@@ -1,0 +1,186 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>{{ title }}</title>
+<link rel=icon href="data:;base64,iVBORw0KGgo=">
+<style>
+  body {
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: .5rem 1rem;
+  }
+
+  main {
+    border-width: 2px 0;
+    border-style: solid;
+  }
+
+  main [data-expandable=true] {
+    border-top: 1px solid;
+    cursor: pointer;
+  }
+
+  main h2 {
+    margin: 0;
+    border-top: 2px solid !important;
+  }
+
+  button {
+    all: inherit;
+    border: 0;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.5rem 0;
+  }
+
+  button:focus svg {
+    outline: 2px solid;
+  }
+
+  button svg {
+    height: 1rem;
+    margin-left: 0.5rem;
+  }
+
+  [aria-expanded=true] .vert {
+    display: none;
+  }
+
+  [aria-expanded] rect {
+    fill: currentColor;
+  }
+
+  h2 > [aria-expanded=true],
+  h3 > [aria-expanded=true] {
+    background: gainsboro;
+  }
+
+  /* page styles */
+
+  html {
+    /* Based on http://markdotto.com/2018/02/07/github-system-fonts/ */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Helvetica, Arial, sans-serif,
+                 "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    line-height: 1.5;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  summary {
+    cursor: pointer;
+  }
+
+  details div {
+    padding: .1rem 1rem;
+  }
+
+  .article {
+    background-color: bisque;
+  }
+  .jaune {
+    background-color: lemonchiffon;
+  }
+  .expose {
+    background-color: azure;
+  }
+  .reponse {
+    background-color: seashell;
+  }
+  .reponse.positive {
+    background-color: honeydew;
+  }
+  .reponse.negative {
+    background-color: mistyrose;
+  }
+</style>
+<h1>{{ title }}</h1>
+<main>
+  {% for article in articles %}
+    <h2 data-expandable=true>Article {{ article.idArticle }} : {{ article.titre }}</h2>
+    <div>
+    {% if article.content %}
+      <details>
+        <summary>Article complet</summary>
+        <div class="article">{{ article.content }}</div>
+      </details>
+    {% endif %}
+    {% if article.jaune %}
+      <details>
+        <summary>Jaune</summary>
+        <div class="jaune">{{ article.jaune }}</div>
+      </details>
+    {% endif %}
+    {% if article.amendements %}
+        {% for amendement in article.amendements %}
+          <h3 data-expandable=true>
+            Amendement {{ amendement.idAmendement }} par
+            {% for auteur in amendement.auteurs %}
+              {{ auteur.auteur }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+            {% if amendement.groupesParlementaires %}
+              ({{ amendement.groupesParlementaires[0].libelle }})
+            {% endif %}
+          </h3>
+          <div>
+            <p>{{ amendement.content }}</p>
+            {% if amendement.expose %}
+              <details>
+                <summary>Exposé sommaire</summary>
+                <div class="expose"><p>{{ amendement.expose }}</p></div>
+              </details>
+            {% endif %}
+            {% if amendement.reponse %}
+              {% set positive = amendement.reponse.avis == 'Favorable' %}
+              {% set negative = amendement.reponse.avis == 'Défavorable' %}
+              <details>
+                <summary>Réponse : {% if negative %}👎{% elif positive %}👍{% endif %}
+                  {{ amendement.reponse.avis }}
+                </summary>
+                <div class="reponse {% if negative %}negative{% elif positive %}positive{% endif %}">
+                  {{ amendement.reponse.presentation }}
+                  {{ amendement.reponse.reponse }}
+                </div>
+              </details>
+            {% endif %}
+          </div>
+        {% endfor %}
+    {% endif %}
+    </div>
+  {% endfor %}
+</main>
+<script>
+  (function() {
+    const plusMinusIcon = `
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 10 10">
+        <rect class="vert" height="8" width="2" y="1" x="4"/>
+        <rect height="2" width="8" y="4" x="1"/>
+      </svg>`
+
+    const headings = document.querySelectorAll('[data-expandable=true]')
+    Array.prototype.forEach.call(headings, heading => {
+      // Give each heading a toggle button child with the SVG plus/minus icon
+      heading.innerHTML = `
+        <button aria-expanded="false">${heading.textContent} ${plusMinusIcon}</button>
+      `
+      let toggledContent = heading.nextElementSibling
+      toggledContent.hidden = true
+
+      let btn = heading.querySelector('button')
+      btn.onclick = () => {
+        // Cast the state as a boolean
+        let expanded = btn.getAttribute('aria-expanded') === 'true' || false
+        // Switch the state
+        btn.setAttribute('aria-expanded', !expanded)
+        // Switch the content's visibility
+        toggledContent.hidden = expanded
+      }
+    })
+  })()
+</script>

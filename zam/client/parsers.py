@@ -1,10 +1,11 @@
+from typing import IO, Union
 from xml.etree import ElementTree
 import zipfile
 
 nsmap = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
 
 
-def qualified_name(tag):
+def qualified_name(tag: str) -> str:
     """
     A utility function to turn a namespace prefixed tag name into
     a Clark-notation qualified tag name for lxml.
@@ -18,14 +19,14 @@ def qualified_name(tag):
     return f'{{{nsmap[prefix]}}}{tagroot}'
 
 
-def xml2text(xml):
+def xml2text(xml: bytes) -> str:
     """
     A string representing the textual content of this run, with content
     child elements translated to their Python equivalents.
 
     Inspiration: https://github.com/python-openxml/python-docx/
     """
-    text = u''
+    text = ''
     root = ElementTree.fromstring(xml)
     for child in root.iter():
         if child.tag == qualified_name('w:t'):
@@ -40,6 +41,6 @@ def xml2text(xml):
     return text
 
 
-def parse_docx(source):
+def parse_docx(source: Union[str, IO[bytes]]) -> str:
     zipf = zipfile.ZipFile(source)
     return xml2text(zipf.read('word/document.xml'))

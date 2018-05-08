@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 
 import CommonMark
 from logbook import warn
@@ -13,7 +14,8 @@ N°\s\d+(\s\(Rect\))?\s+ # Amendement like `N° 222` but also `N° 18 (Rect)`
 """, re.VERBOSE)
 
 
-def enhance_amendement(amendement, article, input_dir):
+def enhance_amendement(
+        amendement: dict, article: dict, input_dir: Path) -> None:
     amendement_filename = amendement['document']
     amendement_path = input_dir / 'Jeu de docs - PDF, word'
     content = load_pdf(amendement_path / amendement_filename)
@@ -33,7 +35,7 @@ def enhance_amendement(amendement, article, input_dir):
         amendement['content'] = content
 
 
-def enhance_articles(articles, input_dir, limit):
+def enhance_articles(articles: list, input_dir: Path, limit: int) -> list:
     for index, article in enumerate(articles):
         if limit and index > limit:
             warn(f'Only {limit} articles enhanced.')

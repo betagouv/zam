@@ -1,0 +1,2 @@
+git+git://github.com/fabric/fabric@v2
+requests==2.18.4

@@ -4,4 +4,4 @@ env = Environment(loader=FileSystemLoader('.'))
 
 
 def render(**data):
-    return env.get_template('zam/client/templates/index.html').render(**data)
+    return env.get_template('templates/index.html').render(**data)

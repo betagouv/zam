@@ -8,20 +8,20 @@ import requests
 def sudo_put(ctx, local, remote, chown=None):
     tmp = str(Path('/tmp') / md5(remote.encode()).hexdigest())
     ctx.put(local, tmp)
-    ctx.run('sudo mv {} {}'.format(tmp, remote))
+    ctx.sudo('mv {} {}'.format(tmp, remote))
     if chown:
-        ctx.run('sudo chown {} {}'.format(chown, remote))
+        ctx.sudo('chown {} {}'.format(chown, remote))
 
 
 @task
 def system(ctx):
-    ctx.run('sudo apt update')
-    ctx.run('sudo apt install -y python3.6 nginx')
-    ctx.run('sudo mkdir -p /srv/zam')
-    ctx.run('sudo mkdir -p /srv/zam/letsencrypt/.well-known/acme-challenge')
-    ctx.run('sudo useradd -N zam -d /srv/zam/ || exit 0')
-    ctx.run('sudo chown zam:users /srv/zam/')
-    ctx.run('sudo chsh -s /bin/bash zam')
+    ctx.sudo('apt update')
+    ctx.sudo('apt install -y python3.6 nginx')
+    ctx.sudo('mkdir -p /srv/zam')
+    ctx.sudo('mkdir -p /srv/zam/letsencrypt/.well-known/acme-challenge')
+    ctx.sudo('useradd -N zam -d /srv/zam/ || exit 0')
+    ctx.sudo('chown zam:users /srv/zam/')
+    ctx.sudo('chsh -s /bin/bash zam')
 
 
 @task
@@ -36,7 +36,7 @@ def http(ctx):
         # Before letsencrypt.
         conf = 'nginx-http.conf'
     sudo_put(ctx, conf, '/etc/nginx/sites-enabled/default')
-    ctx.run('sudo systemctl restart nginx')
+    ctx.sudo('systemctl restart nginx')
 
 
 @task
@@ -51,22 +51,22 @@ def bootstrap(ctx):
 
 @task
 def basicauth(ctx):
-    ctx.run('sudo apt update')
-    ctx.run('sudo apt install -y apache2-utils')
+    ctx.sudo('apt update')
+    ctx.sudo('apt install -y apache2-utils')
     # Will prompt for password.
-    ctx.run('sudo htpasswd -c /etc/nginx/.htpasswd demozam')
+    ctx.sudo('htpasswd -c /etc/nginx/.htpasswd demozam')
 
 
 @task
 def letsencrypt(ctx):
-    ctx.run('sudo add-apt-repository ppa:certbot/certbot')
-    ctx.run('sudo apt update')
-    ctx.run('sudo apt install -y certbot software-properties-common')
+    ctx.sudo('add-apt-repository ppa:certbot/certbot')
+    ctx.sudo('apt update')
+    ctx.sudo('apt install -y certbot software-properties-common')
     sudo_put(ctx, 'certbot.ini', '/srv/zam/certbot.ini')
     sudo_put(ctx, 'ssl-renew', '/etc/cron.weekly/ssl-renew')
-    ctx.run('chmod +x /etc/cron.weekly/ssl-renew')
-    ctx.run('certbot certonly -c /srv/zam/certbot.ini --non-interactive '
-            '--agree-tos')
+    ctx.sudo('chmod +x /etc/cron.weekly/ssl-renew')
+    ctx.sudo('certbot certonly -c /srv/zam/certbot.ini --non-interactive '
+             '--agree-tos')
 
 
 @task

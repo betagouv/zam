@@ -34,8 +34,7 @@ def generate(input_dir: str, output_dir: str, limit: int=None) -> None:
         now = datetime.utcnow()
         output_dir = f'{now.isoformat()[:10]}-{current_branch}'
         output_path = output_root_path / output_dir
-        if not output_path.exists():
-            output_path.mkdir()
+        output_path.mkdir(exist_ok=True)
         output_filename = output_path / 'index.html'
     with open(output_filename, 'w') as output_file:
         output_file.write(html_output)

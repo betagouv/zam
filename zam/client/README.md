@@ -11,15 +11,15 @@
 
 Adapt your paths for sensitive informations.
 
-    python . generate path/to/Archives\ PLFSS/ > path/to/index.html
+    python . generate path/to/Archives\ PLFSS/ path/to/target/
 
-⚠️ Never ever commit/push the generated file.
+⚠️ Never ever commit/push the generated folder/file.
 
 ## Debugging
 
 Most of the time, parsing only a few articles is enough:
 
-    python . generate path/to/Archives\ PLFSS/ --limit=8 > path/to/index.html
+    python . generate path/to/Archives\ PLFSS/ path/to/target/ --limit=8
 
 You have a list of options with:
 

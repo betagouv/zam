@@ -3,7 +3,6 @@ from pathlib import Path
 from shlex import quote
 
 from invoke import task
-import requests
 
 
 def sudo_put(ctx, local, remote, chown=None):
@@ -72,8 +71,7 @@ def letsencrypt(ctx):
 
 @task
 def sshkeys(ctx):
-    for name, url in ctx.config.get('ssh_key_urls', {}).items():
-        key = requests.get(url).text.replace('\n', '')
+    for name, key in ctx.config.get('ssh_keys', {}).items():
         ctx.run('grep -q -r "{key}" .ssh/authorized_keys '
                 '|| echo "{key}" '
                 '| sudo tee --append .ssh/authorized_keys'.format(key=key))

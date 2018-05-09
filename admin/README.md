@@ -10,7 +10,7 @@
 ## Adding somebody
 
 1.  Install dependencies (see above) and/or activate venv
-2.  Add the public key link to `admin/fabric.yml`
+2.  Add the public key to `admin/fabric.yml` under `ssh_keys` section
 3.  Run `fab -eH root@zam.beta.gouv.fr sshkeys`
 
 ## Bootstraping server

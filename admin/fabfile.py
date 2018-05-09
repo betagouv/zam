@@ -1,5 +1,6 @@
 from hashlib import md5
 from pathlib import Path
+from shlex import quote
 
 from invoke import task
 import requests
@@ -80,4 +81,4 @@ def sshkeys(ctx):
 
 @task
 def deploy(ctx, source):
-    sudo_put(ctx, source, '/srv/zam/index.html', chown='zam')
+    sudo_put(ctx, quote(source), '/srv/zam/index.html', chown='zam')

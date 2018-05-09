@@ -13,6 +13,20 @@ def sudo_put(ctx, local, remote, chown=None):
         ctx.sudo('chown {} {}'.format(chown, remote))
 
 
+def put_dir(ctx, local, remote, chown=None):
+    local = Path(local)
+    remote = Path(remote)
+    for path in local.rglob('*'):
+        relative_path = path.relative_to(local)
+        if str(relative_path).startswith('.'):
+            # Avoid pushing hidden files.
+            continue
+        if path.is_dir():
+            ctx.sudo('mkdir -p {}'.format(remote / relative_path))
+        else:
+            sudo_put(ctx, str(path), str(remote / relative_path), chown)
+
+
 @task
 def system(ctx):
     ctx.sudo('apt update')
@@ -79,4 +93,4 @@ def sshkeys(ctx):
 
 @task
 def deploy(ctx, source):
-    sudo_put(ctx, quote(source), '/srv/zam/index.html', chown='zam')
+    put_dir(ctx, quote(source), '/srv/zam/', chown='zam')

@@ -25,4 +25,4 @@
 
 1.  Generate the `index.html` file from sensitive sources
 2.  Install dependencies (see above) and/or activate venv
-3.  Run `fab -eH root@zam.beta.gouv.fr deploy --source=path/to/index.html`
+3.  Run `fab -eH root@zam.beta.gouv.fr deploy --source=path/to/output/`

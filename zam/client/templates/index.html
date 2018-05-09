@@ -17,20 +17,14 @@
   }
 
   main [data-expandable=true] {
-    border-top: 1px solid;
+    border: 1px solid;
+    border-top: 0;
     cursor: pointer;
-  }
-
-  main h2 {
-    margin: 0;
-    border-top: 2px solid !important;
   }
 
   button {
     all: inherit;
     border: 0;
-    display: flex;
-    justify-content: space-between;
     width: 100%;
     padding: 0.5rem 0;
   }
@@ -40,8 +34,21 @@
   }
 
   button svg {
-    height: 1rem;
-    margin-left: 0.5rem;
+    height: 2rem;
+    margin: 1rem;
+    float: right;
+  }
+
+  button h2,
+  button p {
+    margin: 0;
+    padding: .1rem 1rem;
+  }
+
+  header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
   }
 
   [aria-expanded=true] .vert {
@@ -50,11 +57,6 @@
 
   [aria-expanded] rect {
     fill: currentColor;
-  }
-
-  h2 > [aria-expanded=true],
-  h3 > [aria-expanded=true] {
-    background: gainsboro;
   }
 
   /* page styles */
@@ -105,56 +107,61 @@
 <h1>{{ title }}</h1>
 <main>
   {% for article in articles %}
-    <h2 data-expandable=true>Article {{ article.idArticle }} : {{ article.titre }}</h2>
-    <div>
-    {% if article.content %}
-      <details>
-        <summary>Article complet</summary>
-        <div class="article">{{ article.content }}</div>
-      </details>
-    {% endif %}
-    {% if article.jaune %}
-      <details>
-        <summary>Jaune</summary>
-        <div class="jaune">{{ article.jaune }}</div>
-      </details>
-    {% endif %}
-    {% if article.amendements %}
-        {% for amendement in article.amendements %}
-          <h3 data-expandable=true>
-            Amendement {{ amendement.idAmendement }} par
-            {% for auteur in amendement.auteurs %}
-              {{ auteur.auteur }}{% if not loop.last %}, {% endif %}
-            {% endfor %}
-            {% if amendement.groupesParlementaires %}
-              ({{ amendement.groupesParlementaires[0].libelle }})
-            {% endif %}
-          </h3>
-          <div>
-            <p>{{ amendement.content }}</p>
-            {% if amendement.expose %}
-              <details>
-                <summary>Exposé sommaire</summary>
-                <div class="expose"><p>{{ amendement.expose }}</p></div>
-              </details>
-            {% endif %}
-            {% if amendement.reponse %}
-              {% set positive = amendement.reponse.avis == 'Favorable' %}
-              {% set negative = amendement.reponse.avis == 'Défavorable' %}
-              <details>
-                <summary>Réponse : {% if negative %}👎{% elif positive %}👍{% endif %}
-                  {{ amendement.reponse.avis }}
-                </summary>
-                <div class="reponse {% if negative %}negative{% elif positive %}positive{% endif %}">
-                  {{ amendement.reponse.presentation }}
-                  {{ amendement.reponse.reponse }}
-                </div>
-              </details>
-            {% endif %}
-          </div>
-        {% endfor %}
-    {% endif %}
-    </div>
+    {% for amendement in article.amendements %}
+      {% if amendement.reponse %}
+        {% set positive = amendement.reponse.avis == 'Favorable' %}
+        {% set negative = amendement.reponse.avis == 'Défavorable' %}
+      {% endif %}
+      <header data-expandable=true class="reponse {% if negative %}negative{% elif positive %}positive{% endif %}">
+        <h2>
+          {% if negative %}👎{% elif positive %}👍{% endif %}
+          Amendement {{ amendement.idAmendement }}
+          <small>
+            (Article {{ article.idArticle }})
+          </small>
+        </h2>
+        <p>
+          {% for auteur in amendement.auteurs %}
+            {{ auteur.auteur }}{% if not loop.last %}, {% endif %}
+          {% endfor %}
+          {% if amendement.groupesParlementaires %}
+            ({{ amendement.groupesParlementaires[0].libelle }})
+          {% endif %}
+        </p>
+      </header>
+      <div>
+        {% if amendement.reponse %}
+          <details open>
+            <summary>Réponse : {% if negative %}👎{% elif positive %}👍{% endif %}
+              {{ amendement.reponse.avis }}
+            </summary>
+            <div class="reponse {% if negative %}negative{% elif positive %}positive{% endif %}">
+              {{ amendement.reponse.presentation }}
+              {{ amendement.reponse.reponse }}
+            </div>
+          </details>
+        {% endif %}
+        <p>{{ amendement.content }}</p>
+        {% if amendement.expose %}
+          <details>
+            <summary>Exposé sommaire</summary>
+            <div class="expose"><p>{{ amendement.expose }}</p></div>
+          </details>
+        {% endif %}
+        {% if article.content %}
+          <details>
+            <summary>Article complet</summary>
+            <div class="article">{{ article.content }}</div>
+          </details>
+        {% endif %}
+        {% if article.jaune %}
+          <details>
+            <summary>Jaune</summary>
+            <div class="jaune">{{ article.jaune }}</div>
+          </details>
+        {% endif %}
+      </div>
+    {% endfor %}
   {% endfor %}
 </main>
 <script>
@@ -169,7 +176,7 @@
     Array.prototype.forEach.call(headings, heading => {
       // Give each heading a toggle button child with the SVG plus/minus icon
       heading.innerHTML = `
-        <button aria-expanded="false">${heading.textContent} ${plusMinusIcon}</button>
+        <button aria-expanded="false">${plusMinusIcon} ${heading.innerHTML}</button>
       `
       let toggledContent = heading.nextElementSibling
       toggledContent.hidden = true

@@ -50,6 +50,11 @@
     position: sticky;
     top: 0;
     min-height: 6rem;
+    z-index: 666;
+  }
+
+  header p {
+    margin-left: 2rem;
   }
 
   [aria-expanded=true] .vert {
@@ -78,12 +83,27 @@
     text-align: center;
   }
 
+  h2 small {
+    font-weight: normal;
+  }
+
   summary {
+    position: -webkit-sticky;
+    position: sticky;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 1.3rem;
+    top: 6rem;
+    background: white;
   }
 
   details div {
     padding: .1rem 1rem;
+  }
+
+  article > div {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid;
   }
 
   .article {
@@ -104,11 +124,18 @@
   .reponse.negative {
     background-color: mistyrose;
   }
+
+  .group-color {
+    display: inline-block;
+    width: .6rem;
+    height: .6rem;
+  }
 </style>
 <h1>{{ title }}</h1>
 <main>
   {% for article in articles %}
     {% for amendement in article.amendements %}
+    <article>
       {% if amendement.reponse %}
         {% set positive = amendement.reponse.avis == 'Favorable' %}
         {% set negative = amendement.reponse.avis == 'Défavorable' %}
@@ -117,16 +144,17 @@
         <h2>
           {% if negative %}👎{% elif positive %}👍{% endif %}
           Amendement {{ amendement.idAmendement }}
-          <small>
-            (Article {{ article.idArticle }})
-          </small>
+          <small>‹ Article {{ article.idArticle }}</small>
         </h2>
         <p>
-          {% for auteur in amendement.auteurs %}
-            {{ auteur.auteur }}{% if not loop.last %}, {% endif %}
-          {% endfor %}
+          <strong>
+            {% for auteur in amendement.auteurs %}
+              {{ auteur.auteur }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+          </strong>
           {% if amendement.groupesParlementaires %}
-            ({{ amendement.groupesParlementaires[0].libelle }})
+            — {{ amendement.groupesParlementaires[0].libelle }}
+            <span class="group-color" style="background-color: {{ amendement.groupesParlementaires[0].couleur }};"></span>
           {% endif %}
         </p>
       </header>
@@ -145,23 +173,24 @@
         <p>{{ amendement.content }}</p>
         {% if amendement.expose %}
           <details>
-            <summary>Exposé sommaire</summary>
+            <summary>Article {{ article.idArticle }} : exposé sommaire</summary>
             <div class="expose"><p>{{ amendement.expose }}</p></div>
           </details>
         {% endif %}
         {% if article.content %}
           <details>
-            <summary>Article complet</summary>
+            <summary>Article {{ article.idArticle }} : contenu intégral</summary>
             <div class="article">{{ article.content }}</div>
           </details>
         {% endif %}
         {% if article.jaune %}
           <details>
-            <summary>Jaune</summary>
+            <summary>Article {{ article.idArticle }} : jaune</summary>
             <div class="jaune">{{ article.jaune }}</div>
           </details>
         {% endif %}
       </div>
+    </article>
     {% endfor %}
   {% endfor %}
 </main>

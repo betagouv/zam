@@ -1,5 +1,9 @@
 # Server install
 
+## Requirements
+
+*   Python 3.6+
+
 ## Installing dependencies
 
 1.  Got to `admin`

@@ -1,5 +1,9 @@
 # Client (means frontend for ministers and their teams)
 
+## Requirements
+
+*   Python 3.6+
+
 ## Installing
 
 1.  Go to the `client` folder

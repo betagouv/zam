@@ -29,7 +29,7 @@ def generate(input_dir: str, output_dir: str, limit: int=None) -> None:
     output_root_path = Path(output_dir)
     current_branch = os.popen('git symbolic-ref --short HEAD').read().strip()
     if current_branch == 'master':
-        output_filename = 'index.html'
+        output_filename = output_root_path / 'index.html'
     else:
         now = datetime.utcnow()
         output_dir = f'{now.isoformat()[:len("YYYY-MM-DD")]}-{current_branch}'

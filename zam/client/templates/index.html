@@ -173,29 +173,39 @@
         <p>{{ amendement.content }}</p>
         {% if amendement.expose %}
           <details>
-            <summary>Article {{ article.idArticle }} : exposé sommaire</summary>
+            <summary>Amendement {{ amendement.idAmendement }} : exposé sommaire</summary>
             <div class="expose"><p>{{ amendement.expose }}</p></div>
           </details>
         {% endif %}
-        {% if article.content %}
-          <details>
-            <summary>Article {{ article.idArticle }} : contenu intégral</summary>
-            <div class="article">{{ article.content }}</div>
-          </details>
-        {% endif %}
-        {% if article.jaune %}
-          <details>
-            <summary>Article {{ article.idArticle }} : jaune</summary>
-            <div class="jaune">{{ article.jaune }}</div>
-          </details>
+        {% if article.pk %}
+          <div data-article="{{ article.pk }}"></div>
         {% endif %}
       </div>
     </article>
     {% endfor %}
   {% endfor %}
 </main>
+{% for article in articles %}
+  {% if article.amendements %}
+    <template id="{{ article.pk }}">
+      {% if article.content %}
+        <details>
+          <summary>Article {{ article.idArticle }} : contenu intégral</summary>
+          <div class="article">{{ article.content }}</div>
+        </details>
+      {% endif %}
+      {% if article.jaune %}
+        <details>
+          <summary>Article {{ article.idArticle }} : jaune</summary>
+          <div class="jaune">{{ article.jaune }}</div>
+        </details>
+      {% endif %}
+    </template>
+  {% endif %}
+{% endfor %}
 <script>
-  (function() {
+  ;(function toggleExpandableContent () {
+    /* Inspired by https://inclusive-components.design/collapsible-sections/ */
     const plusMinusIcon = `
       <svg aria-hidden="true" focusable="false" viewBox="0 0 10 10">
         <rect class="vert" height="8" width="2" y="1" x="4"/>
@@ -208,18 +218,28 @@
       heading.innerHTML = `
         <button aria-expanded="false">${plusMinusIcon} ${heading.innerHTML}</button>
       `
-      let toggledContent = heading.nextElementSibling
+      const toggledContent = heading.nextElementSibling
       toggledContent.hidden = true
 
-      let btn = heading.querySelector('button')
+      const btn = heading.querySelector('button')
       btn.onclick = () => {
         // Cast the state as a boolean
-        let expanded = btn.getAttribute('aria-expanded') === 'true' || false
+        const expanded = btn.getAttribute('aria-expanded') === 'true' || false
         // Switch the state
         btn.setAttribute('aria-expanded', !expanded)
         // Switch the content's visibility
         toggledContent.hidden = expanded
       }
+    })
+  })()
+  ;(function injectArticleDetails () {
+    const articlePlaceholders = document.querySelectorAll('[data-article]')
+    Array.prototype.forEach.call(articlePlaceholders, placeholder => {
+      const articlePk = placeholder.getAttribute('data-article')
+      const articleTemplate = document.querySelector(`#${articlePk}`)
+      const clone = articleTemplate.content.cloneNode(true)
+      placeholder.parentNode.appendChild(clone)
+      placeholder.remove()
     })
   })()
 </script>

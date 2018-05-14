@@ -41,9 +41,9 @@ def enhance_articles(articles: list, input_dir: Path, limit: int) -> list:
             warn(f'Only {limit} articles enhanced.')
             break
         article['content'] = 'TODO'
-        jaune_filename = article['feuilletJaune'].replace('.pdf', '.docx')
+        article['pk'] = article['feuilletJaune'].replace('.pdf', '')
         jaune_path = input_dir / 'Jeu de docs - PDF, word'
-        jaune_content = load_docx(jaune_path / jaune_filename)
+        jaune_content = load_docx(jaune_path / f'{article["pk"]}.docx')
         # Convert jaune to CommonMark to preserve some styles.
         article['jaune'] = CommonMark.commonmark(jaune_content)
         for amendement in article.get('amendements', []):

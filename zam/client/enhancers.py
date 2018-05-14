@@ -49,3 +49,25 @@ def enhance_articles(articles: list, input_dir: Path, limit: int) -> list:
         for amendement in article.get('amendements', []):
             enhance_amendement(amendement, article, input_dir)
     return articles
+
+
+def strip_styles(content: str) -> str:
+    needle = ' style="text-align:justify;"'
+    if needle in content:
+        return content.replace(needle, '')
+    return content
+
+
+def regroup_reponses(articles: list) -> dict:
+    reponses = {}
+    for article in articles:
+        for amendement in article.get('amendements', []):
+            if 'reponse' in amendement:
+                reponse = amendement['reponse']
+                reponse['presentation'] = strip_styles(reponse['presentation'])
+                if 'reponse' in reponse:
+                    reponse['reponse'] = strip_styles(reponse['reponse'])
+                pk = hash(reponse['presentation'])
+                reponses[pk] = reponse
+                amendement['reponse']['pk'] = pk
+    return reponses

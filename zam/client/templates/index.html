@@ -129,6 +129,7 @@
     display: inline-block;
     width: .6rem;
     height: .6rem;
+    border-radius: 1rem;
   }
 </style>
 <h1>{{ title }}</h1>
@@ -160,15 +161,7 @@
       </header>
       <div>
         {% if amendement.reponse %}
-          <details open>
-            <summary>Réponse : {% if negative %}👎{% elif positive %}👍{% endif %}
-              {{ amendement.reponse.avis }}
-            </summary>
-            <div class="reponse {% if negative %}negative{% elif positive %}positive{% endif %}">
-              {{ amendement.reponse.presentation }}
-              {{ amendement.reponse.reponse }}
-            </div>
-          </details>
+          <div data-reponse="{{ amendement.reponse.pk }}"></div>
         {% endif %}
         <p>{{ amendement.content }}</p>
         {% if amendement.expose %}
@@ -187,7 +180,7 @@
 </main>
 {% for article in articles %}
   {% if article.amendements %}
-    <template id="{{ article.pk }}">
+    <template id="article-details-{{ article.pk }}">
       {% if article.content %}
         <details>
           <summary>Article {{ article.idArticle }} : contenu intégral</summary>
@@ -202,6 +195,22 @@
       {% endif %}
     </template>
   {% endif %}
+{% endfor %}
+{% for pk, reponse in reponses.items() %}
+  {% set positive = reponse.avis == 'Favorable' %}
+  {% set negative = reponse.avis == 'Défavorable' %}
+  <template id="reponse-details-{{ pk }}">
+    <details open>
+      <summary>Réponse :
+        {% if negative %}👎{% elif positive %}👍{% endif %}
+        {{ reponse.avis }}
+      </summary>
+      <div class="reponse {% if negative %}negative{% elif positive %}positive{% endif %}">
+        {{ reponse.presentation }}
+        {{ reponse.reponse }}
+      </div>
+    </details>
+  </template>
 {% endfor %}
 <script>
   ;(function toggleExpandableContent () {
@@ -236,9 +245,19 @@
     const articlePlaceholders = document.querySelectorAll('[data-article]')
     Array.prototype.forEach.call(articlePlaceholders, placeholder => {
       const articlePk = placeholder.getAttribute('data-article')
-      const articleTemplate = document.querySelector(`#${articlePk}`)
+      const articleTemplate = document.querySelector(`#article-details-${articlePk}`)
       const clone = articleTemplate.content.cloneNode(true)
       placeholder.parentNode.appendChild(clone)
+      placeholder.remove()
+    })
+  })()
+  ;(function injectReponseDetails () {
+    const reponsePlaceholders = document.querySelectorAll('[data-reponse]')
+    Array.prototype.forEach.call(reponsePlaceholders, placeholder => {
+      const reponsePk = placeholder.getAttribute('data-reponse')
+      const reponseTemplate = document.querySelector(`#reponse-details-${reponsePk}`)
+      const clone = reponseTemplate.content.cloneNode(true)
+      placeholder.parentNode.insertBefore(clone, placeholder)
       placeholder.remove()
     })
   })()

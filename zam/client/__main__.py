@@ -6,8 +6,7 @@ from pathlib import Path
 from logbook import StreamHandler
 from minicli import cli, run
 
-from enhancers import enhance_articles, regroup_reponses
-from loaders import load_json
+from loaders import load_json, load_reponses
 from templates import render
 
 StreamHandler(sys.stdout).push_application()
@@ -24,8 +23,7 @@ def generate(input_dir: str, output_dir: str, limit: int=None) -> None:
     input_path = Path(input_dir)
     json_source = input_path / 'JSON - fichier de sauvegarde' / 'AN2-2018.json'
     source = load_json(json_source)[0]  # Unique item.
-    articles = enhance_articles(source['list'], input_path, limit)
-    reponses = regroup_reponses(articles)
+    reponses, articles = load_reponses(source['list'], input_path, limit)
     html_output = render(
         title=source['libelle'], articles=articles, reponses=reponses)
     output_root_path = Path(output_dir)

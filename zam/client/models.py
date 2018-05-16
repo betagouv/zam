@@ -163,7 +163,7 @@ class Reponses(OrderedDict):
     def load(
         cls, items: dict, articles: Articles, amendements: Amendements,
         limit: int
-    ):  # -> Amendements
+    ):  # -> Reponses
         reponses = cls()
         for raw_article in warnumerate(items, limit):
             article = articles.get_from_raw(raw_article)

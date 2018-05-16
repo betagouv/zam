@@ -8,7 +8,7 @@ from decorators import check_existence
 from parsers import parse_docx
 
 
-def load_json(source_path: Path):
+def load_json(source_path: Path) -> dict:
     with open(source_path) as source:
         return json.loads(source.read())
 

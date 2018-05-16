@@ -49,7 +49,7 @@
     position: -webkit-sticky;
     position: sticky;
     top: 0;
-    min-height: 6rem;
+    min-height: 8rem;
     z-index: 666;
   }
 
@@ -93,7 +93,7 @@
     cursor: pointer;
     font-weight: bold;
     font-size: 1.3rem;
-    top: 6rem;
+    top: 8rem;
     background: white;
   }
 
@@ -112,7 +112,7 @@
   .jaune {
     background-color: lemonchiffon;
   }
-  .expose {
+  .summary {
     background-color: azure;
   }
   .reponse {
@@ -129,79 +129,84 @@
     display: inline-block;
     width: .6rem;
     height: .6rem;
+    border-radius: 1rem;
   }
 </style>
 <h1>{{ title }}</h1>
 <main>
-  {% for article in articles %}
-    {% for amendement in article.amendements %}
+  {% for reponse in reponses.values() %}
     <article>
-      {% if amendement.reponse %}
-        {% set positive = amendement.reponse.avis == 'Favorable' %}
-        {% set negative = amendement.reponse.avis == 'Défavorable' %}
-      {% endif %}
+      {% set positive = reponse.avis == 'Favorable' %}
+      {% set negative = reponse.avis == 'Défavorable' %}
+      {% set multiple = reponse.amendements|length > 1 %}
       <header data-expandable=true class="reponse {% if negative %}negative{% elif positive %}positive{% endif %}">
         <h2>
           {% if negative %}👎{% elif positive %}👍{% endif %}
-          Amendement {{ amendement.idAmendement }}
-          <small>‹ Article {{ article.idArticle }}</small>
+          Amendement{% if multiple %}s{% endif %}
+          {% for amendement in reponse.amendements %}
+            {{ amendement.id }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+          {% endfor %}
+          <small>‹ Article {{ reponse.article }}</small>
         </h2>
-        <p>
-          <strong>
-            {% for auteur in amendement.auteurs %}
-              {{ auteur.auteur }}{% if not loop.last %}, {% endif %}
-            {% endfor %}
-          </strong>
-          {% if amendement.groupesParlementaires %}
-            — {{ amendement.groupesParlementaires[0].libelle }}
-            <span class="group-color" style="background-color: {{ amendement.groupesParlementaires[0].couleur }};"></span>
-          {% endif %}
-        </p>
+        {% if multiple %}
+          <p>{{ reponse.presentation }}</p>
+        {% endif %}
+        <ul>
+          {% for amendement in reponse.amendements %}
+            <li>
+              <strong>{{ amendement.authors }}</strong>
+              {% if amendement.group %}
+                — {{ amendement.group.label }}
+                <span class="group-color" style="background-color: {{ amendement.group.color }};"></span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
       </header>
       <div>
-        {% if amendement.reponse %}
-          <details open>
-            <summary>Réponse : {% if negative %}👎{% elif positive %}👍{% endif %}
-              {{ amendement.reponse.avis }}
-            </summary>
-            <div class="reponse {% if negative %}negative{% elif positive %}positive{% endif %}">
-              {{ amendement.reponse.presentation }}
-              {{ amendement.reponse.reponse }}
+        <details open>
+          <summary>Réponse :
+            {% if negative %}👎{% elif positive %}👍{% endif %}
+            {{ reponse.avis }}
+          </summary>
+          <div class="reponse {% if negative %}negative{% elif positive %}positive{% endif %}">
+            <p>{{ reponse.presentation }}</p>
+            {% if reponse.content %}
+              <p>{{ reponse.content }}</p>
+            {% endif %}
+          </div>
+        </details>
+        {% for amendement in reponse.amendements %}
+          <details>
+            <summary>Amendement {{ amendement.id }}</summary>
+            <div class="summary">
+              <p>{{ amendement.content }}</p>
+              {% if amendement.summary %}
+                <p>{{ amendement.summary }}</p>
+              {% endif %}
             </div>
           </details>
-        {% endif %}
-        <p>{{ amendement.content }}</p>
-        {% if amendement.expose %}
-          <details>
-            <summary>Amendement {{ amendement.idAmendement }} : exposé sommaire</summary>
-            <div class="expose"><p>{{ amendement.expose }}</p></div>
-          </details>
-        {% endif %}
-        {% if article.pk %}
-          <div data-article="{{ article.pk }}"></div>
-        {% endif %}
+        {% endfor %}
+        <div data-article="{{ reponse.article.pk }}"></div>
       </div>
     </article>
-    {% endfor %}
   {% endfor %}
 </main>
-{% for article in articles %}
-  {% if article.amendements %}
-    <template id="{{ article.pk }}">
-      {% if article.content %}
-        <details>
-          <summary>Article {{ article.idArticle }} : contenu intégral</summary>
-          <div class="article">{{ article.content }}</div>
-        </details>
-      {% endif %}
-      {% if article.jaune %}
-        <details>
-          <summary>Article {{ article.idArticle }} : jaune</summary>
-          <div class="jaune">{{ article.jaune }}</div>
-        </details>
-      {% endif %}
-    </template>
-  {% endif %}
+{% for article in articles.values() %}
+  <template id="article-details-{{ article.pk }}">
+    {% if article.content %}
+      <details>
+        <summary>Article {{ article }} : contenu intégral</summary>
+        <div class="article">{{ article.content }}</div>
+      </details>
+    {% endif %}
+    {% if article.jaune %}
+      <details>
+        <summary>Article {{ article }} : jaune</summary>
+        <div class="jaune">{{ article.jaune }}</div>
+      </details>
+    {% endif %}
+  </template>
 {% endfor %}
 <script>
   ;(function toggleExpandableContent () {
@@ -236,7 +241,7 @@
     const articlePlaceholders = document.querySelectorAll('[data-article]')
     Array.prototype.forEach.call(articlePlaceholders, placeholder => {
       const articlePk = placeholder.getAttribute('data-article')
-      const articleTemplate = document.querySelector(`#${articlePk}`)
+      const articleTemplate = document.querySelector(`#article-details-${articlePk}`)
       const clone = articleTemplate.content.cloneNode(true)
       placeholder.parentNode.appendChild(clone)
       placeholder.remove()

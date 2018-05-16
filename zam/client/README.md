@@ -28,3 +28,8 @@ Most of the time, parsing only a few articles is enough:
 You have a list of options with:
 
     python . generate --help
+
+## Testing
+
+    pip install pytest
+    env PYTHONPATH=. pytest

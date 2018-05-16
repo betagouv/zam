@@ -1,4 +1,6 @@
-import sys
+from typing import Iterator
+
+from logbook import warn
 
 
 def strip_styles(content: str) -> str:
@@ -8,5 +10,9 @@ def strip_styles(content: str) -> str:
     return content
 
 
-def positive_hash(content: str) -> str:
-    return str(hash(content) % ((sys.maxsize + 1) * 2))
+def warnumerate(items: list, limit: int) -> Iterator[dict]:
+    for index, raw_article in enumerate(items):
+        if limit and index >= limit:
+            warn(f'Only {limit} items loaded.')
+            break
+        yield raw_article

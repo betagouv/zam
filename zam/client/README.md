@@ -31,5 +31,7 @@ You have a list of options with:
 
 ## Testing
 
-    pip install pytest
+The output file must be generated prior to launch all tests.
+
+    pip install pytest selectolax
     env PYTHONPATH=. pytest

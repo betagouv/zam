@@ -4,10 +4,7 @@ from logbook import warn
 
 
 def strip_styles(content: str) -> str:
-    needle = ' style="text-align:justify;"'
-    if needle in content:
-        return content.replace(needle, '')
-    return content
+    return content.replace(' style="text-align:justify;"', '')
 
 
 def warnumerate(items: list, limit: int) -> Iterator[dict]:

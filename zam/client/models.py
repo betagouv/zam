@@ -1,7 +1,10 @@
-from typing import Any, List, NamedTuple, no_type_check
+from typing import Any, List
+
+from dataclasses import dataclass, field
 
 
-class Amendement(NamedTuple):
+@dataclass
+class Amendement:
     pk: str
     id: str
     content: str
@@ -17,15 +20,16 @@ class Amendement(NamedTuple):
         return f'<Amendement {self} article={self.article}>'
 
 
-class Article(NamedTuple):
+@dataclass
+class Article:
     pk: str
     id: str
     title: str
-    content: str
     state: str
     multiplier: str
     jaune: str
-    amendements: List[Amendement]
+    content: str = 'TODO'
+    amendements: List[Amendement] = field(default_factory=lambda: [])
 
     def __str__(self) -> str:
         return f'{self.id} {self.state} {self.multiplier}'
@@ -35,13 +39,9 @@ class Article(NamedTuple):
                                for amendement in self.amendements)
         return f'<Article {self} amendements={amendements}>'
 
-    @no_type_check
-    def __add__(self, amendement: Amendement):  # -> Article
-        self.amendements.append(amendement)
-        return self._replace(amendements=self.amendements)
 
-
-class Reponse(NamedTuple):
+@dataclass
+class Reponse:
     pk: str
     avis: str
     presentation: str
@@ -57,8 +57,3 @@ class Reponse(NamedTuple):
                                for amendement in self.amendements)
         return (f'<Reponse {self} article={self.article}'
                 f'amendements={amendements}>')
-
-    @no_type_check
-    def __add__(self, amendement: Amendement):  # -> Reponse
-        self.amendements.append(amendement)
-        return self._replace(amendements=self.amendements)

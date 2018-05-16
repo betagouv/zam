@@ -32,8 +32,8 @@ def load_article(article: dict, input_dir: Path) -> Article:
     jaune_content = load_docx(jaune_path / jaune_file_path)
     # Convert jaune to CommonMark to preserve some styles.
     jaune = CommonMark.commonmark(jaune_content)
-    return Article(pk=pk, id=id_, title=title, content='TODO', state=state,
-                   multiplier=multiplier, jaune=jaune, amendements=[])
+    return Article(pk=pk, id=id_, title=title, state=state,
+                   multiplier=multiplier, jaune=jaune)
 
 
 def load_amendement(
@@ -99,11 +99,11 @@ def load_reponses(items: list, input_dir: Path, limit: int
                 amendement = load_amendement(amendement, article, input_dir)
                 reponse_pk = positive_hash(reponse['presentation'])
                 if reponse_pk in reponses:
-                    reponses[reponse_pk] += amendement
+                    reponses[reponse_pk].amendements.append(amendement)
                 else:
                     reponses[reponse_pk] = load_reponse(
                         reponse_pk, reponse, amendement, article)
-                article += amendement
+                article.amendements.append(amendement)
         if article.amendements:
             articles[article.pk] = article
     return reponses, articles

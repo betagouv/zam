@@ -6,7 +6,6 @@ from typing import Iterator
 from logbook import warn
 
 from decorators import require_env_vars
-from templates import render, write_html
 
 
 def strip_styles(content: str) -> str:
@@ -32,9 +31,3 @@ def build_output_filename() -> Path:
     output_path = output_root_path / output_dir
     output_path.mkdir(exist_ok=True)
     return output_path / 'index.html'
-
-
-def render_and_save_html(title, articles, amendements, reponses):
-    html = render(title=title, articles=articles, reponses=reponses)
-    output_filename = build_output_filename()
-    write_html(html, output_filename)

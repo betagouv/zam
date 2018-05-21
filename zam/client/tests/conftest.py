@@ -4,7 +4,8 @@ from selectolax.parser import HTMLParser
 from decorators import require_env_vars
 from loaders import load_source
 from models import load_data
-from utils import build_output_filename, render_and_save_html
+from templates import render_and_save_html
+from utils import build_output_filename
 
 
 @pytest.fixture(scope='module')

@@ -5,7 +5,7 @@ from minicli import cli, run
 
 from loaders import load_source
 from models import load_data
-from utils import render_and_save_html
+from templates import render_and_save_html
 
 StreamHandler(sys.stdout).push_application()
 

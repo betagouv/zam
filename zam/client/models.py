@@ -190,11 +190,12 @@ class Reponses(OrderedDict):
 
 @require_env_vars(env_vars=['ZAM_INPUT'])
 def load_data(
-    input_path: str, items: dict, limit: int=None
+    items: dict, limit: int=None
 ) -> Tuple[Articles, Amendements, Reponses]:
+    input_path = Path(os.environ['ZAM_INPUT'])
     articles = Articles.load(items, limit)
-    articles.load_jaunes(items, Path(input_path), limit)
+    articles.load_jaunes(items, input_path, limit)
     amendements = Amendements.load(items, articles, limit)
-    amendements.load_contents(Path(input_path))
+    amendements.load_contents(input_path)
     reponses = Reponses.load(items, articles, amendements, limit)
     return articles, amendements, reponses

@@ -21,11 +21,8 @@ def require_env_vars(env_vars: list) -> Callable:
     def wrapper(
             wrapped: Callable, instance: None,
             args: List[Path], kwargs: dict) -> str:
-        values = []
         for env_var in env_vars:
-            try:
-                values.append(os.environ[env_var])
-            except KeyError:
-                raise Exception(f'Please set {env_var} environment variables.')
-        return wrapped(*values + list(args), **kwargs)
+            assert env_var in os.environ, \
+                f'Please set {env_var} environment variable.'
+        return wrapped(*args, **kwargs)
     return wrapper

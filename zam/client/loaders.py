@@ -16,8 +16,8 @@ def load_json(source_path: Path) -> dict:
 
 
 @require_env_vars(env_vars=['ZAM_INPUT'])
-def load_source(input_path: str) -> Tuple[str, dict]:
-    input_path = Path(input_path)
+def load_source() -> Tuple[str, dict]:
+    input_path = Path(os.environ['ZAM_INPUT'])
     json_source = input_path / 'JSON - fichier de sauvegarde' / 'AN2-2018.json'
     source = load_json(json_source)[0]  # Unique item.
     return source['libelle'], source['list']

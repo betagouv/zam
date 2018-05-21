@@ -22,8 +22,8 @@ def warnumerate(items: list, limit: int) -> Iterator[dict]:
 
 
 @require_env_vars(env_vars=['ZAM_OUTPUT'])
-def build_output_filename(output_path: str) -> Path:
-    output_root_path = Path(output_path)
+def build_output_filename() -> Path:
+    output_root_path = Path(os.environ['ZAM_OUTPUT'])
     current_branch = os.popen('git symbolic-ref --short HEAD').read().strip()
     if current_branch == 'master':
         return output_root_path / 'index.html'

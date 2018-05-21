@@ -9,7 +9,7 @@ from utils import build_output_filename, render_and_save_html
 
 @pytest.fixture(scope='module')
 @require_env_vars(env_vars=['ZAM_INPUT', 'ZAM_OUTPUT'])
-def document(*args: list) -> HTMLParser:
+def document() -> HTMLParser:
     """Read and parse the HTML output, generated if inexistent."""
     output_filename = build_output_filename()
     if not output_filename.exists():

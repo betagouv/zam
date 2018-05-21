@@ -1,15 +1,16 @@
 import base64
-from collections import OrderedDict
-from pathlib import Path
+import os
 import re
-from typing import Any, List
+from collections import OrderedDict
 
 import CommonMark
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, List, Tuple
 
+from decorators import require_env_vars
 from loaders import load_docx, load_pdf
 from utils import strip_styles, warnumerate
-
 
 PAGINATION_PATTERN = re.compile(r"""
 ART\.\s\d+              # Article like `ART. 5` but also `ART. 13 BIS`
@@ -185,3 +186,15 @@ class Reponses(OrderedDict):
                     amendements=[amendement]
                 )
         return reponses
+
+
+@require_env_vars(env_vars=['ZAM_INPUT'])
+def load_data(
+    input_path: str, items: dict, limit: int=None
+) -> Tuple[Articles, Amendements, Reponses]:
+    articles = Articles.load(items, limit)
+    articles.load_jaunes(items, Path(input_path), limit)
+    amendements = Amendements.load(items, articles, limit)
+    amendements.load_contents(Path(input_path))
+    reponses = Reponses.load(items, articles, amendements, limit)
+    return articles, amendements, reponses

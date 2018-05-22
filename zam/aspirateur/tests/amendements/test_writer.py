@@ -14,7 +14,7 @@ FIELDS = [
 
 
 def test_write_csv(tmpdir):
-    from zam_aspirateur.writer import write_csv
+    from zam_aspirateur.amendements.writer import write_csv
 
     filename = str(tmpdir.join('test.csv'))
 

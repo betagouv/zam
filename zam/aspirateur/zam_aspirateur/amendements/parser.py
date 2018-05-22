@@ -1,10 +1,11 @@
 from datetime import datetime
 
-from .clean import clean_html
+from ..clean import clean_html
+
 from .models import Amendement
 
 
-def parse_amendement_from_csv(d_amend: dict) -> Amendement:
+def parse_from_csv(d_amend: dict) -> Amendement:
     return Amendement(  # type: ignore
         num=d_amend['Numéro '],
         article=d_amend['Subdivision '],
@@ -23,7 +24,7 @@ def parse_date(text):
     return datetime.strptime(text, '%Y-%m-%d').date()
 
 
-def parse_amendement_from_json(
+def parse_from_json(
     amend: dict,
     subdiv: dict,
 ) -> Amendement:

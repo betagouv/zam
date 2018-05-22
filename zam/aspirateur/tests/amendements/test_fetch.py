@@ -4,7 +4,7 @@ import responses
 
 
 HERE = os.path.dirname(__file__)
-SAMPLE_DATA_DIR = os.path.join(HERE, 'sample_data')
+SAMPLE_DATA_DIR = os.path.join(os.path.dirname(HERE), 'sample_data')
 
 
 def read_sample_data(basename):
@@ -14,8 +14,8 @@ def read_sample_data(basename):
 
 
 @responses.activate
-def test_fetch_amendements():
-    from zam_aspirateur.fetcher import fetch_amendements
+def test_fetch_all():
+    from zam_aspirateur.amendements.fetch import fetch_all
 
     sample_data = read_sample_data('jeu_complet_2017-2018_63.csv')
 
@@ -26,7 +26,7 @@ def test_fetch_amendements():
         status=200,
     )
 
-    items = fetch_amendements('2017-2018', 63)
+    items = fetch_all('2017-2018', 63)
 
     assert len(items) == 595
 
@@ -47,8 +47,8 @@ def test_fetch_amendements():
 
 
 @responses.activate
-def test_fetch_amendements_discussion():
-    from zam_aspirateur.fetcher import fetch_amendements_discussion
+def test_fetch_discussed():
+    from zam_aspirateur.amendements.fetch import fetch_discussed
 
     fake_data = {
         "info_generales": {
@@ -360,6 +360,6 @@ def test_fetch_amendements_discussion():
         status=200,
     )
 
-    data = fetch_amendements_discussion('2016-2017', 610, 'commission')
+    data = fetch_discussed('2016-2017', 610, 'commission')
 
     assert data == fake_data

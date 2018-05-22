@@ -10,24 +10,24 @@ from typing import (
     Optional,
 )
 
-from zam_aspirateur.fetcher import (
-    fetch_and_parse_amendements,
-    fetch_and_parse_amendements_discussion,
+from zam_aspirateur.amendements.fetch import (
+    fetch_and_parse_all,
+    fetch_and_parse_discussed,
 )
-from zam_aspirateur.models import Amendement
-from zam_aspirateur.senateurs.fetch import fetch_senateurs
-from zam_aspirateur.senateurs.parse import parse_senateurs
-from zam_aspirateur.writer import (
+from zam_aspirateur.amendements.models import Amendement
+from zam_aspirateur.amendements.writer import (
     write_csv,
     write_xlsx,
 )
+from zam_aspirateur.senateurs.fetch import fetch_senateurs
+from zam_aspirateur.senateurs.parse import parse_senateurs
 
 
 def main(argv: List[str] = None) -> None:
     args = parse_args(argv=argv)
 
     print(f'Récupération des amendements déposés...')
-    amendements = fetch_and_parse_amendements(
+    amendements = fetch_and_parse_all(
         session=args.session,
         num=args.texte,
     )
@@ -74,7 +74,7 @@ def process_amendements(
 
     # Les amendements discutés en séance, par ordre de passage
     print(f'Récupération des amendements soumis à la discussion...')
-    amendements_derouleur = fetch_and_parse_amendements_discussion(
+    amendements_derouleur = fetch_and_parse_discussed(
         session=session,
         num=num,
         phase='seance',

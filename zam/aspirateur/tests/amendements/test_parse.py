@@ -1,9 +1,9 @@
 from datetime import date
 
 
-def test_parse_amendement_from_csv():
+def test_parse_from_csv():
 
-    from zam_aspirateur.parser import parse_amendement_from_csv
+    from zam_aspirateur.amendements.parser import parse_from_csv
 
     amend = {
         "Alinéa": " ",
@@ -20,7 +20,7 @@ def test_parse_amendement_from_csv():
         "Url amendement ": "//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",  # noqa
     }
 
-    amendement = parse_amendement_from_csv(amend)
+    amendement = parse_from_csv(amend)
 
     assert amendement.num == "1 rect."
     assert amendement.date_depot == date(2017, 11, 13)
@@ -31,13 +31,13 @@ def test_parse_amendement_from_csv():
 
 
 def test_parse_date():
-    from zam_aspirateur.parser import parse_date
+    from zam_aspirateur.amendements.parser import parse_date
 
     assert parse_date("2017-11-13") == date(2017, 11, 13)
 
 
 def test_parse_date_empty_string():
-    from zam_aspirateur.parser import parse_date
+    from zam_aspirateur.amendements.parser import parse_date
 
     assert parse_date("") is None
 
@@ -45,7 +45,7 @@ def test_parse_date_empty_string():
 class TestParseAmendementFromJSON:
 
     def test_parse_basic_data(self):
-        from zam_aspirateur.parser import parse_amendement_from_json
+        from zam_aspirateur.amendements.parser import parse_from_json
 
         amend = {
             "idAmendement": "1110174",
@@ -72,7 +72,7 @@ class TestParseAmendementFromJSON:
             "isubdivision": "154182",
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
-        amendement = parse_amendement_from_json(amend, subdiv)
+        amendement = parse_from_json(amend, subdiv)
 
         assert amendement.article == "Article 1er - Annexe (Stratégie nationale d'orientation de l'action publique)"  # noqa
         assert amendement.alinea == ""
@@ -84,7 +84,7 @@ class TestParseAmendementFromJSON:
         assert amendement.identique is False
 
     def test_discussion_commune(self):
-        from zam_aspirateur.parser import parse_amendement_from_json
+        from zam_aspirateur.amendements.parser import parse_from_json
 
         amend = {
             "idAmendement": "1110174",
@@ -111,12 +111,12 @@ class TestParseAmendementFromJSON:
             "id_subdivision": "154182",
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
-        amendement = parse_amendement_from_json(amend, subdiv)
+        amendement = parse_from_json(amend, subdiv)
 
         assert amendement.discussion_commune == "110541"
 
     def test_not_discussion_commune(self):
-        from zam_aspirateur.parser import parse_amendement_from_json
+        from zam_aspirateur.amendements.parser import parse_from_json
 
         amend = {
             'idAmendement': '1103376',
@@ -142,7 +142,7 @@ class TestParseAmendementFromJSON:
             'libelle_subdivision': 'Article 3',
         }
 
-        amendement = parse_amendement_from_json(amend, subdiv)
+        amendement = parse_from_json(amend, subdiv)
 
         assert amendement.discussion_commune is None
         assert amendement.sort == "Adopté"

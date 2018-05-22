@@ -7,8 +7,8 @@ import requests
 
 from .models import Amendement
 from .parser import (
-    parse_amendement_from_csv,
-    parse_amendement_from_json,
+    parse_from_csv,
+    parse_from_json,
 )
 
 
@@ -16,7 +16,7 @@ class NotFound(Exception):
     pass
 
 
-def fetch_amendements(session: str, num: str) -> List[OrderedDict]:
+def fetch_all(session: str, num: str) -> List[OrderedDict]:
     """
     Récupère tous les amendements, dans l'ordre de dépôt
     """
@@ -33,14 +33,14 @@ def fetch_amendements(session: str, num: str) -> List[OrderedDict]:
     return items
 
 
-def fetch_and_parse_amendements(session: str, num: str) -> List[Amendement]:
+def fetch_and_parse_all(session: str, num: str) -> List[Amendement]:
     return [
-        parse_amendement_from_csv(item)
-        for item in fetch_amendements(session, num)
+        parse_from_csv(item)
+        for item in fetch_all(session, num)
     ]
 
 
-def fetch_amendements_discussion(
+def fetch_discussed(
     session: str,
     num: str,
     phase: str
@@ -62,14 +62,14 @@ def fetch_amendements_discussion(
     return data
 
 
-def fetch_and_parse_amendements_discussion(
+def fetch_and_parse_discussed(
     session: str,
     num: str,
     phase: str,
 ) -> List[Amendement]:
-    data = fetch_amendements_discussion(session, num, phase)
+    data = fetch_discussed(session, num, phase)
     return [
-        parse_amendement_from_json(amend, subdiv)
+        parse_from_json(amend, subdiv)
         for subdiv in data['Subdivisions']
         for amend in subdiv['Amendements']
     ]

@@ -3,6 +3,7 @@ FIELDS = [
     "alinea",
     "num",
     "auteur",
+    "date_depot",
     "discussion_commune",
     "identique",
 ]

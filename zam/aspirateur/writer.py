@@ -22,6 +22,7 @@ FIELDS_NAMES = {
     'alinea': 'Alinéa',
     'num': 'Nº amdt ou sous-amdt',
     'auteur': 'Auteur(s)',
+    'date_depot': 'Date de dépôt',
     'discussion_commune': 'Discussion commune ?',
     'identique': 'Identique ?',
 }

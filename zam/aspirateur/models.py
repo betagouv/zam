@@ -1,4 +1,5 @@
 import re
+from datetime import date
 from typing import Optional
 
 from attr import (
@@ -16,6 +17,8 @@ class Amendement:
     alinea: str = attrib()                  # libellé de l'alinéa
     num: str = attrib()                     # numéro d'amendement
     auteur: str = attrib()
+
+    date_depot: Optional[date] = attrib(default=None)
 
     discussion_commune: Optional[bool] = attrib(default=None)
     identique: Optional[bool] = attrib(default=None)

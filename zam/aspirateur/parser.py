@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from models import Amendement
 
 
@@ -7,7 +9,14 @@ def parse_amendement_from_csv(d_amend: dict) -> Amendement:
         article=d_amend['Subdivision '],
         alinea=d_amend['Alinéa'].strip(),
         auteur=d_amend['Auteur '],
+        date_depot=parse_date(d_amend['Date de dépôt ']),
     )
+
+
+def parse_date(text):
+    if text == '':
+        return None
+    return datetime.strptime(text, '%Y-%m-%d').date()
 
 
 def parse_amendement_from_json(

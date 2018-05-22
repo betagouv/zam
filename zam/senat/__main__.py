@@ -15,13 +15,16 @@ from fetcher import (
     fetch_and_parse_amendements_discussion,
 )
 from models import Amendement
-from writer import write_csv
+from writer import (
+    write_csv,
+    write_xlsx,
+)
 
 
 def main(argv: List[str] = None) -> None:
     args = parse_args(argv=argv)
 
-    # Tous les amendements déposés, par ordre de dépôt
+    print(f'Récupération des amendements déposés...')
     amendements = fetch_and_parse_amendements(
         session=args.session,
         num=args.texte,
@@ -35,7 +38,8 @@ def main(argv: List[str] = None) -> None:
 
     save_output(
         amendements=processed_amendements,
-        filename=f'amendements_{args.session}_{args.texte}.csv',
+        basename=f'amendements_{args.session}_{args.texte}',
+        format=args.output_format,
     )
 
 
@@ -51,6 +55,12 @@ def parse_args(argv: List[str] = None):
         required=True,
         help='numéro du texte au Sénat (p.ex. 330)',
     )
+    parser.add_argument(
+        '--output-format',
+        default='csv',
+        choices=['csv', 'xlsx'],
+        help='format du tableau à générer',
+    )
     return parser.parse_args(argv)
 
 
@@ -61,6 +71,7 @@ def process_amendements(
 ) -> Iterable[Amendement]:
 
     # Les amendements discutés en séance, par ordre de passage
+    print(f'Récupération des amendements soumis à la discussion...')
     amendements_derouleur = fetch_and_parse_amendements_discussion(
         session=session,
         num=num,
@@ -126,9 +137,20 @@ def _sort(
     )
 
 
-def save_output(amendements: Iterable[Amendement], filename: str) -> None:
-    nb_rows = write_csv(amendements, filename)
-    print(f'Wrote {nb_rows} rows to {filename}')
+def save_output(
+    amendements: Iterable[Amendement],
+    basename: str,
+    format: str,
+) -> None:
+    """
+    Save amendments to a spreadsheet in CSV or XLSX format
+    """
+    assert format in ('csv', 'xlsx')
+    filename = f"{basename}.{format}"
+    write_func = write_csv if format == 'csv' else write_xlsx
+    print(f'Écriture du tableau...')
+    nb_rows = write_func(amendements, filename)
+    print(f'{nb_rows} amendements écrits dans {filename}')
 
 
 if __name__ == '__main__':

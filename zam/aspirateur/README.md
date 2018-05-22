@@ -1,4 +1,4 @@
-# Amendements du Sénat
+# Aspirateur
 
 ## Description
 
@@ -11,8 +11,8 @@ Python 3.6+
 ## Installation
 
 ```
-$ python -m venv ~/.virtualenvs/zam-senat
-$ source ~/.virtualenvs/zam-senat/bin/activate
+$ python -m venv ~/.virtualenvs/zam-aspirateur
+$ source ~/.virtualenvs/zam-aspirateur/bin/activate
 $ pip install -r requirements.txt -r requirements-dev.txt
 ```
 

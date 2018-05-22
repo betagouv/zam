@@ -37,7 +37,7 @@ Les amendements non discutés (retirés ou irrecevables) sont regroupés
 Lancer les tests:
 
 ```
-$ pytest -v
+$ pytest
 ```
 
 Vérifier les règles de style:

@@ -15,6 +15,8 @@ from fetcher import (
     fetch_and_parse_amendements_discussion,
 )
 from models import Amendement
+from senateurs.fetch import fetch_senateurs
+from senateurs.parse import parse_senateurs
 from writer import (
     write_csv,
     write_xlsx,
@@ -78,9 +80,45 @@ def process_amendements(
         phase='seance',
     )
 
+    print(f'Récupération de la liste des sénateurs...')
+    senateurs_by_name = fetch_and_parse_senateurs()
+
+    amendements_avec_groupe = _enrich_groupe_parlementaire(
+        amendements,
+        senateurs_by_name,
+    )
+
     return _sort(
-        _enrich(amendements, amendements_derouleur),
+        _enrich(amendements_avec_groupe, amendements_derouleur),
         amendements_derouleur,
+    )
+
+
+def fetch_and_parse_senateurs():
+    lines = fetch_senateurs()
+    senateurs_by_name = parse_senateurs(lines)
+    return senateurs_by_name
+
+
+def _enrich_groupe_parlementaire(
+    amendements: Iterable[Amendement],
+    senateurs_by_name: dict,
+) -> Iterator[Amendement]:
+    """
+    Enrichir les amendements avec le groupe parlementaire de l'auteur
+    """
+    return (
+        amendement.evolve(
+            groupe=(
+                senateurs_by_name[amendement.auteur.upper()].groupe
+                if amendement.auteur not in (
+                    '',
+                    'LE GOUVERNEMENT',
+                )
+                else None
+            )
+        )
+        for amendement in amendements
     )
 
 

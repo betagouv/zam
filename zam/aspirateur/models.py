@@ -14,7 +14,9 @@ class Amendement:
     article: str        # libellé de l'article
     alinea: str         # libellé de l'alinéa
     num: str            # numéro d'amendement
+
     auteur: str
+    groupe: Optional[str] = None    # groupe parlementaire
 
     date_depot: Optional[date] = None
 
@@ -39,8 +41,8 @@ class Amendement:
             self.html_page,
         )
 
-    def evolve(self, **changes):
+    def evolve(self, **changes) -> 'Amendement':
         return replace(self, **changes)
 
-    def as_dict(self):
+    def as_dict(self) -> dict:
         return asdict(self)

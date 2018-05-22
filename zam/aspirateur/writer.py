@@ -20,6 +20,7 @@ FIELDS_NAMES = {
     'alinea': 'Alinéa',
     'num': 'Nº amdt ou sous-amdt',
     'auteur': 'Auteur(s)',
+    'groupe': 'Groupe',
     'date_depot': 'Date de dépôt',
     'sort': 'Sort',
     'discussion_commune': 'Discussion commune ?',

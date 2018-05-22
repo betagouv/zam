@@ -35,7 +35,8 @@ def test_reponse_has_amendements(document):
     details = reponse.css('details')
     assert len(details) == 8
     assert details[1].css_first('summary').text() == 'Amendement 5'
-    assert details[1].css_first('div').text().strip()
+    assert (details[1].css_first('div').text().strip()
+            .startswith('Supprimer cet article.'))
 
 
 def test_reponse_has_article_hook(document):

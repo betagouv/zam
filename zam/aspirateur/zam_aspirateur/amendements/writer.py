@@ -30,14 +30,6 @@ DARK_BLUE = Color(rgb='00182848')
 WHITE = Color(rgb='00FFFFFF')
 
 
-def filter_dict(d, key_mapping):
-    return {
-        key_mapping[key]: value
-        for key, value in d.items()
-        if key in key_mapping
-    }
-
-
 def write_csv(amendements: Iterable[Amendement], filename: str) -> int:
     nb_rows = 0
     with open(filename, 'w', encoding='utf-8') as file_:

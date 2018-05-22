@@ -15,7 +15,7 @@ def read_sample_data(basename):
 
 @responses.activate
 def test_fetch_amendements():
-    from fetcher import fetch_amendements
+    from zam_aspirateur.fetcher import fetch_amendements
 
     sample_data = read_sample_data('jeu_complet_2017-2018_63.csv')
 
@@ -48,7 +48,7 @@ def test_fetch_amendements():
 
 @responses.activate
 def test_fetch_amendements_discussion():
-    from fetcher import fetch_amendements_discussion
+    from zam_aspirateur.fetcher import fetch_amendements_discussion
 
     fake_data = {
         "info_generales": {

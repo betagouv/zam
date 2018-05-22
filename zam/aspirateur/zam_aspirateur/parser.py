@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from models import Amendement
+from .models import Amendement
 
 
 def parse_amendement_from_csv(d_amend: dict) -> Amendement:

@@ -5,8 +5,8 @@ from typing import List
 
 import requests
 
-from models import Amendement
-from parser import (
+from .models import Amendement
+from .parser import (
     parse_amendement_from_csv,
     parse_amendement_from_json,
 )

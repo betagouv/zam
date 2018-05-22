@@ -1,5 +1,5 @@
 def test_num_int():
-    from models import Amendement
+    from zam_aspirateur.models import Amendement
     amendement = Amendement(
         article="1",
         alinea="",

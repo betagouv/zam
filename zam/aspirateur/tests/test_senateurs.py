@@ -12,7 +12,7 @@ HERE = os.path.dirname(__file__)
     ('M. DANIEL LAURENT', 'Les Républicains'),
 ])
 def test_parse(nom, groupe):
-    from senateurs.parse import parse_senateurs
+    from zam_aspirateur.senateurs.parse import parse_senateurs
     filename = os.path.join(HERE, 'sample_data', 'ODSEN_GENERAL.csv')
     with open(filename, 'r', encoding='cp1252') as file_:
         senateurs_by_name = parse_senateurs(file_)

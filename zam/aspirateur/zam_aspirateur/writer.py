@@ -10,7 +10,7 @@ from openpyxl.styles import (
 )
 from openpyxl.worksheet import Worksheet
 
-from models import Amendement
+from .models import Amendement
 
 
 FIELDS = [field.name for field in fields(Amendement)]

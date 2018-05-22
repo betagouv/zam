@@ -10,14 +10,14 @@ from typing import (
     Optional,
 )
 
-from fetcher import (
+from zam_aspirateur.fetcher import (
     fetch_and_parse_amendements,
     fetch_and_parse_amendements_discussion,
 )
-from models import Amendement
-from senateurs.fetch import fetch_senateurs
-from senateurs.parse import parse_senateurs
-from writer import (
+from zam_aspirateur.models import Amendement
+from zam_aspirateur.senateurs.fetch import fetch_senateurs
+from zam_aspirateur.senateurs.parse import parse_senateurs
+from zam_aspirateur.writer import (
     write_csv,
     write_xlsx,
 )

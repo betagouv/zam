@@ -16,14 +16,17 @@ class Amendement:
     num: str            # numéro d'amendement
 
     auteur: str
-    groupe: Optional[str] = None    # groupe parlementaire
+    groupe: Optional[str] = None        # groupe parlementaire
 
     date_depot: Optional[date] = None
 
-    sort: Optional[str] = None  # retiré, adopté, etc.
+    sort: Optional[str] = None          # retiré, adopté, etc.
 
     discussion_commune: Optional[bool] = None
     identique: Optional[bool] = None
+
+    dispositif: Optional[str] = None    # texte de l'amendement
+    objet: Optional[str] = None         # motivation
 
     @property
     def num_int(self) -> int:

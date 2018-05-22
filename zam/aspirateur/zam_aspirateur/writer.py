@@ -20,9 +20,7 @@ FIELDS_NAMES = {
     'alinea': 'Alinéa',
     'num': 'Nº amdt ou sous-amdt',
     'auteur': 'Auteur(s)',
-    'groupe': 'Groupe',
     'date_depot': 'Date de dépôt',
-    'sort': 'Sort',
     'discussion_commune': 'Discussion commune ?',
     'identique': 'Identique ?',
 }
@@ -69,7 +67,7 @@ def write_xlsx(amendements: Iterable[Amendement], filename: str) -> int:
 
 def _write_header_row(ws: Worksheet) -> None:
     header_row = [
-        FIELDS_NAMES.get(field, field)
+        FIELDS_NAMES.get(field, field.capitalize())
         for field in FIELDS
     ]
     for column, value in enumerate(header_row, 1):

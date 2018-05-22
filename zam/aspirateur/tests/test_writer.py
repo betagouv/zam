@@ -8,6 +8,8 @@ FIELDS = [
     "sort",
     "discussion_commune",
     "identique",
+    "dispositif",
+    "objet",
 ]
 
 

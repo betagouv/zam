@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from .clean import clean_html
 from .models import Amendement
 
 
@@ -11,6 +12,8 @@ def parse_amendement_from_csv(d_amend: dict) -> Amendement:
         auteur=d_amend['Auteur '],
         date_depot=parse_date(d_amend['Date de dépôt ']),
         sort=d_amend['Sort '],
+        dispositif=clean_html(d_amend['Dispositif ']),
+        objet=clean_html(d_amend['Objet ']),
     )
 
 

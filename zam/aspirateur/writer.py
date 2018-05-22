@@ -1,4 +1,5 @@
 import csv
+from dataclasses import fields
 from typing import Iterable
 
 from openpyxl import Workbook
@@ -12,10 +13,7 @@ from openpyxl.worksheet import Worksheet
 from models import Amendement
 
 
-FIELDS = [
-    attr.name
-    for attr in Amendement.__attrs_attrs__  # type: ignore
-]
+FIELDS = [field.name for field in fields(Amendement)]
 
 FIELDS_NAMES = {
     'article': 'Nº article',

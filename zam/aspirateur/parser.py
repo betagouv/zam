@@ -4,7 +4,7 @@ from models import Amendement
 
 
 def parse_amendement_from_csv(d_amend: dict) -> Amendement:
-    return Amendement(
+    return Amendement(  # type: ignore
         num=d_amend['Numéro '],
         article=d_amend['Subdivision '],
         alinea=d_amend['Alinéa'].strip(),
@@ -23,7 +23,7 @@ def parse_amendement_from_json(
     amend: dict,
     subdiv: dict,
 ) -> Amendement:
-    return Amendement(
+    return Amendement(  # type: ignore
         num=amend['num'],
         article=subdiv['libelle_subdivision'],
         alinea=amend['libelleAlinea'],

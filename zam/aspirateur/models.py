@@ -1,27 +1,25 @@
 import re
+from dataclasses import (
+    asdict,
+    dataclass,
+    replace,
+)
 from datetime import date
 from typing import Optional
 
-from attr import (
-    asdict,
-    attrs,
-    attrib,
-    evolve,
-)
 
-
-@attrs
+@dataclass
 class Amendement:
 
-    article: str = attrib()                 # libellé de l'article
-    alinea: str = attrib()                  # libellé de l'alinéa
-    num: str = attrib()                     # numéro d'amendement
-    auteur: str = attrib()
+    article: str        # libellé de l'article
+    alinea: str         # libellé de l'alinéa
+    num: str            # numéro d'amendement
+    auteur: str
 
-    date_depot: Optional[date] = attrib(default=None)
+    date_depot: Optional[date] = None
 
-    discussion_commune: Optional[bool] = attrib(default=None)
-    identique: Optional[bool] = attrib(default=None)
+    discussion_commune: Optional[bool] = None
+    identique: Optional[bool] = None
 
     @property
     def num_int(self) -> int:
@@ -40,7 +38,7 @@ class Amendement:
         )
 
     def evolve(self, **changes):
-        return evolve(self, **changes)
+        return replace(self, **changes)
 
     def as_dict(self):
         return asdict(self)

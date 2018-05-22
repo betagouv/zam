@@ -18,6 +18,8 @@ class Amendement:
 
     date_depot: Optional[date] = None
 
+    sort: Optional[str] = None  # retiré, adopté, etc.
+
     discussion_commune: Optional[bool] = None
     identique: Optional[bool] = None
 

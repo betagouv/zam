@@ -10,6 +10,7 @@ def parse_amendement_from_csv(d_amend: dict) -> Amendement:
         alinea=d_amend['Alinéa'].strip(),
         auteur=d_amend['Auteur '],
         date_depot=parse_date(d_amend['Date de dépôt ']),
+        sort=d_amend['Sort '],
     )
 
 
@@ -28,6 +29,7 @@ def parse_amendement_from_json(
         article=subdiv['libelle_subdivision'],
         alinea=amend['libelleAlinea'],
         auteur=amend['auteur'],
+        sort=amend['sort'],
         identique=parse_bool(amend['isIdentique']),
         discussion_commune=(
             amend['idDiscussionCommune']

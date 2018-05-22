@@ -4,6 +4,7 @@ FIELDS = [
     "num",
     "auteur",
     "date_depot",
+    "sort",
     "discussion_commune",
     "identique",
 ]

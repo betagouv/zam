@@ -24,6 +24,7 @@ def test_parse_amendement_from_csv():
 
     assert amendement.num == "1 rect."
     assert amendement.date_depot == date(2017, 11, 13)
+    assert amendement.sort == "Adopté"
 
 
 def test_parse_date():
@@ -141,3 +142,4 @@ class TestParseAmendementFromJSON:
         amendement = parse_amendement_from_json(amend, subdiv)
 
         assert amendement.discussion_commune is None
+        assert amendement.sort == "Adopté"

@@ -1,5 +1,4 @@
 import csv
-import json
 from collections import OrderedDict
 from http import HTTPStatus
 from typing import List
@@ -59,7 +58,7 @@ def fetch_discussed(
     if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
         raise NotFound(url)
 
-    data = json.loads(resp.content)
+    data = resp.json()
     return data
 
 

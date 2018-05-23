@@ -1,5 +1,6 @@
 import os
 
+import pytest
 import responses
 
 
@@ -44,6 +45,20 @@ def test_fetch_all():
         "Subdivision ": "art. add. après Article 7",
         "Url amendement ": "//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",  # noqa
     }
+
+
+@responses.activate
+def test_fetch_all_not_found():
+    from zam_aspirateur.amendements.fetch import fetch_all, NotFound
+
+    responses.add(
+        responses.GET,
+        'http://www.senat.fr/amendements/2080-2081/42/jeu_complet_2080-2081_42.csv',  # noqa
+        status=404,
+    )
+
+    with pytest.raises(NotFound):
+        fetch_all('2080-2081', 42)
 
 
 @responses.activate
@@ -363,3 +378,17 @@ def test_fetch_discussed():
     data = fetch_discussed('2016-2017', 610, 'commission')
 
     assert data == fake_data
+
+
+@responses.activate
+def test_fetch_discussed_not_found():
+    from zam_aspirateur.amendements.fetch import fetch_discussed, NotFound
+
+    responses.add(
+        responses.GET,
+        'http://www.senat.fr/encommission/2080-2081/42/liste_discussion.json',
+        status=404,
+    )
+
+    with pytest.raises(NotFound):
+        fetch_discussed('2080-2081', 42, 'commission')

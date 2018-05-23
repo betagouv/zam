@@ -1,6 +1,7 @@
 import csv
 import json
 from collections import OrderedDict
+from http import HTTPStatus
 from typing import List
 
 import requests
@@ -23,7 +24,7 @@ def fetch_all(session: str, num: str) -> List[OrderedDict]:
     url = f"http://www.senat.fr/amendements/{session}/{num}/jeu_complet_{session}_{num}.csv"  # noqa
 
     resp = requests.get(url)
-    if resp.status_code == 404:
+    if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
         raise NotFound(url)
 
     text = resp.content.decode('cp1252')
@@ -55,7 +56,7 @@ def fetch_discussed(
     url = f'http://www.senat.fr/en{phase}/{session}/{num}/liste_discussion.json'  # noqa
 
     resp = requests.get(url)
-    if resp.status_code == 404:
+    if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
         raise NotFound(url)
 
     data = json.loads(resp.content)

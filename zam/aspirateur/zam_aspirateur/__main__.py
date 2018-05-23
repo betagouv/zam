@@ -40,10 +40,13 @@ def main(argv: Optional[List[str]] = None) -> None:
         num=args.texte,
     )
 
+    format = args.output_format
+    default_filename = f'amendements_{args.session}_{args.texte}.{format}'
+
     save_output(
         amendements=processed_amendements,
-        basename=f'amendements_{args.session}_{args.texte}',
-        format=args.output_format,
+        filename=args.output or default_filename,
+        format=format,
     )
 
 
@@ -58,6 +61,10 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         '--texte',
         required=True,
         help='numéro du texte au Sénat (p.ex. 330)',
+    )
+    parser.add_argument(
+        '--output',
+        help='nom de fichier de la sortie',
     )
     parser.add_argument(
         '--output-format',
@@ -176,14 +183,13 @@ def _sort(
 
 def save_output(
     amendements: Iterable[Amendement],
-    basename: str,
+    filename: str,
     format: str,
 ) -> None:
     """
     Save amendments to a spreadsheet in CSV or XLSX format
     """
     assert format in ('csv', 'xlsx')
-    filename = f"{basename}.{format}"
     write_func = write_csv if format == 'csv' else write_xlsx
     print('Écriture du tableau...')
     nb_rows = write_func(amendements, filename)

@@ -4,6 +4,7 @@ Récupérer la liste des amendements à un texte de loi au Sénat
 import argparse
 import math
 from typing import (
+    Dict,
     Iterable,
     Iterator,
     List,
@@ -20,6 +21,7 @@ from zam_aspirateur.amendements.writer import (
     write_xlsx,
 )
 from zam_aspirateur.senateurs.fetch import fetch_senateurs
+from zam_aspirateur.senateurs.models import Senateur
 from zam_aspirateur.senateurs.parse import parse_senateurs
 
 
@@ -81,11 +83,11 @@ def process_amendements(
     )
 
     print(f'Récupération de la liste des sénateurs...')
-    senateurs_by_name = fetch_and_parse_senateurs()
+    senateurs_by_matricule = fetch_and_parse_senateurs()
 
     amendements_avec_groupe = _enrich_groupe_parlementaire(
         amendements,
-        senateurs_by_name,
+        senateurs_by_matricule,
     )
 
     return _sort(
@@ -96,13 +98,13 @@ def process_amendements(
 
 def fetch_and_parse_senateurs():
     lines = fetch_senateurs()
-    senateurs_by_name = parse_senateurs(lines)
-    return senateurs_by_name
+    senateurs_by_matricule = parse_senateurs(lines)
+    return senateurs_by_matricule
 
 
 def _enrich_groupe_parlementaire(
     amendements: Iterable[Amendement],
-    senateurs_by_name: dict,
+    senateurs_by_matricule: Dict[str, Senateur],
 ) -> Iterator[Amendement]:
     """
     Enrichir les amendements avec le groupe parlementaire de l'auteur
@@ -110,11 +112,8 @@ def _enrich_groupe_parlementaire(
     return (
         amendement.replace(
             groupe=(
-                senateurs_by_name[amendement.auteur.upper()].groupe
-                if amendement.auteur not in (
-                    '',
-                    'LE GOUVERNEMENT',
-                )
+                senateurs_by_matricule[amendement.matricule].groupe
+                if amendement.matricule is not None
                 else None
             )
         )

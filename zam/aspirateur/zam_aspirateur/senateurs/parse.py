@@ -1,25 +1,27 @@
+from typing import Dict, Iterable
 import csv
 
 from .models import Senateur
 
 
-def parse_senateurs(iterable):
+def parse_senateurs(iterable: Iterable[str]) -> Dict[str, Senateur]:
     lines = (
         line
         for line in iterable
         if not line.startswith('%')
     )
-    senateurs = [
-        Senateur(
+    senateurs = (
+        Senateur(  # type: ignore
+            matricule=row['Matricule'],
             qualite=row['Qualité'],
             nom=row['Nom usuel'],
             prenom=row['Prénom usuel'],
             groupe=row['Groupe politique'],
         )
         for row in csv.DictReader(lines)
-    ]
-    by_name = {}
-    for s in senateurs:
-        by_name[f"{s.qualite} {s.nom}".upper()] = s
-        by_name[f"{s.qualite} {s.prenom} {s.nom}".upper()] = s
-    return by_name
+    )
+    by_matricule = {
+        senateur.matricule: senateur
+        for senateur in senateurs
+    }
+    return by_matricule

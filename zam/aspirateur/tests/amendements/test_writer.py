@@ -3,6 +3,7 @@ FIELDS = [
     "alinea",
     "num",
     "auteur",
+    "matricule",
     "groupe",
     "date_depot",
     "sort",
@@ -25,6 +26,7 @@ def test_write_csv(tmpdir):
             alinea="",
             num="42",
             auteur="M. DUPONT",
+            matricule="000000",
         ),
     ]
 
@@ -37,4 +39,4 @@ def test_write_csv(tmpdir):
 
     assert len(rows) == nb_rows == 1
 
-    assert rows[0] == "1;;42;M. DUPONT;;;;;;;"
+    assert rows[0] == "1;;42;M. DUPONT;000000;;;;;;;"

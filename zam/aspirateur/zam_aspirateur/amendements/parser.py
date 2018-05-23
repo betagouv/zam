@@ -1,4 +1,7 @@
+import re
 from datetime import datetime
+from typing import Optional
+from urllib.parse import urlparse
 
 from ..clean import clean_html
 
@@ -11,11 +14,24 @@ def parse_from_csv(d_amend: dict) -> Amendement:
         article=d_amend['Subdivision '],
         alinea=d_amend['Alinéa'].strip(),
         auteur=d_amend['Auteur '],
+        matricule=extract_matricule(d_amend['Fiche Sénateur']),
         date_depot=parse_date(d_amend['Date de dépôt ']),
         sort=d_amend['Sort '],
         dispositif=clean_html(d_amend['Dispositif ']),
         objet=clean_html(d_amend['Objet ']),
     )
+
+
+FICHE_RE = re.compile(r'^[\w\/_]+(\d{5}[\da-z])\.html$')
+
+
+def extract_matricule(url: str) -> Optional[str]:
+    if url == "":
+        return None
+    mo = FICHE_RE.match(urlparse(url).path)
+    if mo is not None:
+        return mo.group(1).upper()
+    raise ValueError(f"Could not extract matricule from '{url}'")
 
 
 def parse_date(text):
@@ -33,6 +49,11 @@ def parse_from_json(
         article=subdiv['libelle_subdivision'],
         alinea=amend['libelleAlinea'],
         auteur=amend['auteur'],
+        matricule=(
+            extract_matricule(amend['urlAuteur'])
+            if amend['auteur'] != 'LE GOUVERNEMENT'
+            else None
+        ),
         sort=amend['sort'],
         identique=parse_bool(amend['isIdentique']),
         discussion_commune=(

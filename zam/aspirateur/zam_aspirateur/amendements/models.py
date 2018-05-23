@@ -16,6 +16,7 @@ class Amendement:
     num: str            # numéro d'amendement
 
     auteur: str
+    matricule: Optional[str] = None
     groupe: Optional[str] = None        # groupe parlementaire
 
     date_depot: Optional[date] = None

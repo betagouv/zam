@@ -14,12 +14,27 @@ FIELDS = [
 
 
 def test_write_csv(tmpdir):
+    from zam_aspirateur.amendements.models import Amendement
     from zam_aspirateur.amendements.writer import write_csv
 
     filename = str(tmpdir.join('test.csv'))
 
-    write_csv([], filename)
+    amendements = [
+        Amendement(
+            article="1",
+            alinea="",
+            num="42",
+            auteur="M. DUPONT",
+        ),
+    ]
+
+    nb_rows = write_csv(amendements, filename)
 
     with open(filename, 'r', encoding='utf-8') as f_:
-        data = f_.read()
-    assert data == ";".join(FIELDS) + '\n'
+        lines = f_.read().splitlines()
+    header, *rows = lines
+    assert header == ";".join(FIELDS)
+
+    assert len(rows) == nb_rows == 1
+
+    assert rows[0] == "1;;42;M. DUPONT;;;;;;;"

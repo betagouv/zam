@@ -1,6 +1,10 @@
 import csv
+import json
+import re
 from dataclasses import fields
-from typing import Iterable
+from itertools import groupby
+from operator import attrgetter
+from typing import Iterable, Optional, Tuple
 
 from openpyxl import Workbook
 from openpyxl.styles import (
@@ -86,3 +90,93 @@ def _write_data_rows(ws: Worksheet,
             cell.font = Font(sz=8)
         nb_rows += 1
     return nb_rows
+
+
+def write_json_for_viewer(id_projet: int,
+                          title: str,
+                          amendements: Iterable[Amendement],
+                          filename: str) -> int:
+    data = _format_amendements(id_projet, title, amendements)
+    with open(filename, 'w') as file_:
+        json.dump(data, file_)
+    return len(list(amendements))
+
+
+def _format_amendements(id_projet: int,
+                        title: str,
+                        amendements: Iterable[Amendement]) -> list:
+    return [{
+        "idProjet": id_projet,
+        "libelle": title,
+        "list": [
+            _format_article(key, items)
+            for key, items in groupby(
+                amendements,
+                key=attrgetter('article'),
+            )
+        ],
+    }]
+
+
+def _format_article(article: str,
+                    amendements: Iterable[Amendement]) -> dict:
+    id_, mult = _parse_article(article)
+    return {
+        "idArticle": id_,
+        "etat": "",
+        "multiplicatif": mult,
+        "titre": "TODO",
+        "feuilletJaune": f"jaune-{id_}{mult}.pdf",
+        "document": f"article-{id_}{mult}.pdf",
+        "amendements": [
+            _format_amendement(amendement)
+            for amendement in amendements
+        ]
+    }
+
+
+ARTICLE_RE = re.compile(
+    r'''^
+        .*                      # some stuff before
+        Article\s(?P<id>\d+)    # article number
+        (?:\s(?P<mult>\w+))?    # bis, ter, etc.
+        (?:\s.*)?               # some stuff after
+        $
+    ''', re.VERBOSE
+)
+
+
+def _parse_article(article: str) -> Tuple[Optional[int], str]:
+    if article == '':
+        return (None, '')
+    mo = ARTICLE_RE.match(article)
+    if mo is None:
+        raise ValueError(f"Could not parse article number {article!r}")
+    return int(mo.group('id')), mo.group('mult') or ""
+
+
+def _format_amendement(amendement: Amendement) -> dict:
+    return {
+        "idAmendement": amendement.num_int,
+        "etat": amendement.sort or '',
+        "gouvernemental": amendement.gouvernemental,
+        "auteurs": [
+            {
+                "auteur": amendement.auteur,
+                "couleur": "#ffffff"
+            }
+        ],
+        "groupesParlementaires": [
+            {
+                "libelle": amendement.groupe,
+                "couleur": "#ffffff"
+            }
+        ],
+        "reponse": {
+            "avis": "N/A",
+            "presentation": f"Pas de réponse pour le {amendement.num_int}",
+            "reponse": "...",
+        },
+        "document": f"{amendement.num_int:05}-00.pdf",
+        "annexes": [],
+    }

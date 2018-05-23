@@ -27,7 +27,7 @@ Wrote 595 rows to amendements_2017-2018_63.csv
 ```
 
 Le résultat sera un fichier CSV comprenenant l'ensemble des amendements
-déposés, triés par ordre de passage lores de la discussion en séance.
+déposés, triés par ordre de passage lors de la discussion en séance.
 
 Les amendements non discutés (retirés ou irrecevables) sont regroupés
 à la fin du tableau.

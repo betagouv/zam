@@ -52,7 +52,7 @@ def write_xlsx(amendements: Iterable[Amendement], filename: str) -> int:
     ws.title = "Amendements"
 
     _write_header_row(ws)
-    nb_rows = _write_data_row(ws, amendements)
+    nb_rows = _write_data_rows(ws, amendements)
     wb.save(filename)
     return nb_rows
 
@@ -75,7 +75,8 @@ def _write_header_row(ws: Worksheet) -> None:
         )
 
 
-def _write_data_row(ws, amendements) -> int:
+def _write_data_rows(ws: Worksheet,
+                     amendements: Iterable[Amendement]) -> int:
     nb_rows = 0
     for amend in amendements:
         values = tuple(amend.asdict().values())

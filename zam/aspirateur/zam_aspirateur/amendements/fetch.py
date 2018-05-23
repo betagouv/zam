@@ -1,7 +1,7 @@
 import csv
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import List
+from typing import Any, List
 
 import requests
 
@@ -44,7 +44,7 @@ def fetch_discussed(
     session: str,
     num: str,
     phase: str
-) -> dict:
+) -> Any:
     """
     Récupère les amendements à discuter, dans l'ordre de passage
 

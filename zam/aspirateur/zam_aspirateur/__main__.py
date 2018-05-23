@@ -25,7 +25,7 @@ from zam_aspirateur.senateurs.models import Senateur
 from zam_aspirateur.senateurs.parse import parse_senateurs
 
 
-def main(argv: List[str] = None) -> None:
+def main(argv: Optional[List[str]] = None) -> None:
     args = parse_args(argv=argv)
 
     print('Récupération des amendements déposés...')
@@ -47,7 +47,7 @@ def main(argv: List[str] = None) -> None:
     )
 
 
-def parse_args(argv: List[str] = None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--session',
@@ -96,10 +96,10 @@ def process_amendements(
     )
 
 
-def fetch_and_parse_senateurs():
+def fetch_and_parse_senateurs() -> Dict[str, Senateur]:
     lines = fetch_senateurs()
-    senateurs_by_matricule = parse_senateurs(lines)
-    return senateurs_by_matricule
+    by_matricule = parse_senateurs(lines)  # type: Dict[str, Senateur]
+    return by_matricule
 
 
 def _enrich_groupe_parlementaire(

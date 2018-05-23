@@ -38,8 +38,10 @@ class Amendement:
         assert mo is not None
         return int(mo.group(1))
 
-    def replace(self, **changes) -> 'Amendement':
-        return replace(self, **changes)
+    def replace(self, **changes: dict) -> 'Amendement':
+        amendement = replace(self, **changes)  # type: Amendement
+        return amendement
 
     def asdict(self) -> dict:
-        return asdict(self)
+        dict_ = asdict(self)  # type: dict
+        return dict_

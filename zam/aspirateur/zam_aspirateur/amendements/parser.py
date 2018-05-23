@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional
 from urllib.parse import urlparse
 
@@ -34,7 +34,7 @@ def extract_matricule(url: str) -> Optional[str]:
     raise ValueError(f"Could not extract matricule from '{url}'")
 
 
-def parse_date(text):
+def parse_date(text: str) -> Optional[date]:
     if text == '':
         return None
     return datetime.strptime(text, '%Y-%m-%d').date()

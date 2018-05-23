@@ -13,5 +13,5 @@ ALLOWED_TAGS = [
 
 def clean_html(html: str) -> str:
     text = unescape(html)  # decode HTML entities
-    sanitized = bleach.clean(text, tags=ALLOWED_TAGS, strip=True)
+    sanitized = bleach.clean(text, tags=ALLOWED_TAGS, strip=True)  # type: str
     return sanitized.strip()

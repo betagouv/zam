@@ -38,13 +38,6 @@ class Amendement:
         assert mo is not None
         return int(mo.group(1))
 
-    def url(self, session, num_texte):
-        return "http://www.senat.fr/amendements/{}/{}/{}".format(
-            session,
-            num_texte,
-            self.html_page,
-        )
-
     def replace(self, **changes) -> 'Amendement':
         return replace(self, **changes)
 

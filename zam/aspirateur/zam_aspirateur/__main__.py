@@ -28,7 +28,7 @@ from zam_aspirateur.senateurs.parse import parse_senateurs
 def main(argv: List[str] = None) -> None:
     args = parse_args(argv=argv)
 
-    print(f'Récupération des amendements déposés...')
+    print('Récupération des amendements déposés...')
     amendements = fetch_and_parse_all(
         session=args.session,
         num=args.texte,
@@ -75,14 +75,14 @@ def process_amendements(
 ) -> Iterable[Amendement]:
 
     # Les amendements discutés en séance, par ordre de passage
-    print(f'Récupération des amendements soumis à la discussion...')
+    print('Récupération des amendements soumis à la discussion...')
     amendements_derouleur = fetch_and_parse_discussed(
         session=session,
         num=num,
         phase='seance',
     )
 
-    print(f'Récupération de la liste des sénateurs...')
+    print('Récupération de la liste des sénateurs...')
     senateurs_by_matricule = fetch_and_parse_senateurs()
 
     amendements_avec_groupe = _enrich_groupe_parlementaire(
@@ -185,7 +185,7 @@ def save_output(
     assert format in ('csv', 'xlsx')
     filename = f"{basename}.{format}"
     write_func = write_csv if format == 'csv' else write_xlsx
-    print(f'Écriture du tableau...')
+    print('Écriture du tableau...')
     nb_rows = write_func(amendements, filename)
     print(f'{nb_rows} amendements écrits dans {filename}')
 

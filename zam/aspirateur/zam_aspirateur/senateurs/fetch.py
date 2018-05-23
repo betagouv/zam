@@ -3,7 +3,7 @@ from http import HTTPStatus
 import requests
 
 
-URL = f"http://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv"
+URL = "http://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv"
 
 
 def fetch_senateurs():

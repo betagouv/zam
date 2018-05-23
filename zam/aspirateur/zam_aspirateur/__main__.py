@@ -108,7 +108,7 @@ def _enrich_groupe_parlementaire(
     Enrichir les amendements avec le groupe parlementaire de l'auteur
     """
     return (
-        amendement.evolve(
+        amendement.replace(
             groupe=(
                 senateurs_by_name[amendement.auteur.upper()].groupe
                 if amendement.auteur not in (
@@ -148,7 +148,7 @@ def _enrich_one(
 ) -> Amendement:
     if amend_discussion is None:
         return amend
-    return amend.evolve(
+    return amend.replace(
         discussion_commune=amend_discussion.discussion_commune,
         identique=amend_discussion.identique,
     )

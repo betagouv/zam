@@ -44,8 +44,8 @@ class Amendement:
             self.html_page,
         )
 
-    def evolve(self, **changes) -> 'Amendement':
+    def replace(self, **changes) -> 'Amendement':
         return replace(self, **changes)
 
-    def as_dict(self) -> dict:
+    def asdict(self) -> dict:
         return asdict(self)

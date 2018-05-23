@@ -41,7 +41,7 @@ def write_csv(amendements: Iterable[Amendement], filename: str) -> int:
         )
         writer.writeheader()
         for amendement in amendements:
-            writer.writerow(amendement.as_dict())
+            writer.writerow(amendement.asdict())
             nb_rows += 1
     return nb_rows
 
@@ -78,7 +78,7 @@ def _write_header_row(ws: Worksheet) -> None:
 def _write_data_row(ws, amendements) -> int:
     nb_rows = 0
     for amend in amendements:
-        values = tuple(amend.as_dict().values())
+        values = tuple(amend.asdict().values())
         for column, value in enumerate(values, 1):
             cell = ws.cell(row=nb_rows + 2, column=column)
             cell.value = value

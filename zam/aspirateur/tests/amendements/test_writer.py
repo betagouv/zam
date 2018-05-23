@@ -1,3 +1,34 @@
+import pytest
+
+
+@pytest.fixture
+def amendements():
+    from zam_aspirateur.amendements.models import Amendement
+    return [
+        Amendement(
+            article="Article 1",
+            alinea="",
+            num="42",
+            auteur="M. DUPONT",
+            matricule="000000",
+        ),
+        Amendement(
+            article="Article 1",
+            alinea="",
+            num="57",
+            auteur="M. DURAND",
+            matricule="000001",
+        ),
+        Amendement(
+            article="Article 7 bis",
+            alinea="",
+            num="21",
+            auteur="M. MARTIN",
+            matricule="000002",
+        ),
+    ]
+
+
 FIELDS = [
     "article",
     "alinea",
@@ -14,21 +45,10 @@ FIELDS = [
 ]
 
 
-def test_write_csv(tmpdir):
-    from zam_aspirateur.amendements.models import Amendement
+def test_write_csv(amendements, tmpdir):
     from zam_aspirateur.amendements.writer import write_csv
 
     filename = str(tmpdir.join('test.csv'))
-
-    amendements = [
-        Amendement(
-            article="1",
-            alinea="",
-            num="42",
-            auteur="M. DUPONT",
-            matricule="000000",
-        ),
-    ]
 
     nb_rows = write_csv(amendements, filename)
 
@@ -37,6 +57,6 @@ def test_write_csv(tmpdir):
     header, *rows = lines
     assert header == ";".join(FIELDS)
 
-    assert len(rows) == nb_rows == 1
+    assert len(rows) == nb_rows == 3
 
-    assert rows[0] == "1;;42;M. DUPONT;000000;;;;;;;"
+    assert rows[0] == "Article 1;;42;M. DUPONT;000000;;;;;;;"

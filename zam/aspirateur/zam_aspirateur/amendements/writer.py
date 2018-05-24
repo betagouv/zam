@@ -109,11 +109,12 @@ def _format_amendements(id_projet: int,
         "idProjet": id_projet,
         "libelle": title,
         "list": [
-            _format_article(key, items)
-            for key, items in groupby(
+            _format_article(article, items)
+            for article, items in groupby(
                 amendements,
                 key=attrgetter('article'),
             )
+            if article
         ],
     }]
 
@@ -159,7 +160,6 @@ def _format_amendement(amendement: Amendement) -> dict:
     return {
         "idAmendement": amendement.num_int,
         "etat": amendement.sort or '',
-        "gouvernemental": amendement.gouvernemental,
         "auteurs": [
             {
                 "auteur": amendement.auteur,
@@ -172,11 +172,5 @@ def _format_amendement(amendement: Amendement) -> dict:
                 "couleur": "#ffffff"
             }
         ],
-        "reponse": {
-            "avis": "N/A",
-            "presentation": f"Pas de réponse pour le {amendement.num_int}",
-            "reponse": "...",
-        },
-        "document": f"{amendement.num_int:05}-00.pdf",
-        "annexes": [],
+        "document": f"{amendement.num_int:06}-00.pdf",
     }

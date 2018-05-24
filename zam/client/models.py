@@ -5,6 +5,7 @@ from collections import OrderedDict
 
 import CommonMark
 from dataclasses import dataclass, field
+from logbook import warn
 from pathlib import Path
 from typing import Any, List, Optional, Tuple
 
@@ -135,7 +136,9 @@ class Amendements(OrderedDict):
             else:
                 prefix = f'ARTICLE {amendement.article.id}'
             if content.startswith(prefix):
-                amendement.content = content[len(prefix) + 1:]
+                amendement.content = content[len(prefix) + 1:].strip()
+            else:
+                amendement.content = content
             expose_sommaire = 'EXPOSÉ SOMMAIRE'
             if expose_sommaire in amendement.content:
                 amendement.content, amendement.summary = \
@@ -147,7 +150,7 @@ class Amendements(OrderedDict):
 
 @dataclass
 class Reponse:
-    pk: str
+    pk: int
     avis: str
     presentation: str
     content: str
@@ -176,8 +179,15 @@ class Reponses(OrderedDict):
                 if 'reponse' not in raw_amendement:
                     continue
                 raw_reponse = raw_amendement['reponse']
-                amendement = amendements.get_from_raw(raw_amendement)
-                pk = Reponse.pk_from_raw(raw_reponse)
+                pk = raw_reponse['idReponse']
+                try:
+                    amendement = amendements.get_from_raw(raw_amendement)
+                except KeyError:
+                    warn(
+                        f"Amendement {raw_amendement['idAmendement']} not "
+                        f"found for Reponse {pk}."
+                    )
+                    continue
                 if pk in reponses:
                     reponses[pk].amendements.append(amendement)
                     continue
@@ -194,12 +204,12 @@ class Reponses(OrderedDict):
 
 @require_env_vars(env_vars=['ZAM_INPUT'])
 def load_data(
-    items: List[dict], limit: int=None
+    drupal_items: List[dict], aspirateur_items: List[dict], limit: int=None
 ) -> Tuple[Articles, Amendements, Reponses]:
     input_path = Path(os.environ['ZAM_INPUT'])
-    articles = Articles.load(items, limit)
-    articles.load_jaunes(items, input_path, limit)
-    amendements = Amendements.load(items, articles, limit)
+    articles = Articles.load(drupal_items, limit)
+    articles.load_jaunes(drupal_items, input_path, limit)
+    amendements = Amendements.load(aspirateur_items, articles, limit)
     amendements.load_contents(input_path)
-    reponses = Reponses.load(items, articles, amendements, limit)
+    reponses = Reponses.load(drupal_items, articles, amendements, limit)
     return articles, amendements, reponses

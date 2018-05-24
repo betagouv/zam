@@ -112,7 +112,6 @@ def test_write_json_for_viewer(amendements, tmpdir):
                         {
                             'idAmendement': 42,
                             'etat': '',
-                            'gouvernemental': False,
                             'auteurs': [{
                                 'auteur': 'M. DUPONT',
                                 'couleur': '#ffffff',
@@ -123,19 +122,11 @@ def test_write_json_for_viewer(amendements, tmpdir):
                                     "couleur": "#ffffff"
                                 }
                             ],
-                            "reponse": {
-                                "idReponse": 42,
-                                "avis": "Défavorable",
-                                "presentation": "<p><strong>Consequat ea cupidatat in nostrud.</strong></p>",  # noqa
-                                "reponse": "<p>Proident anim cillum ea magna eiusmod enim consectetur nisi sed magna ut id sed ad officia.</p>",  # noqa
-                            },
-                            'document': '00042-00.pdf',
-                            'annexes': [],
+                            'document': '000042-00.pdf',
                         },
                         {
                             'idAmendement': 57,
                             'etat': '',
-                            'gouvernemental': False,
                             'auteurs': [{
                                 'auteur': 'M. DURAND',
                                 'couleur': '#ffffff',
@@ -146,14 +137,7 @@ def test_write_json_for_viewer(amendements, tmpdir):
                                     "couleur": "#ffffff"
                                 }
                             ],
-                            "reponse": {
-                                "idReponse": 57,
-                                "avis": "Défavorable",
-                                "presentation": "<p><strong>Consequat ea cupidatat in nostrud.</strong></p>",  # noqa
-                                "reponse": "<p>Proident anim cillum ea magna eiusmod enim consectetur nisi sed magna ut id sed ad officia.</p>",  # noqa
-                            },
-                            'document': '00057-00.pdf',
-                            'annexes': [],
+                            'document': '000057-00.pdf',
                         },
                     ],
                 },
@@ -168,7 +152,6 @@ def test_write_json_for_viewer(amendements, tmpdir):
                         {
                             'idAmendement': 21,
                             'etat': '',
-                            'gouvernemental': False,
                             'auteurs': [{
                                 'auteur': 'M. MARTIN',
                                 'couleur': '#ffffff',
@@ -179,14 +162,7 @@ def test_write_json_for_viewer(amendements, tmpdir):
                                     "couleur": "#ffffff"
                                 }
                             ],
-                            "reponse": {
-                                "idReponse": 21,
-                                "avis": "Défavorable",
-                                "presentation": "<p><strong>Consequat ea cupidatat in nostrud.</strong></p>",  # noqa
-                                "reponse": "<p>Proident anim cillum ea magna eiusmod enim consectetur nisi sed magna ut id sed ad officia.</p>",  # noqa
-                            },
-                            'document': '00021-00.pdf',
-                            'annexes': [],
+                            'document': '000021-00.pdf',
                         },
                     ],
                 }

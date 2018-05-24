@@ -105,6 +105,7 @@ def test_reponses_load():
                 }
             ],
             "reponse": {
+                "idReponse": 12,
                 "avis": "D\u00e9favorable",
                 "presentation":
                     "<p><strong>Suppression de l\u2019article</strong></p>",
@@ -116,9 +117,9 @@ def test_reponses_load():
     articles = Articles.load(items, None)
     amendements = Amendements.load(items, articles, None)
     reponses = Reponses.load(items, articles, amendements, None)
-    assert list(reponses.keys())[0].startswith('PHA+PHN0cm9uZz5TdXBwcmV')
+    assert list(reponses.keys())[0] == 12
     reponse = list(reponses.values())[0]
-    assert reponse.pk.startswith('PHA+PHN0cm9uZz5TdXBwcmV')
+    assert reponse.pk == 12
     assert (reponse.presentation ==
             '<p><strong>Suppression de l’article</strong></p>')
     assert reponse.content == '<p>Cet article met en œuvre...</p>'

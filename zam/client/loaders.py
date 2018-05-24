@@ -15,11 +15,15 @@ def load_json(source_path: Path) -> dict:
         return json.loads(source.read())
 
 
-@require_env_vars(env_vars=['ZAM_INPUT'])
-def load_source() -> Tuple[str, dict]:
-    input_path = Path(os.environ['ZAM_INPUT'])
-    json_source = input_path / 'JSON - fichier de sauvegarde' / 'AN2-2018.json'
-    source = load_json(json_source)[0]  # Unique item.
+@require_env_vars(env_vars=['ZAM_DRUPAL_SOURCE'])
+def load_drupal_source() -> Tuple[str, dict]:
+    source = load_json(os.environ['ZAM_DRUPAL_SOURCE'])[0]  # Unique item.
+    return source['libelle'], source['list']
+
+
+@require_env_vars(env_vars=['ZAM_ASPIRATEUR_SOURCE'])
+def load_aspirateur_source() -> Tuple[str, dict]:
+    source = load_json(os.environ['ZAM_ASPIRATEUR_SOURCE'])[0]  # Unique item.
     return source['libelle'], source['list']
 
 

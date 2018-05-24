@@ -3,12 +3,12 @@ def test_has_title(document):
 
 
 def test_number_reponses(document):
-    assert len(document.tags('article')) == 156
+    assert len(document.tags('article')) == 179
 
 
 def test_nature_reponses(document):
-    assert len(document.css('header.reponse.positive')) == 57
-    assert len(document.css('header.reponse.negative')) == 90
+    assert len(document.css('header.reponse.positive')) == 78
+    assert len(document.css('header.reponse.negative')) == 92
 
 
 def test_reponse_unique_amendement(document):

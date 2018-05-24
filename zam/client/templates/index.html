@@ -170,9 +170,9 @@
             {{ reponse.avis }}
           </summary>
           <div class="reponse {% if negative %}negative{% elif positive %}positive{% endif %}">
-            <p>{{ reponse.presentation }}</p>
+            {{ reponse.presentation }}
             {% if reponse.content %}
-              <p>{{ reponse.content }}</p>
+              {{ reponse.content }}
             {% endif %}
           </div>
         </details>

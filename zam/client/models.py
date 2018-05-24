@@ -1,15 +1,16 @@
 import base64
-from collections import OrderedDict
-from pathlib import Path
+import os
 import re
-from typing import Any, List
+from collections import OrderedDict
 
 import CommonMark
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, List, Optional, Tuple
 
+from decorators import require_env_vars
 from loaders import load_docx, load_pdf
 from utils import strip_styles, warnumerate
-
 
 PAGINATION_PATTERN = re.compile(r"""
 ART\.\s\d+              # Article like `ART. 5` but also `ART. 13 BIS`
@@ -41,11 +42,11 @@ class Article:
 class Articles(OrderedDict):
 
     @classmethod
-    def load(cls, items: list, limit: int):  # -> Articles
+    def load(cls, items: List[dict], limit: Optional[int]) -> 'Articles':
         articles = cls()
         for raw_article in warnumerate(items, limit):
             pk = Article.pk_from_raw(raw_article)
-            articles[pk] = Article(
+            articles[pk] = Article(  # type: ignore # dataclasses
                 pk=pk,
                 id=raw_article['idArticle'],
                 title=raw_article['titre'],
@@ -54,7 +55,9 @@ class Articles(OrderedDict):
             )
         return articles
 
-    def load_jaunes(self, items: list, input_dir: Path, limit: int) -> None:
+    def load_jaunes(
+        self, items: List[dict], input_dir: Path, limit: Optional[int]
+    ) -> None:
         for raw_article in warnumerate(items, limit):
             article = self.get_from_raw(raw_article)
             jaune_content = load_docx(
@@ -90,8 +93,8 @@ class Amendements(OrderedDict):
 
     @classmethod
     def load(
-        cls, items: dict, articles: Articles, limit: int
-    ):  # -> Amendements
+        cls, items: List[dict], articles: Articles, limit: Optional[int]
+    ) -> 'Amendements':
         amendements = cls()
         for raw_article in warnumerate(items, limit):
             article = articles.get_from_raw(raw_article)
@@ -107,7 +110,7 @@ class Amendements(OrderedDict):
                         'label': group['libelle'],
                         'color': group['couleur']
                     }
-                amendement = Amendement(
+                amendement = Amendement(  # type: ignore # dataclasses
                     pk=pk,
                     id=id_,
                     authors=authors,
@@ -161,9 +164,9 @@ class Reponses(OrderedDict):
 
     @classmethod
     def load(
-        cls, items: dict, articles: Articles, amendements: Amendements,
-        limit: int
-    ):  # -> Reponses
+        cls, items: List[dict], articles: Articles, amendements: Amendements,
+        limit: Optional[int]
+    ) -> 'Reponses':
         reponses = cls()
         for raw_article in warnumerate(items, limit):
             article = articles.get_from_raw(raw_article)
@@ -176,7 +179,7 @@ class Reponses(OrderedDict):
                 if pk in reponses:
                     reponses[pk].amendements.append(amendement)
                     continue
-                reponses[pk] = Reponse(
+                reponses[pk] = Reponse(  # type: ignore # dataclasses
                     pk=pk,
                     avis=raw_reponse['avis'],
                     presentation=strip_styles(raw_reponse['presentation']),
@@ -185,3 +188,16 @@ class Reponses(OrderedDict):
                     amendements=[amendement]
                 )
         return reponses
+
+
+@require_env_vars(env_vars=['ZAM_INPUT'])
+def load_data(
+    items: List[dict], limit: int=None
+) -> Tuple[Articles, Amendements, Reponses]:
+    input_path = Path(os.environ['ZAM_INPUT'])
+    articles = Articles.load(items, limit)
+    articles.load_jaunes(items, input_path, limit)
+    amendements = Amendements.load(items, articles, limit)
+    amendements.load_contents(input_path)
+    reponses = Reponses.load(items, articles, amendements, limit)
+    return articles, amendements, reponses

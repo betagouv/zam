@@ -13,9 +13,14 @@
 
 ## Generating
 
-Adapt your paths for sensitive informations.
+Set your paths for sensitive informations, for instance with fish:
 
-    python . generate path/to/Archives\ PLFSS/ path/to/target/
+    set -gx ZAM_INPUT path/to/Archives\ PLFSS/
+    set -gx ZAM_OUTPUT path/to/target/
+
+Then launch the generator:
+
+    python . generate
 
 ⚠️ Never ever commit/push the generated folder/file.
 
@@ -23,7 +28,7 @@ Adapt your paths for sensitive informations.
 
 Most of the time, parsing only a few articles is enough:
 
-    python . generate path/to/Archives\ PLFSS/ path/to/target/ --limit=8
+    python . generate --limit=8
 
 You have a list of options with:
 
@@ -31,5 +36,7 @@ You have a list of options with:
 
 ## Testing
 
-    pip install pytest
+The output file will be generated if it does not exist.
+
+    pip install pytest selectolax
     env PYTHONPATH=. pytest

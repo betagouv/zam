@@ -1,16 +1,26 @@
 import json
+import os
 from io import BytesIO
 from pathlib import Path
+from typing import Tuple
 
 import pdfminer.high_level
 
-from decorators import check_existence
+from decorators import check_existence, require_env_vars
 from parsers import parse_docx
 
 
 def load_json(source_path: Path) -> dict:
     with open(source_path) as source:
         return json.loads(source.read())
+
+
+@require_env_vars(env_vars=['ZAM_INPUT'])
+def load_source() -> Tuple[str, dict]:
+    input_path = Path(os.environ['ZAM_INPUT'])
+    json_source = input_path / 'JSON - fichier de sauvegarde' / 'AN2-2018.json'
+    source = load_json(json_source)[0]  # Unique item.
+    return source['libelle'], source['list']
 
 
 @check_existence

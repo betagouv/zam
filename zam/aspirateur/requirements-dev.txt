@@ -1,0 +1,7 @@
+cookies==2.2.1
+coverage==4.5.1
+flake8==3.5.0
+mypy==0.600
+pytest-cov==2.5.1
+pytest==3.5.1
+responses==0.9.0

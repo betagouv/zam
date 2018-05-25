@@ -12,7 +12,7 @@ def amendements():
             alinea="",
             num="42",
             auteur="M. DUPONT",
-            groupe="ABC",
+            groupe="RDSE",
             matricule="000000",
         ),
         Amendement(
@@ -20,7 +20,7 @@ def amendements():
             alinea="",
             num="57",
             auteur="M. DURAND",
-            groupe="DEF",
+            groupe="Les Républicains",
             matricule="000001",
         ),
         Amendement(
@@ -28,7 +28,7 @@ def amendements():
             alinea="",
             num="21",
             auteur="M. MARTIN",
-            groupe="GHI",
+            groupe="SOCR",
             matricule="000002",
         ),
     ]
@@ -64,7 +64,7 @@ def test_write_csv(amendements, tmpdir):
 
     assert len(rows) == nb_rows == 3
 
-    assert rows[0] == "Article 1;;42;M. DUPONT;000000;ABC;;;;;;"
+    assert rows[0] == "Article 1;;42;M. DUPONT;000000;RDSE;;;;;;"
 
 
 @pytest.mark.parametrize('text,exp_num,exp_mult', [
@@ -93,9 +93,6 @@ def test_write_json_for_viewer(amendements, tmpdir):
     with open(filename, 'r', encoding='utf-8') as f_:
         data = json.load(f_)
 
-    # print(data)
-    # assert False
-
     assert data == [
         {
             'idProjet': 1,
@@ -112,14 +109,14 @@ def test_write_json_for_viewer(amendements, tmpdir):
                         {
                             'idAmendement': 42,
                             'etat': '',
+                            'gouvernemental': False,
                             'auteurs': [{
                                 'auteur': 'M. DUPONT',
-                                'couleur': '#ffffff',
                             }],
                             "groupesParlementaires": [
                                 {
-                                    "libelle": "ABC",
-                                    "couleur": "#ffffff"
+                                    "libelle": "RDSE",
+                                    "couleur": "#a38ebc"
                                 }
                             ],
                             'document': '000042-00.pdf',
@@ -127,14 +124,14 @@ def test_write_json_for_viewer(amendements, tmpdir):
                         {
                             'idAmendement': 57,
                             'etat': '',
+                            'gouvernemental': False,
                             'auteurs': [{
                                 'auteur': 'M. DURAND',
-                                'couleur': '#ffffff',
                             }],
                             "groupesParlementaires": [
                                 {
-                                    "libelle": "DEF",
-                                    "couleur": "#ffffff"
+                                    "libelle": "Les Républicains",
+                                    "couleur": "#2011e8"
                                 }
                             ],
                             'document': '000057-00.pdf',
@@ -152,14 +149,14 @@ def test_write_json_for_viewer(amendements, tmpdir):
                         {
                             'idAmendement': 21,
                             'etat': '',
+                            'gouvernemental': False,
                             'auteurs': [{
                                 'auteur': 'M. MARTIN',
-                                'couleur': '#ffffff',
                             }],
                             "groupesParlementaires": [
                                 {
-                                    "libelle": "GHI",
-                                    "couleur": "#ffffff"
+                                    "libelle": "SOCR",
+                                    "couleur": "#ff8080"
                                 }
                             ],
                             'document': '000021-00.pdf',

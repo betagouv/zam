@@ -31,6 +31,14 @@ def amendements():
             groupe="SOCR",
             matricule="000002",
         ),
+        Amendement(
+            article="Article 1",
+            alinea="",
+            num="43",
+            auteur="M. JEAN",
+            groupe="Les Indépendants",
+            matricule="000003",
+        ),
     ]
 
 
@@ -62,7 +70,7 @@ def test_write_csv(amendements, tmpdir):
     header, *rows = lines
     assert header == ";".join(FIELDS)
 
-    assert len(rows) == nb_rows == 3
+    assert len(rows) == nb_rows == 4
 
     assert rows[0] == "Article 1;;42;M. DUPONT;000000;RDSE;;;;;;"
 
@@ -135,6 +143,21 @@ def test_write_json_for_viewer(amendements, tmpdir):
                                 }
                             ],
                             'document': '000057-00.pdf',
+                        },
+                        {
+                            'idAmendement': 43,
+                            'etat': '',
+                            'gouvernemental': False,
+                            'auteurs': [{
+                                'auteur': 'M. JEAN',
+                            }],
+                            "groupesParlementaires": [
+                                {
+                                    "libelle": "Les Indépendants",
+                                    "couleur": "#30bfe9"
+                                }
+                            ],
+                            'document': '000043-00.pdf',
                         },
                     ],
                 },

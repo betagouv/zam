@@ -113,13 +113,14 @@ def write_json_for_viewer(id_projet: int,
 def _format_amendements(id_projet: int,
                         title: str,
                         amendements: Iterable[Amendement]) -> list:
+    sorted_amendements = sorted(amendements, key=attrgetter('article'))
     return [{
         "idProjet": id_projet,
         "libelle": title,
         "list": [
             _format_article(article, items)
             for article, items in groupby(
-                amendements,
+                sorted_amendements,
                 key=attrgetter('article'),
             )
             if article

@@ -150,7 +150,7 @@ class Amendements(OrderedDict):
 
 @dataclass
 class Reponse:
-    pk: int
+    pk: str
     avis: str
     presentation: str
     content: str
@@ -179,13 +179,13 @@ class Reponses(OrderedDict):
                 if 'reponse' not in raw_amendement:
                     continue
                 raw_reponse = raw_amendement['reponse']
-                pk = raw_reponse['idReponse']
+                pk = Reponse.pk_from_raw(raw_reponse)
                 try:
                     amendement = amendements.get_from_raw(raw_amendement)
                 except KeyError:
                     warn(
                         f"Amendement {raw_amendement['idAmendement']} not "
-                        f"found for Reponse {pk}."
+                        f"found for Reponse {raw_reponse['idReponse']}."
                     )
                     continue
                 if pk in reponses:

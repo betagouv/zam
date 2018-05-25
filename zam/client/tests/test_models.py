@@ -117,9 +117,9 @@ def test_reponses_load():
     articles = Articles.load(items, None)
     amendements = Amendements.load(items, articles, None)
     reponses = Reponses.load(items, articles, amendements, None)
-    assert list(reponses.keys())[0] == 12
+    assert list(reponses.keys())[0].startswith('PHA+PHN0cm9uZz5TdXBwcmV')
     reponse = list(reponses.values())[0]
-    assert reponse.pk == 12
+    assert reponse.pk.startswith('PHA+PHN0cm9uZz5TdXBwcmV')
     assert (reponse.presentation ==
             '<p><strong>Suppression de l’article</strong></p>')
     assert reponse.content == '<p>Cet article met en œuvre...</p>'

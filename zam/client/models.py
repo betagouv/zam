@@ -77,6 +77,7 @@ class Amendement:
     article: Article
     authors: str
     group: dict
+    is_gouvernemental: bool = False
     content: str = ''
     summary: str = ''
     document: str = ''
@@ -101,7 +102,7 @@ class Amendements(OrderedDict):
             for raw_amendement in raw_article.get('amendements', []):
                 pk = Amendement.pk_from_raw(raw_amendement)
                 id_ = raw_amendement['idAmendement']
-                authors = ', '.join(author['auteur']
+                authors = ', '.join(author['auteur'].strip()
                                     for author in raw_amendement['auteurs'])
                 group = None
                 if 'groupesParlementaires' in raw_amendement:
@@ -116,7 +117,8 @@ class Amendements(OrderedDict):
                     authors=authors,
                     group=group,
                     article=article,
-                    document=raw_amendement['document']
+                    document=raw_amendement['document'],
+                    is_gouvernemental=raw_amendement['gouvernemental']
                 )
                 amendements[pk] = amendement
                 article.amendements.append(amendement)

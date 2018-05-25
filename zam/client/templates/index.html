@@ -6,8 +6,8 @@
 <link rel=icon href="data:;base64,iVBORw0KGgo=">
 <style>
   body {
-    max-width: 60rem;
-    margin: 0 auto;
+    max-width: 58rem;
+    margin: 0 auto 0 6rem;
     padding: .5rem 1rem;
   }
 
@@ -50,7 +50,7 @@
     position: sticky;
     top: 0;
     min-height: 8rem;
-    z-index: 666;
+    z-index: 1;
   }
 
   header p {
@@ -83,8 +83,23 @@
     text-align: center;
   }
 
-  h2 small {
-    font-weight: normal;
+  aside {
+    position: -webkit-sticky;
+    position: sticky;
+    display: block;
+    z-index: 2;
+    top: .5rem;
+    margin-left: -6rem;
+    font-size: x-large;
+    color: black;
+    width: 6rem;
+    float: left;
+    text-align: center;
+    padding: .5rem;
+    background: lavender;
+    border: 1px solid;
+    border-right: 0;
+    border-radius: 1rem 0 0 1rem;
   }
 
   summary {
@@ -95,6 +110,9 @@
     font-size: 1.3rem;
     top: 8rem;
     background: white;
+  }
+  summary small {
+    font-weight: normal;
   }
 
   details div {
@@ -118,11 +136,20 @@
   .reponse {
     background-color: seashell;
   }
+  div.reponse {
+    font-size: x-large;
+  }
   .reponse.positive {
     background-color: honeydew;
   }
   .reponse.negative {
     background-color: mistyrose;
+  }
+  .gouvernemental header {
+    border: 1px solid black;
+    border-top: 0;
+    background-color: green !important;
+    color: white;
   }
 
   .group-color {
@@ -135,7 +162,12 @@
 <h1>{{ title }}</h1>
 <main>
   {% for reponse in reponses.values() %}
-    <article>
+    {% if loop.previtem is defined and loop.previtem.article != reponse.article or loop.previtem is not defined %}
+      <div>
+      <aside>Article<br/>{{ reponse.article }}</aside>
+    {% endif %}
+    {% set is_gouvernemental = reponse.amendements[0].is_gouvernemental %}
+    <article{% if is_gouvernemental %} class="gouvernemental"{% endif %}>
       {% set positive = reponse.avis == 'Favorable' %}
       {% set negative = reponse.avis == 'Défavorable' %}
       {% set multiple = reponse.amendements|length > 1 %}
@@ -146,22 +178,25 @@
           {% for amendement in reponse.amendements %}
             {{ amendement.id }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
           {% endfor %}
-          <small>‹ Article {{ reponse.article }}</small>
         </h2>
-        {% if multiple %}
+        {% if multiple and reponse.presentation|length < 150 %}
           <p>{{ reponse.presentation }}</p>
         {% endif %}
-        <ul>
-          {% for amendement in reponse.amendements %}
-            <li>
-              <strong>{{ amendement.authors }}</strong>
-              {% if amendement.group %}
-                — {{ amendement.group.label }}
-                <span class="group-color" style="background-color: {{ amendement.group.color }};"></span>
+        {% if is_gouvernemental %}
+          <p class="authors"><strong>Gouvernement</strong></p>
+        {% else %}
+          <p class="authors">
+            {% for amendement in reponse.amendements %}
+              {% if loop.previtem is defined and amendement.authors != loop.previtem.authors or loop.previtem is not defined %}
+                <strong>{{ amendement.authors }}</strong>
+                {% if amendement.group -%}
+                  ({{ amendement.group.label }}
+                  <span class="group-color" style="background-color: {{ amendement.group.color }};"></span>)
+                {%- endif %}{% if not loop.last and loop.nextitem.authors != amendement.authors %}, {% endif %}
               {% endif %}
-            </li>
-          {% endfor %}
-        </ul>
+            {% endfor %}
+          </p>
+        {% endif %}
       </header>
       <div>
         <details open>
@@ -178,7 +213,14 @@
         </details>
         {% for amendement in reponse.amendements %}
           <details>
-            <summary>Amendement {{ amendement.id }}</summary>
+            <summary>
+              Amendement {{ amendement.id }}
+              — {{ amendement.authors }}
+              {% if amendement.group -%}
+                <small>({{ amendement.group.label }}
+                  <span class="group-color" style="background-color: {{ amendement.group.color }};"></span>)</small>
+              {%- endif %}
+            </summary>
             <div class="summary">
               <p>{{ amendement.content }}</p>
               {% if amendement.summary %}
@@ -190,6 +232,9 @@
         <div data-article="{{ reponse.article.pk }}"></div>
       </div>
     </article>
+    {% if loop.nextitem is defined and loop.nextitem.article != reponse.article or loop.nextitem is not defined %}
+      </div>
+    {% endif %}
   {% endfor %}
 </main>
 {% for article in articles.values() %}

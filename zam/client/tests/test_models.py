@@ -46,6 +46,7 @@ def test_amendements_load():
         "amendements": [{
             "idAmendement": 5,
             "etat": "",
+            "gouvernemental": False,
             "groupesParlementaires": [
                 {
                     "libelle": "Les D\u00e9veloppeurs",
@@ -77,6 +78,7 @@ def test_amendements_load():
     assert amendement.content == ''
     assert amendement.summary == ''
     assert amendement.document == '000005-00.pdf'
+    assert amendement.is_gouvernemental is False
 
 
 def test_reponses_load():
@@ -89,6 +91,7 @@ def test_reponses_load():
         "amendements": [{
             "idAmendement": 5,
             "etat": "",
+            "gouvernemental": False,
             "groupesParlementaires": [
                 {
                     "libelle": "Les D\u00e9veloppeurs",

@@ -14,7 +14,7 @@ def test_nature_reponses(document):
 def test_reponse_unique_amendement(document):
     reponse = document.tags('article')[0]
     assert '102' in reponse.css_first('h2').text()
-    assert len(reponse.css('header ul li')) == 1
+    assert len(reponse.css('header p.authors strong')) == 1
 
 
 def test_reponse_has_content(document):
@@ -27,14 +27,15 @@ def test_reponse_multiple_amendement(document):
     reponse = document.tags('article')[1]
     assert '5,' in reponse.css_first('h2').text()
     assert '174 et' in reponse.css_first('h2').text()
-    assert len(reponse.css('header ul li')) == 7
+    assert len(reponse.css('header p.authors strong')) == 7
 
 
 def test_reponse_has_amendements(document):
     reponse = document.tags('article')[1]
     details = reponse.css('details')
     assert len(details) == 8
-    assert details[1].css_first('summary').text() == 'Amendement 5'
+    assert (details[1].css_first('summary').text().strip()
+            .startswith('Amendement 5'))
     assert (details[1].css_first('div').text().strip()
             .startswith('Supprimer cet article.'))
 

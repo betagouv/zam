@@ -14,6 +14,8 @@ def amendements():
             auteur="M. DUPONT",
             groupe="RDSE",
             matricule="000000",
+            objet="foo",
+            dispositif="bar",
         ),
         Amendement(
             article="Article 1",
@@ -22,6 +24,8 @@ def amendements():
             auteur="M. DURAND",
             groupe="Les Républicains",
             matricule="000001",
+            objet="baz",
+            dispositif="qux",
         ),
         Amendement(
             article="Article 7 bis",
@@ -30,6 +34,8 @@ def amendements():
             auteur="M. MARTIN",
             groupe="SOCR",
             matricule="000002",
+            objet="quux",
+            dispositif="quuz",
         ),
         Amendement(
             article="Article 1",
@@ -38,6 +44,8 @@ def amendements():
             auteur="M. JEAN",
             groupe="Les Indépendants",
             matricule="000003",
+            objet="corge",
+            dispositif="grault",
         ),
     ]
 
@@ -72,7 +80,7 @@ def test_write_csv(amendements, tmpdir):
 
     assert len(rows) == nb_rows == 4
 
-    assert rows[0] == "Article 1;;42;M. DUPONT;000000;RDSE;;;;;;"
+    assert rows[0] == "Article 1;;42;M. DUPONT;000000;RDSE;;;;;bar;foo"
 
 
 @pytest.mark.parametrize('text,exp_num,exp_mult', [
@@ -128,6 +136,8 @@ def test_write_json_for_viewer(amendements, tmpdir):
                                 }
                             ],
                             'document': '000042-00.pdf',
+                            'objet': 'foo',
+                            'dispositif': 'bar'
                         },
                         {
                             'idAmendement': 57,
@@ -143,6 +153,8 @@ def test_write_json_for_viewer(amendements, tmpdir):
                                 }
                             ],
                             'document': '000057-00.pdf',
+                            'objet': 'baz',
+                            'dispositif': 'qux',
                         },
                         {
                             'idAmendement': 43,
@@ -158,6 +170,8 @@ def test_write_json_for_viewer(amendements, tmpdir):
                                 }
                             ],
                             'document': '000043-00.pdf',
+                            'objet': 'corge',
+                            'dispositif': 'grault',
                         },
                     ],
                 },
@@ -183,6 +197,8 @@ def test_write_json_for_viewer(amendements, tmpdir):
                                 }
                             ],
                             'document': '000021-00.pdf',
+                            'objet': 'quux',
+                            'dispositif': 'quuz',
                         },
                     ],
                 }

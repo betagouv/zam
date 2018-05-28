@@ -39,6 +39,8 @@ GROUPS_COLORS = {
     'RDSE': '#a38ebc',  # https://fr.wikipedia.org/wiki/Groupe_du_Rassemblement_d%C3%A9mocratique_et_social_europ%C3%A9en # noqa
     'Les Indépendants': '#30bfe9',  # https://fr.wikipedia.org/wiki/Groupe_Les_Ind%C3%A9pendants_%E2%80%93_R%C3%A9publique_et_territoires # noqa
     'NI': '#ffffff',  # https://fr.wikipedia.org/wiki/Non-inscrit
+    'CRCE': '#dd0000',  # https://fr.wikipedia.org/wiki/Groupe_communiste,_r%C3%A9publicain,_citoyen_et_%C3%A9cologiste # noqa
+    'LaREM': '#ffeb00',  # https://fr.wikipedia.org/wiki/Groupe_La_R%C3%A9publique_en_marche_(S%C3%A9nat) # noqa
 }
 
 
@@ -182,4 +184,6 @@ def _format_amendement(amendement: Amendement) -> dict:
             }
         ],
         "document": f"{amendement.num_int:06}-00.pdf",
+        "objet": amendement.objet,
+        "dispositif": amendement.dispositif,
     }

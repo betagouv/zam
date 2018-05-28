@@ -15,9 +15,9 @@
 
 Set your paths for sensitive informations, for instance with fish:
 
-    set -gx ZAM_DRUPAL_SOURCE path/to/Archives\ PLFSS/JSON\ -\ fichier\ de\ sauvegarde/AN2-2018.json
+    set -gx ZAM_DRUPAL_SOURCE path/to/Archives\ PLFSS\ 2018/JSON\ -\ fichier\ de\ sauvegarde/Sénat1-2018.json
     set -gx ZAM_ASPIRATEUR_SOURCE path/to/zam/aspirateur/amendements_2017-2018_63.json
-    set -gx ZAM_INPUT path/to/Archives\ PLFSS/
+    set -gx ZAM_JAUNES_SOURCE path/to/Archives\ PLFSS\ 2018/Jeu\ de\ docs\ -\ PDF,\ word/Sénat1/
     set -gx ZAM_OUTPUT path/to/target/
 
 Then launch the generator:

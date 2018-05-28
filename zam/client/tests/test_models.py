@@ -8,11 +8,14 @@ def test_article_pk_from_raw():
 
 
 def test_amendement_pk_from_raw():
-    assert Amendement.pk_from_raw({'document': 'foo.pdf'}) == 'foo'
+    assert Amendement.pk_from_raw({'document': 'foo-xx.pdf'}) == 'foo'
 
 
 def test_reponse_pk_from_raw():
-    assert Reponse.pk_from_raw({'presentation': 'foo'}) == 'Zm9v'
+    assert Reponse.pk_from_raw({
+        'presentation': 'foo',
+        'idReponse': 1,
+    }) == 'Zm9v'
 
 
 def test_articles_load():
@@ -21,7 +24,7 @@ def test_articles_load():
         "etat": "",
         "multiplicatif": "",
         "titre": "Approbation des tableaux d'\u00e9quilibre",
-        "document": "article-1.pdf"
+        "document": "article-1.pdf",
     }]
     articles = Articles.load(items, None)
     assert list(articles.keys()) == ['article-1']
@@ -50,23 +53,25 @@ def test_amendements_load():
             "groupesParlementaires": [
                 {
                     "libelle": "Les D\u00e9veloppeurs",
-                    "couleur": "#133700"
+                    "couleur": "#133700",
                 }
             ],
             "auteurs": [
                 {
                     "auteur": "M.\u00a0David",
-                    "couleur": "#ffffff"
+                    "couleur": "#ffffff",
                 }
             ],
-            "document": "000005-00.pdf"
+            "document": "000005-00.pdf",
+            "objet": "<p>Amendement de précision.</p>",
+            "dispositif": "<p>Alinéa 8</p>",
         }]
     }]
     articles = Articles.load(items, None)
     amendements = Amendements.load(items, articles, None)
-    assert list(amendements.keys()) == ['000005-00']
+    assert list(amendements.keys()) == ['000005']
     amendement = list(amendements.values())[0]
-    assert amendement.pk == '000005-00'
+    assert amendement.pk == '000005'
     assert amendement.id == 5
     assert amendement.article.id == 1
     assert amendement.article.amendements == [amendement]
@@ -75,8 +80,8 @@ def test_amendements_load():
         'label': 'Les Développeurs',
         'color': '#133700'
     }
-    assert amendement.content == ''
-    assert amendement.summary == ''
+    assert amendement.summary == '<p>Amendement de précision.</p>'
+    assert amendement.content == '<p>Alinéa 8</p>'
     assert amendement.document == '000005-00.pdf'
     assert amendement.is_gouvernemental is False
 
@@ -95,13 +100,13 @@ def test_reponses_load():
             "groupesParlementaires": [
                 {
                     "libelle": "Les D\u00e9veloppeurs",
-                    "couleur": "#133700"
+                    "couleur": "#133700",
                 }
             ],
             "auteurs": [
                 {
                     "auteur": "M.\u00a0David",
-                    "couleur": "#ffffff"
+                    "couleur": "#ffffff",
                 }
             ],
             "reponse": {
@@ -109,9 +114,11 @@ def test_reponses_load():
                 "avis": "D\u00e9favorable",
                 "presentation":
                     "<p><strong>Suppression de l\u2019article</strong></p>",
-                "reponse": "<p>Cet article met en \u0153uvre...</p>"
+                "reponse": "<p>Cet article met en \u0153uvre...</p>",
             },
-            "document": "000005-00.pdf"
+            "document": "000005-00.pdf",
+            "objet": "<p>Amendement de précision.</p>",
+            "dispositif": "<p>Alinéa 8</p>",
         }]
     }]
     articles = Articles.load(items, None)

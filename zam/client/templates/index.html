@@ -130,7 +130,7 @@
   .jaune {
     background-color: lemonchiffon;
   }
-  .summary {
+  .amendement {
     background-color: azure;
   }
   .reponse {
@@ -180,7 +180,11 @@
           {% endfor %}
         </h2>
         {% if multiple and reponse.presentation|length < 150 %}
-          <p>{{ reponse.presentation }}</p>
+          {% if reponse.presentation.startswith('<p>') %}
+            {{ reponse.presentation }}
+          {% else %}
+            <p>{{ reponse.presentation }}</p>
+          {% endif %}
         {% endif %}
         {% if is_gouvernemental %}
           <p class="authors"><strong>Gouvernement</strong></p>
@@ -221,11 +225,9 @@
                   <span class="group-color" style="background-color: {{ amendement.group.color }};"></span>)</small>
               {%- endif %}
             </summary>
-            <div class="summary">
-              <p>{{ amendement.content }}</p>
-              {% if amendement.summary %}
-                <p>{{ amendement.summary }}</p>
-              {% endif %}
+            <div class="amendement">
+              {{ amendement.summary }}
+              {{ amendement.content }}
             </div>
           </details>
         {% endfor %}

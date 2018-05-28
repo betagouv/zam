@@ -10,15 +10,8 @@ from pathlib import Path
 from typing import Any, List, Optional, Tuple
 
 from decorators import require_env_vars
-from loaders import load_docx, load_pdf
+from loaders import load_docx
 from utils import strip_styles, warnumerate
-
-PAGINATION_PATTERN = re.compile(r"""
-ART\.\s\d+              # Article like `ART. 5` but also `ART. 13 BIS`
-(\sBIS(\sB)?|\sTER)?\s  # Article extension (optional) like `BIS B` or `TER`
-N°\s\d+(\s\(Rect\))?\s+ # Amendement like `N° 222` but also `N° 18 (Rect)`
-\d/\d                   # Pagination like `2/3`
-""", re.VERBOSE)
 
 
 @dataclass
@@ -56,14 +49,12 @@ class Articles(OrderedDict):
             )
         return articles
 
-    def load_jaunes(
-        self, items: List[dict], input_dir: Path, limit: Optional[int]
-    ) -> None:
+    def load_jaunes(self, items: List[dict], limit: Optional[int]) -> None:
+        jaunes_path = Path(os.environ['ZAM_JAUNES_SOURCE'])
         for raw_article in warnumerate(items, limit):
             article = self.get_from_raw(raw_article)
-            jaune_content = load_docx(
-                input_dir / 'Jeu de docs - PDF, word' /
-                raw_article['feuilletJaune'].replace('.pdf', '.docx'))
+            jaune_name = raw_article['feuilletJaune'].replace('.pdf', '.docx')
+            jaune_content = load_docx(jaunes_path / jaune_name)
             # Convert jaune to CommonMark to preserve some styles.
             article.jaune = CommonMark.commonmark(jaune_content)
 
@@ -76,11 +67,11 @@ class Amendement:
     pk: str
     id: int
     article: Article
-    authors: str
     group: dict
+    authors: str = ''
     is_gouvernemental: bool = False
-    content: str = ''
     summary: str = ''
+    content: str = ''
     document: str = ''
 
     def __str__(self) -> str:
@@ -88,7 +79,7 @@ class Amendement:
 
     @staticmethod
     def pk_from_raw(raw: dict) -> str:
-        return raw['document'][:-len('.pdf')]
+        return raw['document'][:-len('-00.pdf')]
 
 
 class Amendements(OrderedDict):
@@ -103,8 +94,10 @@ class Amendements(OrderedDict):
             for raw_amendement in raw_article.get('amendements', []):
                 pk = Amendement.pk_from_raw(raw_amendement)
                 id_ = raw_amendement['idAmendement']
-                authors = ', '.join(author['auteur'].strip()
-                                    for author in raw_amendement['auteurs'])
+                auteurs = raw_amendement.get('auteurs')
+                if auteurs:
+                    authors = ', '.join(author['auteur'].strip()
+                                        for author in auteurs)
                 group = None
                 if 'groupesParlementaires' in raw_amendement:
                     group = raw_amendement['groupesParlementaires'][0]
@@ -120,29 +113,12 @@ class Amendements(OrderedDict):
                     article=article,
                     document=raw_amendement['document'],
                     is_gouvernemental=raw_amendement['gouvernemental'],
+                    summary=raw_amendement['objet'],
+                    content=raw_amendement['dispositif'],
                 )
                 amendements[pk] = amendement
                 article.amendements.append(amendement)
         return amendements
-
-    def load_contents(self, input_dir: Path) -> None:
-        for amendement in self.values():
-            amendement_filename = amendement.document
-            amendement_path = input_dir / 'Jeu de docs - PDF, word'
-            content = load_pdf(amendement_path / amendement.document)
-            content = PAGINATION_PATTERN.sub('', content)
-            if amendement.article.state or amendement.article.multiplier:
-                prefix = amendement.article.title.upper()
-            else:
-                prefix = f'ARTICLE {amendement.article.id}'
-            if content.startswith(prefix):
-                amendement.content = content[len(prefix) + 1:].strip()
-            else:
-                amendement.content = content
-            expose_sommaire = 'EXPOSÉ SOMMAIRE'
-            if expose_sommaire in amendement.content:
-                amendement.content, amendement.summary = \
-                    amendement.content.split(expose_sommaire)
 
     def get_from_raw(self, raw: dict) -> Amendement:
         return self[Amendement.pk_from_raw(raw)]
@@ -162,7 +138,8 @@ class Reponse:
 
     @staticmethod
     def pk_from_raw(raw: dict) -> str:
-        return base64.b64encode(raw['presentation'].encode()).decode()
+        unique = raw.get('presentation', str(raw['idReponse']))
+        return base64.b64encode(unique.encode()).decode()
 
 
 class Reponses(OrderedDict):
@@ -194,7 +171,8 @@ class Reponses(OrderedDict):
                 reponses[pk] = Reponse(  # type: ignore # dataclasses
                     pk=pk,
                     avis=raw_reponse['avis'],
-                    presentation=strip_styles(raw_reponse['presentation']),
+                    presentation=strip_styles(
+                        raw_reponse.get('presentation', '')),
                     content=strip_styles(raw_reponse.get('reponse', '')),
                     article=article,
                     amendements=[amendement],
@@ -202,14 +180,12 @@ class Reponses(OrderedDict):
         return reponses
 
 
-@require_env_vars(env_vars=['ZAM_INPUT'])
+@require_env_vars(env_vars=['ZAM_JAUNES_SOURCE'])
 def load_data(
     drupal_items: List[dict], aspirateur_items: List[dict], limit: int=None
 ) -> Tuple[Articles, Amendements, Reponses]:
-    input_path = Path(os.environ['ZAM_INPUT'])
     articles = Articles.load(drupal_items, limit)
-    articles.load_jaunes(drupal_items, input_path, limit)
+    articles.load_jaunes(drupal_items, limit)
     amendements = Amendements.load(aspirateur_items, articles, limit)
-    amendements.load_contents(input_path)
     reponses = Reponses.load(drupal_items, articles, amendements, limit)
     return articles, amendements, reponses

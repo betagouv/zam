@@ -3,17 +3,17 @@ def test_has_title(document):
 
 
 def test_number_reponses(document):
-    assert len(document.tags('article')) == 151
+    assert len(document.tags('article')) == 316
 
 
 def test_nature_reponses(document):
-    assert len(document.css('header.reponse.positive')) == 56
-    assert len(document.css('header.reponse.negative')) == 86
+    assert len(document.css('header.reponse.positive')) == 30
+    assert len(document.css('header.reponse.negative')) == 249
 
 
 def test_reponse_unique_amendement(document):
-    reponse = document.tags('article')[0]
-    assert '102' in reponse.css_first('h2').text()
+    reponse = document.tags('article')[1]
+    assert '443' in reponse.css_first('h2').text()
     assert len(reponse.css('header p.authors strong')) == 1
 
 
@@ -24,29 +24,29 @@ def test_reponse_has_content(document):
 
 
 def test_reponse_multiple_amendement(document):
-    reponse = document.tags('article')[1]
-    assert '5,' in reponse.css_first('h2').text()
-    assert '174 et' in reponse.css_first('h2').text()
-    assert len(reponse.css('header p.authors strong')) == 7
+    reponse = document.tags('article')[0]
+    assert '31,' in reponse.css_first('h2').text()
+    assert '146 et' in reponse.css_first('h2').text()
+    assert len(reponse.css('header p.authors strong')) == 4
 
 
 def test_reponse_has_amendements(document):
-    reponse = document.tags('article')[1]
+    reponse = document.tags('article')[0]
     details = reponse.css('details')
-    assert len(details) == 8
+    assert len(details) == 66
     assert (details[1].css_first('summary').text().strip()
-            .startswith('Amendement 5'))
+            .startswith('Amendement 31'))
     assert (details[1].css_first('div').text().strip()
-            .startswith('Supprimer cet article.'))
+            .startswith('Cet amendement précise l’assiette'))
 
 
 def test_reponse_has_article_hook(document):
     reponse = document.tags('article')[0]
-    assert reponse.css_first('[data-article="article-7av"]')
+    assert reponse.css_first('[data-article="article-3"]')
 
 
 def test_article_templates_presence(document):
-    assert len(document.tags('template')) == 93
+    assert len(document.tags('template')) == 113
 
 
 def test_article_template_content(document):

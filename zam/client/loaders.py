@@ -7,7 +7,7 @@ from decorators import check_existence, require_env_vars
 from parsers import parse_docx
 
 
-def load_json(source_path: Path) -> dict:
+def load_json(source_path: str) -> dict:
     with open(source_path) as source:
         return json.loads(source.read())
 

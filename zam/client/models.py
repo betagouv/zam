@@ -51,7 +51,7 @@ class Articles(OrderedDict):
                 id=raw_article['idArticle'],
                 title=raw_article['titre'],
                 state=raw_article['etat'],
-                multiplier=raw_article['multiplicatif']
+                multiplier=raw_article['multiplicatif'],
             )
         return articles
 
@@ -109,7 +109,7 @@ class Amendements(OrderedDict):
                     group = raw_amendement['groupesParlementaires'][0]
                     group = {
                         'label': group['libelle'],
-                        'color': group['couleur']
+                        'color': group['couleur'],
                     }
                 amendement = Amendement(  # type: ignore # dataclasses
                     pk=pk,
@@ -118,7 +118,7 @@ class Amendements(OrderedDict):
                     group=group,
                     article=article,
                     document=raw_amendement['document'],
-                    is_gouvernemental=raw_amendement['gouvernemental']
+                    is_gouvernemental=raw_amendement['gouvernemental'],
                 )
                 amendements[pk] = amendement
                 article.amendements.append(amendement)
@@ -187,7 +187,7 @@ class Reponses(OrderedDict):
                     presentation=strip_styles(raw_reponse['presentation']),
                     content=strip_styles(raw_reponse.get('reponse', '')),
                     article=article,
-                    amendements=[amendement]
+                    amendements=[amendement],
                 )
         return reponses
 

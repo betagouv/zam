@@ -14,6 +14,11 @@ CHAMBRES = {"senat": "Sénat"}
 SESSIONS = ["2017-2018"]
 
 
+@view_config(route_name="textes_list", renderer="textes_list.html")
+def textes_list(request: Request) -> dict:
+    return {}
+
+
 @view_defaults(route_name="textes_add", renderer="textes_add.html")
 class TextesAdd:
     def __init__(self, request: Request) -> None:

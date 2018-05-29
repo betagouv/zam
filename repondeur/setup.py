@@ -1,6 +1,6 @@
 from setuptools import setup
 
-requires = ["pyramid"]
+requires = ["pyramid", "pyramid-jinja2"]
 
 setup(
     name="zam-repondeur",

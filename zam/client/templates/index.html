@@ -7,18 +7,16 @@
 <style>
   body {
     max-width: 58rem;
-    margin: 0 auto 0 6rem;
+    margin: 0 auto 0 8rem;
     padding: .5rem 1rem;
   }
 
-  main {
-    border-width: 2px 0;
-    border-style: solid;
+  article {
+    margin: .25rem 0;
   }
 
   main [data-expandable=true] {
     border: 1px solid;
-    border-top: 0;
     cursor: pointer;
   }
 
@@ -49,7 +47,7 @@
     position: -webkit-sticky;
     position: sticky;
     top: 0;
-    min-height: 8rem;
+    min-height: 5rem;
     z-index: 1;
   }
 
@@ -89,17 +87,24 @@
     display: block;
     z-index: 2;
     top: .5rem;
-    margin-left: -6rem;
+    margin-left: -8rem;
     font-size: x-large;
     color: black;
-    width: 6rem;
+    width: 8rem;
     float: left;
     text-align: center;
-    padding: .5rem;
+    padding: .3rem;
     background: lavender;
     border: 1px solid;
     border-right: 0;
     border-radius: 1rem 0 0 1rem;
+    line-height: 1.1;
+  }
+  aside select {
+    text-align-last: center;
+    font-size: 1.4rem;
+    max-width: 7rem;
+    border: 1px solid currentcolor;
   }
 
   summary {
@@ -108,7 +113,7 @@
     cursor: pointer;
     font-weight: bold;
     font-size: 1.3rem;
-    top: 8rem;
+    top: 5rem;
     background: white;
   }
   summary small {
@@ -120,8 +125,7 @@
   }
 
   article > div {
-    padding-bottom: 2rem;
-    border-bottom: 1px solid;
+    padding-bottom: 1rem;
   }
 
   .article {
@@ -163,8 +167,11 @@
 <main>
   {% for reponse in reponses.values() %}
     {% if loop.previtem is defined and loop.previtem.article != reponse.article or loop.previtem is not defined %}
-      <div>
-      <aside>Article<br/>{{ reponse.article }}</aside>
+      <div id="{{ reponse.article.slug }}">
+      <aside>
+        Article
+        <div>{{ reponse.article }}</div>
+      </aside>
     {% endif %}
     {% set is_gouvernemental = reponse.amendements[0].is_gouvernemental %}
     <article{% if is_gouvernemental %} class="gouvernemental"{% endif %}>
@@ -290,6 +297,40 @@
       const clone = articleTemplate.content.cloneNode(true)
       placeholder.parentNode.appendChild(clone)
       placeholder.remove()
+    })
+  })()
+  ;(function injectArticleNavigation () {
+    const navigationPlaceholders = Array.from(document.querySelectorAll('aside div'))
+    const slugFromLabel = label => `article-${label.replace(/ /g, '-')}`
+    const tmpl = (items, current) => {
+      const currentSlug = slugFromLabel(current.innerText)
+      return `
+        <select>
+          ${items.map(item => {
+            const slug = slugFromLabel(item.innerText)
+            const selected = slug === currentSlug ? " selected" : ""
+            return `
+              <option value="${slug}"${selected}>${item.innerText}</option>`
+          }).join('')}
+        </select>
+      `
+    }
+    navigationPlaceholders.forEach(placeholder => {
+      const aside = placeholder.parentNode
+      const range = document.createRange()
+      const fragment = tmpl(navigationPlaceholders, placeholder)
+      const selectFragment = range.createContextualFragment(fragment)
+      const clonedSelectFragment = selectFragment.cloneNode(true)
+      aside.appendChild(clonedSelectFragment)
+      placeholder.remove()
+      const selectElement = aside.querySelector('select')
+      selectElement.onchange = event => {
+        const value = event.target.options[event.target.selectedIndex].value
+        window.location.hash = `#${value}`
+        Array.from(selectElement.options).forEach(option => {
+          option.selected = option.hasAttribute('selected')
+        })
+      }
     })
   })()
 </script>

@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pyramid = "*"
+waitress = "*"
+"e1839a8" = {path = ".", editable = true}
+
+[dev-packages]
+webtest = "*"
+pytest = "*"
+"flake8" = "*"
+mypy = "*"
+black = "*"
+pytest-cov = "*"
+
+[requires]
+python_version = "3.6"
+
+[pipenv]
+allow_prereleases = true

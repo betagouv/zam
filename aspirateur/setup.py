@@ -10,4 +10,10 @@ setup(
             'zam-aspirateur = zam_aspirateur.__main__:main',
         ],
     },
+    install_requires=[
+        'bleach',
+        'dataclasses',
+        'openpyxl',
+        'requests',
+    ],
 )

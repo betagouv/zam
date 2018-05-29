@@ -8,6 +8,11 @@ pyramid = "*"
 waitress = "*"
 "e1839a8" = {path = ".", editable = true}
 "pyramid-jinja2" = "*"
+requests = "*"
+bleach = "*"
+openpyxl = "*"
+dataclasses = "*"
+"4f547c1" = {path = "./../aspirateur", editable = true}
 
 [dev-packages]
 webtest = "*"

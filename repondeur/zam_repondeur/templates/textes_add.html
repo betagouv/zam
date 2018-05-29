@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zam</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+</head>
+<body>
+    <h2>Ajouter un texte...</h2>
+
+    <form action="{{ request.path }}" method="POST">
+        <div class="form-group">
+            <label for="chambre">Chambre</label>
+            <select name="chambre" class="form-control">
+                {% for id, label in chambres %}
+                    <option value="{{ id }}" {%- if loop.first %} selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="session">Session</label>
+            <select name="session" class="form-control">
+                {% for id, label in sessions %}
+                    <option value="{{ id }}" {%- if loop.first %} selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="num_texte">Numéro de texte</label>
+            <input type="number" name="num_texte" value="63" class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="submit" name="submit" value="Récupérer les amendements" class="btn btn-primary btn-lg">
+        </div>
+    </form>
+
+    {% if amendements %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Article</th>
+                <th>Alinéa</th>
+                <th>Numéro</th>
+                <th>Auteur</th>
+                <th>Groupe</th>
+                <th>Sort</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for amendement in amendements %}
+                <tr>
+                    <td>{{ amendement.article }}</td>
+                    <td>{{ amendement.alinea }}</td>
+                    <td>{{ amendement.num }}</td>
+                    <td>{{ amendement.auteur }}</td>
+                    <td>{{ amendement.groupe }}</td>
+                    <td>{{ amendement.sort }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</body>
+</html>

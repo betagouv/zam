@@ -6,4 +6,4 @@ from pyramid.view import view_config
 
 @view_config(route_name="home")
 def home(request: Request) -> Response:
-    return HTTPFound(location=request.route_url("textes_add"))
+    return HTTPFound(location=request.route_url("textes_list"))

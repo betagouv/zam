@@ -1,4 +1,4 @@
-from unittest.mock import patch
+import os
 
 from webtest.forms import Select
 
@@ -32,20 +32,20 @@ def test_get_form(app):
     assert resp.form.fields["submit"][0].attrs["type"] == "submit"
 
 
-def test_post_form(app):
+def test_post_form(app, tmpdir):
     form = app.get("/textes/add").form
     form["chambre"] = "senat"
     form["session"] = "2017-2018"
     form["num_texte"] = "63"
 
-    with patch("zam_repondeur.views.textes.get_amendements_senat") as mock:
-        mock.return_value = []
-        resp = form.submit()
+    assert not os.path.isdir(tmpdir.join("zam").join("senat-2017-2018-63"))
 
-    mock.assert_called_once_with("2017-2018", "63")
+    resp = form.submit()
 
-    assert resp.status_code == 200
-    assert resp.content_type == "text/html"
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/textes/"
+
+    assert os.path.isdir(tmpdir.join("zam").join("senat-2017-2018-63"))
 
 
 def test_post_form_bad_chambre(app):

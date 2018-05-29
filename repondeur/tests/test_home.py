@@ -1,5 +1,4 @@
-def test_home(app):
+def test_home_redirects_to_textes(app):
     resp = app.get("/")
-    assert resp.status_code == 200
-    assert resp.content_type == "text/html"
-    assert "Hello world" in resp.text
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/textes/add"

@@ -57,5 +57,5 @@ def test_article_template_content(document):
 def test_article_template_has_jaune(document):
     article = document.tags('template')[0]
     jaune = article.css('details')[1]
-    assert jaune.css_first('summary').text() == 'Article 1  \xa0: jaune'
+    assert jaune.css_first('summary').text() == 'Article 1\xa0: jaune'
     assert jaune.css_first('div.jaune').text().strip()

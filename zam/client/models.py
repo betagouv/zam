@@ -32,7 +32,13 @@ class Article:
     amendements: Any = field(default_factory=lambda: [])  # List[Amendement]
 
     def __str__(self) -> str:
-        return f'{self.id} {self.state} {self.multiplier}'
+        if self.state:
+            return f'{self.id} {self.state} {self.multiplier}'.strip()
+        return f'{self.id} {self.multiplier}'.strip()
+
+    @property
+    def slug(self) -> str:
+        return f'article-{str(self).replace(" ", "-")}'
 
     @staticmethod
     def pk_from_raw(raw: dict) -> str:
@@ -61,7 +67,7 @@ class Articles(OrderedDict):
         for raw_article in warnumerate(items, limit):
             article = self.get_from_raw(raw_article)
             jaune_content = load_docx(
-                input_dir / 'Jeu de docs - PDF, word' /
+                input_dir / 'Jeu de docs - PDF, word' / 'AN2' /
                 raw_article['feuilletJaune'].replace('.pdf', '.docx'))
             # Convert jaune to CommonMark to preserve some styles.
             article.jaune = CommonMark.commonmark(jaune_content)
@@ -127,7 +133,7 @@ class Amendements(OrderedDict):
     def load_contents(self, input_dir: Path) -> None:
         for amendement in self.values():
             amendement_filename = amendement.document
-            amendement_path = input_dir / 'Jeu de docs - PDF, word'
+            amendement_path = input_dir / 'Jeu de docs - PDF, word' / 'AN2'
             content = load_pdf(amendement_path / amendement.document)
             content = PAGINATION_PATTERN.sub('', content)
             if amendement.article.state or amendement.article.multiplier:

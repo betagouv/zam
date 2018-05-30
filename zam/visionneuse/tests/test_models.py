@@ -1,4 +1,4 @@
-from models import (
+from zam_visionneuse.models import (
     Amendement,
     Amendements,
     Article,
@@ -32,7 +32,7 @@ def test_articles_load():
             "document": "article-1.pdf",
         }
     ]
-    articles = Articles.load(items, None)
+    articles = Articles.load(items)
     assert list(articles.keys()) == ["article-1"]
     article = list(articles.values())[0]
     assert article.pk == "article-1"
@@ -55,7 +55,7 @@ def test_article_slug():
             "document": "article-1.pdf",
         }
     ]
-    articles = Articles.load(items, None)
+    articles = Articles.load(items)
     article = list(articles.values())[0]
     assert article.slug == "article-1"
     items = [
@@ -67,7 +67,7 @@ def test_article_slug():
             "document": "article-1.pdf",
         }
     ]
-    articles = Articles.load(items, None)
+    articles = Articles.load(items)
     article = list(articles.values())[0]
     assert article.slug == "article-1-ap-bis"
 
@@ -101,8 +101,8 @@ def test_amendements_load():
             ],
         }
     ]
-    articles = Articles.load(items, None)
-    amendements = Amendements.load(items, articles, None)
+    articles = Articles.load(items)
+    amendements = Amendements.load(items, articles)
     assert list(amendements.keys()) == ["000005"]
     amendement = list(amendements.values())[0]
     assert amendement.pk == "000005"
@@ -155,9 +155,9 @@ def test_reponses_load():
             ],
         }
     ]
-    articles = Articles.load(items, None)
-    amendements = Amendements.load(items, articles, None)
-    reponses = Reponses.load(items, articles, amendements, None)
+    articles = Articles.load(items)
+    amendements = Amendements.load(items, articles)
+    reponses = Reponses.load(items, articles, amendements)
     assert list(reponses.keys())[0].startswith("PHA+PHN0cm9uZz5TdXBwcmV")
     reponse = list(reponses.values())[0]
     assert reponse.pk.startswith("PHA+PHN0cm9uZz5TdXBwcmV")

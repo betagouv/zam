@@ -3,8 +3,8 @@ import os
 from pathlib import Path
 from typing import Tuple
 
-from decorators import check_existence, require_env_vars
-from parsers import parse_docx
+from .decorators import check_existence, require_env_vars
+from .parsers import parse_docx
 
 
 def load_json(source_path: str) -> dict:

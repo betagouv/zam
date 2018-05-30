@@ -9,9 +9,9 @@ from logbook import warn
 from pathlib import Path
 from typing import Any, List, Optional, Tuple
 
-from decorators import require_env_vars
-from loaders import load_docx
-from utils import strip_styles, warnumerate
+from .decorators import require_env_vars
+from .loaders import load_docx
+from .utils import strip_styles
 
 
 @dataclass
@@ -41,9 +41,9 @@ class Article:
 
 class Articles(OrderedDict):
     @classmethod
-    def load(cls, items: List[dict], limit: Optional[int]) -> "Articles":
+    def load(cls, items: List[dict]) -> "Articles":
         articles = cls()
-        for raw_article in warnumerate(items, limit):
+        for raw_article in items:
             pk = Article.pk_from_raw(raw_article)
             articles[pk] = Article(  # type: ignore # dataclasses
                 pk=pk,
@@ -54,9 +54,9 @@ class Articles(OrderedDict):
             )
         return articles
 
-    def load_jaunes(self, items: List[dict], limit: Optional[int]) -> None:
+    def load_jaunes(self, items: List[dict]) -> None:
         jaunes_path = Path(os.environ["ZAM_JAUNES_SOURCE"])
-        for raw_article in warnumerate(items, limit):
+        for raw_article in items:
             article = self.get_from_raw(raw_article)
             jaune_name = raw_article["feuilletJaune"].replace(".pdf", ".docx")
             jaune_content = load_docx(jaunes_path / jaune_name)
@@ -89,11 +89,9 @@ class Amendement:
 
 class Amendements(OrderedDict):
     @classmethod
-    def load(
-        cls, items: List[dict], articles: Articles, limit: Optional[int]
-    ) -> "Amendements":
+    def load(cls, items: List[dict], articles: Articles) -> "Amendements":
         amendements = cls()
-        for raw_article in warnumerate(items, limit):
+        for raw_article in items:
             article = articles.get_from_raw(raw_article)
             for raw_amendement in raw_article.get("amendements", []):
                 pk = Amendement.pk_from_raw(raw_amendement)
@@ -150,14 +148,10 @@ class Reponse:
 class Reponses(OrderedDict):
     @classmethod
     def load(
-        cls,
-        items: List[dict],
-        articles: Articles,
-        amendements: Amendements,
-        limit: Optional[int],
+        cls, items: List[dict], articles: Articles, amendements: Amendements
     ) -> "Reponses":
         reponses = cls()
-        for raw_article in warnumerate(items, limit):
+        for raw_article in items:
             article = articles.get_from_raw(raw_article)
             for raw_amendement in raw_article.get("amendements", []):
                 if "reponse" not in raw_amendement:
@@ -190,10 +184,10 @@ class Reponses(OrderedDict):
 
 @require_env_vars(env_vars=["ZAM_JAUNES_SOURCE"])
 def load_data(
-    drupal_items: List[dict], aspirateur_items: List[dict], limit: int = None
+    drupal_items: List[dict], aspirateur_items: List[dict]
 ) -> Tuple[Articles, Amendements, Reponses]:
-    articles = Articles.load(drupal_items, limit)
-    articles.load_jaunes(drupal_items, limit)
-    amendements = Amendements.load(aspirateur_items, articles, limit)
-    reponses = Reponses.load(drupal_items, articles, amendements, limit)
+    articles = Articles.load(drupal_items)
+    articles.load_jaunes(drupal_items)
+    amendements = Amendements.load(aspirateur_items, articles)
+    reponses = Reponses.load(drupal_items, articles, amendements)
     return articles, amendements, reponses

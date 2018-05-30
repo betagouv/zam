@@ -10,6 +10,7 @@
 2.  Create the virtualenv `python3 -m venv ~/.virtualenvs/zam-visionneuse`
 3.  Activate it `source ~/.virtualenvs/zam-visionneuse/bin/activate.fish`
 4.  Install dependecies `pip install -r requirements.txt`
+5.  Run `pip install -e .`
 
 ## Generating
 
@@ -22,23 +23,14 @@ Set your paths for sensitive informations, for instance with fish:
 
 Then launch the generator:
 
-    python . generate
+    zam-visionneuse
 
 ⚠️ Never ever commit/push the generated folder/file.
 
-## Debugging
-
-Most of the time, parsing only a few articles is enough:
-
-    python . generate --limit=8
-
-You have a list of options with:
-
-    python . generate --help
 
 ## Testing
 
 First, set environment variables as described in `Generating` above.
 
     pip install pytest selectolax
-    env PYTHONPATH=. pytest
+    pytest

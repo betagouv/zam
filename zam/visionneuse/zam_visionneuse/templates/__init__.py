@@ -3,8 +3,8 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 from logbook import Logger
 
-from models import Articles, Amendements, Reponses
-from utils import build_output_filename
+from ..models import Articles, Amendements, Reponses
+from ..utils import build_output_filename
 
 log = Logger("client")
 env = Environment(
@@ -17,7 +17,9 @@ env = Environment(
 
 
 def render(**kwargs: dict) -> str:
-    return env.get_template("templates/index.html").render(**kwargs)
+    return env.get_template("zam_visionneuse/templates/index.html").render(
+        **kwargs
+    )
 
 
 def write_html(html: str, output_filename: Path) -> None:

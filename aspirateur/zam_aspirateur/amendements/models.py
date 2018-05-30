@@ -11,11 +11,17 @@ from typing import Optional
 @dataclass
 class Amendement:
 
-    article: str        # libellé de l'article
-    alinea: str         # libellé de l'alinéa
-    num: str            # numéro d'amendement
+    subdiv_type: int                    # article, titre...
+    subdiv_num: int                     # numéro
+    subdiv_mult: str = ""               # bis, ter...
+    subdiv_pos: str = ""                # avant / après
 
-    auteur: str
+    alinea: str = ""                    # libellé de l'alinéa de l'article concerné
+
+    num: str = ""                       # numéro de l'amendement
+    rectif: int = 0                     # numéro de révision de l'amendement
+
+    auteur: str = ""
     matricule: Optional[str] = None
     groupe: Optional[str] = None        # groupe parlementaire
 
@@ -28,6 +34,12 @@ class Amendement:
 
     dispositif: Optional[str] = None    # texte de l'amendement
     objet: Optional[str] = None         # motivation
+
+    objet: Optional[str] = None         # résumé de l'objet
+
+    avis: Optional[str] = None          # position du gouvernemnt
+    observations: Optional[str] = None
+    reponse: Optional[str] = None
 
     @property
     def num_int(self) -> int:

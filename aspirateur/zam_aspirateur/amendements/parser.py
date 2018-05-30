@@ -1,6 +1,6 @@
 import re
 from datetime import date, datetime
-from typing import Optional
+from typing import Optional, Tuple
 from urllib.parse import urlparse
 
 from ..clean import clean_html
@@ -9,9 +9,13 @@ from .models import Amendement
 
 
 def parse_from_csv(d_amend: dict) -> Amendement:
+    subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = _parse_subdiv(d_amend['Subdivision '])
     return Amendement(  # type: ignore
         num=d_amend['Numéro '],
-        article=d_amend['Subdivision '],
+        subdiv_type=subdiv_type,
+        subdiv_num=subdiv_num,
+        subdiv_mult=subdiv_mult,
+        subdiv_pos=subdiv_pos,
         alinea=d_amend['Alinéa'].strip(),
         auteur=d_amend['Auteur '],
         matricule=extract_matricule(d_amend['Fiche Sénateur']),
@@ -44,9 +48,13 @@ def parse_from_json(
     amend: dict,
     subdiv: dict,
 ) -> Amendement:
+    subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = _parse_subdiv(subdiv['libelle_subdivision'])
     return Amendement(  # type: ignore
+        subdiv_type=subdiv_type,
+        subdiv_num=subdiv_num,
+        subdiv_mult=subdiv_mult,
+        subdiv_pos=subdiv_pos,
         num=amend['num'],
-        article=subdiv['libelle_subdivision'],
         alinea=amend['libelleAlinea'],
         auteur=amend['auteur'],
         matricule=(
@@ -70,3 +78,25 @@ def parse_bool(text: str) -> bool:
     if text == 'false':
         return False
     raise ValueError
+
+
+SUBDIV_RE = re.compile(
+    r'''^
+        (?:art\.\sadd\.\s(?P<pos>après)\s)?  # position
+        Article\s
+        (?P<num>\d+|1er)
+        (?:\s(?P<mult>\w+))?        # bis, ter, etc.
+        (?:\s.*)?                   # junk
+        $
+    ''', re.VERBOSE
+)
+
+
+def _parse_subdiv(libelle: str) -> Tuple[str, str, str, str]:
+    if libelle == "":
+        return ("", "", "", "")
+    mo = SUBDIV_RE.match(libelle)
+    if mo is None:
+        raise ValueError(f"Could not parse subdivision {libelle!r}")
+    num = "1" if mo.group('num') == "1er" else mo.group('num')
+    return "article", num, mo.group('mult') or "", mo.group('pos') or ""

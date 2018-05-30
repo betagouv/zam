@@ -8,7 +8,8 @@ def amendements():
     from zam_aspirateur.amendements.models import Amendement
     return [
         Amendement(
-            article="Article 1",
+            subdiv_type="article",
+            subdiv_num="1",
             alinea="",
             num="42",
             auteur="M. DUPONT",
@@ -18,7 +19,8 @@ def amendements():
             dispositif="bar",
         ),
         Amendement(
-            article="Article 1",
+            subdiv_type="article",
+            subdiv_num="1",
             alinea="",
             num="57",
             auteur="M. DURAND",
@@ -28,7 +30,9 @@ def amendements():
             dispositif="qux",
         ),
         Amendement(
-            article="Article 7 bis",
+            subdiv_type="article",
+            subdiv_num="7",
+            subdiv_mult="bis",
             alinea="",
             num="21",
             auteur="M. MARTIN",
@@ -38,7 +42,8 @@ def amendements():
             dispositif="quuz",
         ),
         Amendement(
-            article="Article 1",
+            subdiv_type="article",
+            subdiv_num="1",
             alinea="",
             num="43",
             auteur="M. JEAN",
@@ -51,9 +56,13 @@ def amendements():
 
 
 FIELDS = [
-    "article",
+    "subdiv_type",
+    "subdiv_num",
+    "subdiv_mult",
+    "subdiv_pos",
     "alinea",
     "num",
+    "rectif",
     "auteur",
     "matricule",
     "groupe",
@@ -63,6 +72,9 @@ FIELDS = [
     "identique",
     "dispositif",
     "objet",
+    "avis",
+    "observations",
+    "reponse",
 ]
 
 
@@ -80,21 +92,7 @@ def test_write_csv(amendements, tmpdir):
 
     assert len(rows) == nb_rows == 4
 
-    assert rows[0] == "Article 1;;42;M. DUPONT;000000;RDSE;;;;;bar;foo"
-
-
-@pytest.mark.parametrize('text,exp_num,exp_mult', [
-    ('', None, ''),
-    ('Article 1', 1, ''),
-    ('Article 8\xa0bis', 8, 'bis'),
-    ('art. add. après Article 7', 7, ''),
-    ('Article 31 (précédemment examiné)', 31, ''),
-])
-def test_parse_article(text, exp_num, exp_mult):
-    from zam_aspirateur.amendements.writer import _parse_article
-
-    num, mult = _parse_article(text)
-    assert (num, mult) == (exp_num, exp_mult)
+    assert rows[0] == "article;1;;;;42;0;M. DUPONT;000000;RDSE;;;;;bar;foo;;;"
 
 
 def test_write_json_for_viewer(amendements, tmpdir):

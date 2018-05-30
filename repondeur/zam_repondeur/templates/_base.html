@@ -26,6 +26,12 @@
           </ol>
         </nav>
 
+        {% for class_, message in request.session.pop_flash() %}
+        <div class="alert alert-{{ class_ }}" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+
         {% block body %}
         {% endblock %}
 

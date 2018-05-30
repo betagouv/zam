@@ -10,7 +10,7 @@ from pyramid.response import FileResponse, Response
 from pyramid.view import view_config, view_defaults
 
 from zam_aspirateur.amendements.models import Amendement
-from zam_aspirateur.amendements.fetch import fetch_and_parse_all
+from zam_aspirateur.amendements.fetch import fetch_and_parse_all, NotFound
 from zam_aspirateur.amendements.writer import write_csv, write_xlsx
 from zam_aspirateur.__main__ import process_amendements
 
@@ -83,8 +83,14 @@ class LecturesAdd:
         num_texte = self.request.POST["num_texte"]
         if chambre not in CHAMBRES:
             raise HTTPBadRequest
-        basename = f"{chambre}-{session}-{num_texte}"
-        os.makedirs(os.path.join(self.data_dir, basename), exist_ok=True)
+
+        lecture_dir = os.path.join(self.data_dir, f"{chambre}-{session}-{num_texte}")
+        if os.path.isdir(lecture_dir):
+            self.request.session.flash(("warning", "Cette lecture existe déjà..."))
+        else:
+            os.makedirs(lecture_dir)
+            self.request.session.flash(("success", "Lecture créée avec succès."))
+
         return HTTPFound(
             location=self.request.route_url(
                 "lecture", chambre=chambre, session=session, num_texte=num_texte
@@ -110,13 +116,21 @@ def lecture(request: Request) -> dict:
 
 
 @view_config(route_name="amendements_csv")
-def amendements_csv(request: Request) -> FileResponse:
+def amendements_csv(request: Request) -> Response:
     chambre = request.matchdict["chambre"]
     session = request.matchdict["session"]
     num_texte = request.matchdict["num_texte"]
     assert chambre in CHAMBRES
 
-    amendements = get_amendements_senat(session, num_texte)
+    try:
+        amendements = get_amendements_senat(session, num_texte)
+    except NotFound:
+        request.session.flash(("danger", "Aucun amendement n'a pu être trouvé."))
+        return HTTPFound(
+            location=request.route_url(
+                "lecture", chambre=chambre, session=session, num_texte=num_texte
+            )
+        )
 
     with NamedTemporaryFile() as file_:
 
@@ -132,13 +146,21 @@ def amendements_csv(request: Request) -> FileResponse:
 
 
 @view_config(route_name="amendements_xlsx")
-def amendements_xlsx(request: Request) -> FileResponse:
+def amendements_xlsx(request: Request) -> Response:
     chambre = request.matchdict["chambre"]
     session = request.matchdict["session"]
     num_texte = request.matchdict["num_texte"]
     assert chambre in CHAMBRES
 
-    amendements = get_amendements_senat(session, num_texte)
+    try:
+        amendements = get_amendements_senat(session, num_texte)
+    except NotFound:
+        request.session.flash(("danger", "Aucun amendement n'a pu être trouvé."))
+        return HTTPFound(
+            location=request.route_url(
+                "lecture", chambre=chambre, session=session, num_texte=num_texte
+            )
+        )
 
     with NamedTemporaryFile() as file_:
 

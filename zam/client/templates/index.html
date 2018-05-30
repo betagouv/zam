@@ -162,6 +162,9 @@
     height: .6rem;
     border-radius: 1rem;
   }
+  .authors .author {
+    white-space: nowrap;
+  }
 </style>
 <h1>{{ title }}</h1>
 <main>
@@ -199,11 +202,13 @@
           <p class="authors">
             {% for amendement in reponse.amendements %}
               {% if loop.previtem is defined and amendement.authors != loop.previtem.authors or loop.previtem is not defined %}
-                <strong>{{ amendement.authors }}</strong>
-                {% if amendement.group and amendement.group.label -%}
-                  - ({{ amendement.group.label }}
-                  <span class="group-color" style="background-color: {{ amendement.group.color }};"></span>)
-                {%- endif %}{% if not loop.last and loop.nextitem.authors != amendement.authors %}, {% endif %}
+                <span class="author">
+                  <strong>{{ amendement.authors }}</strong>
+                  {% if amendement.group and amendement.group.label -%}
+                    ({{ amendement.group.label }}
+                    <span class="group-color" style="background-color: {{ amendement.group.color }};"></span>)
+                  {%- endif %}{% if not loop.last and loop.nextitem.authors != amendement.authors %}, {% endif %}
+                </span>
               {% endif %}
             {% endfor %}
           </p>

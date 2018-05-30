@@ -15,7 +15,7 @@ from zam_aspirateur.amendements.writer import write_csv, write_xlsx
 from zam_aspirateur.__main__ import process_amendements
 
 
-CHAMBRES = {"senat": "Sénat"}
+CHAMBRES = {"assemblee": "Assemblée nationale", "senat": "Sénat"}
 
 SESSIONS = ["2017-2018"]
 

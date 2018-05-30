@@ -22,7 +22,10 @@ def test_get_form(app):
     ]
 
     assert isinstance(resp.form.fields["chambre"][0], Select)
-    assert resp.form.fields["chambre"][0].options == [("senat", True, "Sénat")]
+    assert resp.form.fields["chambre"][0].options == [
+        ("assemblee", True, "Assemblée nationale"),
+        ("senat", False, "Sénat"),
+    ]
 
     assert isinstance(resp.form.fields["session"][0], Select)
     assert resp.form.fields["session"][0].options == [("2017-2018", True, "2017-2018")]
@@ -51,7 +54,7 @@ def test_post_form(app, tmpdir):
 def test_post_form_bad_chambre(app):
     resp = app.post(
         "/lectures/add",
-        {"chambre": "assemblee", "session": "2017-2018", "num_texte": "63"},
+        {"chambre": "tralala", "session": "2017-2018", "num_texte": "63"},
         expect_errors=True,
     )
     assert resp.status_code == 400  # Bad request

@@ -13,12 +13,16 @@
     <div class="card">
         <div class="card-body">
             <div class="card-title">
-                <h4>Amendements</h4>
+                <h4>Récupérer les amendements</h4>
             </div>
             <div class="card-text">
-                <p>Récupérer un tableau de tous les amendements déposés, triés par ordre de passage.</p>
+            {% if lecture.chambre == 'senat' %}
+                <p>Récupérer un tableau de tous les amendements déposés, triés par ordre de passage, depuis le site du Sénat.</p>
                 <a class="btn btn-primary" href="{{ request.route_url('amendements_csv', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}"><i class="fa fa-table"></i>Télécharger (CSV)</a>
                 <a class="btn btn-primary" href="{{ request.route_url('amendements_xlsx', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}"><i class="fa fa-file-excel"></i>Télécharger (Excel)</a>
+            {% elif lecture.chambre == 'assemblee' %}
+                <p>La récupération des amendements depuis le site de l'Assemblée nationale n'est pas encore disponible. 🚧</p>
+            {% endif %}
             </div>
         </div>
     </div>

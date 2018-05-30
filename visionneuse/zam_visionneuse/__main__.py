@@ -15,3 +15,7 @@ def generate() -> str:
     _, aspirateur_items = load_aspirateur_source()
     articles, amendements, reponses = load_data(drupal_items, aspirateur_items)
     return render_and_save_html(title, articles, amendements, reponses)
+
+
+def main() -> None:
+    generate()

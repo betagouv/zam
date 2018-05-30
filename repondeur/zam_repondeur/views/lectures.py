@@ -2,7 +2,7 @@ import os
 import re
 from dataclasses import dataclass
 from tempfile import NamedTemporaryFile
-from typing import Generator, List
+from typing import Any, Generator, List
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
 from pyramid.request import Request
@@ -36,10 +36,25 @@ class Lecture:
     def __str__(self) -> str:
         return f"{self.chambre_disp}, session {self.session}, texte nº {self.num_texte}"
 
+    def __lt__(self, other: Any) -> bool:
+        if type(self) != type(other):
+            return NotImplemented
+        return (self.chambre, self.session, int(self.num_texte)) < (
+            other.chambre,
+            other.session,
+            int(other.num_texte),
+        )
+
 
 @view_config(route_name="lectures_list", renderer="lectures_list.html")
 def lectures_list(request: Request) -> dict:
-    return {"lectures": list(list_lectures(request.registry.settings["zam.data_dir"]))}
+    return {
+        "lectures": list(
+            sorted(
+                list_lectures(request.registry.settings["zam.data_dir"]), reverse=True
+            )
+        )
+    }
 
 
 def list_lectures(dirname: str) -> Generator:

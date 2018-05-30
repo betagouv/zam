@@ -26,7 +26,13 @@ class Article:
     amendements: Any = field(default_factory=lambda: [])  # List[Amendement]
 
     def __str__(self) -> str:
-        return f'{self.id} {self.state} {self.multiplier}'
+        if self.state:
+            return f'{self.id} {self.state} {self.multiplier}'.strip()
+        return f'{self.id} {self.multiplier}'.strip()
+
+    @property
+    def slug(self) -> str:
+        return f'article-{str(self).replace(" ", "-")}'
 
     @staticmethod
     def pk_from_raw(raw: dict) -> str:

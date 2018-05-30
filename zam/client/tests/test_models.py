@@ -39,6 +39,29 @@ def test_articles_load():
     assert article.amendements == []
 
 
+def test_article_slug():
+    items = [{
+        "idArticle": 1,
+        "etat": "",
+        "multiplicatif": "",
+        "titre": "Approbation des tableaux d'\u00e9quilibre",
+        "document": "article-1.pdf"
+    }]
+    articles = Articles.load(items, None)
+    article = list(articles.values())[0]
+    assert article.slug == 'article-1'
+    items = [{
+        "idArticle": 1,
+        "etat": "ap",
+        "multiplicatif": "bis",
+        "titre": "Approbation des tableaux d'\u00e9quilibre",
+        "document": "article-1.pdf"
+    }]
+    articles = Articles.load(items, None)
+    article = list(articles.values())[0]
+    assert article.slug == 'article-1-ap-bis'
+
+
 def test_amendements_load():
     items = [{
         "idArticle": 1,

@@ -1,0 +1,27 @@
+{% extends "_base.html" %}
+
+{% block body %}
+
+<a href="{{ request.route_url('lectures_add') }}" class="btn btn-primary btn-lg" style="float: right">Ajouter une lecture...</a>
+
+<h2>Lectures</h2>
+
+{% if lectures %}
+    <ul>
+        {% for lecture in lectures %}
+        <li class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ lecture }}</h5>
+                <div class="card-text">
+                    <div><a href="{{ request.route_url('amendements_csv', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}"><i class="fas fa-table"></i> Amendements (CSV)</a></div>
+                    <div><a href="{{ request.route_url('amendements_xlsx', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}"><i class="far fa-file-excel"></i> Amendements (Excel)</a></div>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Aucune lecture pour l'instant.</p>
+{% endif %}
+
+{% endblock %}

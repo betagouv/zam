@@ -24,7 +24,7 @@ RE_TEXTE = re.compile(r"^(?P<chambre>\w+)-(?P<session>\d{4}-\d{4})-(?P<num_texte
 
 
 @dataclass
-class Texte:
+class Lecture:
     chambre: str
     session: str
     num_texte: str
@@ -37,22 +37,22 @@ class Texte:
         return f"{self.chambre_disp}, session {self.session}, texte nº {self.num_texte}"
 
 
-@view_config(route_name="textes_list", renderer="textes_list.html")
-def textes_list(request: Request) -> dict:
-    return {"textes": list(list_textes(request.registry.settings["zam.data_dir"]))}
+@view_config(route_name="lectures_list", renderer="lectures_list.html")
+def lectures_list(request: Request) -> dict:
+    return {"lectures": list(list_lectures(request.registry.settings["zam.data_dir"]))}
 
 
-def list_textes(dirname: str) -> Generator:
+def list_lectures(dirname: str) -> Generator:
     if not os.path.isdir(dirname):
         return
     for name in os.listdir(dirname):
         mo = RE_TEXTE.match(name)
         if mo is not None:
-            yield Texte(**mo.groupdict())  # type: ignore
+            yield Lecture(**mo.groupdict())  # type: ignore
 
 
-@view_defaults(route_name="textes_add", renderer="textes_add.html")
-class TextesAdd:
+@view_defaults(route_name="lectures_add", renderer="lectures_add.html")
+class LecturesAdd:
     def __init__(self, request: Request) -> None:
         self.request = request
         self.data_dir = self.request.registry.settings["zam.data_dir"]
@@ -70,7 +70,7 @@ class TextesAdd:
             raise HTTPBadRequest
         basename = f"{chambre}-{session}-{num_texte}"
         os.makedirs(os.path.join(self.data_dir, basename), exist_ok=True)
-        return HTTPFound(location=self.request.route_url("textes_list"))
+        return HTTPFound(location=self.request.route_url("lectures_list"))
 
     def _form_data(self) -> dict:
         return {

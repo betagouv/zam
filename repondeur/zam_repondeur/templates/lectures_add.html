@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
 
 {% block body %}
-    <h2>Ajouter un texte...</h2>
+    <h2>Ajouter une lecture...</h2>
 
     <form action="{{ request.path }}" method="POST">
         <div class="form-group">
@@ -26,7 +26,7 @@
         </div>
         <div class="form-group">
             <input type="submit" name="submit" value="Ajouter" class="btn btn-primary btn-lg">
-            <a href="{{ request.route_url('textes_list') }}" class="btn">Annuler</a>
+            <a href="{{ request.route_url('lectures_list') }}" class="btn">Annuler</a>
         </div>
     </form>
 

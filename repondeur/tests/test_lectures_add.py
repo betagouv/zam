@@ -5,14 +5,14 @@ from webtest.forms import Select
 
 def test_get_form(app):
 
-    resp = app.get("/textes/add")
+    resp = app.get("/lectures/add")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
     # Check the form
     assert resp.form.method == "POST"
-    assert resp.form.action == "/textes/add"
+    assert resp.form.action == "/lectures/add"
 
     assert list(resp.form.fields.keys()) == [
         "chambre",
@@ -33,7 +33,7 @@ def test_get_form(app):
 
 
 def test_post_form(app, tmpdir):
-    form = app.get("/textes/add").form
+    form = app.get("/lectures/add").form
     form["chambre"] = "senat"
     form["session"] = "2017-2018"
     form["num_texte"] = "63"
@@ -43,14 +43,14 @@ def test_post_form(app, tmpdir):
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/textes/"
+    assert resp.location == "http://localhost/lectures/"
 
     assert os.path.isdir(tmpdir.join("zam").join("senat-2017-2018-63"))
 
 
 def test_post_form_bad_chambre(app):
     resp = app.post(
-        "/textes/add",
+        "/lectures/add",
         {"chambre": "assemblee", "session": "2017-2018", "num_texte": "63"},
         expect_errors=True,
     )

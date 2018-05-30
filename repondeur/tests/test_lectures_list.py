@@ -5,16 +5,16 @@ import pytest
 
 def test_get_list_empty(app):
 
-    resp = app.get("/textes/")
+    resp = app.get("/lectures/")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
-    assert "Aucun texte pour l'instant." in resp.text
+    assert "Aucune lecture pour l'instant." in resp.text
 
 
 @pytest.yield_fixture
-def dummy_texte(app):
+def dummy_lecture(app):
     data_dir = app.app.registry.settings["zam.data_dir"]
     dir_names = ["senat-2017-2018-63", "ignore_this"]
     paths = [os.path.join(data_dir, dir_name) for dir_name in dir_names]
@@ -25,9 +25,9 @@ def dummy_texte(app):
         os.rmdir(path)
 
 
-def test_get_list_not_empty(app, dummy_texte):
+def test_get_list_not_empty(app, dummy_lecture):
 
-    resp = app.get("/textes/")
+    resp = app.get("/lectures/")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"

@@ -11,7 +11,7 @@ StreamHandler(sys.stdout).push_application()
 
 
 @cli
-def generate(limit: int=None) -> None:
+def generate(limit: int = None) -> None:
     """Generate the final confidential page from sensitive sources.
 
     :limit: Number of articles to parse, useful for debugging (default=all).
@@ -19,7 +19,8 @@ def generate(limit: int=None) -> None:
     title, drupal_items = load_drupal_source()
     _, aspirateur_items = load_aspirateur_source()
     articles, amendements, reponses = load_data(
-        drupal_items, aspirateur_items, limit)
+        drupal_items, aspirateur_items, limit
+    )
     render_and_save_html(title, articles, amendements, reponses)
 
 

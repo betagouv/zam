@@ -7,10 +7,10 @@ from models import load_data
 from templates import render_and_save_html
 
 
-@pytest.fixture(scope='module')
-@require_env_vars(env_vars=[
-    'ZAM_DRUPAL_SOURCE', 'ZAM_ASPIRATEUR_SOURCE', 'ZAM_OUTPUT'
-])
+@pytest.fixture(scope="module")
+@require_env_vars(
+    env_vars=["ZAM_DRUPAL_SOURCE", "ZAM_ASPIRATEUR_SOURCE", "ZAM_OUTPUT"]
+)
 def document() -> HTMLParser:
     """Read and parse the HTML output, generated if inexistent."""
     title, drupal_items = load_drupal_source()

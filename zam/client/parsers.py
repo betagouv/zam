@@ -2,7 +2,7 @@ from typing import IO, Union
 from xml.etree import ElementTree
 import zipfile
 
-nsmap = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+nsmap = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
 
 
 def qualified_name(tag: str) -> str:
@@ -15,8 +15,8 @@ def qualified_name(tag: str) -> str:
 
     Inspiration: https://github.com/python-openxml/python-docx/
     """
-    prefix, tagroot = tag.split(':')
-    return f'{{{nsmap[prefix]}}}{tagroot}'
+    prefix, tagroot = tag.split(":")
+    return f"{{{nsmap[prefix]}}}{tagroot}"
 
 
 def xml2text(xml: bytes) -> str:
@@ -26,21 +26,21 @@ def xml2text(xml: bytes) -> str:
 
     Inspiration: https://github.com/python-openxml/python-docx/
     """
-    text = ''
+    text = ""
     root = ElementTree.fromstring(xml)
     for child in root.iter():
-        if child.tag == qualified_name('w:t'):
+        if child.tag == qualified_name("w:t"):
             t_text = child.text
-            text += t_text if t_text is not None else ''
-        elif child.tag == qualified_name('w:tab'):
-            text += ''  # Not '\t' to avoid <pre> once commonmarked.
-        elif child.tag in (qualified_name('w:br'), qualified_name('w:cr')):
-            text += '\n'
+            text += t_text if t_text is not None else ""
+        elif child.tag == qualified_name("w:tab"):
+            text += ""  # Not '\t' to avoid <pre> once commonmarked.
+        elif child.tag in (qualified_name("w:br"), qualified_name("w:cr")):
+            text += "\n"
         elif child.tag == qualified_name("w:p"):
-            text += '\n\n'
+            text += "\n\n"
     return text
 
 
 def parse_docx(source: Union[str, IO[bytes]]) -> str:
     zipf = zipfile.ZipFile(source)
-    return xml2text(zipf.read('word/document.xml'))
+    return xml2text(zipf.read("word/document.xml"))

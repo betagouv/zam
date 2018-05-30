@@ -19,16 +19,16 @@ class Article:
     pk: str
     id: int
     title: str
-    state: str = ''
-    multiplier: str = ''
-    jaune: str = ''
-    content: str = 'TODO'
+    state: str = ""
+    multiplier: str = ""
+    jaune: str = ""
+    content: str = "TODO"
     amendements: Any = field(default_factory=lambda: [])  # List[Amendement]
 
     def __str__(self) -> str:
         if self.state:
-            return f'{self.id} {self.state} {self.multiplier}'.strip()
-        return f'{self.id} {self.multiplier}'.strip()
+            return f"{self.id} {self.state} {self.multiplier}".strip()
+        return f"{self.id} {self.multiplier}".strip()
 
     @property
     def slug(self) -> str:
@@ -36,30 +36,29 @@ class Article:
 
     @staticmethod
     def pk_from_raw(raw: dict) -> str:
-        return raw['document'][:-len('.pdf')]
+        return raw["document"][: -len(".pdf")]
 
 
 class Articles(OrderedDict):
-
     @classmethod
-    def load(cls, items: List[dict], limit: Optional[int]) -> 'Articles':
+    def load(cls, items: List[dict], limit: Optional[int]) -> "Articles":
         articles = cls()
         for raw_article in warnumerate(items, limit):
             pk = Article.pk_from_raw(raw_article)
             articles[pk] = Article(  # type: ignore # dataclasses
                 pk=pk,
-                id=raw_article['idArticle'],
-                title=raw_article['titre'],
-                state=raw_article['etat'],
-                multiplier=raw_article['multiplicatif'],
+                id=raw_article["idArticle"],
+                title=raw_article["titre"],
+                state=raw_article["etat"],
+                multiplier=raw_article["multiplicatif"],
             )
         return articles
 
     def load_jaunes(self, items: List[dict], limit: Optional[int]) -> None:
-        jaunes_path = Path(os.environ['ZAM_JAUNES_SOURCE'])
+        jaunes_path = Path(os.environ["ZAM_JAUNES_SOURCE"])
         for raw_article in warnumerate(items, limit):
             article = self.get_from_raw(raw_article)
-            jaune_name = raw_article['feuilletJaune'].replace('.pdf', '.docx')
+            jaune_name = raw_article["feuilletJaune"].replace(".pdf", ".docx")
             jaune_content = load_docx(jaunes_path / jaune_name)
             # Convert jaune to CommonMark to preserve some styles.
             article.jaune = CommonMark.commonmark(jaune_content)
@@ -74,42 +73,42 @@ class Amendement:
     id: int
     article: Article
     group: dict
-    authors: str = ''
+    authors: str = ""
     is_gouvernemental: bool = False
-    summary: str = ''
-    content: str = ''
-    document: str = ''
+    summary: str = ""
+    content: str = ""
+    document: str = ""
 
     def __str__(self) -> str:
         return self.pk
 
     @staticmethod
     def pk_from_raw(raw: dict) -> str:
-        return raw['document'][:-len('-00.pdf')]
+        return raw["document"][: -len("-00.pdf")]
 
 
 class Amendements(OrderedDict):
-
     @classmethod
     def load(
         cls, items: List[dict], articles: Articles, limit: Optional[int]
-    ) -> 'Amendements':
+    ) -> "Amendements":
         amendements = cls()
         for raw_article in warnumerate(items, limit):
             article = articles.get_from_raw(raw_article)
-            for raw_amendement in raw_article.get('amendements', []):
+            for raw_amendement in raw_article.get("amendements", []):
                 pk = Amendement.pk_from_raw(raw_amendement)
-                id_ = raw_amendement['idAmendement']
-                auteurs = raw_amendement.get('auteurs')
+                id_ = raw_amendement["idAmendement"]
+                auteurs = raw_amendement.get("auteurs")
                 if auteurs:
-                    authors = ', '.join(author['auteur'].strip()
-                                        for author in auteurs)
+                    authors = ", ".join(
+                        author["auteur"].strip() for author in auteurs
+                    )
                 group = None
-                if 'groupesParlementaires' in raw_amendement:
-                    group = raw_amendement['groupesParlementaires'][0]
+                if "groupesParlementaires" in raw_amendement:
+                    group = raw_amendement["groupesParlementaires"][0]
                     group = {
-                        'label': group['libelle'],
-                        'color': group['couleur'],
+                        "label": group["libelle"],
+                        "color": group["couleur"],
                     }
                 amendement = Amendement(  # type: ignore # dataclasses
                     pk=pk,
@@ -117,10 +116,10 @@ class Amendements(OrderedDict):
                     authors=authors,
                     group=group,
                     article=article,
-                    document=raw_amendement['document'],
-                    is_gouvernemental=raw_amendement['gouvernemental'],
-                    summary=raw_amendement['objet'],
-                    content=raw_amendement['dispositif'],
+                    document=raw_amendement["document"],
+                    is_gouvernemental=raw_amendement["gouvernemental"],
+                    summary=raw_amendement["objet"],
+                    content=raw_amendement["dispositif"],
                 )
                 amendements[pk] = amendement
                 article.amendements.append(amendement)
@@ -144,24 +143,26 @@ class Reponse:
 
     @staticmethod
     def pk_from_raw(raw: dict) -> str:
-        unique = raw.get('presentation', str(raw['idReponse']))
+        unique = raw.get("presentation", str(raw["idReponse"]))
         return base64.b64encode(unique.encode()).decode()
 
 
 class Reponses(OrderedDict):
-
     @classmethod
     def load(
-        cls, items: List[dict], articles: Articles, amendements: Amendements,
-        limit: Optional[int]
-    ) -> 'Reponses':
+        cls,
+        items: List[dict],
+        articles: Articles,
+        amendements: Amendements,
+        limit: Optional[int],
+    ) -> "Reponses":
         reponses = cls()
         for raw_article in warnumerate(items, limit):
             article = articles.get_from_raw(raw_article)
-            for raw_amendement in raw_article.get('amendements', []):
-                if 'reponse' not in raw_amendement:
+            for raw_amendement in raw_article.get("amendements", []):
+                if "reponse" not in raw_amendement:
                     continue
-                raw_reponse = raw_amendement['reponse']
+                raw_reponse = raw_amendement["reponse"]
                 pk = Reponse.pk_from_raw(raw_reponse)
                 try:
                     amendement = amendements.get_from_raw(raw_amendement)
@@ -176,19 +177,20 @@ class Reponses(OrderedDict):
                     continue
                 reponses[pk] = Reponse(  # type: ignore # dataclasses
                     pk=pk,
-                    avis=raw_reponse['avis'],
+                    avis=raw_reponse["avis"],
                     presentation=strip_styles(
-                        raw_reponse.get('presentation', '')),
-                    content=strip_styles(raw_reponse.get('reponse', '')),
+                        raw_reponse.get("presentation", "")
+                    ),
+                    content=strip_styles(raw_reponse.get("reponse", "")),
                     article=article,
                     amendements=[amendement],
                 )
         return reponses
 
 
-@require_env_vars(env_vars=['ZAM_JAUNES_SOURCE'])
+@require_env_vars(env_vars=["ZAM_JAUNES_SOURCE"])
 def load_data(
-    drupal_items: List[dict], aspirateur_items: List[dict], limit: int=None
+    drupal_items: List[dict], aspirateur_items: List[dict], limit: int = None
 ) -> Tuple[Articles, Amendements, Reponses]:
     articles = Articles.load(drupal_items, limit)
     articles.load_jaunes(drupal_items, limit)

@@ -18,6 +18,7 @@ from zam_aspirateur.amendements.fetch import (
 from zam_aspirateur.amendements.models import Amendement
 from zam_aspirateur.amendements.writer import (
     write_csv,
+    write_json_for_viewer,
     write_xlsx,
 )
 from zam_aspirateur.senateurs.fetch import fetch_senateurs
@@ -69,8 +70,8 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         '--output-format',
         default='csv',
-        choices=['csv', 'xlsx'],
-        help='format du tableau à générer',
+        choices=['csv', 'xlsx', 'json'],
+        help='format de sortie à générer',
     )
     return parser.parse_args(argv)
 
@@ -187,13 +188,22 @@ def save_output(
     format: str,
 ) -> None:
     """
-    Save amendments to a spreadsheet in CSV or XLSX format
+    Save amendments
+
+    - as a spreadsheet, either in CSV or XLSX format
+    - as a JSON file suitable for opening with the viewer
     """
-    assert format in ('csv', 'xlsx')
-    write_func = write_csv if format == 'csv' else write_xlsx
-    print('Écriture du tableau...')
-    nb_rows = write_func(amendements, filename)
-    print(f'{nb_rows} amendements écrits dans {filename}')
+    if format in ('csv', 'xlsx'):
+        write_func = write_csv if format == 'csv' else write_xlsx
+        print('Écriture du tableau...')
+        nb_rows = write_func(amendements, filename)
+        print(f'{nb_rows} amendements écrits dans {filename}')
+    elif format == 'json':
+        print('Écriture du fichier...')
+        nb_rows = write_json_for_viewer(1, 'Test', amendements, filename)
+        print(f'{nb_rows} amendements écrits dans {filename}')
+    else:
+        raise NotImplementedError
 
 
 if __name__ == '__main__':

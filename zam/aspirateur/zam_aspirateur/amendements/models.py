@@ -38,6 +38,10 @@ class Amendement:
         assert mo is not None
         return int(mo.group(1))
 
+    @property
+    def gouvernemental(self) -> bool:
+        return self.auteur == "LE GOUVERNEMENT"
+
     def replace(self, **changes: dict) -> 'Amendement':
         amendement = replace(self, **changes)  # type: Amendement
         return amendement

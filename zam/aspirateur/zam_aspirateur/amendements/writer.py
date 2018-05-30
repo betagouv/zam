@@ -1,6 +1,10 @@
 import csv
+import json
+import re
 from dataclasses import fields
-from typing import Iterable
+from itertools import groupby
+from operator import attrgetter
+from typing import Iterable, Optional, Tuple
 
 from openpyxl import Workbook
 from openpyxl.styles import (
@@ -28,6 +32,16 @@ FIELDS_NAMES = {
 
 DARK_BLUE = Color(rgb='00182848')
 WHITE = Color(rgb='00FFFFFF')
+GROUPS_COLORS = {
+    'Les Républicains': '#2011e8',  # https://fr.wikipedia.org/wiki/Les_R%C3%A9publicains # noqa
+    'UC': '#1e90ff',  # https://fr.wikipedia.org/wiki/Groupe_Union_centriste_(S%C3%A9nat) # noqa
+    'SOCR': '#ff8080',  # https://fr.wikipedia.org/wiki/Groupe_socialiste_et_r%C3%A9publicain_(S%C3%A9nat) # noqa
+    'RDSE': '#a38ebc',  # https://fr.wikipedia.org/wiki/Groupe_du_Rassemblement_d%C3%A9mocratique_et_social_europ%C3%A9en # noqa
+    'Les Indépendants': '#30bfe9',  # https://fr.wikipedia.org/wiki/Groupe_Les_Ind%C3%A9pendants_%E2%80%93_R%C3%A9publique_et_territoires # noqa
+    'NI': '#ffffff',  # https://fr.wikipedia.org/wiki/Non-inscrit
+    'CRCE': '#dd0000',  # https://fr.wikipedia.org/wiki/Groupe_communiste,_r%C3%A9publicain,_citoyen_et_%C3%A9cologiste # noqa
+    'LaREM': '#ffeb00',  # https://fr.wikipedia.org/wiki/Groupe_La_R%C3%A9publique_en_marche_(S%C3%A9nat) # noqa
+}
 
 
 def write_csv(amendements: Iterable[Amendement], filename: str) -> int:
@@ -86,3 +100,90 @@ def _write_data_rows(ws: Worksheet,
             cell.font = Font(sz=8)
         nb_rows += 1
     return nb_rows
+
+
+def write_json_for_viewer(id_projet: int,
+                          title: str,
+                          amendements: Iterable[Amendement],
+                          filename: str) -> int:
+    data = _format_amendements(id_projet, title, amendements)
+    with open(filename, 'w') as file_:
+        json.dump(data, file_)
+    return len(list(amendements))
+
+
+def _format_amendements(id_projet: int,
+                        title: str,
+                        amendements: Iterable[Amendement]) -> list:
+    sorted_amendements = sorted(amendements, key=attrgetter('article'))
+    return [{
+        "idProjet": id_projet,
+        "libelle": title,
+        "list": [
+            _format_article(article, items)
+            for article, items in groupby(
+                sorted_amendements,
+                key=attrgetter('article'),
+            )
+            if article
+        ],
+    }]
+
+
+def _format_article(article: str,
+                    amendements: Iterable[Amendement]) -> dict:
+    id_, mult = _parse_article(article)
+    return {
+        "idArticle": id_,
+        "etat": "",
+        "multiplicatif": mult,
+        "titre": "TODO",
+        "feuilletJaune": f"jaune-{id_}{mult}.pdf",
+        "document": f"article-{id_}{mult}.pdf",
+        "amendements": [
+            _format_amendement(amendement)
+            for amendement in amendements
+        ]
+    }
+
+
+ARTICLE_RE = re.compile(
+    r'''^
+        .*                      # some stuff before
+        Article\s(?P<id>\d+)    # article number
+        (?:\s(?P<mult>\w+))?    # bis, ter, etc.
+        (?:\s.*)?               # some stuff after
+        $
+    ''', re.VERBOSE
+)
+
+
+def _parse_article(article: str) -> Tuple[Optional[int], str]:
+    if article == '':
+        return (None, '')
+    mo = ARTICLE_RE.match(article)
+    if mo is None:
+        raise ValueError(f"Could not parse article number {article!r}")
+    return int(mo.group('id')), mo.group('mult') or ""
+
+
+def _format_amendement(amendement: Amendement) -> dict:
+    return {
+        "idAmendement": amendement.num_int,
+        "etat": amendement.sort or '',
+        "gouvernemental": amendement.gouvernemental,
+        "auteurs": [
+            {
+                "auteur": amendement.auteur
+            }
+        ],
+        "groupesParlementaires": [
+            {
+                "libelle": amendement.groupe or '',
+                "couleur": GROUPS_COLORS.get(amendement.groupe, "#ffffff")
+            }
+        ],
+        "document": f"{amendement.num_int:06}-00.pdf",
+        "objet": amendement.objet,
+        "dispositif": amendement.dispositif,
+    }

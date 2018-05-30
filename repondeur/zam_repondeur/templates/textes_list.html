@@ -9,7 +9,15 @@
 {% if textes %}
     <ul>
         {% for texte in textes %}
-        <li>{{ texte }}</li>
+        <li class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ texte }}</h5>
+                <div class="card-text">
+                    <div><a href="{{ request.route_url('amendements_csv', chambre=texte.chambre, session=texte.session, num_texte=texte.num_texte) }}"><i class="fas fa-table"></i> Amendements (CSV)</a></div>
+                    <div><a href="{{ request.route_url('amendements_xlsx', chambre=texte.chambre, session=texte.session, num_texte=texte.num_texte) }}"><i class="far fa-file-excel"></i> Amendements (Excel)</a></div>
+                </div>
+            </div>
+        </li>
         {% endfor %}
     </ul>
 {% else %}

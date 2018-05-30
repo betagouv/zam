@@ -10,6 +10,13 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.add_route("home", "/")
         config.add_route("textes_list", "/textes/")
         config.add_route("textes_add", "/textes/add")
+        config.add_route(
+            "amendements_csv", "/textes/{chambre}/{session}/{num_texte}/amendements.csv"
+        )
+        config.add_route(
+            "amendements_xlsx",
+            "/textes/{chambre}/{session}/{num_texte}/amendements.xlsx",
+        )
         config.scan()
         app = config.make_wsgi_app()
     return app

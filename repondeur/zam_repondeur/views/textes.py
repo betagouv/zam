@@ -1,15 +1,17 @@
 import os
 import re
 from dataclasses import dataclass
+from tempfile import NamedTemporaryFile
 from typing import Generator, List
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
 from pyramid.request import Request
-from pyramid.response import Response
+from pyramid.response import FileResponse, Response
 from pyramid.view import view_config, view_defaults
 
 from zam_aspirateur.amendements.models import Amendement
 from zam_aspirateur.amendements.fetch import fetch_and_parse_all
+from zam_aspirateur.amendements.writer import write_csv, write_xlsx
 from zam_aspirateur.__main__ import process_amendements
 
 
@@ -64,7 +66,7 @@ class TextesAdd:
         chambre = self.request.POST["chambre"]
         session = self.request.POST["session"]
         num_texte = self.request.POST["num_texte"]
-        if chambre != "senat":
+        if chambre not in CHAMBRES:
             raise HTTPBadRequest
         basename = f"{chambre}-{session}-{num_texte}"
         os.makedirs(os.path.join(self.data_dir, basename), exist_ok=True)
@@ -75,6 +77,52 @@ class TextesAdd:
             "chambres": CHAMBRES.items(),
             "sessions": [(sess, sess) for sess in SESSIONS],
         }
+
+
+@view_config(route_name="amendements_csv")
+def amendements_csv(request: Request) -> FileResponse:
+    chambre = request.matchdict["chambre"]
+    session = request.matchdict["session"]
+    num_texte = request.matchdict["num_texte"]
+    assert chambre in CHAMBRES
+
+    amendements = get_amendements_senat(session, num_texte)
+
+    with NamedTemporaryFile() as file_:
+
+        tmp_file_path = os.path.abspath(file_.name)
+
+        write_csv(amendements, tmp_file_path)
+
+        response = FileResponse(tmp_file_path)
+        attach_name = f"amendements-{chambre}-{session}-{num_texte}.csv"
+        response.content_type = "text/csv"
+        response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
+        return response
+
+
+@view_config(route_name="amendements_xlsx")
+def amendements_xlsx(request: Request) -> FileResponse:
+    chambre = request.matchdict["chambre"]
+    session = request.matchdict["session"]
+    num_texte = request.matchdict["num_texte"]
+    assert chambre in CHAMBRES
+
+    amendements = get_amendements_senat(session, num_texte)
+
+    with NamedTemporaryFile() as file_:
+
+        tmp_file_path = os.path.abspath(file_.name)
+
+        write_xlsx(amendements, tmp_file_path)
+
+        response = FileResponse(tmp_file_path)
+        attach_name = f"amendements-{chambre}-{session}-{num_texte}.xlsx"
+        response.content_type = (
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
+        return response
 
 
 def get_amendements_senat(session: str, num_texte: str) -> List[Amendement]:

@@ -1,4 +1,4 @@
-# Client (means frontend for ministers and their teams)
+# Visionneuse (means frontend for ministers and their teams)
 
 ## Requirements
 
@@ -6,9 +6,9 @@
 
 ## Installing
 
-1.  Go to the `client` folder
-2.  Create the virtualenv `python3 -m venv ~/.virtualenvs/zam`
-3.  Activate it `source ~/.virtualenvs/zam/bin/activate.fish`
+1.  Go to the `visionneuse` folder
+2.  Create the virtualenv `python3 -m venv ~/.virtualenvs/zam-visionneuse`
+3.  Activate it `source ~/.virtualenvs/zam-visionneuse/bin/activate.fish`
 4.  Install dependecies `pip install -r requirements.txt`
 
 ## Generating

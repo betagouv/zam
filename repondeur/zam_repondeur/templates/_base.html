@@ -18,8 +18,17 @@
     </nav>
 
     <main role="main" class="container">
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            {% block breadcrumbs %}
+            {% endblock %}
+          </ol>
+        </nav>
+
         {% block body %}
         {% endblock %}
+
     </main>
 </body>
 </html>

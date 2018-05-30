@@ -1,5 +1,12 @@
 {% extends "_base.html" %}
 
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Ajouter une lecture...</li>
+{% endblock %}
+
+
 {% block body %}
     <h2>Ajouter une lecture...</h2>
 

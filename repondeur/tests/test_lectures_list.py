@@ -33,5 +33,3 @@ def test_get_list_not_empty(app, dummy_lecture):
     assert resp.content_type == "text/html"
 
     assert "Sénat, session 2017-2018, texte nº 63" in resp.text
-    assert "Amendements (CSV)" in resp.text
-    assert "Amendements (Excel)" in resp.text

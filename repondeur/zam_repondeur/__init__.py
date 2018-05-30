@@ -10,6 +10,7 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.add_route("home", "/")
         config.add_route("lectures_list", "/lectures/")
         config.add_route("lectures_add", "/lectures/add")
+        config.add_route("lecture", "/lectures/{chambre}/{session}/{num_texte}/")
         config.add_route(
             "amendements_csv",
             "/lectures/{chambre}/{session}/{num_texte}/amendements.csv",

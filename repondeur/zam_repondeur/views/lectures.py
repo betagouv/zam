@@ -85,13 +85,28 @@ class LecturesAdd:
             raise HTTPBadRequest
         basename = f"{chambre}-{session}-{num_texte}"
         os.makedirs(os.path.join(self.data_dir, basename), exist_ok=True)
-        return HTTPFound(location=self.request.route_url("lectures_list"))
+        return HTTPFound(
+            location=self.request.route_url(
+                "lecture", chambre=chambre, session=session, num_texte=num_texte
+            )
+        )
 
     def _form_data(self) -> dict:
         return {
             "chambres": CHAMBRES.items(),
             "sessions": [(sess, sess) for sess in SESSIONS],
         }
+
+
+@view_config(route_name="lecture", renderer="lecture.html")
+def lecture(request: Request) -> dict:
+    return {
+        "lecture": Lecture(  # type: ignore
+            chambre=request.matchdict["chambre"],
+            session=request.matchdict["session"],
+            num_texte=request.matchdict["num_texte"],
+        )
+    }
 
 
 @view_config(route_name="amendements_csv")

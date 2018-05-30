@@ -43,7 +43,7 @@ def test_post_form(app, tmpdir):
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/"
+    assert resp.location == "http://localhost/lectures/senat/2017-2018/63/"
 
     assert os.path.isdir(tmpdir.join("zam").join("senat-2017-2018-63"))
 

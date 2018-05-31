@@ -100,16 +100,11 @@ class Amendements(OrderedDict):
                 id_ = raw_amendement["idAmendement"]
                 auteurs = raw_amendement.get("auteurs")
                 if auteurs:
-                    authors = ", ".join(
-                        author["auteur"].strip() for author in auteurs
-                    )
+                    authors = ", ".join(author["auteur"].strip() for author in auteurs)
                 group = None
                 if "groupesParlementaires" in raw_amendement:
                     group = raw_amendement["groupesParlementaires"][0]
-                    group = {
-                        "label": group["libelle"],
-                        "color": group["couleur"],
-                    }
+                    group = {"label": group["libelle"], "color": group["couleur"]}
                 amendement = Amendement(  # type: ignore # dataclasses
                     pk=pk,
                     id=id_,
@@ -177,9 +172,7 @@ class Reponses(OrderedDict):
                 reponses[pk] = Reponse(  # type: ignore # dataclasses
                     pk=pk,
                     avis=raw_reponse["avis"],
-                    presentation=strip_styles(
-                        raw_reponse.get("presentation", "")
-                    ),
+                    presentation=strip_styles(raw_reponse.get("presentation", "")),
                     content=strip_styles(raw_reponse.get("reponse", "")),
                     article=article,
                     amendements=[amendement],

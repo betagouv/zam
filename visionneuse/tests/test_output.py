@@ -34,13 +34,7 @@ def test_reponse_has_amendements(output):
     reponse = output.tags("article")[0]
     details = reponse.css("details")
     assert len(details) == 66
-    assert (
-        details[1]
-        .css_first("summary")
-        .text()
-        .strip()
-        .startswith("Amendement 31")
-    )
+    assert details[1].css_first("summary").text().strip().startswith("Amendement 31")
     assert (
         details[1]
         .css_first("div")

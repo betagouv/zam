@@ -22,9 +22,7 @@ def require_env_vars(env_vars: list) -> Callable:
         wrapped: Callable, instance: None, args: List[Path], kwargs: dict
     ) -> Any:
         for env_var in env_vars:
-            assert (
-                env_var in os.environ
-            ), f"Please set {env_var} environment variable."
+            assert env_var in os.environ, f"Please set {env_var} environment variable."
         return wrapped(*args, **kwargs)
 
     return wrapper

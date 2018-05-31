@@ -17,9 +17,7 @@ def test_amendement_pk_from_raw():
 
 
 def test_reponse_pk_from_raw():
-    assert (
-        Reponse.pk_from_raw({"presentation": "foo", "idReponse": 1}) == "Zm9v"
-    )
+    assert Reponse.pk_from_raw({"presentation": "foo", "idReponse": 1}) == "Zm9v"
 
 
 def test_articles_load():
@@ -86,14 +84,9 @@ def test_amendements_load():
                     "etat": "",
                     "gouvernemental": False,
                     "groupesParlementaires": [
-                        {
-                            "libelle": "Les D\u00e9veloppeurs",
-                            "couleur": "#133700",
-                        }
+                        {"libelle": "Les D\u00e9veloppeurs", "couleur": "#133700"}
                     ],
-                    "auteurs": [
-                        {"auteur": "M.\u00a0David", "couleur": "#ffffff"}
-                    ],
+                    "auteurs": [{"auteur": "M.\u00a0David", "couleur": "#ffffff"}],
                     "document": "000005-00.pdf",
                     "objet": "<p>Amendement de précision.</p>",
                     "dispositif": "<p>Alinéa 8</p>",
@@ -110,10 +103,7 @@ def test_amendements_load():
     assert amendement.article.id == 1
     assert amendement.article.amendements == [amendement]
     assert amendement.authors == "M.\xa0David"
-    assert amendement.group == {
-        "label": "Les Développeurs",
-        "color": "#133700",
-    }
+    assert amendement.group == {"label": "Les Développeurs", "color": "#133700"}
     assert amendement.summary == "<p>Amendement de précision.</p>"
     assert amendement.content == "<p>Alinéa 8</p>"
     assert amendement.document == "000005-00.pdf"
@@ -134,14 +124,9 @@ def test_reponses_load():
                     "etat": "",
                     "gouvernemental": False,
                     "groupesParlementaires": [
-                        {
-                            "libelle": "Les D\u00e9veloppeurs",
-                            "couleur": "#133700",
-                        }
+                        {"libelle": "Les D\u00e9veloppeurs", "couleur": "#133700"}
                     ],
-                    "auteurs": [
-                        {"auteur": "M.\u00a0David", "couleur": "#ffffff"}
-                    ],
+                    "auteurs": [{"auteur": "M.\u00a0David", "couleur": "#ffffff"}],
                     "reponse": {
                         "idReponse": 12,
                         "avis": "D\u00e9favorable",
@@ -161,9 +146,6 @@ def test_reponses_load():
     assert list(reponses.keys())[0].startswith("PHA+PHN0cm9uZz5TdXBwcmV")
     reponse = list(reponses.values())[0]
     assert reponse.pk.startswith("PHA+PHN0cm9uZz5TdXBwcmV")
-    assert (
-        reponse.presentation
-        == "<p><strong>Suppression de l’article</strong></p>"
-    )
+    assert reponse.presentation == "<p><strong>Suppression de l’article</strong></p>"
     assert reponse.content == "<p>Cet article met en œuvre...</p>"
     assert reponse.avis == "Défavorable"

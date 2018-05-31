@@ -109,8 +109,6 @@ def test_write_json_for_viewer(amendements, tmpdir):
     with open(filename, 'r', encoding='utf-8') as f_:
         data = json.load(f_)
 
-    import pprint; pprint.pprint(data)
-
     assert data == [
         {
             'idProjet': 1,

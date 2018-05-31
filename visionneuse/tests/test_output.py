@@ -3,12 +3,12 @@ def test_has_title(output):
 
 
 def test_number_reponses(output):
-    assert len(output.tags("article")) == 210
+    assert len(output.tags("article")) == 306
 
 
 def test_nature_reponses(output):
-    assert len(output.css("header.reponse.positive")) == 28
-    assert len(output.css("header.reponse.negative")) == 151
+    assert len(output.css("header.reponse.positive")) == 30
+    assert len(output.css("header.reponse.negative")) == 240
 
 
 def test_reponse_unique_amendement(output):
@@ -56,7 +56,7 @@ def test_reponse_has_article_hook(output):
 
 
 def test_article_templates_presence(output):
-    assert len(output.tags("template")) == 56
+    assert len(output.tags("template")) == 96
 
 
 def test_article_template_content(output):

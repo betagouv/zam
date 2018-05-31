@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Callable, List
+from typing import Any, Callable, List
 
 import wrapt
 from logbook import warn
@@ -20,7 +20,7 @@ def require_env_vars(env_vars: list) -> Callable:
     @wrapt.decorator
     def wrapper(
         wrapped: Callable, instance: None, args: List[Path], kwargs: dict
-    ) -> str:
+    ) -> Any:
         for env_var in env_vars:
             assert (
                 env_var in os.environ

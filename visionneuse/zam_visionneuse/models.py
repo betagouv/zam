@@ -1,13 +1,12 @@
 import base64
 import os
-import re
 from collections import OrderedDict
 
 import CommonMark
 from dataclasses import dataclass, field
 from logbook import warn
 from pathlib import Path
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Tuple
 
 from .decorators import require_env_vars
 from .loaders import load_docx

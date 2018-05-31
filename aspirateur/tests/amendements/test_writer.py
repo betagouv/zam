@@ -1,3 +1,4 @@
+# fmt: off
 import json
 
 import pytest
@@ -21,6 +22,7 @@ def amendements():
         Amendement(
             subdiv_type="article",
             subdiv_num="1",
+            subdiv_pos="avant",
             alinea="",
             num="57",
             auteur="M. DURAND",
@@ -107,6 +109,8 @@ def test_write_json_for_viewer(amendements, tmpdir):
     with open(filename, 'r', encoding='utf-8') as f_:
         data = json.load(f_)
 
+    import pprint; pprint.pprint(data)
+
     assert data == [
         {
             'idProjet': 1,
@@ -138,23 +142,6 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             'dispositif': 'bar'
                         },
                         {
-                            'idAmendement': 57,
-                            'etat': '',
-                            'gouvernemental': False,
-                            'auteurs': [{
-                                'auteur': 'M. DURAND',
-                            }],
-                            "groupesParlementaires": [
-                                {
-                                    "libelle": "Les Républicains",
-                                    "couleur": "#2011e8"
-                                }
-                            ],
-                            'document': '000057-00.pdf',
-                            'objet': 'baz',
-                            'dispositif': 'qux',
-                        },
-                        {
                             'idAmendement': 43,
                             'etat': '',
                             'gouvernemental': False,
@@ -170,6 +157,33 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             'document': '000043-00.pdf',
                             'objet': 'corge',
                             'dispositif': 'grault',
+                        },
+                    ],
+                },
+                {
+                    'idArticle': 1,
+                    'etat': 'av',
+                    'multiplicatif': '',
+                    'titre': 'TODO',
+                    'feuilletJaune': 'jaune-1av.pdf',
+                    'document': 'article-1av.pdf',
+                    'amendements': [
+                        {
+                            'idAmendement': 57,
+                            'etat': '',
+                            'gouvernemental': False,
+                            'auteurs': [{
+                                'auteur': 'M. DURAND',
+                            }],
+                            "groupesParlementaires": [
+                                {
+                                    "libelle": "Les Républicains",
+                                    "couleur": "#2011e8"
+                                }
+                            ],
+                            'document': '000057-00.pdf',
+                            'objet': 'baz',
+                            'dispositif': 'qux',
                         },
                     ],
                 },

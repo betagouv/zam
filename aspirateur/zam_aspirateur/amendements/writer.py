@@ -1,8 +1,8 @@
+# fmt: off
 import csv
 import json
 from dataclasses import fields
 from itertools import groupby
-from operator import attrgetter
 from typing import Iterable
 
 from openpyxl import Workbook
@@ -141,10 +141,10 @@ def _format_article(num: str, mult: str, pos: str,
     return {
         "idArticle": int(num),
         "multiplicatif": mult,
-        "etat": pos,
+        "etat": pos[:2],
         "titre": "TODO",
-        "feuilletJaune": f"jaune-{num}{mult}.pdf",
-        "document": f"article-{num}{mult}.pdf",
+        "feuilletJaune": f"jaune-{num}{mult}{pos[:2]}.pdf",
+        "document": f"article-{num}{mult}{pos[:2]}.pdf",
         "amendements": [
             _format_amendement(amendement)
             for amendement in amendements

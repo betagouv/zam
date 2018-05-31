@@ -101,15 +101,11 @@ class Amendements(OrderedDict):
                 auteurs = raw_amendement.get("auteurs")
                 if auteurs:
                     authors = ", ".join(author["auteur"].strip() for author in auteurs)
-                group = None
-                if "groupesParlementaires" in raw_amendement:
-                    group = raw_amendement["groupesParlementaires"][0]
-                    group = {"label": group["libelle"], "color": group["couleur"]}
                 amendement = Amendement(  # type: ignore # dataclasses
                     pk=pk,
                     id=id_,
                     authors=authors,
-                    group=group,
+                    group=raw_amendement["groupe"],
                     article=article,
                     document=raw_amendement["document"],
                     is_gouvernemental=raw_amendement["gouvernemental"],

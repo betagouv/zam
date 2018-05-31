@@ -204,9 +204,9 @@
               {% if loop.previtem is defined and amendement.authors != loop.previtem.authors or loop.previtem is not defined %}
                 <span class="author">
                   <strong>{{ amendement.authors }}</strong>
-                  {% if amendement.group and amendement.group.label -%}
-                    ({{ amendement.group.label }}
-                    <span class="group-color" style="background-color: {{ amendement.group.color }};"></span>)
+                  {% if amendement.group and amendement.group.libelle -%}
+                    ({{ amendement.group.libelle }}
+                    <span class="group-color" style="background-color: {{ amendement.group.couleur }};"></span>)
                   {%- endif %}{% if not loop.last and loop.nextitem.authors != amendement.authors %}, {% endif %}
                 </span>
               {% endif %}

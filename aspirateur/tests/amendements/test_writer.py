@@ -38,7 +38,7 @@ def amendements():
             alinea="",
             num="21",
             auteur="M. MARTIN",
-            groupe="SOCR",
+            groupe=None,
             matricule="000002",
             objet="quux",
             dispositif="quuz",
@@ -129,12 +129,10 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             'auteurs': [{
                                 'auteur': 'M. DUPONT',
                             }],
-                            "groupesParlementaires": [
-                                {
-                                    "libelle": "RDSE",
-                                    "couleur": "#a38ebc"
-                                }
-                            ],
+                            "groupe": {
+                                "libelle": "RDSE",
+                                "couleur": "#a38ebc"
+                            },
                             'document': '000042-00.pdf',
                             'objet': 'foo',
                             'dispositif': 'bar'
@@ -146,12 +144,10 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             'auteurs': [{
                                 'auteur': 'M. JEAN',
                             }],
-                            "groupesParlementaires": [
-                                {
-                                    "libelle": "Les Indépendants",
-                                    "couleur": "#30bfe9"
-                                }
-                            ],
+                            "groupe": {
+                                "libelle": "Les Indépendants",
+                                "couleur": "#30bfe9"
+                            },
                             'document': '000043-00.pdf',
                             'objet': 'corge',
                             'dispositif': 'grault',
@@ -173,12 +169,10 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             'auteurs': [{
                                 'auteur': 'M. DURAND',
                             }],
-                            "groupesParlementaires": [
-                                {
-                                    "libelle": "Les Républicains",
-                                    "couleur": "#2011e8"
-                                }
-                            ],
+                            "groupe": {
+                                "libelle": "Les Républicains",
+                                "couleur": "#2011e8"
+                            },
                             'document': '000057-00.pdf',
                             'objet': 'baz',
                             'dispositif': 'qux',
@@ -200,12 +194,10 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             'auteurs': [{
                                 'auteur': 'M. MARTIN',
                             }],
-                            "groupesParlementaires": [
-                                {
-                                    "libelle": "SOCR",
-                                    "couleur": "#ff8080"
-                                }
-                            ],
+                            "groupe": {
+                                "libelle": "",
+                                "couleur": "#ffffff"
+                            },
                             'document': '000021-00.pdf',
                             'objet': 'quux',
                             'dispositif': 'quuz',

@@ -162,12 +162,10 @@ def _format_amendement(amendement: Amendement) -> dict:
                 "auteur": amendement.auteur
             }
         ],
-        "groupesParlementaires": [
-            {
-                "libelle": amendement.groupe or '',
-                "couleur": GROUPS_COLORS.get(amendement.groupe, "#ffffff")
-            }
-        ],
+        "groupe": {
+            "libelle": amendement.groupe or '',
+            "couleur": GROUPS_COLORS.get(amendement.groupe, '#ffffff'),
+        },
         "document": f"{amendement.num_int:06}-00.pdf",
         "objet": amendement.objet,
         "dispositif": amendement.dispositif,

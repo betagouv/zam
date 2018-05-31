@@ -83,9 +83,10 @@ def test_amendements_load():
                     "idAmendement": 5,
                     "etat": "",
                     "gouvernemental": False,
-                    "groupesParlementaires": [
-                        {"libelle": "Les D\u00e9veloppeurs", "couleur": "#133700"}
-                    ],
+                    "groupe": {
+                        "libelle": "Les D\u00e9veloppeurs",
+                        "couleur": "#133700",
+                    },
                     "auteurs": [{"auteur": "M.\u00a0David", "couleur": "#ffffff"}],
                     "document": "000005-00.pdf",
                     "objet": "<p>Amendement de précision.</p>",
@@ -103,7 +104,7 @@ def test_amendements_load():
     assert amendement.article.id == 1
     assert amendement.article.amendements == [amendement]
     assert amendement.authors == "M.\xa0David"
-    assert amendement.group == {"label": "Les Développeurs", "color": "#133700"}
+    assert amendement.group == {"libelle": "Les Développeurs", "couleur": "#133700"}
     assert amendement.summary == "<p>Amendement de précision.</p>"
     assert amendement.content == "<p>Alinéa 8</p>"
     assert amendement.document == "000005-00.pdf"
@@ -123,9 +124,10 @@ def test_reponses_load():
                     "idAmendement": 5,
                     "etat": "",
                     "gouvernemental": False,
-                    "groupesParlementaires": [
-                        {"libelle": "Les D\u00e9veloppeurs", "couleur": "#133700"}
-                    ],
+                    "groupe": {
+                        "libelle": "Les D\u00e9veloppeurs",
+                        "couleur": "#133700",
+                    },
                     "auteurs": [{"auteur": "M.\u00a0David", "couleur": "#ffffff"}],
                     "reponse": {
                         "idReponse": 12,

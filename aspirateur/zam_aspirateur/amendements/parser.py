@@ -1,3 +1,4 @@
+# fmt: off
 import re
 from datetime import date, datetime
 from typing import Optional, Tuple
@@ -82,7 +83,7 @@ def parse_bool(text: str) -> bool:
 
 SUBDIV_RE = re.compile(
     r'''^
-        (?:art\.\sadd\.\s(?P<pos>après)\s)?  # position
+        (?:art\.\sadd\.\s(?P<pos>(avant|après))\s)?  # position
         Article\s
         (?P<num>\d+|1er)
         (?:\s(?P<mult>\w+))?        # bis, ter, etc.

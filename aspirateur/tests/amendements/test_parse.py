@@ -1,3 +1,4 @@
+# fmt: off
 from datetime import date
 
 import pytest
@@ -182,6 +183,7 @@ class TestParseAmendementFromJSON:
     ("Article 1er - Annexe (Stratégie nationale d'orientation de l'action publique)", 'article', '1', '', ''),
     ('Article 8\xa0bis', 'article', '8', 'bis', ''),
     ('art. add. après Article 7', 'article', '7', '', 'après'),
+    ('art. add. avant Article 39', 'article', '39', '', 'avant'),
     ('Article 31 (précédemment examiné)', 'article', '31', '', ''),
 ])
 def test_parse_subdiv(text, type_, num, mult, pos):

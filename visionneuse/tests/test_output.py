@@ -3,12 +3,12 @@ def test_has_title(output):
 
 
 def test_number_reponses(output):
-    assert len(output.tags("article")) == 316
+    assert len(output.tags("article")) == 210
 
 
 def test_nature_reponses(output):
-    assert len(output.css("header.reponse.positive")) == 30
-    assert len(output.css("header.reponse.negative")) == 249
+    assert len(output.css("header.reponse.positive")) == 28
+    assert len(output.css("header.reponse.negative")) == 151
 
 
 def test_reponse_unique_amendement(output):
@@ -56,7 +56,7 @@ def test_reponse_has_article_hook(output):
 
 
 def test_article_templates_presence(output):
-    assert len(output.tags("template")) == 113
+    assert len(output.tags("template")) == 56
 
 
 def test_article_template_content(output):
@@ -67,5 +67,5 @@ def test_article_template_content(output):
 def test_article_template_has_jaune(output):
     article = output.tags("template")[0]
     jaune = article.css("details")[1]
-    assert jaune.css_first("summary").text() == "Article 1\xa0: jaune"
+    assert jaune.css_first("summary").text() == "Article 10\xa0: jaune"
     assert jaune.css_first("div.jaune").text().strip()

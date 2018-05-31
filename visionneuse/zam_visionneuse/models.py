@@ -56,7 +56,10 @@ class Articles(OrderedDict):
     def load_jaunes(self, items: List[dict]) -> None:
         jaunes_path = Path(os.environ["ZAM_JAUNES_SOURCE"])
         for raw_article in items:
-            article = self.get_from_raw(raw_article)
+            try:
+                article = self.get_from_raw(raw_article)
+            except KeyError:
+                continue
             jaune_name = raw_article["feuilletJaune"].replace(".pdf", ".docx")
             jaune_content = load_docx(jaunes_path / jaune_name)
             # Convert jaune to CommonMark to preserve some styles.
@@ -151,7 +154,10 @@ class Reponses(OrderedDict):
     ) -> "Reponses":
         reponses = cls()
         for raw_article in items:
-            article = articles.get_from_raw(raw_article)
+            try:
+                article = articles.get_from_raw(raw_article)
+            except KeyError:
+                continue
             for raw_amendement in raw_article.get("amendements", []):
                 if "reponse" not in raw_amendement:
                     continue
@@ -185,7 +191,7 @@ class Reponses(OrderedDict):
 def load_data(
     drupal_items: List[dict], aspirateur_items: List[dict]
 ) -> Tuple[Articles, Amendements, Reponses]:
-    articles = Articles.load(drupal_items)
+    articles = Articles.load(aspirateur_items)
     articles.load_jaunes(drupal_items)
     amendements = Amendements.load(aspirateur_items, articles)
     reponses = Reponses.load(drupal_items, articles, amendements)

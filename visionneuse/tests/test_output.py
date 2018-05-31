@@ -1,5 +1,7 @@
 def test_has_title(output):
-    assert output.css_first("h1").text().startswith("Projet Loi de")
+    assert (
+        output.css_first("h1").text() == "Financement de la sécurité sociale pour 2018"
+    )
 
 
 def test_number_reponses(output):

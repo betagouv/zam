@@ -1,3 +1,4 @@
+# fmt: off
 """
 Récupérer la liste des amendements à un texte de loi au Sénat
 """
@@ -14,6 +15,7 @@ from typing import (
 from zam_aspirateur.amendements.fetch import (
     fetch_and_parse_all,
     fetch_and_parse_discussed,
+    fetch_title,
 )
 from zam_aspirateur.amendements.models import Amendement
 from zam_aspirateur.amendements.writer import (
@@ -28,6 +30,12 @@ from zam_aspirateur.senateurs.parse import parse_senateurs
 
 def main(argv: Optional[List[str]] = None) -> None:
     args = parse_args(argv=argv)
+
+    print('Récupération du titre...')
+    title = fetch_title(
+        session=args.session,
+        num=args.texte
+    )
 
     print('Récupération des amendements déposés...')
     amendements = fetch_and_parse_all(
@@ -45,6 +53,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     default_filename = f'amendements_{args.session}_{args.texte}.{format}'
 
     save_output(
+        title=title,
         amendements=processed_amendements,
         filename=args.output or default_filename,
         format=format,
@@ -183,6 +192,7 @@ def _sort(
 
 
 def save_output(
+    title: str,
     amendements: Iterable[Amendement],
     filename: str,
     format: str,
@@ -200,7 +210,7 @@ def save_output(
         print(f'{nb_rows} amendements écrits dans {filename}')
     elif format == 'json':
         print('Écriture du fichier...')
-        nb_rows = write_json_for_viewer(1, 'Test', amendements, filename)
+        nb_rows = write_json_for_viewer(1, title, amendements, filename)
         print(f'{nb_rows} amendements écrits dans {filename}')
     else:
         raise NotImplementedError

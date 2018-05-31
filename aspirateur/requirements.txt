@@ -5,4 +5,5 @@ dataclasses==0.6
 idna==2.6
 openpyxl==2.5.3
 requests==2.18.4
+selectolax==0.1.6
 urllib3==1.22

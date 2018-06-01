@@ -1,12 +1,12 @@
 import base64
 import os
 from collections import OrderedDict
+from pathlib import Path
+from typing import Any, List, Optional, Tuple
 
 import CommonMark
 from dataclasses import dataclass, field
 from logbook import warn
-from pathlib import Path
-from typing import Any, List, Tuple
 
 from .decorators import require_env_vars
 from .loaders import load_docx
@@ -17,17 +17,18 @@ from .utils import strip_styles
 class Article:
     pk: str
     id: int
-    title: str
-    state: str = ""
-    multiplier: str = ""
-    jaune: str = ""
-    content: str = "TODO"
+    titre: str
+    etat: Optional[str] = ""
+    multiplicatif: Optional[str] = ""
+    jaune: Optional[str] = ""
+    content: Optional[str] = "TODO"
     amendements: Any = field(default_factory=lambda: [])  # List[Amendement]
+    document: Optional[str] = ""
 
     def __str__(self) -> str:
-        if self.state:
-            return f"{self.id} {self.state} {self.multiplier}".strip()
-        return f"{self.id} {self.multiplier}".strip()
+        if self.etat:
+            return f"{self.id} {self.etat} {self.multiplicatif}".strip()
+        return f"{self.id} {self.multiplicatif}".strip()
 
     @property
     def slug(self) -> str:
@@ -43,14 +44,9 @@ class Articles(OrderedDict):
     def load(cls, items: List[dict]) -> "Articles":
         articles = cls()
         for raw_article in items:
-            pk = Article.pk_from_raw(raw_article)
-            articles[pk] = Article(  # type: ignore # dataclasses
-                pk=pk,
-                id=raw_article["idArticle"],
-                title=raw_article["titre"],
-                state=raw_article["etat"],
-                multiplier=raw_article["multiplicatif"],
-            )
+            article = Article(**raw_article)  # type: ignore # dataclasses
+            article.amendements = []  # Reset, loaded after.
+            articles[article.pk] = article
         return articles
 
     def load_jaunes(self, items: List[dict]) -> None:
@@ -73,13 +69,14 @@ class Articles(OrderedDict):
 class Amendement:
     pk: str
     id: int
+    groupe: dict
     article: Article
-    group: dict
-    authors: str = ""
-    is_gouvernemental: bool = False
-    summary: str = ""
-    content: str = ""
-    document: str = ""
+    gouvernemental: bool = False
+    auteur: Optional[str] = ""
+    objet: Optional[str] = ""
+    dispositif: Optional[str] = ""
+    document: Optional[str] = ""
+    etat: Optional[str] = ""
 
     def __str__(self) -> str:
         return self.pk
@@ -94,25 +91,11 @@ class Amendements(OrderedDict):
     def load(cls, items: List[dict], articles: Articles) -> "Amendements":
         amendements = cls()
         for raw_article in items:
-            article = articles.get_from_raw(raw_article)
+            article = articles[raw_article["pk"]]
             for raw_amendement in raw_article.get("amendements", []):
-                pk = Amendement.pk_from_raw(raw_amendement)
-                id_ = raw_amendement["idAmendement"]
-                auteurs = raw_amendement.get("auteurs")
-                if auteurs:
-                    authors = ", ".join(author["auteur"].strip() for author in auteurs)
-                amendement = Amendement(  # type: ignore # dataclasses
-                    pk=pk,
-                    id=id_,
-                    authors=authors,
-                    group=raw_amendement["groupe"],
-                    article=article,
-                    document=raw_amendement["document"],
-                    is_gouvernemental=raw_amendement["gouvernemental"],
-                    summary=raw_amendement["objet"],
-                    content=raw_amendement["dispositif"],
-                )
-                amendements[pk] = amendement
+                raw_amendement["article"] = article
+                amendement = Amendement(**raw_amendement)  # type: ignore # dataclasses
+                amendements[amendement.pk] = amendement
                 article.amendements.append(amendement)
         return amendements
 

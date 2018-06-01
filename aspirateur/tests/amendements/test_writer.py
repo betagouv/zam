@@ -115,20 +115,20 @@ def test_write_json_for_viewer(amendements, tmpdir):
             'libelle': 'Projet Loi de Financement de la Sécurité Sociale 2018',
             'list': [
                 {
-                    'idArticle': 1,
+                    'id': 1,
+                    'pk': 'article-1',
                     'etat': '',
                     'multiplicatif': '',
                     'titre': 'TODO',
-                    'feuilletJaune': 'jaune-1.pdf',
+                    'jaune': 'jaune-1.pdf',
                     'document': 'article-1.pdf',
                     'amendements': [
                         {
-                            'idAmendement': 42,
+                            'id': 42,
+                            'pk': '000042',
                             'etat': '',
                             'gouvernemental': False,
-                            'auteurs': [{
-                                'auteur': 'M. DUPONT',
-                            }],
+                            'auteur': 'M. DUPONT',
                             "groupe": {
                                 "libelle": "RDSE",
                                 "couleur": "#a38ebc"
@@ -138,12 +138,11 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             'dispositif': 'bar'
                         },
                         {
-                            'idAmendement': 43,
+                            'id': 43,
+                            'pk': '000043',
                             'etat': '',
                             'gouvernemental': False,
-                            'auteurs': [{
-                                'auteur': 'M. JEAN',
-                            }],
+                            'auteur': 'M. JEAN',
                             "groupe": {
                                 "libelle": "Les Indépendants",
                                 "couleur": "#30bfe9"
@@ -155,20 +154,20 @@ def test_write_json_for_viewer(amendements, tmpdir):
                     ],
                 },
                 {
-                    'idArticle': 1,
+                    'id': 1,
+                    'pk': 'article-1av',
                     'etat': 'av',
                     'multiplicatif': '',
                     'titre': 'TODO',
-                    'feuilletJaune': 'jaune-1av.pdf',
+                    'jaune': 'jaune-1av.pdf',
                     'document': 'article-1av.pdf',
                     'amendements': [
                         {
-                            'idAmendement': 57,
+                            'id': 57,
+                            'pk': '000057',
                             'etat': '',
                             'gouvernemental': False,
-                            'auteurs': [{
-                                'auteur': 'M. DURAND',
-                            }],
+                            'auteur': 'M. DURAND',
                             "groupe": {
                                 "libelle": "Les Républicains",
                                 "couleur": "#2011e8"
@@ -180,20 +179,20 @@ def test_write_json_for_viewer(amendements, tmpdir):
                     ],
                 },
                 {
-                    'idArticle': 7,
+                    'id': 7,
+                    'pk': 'article-7bis',
                     'etat': '',
                     'multiplicatif': 'bis',
                     'titre': 'TODO',
-                    'feuilletJaune': 'jaune-7bis.pdf',
+                    'jaune': 'jaune-7bis.pdf',
                     'document': 'article-7bis.pdf',
                     'amendements': [
                         {
-                            'idAmendement': 21,
+                            'id': 21,
+                            'pk': '000021',
                             'etat': '',
                             'gouvernemental': False,
-                            'auteurs': [{
-                                'auteur': 'M. MARTIN',
-                            }],
+                            'auteur': 'M. MARTIN',
                             "groupe": {
                                 "libelle": "",
                                 "couleur": "#ffffff"

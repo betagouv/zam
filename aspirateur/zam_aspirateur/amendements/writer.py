@@ -139,11 +139,12 @@ def _format_amendements(id_projet: int,
 def _format_article(num: str, mult: str, pos: str,
                     amendements: Iterable[Amendement]) -> dict:
     return {
-        "idArticle": int(num),
+        "id": int(num),
+        "pk": f"article-{num}{mult}{pos[:2]}",
         "multiplicatif": mult,
         "etat": pos[:2],
         "titre": "TODO",
-        "feuilletJaune": f"jaune-{num}{mult}{pos[:2]}.pdf",
+        "jaune": f"jaune-{num}{mult}{pos[:2]}.pdf",
         "document": f"article-{num}{mult}{pos[:2]}.pdf",
         "amendements": [
             _format_amendement(amendement)
@@ -154,14 +155,11 @@ def _format_article(num: str, mult: str, pos: str,
 
 def _format_amendement(amendement: Amendement) -> dict:
     return {
-        "idAmendement": amendement.num_int,
+        "id": amendement.num_int,
+        "pk": f"{amendement.num_int:06}",
         "etat": amendement.sort or '',
         "gouvernemental": amendement.gouvernemental,
-        "auteurs": [
-            {
-                "auteur": amendement.auteur
-            }
-        ],
+        "auteur": amendement.auteur,
         "groupe": {
             "libelle": amendement.groupe or '',
             "couleur": GROUPS_COLORS.get(amendement.groupe, '#ffffff'),

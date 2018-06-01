@@ -161,10 +161,13 @@ class Reponses(OrderedDict):
 
 @require_env_vars(env_vars=["ZAM_JAUNES_SOURCE"])
 def load_data(
-    drupal_items: List[dict], aspirateur_items: List[dict]
+    aspirateur_items: List[dict], drupal_items: List[dict] = None
 ) -> Tuple[Articles, Amendements, Reponses]:
     articles = Articles.load(aspirateur_items)
-    articles.load_jaunes(drupal_items)
     amendements = Amendements.load(aspirateur_items, articles)
-    reponses = Reponses.load(drupal_items, articles, amendements)
+    if drupal_items:
+        articles.load_jaunes(drupal_items)
+        reponses = Reponses.load(drupal_items, articles, amendements)
+    else:
+        reponses = {}
     return articles, amendements, reponses

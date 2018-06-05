@@ -1,88 +1,83 @@
-# fmt: off
 import csv
 from collections import OrderedDict
 from http import HTTPStatus
 from typing import Any, List
+from urllib.parse import urljoin
 
 import requests
 from selectolax.parser import HTMLParser
 
 from .models import Amendement
-from .parser import (
-    parse_from_csv,
-    parse_from_json,
-)
+from .parser import parse_from_csv, parse_from_json
+
+
+BASE_URL = "http://www.senat.fr"
 
 
 class NotFound(Exception):
     pass
 
 
-def fetch_title(session: str, num: str) -> 'str':
+def fetch_title(session: str, num: str) -> str:
     """
     Récupère le titre du projet de loi de puis le site du Sénat.
     """
-    url = f"http://www.senat.fr/dossiers-legislatifs/depots/depots-{session[:4]}.html"
+    url = f"{BASE_URL}/dossiers-legislatifs/depots/depots-{session[:4]}.html"
 
     resp = requests.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:
         raise NotFound(url)
 
     project_url = None
-    for link in HTMLParser(resp.content).css('.flgris span a'):
+    for link in HTMLParser(resp.content).css(".flgris span a"):
         if link.text() == f"N°\xa0{num}":
-            project_url = link.attributes.get('href')
+            project_url = link.attributes.get("href")
             break
 
     if not project_url:
-        return 'Unknown'
+        return "Unknown"
 
-    url = f"http://www.senat.fr{project_url}"
+    url = urljoin(BASE_URL, project_url)
 
     resp = requests.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:
         raise NotFound(url)
 
-    return HTMLParser(resp.content).css_first('h1').text()
+    title: str = HTMLParser(resp.content).css_first("h1").text()
+
+    return title
 
 
 def fetch_all(session: str, num: str) -> List[OrderedDict]:
     """
     Récupère tous les amendements, dans l'ordre de dépôt
     """
-    url = f"http://www.senat.fr/amendements/{session}/{num}/jeu_complet_{session}_{num}.csv"  # noqa
+    url = f"{BASE_URL}/amendements/{session}/{num}/jeu_complet_{session}_{num}.csv"
 
     resp = requests.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
         raise NotFound(url)
 
-    text = resp.content.decode('cp1252')
+    text = resp.content.decode("cp1252")
     lines = text.splitlines()[1:]
-    reader = csv.DictReader(lines, delimiter='\t')
+    reader = csv.DictReader(lines, delimiter="\t")
     items = list(reader)
     return items
 
 
 def fetch_and_parse_all(session: str, num: str) -> List[Amendement]:
-    return [
-        parse_from_csv(item)
-        for item in fetch_all(session, num)
-    ]
+    return [parse_from_csv(item) for item in fetch_all(session, num)]
 
 
-def fetch_discussed(
-    session: str,
-    num: str,
-    phase: str
-) -> Any:
+def fetch_discussed(session: str, num: str, phase: str) -> Any:
     """
     Récupère les amendements à discuter, dans l'ordre de passage
 
     NB : les amendements jugés irrecevables ne sont pas inclus.
     """
-    assert phase in ('commission', 'seance')
+    assert phase in ("commission", "seance")
 
-    url = f'http://www.senat.fr/en{phase}/{session}/{num}/liste_discussion.json'  # noqa
+    url = f"{BASE_URL}/en{phase}/{session}/{num}/liste_discussion.json"
 
     resp = requests.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
@@ -92,14 +87,13 @@ def fetch_discussed(
     return data
 
 
-def fetch_and_parse_discussed(
-    session: str,
-    num: str,
-    phase: str,
-) -> List[Amendement]:
-    data = fetch_discussed(session, num, phase)
+def fetch_and_parse_discussed(session: str, num: str, phase: str) -> List[Amendement]:
+    try:
+        data = fetch_discussed(session, num, phase)
+    except NotFound:
+        return []
     return [
         parse_from_json(amend, subdiv)
-        for subdiv in data['Subdivisions']
-        for amend in subdiv['Amendements']
+        for subdiv in data["Subdivisions"]
+        for amend in subdiv["Amendements"]
     ]

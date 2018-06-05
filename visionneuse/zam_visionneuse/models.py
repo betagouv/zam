@@ -75,6 +75,7 @@ class Amendement:
     auteur: Optional[str] = ""
     objet: Optional[str] = ""
     dispositif: Optional[str] = ""
+    resume: Optional[str] = ""
     document: Optional[str] = ""
     etat: Optional[str] = ""
 

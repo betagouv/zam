@@ -19,7 +19,7 @@ class Amendement:
 
     auteur: str = ""
     matricule: Optional[str] = None
-    groupe: Optional[str] = None  # groupe parlementaire
+    groupe: str = ""  # groupe parlementaire
 
     date_depot: Optional[date] = None
 

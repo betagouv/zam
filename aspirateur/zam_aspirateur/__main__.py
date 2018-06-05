@@ -115,7 +115,7 @@ def _enrich_groupe_parlementaire(
             groupe=(
                 senateurs_by_matricule[amendement.matricule].groupe
                 if amendement.matricule is not None
-                else None
+                else ""
             )
         )
         for amendement in amendements

@@ -1,0 +1,27 @@
+{% extends "_base.html" %}
+
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item active" aria-current="page">Lectures</li>
+{% endblock %}
+
+
+{% block body %}
+
+<a href="{{ request.route_url('lectures_add') }}" class="btn btn-primary btn-lg" style="float: right">Ajouter une lecture...</a>
+
+<h2>Lectures</h2>
+
+{% if lectures %}
+    <ul>
+        {% for lecture in lectures %}
+        <li>
+            <a href="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">{{ lecture }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Aucune lecture pour l'instant.</p>
+{% endif %}
+
+{% endblock %}

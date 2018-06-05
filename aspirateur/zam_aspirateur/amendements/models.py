@@ -7,8 +7,8 @@ from typing import Optional
 @dataclass
 class Amendement:
 
-    subdiv_type: int  # article, titre...
-    subdiv_num: int  # numéro
+    subdiv_type: str  # article, titre...
+    subdiv_num: str  # numéro
     subdiv_mult: str = ""  # bis, ter...
     subdiv_pos: str = ""  # avant / après
 

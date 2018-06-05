@@ -4,7 +4,7 @@ Récupérer la liste des amendements à un texte de loi au Sénat
 import argparse
 import math
 import sys
-from typing import Dict, Iterable, Iterator, List, Optional
+from typing import Dict, Iterable, Iterator, List, NewType, Optional
 
 from zam_aspirateur.amendements.fetch import (
     fetch_and_parse_all,
@@ -23,7 +23,10 @@ from zam_aspirateur.senateurs.models import Senateur
 from zam_aspirateur.senateurs.parse import parse_senateurs
 
 
-def main(argv: Optional[List[str]] = None) -> None:
+SystemStatus = NewType("SystemStatus", int)  # status code for sys.exit()
+
+
+def main(argv: Optional[List[str]] = None) -> SystemStatus:
     args = parse_args(argv=argv)
 
     print("Récupération du titre...")
@@ -34,7 +37,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         amendements = fetch_and_parse_all(session=args.session, num=args.texte)
     except NotFound:
         print("Aucun amendement déposé pour l'instant!")
-        return 1
+        return SystemStatus(1)
 
     processed_amendements = process_amendements(
         amendements=amendements, session=args.session, num=args.texte
@@ -50,7 +53,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         format=format,
     )
 
-    return 0
+    return SystemStatus(0)
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:

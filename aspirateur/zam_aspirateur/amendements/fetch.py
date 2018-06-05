@@ -2,6 +2,7 @@ import csv
 from collections import OrderedDict
 from http import HTTPStatus
 from typing import Any, List
+from urllib.parse import urljoin
 
 import requests
 from selectolax.parser import HTMLParser
@@ -36,7 +37,7 @@ def fetch_title(session: str, num: str) -> "str":
     if not project_url:
         return "Unknown"
 
-    url = f"{BASE_URL}{project_url}"
+    url = urljoin(BASE_URL, project_url)
 
     resp = requests.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:

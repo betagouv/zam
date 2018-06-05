@@ -84,7 +84,10 @@ def fetch_discussed(session: str, num: str, phase: str) -> Any:
 
 
 def fetch_and_parse_discussed(session: str, num: str, phase: str) -> List[Amendement]:
-    data = fetch_discussed(session, num, phase)
+    try:
+        data = fetch_discussed(session, num, phase)
+    except NotFound:
+        return []
     return [
         parse_from_json(amend, subdiv)
         for subdiv in data["Subdivisions"]

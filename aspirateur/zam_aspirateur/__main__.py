@@ -72,6 +72,8 @@ def process_amendements(
     amendements_derouleur = fetch_and_parse_discussed(
         session=session, num=num, phase="seance"
     )
+    if len(amendements_derouleur) == 0:
+        print("Aucun amendement soumis à la discussion pour l'instant!")
 
     print("Récupération de la liste des sénateurs...")
     senateurs_by_matricule = fetch_and_parse_senateurs()

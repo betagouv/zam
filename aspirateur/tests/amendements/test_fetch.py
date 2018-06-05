@@ -1,3 +1,4 @@
+from unittest.mock import patch
 import os
 
 import pytest
@@ -448,3 +449,14 @@ def test_fetch_title_not_found():
 
     with pytest.raises(NotFound):
         fetch_title("2024-2025", 42)
+
+
+def test_fetch_and_parse_discussed_not_found():
+    from zam_aspirateur.amendements.fetch import fetch_and_parse_discussed, NotFound
+
+    with patch("zam_aspirateur.amendements.fetch.fetch_discussed") as m_fetch:
+        m_fetch.side_effect = NotFound
+
+        amendements = fetch_and_parse_discussed("2016-2017", 610, "commission")
+
+    assert amendements == []

@@ -1,4 +1,3 @@
-# fmt: off
 import json
 
 import pytest
@@ -7,6 +6,7 @@ import pytest
 @pytest.fixture
 def amendements():
     from zam_aspirateur.amendements.models import Amendement
+
     return [
         Amendement(
             subdiv_type="article",
@@ -83,11 +83,11 @@ FIELDS = [
 def test_write_csv(amendements, tmpdir):
     from zam_aspirateur.amendements.writer import write_csv
 
-    filename = str(tmpdir.join('test.csv'))
+    filename = str(tmpdir.join("test.csv"))
 
     nb_rows = write_csv(amendements, filename)
 
-    with open(filename, 'r', encoding='utf-8') as f_:
+    with open(filename, "r", encoding="utf-8") as f_:
         lines = f_.read().splitlines()
     header, *rows = lines
     assert header == ";".join(FIELDS)
@@ -102,107 +102,101 @@ def test_write_json_for_viewer(amendements, tmpdir):
 
     TITLE = "Projet Loi de Financement de la Sécurité Sociale 2018"
 
-    filename = str(tmpdir.join('test.json'))
+    filename = str(tmpdir.join("test.json"))
 
     write_json_for_viewer(1, TITLE, amendements, filename)
 
-    with open(filename, 'r', encoding='utf-8') as f_:
+    with open(filename, "r", encoding="utf-8") as f_:
         data = json.load(f_)
 
     assert data == [
         {
-            'idProjet': 1,
-            'libelle': 'Projet Loi de Financement de la Sécurité Sociale 2018',
-            'list': [
+            "idProjet": 1,
+            "libelle": "Projet Loi de Financement de la Sécurité Sociale 2018",
+            "list": [
                 {
-                    'id': 1,
-                    'pk': 'article-1',
-                    'etat': '',
-                    'multiplicatif': '',
-                    'titre': 'TODO',
-                    'jaune': 'jaune-1.pdf',
-                    'document': 'article-1.pdf',
-                    'amendements': [
+                    "id": 1,
+                    "pk": "article-1",
+                    "etat": "",
+                    "multiplicatif": "",
+                    "titre": "TODO",
+                    "jaune": "jaune-1.pdf",
+                    "document": "article-1.pdf",
+                    "amendements": [
                         {
-                            'id': 42,
-                            'pk': '000042',
-                            'etat': '',
-                            'gouvernemental': False,
-                            'auteur': 'M. DUPONT',
-                            "groupe": {
-                                "libelle": "RDSE",
-                                "couleur": "#a38ebc"
-                            },
-                            'document': '000042-00.pdf',
-                            'objet': 'foo',
-                            'dispositif': 'bar'
+                            "id": 42,
+                            "pk": "000042",
+                            "etat": "",
+                            "gouvernemental": False,
+                            "auteur": "M. DUPONT",
+                            "groupe": {"libelle": "RDSE", "couleur": "#a38ebc"},
+                            "document": "000042-00.pdf",
+                            "objet": "foo",
+                            "dispositif": "bar",
                         },
                         {
-                            'id': 43,
-                            'pk': '000043',
-                            'etat': '',
-                            'gouvernemental': False,
-                            'auteur': 'M. JEAN',
+                            "id": 43,
+                            "pk": "000043",
+                            "etat": "",
+                            "gouvernemental": False,
+                            "auteur": "M. JEAN",
                             "groupe": {
                                 "libelle": "Les Indépendants",
-                                "couleur": "#30bfe9"
+                                "couleur": "#30bfe9",
                             },
-                            'document': '000043-00.pdf',
-                            'objet': 'corge',
-                            'dispositif': 'grault',
+                            "document": "000043-00.pdf",
+                            "objet": "corge",
+                            "dispositif": "grault",
                         },
                     ],
                 },
                 {
-                    'id': 1,
-                    'pk': 'article-1av',
-                    'etat': 'av',
-                    'multiplicatif': '',
-                    'titre': 'TODO',
-                    'jaune': 'jaune-1av.pdf',
-                    'document': 'article-1av.pdf',
-                    'amendements': [
+                    "id": 1,
+                    "pk": "article-1av",
+                    "etat": "av",
+                    "multiplicatif": "",
+                    "titre": "TODO",
+                    "jaune": "jaune-1av.pdf",
+                    "document": "article-1av.pdf",
+                    "amendements": [
                         {
-                            'id': 57,
-                            'pk': '000057',
-                            'etat': '',
-                            'gouvernemental': False,
-                            'auteur': 'M. DURAND',
+                            "id": 57,
+                            "pk": "000057",
+                            "etat": "",
+                            "gouvernemental": False,
+                            "auteur": "M. DURAND",
                             "groupe": {
                                 "libelle": "Les Républicains",
-                                "couleur": "#2011e8"
+                                "couleur": "#2011e8",
                             },
-                            'document': '000057-00.pdf',
-                            'objet': 'baz',
-                            'dispositif': 'qux',
-                        },
+                            "document": "000057-00.pdf",
+                            "objet": "baz",
+                            "dispositif": "qux",
+                        }
                     ],
                 },
                 {
-                    'id': 7,
-                    'pk': 'article-7bis',
-                    'etat': '',
-                    'multiplicatif': 'bis',
-                    'titre': 'TODO',
-                    'jaune': 'jaune-7bis.pdf',
-                    'document': 'article-7bis.pdf',
-                    'amendements': [
+                    "id": 7,
+                    "pk": "article-7bis",
+                    "etat": "",
+                    "multiplicatif": "bis",
+                    "titre": "TODO",
+                    "jaune": "jaune-7bis.pdf",
+                    "document": "article-7bis.pdf",
+                    "amendements": [
                         {
-                            'id': 21,
-                            'pk': '000021',
-                            'etat': '',
-                            'gouvernemental': False,
-                            'auteur': 'M. MARTIN',
-                            "groupe": {
-                                "libelle": "",
-                                "couleur": "#ffffff"
-                            },
-                            'document': '000021-00.pdf',
-                            'objet': 'quux',
-                            'dispositif': 'quuz',
-                        },
+                            "id": 21,
+                            "pk": "000021",
+                            "etat": "",
+                            "gouvernemental": False,
+                            "auteur": "M. MARTIN",
+                            "groupe": {"libelle": "", "couleur": "#ffffff"},
+                            "document": "000021-00.pdf",
+                            "objet": "quux",
+                            "dispositif": "quuz",
+                        }
                     ],
-                }
+                },
             ],
-        },
+        }
     ]

@@ -3,12 +3,7 @@ from html import unescape
 import bleach
 
 
-ALLOWED_TAGS = [
-    'b',
-    'div',
-    'p',
-    'sup',
-]
+ALLOWED_TAGS = ["b", "div", "p", "sup"]
 
 
 def clean_html(html: str) -> str:

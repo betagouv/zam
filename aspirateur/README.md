@@ -34,10 +34,10 @@ Les amendements non discutés (retirés ou irrecevables) sont regroupés
 
 ## Tests et analyses statiques du code
 
-Lancer les tests:
+Reformatter le code:
 
 ```
-$ pytest
+$ black .
 ```
 
 Vérifier les règles de style:
@@ -50,4 +50,16 @@ Vérifier les annotations de type:
 
 ```
 $ mypy zam_aspirateur
+```
+
+Lancer les tests:
+
+```
+$ pytest
+```
+
+Bonus : toutes les étapes précédentes en une seule commande :
+
+```
+$ tox
 ```

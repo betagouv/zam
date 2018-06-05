@@ -112,11 +112,11 @@ def _enrich_groupe_parlementaire(
     """
     return (
         amendement.replace(
-            groupe=(
-                senateurs_by_matricule[amendement.matricule].groupe
+            {
+                "groupe": senateurs_by_matricule[amendement.matricule].groupe
                 if amendement.matricule is not None
                 else ""
-            )
+            }
         )
         for amendement in amendements
     )
@@ -146,8 +146,10 @@ def _enrich_one(
     if amend_discussion is None:
         return amend
     return amend.replace(
-        discussion_commune=amend_discussion.discussion_commune,
-        identique=amend_discussion.identique,
+        {
+            "discussion_commune": amend_discussion.discussion_commune,
+            "identique": amend_discussion.identique,
+        }
     )
 
 

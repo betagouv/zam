@@ -50,7 +50,7 @@ class Amendement:
     def gouvernemental(self) -> bool:
         return self.auteur == "LE GOUVERNEMENT"
 
-    def replace(self, **changes: dict) -> "Amendement":
+    def replace(self, changes: dict) -> "Amendement":
         amendement = replace(self, **changes)  # type: Amendement
         return amendement
 

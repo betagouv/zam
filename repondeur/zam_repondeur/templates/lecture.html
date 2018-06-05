@@ -1,6 +1,21 @@
 {% extends "_base.html" %}
 
 
+{% block header %}
+<style type="text/css">
+    h2 {
+        margin-bottom: 1.25rem;
+    }
+    a.btn {
+        margin-right: 0.75rem;
+    }
+    a.btn i.fa {
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ lecture }}</li>
@@ -27,19 +42,4 @@
         </div>
     </div>
 
-{% endblock %}
-
-
-{% block header %}
-<style type="text/css">
-    h2 {
-        margin-bottom: 1.25rem;
-    }
-    a.btn {
-        margin-right: 0.75rem;
-    }
-    a.btn i.fa {
-        margin-right: 0.5rem;
-    }
-</style>
 {% endblock %}

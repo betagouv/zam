@@ -2,7 +2,7 @@ import csv
 import json
 from dataclasses import fields
 from itertools import groupby
-from typing import Iterable
+from typing import Iterable, Tuple
 
 from openpyxl import Workbook
 from openpyxl.styles import Color, Font, PatternFill
@@ -95,7 +95,7 @@ def write_json_for_viewer(
 def _format_amendements(
     id_projet: int, title: str, amendements: Iterable[Amendement]
 ) -> list:
-    def key_func(amendement):
+    def key_func(amendement: Amendement) -> Tuple[str, str, str, str]:
         return (
             amendement.subdiv_type,
             amendement.subdiv_num,

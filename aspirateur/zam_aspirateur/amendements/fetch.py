@@ -18,7 +18,7 @@ class NotFound(Exception):
     pass
 
 
-def fetch_title(session: str, num: str) -> "str":
+def fetch_title(session: str, num: str) -> str:
     """
     Récupère le titre du projet de loi de puis le site du Sénat.
     """
@@ -43,7 +43,9 @@ def fetch_title(session: str, num: str) -> "str":
     if resp.status_code == HTTPStatus.NOT_FOUND:
         raise NotFound(url)
 
-    return HTMLParser(resp.content).css_first("h1").text()
+    title: str = HTMLParser(resp.content).css_first("h1").text()
+
+    return title
 
 
 def fetch_all(session: str, num: str) -> List[OrderedDict]:

@@ -26,6 +26,8 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
             "/lectures/{chambre}/{session}/{num_texte}/amendements.xlsx",
         )
 
+        config.add_static_view("static", "static", cache_max_age=3600)
+
         config.scan()
 
         app = config.make_wsgi_app()

@@ -31,7 +31,7 @@ class Amendement:
     dispositif: Optional[str] = None  # texte de l'amendement
     objet: Optional[str] = None  # motivation
 
-    objet: Optional[str] = None  # résumé de l'objet
+    resume: Optional[str] = None  # résumé de l'objet
 
     avis: Optional[str] = None  # position du gouvernemnt
     observations: Optional[str] = None

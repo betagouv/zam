@@ -16,8 +16,9 @@ def amendements():
             auteur="M. DUPONT",
             groupe="RDSE",
             matricule="000000",
-            objet="foo",
-            dispositif="bar",
+            dispositif="<p>L'article 1 est supprimé.</p>",
+            objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+            resume="Suppression de l'article",
         ),
         Amendement(
             subdiv_type="article",
@@ -74,6 +75,7 @@ FIELDS = [
     "identique",
     "dispositif",
     "objet",
+    "resume",
     "avis",
     "observations",
     "reponse",
@@ -94,7 +96,10 @@ def test_write_csv(amendements, tmpdir):
 
     assert len(rows) == nb_rows == 4
 
-    assert rows[0] == "article;1;;;;42;0;M. DUPONT;000000;RDSE;;;;;bar;foo;;;"
+    assert (
+        rows[0]
+        == "article;1;;;;42;0;M. DUPONT;000000;RDSE;;;;;<p>L'article 1 est supprimé.</p>;<p>Cet article va à l'encontre du principe d'égalité.</p>;Suppression de l'article;;;"  # noqa
+    )
 
 
 def test_write_json_for_viewer(amendements, tmpdir):
@@ -131,8 +136,9 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             "auteur": "M. DUPONT",
                             "groupe": {"libelle": "RDSE", "couleur": "#a38ebc"},
                             "document": "000042-00.pdf",
-                            "objet": "foo",
-                            "dispositif": "bar",
+                            "dispositif": "<p>L'article 1 est supprimé.</p>",
+                            "objet": "<p>Cet article va à l'encontre du principe d'égalité.</p>",  # noqa
+                            "resume": "Suppression de l'article",
                         },
                         {
                             "id": 43,
@@ -145,8 +151,9 @@ def test_write_json_for_viewer(amendements, tmpdir):
                                 "couleur": "#30bfe9",
                             },
                             "document": "000043-00.pdf",
-                            "objet": "corge",
                             "dispositif": "grault",
+                            "objet": "corge",
+                            "resume": "",
                         },
                     ],
                 },
@@ -170,8 +177,9 @@ def test_write_json_for_viewer(amendements, tmpdir):
                                 "couleur": "#2011e8",
                             },
                             "document": "000057-00.pdf",
-                            "objet": "baz",
                             "dispositif": "qux",
+                            "objet": "baz",
+                            "resume": "",
                         }
                     ],
                 },
@@ -192,8 +200,9 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             "auteur": "M. MARTIN",
                             "groupe": {"libelle": "", "couleur": "#ffffff"},
                             "document": "000021-00.pdf",
-                            "objet": "quux",
                             "dispositif": "quuz",
+                            "objet": "quux",
+                            "resume": "",
                         }
                     ],
                 },

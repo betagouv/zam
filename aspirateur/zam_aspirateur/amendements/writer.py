@@ -146,6 +146,7 @@ def _format_amendement(amendement: Amendement) -> dict:
             "couleur": GROUPS_COLORS.get(amendement.groupe, "#ffffff"),
         },
         "document": f"{amendement.num_int:06}-00.pdf",
-        "objet": amendement.objet,
         "dispositif": amendement.dispositif,
+        "objet": amendement.objet,
+        "resume": amendement.resume or "",
     }

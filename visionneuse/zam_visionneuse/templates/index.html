@@ -176,7 +176,7 @@
         <div>{{ reponse.article }}</div>
       </aside>
     {% endif %}
-    {% set is_gouvernemental = reponse.amendements[0].is_gouvernemental %}
+    {% set is_gouvernemental = reponse.amendements[0].gouvernemental %}
     <article{% if is_gouvernemental %} class="gouvernemental"{% endif %}>
       {% set positive = reponse.avis == 'Favorable' %}
       {% set negative = reponse.avis == 'Défavorable' %}
@@ -201,13 +201,13 @@
         {% else %}
           <p class="authors">
             {% for amendement in reponse.amendements %}
-              {% if loop.previtem is defined and amendement.authors != loop.previtem.authors or loop.previtem is not defined %}
+              {% if loop.previtem is defined and amendement.auteur != loop.previtem.auteur or loop.previtem is not defined %}
                 <span class="author">
-                  <strong>{{ amendement.authors }}</strong>
-                  {% if amendement.group and amendement.group.label -%}
-                    ({{ amendement.group.label }}
-                    <span class="group-color" style="background-color: {{ amendement.group.color }};"></span>)
-                  {%- endif %}{% if not loop.last and loop.nextitem.authors != amendement.authors %}, {% endif %}
+                  <strong>{{ amendement.auteur }}</strong>
+                  {% if amendement.groupe and amendement.groupe.libelle -%}
+                    ({{ amendement.groupe.libelle }}
+                    <span class="group-color" style="background-color: {{ amendement.groupe.couleur }};"></span>)
+                  {%- endif %}{% if not loop.last and loop.nextitem.auteur != amendement.auteur %}, {% endif %}
                 </span>
               {% endif %}
             {% endfor %}
@@ -231,15 +231,15 @@
           <details>
             <summary>
               Amendement {{ amendement.id }}
-              — {{ amendement.authors }}
-              {% if amendement.group and amendement.group.label -%}
-                <small>({{ amendement.group.label }}
-                  <span class="group-color" style="background-color: {{ amendement.group.color }};"></span>)</small>
+              — {{ amendement.auteur }}
+              {% if amendement.groupe and amendement.groupe.libelle -%}
+                <small>({{ amendement.groupe.libelle }}
+                  <span class="group-color" style="background-color: {{ amendement.groupe.couleur }};"></span>)</small>
               {%- endif %}
             </summary>
             <div class="amendement">
-              {{ amendement.summary }}
-              {{ amendement.content }}
+              {{ amendement.objet }}
+              {{ amendement.dispositif }}
             </div>
           </details>
         {% endfor %}

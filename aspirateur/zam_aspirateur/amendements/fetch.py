@@ -1,9 +1,11 @@
+# fmt: off
 import csv
 from collections import OrderedDict
 from http import HTTPStatus
 from typing import Any, List
 
 import requests
+from selectolax.parser import HTMLParser
 
 from .models import Amendement
 from .parser import (
@@ -14,6 +16,34 @@ from .parser import (
 
 class NotFound(Exception):
     pass
+
+
+def fetch_title(session: str, num: str) -> 'str':
+    """
+    Récupère le titre du projet de loi de puis le site du Sénat.
+    """
+    url = f"http://www.senat.fr/dossiers-legislatifs/depots/depots-{session[:4]}.html"
+
+    resp = requests.get(url)
+    if resp.status_code == HTTPStatus.NOT_FOUND:
+        raise NotFound(url)
+
+    project_url = None
+    for link in HTMLParser(resp.content).css('.flgris span a'):
+        if link.text() == f"N°\xa0{num}":
+            project_url = link.attributes.get('href')
+            break
+
+    if not project_url:
+        return 'Unknown'
+
+    url = f"http://www.senat.fr{project_url}"
+
+    resp = requests.get(url)
+    if resp.status_code == HTTPStatus.NOT_FOUND:
+        raise NotFound(url)
+
+    return HTMLParser(resp.content).css_first('h1').text()
 
 
 def fetch_all(session: str, num: str) -> List[OrderedDict]:

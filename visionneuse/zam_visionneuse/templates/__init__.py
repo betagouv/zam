@@ -16,9 +16,9 @@ env = Environment(
 )
 
 
-def render(**kwargs: dict) -> str:
+def render(title: str, articles: Articles, reponses: Reponses) -> str:
     return env.get_template("zam_visionneuse/templates/index.html").render(
-        **kwargs
+        {"title": title, "articles": articles, "reponses": reponses}
     )
 
 
@@ -29,13 +29,8 @@ def write_html(html: str, output_filename: Path) -> None:
 
 
 def render_and_save_html(
-    title: str,
-    articles: Articles,
-    amendements: Amendements,
-    reponses: Reponses,
+    title: str, articles: Articles, amendements: Amendements, reponses: Reponses
 ) -> str:
-    html = render(
-        **{"title": title, "articles": articles, "reponses": reponses}
-    )
+    html = render(title=title, articles=articles, reponses=reponses)
     write_html(html, build_output_filename())
     return html

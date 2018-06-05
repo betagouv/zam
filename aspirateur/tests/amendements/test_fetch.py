@@ -1,3 +1,4 @@
+# fmt: off
 import os
 
 import pytest
@@ -392,3 +393,58 @@ def test_fetch_discussed_not_found():
 
     with pytest.raises(NotFound):
         fetch_discussed('2080-2081', 42, 'commission')
+
+
+@responses.activate
+def test_fetch_title():
+    from zam_aspirateur.amendements.fetch import fetch_title
+
+    responses.add(
+        responses.GET,
+        'http://www.senat.fr/dossiers-legislatifs/depots/depots-2017.html',
+        body=('<li class="flgris">'
+              '<span><a href="/dossierleg/plfss2018.html">N°\xa063</a></span>'
+              '</li>'),
+        status=200,
+    )
+
+    responses.add(
+        responses.GET,
+        'http://www.senat.fr/dossierleg/plfss2018.html',
+        body='<h1>Financement de la sécurité sociale pour 2018</h1>',
+        status=200,
+    )
+
+    title = fetch_title('2017-2018', 63)
+
+    assert title == "Financement de la sécurité sociale pour 2018"
+
+
+@responses.activate
+def test_fetch_title_unknown():
+    from zam_aspirateur.amendements.fetch import fetch_title
+
+    responses.add(
+        responses.GET,
+        'http://www.senat.fr/dossiers-legislatifs/depots/depots-2017.html',
+        body='',
+        status=200,
+    )
+
+    title = fetch_title('2017-2018', 63)
+
+    assert title == "Unknown"
+
+
+@responses.activate
+def test_fetch_title_not_found():
+    from zam_aspirateur.amendements.fetch import fetch_title, NotFound
+
+    responses.add(
+        responses.GET,
+        'http://www.senat.fr/dossiers-legislatifs/depots/depots-2024.html',
+        status=404,
+    )
+
+    with pytest.raises(NotFound):
+        fetch_title('2024-2025', 42)

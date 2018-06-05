@@ -1,3 +1,4 @@
+# fmt: off
 from datetime import date
 
 import pytest
@@ -98,7 +99,11 @@ class TestParseAmendementFromJSON:
         }
         amendement = parse_from_json(amend, subdiv)
 
-        assert amendement.article == "Article 1er - Annexe (Stratégie nationale d'orientation de l'action publique)"  # noqa
+        assert amendement.subdiv_type == "article"
+        assert amendement.subdiv_num == "1"
+        assert amendement.subdiv_mult == ""
+        assert amendement.subdiv_pos == ""
+
         assert amendement.alinea == ""
 
         assert amendement.num == "131"
@@ -170,3 +175,18 @@ class TestParseAmendementFromJSON:
 
         assert amendement.discussion_commune is None
         assert amendement.sort == "Adopté"
+
+
+@pytest.mark.parametrize('text,type_,num,mult,pos', [
+    ('', '', '', '', ''),
+    ('Article 1', 'article', '1', '', ''),
+    ("Article 1er - Annexe (Stratégie nationale d'orientation de l'action publique)", 'article', '1', '', ''),
+    ('Article 8\xa0bis', 'article', '8', 'bis', ''),
+    ('art. add. après Article 7', 'article', '7', '', 'après'),
+    ('art. add. avant Article 39', 'article', '39', '', 'avant'),
+    ('Article 31 (précédemment examiné)', 'article', '31', '', ''),
+])
+def test_parse_subdiv(text, type_, num, mult, pos):
+    from zam_aspirateur.amendements.parser import _parse_subdiv
+
+    assert _parse_subdiv(text) == (type_, num, mult, pos)

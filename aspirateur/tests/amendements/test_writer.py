@@ -1,3 +1,4 @@
+# fmt: off
 import json
 
 import pytest
@@ -8,7 +9,8 @@ def amendements():
     from zam_aspirateur.amendements.models import Amendement
     return [
         Amendement(
-            article="Article 1",
+            subdiv_type="article",
+            subdiv_num="1",
             alinea="",
             num="42",
             auteur="M. DUPONT",
@@ -18,7 +20,9 @@ def amendements():
             dispositif="bar",
         ),
         Amendement(
-            article="Article 1",
+            subdiv_type="article",
+            subdiv_num="1",
+            subdiv_pos="avant",
             alinea="",
             num="57",
             auteur="M. DURAND",
@@ -28,17 +32,20 @@ def amendements():
             dispositif="qux",
         ),
         Amendement(
-            article="Article 7 bis",
+            subdiv_type="article",
+            subdiv_num="7",
+            subdiv_mult="bis",
             alinea="",
             num="21",
             auteur="M. MARTIN",
-            groupe="SOCR",
+            groupe=None,
             matricule="000002",
             objet="quux",
             dispositif="quuz",
         ),
         Amendement(
-            article="Article 1",
+            subdiv_type="article",
+            subdiv_num="1",
             alinea="",
             num="43",
             auteur="M. JEAN",
@@ -51,9 +58,13 @@ def amendements():
 
 
 FIELDS = [
-    "article",
+    "subdiv_type",
+    "subdiv_num",
+    "subdiv_mult",
+    "subdiv_pos",
     "alinea",
     "num",
+    "rectif",
     "auteur",
     "matricule",
     "groupe",
@@ -63,6 +74,9 @@ FIELDS = [
     "identique",
     "dispositif",
     "objet",
+    "avis",
+    "observations",
+    "reponse",
 ]
 
 
@@ -80,21 +94,7 @@ def test_write_csv(amendements, tmpdir):
 
     assert len(rows) == nb_rows == 4
 
-    assert rows[0] == "Article 1;;42;M. DUPONT;000000;RDSE;;;;;bar;foo"
-
-
-@pytest.mark.parametrize('text,exp_num,exp_mult', [
-    ('', None, ''),
-    ('Article 1', 1, ''),
-    ('Article 8\xa0bis', 8, 'bis'),
-    ('art. add. après Article 7', 7, ''),
-    ('Article 31 (précédemment examiné)', 31, ''),
-])
-def test_parse_article(text, exp_num, exp_mult):
-    from zam_aspirateur.amendements.writer import _parse_article
-
-    num, mult = _parse_article(text)
-    assert (num, mult) == (exp_num, exp_mult)
+    assert rows[0] == "article;1;;;;42;0;M. DUPONT;000000;RDSE;;;;;bar;foo;;;"
 
 
 def test_write_json_for_viewer(amendements, tmpdir):
@@ -115,60 +115,38 @@ def test_write_json_for_viewer(amendements, tmpdir):
             'libelle': 'Projet Loi de Financement de la Sécurité Sociale 2018',
             'list': [
                 {
-                    'idArticle': 1,
+                    'id': 1,
+                    'pk': 'article-1',
                     'etat': '',
                     'multiplicatif': '',
                     'titre': 'TODO',
-                    'feuilletJaune': 'jaune-1.pdf',
+                    'jaune': 'jaune-1.pdf',
                     'document': 'article-1.pdf',
                     'amendements': [
                         {
-                            'idAmendement': 42,
+                            'id': 42,
+                            'pk': '000042',
                             'etat': '',
                             'gouvernemental': False,
-                            'auteurs': [{
-                                'auteur': 'M. DUPONT',
-                            }],
-                            "groupesParlementaires": [
-                                {
-                                    "libelle": "RDSE",
-                                    "couleur": "#a38ebc"
-                                }
-                            ],
+                            'auteur': 'M. DUPONT',
+                            "groupe": {
+                                "libelle": "RDSE",
+                                "couleur": "#a38ebc"
+                            },
                             'document': '000042-00.pdf',
                             'objet': 'foo',
                             'dispositif': 'bar'
                         },
                         {
-                            'idAmendement': 57,
+                            'id': 43,
+                            'pk': '000043',
                             'etat': '',
                             'gouvernemental': False,
-                            'auteurs': [{
-                                'auteur': 'M. DURAND',
-                            }],
-                            "groupesParlementaires": [
-                                {
-                                    "libelle": "Les Républicains",
-                                    "couleur": "#2011e8"
-                                }
-                            ],
-                            'document': '000057-00.pdf',
-                            'objet': 'baz',
-                            'dispositif': 'qux',
-                        },
-                        {
-                            'idAmendement': 43,
-                            'etat': '',
-                            'gouvernemental': False,
-                            'auteurs': [{
-                                'auteur': 'M. JEAN',
-                            }],
-                            "groupesParlementaires": [
-                                {
-                                    "libelle": "Les Indépendants",
-                                    "couleur": "#30bfe9"
-                                }
-                            ],
+                            'auteur': 'M. JEAN',
+                            "groupe": {
+                                "libelle": "Les Indépendants",
+                                "couleur": "#30bfe9"
+                            },
                             'document': '000043-00.pdf',
                             'objet': 'corge',
                             'dispositif': 'grault',
@@ -176,26 +154,49 @@ def test_write_json_for_viewer(amendements, tmpdir):
                     ],
                 },
                 {
-                    'idArticle': 7,
+                    'id': 1,
+                    'pk': 'article-1av',
+                    'etat': 'av',
+                    'multiplicatif': '',
+                    'titre': 'TODO',
+                    'jaune': 'jaune-1av.pdf',
+                    'document': 'article-1av.pdf',
+                    'amendements': [
+                        {
+                            'id': 57,
+                            'pk': '000057',
+                            'etat': '',
+                            'gouvernemental': False,
+                            'auteur': 'M. DURAND',
+                            "groupe": {
+                                "libelle": "Les Républicains",
+                                "couleur": "#2011e8"
+                            },
+                            'document': '000057-00.pdf',
+                            'objet': 'baz',
+                            'dispositif': 'qux',
+                        },
+                    ],
+                },
+                {
+                    'id': 7,
+                    'pk': 'article-7bis',
                     'etat': '',
                     'multiplicatif': 'bis',
                     'titre': 'TODO',
-                    'feuilletJaune': 'jaune-7bis.pdf',
+                    'jaune': 'jaune-7bis.pdf',
                     'document': 'article-7bis.pdf',
                     'amendements': [
                         {
-                            'idAmendement': 21,
+                            'id': 21,
+                            'pk': '000021',
                             'etat': '',
                             'gouvernemental': False,
-                            'auteurs': [{
-                                'auteur': 'M. MARTIN',
-                            }],
-                            "groupesParlementaires": [
-                                {
-                                    "libelle": "SOCR",
-                                    "couleur": "#ff8080"
-                                }
-                            ],
+                            'auteur': 'M. MARTIN',
+                            "groupe": {
+                                "libelle": "",
+                                "couleur": "#ffffff"
+                            },
                             'document': '000021-00.pdf',
                             'objet': 'quux',
                             'dispositif': 'quuz',

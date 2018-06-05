@@ -1,10 +1,9 @@
+# fmt: off
 import csv
 import json
-import re
 from dataclasses import fields
 from itertools import groupby
-from operator import attrgetter
-from typing import Iterable, Optional, Tuple
+from typing import Iterable
 
 from openpyxl import Workbook
 from openpyxl.styles import (
@@ -115,31 +114,38 @@ def write_json_for_viewer(id_projet: int,
 def _format_amendements(id_projet: int,
                         title: str,
                         amendements: Iterable[Amendement]) -> list:
-    sorted_amendements = sorted(amendements, key=attrgetter('article'))
+    def key_func(amendement):
+        return (
+            amendement.subdiv_type,
+            amendement.subdiv_num,
+            amendement.subdiv_mult,
+            amendement.subdiv_pos,
+        )
+    sorted_amendements = sorted(amendements, key=key_func)
     return [{
         "idProjet": id_projet,
         "libelle": title,
         "list": [
-            _format_article(article, items)
-            for article, items in groupby(
+            _format_article(num, mult, pos, items)
+            for (type_, num, mult, pos), items in groupby(
                 sorted_amendements,
-                key=attrgetter('article'),
+                key=key_func,
             )
-            if article
+            if type_ == 'article'
         ],
     }]
 
 
-def _format_article(article: str,
+def _format_article(num: str, mult: str, pos: str,
                     amendements: Iterable[Amendement]) -> dict:
-    id_, mult = _parse_article(article)
     return {
-        "idArticle": id_,
-        "etat": "",
+        "id": int(num),
+        "pk": f"article-{num}{mult}{pos[:2]}",
         "multiplicatif": mult,
+        "etat": pos[:2],
         "titre": "TODO",
-        "feuilletJaune": f"jaune-{id_}{mult}.pdf",
-        "document": f"article-{id_}{mult}.pdf",
+        "jaune": f"jaune-{num}{mult}{pos[:2]}.pdf",
+        "document": f"article-{num}{mult}{pos[:2]}.pdf",
         "amendements": [
             _format_amendement(amendement)
             for amendement in amendements
@@ -147,42 +153,17 @@ def _format_article(article: str,
     }
 
 
-ARTICLE_RE = re.compile(
-    r'''^
-        .*                      # some stuff before
-        Article\s(?P<id>\d+)    # article number
-        (?:\s(?P<mult>\w+))?    # bis, ter, etc.
-        (?:\s.*)?               # some stuff after
-        $
-    ''', re.VERBOSE
-)
-
-
-def _parse_article(article: str) -> Tuple[Optional[int], str]:
-    if article == '':
-        return (None, '')
-    mo = ARTICLE_RE.match(article)
-    if mo is None:
-        raise ValueError(f"Could not parse article number {article!r}")
-    return int(mo.group('id')), mo.group('mult') or ""
-
-
 def _format_amendement(amendement: Amendement) -> dict:
     return {
-        "idAmendement": amendement.num_int,
+        "id": amendement.num_int,
+        "pk": f"{amendement.num_int:06}",
         "etat": amendement.sort or '',
         "gouvernemental": amendement.gouvernemental,
-        "auteurs": [
-            {
-                "auteur": amendement.auteur
-            }
-        ],
-        "groupesParlementaires": [
-            {
-                "libelle": amendement.groupe or '',
-                "couleur": GROUPS_COLORS.get(amendement.groupe, "#ffffff")
-            }
-        ],
+        "auteur": amendement.auteur,
+        "groupe": {
+            "libelle": amendement.groupe or '',
+            "couleur": GROUPS_COLORS.get(amendement.groupe, '#ffffff'),
+        },
         "document": f"{amendement.num_int:06}-00.pdf",
         "objet": amendement.objet,
         "dispositif": amendement.dispositif,

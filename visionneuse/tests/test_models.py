@@ -17,19 +17,19 @@ def test_amendement_pk_from_raw():
 
 
 def test_reponse_pk_from_raw():
-    assert (
-        Reponse.pk_from_raw({"presentation": "foo", "idReponse": 1}) == "Zm9v"
-    )
+    assert Reponse.pk_from_raw({"presentation": "foo", "idReponse": 1}) == "Zm9v"
 
 
 def test_articles_load():
     items = [
         {
-            "idArticle": 1,
+            "id": 1,
+            "pk": "article-1",
             "etat": "",
             "multiplicatif": "",
             "titre": "Approbation des tableaux d'\u00e9quilibre",
             "document": "article-1.pdf",
+            "amendements": [],
         }
     ]
     articles = Articles.load(items)
@@ -37,9 +37,9 @@ def test_articles_load():
     article = list(articles.values())[0]
     assert article.pk == "article-1"
     assert article.id == 1
-    assert article.title == "Approbation des tableaux d'équilibre"
-    assert article.state == ""
-    assert article.multiplier == ""
+    assert article.titre == "Approbation des tableaux d'équilibre"
+    assert article.etat == ""
+    assert article.multiplicatif == ""
     assert article.jaune == ""
     assert article.content == "TODO"
     assert article.amendements == []
@@ -48,11 +48,13 @@ def test_articles_load():
 def test_article_slug():
     items = [
         {
-            "idArticle": 1,
+            "id": 1,
+            "pk": "article-1",
             "etat": "",
             "multiplicatif": "",
             "titre": "Approbation des tableaux d'\u00e9quilibre",
             "document": "article-1.pdf",
+            "amendements": [],
         }
     ]
     articles = Articles.load(items)
@@ -60,11 +62,13 @@ def test_article_slug():
     assert article.slug == "article-1"
     items = [
         {
-            "idArticle": 1,
+            "id": 1,
+            "pk": "article-1",
             "etat": "ap",
             "multiplicatif": "bis",
             "titre": "Approbation des tableaux d'\u00e9quilibre",
             "document": "article-1.pdf",
+            "amendements": [],
         }
     ]
     articles = Articles.load(items)
@@ -75,25 +79,23 @@ def test_article_slug():
 def test_amendements_load():
     items = [
         {
-            "idArticle": 1,
+            "id": 1,
+            "pk": "article-1",
             "etat": "",
             "multiplicatif": "",
             "titre": "Approbation des tableaux d'\u00e9quilibre",
             "document": "article-1.pdf",
             "amendements": [
                 {
-                    "idAmendement": 5,
+                    "id": 5,
+                    "pk": "000005",
                     "etat": "",
                     "gouvernemental": False,
-                    "groupesParlementaires": [
-                        {
-                            "libelle": "Les D\u00e9veloppeurs",
-                            "couleur": "#133700",
-                        }
-                    ],
-                    "auteurs": [
-                        {"auteur": "M.\u00a0David", "couleur": "#ffffff"}
-                    ],
+                    "groupe": {
+                        "libelle": "Les D\u00e9veloppeurs",
+                        "couleur": "#133700",
+                    },
+                    "auteur": "M.\u00a0David",
                     "document": "000005-00.pdf",
                     "objet": "<p>Amendement de précision.</p>",
                     "dispositif": "<p>Alinéa 8</p>",
@@ -109,19 +111,42 @@ def test_amendements_load():
     assert amendement.id == 5
     assert amendement.article.id == 1
     assert amendement.article.amendements == [amendement]
-    assert amendement.authors == "M.\xa0David"
-    assert amendement.group == {
-        "label": "Les Développeurs",
-        "color": "#133700",
-    }
-    assert amendement.summary == "<p>Amendement de précision.</p>"
-    assert amendement.content == "<p>Alinéa 8</p>"
+    assert amendement.auteur == "M.\xa0David"
+    assert amendement.groupe == {"libelle": "Les Développeurs", "couleur": "#133700"}
+    assert amendement.objet == "<p>Amendement de précision.</p>"
+    assert amendement.dispositif == "<p>Alinéa 8</p>"
     assert amendement.document == "000005-00.pdf"
-    assert amendement.is_gouvernemental is False
+    assert amendement.gouvernemental is False
 
 
 def test_reponses_load():
-    items = [
+    aspirateur_data = [
+        {
+            "id": 1,
+            "pk": "article-1",
+            "etat": "",
+            "multiplicatif": "",
+            "titre": "Approbation des tableaux d'\u00e9quilibre",
+            "document": "article-1.pdf",
+            "amendements": [
+                {
+                    "id": 5,
+                    "pk": "000005",
+                    "etat": "",
+                    "gouvernemental": False,
+                    "groupe": {
+                        "libelle": "Les D\u00e9veloppeurs",
+                        "couleur": "#133700",
+                    },
+                    "auteur": "M.\u00a0David",
+                    "document": "000005-00.pdf",
+                    "objet": "<p>Amendement de précision.</p>",
+                    "dispositif": "<p>Alinéa 8</p>",
+                }
+            ],
+        }
+    ]
+    drupal_data = [
         {
             "idArticle": 1,
             "etat": "",
@@ -133,15 +158,11 @@ def test_reponses_load():
                     "idAmendement": 5,
                     "etat": "",
                     "gouvernemental": False,
-                    "groupesParlementaires": [
-                        {
-                            "libelle": "Les D\u00e9veloppeurs",
-                            "couleur": "#133700",
-                        }
-                    ],
-                    "auteurs": [
-                        {"auteur": "M.\u00a0David", "couleur": "#ffffff"}
-                    ],
+                    "groupe": {
+                        "libelle": "Les D\u00e9veloppeurs",
+                        "couleur": "#133700",
+                    },
+                    "auteurs": [{"auteur": "M.\u00a0David", "couleur": "#ffffff"}],
                     "reponse": {
                         "idReponse": 12,
                         "avis": "D\u00e9favorable",
@@ -155,15 +176,12 @@ def test_reponses_load():
             ],
         }
     ]
-    articles = Articles.load(items)
-    amendements = Amendements.load(items, articles)
-    reponses = Reponses.load(items, articles, amendements)
+    articles = Articles.load(aspirateur_data)
+    amendements = Amendements.load(aspirateur_data, articles)
+    reponses = Reponses.load(drupal_data, articles, amendements)
     assert list(reponses.keys())[0].startswith("PHA+PHN0cm9uZz5TdXBwcmV")
     reponse = list(reponses.values())[0]
     assert reponse.pk.startswith("PHA+PHN0cm9uZz5TdXBwcmV")
-    assert (
-        reponse.presentation
-        == "<p><strong>Suppression de l’article</strong></p>"
-    )
+    assert reponse.presentation == "<p><strong>Suppression de l’article</strong></p>"
     assert reponse.content == "<p>Cet article met en œuvre...</p>"
     assert reponse.avis == "Défavorable"

@@ -18,6 +18,11 @@ def load_drupal_source() -> Tuple[str, dict]:
     return source["libelle"], source["list"]
 
 
+@require_env_vars(env_vars=["ZAM_ARTICLES_SOURCE"])
+def load_articles_contents_source() -> list:
+    return load_json(os.environ["ZAM_ARTICLES_SOURCE"])
+
+
 @require_env_vars(env_vars=["ZAM_ASPIRATEUR_SOURCE"])
 def load_aspirateur_source() -> Tuple[str, dict]:
     source = load_json(os.environ["ZAM_ASPIRATEUR_SOURCE"])[0]  # Unique item.

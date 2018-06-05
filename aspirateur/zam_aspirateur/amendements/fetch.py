@@ -10,6 +10,9 @@ from .models import Amendement
 from .parser import parse_from_csv, parse_from_json
 
 
+BASE_URL = "http://www.senat.fr"
+
+
 class NotFound(Exception):
     pass
 
@@ -18,7 +21,7 @@ def fetch_title(session: str, num: str) -> "str":
     """
     Récupère le titre du projet de loi de puis le site du Sénat.
     """
-    url = f"http://www.senat.fr/dossiers-legislatifs/depots/depots-{session[:4]}.html"
+    url = f"{BASE_URL}/dossiers-legislatifs/depots/depots-{session[:4]}.html"
 
     resp = requests.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:
@@ -33,7 +36,7 @@ def fetch_title(session: str, num: str) -> "str":
     if not project_url:
         return "Unknown"
 
-    url = f"http://www.senat.fr{project_url}"
+    url = f"{BASE_URL}{project_url}"
 
     resp = requests.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:
@@ -46,9 +49,7 @@ def fetch_all(session: str, num: str) -> List[OrderedDict]:
     """
     Récupère tous les amendements, dans l'ordre de dépôt
     """
-    url = (
-        f"http://www.senat.fr/amendements/{session}/{num}/jeu_complet_{session}_{num}.csv"
-    )  # noqa
+    url = f"{BASE_URL}/amendements/{session}/{num}/jeu_complet_{session}_{num}.csv"
 
     resp = requests.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
@@ -73,7 +74,7 @@ def fetch_discussed(session: str, num: str, phase: str) -> Any:
     """
     assert phase in ("commission", "seance")
 
-    url = f"http://www.senat.fr/en{phase}/{session}/{num}/liste_discussion.json"  # noqa
+    url = f"{BASE_URL}/en{phase}/{session}/{num}/liste_discussion.json"
 
     resp = requests.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:  # 404

@@ -3,12 +3,14 @@ Récupérer la liste des amendements à un texte de loi au Sénat
 """
 import argparse
 import math
+import sys
 from typing import Dict, Iterable, Iterator, List, Optional
 
 from zam_aspirateur.amendements.fetch import (
     fetch_and_parse_all,
     fetch_and_parse_discussed,
     fetch_title,
+    NotFound,
 )
 from zam_aspirateur.amendements.models import Amendement
 from zam_aspirateur.amendements.writer import (
@@ -28,7 +30,11 @@ def main(argv: Optional[List[str]] = None) -> None:
     title = fetch_title(session=args.session, num=args.texte)
 
     print("Récupération des amendements déposés...")
-    amendements = fetch_and_parse_all(session=args.session, num=args.texte)
+    try:
+        amendements = fetch_and_parse_all(session=args.session, num=args.texte)
+    except NotFound:
+        print("Aucun amendement déposé pour l'instant!")
+        return 1
 
     processed_amendements = process_amendements(
         amendements=amendements, session=args.session, num=args.texte
@@ -43,6 +49,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         filename=args.output or default_filename,
         format=format,
     )
+
+    return 0
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
@@ -181,4 +189,4 @@ def save_output(
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

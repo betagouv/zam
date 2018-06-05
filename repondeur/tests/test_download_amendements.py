@@ -15,6 +15,15 @@ def test_download_csv(app):
     assert resp.headers["Content-Disposition"] == f"attachment; filename={filename}"
 
 
+def test_download_csv_bad_request(app):
+
+    resp = app.get("/lectures/bad/2017-2018/63/amendements.csv", expect_errors=True)
+
+    assert resp.status_code == 400
+    assert resp.content_type == "text/plain"
+    assert 'Invalid value "bad" for "chambre" param' in resp.text
+
+
 def test_download_xlsx(app):
 
     with patch("zam_repondeur.views.lectures.get_amendements_senat") as mock:
@@ -28,3 +37,12 @@ def test_download_xlsx(app):
 
     filename = "amendements-senat-2017-2018-63.xlsx"
     assert resp.headers["Content-Disposition"] == f"attachment; filename={filename}"
+
+
+def test_download_xlsx_bad_request(app):
+
+    resp = app.get("/lectures/bad/2017-2018/63/amendements.xlsx", expect_errors=True)
+
+    assert resp.status_code == 400
+    assert resp.content_type == "text/plain"
+    assert 'Invalid value "bad" for "chambre" param' in resp.text

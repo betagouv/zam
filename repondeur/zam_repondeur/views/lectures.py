@@ -120,7 +120,8 @@ def amendements_csv(request: Request) -> Response:
     chambre = request.matchdict["chambre"]
     session = request.matchdict["session"]
     num_texte = request.matchdict["num_texte"]
-    assert chambre in CHAMBRES
+    if chambre not in CHAMBRES:
+        return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
 
     try:
         amendements = get_amendements_senat(session, num_texte)
@@ -150,7 +151,8 @@ def amendements_xlsx(request: Request) -> Response:
     chambre = request.matchdict["chambre"]
     session = request.matchdict["session"]
     num_texte = request.matchdict["num_texte"]
-    assert chambre in CHAMBRES
+    if chambre not in CHAMBRES:
+        return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
 
     try:
         amendements = get_amendements_senat(session, num_texte)

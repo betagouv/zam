@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
@@ -6,9 +7,13 @@ from logbook import Logger
 from ..models import Articles, Amendements, Reponses
 from ..utils import build_output_filename
 
+
+HERE = os.path.dirname(__file__)
+
+
 log = Logger("client")
 env = Environment(
-    loader=FileSystemLoader("."),
+    loader=FileSystemLoader(HERE),
     # Strip down as much as possible the size of the HTML
     # by avoiding extra white spaces everywhere.
     trim_blocks=True,
@@ -17,7 +22,7 @@ env = Environment(
 
 
 def render(title: str, articles: Articles, reponses: Reponses) -> str:
-    return env.get_template("zam_visionneuse/templates/index.html").render(
+    return env.get_template("index.html").render(
         {"title": title, "articles": articles, "reponses": reponses}
     )
 

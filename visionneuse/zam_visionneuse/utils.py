@@ -27,6 +27,7 @@ def get_current_branch():
     res = subprocess.run(
         "git symbolic-ref --short HEAD",
         shell=True,
+        stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
         encoding="ascii",
     )

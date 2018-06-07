@@ -33,8 +33,8 @@
             <div class="card-text">
             {% if lecture.chambre == 'senat' %}
                 <p>Récupérer un tableau de tous les amendements déposés, triés par ordre de passage, depuis le site du Sénat.</p>
-                <a class="btn btn-primary" href="{{ request.route_url('amendements_csv', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}"><i class="fa fa-table"></i>Télécharger (CSV)</a>
-                <a class="btn btn-primary" href="{{ request.route_url('amendements_xlsx', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}"><i class="fa fa-file-excel"></i>Télécharger (Excel)</a>
+                <a class="btn btn-primary" href="{{ request.route_url('download_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, format='csv') }}"><i class="fa fa-table"></i>Télécharger (CSV)</a>
+                <a class="btn btn-primary" href="{{ request.route_url('download_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, format='xlsx') }}"><i class="fa fa-file-excel"></i>Télécharger (Excel)</a>
             {% elif lecture.chambre == 'assemblee' %}
                 <p>La récupération des amendements depuis le site de l'Assemblée nationale n'est pas encore disponible. 🚧</p>
             {% endif %}

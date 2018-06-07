@@ -67,11 +67,22 @@ def lecture(request: Request) -> dict:
     }
 
 
-@view_config(route_name="amendements_csv")
-def amendements_csv(request: Request) -> Response:
+DOWNLOAD_FORMATS = {
+    "csv": (write_csv, "text/csv"),
+    "xlsx": (
+        write_xlsx,
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ),
+}
+
+
+@view_config(route_name="download_amendements")
+def download_amendements(request: Request) -> Response:
     chambre = request.matchdict["chambre"]
     session = request.matchdict["session"]
     num_texte = request.matchdict["num_texte"]
+    fmt = request.matchdict["format"]
+
     if chambre not in CHAMBRES:
         return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
 
@@ -89,44 +100,13 @@ def amendements_csv(request: Request) -> Response:
 
         tmp_file_path = os.path.abspath(file_.name)
 
-        write_csv(amendements, tmp_file_path)
+        write_func, content_type = DOWNLOAD_FORMATS[fmt]
+
+        write_func(amendements, tmp_file_path)
 
         response = FileResponse(tmp_file_path)
-        attach_name = f"amendements-{chambre}-{session}-{num_texte}.csv"
-        response.content_type = "text/csv"
-        response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
-        return response
-
-
-@view_config(route_name="amendements_xlsx")
-def amendements_xlsx(request: Request) -> Response:
-    chambre = request.matchdict["chambre"]
-    session = request.matchdict["session"]
-    num_texte = request.matchdict["num_texte"]
-    if chambre not in CHAMBRES:
-        return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
-
-    try:
-        amendements = get_amendements_senat(session, num_texte)
-    except NotFound:
-        request.session.flash(("danger", "Aucun amendement n'a pu être trouvé."))
-        return HTTPFound(
-            location=request.route_url(
-                "lecture", chambre=chambre, session=session, num_texte=num_texte
-            )
-        )
-
-    with NamedTemporaryFile() as file_:
-
-        tmp_file_path = os.path.abspath(file_.name)
-
-        write_xlsx(amendements, tmp_file_path)
-
-        response = FileResponse(tmp_file_path)
-        attach_name = f"amendements-{chambre}-{session}-{num_texte}.xlsx"
-        response.content_type = (
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
+        attach_name = f"amendements-{chambre}-{session}-{num_texte}.{fmt}"
+        response.content_type = content_type
         response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
         return response
 

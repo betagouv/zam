@@ -27,12 +27,8 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.add_route("lectures_add", "/lectures/add")
         config.add_route("lecture", "/lectures/{chambre}/{session}/{num_texte}/")
         config.add_route(
-            "amendements_csv",
-            "/lectures/{chambre}/{session}/{num_texte}/amendements.csv",
-        )
-        config.add_route(
-            "amendements_xlsx",
-            "/lectures/{chambre}/{session}/{num_texte}/amendements.xlsx",
+            "download_amendements",
+            "/lectures/{chambre}/{session}/{num_texte}/amendements.{format:(csv|xlsx)}",
         )
 
         config.add_static_view("static", "static", cache_max_age=3600)

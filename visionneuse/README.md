@@ -33,5 +33,5 @@ Then launch the generator:
 
 First, set environment variables as described in `Generating` above.
 
-    pip install pytest selectolax
+    pip install -r requirements-dev.txt
     pytest

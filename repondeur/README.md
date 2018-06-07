@@ -11,6 +11,12 @@ $ pipenv install
 $ pipenv shell
 ```
 
+## Initialize the database
+
+```
+$ zam_init_db development.ini
+```
+
 ## Start the web app
 
 ```
@@ -42,5 +48,5 @@ $ flake8
 Check type annotations:
 
 ```
-mypy .
+mypy zam_repondeur
 ```

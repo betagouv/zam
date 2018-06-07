@@ -1,6 +1,9 @@
 from pyramid.config import Configurator
 from pyramid.router import Router
 from pyramid.session import SignedCookieSessionFactory
+from sqlalchemy import engine_from_config
+
+from zam_repondeur.models import DBSession, Base
 
 
 def make_app(global_settings: dict, **settings: dict) -> Router:
@@ -8,6 +11,12 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
     session_factory = SignedCookieSessionFactory(settings["zam.secret"])
 
     with Configurator(settings=settings, session_factory=session_factory) as config:
+
+        config.include("pyramid_tm")
+
+        engine = engine_from_config(settings, "sqlalchemy.")
+        DBSession.configure(bind=engine)
+        Base.metadata.bind = engine
 
         config.include("pyramid_jinja2")
         config.add_jinja2_renderer(".html")

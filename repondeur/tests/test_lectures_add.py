@@ -1,5 +1,3 @@
-import os
-
 from webtest.forms import Select
 
 
@@ -35,20 +33,48 @@ def test_get_form(app):
     assert resp.form.fields["submit"][0].attrs["type"] == "submit"
 
 
-def test_post_form(app, tmpdir):
+def test_post_form(app):
+    from zam_repondeur.models import Lecture
+
     form = app.get("/lectures/add").form
     form["chambre"] = "senat"
     form["session"] = "2017-2018"
     form["num_texte"] = "63"
 
-    assert not os.path.isdir(tmpdir.join("zam").join("senat-2017-2018-63"))
+    assert not Lecture.exists(chambre="senat", session="2017-2018", num_texte="63")
 
     resp = form.submit()
 
     assert resp.status_code == 302
     assert resp.location == "http://localhost/lectures/senat/2017-2018/63/"
 
-    assert os.path.isdir(tmpdir.join("zam").join("senat-2017-2018-63"))
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "Lecture créée avec succès." in resp.text
+
+    assert Lecture.exists(chambre="senat", session="2017-2018", num_texte="63")
+
+
+def test_post_form_already_exists(app, dummy_lecture):
+    from zam_repondeur.models import Lecture
+
+    assert Lecture.exists(chambre="senat", session="2017-2018", num_texte="63")
+
+    form = app.get("/lectures/add").form
+    form["chambre"] = "senat"
+    form["session"] = "2017-2018"
+    form["num_texte"] = "63"
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/senat/2017-2018/63/"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "Cette lecture existe déjà..." in resp.text
 
 
 def test_post_form_bad_chambre(app):

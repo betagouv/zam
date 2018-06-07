@@ -45,7 +45,7 @@ $PIP install --quiet -e git+https://framagit.org/mdamien/metslesliens.git@1.1.1-
 $PIP install --quiet -e git+https://github.com/regardscitoyens/the-law-factory-parser.git#egg=tlfp
 
 message "Lancement de l'aspirateur"
-"$VENVS/aspirateur/bin/zam-aspirateur" --session 2017-2018 --texte 63 --output-format=json --output="$OUTPUT/amendements_2017-2018_63.json"
+"$VENVS/aspirateur/bin/zam-aspirateur" --source=senat --session 2017-2018 --texte 63 --output-format=json --output="$OUTPUT/amendements_2017-2018_63.json"
 
 message "Lancement du parser de la fabrique de la loi"
 "$VENVS/tlfp/bin/tlfp-parse-text" http://www.senat.fr/leg/pjl17-063.html >"$OUTPUT/tlfp-output.json"

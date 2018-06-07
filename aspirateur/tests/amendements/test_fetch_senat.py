@@ -17,13 +17,13 @@ def read_sample_data(basename):
 
 @responses.activate
 def test_fetch_all():
-    from zam_aspirateur.amendements.fetch import fetch_all
+    from zam_aspirateur.amendements.fetch_senat import fetch_all
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
 
     responses.add(
         responses.GET,
-        "http://www.senat.fr/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv",  # noqa
+        "http://www.senat.fr/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv",
         body=sample_data,
         status=200,
     )
@@ -44,17 +44,17 @@ def test_fetch_all():
         "Objet ": '<body><p style="text-align: justify;">Cet amendement vise &#224; rectifier une anomalie, celle de l&#8217;assujettissement des Fran&#231;ais &#233;tablis hors de France au paiement de la contribution sociale g&#233;n&#233;ralis&#233;e et de la contribution pour le remboursement de la dette sociale.</p><p style="text-align: justify;">En effet, la loi de finances rectificatives pour 2012 a &#233;tendu les pr&#233;l&#232;vements sociaux aux revenus immobiliers (revenus fonciers et plus-values immobili&#232;res) de source fran&#231;aise per&#231;us par les personnes physiques fiscalement domicili&#233;es hors de France.</p><p style="text-align: justify;">Par cette mesure, les Fran&#231;ais non-r&#233;sidents contribuent au financement des r&#233;gimes obligatoires de la s&#233;curit&#233; sociale, dont ils ne b&#233;n&#233;ficient pourtant pas dans la majorit&#233; des cas, leur protection sociale relevant soit d&#8217;un r&#233;gime volontaire de la Caisse des Fran&#231;ais de l&#8217;&#233;tranger soit d&#8217;un syst&#232;me de protection sociale de leur pays de r&#233;sidence.</p><p style="text-align: justify;">Il en r&#233;sulte une double imposition pour les contribuables non-r&#233;sidents affili&#233;s &#224; un r&#233;gime de s&#233;curit&#233; sociale dans leur pays de r&#233;sidence et assujettis de fait aux pr&#233;l&#232;vements sociaux &#224; la fois en France et dans le pays o&#249; ils r&#233;sident.</p><p style="text-align: justify;">Cette situation est contraire au droit de l&#8217;Union europ&#233;enne et particuli&#232;rement au R&#232;glement (CEE) n&#176; 1408/71 du Conseil, du 14 juin 1971, relatif &#224; l&#8217;application des r&#233;gimes de s&#233;curit&#233; sociale aux travailleurs salari&#233;s, aux travailleurs non-salari&#233;s et aux membres de leur famille qui se d&#233;placent &#224; l&#8217;int&#233;rieur de la Communaut&#233;, qui subordonne le paiement des cotisations sociales au b&#233;n&#233;fice du r&#233;gime obligatoire de s&#233;curit&#233; sociale.</p></body>',  # noqa
         "Sort ": "Adopté",
         "Subdivision ": "art. add. après Article 7",
-        "Url amendement ": "//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",  # noqa
+        "Url amendement ": "//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",
     }
 
 
 @responses.activate
 def test_fetch_all_not_found():
-    from zam_aspirateur.amendements.fetch import fetch_all, NotFound
+    from zam_aspirateur.amendements.fetch_senat import fetch_all, NotFound
 
     responses.add(
         responses.GET,
-        "http://www.senat.fr/amendements/2080-2081/42/jeu_complet_2080-2081_42.csv",  # noqa
+        "http://www.senat.fr/amendements/2080-2081/42/jeu_complet_2080-2081_42.csv",
         status=404,
     )
 
@@ -64,7 +64,7 @@ def test_fetch_all_not_found():
 
 @responses.activate
 def test_fetch_discussed():
-    from zam_aspirateur.amendements.fetch import fetch_discussed
+    from zam_aspirateur.amendements.fetch_senat import fetch_discussed
 
     fake_data = {
         "info_generales": {
@@ -81,7 +81,7 @@ def test_fetch_discussed():
             {
                 "libelle_subdivision": "Article 1er",
                 "id_subdivision": "153938",
-                "signet": "../../textes/2016-2017/610.html#AMELI_SUB_4__Article_1",  # noqa
+                "signet": "../../textes/2016-2017/610.html#AMELI_SUB_4__Article_1",
                 "Amendements": [
                     {
                         "idAmendement": "1109668",
@@ -183,7 +183,7 @@ def test_fetch_discussed():
             {
                 "libelle_subdivision": "Article 2",
                 "id_subdivision": "153939",
-                "signet": "../../textes/2016-2017/610.html#AMELI_SUB_4__Article_2",  # noqa
+                "signet": "../../textes/2016-2017/610.html#AMELI_SUB_4__Article_2",
                 "Amendements": [
                     {
                         "idAmendement": "1109665",
@@ -382,7 +382,7 @@ def test_fetch_discussed():
 
 @responses.activate
 def test_fetch_discussed_not_found():
-    from zam_aspirateur.amendements.fetch import fetch_discussed, NotFound
+    from zam_aspirateur.amendements.fetch_senat import fetch_discussed, NotFound
 
     responses.add(
         responses.GET,
@@ -396,7 +396,7 @@ def test_fetch_discussed_not_found():
 
 @responses.activate
 def test_fetch_title():
-    from zam_aspirateur.amendements.fetch import fetch_title
+    from zam_aspirateur.amendements.fetch_senat import fetch_title
 
     responses.add(
         responses.GET,
@@ -423,7 +423,7 @@ def test_fetch_title():
 
 @responses.activate
 def test_fetch_title_unknown():
-    from zam_aspirateur.amendements.fetch import fetch_title
+    from zam_aspirateur.amendements.fetch_senat import fetch_title
 
     responses.add(
         responses.GET,
@@ -439,7 +439,7 @@ def test_fetch_title_unknown():
 
 @responses.activate
 def test_fetch_title_not_found():
-    from zam_aspirateur.amendements.fetch import fetch_title, NotFound
+    from zam_aspirateur.amendements.fetch_senat import fetch_title, NotFound
 
     responses.add(
         responses.GET,
@@ -452,9 +452,12 @@ def test_fetch_title_not_found():
 
 
 def test_fetch_and_parse_discussed_not_found():
-    from zam_aspirateur.amendements.fetch import fetch_and_parse_discussed, NotFound
+    from zam_aspirateur.amendements.fetch_senat import (
+        fetch_and_parse_discussed,
+        NotFound,
+    )
 
-    with patch("zam_aspirateur.amendements.fetch.fetch_discussed") as m_fetch:
+    with patch("zam_aspirateur.amendements.fetch_senat.fetch_discussed") as m_fetch:
         m_fetch.side_effect = NotFound
 
         amendements = fetch_and_parse_discussed("2016-2017", 610, "commission")

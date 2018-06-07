@@ -102,3 +102,6 @@ ENV/
 
 # pytest
 .pytest_cache/
+
+# cachecontrol
+aspirateur/.web_cache/

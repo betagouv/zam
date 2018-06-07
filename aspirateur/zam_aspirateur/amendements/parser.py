@@ -97,6 +97,8 @@ SUBDIV_RE = re.compile(
 def _parse_subdiv(libelle: str) -> Tuple[str, str, str, str]:
     if libelle == "":
         return ("", "", "", "")
+    if libelle.startswith("ANNEXE "):
+        return ("annexe", libelle[len("ANNEXE "):], "", "")
     mo = SUBDIV_RE.match(libelle)
     if mo is None:
         raise ValueError(f"Could not parse subdivision {libelle!r}")

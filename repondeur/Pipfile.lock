@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c4d3627aa05bbecf9155599c509382a3ae982fdcaedae227be943e85acc5b10e"
+            "sha256": "1c66ebbc12d0e6f0271d6b4ca5bfb339ef61755fd3930b25b14d01c3523327f5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -178,6 +178,20 @@
             "index": "pypi",
             "version": "==2.7"
         },
+        "pyramid-retry": {
+            "hashes": [
+                "sha256:94401b2e1c6850517f1a5eb2caad63f1120b7263dce1a5087afef15145b5d95a",
+                "sha256:ade60f8def4cb179e102a0dd6545835e62aa946479a7e0354c0b2c2f9bc86947"
+            ],
+            "version": "==0.5"
+        },
+        "pyramid-tm": {
+            "hashes": [
+                "sha256:07d03bab7bdd265c3920db4e68dbaa8cbaff27da828700f404b1424244ad617f",
+                "sha256:11b0f31482339d655358081bc1366d39679d02588782b5c8019bfb41ae02ba3d"
+            ],
+            "version": "==2.2"
+        },
         "repoze.lru": {
             "hashes": [
                 "sha256:0429a75e19380e4ed50c0694e26ac8819b4ea7851ee1fc7583c8572db80aff77",
@@ -207,6 +221,21 @@
                 "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb"
             ],
             "version": "==1.11.0"
+        },
+        "sqlalchemy": {
+            "hashes": [
+                "sha256:2d5f08f714a886a1382c18be501e614bce50d362384dc089474019ce0768151c"
+            ],
+            "index": "pypi",
+            "version": "==1.2.8"
+        },
+        "transaction": {
+            "hashes": [
+                "sha256:269601a3493cd3eddeb869419ceadfc5e6d2bc931e9970d11fc4649dab189c3c",
+                "sha256:9de0f93f833713270fbceaf6092194313c1de0afb660e66dea8e089855eb281c",
+                "sha256:f2242070e437e5d555ea3df809cb517860513254c828f33847df1c5e4b776c7a"
+            ],
+            "version": "==2.2.1"
         },
         "translationstring": {
             "hashes": [
@@ -278,6 +307,12 @@
                 "sha256:f41037260deaacb875db250021fe883bf536bf6414a4fd25b25059b02e31b120"
             ],
             "version": "==4.5.0"
+        },
+        "zope.sqlalchemy": {
+            "hashes": [
+                "sha256:9316a1a8bb9e4f9f59332acf1ad2cc8b664f19a4bde5f68be7f61f3e11f80514"
+            ],
+            "version": "==1.0"
         }
     },
     "develop": {

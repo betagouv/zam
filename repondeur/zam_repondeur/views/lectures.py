@@ -1,8 +1,6 @@
 import os
-import re
-from dataclasses import dataclass
 from tempfile import NamedTemporaryFile
-from typing import Any, Generator, List
+from typing import List
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
 from pyramid.request import Request
@@ -14,63 +12,18 @@ from zam_aspirateur.amendements.fetch_senat import fetch_and_parse_all, NotFound
 from zam_aspirateur.amendements.writer import write_csv, write_xlsx
 from zam_aspirateur.__main__ import process_amendements
 
-
-CHAMBRES = {"assemblee": "Assemblée nationale", "senat": "Sénat"}
-
-SESSIONS = ["2017-2018"]
-
-
-RE_TEXTE = re.compile(r"^(?P<chambre>\w+)-(?P<session>\d{4}-\d{4})-(?P<num_texte>\d+)$")
-
-
-@dataclass
-class Lecture:
-    chambre: str
-    session: str
-    num_texte: str
-
-    @property
-    def chambre_disp(self) -> str:
-        return CHAMBRES[self.chambre]
-
-    def __str__(self) -> str:
-        return f"{self.chambre_disp}, session {self.session}, texte nº {self.num_texte}"
-
-    def __lt__(self, other: Any) -> bool:
-        if type(self) != type(other):
-            return NotImplemented
-        return (self.chambre, self.session, int(self.num_texte)) < (
-            other.chambre,
-            other.session,
-            int(other.num_texte),
-        )
+from zam_repondeur.models import Lecture, CHAMBRES, SESSIONS
 
 
 @view_config(route_name="lectures_list", renderer="lectures_list.html")
 def lectures_list(request: Request) -> dict:
-    return {
-        "lectures": list(
-            sorted(
-                list_lectures(request.registry.settings["zam.data_dir"]), reverse=True
-            )
-        )
-    }
-
-
-def list_lectures(dirname: str) -> Generator:
-    if not os.path.isdir(dirname):
-        return
-    for name in os.listdir(dirname):
-        mo = RE_TEXTE.match(name)
-        if mo is not None:
-            yield Lecture(**mo.groupdict())  # type: ignore
+    return {"lectures": Lecture.all()}
 
 
 @view_defaults(route_name="lectures_add", renderer="lectures_add.html")
 class LecturesAdd:
     def __init__(self, request: Request) -> None:
         self.request = request
-        self.data_dir = self.request.registry.settings["zam.data_dir"]
 
     @view_config(request_method="GET")
     def get(self) -> dict:
@@ -84,11 +37,10 @@ class LecturesAdd:
         if chambre not in CHAMBRES:
             raise HTTPBadRequest
 
-        lecture_dir = os.path.join(self.data_dir, f"{chambre}-{session}-{num_texte}")
-        if os.path.isdir(lecture_dir):
+        if Lecture.exists(chambre, session, num_texte):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
         else:
-            os.makedirs(lecture_dir)
+            Lecture.create(chambre, session, num_texte)
             self.request.session.flash(("success", "Lecture créée avec succès."))
 
         return HTTPFound(
@@ -107,7 +59,7 @@ class LecturesAdd:
 @view_config(route_name="lecture", renderer="lecture.html")
 def lecture(request: Request) -> dict:
     return {
-        "lecture": Lecture(  # type: ignore
+        "lecture": Lecture(
             chambre=request.matchdict["chambre"],
             session=request.matchdict["session"],
             num_texte=request.matchdict["num_texte"],

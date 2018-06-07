@@ -46,6 +46,19 @@ class Lecture(Base):  # type: ignore
         return lectures
 
     @classmethod
+    def get(cls, chambre: str, session: str, num_texte: str) -> "Lecture":
+        res: "Lecture" = (
+            DBSession.query(cls)
+            .filter(
+                cls.chambre == chambre,
+                cls.session == session,
+                cls.num_texte == num_texte,
+            )
+            .first()
+        )
+        return res
+
+    @classmethod
     def exists(cls, chambre: str, session: str, num_texte: str) -> bool:
         res: bool = DBSession.query(
             DBSession.query(cls)

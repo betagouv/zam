@@ -2,7 +2,7 @@ import os
 from tempfile import NamedTemporaryFile
 from typing import List
 
-from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
+from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
 from pyramid.response import FileResponse, Response
 from pyramid.view import view_config, view_defaults
@@ -58,13 +58,14 @@ class LecturesAdd:
 
 @view_config(route_name="lecture", renderer="lecture.html")
 def lecture(request: Request) -> dict:
-    return {
-        "lecture": Lecture(
-            chambre=request.matchdict["chambre"],
-            session=request.matchdict["session"],
-            num_texte=request.matchdict["num_texte"],
-        )
-    }
+    lecture = Lecture.get(
+        chambre=request.matchdict["chambre"],
+        session=request.matchdict["session"],
+        num_texte=request.matchdict["num_texte"],
+    )
+    if lecture is None:
+        raise HTTPNotFound
+    return {"lecture": lecture}
 
 
 DOWNLOAD_FORMATS = {

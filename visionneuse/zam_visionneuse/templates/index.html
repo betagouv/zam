@@ -131,6 +131,17 @@
   .article {
     background-color: bisque;
   }
+  .article dt {
+    border-radius: 5rem;
+    background: white;
+    float: left;
+    height: 2rem;
+    width: 2rem;
+    padding: .4rem .3rem;
+    margin-top: .1rem;
+    font-size: x-small;
+    border: 2px solid black;
+  }
   .jaune {
     background-color: lemonchiffon;
   }
@@ -253,10 +264,19 @@
 </main>
 {% for article in articles.values() %}
   <template id="article-details-{{ article.pk }}">
-    {% if article.content %}
+    {% if article.alineas %}
       <details>
         <summary>Article {{ article }} : contenu intégral</summary>
-        <div class="article">{{ article.content }}</div>
+        <div class="article">
+          {% for number, content in article.alineas.items() %}
+            <dl>
+              <dt>{{ number }}</dt>
+              <dd>
+                <p>{{ content }}</p>
+              </dd>
+            </dl>
+          {% endfor %}
+        </div>
       </details>
     {% endif %}
     {% if article.jaune %}

@@ -41,7 +41,7 @@ def test_articles_load():
     assert article.etat == ""
     assert article.multiplicatif == ""
     assert article.jaune == ""
-    assert article.content == "TODO"
+    assert article.alineas is None
     assert article.amendements == []
 
 

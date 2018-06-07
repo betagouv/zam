@@ -21,7 +21,7 @@ class Article:
     etat: Optional[str] = ""
     multiplicatif: Optional[str] = ""
     jaune: Optional[str] = ""
-    content: Optional[str] = "TODO"
+    alineas: Optional[dict] = None
     amendements: Any = field(default_factory=lambda: [])  # List[Amendement]
     document: Optional[str] = ""
 
@@ -60,6 +60,12 @@ class Articles(OrderedDict):
             jaune_content = load_docx(jaunes_path / jaune_name)
             # Convert jaune to CommonMark to preserve some styles.
             article.jaune = CommonMark.commonmark(jaune_content)
+
+    def load_contents(self, items: List[dict]) -> None:
+        for article_content in items:
+            pk = f'article-{article_content["titre"]}'
+            if pk in self:
+                self[pk].alineas = article_content["alineas"]
 
     def get_from_raw(self, raw: dict) -> Article:
         return self[Article.pk_from_raw(raw)]
@@ -162,7 +168,9 @@ class Reponses(OrderedDict):
 
 @require_env_vars(env_vars=["ZAM_JAUNES_SOURCE"])
 def load_data(
-    aspirateur_items: List[dict], drupal_items: List[dict] = None
+    aspirateur_items: List[dict],
+    drupal_items: List[dict] = None,
+    articles_contents: List[dict] = None,
 ) -> Tuple[Articles, Amendements, Reponses]:
     articles = Articles.load(aspirateur_items)
     amendements = Amendements.load(aspirateur_items, articles)
@@ -171,4 +179,6 @@ def load_data(
         reponses = Reponses.load(drupal_items, articles, amendements)
     else:
         reponses = {}
+    if articles_contents:
+        articles.load_contents(articles_contents)
     return articles, amendements, reponses

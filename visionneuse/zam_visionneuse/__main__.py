@@ -1,5 +1,6 @@
 import sys
 import argparse
+from pathlib import Path
 from typing import List, NewType, Optional
 
 from logbook import StreamHandler
@@ -14,6 +15,7 @@ from .templates import render_and_save_html
 
 StreamHandler(sys.stdout).push_application()
 SystemStatus = NewType("SystemStatus", int)  # status code for sys.exit()
+HERE = Path.cwd()
 
 
 def generate(
@@ -38,8 +40,8 @@ def main(argv: Optional[List[str]] = None) -> SystemStatus:
 
     generate(
         aspirateur_file=args.file_aspirateur,
-        reponses_file=args.file_reponses,
-        jaunes_folder=args.folder_jaunes,
+        reponses_file=HERE / Path(args.file_reponses),
+        jaunes_folder=HERE / Path(args.folder_jaunes),
         articles_file=args.file_articles,
         output_folder=args.folder_output,
     )
@@ -76,12 +78,6 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         "--folder-output",
         required=True,
         help="chemin vers le dossier de destination de la visionneuse",
-    )
-    parser.add_argument(
-        "--source",
-        default="senat",
-        choices=["senat", "an"],
-        help="institution fournissant les données",
     )
     return parser.parse_args(argv)
 

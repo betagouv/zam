@@ -61,7 +61,7 @@ class Articles(OrderedDict):
 
     def load_contents(self, items: List[dict]) -> None:
         for article_content in items:
-            pk = f'article-{article_content["titre"]}'
+            pk = f'article-{article_content["titre"].replace(" ", "-")}'
             if pk in self:
                 self[pk].alineas = article_content["alineas"]
 

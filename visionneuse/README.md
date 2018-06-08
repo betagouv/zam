@@ -16,20 +16,12 @@
 
 Generate JSON files related to amendements from the aspirateur and articles from tlfp:
 
-    zam-aspirateur --session=2017-2018 --texte=63
+    zam-aspirateur --source=senat --session=2017-2018 --texte=63
     tlfp-parse-text http://www.senat.fr/leg/pjl17-063.html > tlfp-output.json
-
-Set your paths for sensitive informations, for instance with fish:
-
-    set -gx ZAM_ASPIRATEUR_SOURCE path/to/zam/aspirateur/amendements_2017-2018_63.json
-    set -gx ZAM_DRUPAL_SOURCE path/to/Archives\ PLFSS\ 2018/JSON\ -\ fichier\ de\ sauvegarde/Sénat1-2018.json
-    set -gx ZAM_JAUNES_SOURCE path/to/Archives\ PLFSS\ 2018/Jeu\ de\ docs\ -\ PDF,\ word/Sénat1/
-    set -gx ZAM_ARTICLES_SOURCE path/to/tlfp-output.json
-    set -gx ZAM_OUTPUT path/to/target/
 
 Then launch the generator:
 
-    zam-visionneuse
+    zam-visionneuse --source=senat --file-aspirateur=path/to/zam/aspirateur/amendements_2017-2018_63.json --file-reponses=path/to/Archives\ PLFSS\ 2018/JSON\ -\ fichier\ de\ sauvegarde/Sénat1-2018.json --folder-jaunes=path/to/Archives\ PLFSS\ 2018/Jeu\ de\ docs\ -\ PDF,\ word/Sénat1/ --file-articles path/to/tlfp-output.json --folder-output path/to/target/
 
 ⚠️ Never ever commit/push the generated folder/file.
 

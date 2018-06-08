@@ -1,9 +1,8 @@
 import json
-import os
 from pathlib import Path
-from typing import Tuple
+from typing import List, Tuple
 
-from .decorators import check_existence, require_env_vars
+from .decorators import check_existence
 from .parsers import parse_docx
 
 
@@ -12,20 +11,17 @@ def load_json(source_path: str) -> dict:
         return json.loads(source.read())
 
 
-@require_env_vars(env_vars=["ZAM_DRUPAL_SOURCE"])
-def load_drupal_source() -> Tuple[str, dict]:
-    source = load_json(os.environ["ZAM_DRUPAL_SOURCE"])[0]  # Unique item.
+def load_drupal_source(reponses_file: str) -> Tuple[str, List[dict]]:
+    source = load_json(reponses_file)[0]  # Unique item.
     return source["libelle"], source["list"]
 
 
-@require_env_vars(env_vars=["ZAM_ARTICLES_SOURCE"])
-def load_articles_contents_source() -> list:
-    return load_json(os.environ["ZAM_ARTICLES_SOURCE"])
+def load_articles_contents_source(articles_file: str) -> List[dict]:
+    return load_json(articles_file)  # type: ignore
 
 
-@require_env_vars(env_vars=["ZAM_ASPIRATEUR_SOURCE"])
-def load_aspirateur_source() -> Tuple[str, dict]:
-    source = load_json(os.environ["ZAM_ASPIRATEUR_SOURCE"])[0]  # Unique item.
+def load_aspirateur_source(aspirateur_file: str) -> Tuple[str, List[dict]]:
+    source = load_json(aspirateur_file)[0]  # Unique item.
     return source["libelle"], source["list"]
 
 

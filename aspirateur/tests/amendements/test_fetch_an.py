@@ -49,15 +49,22 @@ def test_fetch_and_parse_all():
         body=read_sample_data("an_135.xml"),
         status=200,
     )
+    responses.add(
+        responses.GET,
+        build_url(14, "4072", 192),
+        body=read_sample_data("an_192.xml"),
+        status=200,
+    )
 
     title, items = fetch_and_parse_all(14, "4072")
 
     assert title == "PLFSS 2017"
-    assert len(items) == 4
+    assert len(items) == 5
     assert items[0].num == "177"
     assert items[1].num == "270"
     assert items[2].num == "723"
     assert items[3].num == "135"
+    assert items[4].num == "192"
 
 
 @responses.activate
@@ -74,7 +81,7 @@ def test_fetch_amendements():
     title, items = fetch_amendements(14, "4072")
 
     assert title == "PLFSS 2017"
-    assert len(items) == 4
+    assert len(items) == 5
     assert items[0] == {
         "@alineaLabel": "S",
         "@auteurGroupe": "Les Républicains",
@@ -176,6 +183,25 @@ def test_fetch_amendement_commission():
     assert amendement.gouvernemental is False
     assert amendement.auteur == "Bapt Gérard"
     assert amendement.groupe == ""
+
+
+@responses.activate
+def test_fetch_amendement_apres():
+    from zam_aspirateur.amendements.fetch_an import fetch_amendement
+
+    responses.add(
+        responses.GET,
+        build_url(14, "4072", 192),
+        body=read_sample_data("an_192.xml"),
+        status=200,
+    )
+
+    amendement = fetch_amendement(14, "4072", 192)
+
+    assert amendement.subdiv_type == "article"
+    assert amendement.subdiv_num == "8"
+    assert amendement.subdiv_mult == ""
+    assert amendement.subdiv_pos == "apres"
 
 
 @responses.activate

@@ -31,10 +31,6 @@ class NotFound(Exception):
     pass
 
 
-def fetch_title(session: str, num: str) -> str:
-    return "TODO"
-
-
 def get_auteur(amendement: OrderedDict) -> str:
     if int(amendement["auteur"]["estGouvernement"]):
         return "LE GOUVERNEMENT"
@@ -63,6 +59,10 @@ def fetch_amendement(legislature: int, texte: str, numero: int) -> Amendement:
     subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = _parse_subdiv(
         amendement["division"]["titre"]
     )
+    if amendement["division"]["avantApres"]:
+        subdiv_pos = amendement["division"]["avantApres"].lower()
+        if subdiv_pos == "a":  # TODO: understand what it means...
+            subdiv_pos = ""
     return Amendement(  # type: ignore
         num=amendement["numero"],
         subdiv_type=subdiv_type,

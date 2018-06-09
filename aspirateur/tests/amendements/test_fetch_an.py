@@ -138,12 +138,12 @@ def test_fetch_amendement():
         matricule="267289",
         groupe="707869",
         date_depot=None,
-        sort=None,
+        sort="rejeté",
         discussion_commune=None,
         identique=None,
-        dispositif='<p style="text-align: justify;">Supprimer cet article.</p>',
-        objet=None,
-        resume='<p style="text-align: justify;">Amendement d&#8217;appel.</p>\n<p style="text-align: justify;">Pour couvrir les d&#233;passements attendus de l&#8217;ONDAM pour 2016, cet article pr&#233;voit un pr&#233;l&#232;vement de 200 millions d&#8217;&#8364; sur les fonds de roulement de l&#8217;association nationale pour la formation permanente du personnel hospitalier (ANFH) et du fonds pour l&#8217;emploi hospitalier (FEH) pour financer le <span>fonds pour la modernisation des &#233;tablissements de sant&#233; publics et priv&#233;s</span>(FMESPP) en remplacement de cr&#233;dit de l&#8217;ONDAM. Il participe donc &#224; la pr&#233;sentation insinc&#232;re de la construction de l&#8217;ONDAM, d&#233;nonc&#233;e par le Comit&#233; d&#8217;alerte le 12 octobre dernier.</p>',  # noqa
+        dispositif='<p>Supprimer cet article.</p>',
+        objet='<p>Amendement d&#8217;appel.</p>\n<p>Pour couvrir les d&#233;passements attendus de l&#8217;ONDAM pour 2016, cet article pr&#233;voit un pr&#233;l&#232;vement de 200 millions d&#8217;&#8364; sur les fonds de roulement de l&#8217;association nationale pour la formation permanente du personnel hospitalier (ANFH) et du fonds pour l&#8217;emploi hospitalier (FEH) pour financer le <span>fonds pour la modernisation des &#233;tablissements de sant&#233; publics et priv&#233;s</span>(FMESPP) en remplacement de cr&#233;dit de l&#8217;ONDAM. Il participe donc &#224; la pr&#233;sentation insinc&#232;re de la construction de l&#8217;ONDAM, d&#233;nonc&#233;e par le Comit&#233; d&#8217;alerte le 12 octobre dernier.</p>',  # noqa
+        resume=None,
         avis=None,
         observations=None,
         reponse=None,

@@ -45,13 +45,13 @@ $PIP install --quiet -e git+https://framagit.org/mdamien/metslesliens.git@1.1.1-
 $PIP install --quiet -e git+https://github.com/regardscitoyens/the-law-factory-parser.git#egg=tlfp
 
 message "Lancement de l'aspirateur"
-"$VENVS/aspirateur/bin/zam-aspirateur" --source=an --session=15 --texte=0269 --output-format=json --output="$OUTPUT/amendements_15_0269.json"
+"$VENVS/aspirateur/bin/zam-aspirateur" --source=an --session=15 --texte=0387 --output-format=json --output="$OUTPUT/amendements_15_0387.json"
 
 message "Lancement du parser de la fabrique de la loi"
-"$VENVS/tlfp/bin/tlfp-parse-text" http://www.assemblee-nationale.fr/15/projets/pl0269.asp >"$OUTPUT/articles-an-plfss2018.json"
+"$VENVS/tlfp/bin/tlfp-parse-text" http://www.assemblee-nationale.fr/15/projets/pl0387.asp >"$OUTPUT/articles-an-plfss2018.json"
 
 message "Lancement de la visionneuse"
-"$VENVS/visionneuse/bin/zam-visionneuse" --file-aspirateur="$OUTPUT/amendements_15_0269.json" --file-reponses="../Archives PLFSS 2018/JSON - fichier de sauvegarde/AN2-2018.json" --folder-jaunes="../Archives PLFSS 2018/Jeu de docs - PDF, word/AN2/" --file-articles="$OUTPUT/articles-an-plfss2018.json" --folder-output="$OUTPUT"
+"$VENVS/visionneuse/bin/zam-visionneuse" --file-aspirateur="$OUTPUT/amendements_15_0387.json" --file-reponses="../Archives PLFSS 2018/JSON - fichier de sauvegarde/AN2-2018.json" --folder-jaunes="../Archives PLFSS 2018/Jeu de docs - PDF, word/AN2/" --file-articles="$OUTPUT/articles-an-plfss2018.json" --folder-output="$OUTPUT"
 
 message "Vérification de la sortie de la visionneuse"
 "$VENVS/visionneuse/bin/pytest" visionneuse/tests/test_output.py

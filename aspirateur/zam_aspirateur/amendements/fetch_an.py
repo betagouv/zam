@@ -44,6 +44,10 @@ def get_groupe(amendement: OrderedDict) -> str:
     return str(auteur["groupeTribunId"])
 
 
+def unjustify(content: str) -> str:
+    return content.replace(' style="text-align: justify;"', "")
+
+
 def fetch_amendement(legislature: int, texte: str, numero: int) -> Amendement:
     """
     Récupère un amendement depuis son numéro.
@@ -69,11 +73,12 @@ def fetch_amendement(legislature: int, texte: str, numero: int) -> Amendement:
         subdiv_num=subdiv_num,
         subdiv_mult=subdiv_mult,
         subdiv_pos=subdiv_pos,
+        sort=amendement["sortEnSeance"].lower(),
         matricule=amendement["auteur"]["tribunId"],
         groupe=get_groupe(amendement),
         auteur=get_auteur(amendement),
-        dispositif=amendement["dispositif"],
-        resume=amendement["exposeSommaire"],
+        dispositif=unjustify(amendement["dispositif"]),
+        objet=unjustify(amendement["exposeSommaire"]),
     )
 
 

@@ -1,18 +1,16 @@
-import os
+from pathlib import Path
 
 import pytest
 import responses
 
 from zam_aspirateur.amendements.fetch_an import build_url
 
-HERE = os.path.dirname(__file__)
-SAMPLE_DATA_DIR = os.path.join(os.path.dirname(HERE), "sample_data")
+HERE = Path(__file__)
+SAMPLE_DATA_DIR = HERE.parent.parent / "sample_data"
 
 
 def read_sample_data(basename):
-    filename = os.path.join(SAMPLE_DATA_DIR, basename)
-    with open(filename, "rb") as file_:
-        return file_.read()
+    return (SAMPLE_DATA_DIR / basename).read_text()
 
 
 @responses.activate
@@ -56,7 +54,7 @@ def test_fetch_and_parse_all():
         status=200,
     )
 
-    title, items = fetch_and_parse_all(14, "4072")
+    title, items = fetch_and_parse_all(14, "4072", SAMPLE_DATA_DIR)
 
     assert title == "PLFSS 2017"
     assert len(items) == 5
@@ -124,7 +122,7 @@ def test_fetch_amendement():
         status=200,
     )
 
-    amendement = fetch_amendement(14, "4072", 177)
+    amendement = fetch_amendement(14, "4072", 177, SAMPLE_DATA_DIR)
 
     assert amendement == Amendement(
         subdiv_type="article",
@@ -136,13 +134,13 @@ def test_fetch_amendement():
         rectif=0,
         auteur="Door Jean-Pierre",
         matricule="267289",
-        groupe="707869",
+        groupe="Les Républicains",
         date_depot=None,
         sort="rejeté",
         discussion_commune=None,
         identique=None,
-        dispositif='<p>Supprimer cet article.</p>',
-        objet='<p>Amendement d&#8217;appel.</p>\n<p>Pour couvrir les d&#233;passements attendus de l&#8217;ONDAM pour 2016, cet article pr&#233;voit un pr&#233;l&#232;vement de 200 millions d&#8217;&#8364; sur les fonds de roulement de l&#8217;association nationale pour la formation permanente du personnel hospitalier (ANFH) et du fonds pour l&#8217;emploi hospitalier (FEH) pour financer le <span>fonds pour la modernisation des &#233;tablissements de sant&#233; publics et priv&#233;s</span>(FMESPP) en remplacement de cr&#233;dit de l&#8217;ONDAM. Il participe donc &#224; la pr&#233;sentation insinc&#232;re de la construction de l&#8217;ONDAM, d&#233;nonc&#233;e par le Comit&#233; d&#8217;alerte le 12 octobre dernier.</p>',  # noqa
+        dispositif="<p>Supprimer cet article.</p>",
+        objet="<p>Amendement d&#8217;appel.</p>\n<p>Pour couvrir les d&#233;passements attendus de l&#8217;ONDAM pour 2016, cet article pr&#233;voit un pr&#233;l&#232;vement de 200 millions d&#8217;&#8364; sur les fonds de roulement de l&#8217;association nationale pour la formation permanente du personnel hospitalier (ANFH) et du fonds pour l&#8217;emploi hospitalier (FEH) pour financer le <span>fonds pour la modernisation des &#233;tablissements de sant&#233; publics et priv&#233;s</span>(FMESPP) en remplacement de cr&#233;dit de l&#8217;ONDAM. Il participe donc &#224; la pr&#233;sentation insinc&#232;re de la construction de l&#8217;ONDAM, d&#233;nonc&#233;e par le Comit&#233; d&#8217;alerte le 12 octobre dernier.</p>",  # noqa
         resume=None,
         avis=None,
         observations=None,
@@ -161,7 +159,7 @@ def test_fetch_amendement_gouvernement():
         status=200,
     )
 
-    amendement = fetch_amendement(14, "4072", 723)
+    amendement = fetch_amendement(14, "4072", 723, SAMPLE_DATA_DIR)
 
     assert amendement.gouvernemental is True
     assert amendement.groupe == ""
@@ -178,7 +176,7 @@ def test_fetch_amendement_commission():
         status=200,
     )
 
-    amendement = fetch_amendement(14, "4072", 135)
+    amendement = fetch_amendement(14, "4072", 135, SAMPLE_DATA_DIR)
 
     assert amendement.gouvernemental is False
     assert amendement.auteur == "Bapt Gérard"
@@ -196,7 +194,7 @@ def test_fetch_amendement_apres():
         status=200,
     )
 
-    amendement = fetch_amendement(14, "4072", 192)
+    amendement = fetch_amendement(14, "4072", 192, SAMPLE_DATA_DIR)
 
     assert amendement.subdiv_type == "article"
     assert amendement.subdiv_num == "8"
@@ -211,4 +209,4 @@ def test_fetch_amendement_not_found():
     responses.add(responses.GET, build_url(14, "4072", 177), status=404)
 
     with pytest.raises(NotFound):
-        fetch_amendement(14, "4072", 177)
+        fetch_amendement(14, "4072", 177, SAMPLE_DATA_DIR)

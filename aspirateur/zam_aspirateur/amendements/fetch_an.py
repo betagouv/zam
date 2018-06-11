@@ -1,6 +1,8 @@
+import json
 import os
 from collections import OrderedDict
 from http import HTTPStatus
+from pathlib import Path
 from typing import List, Tuple
 
 import requests
@@ -37,18 +39,21 @@ def get_auteur(amendement: OrderedDict) -> str:
     return f"{amendement['auteur']['nom']} {amendement['auteur']['prenom']}"
 
 
-def get_groupe(amendement: OrderedDict) -> str:
+def get_groupe(amendement: OrderedDict, groups_folder: Path) -> str:
     auteur = amendement["auteur"]
     if int(auteur["estGouvernement"]) or "@xsi:nil" in auteur["groupeTribunId"]:
         return ""
-    return str(auteur["groupeTribunId"])
+    groupe_raw = (groups_folder / f"PO{auteur['groupeTribunId']}.json").read_text()
+    return json.loads(groupe_raw)["organe"]["libelle"]
 
 
 def unjustify(content: str) -> str:
     return content.replace(' style="text-align: justify;"', "")
 
 
-def fetch_amendement(legislature: int, texte: str, numero: int) -> Amendement:
+def fetch_amendement(
+    legislature: int, texte: str, numero: int, groups_folder: Path
+) -> Amendement:
     """
     Récupère un amendement depuis son numéro.
     """
@@ -75,7 +80,7 @@ def fetch_amendement(legislature: int, texte: str, numero: int) -> Amendement:
         subdiv_pos=subdiv_pos,
         sort=amendement["sortEnSeance"].lower(),
         matricule=amendement["auteur"]["tribunId"],
-        groupe=get_groupe(amendement),
+        groupe=get_groupe(amendement, groups_folder),
         auteur=get_auteur(amendement),
         dispositif=unjustify(amendement["dispositif"]),
         objet=unjustify(amendement["exposeSommaire"]),
@@ -98,9 +103,11 @@ def fetch_amendements(legislature: int, texte: str) -> Tuple[str, List[OrderedDi
     return title, amendements_raw
 
 
-def fetch_and_parse_all(legislature: int, texte: str) -> Tuple[str, List[Amendement]]:
+def fetch_and_parse_all(
+    legislature: int, texte: str, groups_folder: Path
+) -> Tuple[str, List[Amendement]]:
     title, amendements_raw = fetch_amendements(legislature, texte)
     return title, [
-        fetch_amendement(legislature, texte, item["@numero"])
+        fetch_amendement(legislature, texte, item["@numero"], groups_folder)
         for item in amendements_raw
     ]

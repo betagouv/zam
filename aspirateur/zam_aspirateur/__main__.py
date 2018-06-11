@@ -4,6 +4,7 @@ Récupérer la liste des amendements relatifs à un texte de loi.
 import argparse
 import math
 import sys
+from pathlib import Path
 from typing import Dict, Iterable, Iterator, List, NewType, Optional, Tuple
 
 import zam_aspirateur.amendements.fetch_senat as senat
@@ -38,10 +39,12 @@ def aspire_senat(session: str, num: str) -> Tuple[str, Iterable[Amendement]]:
     return title, processed_amendements
 
 
-def aspire_an(legislature: int, texte: str) -> Tuple[str, List[Amendement]]:
+def aspire_an(
+    legislature: int, texte: str, groups_folder: Path
+) -> Tuple[str, List[Amendement]]:
     print("Récupération du titre et des amendements déposés...")
     try:
-        title, amendements = an.fetch_and_parse_all(legislature, texte)
+        title, amendements = an.fetch_and_parse_all(legislature, texte, groups_folder)
     except an.NotFound:
         return "", []
 
@@ -54,7 +57,11 @@ def main(argv: Optional[List[str]] = None) -> SystemStatus:
     if args.source == "senat":
         title, amendements = aspire_senat(session=args.session, num=args.texte)
     elif args.source == "an":
-        title, amendements = aspire_an(legislature=int(args.session), texte=args.texte)
+        title, amendements = aspire_an(
+            legislature=int(args.session),
+            texte=args.texte,
+            groups_folder=Path(args.folder_groups),
+        )
 
     if not amendements:
         print("Aucun amendement déposé pour l'instant!")
@@ -82,6 +89,9 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         "--texte", required=True, help="numéro du texte au Sénat (p.ex. 330)"
     )
     parser.add_argument("--output", help="nom de fichier de la sortie")
+    parser.add_argument(
+        "--folder-groups", help="chemin vers les fichiers de détail des groupes"
+    )
     parser.add_argument(
         "--source",
         default="senat",

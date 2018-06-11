@@ -104,4 +104,4 @@ ENV/
 .pytest_cache/
 
 # cachecontrol
-aspirateur/.web_cache/
+.web_cache/

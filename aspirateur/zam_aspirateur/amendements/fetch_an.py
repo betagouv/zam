@@ -16,7 +16,11 @@ from .parser import _parse_subdiv
 
 BASE_URL = "http://www.assemblee-nationale.fr"
 session = requests.session()
-cached_session = CacheControl(session, cache=FileCache(".web_cache"))
+HERE = Path(__file__)
+cached_session = CacheControl(
+    session,
+    cache=FileCache(HERE.parent.parent.parent.parent / ".web_cache")
+)
 
 
 def build_url(legislature: int, texte: str, numero: int = 0) -> str:

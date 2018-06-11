@@ -54,4 +54,4 @@ message "Lancement de la visionneuse"
 "$VENVS/visionneuse/bin/zam-visionneuse" --file-aspirateur="$OUTPUT/amendements_2017-2018_63.json" --file-reponses="../Archives PLFSS 2018/JSON - fichier de sauvegarde/Sénat1-2018.json" --folder-jaunes="../Archives PLFSS 2018/Jeu de docs - PDF, word/Sénat1/" --file-articles="$OUTPUT/articles-senat-plfss2018.json" --folder-output="$OUTPUT"
 
 message "Vérification de la sortie de la visionneuse"
-"$VENVS/visionneuse/bin/pytest" visionneuse/tests/test_output.py
+env OUTPUT=$OUTPUT "$VENVS/visionneuse/bin/pytest" visionneuse/tests/output_senat.py

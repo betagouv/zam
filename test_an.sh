@@ -44,8 +44,14 @@ $PIP install --quiet -e git+https://github.com/regardscitoyens/legipy.git#egg=le
 $PIP install --quiet -e git+https://framagit.org/mdamien/metslesliens.git@1.1.1-manifest#egg=metslesliens
 $PIP install --quiet -e git+https://github.com/regardscitoyens/the-law-factory-parser.git#egg=tlfp
 
+message "Téléchargement des données relatives aux tribuns"
+TRIBUN_URL=http://data.assemblee-nationale.fr/static/openData/repository/15/amo/deputes_actifs_mandats_actifs_organes_divises/AMO40_deputes_actifs_mandats_actifs_organes_divises_XV.json.zip
+$PIP install --quiet httpie
+http --print '' --download $TRIBUN_URL --output "$OUTPUT/groups.zip"
+unzip -q -f "$OUTPUT/groups.zip" -d $OUTPUT
+
 message "Lancement de l'aspirateur"
-"$VENVS/aspirateur/bin/zam-aspirateur" --source=an --session=15 --texte=0387 --output-format=json --output="$OUTPUT/amendements_15_0387.json"
+"$VENVS/aspirateur/bin/zam-aspirateur" --source=an --session=15 --texte=0387 --output-format=json --output="$OUTPUT/amendements_15_0387.json" --folder-groups="$OUTPUT/organe/"
 
 message "Lancement du parser de la fabrique de la loi"
 "$VENVS/tlfp/bin/tlfp-parse-text" http://www.assemblee-nationale.fr/15/projets/pl0387.asp >"$OUTPUT/articles-an-plfss2018.json"
@@ -54,4 +60,4 @@ message "Lancement de la visionneuse"
 "$VENVS/visionneuse/bin/zam-visionneuse" --file-aspirateur="$OUTPUT/amendements_15_0387.json" --file-reponses="../Archives PLFSS 2018/JSON - fichier de sauvegarde/AN2-2018.json" --folder-jaunes="../Archives PLFSS 2018/Jeu de docs - PDF, word/AN2/" --file-articles="$OUTPUT/articles-an-plfss2018.json" --folder-output="$OUTPUT"
 
 message "Vérification de la sortie de la visionneuse"
-"$VENVS/visionneuse/bin/pytest" visionneuse/tests/test_output.py
+env OUTPUT=$OUTPUT "$VENVS/visionneuse/bin/pytest" visionneuse/tests/output_an.py

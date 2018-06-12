@@ -48,7 +48,7 @@ message "Téléchargement des données relatives aux tribuns"
 TRIBUN_URL=http://data.assemblee-nationale.fr/static/openData/repository/15/amo/deputes_actifs_mandats_actifs_organes_divises/AMO40_deputes_actifs_mandats_actifs_organes_divises_XV.json.zip
 $PIP install --quiet httpie
 http --print '' --download $TRIBUN_URL --output "$OUTPUT/groups.zip"
-unzip -q -f "$OUTPUT/groups.zip" -d $OUTPUT
+unzip -q -o "$OUTPUT/groups.zip" -d "$OUTPUT"
 
 message "Lancement de l'aspirateur"
 "$VENVS/aspirateur/bin/zam-aspirateur" --source=an --session=15 --texte=0387 --output-format=json --output="$OUTPUT/amendements_15_0387.json" --folder-groups="$OUTPUT/organe/"

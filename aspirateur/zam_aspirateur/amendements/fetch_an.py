@@ -18,8 +18,7 @@ BASE_URL = "http://www.assemblee-nationale.fr"
 session = requests.session()
 HERE = Path(__file__)
 cached_session = CacheControl(
-    session,
-    cache=FileCache(HERE.parent.parent.parent.parent / ".web_cache")
+    session, cache=FileCache(HERE.parent.parent.parent.parent / ".web_cache")
 )
 
 

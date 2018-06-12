@@ -7,7 +7,7 @@ def strip_styles(content: str) -> str:
     return content.replace(' style="text-align:justify;"', "")
 
 
-def build_output_filename(output_folder: str) -> Path:
+def build_output_filename(output_folder: Path) -> Path:
     output_root_path = Path(output_folder)
     current_branch = get_current_branch()
     if current_branch == "master":

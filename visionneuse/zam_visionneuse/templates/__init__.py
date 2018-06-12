@@ -38,7 +38,7 @@ def render_and_save_html(
     articles: Articles,
     amendements: Amendements,
     reponses: Reponses,
-    output_folder: str,
+    output_folder: Path,
 ) -> str:
     html = render(title=title, articles=articles, reponses=reponses)
     write_html(html, build_output_filename(output_folder))

@@ -1,7 +1,7 @@
 import sys
 import argparse
 from pathlib import Path
-from typing import List, NewType, Optional
+from typing import List, NewType, Optional, TextIO
 
 from logbook import StreamHandler
 
@@ -15,15 +15,14 @@ from .templates import render_and_save_html
 
 StreamHandler(sys.stdout).push_application()
 SystemStatus = NewType("SystemStatus", int)  # status code for sys.exit()
-HERE = Path.cwd()
 
 
 def generate(
-    aspirateur_file: str,
-    reponses_file: str,
-    jaunes_folder: str,
-    articles_file: str,
-    output_folder: str,
+    aspirateur_file: TextIO,
+    reponses_file: TextIO,
+    jaunes_folder: Path,
+    articles_file: TextIO,
+    output_folder: Path,
 ) -> str:
     """Generate the final confidential page from available sources."""
     title, aspirateur_items = load_aspirateur_source(aspirateur_file)
@@ -40,8 +39,8 @@ def main(argv: Optional[List[str]] = None) -> SystemStatus:
 
     generate(
         aspirateur_file=args.file_aspirateur,
-        reponses_file=HERE / Path(args.file_reponses),
-        jaunes_folder=HERE / Path(args.folder_jaunes),
+        reponses_file=args.file_reponses,
+        jaunes_folder=args.folder_jaunes,
         articles_file=args.file_articles,
         output_folder=args.folder_output,
     )
@@ -54,6 +53,7 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--file-aspirateur",
         required=True,
+        type=argparse.FileType("r"),
         help=(
             "chemin vers le fichier JSON issu de l’aspirateur "
             "(p.ex. amendements_2017-2018_63.json)"
@@ -62,21 +62,25 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--file-reponses",
         required=True,
+        type=argparse.FileType("r"),
         help="chemin vers le fichier JSON issu de Drupal (p.ex. Sénat1-2018.json)",
     )
     parser.add_argument(
         "--folder-jaunes",
         required=True,
+        type=Path,
         help="chemin vers les fichiers jaunes (p.ex. `Jeu de docs - PDF, word/Sénat1/`)",
     )
     parser.add_argument(
         "--file-articles",
         required=True,
+        type=argparse.FileType("r"),
         help="chemin vers le fichier JSON issu de TLFP (p.ex. tlfp-output.json)",
     )
     parser.add_argument(
         "--folder-output",
         required=True,
+        type=Path,
         help="chemin vers le dossier de destination de la visionneuse",
     )
     return parser.parse_args(argv)

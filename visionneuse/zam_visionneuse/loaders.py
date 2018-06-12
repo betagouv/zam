@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, TextIO
 
 from .decorators import check_existence
 from .parsers import parse_docx
@@ -11,17 +11,17 @@ def load_json(source_path: str) -> dict:
         return json.loads(source.read())
 
 
-def load_drupal_source(reponses_file: str) -> Tuple[str, List[dict]]:
-    source = load_json(reponses_file)[0]  # Unique item.
+def load_drupal_source(reponses_file: TextIO) -> Tuple[str, List[dict]]:
+    source = json.load(reponses_file)[0]  # Unique item.
     return source["libelle"], source["list"]
 
 
-def load_articles_contents_source(articles_file: str) -> List[dict]:
-    return load_json(articles_file)  # type: ignore
+def load_articles_contents_source(articles_file: TextIO) -> List[dict]:
+    return json.load(articles_file)
 
 
-def load_aspirateur_source(aspirateur_file: str) -> Tuple[str, List[dict]]:
-    source = load_json(aspirateur_file)[0]  # Unique item.
+def load_aspirateur_source(aspirateur_file: TextIO) -> Tuple[str, List[dict]]:
+    source = json.load(aspirateur_file)[0]  # Unique item.
     return source["libelle"], source["list"]
 
 

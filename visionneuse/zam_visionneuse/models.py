@@ -47,7 +47,7 @@ class Articles(OrderedDict):
             articles[article.pk] = article
         return articles
 
-    def load_jaunes(self, items: List[dict], jaunes_folder: str) -> None:
+    def load_jaunes(self, items: List[dict], jaunes_folder: Path) -> None:
         jaunes_path = Path(jaunes_folder)
         for raw_article in items:
             try:
@@ -168,7 +168,7 @@ def load_data(
     aspirateur_items: List[dict],
     drupal_items: List[dict] = [],
     articles_contents: List[dict] = [],
-    jaunes_folder: str = "",
+    jaunes_folder: Path = Path(),
 ) -> Tuple[Articles, Amendements, Reponses]:
     articles = Articles.load(aspirateur_items)
     amendements = Amendements.load(aspirateur_items, articles)

@@ -27,11 +27,21 @@ $ zam-aspirateur --source=senat --session=2017-2018 --texte=63
 ```
 
 Dans le cas d’une récupération d’amendements depuis le site de l’Assemblée Nationale,
-les variables d’environnement `ZAM_AN_PATTERN_LISTE` et `ZAM_AN_PATTERN_AMENDEMENT`
-doivent être définies, puis :
+définir les variables d’environnement `ZAM_AN_PATTERN_LISTE` et
+`ZAM_AN_PATTERN_AMENDEMENT`.
+
+Récupérer les données relatives aux
+[députés en exercice](http://data.assemblee-nationale.fr/acteurs/deputes-en-exercice) :
 
 ```
-$ zam-aspirateur --source=an --session=14 --texte=4072
+$ curl --silent --show-error http://data.assemblee-nationale.fr/static/openData/repository/15/amo/deputes_actifs_mandats_actifs_organes_divises/AMO40_deputes_actifs_mandats_actifs_organes_divises_XV.json.zip --output "../../groups.zip"
+$ unzip -q -o "../../groups.zip" -d "../.."
+```
+
+Lancer ensuite la commande d’aspiration :
+
+```
+$ zam-aspirateur --source=an --session=14 --texte=4072 --folder-groups=../../organe/
 772 amendements écrits dans amendements_14_4072.csv
 ```
 

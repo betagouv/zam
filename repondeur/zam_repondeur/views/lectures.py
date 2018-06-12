@@ -1,18 +1,16 @@
-import os
-from tempfile import NamedTemporaryFile
-from typing import List
-
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
-from pyramid.response import FileResponse, Response
+from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
-from zam_aspirateur.amendements.models import Amendement
-from zam_aspirateur.amendements.fetch_senat import fetch_and_parse_all, NotFound
-from zam_aspirateur.amendements.writer import write_csv, write_xlsx
-from zam_aspirateur.__main__ import process_amendements
-
-from zam_repondeur.models import Lecture, CHAMBRES, SESSIONS
+from zam_repondeur.fetch import get_amendements_senat, NotFound
+from zam_repondeur.models import (
+    DBSession,
+    Amendement as AmendementModel,
+    Lecture,
+    CHAMBRES,
+    SESSIONS,
+)
 
 
 @view_config(route_name="lectures_list", renderer="lectures_list.html")
@@ -57,6 +55,7 @@ class LecturesAdd:
 
 
 @view_config(route_name="lecture", renderer="lecture.html")
+@view_config(route_name="list_amendements", renderer="amendements.html")
 def lecture(request: Request) -> dict:
     lecture = Lecture.get(
         chambre=request.matchdict["chambre"],
@@ -65,56 +64,51 @@ def lecture(request: Request) -> dict:
     )
     if lecture is None:
         raise HTTPNotFound
-    return {"lecture": lecture}
+
+    amendements = (
+        DBSession.query(AmendementModel)
+        .filter(
+            AmendementModel.chambre == lecture.chambre,
+            AmendementModel.session == lecture.session,
+            AmendementModel.num_texte == lecture.num_texte,
+        )
+        .order_by(AmendementModel.position, AmendementModel.num)
+        .all()
+    )
+    return {"lecture": lecture, "amendements": amendements}
 
 
-DOWNLOAD_FORMATS = {
-    "csv": (write_csv, "text/csv"),
-    "xlsx": (
-        write_xlsx,
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    ),
-}
-
-
-@view_config(route_name="download_amendements")
-def download_amendements(request: Request) -> Response:
+@view_config(route_name="fetch_amendements")
+def fetch_amendements(request: Request) -> Response:
     chambre = request.matchdict["chambre"]
     session = request.matchdict["session"]
     num_texte = request.matchdict["num_texte"]
-    fmt = request.matchdict["format"]
 
-    if chambre not in CHAMBRES:
+    if chambre != "senat":
         return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
 
     try:
         amendements = get_amendements_senat(session, num_texte)
     except NotFound:
         request.session.flash(("danger", "Aucun amendement n'a pu être trouvé."))
-        return HTTPFound(
-            location=request.route_url(
-                "lecture", chambre=chambre, session=session, num_texte=num_texte
+
+    if amendements:
+
+        amendement_models = [
+            AmendementModel.from_dataclass(
+                data=amendement,
+                chambre=chambre,
+                session=session,
+                num_texte=num_texte,
+                position=position,
             )
+            for position, amendement in enumerate(amendements)
+        ]
+        DBSession.add_all(amendement_models)
+        request.session.flash(("success", f"{len(amendements)} amendements"))
+
+    return HTTPFound(
+        location=request.route_url(
+            "lecture", chambre=chambre, session=session, num_texte=num_texte
         )
-
-    with NamedTemporaryFile() as file_:
-
-        tmp_file_path = os.path.abspath(file_.name)
-
-        write_func, content_type = DOWNLOAD_FORMATS[fmt]
-
-        write_func(amendements, tmp_file_path)
-
-        response = FileResponse(tmp_file_path)
-        attach_name = f"amendements-{chambre}-{session}-{num_texte}.{fmt}"
-        response.content_type = content_type
-        response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
-        return response
-
-
-def get_amendements_senat(session: str, num_texte: str) -> List[Amendement]:
-    amendements = fetch_and_parse_all(session=session, num=num_texte)
-    processed_amendements = process_amendements(
-        amendements=amendements, session=session, num=num_texte
-    )  # type: List[Amendement]
-    return processed_amendements
+    )

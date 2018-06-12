@@ -1,0 +1,16 @@
+from typing import List
+
+from zam_aspirateur.amendements.models import Amendement as AmendementData
+from zam_aspirateur.amendements.fetch_senat import fetch_and_parse_all, NotFound
+from zam_aspirateur.__main__ import process_amendements
+
+
+def get_amendements_senat(session: str, num_texte: str) -> List[AmendementData]:
+    amendements = fetch_and_parse_all(session=session, num=num_texte)
+    processed_amendements = process_amendements(
+        amendements=amendements, session=session, num=num_texte
+    )  # type: List[AmendementData]
+    return processed_amendements
+
+
+__all__ = ["get_amendements_senat", "NotFound"]

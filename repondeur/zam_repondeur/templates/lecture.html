@@ -1,8 +1,13 @@
 {% extends "_base.html" %}
 
+{% from "_macros.html" import lecture_title %}
+
 
 {% block header %}
 <style type="text/css">
+    .card {
+        margin-bottom: 1rem;
+    }
     h2 {
         margin-bottom: 1.25rem;
     }
@@ -18,13 +23,26 @@
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{ lecture }}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{ lecture_title(lecture.chambre, lecture.session, lecture.num_texte) }}</li>
 {% endblock %}
 
 
 {% block body %}
     <h2>{{ lecture }}</h2>
 
+    {% if amendements %}
+    <div class="card">
+        <div class="card-body">
+            <div class="card-title">
+                <h4>Amendements</h4>
+            </div>
+            <div class="card-text">
+                <p>{{ amendements | length }} amendements déposés.</p>
+                <p><a class="btn btn-primary" href="{{ request.route_url('list_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">Consulter la liste</a></p>
+            </div>
+        </div>
+    </div>
+    {% else %}
     <div class="card">
         <div class="card-body">
             <div class="card-title">
@@ -32,14 +50,30 @@
             </div>
             <div class="card-text">
             {% if lecture.chambre == 'senat' %}
-                <p>Récupérer un tableau de tous les amendements déposés, triés par ordre de passage, depuis le site du Sénat.</p>
-                <a class="btn btn-primary" href="{{ request.route_url('download_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, format='csv') }}"><i class="fa fa-table"></i>Télécharger (CSV)</a>
-                <a class="btn btn-primary" href="{{ request.route_url('download_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, format='xlsx') }}"><i class="fa fa-file-excel"></i>Télécharger (Excel)</a>
-            {% elif lecture.chambre == 'assemblee' %}
+                <p>Récupérer les amendements déposés depuis le site du Sénat.</p>
+                <form method="POST" action="{{ request.route_url('fetch_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">
+                    <input type="submit" class="btn btn-primary" value="Récupérer">
+                </form>
+             {% elif lecture.chambre == 'assemblee' %}
                 <p>La récupération des amendements depuis le site de l'Assemblée nationale n'est pas encore disponible. 🚧</p>
             {% endif %}
             </div>
         </div>
     </div>
+    {% endif %}
+
+    {% if amendements %}
+    <div class="card">
+        <div class="card-body">
+            <div class="card-title">
+                <h4>Télécharger un tableau</h4>
+            </div>
+                <p>Télécharger un tableau de tous les amendements déposés, triés par ordre de passage.</p>
+                <a class="btn btn-primary" href="{{ request.route_url('download_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, format='csv') }}"><i class="fa fa-table"></i>Télécharger (CSV)</a>
+                <a class="btn btn-primary" href="{{ request.route_url('download_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, format='xlsx') }}"><i class="fa fa-file-excel"></i>Télécharger (Excel)</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
 {% endblock %}

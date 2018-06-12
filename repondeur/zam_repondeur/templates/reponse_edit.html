@@ -1,0 +1,40 @@
+{% extends "_base.html" %}
+
+{% from "_macros.html" import lecture_title, amendement_title %}
+
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.route_url('lecture', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte) }}">{{ lecture_title(amendement.chambre, amendement.session, amendement.num_texte) }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.route_url('list_amendements', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte) }}">Amendements</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Nº&nbsp;{{ amendement.num_disp }}</li>
+{% endblock %}
+
+
+{% block body %}
+    <h2>{{ amendement_title(amendement) }}</h2>
+
+    <form action="{{ request.path }}" method="POST">
+
+        <div class="form-group">
+            <label for="avis">Position du gouvernement</label>
+            <select name="avis" class="form-control">
+                <option value="">Choisir dans la liste...</option>
+                {% for value in avis %}
+                    <option value="{{ value }}" {%- if amendement.avis == value %} selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="observations">Observations</label>
+            <textarea name="observations" class="form-control">{{ amendement.observations or "" }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" name="submit" value="Enregistrer" class="btn btn-primary">
+            <a href="{{ request.route_url('list_amendements', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte) }}" class="btn">Annuler</a>
+        </div>
+
+    </form>
+{% endblock %}

@@ -5,10 +5,11 @@ from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.request import Request
 from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
+from sqlalchemy.sql.expression import case
 
 from zam_aspirateur.amendements.writer import write_csv, write_xlsx
 
-from zam_repondeur.models import DBSession, Amendement as AmendementModel, CHAMBRES
+from zam_repondeur.models import DBSession, Amendement, CHAMBRES
 
 
 DOWNLOAD_FORMATS = {
@@ -31,13 +32,17 @@ def download_amendements(request: Request) -> Response:
         return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
 
     amendements = (
-        DBSession.query(AmendementModel)
+        DBSession.query(Amendement)
         .filter(
-            AmendementModel.chambre == chambre,
-            AmendementModel.session == session,
-            AmendementModel.num_texte == num_texte,
+            Amendement.chambre == chambre,
+            Amendement.session == session,
+            Amendement.num_texte == num_texte,
         )
-        .order_by(AmendementModel.position, AmendementModel.num)
+        .order_by(
+            case([(Amendement.position.is_(None), 1)], else_=0),
+            Amendement.position,
+            Amendement.num,
+        )
         .all()
     )
 

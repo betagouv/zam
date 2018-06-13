@@ -9,6 +9,9 @@ def amendements():
 
     return [
         Amendement(
+            chambre="senat",
+            session="2017-2018",
+            num_texte="63",
             subdiv_type="article",
             subdiv_num="1",
             alinea="",
@@ -21,6 +24,9 @@ def amendements():
             resume="Suppression de l'article",
         ),
         Amendement(
+            chambre="senat",
+            session="2017-2018",
+            num_texte="63",
             subdiv_type="article",
             subdiv_num="1",
             subdiv_pos="avant",
@@ -33,6 +39,9 @@ def amendements():
             dispositif="qux",
         ),
         Amendement(
+            chambre="senat",
+            session="2017-2018",
+            num_texte="63",
             subdiv_type="article",
             subdiv_num="7",
             subdiv_mult="bis",
@@ -45,6 +54,9 @@ def amendements():
             dispositif="quuz",
         ),
         Amendement(
+            chambre="senat",
+            session="2017-2018",
+            num_texte="63",
             subdiv_type="article",
             subdiv_num="1",
             alinea="",
@@ -59,6 +71,9 @@ def amendements():
 
 
 FIELDS = [
+    "chambre",
+    "session",
+    "num_texte",
     "subdiv_type",
     "subdiv_num",
     "subdiv_mult",
@@ -71,6 +86,7 @@ FIELDS = [
     "groupe",
     "date_depot",
     "sort",
+    "position",
     "discussion_commune",
     "identique",
     "dispositif",
@@ -98,7 +114,7 @@ def test_write_csv(amendements, tmpdir):
 
     assert (
         rows[0]
-        == "article;1;;;;42;0;M. DUPONT;000000;RDSE;;;;;<p>L'article 1 est supprimé.</p>;<p>Cet article va à l'encontre du principe d'égalité.</p>;Suppression de l'article;;;"  # noqa
+        == "senat;2017-2018;63;article;1;;;;42;0;M. DUPONT;000000;RDSE;;;;;;<p>L'article 1 est supprimé.</p>;<p>Cet article va à l'encontre du principe d'égalité.</p>;Suppression de l'article;;;"  # noqa
     )
 
 

@@ -7,6 +7,11 @@ from typing import Optional
 @dataclass
 class Amendement:
 
+    # Identification du texte
+    chambre: str  # 'senat' or 'an'
+    session: str  # session / législature
+    num_texte: str  # numéro de texte / lecture
+
     subdiv_type: str  # article, titre...
     subdiv_num: str  # numéro
     subdiv_mult: str = ""  # bis, ter...
@@ -15,6 +20,7 @@ class Amendement:
     alinea: str = ""  # libellé de l'alinéa de l'article concerné
 
     num: str = ""  # numéro de l'amendement
+
     rectif: int = 0  # numéro de révision de l'amendement
 
     auteur: str = ""
@@ -25,7 +31,8 @@ class Amendement:
 
     sort: Optional[str] = None  # retiré, adopté, etc.
 
-    discussion_commune: Optional[bool] = None
+    position: Optional[int] = None  # ordre de lecture
+    discussion_commune: Optional[int] = None
     identique: Optional[bool] = None
 
     dispositif: Optional[str] = None  # texte de l'amendement
@@ -45,6 +52,24 @@ class Amendement:
         mo = re.search(r"(\d+)", self.num)
         assert mo is not None
         return int(mo.group(1))
+
+    @property
+    def num_disp(self) -> str:
+        return f"{self.num}{self._RECT_SUFFIXES[self.rectif]}"
+
+    _RECT_SUFFIXES = {
+        0: "",
+        1: " rect",
+        2: " rect bis",
+        3: " rect ter",
+        4: " rect quater",
+        5: " rect quinquies",
+        6: " rect sexies",
+        7: " rect septies",
+        8: " rect octies",
+        9: " rect nonies",
+        10: " rect decies",
+    }
 
     @property
     def gouvernemental(self) -> bool:

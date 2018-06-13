@@ -2,15 +2,10 @@ from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
+from sqlalchemy.sql.expression import case
 
 from zam_repondeur.fetch import get_amendements_senat, NotFound
-from zam_repondeur.models import (
-    DBSession,
-    Amendement as AmendementModel,
-    Lecture,
-    CHAMBRES,
-    SESSIONS,
-)
+from zam_repondeur.models import DBSession, Amendement, Lecture, CHAMBRES, SESSIONS
 
 
 @view_config(route_name="lectures_list", renderer="lectures_list.html")
@@ -66,13 +61,17 @@ def lecture(request: Request) -> dict:
         raise HTTPNotFound
 
     amendements = (
-        DBSession.query(AmendementModel)
+        DBSession.query(Amendement)
         .filter(
-            AmendementModel.chambre == lecture.chambre,
-            AmendementModel.session == lecture.session,
-            AmendementModel.num_texte == lecture.num_texte,
+            Amendement.chambre == lecture.chambre,
+            Amendement.session == lecture.session,
+            Amendement.num_texte == lecture.num_texte,
         )
-        .order_by(AmendementModel.position, AmendementModel.num)
+        .order_by(
+            case([(Amendement.position.is_(None), 1)], else_=0),
+            Amendement.position,
+            Amendement.num,
+        )
         .all()
     )
     return {"lecture": lecture, "amendements": amendements}
@@ -93,18 +92,8 @@ def fetch_amendements(request: Request) -> Response:
         request.session.flash(("danger", "Aucun amendement n'a pu être trouvé."))
 
     if amendements:
-
-        amendement_models = [
-            AmendementModel.from_dataclass(
-                data=amendement,
-                chambre=chambre,
-                session=session,
-                num_texte=num_texte,
-                position=position,
-            )
-            for position, amendement in enumerate(amendements)
-        ]
-        DBSession.add_all(amendement_models)
+        DBSession.add_all(amendements)
+        DBSession.flush()
         request.session.flash(("success", f"{len(amendements)} amendements"))
 
     return HTTPFound(

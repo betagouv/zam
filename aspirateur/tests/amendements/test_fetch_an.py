@@ -125,6 +125,9 @@ def test_fetch_amendement():
     amendement = fetch_amendement(14, "4072", 177, SAMPLE_DATA_DIR)
 
     assert amendement == Amendement(
+        chambre="an",
+        session="14",
+        num_texte="4072",
         subdiv_type="article",
         subdiv_num="3",
         subdiv_mult="",

@@ -2,7 +2,6 @@
 Récupérer la liste des amendements relatifs à un texte de loi.
 """
 import argparse
-import math
 import sys
 from pathlib import Path
 from typing import Dict, Iterable, Iterator, List, NewType, Optional, Tuple
@@ -180,6 +179,7 @@ def _enrich_one(
         return amend
     return amend.replace(
         {
+            "position": amend_discussion.position,
             "discussion_commune": amend_discussion.discussion_commune,
             "identique": amend_discussion.identique,
         }
@@ -192,14 +192,12 @@ def _sort(
     """
     Trier les amendements par ordre de passage, puis par numéro
     """
-    amendements_discussion_order = {
-        amend.num_int: index for index, amend in enumerate(amendements_derouleur)
-    }
     return sorted(
         amendements,
-        key=lambda a: (
-            amendements_discussion_order.get(a.num_int, math.inf),
-            a.num_int,
+        key=lambda amendement: (
+            1 if amendement.position is None else 0,
+            amendement.position,
+            amendement.num_int,
         ),
     )
 

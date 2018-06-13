@@ -22,7 +22,7 @@ def test_parse_from_csv():
         "Url amendement ": "//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",  # noqa
     }
 
-    amendement = parse_from_csv(amend)
+    amendement = parse_from_csv(amend, session="2017-2018", num_texte="63")
 
     assert amendement.num == "1 rect."
     assert amendement.date_depot == date(2017, 11, 13)
@@ -104,7 +104,9 @@ class TestParseAmendementFromJSON:
             "isubdivision": "154182",
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
-        amendement = parse_from_json(amend, subdiv)
+        amendement = parse_from_json(
+            amend, position=1, session="2017-2018", num_texte="63", subdiv=subdiv
+        )
 
         assert amendement.subdiv_type == "article"
         assert amendement.subdiv_num == "1"
@@ -147,7 +149,9 @@ class TestParseAmendementFromJSON:
             "id_subdivision": "154182",
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
-        amendement = parse_from_json(amend, subdiv)
+        amendement = parse_from_json(
+            amend, position=1, session="2017-2018", num_texte="63", subdiv=subdiv
+        )
 
         assert amendement.discussion_commune == "110541"
 
@@ -176,7 +180,9 @@ class TestParseAmendementFromJSON:
 
         subdiv = {"libelle_subdivision": "Article 3"}
 
-        amendement = parse_from_json(amend, subdiv)
+        amendement = parse_from_json(
+            amend, position=1, session="2017-2018", num_texte="63", subdiv=subdiv
+        )
 
         assert amendement.discussion_commune is None
         assert amendement.sort == "Adopté"

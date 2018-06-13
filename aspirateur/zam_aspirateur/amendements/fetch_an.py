@@ -77,6 +77,9 @@ def fetch_amendement(
         if subdiv_pos == "a":  # TODO: understand what it means...
             subdiv_pos = ""
     return Amendement(  # type: ignore
+        chambre="an",
+        session=str(legislature),
+        num_texte=texte,
         num=amendement["numero"],
         subdiv_type=subdiv_type,
         subdiv_num=subdiv_num,

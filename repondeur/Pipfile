@@ -22,6 +22,7 @@ pytest = "*"
 mypy = "*"
 black = "*"
 pytest-cov = "*"
+pyramid-debugtoolbar = "*"
 
 [requires]
 python_version = "3.6"

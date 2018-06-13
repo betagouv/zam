@@ -6,7 +6,7 @@
 
 ## Installing dependencies
 
-1.  Got to `admin`
+1.  Go to `admin`
 2.  Run `python3 -m venv ~/.virtualenvs/zam-admin`
 3.  Activate `source ~/.virtualenvs/zam-admin/bin/activate`
 4.  Install `pip install -r requirements.txt`

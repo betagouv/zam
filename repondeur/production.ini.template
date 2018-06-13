@@ -1,0 +1,21 @@
+[pipeline:main]
+pipeline =
+    paste_prefix
+    repondeur
+
+[filter:paste_prefix]
+use = egg:PasteDeploy#prefix
+prefix = /repondeur
+
+[app:repondeur]
+use = egg:zam_repondeur
+
+pyramid.reload_templates = true
+
+sqlalchemy.url = sqlite:////var/lib/zam/repondeur.db
+
+zam.secret = $secret
+
+[server:main]
+use = egg:waitress#main
+listen = localhost:6543

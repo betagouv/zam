@@ -1,6 +1,7 @@
 from hashlib import md5
 from pathlib import Path
 from shlex import quote
+from string import Template
 
 from invoke import task
 
@@ -97,3 +98,87 @@ def sshkeys(ctx):
 @task
 def deploy(ctx, source):
     put_dir(ctx, quote(source), "/srv/zam/", chown="zam")
+
+
+@task
+def deploy_repondeur(ctx, secret, branch="master"):
+    user = "repondeur"
+    create_user(ctx, name=user, home_dir="/srv/repondeur")
+    clone_repo(
+        ctx,
+        repo="https://github.com/betagouv/zam.git",
+        branch="repondeur-db",
+        path="/srv/repondeur/src",
+        user=user,
+    )
+    app_dir = "/srv/repondeur/src/repondeur"
+    install_requirements(ctx, app_dir=app_dir, user=user)
+    setup_config(ctx, app_dir=app_dir, user=user, secret=secret)
+    initialize_db(ctx, app_dir=app_dir, user=user)
+    setup_service(ctx)
+
+
+@task
+def create_user(ctx, name, home_dir):
+    if ctx.sudo(f"getent passwd {name}", warn=True, hide=True).failed:
+        ctx.sudo(f"useradd --system --create-home --home-dir {quote(home_dir)} {name}")
+
+
+@task
+def clone_repo(ctx, repo, branch, path, user):
+    if ctx.run(f"test -d {quote(path)}", warn=True, hide=True).failed:
+        ctx.sudo(f"git clone --branch={branch} {repo} {quote(path)}", user=user)
+    else:
+        git = f"git --work-tree={quote(path)} --git-dir={quote(path + '/.git')}"
+        ctx.sudo(f"{git} fetch", user=user)
+        ctx.sudo(f"{git} checkout {branch}", user=user)
+        ctx.sudo(f"{git} reset --hard origin/{branch}", user=user)
+
+
+@task
+def install_requirements(ctx, app_dir, user):
+    ctx.sudo("apt-get update")
+    ctx.sudo("apt-get install --yes python3-pip")
+    ctx.sudo("python3 -m pip install pipenv")
+    ctx.sudo(f'bash -c "cd {app_dir} && pipenv install"', user=user)
+
+
+@task
+def setup_config(ctx, app_dir, user, secret):
+    template_local_file(
+        "../repondeur/production.ini.template",
+        "../repondeur/production.ini",
+        {"secret": secret},
+    )
+    sudo_put(
+        ctx, "../repondeur/production.ini", f"{app_dir}/production.ini", chown=user
+    )
+
+
+@task
+def initialize_db(ctx, app_dir, user):
+    create_directory(ctx, "/var/lib/zam", owner=user)
+    ctx.sudo(
+        f'bash -c "cd {app_dir} && pipenv run zam_init_db production.ini#repondeur"',
+        user=user,
+    )
+
+
+def template_local_file(template_filename, output_filename, data):
+    with open(template_filename, encoding="utf-8") as template_file:
+        template = Template(template_file.read())
+    with open(output_filename, mode="w", encoding="utf-8") as output_file:
+        output_file.write(template.substitute(**data))
+
+
+@task
+def create_directory(ctx, path, owner):
+    ctx.sudo(f"mkdir -p {quote(path)}")
+    ctx.sudo(f"chown {owner}: {quote(path)}")
+
+
+@task
+def setup_service(ctx):
+    sudo_put(ctx, "repondeur.service", "/etc/systemd/system/repondeur.service")
+    ctx.sudo("systemctl enable repondeur")
+    ctx.sudo("systemctl restart repondeur")

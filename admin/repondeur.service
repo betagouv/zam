@@ -1,0 +1,13 @@
+[Unit]
+Description=Zam Repondeur Web Application
+After=network.target
+
+[Service]
+Type=simple
+User=repondeur
+WorkingDirectory=/srv/repondeur/src/repondeur/
+ExecStart=/usr/local/bin/pipenv run pserve production.ini
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

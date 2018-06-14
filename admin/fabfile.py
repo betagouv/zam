@@ -101,7 +101,9 @@ def deploy(ctx, source):
 
 
 @task
-def deploy_repondeur(ctx, secret, branch="master"):
+def deploy_repondeur(
+    ctx, secret, an_pattern_liste, an_pattern_amendement, branch="master"
+):
     user = "repondeur"
     create_user(ctx, name=user, home_dir="/srv/repondeur")
     clone_repo(
@@ -115,7 +117,8 @@ def deploy_repondeur(ctx, secret, branch="master"):
     install_requirements(ctx, app_dir=app_dir, user=user)
     setup_config(ctx, app_dir=app_dir, user=user, secret=secret)
     initialize_db(ctx, app_dir=app_dir, user=user)
-    setup_service(ctx)
+    fetch_an_group_data(ctx, user=user)
+    setup_service(ctx, an_pattern_liste, an_pattern_amendement)
 
 
 @task
@@ -164,6 +167,22 @@ def initialize_db(ctx, app_dir, user):
     )
 
 
+@task
+def fetch_an_group_data(ctx, user):
+    url = "http://data.assemblee-nationale.fr/static/openData/repository/15/amo/deputes_actifs_mandats_actifs_organes_divises/AMO40_deputes_actifs_mandats_actifs_organes_divises_XV.json.zip"  # noqa
+    filename = "/tmp/groups.zip"
+    ctx.sudo(f"curl --silent --show-error {url} -o {filename}", user=user)
+
+    data_dir = "/var/lib/zam/data/an/groups"
+    create_directory(ctx, data_dir, owner=user)
+
+    ctx.sudo("apt-get update")
+    ctx.sudo("apt-get install --yes unzip")
+    ctx.sudo(f"unzip -q -o {filename} -d {data_dir}/", user=user)
+
+    ctx.sudo(f"rm {filename}", user=user)
+
+
 def template_local_file(template_filename, output_filename, data):
     with open(template_filename, encoding="utf-8") as template_file:
         template = Template(template_file.read())
@@ -178,7 +197,15 @@ def create_directory(ctx, path, owner):
 
 
 @task
-def setup_service(ctx):
+def setup_service(ctx, an_pattern_liste, an_pattern_amendement):
+    template_local_file(
+        "repondeur.service.template",
+        "repondeur.service",
+        {
+            "an_pattern_liste": an_pattern_liste,
+            "an_pattern_amendement": an_pattern_amendement,
+        },
+    )
     sudo_put(ctx, "repondeur.service", "/etc/systemd/system/repondeur.service")
     ctx.sudo("systemctl enable repondeur")
     ctx.sudo("systemctl restart repondeur")

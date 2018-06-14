@@ -49,14 +49,16 @@
                 <h4>Récupérer les amendements</h4>
             </div>
             <div class="card-text">
-            {% if lecture.chambre == 'senat' %}
-                <p>Récupérer les amendements déposés depuis le site du Sénat.</p>
+                <p>Récupérer les amendements déposés depuis le site
+                {% if lecture.chambre == 'an' -%}
+                    de l'Assemblée nationale
+                {%- else %}
+                    du Sénat
+                {%- endif -%}
+                .</p>
                 <form method="POST" action="{{ request.route_url('fetch_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">
                     <input type="submit" class="btn btn-primary" value="Récupérer">
                 </form>
-             {% elif lecture.chambre == 'assemblee' %}
-                <p>La récupération des amendements depuis le site de l'Assemblée nationale n'est pas encore disponible. 🚧</p>
-            {% endif %}
             </div>
         </div>
     </div>

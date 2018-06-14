@@ -4,7 +4,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
 
-from zam_repondeur.fetch import get_amendements_senat, NotFound
+from zam_repondeur.fetch import get_amendements
 from zam_repondeur.models import DBSession, Amendement, Lecture, CHAMBRES, SESSIONS
 
 
@@ -30,6 +30,9 @@ class LecturesAdd:
         if chambre not in CHAMBRES:
             raise HTTPBadRequest
 
+        if chambre == "an":
+            num_texte = f"{int(num_texte):04}"
+
         if Lecture.exists(chambre, session, num_texte):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
         else:
@@ -43,10 +46,7 @@ class LecturesAdd:
         )
 
     def _form_data(self) -> dict:
-        return {
-            "chambres": CHAMBRES.items(),
-            "sessions": [(sess, sess) for sess in SESSIONS],
-        }
+        return {"chambres": CHAMBRES, "sessions": SESSIONS}
 
 
 @view_config(route_name="lecture", renderer="lecture.html")
@@ -83,18 +83,17 @@ def fetch_amendements(request: Request) -> Response:
     session = request.matchdict["session"]
     num_texte = request.matchdict["num_texte"]
 
-    if chambre != "senat":
+    if chambre not in CHAMBRES:
         return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
 
-    try:
-        amendements = get_amendements_senat(session, num_texte)
-    except NotFound:
-        request.session.flash(("danger", "Aucun amendement n'a pu être trouvé."))
+    amendements = get_amendements(chambre, session, num_texte)
 
     if amendements:
         DBSession.add_all(amendements)
         DBSession.flush()
         request.session.flash(("success", f"{len(amendements)} amendements"))
+    else:
+        request.session.flash(("danger", "Aucun amendement n'a pu être trouvé."))
 
     return HTTPFound(
         location=request.route_url(

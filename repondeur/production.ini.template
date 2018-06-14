@@ -15,6 +15,7 @@ pyramid.reload_templates = true
 sqlalchemy.url = sqlite:////var/lib/zam/repondeur.db
 
 zam.secret = $secret
+zam.an_groups_folder = /var/lib/zam/data/an/groups/organe/
 
 [server:main]
 use = egg:waitress#main

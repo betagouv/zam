@@ -1,3 +1,4 @@
+
 {% extends "_base.html" %}
 
 
@@ -13,23 +14,23 @@
     <form action="{{ request.path }}" method="POST">
         <div class="form-group">
             <label for="chambre">Chambre</label>
-            <select name="chambre" class="form-control">
-                {% for id, label in chambres %}
+            <select id="select-chambre" name="chambre" class="form-control">
+                {% for id, label in chambres.items() %}
                     <option value="{{ id }}" {%- if loop.first %} selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="form-group">
             <label for="session">Session</label>
-            <select name="session" class="form-control">
-                {% for id, label in sessions %}
+            <select id="select-session" name="session" class="form-control">
+                {% for id, label in sessions['an'].items() %}
                     <option value="{{ id }}" {%- if loop.first %} selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="form-group">
             <label for="num_texte">Numéro de texte</label>
-            <input type="number" name="num_texte" value="63" class="form-control">
+            <input type="number" name="num_texte" value="269" class="form-control">
         </div>
         <div class="form-group">
             <input type="submit" name="submit" value="Ajouter" class="btn btn-primary btn-lg">
@@ -64,4 +65,25 @@
         </tbody>
     </table>
     {% endif %}
+{% endblock %}
+
+
+{% block scripts %}
+<script type="text/javascript">
+    var sessions = {{ sessions | tojson | safe }};
+    document.addEventListener("DOMContentLoaded", function() {
+        var chambreElem = document.getElementById('select-chambre');
+        chambreElem.addEventListener("change", function() {
+            var sessionElem = document.getElementById('select-session');
+            sessionElem.innerHTML = '';
+            var choices = sessions[chambreElem.value];
+            for (var value in choices) {
+                var elem = document.createElement('option')
+                elem.value = value;
+                elem.text = choices[value];
+                sessionElem.appendChild(elem);
+            }
+        }, false);
+    });
+</script>
 {% endblock %}

@@ -5,9 +5,12 @@ from sqlalchemy import Column, Text, desc
 from .base import Base, DBSession
 
 
-CHAMBRES = {"assemblee": "Assemblée nationale", "senat": "Sénat"}
+CHAMBRES = {"an": "Assemblée nationale", "senat": "Sénat"}
 
-SESSIONS = ["2017-2018"]
+SESSIONS = {
+    "an": {"15": "15e législature", "14": "14e législature"},
+    "senat": {"2017-2018": "2017-2018"},
+}
 
 
 class Lecture(Base):  # type: ignore

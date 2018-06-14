@@ -17,6 +17,24 @@ $ pipenv shell
 $ zam_init_db development.ini
 ```
 
+## Extra setup
+
+Get the groups data for Assemblée nationale:
+
+```
+$ curl --silent --show-error http://data.assemblee-nationale.fr/static/openData/repository/15/amo/deputes_actifs_mandats_actifs_organes_divises/AMO40_deputes_actifs_mandats_actifs_organes_divises_XV.json.zip -o groups.zip
+$ mkdir -p data/an/groups
+$ unzip -q -o groups.zip -d data/an/groups/
+$ rm groups.zip
+```
+
+Define the folowing environment variables:
+
+```
+$ export ZAM_AN_PATTERN_LISTE="..."
+$ export ZAM_AN_PATTERN_AMENDEMENT="..."
+```
+
 ## Start the web app
 
 ```

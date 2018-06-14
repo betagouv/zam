@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 def test_download_csv(app):
 
-    with patch("zam_repondeur.views.lectures.get_amendements_senat") as mock:
+    with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = []
         resp = app.get("/lectures/senat/2017-2018/63/amendements/download.csv")
 
@@ -28,7 +28,7 @@ def test_download_csv_bad_request(app):
 
 def test_download_xlsx(app):
 
-    with patch("zam_repondeur.views.lectures.get_amendements_senat") as mock:
+    with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = []
         resp = app.get("/lectures/senat/2017-2018/63/amendements/download.xlsx")
 

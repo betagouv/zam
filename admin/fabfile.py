@@ -109,7 +109,7 @@ def deploy_repondeur(
     clone_repo(
         ctx,
         repo="https://github.com/betagouv/zam.git",
-        branch="repondeur-db",
+        branch=branch,
         path="/srv/repondeur/src",
         user=user,
     )

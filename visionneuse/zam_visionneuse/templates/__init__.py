@@ -34,8 +34,12 @@ def write_html(html: str, output_filename: Path) -> None:
 
 
 def render_and_save_html(
-    title: str, articles: Articles, amendements: Amendements, reponses: Reponses
+    title: str,
+    articles: Articles,
+    amendements: Amendements,
+    reponses: Reponses,
+    output_folder: Path,
 ) -> str:
     html = render(title=title, articles=articles, reponses=reponses)
-    write_html(html, build_output_filename())
+    write_html(html, build_output_filename(output_folder))
     return html

@@ -9,5 +9,14 @@ setup(
     zip_safe=False,
     include_package_data=True,
     entry_points={"console_scripts": ["zam-aspirateur = zam_aspirateur.__main__:main"]},
-    install_requires=["bleach", "dataclasses", "openpyxl", "requests", "selectolax"],
+    install_requires=[
+        "bleach",
+        "cachecontrol",
+        "dataclasses",
+        "lockfile",
+        "openpyxl",
+        "requests",
+        "selectolax",
+        "xmltodict",
+    ],
 )

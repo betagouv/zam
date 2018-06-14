@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendement>
+    <numero>270</numero>
+    <numeroLong>270</numeroLong>
+    <numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amendementEtendu>0</amendementEtendu>
+    <etat>DI</etat>
+    <missionVisee xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dispositif><![CDATA[<p style="text-align: justify;">Supprimer cet article.</p>]]></dispositif>
+    <exposeSommaire><![CDATA[<p style="text-align: justify;">Amendement d&#8217;appel.</p>
+<p style="text-align: justify;">Pour couvrir les d&#233;passements attendus de l&#8217;ONDAM pour 2016, cet article pr&#233;voit un pr&#233;l&#232;vement de 200 millions d&#8217;&#8364; sur les fonds de roulement de l&#8217;association nationale pour la formation permanente du personnel hospitalier (ANFH) et du fonds pour l&#8217;emploi hospitalier (FEH) pour financer le fonds pour la modernisation des &#233;tablissements de sant&#233; public.</p>]]></exposeSommaire>
+    <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <listeDesSignataires> M.&amp;#160;Accoyer</listeDesSignataires>
+    <listeDesTribunCosignataires xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <libelleSeance></libelleSeance>
+    <sortEnSeance>Rejeté</sortEnSeance>
+    <dateDepot>20/10/2016</dateDepot>
+    <datePublication>24/10/2016</datePublication>
+    <dateSaisieSort>26/10/2016</dateSaisieSort>
+    <article99>0</article99>
+    <triAmendement>aeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaako</triAmendement>
+    <codeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <refCodeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dateDepotAffiche>20 octobre 2016 </dateDepotAffiche>
+    <division>
+        <titre>Article 3</titre>
+        <divisionDesignation>ART. 3</divisionDesignation>
+        <type>ARTICLE</type>
+        <avantApres>A</avantApres>
+        <divisionRattache>ARTICLE 3</divisionRattache>
+        <articleAdditionnel>0</articleAdditionnel>
+        <divisionAdditionnelle>0</divisionAdditionnelle>
+        <urlDivisionTexteVise>/14/textes/4072.asp#D_Article_3</urlDivisionTexteVise>
+    </division>
+    <examen>
+        <examenId>6591</examenId>
+        <organeSaisi>Séance publique</organeSaisi>
+        <typeSaisie>En séance</typeSaisie>
+        <idOrganeProprietaire>644420</idOrganeProprietaire>
+    </examen>
+    <texte>
+        <titre>POUR 2017</titre>
+        <titreCourt>PLFSS 2017</titreCourt>
+        <numBibard>4072</numBibard>
+        <numsBibardsDesPropositions></numsBibardsDesPropositions>
+        <etapeTexte>1ère lecture (1ère assemblée saisie)</etapeTexte>
+        <numeroLegislature>14</numeroLegislature>
+        <mentionSecondeDeliberation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <numeroPartiePLF xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <idDossier>35276</idDossier>
+        <libelleDossier>Sécurité sociale : loi de financement 2017</libelleDossier>
+        <urlDossierWeb>http://www.assemblee-nationale.fr/14/dossiers/plfss_2017.asp</urlDossierWeb>
+    </texte>
+    <seance>
+        <legisId>20325</legisId>
+        <legisIdperiode>533</legisIdperiode>
+        <numero>26</numero>
+        <debut>26/10/2016 15:00</debut>
+        <fin xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlcr>/14/cri/2016-2017/20170026.asp</urlcr>
+        <quantieme>Première</quantieme>
+    </seance>
+    <alinea xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <auteur>
+        <tribunId>230</tribunId>
+        <civilite>M.</civilite>
+        <nom>Accoyer</nom>
+        <prenom>Bernard</prenom>
+        <estGouvernement>0</estGouvernement>
+        <estRapporteur>0</estRapporteur>
+        <groupeTribunId>707869</groupeTribunId>
+    </auteur>
+    <cosignataires/>
+    <auteurParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amdtDejaMisADiscute>1</amdtDejaMisADiscute>
+    <typeRectification xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <causeDeRetrait xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <estMasque>0</estMasque>
+    <retireAvantPublication>0</retireAvantPublication>
+    <afficherEnRecevabilite>false</afficherEnRecevabilite>
+    <isLiasseRapporteur>false</isLiasseRapporteur>
+    <isMarqueDeRevisionVisible>false</isMarqueDeRevisionVisible>
+    <isPlfrMode>false</isPlfrMode>
+    <isPlfMode>false</isPlfMode>
+    <accordGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <statutDiffusion>normal</statutDiffusion>
+</amendement>

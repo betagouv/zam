@@ -1,18 +1,14 @@
 from datetime import datetime
 from pathlib import Path
 import subprocess
-import os
-
-from .decorators import require_env_vars
 
 
 def strip_styles(content: str) -> str:
     return content.replace(' style="text-align:justify;"', "")
 
 
-@require_env_vars(env_vars=["ZAM_OUTPUT"])
-def build_output_filename() -> Path:
-    output_root_path = Path(os.environ["ZAM_OUTPUT"])
+def build_output_filename(output_folder: Path) -> Path:
+    output_root_path = Path(output_folder)
     current_branch = get_current_branch()
     if current_branch == "master":
         return output_root_path / "index.html"
@@ -23,7 +19,7 @@ def build_output_filename() -> Path:
     return output_path / "index.html"
 
 
-def get_current_branch():
+def get_current_branch() -> str:
     res = subprocess.run(
         "git symbolic-ref --short HEAD",
         shell=True,

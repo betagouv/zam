@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendement>
+    <numero>135</numero>
+    <numeroLong>135</numeroLong>
+    <numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amendementEtendu>0</amendementEtendu>
+    <etat>DI</etat>
+    <missionVisee xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dispositif><![CDATA[<p style="text-align: justify;">Compl&#233;ter cet article par l&#8217;alin&#233;a suivant&#160;:</p>
+<p style="text-align: justify;"><span>&#171;&#160;VI.&#160;&#8211;&#160;Le&#160;I de l&#8217;article L.&#160;133&#8209;1&#8209;1 s&#8217;applique aux cotisations d&#8217;assurance famille, aux contributions sociales et &#224; la contribution &#224; la formation professionnelle dues par les professions lib&#233;rales &#224; compter du 1<sup>er</sup>&#160;janvier 2018.&#160;&#187;</span></p>]]></dispositif>
+    <exposeSommaire><![CDATA[<p style="text-align: justify;">L&#8217;int&#233;gration des professions lib&#233;rales, &#224; l&#8217;exception des cotisations d&#8217;assurance vieillesse des professions lib&#233;rales r&#232;glement&#233;es, dans le champ de la nouvelle organisation conjointe du recouvrement des cotisations et contributions sociales des travailleurs ind&#233;pendants implique un changement important dans l&#8217;organisation du recouvrement des cotisations et contributions sociales de ces populations, celles-ci &#233;tant aujourd&#8217;hui g&#233;r&#233;es par des r&#233;gimes diff&#233;rents.</p>
+<p style="text-align: justify;">Or, d&#8217;apr&#232;s l&#8217;article&#160;9, le recouvrement des cotisations d&#8217;assurance famille, des contributions sociales (CSG et CRDS) et de la contribution &#224; la formation professionnelle des professions lib&#233;rales, aujourd&#8217;hui de la comp&#233;tence des URSSAF, rel&#232;verait de la comp&#233;tence conjointe du RSI et des URSSAF d&#232;s 1<sup>er</sup>janvier&#160;2017.</p>
+<p style="text-align: justify;">Afin de permettre aux deux r&#233;gimes d&#8217;anticiper la r&#233;forme et de s&#8217;organiser en vue du nouveau partage de comp&#233;tences, il est propos&#233; de d&#233;caler l&#8217;entr&#233;e en vigueur de cette mesure au 1<sup>er</sup> janvier 2018.</p>]]></exposeSommaire>
+    <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <listeDesSignataires> M.&amp;#160;Bapt, rapporteur au nom de la commission des affaires sociales (Recettes et &amp;#233;quilibre g&amp;#233;n&amp;#233;ral) et M.&amp;#160;Bapt</listeDesSignataires>
+    <listeDesTribunCosignataires>356</listeDesTribunCosignataires>
+    <libelleSeance>null;</libelleSeance>
+    <sortEnSeance>Adopté</sortEnSeance>
+    <dateDepot>19/10/2016</dateDepot>
+    <datePublication>24/10/2016</datePublication>
+    <dateSaisieSort>26/10/2016</dateSaisieSort>
+    <article99>0</article99>
+    <triAmendement>bacaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaao</triAmendement>
+    <codeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <refCodeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dateDepotAffiche>19 octobre 2016 </dateDepotAffiche>
+    <division>
+        <titre>Article 9</titre>
+        <divisionDesignation>ART. 9</divisionDesignation>
+        <type>ARTICLE</type>
+        <avantApres>A</avantApres>
+        <divisionRattache>ARTICLE 9</divisionRattache>
+        <articleAdditionnel>0</articleAdditionnel>
+        <divisionAdditionnelle>0</divisionAdditionnelle>
+        <urlDivisionTexteVise>/14/textes/4072.asp#D_Article_9</urlDivisionTexteVise>
+    </division>
+    <examen>
+        <examenId>6591</examenId>
+        <organeSaisi>Séance publique</organeSaisi>
+        <typeSaisie>En séance</typeSaisie>
+        <idOrganeProprietaire>644420</idOrganeProprietaire>
+    </examen>
+    <texte>
+        <titre>POUR 2017</titre>
+        <titreCourt>PLFSS 2017</titreCourt>
+        <numBibard>4072</numBibard>
+        <numsBibardsDesPropositions></numsBibardsDesPropositions>
+        <etapeTexte>1ère lecture (1ère assemblée saisie)</etapeTexte>
+        <numeroLegislature>14</numeroLegislature>
+        <mentionSecondeDeliberation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <numeroPartiePLF xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <idDossier>35276</idDossier>
+        <libelleDossier>Sécurité sociale : loi de financement 2017</libelleDossier>
+        <urlDossierWeb>http://www.assemblee-nationale.fr/14/dossiers/plfss_2017.asp</urlDossierWeb>
+    </texte>
+    <seance>
+        <legisId>20326</legisId>
+        <legisIdperiode>533</legisIdperiode>
+        <numero>27</numero>
+        <debut>26/10/2016 21:30</debut>
+        <fin xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlcr>/14/cri/2016-2017/20170027.asp</urlcr>
+        <quantieme>Deuxième</quantieme>
+    </seance>
+    <alinea>
+        <avantApres>Apres</avantApres>
+        <numero>73</numero>
+        <alineaDesignation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </alinea>
+    <auteur>
+        <tribunId>420120</tribunId>
+        <civilite>M.</civilite>
+        <nom>Bapt</nom>
+        <prenom>Gérard</prenom>
+        <estGouvernement>0</estGouvernement>
+        <estRapporteur>1</estRapporteur>
+        <groupeTribunId xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </auteur>
+    <cosignataires>
+        <cosignataire>
+            <tribunId>356</tribunId>
+            <civilite>M.</civilite>
+            <nom>Bapt</nom>
+            <prenom>Gérard</prenom>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>713077</groupeTribunId>
+        </cosignataire>
+    </cosignataires>
+    <auteurParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amdtDejaMisADiscute>1</amdtDejaMisADiscute>
+    <typeRectification xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <causeDeRetrait xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <estMasque>0</estMasque>
+    <retireAvantPublication>0</retireAvantPublication>
+    <afficherEnRecevabilite>false</afficherEnRecevabilite>
+    <isLiasseRapporteur>false</isLiasseRapporteur>
+    <isMarqueDeRevisionVisible>false</isMarqueDeRevisionVisible>
+    <isPlfrMode>false</isPlfrMode>
+    <isPlfMode>false</isPlfMode>
+    <accordGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <statutDiffusion>normal</statutDiffusion>
+</amendement>

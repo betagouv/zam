@@ -1,17 +1,14 @@
 """
-Récupérer la liste des amendements à un texte de loi au Sénat
+Récupérer la liste des amendements relatifs à un texte de loi.
 """
 import argparse
 import math
 import sys
-from typing import Dict, Iterable, Iterator, List, NewType, Optional
+from pathlib import Path
+from typing import Dict, Iterable, Iterator, List, NewType, Optional, Tuple
 
-from zam_aspirateur.amendements.fetch import (
-    fetch_and_parse_all,
-    fetch_and_parse_discussed,
-    fetch_title,
-    NotFound,
-)
+import zam_aspirateur.amendements.fetch_senat as senat
+import zam_aspirateur.amendements.fetch_an as an
 from zam_aspirateur.amendements.models import Amendement
 from zam_aspirateur.amendements.writer import (
     write_csv,
@@ -26,29 +23,56 @@ from zam_aspirateur.senateurs.parse import parse_senateurs
 SystemStatus = NewType("SystemStatus", int)  # status code for sys.exit()
 
 
-def main(argv: Optional[List[str]] = None) -> SystemStatus:
-    args = parse_args(argv=argv)
-
+def aspire_senat(session: str, num: str) -> Tuple[str, Iterable[Amendement]]:
     print("Récupération du titre...")
-    title = fetch_title(session=args.session, num=args.texte)
+    title = senat.fetch_title(session, num)
 
     print("Récupération des amendements déposés...")
     try:
-        amendements = fetch_and_parse_all(session=args.session, num=args.texte)
-    except NotFound:
-        print("Aucun amendement déposé pour l'instant!")
-        return SystemStatus(1)
+        amendements = senat.fetch_and_parse_all(session, num)
+    except senat.NotFound:
+        return "", []
 
     processed_amendements = process_amendements(
-        amendements=amendements, session=args.session, num=args.texte
+        amendements=amendements, session=session, num=num
     )
+    return title, processed_amendements
+
+
+def aspire_an(
+    legislature: int, texte: str, groups_folder: Path
+) -> Tuple[str, List[Amendement]]:
+    print("Récupération du titre et des amendements déposés...")
+    try:
+        title, amendements = an.fetch_and_parse_all(legislature, texte, groups_folder)
+    except an.NotFound:
+        return "", []
+
+    return title, amendements
+
+
+def main(argv: Optional[List[str]] = None) -> SystemStatus:
+    args = parse_args(argv=argv)
+
+    if args.source == "senat":
+        title, amendements = aspire_senat(session=args.session, num=args.texte)
+    elif args.source == "an":
+        title, amendements = aspire_an(
+            legislature=int(args.session),
+            texte=args.texte,
+            groups_folder=Path(args.folder_groups),
+        )
+
+    if not amendements:
+        print("Aucun amendement déposé pour l'instant!")
+        return SystemStatus(1)
 
     format = args.output_format
     default_filename = f"amendements_{args.session}_{args.texte}.{format}"
 
     save_output(
         title=title,
-        amendements=processed_amendements,
+        amendements=amendements,
         filename=args.output or default_filename,
         format=format,
     )
@@ -66,6 +90,15 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     )
     parser.add_argument("--output", help="nom de fichier de la sortie")
     parser.add_argument(
+        "--folder-groups", help="chemin vers les fichiers de détail des groupes"
+    )
+    parser.add_argument(
+        "--source",
+        default="senat",
+        choices=["senat", "an"],
+        help="institution fournissant les données",
+    )
+    parser.add_argument(
         "--output-format",
         default="csv",
         choices=["csv", "xlsx", "json"],
@@ -80,7 +113,7 @@ def process_amendements(
 
     # Les amendements discutés en séance, par ordre de passage
     print("Récupération des amendements soumis à la discussion...")
-    amendements_derouleur = fetch_and_parse_discussed(
+    amendements_derouleur = senat.fetch_and_parse_discussed(
         session=session, num=num, phase="seance"
     )
     if len(amendements_derouleur) == 0:

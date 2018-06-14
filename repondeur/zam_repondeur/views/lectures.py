@@ -10,7 +10,7 @@ from pyramid.response import FileResponse, Response
 from pyramid.view import view_config, view_defaults
 
 from zam_aspirateur.amendements.models import Amendement
-from zam_aspirateur.amendements.fetch import fetch_and_parse_all, NotFound
+from zam_aspirateur.amendements.fetch_senat import fetch_and_parse_all, NotFound
 from zam_aspirateur.amendements.writer import write_csv, write_xlsx
 from zam_aspirateur.__main__ import process_amendements
 

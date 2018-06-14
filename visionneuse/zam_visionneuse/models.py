@@ -1,5 +1,4 @@
 import base64
-import os
 from collections import OrderedDict
 from pathlib import Path
 from typing import Any, List, Optional, Tuple
@@ -8,7 +7,6 @@ import CommonMark
 from dataclasses import dataclass, field
 from logbook import warn
 
-from .decorators import require_env_vars
 from .loaders import load_docx
 from .utils import strip_styles
 
@@ -49,8 +47,8 @@ class Articles(OrderedDict):
             articles[article.pk] = article
         return articles
 
-    def load_jaunes(self, items: List[dict]) -> None:
-        jaunes_path = Path(os.environ["ZAM_JAUNES_SOURCE"])
+    def load_jaunes(self, items: List[dict], jaunes_folder: Path) -> None:
+        jaunes_path = Path(jaunes_folder)
         for raw_article in items:
             try:
                 article = self.get_from_raw(raw_article)
@@ -63,7 +61,7 @@ class Articles(OrderedDict):
 
     def load_contents(self, items: List[dict]) -> None:
         for article_content in items:
-            pk = f'article-{article_content["titre"]}'
+            pk = f'article-{article_content["titre"].replace(" ", "-")}'
             if pk in self:
                 self[pk].alineas = article_content["alineas"]
 
@@ -166,19 +164,19 @@ class Reponses(OrderedDict):
         return reponses
 
 
-@require_env_vars(env_vars=["ZAM_JAUNES_SOURCE"])
 def load_data(
     aspirateur_items: List[dict],
-    drupal_items: List[dict] = None,
-    articles_contents: List[dict] = None,
+    drupal_items: List[dict] = [],
+    articles_contents: List[dict] = [],
+    jaunes_folder: Path = Path(),
 ) -> Tuple[Articles, Amendements, Reponses]:
     articles = Articles.load(aspirateur_items)
     amendements = Amendements.load(aspirateur_items, articles)
     if drupal_items:
-        articles.load_jaunes(drupal_items)
+        articles.load_jaunes(drupal_items, jaunes_folder)
         reponses = Reponses.load(drupal_items, articles, amendements)
     else:
-        reponses = {}
+        reponses = Reponses()
     if articles_contents:
         articles.load_contents(articles_contents)
     return articles, amendements, reponses

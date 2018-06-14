@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendement>
+    <numero>192</numero>
+    <numeroLong>192</numeroLong>
+    <numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amendementEtendu>0</amendementEtendu>
+    <etat>DI</etat>
+    <missionVisee xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dispositif><![CDATA[<p style="text-align: justify;">I.&#160;&#8211; La section 3 du chapitre 1<sup>er</sup> du titre 3 du livre 1<sup>er</sup> du code de la s&#233;curit&#233; sociale est compl&#233;t&#233;e par un article L.&#160;131&#8209;4&#8209;4 ainsi r&#233;dig&#233;e&#160;:</p>
+<p style="text-align: justify;">&#171;&#160;<i>Art.&#160;L.&#160;131-4-4.</i>&#160;-&#160;Les gains et r&#233;mun&#233;rations, au sens de l&#8217;article L.&#160;242&#8209;1 ou de l&#8217;article L.&#160;741&#8209;10 du code rural et de la p&#234;che maritime, vers&#233;s aux salari&#233;s embauch&#233;s pour les besoins d&#8217;op&#233;rations de collecte de lait dans les exploitations agricoles situ&#233;es dans les zones de montagne telles que d&#233;finies &#224; l&#8217;article D. 113&#8209;14 du code rural et de la p&#234;che maritime sont exon&#233;r&#233;s des cotisations &#224; la charge de l&#8217;employeur au titre des assurances sociales et des allocations familiales.&#160;&#187;</p>
+<p style="text-align: justify;"></p>
+<p style="text-align: justify;">II.&#160;&#8211;&#160;La perte de recettes r&#233;sultant pour les organismes de s&#233;curit&#233; sociale du I ci-dessus est compens&#233;e, &#224; due concurrence, par la cr&#233;ation d&#8217;une taxe additionnelle aux droits pr&#233;vus aux articles 575 et 575 A du code g&#233;n&#233;ral des imp&#244;ts.</p>]]></dispositif>
+    <exposeSommaire><![CDATA[<p style="text-align: justify;">Afin de compenser les surco&#251;ts de la collecte du lait en zone de montagne, cet amendement vise &#224; supprimer les cotisations sociales sur le personnel charg&#233; de cette collecte.</p>]]></exposeSommaire>
+    <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <listeDesSignataires> M.&amp;#160;Tardy</listeDesSignataires>
+    <listeDesTribunCosignataires xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <libelleSeance>null;</libelleSeance>
+    <sortEnSeance>Non soutenu</sortEnSeance>
+    <dateDepot>19/10/2016</dateDepot>
+    <datePublication>24/10/2016</datePublication>
+    <dateSaisieSort>26/10/2016</dateSaisieSort>
+    <article99>0</article99>
+    <triAmendement>awaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaice</triAmendement>
+    <codeLoi>c sécurité sociale</codeLoi>
+    <refCodeLoi>L131-4-3</refCodeLoi>
+    <dateDepotAffiche>19 octobre 2016 </dateDepotAffiche>
+    <division>
+        <titre>Article 8</titre>
+        <divisionDesignation>APRÈS ART. 8</divisionDesignation>
+        <type>ARTICLE</type>
+        <avantApres>Apres</avantApres>
+        <divisionRattache>APRÈS L'ARTICLE 8, insérer l'article suivant:</divisionRattache>
+        <articleAdditionnel>1</articleAdditionnel>
+        <divisionAdditionnelle>0</divisionAdditionnelle>
+        <urlDivisionTexteVise>/14/textes/4072.asp#D_Article_8</urlDivisionTexteVise>
+    </division>
+    <examen>
+        <examenId>6591</examenId>
+        <organeSaisi>Séance publique</organeSaisi>
+        <typeSaisie>En séance</typeSaisie>
+        <idOrganeProprietaire>644420</idOrganeProprietaire>
+    </examen>
+    <texte>
+        <titre>POUR 2017</titre>
+        <titreCourt>PLFSS 2017</titreCourt>
+        <numBibard>4072</numBibard>
+        <numsBibardsDesPropositions></numsBibardsDesPropositions>
+        <etapeTexte>1ère lecture (1ère assemblée saisie)</etapeTexte>
+        <numeroLegislature>14</numeroLegislature>
+        <mentionSecondeDeliberation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <numeroPartiePLF xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <idDossier>35276</idDossier>
+        <libelleDossier>Sécurité sociale : loi de financement 2017</libelleDossier>
+        <urlDossierWeb>http://www.assemblee-nationale.fr/14/dossiers/plfss_2017.asp</urlDossierWeb>
+    </texte>
+    <seance>
+        <legisId>20325</legisId>
+        <legisIdperiode>533</legisIdperiode>
+        <numero>26</numero>
+        <debut>26/10/2016 15:00</debut>
+        <fin xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlcr>/14/cri/2016-2017/20170026.asp</urlcr>
+        <quantieme>Première</quantieme>
+    </seance>
+    <alinea xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <auteur>
+        <tribunId>335159</tribunId>
+        <civilite>M.</civilite>
+        <nom>Tardy</nom>
+        <prenom>Lionel</prenom>
+        <estGouvernement>0</estGouvernement>
+        <estRapporteur>0</estRapporteur>
+        <groupeTribunId>707869</groupeTribunId>
+    </auteur>
+    <cosignataires/>
+    <auteurParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amdtDejaMisADiscute>1</amdtDejaMisADiscute>
+    <typeRectification xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <causeDeRetrait xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <estMasque>0</estMasque>
+    <retireAvantPublication>0</retireAvantPublication>
+    <afficherEnRecevabilite>false</afficherEnRecevabilite>
+    <isLiasseRapporteur>false</isLiasseRapporteur>
+    <isMarqueDeRevisionVisible>false</isMarqueDeRevisionVisible>
+    <isPlfrMode>false</isPlfrMode>
+    <isPlfMode>false</isPlfMode>
+    <accordGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <statutDiffusion>normal</statutDiffusion>
+</amendement>

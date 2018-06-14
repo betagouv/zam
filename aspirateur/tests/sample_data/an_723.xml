@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendement>
+    <numero>723</numero>
+    <numeroLong>723</numeroLong>
+    <numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amendementEtendu>0</amendementEtendu>
+    <etat>DI</etat>
+    <missionVisee xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dispositif><![CDATA[<p>Compl&#233;ter cet article par l&#8217;alin&#233;a suivant&#160;:</p>
+<p style="text-align: justify;">&#171;&#160;V.&#160;&#8211;&#160;Pour l&#8217;ann&#233;e 2016, la section mentionn&#233;e au V de l&#8217;article L.&#160;14&#8209;10&#8209;5 du code de l&#8217;action sociale et des familles retrace en charges la contribution de la caisse nationale de solidarit&#233; pour l&#8217;autonomie au financement du plan national d&#8217;adaptation des logements priv&#233;s aux contraintes de l&#8217;&#226;ge et du handicap, dans la limite de 20 millions d&#8217;euros.&#160;&#187;</p>]]></dispositif>
+    <exposeSommaire><![CDATA[<p style="text-align: justify;"><span>Cet amendement vise &#224; contribuer au financement du second volet d&#8217;un plan d&#8217;adaptation de 100&#160;000 logements priv&#233;s &#224; la perte d&#8217;autonomie qui est pr&#233;vu dans le rapport annex&#233; &#224; la loi portant adaptation de la soci&#233;t&#233; au vieillissement.</span></p>
+<p style="text-align: justify;"><span>Ce plan est port&#233; notamment dans le cadre d&#8217;une convention pass&#233;e entre la Caisse nationale de solidarit&#233; pour l&#8217;autonomie (CNSA) et l&#8217;Agence nationale de l&#8217;habitat (ANAH).</span></p>]]></exposeSommaire>
+    <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <listeDesSignataires> le Gouvernement</listeDesSignataires>
+    <listeDesTribunCosignataires xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <libelleSeance></libelleSeance>
+    <sortEnSeance>Adopté</sortEnSeance>
+    <dateDepot>21/10/2016</dateDepot>
+    <datePublication>24/10/2016</datePublication>
+    <dateSaisieSort>26/10/2016</dateSaisieSort>
+    <article99>0</article99>
+    <triAmendement>aeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas</triAmendement>
+    <codeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <refCodeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dateDepotAffiche>21 octobre 2016 </dateDepotAffiche>
+    <division>
+        <titre>Article 3</titre>
+        <divisionDesignation>ART. 3</divisionDesignation>
+        <type>ARTICLE</type>
+        <avantApres>A</avantApres>
+        <divisionRattache>ARTICLE 3</divisionRattache>
+        <articleAdditionnel>0</articleAdditionnel>
+        <divisionAdditionnelle>0</divisionAdditionnelle>
+        <urlDivisionTexteVise>/14/textes/4072.asp#D_Article_3</urlDivisionTexteVise>
+    </division>
+    <examen>
+        <examenId>6591</examenId>
+        <organeSaisi>Séance publique</organeSaisi>
+        <typeSaisie>En séance</typeSaisie>
+        <idOrganeProprietaire>644420</idOrganeProprietaire>
+    </examen>
+    <texte>
+        <titre>POUR 2017</titre>
+        <titreCourt>PLFSS 2017</titreCourt>
+        <numBibard>4072</numBibard>
+        <numsBibardsDesPropositions></numsBibardsDesPropositions>
+        <etapeTexte>1ère lecture (1ère assemblée saisie)</etapeTexte>
+        <numeroLegislature>14</numeroLegislature>
+        <mentionSecondeDeliberation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <numeroPartiePLF xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <idDossier>35276</idDossier>
+        <libelleDossier>Sécurité sociale : loi de financement 2017</libelleDossier>
+        <urlDossierWeb>http://www.assemblee-nationale.fr/14/dossiers/plfss_2017.asp</urlDossierWeb>
+    </texte>
+    <seance>
+        <legisId>20325</legisId>
+        <legisIdperiode>533</legisIdperiode>
+        <numero>26</numero>
+        <debut>26/10/2016 15:00</debut>
+        <fin xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlcr>/14/cri/2016-2017/20170026.asp</urlcr>
+        <quantieme>Première</quantieme>
+    </seance>
+    <alinea>
+        <avantApres>Apres</avantApres>
+        <numero>5</numero>
+        <alineaDesignation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </alinea>
+    <auteur>
+        <tribunId>GVT</tribunId>
+        <civilite xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <nom xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <prenom xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <estGouvernement>1</estGouvernement>
+        <estRapporteur>0</estRapporteur>
+        <groupeTribunId xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </auteur>
+    <cosignataires/>
+    <auteurParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amdtDejaMisADiscute>1</amdtDejaMisADiscute>
+    <typeRectification xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <causeDeRetrait xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <estMasque>0</estMasque>
+    <retireAvantPublication>0</retireAvantPublication>
+    <afficherEnRecevabilite>false</afficherEnRecevabilite>
+    <isLiasseRapporteur>false</isLiasseRapporteur>
+    <isMarqueDeRevisionVisible>false</isMarqueDeRevisionVisible>
+    <isPlfrMode>false</isPlfrMode>
+    <isPlfMode>false</isPlfMode>
+    <accordGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <statutDiffusion>normal</statutDiffusion>
+</amendement>

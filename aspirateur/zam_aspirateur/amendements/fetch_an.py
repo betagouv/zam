@@ -47,7 +47,8 @@ def get_groupe(amendement: OrderedDict, groups_folder: Path) -> str:
     if int(auteur["estGouvernement"]) or "@xsi:nil" in auteur["groupeTribunId"]:
         return ""
     groupe_raw = (groups_folder / f"PO{auteur['groupeTribunId']}.json").read_text()
-    return json.loads(groupe_raw)["organe"]["libelle"]
+    libelle: str = json.loads(groupe_raw)["organe"]["libelle"]
+    return libelle
 
 
 def unjustify(content: str) -> str:

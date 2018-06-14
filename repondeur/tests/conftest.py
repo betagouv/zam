@@ -25,7 +25,7 @@ def dummy_lecture(app):
     from zam_repondeur.models import DBSession, Lecture
 
     with transaction.manager:
-        lecture = Lecture(chambre="senat", session="2017-2018", num_texte=63)
+        lecture = Lecture(chambre="an", session="15", num_texte="0269")
         DBSession.add(lecture)
 
     return lecture

@@ -7,15 +7,12 @@ from urllib.parse import urljoin
 import requests
 from selectolax.parser import HTMLParser
 
+from ..exceptions import NotFound
 from .models import Amendement
 from .parser import parse_from_csv, parse_from_json
 
 
 BASE_URL = "http://www.senat.fr"
-
-
-class NotFound(Exception):
-    pass
 
 
 def fetch_title(session: str, num: str) -> str:

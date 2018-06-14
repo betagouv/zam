@@ -10,6 +10,7 @@ import xmltodict
 from cachecontrol import CacheControl
 from cachecontrol.caches.file_cache import FileCache
 
+from ..exceptions import NotFound
 from .models import Amendement
 from .parser import _parse_subdiv
 
@@ -30,10 +31,6 @@ def build_url(legislature: int, texte: str, numero: int = 0) -> str:
         pattern = os.environ["ZAM_AN_PATTERN_LISTE"]
         path = pattern.format(legislature=legislature, texte=texte)
     return f"{BASE_URL}{path}"
-
-
-class NotFound(Exception):
-    pass
 
 
 def get_auteur(amendement: OrderedDict) -> str:

@@ -38,33 +38,6 @@
         </div>
     </form>
 
-    {% if amendements %}
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Article</th>
-                <th>Alinéa</th>
-                <th>Numéro</th>
-                <th>Auteur</th>
-                <th>Groupe</th>
-                <th>Sort</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for amendement in amendements %}
-                <tr>
-                    <td>{{ amendement.article }}</td>
-                    <td>{{ amendement.alinea }}</td>
-                    <td>{{ amendement.num }}</td>
-                    <td>{{ amendement.auteur }}</td>
-                    <td>{{ amendement.groupe }}</td>
-                    <td>{{ amendement.sort }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
 {% endblock %}
 
 

@@ -5,22 +5,15 @@ from http import HTTPStatus
 from pathlib import Path
 from typing import List, Tuple
 
-import requests
 import xmltodict
-from cachecontrol import CacheControl
-from cachecontrol.caches.file_cache import FileCache
 
 from ..exceptions import NotFound
+from ..http import cached_session
 from .models import Amendement
 from .parser import _parse_subdiv
 
 
 BASE_URL = "http://www.assemblee-nationale.fr"
-session = requests.session()
-HERE = Path(__file__)
-cached_session = CacheControl(
-    session, cache=FileCache(HERE.parent.parent.parent.parent / ".web_cache")
-)
 
 
 def build_url(legislature: int, texte: str, numero: int = 0) -> str:

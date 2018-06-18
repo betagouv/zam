@@ -5,12 +5,8 @@ from json import load
 from typing import Dict, Generator, IO
 from zipfile import ZipFile
 
-from requests import Session
-
+from ..http import cached_session
 from .models import Chambre, Lecture, Dossier, Texte, TypeTexte
-
-
-requests_session = Session()
 
 
 def get_dossiers_legislatifs(legislature: int) -> Dict[str, Dossier]:
@@ -34,7 +30,7 @@ def roman(n: int) -> str:
 
 @contextmanager
 def extract_from_remote_zip(url: str, filename: str) -> Generator[IO[str], None, None]:
-    response = requests_session.get(url)
+    response = cached_session.get(url)
     assert response.headers["content-type"] == "application/zip"
     with ZipFile(BytesIO(response.content)) as zip_file:
         with zip_file.open(filename) as file_:

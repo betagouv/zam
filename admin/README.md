@@ -33,4 +33,4 @@
 
 ## Deploying répondeur
 
-1.  Run `fab -eH root@zam.beta.gouv.fr deploy-repondeur --secret=...`
+1.  Run `fab -eH root@zam.beta.gouv.fr deploy-repondeur --branch=master --secret=... --an-pattern-liste=... --an-pattern-amendement=...`

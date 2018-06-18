@@ -4,8 +4,14 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
 
+from zam_aspirateur.textes.dossiers_legislatifs import get_dossiers_legislatifs
+from zam_aspirateur.textes.models import Chambre
+
 from zam_repondeur.fetch import get_amendements
-from zam_repondeur.models import DBSession, Amendement, Lecture, CHAMBRES, SESSIONS
+from zam_repondeur.models import DBSession, Amendement, Lecture, CHAMBRES
+
+
+CURRENT_LEGISLATURE = 15
 
 
 @view_config(route_name="lectures_list", renderer="lectures_list.html")
@@ -17,21 +23,38 @@ def lectures_list(request: Request) -> dict:
 class LecturesAdd:
     def __init__(self, request: Request) -> None:
         self.request = request
+        self.dossiers_by_uid = get_dossiers_legislatifs(legislature=CURRENT_LEGISLATURE)
+        self.lectures_by_dossier = {
+            dossier.uid: {
+                lecture.texte.uid: f"{lecture.chambre} : {lecture.titre} (texte nº {lecture.texte.numero} déposé le {lecture.texte.date_depot.strftime('%d/%m/%Y')})"  # noqa
+                for lecture in dossier.lectures.values()
+            }
+            for dossier in self.dossiers_by_uid.values()
+        }
 
     @view_config(request_method="GET")
     def get(self) -> dict:
-        return {"chambres": CHAMBRES, "sessions": SESSIONS}
+        return {
+            "dossiers": list(self.dossiers_by_uid.values()),
+            "lectures_by_dossier": self.lectures_by_dossier,
+        }
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        chambre = self.request.POST["chambre"]
-        session = self.request.POST["session"]
-        num_texte = self.request.POST["num_texte"]
-        if chambre not in CHAMBRES:
-            raise HTTPBadRequest
+        dossier_uid = self.request.POST["dossier"]
+        texte_uid = self.request.POST["lecture"]
 
-        if chambre == "an":
-            num_texte = f"{int(num_texte):04}"
+        dossier = self.dossiers_by_uid[dossier_uid]
+        lecture = dossier.lectures[texte_uid]
+
+        if lecture.chambre == Chambre.AN:
+            chambre = "an"
+            session = "15"
+            num_texte = f"{lecture.texte.numero:04}"
+        else:
+            chambre = "senat"
+            session = "2017-2018"
+            num_texte = str(lecture.texte.numero)
 
         if Lecture.exists(chambre, session, num_texte):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))

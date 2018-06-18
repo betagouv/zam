@@ -20,7 +20,7 @@ class LecturesAdd:
 
     @view_config(request_method="GET")
     def get(self) -> dict:
-        return self._form_data()
+        return {"chambres": CHAMBRES, "sessions": SESSIONS}
 
     @view_config(request_method="POST")
     def post(self) -> Response:
@@ -44,9 +44,6 @@ class LecturesAdd:
                 "lecture", chambre=chambre, session=session, num_texte=num_texte
             )
         )
-
-    def _form_data(self) -> dict:
-        return {"chambres": CHAMBRES, "sessions": SESSIONS}
 
 
 @view_config(route_name="lecture", renderer="lecture.html")

@@ -112,6 +112,11 @@
         </div>
 
         <div class="form-group">
+            <label for="reponse">Réponse</label>
+            <textarea name="reponse" class="form-control">{{ amendement.reponse or "" }}</textarea>
+        </div>
+
+        <div class="form-group">
             <input type="submit" name="submit" value="Enregistrer" class="btn btn-primary">
             <a href="{{ request.route_url('list_amendements', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte) }}" class="btn">Annuler</a>
         </div>

@@ -1,3 +1,5 @@
+import json
+
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
 from pyramid.response import Response
@@ -70,7 +72,6 @@ class LecturesAdd:
 
 
 @view_config(route_name="lecture", renderer="lecture.html")
-@view_config(route_name="list_amendements", renderer="amendements.html")
 def lecture(request: Request) -> dict:
     lecture = Lecture.get(
         chambre=request.matchdict["chambre"],
@@ -80,21 +81,79 @@ def lecture(request: Request) -> dict:
     if lecture is None:
         raise HTTPNotFound
 
-    amendements = (
+    amendements_count = (
         DBSession.query(Amendement)
         .filter(
             Amendement.chambre == lecture.chambre,
             Amendement.session == lecture.session,
             Amendement.num_texte == lecture.num_texte,
         )
-        .order_by(
-            case([(Amendement.position.is_(None), 1)], else_=0),
-            Amendement.position,
-            Amendement.num,
-        )
-        .all()
+        .count()
     )
-    return {"lecture": lecture, "amendements": amendements}
+    return {"lecture": lecture, "amendements_count": amendements_count}
+
+
+@view_defaults(route_name="list_amendements", renderer="amendements.html")
+class ListAmendements:
+    def __init__(self, request: Request) -> None:
+        self.request = request
+        self.lecture = Lecture.get(
+            chambre=request.matchdict["chambre"],
+            session=request.matchdict["session"],
+            num_texte=request.matchdict["num_texte"],
+        )
+        if self.lecture is None:
+            raise HTTPNotFound
+
+        self.amendements = (
+            DBSession.query(Amendement)
+            .filter(
+                Amendement.chambre == self.lecture.chambre,
+                Amendement.session == self.lecture.session,
+                Amendement.num_texte == self.lecture.num_texte,
+            )
+            .order_by(
+                case([(Amendement.position.is_(None), 1)], else_=0),
+                Amendement.position,
+                Amendement.num,
+            )
+            .all()
+        )
+
+    @view_config(request_method="GET")
+    def get(self) -> dict:
+        return {"lecture": self.lecture, "amendements": self.amendements}
+
+    @view_config(request_method="POST")
+    def post(self) -> Response:
+        reponses_file = self.request.POST["reponses"].file
+        reponses = json.load(reponses_file)[0]  # Unique item.
+        for article in reponses["list"]:
+            for amendement in article.get("amendements", []):
+                if "reponse" in amendement:
+                    amd = (
+                        DBSession.query(Amendement)
+                        .filter(
+                            Amendement.chambre == self.lecture.chambre,
+                            Amendement.session == self.lecture.session,
+                            Amendement.num_texte == self.lecture.num_texte,
+                            Amendement.num == amendement["idAmendement"]
+                        )
+                        .first()
+                    )
+                    if amd:
+                        amd.avis = amendement["reponse"]["avis"]
+                        amd.observations = amendement["reponse"].get("presentation", "")
+                        amd.reponse = amendement["reponse"].get("reponse", "")
+
+        return HTTPFound(
+            location=self.request.route_url(
+                "list_amendements",
+                chambre=self.lecture.chambre,
+                session=self.lecture.session,
+                num_texte=self.lecture.num_texte,
+            )
+        )
 
 
 @view_config(route_name="fetch_amendements")

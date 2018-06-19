@@ -22,6 +22,18 @@
 {% block body %}
     <h2>{{ lecture }}</h2>
 
+    <form action="" enctype="multipart/form-data" method="post">
+        <div class="form-row align-items-center">
+            <div class="col-sm-6">
+                <input type="file" class="custom-file-input" id="reponses" name="reponses">
+                <label class="custom-file-label" for="reponses">Fichier JSON au format Drupal</label>
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary">Charger un lot de réponses</button>
+            </div>
+        </div>
+    </form>
+
     <table class="table table-striped">
         <thead>
             <tr>

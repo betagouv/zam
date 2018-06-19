@@ -30,14 +30,14 @@
 {% block body %}
     <h2>{{ lecture }}</h2>
 
-    {% if amendements %}
+    {% if amendements_count %}
     <div class="card">
         <div class="card-body">
             <div class="card-title">
                 <h4>Amendements</h4>
             </div>
             <div class="card-text">
-                <p>{{ amendements | length }} amendements déposés.</p>
+                <p>{{ amendements_count }} amendements déposés.</p>
                 <p><a class="btn btn-primary" href="{{ request.route_url('list_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">Consulter la liste</a></p>
             </div>
         </div>
@@ -64,7 +64,7 @@
     </div>
     {% endif %}
 
-    {% if amendements %}
+    {% if amendements_count %}
     <div class="card">
         <div class="card-body">
             <div class="card-title">

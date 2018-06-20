@@ -9,11 +9,10 @@ import pytest
 HERE = Path(os.path.dirname(__file__))
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def sample_file():
     path = HERE.parent / "sample_data" / "Dossiers_Legislatifs_XV.json"
-    with open(path) as f_:
-        yield f_
+    return path.open()
 
 
 def test_an_get_dossiers_legislatifs(sample_file):

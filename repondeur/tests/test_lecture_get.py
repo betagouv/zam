@@ -1,5 +1,5 @@
 def test_get_lecture(app, dummy_lecture):
-    resp = app.get("http://localhost/lectures/an/15/0269/")
+    resp = app.get("http://localhost/lectures/an/15/269/")
     assert resp.status_code == 200
 
 

@@ -22,7 +22,7 @@ from zam_aspirateur.senateurs.parse import parse_senateurs
 SystemStatus = NewType("SystemStatus", int)  # status code for sys.exit()
 
 
-def aspire_senat(session: str, num: str) -> Tuple[str, Iterable[Amendement]]:
+def aspire_senat(session: str, num: int) -> Tuple[str, Iterable[Amendement]]:
     print("Récupération du titre...")
     title = senat.fetch_title(session, num)
 
@@ -39,7 +39,7 @@ def aspire_senat(session: str, num: str) -> Tuple[str, Iterable[Amendement]]:
 
 
 def aspire_an(
-    legislature: int, texte: str, groups_folder: Path
+    legislature: int, texte: int, groups_folder: Path
 ) -> Tuple[str, List[Amendement]]:
     print("Récupération du titre et des amendements déposés...")
     try:
@@ -107,7 +107,7 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
 
 
 def process_amendements(
-    amendements: Iterable[Amendement], session: str, num: str
+    amendements: Iterable[Amendement], session: str, num: int
 ) -> Iterable[Amendement]:
 
     # Les amendements discutés en séance, par ordre de passage
@@ -164,10 +164,10 @@ def _enrich(
     - amendement identique ?
     """
     amendements_discussion_by_num = {
-        amend.num_int: amend for amend in amendements_derouleur
+        amend.num: amend for amend in amendements_derouleur
     }
     return (
-        _enrich_one(amend, amendements_discussion_by_num.get(amend.num_int))
+        _enrich_one(amend, amendements_discussion_by_num.get(amend.num))
         for amend in amendements
     )
 
@@ -197,7 +197,7 @@ def _sort(
         key=lambda amendement: (
             1 if amendement.position is None else 0,
             amendement.position,
-            amendement.num_int,
+            amendement.num,
         ),
     )
 

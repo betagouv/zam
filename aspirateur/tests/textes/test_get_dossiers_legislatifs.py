@@ -11,7 +11,7 @@ HERE = Path(os.path.dirname(__file__))
 
 @pytest.yield_fixture
 def sample_file():
-    path = HERE / ".." / "sample_data" / "Dossiers_Legislatifs_XV.json"
+    path = HERE.parent / "sample_data" / "Dossiers_Legislatifs_XV.json"
     with open(path) as f_:
         yield f_
 

@@ -1,0 +1,125 @@
+{% extends "_base.html" %}
+
+{% from "_macros.html" import lecture_title, amendement_title %}
+
+
+{% block header %}
+    <style type="text/css">
+        h4 {
+            margin-bottom: 0.75rem;
+        }
+        .auteur, .dispositif, .objet {
+            margin-bottom: 1.5rem;
+        }
+        .auteur {
+            font-style: italic;
+        }
+        label {
+            font-weight: 500;
+        }
+        textarea {
+            height: 30vh;
+        }
+        div.mce-fullscreen {
+            z-index: 1030;
+        }
+    </style>
+    <script src="{{ request.static_url('zam_repondeur:static/tinymce/tinymce.min.js') }}"></script>
+    <script type="text/javascript">
+        tinymce.init({
+            selector: "textarea",
+            language: "fr_FR",
+            menubar: false,
+            plugins: "lists fullscreen",
+            toolbar: "undo redo | bold italic removeformat | bullist numlist | cut copy paste | fullscreen",
+            branding: false,
+            elementpath: false,
+            content_style: "p, li { line-height: 1.5; margin: 1em 0; }",
+        });
+    </script>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.route_url('lecture', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte) }}">{{ lecture_title(amendement.chambre, amendement.session, amendement.num_texte) }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.route_url('list_amendements', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte) }}">Amendements</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Nº&nbsp;{{ amendement.num_disp }}</li>
+{% endblock %}
+
+
+{% block body %}
+    <h2>{{ amendement_title(amendement) }}</h2>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm pl-0 mr-4">
+              {{ content(amendement) }}
+            </div>
+            <div class="col-sm px-0">
+              {{ form(amendement) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% macro content(amendement) %}
+    <div class="auteur">
+        Présenté par {{ amendement.auteur }} ({{ amendement.groupe }}).
+    </div>
+    <div class="dispositif">
+        <h4>
+            {% if amendement.subdiv_pos == 'avant' %}
+                Article additionnel avant l'{{ amendement.subdiv_type }}
+            {% elif amendement.subdiv_pos == 'apres' %}
+                Article additionnel après l'{{ amendement.subdiv_type }}
+            {% else %}
+                {{ amendement.subdiv_type | capitalize }}
+            {% endif %}
+            {{ amendement.subdiv_num }} {{ amendement.subdiv_mult }}
+        </h4>
+        {{ amendement.dispositif | safe }}
+    </div>
+    <div class="objet">
+        <h4>Exposé sommaire</h4>
+        {% if amendement.objet %}
+            {{ amendement.objet | safe }}
+        {% else %}
+            <i>Néant</i>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+
+{% macro form(amendement) %}
+    <h4>Réponse</h4>
+
+    <form action="{{ request.path }}" method="POST" class="mt-3">
+        <div class="form-group">
+            <label for="avis">Position du gouvernement</label>
+            <select name="avis" class="form-control">
+                <option value="">Choisir dans la liste...</option>
+                {% for value in avis %}
+                    <option value="{{ value }}" {%- if amendement.avis == value %} selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="observations">Observations</label>
+            <textarea name="observations" class="form-control">{{ amendement.observations or "" }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="reponse">Réponse</label>
+            <textarea name="reponse" class="form-control">{{ amendement.reponse or "" }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" name="submit" value="Enregistrer" class="btn btn-primary">
+            <a href="{{ request.route_url('list_amendements', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte) }}" class="btn">Annuler</a>
+        </div>
+
+    </form>
+{% endmacro %}

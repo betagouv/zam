@@ -1,0 +1,15 @@
+[Unit]
+Description=Zam Repondeur Web Application
+After=network.target
+
+[Service]
+Type=simple
+User=repondeur
+WorkingDirectory=/srv/repondeur/src/repondeur/
+ExecStart=/usr/local/bin/pipenv run pserve production.ini
+Restart=on-failure
+Environment="ZAM_AN_PATTERN_LISTE=$an_pattern_liste"
+Environment="ZAM_AN_PATTERN_AMENDEMENT=$an_pattern_amendement"
+
+[Install]
+WantedBy=multi-user.target

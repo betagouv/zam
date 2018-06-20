@@ -1,0 +1,10 @@
+{% macro lecture_title(chambre, session, num_texte) %}
+    {{- "Sénat" if chambre == "senat" else "Assemblée nationale"}},
+    session {{ session }},
+    texte nº&nbsp;{{ num_texte }}
+{% endmacro %}
+
+
+{% macro amendement_title(amendement) %}
+    Amendement nº&nbsp;{{ amendement.num_disp }}
+{% endmacro %}

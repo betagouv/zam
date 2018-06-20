@@ -1,94 +1,67 @@
-import os
-import re
-from dataclasses import dataclass
-from tempfile import NamedTemporaryFile
-from typing import Any, Generator, List
+import json
 
-from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
+from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
-from pyramid.response import FileResponse, Response
+from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
+from sqlalchemy.sql.expression import case
 
-from zam_aspirateur.amendements.models import Amendement
-from zam_aspirateur.amendements.fetch_senat import fetch_and_parse_all, NotFound
-from zam_aspirateur.amendements.writer import write_csv, write_xlsx
-from zam_aspirateur.__main__ import process_amendements
+from zam_aspirateur.textes.dossiers_legislatifs import get_dossiers_legislatifs
+from zam_aspirateur.textes.models import Chambre
 
-
-CHAMBRES = {"assemblee": "Assemblée nationale", "senat": "Sénat"}
-
-SESSIONS = ["2017-2018"]
+from zam_repondeur.fetch import get_amendements
+from zam_repondeur.models import DBSession, Amendement, Lecture, CHAMBRES
 
 
-RE_TEXTE = re.compile(r"^(?P<chambre>\w+)-(?P<session>\d{4}-\d{4})-(?P<num_texte>\d+)$")
-
-
-@dataclass
-class Lecture:
-    chambre: str
-    session: str
-    num_texte: str
-
-    @property
-    def chambre_disp(self) -> str:
-        return CHAMBRES[self.chambre]
-
-    def __str__(self) -> str:
-        return f"{self.chambre_disp}, session {self.session}, texte nº {self.num_texte}"
-
-    def __lt__(self, other: Any) -> bool:
-        if type(self) != type(other):
-            return NotImplemented
-        return (self.chambre, self.session, int(self.num_texte)) < (
-            other.chambre,
-            other.session,
-            int(other.num_texte),
-        )
+CURRENT_LEGISLATURE = 15
 
 
 @view_config(route_name="lectures_list", renderer="lectures_list.html")
 def lectures_list(request: Request) -> dict:
-    return {
-        "lectures": list(
-            sorted(
-                list_lectures(request.registry.settings["zam.data_dir"]), reverse=True
-            )
-        )
-    }
-
-
-def list_lectures(dirname: str) -> Generator:
-    if not os.path.isdir(dirname):
-        return
-    for name in os.listdir(dirname):
-        mo = RE_TEXTE.match(name)
-        if mo is not None:
-            yield Lecture(**mo.groupdict())  # type: ignore
+    return {"lectures": Lecture.all()}
 
 
 @view_defaults(route_name="lectures_add", renderer="lectures_add.html")
 class LecturesAdd:
     def __init__(self, request: Request) -> None:
         self.request = request
-        self.data_dir = self.request.registry.settings["zam.data_dir"]
+        self.dossiers_by_uid = get_dossiers_legislatifs(legislature=CURRENT_LEGISLATURE)
+        self.lectures_by_dossier = {
+            dossier.uid: {
+                lecture.texte.uid: f"{lecture.chambre} : {lecture.titre} (texte nº {lecture.texte.numero} déposé le {lecture.texte.date_depot.strftime('%d/%m/%Y')})"  # noqa
+                for lecture in dossier.lectures.values()
+            }
+            for dossier in self.dossiers_by_uid.values()
+        }
 
     @view_config(request_method="GET")
     def get(self) -> dict:
-        return self._form_data()
+        return {
+            "dossiers": list(self.dossiers_by_uid.values()),
+            "lectures_by_dossier": self.lectures_by_dossier,
+        }
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        chambre = self.request.POST["chambre"]
-        session = self.request.POST["session"]
-        num_texte = self.request.POST["num_texte"]
-        if chambre not in CHAMBRES:
-            raise HTTPBadRequest
+        dossier_uid = self.request.POST["dossier"]
+        texte_uid = self.request.POST["lecture"]
 
-        lecture_dir = os.path.join(self.data_dir, f"{chambre}-{session}-{num_texte}")
-        if os.path.isdir(lecture_dir):
+        dossier = self.dossiers_by_uid[dossier_uid]
+        lecture = dossier.lectures[texte_uid]
+
+        chambre = lecture.chambre.value
+        num_texte = lecture.texte.numero
+
+        # FIXME: use date_depot to find the right session?
+        if lecture.chambre == Chambre.AN:
+            session = "15"
+        else:
+            session = "2017-2018"
+
+        if Lecture.exists(chambre, session, num_texte):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
         else:
-            os.makedirs(lecture_dir)
+            Lecture.create(chambre, session, num_texte)
             self.request.session.flash(("success", "Lecture créée avec succès."))
 
         return HTTPFound(
@@ -97,91 +70,112 @@ class LecturesAdd:
             )
         )
 
-    def _form_data(self) -> dict:
-        return {
-            "chambres": CHAMBRES.items(),
-            "sessions": [(sess, sess) for sess in SESSIONS],
-        }
-
 
 @view_config(route_name="lecture", renderer="lecture.html")
 def lecture(request: Request) -> dict:
-    return {
-        "lecture": Lecture(  # type: ignore
+    lecture = Lecture.get(
+        chambre=request.matchdict["chambre"],
+        session=request.matchdict["session"],
+        num_texte=int(request.matchdict["num_texte"]),
+    )
+    if lecture is None:
+        raise HTTPNotFound
+
+    amendements_count = (
+        DBSession.query(Amendement)
+        .filter(
+            Amendement.chambre == lecture.chambre,
+            Amendement.session == lecture.session,
+            Amendement.num_texte == lecture.num_texte,
+        )
+        .count()
+    )
+    return {"lecture": lecture, "amendements_count": amendements_count}
+
+
+@view_defaults(route_name="list_amendements", renderer="amendements.html")
+class ListAmendements:
+    def __init__(self, request: Request) -> None:
+        self.request = request
+        self.lecture = Lecture.get(
             chambre=request.matchdict["chambre"],
             session=request.matchdict["session"],
-            num_texte=request.matchdict["num_texte"],
+            num_texte=int(request.matchdict["num_texte"]),
         )
-    }
+        if self.lecture is None:
+            raise HTTPNotFound
 
+        self.amendements = (
+            DBSession.query(Amendement)
+            .filter(
+                Amendement.chambre == self.lecture.chambre,
+                Amendement.session == self.lecture.session,
+                Amendement.num_texte == self.lecture.num_texte,
+            )
+            .order_by(
+                case([(Amendement.position.is_(None), 1)], else_=0),
+                Amendement.position,
+                Amendement.num,
+            )
+            .all()
+        )
 
-@view_config(route_name="amendements_csv")
-def amendements_csv(request: Request) -> Response:
-    chambre = request.matchdict["chambre"]
-    session = request.matchdict["session"]
-    num_texte = request.matchdict["num_texte"]
-    if chambre not in CHAMBRES:
-        return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
+    @view_config(request_method="GET")
+    def get(self) -> dict:
+        return {"lecture": self.lecture, "amendements": self.amendements}
 
-    try:
-        amendements = get_amendements_senat(session, num_texte)
-    except NotFound:
-        request.session.flash(("danger", "Aucun amendement n'a pu être trouvé."))
+    @view_config(request_method="POST")
+    def post(self) -> Response:
+        reponses_file = self.request.POST["reponses"].file
+        reponses = json.load(reponses_file)[0]  # Unique item.
+        for article in reponses["list"]:
+            for amendement in article.get("amendements", []):
+                if "reponse" in amendement:
+                    amd = (
+                        DBSession.query(Amendement)
+                        .filter(
+                            Amendement.chambre == self.lecture.chambre,
+                            Amendement.session == self.lecture.session,
+                            Amendement.num_texte == self.lecture.num_texte,
+                            Amendement.num == amendement["idAmendement"],
+                        )
+                        .first()
+                    )
+                    if amd:
+                        amd.avis = amendement["reponse"]["avis"]
+                        amd.observations = amendement["reponse"].get("presentation", "")
+                        amd.reponse = amendement["reponse"].get("reponse", "")
+
         return HTTPFound(
-            location=request.route_url(
-                "lecture", chambre=chambre, session=session, num_texte=num_texte
+            location=self.request.route_url(
+                "list_amendements",
+                chambre=self.lecture.chambre,
+                session=self.lecture.session,
+                num_texte=self.lecture.num_texte,
             )
         )
 
-    with NamedTemporaryFile() as file_:
 
-        tmp_file_path = os.path.abspath(file_.name)
-
-        write_csv(amendements, tmp_file_path)
-
-        response = FileResponse(tmp_file_path)
-        attach_name = f"amendements-{chambre}-{session}-{num_texte}.csv"
-        response.content_type = "text/csv"
-        response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
-        return response
-
-
-@view_config(route_name="amendements_xlsx")
-def amendements_xlsx(request: Request) -> Response:
+@view_config(route_name="fetch_amendements")
+def fetch_amendements(request: Request) -> Response:
     chambre = request.matchdict["chambre"]
     session = request.matchdict["session"]
-    num_texte = request.matchdict["num_texte"]
+    num_texte = int(request.matchdict["num_texte"])
+
     if chambre not in CHAMBRES:
         return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
 
-    try:
-        amendements = get_amendements_senat(session, num_texte)
-    except NotFound:
+    amendements = get_amendements(chambre, session, num_texte)
+
+    if amendements:
+        DBSession.add_all(amendements)
+        DBSession.flush()
+        request.session.flash(("success", f"{len(amendements)} amendements"))
+    else:
         request.session.flash(("danger", "Aucun amendement n'a pu être trouvé."))
-        return HTTPFound(
-            location=request.route_url(
-                "lecture", chambre=chambre, session=session, num_texte=num_texte
-            )
+
+    return HTTPFound(
+        location=request.route_url(
+            "lecture", chambre=chambre, session=session, num_texte=num_texte
         )
-
-    with NamedTemporaryFile() as file_:
-
-        tmp_file_path = os.path.abspath(file_.name)
-
-        write_xlsx(amendements, tmp_file_path)
-
-        response = FileResponse(tmp_file_path)
-        attach_name = f"amendements-{chambre}-{session}-{num_texte}.xlsx"
-        response.content_type = (
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-        response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
-        return response
-
-
-def get_amendements_senat(session: str, num_texte: str) -> List[Amendement]:
-    amendements = fetch_and_parse_all(session=session, num=num_texte)
-    processed_amendements = process_amendements(
-        amendements=amendements, session=session, num=num_texte
-    )  # type: List[Amendement]
-    return processed_amendements
+    )

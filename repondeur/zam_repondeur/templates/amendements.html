@@ -1,0 +1,80 @@
+{% extends "_base.html" %}
+
+{% from "_macros.html" import lecture_title %}
+
+
+{% block header %}
+<style type="text/css">
+    .action i {
+        margin-right: 0.33rem;
+    }
+</style>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">{{ lecture_title(lecture.chambre, lecture.session, lecture.num_texte) }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Amendements</li>
+{% endblock %}
+
+
+{% block body %}
+    <h2>{{ lecture }}</h2>
+
+    <form action="" enctype="multipart/form-data" method="post">
+        <div class="form-row align-items-center">
+            <div class="col-sm-6">
+                <input type="file" class="custom-file-input" id="reponses" name="reponses">
+                <label class="custom-file-label" for="reponses">Fichier JSON au format Drupal</label>
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary">Charger un lot de réponses</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Article</th>
+                <th>Nº</th>
+                <th>Auteur</th>
+                <th>Groupe</th>
+                <th>Avis</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        {% for amendement in amendements %}
+            <tr>
+                <td>
+                    {{ amendement.subdiv_pos }}
+                    {% if amendement.subdiv_type == 'article' %}
+                        Art.
+                    {% else %}
+                        {{ amendement.subdiv_type }}
+                    {% endif %}
+                    {{ amendement.subdiv_num }}
+                    {{ amendement.subdiv_mult }}
+                </td>
+                <td>
+                    {{ amendement.num_disp }}
+                </td>
+                <td>{{ amendement.auteur }}</td>
+                <td>{{ amendement.groupe }}</td>
+                <td>
+                    {% if amendement.avis %}
+                        {{ amendement.avis }}
+                    {% endif %}
+                </td>
+                <td>
+                    <a class="action" href="{{ request.route_url('reponse_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, num=amendement.num) }}">
+                        <i class="fas fa-edit"></i>Éditer...
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

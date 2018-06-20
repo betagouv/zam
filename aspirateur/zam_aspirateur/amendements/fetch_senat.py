@@ -7,6 +7,7 @@ from urllib.parse import urljoin
 import requests
 from selectolax.parser import HTMLParser
 
+from ..exceptions import NotFound
 from .models import Amendement
 from .parser import parse_from_csv, parse_from_json
 
@@ -14,11 +15,7 @@ from .parser import parse_from_csv, parse_from_json
 BASE_URL = "http://www.senat.fr"
 
 
-class NotFound(Exception):
-    pass
-
-
-def fetch_title(session: str, num: str) -> str:
+def fetch_title(session: str, num: int) -> str:
     """
     Récupère le titre du projet de loi de puis le site du Sénat.
     """
@@ -48,7 +45,7 @@ def fetch_title(session: str, num: str) -> str:
     return title
 
 
-def fetch_all(session: str, num: str) -> List[OrderedDict]:
+def fetch_all(session: str, num: int) -> List[OrderedDict]:
     """
     Récupère tous les amendements, dans l'ordre de dépôt
     """
@@ -65,11 +62,11 @@ def fetch_all(session: str, num: str) -> List[OrderedDict]:
     return items
 
 
-def fetch_and_parse_all(session: str, num: str) -> List[Amendement]:
-    return [parse_from_csv(item) for item in fetch_all(session, num)]
+def fetch_and_parse_all(session: str, num: int) -> List[Amendement]:
+    return [parse_from_csv(row, session, num) for row in fetch_all(session, num)]
 
 
-def fetch_discussed(session: str, num: str, phase: str) -> Any:
+def fetch_discussed(session: str, num: int, phase: str) -> Any:
     """
     Récupère les amendements à discuter, dans l'ordre de passage
 
@@ -87,13 +84,19 @@ def fetch_discussed(session: str, num: str, phase: str) -> Any:
     return data
 
 
-def fetch_and_parse_discussed(session: str, num: str, phase: str) -> List[Amendement]:
+def fetch_and_parse_discussed(session: str, num: int, phase: str) -> List[Amendement]:
     try:
         data = fetch_discussed(session, num, phase)
     except NotFound:
         return []
     return [
-        parse_from_json(amend, subdiv)
-        for subdiv in data["Subdivisions"]
-        for amend in subdiv["Amendements"]
+        parse_from_json(amend, position, session, num, subdiv)
+        for position, (subdiv, amend) in enumerate(
+            (
+                (subdiv, amend)
+                for subdiv in data["Subdivisions"]
+                for amend in subdiv["Amendements"]
+            ),
+            start=1,
+        )
     ]

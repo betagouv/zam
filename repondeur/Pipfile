@@ -13,6 +13,7 @@ bleach = "*"
 openpyxl = "*"
 dataclasses = "*"
 "4f547c1" = {path = "./../aspirateur", editable = true}
+sqlalchemy = ">=1.2,<1.3"
 
 [dev-packages]
 webtest = "*"
@@ -21,6 +22,7 @@ pytest = "*"
 mypy = "*"
 black = "*"
 pytest-cov = "*"
+pyramid-debugtoolbar = "*"
 
 [requires]
 python_version = "3.6"

@@ -6,7 +6,7 @@
 
 ## Installing dependencies
 
-1.  Got to `admin`
+1.  Go to `admin`
 2.  Run `python3 -m venv ~/.virtualenvs/zam-admin`
 3.  Activate `source ~/.virtualenvs/zam-admin/bin/activate`
 4.  Install `pip install -r requirements.txt`
@@ -30,3 +30,7 @@
 1.  Generate the `index.html` file from sensitive sources
 2.  Install dependencies (see above) and/or activate venv
 3.  Run `fab -eH root@zam.beta.gouv.fr deploy --source=path/to/output/`
+
+## Deploying répondeur
+
+1.  Run `fab -eH root@zam.beta.gouv.fr deploy-repondeur --branch=master --secret=... --an-pattern-liste=... --an-pattern-amendement=...`

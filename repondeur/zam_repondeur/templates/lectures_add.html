@@ -1,4 +1,10 @@
+
 {% extends "_base.html" %}
+
+
+{% block header %}
+    <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/choices/choices.min.css') }}">
+{% endblock %}
 
 
 {% block breadcrumbs %}
@@ -12,24 +18,20 @@
 
     <form action="{{ request.path }}" method="POST">
         <div class="form-group">
-            <label for="chambre">Chambre</label>
-            <select name="chambre" class="form-control">
-                {% for id, label in chambres %}
-                    <option value="{{ id }}" {%- if loop.first %} selected{% endif %}>{{ label }}</option>
+            <label for="dossier">Texte de loi</label>
+            <select id="select-dossier" name="dossier" class="form-control">
+                {% for dossier in dossiers %}
+                    <option value="{{ dossier.uid }}" {%- if loop.first %} selected{% endif %}>{{ dossier.titre }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="form-group">
-            <label for="session">Session</label>
-            <select name="session" class="form-control">
-                {% for id, label in sessions %}
-                    <option value="{{ id }}" {%- if loop.first %} selected{% endif %}>{{ label }}</option>
+            <label for="lecture">Lecture</label>
+            <select id="select-lecture" name="lecture" class="form-control">
+                {% for texte_uid, titre in lectures_by_dossier[dossiers[0].uid].items() %}
+                    <option value="{{ texte_uid }}" {%- if loop.first %} selected{% endif %}>{{ titre }}</option>
                 {% endfor %}
             </select>
-        </div>
-        <div class="form-group">
-            <label for="num_texte">Numéro de texte</label>
-            <input type="number" name="num_texte" value="63" class="form-control">
         </div>
         <div class="form-group">
             <input type="submit" name="submit" value="Ajouter" class="btn btn-primary btn-lg">
@@ -37,31 +39,52 @@
         </div>
     </form>
 
-    {% if amendements %}
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Article</th>
-                <th>Alinéa</th>
-                <th>Numéro</th>
-                <th>Auteur</th>
-                <th>Groupe</th>
-                <th>Sort</th>
-            </tr>
-        </thead>
+{% endblock %}
 
-        <tbody>
-            {% for amendement in amendements %}
-                <tr>
-                    <td>{{ amendement.article }}</td>
-                    <td>{{ amendement.alinea }}</td>
-                    <td>{{ amendement.num }}</td>
-                    <td>{{ amendement.auteur }}</td>
-                    <td>{{ amendement.groupe }}</td>
-                    <td>{{ amendement.sort }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
+
+{% block scripts %}
+<script src="{{ request.static_url('zam_repondeur:static/choices/choices.min.js') }}"></script>
+<script type="text/javascript">
+
+    var lectures_by_dossier = {{ lectures_by_dossier | tojson | safe }};
+    document.addEventListener("DOMContentLoaded", function() {
+
+        var dossierElem = document.getElementById("select-dossier");
+        var dossierChoices = new Choices(dossierElem, {
+            shouldSort: false,
+        });
+
+        var lectureElem = document.getElementById("select-lecture");
+        var lectureChoices;
+        updateFancySelectWidget();
+
+        dossierElem.addEventListener("change", function(event) {
+            resetFancySelectWidget();
+            updateBaseSelectOptions(event.detail.value);
+            updateFancySelectWidget();
+        }, false);
+
+        function resetFancySelectWidget() {
+            lectureChoices.destroy();
+        }
+
+        function updateBaseSelectOptions(value) {
+            lectureElem.innerHTML = '';
+            var choices = lectures_by_dossier[value];
+            for (var texte_uid in choices) {
+                var elem = document.createElement("option")
+                elem.value = texte_uid;
+                elem.text = choices[texte_uid];
+                lectureElem.appendChild(elem);
+            }
+        }
+
+        function updateFancySelectWidget() {
+            lectureChoices = new Choices(lectureElem, {
+                shouldSort: false,
+            });
+        }
+
+    });
+</script>
 {% endblock %}

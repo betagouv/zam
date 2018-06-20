@@ -8,23 +8,28 @@ from ..clean import clean_html
 from .models import Amendement
 
 
-def parse_from_csv(d_amend: dict) -> Amendement:
+def parse_from_csv(row: dict, session: str, num_texte: int) -> Amendement:
+    num, rectif = Amendement.parse_num(row["Numéro "])
     subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = _parse_subdiv(
-        d_amend["Subdivision "]
+        row["Subdivision "]
     )
     return Amendement(  # type: ignore
-        num=d_amend["Numéro "],
+        chambre="senat",
+        session=session,
+        num_texte=num_texte,
+        num=num,
+        rectif=rectif,
         subdiv_type=subdiv_type,
         subdiv_num=subdiv_num,
         subdiv_mult=subdiv_mult,
         subdiv_pos=subdiv_pos,
-        alinea=d_amend["Alinéa"].strip(),
-        auteur=d_amend["Auteur "],
-        matricule=extract_matricule(d_amend["Fiche Sénateur"]),
-        date_depot=parse_date(d_amend["Date de dépôt "]),
-        sort=d_amend["Sort "],
-        dispositif=clean_html(d_amend["Dispositif "]),
-        objet=clean_html(d_amend["Objet "]),
+        alinea=row["Alinéa"].strip(),
+        auteur=row["Auteur "],
+        matricule=extract_matricule(row["Fiche Sénateur"]),
+        date_depot=parse_date(row["Date de dépôt "]),
+        sort=row["Sort "],
+        dispositif=clean_html(row["Dispositif "]),
+        objet=clean_html(row["Objet "]),
     )
 
 
@@ -46,16 +51,23 @@ def parse_date(text: str) -> Optional[date]:
     return datetime.strptime(text, "%Y-%m-%d").date()
 
 
-def parse_from_json(amend: dict, subdiv: dict) -> Amendement:
+def parse_from_json(
+    amend: dict, position: int, session: str, num_texte: int, subdiv: dict
+) -> Amendement:
+    num, rectif = Amendement.parse_num(amend["num"])
     subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = _parse_subdiv(
         subdiv["libelle_subdivision"]
     )
     return Amendement(  # type: ignore
+        chambre="senat",
+        session=session,
+        num_texte=num_texte,
         subdiv_type=subdiv_type,
         subdiv_num=subdiv_num,
         subdiv_mult=subdiv_mult,
         subdiv_pos=subdiv_pos,
-        num=amend["num"],
+        num=num,
+        rectif=rectif,
         alinea=amend["libelleAlinea"],
         auteur=amend["auteur"],
         matricule=(
@@ -64,6 +76,7 @@ def parse_from_json(amend: dict, subdiv: dict) -> Amendement:
             else None
         ),
         sort=amend["sort"],
+        position=position,
         identique=parse_bool(amend["isIdentique"]),
         discussion_commune=(
             amend["idDiscussionCommune"]

@@ -9,10 +9,13 @@ def amendements():
 
     return [
         Amendement(
+            chambre="senat",
+            session="2017-2018",
+            num_texte=63,
             subdiv_type="article",
             subdiv_num="1",
             alinea="",
-            num="42",
+            num=42,
             auteur="M. DUPONT",
             groupe="RDSE",
             matricule="000000",
@@ -21,11 +24,14 @@ def amendements():
             resume="Suppression de l'article",
         ),
         Amendement(
+            chambre="senat",
+            session="2017-2018",
+            num_texte=63,
             subdiv_type="article",
             subdiv_num="1",
             subdiv_pos="avant",
             alinea="",
-            num="57",
+            num=57,
             auteur="M. DURAND",
             groupe="Les Républicains",
             matricule="000001",
@@ -33,11 +39,14 @@ def amendements():
             dispositif="qux",
         ),
         Amendement(
+            chambre="senat",
+            session="2017-2018",
+            num_texte=63,
             subdiv_type="article",
             subdiv_num="7",
             subdiv_mult="bis",
             alinea="",
-            num="21",
+            num=21,
             auteur="M. MARTIN",
             groupe=None,
             matricule="000002",
@@ -45,10 +54,13 @@ def amendements():
             dispositif="quuz",
         ),
         Amendement(
+            chambre="senat",
+            session="2017-2018",
+            num_texte=63,
             subdiv_type="article",
             subdiv_num="1",
             alinea="",
-            num="43",
+            num=43,
             auteur="M. JEAN",
             groupe="Les Indépendants",
             matricule="000003",
@@ -59,6 +71,9 @@ def amendements():
 
 
 FIELDS = [
+    "chambre",
+    "session",
+    "num_texte",
     "subdiv_type",
     "subdiv_num",
     "subdiv_mult",
@@ -71,6 +86,7 @@ FIELDS = [
     "groupe",
     "date_depot",
     "sort",
+    "position",
     "discussion_commune",
     "identique",
     "dispositif",
@@ -98,7 +114,7 @@ def test_write_csv(amendements, tmpdir):
 
     assert (
         rows[0]
-        == "article;1;;;;42;0;M. DUPONT;000000;RDSE;;;;;<p>L'article 1 est supprimé.</p>;<p>Cet article va à l'encontre du principe d'égalité.</p>;Suppression de l'article;;;"  # noqa
+        == "senat;2017-2018;63;article;1;;;;42;0;M. DUPONT;000000;RDSE;;;;;;<p>L'article 1 est supprimé.</p>;<p>Cet article va à l'encontre du principe d'égalité.</p>;Suppression de l'article;;;"  # noqa
     )
 
 

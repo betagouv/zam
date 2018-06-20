@@ -49,12 +49,12 @@ class LecturesAdd:
         dossier = self.dossiers_by_uid[dossier_uid]
         lecture = dossier.lectures[texte_uid]
 
+        chambre = lecture.chambre.value
+
         if lecture.chambre == Chambre.AN:
-            chambre = "an"
             session = "15"
             num_texte = f"{lecture.texte.numero:04}"
         else:
-            chambre = "senat"
             session = "2017-2018"
             num_texte = str(lecture.texte.numero)
 

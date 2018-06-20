@@ -18,8 +18,8 @@ class ReponseEdit:
 
         chambre = request.matchdict["chambre"]
         session = request.matchdict["session"]
-        num_texte = request.matchdict["num_texte"]
-        num = request.matchdict["num"]
+        num_texte = int(request.matchdict["num_texte"])
+        num = int(request.matchdict["num"])
         if chambre not in CHAMBRES:
             raise HTTPBadRequest
         self.amendement = (

@@ -16,13 +16,15 @@ from .parser import _parse_subdiv
 BASE_URL = "http://www.assemblee-nationale.fr"
 
 
-def build_url(legislature: int, texte: str, numero: int = 0) -> str:
+def build_url(legislature: int, texte: int, numero: int = 0) -> str:
     if numero:
         pattern = os.environ["ZAM_AN_PATTERN_AMENDEMENT"]
-        path = pattern.format(legislature=legislature, texte=texte, numero=numero)
+        path = pattern.format(
+            legislature=legislature, texte=f"{texte:04}", numero=numero
+        )
     else:
         pattern = os.environ["ZAM_AN_PATTERN_LISTE"]
-        path = pattern.format(legislature=legislature, texte=texte)
+        path = pattern.format(legislature=legislature, texte=f"{texte:04}")
     return f"{BASE_URL}{path}"
 
 
@@ -46,7 +48,7 @@ def unjustify(content: str) -> str:
 
 
 def fetch_amendement(
-    legislature: int, texte: str, numero: int, groups_folder: Path
+    legislature: int, texte: int, numero: int, groups_folder: Path
 ) -> Amendement:
     """
     Récupère un amendement depuis son numéro.
@@ -70,7 +72,7 @@ def fetch_amendement(
         chambre="an",
         session=str(legislature),
         num_texte=texte,
-        num=amendement["numero"],
+        num=int(amendement["numero"]),
         subdiv_type=subdiv_type,
         subdiv_num=subdiv_num,
         subdiv_mult=subdiv_mult,
@@ -84,7 +86,7 @@ def fetch_amendement(
     )
 
 
-def fetch_amendements(legislature: int, texte: str) -> Tuple[str, List[OrderedDict]]:
+def fetch_amendements(legislature: int, texte: int) -> Tuple[str, List[OrderedDict]]:
     """
     Récupère la liste des références aux amendements, dans l'ordre de dépôt.
     """
@@ -101,7 +103,7 @@ def fetch_amendements(legislature: int, texte: str) -> Tuple[str, List[OrderedDi
 
 
 def fetch_and_parse_all(
-    legislature: int, texte: str, groups_folder: Path
+    legislature: int, texte: int, groups_folder: Path
 ) -> Tuple[str, List[Amendement]]:
     title, amendements_raw = fetch_amendements(legislature, texte)
     return (

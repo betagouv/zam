@@ -7,7 +7,7 @@ from zam_aspirateur.amendements.models import Amendement
 from zam_aspirateur.__main__ import aspire_an, aspire_senat
 
 
-def get_amendements(chambre: str, session: str, texte: str) -> List[Amendement]:
+def get_amendements(chambre: str, session: str, texte: int) -> List[Amendement]:
     title: str
     amendements: List[Amendement]
     if chambre == "senat":

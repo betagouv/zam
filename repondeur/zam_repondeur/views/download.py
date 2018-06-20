@@ -25,7 +25,7 @@ DOWNLOAD_FORMATS = {
 def download_amendements(request: Request) -> Response:
     chambre = request.matchdict["chambre"]
     session = request.matchdict["session"]
-    num_texte = request.matchdict["num_texte"]
+    num_texte = int(request.matchdict["num_texte"])
     fmt = request.matchdict["format"]
 
     if chambre not in CHAMBRES:

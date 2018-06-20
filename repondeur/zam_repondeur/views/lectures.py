@@ -50,13 +50,13 @@ class LecturesAdd:
         lecture = dossier.lectures[texte_uid]
 
         chambre = lecture.chambre.value
+        num_texte = lecture.texte.numero
 
+        # FIXME: use date_depot to find the right session?
         if lecture.chambre == Chambre.AN:
             session = "15"
-            num_texte = f"{lecture.texte.numero:04}"
         else:
             session = "2017-2018"
-            num_texte = str(lecture.texte.numero)
 
         if Lecture.exists(chambre, session, num_texte):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
@@ -76,7 +76,7 @@ def lecture(request: Request) -> dict:
     lecture = Lecture.get(
         chambre=request.matchdict["chambre"],
         session=request.matchdict["session"],
-        num_texte=request.matchdict["num_texte"],
+        num_texte=int(request.matchdict["num_texte"]),
     )
     if lecture is None:
         raise HTTPNotFound
@@ -100,7 +100,7 @@ class ListAmendements:
         self.lecture = Lecture.get(
             chambre=request.matchdict["chambre"],
             session=request.matchdict["session"],
-            num_texte=request.matchdict["num_texte"],
+            num_texte=int(request.matchdict["num_texte"]),
         )
         if self.lecture is None:
             raise HTTPNotFound
@@ -160,7 +160,7 @@ class ListAmendements:
 def fetch_amendements(request: Request) -> Response:
     chambre = request.matchdict["chambre"]
     session = request.matchdict["session"]
-    num_texte = request.matchdict["num_texte"]
+    num_texte = int(request.matchdict["num_texte"])
 
     if chambre not in CHAMBRES:
         return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')

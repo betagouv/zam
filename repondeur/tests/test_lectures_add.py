@@ -69,25 +69,25 @@ def test_post_form(app):
     form["dossier"] = "DLR5L15N36030"
     form["lecture"] = "PRJLANR5L15B0269"
 
-    assert not Lecture.exists(chambre="an", session="15", num_texte="0269")
+    assert not Lecture.exists(chambre="an", session="15", num_texte=269)
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an/15/0269/"
+    assert resp.location == "http://localhost/lectures/an/15/269/"
 
     resp = resp.follow()
 
     assert resp.status_code == 200
     assert "Lecture créée avec succès." in resp.text
 
-    assert Lecture.exists(chambre="an", session="15", num_texte="0269")
+    assert Lecture.exists(chambre="an", session="15", num_texte=269)
 
 
 def test_post_form_already_exists(app, dummy_lecture):
     from zam_repondeur.models import Lecture
 
-    assert Lecture.exists(chambre="an", session="15", num_texte="0269")
+    assert Lecture.exists(chambre="an", session="15", num_texte=269)
 
     form = app.get("/lectures/add").form
     form["dossier"] = "DLR5L15N36030"
@@ -96,7 +96,7 @@ def test_post_form_already_exists(app, dummy_lecture):
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an/15/0269/"
+    assert resp.location == "http://localhost/lectures/an/15/269/"
 
     resp = resp.follow()
 

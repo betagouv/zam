@@ -22,9 +22,11 @@ def test_parse_from_csv():
         "Url amendement ": "//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",  # noqa
     }
 
-    amendement = parse_from_csv(amend, session="2017-2018", num_texte="63")
+    amendement = parse_from_csv(amend, session="2017-2018", num_texte=63)
 
-    assert amendement.num == "1 rect."
+    assert amendement.num == 1
+    assert amendement.rectif == 1
+    assert amendement.num_disp == "1 rect."
     assert amendement.date_depot == date(2017, 11, 13)
     assert amendement.sort == "Adopté"
 
@@ -80,19 +82,18 @@ class TestParseAmendementFromJSON:
         from zam_aspirateur.amendements.parser import parse_from_json
 
         amend = {
-            "idAmendement": "1110174",
+            "idAmendement": "1104289",
             "posder": "1",
             "subpos": "0",
             "isSousAmendement": "false",
             "idAmendementPere": "0",
-            "urlAmdt": "Amdt_131.html",
+            "urlAmdt": "Amdt_230.html",
             "typeAmdt": "Amt",
-            "num": "131",
-            "libelleAlinea": "",
-            "urlAuteur": "bocquet_eric11040e.html",
-            "auteur": "M. BOCQUET",
-            "isDiscussionCommune": "true",
-            "idDiscussionCommune": "110541",
+            "num": "230 rect.",
+            "libelleAlinea": "Al. 2",
+            "urlAuteur": "pellevat_cyril14237s.html",
+            "auteur": "M. PELLEVAT",
+            "isDiscussionCommune": "false",
             "isDiscussionCommuneIsolee": "false",
             "isIdentique": "false",
             "sort": "Rejeté",
@@ -105,7 +106,7 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
-            amend, position=1, session="2017-2018", num_texte="63", subdiv=subdiv
+            amend, position=1, session="2017-2018", num_texte=63, subdiv=subdiv
         )
 
         assert amendement.subdiv_type == "article"
@@ -113,11 +114,12 @@ class TestParseAmendementFromJSON:
         assert amendement.subdiv_mult == ""
         assert amendement.subdiv_pos == ""
 
-        assert amendement.alinea == ""
+        assert amendement.alinea == "Al. 2"
 
-        assert amendement.num == "131"
+        assert amendement.num == 230
+        assert amendement.rectif == 1
 
-        assert amendement.auteur == "M. BOCQUET"
+        assert amendement.auteur == "M. PELLEVAT"
 
         assert amendement.identique is False
 
@@ -150,7 +152,7 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
-            amend, position=1, session="2017-2018", num_texte="63", subdiv=subdiv
+            amend, position=1, session="2017-2018", num_texte=63, subdiv=subdiv
         )
 
         assert amendement.discussion_commune == "110541"
@@ -181,7 +183,7 @@ class TestParseAmendementFromJSON:
         subdiv = {"libelle_subdivision": "Article 3"}
 
         amendement = parse_from_json(
-            amend, position=1, session="2017-2018", num_texte="63", subdiv=subdiv
+            amend, position=1, session="2017-2018", num_texte=63, subdiv=subdiv
         )
 
         assert amendement.discussion_commune is None

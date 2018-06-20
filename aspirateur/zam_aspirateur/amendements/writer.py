@@ -146,8 +146,8 @@ def _format_article(
 
 def _format_amendement(amendement: Amendement) -> dict:
     return {
-        "id": amendement.num_int,
-        "pk": f"{amendement.num_int:06}",
+        "id": amendement.num,
+        "pk": f"{amendement.num:06}",
         "etat": amendement.sort or "",
         "gouvernemental": amendement.gouvernemental,
         "auteur": amendement.auteur,
@@ -155,7 +155,7 @@ def _format_amendement(amendement: Amendement) -> dict:
             "libelle": amendement.groupe or "",
             "couleur": GROUPS_COLORS.get(amendement.groupe, "#ffffff"),
         },
-        "document": f"{amendement.num_int:06}-00.pdf",
+        "document": f"{amendement.num:06}-00.pdf",
         "dispositif": amendement.dispositif,
         "objet": amendement.objet,
         "resume": amendement.resume or "",

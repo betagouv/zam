@@ -1,6 +1,6 @@
 from typing import Any, List
 
-from sqlalchemy import Column, Text, desc
+from sqlalchemy import Column, Integer, Text, desc
 
 from .base import Base, DBSession
 
@@ -18,7 +18,7 @@ class Lecture(Base):  # type: ignore
 
     chambre = Column(Text, primary_key=True)
     session = Column(Text, primary_key=True)
-    num_texte = Column(Text, primary_key=True)
+    num_texte = Column(Integer, primary_key=True)
 
     @property
     def chambre_disp(self) -> str:
@@ -30,10 +30,10 @@ class Lecture(Base):  # type: ignore
     def __lt__(self, other: Any) -> bool:
         if type(self) != type(other):
             return NotImplemented
-        return (self.chambre, self.session, int(self.num_texte)) < (
+        return (self.chambre, self.session, self.num_texte) < (
             other.chambre,
             other.session,
-            int(other.num_texte),
+            other.num_texte,
         )
 
     @classmethod
@@ -44,7 +44,7 @@ class Lecture(Base):  # type: ignore
         return lectures
 
     @classmethod
-    def get(cls, chambre: str, session: str, num_texte: str) -> "Lecture":
+    def get(cls, chambre: str, session: str, num_texte: int) -> "Lecture":
         res: "Lecture" = (
             DBSession.query(cls)
             .filter(
@@ -57,7 +57,7 @@ class Lecture(Base):  # type: ignore
         return res
 
     @classmethod
-    def exists(cls, chambre: str, session: str, num_texte: str) -> bool:
+    def exists(cls, chambre: str, session: str, num_texte: int) -> bool:
         res: bool = DBSession.query(
             DBSession.query(cls)
             .filter(
@@ -70,7 +70,7 @@ class Lecture(Base):  # type: ignore
         return res
 
     @classmethod
-    def create(cls, chambre: str, session: str, num_texte: str) -> "Lecture":
+    def create(cls, chambre: str, session: str, num_texte: int) -> "Lecture":
         lecture = cls(chambre=chambre, session=session, num_texte=num_texte)
         DBSession.add(lecture)
         return lecture

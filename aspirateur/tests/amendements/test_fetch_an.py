@@ -19,50 +19,50 @@ def test_fetch_and_parse_all():
 
     responses.add(
         responses.GET,
-        build_url(14, "4072"),
+        build_url(14, 4072),
         body=read_sample_data("an_liste.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, "4072", 177),
+        build_url(14, 4072, 177),
         body=read_sample_data("an_177.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, "4072", 270),
+        build_url(14, 4072, 270),
         body=read_sample_data("an_270.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, "4072", 723),
+        build_url(14, 4072, 723),
         body=read_sample_data("an_723.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, "4072", 135),
+        build_url(14, 4072, 135),
         body=read_sample_data("an_135.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, "4072", 192),
+        build_url(14, 4072, 192),
         body=read_sample_data("an_192.xml"),
         status=200,
     )
 
-    title, items = fetch_and_parse_all(14, "4072", SAMPLE_DATA_DIR)
+    title, items = fetch_and_parse_all(14, 4072, SAMPLE_DATA_DIR)
 
     assert title == "PLFSS 2017"
     assert len(items) == 5
-    assert items[0].num == "177"
-    assert items[1].num == "270"
-    assert items[2].num == "723"
-    assert items[3].num == "135"
-    assert items[4].num == "192"
+    assert items[0].num == 177
+    assert items[1].num == 270
+    assert items[2].num == 723
+    assert items[3].num == 135
+    assert items[4].num == 192
 
 
 @responses.activate
@@ -71,12 +71,12 @@ def test_fetch_amendements():
 
     responses.add(
         responses.GET,
-        build_url(14, "4072"),
+        build_url(14, 4072),
         body=read_sample_data("an_liste.xml"),
         status=200,
     )
 
-    title, items = fetch_amendements(14, "4072")
+    title, items = fetch_amendements(14, 4072)
 
     assert title == "PLFSS 2017"
     assert len(items) == 5
@@ -104,10 +104,10 @@ def test_fetch_amendements():
 def test_fetch_amendements_not_found():
     from zam_aspirateur.amendements.fetch_an import fetch_amendements, NotFound
 
-    responses.add(responses.GET, build_url(14, "4072"), status=404)
+    responses.add(responses.GET, build_url(14, 4072), status=404)
 
     with pytest.raises(NotFound):
-        fetch_amendements(14, "4072")
+        fetch_amendements(14, 4072)
 
 
 @responses.activate
@@ -117,23 +117,23 @@ def test_fetch_amendement():
 
     responses.add(
         responses.GET,
-        build_url(14, "4072", 177),
+        build_url(14, 4072, 177),
         body=read_sample_data("an_177.xml"),
         status=200,
     )
 
-    amendement = fetch_amendement(14, "4072", 177, SAMPLE_DATA_DIR)
+    amendement = fetch_amendement(14, 4072, 177, SAMPLE_DATA_DIR)
 
     assert amendement == Amendement(
         chambre="an",
         session="14",
-        num_texte="4072",
+        num_texte=4072,
         subdiv_type="article",
         subdiv_num="3",
         subdiv_mult="",
         subdiv_pos="",
         alinea="",
-        num="177",
+        num=177,
         rectif=0,
         auteur="Door Jean-Pierre",
         matricule="267289",
@@ -157,12 +157,12 @@ def test_fetch_amendement_gouvernement():
 
     responses.add(
         responses.GET,
-        build_url(14, "4072", 723),
+        build_url(14, 4072, 723),
         body=read_sample_data("an_723.xml"),
         status=200,
     )
 
-    amendement = fetch_amendement(14, "4072", 723, SAMPLE_DATA_DIR)
+    amendement = fetch_amendement(14, 4072, 723, SAMPLE_DATA_DIR)
 
     assert amendement.gouvernemental is True
     assert amendement.groupe == ""
@@ -174,12 +174,12 @@ def test_fetch_amendement_commission():
 
     responses.add(
         responses.GET,
-        build_url(14, "4072", 135),
+        build_url(14, 4072, 135),
         body=read_sample_data("an_135.xml"),
         status=200,
     )
 
-    amendement = fetch_amendement(14, "4072", 135, SAMPLE_DATA_DIR)
+    amendement = fetch_amendement(14, 4072, 135, SAMPLE_DATA_DIR)
 
     assert amendement.gouvernemental is False
     assert amendement.auteur == "Bapt Gérard"
@@ -192,12 +192,12 @@ def test_fetch_amendement_apres():
 
     responses.add(
         responses.GET,
-        build_url(14, "4072", 192),
+        build_url(14, 4072, 192),
         body=read_sample_data("an_192.xml"),
         status=200,
     )
 
-    amendement = fetch_amendement(14, "4072", 192, SAMPLE_DATA_DIR)
+    amendement = fetch_amendement(14, 4072, 192, SAMPLE_DATA_DIR)
 
     assert amendement.subdiv_type == "article"
     assert amendement.subdiv_num == "8"
@@ -209,7 +209,7 @@ def test_fetch_amendement_apres():
 def test_fetch_amendement_not_found():
     from zam_aspirateur.amendements.fetch_an import fetch_amendement, NotFound
 
-    responses.add(responses.GET, build_url(14, "4072", 177), status=404)
+    responses.add(responses.GET, build_url(14, 4072, 177), status=404)
 
     with pytest.raises(NotFound):
-        fetch_amendement(14, "4072", 177, SAMPLE_DATA_DIR)
+        fetch_amendement(14, 4072, 177, SAMPLE_DATA_DIR)

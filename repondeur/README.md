@@ -28,7 +28,7 @@ $ unzip -q -o groups.zip -d data/an/groups/
 $ rm groups.zip
 ```
 
-Define the folowing environment variables:
+Define the following environment variables:
 
 ```
 $ export ZAM_AN_PATTERN_LISTE="..."

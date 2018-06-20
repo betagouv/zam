@@ -137,7 +137,7 @@ class ListAmendements:
                             Amendement.chambre == self.lecture.chambre,
                             Amendement.session == self.lecture.session,
                             Amendement.num_texte == self.lecture.num_texte,
-                            Amendement.num == amendement["idAmendement"]
+                            Amendement.num == amendement["idAmendement"],
                         )
                         .first()
                     )

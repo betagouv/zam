@@ -24,8 +24,33 @@ def app():
 def dummy_lecture(app):
     from zam_repondeur.models import DBSession, Lecture
 
+    chambre = "an"
+    session = "15"
+    num_texte = 269
+
     with transaction.manager:
-        lecture = Lecture(chambre="an", session="15", num_texte=269)
+        lecture = Lecture(chambre=chambre, session=session, num_texte=num_texte)
         DBSession.add(lecture)
 
-    return lecture
+    return (chambre, session, num_texte)
+
+
+@pytest.fixture
+def dummy_amendements(app, dummy_lecture):
+    from zam_repondeur.models import DBSession, Amendement
+
+    amendements = []
+    for num in (666, 999):
+        amendement = Amendement(
+            chambre=dummy_lecture[0],
+            session=dummy_lecture[1],
+            num_texte=dummy_lecture[2],
+            subdiv_type="article",
+            subdiv_num=1,
+            num=num,
+        )
+        amendements.append(amendement)
+    with transaction.manager:
+        DBSession.add_all(amendements)
+
+    return amendements

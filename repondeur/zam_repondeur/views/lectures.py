@@ -1,4 +1,5 @@
-import json
+import csv
+import io
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -11,6 +12,7 @@ from zam_aspirateur.textes.models import Chambre
 
 from zam_repondeur.fetch import get_amendements
 from zam_repondeur.models import DBSession, Amendement, Lecture, CHAMBRES
+from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 
 CURRENT_LEGISLATURE = 15
@@ -93,7 +95,7 @@ def lecture(request: Request) -> dict:
     return {"lecture": lecture, "amendements_count": amendements_count}
 
 
-@view_defaults(route_name="list_amendements", renderer="amendements.html")
+@view_defaults(route_name="list_amendements")
 class ListAmendements:
     def __init__(self, request: Request) -> None:
         self.request = request
@@ -120,32 +122,31 @@ class ListAmendements:
             .all()
         )
 
-    @view_config(request_method="GET")
+    @view_config(request_method="GET", renderer="amendements.html")
     def get(self) -> dict:
         return {"lecture": self.lecture, "amendements": self.amendements}
 
     @view_config(request_method="POST")
     def post(self) -> Response:
         reponses_file = self.request.POST["reponses"].file
-        reponses = json.load(reponses_file)[0]  # Unique item.
-        for article in reponses["list"]:
-            for amendement in article.get("amendements", []):
-                if "reponse" in amendement:
-                    amd = (
-                        DBSession.query(Amendement)
-                        .filter(
-                            Amendement.chambre == self.lecture.chambre,
-                            Amendement.session == self.lecture.session,
-                            Amendement.num_texte == self.lecture.num_texte,
-                            Amendement.num == amendement["idAmendement"],
-                        )
-                        .first()
-                    )
-                    if amd:
-                        amd.avis = amendement["reponse"]["avis"]
-                        amd.observations = amendement["reponse"].get("presentation", "")
-                        amd.reponse = amendement["reponse"].get("reponse", "")
+        previous_reponse = ""
+        reponses_count = 0
+        for line in csv.DictReader(io.TextIOWrapper(reponses_file)):
+            num = normalize_num(line["N°"])
+            amendement = [a for a in self.amendements if a.num == num]
+            if amendement:
+                amendement[0].avis = normalize_avis(line["Avis du Gouvernement"])
+                amendement[0].observations = line["Objet (article / amdt)"]
+                reponse = normalize_reponse(
+                    line["Avis et observations de l'administration référente"],
+                    previous_reponse,
+                    self.lecture
+                )
+                amendement[0].reponse = reponse
+                previous_reponse = reponse
+                reponses_count += 1
 
+        self.request.session.flash(("success", f"{reponses_count} réponses chargées"))
         return HTTPFound(
             location=self.request.route_url(
                 "list_amendements",

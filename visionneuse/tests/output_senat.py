@@ -10,58 +10,74 @@ def test_number_reponses(output):
 
 def test_nature_reponses(output):
     assert len(output.css("header.reponse.positive")) == 30
-    assert len(output.css("header.reponse.negative")) == 240
+    assert len(output.css("header.reponse.negative")) == 267
+
+
+def test_articles_presence(output):
+    articles = output.tags("section")
+    assert len(articles) == 72
+    assert articles[0].css_first("h2").text().strip() == "Article 3"
+
+
+def test_articles_links_presence(output):
+    article = output.tags("section")[0]
+    links = article.css("header .wrapper a")
+    assert len(links) == 2
+    assert links[0].text().strip() == "Jaune"
+    assert links[1].text().strip() == "Texte"
+
+
+def test_articles_jaune_presence(output):
+    article = output.tags("section")[0]
+    jaune = article.css_first(".is-hidden .jaune")
+    assert jaune.text().strip().startswith("Rectification des dotations des branches")
+
+
+def test_articles_texte_presence(output):
+    article = output.tags("section")[0]
+    texte = article.css_first(".is-hidden .article")
+    assert texte.text().strip().startswith("001")
 
 
 def test_reponse_unique_amendement(output):
     reponse = output.tags("article")[1]
     assert "443" in reponse.css_first("h2").text()
-    assert len(reponse.css("header p.authors strong")) == 1
+    assert len(reponse.css("header p.authors .author")) == 1
 
 
 def test_reponse_has_content(output):
     reponse = output.tags("article")[0]
-    assert reponse.css_first("div details summary").text().strip()
-    assert reponse.css_first("div details div.reponse").text().strip()
+    assert reponse.css_first("header .button").text().strip().startswith("Réponse\xa0:")
+    assert (
+        reponse.css_first(".reponse-detail").text().strip().startswith("Rédactionnel")
+    )
 
 
 def test_reponse_multiple_amendement(output):
     reponse = output.tags("article")[0]
     assert "31," in reponse.css_first("h2").text()
     assert "146 et" in reponse.css_first("h2").text()
-    assert len(reponse.css("header p.authors strong")) == 4
+    assert len(reponse.css("header p.authors .author")) == 4
 
 
 def test_reponse_has_amendements(output):
     reponse = output.tags("article")[0]
-    details = reponse.css("details")
-    assert len(details) == 66
-    assert details[1].css_first("summary").text().strip().startswith("Amendement 31")
+    details_titles = reponse.css(".amendement-detail h3")
+    details_contents = reponse.css(".amendement-detail div")
+    assert len(details_titles) == 65
+    assert details_titles[0].text().strip().startswith("Amendement 31")
     assert (
-        details[1]
-        .css_first("div")
+        details_contents[0]
         .text()
         .strip()
         .startswith("Cet amendement précise l’assiette")
     )
 
 
-def test_reponse_has_article_hook(output):
-    reponse = output.tags("article")[0]
-    assert reponse.css_first('[data-article="article-3"]')
+def test_menu_templates_presence(output):
+    assert len(output.tags("template")) == 1
 
 
-def test_article_templates_presence(output):
-    assert len(output.tags("template")) == 96
-
-
-def test_article_template_content(output):
-    article = output.tags("template")[0]
-    assert len(article.css("details")) == 2
-
-
-def test_article_template_has_jaune(output):
-    article = output.tags("template")[0]
-    jaune = article.css("details")[1]
-    assert jaune.css_first("summary").text() == "Article 10\xa0: jaune"
-    assert jaune.css_first("div.jaune").text().strip()
+def test_menu_template_content(output):
+    menu = output.tags("template")[0]
+    assert len(menu.css("a")) == 72

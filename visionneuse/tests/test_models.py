@@ -45,6 +45,44 @@ def test_articles_load():
     assert article.amendements == []
 
 
+def test_articles_load_contents():
+    items = [
+        {
+            "id": 1,
+            "pk": "article-1",
+            "etat": "",
+            "multiplicatif": "",
+            "titre": "Approbation des tableaux d'\u00e9quilibre",
+            "document": "article-1.pdf",
+            "amendements": [],
+        }
+    ]
+    contents = [
+        {
+            "id": "P1",
+            "titre": "Dispositions relatives à l'exercice 2016",
+            "type": "section",
+            "type_section": "partie"
+        },
+        {
+            "alineas": {
+                "001": "(Non modifié)"
+            },
+            "order": 1,
+            "section": "P1",
+            "statut": "conformes",
+            "titre": "1er",
+            "type": "article"
+        },
+    ]
+    articles = Articles.load(items)
+    articles.load_contents(contents)
+    assert list(articles.keys()) == ["article-1"]
+    article = list(articles.values())[0]
+    assert article.alineas == {"001": "(Non modifié)"}
+    assert article.titre == "Dispositions relatives à l'exercice 2016"
+
+
 def test_article_slug():
     items = [
         {
@@ -185,3 +223,5 @@ def test_reponses_load():
     assert reponse.presentation == "<p><strong>Suppression de l’article</strong></p>"
     assert reponse.content == "<p>Cet article met en œuvre...</p>"
     assert reponse.avis == "Défavorable"
+    assert reponse.favorable is False
+    assert reponse.sagesse is False

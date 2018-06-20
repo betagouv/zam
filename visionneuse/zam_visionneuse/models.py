@@ -61,9 +61,16 @@ class Articles(OrderedDict):
 
     def load_contents(self, items: List[dict]) -> None:
         for article_content in items:
-            pk = f'article-{article_content["titre"].replace(" ", "-")}'
+            article_num = article_content["titre"].replace(" ", "-").replace("1er", "1")
+            pk = f'article-{article_num}'
             if pk in self:
                 self[pk].alineas = article_content["alineas"]
+                if "section" in article_content:
+                    self[pk].titre = [
+                        item["titre"]
+                        for item in items
+                        if article_content["section"] == item.get("id")
+                    ][0]
 
     def get_from_raw(self, raw: dict) -> Article:
         return self[Article.pk_from_raw(raw)]
@@ -124,6 +131,14 @@ class Reponse:
     def pk_from_raw(raw: dict) -> str:
         unique = raw.get("presentation", str(raw["idReponse"]))
         return base64.b64encode(unique.encode()).decode()
+
+    @property
+    def favorable(self):
+        return self.avis.startswith("Favorable")
+
+    @property
+    def sagesse(self):
+        return self.avis == "Sagesse"
 
 
 class Reponses(OrderedDict):

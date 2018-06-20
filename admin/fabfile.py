@@ -1,3 +1,5 @@
+import os
+from contextlib import contextmanager
 from hashlib import md5
 from pathlib import Path
 from shlex import quote
@@ -148,14 +150,14 @@ def install_requirements(ctx, app_dir, user):
 
 @task
 def setup_config(ctx, app_dir, user, secret):
-    template_local_file(
+    with template_local_file(
         "../repondeur/production.ini.template",
         "../repondeur/production.ini",
         {"secret": secret},
-    )
-    sudo_put(
-        ctx, "../repondeur/production.ini", f"{app_dir}/production.ini", chown=user
-    )
+    ):
+        sudo_put(
+            ctx, "../repondeur/production.ini", f"{app_dir}/production.ini", chown=user
+        )
 
 
 @task
@@ -183,11 +185,14 @@ def fetch_an_group_data(ctx, user):
     ctx.sudo(f"rm {filename}", user=user)
 
 
+@contextmanager
 def template_local_file(template_filename, output_filename, data):
     with open(template_filename, encoding="utf-8") as template_file:
         template = Template(template_file.read())
     with open(output_filename, mode="w", encoding="utf-8") as output_file:
         output_file.write(template.substitute(**data))
+    yield
+    os.remove(output_filename)
 
 
 @task
@@ -198,14 +203,14 @@ def create_directory(ctx, path, owner):
 
 @task
 def setup_service(ctx, an_pattern_liste, an_pattern_amendement):
-    template_local_file(
+    with template_local_file(
         "repondeur.service.template",
         "repondeur.service",
         {
             "an_pattern_liste": an_pattern_liste,
             "an_pattern_amendement": an_pattern_amendement,
         },
-    )
-    sudo_put(ctx, "repondeur.service", "/etc/systemd/system/repondeur.service")
+    ):
+        sudo_put(ctx, "repondeur.service", "/etc/systemd/system/repondeur.service")
     ctx.sudo("systemctl enable repondeur")
     ctx.sudo("systemctl restart repondeur")

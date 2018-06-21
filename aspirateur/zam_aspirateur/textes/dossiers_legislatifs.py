@@ -118,8 +118,6 @@ def top_level_actes(dossier: dict) -> Iterator[dict]:
 
 def gen_lectures(acte: dict, textes: Dict[str, Texte]) -> Iterator[Lecture]:
     for phase, texte_uid in walk_actes(acte):
-        print(phase)
-
         chambre, titre = TOP_LEVEL_ACTES[acte["codeActe"]]
         if phase == "COM-FOND":
             titre += " – Commission saisie au fond"
@@ -156,7 +154,6 @@ def walk_actes(acte: dict) -> Iterator[Tuple[str, Optional[str]]]:
                     current_texte = TexteRef(
                         acte["codeActe"], acte["@xsi:type"], key, uid
                     )
-                    # print(f"current_texte is now {current_texte}")
 
         for sous_acte in extract_actes(acte):
             yield from _walk_actes(sous_acte)

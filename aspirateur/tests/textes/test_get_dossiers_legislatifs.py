@@ -50,7 +50,6 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
     from zam_aspirateur.textes.models import Chambre, Lecture, Dossier, Texte, TypeTexte
 
     dossier = parse_dossier(dossier_plfss_2018, textes)
-    print(dossier)
 
     assert dossier == Dossier(
         uid="DLR5L15N36030",
@@ -131,7 +130,6 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
     from zam_aspirateur.textes.models import Chambre, Lecture, Dossier, Texte, TypeTexte
 
     dossier = parse_dossier(dossier_essoc, textes)
-    print(dossier)
 
     assert dossier == Dossier(
         uid="DLR5L15N36159",

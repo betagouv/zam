@@ -140,7 +140,7 @@ class ListAmendements:
                 reponse = normalize_reponse(
                     line["Avis et observations de l'administration référente"],
                     previous_reponse,
-                    self.lecture
+                    self.lecture,
                 )
                 amendement[0].reponse = reponse
                 previous_reponse = reponse

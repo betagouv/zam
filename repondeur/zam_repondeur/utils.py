@@ -1,15 +1,15 @@
-from zam_repondeur.models import AVIS, Amendement, DBSession
+from zam_repondeur.models import AVIS, Amendement, DBSession, Lecture
 
 
-def normalize_num(num):
+def normalize_num(num: str) -> int:
     try:
-        num = int(num)
+        num_int = int(num)
     except ValueError:
-        num = int(num.split("\n")[0].strip(","))
-    return num
+        num_int = int(num.split("\n")[0].strip(","))
+    return num_int
 
 
-def normalize_avis(avis):
+def normalize_avis(avis: str) -> str:
     avis = avis.strip()
     avis_lower = avis.lower()
     if avis_lower in ("défavorable", "defavorable"):
@@ -25,7 +25,7 @@ def normalize_avis(avis):
     return avis
 
 
-def normalize_reponse(reponse, previous_reponse, lecture):
+def normalize_reponse(reponse: str, previous_reponse: str, lecture: Lecture) -> str:
     reponse = reponse.strip()
     if reponse.startswith("id."):
         if reponse == "id.":

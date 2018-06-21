@@ -1,5 +1,6 @@
 import csv
 import io
+from typing import BinaryIO, List
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -129,24 +130,13 @@ class ListAmendements:
     @view_config(request_method="POST")
     def post(self) -> Response:
         reponses_file = self.request.POST["reponses"].file
-        previous_reponse = ""
-        reponses_count = 0
-        for line in csv.DictReader(io.TextIOWrapper(reponses_file)):
-            num = normalize_num(line["N°"])
-            amendement = [a for a in self.amendements if a.num == num]
-            if amendement:
-                amendement[0].avis = normalize_avis(line["Avis du Gouvernement"])
-                amendement[0].observations = line["Objet (article / amdt)"]
-                reponse = normalize_reponse(
-                    line["Avis et observations de l'administration référente"],
-                    previous_reponse,
-                    self.lecture,
-                )
-                amendement[0].reponse = reponse
-                previous_reponse = reponse
-                reponses_count += 1
+
+        reponses_count = self._import_reponses_from_csv_file(
+            reponses_file, self.lecture, self.amendements
+        )
 
         self.request.session.flash(("success", f"{reponses_count} réponses chargées"))
+
         return HTTPFound(
             location=self.request.route_url(
                 "list_amendements",
@@ -155,6 +145,28 @@ class ListAmendements:
                 num_texte=self.lecture.num_texte,
             )
         )
+
+    @staticmethod
+    def _import_reponses_from_csv_file(
+        reponses_file: BinaryIO, lecture: Lecture, amendements: List[Amendement]
+    ) -> int:
+        previous_reponse = ""
+        reponses_count = 0
+        for line in csv.DictReader(io.TextIOWrapper(reponses_file)):
+            num = normalize_num(line["N°"])
+            amendement = [a for a in amendements if a.num == num]
+            if amendement:
+                amendement[0].avis = normalize_avis(line["Avis du Gouvernement"])
+                amendement[0].observations = line["Objet (article / amdt)"]
+                reponse = normalize_reponse(
+                    line["Avis et observations de l'administration référente"],
+                    previous_reponse,
+                    lecture,
+                )
+                amendement[0].reponse = reponse
+                previous_reponse = reponse
+                reponses_count += 1
+        return reponses_count
 
 
 @view_config(route_name="fetch_amendements")

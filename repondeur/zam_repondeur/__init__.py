@@ -27,6 +27,9 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.add_route("lectures_add", "/lectures/add")
 
         config.add_route("lecture", "/lectures/{chambre}/{session}/{num_texte:\d+}/")
+        config.add_route(
+            "list_reponses", "/lectures/{chambre}/{session}/{num_texte:\d+}/reponses"
+        )
 
         config.add_route(
             "list_amendements",

@@ -38,7 +38,10 @@
             </div>
             <div class="card-text">
                 <p>{{ amendements_count }} amendements déposés.</p>
-                <p><a class="btn btn-primary" href="{{ request.route_url('list_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">Consulter la liste</a></p>
+                <p>
+                    <a class="btn btn-primary" href="{{ request.route_url('list_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">Consulter la liste</a>
+                    <a class="btn btn-primary" href="{{ request.route_url('list_reponses', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">Visualiser les réponses</a>
+                </p>
             </div>
         </div>
     </div>

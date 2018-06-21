@@ -1,7 +1,7 @@
 import re
 from dataclasses import asdict, dataclass, replace
 from datetime import date
-from typing import Optional, Tuple
+from typing import NamedTuple, Optional, Tuple
 
 
 @dataclass
@@ -101,3 +101,10 @@ class Amendement:
     def asdict(self) -> dict:
         dict_ = asdict(self)  # type: dict
         return dict_
+
+
+class SubDiv(NamedTuple):
+    type_: str
+    num: str
+    mult: str
+    pos: str

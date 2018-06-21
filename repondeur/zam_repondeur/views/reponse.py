@@ -21,7 +21,7 @@ from zam_repondeur.models import (
 
 
 @view_config(route_name="list_reponses")
-def list_reponses(request: Request) -> dict:
+def list_reponses(request: Request) -> Response:
     lecture = Lecture.get(
         chambre=request.matchdict["chambre"],
         session=request.matchdict["session"],

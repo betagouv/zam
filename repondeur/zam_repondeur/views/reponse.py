@@ -70,15 +70,16 @@ def list_reponses(request: Request) -> dict:
                 objet=amendement.objet,
                 resume=amendement.resume,
             )
-            reponse = Reponse(
-                pk=base64.b64encode(amendement.reponse.encode()).decode(),
-                avis=amendement.avis,
-                presentation=amendement.observations,
-                content=amendement.reponse,
-                article=article,
-                amendements=[amd],
-            )
-            reponses[reponse.pk] = reponse
+            if amendement.reponse:
+                reponse = Reponse(
+                    pk=base64.b64encode(amendement.reponse.encode()).decode(),
+                    avis=amendement.avis,
+                    presentation=amendement.observations,
+                    content=amendement.reponse,
+                    article=article,
+                    amendements=[amd],
+                )
+                reponses[reponse.pk] = reponse
 
     return Response(render(title=lecture, articles=articles, reponses=reponses))
 

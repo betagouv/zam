@@ -58,7 +58,7 @@ def list_reponses(request: Request) -> Response:
                 )
                 articles[article.pk] = article
             amd = Amendement(
-                pk=amendement.num,
+                pk=f"{amendement.num:06}",
                 id=amendement.num,
                 groupe={
                     "libelle": amendement.groupe,
@@ -69,10 +69,14 @@ def list_reponses(request: Request) -> Response:
                 dispositif=amendement.dispositif,
                 objet=amendement.objet,
                 resume=amendement.resume,
+                etat=amendement.sort,
             )
-            if amendement.reponse:
+            reponse_pk = base64.b64encode(amendement.reponse.encode()).decode()
+            if reponse_pk in reponses:
+                reponses[reponse_pk].amendements.append(amd)
+            else:
                 reponse = Reponse(
-                    pk=base64.b64encode(amendement.reponse.encode()).decode(),
+                    pk=reponse_pk,
                     avis=amendement.avis,
                     presentation=amendement.observations,
                     content=amendement.reponse,

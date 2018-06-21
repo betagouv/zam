@@ -39,5 +39,7 @@ def test_post_form_reponse(app, dummy_lecture, dummy_amendements):
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.avis == "Défavorable"
+    assert amendement.position == 0
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
     assert amendement.observations.startswith("Lorem")
+    assert amendement.position == 1

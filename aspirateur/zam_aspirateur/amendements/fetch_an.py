@@ -9,7 +9,7 @@ import xmltodict
 
 from ..exceptions import NotFound
 from ..http import cached_session
-from .models import Amendement
+from .models import Amendement, SubDiv
 from .parser import _parse_subdiv
 
 
@@ -61,22 +61,16 @@ def fetch_amendement(
 
     content = xmltodict.parse(resp.content)
     amendement = content["amendement"]
-    subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = _parse_subdiv(
-        amendement["division"]["titre"]
-    )
-    if amendement["division"]["avantApres"]:
-        subdiv_pos = amendement["division"]["avantApres"].lower()
-        if subdiv_pos == "a":  # TODO: understand what it means...
-            subdiv_pos = ""
+    subdiv = parse_division(amendement["division"])
     return Amendement(  # type: ignore
         chambre="an",
         session=str(legislature),
         num_texte=texte,
         num=int(amendement["numero"]),
-        subdiv_type=subdiv_type,
-        subdiv_num=subdiv_num,
-        subdiv_mult=subdiv_mult,
-        subdiv_pos=subdiv_pos,
+        subdiv_type=subdiv.type_,
+        subdiv_num=subdiv.num,
+        subdiv_mult=subdiv.mult,
+        subdiv_pos=subdiv.pos,
         sort=amendement["sortEnSeance"].lower(),
         matricule=amendement["auteur"]["tribunId"],
         groupe=get_groupe(amendement, groups_folder),
@@ -84,6 +78,17 @@ def fetch_amendement(
         dispositif=unjustify(amendement["dispositif"]),
         objet=unjustify(amendement["exposeSommaire"]),
     )
+
+
+def parse_division(division: dict) -> SubDiv:
+    if division["type"] == "TITRE":
+        return SubDiv("titre", "", "", "")
+    subdiv = _parse_subdiv(division["titre"])
+    if division["avantApres"]:
+        subdiv = subdiv._replace(pos=division["avantApres"].lower())
+        if subdiv.pos == "a":  # TODO: understand what it means...
+            subdiv = subdiv._replace(pos="")
+    return subdiv
 
 
 def fetch_amendements(legislature: int, texte: int) -> Tuple[str, List[OrderedDict]]:

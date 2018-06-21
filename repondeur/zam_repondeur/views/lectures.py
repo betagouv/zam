@@ -31,7 +31,7 @@ class LecturesAdd:
         self.dossiers_by_uid = get_dossiers_legislatifs(legislature=CURRENT_LEGISLATURE)
         self.lectures_by_dossier = {
             dossier.uid: {
-                lecture.texte.uid: f"{lecture.chambre} : {lecture.titre} (texte nº {lecture.texte.numero} déposé le {lecture.texte.date_depot.strftime('%d/%m/%Y')})"  # noqa
+                lecture.texte.uid: f"{lecture.chambre} – {lecture.titre} (texte nº {lecture.texte.numero} déposé le {lecture.texte.date_depot.strftime('%d/%m/%Y')})"  # noqa
                 for lecture in dossier.lectures.values()
             }
             for dossier in self.dossiers_by_uid.values()

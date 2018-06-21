@@ -213,3 +213,36 @@ def test_fetch_amendement_not_found():
 
     with pytest.raises(NotFound):
         fetch_amendement(14, 4072, 177, SAMPLE_DATA_DIR)
+
+
+@pytest.mark.parametrize(
+    "division,type_,num,mult,pos",
+    [
+        (
+            {
+                "titre": "pour un État au service d’une société de confiance.",
+                "divisionDesignation": "TITRE",
+                "type": "TITRE",
+                "avantApres": "A",
+                "divisionRattache": "TITRE",
+                "articleAdditionnel": {
+                    "@xsi:nil": "true",
+                    "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                },
+                "divisionAdditionnelle": {
+                    "@xsi:nil": "true",
+                    "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                },
+                "urlDivisionTexteVise": "/15/textes/0575.asp#D_pour_un_Etat_au_service_dune_societe_d",  # noqa
+            },
+            "titre",
+            "",
+            "",
+            "",
+        )
+    ],
+)
+def test_parse_division(division, type_, num, mult, pos):
+    from zam_aspirateur.amendements.fetch_an import parse_division
+
+    assert parse_division(division) == (type_, num, mult, pos)

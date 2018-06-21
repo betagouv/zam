@@ -55,7 +55,7 @@ def test_get_form(app):
         (
             "PRJLANR5L15B0269",
             True,
-            "Assemblée nationale : 1ère lecture (texte nº 269 déposé le 11/10/2017)",
+            "Assemblée nationale – 1ère lecture (texte nº 269 déposé le 11/10/2017)",
         )
     ]
 

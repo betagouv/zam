@@ -1,0 +1,1043 @@
+{
+    "dossierParlementaire": {
+        "@xsi:type": "DossierLegislatif_Type",
+        "uid": "DLR5L15N36159",
+        "legislature": "15",
+        "titreDossier": {
+            "titre": "Fonction publique : un Etat au service d'une société de confiance",
+            "titreChemin": "etat_service_societe_confiance",
+            "senatChemin": "http://www.senat.fr/dossier-legislatif/pjl17-259.html"
+        },
+        "procedureParlementaire": {
+            "code": "1",
+            "libelle": "Projet de loi ordinaire"
+        },
+        "initiateur": {
+            "acteurs": {
+                "acteur": [
+                    {
+                        "acteurRef": "PA345619",
+                        "mandatRef": "PM725692"
+                    },
+                    {
+                        "acteurRef": "PA607846",
+                        "mandatRef": "PM730066"
+                    }
+                ]
+            }
+        },
+        "actesLegislatifs": {
+            "acteLegislatif": [
+                {
+                    "@xsi:type": "Etape_Type",
+                    "uid": "L15-AN1-36159",
+                    "codeActe": "AN1",
+                    "libelleActe": {
+                        "nomCanonique": "1ère lecture (1ère assemblée saisie)",
+                        "libelleCourt": "1ère lecture"
+                    },
+                    "organeRef": "PO717460",
+                    "dateActe": null,
+                    "actesLegislatifs": {
+                        "acteLegislatif": [
+                            {
+                                "@xsi:type": "DepotInitiative_Type",
+                                "uid": "L15-VD183572DI",
+                                "codeActe": "AN1-DEPOT",
+                                "libelleActe": {
+                                    "nomCanonique": "1er dépôt d'une initiative.",
+                                    "libelleCourt": "1er dépôt d'une initiative."
+                                },
+                                "organeRef": "PO717460",
+                                "dateActe": "2017-11-27T00:00:00.000+01:00",
+                                "actesLegislatifs": null,
+                                "texteAssocie": "PRJLANR5L15B0424"
+                            },
+                            {
+                                "@xsi:type": "EtudeImpact_Type",
+                                "uid": "L15-VD183572ETI",
+                                "codeActe": "AN1-ETI",
+                                "libelleActe": {
+                                    "nomCanonique": "Etude d'impact",
+                                    "libelleCourt": "Etude d'impact"
+                                },
+                                "organeRef": "PO717460",
+                                "dateActe": "2017-11-27T00:00:00.000+01:00",
+                                "actesLegislatifs": null,
+                                "contributionInternaute": {
+                                    "dateOuverture": "2017-11-29+01:00",
+                                    "dateFermeture": "2018-02-22+01:00"
+                                },
+                                "texteAssocie": "ETDIANR5L15B0424"
+                            },
+                            {
+                                "@xsi:type": "DepotAvisConseilEtat_Type",
+                                "uid": "L15-VD183572AVCE",
+                                "codeActe": "AN1-AVCE",
+                                "libelleActe": {
+                                    "nomCanonique": "Avis du Conseil d'Etat",
+                                    "libelleCourt": "Avis du Conseil d'Etat"
+                                },
+                                "organeRef": "PO717460",
+                                "dateActe": "2017-11-27T00:00:00.000+01:00",
+                                "actesLegislatifs": null,
+                                "texteAssocie": "AVCEANR5L15B0424"
+                            },
+                            {
+                                "@xsi:type": "ProcedureAccelere_Type",
+                                "uid": "L15-VD183574",
+                                "codeActe": "AN1-PROCACC",
+                                "libelleActe": {
+                                    "nomCanonique": "Le gouvernement déclare l'urgence / engage la procédure accélérée",
+                                    "libelleCourt": "Le gouvernement déclare l'urgence / engage la procédure accélérée"
+                                },
+                                "organeRef": "PO725688",
+                                "dateActe": "2017-11-27T00:00:00.000+01:00",
+                                "actesLegislatifs": null
+                            },
+                            {
+                                "@xsi:type": "Etape_Type",
+                                "uid": "L15-AN1-COM-36159",
+                                "codeActe": "AN1-COM",
+                                "libelleActe": {
+                                    "nomCanonique": "Travaux des commissions",
+                                    "libelleCourt": "Travaux des commissions"
+                                },
+                                "organeRef": "PO717460",
+                                "dateActe": null,
+                                "actesLegislatifs": {
+                                    "acteLegislatif": {
+                                        "@xsi:type": "Etape_Type",
+                                        "uid": "L15-VD183573CF",
+                                        "codeActe": "AN1-COM-FOND",
+                                        "libelleActe": {
+                                            "nomCanonique": "Travaux de la commission saisie au fond",
+                                            "libelleCourt": "Travaux de la commission saisie au fond"
+                                        },
+                                        "organeRef": "PO744107",
+                                        "dateActe": null,
+                                        "actesLegislatifs": {
+                                            "acteLegislatif": [
+                                                {
+                                                    "@xsi:type": "SaisieComFond_Type",
+                                                    "uid": "L15-VD183573CFS",
+                                                    "codeActe": "AN1-COM-FOND-SAISIE",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Renvoi en commission au fond",
+                                                        "libelleCourt": "Renvoi en commission au fond"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2017-11-27T00:00:00.000+01:00",
+                                                    "actesLegislatifs": null
+                                                },
+                                                {
+                                                    "@xsi:type": "NominRapporteurs_Type",
+                                                    "uid": "L15-VD183779",
+                                                    "codeActe": "AN1-COM-FOND-NOMIN",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Nomination de rapporteur",
+                                                        "libelleCourt": "Nomination de rapporteur"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2017-12-06T00:00:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "rapporteurs": {
+                                                        "rapporteur": {
+                                                            "acteurRef": "PA721498",
+                                                            "typeRapporteur": "rapporteur"
+                                                        }
+                                                    },
+                                                    "reunion": null
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25316",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2017-12-06T16:30:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428051",
+                                                    "odjRef": "RUANR5L15S2018IDC428051PT25316"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25317",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2017-12-13T16:30:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428110",
+                                                    "odjRef": "RUANR5L15S2018IDC428110PT25317"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25318",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2017-12-20T09:00:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428111",
+                                                    "odjRef": "RUANR5L15S2018IDC428111PT25318"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25320",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2017-12-20T16:15:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428113",
+                                                    "odjRef": "RUANR5L15S2018IDC428113PT25320"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25321",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-01-10T09:30:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428114",
+                                                    "odjRef": "RUANR5L15S2018IDC428114PT25321"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25322",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-01-15T16:30:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428115",
+                                                    "odjRef": "RUANR5L15S2018IDC428115PT25322"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25334",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-01-15T21:30:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428149",
+                                                    "odjRef": "RUANR5L15S2018IDC428149PT25334"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25335",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-01-16T17:00:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428150",
+                                                    "odjRef": "RUANR5L15S2018IDC428150PT25335"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25336",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-01-16T21:35:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428151",
+                                                    "odjRef": "RUANR5L15S2018IDC428151PT25336"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25384",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-01-17T10:20:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428233",
+                                                    "odjRef": "RUANR5L15S2018IDC428233PT25384"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25337",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-01-17T16:25:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428152",
+                                                    "odjRef": "RUANR5L15S2018IDC428152PT25337"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25338",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-01-17T21:00:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428153",
+                                                    "odjRef": "RUANR5L15S2018IDC428153PT25338"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD183777R25422",
+                                                    "codeActe": "AN1-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-01-23T14:35:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC428319",
+                                                    "odjRef": "RUANR5L15S2018IDC428319PT25422"
+                                                },
+                                                {
+                                                    "@xsi:type": "DepotRapport_Type",
+                                                    "uid": "L15-VD184144",
+                                                    "codeActe": "AN1-COM-FOND-RAPPORT",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Dépôt de rapport",
+                                                        "libelleCourt": "Dépôt de rapport"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-01-18T00:00:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "texteAssocie": "RAPPANR5L15B0575",
+                                                    "texteAdopte": "PRJLANR5L15BTC0575"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "@xsi:type": "Etape_Type",
+                                "uid": "L15-AN1-DEBATS-36159",
+                                "codeActe": "AN1-DEBATS",
+                                "libelleActe": {
+                                    "nomCanonique": "Discussion en séance publique",
+                                    "libelleCourt": "Discussion en séance publique"
+                                },
+                                "organeRef": "PO717460",
+                                "dateActe": null,
+                                "actesLegislatifs": {
+                                    "acteLegislatif": [
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD183856S35443",
+                                            "codeActe": "AN1-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-01-23T00:00:00.000+01:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS20864",
+                                            "odjRef": "RUANR5L15S2018IDS20864PT35443"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD183856S35444",
+                                            "codeActe": "AN1-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-01-23T00:00:00.000+01:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS20874",
+                                            "odjRef": "RUANR5L15S2018IDS20874PT35444"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD183856S35446",
+                                            "codeActe": "AN1-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-01-24T00:00:00.000+01:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS20865",
+                                            "odjRef": "RUANR5L15S2018IDS20865PT35446"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD183856S35447",
+                                            "codeActe": "AN1-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-01-24T00:00:00.000+01:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS20866",
+                                            "odjRef": "RUANR5L15S2018IDS20866PT35447"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD183856S35448",
+                                            "codeActe": "AN1-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-01-25T00:00:00.000+01:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS20867",
+                                            "odjRef": "RUANR5L15S2018IDS20867PT35448"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD183856S35449",
+                                            "codeActe": "AN1-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-01-25T00:00:00.000+01:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS20868",
+                                            "odjRef": "RUANR5L15S2018IDS20868PT35449"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD183856S35488",
+                                            "codeActe": "AN1-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-01-30T00:00:00.000+01:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS20886",
+                                            "odjRef": "RUANR5L15S2018IDS20886PT35488"
+                                        },
+                                        {
+                                            "@xsi:type": "Decision_Type",
+                                            "uid": "L15-VD184285DEC",
+                                            "codeActe": "AN1-DEBATS-DEC",
+                                            "libelleActe": {
+                                                "nomCanonique": "Décision",
+                                                "libelleCourt": "Décision"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-01-30T00:00:00.000+01:00",
+                                            "actesLegislatifs": null,
+                                            "statutConclusion": {
+                                                "fam_code": "TSORTF01",
+                                                "libelle": "adopté"
+                                            },
+                                            "reunionRef": "RUANR5L15S2018IDS20886",
+                                            "voteRefs": {
+                                                "voteRef": "VTANR5L15V365"
+                                            },
+                                            "textesAssocies": {
+                                                "texteAssocie": [
+                                                    {
+                                                        "typeTexte": "BTA",
+                                                        "refTexteAssocie": "PRJLANR5L15BTA0073"
+                                                    },
+                                                    {
+                                                        "typeTexte": "TAP",
+                                                        "refTexteAssocie": "PRJLANR5L15TAP0073"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "@xsi:type": "Etape_Type",
+                    "uid": "L15-SN1-36159",
+                    "codeActe": "SN1",
+                    "libelleActe": {
+                        "nomCanonique": "1ère lecture (2ème assemblée saisie)",
+                        "libelleCourt": "1ère lecture"
+                    },
+                    "organeRef": "PO78718",
+                    "dateActe": null,
+                    "actesLegislatifs": {
+                        "acteLegislatif": [
+                            {
+                                "@xsi:type": "DepotInitiativeNavette_Type",
+                                "uid": "L15-VD184460DIN",
+                                "codeActe": "SN1-DEPOT",
+                                "libelleActe": {
+                                    "nomCanonique": "Dépôt d'une initiative en navette",
+                                    "libelleCourt": "Dépôt d'une initiative en navette"
+                                },
+                                "organeRef": "PO78718",
+                                "dateActe": "2018-01-31T00:00:00.000+01:00",
+                                "actesLegislatifs": null,
+                                "texteAssocie": "PRJLSNR5S299B0259",
+                                "provenance": "PO717460"
+                            },
+                            {
+                                "@xsi:type": "Etape_Type",
+                                "uid": "L15-SN1-COM-36159",
+                                "codeActe": "SN1-COM",
+                                "libelleActe": {
+                                    "nomCanonique": "Travaux des commissions",
+                                    "libelleCourt": "Travaux des commissions"
+                                },
+                                "organeRef": "PO78718",
+                                "dateActe": null,
+                                "actesLegislatifs": {
+                                    "acteLegislatif": {
+                                        "@xsi:type": "Etape_Type",
+                                        "uid": "L15-VD184461CF",
+                                        "codeActe": "SN1-COM-FOND",
+                                        "libelleActe": {
+                                            "nomCanonique": "Travaux de la commission saisie au fond",
+                                            "libelleCourt": "Travaux de la commission saisie au fond"
+                                        },
+                                        "organeRef": "PO748821",
+                                        "dateActe": null,
+                                        "actesLegislatifs": {
+                                            "acteLegislatif": [
+                                                {
+                                                    "@xsi:type": "SaisieComFond_Type",
+                                                    "uid": "L15-VD184461CFS",
+                                                    "codeActe": "SN1-COM-FOND-SAISIE",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Renvoi en commission au fond",
+                                                        "libelleCourt": "Renvoi en commission au fond"
+                                                    },
+                                                    "organeRef": "PO748821",
+                                                    "dateActe": "2018-01-31T00:00:00.000+01:00",
+                                                    "actesLegislatifs": null
+                                                },
+                                                {
+                                                    "@xsi:type": "NominRapporteurs_Type",
+                                                    "uid": "L15-VD184754",
+                                                    "codeActe": "SN1-COM-FOND-NOMIN",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Nomination de rapporteur",
+                                                        "libelleCourt": "Nomination de rapporteur"
+                                                    },
+                                                    "organeRef": "PO748821",
+                                                    "dateActe": "2018-01-31T00:00:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "rapporteurs": {
+                                                        "rapporteur": [
+                                                            {
+                                                                "acteurRef": "PA267081",
+                                                                "typeRapporteur": "rapporteur"
+                                                            },
+                                                            {
+                                                                "acteurRef": "PA703516",
+                                                                "typeRapporteur": "rapporteur"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "reunion": null
+                                                },
+                                                {
+                                                    "@xsi:type": "DepotRapport_Type",
+                                                    "uid": "L15-VD184756",
+                                                    "codeActe": "SN1-COM-FOND-RAPPORT",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Dépôt de rapport",
+                                                        "libelleCourt": "Dépôt de rapport"
+                                                    },
+                                                    "organeRef": "PO748821",
+                                                    "dateActe": "2018-02-22T00:00:00.000+01:00",
+                                                    "actesLegislatifs": null,
+                                                    "texteAssocie": "RAPPSNR5S299B0329",
+                                                    "texteAdopte": "PRJLSNR5S299BTC0330"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "@xsi:type": "Etape_Type",
+                                "uid": "L15-SN1-DEBATS-36159",
+                                "codeActe": "SN1-DEBATS",
+                                "libelleActe": {
+                                    "nomCanonique": "Discussion en séance publique",
+                                    "libelleCourt": "Discussion en séance publique"
+                                },
+                                "organeRef": "PO78718",
+                                "dateActe": null,
+                                "actesLegislatifs": {
+                                    "acteLegislatif": [
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD184753S35726",
+                                            "codeActe": "SN1-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO78718",
+                                            "dateActe": "2018-03-13T00:00:00.000+01:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUSNR5L15S2018IDS20973",
+                                            "odjRef": "RUSNR5L15S2018IDS20973PT35726"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD184753S35727",
+                                            "codeActe": "SN1-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO78718",
+                                            "dateActe": "2018-03-14T00:00:00.000+01:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUSNR5L15S2018IDS20974",
+                                            "odjRef": "RUSNR5L15S2018IDS20974PT35727"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD184753S35730",
+                                            "codeActe": "SN1-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO78718",
+                                            "dateActe": "2018-03-20T00:00:00.000+01:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUSNR5L15S2018IDS20976",
+                                            "odjRef": "RUSNR5L15S2018IDS20976PT35730"
+                                        },
+                                        {
+                                            "@xsi:type": "Decision_Type",
+                                            "uid": "L15-VD184942DEC",
+                                            "codeActe": "SN1-DEBATS-DEC",
+                                            "libelleActe": {
+                                                "nomCanonique": "Décision",
+                                                "libelleCourt": "Décision"
+                                            },
+                                            "organeRef": "PO78718",
+                                            "dateActe": "2018-03-20T00:00:00.000+01:00",
+                                            "actesLegislatifs": null,
+                                            "statutConclusion": {
+                                                "fam_code": "TSORTF05",
+                                                "libelle": "modifié"
+                                            },
+                                            "reunionRef": "RUSNR5L15S2018IDS20976",
+                                            "voteRefs": null,
+                                            "textesAssocies": {
+                                                "texteAssocie": {
+                                                    "typeTexte": "BTA",
+                                                    "refTexteAssocie": "PRJLSNR5S299BTA0075"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "@xsi:type": "Etape_Type",
+                    "uid": "L15-CMP-36159",
+                    "codeActe": "CMP",
+                    "libelleActe": {
+                        "nomCanonique": "Commission Mixte Paritaire",
+                        "libelleCourt": "Commission Mixte Paritaire"
+                    },
+                    "organeRef": "PO753655",
+                    "dateActe": null,
+                    "actesLegislatifs": {
+                        "acteLegislatif": [
+                            {
+                                "@xsi:type": "RenvoiCMP_Type",
+                                "uid": "L15-VD184992CMPS",
+                                "codeActe": "CMP-SAISIE",
+                                "libelleActe": {
+                                    "nomCanonique": "Convocation d'une CMP",
+                                    "libelleCourt": "Convocation d'une CMP"
+                                },
+                                "organeRef": "PO753655",
+                                "dateActe": "2018-03-21T00:00:00.000+01:00",
+                                "actesLegislatifs": null,
+                                "initiateur": {
+                                    "acteurs": {
+                                        "acteur": {
+                                            "acteurRef": "PA345619",
+                                            "mandatRef": "PM725692"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "@xsi:type": "Etape_Type",
+                                "uid": "L15-VD184992COM",
+                                "codeActe": "CMP-COM",
+                                "libelleActe": {
+                                    "nomCanonique": "Commission Mixte Paritaire",
+                                    "libelleCourt": "Commission Mixte Paritaire"
+                                },
+                                "organeRef": "PO753655",
+                                "dateActe": null,
+                                "actesLegislatifs": {
+                                    "acteLegislatif": [
+                                        {
+                                            "@xsi:type": "NominRapporteurs_Type",
+                                            "uid": "L15-VD185178",
+                                            "codeActe": "CMP-COM-NOMIN",
+                                            "libelleActe": {
+                                                "nomCanonique": "Nomination de rapporteur",
+                                                "libelleCourt": "Nomination de rapporteur"
+                                            },
+                                            "organeRef": "PO753655",
+                                            "dateActe": "2018-04-05T00:00:00.000+02:00",
+                                            "actesLegislatifs": null,
+                                            "rapporteurs": {
+                                                "rapporteur": [
+                                                    {
+                                                        "acteurRef": "PA721498",
+                                                        "typeRapporteur": "rapporteur"
+                                                    },
+                                                    {
+                                                        "acteurRef": "PA267081",
+                                                        "typeRapporteur": "rapporteur"
+                                                    },
+                                                    {
+                                                        "acteurRef": "PA703516",
+                                                        "typeRapporteur": "rapporteur"
+                                                    }
+                                                ]
+                                            },
+                                            "reunion": null
+                                        },
+                                        {
+                                            "@xsi:type": "DepotRapport_Type",
+                                            "uid": "L15-VD185190",
+                                            "codeActe": "CMP-COM-RAPPORT-AN",
+                                            "libelleActe": {
+                                                "nomCanonique": "Dépôt du rapport d'une CMP",
+                                                "libelleCourt": "Dépôt du rapport d'une CMP"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-04-05T00:00:00.000+02:00",
+                                            "actesLegislatifs": null,
+                                            "texteAssocie": "RAPPANR5L15B0853",
+                                            "texteAdopte": null
+                                        },
+                                        {
+                                            "@xsi:type": "DepotRapport_Type",
+                                            "uid": "L15-VD185193",
+                                            "codeActe": "CMP-COM-RAPPORT-SN",
+                                            "libelleActe": {
+                                                "nomCanonique": "Dépôt du rapport d'une CMP",
+                                                "libelleCourt": "Dépôt du rapport d'une CMP"
+                                            },
+                                            "organeRef": "PO78718",
+                                            "dateActe": "2018-04-05T00:00:00.000+02:00",
+                                            "actesLegislatifs": null,
+                                            "texteAssocie": "RAPPSNR5S299B0401",
+                                            "texteAdopte": "PRJLSNR5S299BTC0402"
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "@xsi:type": "Decision_Type",
+                                "uid": "L15-VD184992DEC",
+                                "codeActe": "CMP-DEC",
+                                "libelleActe": {
+                                    "nomCanonique": "Décision de la CMP",
+                                    "libelleCourt": "Décision de la CMP"
+                                },
+                                "organeRef": "PO753655",
+                                "dateActe": "2018-04-05T00:00:00.000+02:00",
+                                "actesLegislatifs": null,
+                                "statutConclusion": {
+                                    "fam_code": "TCCMP02",
+                                    "libelle": "Désaccord"
+                                },
+                                "reunionRef": null,
+                                "voteRefs": null
+                            }
+                        ]
+                    }
+                },
+                {
+                    "@xsi:type": "Etape_Type",
+                    "uid": "L15-ANNLEC-36159",
+                    "codeActe": "ANNLEC",
+                    "libelleActe": {
+                        "nomCanonique": "Nouvelle Lecture",
+                        "libelleCourt": "Nouvelle lecture"
+                    },
+                    "organeRef": "PO717460",
+                    "dateActe": null,
+                    "actesLegislatifs": {
+                        "acteLegislatif": [
+                            {
+                                "@xsi:type": "DepotInitiativeNavette_Type",
+                                "uid": "L15-VD184959DIN",
+                                "codeActe": "ANNLEC-DEPOT",
+                                "libelleActe": {
+                                    "nomCanonique": "Dépôt d'une initiative en navette",
+                                    "libelleCourt": "Dépôt d'une initiative en navette"
+                                },
+                                "organeRef": "PO717460",
+                                "dateActe": "2018-03-21T00:00:00.000+01:00",
+                                "actesLegislatifs": null,
+                                "texteAssocie": "PRJLANR5L15B0806",
+                                "provenance": "PO753655"
+                            },
+                            {
+                                "@xsi:type": "Etape_Type",
+                                "uid": "L15-ANNLEC-COM-36159",
+                                "codeActe": "ANNLEC-COM",
+                                "libelleActe": {
+                                    "nomCanonique": "Travaux des commissions",
+                                    "libelleCourt": "Travaux des commissions"
+                                },
+                                "organeRef": "PO717460",
+                                "dateActe": null,
+                                "actesLegislatifs": {
+                                    "acteLegislatif": {
+                                        "@xsi:type": "Etape_Type",
+                                        "uid": "L15-VD184960CF",
+                                        "codeActe": "ANNLEC-COM-FOND",
+                                        "libelleActe": {
+                                            "nomCanonique": "Travaux de la commission saisie au fond",
+                                            "libelleCourt": "Travaux de la commission saisie au fond"
+                                        },
+                                        "organeRef": "PO744107",
+                                        "dateActe": null,
+                                        "actesLegislatifs": {
+                                            "acteLegislatif": [
+                                                {
+                                                    "@xsi:type": "SaisieComFond_Type",
+                                                    "uid": "L15-VD184960CFS",
+                                                    "codeActe": "ANNLEC-COM-FOND-SAISIE",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Renvoi en commission au fond",
+                                                        "libelleCourt": "Renvoi en commission au fond"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-03-21T00:00:00.000+01:00",
+                                                    "actesLegislatifs": null
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD185757R25760",
+                                                    "codeActe": "ANNLEC-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-06-12T17:00:00.000+02:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC429727",
+                                                    "odjRef": "RUANR5L15S2018IDC429727PT25760"
+                                                },
+                                                {
+                                                    "@xsi:type": "DiscussionCommission_Type",
+                                                    "uid": "L15-VD185757R25761",
+                                                    "codeActe": "ANNLEC-COM-FOND-REUNION",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Réunion de commission",
+                                                        "libelleCourt": "Réunion de commission"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-06-12T21:00:00.000+02:00",
+                                                    "actesLegislatifs": null,
+                                                    "reunionRef": "RUANR5L15S2018IDC429728",
+                                                    "odjRef": "RUANR5L15S2018IDC429728PT25761"
+                                                },
+                                                {
+                                                    "@xsi:type": "DepotRapport_Type",
+                                                    "uid": "L15-VD185883",
+                                                    "codeActe": "ANNLEC-COM-FOND-RAPPORT",
+                                                    "libelleActe": {
+                                                        "nomCanonique": "Dépôt de rapport",
+                                                        "libelleCourt": "Dépôt de rapport"
+                                                    },
+                                                    "organeRef": "PO744107",
+                                                    "dateActe": "2018-06-13T00:00:00.000+02:00",
+                                                    "actesLegislatifs": null,
+                                                    "texteAssocie": "RAPPANR5L15B1056",
+                                                    "texteAdopte": "PRJLANR5L15BTC1056"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "@xsi:type": "Etape_Type",
+                                "uid": "L15-ANNLEC-DEBATS-36159",
+                                "codeActe": "ANNLEC-DEBATS",
+                                "libelleActe": {
+                                    "nomCanonique": "Discussion en séance publique",
+                                    "libelleCourt": "Discussion en séance publique"
+                                },
+                                "organeRef": "PO717460",
+                                "dateActe": null,
+                                "actesLegislatifs": {
+                                    "acteLegislatif": [
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD185722S36027",
+                                            "codeActe": "ANNLEC-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-06-26T00:00:00.000+02:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS21129",
+                                            "odjRef": "RUANR5L15S2018IDS21129PT36027"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD185722S36028",
+                                            "codeActe": "ANNLEC-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-06-26T00:00:00.000+02:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS21130",
+                                            "odjRef": "RUANR5L15S2018IDS21130PT36028"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD185722S36030",
+                                            "codeActe": "ANNLEC-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-06-27T00:00:00.000+02:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS21131",
+                                            "odjRef": "RUANR5L15S2018IDS21131PT36030"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD185722S36031",
+                                            "codeActe": "ANNLEC-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-06-27T00:00:00.000+02:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS21132",
+                                            "odjRef": "RUANR5L15S2018IDS21132PT36031"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD185722S36084",
+                                            "codeActe": "ANNLEC-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-06-28T00:00:00.000+02:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS21133",
+                                            "odjRef": "RUANR5L15S2018IDS21133PT36084"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD185722S36086",
+                                            "codeActe": "ANNLEC-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-06-28T00:00:00.000+02:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS21134",
+                                            "odjRef": "RUANR5L15S2018IDS21134PT36086"
+                                        },
+                                        {
+                                            "@xsi:type": "DiscussionSeancePublique_Type",
+                                            "uid": "L15-VD185722S36089",
+                                            "codeActe": "ANNLEC-DEBATS-SEANCE",
+                                            "libelleActe": {
+                                                "nomCanonique": "Discussion en séance publique",
+                                                "libelleCourt": "Discussion en séance publique"
+                                            },
+                                            "organeRef": "PO717460",
+                                            "dateActe": "2018-06-28T00:00:00.000+02:00",
+                                            "actesLegislatifs": null,
+                                            "reunionRef": "RUANR5L15S2018IDS21135",
+                                            "odjRef": "RUANR5L15S2018IDS21135PT36089"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "fusionDossier": null
+    }
+}

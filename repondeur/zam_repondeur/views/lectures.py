@@ -1,6 +1,6 @@
 import csv
 import io
-from typing import BinaryIO, List
+from typing import BinaryIO, Dict
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -131,8 +131,12 @@ class ListAmendements:
     def post(self) -> Response:
         reponses_file = self.request.POST["reponses"].file
 
+        amendements_by_num = {
+            amendement.num: amendement for amendement in self.amendements
+        }
+
         reponses_count = self._import_reponses_from_csv_file(
-            reponses_file, self.lecture, self.amendements
+            reponses_file, self.lecture, amendements_by_num
         )
 
         self.request.session.flash(("success", f"{reponses_count} réponses chargées"))
@@ -148,22 +152,22 @@ class ListAmendements:
 
     @staticmethod
     def _import_reponses_from_csv_file(
-        reponses_file: BinaryIO, lecture: Lecture, amendements: List[Amendement]
+        reponses_file: BinaryIO, lecture: Lecture, amendements: Dict[int, Amendement]
     ) -> int:
         previous_reponse = ""
         reponses_count = 0
         for line in csv.DictReader(io.TextIOWrapper(reponses_file)):
             num = normalize_num(line["N°"])
-            amendement = [a for a in amendements if a.num == num]
+            amendement = amendements.get(num)
             if amendement:
-                amendement[0].avis = normalize_avis(line["Avis du Gouvernement"])
-                amendement[0].observations = line["Objet (article / amdt)"]
+                amendement.avis = normalize_avis(line["Avis du Gouvernement"])
+                amendement.observations = line["Objet (article / amdt)"]
                 reponse = normalize_reponse(
                     line["Avis et observations de l'administration référente"],
                     previous_reponse,
                     lecture,
                 )
-                amendement[0].reponse = reponse
+                amendement.reponse = reponse
                 previous_reponse = reponse
                 reponses_count += 1
         return reponses_count

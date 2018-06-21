@@ -1,9 +1,12 @@
 [[source]]
+
 url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+
 [packages]
+
 pyramid = "*"
 waitress = "*"
 "e1839a8" = {path = ".", editable = true}
@@ -15,8 +18,12 @@ dataclasses = "*"
 "4f547c1" = {path = "./../aspirateur", editable = true}
 sqlalchemy = ">=1.2,<1.3"
 "6901425" = {path = "./../visionneuse", editable = true}
+legipy = "*"
+tlfp = {git = "https://github.com/regardscitoyens/the-law-factory-parser.git", editable = true}
+
 
 [dev-packages]
+
 webtest = "*"
 pytest = "*"
 "flake8" = "*"
@@ -25,8 +32,12 @@ black = "*"
 pytest-cov = "*"
 pyramid-debugtoolbar = "*"
 
+
 [requires]
+
 python_version = "3.6"
 
+
 [pipenv]
+
 allow_prereleases = true

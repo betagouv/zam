@@ -11,7 +11,7 @@ from sqlalchemy.sql.expression import case
 from zam_aspirateur.textes.dossiers_legislatifs import get_dossiers_legislatifs
 from zam_aspirateur.textes.models import Chambre
 
-from zam_repondeur.fetch import get_amendements
+from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.models import DBSession, Amendement, Lecture, CHAMBRES
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
@@ -191,6 +191,25 @@ def fetch_amendements(request: Request) -> Response:
         request.session.flash(("success", f"{len(amendements)} amendements"))
     else:
         request.session.flash(("danger", "Aucun amendement n'a pu être trouvé."))
+
+    return HTTPFound(
+        location=request.route_url(
+            "lecture", chambre=chambre, session=session, num_texte=num_texte
+        )
+    )
+
+
+@view_config(route_name="fetch_articles")
+def fetch_articles(request: Request) -> Response:
+    chambre = request.matchdict["chambre"]
+    session = request.matchdict["session"]
+    num_texte = int(request.matchdict["num_texte"])
+
+    if chambre not in CHAMBRES:
+        return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
+
+    get_articles(chambre, session, num_texte)
+    request.session.flash(("success", f"Articles récupérés"))
 
     return HTTPFound(
         location=request.route_url(

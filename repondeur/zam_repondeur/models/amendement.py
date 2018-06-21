@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Date, Integer, Table, Text
+from sqlalchemy import Boolean, Column, Date, Integer, PickleType, Table, Text
 from sqlalchemy.orm import mapper
 from sqlalchemy.schema import ForeignKeyConstraint
 
@@ -40,6 +40,8 @@ amendements_table = Table(
     Column("subdiv_mult", Text, nullable=True),  # bis, ter...
     Column("subdiv_pos", Text, nullable=True),  # avant / après
     Column("alinea", Text, nullable=True),  # libellé de l'alinéa de l'article concerné
+    Column("subdiv_titre", Text, nullable=True),  # titre de l'article
+    Column("subdiv_contenu", PickleType, nullable=True),  # contenu de l'article
     #
     # Numéro de l'amendement
     #
@@ -90,6 +92,8 @@ mapper(
         # so we map them explicitly here
         "subdiv_mult": amendements_table.c.subdiv_mult,
         "subdiv_pos": amendements_table.c.subdiv_pos,
+        "subdiv_titre": amendements_table.c.subdiv_titre,
+        "subdiv_contenu": amendements_table.c.subdiv_contenu,
         "alinea": amendements_table.c.alinea,
         "num": amendements_table.c.num,
         "rectif": amendements_table.c.rectif,

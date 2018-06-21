@@ -40,6 +40,10 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
             "/lectures/{chambre}/{session}/{num_texte:\d+}/amendements/fetch",
         )
         config.add_route(
+            "fetch_articles",
+            "/lectures/{chambre}/{session}/{num_texte:\d+}/articles/fetch",
+        )
+        config.add_route(
             "download_amendements",
             "/lectures/{chambre}/{session}/{num_texte:\d+}/amendements/download.{format:(csv|xlsx)}",  # noqa
         )

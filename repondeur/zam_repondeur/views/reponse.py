@@ -54,7 +54,8 @@ def list_reponses(request: Request) -> Response:
                 article = Article(
                     pk=amendement.subdiv_num,
                     id=amendement.subdiv_num,
-                    titre=amendement.subdiv_type,
+                    titre=amendement.subdiv_titre,
+                    alineas=amendement.subdiv_contenu,
                 )
                 articles[article.pk] = article
             amd = Amendement(

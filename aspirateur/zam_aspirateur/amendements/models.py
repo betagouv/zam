@@ -16,6 +16,8 @@ class Amendement:
     subdiv_num: str  # numéro
     subdiv_mult: str = ""  # bis, ter...
     subdiv_pos: str = ""  # avant / après
+    subdiv_titre: str = ""  # titre article
+    subdiv_contenu: str = ""  # contenu article
 
     alinea: str = ""  # libellé de l'alinéa de l'article concerné
 

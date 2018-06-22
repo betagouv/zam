@@ -1,4 +1,4 @@
-from zam_repondeur.models import AVIS, Amendement, DBSession, Lecture
+from zam_repondeur.models import AVIS
 
 
 def normalize_num(num: str) -> int:
@@ -25,23 +25,8 @@ def normalize_avis(avis: str) -> str:
     return avis
 
 
-def normalize_reponse(reponse: str, previous_reponse: str, lecture: Lecture) -> str:
+def normalize_reponse(reponse: str, previous_reponse: str) -> str:
     reponse = reponse.strip()
-    if reponse.startswith("id."):
-        if reponse == "id.":
-            reponse = previous_reponse
-        else:
-            id_, num, name = reponse.split(" ")
-            amendement = (
-                DBSession.query(Amendement)
-                .filter(
-                    Amendement.chambre == lecture.chambre,
-                    Amendement.session == lecture.session,
-                    Amendement.num_texte == lecture.num_texte,
-                    Amendement.num == num,
-                )
-                .first()
-            )
-            if amendement:
-                reponse = amendement.reponse
+    if reponse.lower() == "id.":
+        reponse = previous_reponse
     return reponse

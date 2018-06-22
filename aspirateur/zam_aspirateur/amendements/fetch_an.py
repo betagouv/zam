@@ -48,7 +48,7 @@ def unjustify(content: str) -> str:
 
 
 def fetch_amendement(
-    legislature: int, texte: int, numero: int, groups_folder: Path
+    legislature: int, texte: int, numero: int, groups_folder: Path, position: int
 ) -> Amendement:
     """
     Récupère un amendement depuis son numéro.
@@ -72,6 +72,7 @@ def fetch_amendement(
         subdiv_mult=subdiv.mult,
         subdiv_pos=subdiv.pos,
         sort=amendement["sortEnSeance"].lower(),
+        position=position,
         matricule=amendement["auteur"]["tribunId"],
         groupe=get_groupe(amendement, groups_folder),
         auteur=get_auteur(amendement),
@@ -114,7 +115,9 @@ def fetch_and_parse_all(
     return (
         title,
         [
-            fetch_amendement(legislature, texte, item["@numero"], groups_folder)
-            for item in amendements_raw
+            fetch_amendement(
+                legislature, texte, item["@numero"], groups_folder, position=index
+            )
+            for index, item in enumerate(amendements_raw, 1)
         ],
     )

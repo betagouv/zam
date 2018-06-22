@@ -1,5 +1,6 @@
 import csv
 import io
+import logging
 from typing import BinaryIO, Dict
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
@@ -129,17 +130,26 @@ class ListAmendements:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        reponses_file = self.request.POST["reponses"].file
-
-        amendements_by_num = {
-            amendement.num: amendement for amendement in self.amendements
-        }
-
-        reponses_count = self._import_reponses_from_csv_file(
-            reponses_file, self.lecture, amendements_by_num
-        )
-
-        self.request.session.flash(("success", f"{reponses_count} réponses chargées"))
+        # We cannot just do `if not POST["reponses"]`, as FieldStorage does not want
+        # to be cast to a boolean...
+        if self.request.POST["reponses"] != b"":
+            reponses_count, errors_count = self._import_reponses_from_csv_file(
+                reponses_file=self.request.POST["reponses"].file,
+                amendements={
+                    amendement.num: amendement for amendement in self.amendements
+                },
+            )
+            self.request.session.flash(
+                ("success", f"{reponses_count} réponses chargées avec succès")
+            )
+            if errors_count:
+                self.request.session.flash(
+                    ("warning", f"{errors_count} réponses n'ont pas pu être chargées")
+                )
+        else:
+            self.request.session.flash(
+                ("warning", "Veuillez d'abord sélectionner un fichier")
+            )
 
         return HTTPFound(
             location=self.request.route_url(
@@ -152,26 +162,37 @@ class ListAmendements:
 
     @staticmethod
     def _import_reponses_from_csv_file(
-        reponses_file: BinaryIO, lecture: Lecture, amendements: Dict[int, Amendement]
+        reponses_file: BinaryIO, amendements: Dict[int, Amendement]
     ) -> int:
         previous_reponse = ""
         reponses_count = 0
-        for i, line in enumerate(csv.DictReader(io.TextIOWrapper(reponses_file))):
-            num = normalize_num(line["N°"])
+        errors_count = 0
+        for line in csv.DictReader(io.TextIOWrapper(reponses_file)):
+
+            try:
+                num = normalize_num(line["N°"])
+            except ValueError:
+                logging.warning("Invalid amendement number %r", num)
+                errors_count += 1
+                continue
+
             amendement = amendements.get(num)
-            if amendement:
-                amendement.position = i
-                amendement.avis = normalize_avis(line["Avis du Gouvernement"])
-                amendement.observations = line["Objet (article / amdt)"]
-                reponse = normalize_reponse(
-                    line["Avis et observations de l'administration référente"],
-                    previous_reponse,
-                    lecture,
-                )
-                amendement.reponse = reponse
-                previous_reponse = reponse
-                reponses_count += 1
-        return reponses_count
+            if not amendement:
+                logging.warning("Could not find amendement number %r", num)
+                errors_count += 1
+                continue
+
+            amendement.avis = normalize_avis(line["Avis du Gouvernement"])
+            amendement.observations = line["Objet (article / amdt)"]
+            reponse = normalize_reponse(
+                line["Avis et observations de l'administration référente"],
+                previous_reponse,
+            )
+            amendement.reponse = reponse
+            previous_reponse = reponse
+            reponses_count += 1
+
+        return reponses_count, errors_count
 
 
 @view_config(route_name="fetch_amendements")

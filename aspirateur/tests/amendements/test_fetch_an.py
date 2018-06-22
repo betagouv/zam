@@ -54,15 +54,17 @@ def test_fetch_and_parse_all():
         status=200,
     )
 
-    title, items = fetch_and_parse_all(14, 4072, SAMPLE_DATA_DIR)
+    title, amendements = fetch_and_parse_all(14, 4072, SAMPLE_DATA_DIR)
 
     assert title == "PLFSS 2017"
-    assert len(items) == 5
-    assert items[0].num == 177
-    assert items[1].num == 270
-    assert items[2].num == 723
-    assert items[3].num == 135
-    assert items[4].num == 192
+    assert len(amendements) == 5
+    assert amendements[0].num == 177
+    assert amendements[1].num == 270
+    assert amendements[2].num == 723
+    assert amendements[3].num == 135
+    assert amendements[4].num == 192
+
+    assert [amdt.position for amdt in amendements] == list(range(1, 6))
 
 
 @responses.activate
@@ -122,7 +124,13 @@ def test_fetch_amendement():
         status=200,
     )
 
-    amendement = fetch_amendement(14, 4072, 177, SAMPLE_DATA_DIR)
+    amendement = fetch_amendement(
+        legislature=14,
+        texte=4072,
+        numero=177,
+        groups_folder=SAMPLE_DATA_DIR,
+        position=1,
+    )
 
     assert amendement == Amendement(
         chambre="an",
@@ -140,6 +148,7 @@ def test_fetch_amendement():
         groupe="Les Républicains",
         date_depot=None,
         sort="rejeté",
+        position=1,
         discussion_commune=None,
         identique=None,
         dispositif="<p>Supprimer cet article.</p>",
@@ -162,7 +171,13 @@ def test_fetch_amendement_gouvernement():
         status=200,
     )
 
-    amendement = fetch_amendement(14, 4072, 723, SAMPLE_DATA_DIR)
+    amendement = fetch_amendement(
+        legislature=14,
+        texte=4072,
+        numero=723,
+        groups_folder=SAMPLE_DATA_DIR,
+        position=1,
+    )
 
     assert amendement.gouvernemental is True
     assert amendement.groupe == ""
@@ -179,7 +194,13 @@ def test_fetch_amendement_commission():
         status=200,
     )
 
-    amendement = fetch_amendement(14, 4072, 135, SAMPLE_DATA_DIR)
+    amendement = fetch_amendement(
+        legislature=14,
+        texte=4072,
+        numero=135,
+        groups_folder=SAMPLE_DATA_DIR,
+        position=1,
+    )
 
     assert amendement.gouvernemental is False
     assert amendement.auteur == "Bapt Gérard"
@@ -197,7 +218,13 @@ def test_fetch_amendement_apres():
         status=200,
     )
 
-    amendement = fetch_amendement(14, 4072, 192, SAMPLE_DATA_DIR)
+    amendement = fetch_amendement(
+        legislature=14,
+        texte=4072,
+        numero=192,
+        groups_folder=SAMPLE_DATA_DIR,
+        position=1,
+    )
 
     assert amendement.subdiv_type == "article"
     assert amendement.subdiv_num == "8"
@@ -212,7 +239,13 @@ def test_fetch_amendement_not_found():
     responses.add(responses.GET, build_url(14, 4072, 177), status=404)
 
     with pytest.raises(NotFound):
-        fetch_amendement(14, 4072, 177, SAMPLE_DATA_DIR)
+        fetch_amendement(
+            legislature=14,
+            texte=4072,
+            numero=177,
+            groups_folder=SAMPLE_DATA_DIR,
+            position=1,
+        )
 
 
 @pytest.mark.parametrize(

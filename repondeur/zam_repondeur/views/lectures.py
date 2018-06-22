@@ -129,17 +129,23 @@ class ListAmendements:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        reponses_file = self.request.POST["reponses"].file
-
-        amendements_by_num = {
-            amendement.num: amendement for amendement in self.amendements
-        }
-
-        reponses_count = self._import_reponses_from_csv_file(
-            reponses_file, self.lecture, amendements_by_num
-        )
-
-        self.request.session.flash(("success", f"{reponses_count} réponses chargées"))
+        # We cannot just do `if not POST["reponses"]`, as FieldStorage does not want
+        # to be cast to a boolean...
+        if self.request.POST["reponses"] != b"":
+            reponses_count = self._import_reponses_from_csv_file(
+                reponses_file=self.request.POST["reponses"].file,
+                lecture=self.lecture,
+                amendements={
+                    amendement.num: amendement for amendement in self.amendements
+                },
+            )
+            self.request.session.flash(
+                ("success", f"{reponses_count} réponses chargées")
+            )
+        else:
+            self.request.session.flash(
+                ("warning", "Veuillez d'abord sélectionner un fichier")
+            )
 
         return HTTPFound(
             location=self.request.route_url(

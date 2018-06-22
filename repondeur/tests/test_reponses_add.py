@@ -43,3 +43,18 @@ def test_post_form_reponse(app, dummy_lecture, dummy_amendements):
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
     assert amendement.observations.startswith("Lorem")
     assert amendement.position == 1
+
+
+def test_post_form_reponse_no_file(app, dummy_lecture, dummy_amendements):
+
+    form = app.get("/lectures/an/15/269/amendements/list").form
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/an/15/269/amendements/list"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    print(resp.text)
+    assert "Veuillez d&#39;abord sélectionner un fichier" in resp.text

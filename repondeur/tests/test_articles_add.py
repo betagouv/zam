@@ -59,12 +59,10 @@ def test_post_form_seance(app, dummy_lecture, dummy_amendements):
         )
         lecture.num_texte = 575
         lecture.titre = "Première lecture – Séance publique"
-        DBSession.add(lecture)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         amendement.num_texte = 575
         amendement.subdiv_num = 2
-        DBSession.add(amendement)
 
     responses.add(
         responses.GET,
@@ -104,14 +102,12 @@ def test_post_form_senat(app, dummy_lecture, dummy_amendements):
         lecture.chambre = "senat"
         lecture.session = "2017-2018"
         lecture.num_texte = 63
-        DBSession.add(lecture)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         amendement.chambre = "senat"
         amendement.session = "2017-2018"
         amendement.num_texte = 63
         amendement.subdiv_num = 1
-        DBSession.add(amendement)
 
     responses.add(
         responses.GET,

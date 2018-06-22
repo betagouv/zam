@@ -162,11 +162,10 @@ class ListAmendements:
     ) -> int:
         previous_reponse = ""
         reponses_count = 0
-        for i, line in enumerate(csv.DictReader(io.TextIOWrapper(reponses_file))):
+        for line in csv.DictReader(io.TextIOWrapper(reponses_file)):
             num = normalize_num(line["N°"])
             amendement = amendements.get(num)
             if amendement:
-                amendement.position = i
                 amendement.avis = normalize_avis(line["Avis du Gouvernement"])
                 amendement.observations = line["Objet (article / amdt)"]
                 reponse = normalize_reponse(

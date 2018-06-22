@@ -120,6 +120,7 @@ class ReponseEdit:
     def post(self) -> Response:
         self.amendement.avis = self.request.POST["avis"]
         self.amendement.observations = self.request.POST["observations"]
+        self.amendement.reponse = self.request.POST["reponse"]
         return HTTPFound(
             location=self.request.route_url(
                 "list_amendements",

@@ -40,7 +40,7 @@ def dummy_amendements(app, dummy_lecture):
     from zam_repondeur.models import DBSession, Amendement
 
     amendements = []
-    for num in (666, 999):
+    for position, num in enumerate((666, 999), 1):
         amendement = Amendement(
             chambre=dummy_lecture[0],
             session=dummy_lecture[1],
@@ -48,6 +48,7 @@ def dummy_amendements(app, dummy_lecture):
             subdiv_type="article",
             subdiv_num=1,
             num=num,
+            position=position,
         )
         amendements.append(amendement)
     with transaction.manager:

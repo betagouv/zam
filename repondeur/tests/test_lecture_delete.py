@@ -6,7 +6,7 @@ def test_lecture_delete(app, dummy_lecture, dummy_amendements):
     )
     assert DBSession.query(Amendement).count() == 2
 
-    form = app.get("http://localhost/lectures/an/15/269/").form
+    form = app.get("http://localhost/lectures/an/15/269/").forms["delete-lecture"]
 
     resp = form.submit()
 

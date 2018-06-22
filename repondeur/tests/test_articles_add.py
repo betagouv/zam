@@ -10,12 +10,15 @@ def test_get_form(app, dummy_lecture, dummy_amendements):
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
-    assert resp.form.method == "post"
-    assert resp.form.action == "http://localhost/lectures/an/15/269/articles/fetch"
+    assert resp.forms["retrieve-textes"].method == "post"
+    assert (
+        resp.forms["retrieve-textes"].action
+        == "http://localhost/lectures/an/15/269/articles/fetch"
+    )
 
-    assert list(resp.form.fields.keys()) == ["fetch"]
+    assert list(resp.forms["retrieve-textes"].fields.keys()) == ["fetch"]
 
-    assert resp.form.fields["fetch"][0].attrs["type"] == "submit"
+    assert resp.forms["retrieve-textes"].fields["fetch"][0].attrs["type"] == "submit"
 
 
 @responses.activate
@@ -31,7 +34,7 @@ def test_post_form(app, dummy_lecture, dummy_amendements):
         status=200,
     )
 
-    form = app.get("/lectures/an/15/269/").form
+    form = app.get("/lectures/an/15/269/").forms["retrieve-textes"]
 
     resp = form.submit()
 
@@ -73,7 +76,7 @@ def test_post_form_seance(app, dummy_lecture, dummy_amendements):
         status=200,
     )
 
-    form = app.get("/lectures/an/15/575/").form
+    form = app.get("/lectures/an/15/575/").forms["retrieve-textes"]
 
     resp = form.submit()
 
@@ -118,7 +121,7 @@ def test_post_form_senat(app, dummy_lecture, dummy_amendements):
         status=200,
     )
 
-    form = app.get("/lectures/senat/2017-2018/63/").form
+    form = app.get("/lectures/senat/2017-2018/63/").forms["retrieve-textes"]
 
     resp = form.submit()
 

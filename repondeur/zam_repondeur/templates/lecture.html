@@ -41,7 +41,7 @@
                 <p>
                     <a class="btn btn-primary" href="{{ request.route_url('list_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">Consulter la liste</a>
                     <a class="btn btn-primary" href="{{ request.route_url('list_reponses', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">Visualiser les réponses</a>
-                    <form method="post" action="{{ request.route_url('fetch_articles', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">
+                    <form method="post" action="{{ request.route_url('fetch_articles', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}" id="retrieve-textes">
                         <input type="submit" name="fetch" class="btn btn-primary" value="Récupérer le texte des articles">
                     </form>
                 </p>
@@ -88,7 +88,7 @@
             <div class="card-title">
                 <h4>⚠️ Zone de danger</h4>
             </div>
-                <form method="post" action="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">
+                <form method="post" action="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}" id="delete-lecture">
                     <input type="submit" class="btn btn-light btn-sm" value="Supprimer la lecture ainsi que tous les amendements et réponses associés">
                 </form>
             </div>

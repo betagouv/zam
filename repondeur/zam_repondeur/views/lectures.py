@@ -1,7 +1,7 @@
 import csv
 import io
 import logging
-from typing import BinaryIO, Dict
+from typing import BinaryIO, Dict, Tuple
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -163,7 +163,7 @@ class ListAmendements:
     @staticmethod
     def _import_reponses_from_csv_file(
         reponses_file: BinaryIO, amendements: Dict[int, Amendement]
-    ) -> int:
+    ) -> Tuple[int, int]:
         previous_reponse = ""
         reponses_count = 0
         errors_count = 0

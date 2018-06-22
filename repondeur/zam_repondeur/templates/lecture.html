@@ -80,5 +80,16 @@
         </div>
     </div>
     {% endif %}
+    <div class="card text-white bg-danger">
+        <div class="card-body">
+            <div class="card-title">
+                <h4>⚠️ Zone de danger</h4>
+            </div>
+                <form method="post" action="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">
+                    <input type="submit" class="btn btn-light btn-sm" value="Supprimer la lecture ainsi que tous les amendements et réponses associés">
+                </form>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

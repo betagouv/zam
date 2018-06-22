@@ -46,7 +46,8 @@ def get_articles(chambre: str, session: str, texte: int) -> None:
                 item["titre"]
                 for item in items
                 if article_content.get("section", False) == item.get("id")
-            ][0] or ""
+            ]
+            titre = titre and titre[0] or ""
             DBSession.query(AmendementModel).filter(
                 AmendementModel.chambre == chambre,
                 AmendementModel.session == session,

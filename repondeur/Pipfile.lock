@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "026853aad575fca444e42eb7bc3afe9a6b10e0affdbce5b5072c1f18512ea22e"
+            "sha256": "3d41eede622619aac81d573f45f0b5b8d339199006e3ccc8814c5689906ab6e5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -86,6 +86,13 @@
                 "sha256:4dfbbd1dbc669a9b71a015032b2bbe5c4b019ca8b6ca410d89cf7020de46d2c0"
             ],
             "version": "==0.7.5"
+        },
+        "cookies": {
+            "hashes": [
+                "sha256:15bee753002dff684987b8df8c235288eb8d45f8191ae056254812dfd42c81d3",
+                "sha256:d6b698788cae4cfa4e62ef8643a9ca332b79bd96cb314294b864ae8d7eb3ee8e"
+            ],
+            "version": "==2.2.1"
         },
         "dataclasses": {
             "hashes": [
@@ -384,6 +391,14 @@
             ],
             "index": "pypi",
             "version": "==2.18.4"
+        },
+        "responses": {
+            "hashes": [
+                "sha256:c6082710f4abfb60793899ca5f21e7ceb25aabf321560cc0726f8b59006811c9",
+                "sha256:f23a29dca18b815d9d64a516b4a0abb1fbdccff6141d988ad8100facb81cf7b3"
+            ],
+            "index": "pypi",
+            "version": "==0.9.0"
         },
         "selectolax": {
             "hashes": [

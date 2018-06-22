@@ -26,6 +26,7 @@ mypy = "*"
 black = "*"
 pytest-cov = "*"
 pyramid-debugtoolbar = "*"
+responses = "*"
 
 [requires]
 python_version = "3.6"

@@ -12,7 +12,7 @@ from sqlalchemy.sql.expression import case
 from zam_aspirateur.textes.dossiers_legislatifs import get_dossiers_legislatifs
 from zam_aspirateur.textes.models import Chambre
 
-from zam_repondeur.fetch import get_amendements
+from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.models import DBSession, Amendement, Lecture, CHAMBRES
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
@@ -55,6 +55,7 @@ class LecturesAdd:
 
         chambre = lecture.chambre.value
         num_texte = lecture.texte.numero
+        titre = lecture.titre
 
         # FIXME: use date_depot to find the right session?
         if lecture.chambre == Chambre.AN:
@@ -65,7 +66,7 @@ class LecturesAdd:
         if Lecture.exists(chambre, session, num_texte):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
         else:
-            Lecture.create(chambre, session, num_texte)
+            Lecture.create(chambre, session, num_texte, titre)
             self.request.session.flash(("success", "Lecture créée avec succès."))
 
         return HTTPFound(
@@ -235,5 +236,28 @@ def fetch_amendements(request: Request) -> Response:
     return HTTPFound(
         location=request.route_url(
             "lecture", chambre=chambre, session=session, num_texte=num_texte
+        )
+    )
+
+
+@view_config(route_name="fetch_articles")
+def fetch_articles(request: Request) -> Response:
+    lecture = Lecture.get(
+        chambre=request.matchdict["chambre"],
+        session=request.matchdict["session"],
+        num_texte=int(request.matchdict["num_texte"]),
+    )
+    if lecture is None:
+        raise HTTPNotFound
+
+    get_articles(lecture)
+    request.session.flash(("success", f"Articles récupérés"))
+
+    return HTTPFound(
+        location=request.route_url(
+            "lecture",
+            chambre=lecture.chambre,
+            session=lecture.session,
+            num_texte=lecture.num_texte,
         )
     )

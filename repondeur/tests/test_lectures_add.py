@@ -81,7 +81,9 @@ def test_post_form(app):
     assert resp.status_code == 200
     assert "Lecture créée avec succès." in resp.text
 
-    assert Lecture.exists(chambre="an", session="15", num_texte=269)
+    lecture = Lecture.get(chambre="an", session="15", num_texte=269)
+    assert lecture.chambre == "an"
+    assert lecture.titre == "1ère lecture"
 
 
 def test_post_form_already_exists(app, dummy_lecture):

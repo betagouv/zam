@@ -78,6 +78,8 @@ FIELDS = [
     "subdiv_num",
     "subdiv_mult",
     "subdiv_pos",
+    "subdiv_titre",
+    "subdiv_contenu",
     "alinea",
     "num",
     "rectif",
@@ -114,7 +116,7 @@ def test_write_csv(amendements, tmpdir):
 
     assert (
         rows[0]
-        == "senat;2017-2018;63;article;1;;;;42;0;M. DUPONT;000000;RDSE;;;;;;<p>L'article 1 est supprimé.</p>;<p>Cet article va à l'encontre du principe d'égalité.</p>;Suppression de l'article;;;"  # noqa
+        == "senat;2017-2018;63;article;1;;;;;;42;0;M. DUPONT;000000;RDSE;;;;;;<p>L'article 1 est supprimé.</p>;<p>Cet article va à l'encontre du principe d'égalité.</p>;Suppression de l'article;;;"  # noqa
     )
 
 

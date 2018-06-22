@@ -1,11 +1,11 @@
 appdirs==1.4.3
-black==18.6b0
+black==18.6b4
 click==6.7
 cookies==2.2.1
 coverage==4.5.1
 flake8==3.5.0
-mypy==0.600
+mypy==0.610
 pytest-cov==2.5.1
-pytest==3.5.1
+pytest==3.6.2
 responses==0.9.0
 tox==3.0.0

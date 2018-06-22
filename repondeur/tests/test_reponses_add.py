@@ -20,7 +20,7 @@ def test_get_form(app, dummy_lecture):
     assert resp.form.fields["upload"][0].attrs["type"] == "submit"
 
 
-def test_post_form_reponse(app, dummy_lecture, dummy_amendements):
+def test_post_form(app, dummy_lecture, dummy_amendements):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get("/lectures/an/15/269/amendements/list").form

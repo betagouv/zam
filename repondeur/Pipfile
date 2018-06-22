@@ -15,6 +15,8 @@ dataclasses = "*"
 "4f547c1" = {path = "./../aspirateur", editable = true}
 sqlalchemy = ">=1.2,<1.3"
 "6901425" = {path = "./../visionneuse", editable = true}
+legipy = {git = "https://github.com/regardscitoyens/legipy.git", editable = true}
+tlfp = {git = "https://github.com/regardscitoyens/the-law-factory-parser.git", editable = true}
 
 [dev-packages]
 webtest = "*"
@@ -24,6 +26,8 @@ mypy = "*"
 black = "*"
 pytest-cov = "*"
 pyramid-debugtoolbar = "*"
+responses = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.6"

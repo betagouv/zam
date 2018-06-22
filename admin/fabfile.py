@@ -104,7 +104,7 @@ def deploy(ctx, source):
 
 @task
 def deploy_repondeur(
-    ctx, secret, an_pattern_liste, an_pattern_amendement, branch="master"
+    ctx, secret, an_pattern_liste, an_pattern_amendement, branch="master", wipe=False
 ):
     user = "repondeur"
     create_user(ctx, name=user, home_dir="/srv/repondeur")
@@ -118,6 +118,8 @@ def deploy_repondeur(
     app_dir = "/srv/repondeur/src/repondeur"
     install_requirements(ctx, app_dir=app_dir, user=user)
     setup_config(ctx, app_dir=app_dir, user=user, secret=secret)
+    if wipe:
+        wipe_db(ctx, user=user)
     initialize_db(ctx, app_dir=app_dir, user=user)
     fetch_an_group_data(ctx, user=user)
     setup_service(ctx, an_pattern_liste, an_pattern_amendement)
@@ -158,6 +160,16 @@ def setup_config(ctx, app_dir, user, secret):
         sudo_put(
             ctx, "../repondeur/production.ini", f"{app_dir}/production.ini", chown=user
         )
+
+
+@task
+def wipe_db(ctx, user):
+    create_directory(ctx, "/var/backups/zam", owner=user)
+    ctx.sudo(
+        f"cp --backup=numbered /var/lib/zam/repondeur.db /var/backups/zam/repondeur.db",
+        user=user,
+    )
+    ctx.sudo(f"rm -f /var/lib/zam/repondeur.db", user=user)
 
 
 @task

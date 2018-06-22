@@ -41,7 +41,7 @@ def test_normalize_reponse_with_reference(app):
     from zam_repondeur.models import DBSession, Amendement, Lecture
 
     with transaction.manager:
-        lecture = Lecture.create(chambre="an", session="15", num_texte=269)
+        lecture = Lecture.create(chambre="an", session="15", num_texte=269, titre="foo")
         amendement = Amendement(
             chambre="an",
             session="15",
@@ -61,6 +61,6 @@ def test_normalize_reponse_with_missing_reference(app):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
-        lecture = Lecture.create(chambre="an", session="15", num_texte=269)
+        lecture = Lecture.create(chambre="an", session="15", num_texte=269, titre="foo")
 
         assert normalize_reponse("id. 91 FOO", "", lecture) == "id. 91 FOO"

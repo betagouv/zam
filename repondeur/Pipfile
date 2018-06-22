@@ -27,6 +27,7 @@ black = "*"
 pytest-cov = "*"
 pyramid-debugtoolbar = "*"
 responses = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.6"

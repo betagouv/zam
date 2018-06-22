@@ -7,7 +7,7 @@ from tlfp.tools.parse_texte import parse
 from zam_aspirateur.amendements.models import Amendement
 from zam_aspirateur.__main__ import aspire_an, aspire_senat
 
-from zam_repondeur.models import DBSession, Amendement as AmendementModel
+from zam_repondeur.models import DBSession, Amendement as AmendementModel, Lecture
 
 
 def get_amendements(chambre: str, session: str, texte: int) -> List[Amendement]:
@@ -28,16 +28,17 @@ def get_amendements(chambre: str, session: str, texte: int) -> List[Amendement]:
         raise NotImplementedError
 
 
-def get_articles(chambre: str, session: str, texte: int) -> None:
-    if chambre == "an":
+def get_articles(lecture: Lecture) -> None:
+    if lecture.chambre == "an":
         BASE_URL = "http://www.assemblee-nationale.fr/"
-        is_commission = False  # TODO: keep from dossier/texte.
-        if is_commission:
-            url = f"{BASE_URL}{session}/ta-commission/r{texte:04}-a0.asp"
+        if "Commission" in lecture.titre or "Séance" in lecture.titre:
+            url = (
+                f"{BASE_URL}{lecture.session}/ta-commission/r{lecture.num_texte:04}-a0.asp"
+            )
         else:
-            url = f"{BASE_URL}{session}/projets/pl{texte:04}.asp"
+            url = f"{BASE_URL}{lecture.session}/projets/pl{lecture.num_texte:04}.asp"
     else:
-        url = "http://www.senat.fr/leg/pjl17-063.html"
+        url = f"http://www.senat.fr/leg/pjl17-{lecture.num_texte:03}.html"
     items = parse(url)
     for article_content in items:
         if "alineas" in article_content and article_content["alineas"]:
@@ -49,9 +50,9 @@ def get_articles(chambre: str, session: str, texte: int) -> None:
             ]
             titre = titre and titre[0] or ""
             DBSession.query(AmendementModel).filter(
-                AmendementModel.chambre == chambre,
-                AmendementModel.session == session,
-                AmendementModel.num_texte == texte,
+                AmendementModel.chambre == lecture.chambre,
+                AmendementModel.session == lecture.session,
+                AmendementModel.num_texte == lecture.num_texte,
                 AmendementModel.subdiv_num == article_num,
             ).update(
                 {"subdiv_titre": titre, "subdiv_contenu": article_content["alineas"]}

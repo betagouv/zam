@@ -27,12 +27,15 @@ def dummy_lecture(app):
     chambre = "an"
     session = "15"
     num_texte = 269
+    titre = "Titre lecture"
 
     with transaction.manager:
-        lecture = Lecture(chambre=chambre, session=session, num_texte=num_texte)
+        lecture = Lecture(
+            chambre=chambre, session=session, num_texte=num_texte, titre=titre
+        )
         DBSession.add(lecture)
 
-    return (chambre, session, num_texte)
+    return (chambre, session, num_texte, titre)
 
 
 @pytest.fixture

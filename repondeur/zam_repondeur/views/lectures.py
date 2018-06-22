@@ -75,26 +75,45 @@ class LecturesAdd:
         )
 
 
-@view_config(route_name="lecture", renderer="lecture.html")
-def lecture(request: Request) -> dict:
-    lecture = Lecture.get(
-        chambre=request.matchdict["chambre"],
-        session=request.matchdict["session"],
-        num_texte=int(request.matchdict["num_texte"]),
-    )
-    if lecture is None:
-        raise HTTPNotFound
-
-    amendements_count = (
-        DBSession.query(Amendement)
-        .filter(
-            Amendement.chambre == lecture.chambre,
-            Amendement.session == lecture.session,
-            Amendement.num_texte == lecture.num_texte,
+@view_defaults(route_name="lecture")
+class LectureView:
+    def __init__(self, request: Request) -> None:
+        self.request = request
+        self.lecture = Lecture.get(
+            chambre=request.matchdict["chambre"],
+            session=request.matchdict["session"],
+            num_texte=int(request.matchdict["num_texte"]),
         )
-        .count()
-    )
-    return {"lecture": lecture, "amendements_count": amendements_count}
+        if self.lecture is None:
+            raise HTTPNotFound
+
+    @view_config(renderer="lecture.html")
+    def get(self) -> dict:
+        amendements_count = (
+            DBSession.query(Amendement)
+            .filter(
+                Amendement.chambre == self.lecture.chambre,
+                Amendement.session == self.lecture.session,
+                Amendement.num_texte == self.lecture.num_texte,
+            )
+            .count()
+        )
+        return {"lecture": self.lecture, "amendements_count": amendements_count}
+
+    @view_config(request_method="POST")
+    def post(self) -> Response:
+        DBSession.query(Amendement).filter(
+            Amendement.chambre == self.lecture.chambre,
+            Amendement.session == self.lecture.session,
+            Amendement.num_texte == self.lecture.num_texte,
+        ).delete()
+        DBSession.query(Lecture).filter(
+            Lecture.chambre == self.lecture.chambre,
+            Lecture.session == self.lecture.session,
+            Lecture.num_texte == self.lecture.num_texte,
+        ).delete()
+        self.request.session.flash(("success", "Lecture supprimée avec succès."))
+        return HTTPFound(location=self.request.route_url("lectures_list"))
 
 
 @view_defaults(route_name="list_amendements")

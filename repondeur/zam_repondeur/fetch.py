@@ -38,7 +38,9 @@ def get_articles(lecture: Lecture) -> None:
         else:
             url = f"{BASE_URL}{lecture.session}/projets/pl{lecture.num_texte:04}.asp"
     else:
-        url = f"http://www.senat.fr/leg/pjl17-{lecture.num_texte:03}.html"
+        url = (
+            f"http://www.senat.fr/leg/pjl{lecture.session[2:4]}-{lecture.num_texte:03}.html"
+        )
     items = parse(url)
     for article_content in items:
         if "alineas" in article_content and article_content["alineas"]:

@@ -134,7 +134,6 @@ class ListAmendements:
         if self.request.POST["reponses"] != b"":
             reponses_count = self._import_reponses_from_csv_file(
                 reponses_file=self.request.POST["reponses"].file,
-                lecture=self.lecture,
                 amendements={
                     amendement.num: amendement for amendement in self.amendements
                 },
@@ -158,7 +157,7 @@ class ListAmendements:
 
     @staticmethod
     def _import_reponses_from_csv_file(
-        reponses_file: BinaryIO, lecture: Lecture, amendements: Dict[int, Amendement]
+        reponses_file: BinaryIO, amendements: Dict[int, Amendement]
     ) -> int:
         previous_reponse = ""
         reponses_count = 0

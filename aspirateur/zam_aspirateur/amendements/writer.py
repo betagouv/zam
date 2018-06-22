@@ -21,6 +21,10 @@ FIELDS_NAMES = {
     "date_depot": "Date de dépôt",
     "discussion_commune": "Discussion commune ?",
     "identique": "Identique ?",
+    "objet": "Corps de l'amendement (origine : parlementaire)",
+    "resume": "Exposé de l'amendement (origine : parlementaire)",
+    "observation": "Objet de l'amendement (origine : saisie coordinateur)",
+    "reponse": "Réponse à l'amendement (origine : saisie rédacteur)",
 }
 
 

@@ -236,3 +236,8 @@ def setup_service(ctx, an_pattern_liste, an_pattern_amendement):
         sudo_put(ctx, "repondeur.service", "/etc/systemd/system/repondeur.service")
     ctx.sudo("systemctl enable repondeur")
     ctx.sudo("systemctl restart repondeur")
+
+
+@task
+def logs(ctx, lines=100):
+    ctx.sudo(f"journalctl --unit repondeur.service | tail -n {lines}")

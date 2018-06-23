@@ -107,6 +107,7 @@ def deploy_repondeur(
     ctx, secret, an_pattern_liste, an_pattern_amendement, branch="master", wipe=False
 ):
     user = "repondeur"
+    install_locale(ctx, "fr_FR.utf8")
     create_user(ctx, name=user, home_dir="/srv/repondeur")
     clone_repo(
         ctx,
@@ -123,6 +124,15 @@ def deploy_repondeur(
     initialize_db(ctx, app_dir=app_dir, user=user)
     fetch_an_group_data(ctx, user=user)
     setup_service(ctx, an_pattern_liste, an_pattern_amendement)
+
+
+@task
+def install_locale(ctx, locale_name):
+    installed_locales = [
+        line.strip() for line in ctx.sudo(f"locale -a", hide=True).stdout.splitlines()
+    ]
+    if locale_name not in installed_locales:
+        ctx.sudo(f"locale-gen {locale_name}")
 
 
 @task
@@ -226,3 +236,8 @@ def setup_service(ctx, an_pattern_liste, an_pattern_amendement):
         sudo_put(ctx, "repondeur.service", "/etc/systemd/system/repondeur.service")
     ctx.sudo("systemctl enable repondeur")
     ctx.sudo("systemctl restart repondeur")
+
+
+@task
+def logs(ctx, lines=100):
+    ctx.sudo(f"journalctl --unit repondeur.service | tail -n {lines}")

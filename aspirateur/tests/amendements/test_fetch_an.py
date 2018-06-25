@@ -208,6 +208,28 @@ def test_fetch_amendement_commission():
 
 
 @responses.activate
+def test_fetch_amendement_sort_nil():
+    from zam_aspirateur.amendements.fetch_an import fetch_amendement
+
+    responses.add(
+        responses.GET,
+        build_url(14, 4072, 38),
+        body=read_sample_data("an_38.xml"),
+        status=200,
+    )
+
+    amendement = fetch_amendement(
+        legislature=14,
+        texte=4072,
+        numero=38,
+        groups_folder=SAMPLE_DATA_DIR,
+        position=1,
+    )
+
+    assert amendement.sort == ""
+
+
+@responses.activate
 def test_fetch_amendement_apres():
     from zam_aspirateur.amendements.fetch_an import fetch_amendement
 

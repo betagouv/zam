@@ -43,6 +43,13 @@ def get_groupe(amendement: OrderedDict, groups_folder: Path) -> str:
     return libelle
 
 
+def get_sort(amendement: OrderedDict) -> str:
+    sort = amendement["sortEnSeance"]
+    if isinstance(sort, OrderedDict) and "@xsi:nil" in sort:
+        return ""
+    return sort.lower()
+
+
 def unjustify(content: str) -> str:
     return content.replace(' style="text-align: justify;"', "")
 
@@ -71,7 +78,7 @@ def fetch_amendement(
         subdiv_num=subdiv.num,
         subdiv_mult=subdiv.mult,
         subdiv_pos=subdiv.pos,
-        sort=amendement["sortEnSeance"].lower(),
+        sort=get_sort(amendement),
         position=position,
         matricule=amendement["auteur"]["tribunId"],
         groupe=get_groupe(amendement, groups_folder),

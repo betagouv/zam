@@ -117,17 +117,19 @@ def fetch_amendements(legislature: int, texte: int) -> Tuple[str, List[OrderedDi
 
 def fetch_and_parse_all(
     legislature: int, texte: int, groups_folder: Path
-) -> Tuple[str, List[Amendement]]:
+) -> Tuple[str, List[Amendement], List[str]]:
     title, amendements_raw = fetch_amendements(legislature, texte)
     amendements = []
     index = 1
+    errored = []
     for item in amendements_raw:
         try:
             amendement = fetch_amendement(
                 legislature, texte, item["@numero"], groups_folder, position=index
             )
         except NotFound:
+            errored.append(item["@numero"])
             continue
         amendements.append(amendement)
         index += 1
-    return title, amendements
+    return title, amendements, errored

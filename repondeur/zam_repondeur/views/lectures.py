@@ -227,7 +227,15 @@ def fetch_amendements(request: Request) -> Response:
     if chambre not in CHAMBRES:
         return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
 
-    amendements = get_amendements(chambre, session, num_texte)
+    amendements, errored = get_amendements(chambre, session, num_texte)
+
+    if errored:
+        request.session.flash(
+            (
+                "warning",
+                f"Les amendements {', '.join(errored)} n’ont pu être récupérés.",
+            )
+        )
 
     if amendements:
         added, updated, unchanged = _add_or_update_amendements(amendements)

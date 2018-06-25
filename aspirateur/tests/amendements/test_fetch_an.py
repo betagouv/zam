@@ -54,7 +54,7 @@ def test_fetch_and_parse_all():
         status=200,
     )
 
-    title, amendements = fetch_and_parse_all(14, 4072, SAMPLE_DATA_DIR)
+    title, amendements, errored = fetch_and_parse_all(14, 4072, SAMPLE_DATA_DIR)
 
     assert title == "PLFSS 2017"
     assert len(amendements) == 5
@@ -65,6 +65,7 @@ def test_fetch_and_parse_all():
     assert amendements[4].num == 192
 
     assert [amdt.position for amdt in amendements] == list(range(1, 6))
+    assert errored == []
 
 
 @responses.activate
@@ -107,7 +108,7 @@ def test_fetch_and_parse_all_with_404():
         status=200,
     )
 
-    title, amendements = fetch_and_parse_all(14, 4072, SAMPLE_DATA_DIR)
+    title, amendements, errored = fetch_and_parse_all(14, 4072, SAMPLE_DATA_DIR)
 
     assert title == "PLFSS 2017"
     assert len(amendements) == 4
@@ -117,6 +118,7 @@ def test_fetch_and_parse_all_with_404():
     assert amendements[3].num == 192
 
     assert [amdt.position for amdt in amendements] == list(range(1, 5))
+    assert errored == ["270"]
 
 
 @responses.activate

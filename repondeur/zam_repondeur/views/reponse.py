@@ -46,8 +46,8 @@ def list_reponses(request: Request) -> Response:
     )
     reponses = Reponses()
     articles = Articles()
-    for amendement in amendements:
-        if amendement.avis:
+    for index, amendement in enumerate(amendements, 1):
+        if amendement.avis or amendement.gouvernemental:
             if amendement.subdiv_num in articles:
                 article = articles[amendement.subdiv_num]
             else:
@@ -71,20 +71,32 @@ def list_reponses(request: Request) -> Response:
                 objet=amendement.objet,
                 resume=amendement.resume,
                 etat=amendement.sort,
+                gouvernemental=amendement.gouvernemental,
             )
-            reponse_pk = base64.b64encode(amendement.reponse.encode()).decode()
-            if reponse_pk in reponses:
-                reponses[reponse_pk].amendements.append(amd)
-            else:
+            if amendement.gouvernemental:
                 reponse = Reponse(
-                    pk=reponse_pk,
+                    pk=index,  # Avoid later regroup by same (inexisting) response.
                     avis=amendement.avis,
-                    presentation=amendement.observations,
-                    content=amendement.reponse,
+                    presentation=amendement.observations or "",
+                    content=amendement.reponse or "",
                     article=article,
                     amendements=[amd],
                 )
                 reponses[reponse.pk] = reponse
+            else:
+                reponse_pk = base64.b64encode(amendement.reponse.encode()).decode()
+                if reponse_pk in reponses:
+                    reponses[reponse_pk].amendements.append(amd)
+                else:
+                    reponse = Reponse(
+                        pk=reponse_pk,
+                        avis=amendement.avis,
+                        presentation=amendement.observations,
+                        content=amendement.reponse,
+                        article=article,
+                        amendements=[amd],
+                    )
+                    reponses[reponse.pk] = reponse
 
     return Response(render(title=lecture, articles=articles, reponses=reponses))
 

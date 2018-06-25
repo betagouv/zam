@@ -4,6 +4,7 @@ from dataclasses import fields
 from itertools import groupby
 from typing import Iterable, Tuple
 
+from inscriptis import get_text
 from openpyxl import Workbook
 from openpyxl.styles import Color, Font, PatternFill
 from openpyxl.worksheet import Worksheet
@@ -60,7 +61,7 @@ def write_csv(amendements: Iterable[Amendement], filename: str) -> int:
         )
         writer.writeheader()
         for amendement in amendements:
-            writer.writerow(amendement.asdict())
+            writer.writerow(export_amendement(amendement))
             nb_rows += 1
     return nb_rows
 
@@ -88,7 +89,7 @@ def _write_header_row(ws: Worksheet) -> None:
 def _write_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> int:
     nb_rows = 0
     for amend in amendements:
-        values = tuple(amend.asdict().values())
+        values = tuple(export_amendement(amend).values())
         for column, value in enumerate(values, 1):
             cell = ws.cell(row=nb_rows + 2, column=column)
             cell.value = value
@@ -164,3 +165,19 @@ def _format_amendement(amendement: Amendement) -> dict:
         "objet": amendement.objet,
         "resume": amendement.resume or "",
     }
+
+
+HTML_FIELDS = ["objet", "dispositif", "observations", "reponse"]
+
+
+def export_amendement(amendement: Amendement) -> dict:
+    data = amendement.asdict()
+    for field_name in HTML_FIELDS:
+        if data[field_name] is not None:
+            data[field_name] = html_to_text(data[field_name])
+    return data
+
+
+def html_to_text(html: str) -> str:
+    text: str = get_text(html).strip()
+    return text

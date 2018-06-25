@@ -13,6 +13,7 @@ setup(
         "bleach",
         "cachecontrol",
         "dataclasses",
+        "inscriptis",
         "lockfile",
         "openpyxl",
         "requests",

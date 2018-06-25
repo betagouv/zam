@@ -1,7 +1,7 @@
 import re
-from dataclasses import asdict, dataclass, replace
+from dataclasses import asdict, dataclass, fields, replace
 from datetime import date
-from typing import NamedTuple, Optional, Tuple
+from typing import Iterable, NamedTuple, Optional, Tuple
 
 
 @dataclass
@@ -103,6 +103,16 @@ class Amendement:
     def asdict(self) -> dict:
         dict_ = asdict(self)  # type: dict
         return dict_
+
+    def changes(self, other: "Amendement", ignored_fields: Iterable[str] = ()) -> dict:
+        field_names = (
+            field.name for field in fields(self) if field.name not in ignored_fields
+        )
+        return {
+            field_name: (getattr(self, field_name), getattr(other, field_name))
+            for field_name in field_names
+            if getattr(self, field_name) != getattr(other, field_name)
+        }
 
 
 class SubDiv(NamedTuple):

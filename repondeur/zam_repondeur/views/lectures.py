@@ -1,7 +1,7 @@
 import csv
 import io
 import logging
-from typing import BinaryIO, Dict, Tuple
+from typing import BinaryIO, Dict, Iterable, Tuple
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -215,6 +215,9 @@ class ListAmendements:
         return reponses_count, errors_count
 
 
+REPONSE_FIELDS = ["avis", "observations", "reponse"]
+
+
 @view_config(route_name="fetch_amendements")
 def fetch_amendements(request: Request) -> Response:
     chambre = request.matchdict["chambre"]
@@ -227,9 +230,9 @@ def fetch_amendements(request: Request) -> Response:
     amendements = get_amendements(chambre, session, num_texte)
 
     if amendements:
-        DBSession.add_all(amendements)
-        DBSession.flush()
-        request.session.flash(("success", f"{len(amendements)} amendements"))
+        added, updated, unchanged = _add_or_update_amendements(amendements)
+        assert added + updated + unchanged == len(amendements)
+        _set_flash_messages(request, added, updated, unchanged)
     else:
         request.session.flash(("danger", "Aucun amendement n'a pu être trouvé."))
 
@@ -238,6 +241,62 @@ def fetch_amendements(request: Request) -> Response:
             "lecture", chambre=chambre, session=session, num_texte=num_texte
         )
     )
+
+
+def _add_or_update_amendements(
+    amendements: Iterable[Amendement]
+) -> Tuple[int, int, int]:
+    added, updated, unchanged = 0, 0, 0
+    for amendement in amendements:
+        existing = (
+            DBSession.query(Amendement)
+            .filter(
+                Amendement.chambre == amendement.chambre,
+                Amendement.session == amendement.session,
+                Amendement.num_texte == amendement.num_texte,
+                Amendement.num == amendement.num,
+            )
+            .first()
+        )
+        if existing is None:
+            DBSession.add(amendement)
+            added += 1
+        else:
+            changes = amendement.changes(existing, ignored_fields=REPONSE_FIELDS)
+            if changes:
+                for field_name, (new_value, old_value) in changes.items():
+                    setattr(existing, field_name, new_value)
+                updated += 1
+            else:
+                unchanged += 1
+    if added or updated:
+        DBSession.flush()
+    return added, updated, unchanged
+
+
+def _set_flash_messages(
+    request: Request, added: int, updated: int, unchanged: int
+) -> None:
+    if added:
+        if added == 1:
+            message = "1 nouvel amendement récupéré."
+        else:
+            message = f"{added} nouveaux amendements récupérés."
+        request.session.flash(("success", message))
+
+    if updated:
+        if updated == 1:
+            message = "1 amendement mis à jour."
+        else:
+            message = f"{updated} amendements mis à jour."
+        request.session.flash(("success", message))
+
+    if unchanged:
+        if unchanged == 1:
+            message = "1 amendement inchangé."
+        else:
+            message = f"{unchanged} amendements inchangés."
+        request.session.flash(("success", message))
 
 
 @view_config(route_name="fetch_articles")

@@ -4,7 +4,7 @@ from typing import List
 import requests
 
 
-URL = "http://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv"
+URL = "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv"
 
 
 def fetch_senateurs() -> List[str]:

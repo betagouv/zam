@@ -23,7 +23,7 @@ def test_fetch_all():
 
     responses.add(
         responses.GET,
-        "http://www.senat.fr/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv",
+        "https://www.senat.fr/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv",
         body=sample_data,
         status=200,
     )
@@ -54,7 +54,7 @@ def test_fetch_all_not_found():
 
     responses.add(
         responses.GET,
-        "http://www.senat.fr/amendements/2080-2081/42/jeu_complet_2080-2081_42.csv",
+        "https://www.senat.fr/amendements/2080-2081/42/jeu_complet_2080-2081_42.csv",
         status=404,
     )
 
@@ -370,7 +370,7 @@ def test_fetch_discussed():
 
     responses.add(
         responses.GET,
-        "http://www.senat.fr/encommission/2016-2017/610/liste_discussion.json",
+        "https://www.senat.fr/encommission/2016-2017/610/liste_discussion.json",
         json=fake_data,
         status=200,
     )
@@ -386,7 +386,7 @@ def test_fetch_discussed_not_found():
 
     responses.add(
         responses.GET,
-        "http://www.senat.fr/encommission/2080-2081/42/liste_discussion.json",
+        "https://www.senat.fr/encommission/2080-2081/42/liste_discussion.json",
         status=404,
     )
 
@@ -400,7 +400,7 @@ def test_fetch_title():
 
     responses.add(
         responses.GET,
-        "http://www.senat.fr/dossiers-legislatifs/depots/depots-2017.html",
+        "https://www.senat.fr/dossiers-legislatifs/depots/depots-2017.html",
         body=(
             '<li class="flgris">'
             '<span><a href="/dossierleg/plfss2018.html">N°\xa063</a></span>'
@@ -411,7 +411,7 @@ def test_fetch_title():
 
     responses.add(
         responses.GET,
-        "http://www.senat.fr/dossierleg/plfss2018.html",
+        "https://www.senat.fr/dossierleg/plfss2018.html",
         body="<h1>Financement de la sécurité sociale pour 2018</h1>",
         status=200,
     )
@@ -427,7 +427,7 @@ def test_fetch_title_unknown():
 
     responses.add(
         responses.GET,
-        "http://www.senat.fr/dossiers-legislatifs/depots/depots-2017.html",
+        "https://www.senat.fr/dossiers-legislatifs/depots/depots-2017.html",
         body="",
         status=200,
     )
@@ -443,7 +443,7 @@ def test_fetch_title_not_found():
 
     responses.add(
         responses.GET,
-        "http://www.senat.fr/dossiers-legislatifs/depots/depots-2024.html",
+        "https://www.senat.fr/dossiers-legislatifs/depots/depots-2024.html",
         status=404,
     )
 

@@ -4,14 +4,13 @@ from dataclasses import fields
 from itertools import groupby
 from typing import Iterable, Tuple
 
+from inscriptis import get_text
 from openpyxl import Workbook
 from openpyxl.styles import Color, Font, PatternFill
 from openpyxl.worksheet import Worksheet
 
 from .models import Amendement
 
-
-FIELDS = [field.name for field in fields(Amendement)]
 
 FIELDS_NAMES = {
     "article": "Nº article",
@@ -23,9 +22,19 @@ FIELDS_NAMES = {
     "identique": "Identique ?",
     "objet": "Corps de l'amendement (origine : parlementaire)",
     "resume": "Exposé de l'amendement (origine : parlementaire)",
-    "observation": "Objet de l'amendement (origine : saisie coordinateur)",
+    "observations": "Objet de l'amendement (origine : saisie coordinateur)",
     "reponse": "Réponse à l'amendement (origine : saisie rédacteur)",
 }
+
+
+def rename_field(field_name: str) -> str:
+    return FIELDS_NAMES.get(field_name, field_name.capitalize())
+
+
+FIELDS = [field.name for field in fields(Amendement)]
+
+
+HEADERS = [rename_field(field_name) for field_name in FIELDS]
 
 
 DARK_BLUE = Color(rgb="00182848")
@@ -55,12 +64,12 @@ GROUPS_COLORS = {
 def write_csv(amendements: Iterable[Amendement], filename: str) -> int:
     nb_rows = 0
     with open(filename, "w", encoding="utf-8") as file_:
+        file_.write(";".join(HEADERS) + "\n")
         writer = csv.DictWriter(
             file_, fieldnames=FIELDS, delimiter=";", quoting=csv.QUOTE_MINIMAL
         )
-        writer.writeheader()
         for amendement in amendements:
-            writer.writerow(amendement.asdict())
+            writer.writerow(export_amendement(amendement))
             nb_rows += 1
     return nb_rows
 
@@ -77,8 +86,7 @@ def write_xlsx(amendements: Iterable[Amendement], filename: str) -> int:
 
 
 def _write_header_row(ws: Worksheet) -> None:
-    header_row = [FIELDS_NAMES.get(field, field.capitalize()) for field in FIELDS]
-    for column, value in enumerate(header_row, 1):
+    for column, value in enumerate(HEADERS, 1):
         cell = ws.cell(row=1, column=column)
         cell.value = value
         cell.fill = PatternFill(patternType="solid", fgColor=DARK_BLUE)
@@ -88,7 +96,7 @@ def _write_header_row(ws: Worksheet) -> None:
 def _write_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> int:
     nb_rows = 0
     for amend in amendements:
-        values = tuple(amend.asdict().values())
+        values = tuple(export_amendement(amend).values())
         for column, value in enumerate(values, 1):
             cell = ws.cell(row=nb_rows + 2, column=column)
             cell.value = value
@@ -164,3 +172,19 @@ def _format_amendement(amendement: Amendement) -> dict:
         "objet": amendement.objet,
         "resume": amendement.resume or "",
     }
+
+
+HTML_FIELDS = ["objet", "dispositif", "observations", "reponse"]
+
+
+def export_amendement(amendement: Amendement) -> dict:
+    data = amendement.asdict()
+    for field_name in HTML_FIELDS:
+        if data[field_name] is not None:
+            data[field_name] = html_to_text(data[field_name])
+    return data
+
+
+def html_to_text(html: str) -> str:
+    text: str = get_text(html).strip()
+    return text

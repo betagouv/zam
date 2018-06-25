@@ -32,25 +32,21 @@ def get_articles(lecture: Lecture) -> None:
     if lecture.chambre == "an":
         BASE_URL = "http://www.assemblee-nationale.fr/"
         if "Commission" in lecture.titre or "Séance" in lecture.titre:
-            url = (
-                f"{BASE_URL}{lecture.session}/ta-commission/r{lecture.num_texte:04}-a0.asp"
-            )
+            url = f"{BASE_URL}{lecture.session}/ta-commission/r{lecture.num_texte:04}-a0.asp"  # noqa
         else:
             url = f"{BASE_URL}{lecture.session}/projets/pl{lecture.num_texte:04}.asp"
     else:
-        url = (
-            f"http://www.senat.fr/leg/pjl{lecture.session[2:4]}-{lecture.num_texte:03}.html"
-        )
+        url = f"http://www.senat.fr/leg/pjl{lecture.session[2:4]}-{lecture.num_texte:03}.html"  # noqa
     items = parse(url)
     for article_content in items:
         if "alineas" in article_content and article_content["alineas"]:
             article_num = article_content["titre"].replace(" ", "-").replace("1er", "1")
-            titre = [
+            titres = [
                 item["titre"]
                 for item in items
                 if article_content.get("section", False) == item.get("id")
             ]
-            titre = titre and titre[0] or ""
+            titre = titres and titres[0] or ""
             DBSession.query(AmendementModel).filter(
                 AmendementModel.chambre == lecture.chambre,
                 AmendementModel.session == lecture.session,

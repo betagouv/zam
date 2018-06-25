@@ -43,11 +43,13 @@ def aspire_an(
 ) -> Tuple[str, List[Amendement]]:
     print("Récupération du titre et des amendements déposés...")
     try:
-        title, amendements = an.fetch_and_parse_all(legislature, texte, groups_folder)
+        title, amendements, errored = an.fetch_and_parse_all(
+            legislature, texte, groups_folder
+        )
     except an.NotFound:
-        return "", []
+        return "", [], []
 
-    return title, amendements
+    return title, amendements, errored
 
 
 def main(argv: Optional[List[str]] = None) -> SystemStatus:

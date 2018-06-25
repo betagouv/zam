@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendement>
+    <numero>38</numero>
+    <numeroLong>38</numeroLong>
+    <numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amendementEtendu>0</amendementEtendu>
+    <etat>AC</etat>
+    <missionVisee xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dispositif><![CDATA[<p style="text-align: justify;">Supprimer cet article.</p>]]></dispositif>
+    <exposeSommaire><![CDATA[<p style="text-align: justify;">Si les auteurs de l&#8217;amendement sont favorables &#224; la reconnaissance pour les usagers d&#8217;un droit &#224; r&#233;gulariser une erreur commise de bonne foi, la sagesse commanderait cependant de ne pas reconna&#238;tre un droit &#224; l&#8217;erreur g&#233;n&#233;ral dans les proc&#233;dures d&#233;claratives, sans exp&#233;rimentation pr&#233;alable. Les cons&#233;quences des mesures envisag&#233;es sur le bon fonctionnement de l&#8217;administration, dans un contexte de r&#233;duction des moyens des services de l&#8217;&#201;tat, sont mal appr&#233;hend&#233;es. La pr&#233;somption de bonne foi, sans d&#233;finition claire de celle-ci, appara&#238;t &#233;galement hasardeuse et potentiellement g&#233;n&#233;ratrice de comportements arbitraires. En tout &#233;tat de cause, la prudence commanderait de limiter le droit &#224; l&#8217;erreur &#224; un nombre limit&#233; de proc&#233;dures int&#233;ressant par priorit&#233; les titulaires de droits sociaux, les TPE et les PME.</p>]]></exposeSommaire>
+    <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <listeDesSignataires> M.&amp;#160;Bruneel,  Mme&amp;#160;Bello, M.&amp;#160;Brotherson, Mme&amp;#160;Buffet, M.&amp;#160;Chassaigne, M.&amp;#160;Dharr&amp;#233;ville, M.&amp;#160;Dufr&amp;#232;gne, Mme&amp;#160;Faucillon, M.&amp;#160;Jumel, Mme&amp;#160;K&amp;#233;clard-Mond&amp;#233;sir, M.&amp;#160;Lecoq, M.&amp;#160;Nilor, M.&amp;#160;Peu, M.&amp;#160;Fabien&amp;#160;Roussel, M.&amp;#160;Serville et M.&amp;#160;Wulfranc</listeDesSignataires>
+    <listeDesTribunCosignataires>441;721118;689;267306;718926;718720;721896;722202;721012;335612;610654;721270;720692;610667;722110</listeDesTribunCosignataires>
+    <libelleSeance></libelleSeance>
+    <sortEnSeance xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dateDepot>21/06/2018</dateDepot>
+    <datePublication>25/06/2018</datePublication>
+    <dateSaisieSort xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <article99>0</article99>
+    <triAmendement>aboaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabb</triAmendement>
+    <codeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <refCodeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dateDepotAffiche>21 juin 2018 </dateDepotAffiche>
+    <division>
+        <titre>Article 2</titre>
+        <divisionDesignation>ART. 2</divisionDesignation>
+        <type>ARTICLE</type>
+        <avantApres>A</avantApres>
+        <divisionRattache>ARTICLE 2</divisionRattache>
+        <articleAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <divisionAdditionnelle xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlDivisionTexteVise>/15/textes/1056.asp#D_Article_2</urlDivisionTexteVise>
+    </division>
+    <examen>
+        <examenId>1395</examenId>
+        <organeSaisi>Séance publique</organeSaisi>
+        <typeSaisie>En séance</typeSaisie>
+        <idOrganeProprietaire>717460</idOrganeProprietaire>
+    </examen>
+    <texte>
+        <titre>RENFORÇANT L'EFFICACITÉ DE L'ADMINISTRATION POUR UNE RELATION DE CONFIANCE AVEC LE PUBLIC</titre>
+        <titreCourt>RENFORCEMENT DE L'EFFICACITÉ DE L'ADMINISTRATION POUR UNE RELATION DE CONFIANCE AVEC LE PUBLIC</titreCourt>
+        <numBibard>1056</numBibard>
+        <numsBibardsDesPropositions></numsBibardsDesPropositions>
+        <etapeTexte>Nouvelle Lecture</etapeTexte>
+        <numeroLegislature>15</numeroLegislature>
+        <mentionSecondeDeliberation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <numeroPartiePLF xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <idDossier>36159</idDossier>
+        <libelleDossier>Fonction publique : un Etat au service d'une société de confiance</libelleDossier>
+        <urlDossierWeb>http://www.assemblee-nationale.fr/15/dossiers/etat_service_societe_confiance.asp</urlDossierWeb>
+    </texte>
+    <seance xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <alinea xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <auteur>
+        <tribunId>720546</tribunId>
+        <civilite>M.</civilite>
+        <nom>Bruneel</nom>
+        <prenom>Alain</prenom>
+        <auteurLabel>M. Bruneel</auteurLabel>
+        <estGouvernement>0</estGouvernement>
+        <estRapporteur>0</estRapporteur>
+        <groupeTribunId>707869</groupeTribunId>
+    </auteur>
+    <cosignataires>
+    </cosignataires>
+    <auteurParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amdtDejaMisADiscute>1</amdtDejaMisADiscute>
+    <typeRectification xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <causeDeRetrait xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <estMasque>0</estMasque>
+    <retireAvantPublication>0</retireAvantPublication>
+    <afficherEnRecevabilite>false</afficherEnRecevabilite>
+    <isLiasseRapporteur>false</isLiasseRapporteur>
+    <isMarqueDeRevisionVisible>false</isMarqueDeRevisionVisible>
+    <isPlfrMode>false</isPlfrMode>
+    <isPlfMode>false</isPlfMode>
+    <accordGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <statutDiffusion>normal</statutDiffusion>
+</amendement>

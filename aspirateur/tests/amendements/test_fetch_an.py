@@ -54,7 +54,7 @@ def test_fetch_and_parse_all():
         status=200,
     )
 
-    title, amendements = fetch_and_parse_all(14, 4072, SAMPLE_DATA_DIR)
+    title, amendements, errored = fetch_and_parse_all(14, 4072, SAMPLE_DATA_DIR)
 
     assert title == "PLFSS 2017"
     assert len(amendements) == 5
@@ -65,6 +65,60 @@ def test_fetch_and_parse_all():
     assert amendements[4].num == 192
 
     assert [amdt.position for amdt in amendements] == list(range(1, 6))
+    assert errored == []
+
+
+@responses.activate
+def test_fetch_and_parse_all_with_404():
+    from zam_aspirateur.amendements.fetch_an import fetch_and_parse_all
+
+    responses.add(
+        responses.GET,
+        build_url(14, 4072),
+        body=read_sample_data("an_liste.xml"),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        build_url(14, 4072, 177),
+        body=read_sample_data("an_177.xml"),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        build_url(14, 4072, 270),
+        status=404,
+    )
+    responses.add(
+        responses.GET,
+        build_url(14, 4072, 723),
+        body=read_sample_data("an_723.xml"),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        build_url(14, 4072, 135),
+        body=read_sample_data("an_135.xml"),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        build_url(14, 4072, 192),
+        body=read_sample_data("an_192.xml"),
+        status=200,
+    )
+
+    title, amendements, errored = fetch_and_parse_all(14, 4072, SAMPLE_DATA_DIR)
+
+    assert title == "PLFSS 2017"
+    assert len(amendements) == 4
+    assert amendements[0].num == 177
+    assert amendements[1].num == 723
+    assert amendements[2].num == 135
+    assert amendements[3].num == 192
+
+    assert [amdt.position for amdt in amendements] == list(range(1, 5))
+    assert errored == ["270"]
 
 
 @responses.activate
@@ -205,6 +259,28 @@ def test_fetch_amendement_commission():
     assert amendement.gouvernemental is False
     assert amendement.auteur == "Bapt Gérard"
     assert amendement.groupe == ""
+
+
+@responses.activate
+def test_fetch_amendement_sort_nil():
+    from zam_aspirateur.amendements.fetch_an import fetch_amendement
+
+    responses.add(
+        responses.GET,
+        build_url(14, 4072, 38),
+        body=read_sample_data("an_38.xml"),
+        status=200,
+    )
+
+    amendement = fetch_amendement(
+        legislature=14,
+        texte=4072,
+        numero=38,
+        groups_folder=SAMPLE_DATA_DIR,
+        position=1,
+    )
+
+    assert amendement.sort == ""
 
 
 @responses.activate

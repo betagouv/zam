@@ -43,6 +43,13 @@ def get_groupe(amendement: OrderedDict, groups_folder: Path) -> str:
     return libelle
 
 
+def get_sort(amendement: OrderedDict) -> str:
+    sort = amendement["sortEnSeance"]
+    if isinstance(sort, OrderedDict) and "@xsi:nil" in sort:
+        return ""
+    return sort.lower()
+
+
 def unjustify(content: str) -> str:
     return content.replace(' style="text-align: justify;"', "")
 
@@ -71,7 +78,7 @@ def fetch_amendement(
         subdiv_num=subdiv.num,
         subdiv_mult=subdiv.mult,
         subdiv_pos=subdiv.pos,
-        sort=amendement["sortEnSeance"].lower(),
+        sort=get_sort(amendement),
         position=position,
         matricule=amendement["auteur"]["tribunId"],
         groupe=get_groupe(amendement, groups_folder),
@@ -110,14 +117,19 @@ def fetch_amendements(legislature: int, texte: int) -> Tuple[str, List[OrderedDi
 
 def fetch_and_parse_all(
     legislature: int, texte: int, groups_folder: Path
-) -> Tuple[str, List[Amendement]]:
+) -> Tuple[str, List[Amendement], List[str]]:
     title, amendements_raw = fetch_amendements(legislature, texte)
-    return (
-        title,
-        [
-            fetch_amendement(
+    amendements = []
+    index = 1
+    errored = []
+    for item in amendements_raw:
+        try:
+            amendement = fetch_amendement(
                 legislature, texte, item["@numero"], groups_folder, position=index
             )
-            for index, item in enumerate(amendements_raw, 1)
-        ],
-    )
+        except NotFound:
+            errored.append(item["@numero"])
+            continue
+        amendements.append(amendement)
+        index += 1
+    return title, amendements, errored

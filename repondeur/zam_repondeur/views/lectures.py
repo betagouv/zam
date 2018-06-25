@@ -87,27 +87,27 @@ class LectureView:
         )
         if self.lecture is None:
             raise HTTPNotFound
-
-    @view_config(renderer="lecture.html")
-    def get(self) -> dict:
-        amendements_count = (
-            DBSession.query(Amendement)
-            .filter(
-                Amendement.chambre == self.lecture.chambre,
-                Amendement.session == self.lecture.session,
-                Amendement.num_texte == self.lecture.num_texte,
-            )
-            .count()
-        )
-        return {"lecture": self.lecture, "amendements_count": amendements_count}
-
-    @view_config(request_method="POST")
-    def post(self) -> Response:
-        DBSession.query(Amendement).filter(
+        self.amendements = DBSession.query(Amendement).filter(
             Amendement.chambre == self.lecture.chambre,
             Amendement.session == self.lecture.session,
             Amendement.num_texte == self.lecture.num_texte,
-        ).delete()
+        )
+
+    @view_config(renderer="lecture.html")
+    def get(self) -> dict:
+        amendements_count = self.amendements.count()
+        can_be_displayed = any(
+            [amd.avis or amd.gouvernemental for amd in self.amendements.all()]
+        )
+        return {
+            "lecture": self.lecture,
+            "amendements_count": amendements_count,
+            "can_be_displayed": can_be_displayed,
+        }
+
+    @view_config(request_method="POST")
+    def post(self) -> Response:
+        self.amendements.delete()
         DBSession.query(Lecture).filter(
             Lecture.chambre == self.lecture.chambre,
             Lecture.session == self.lecture.session,

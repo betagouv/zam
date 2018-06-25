@@ -57,5 +57,4 @@ def test_post_form_reponse_no_file(app, dummy_lecture, dummy_amendements):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    print(resp.text)
-    assert "Veuillez d&#39;abord sélectionner un fichier" in resp.text
+    assert "Veuillez d’abord sélectionner un fichier" in resp.text

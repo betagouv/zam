@@ -79,7 +79,7 @@ def parse_from_json(
         position=position,
         identique=parse_bool(amend["isIdentique"]),
         discussion_commune=(
-            amend["idDiscussionCommune"]
+            int(amend["idDiscussionCommune"])
             if parse_bool(amend["isDiscussionCommune"])
             else None
         ),

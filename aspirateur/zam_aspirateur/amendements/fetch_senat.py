@@ -12,7 +12,7 @@ from .models import Amendement
 from .parser import parse_from_csv, parse_from_json
 
 
-BASE_URL = "http://www.senat.fr"
+BASE_URL = "https://www.senat.fr"
 
 
 def fetch_title(session: str, num: int) -> str:

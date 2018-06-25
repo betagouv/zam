@@ -49,7 +49,7 @@ def dummy_amendements(app, dummy_lecture):
             session=dummy_lecture[1],
             num_texte=dummy_lecture[2],
             subdiv_type="article",
-            subdiv_num=1,
+            subdiv_num="1",
             num=num,
             position=position,
         )

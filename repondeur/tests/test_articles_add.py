@@ -114,7 +114,7 @@ def test_post_form_senat(app, dummy_lecture, dummy_amendements):
 
     responses.add(
         responses.GET,
-        "http://www.senat.fr/leg/pjl17-063.html",
+        "https://www.senat.fr/leg/pjl17-063.html",
         body=(Path(__file__).parent / "sample_data" / "pjl17-063.html").read_text(
             "utf-8", "ignore"
         ),

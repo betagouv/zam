@@ -155,7 +155,7 @@ class TestParseAmendementFromJSON:
             amend, position=1, session="2017-2018", num_texte=63, subdiv=subdiv
         )
 
-        assert amendement.discussion_commune == "110541"
+        assert amendement.discussion_commune == 110541
 
     def test_not_discussion_commune(self):
         from zam_aspirateur.amendements.parser import parse_from_json

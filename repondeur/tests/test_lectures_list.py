@@ -5,7 +5,7 @@ def test_get_list_empty(app):
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
-    assert "Aucune lecture pour l'instant." in resp.text
+    assert "Aucune lecture pour l’instant." in resp.text
 
 
 def test_get_list_not_empty(app, dummy_lecture):

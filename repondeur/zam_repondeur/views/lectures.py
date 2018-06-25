@@ -164,11 +164,11 @@ class ListAmendements:
             )
             if errors_count:
                 self.request.session.flash(
-                    ("warning", f"{errors_count} réponses n'ont pas pu être chargées")
+                    ("warning", f"{errors_count} réponses n’ont pas pu être chargées")
                 )
         else:
             self.request.session.flash(
-                ("warning", "Veuillez d'abord sélectionner un fichier")
+                ("warning", "Veuillez d’abord sélectionner un fichier")
             )
 
         return HTTPFound(
@@ -234,7 +234,7 @@ def fetch_amendements(request: Request) -> Response:
         assert added + updated + unchanged == len(amendements)
         _set_flash_messages(request, added, updated, unchanged)
     else:
-        request.session.flash(("danger", "Aucun amendement n'a pu être trouvé."))
+        request.session.flash(("danger", "Aucun amendement n’a pu être trouvé."))
 
     return HTTPFound(
         location=request.route_url(

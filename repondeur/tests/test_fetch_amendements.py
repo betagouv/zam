@@ -3,10 +3,6 @@ from unittest.mock import patch
 import transaction
 
 
-def html_text(text):
-    return text.replace("'", "&#39;")
-
-
 def test_fetch_amendements(app, dummy_lecture, dummy_amendements):
     from zam_repondeur.models import Amendement, DBSession
 
@@ -56,9 +52,9 @@ def test_fetch_amendements(app, dummy_lecture, dummy_amendements):
 
     resp = resp.follow()
     assert resp.status_code == 200
-    assert html_text("1 nouvel amendement récupéré.") in resp.text
-    assert html_text("1 amendement mis à jour.") in resp.text
-    assert html_text("1 amendement inchangé.") in resp.text
+    assert "1 nouvel amendement récupéré." in resp.text
+    assert "1 amendement mis à jour." in resp.text
+    assert "1 amendement inchangé." in resp.text
 
     # Check that the response was preserved on the updated amendement
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -82,4 +78,4 @@ def test_fetch_amendements_none(app, dummy_lecture):
 
     resp = resp.follow()
     assert resp.status_code == 200
-    assert html_text("Aucun amendement n'a pu être trouvé.") in resp.text
+    assert "Aucun amendement n’a pu être trouvé." in resp.text

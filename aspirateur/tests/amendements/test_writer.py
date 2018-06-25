@@ -70,33 +70,33 @@ def amendements():
     ]
 
 
-FIELDS = [
-    "chambre",
-    "session",
-    "num_texte",
-    "subdiv_type",
-    "subdiv_num",
-    "subdiv_mult",
-    "subdiv_pos",
-    "subdiv_titre",
-    "subdiv_contenu",
-    "alinea",
-    "num",
-    "rectif",
-    "auteur",
-    "matricule",
-    "groupe",
-    "date_depot",
-    "sort",
-    "position",
-    "discussion_commune",
-    "identique",
-    "dispositif",
-    "objet",
-    "resume",
-    "avis",
-    "observations",
-    "reponse",
+EXPECTED_FIELDS = [
+    "Chambre",
+    "Session",
+    "Num_texte",
+    "Subdiv_type",
+    "Subdiv_num",
+    "Subdiv_mult",
+    "Subdiv_pos",
+    "Subdiv_titre",
+    "Subdiv_contenu",
+    "Alinéa",
+    "Nº amdt ou sous-amdt",
+    "Rectif",
+    "Auteur(s)",
+    "Matricule",
+    "Groupe",
+    "Date de dépôt",
+    "Sort",
+    "Position",
+    "Discussion commune ?",
+    "Identique ?",
+    "Dispositif",
+    "Corps de l'amendement (origine : parlementaire)",
+    "Exposé de l'amendement (origine : parlementaire)",
+    "Avis",
+    "Objet de l'amendement (origine : saisie coordinateur)",
+    "Réponse à l'amendement (origine : saisie rédacteur)",
 ]
 
 
@@ -110,7 +110,7 @@ def test_write_csv(amendements, tmpdir):
     with open(filename, "r", encoding="utf-8") as f_:
         lines = f_.read().splitlines()
     header, *rows = lines
-    assert header == ";".join(FIELDS)
+    assert header == ";".join(EXPECTED_FIELDS)
 
     assert len(rows) == nb_rows == 4
 

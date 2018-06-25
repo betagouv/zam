@@ -12,8 +12,6 @@ from openpyxl.worksheet import Worksheet
 from .models import Amendement
 
 
-FIELDS = [field.name for field in fields(Amendement)]
-
 FIELDS_NAMES = {
     "article": "Nº article",
     "alinea": "Alinéa",
@@ -24,9 +22,19 @@ FIELDS_NAMES = {
     "identique": "Identique ?",
     "objet": "Corps de l'amendement (origine : parlementaire)",
     "resume": "Exposé de l'amendement (origine : parlementaire)",
-    "observation": "Objet de l'amendement (origine : saisie coordinateur)",
+    "observations": "Objet de l'amendement (origine : saisie coordinateur)",
     "reponse": "Réponse à l'amendement (origine : saisie rédacteur)",
 }
+
+
+def rename_field(field_name: str) -> str:
+    return FIELDS_NAMES.get(field_name, field_name.capitalize())
+
+
+FIELDS = [field.name for field in fields(Amendement)]
+
+
+HEADERS = [rename_field(field_name) for field_name in FIELDS]
 
 
 DARK_BLUE = Color(rgb="00182848")
@@ -56,10 +64,10 @@ GROUPS_COLORS = {
 def write_csv(amendements: Iterable[Amendement], filename: str) -> int:
     nb_rows = 0
     with open(filename, "w", encoding="utf-8") as file_:
+        file_.write(";".join(HEADERS) + "\n")
         writer = csv.DictWriter(
             file_, fieldnames=FIELDS, delimiter=";", quoting=csv.QUOTE_MINIMAL
         )
-        writer.writeheader()
         for amendement in amendements:
             writer.writerow(export_amendement(amendement))
             nb_rows += 1
@@ -78,8 +86,7 @@ def write_xlsx(amendements: Iterable[Amendement], filename: str) -> int:
 
 
 def _write_header_row(ws: Worksheet) -> None:
-    header_row = [FIELDS_NAMES.get(field, field.capitalize()) for field in FIELDS]
-    for column, value in enumerate(header_row, 1):
+    for column, value in enumerate(HEADERS, 1):
         cell = ws.cell(row=1, column=column)
         cell.value = value
         cell.fill = PatternFill(patternType="solid", fgColor=DARK_BLUE)

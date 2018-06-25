@@ -106,7 +106,7 @@ SUBDIV_RE = re.compile(
             (?P<pos>(avant|après))
             \s
         )?  # position
-        article\s
+        (?:article\s)+
         (?P<num>\d+|1er|premier)
         (?:\s(?P<mult>\w+))?        # bis, ter, etc.
         (?:\s.*)?                   # junk

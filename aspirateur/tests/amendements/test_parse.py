@@ -219,6 +219,7 @@ class TestParseAmendementFromJSON:
         ("Annexe", "annexe", "", "", ""),
         ("ANNEXE B", "annexe", "B", "", ""),
         ("Chapitre III", "chapitre", "III", "", ""),
+        ("Article Article 3 bis AAA", "article", "3", "bis", ""),
     ],
 )
 def test_parse_subdiv(text, type_, num, mult, pos):

@@ -41,12 +41,12 @@ def get_articles(lecture: Lecture) -> None:
     for article_content in items:
         if "alineas" in article_content and article_content["alineas"]:
             article_num = article_content["titre"].replace(" ", "-").replace("1er", "1")
-            titre = [
+            titres = [
                 item["titre"]
                 for item in items
                 if article_content.get("section", False) == item.get("id")
             ]
-            titre = titre and titre[0] or ""
+            titre = titres and titres[0] or ""
             DBSession.query(AmendementModel).filter(
                 AmendementModel.chambre == lecture.chambre,
                 AmendementModel.session == lecture.session,

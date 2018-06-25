@@ -43,7 +43,7 @@ def test_fetch_amendements(app, dummy_lecture, dummy_amendements):
                 num=999,
                 position=3,
             ),
-        ]
+        ], []
 
         resp = app.post("/lectures/an/15/269/amendements/fetch")
 
@@ -66,10 +66,37 @@ def test_fetch_amendements(app, dummy_lecture, dummy_amendements):
     assert amendement.position == 3
 
 
+def test_fetch_amendements_with_errored(app, dummy_lecture, dummy_amendements):
+    from zam_repondeur.models import Amendement
+
+    with patch("zam_repondeur.views.lectures.get_amendements") as mock_get_amendements:
+        mock_get_amendements.return_value = [
+            Amendement(
+                chambre="an",
+                session="15",
+                num_texte=269,
+                subdiv_type="article",
+                subdiv_num="1",
+                num=666,
+                position=1,
+            )
+        ], ["111", "222"]
+
+        resp = app.post("/lectures/an/15/269/amendements/fetch")
+
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/an/15/269/"
+
+    resp = resp.follow()
+    assert resp.status_code == 200
+    assert "Les amendements 111, 222 n’ont pu être récupérés." in resp.text
+    assert "1 amendement inchangé." in resp.text
+
+
 def test_fetch_amendements_none(app, dummy_lecture):
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock_get_amendements:
-        mock_get_amendements.return_value = []
+        mock_get_amendements.return_value = [], []
 
         resp = app.post("/lectures/an/15/269/amendements/fetch")
 

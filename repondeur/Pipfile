@@ -17,6 +17,7 @@ legipy = {git = "https://github.com/regardscitoyens/legipy.git", editable = true
 tlfp = {git = "https://github.com/regardscitoyens/the-law-factory-parser.git", editable = true}
 "4f547c1" = {path = "./../aspirateur", editable = true}
 inscriptis = "*"
+selectolax = "*"
 
 [dev-packages]
 webtest = "*"

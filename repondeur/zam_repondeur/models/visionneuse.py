@@ -1,5 +1,5 @@
 import base64
-from typing import Any, List, Optional
+from typing import List, Optional
 
 from dataclasses import dataclass, field
 
@@ -13,7 +13,7 @@ class Article:
     multiplicatif: Optional[str] = ""
     jaune: Optional[str] = ""
     alineas: Optional[dict] = None
-    amendements: Any = field(default_factory=lambda: [])  # List[Amendement]
+    amendements: List["Amendement"] = field(default_factory=lambda: [])
     document: Optional[str] = ""
 
     def __str__(self) -> str:
@@ -62,9 +62,9 @@ class Reponse:
         return base64.b64encode(unique.encode()).decode()
 
     @property
-    def favorable(self):
+    def favorable(self) -> bool:
         return self.avis.startswith("Favorable")
 
     @property
-    def sagesse(self):
+    def sagesse(self) -> bool:
         return self.avis == "Sagesse"

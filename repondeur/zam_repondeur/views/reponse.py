@@ -43,21 +43,21 @@ def list_reponses(request: Request) -> Response:
         )
         .all()
     )
-    reponses = OrderedDict()
-    articles = OrderedDict()
+    reponses: OrderedDict = OrderedDict()
+    articles: OrderedDict = OrderedDict()
     for index, amendement in enumerate(amendements, 1):
         if amendement.avis or amendement.gouvernemental:
             if amendement.subdiv_num in articles:
                 article = articles[amendement.subdiv_num]
             else:
-                article = Article(
+                article = Article(  # type: ignore
                     pk=amendement.subdiv_num,
                     id=amendement.subdiv_num,
                     titre=amendement.subdiv_titre,
                     alineas=amendement.subdiv_contenu,
                 )
                 articles[article.pk] = article
-            amd = Amendement(
+            amd = Amendement(  # type: ignore
                 pk=f"{amendement.num:06}",
                 id=amendement.num,
                 groupe={
@@ -73,7 +73,7 @@ def list_reponses(request: Request) -> Response:
                 gouvernemental=amendement.gouvernemental,
             )
             if amendement.gouvernemental:
-                reponse = Reponse(
+                reponse = Reponse(  # type: ignore
                     pk=index,  # Avoid later regroup by same (inexisting) response.
                     avis=amendement.avis,
                     presentation=amendement.observations or "",
@@ -87,7 +87,7 @@ def list_reponses(request: Request) -> Response:
                 if reponse_pk in reponses:
                     reponses[reponse_pk].amendements.append(amd)
                 else:
-                    reponse = Reponse(
+                    reponse = Reponse(  # type: ignore
                         pk=reponse_pk,
                         avis=amendement.avis,
                         presentation=amendement.observations,

@@ -482,9 +482,9 @@
           </header>
           <div class="is-hidden">
             <div id="reponse-detail-{{ reponse.amendements[0].pk }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
-              {{ reponse.presentation }}
+              <p><strong>{{ reponse.presentation }}</strong></p>
               {% if reponse.content %}
-                {{ reponse.content }}
+                <p>{{ reponse.content }}</p>
               {% endif %}
               <p class="bottom">
                 <a href="#amendement-{{ reponse.amendements[0].pk }}">

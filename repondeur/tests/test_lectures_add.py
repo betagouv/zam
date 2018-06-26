@@ -14,18 +14,10 @@ def test_get_form(app):
     assert list(resp.form.fields.keys()) == ["dossier", "lecture", "submit"]
 
     assert isinstance(resp.form.fields["dossier"][0], Select)
-    assert resp.form.fields["dossier"][0].options == [
-        ("DLR5L15N36030", True, "Sécurité sociale : loi de financement 2018")
-    ]
+    assert resp.form.fields["dossier"][0].options == [("", True, "")]
 
     assert isinstance(resp.form.fields["lecture"][0], Select)
-    assert resp.form.fields["lecture"][0].options == [
-        (
-            "0",
-            True,
-            "Assemblée nationale – 1ère lecture (texte nº 269 déposé le 11/10/2017)",
-        )
-    ]
+    assert resp.form.fields["lecture"][0].options == [("", True, "")]
 
     assert resp.form.fields["submit"][0].attrs["type"] == "submit"
 

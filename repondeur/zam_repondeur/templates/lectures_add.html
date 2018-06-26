@@ -3,7 +3,8 @@
 
 
 {% block header %}
-    <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/choices/choices.min.css') }}">
+    <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.css') }}">
+    <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.bootstrap3.css') }}">
 {% endblock %}
 
 
@@ -18,19 +19,15 @@
 
     <form action="{{ request.path }}" method="POST">
         <div class="form-group">
-            <label for="dossier">Texte de loi</label>
-            <select id="select-dossier" name="dossier" class="form-control">
-                {% for dossier in dossiers %}
-                    <option value="{{ dossier.uid }}" {%- if loop.first %} selected{% endif %}>{{ dossier.titre }}</option>
-                {% endfor %}
+            <label for="dossier">Dossier législatif</label>
+            <select id="select-dossier" name="dossier" class="form-control" placeholder="Choisir un dossier législatif...">
+                <option value="" selected="selected"></option>
             </select>
         </div>
         <div class="form-group">
             <label for="lecture">Lecture</label>
-            <select id="select-lecture" name="lecture" class="form-control">
-                {% for texte_uid, titre in lectures_by_dossier[dossiers[0].uid].items() %}
-                    <option value="{{ texte_uid }}" {%- if loop.first %} selected{% endif %}>{{ titre }}</option>
-                {% endfor %}
+            <select id="select-lecture" name="lecture" class="form-control" placeholder="Choisir une lecture...">
+                <option value="" selected="selected"></option>
             </select>
         </div>
         <div class="form-group">
@@ -43,48 +40,56 @@
 
 
 {% block scripts %}
-<script src="{{ request.static_url('zam_repondeur:static/choices/choices.min.js') }}"></script>
+<script src="{{ request.static_url('zam_repondeur:static/jquery/jquery-1.12.4.min.js') }}"></script>
+<script src="{{ request.static_url('zam_repondeur:static/selectize/js/standalone/selectize.min.js') }}"></script>
 <script type="text/javascript">
 
-    var lectures_by_dossier = {{ lectures_by_dossier | tojson | safe }};
     document.addEventListener("DOMContentLoaded", function() {
 
-        var dossierElem = document.getElementById("select-dossier");
-        var dossierChoices = new Choices(dossierElem, {
-            shouldSort: false,
-        });
+        var selectLectures = $("#select-lecture").selectize({
+            valueField: "uid",
+            labelField: "label",
+        })[0];
 
-        var lectureElem = document.getElementById("select-lecture");
-        var lectureChoices;
-        updateFancySelectWidget();
-
-        dossierElem.addEventListener("change", function(event) {
-            resetFancySelectWidget();
-            updateBaseSelectOptions(event.detail.value);
-            updateFancySelectWidget();
-        }, false);
-
-        function resetFancySelectWidget() {
-            lectureChoices.destroy();
-        }
-
-        function updateBaseSelectOptions(value) {
-            lectureElem.innerHTML = '';
-            var choices = lectures_by_dossier[value];
-            for (var texte_uid in choices) {
-                var elem = document.createElement("option")
-                elem.value = texte_uid;
-                elem.text = choices[texte_uid];
-                lectureElem.appendChild(elem);
+        $("#select-dossier").selectize({
+            valueField: "uid",
+            labelField: "titre",
+            searchField: ["titre"],
+            onInitialize: function() {
+                var self = this;
+                $.ajax({
+                    url: "{{ request.route_url('choices_dossiers') }}",
+                    type: "GET",
+                    error: function() {
+                        alert("Impossible de récupérer la liste des dossiers.\nMerci de réessayer plus tard !");
+                    },
+                    success: function(res) {
+                        for (let dossier of res.dossiers) {
+                            self.addOption(dossier);
+                        }
+                    }
+                });
+            },
+            onChange: function(uid) {
+                selectLectures.selectize.clearOptions();
+                if (uid === "") {
+                    return;
+                }
+                $.ajax({
+                    url: "{{ request.route_url('choices_lectures', uid='UID') }}".replace("UID", uid),
+                    type: "GET",
+                    error: function() {
+                        alert("Impossible de récupérer la liste des lectures.\nMerci de réessayer plus tard !");
+                    },
+                    success: function(res) {
+                        for (let uid in res.lectures) {
+                            selectLectures.selectize.addOption(res.lectures[uid]);
+                        }
+                        selectLectures.selectize.refreshOptions();
+                    }
+                });
             }
-        }
-
-        function updateFancySelectWidget() {
-            lectureChoices = new Choices(lectureElem, {
-                shouldSort: false,
-            });
-        }
-
+        });
     });
 </script>
 {% endblock %}

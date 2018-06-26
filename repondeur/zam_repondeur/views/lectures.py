@@ -28,24 +28,22 @@ def lectures_list(request: Request) -> dict:
     return {"lectures": Lecture.all()}
 
 
-@view_defaults(route_name="lectures_add", renderer="lectures_add.html")
+@view_defaults(route_name="lectures_add")
 class LecturesAdd:
     def __init__(self, request: Request) -> None:
         self.request = request
         self.dossiers_by_uid = get_data("dossiers")
-        self.lectures_by_dossier = {
-            dossier.uid: {
-                index: lecture.label for index, lecture in enumerate(dossier.lectures)
-            }
-            for dossier in self.dossiers_by_uid.values()
-        }
 
-    @view_config(request_method="GET")
+    @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:
         return {
-            "dossiers": list(self.dossiers_by_uid.values()),
-            "lectures_by_dossier": self.lectures_by_dossier,
-        }
+            "dossiers": {
+                dossier.uid: {
+                    index: lecture.label for index, lecture in enumerate(dossier.lectures)
+                }
+                for dossier in self.dossiers_by_uid.values()
+            }
+         }
 
     @view_config(request_method="POST")
     def post(self) -> Response:
@@ -394,3 +392,29 @@ def lecture_check(request: Request) -> dict:
         raise HTTPNotFound
 
     return {"modified_at": lecture.modified_at_timestamp}
+
+
+@view_config(route_name="choices_lectures", renderer="json")
+def choices_lectures(request: Request) -> dict:
+    uid = request.matchdict["uid"]
+    dossiers_by_uid = get_data("dossiers")
+    dossier = dossiers_by_uid[uid]
+    return {
+        "lectures": [
+            {
+                "uid": lecture.texte.uid,
+                "chambre": lecture.chambre.value,
+                "titre": lecture.titre,
+                "numero": lecture.texte.numero,
+                "dateDepot": lecture.texte.date_depot.strftime("%d/%m/%Y"),
+                "label": " – ".join(
+                    [
+                        str(lecture.chambre),
+                        lecture.titre,
+                        f"Texte Nº {lecture.texte.numero}",
+                    ]
+                ),
+            }
+            for lecture in dossier.lectures.values()
+        ]
+    }

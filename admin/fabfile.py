@@ -98,12 +98,7 @@ def sshkeys(ctx):
 
 
 @task
-def deploy(ctx, source):
-    put_dir(ctx, quote(source), "/srv/zam/", chown="zam")
-
-
-@task
-def deploy_repondeur(
+def deploy(
     ctx, secret, an_pattern_liste, an_pattern_amendement, branch="master", wipe=False
 ):
     user = "repondeur"

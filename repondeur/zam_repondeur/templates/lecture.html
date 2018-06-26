@@ -41,7 +41,7 @@
                 <p>
                     <a class="btn btn-primary" href="{{ request.route_url('list_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">Consulter la liste</a>
                     {% if lecture.displayable %}
-                        <a class="btn btn-primary" href="{{ request.route_url('list_reponses', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">Visualiser les réponses</a>
+                        <a class="btn btn-primary" href="{{ request.route_url('list_reponses', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}" target="_blank">Visualiser les réponses</a>
                     {% endif %}
                     <form method="post" action="{{ request.route_url('fetch_articles', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}" id="retrieve-textes">
                         <input type="submit" name="fetch" class="btn btn-primary" value="Récupérer le texte des articles">

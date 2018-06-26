@@ -2,8 +2,8 @@ from typing import Any, List
 
 from sqlalchemy import Column, Integer, Text, desc
 
+from .amendement import Amendement
 from .base import Base, DBSession
-
 
 CHAMBRES = {"an": "Assemblée nationale", "senat": "Sénat"}
 
@@ -36,6 +36,15 @@ class Lecture(Base):  # type: ignore
             other.session,
             other.num_texte,
         )
+
+    @property
+    def displayable(self) -> bool:
+        query = DBSession.query(Amendement).filter(
+            Amendement.chambre == self.chambre,
+            Amendement.session == self.session,
+            Amendement.num_texte == self.num_texte,
+        )
+        return any(amd.avis or amd.gouvernemental for amd in query)
 
     @classmethod
     def all(cls) -> List["Lecture"]:

@@ -96,13 +96,9 @@ class LectureView:
     @view_config(renderer="lecture.html")
     def get(self) -> dict:
         amendements_count = self.amendements_query.count()
-        can_be_displayed = any(
-            amd.avis or amd.gouvernemental for amd in self.amendements_query
-        )
         return {
             "lecture": self.lecture,
             "amendements_count": amendements_count,
-            "can_be_displayed": can_be_displayed,
         }
 
     @view_config(request_method="POST")

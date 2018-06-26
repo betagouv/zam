@@ -13,13 +13,30 @@
 <h2>Lectures</h2>
 
 {% if lectures %}
-    <ul>
-        {% for lecture in lectures %}
-        <li>
-            <a href="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">{{ lecture }}</a>
-        </li>
-        {% endfor %}
-    </ul>
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Lecture</th>
+                <th scope="col">Dossier de banc</th>
+            </tr>
+        </thead>
+      <tbody>
+            {% for lecture in lectures %}
+            <tr>
+                <td>
+                    <a href="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">{{ lecture }}</a>
+                </td>
+                <td>
+                    {% if lecture.displayable %}
+                        <a class="btn btn-primary btn-sm" href="{{ request.route_url('list_reponses', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}" role="button">Dossier de banc</a>
+                    {% else %}
+                        Saisie de réponses requise.
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+      </tbody>
+    </table>
 {% else %}
     <p>Aucune lecture pour l’instant.</p>
 {% endif %}

@@ -4,15 +4,13 @@
 
 Le dépôt regroupe plusieurs applications distinctes (monorepo) :
 
-* [`/aspirateur/`](aspirateur/) contient l’outil permettant de récupérer les données publiques/ouvertes issues des sites du Sénat et de l’Assemblée Nationale.
-* [`/visionneuse/`](visionneuse/) contient l’outil permettant d’afficher les articles, amendements et réponses (ces dernières sont privées) de manière ergonomique.
-* [`/repondeur/`](repondeur/) contient l'application web intégrant l'aspirateur et la visionneuse, ainsi que la préparation collaborative des réponses aux amendements.
-* [`/admin/`](admin/) contient les tâches pour initialiser et déployer le serveur.
+*   [`/aspirateur/`](aspirateur/) contient l’outil permettant de récupérer les données publiques/ouvertes issues des sites du Sénat et de l’Assemblée Nationale.
+*   [`/repondeur/`](repondeur/) contient l’application web utilisant les données issues de l’aspirateur, ainsi que la préparation collaborative des réponses aux amendements.
+*   [`/admin/`](admin/) contient les tâches pour initialiser et déployer le serveur.
 
 Chacune des application est documentée de manière plus précise au sein du fichier README dédié.
 
-
 ## Licences
 
-* [GNU AFFERO GENERAL PUBLIC LICENSE Version 3](LICENSE) pour le code
-* [SIL OPEN FONT LICENSE Version 1.1](LICENSE_FONTS) pour les polices de caractères
+*   [GNU AFFERO GENERAL PUBLIC LICENSE Version 3](LICENSE) pour le code
+*   [SIL OPEN FONT LICENSE Version 1.1](LICENSE_FONTS) pour les polices de caractères

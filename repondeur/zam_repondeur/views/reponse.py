@@ -1,4 +1,5 @@
 import base64
+from collections import OrderedDict
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -8,9 +9,6 @@ from sqlalchemy.sql.expression import case
 
 from zam_aspirateur.amendements.writer import GROUPS_COLORS
 
-from zam_visionneuse.models import Amendement, Article, Articles, Reponse, Reponses
-from zam_visionneuse.templates import render
-
 from zam_repondeur.models import (
     DBSession,
     Amendement as AmendementModel,
@@ -18,9 +16,10 @@ from zam_repondeur.models import (
     AVIS,
     Lecture,
 )
+from zam_repondeur.models.visionneuse import Amendement, Article, Reponse
 
 
-@view_config(route_name="list_reponses")
+@view_config(route_name="list_reponses", renderer="visionneuse.html")
 def list_reponses(request: Request) -> Response:
     lecture = Lecture.get(
         chambre=request.matchdict["chambre"],
@@ -44,21 +43,21 @@ def list_reponses(request: Request) -> Response:
         )
         .all()
     )
-    reponses = Reponses()
-    articles = Articles()
+    reponses: OrderedDict = OrderedDict()
+    articles: OrderedDict = OrderedDict()
     for index, amendement in enumerate(amendements, 1):
         if amendement.avis or amendement.gouvernemental:
             if amendement.subdiv_num in articles:
                 article = articles[amendement.subdiv_num]
             else:
-                article = Article(
+                article = Article(  # type: ignore
                     pk=amendement.subdiv_num,
                     id=amendement.subdiv_num,
                     titre=amendement.subdiv_titre,
                     alineas=amendement.subdiv_contenu,
                 )
                 articles[article.pk] = article
-            amd = Amendement(
+            amd = Amendement(  # type: ignore
                 pk=f"{amendement.num:06}",
                 id=amendement.num,
                 groupe={
@@ -74,7 +73,7 @@ def list_reponses(request: Request) -> Response:
                 gouvernemental=amendement.gouvernemental,
             )
             if amendement.gouvernemental:
-                reponse = Reponse(
+                reponse = Reponse(  # type: ignore
                     pk=index,  # Avoid later regroup by same (inexisting) response.
                     avis=amendement.avis,
                     presentation=amendement.observations or "",
@@ -88,7 +87,7 @@ def list_reponses(request: Request) -> Response:
                 if reponse_pk in reponses:
                     reponses[reponse_pk].amendements.append(amd)
                 else:
-                    reponse = Reponse(
+                    reponse = Reponse(  # type: ignore
                         pk=reponse_pk,
                         avis=amendement.avis,
                         presentation=amendement.observations,
@@ -98,7 +97,7 @@ def list_reponses(request: Request) -> Response:
                     )
                     reponses[reponse.pk] = reponse
 
-    return Response(render(title=lecture, articles=articles, reponses=reponses))
+    return {"title": lecture, "articles": articles, "reponses": reponses}
 
 
 @view_defaults(route_name="reponse_edit", renderer="reponse_edit.html")

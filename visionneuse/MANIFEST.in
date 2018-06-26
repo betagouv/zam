@@ -1,2 +1,0 @@
-include README.md
-recursive-include zam_visionneuse/templates *.html

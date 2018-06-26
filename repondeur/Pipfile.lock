@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4c37798e69bd3bc2c35c9d93261eadd141fd9175300997dbe900acda693cdf50"
+            "sha256": "6b36b43b58e4dadf4eb6e97e55105305322feecb561b0c0f4f9472dac72f4740"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -19,10 +19,6 @@
         "4f547c1": {
             "editable": true,
             "path": "./../aspirateur"
-        },
-        "6901425": {
-            "editable": true,
-            "path": "./../visionneuse"
         },
         "anpy": {
             "hashes": [
@@ -79,13 +75,6 @@
                 "sha256:f15516df478d5a56180fbf80e68f206010e6d160fc39fa508b65e035fd75130b"
             ],
             "version": "==6.7"
-        },
-        "commonmark": {
-            "hashes": [
-                "sha256:12deadd8ef46155a0af4213a91a95833ae6c29e1ff36cc3f6121668f345af5ad",
-                "sha256:4dfbbd1dbc669a9b71a015032b2bbe5c4b019ca8b6ca410d89cf7020de46d2c0"
-            ],
-            "version": "==0.7.5"
         },
         "dataclasses": {
             "hashes": [
@@ -189,16 +178,6 @@
                 "sha256:6c3cb24f344923d30b2785d5ad75182c8ea7ac1b6171b08657258ec7429d50fa"
             ],
             "version": "==0.12.2"
-        },
-        "logbook": {
-            "hashes": [
-                "sha256:3c0a3ebd48e89fcdd725fe393eb9226c789dca5a4e7842d65e2f256645fd1cd9",
-                "sha256:97a827a49db0f543cf67a87dbbb7f3164383c801c28641630e200d00c396baa8",
-                "sha256:e273188067df6c82b09a0b51d1034628fcd2dab300a074c89e64c4dbbbec0328",
-                "sha256:f25f247eed81b7befca3a4646a266c7f6f328a7152d75223f9d3d0ee6476c015",
-                "sha256:f4d0b079756f99181d7d87b701b09af1f5d8b17110fe39465cc7afd94db1e95c"
-            ],
-            "version": "==1.4.0"
         },
         "lxml": {
             "hashes": [
@@ -486,12 +465,6 @@
                 "sha256:263690003a3e092ca1ec4df787f93feb0004e39d7bac9cba2c19a552c765894b"
             ],
             "version": "==1.8.2"
-        },
-        "wrapt": {
-            "hashes": [
-                "sha256:d4d560d479f2c21e1b5443bbd15fe7ec4b37fe7e53d335d3b9b0a7b1226fe3c6"
-            ],
-            "version": "==1.10.11"
         },
         "xmltodict": {
             "hashes": [

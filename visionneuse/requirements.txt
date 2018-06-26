@@ -1,5 +1,0 @@
-CommonMark==0.7.5
-dataclasses==0.5
-Jinja2==2.10
-Logbook==1.3.3
-wrapt==1.10.11

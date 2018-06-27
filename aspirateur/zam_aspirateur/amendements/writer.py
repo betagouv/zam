@@ -31,7 +31,10 @@ def rename_field(field_name: str) -> str:
     return FIELDS_NAMES.get(field_name, field_name.capitalize())
 
 
-FIELDS = [field.name for field in fields(Amendement)]
+EXCLUDED_FIELDS = ["subdiv_contenu"]
+FIELDS = [
+    field.name for field in fields(Amendement) if field.name not in EXCLUDED_FIELDS
+]
 
 
 HEADERS = [rename_field(field_name) for field_name in FIELDS]
@@ -182,6 +185,9 @@ def export_amendement(amendement: Amendement) -> dict:
     for field_name in HTML_FIELDS:
         if data[field_name] is not None:
             data[field_name] = html_to_text(data[field_name])
+    for excluded_field in EXCLUDED_FIELDS:
+        if excluded_field in data.keys():
+            del data[excluded_field]
     return data
 
 

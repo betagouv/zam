@@ -79,7 +79,6 @@ EXPECTED_FIELDS = [
     "Subdiv_mult",
     "Subdiv_pos",
     "Subdiv_titre",
-    "Subdiv_contenu",
     "Alinéa",
     "Nº amdt ou sous-amdt",
     "Rectif",
@@ -116,7 +115,7 @@ def test_write_csv(amendements, tmpdir):
 
     assert (
         rows[0]
-        == "senat;2017-2018;63;article;1;;;;;;42;0;M. DUPONT;000000;RDSE;;;;;;L'article 1 est supprimé.;Cet article va à l'encontre du principe d'égalité.;Suppression de l'article;;;"  # noqa
+        == "senat;2017-2018;63;article;1;;;;;42;0;M. DUPONT;000000;RDSE;;;;;;L'article 1 est supprimé.;Cet article va à l'encontre du principe d'égalité.;Suppression de l'article;;;"  # noqa
     )
 
 

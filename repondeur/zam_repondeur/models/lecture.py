@@ -44,7 +44,7 @@ class Lecture(Base):  # type: ignore
             Amendement.session == self.session,
             Amendement.num_texte == self.num_texte,
         )
-        return any(amd.avis or amd.gouvernemental for amd in query)
+        return any(amd.is_displayable for amd in query)
 
     @classmethod
     def all(cls) -> List["Lecture"]:

@@ -539,11 +539,17 @@
     {% for article in articles.values() %}
       {# Once data are cleaner, use the groupby jinja filter here. #}
       {% if loop.previtem is defined and loop.previtem != article or loop.previtem is not defined %}
-        {% if loop.previtem is defined and loop.previtem.titre != article.titre and article.titre != "TODO" or loop.previtem is not defined %}
+        {% if loop.previtem is defined and loop.previtem.titre != article.titre and article.titre not in ("TODO", "") or loop.previtem is not defined and article.titre %}
           <p><strong>{{ article.titre }} :</strong>
         {% endif %}
-        <a href="#{{ article.slug }}">Art. {{ article }}</a>
-        {% if loop.nextitem is defined and loop.nextitem.titre != article.titre and loop.nextitem.titre != "TODO" or loop.nextitem is not defined %}
+        <a href="#{{ article.slug }}">
+          {%- if article.type_ == "article" -%}
+            Art. {{ article }}
+          {%- else -%}
+            {{ article.type_.capitalize() }}s
+          {%- endif -%}
+        </a>
+        {% if loop.nextitem is defined and loop.nextitem.titre != article.titre and loop.nextitem.titre not in ("TODO", "") or loop.nextitem is not defined %}
           </p>
         {% endif %}
       {% endif %}

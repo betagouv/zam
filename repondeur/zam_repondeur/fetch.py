@@ -43,18 +43,26 @@ def get_articles(lecture: Lecture) -> None:
     items = parse(url)
     for article_content in items:
         if "alineas" in article_content and article_content["alineas"]:
-            article_num = article_content["titre"].replace(" ", "-").replace("1er", "1")
-            titres = [
+            titre = article_content["titre"].replace("1er", "1")
+            if " " in titre:
+                article_num, article_mult = titre.split(" ", 1)
+            else:
+                article_num, article_mult = titre, ""
+            section_titles = [
                 item["titre"]
                 for item in items
                 if article_content.get("section", False) == item.get("id")
             ]
-            titre = titres and titres[0] or ""
+            section_title = section_titles and section_titles[0] or ""
             DBSession.query(AmendementModel).filter(
                 AmendementModel.chambre == lecture.chambre,
                 AmendementModel.session == lecture.session,
                 AmendementModel.num_texte == lecture.num_texte,
                 AmendementModel.subdiv_num == article_num,
+                AmendementModel.subdiv_mult == article_mult,
             ).update(
-                {"subdiv_titre": titre, "subdiv_contenu": article_content["alineas"]}
+                {
+                    "subdiv_titre": section_title,
+                    "subdiv_contenu": article_content["alineas"],
+                }
             )

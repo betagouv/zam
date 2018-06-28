@@ -96,6 +96,10 @@ class Amendement:
     def gouvernemental(self) -> bool:
         return self.auteur == "LE GOUVERNEMENT"
 
+    @property
+    def is_displayable(self) -> bool:
+        return self.avis or self.gouvernemental
+
     def replace(self, changes: dict) -> "Amendement":
         amendement = replace(self, **changes)  # type: Amendement
         return amendement

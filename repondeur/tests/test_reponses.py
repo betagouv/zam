@@ -223,3 +223,68 @@ def test_reponses_with_multiple_articles(app, dummy_lecture, dummy_amendements):
     assert len(parser.css(".menu p strong")) == 2
     for index, item in enumerate(parser.css(".menu p strong"), 1):
         assert item.text() == f"Titre article {index} :"
+
+
+def test_reponses_with_multiplicatif_articles(app, dummy_lecture, dummy_amendements):
+    from zam_repondeur.models import Amendement, DBSession, Lecture
+
+    with transaction.manager:
+        lecture = Lecture.get(
+            chambre=dummy_lecture[0],
+            session=dummy_lecture[1],
+            num_texte=dummy_lecture[2],
+        )
+        amendements = DBSession.query(Amendement).filter(
+            Amendement.chambre == lecture.chambre,
+            Amendement.session == lecture.session,
+            Amendement.num_texte == lecture.num_texte,
+        )
+        for index, amendement in enumerate(amendements.all(), 1):
+            amendement.avis = "Favorable"
+            amendement.observations = f"Observations pour {amendement.num}"
+            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.subdiv_titre = f"Titre article {index}"
+        # Only the last one.
+        amendement.subdiv_mult = "bis"
+        DBSession.add_all(amendements)
+
+    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    parser = HTMLParser(resp.text)
+    assert len(parser.tags("section")) == 2
+    assert len(parser.tags("article")) == 2
+    assert len(parser.css(".titles")) == 2
+    assert parser.css(".titles h2")[0].text() == "Article 1"
+    assert parser.css(".titles h2")[1].text() == "Article 1 bis"
+
+
+def test_reponses_with_annexes(app, dummy_lecture, dummy_amendements):
+    from zam_repondeur.models import Amendement, DBSession, Lecture
+
+    with transaction.manager:
+        lecture = Lecture.get(
+            chambre=dummy_lecture[0],
+            session=dummy_lecture[1],
+            num_texte=dummy_lecture[2],
+        )
+        amendements = DBSession.query(Amendement).filter(
+            Amendement.chambre == lecture.chambre,
+            Amendement.session == lecture.session,
+            Amendement.num_texte == lecture.num_texte,
+        )
+        for index, amendement in enumerate(amendements.all(), 1):
+            amendement.avis = "Favorable"
+            amendement.observations = f"Observations pour {amendement.num}"
+            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.subdiv_titre = f"Titre article {index}"
+        # Only the last one.
+        amendement.subdiv_num = ""
+        amendement.subdiv_type = "annexe"
+        DBSession.add_all(amendements)
+
+    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    parser = HTMLParser(resp.text)
+    assert len(parser.tags("section")) == 2
+    assert len(parser.tags("article")) == 2
+    assert len(parser.css(".titles")) == 2
+    assert parser.css(".titles h2")[0].text() == "Article 1"
+    assert parser.css(".titles h2")[1].text() == "Annexes"

@@ -3,7 +3,7 @@ import os
 from collections import OrderedDict
 from http import HTTPStatus
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import xmltodict
 
@@ -44,9 +44,12 @@ def get_groupe(amendement: OrderedDict, groups_folder: Path) -> str:
 
 
 def get_sort(amendement: OrderedDict) -> str:
-    sort = amendement["sortEnSeance"]
-    if isinstance(sort, OrderedDict) and "@xsi:nil" in sort:
-        return ""
+    sort: Union[str, OrderedDict] = amendement["sortEnSeance"]
+    if isinstance(sort, OrderedDict):
+        if "@xsi:nil" in sort:
+            return ""
+        else:
+            raise NotImplementedError
     return sort.lower()
 
 

@@ -8,6 +8,20 @@ from string import Template
 from invoke import task
 
 
+class NginxFriendlyTemplate(Template):
+    delimiter = "$$"
+
+
+@contextmanager
+def template_local_file(template_filename, output_filename, data):
+    with open(template_filename, encoding="utf-8") as template_file:
+        template = NginxFriendlyTemplate(template_file.read())
+    with open(output_filename, mode="w", encoding="utf-8") as output_file:
+        output_file.write(template.substitute(**data))
+    yield
+    os.remove(output_filename)
+
+
 def sudo_put(ctx, local, remote, chown=None):
     tmp = str(Path("/tmp") / md5(remote.encode()).hexdigest())
     ctx.put(local, tmp)
@@ -45,14 +59,27 @@ def system(ctx):
 def http(ctx):
     sudo_put(ctx, "letsencrypt.conf", "/etc/nginx/snippets/letsencrypt.conf")
     sudo_put(ctx, "ssl.conf", "/etc/nginx/snippets/ssl.conf")
-    certif = "/etc/letsencrypt/live/zam.beta.gouv.fr/fullchain.pem"
+    certif = f"/etc/letsencrypt/live/{ctx.host}/fullchain.pem"
     exists = ctx.run('if [ -f "{}" ]; then echo 1; fi'.format(certif))
     if exists.stdout:
-        conf = "nginx-https.conf"
+        with template_local_file(
+            "nginx-https.conf.template",
+            "nginx-https.conf",
+            {
+                "host": ctx.host,
+            },
+        ):
+            sudo_put(ctx, "nginx-https.conf", "/etc/nginx/sites-available/default")
     else:
         # Before letsencrypt.
-        conf = "nginx-http.conf"
-    sudo_put(ctx, conf, "/etc/nginx/sites-available/default")
+        with template_local_file(
+            "nginx-http.conf.template",
+            "nginx-http.conf",
+            {
+                "host": ctx.host,
+            },
+        ):
+            sudo_put(ctx, "nginx-http.conf", "/etc/nginx/sites-available/default")
     ctx.sudo("systemctl restart nginx")
 
 
@@ -79,7 +106,14 @@ def letsencrypt(ctx):
     ctx.sudo("add-apt-repository ppa:certbot/certbot")
     ctx.sudo("apt update")
     ctx.sudo("apt install -y certbot software-properties-common")
-    sudo_put(ctx, "certbot.ini", "/srv/zam/certbot.ini")
+    with template_local_file(
+        "certbot.ini.template",
+        "certbot.ini",
+        {
+            "host": ctx.host,
+        },
+    ):
+        sudo_put(ctx, "certbot.ini", "/srv/zam/certbot.ini")
     sudo_put(ctx, "ssl-renew", "/etc/cron.weekly/ssl-renew")
     ctx.sudo("chmod +x /etc/cron.weekly/ssl-renew")
     ctx.sudo(
@@ -205,16 +239,6 @@ def fetch_an_group_data(ctx, user):
     ctx.sudo(f"unzip -q -o {filename} -d {data_dir}/", user=user)
 
     ctx.sudo(f"rm {filename}", user=user)
-
-
-@contextmanager
-def template_local_file(template_filename, output_filename, data):
-    with open(template_filename, encoding="utf-8") as template_file:
-        template = Template(template_file.read())
-    with open(output_filename, mode="w", encoding="utf-8") as output_file:
-        output_file.write(template.substitute(**data))
-    yield
-    os.remove(output_filename)
 
 
 @task

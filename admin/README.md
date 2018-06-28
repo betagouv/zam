@@ -3,6 +3,7 @@
 ## Requirements
 
 *   Python 3.6+
+*   Having a ssh key-based root access
 
 ## Installing dependencies
 
@@ -15,22 +16,22 @@
 
 1.  Install dependencies (see above) and/or activate venv
 2.  Add the public key to `admin/fabric.yml` under `ssh_keys` section
-3.  Run `fab -eH root@zam.beta.gouv.fr sshkeys`
+3.  Run `fab -eH root@zam-test.beta.gouv.fr sshkeys`
 
 ## Bootstraping server
 
 ⚠️ Only required once.
 
 1.  Install dependencies (see above) and/or activate venv
-2.  Run `fab -eH root@zam.beta.gouv.fr bootstrap`
+2.  Run `fab -eH root@zam-test.beta.gouv.fr bootstrap`
 3.  Note that a password for Basic Auth access will be prompted
 
 ## Deploying client
 
 1.  Generate the `index.html` file from sensitive sources
 2.  Install dependencies (see above) and/or activate venv
-3.  Run `fab -eH root@zam.beta.gouv.fr deploy --source=path/to/output/`
+3.  Run `fab -eH root@zam-test.beta.gouv.fr deploy --source=path/to/output/`
 
 ## Deploying répondeur
 
-1.  Run `fab -eH root@zam.beta.gouv.fr deploy-repondeur --branch=master --secret=... --an-pattern-liste=... --an-pattern-amendement=...`
+1.  Run `fab -eH root@zam-test.beta.gouv.fr deploy-repondeur --branch=master --secret=... --an-pattern-liste=... --an-pattern-amendement=...`

@@ -1,11 +1,6 @@
 [pipeline:main]
 pipeline =
-    paste_prefix
     repondeur
-
-[filter:paste_prefix]
-use = egg:PasteDeploy#prefix
-prefix = /repondeur
 
 [app:repondeur]
 use = egg:zam_repondeur

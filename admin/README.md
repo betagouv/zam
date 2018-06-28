@@ -25,12 +25,6 @@
 2.  Run `fab -eH root@zam.beta.gouv.fr bootstrap`
 3.  Note that a password for Basic Auth access will be prompted
 
-## Deploying client
+## Deploying
 
-1.  Generate the `index.html` file from sensitive sources
-2.  Install dependencies (see above) and/or activate venv
-3.  Run `fab -eH root@zam.beta.gouv.fr deploy --source=path/to/output/`
-
-## Deploying répondeur
-
-1.  Run `fab -eH root@zam.beta.gouv.fr deploy-repondeur --branch=master --secret=... --an-pattern-liste=... --an-pattern-amendement=...`
+1.  Run `fab -eH root@zam.beta.gouv.fr deploy --branch=master --secret=... --an-pattern-liste=... --an-pattern-amendement=...`

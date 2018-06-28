@@ -1,10 +1,10 @@
-import bleach
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
 
+from zam_repondeur.clean import clean_html
 from zam_repondeur.models import (
     DBSession,
     Amendement as AmendementModel,
@@ -13,14 +13,6 @@ from zam_repondeur.models import (
     Lecture,
 )
 from zam_repondeur.models.visionneuse import build_tree
-
-
-ALLOWED_TAGS = ["p", "ul", "li", "b", "i", "strong", "em"]
-
-
-def clean_html(text: str) -> str:
-    cleaned: str = bleach.clean(text, strip=True, tags=ALLOWED_TAGS)
-    return cleaned
 
 
 @view_config(route_name="list_reponses", renderer="visionneuse.html")

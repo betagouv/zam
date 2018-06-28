@@ -1,3 +1,4 @@
+import bleach
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
 from pyramid.response import Response
@@ -12,6 +13,14 @@ from zam_repondeur.models import (
     Lecture,
 )
 from zam_repondeur.models.visionneuse import build_tree
+
+
+ALLOWED_TAGS = ["p", "ul", "li", "b", "i", "strong", "em"]
+
+
+def clean_html(text: str) -> str:
+    cleaned: str = bleach.clean(text, strip=True, tags=ALLOWED_TAGS)
+    return cleaned
 
 
 @view_config(route_name="list_reponses", renderer="visionneuse.html")
@@ -73,8 +82,8 @@ class ReponseEdit:
     @view_config(request_method="POST")
     def post(self) -> Response:
         self.amendement.avis = self.request.POST["avis"]
-        self.amendement.observations = self.request.POST["observations"]
-        self.amendement.reponse = self.request.POST["reponse"]
+        self.amendement.observations = clean_html(self.request.POST["observations"])
+        self.amendement.reponse = clean_html(self.request.POST["reponse"])
         return HTTPFound(
             location=self.request.route_url(
                 "list_amendements",

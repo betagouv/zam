@@ -40,7 +40,7 @@ def aspire_senat(session: str, num: int) -> Tuple[str, Iterable[Amendement]]:
 
 def aspire_an(
     legislature: int, texte: int, groups_folder: Path
-) -> Tuple[str, List[Amendement]]:
+) -> Tuple[str, List[Amendement], List[str]]:
     print("Récupération du titre et des amendements déposés...")
     try:
         title, amendements, errored = an.fetch_and_parse_all(
@@ -58,11 +58,17 @@ def main(argv: Optional[List[str]] = None) -> SystemStatus:
     if args.source == "senat":
         title, amendements = aspire_senat(session=args.session, num=args.texte)
     elif args.source == "an":
-        title, amendements = aspire_an(
+        if args.folder_groups is None:
+            print("Le paramètre --folder-groups est requis pour l'assemblée nationale")
+            return SystemStatus(1)
+
+        title, amendements, errored = aspire_an(
             legislature=int(args.session),
-            texte=args.texte,
+            texte=int(args.texte),
             groups_folder=Path(args.folder_groups),
         )
+        if errored:
+            print(f"Les amendements {', '.join(errored)} n’ont pu être récupérés.")
 
     if not amendements:
         print("Aucun amendement déposé pour l'instant!")

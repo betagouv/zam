@@ -1,5 +1,6 @@
 import base64
 from collections import OrderedDict
+from hashlib import sha256
 from typing import DefaultDict, List, Optional
 
 from dataclasses import dataclass, field
@@ -123,7 +124,9 @@ def build_tree(amendements: AmendementModel) -> OrderedDict:
                 # Avoid later regroup by same (inexisting) response.
                 reponse_pk = str(index)
             else:
-                reponse_pk = base64.b64encode(amendement.reponse.encode()).decode()
+                reponse_pk = base64.b64encode(
+                    sha256(amendement.reponse.encode()).digest()
+                ).decode()
             reponse = Reponse(  # type: ignore
                 pk=reponse_pk,
                 avis=amendement.avis,

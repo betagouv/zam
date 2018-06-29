@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from pyramid.threadlocal import get_current_registry
 from tlfp.tools.parse_texte import parse
@@ -30,6 +30,23 @@ def get_amendements(
         raise NotImplementedError
 
 
+def get_section_title(items: List[Dict[str, Any]], article: dict) -> str:
+    for item in items:
+        if article.get("section", False) == item.get("id"):
+            titre: str = item["titre"]
+            return titre
+    return ""
+
+
+def get_article_num_mult(article: Dict[str, Any]) -> Tuple[str, str]:
+    titre = article["titre"].replace("1er", "1")
+    if " " in titre:
+        num, mult = titre.split(" ", 1)
+        return num, mult
+    else:
+        return titre, ""
+
+
 def get_articles(lecture: Lecture) -> None:
     if lecture.chambre == "an":
         BASE_URL = "http://www.assemblee-nationale.fr/"
@@ -43,17 +60,8 @@ def get_articles(lecture: Lecture) -> None:
     items = parse(url)
     for article_content in items:
         if "alineas" in article_content and article_content["alineas"]:
-            titre = article_content["titre"].replace("1er", "1")
-            if " " in titre:
-                article_num, article_mult = titre.split(" ", 1)
-            else:
-                article_num, article_mult = titre, ""
-            section_titles = [
-                item["titre"]
-                for item in items
-                if article_content.get("section", False) == item.get("id")
-            ]
-            section_title = section_titles and section_titles[0] or ""
+            article_num, article_mult = get_article_num_mult(article_content)
+            section_title = get_section_title(items, article_content)
             DBSession.query(AmendementModel).filter(
                 AmendementModel.chambre == lecture.chambre,
                 AmendementModel.session == lecture.session,

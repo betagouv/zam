@@ -12,6 +12,7 @@ from sqlalchemy.sql.expression import case
 from zam_aspirateur.textes.dossiers_legislatifs import get_dossiers_legislatifs
 from zam_aspirateur.textes.models import Chambre
 
+from zam_repondeur.clean import clean_html
 from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.models import DBSession, Amendement, Lecture, CHAMBRES
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
@@ -199,12 +200,12 @@ class ListAmendements:
                 continue
 
             amendement.avis = normalize_avis(line["Avis du Gouvernement"])
-            amendement.observations = line["Objet (article / amdt)"]
+            amendement.observations = clean_html(line["Objet (article / amdt)"])
             reponse = normalize_reponse(
                 line["Avis et observations de l'administration référente"],
                 previous_reponse,
             )
-            amendement.reponse = reponse
+            amendement.reponse = clean_html(reponse)
             previous_reponse = reponse
             reponses_count += 1
 

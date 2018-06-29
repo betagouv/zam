@@ -4,6 +4,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
 
+from zam_repondeur.clean import clean_html
 from zam_repondeur.models import (
     DBSession,
     Amendement as AmendementModel,
@@ -73,8 +74,8 @@ class ReponseEdit:
     @view_config(request_method="POST")
     def post(self) -> Response:
         self.amendement.avis = self.request.POST["avis"]
-        self.amendement.observations = self.request.POST["observations"]
-        self.amendement.reponse = self.request.POST["reponse"]
+        self.amendement.observations = clean_html(self.request.POST["observations"])
+        self.amendement.reponse = clean_html(self.request.POST["reponse"])
         return HTTPFound(
             location=self.request.route_url(
                 "list_amendements",

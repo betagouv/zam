@@ -40,6 +40,11 @@ def test_post_form(app, dummy_lecture, dummy_amendements):
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.avis == "Défavorable"
     assert amendement.position == 1
+    assert "<strong>ipsum</strong>" in amendement.observations
+    assert "<blink>amet</blink>" not in amendement.observations
+
+    assert "<i>tempor</i>" in amendement.reponse
+    assert "<u>aliqua</u>" not in amendement.reponse
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
     assert amendement.observations.startswith("Lorem")

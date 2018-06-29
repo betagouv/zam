@@ -487,9 +487,9 @@
           </header>
           <div class="is-hidden">
             <div id="reponse-detail-{{ amendements[0].pk }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
-              <p><strong>{{ reponse.presentation }}</strong></p>
+              <p><strong>{{ reponse.presentation | safe }}</strong></p>
               {% if reponse.content %}
-                <p>{{ reponse.content }}</p>
+                <p>{{ reponse.content | safe }}</p>
               {% endif %}
               <p class="bottom">
                 <a href="#amendement-{{ amendements[0].pk }}">

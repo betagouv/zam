@@ -64,9 +64,9 @@
                         alert("Impossible de récupérer la liste des dossiers.\nMerci de réessayer plus tard !");
                     },
                     success: function(res) {
-                        for (let dossier of res.dossiers) {
-                            self.addOption(dossier);
-                        }
+                        res.dossiers.forEach(function(item) {
+                            self.addOption(item);
+                        })
                     }
                 });
             },
@@ -82,9 +82,9 @@
                         alert("Impossible de récupérer la liste des lectures.\nMerci de réessayer plus tard !");
                     },
                     success: function(res) {
-                        for (let uid in res.lectures) {
-                            selectLectures.selectize.addOption(res.lectures[uid]);
-                        }
+                        res.lectures.forEach(function(item) {
+                            selectLectures.selectize.addOption(item);
+                        })
                         selectLectures.selectize.refreshOptions();
                     }
                 });

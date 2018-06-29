@@ -1,0 +1,73 @@
+version: 2
+workflows:
+  version: 2
+  all:
+    jobs:
+      - aspirateur
+      - repondeur
+jobs:
+  aspirateur:
+    docker:
+      - image: circleci/python:3.6-stretch-browsers
+    steps:
+      - checkout
+      - run:
+          name: Install Python deps in a venv
+          command: |
+            cd aspirateur
+            python3 -m venv ~/venv-aspirateur
+            ~/venv-aspirateur/bin/pip install -r requirements.txt -r requirements-dev.txt
+            ~/venv-aspirateur/bin/pip install -e .
+      - run:
+          name: Check formatting with black
+          command: |
+            cd aspirateur
+             ~/venv-aspirateur/bin/black --check .
+      - run:
+          name: Check coding style with flake8
+          command: |
+            cd aspirateur
+             ~/venv-aspirateur/bin/flake8
+      - run:
+          name: Check type annotations with mypy
+          command: |
+            cd aspirateur
+             ~/venv-aspirateur/bin/mypy zam_aspirateur
+      - run:
+          name: Run tests
+          command: |
+            cd aspirateur
+             ~/venv-aspirateur/bin/pytest -vv
+  repondeur:
+    docker:
+      - image: circleci/python:3.6-stretch-browsers
+    steps:
+      - checkout
+      - run:
+          name: Install Python deps in a venv
+          command: |
+            sudo pip install pipenv==2018.05.18
+            cd repondeur
+            pipenv install --dev
+      - run:
+          name: Check formatting with black
+          command: |
+            cd repondeur
+            pipenv run black --check .
+      - run:
+          name: Check coding style with flake8
+          command: |
+            cd repondeur
+            pipenv run flake8
+      - run:
+          name: Check type annotations with mypy
+          command: |
+            cd repondeur
+            pipenv run mypy zam_repondeur
+      - run:
+          name: Run tests
+          command: |
+            cd repondeur
+            sudo sed --in-place '/fr_FR.UTF-8/s/^#//' /etc/locale.gen
+            sudo locale-gen fr_FR.UTF-8
+            pipenv run pytest -vv

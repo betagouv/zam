@@ -27,7 +27,6 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.add_route("home", "/")
         config.add_route("lectures_list", "/lectures/")
         config.add_route("lectures_add", "/lectures/add")
-        config.add_route("choices_dossiers", "/choices/dossiers/")
         config.add_route("choices_lectures", "/choices/dossiers/{uid}/")
 
         config.add_route(

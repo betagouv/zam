@@ -43,15 +43,13 @@ class LecturesAdd:
                 }
                 for dossier in self.dossiers_by_uid.values()
             }
-         }
+        }
 
     @view_config(request_method="POST")
     def post(self) -> Response:
         dossier_uid = self.request.POST["dossier"]
         dossier = self.dossiers_by_uid[dossier_uid]
-
-        lecture_index = int(self.request.POST["lecture"])
-        lecture = dossier.lectures[lecture_index]
+        lecture = dossier.lectures[texte_uid]
 
         chambre = lecture.chambre.value
         num_texte = lecture.texte.numero

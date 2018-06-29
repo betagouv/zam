@@ -14,7 +14,10 @@ def test_get_form(app):
     assert list(resp.form.fields.keys()) == ["dossier", "lecture", "submit"]
 
     assert isinstance(resp.form.fields["dossier"][0], Select)
-    assert resp.form.fields["dossier"][0].options == [("", True, "")]
+    assert resp.form.fields["dossier"][0].options == [
+        ("", True, ""),
+        ("DLR5L15N36030", False, "Sécurité sociale : loi de financement 2018"),
+    ]
 
     assert isinstance(resp.form.fields["lecture"][0], Select)
     assert resp.form.fields["lecture"][0].options == [("", True, "")]
@@ -66,22 +69,6 @@ def test_post_form_already_exists(app, dummy_lecture):
 
     assert resp.status_code == 200
     assert "Cette lecture existe déjà..." in resp.text
-
-
-def test_choices_dossiers(app):
-
-    resp = app.get("/choices/dossiers/")
-
-    assert resp.status_code == 200
-    assert resp.headers["content-type"] == "application/json"
-    assert resp.json == {
-        "dossiers": [
-            {
-                "titre": "Sécurité sociale : loi de financement 2018",
-                "uid": "DLR5L15N36030",
-            }
-        ]
-    }
 
 
 def test_choices_lectures(app):

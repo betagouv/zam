@@ -181,7 +181,10 @@ class ListAmendements:
         previous_reponse = ""
         reponses_count = 0
         errors_count = 0
-        for line in csv.DictReader(io.TextIOWrapper(reponses_file)):
+        reponses_text_file = io.TextIOWrapper(reponses_file)
+        dialect = csv.Sniffer().sniff(reponses_text_file.read(1024))
+        reponses_text_file.seek(0)
+        for line in csv.DictReader(reponses_text_file, delimiter=dialect.delimiter):
 
             try:
                 num = normalize_num(line["N°"])

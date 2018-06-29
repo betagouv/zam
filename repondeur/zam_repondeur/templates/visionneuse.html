@@ -439,7 +439,7 @@
               {% if reponse.presentation|length < 200 %}
                 <div class="presentation">
                   {% if reponse.presentation.startswith('<p>') %}
-                    {{ reponse.presentation }}
+                    {{ reponse.presentation|safe }}
                   {% else %}
                     <p>{{ reponse.presentation }}</p>
                   {% endif %}

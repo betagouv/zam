@@ -82,6 +82,22 @@ def test_post_form_semicolumns(app, dummy_lecture, dummy_amendements):
     assert amendement.position == 2
 
 
+def test_post_form_with_bom(app, dummy_lecture, dummy_amendements):
+    form = app.get("/lectures/an/15/269/amendements/list").form
+    path = Path(__file__).parent / "sample_data" / "reponses_with_bom.csv"
+    form["reponses"] = Upload("file.csv", path.read_bytes())
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/an/15/269/amendements/list"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "2 réponses chargées" in resp.text
+
+
 def test_post_form_reponse_no_file(app, dummy_lecture, dummy_amendements):
 
     form = app.get("/lectures/an/15/269/amendements/list").form

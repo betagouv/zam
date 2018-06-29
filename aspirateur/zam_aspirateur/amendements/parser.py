@@ -75,7 +75,7 @@ def parse_from_json(
             if amend["auteur"] != "LE GOUVERNEMENT"
             else None
         ),
-        sort=amend["sort"],
+        sort=amend.get("sort"),
         position=position,
         identique=parse_bool(amend["isIdentique"]),
         discussion_commune=(

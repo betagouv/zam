@@ -123,6 +123,47 @@ class TestParseAmendementFromJSON:
 
         assert amendement.identique is False
 
+    def test_parse_without_sort(self):
+        """
+        Happens with `Economie : lutte contre la fraude
+                      -> Sénat, session 2017-2018, texte nº 603.`
+        """
+        from zam_aspirateur.amendements.parser import parse_from_json
+
+        amend = {
+            "idAmendement": "1104289",
+            "posder": "1",
+            "subpos": "0",
+            "isSousAmendement": "false",
+            "idAmendementPere": "0",
+            "urlAmdt": "Amdt_230.html",
+            "typeAmdt": "Amt",
+            "num": "230 rect.",
+            "libelleAlinea": "Al. 2",
+            "urlAuteur": "pellevat_cyril14237s.html",
+            "auteur": "M. PELLEVAT",
+            "isDiscussionCommune": "false",
+            "isDiscussionCommuneIsolee": "false",
+            "isIdentique": "false",
+            "isAdopte": "false",
+            "isRejete": "true",
+        }
+        subdiv = {
+            "libelle_subdivision": "Article 1er - Annexe (Stratégie nationale d'orientation de l'action publique)",  # noqa
+            "isubdivision": "154182",
+            "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
+        }
+        amendement = parse_from_json(
+            amend, position=1, session="2017-2018", num_texte=63, subdiv=subdiv
+        )
+
+        assert amendement.subdiv_type == "article"
+        assert amendement.subdiv_num == "1"
+        assert amendement.subdiv_mult == ""
+        assert amendement.subdiv_pos == ""
+
+        assert amendement.sort is None
+
     def test_discussion_commune(self):
         from zam_aspirateur.amendements.parser import parse_from_json
 

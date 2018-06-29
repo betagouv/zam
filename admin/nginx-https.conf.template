@@ -4,21 +4,21 @@ upstream pyramid {
 
 server {
     listen 80 default_server;
-    server_name zam.beta.gouv.fr;
+    server_name $$host;
 
     include /etc/nginx/snippets/letsencrypt.conf;
 
-    return 301 https://zam.beta.gouv.fr$request_uri;
+    return 301 https://$$host$request_uri;
 }
 
 server {
     listen 443 ssl http2 default_server;
     listen [::]:443 ssl http2 default_server ipv6only=on;
-    server_name zam.beta.gouv.fr;
+    server_name $$host;
 
-    ssl_certificate /etc/letsencrypt/live/zam.beta.gouv.fr/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/zam.beta.gouv.fr/privkey.pem;
-    ssl_trusted_certificate /etc/letsencrypt/live/zam.beta.gouv.fr/fullchain.pem;
+    ssl_certificate /etc/letsencrypt/live/$$host/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/$$host/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/$$host/fullchain.pem;
     include /etc/nginx/snippets/ssl.conf;
 
     charset     utf-8;

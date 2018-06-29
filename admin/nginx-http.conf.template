@@ -1,6 +1,6 @@
 server {
     listen 80 default_server;
-    server_name zam.beta.gouv.fr;
+    server_name $$host;
 
     include /etc/nginx/snippets/letsencrypt.conf;
 }

@@ -66,3 +66,39 @@ def test_post_form_already_exists(app, dummy_lecture):
 
     assert resp.status_code == 200
     assert "Cette lecture existe déjà..." in resp.text
+
+
+def test_choices_dossiers(app):
+
+    resp = app.get("/choices/dossiers/")
+
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "application/json"
+    assert resp.json == {
+        "dossiers": [
+            {
+                "titre": "Sécurité sociale : loi de financement 2018",
+                "uid": "DLR5L15N36030",
+            }
+        ]
+    }
+
+
+def test_choices_lectures(app):
+
+    resp = app.get("/choices/dossiers/DLR5L15N36030/")
+
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "application/json"
+    assert resp.json == {
+        "lectures": [
+            {
+                "chambre": "an",
+                "dateDepot": "11/10/2017",
+                "label": "Assemblée nationale – 1ère lecture – Texte Nº 269",
+                "numero": 269,
+                "titre": "1ère lecture",
+                "uid": "PRJLANR5L15B0269",
+            }
+        ]
+    }

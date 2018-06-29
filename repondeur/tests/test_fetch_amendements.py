@@ -15,35 +15,38 @@ def test_fetch_amendements(app, dummy_lecture, dummy_amendements):
 
     # Update amendements
     with patch("zam_repondeur.views.lectures.get_amendements") as mock_get_amendements:
-        mock_get_amendements.return_value = [
-            Amendement(
-                chambre="an",
-                session="15",
-                num_texte=269,
-                subdiv_type="article",
-                subdiv_num="1",
-                num=666,
-                position=1,
-            ),
-            Amendement(
-                chambre="an",
-                session="15",
-                num_texte=269,
-                subdiv_type="article",
-                subdiv_num="1",
-                num=777,
-                position=2,
-            ),
-            Amendement(
-                chambre="an",
-                session="15",
-                num_texte=269,
-                subdiv_type="article",
-                subdiv_num="1",
-                num=999,
-                position=3,
-            ),
-        ], []
+        mock_get_amendements.return_value = (
+            [
+                Amendement(
+                    chambre="an",
+                    session="15",
+                    num_texte=269,
+                    subdiv_type="article",
+                    subdiv_num="1",
+                    num=666,
+                    position=1,
+                ),
+                Amendement(
+                    chambre="an",
+                    session="15",
+                    num_texte=269,
+                    subdiv_type="article",
+                    subdiv_num="1",
+                    num=777,
+                    position=2,
+                ),
+                Amendement(
+                    chambre="an",
+                    session="15",
+                    num_texte=269,
+                    subdiv_type="article",
+                    subdiv_num="1",
+                    num=999,
+                    position=3,
+                ),
+            ],
+            [],
+        )
 
         resp = app.post("/lectures/an/15/269/amendements/fetch")
 
@@ -70,17 +73,20 @@ def test_fetch_amendements_with_errored(app, dummy_lecture, dummy_amendements):
     from zam_repondeur.models import Amendement
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock_get_amendements:
-        mock_get_amendements.return_value = [
-            Amendement(
-                chambre="an",
-                session="15",
-                num_texte=269,
-                subdiv_type="article",
-                subdiv_num="1",
-                num=666,
-                position=1,
-            )
-        ], ["111", "222"]
+        mock_get_amendements.return_value = (
+            [
+                Amendement(
+                    chambre="an",
+                    session="15",
+                    num_texte=269,
+                    subdiv_type="article",
+                    subdiv_num="1",
+                    num=666,
+                    position=1,
+                )
+            ],
+            ["111", "222"],
+        )
 
         resp = app.post("/lectures/an/15/269/amendements/fetch")
 

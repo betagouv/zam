@@ -97,10 +97,7 @@ class LectureView:
     @view_config(renderer="lecture.html")
     def get(self) -> dict:
         amendements_count = self.amendements_query.count()
-        return {
-            "lecture": self.lecture,
-            "amendements_count": amendements_count,
-        }
+        return {"lecture": self.lecture, "amendements_count": amendements_count}
 
     @view_config(request_method="POST")
     def post(self) -> Response:

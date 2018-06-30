@@ -1,7 +1,7 @@
 import csv
 import io
 import logging
-from typing import BinaryIO, Dict, Iterable, Tuple
+from typing import BinaryIO, Dict, Iterable, TextIO, Tuple
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -181,10 +181,12 @@ class ListAmendements:
         previous_reponse = ""
         reponses_count = 0
         errors_count = 0
+
         reponses_text_file = io.TextIOWrapper(reponses_file, encoding="utf-8-sig")
-        dialect = csv.Sniffer().sniff(reponses_text_file.read(1024))
-        reponses_text_file.seek(0)
-        for line in csv.DictReader(reponses_text_file, delimiter=dialect.delimiter):
+
+        delimiter = ListAmendements._guess_csv_delimiter(reponses_text_file)
+
+        for line in csv.DictReader(reponses_text_file, delimiter=delimiter):
 
             try:
                 num = normalize_num(line["N°"])
@@ -210,6 +212,13 @@ class ListAmendements:
             reponses_count += 1
 
         return reponses_count, errors_count
+
+    @staticmethod
+    def _guess_csv_delimiter(text_file: TextIO) -> str:
+        sample = text_file.read(1024)
+        dialect = csv.Sniffer().sniff(sample)
+        text_file.seek(0)
+        return dialect.delimiter
 
 
 REPONSE_FIELDS = ["avis", "observations", "reponse"]

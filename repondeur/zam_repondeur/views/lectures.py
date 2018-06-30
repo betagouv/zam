@@ -181,16 +181,9 @@ class ListAmendements:
         previous_reponse = ""
         reponses_count = 0
         errors_count = 0
-        reponses_text_file = io.TextIOWrapper(reponses_file)
-        start = reponses_text_file.read(1024)
-        dialect = csv.Sniffer().sniff(start)
-        # The UTF-8 conversion via Notepad adds a Byte Order Mark,
-        # we need to get rid of it for appropriate first column naming (`N°`).
-        BOM = "\ufeff"
-        if start.startswith(BOM):
-            reponses_text_file.seek(len(BOM.encode("utf-8")))
-        else:
-            reponses_text_file.seek(0)
+        reponses_text_file = io.TextIOWrapper(reponses_file, encoding="utf-8-sig")
+        dialect = csv.Sniffer().sniff(reponses_text_file.read(1024))
+        reponses_text_file.seek(0)
         for line in csv.DictReader(reponses_text_file, delimiter=dialect.delimiter):
 
             try:

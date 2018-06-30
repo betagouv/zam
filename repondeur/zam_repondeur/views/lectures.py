@@ -228,14 +228,14 @@ class ListAmendements:
         try:
             sample = text_file.read(2048)
         except UnicodeDecodeError:
-            raise CSVError("Le fichier n'est pas un CSV, ou n'est pas encodé en UTF-8")
+            raise CSVError("Le fichier n’est pas un CSV, ou n’est pas encodé en UTF-8")
 
         try:
             dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
         except csv.Error:
             raise CSVError(
-                "Le fichier CSV n'utilise pas un délimiteur reconnu "
-                "(virgule, point-virgule, ou tabulation)"
+                "Le fichier CSV n’utilise pas un délimiteur reconnu "
+                "(virgule, point-virgule ou tabulation)"
             )
 
         text_file.seek(0)

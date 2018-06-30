@@ -1,7 +1,7 @@
 import csv
 import io
 import logging
-from typing import BinaryIO, Dict, Iterable, Tuple
+from typing import BinaryIO, Dict, Iterable, TextIO, Tuple
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -19,6 +19,10 @@ from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 
 CURRENT_LEGISLATURE = 15
+
+
+class CSVError(Exception):
+    pass
 
 
 @view_config(route_name="lectures_list", renderer="lectures_list.html")
@@ -147,19 +151,25 @@ class ListAmendements:
         # We cannot just do `if not POST["reponses"]`, as FieldStorage does not want
         # to be cast to a boolean...
         if self.request.POST["reponses"] != b"":
-            reponses_count, errors_count = self._import_reponses_from_csv_file(
-                reponses_file=self.request.POST["reponses"].file,
-                amendements={
-                    amendement.num: amendement for amendement in self.amendements
-                },
-            )
-            self.request.session.flash(
-                ("success", f"{reponses_count} réponses chargées avec succès")
-            )
-            if errors_count:
-                self.request.session.flash(
-                    ("warning", f"{errors_count} réponses n’ont pas pu être chargées")
+            try:
+                reponses_count, errors_count = self._import_reponses_from_csv_file(
+                    reponses_file=self.request.POST["reponses"].file,
+                    amendements={
+                        amendement.num: amendement for amendement in self.amendements
+                    },
                 )
+                self.request.session.flash(
+                    ("success", f"{reponses_count} réponses chargées avec succès")
+                )
+                if errors_count:
+                    self.request.session.flash(
+                        (
+                            "warning",
+                            f"{errors_count} réponses n’ont pas pu être chargées",
+                        )
+                    )
+            except CSVError as exc:
+                self.request.session.flash(("danger", str(exc)))
         else:
             self.request.session.flash(
                 ("warning", "Veuillez d’abord sélectionner un fichier")
@@ -181,10 +191,12 @@ class ListAmendements:
         previous_reponse = ""
         reponses_count = 0
         errors_count = 0
-        reponses_text_file = io.TextIOWrapper(reponses_file)
-        dialect = csv.Sniffer().sniff(reponses_text_file.read(1024))
-        reponses_text_file.seek(0)
-        for line in csv.DictReader(reponses_text_file, delimiter=dialect.delimiter):
+
+        reponses_text_file = io.TextIOWrapper(reponses_file, encoding="utf-8-sig")
+
+        delimiter = ListAmendements._guess_csv_delimiter(reponses_text_file)
+
+        for line in csv.DictReader(reponses_text_file, delimiter=delimiter):
 
             try:
                 num = normalize_num(line["N°"])
@@ -210,6 +222,25 @@ class ListAmendements:
             reponses_count += 1
 
         return reponses_count, errors_count
+
+    @staticmethod
+    def _guess_csv_delimiter(text_file: TextIO) -> str:
+        try:
+            sample = text_file.read(2048)
+        except UnicodeDecodeError:
+            raise CSVError("Le fichier n’est pas un CSV, ou n’est pas encodé en UTF-8")
+
+        try:
+            dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
+        except csv.Error:
+            raise CSVError(
+                "Le fichier CSV n’utilise pas un délimiteur reconnu "
+                "(virgule, point-virgule ou tabulation)"
+            )
+
+        text_file.seek(0)
+
+        return dialect.delimiter
 
 
 REPONSE_FIELDS = ["avis", "observations", "reponse"]

@@ -215,7 +215,7 @@ class ListAmendements:
 
     @staticmethod
     def _guess_csv_delimiter(text_file: TextIO) -> str:
-        sample = text_file.read(1024)
+        sample = text_file.read(2048)
         dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
         text_file.seek(0)
         return dialect.delimiter

@@ -21,6 +21,10 @@ from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 CURRENT_LEGISLATURE = 15
 
 
+class CSVError(Exception):
+    pass
+
+
 @view_config(route_name="lectures_list", renderer="lectures_list.html")
 def lectures_list(request: Request) -> dict:
     return {"lectures": Lecture.all()}
@@ -147,19 +151,25 @@ class ListAmendements:
         # We cannot just do `if not POST["reponses"]`, as FieldStorage does not want
         # to be cast to a boolean...
         if self.request.POST["reponses"] != b"":
-            reponses_count, errors_count = self._import_reponses_from_csv_file(
-                reponses_file=self.request.POST["reponses"].file,
-                amendements={
-                    amendement.num: amendement for amendement in self.amendements
-                },
-            )
-            self.request.session.flash(
-                ("success", f"{reponses_count} réponses chargées avec succès")
-            )
-            if errors_count:
-                self.request.session.flash(
-                    ("warning", f"{errors_count} réponses n’ont pas pu être chargées")
+            try:
+                reponses_count, errors_count = self._import_reponses_from_csv_file(
+                    reponses_file=self.request.POST["reponses"].file,
+                    amendements={
+                        amendement.num: amendement for amendement in self.amendements
+                    },
                 )
+                self.request.session.flash(
+                    ("success", f"{reponses_count} réponses chargées avec succès")
+                )
+                if errors_count:
+                    self.request.session.flash(
+                        (
+                            "warning",
+                            f"{errors_count} réponses n’ont pas pu être chargées",
+                        )
+                    )
+            except CSVError as exc:
+                self.request.session.flash(("danger", str(exc)))
         else:
             self.request.session.flash(
                 ("warning", "Veuillez d’abord sélectionner un fichier")
@@ -215,9 +225,21 @@ class ListAmendements:
 
     @staticmethod
     def _guess_csv_delimiter(text_file: TextIO) -> str:
-        sample = text_file.read(2048)
-        dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
+        try:
+            sample = text_file.read(2048)
+        except UnicodeDecodeError:
+            raise CSVError("Le fichier n'est pas un CSV, ou n'est pas encodé en UTF-8")
+
+        try:
+            dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
+        except csv.Error:
+            raise CSVError(
+                "Le fichier CSV n'utilise pas un délimiteur reconnu "
+                "(virgule, point-virgule, ou tabulation)"
+            )
+
         text_file.seek(0)
+
         return dialect.delimiter
 
 

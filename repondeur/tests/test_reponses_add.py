@@ -1,3 +1,4 @@
+import transaction
 from pathlib import Path
 
 from webtest import Upload
@@ -51,6 +52,31 @@ def test_post_form(app, dummy_lecture, dummy_amendements):
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
     assert amendement.observations.startswith("Lorem")
     assert amendement.position == 2
+
+
+def test_post_form_updates_modification_date(app, dummy_lecture, dummy_amendements):
+    from zam_repondeur.models import Lecture
+
+    with transaction.manager:
+        lecture = Lecture.get(
+            chambre=dummy_lecture[0],
+            session=dummy_lecture[1],
+            num_texte=dummy_lecture[2],
+        )
+        initial_modified_at = lecture.modified_at
+
+    form = app.get("/lectures/an/15/269/amendements/list").form
+    path = Path(__file__).parent / "sample_data" / "reponses.csv"
+    form["reponses"] = Upload("file.csv", path.read_bytes())
+    form.submit()
+
+    with transaction.manager:
+        lecture = Lecture.get(
+            chambre=dummy_lecture[0],
+            session=dummy_lecture[1],
+            num_texte=dummy_lecture[2],
+        )
+        assert lecture.modified_at != initial_modified_at
 
 
 def test_post_form_semicolumns(app, dummy_lecture, dummy_amendements):

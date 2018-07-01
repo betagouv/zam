@@ -26,6 +26,7 @@ class Lecture(Base):  # type: ignore
     organe = Column(Text, primary_key=True)
     titre = Column(Text)
     created_at = Column(DateTime)
+    modified_at = Column(DateTime)
 
     def __str__(self) -> str:
         return ", ".join(
@@ -129,6 +130,7 @@ class Lecture(Base):  # type: ignore
             titre=titre,
             organe=organe,
             created_at=now,
+            modified_at=now,
         )
         DBSession.add(lecture)
         return lecture

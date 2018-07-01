@@ -7,12 +7,7 @@ from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
 
 from zam_repondeur.clean import clean_html
-from zam_repondeur.models import (
-    DBSession,
-    Amendement as AmendementModel,
-    AVIS,
-    Lecture,
-)
+from zam_repondeur.models import DBSession, Amendement as AmendementModel, AVIS, Lecture
 from zam_repondeur.models.visionneuse import build_tree
 
 
@@ -43,7 +38,19 @@ def list_reponses(request: Request) -> Response:
         .all()
     )
     articles = build_tree(amendements)
-    return {"title": str(lecture), "articles": articles}
+    timestamp = (lecture.modified_at - datetime(1970, 1, 1)).total_seconds()
+    check_url = request.route_path(
+        "lecture_check",
+        chambre=lecture.chambre,
+        session=lecture.session,
+        num_texte=lecture.num_texte,
+    )
+    return {
+        "title": str(lecture),
+        "articles": articles,
+        "timestamp": timestamp,
+        "check_url": check_url,
+    }
 
 
 @view_defaults(route_name="reponse_edit", renderer="reponse_edit.html")

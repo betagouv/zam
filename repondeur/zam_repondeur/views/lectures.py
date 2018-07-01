@@ -380,3 +380,16 @@ def fetch_articles(request: Request) -> Response:
             organe=lecture.organe,
         )
     )
+
+
+@view_config(route_name="lecture_check", renderer="json")
+def lecture_check(request: Request) -> dict:
+    lecture = Lecture.get(
+        chambre=request.matchdict["chambre"],
+        session=request.matchdict["session"],
+        num_texte=int(request.matchdict["num_texte"]),
+    )
+    if lecture is None:
+        raise HTTPNotFound
+
+    return {"modified_at": (lecture.modified_at - datetime(1970, 1, 1)).total_seconds()}

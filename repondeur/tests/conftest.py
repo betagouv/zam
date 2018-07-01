@@ -160,17 +160,16 @@ def app(wsgi_app):
 
 @pytest.fixture
 def dummy_lecture(app):
-    from zam_repondeur.models import DBSession, Lecture
+    from zam_repondeur.models import Lecture
 
     with transaction.manager:
-        lecture = Lecture(
+        lecture = Lecture.create(
             chambre="an",
             session="15",
             num_texte=269,
             titre="Titre lecture",
             organe="PO717460",
         )
-        DBSession.add(lecture)
 
     return lecture
 

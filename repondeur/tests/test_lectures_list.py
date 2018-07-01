@@ -42,3 +42,32 @@ def test_get_list_not_empty(app, dummy_lecture, dummy_lecture_commission):
         "Assemblée nationale, 15e législature, Séance publique, texte nº 269",
     ]
     assert links[0].attributes["href"] != links[1].attributes["href"]
+
+
+def test_get_list_reverse_datetime_order(app, dummy_lecture):
+    from zam_repondeur.models import DBSession, Lecture
+
+    with transaction.manager:
+        lecture = Lecture.get(
+            chambre=dummy_lecture[0],
+            session=dummy_lecture[1],
+            num_texte=dummy_lecture[2],
+        )
+        title = str(lecture)
+        lecture2 = Lecture.create(
+            chambre=dummy_lecture[0],
+            session=dummy_lecture[1],
+            num_texte=dummy_lecture[2] + 1,
+            titre="Titre lecture 2",
+        )
+        title2 = str(lecture2)
+        DBSession.add(lecture2)
+
+    resp = app.get("/lectures/")
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+    assert title in resp.text
+    assert title2 in resp.text
+    assert resp.parser.css("tbody a")[0].text() == title2
+    assert resp.parser.css("tbody a")[1].text() == title

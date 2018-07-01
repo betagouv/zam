@@ -74,6 +74,11 @@ class Lecture(Base):  # type: ignore
         )
 
     @property
+    def modified_at_timestamp(self) -> float:
+        timestamp: float = (self.modified_at - datetime(1970, 1, 1)).total_seconds()
+        return timestamp
+
+    @property
     def displayable(self) -> bool:
         query = DBSession.query(Amendement).filter(
             Amendement.chambre == self.chambre,

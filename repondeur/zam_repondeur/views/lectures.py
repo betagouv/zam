@@ -392,4 +392,4 @@ def lecture_check(request: Request) -> dict:
     if lecture is None:
         raise HTTPNotFound
 
-    return {"modified_at": (lecture.modified_at - datetime(1970, 1, 1)).total_seconds()}
+    return {"modified_at": lecture.modified_at_timestamp}

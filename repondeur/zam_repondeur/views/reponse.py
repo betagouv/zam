@@ -38,7 +38,6 @@ def list_reponses(request: Request) -> Response:
         .all()
     )
     articles = build_tree(amendements)
-    timestamp = (lecture.modified_at - datetime(1970, 1, 1)).total_seconds()
     check_url = request.route_path(
         "lecture_check",
         chambre=lecture.chambre,
@@ -48,7 +47,7 @@ def list_reponses(request: Request) -> Response:
     return {
         "title": str(lecture),
         "articles": articles,
-        "timestamp": timestamp,
+        "timestamp": lecture.modified_at_timestamp,
         "check_url": check_url,
     }
 

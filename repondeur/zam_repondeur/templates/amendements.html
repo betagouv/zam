@@ -8,6 +8,18 @@
     .action i {
         margin-right: 0.33rem;
     }
+    th::after {
+        content: " ⇵";
+    }
+    th[data-order="asc"]::after {
+        content: " ↓";
+    }
+    th[data-order="desc"]::after {
+        content: " ↑";
+    }
+    th.nosort::after {
+        content: "";
+    }
 </style>
 {% endblock %}
 
@@ -21,7 +33,6 @@
 
 {% block body %}
     <h2>{{ lecture }}</h2>
-
 
     <form action="" enctype="multipart/form-data" method="post">
         <div class="form-row align-items-center">
@@ -44,7 +55,7 @@
                 <th>Groupe</th>
                 <th>Sort</th>
                 <th>Avis</th>
-                <th>Actions</th>
+                <th class="nosort">Actions</th>
             </tr>
         </thead>
         {% for amendement in amendements %}
@@ -79,5 +90,29 @@
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
 
+{% block scripts %}
+<script src="{{ request.static_url('zam_repondeur:static/tinysort/tinysort.min.js') }}"></script>
+<script type="text/javascript">
+    var table = document.querySelector('table')
+    var tableHead = table.querySelector('thead')
+    var tableHeaders = tableHead.querySelectorAll('th')
+    var tableBody = table.querySelector('tbody')
+    tableHead.addEventListener('click', function (e) {
+        var tableHeader = e.target
+        if (tableHeader.classList.contains("nosort"))
+            return
+        var tableHeaderIndex = Array.prototype.indexOf.call(tableHeaders, tableHeader)
+        var isAscending = tableHeader.getAttribute('data-order') === 'asc'
+        var order = isAscending ? 'desc' : 'asc'
+        tableHeader.setAttribute('data-order', order)
+        tinysort(
+            tableBody.querySelectorAll('tr'), {
+                selector:'td:nth-child(' + (tableHeaderIndex + 1) + ')',
+                order: order
+            }
+        )
+    })
+</script>
 {% endblock %}

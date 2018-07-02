@@ -625,7 +625,9 @@
       document.querySelector('[role="status"]').innerHTML = message
     }
     function check () {
-      fetch('{{ check_url }}')
+      const request = new Request('{{ check_url }}')
+      request.credentials = 'include'
+      fetch(request)
         .then(reponse => reponse.json())
         .then(json => {
           if (json.modified_at !== timestamp)

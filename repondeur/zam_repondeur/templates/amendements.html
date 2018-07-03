@@ -69,7 +69,7 @@
             {%- else -%}
                 {{ amendement.subdiv_type }}
             {%- endif -%}">
-                <td>
+                <td data-sortkey="{{ amendement.subdiv_num }}">
                     {{ amendement.subdiv_pos }}
                     {% if amendement.subdiv_type == 'article' %}
                         Art.
@@ -79,7 +79,7 @@
                     {{ amendement.subdiv_num }}
                     {{ amendement.subdiv_mult }}
                 </td>
-                <td>
+                <td data-sortkey="{{ amendement.num }}">
                     {{ amendement.num_disp }}
                 </td>
                 <td>{{ amendement.auteur }}</td>
@@ -117,10 +117,14 @@
         var isAscending = tableHeader.getAttribute('data-order') === 'asc'
         var order = isAscending ? 'desc' : 'asc'
         tableHeader.setAttribute('data-order', order)
-        tinysort(tableLines, {
+        var options = {
             selector:'td:nth-child(' + (tableHeaderIndex + 1) + ')',
-            order: order
-        })
+            order: order,
+        }
+        if (tableHeaderIndex < 2) {
+            options['data'] = 'sortkey'
+        }
+        tinysort(tableLines, options)
     })
     var filterInput = table.querySelector('input')
     filterInput.addEventListener('keyup', function (e) {

@@ -288,3 +288,71 @@ def test_reponses_with_annexes(app, dummy_lecture, dummy_amendements):
     assert len(parser.css(".titles")) == 2
     assert parser.css(".titles h2")[0].text() == "Article 1"
     assert parser.css(".titles h2")[1].text() == "Annexes"
+
+
+def test_reponses_article_additionnel_avant(app, dummy_lecture, dummy_amendements):
+    from zam_repondeur.models import Amendement, DBSession, Lecture
+
+    with transaction.manager:
+        lecture = Lecture.get(
+            chambre=dummy_lecture[0],
+            session=dummy_lecture[1],
+            num_texte=dummy_lecture[2],
+        )
+        amendements = DBSession.query(Amendement).filter(
+            Amendement.chambre == lecture.chambre,
+            Amendement.session == lecture.session,
+            Amendement.num_texte == lecture.num_texte,
+        )
+        for amendement in amendements:
+            amendement.avis = "Favorable"
+            amendement.observations = f"Observations pour {amendement.num}"
+            amendement.reponse = f"Réponse pour {amendement.num}"
+
+        amendements[0].subdiv_pos = "avant"
+
+    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    assert resp.status_code == 200
+    parser = HTMLParser(resp.text)
+
+    assert [section.attributes["id"] for section in parser.tags("section")] == [
+        "article-add-av-1",
+        "article-1",
+    ]
+
+    article_titles = [item.text() for item in parser.css(".titles h2")]
+    assert article_titles == ["Article add. av. 1", "Article 1"]
+
+
+def test_reponses_article_additionnel_après(app, dummy_lecture, dummy_amendements):
+    from zam_repondeur.models import Amendement, DBSession, Lecture
+
+    with transaction.manager:
+        lecture = Lecture.get(
+            chambre=dummy_lecture[0],
+            session=dummy_lecture[1],
+            num_texte=dummy_lecture[2],
+        )
+        amendements = DBSession.query(Amendement).filter(
+            Amendement.chambre == lecture.chambre,
+            Amendement.session == lecture.session,
+            Amendement.num_texte == lecture.num_texte,
+        )
+        for amendement in amendements:
+            amendement.avis = "Favorable"
+            amendement.observations = f"Observations pour {amendement.num}"
+            amendement.reponse = f"Réponse pour {amendement.num}"
+
+        amendements[1].subdiv_pos = "après"
+
+    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    assert resp.status_code == 200
+    parser = HTMLParser(resp.text)
+
+    assert [section.attributes["id"] for section in parser.tags("section")] == [
+        "article-1",
+        "article-add-ap-1",
+    ]
+
+    titles = [item.text() for item in parser.css(".titles h2")]
+    assert titles == ["Article 1", "Article add. ap. 1"]

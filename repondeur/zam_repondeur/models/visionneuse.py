@@ -89,17 +89,19 @@ class Article:
 
     def __str__(self) -> str:
         if self.etat:
-            return f"{self.id} {self.etat} {self.multiplicatif}".strip()
+            return f"add. {self.etat}. {self.id} {self.multiplicatif}".strip()
         return f"{self.id} {self.multiplicatif}".strip()
 
     @property
     def slug(self) -> str:
-        return f'article-{str(self).replace(" ", "-")}'
+        return f'article-{str(self).replace(" ", "-").replace(".", "")}'
 
 
 class Articles(OrderedDict):
     def get_or_create(self, amendement: AmendementModel) -> Article:
         pk = f"{amendement.subdiv_num}-{amendement.subdiv_mult}"
+        if amendement.subdiv_pos:
+            pk += f"-{amendement.subdiv_pos}"
         if pk in self:
             article: Article = self[pk]
         else:
@@ -108,6 +110,7 @@ class Articles(OrderedDict):
                 id=amendement.subdiv_num,
                 titre=amendement.subdiv_titre,
                 multiplicatif=amendement.subdiv_mult,
+                etat=amendement.subdiv_pos[:2],
                 type_=amendement.subdiv_type,
                 alineas=amendement.subdiv_contenu,
             )

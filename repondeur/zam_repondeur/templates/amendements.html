@@ -8,6 +8,23 @@
     .action i {
         margin-right: 0.33rem;
     }
+    th::after {
+        content: " ⇵";
+    }
+    th[data-order="asc"]::after {
+        content: " ↓";
+    }
+    th[data-order="desc"]::after {
+        content: " ↑";
+    }
+    th.nosort::after {
+        content: "";
+    }
+    th input.form-control {
+        display: inline;
+        width: 4rem;
+        padding: 0 .25rem;
+    }
 </style>
 {% endblock %}
 
@@ -21,7 +38,6 @@
 
 {% block body %}
     <h2>{{ lecture }}</h2>
-
 
     <form action="" enctype="multipart/form-data" method="post">
         <div class="form-row align-items-center">
@@ -38,18 +54,22 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Article</th>
+                <th>Article <input class="form-control form-control-sm" type="text"></th>
                 <th>Nº</th>
                 <th>Auteur</th>
                 <th>Groupe</th>
                 <th>Sort</th>
                 <th>Avis</th>
-                <th>Actions</th>
+                <th class="nosort">Actions</th>
             </tr>
         </thead>
         {% for amendement in amendements %}
-            <tr>
-                <td>
+            <tr data-value="{%- if amendement.subdiv_type == 'article' -%}
+                {{ amendement.subdiv_num }} {{ amendement.subdiv_mult }}
+            {%- else -%}
+                {{ amendement.subdiv_type }}
+            {%- endif -%}">
+                <td data-sortkey="{{ amendement.subdiv_num }}">
                     {{ amendement.subdiv_pos }}
                     {% if amendement.subdiv_type == 'article' %}
                         Art.
@@ -59,7 +79,7 @@
                     {{ amendement.subdiv_num }}
                     {{ amendement.subdiv_mult }}
                 </td>
-                <td>
+                <td data-sortkey="{{ amendement.num }}">
                     {{ amendement.num_disp }}
                 </td>
                 <td>{{ amendement.auteur }}</td>
@@ -79,5 +99,47 @@
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
 
+{% block scripts %}
+<script src="{{ request.static_url('zam_repondeur:static/tinysort/tinysort.min.js') }}"></script>
+<script type="text/javascript">
+    var table = document.querySelector('table')
+    var tableHead = table.querySelector('thead')
+    var tableHeaders = tableHead.querySelectorAll('th')
+    var tableBody = table.querySelector('tbody')
+    var tableLines = tableBody.querySelectorAll('tr')
+    tableHead.addEventListener('click', function (e) {
+        var tableHeader = e.target
+        if (tableHeader.classList.contains("nosort") || tableHeader.nodeName === 'INPUT')
+            return
+        var tableHeaderIndex = Array.prototype.indexOf.call(tableHeaders, tableHeader)
+        var isAscending = tableHeader.getAttribute('data-order') === 'asc'
+        var order = isAscending ? 'desc' : 'asc'
+        tableHeader.setAttribute('data-order', order)
+        var options = {
+            selector:'td:nth-child(' + (tableHeaderIndex + 1) + ')',
+            order: order,
+        }
+        if (tableHeaderIndex < 2) {
+            options['data'] = 'sortkey'
+        }
+        tinysort(tableLines, options)
+    })
+    var filterInput = table.querySelector('input')
+    filterInput.addEventListener('keyup', function (e) {
+        var value = e.target.value.trim()
+        ;[].slice.call(tableLines).forEach(function (line) {
+            if (!value) {
+                line.classList.remove("d-none")
+                return
+            }
+            if (line.dataset.value.trim() === value) {
+                line.classList.remove("d-none")
+            } else {
+                line.classList.add("d-none")
+            }
+        })
+    })
+</script>
 {% endblock %}

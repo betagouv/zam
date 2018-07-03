@@ -100,13 +100,13 @@ SUBDIV_RE = re.compile(
             (
                 art\.\sadd\.
                 |
-                Article\(s\)\sadditionnel\(s\)
+                Article(?:\(s\))?\sadditionnel(?:\(s\))?
             )
             \s
             (?P<pos>(avant|après))
             \s
         )?  # position
-        (?:article\s)+
+        (?:(?:l')?article\s)+
         (?P<num>\d+|1er|premier)
         (?:\s(?P<mult>\w+))?        # bis, ter, etc.
         (?:\s.*)?                   # junk

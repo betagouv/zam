@@ -3,7 +3,7 @@ import io
 import logging
 from typing import BinaryIO, Dict, Iterable, TextIO, Tuple
 
-from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
@@ -11,10 +11,11 @@ from sqlalchemy.sql.expression import case
 
 from zam_aspirateur.textes.dossiers_legislatifs import get_dossiers_legislatifs
 from zam_aspirateur.textes.models import Chambre
+from zam_aspirateur.textes.organes import get_organes
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.fetch import get_articles, get_amendements
-from zam_repondeur.models import DBSession, Amendement, Lecture, CHAMBRES
+from zam_repondeur.models import DBSession, Amendement, Lecture
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 
@@ -61,6 +62,7 @@ class LecturesAdd:
         chambre = lecture.chambre.value
         num_texte = lecture.texte.numero
         titre = lecture.titre
+        organe = lecture.organe
 
         # FIXME: use date_depot to find the right session?
         if lecture.chambre == Chambre.AN:
@@ -71,7 +73,7 @@ class LecturesAdd:
         if Lecture.exists(chambre, session, num_texte):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
         else:
-            Lecture.create(chambre, session, num_texte, titre)
+            Lecture.create(chambre, session, num_texte, titre, organe)
             self.request.session.flash(("success", "Lecture créée avec succès."))
 
         return HTTPFound(
@@ -248,14 +250,22 @@ REPONSE_FIELDS = ["avis", "observations", "reponse"]
 
 @view_config(route_name="fetch_amendements")
 def fetch_amendements(request: Request) -> Response:
-    chambre = request.matchdict["chambre"]
-    session = request.matchdict["session"]
-    num_texte = int(request.matchdict["num_texte"])
+    lecture = Lecture.get(
+        chambre=request.matchdict["chambre"],
+        session=request.matchdict["session"],
+        num_texte=int(request.matchdict["num_texte"]),
+    )
+    if lecture is None:
+        raise HTTPNotFound
 
-    if chambre not in CHAMBRES:
-        return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
+    organes = get_organes(legislature=CURRENT_LEGISLATURE)
 
-    amendements, errored = get_amendements(chambre, session, num_texte)
+    amendements, errored = get_amendements(
+        chambre=lecture.chambre,
+        session=lecture.session,
+        texte=lecture.num_texte,
+        organe=organes[lecture.organe]["libelleAbrev"],
+    )
 
     if errored:
         request.session.flash(
@@ -274,7 +284,10 @@ def fetch_amendements(request: Request) -> Response:
 
     return HTTPFound(
         location=request.route_url(
-            "lecture", chambre=chambre, session=session, num_texte=num_texte
+            "lecture",
+            chambre=lecture.chambre,
+            session=lecture.session,
+            num_texte=lecture.num_texte,
         )
     )
 

@@ -20,6 +20,7 @@ class Lecture(Base):  # type: ignore
     session = Column(Text, primary_key=True)
     num_texte = Column(Integer, primary_key=True)
     titre = Column(Text)
+    organe = Column(Text)
 
     @property
     def chambre_disp(self) -> str:
@@ -81,10 +82,14 @@ class Lecture(Base):  # type: ignore
 
     @classmethod
     def create(
-        cls, chambre: str, session: str, num_texte: int, titre: str
+        cls, chambre: str, session: str, num_texte: int, titre: str, organe: str
     ) -> "Lecture":
         lecture = cls(
-            chambre=chambre, session=session, num_texte=num_texte, titre=titre
+            chambre=chambre,
+            session=session,
+            num_texte=num_texte,
+            titre=titre,
+            organe=organe,
         )
         DBSession.add(lecture)
         return lecture

@@ -17,18 +17,18 @@ BASE_URL = "http://www.assemblee-nationale.fr"
 
 # Deprecation warning: this API for fetching amendements will be removed in the future
 # and has no Service Level Agreement (SLA)
-PATTERN_LISTE = "/{legislature}/amendements/{texte}/AN/liste.xml"
-PATTERN_AMENDEMENT = "/{legislature}/xml/amendements/{texte}/AN/{numero}.xml"
+PATTERN_LISTE = "/{legislature}/amendements/{texte}/{organe}/liste.xml"
+PATTERN_AMENDEMENT = "/{legislature}/xml/amendements/{texte}/{organe}/{numero}.xml"
 
 
-def build_url(legislature: int, texte: int, numero: int = 0) -> str:
+def build_url(legislature: int, texte: int, numero: int = 0, organe: str = "AN") -> str:
     if numero:
         path = PATTERN_AMENDEMENT.format(
-            legislature=legislature, texte=f"{texte:04}", numero=numero
+            legislature=legislature, texte=f"{texte:04}", organe=organe, numero=numero
         )
     else:
         path = PATTERN_LISTE.format(
-            legislature=legislature, texte=f"{texte:04}"
+            legislature=legislature, texte=f"{texte:04}", organe=organe
         )
     url: str = urljoin(BASE_URL, path)
     return url
@@ -64,12 +64,17 @@ def unjustify(content: str) -> str:
 
 
 def fetch_amendement(
-    legislature: int, texte: int, numero: int, groups_folder: Path, position: int
+    legislature: int,
+    texte: int,
+    numero: int,
+    organe: str,
+    groups_folder: Path,
+    position: int,
 ) -> Amendement:
     """
     Récupère un amendement depuis son numéro.
     """
-    url = build_url(legislature, texte, numero)
+    url = build_url(legislature=legislature, texte=texte, numero=numero, organe=organe)
 
     resp = cached_session.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
@@ -108,11 +113,13 @@ def parse_division(division: dict) -> SubDiv:
     return subdiv
 
 
-def fetch_amendements(legislature: int, texte: int) -> Tuple[str, List[OrderedDict]]:
+def fetch_amendements(
+    legislature: int, texte: int, organe: str
+) -> Tuple[str, List[OrderedDict]]:
     """
     Récupère la liste des références aux amendements, dans l'ordre de dépôt.
     """
-    url = build_url(legislature, texte)
+    url = build_url(legislature=legislature, texte=texte, organe=organe)
 
     resp = cached_session.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
@@ -125,16 +132,21 @@ def fetch_amendements(legislature: int, texte: int) -> Tuple[str, List[OrderedDi
 
 
 def fetch_and_parse_all(
-    legislature: int, texte: int, groups_folder: Path
+    legislature: int, texte: int, organe: str, groups_folder: Path
 ) -> Tuple[str, List[Amendement], List[str]]:
-    title, amendements_raw = fetch_amendements(legislature, texte)
+    title, amendements_raw = fetch_amendements(legislature, texte, organe)
     amendements = []
     index = 1
     errored = []
     for item in amendements_raw:
         try:
             amendement = fetch_amendement(
-                legislature, texte, item["@numero"], groups_folder, position=index
+                legislature=legislature,
+                texte=texte,
+                numero=item["@numero"],
+                organe=organe,
+                groups_folder=groups_folder,
+                position=index,
             )
         except NotFound:
             errored.append(item["@numero"])

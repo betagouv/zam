@@ -39,12 +39,15 @@ def aspire_senat(session: str, num: int) -> Tuple[str, Iterable[Amendement]]:
 
 
 def aspire_an(
-    legislature: int, texte: int, groups_folder: Path
+    legislature: int, texte: int, organe: str, groups_folder: Path
 ) -> Tuple[str, List[Amendement], List[str]]:
     print("Récupération du titre et des amendements déposés...")
     try:
         title, amendements, errored = an.fetch_and_parse_all(
-            legislature, texte, groups_folder
+            legislature=legislature,
+            texte=texte,
+            organe=organe,
+            groups_folder=groups_folder,
         )
     except an.NotFound:
         return "", [], []
@@ -65,6 +68,7 @@ def main(argv: Optional[List[str]] = None) -> SystemStatus:
         title, amendements, errored = aspire_an(
             legislature=int(args.session),
             texte=int(args.texte),
+            organe=args.organe,
             groups_folder=Path(args.folder_groups),
         )
         if errored:
@@ -104,6 +108,11 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         default="senat",
         choices=["senat", "an"],
         help="institution fournissant les données",
+    )
+    parser.add_argument(
+        "--organe",
+        default="AN",
+        help="organe examinant le texte (pour l'Assemblée nationale)",
     )
     parser.add_argument(
         "--output-format",

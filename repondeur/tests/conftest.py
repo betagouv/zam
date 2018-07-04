@@ -31,7 +31,11 @@ def dummy_lecture(app):
 
     with transaction.manager:
         lecture = Lecture(
-            chambre=chambre, session=session, num_texte=num_texte, titre=titre
+            chambre=chambre,
+            session=session,
+            num_texte=num_texte,
+            titre=titre,
+            organe="PO717460",
         )
         DBSession.add(lecture)
 

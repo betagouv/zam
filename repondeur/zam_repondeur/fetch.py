@@ -12,7 +12,7 @@ from zam_repondeur.models import DBSession, Amendement as AmendementModel, Lectu
 
 
 def get_amendements(
-    chambre: str, session: str, texte: int
+    chambre: str, session: str, texte: int, organe: str
 ) -> Tuple[List[Amendement], List[str]]:
     title: str
     amendements: List[Amendement]
@@ -24,6 +24,7 @@ def get_amendements(
         title, amendements, errored = aspire_an(
             legislature=int(session),
             texte=texte,
+            organe=organe,
             groups_folder=Path(settings["zam.an_groups_folder"]),
         )
         return amendements, errored

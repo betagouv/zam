@@ -51,6 +51,7 @@ class Lecture:
     chambre: Chambre
     titre: str
     texte: Texte
+    organe: str
 
 
 @dataclass

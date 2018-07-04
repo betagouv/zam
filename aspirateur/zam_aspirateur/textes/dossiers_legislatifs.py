@@ -129,7 +129,9 @@ def gen_lectures(acte: dict, textes: Dict[str, Texte]) -> Iterator[Lecture]:
         assert result.texte is not None
         texte = textes[result.texte]
 
-        yield Lecture(chambre=chambre, titre=titre, texte=texte)  # type: ignore
+        yield Lecture(  # type: ignore
+            chambre=chambre, titre=titre, texte=texte, organe=result.organe
+        )
 
 
 class WalkResult(NamedTuple):

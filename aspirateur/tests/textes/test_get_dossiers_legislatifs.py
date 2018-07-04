@@ -66,6 +66,7 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
                     titre_court="PLFSS pour 2018",
                     date_depot=datetime.date(2017, 10, 11),
                 ),
+                organe="PO717460",
             ),
             "PRJLSNR5S299B0063": Lecture(
                 chambre=Chambre.SENAT,
@@ -78,6 +79,7 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
                     titre_court="PLFSS pour 2018",
                     date_depot=datetime.date(2017, 11, 6),
                 ),
+                organe="PO78718",
             ),
             "PRJLANR5L15B0387": Lecture(
                 chambre=Chambre.AN,
@@ -90,6 +92,7 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
                     titre_court="PLFSS pour 2018",
                     date_depot=datetime.date(2017, 11, 21),
                 ),
+                organe="PO717460",
             ),
             "PRJLSNR5S299B0121": Lecture(
                 chambre=Chambre.SENAT,
@@ -102,6 +105,7 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
                     titre_court="PLFSS pour 2018",
                     date_depot=datetime.date(2017, 11, 30),
                 ),
+                organe="PO78718",
             ),
             "PRJLANR5L15B0434": Lecture(
                 chambre=Chambre.AN,
@@ -114,6 +118,7 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
                     titre_court="PLFSS pour 2018",
                     date_depot=datetime.date(2017, 12, 1),
                 ),
+                organe="PO717460",
             ),
         },
     )
@@ -146,6 +151,7 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                     titre_court="Etat service société de confiance",
                     date_depot=datetime.date(2017, 11, 27),
                 ),
+                organe="PO744107",
             ),
             "PRJLANR5L15BTC0575": Lecture(
                 chambre=Chambre.AN,
@@ -158,6 +164,7 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                     titre_court="Etat service société de confiance",
                     date_depot=datetime.date(2018, 1, 18),
                 ),
+                organe="PO717460",
             ),
             "PRJLSNR5S299B0259": Lecture(
                 chambre=Chambre.SENAT,
@@ -170,6 +177,7 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                     titre_court="État au service d'une société de confiance",
                     date_depot=datetime.date(2018, 1, 31),
                 ),
+                organe="PO748821",
             ),
             "PRJLSNR5S299BTC0330": Lecture(
                 chambre=Chambre.SENAT,
@@ -182,6 +190,7 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                     titre_court="État au service d'une société de confiance",
                     date_depot=datetime.date(2018, 2, 22),
                 ),
+                organe="PO78718",
             ),
             "PRJLANR5L15B0806": Lecture(
                 chambre=Chambre.AN,
@@ -194,6 +203,7 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                     titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
                     date_depot=datetime.date(2018, 3, 21),
                 ),
+                organe="PO744107",
             ),
             "PRJLANR5L15BTC1056": Lecture(
                 chambre=Chambre.AN,
@@ -206,6 +216,7 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                     titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
                     date_depot=datetime.date(2018, 6, 13),
                 ),
+                organe="PO717460",
             ),
         },
     )
@@ -241,6 +252,7 @@ def test_gen_lectures(dossier_essoc, textes):
                 titre_court="Etat service société de confiance",
                 date_depot=datetime.date(2017, 11, 27),
             ),
+            organe="PO744107",
         ),
         Lecture(
             chambre=Chambre.AN,
@@ -253,6 +265,7 @@ def test_gen_lectures(dossier_essoc, textes):
                 titre_court="Etat service société de confiance",
                 date_depot=datetime.date(2018, 1, 18),
             ),
+            organe="PO717460",
         ),
     ]
 

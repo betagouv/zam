@@ -11,7 +11,11 @@ class TestGetPossibleUrls:
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
-            chambre="an", session="15", num_texte=269, titre="Titre lecture"
+            chambre="an",
+            session="15",
+            num_texte=269,
+            titre="Titre lecture",
+            organe="PO420120",
         )
         assert get_possible_texte_urls(lecture) == [
             "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
@@ -23,7 +27,11 @@ class TestGetPossibleUrls:
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
-            chambre="senat", session="2017-2018", num_texte=63, titre="Titre lecture"
+            chambre="senat",
+            session="2017-2018",
+            num_texte=63,
+            titre="Titre lecture",
+            organe="PO78718",
         )
         assert get_possible_texte_urls(lecture) == [
             "https://www.senat.fr/leg/pjl17-063.html"

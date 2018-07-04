@@ -258,10 +258,10 @@ def test_gen_lectures(dossier_essoc, textes):
 
 
 def test_walk_actes(dossier_essoc, textes):
-    from zam_aspirateur.textes.dossiers_legislatifs import walk_actes
+    from zam_aspirateur.textes.dossiers_legislatifs import walk_actes, WalkResult
 
     acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
     assert list(walk_actes(acte)) == [
-        ("COM-FOND", "PRJLANR5L15B0424"),
-        ("DEBATS", "PRJLANR5L15BTC0575"),
+        WalkResult(phase="COM-FOND", organe="PO744107", texte="PRJLANR5L15B0424"),
+        WalkResult(phase="DEBATS", organe="PO717460", texte="PRJLANR5L15BTC0575"),
     ]

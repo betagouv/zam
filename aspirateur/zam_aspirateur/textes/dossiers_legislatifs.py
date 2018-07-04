@@ -2,7 +2,7 @@ from contextlib import contextmanager
 from datetime import date
 from io import BytesIO, TextIOWrapper
 from json import load
-from typing import Dict, Generator, IO, Iterator, List, NamedTuple, Optional, Tuple
+from typing import Dict, Generator, IO, Iterator, List, NamedTuple, Optional
 from zipfile import ZipFile
 
 from ..http import cached_session
@@ -117,43 +117,44 @@ def top_level_actes(dossier: dict) -> Iterator[dict]:
 
 
 def gen_lectures(acte: dict, textes: Dict[str, Texte]) -> Iterator[Lecture]:
-    for phase, texte_uid in walk_actes(acte):
+    for result in walk_actes(acte):
         chambre, titre = TOP_LEVEL_ACTES[acte["codeActe"]]
-        if phase == "COM-FOND":
+        if result.phase == "COM-FOND":
             titre += " – Commission saisie au fond"
-        elif phase == "DEBATS":
+        elif result.phase == "DEBATS":
             titre += " – Séance publique"
         else:
             raise NotImplementedError
 
-        assert texte_uid is not None
-        texte = textes[texte_uid]
+        assert result.texte is not None
+        texte = textes[result.texte]
 
         yield Lecture(chambre=chambre, titre=titre, texte=texte)  # type: ignore
 
 
-def walk_actes(acte: dict) -> Iterator[Tuple[str, Optional[str]]]:
+class WalkResult(NamedTuple):
+    phase: str
+    organe: str
+    texte: Optional[str]
+
+
+def walk_actes(acte: dict) -> Iterator[WalkResult]:
     current_texte = None
 
-    def _walk_actes(acte: dict) -> Iterator[Tuple[str, Optional[str]]]:
+    def _walk_actes(acte: dict) -> Iterator[WalkResult]:
         nonlocal current_texte
 
         code = acte["codeActe"]
         phase = code.split("-", 1)[1] if "-" in code else ""
 
         if phase in {"COM-FOND", "DEBATS"}:
-            if current_texte is None:
-                yield (phase, None)
-            else:
-                yield (phase, current_texte.uid)
+            yield WalkResult(phase=phase, organe=acte["organeRef"], texte=current_texte)
 
         for key in ["texteAssocie", "texteAdopte"]:
             if key in acte and acte[key] is not None:
                 uid = acte[key]
                 if uid[:4] in {"PRJL", "PION"}:
-                    current_texte = TexteRef(
-                        acte["codeActe"], acte["@xsi:type"], key, uid
-                    )
+                    current_texte = uid
 
         for sous_acte in extract_actes(acte):
             yield from _walk_actes(sous_acte)

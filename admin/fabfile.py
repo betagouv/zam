@@ -63,21 +63,13 @@ def http(ctx):
     exists = ctx.run('if [ -f "{}" ]; then echo 1; fi'.format(certif))
     if exists.stdout:
         with template_local_file(
-            "nginx-https.conf.template",
-            "nginx-https.conf",
-            {
-                "host": ctx.host,
-            },
+            "nginx-https.conf.template", "nginx-https.conf", {"host": ctx.host}
         ):
             sudo_put(ctx, "nginx-https.conf", "/etc/nginx/sites-available/default")
     else:
         # Before letsencrypt.
         with template_local_file(
-            "nginx-http.conf.template",
-            "nginx-http.conf",
-            {
-                "host": ctx.host,
-            },
+            "nginx-http.conf.template", "nginx-http.conf", {"host": ctx.host}
         ):
             sudo_put(ctx, "nginx-http.conf", "/etc/nginx/sites-available/default")
     ctx.sudo("systemctl restart nginx")
@@ -106,13 +98,7 @@ def letsencrypt(ctx):
     ctx.sudo("add-apt-repository ppa:certbot/certbot")
     ctx.sudo("apt update")
     ctx.sudo("apt install -y certbot software-properties-common")
-    with template_local_file(
-        "certbot.ini.template",
-        "certbot.ini",
-        {
-            "host": ctx.host,
-        },
-    ):
+    with template_local_file("certbot.ini.template", "certbot.ini", {"host": ctx.host}):
         sudo_put(ctx, "certbot.ini", "/srv/zam/certbot.ini")
     sudo_put(ctx, "ssl-renew", "/etc/cron.weekly/ssl-renew")
     ctx.sudo("chmod +x /etc/cron.weekly/ssl-renew")
@@ -137,9 +123,7 @@ def deploy(ctx, source):
 
 
 @task
-def deploy_repondeur(
-    ctx, secret, an_pattern_liste, an_pattern_amendement, branch="master", wipe=False
-):
+def deploy_repondeur(ctx, secret, branch="master", wipe=False):
     user = "repondeur"
     install_locale(ctx, "fr_FR.utf8")
     create_user(ctx, name=user, home_dir="/srv/repondeur")
@@ -157,7 +141,7 @@ def deploy_repondeur(
         wipe_db(ctx, user=user)
     initialize_db(ctx, app_dir=app_dir, user=user)
     fetch_an_group_data(ctx, user=user)
-    setup_service(ctx, an_pattern_liste, an_pattern_amendement)
+    setup_service(ctx)
 
 
 @task
@@ -248,16 +232,8 @@ def create_directory(ctx, path, owner):
 
 
 @task
-def setup_service(ctx, an_pattern_liste, an_pattern_amendement):
-    with template_local_file(
-        "repondeur.service.template",
-        "repondeur.service",
-        {
-            "an_pattern_liste": an_pattern_liste,
-            "an_pattern_amendement": an_pattern_amendement,
-        },
-    ):
-        sudo_put(ctx, "repondeur.service", "/etc/systemd/system/repondeur.service")
+def setup_service(ctx):
+    sudo_put(ctx, "repondeur.service", "/etc/systemd/system/repondeur.service")
     ctx.sudo("systemctl enable repondeur")
     ctx.sudo("systemctl restart repondeur")
 

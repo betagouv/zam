@@ -26,10 +26,6 @@ $ zam-aspirateur --source=senat --session=2017-2018 --texte=63
 595 amendements écrits dans amendements_2017-2018_63.csv
 ```
 
-Dans le cas d’une récupération d’amendements depuis le site de l’Assemblée Nationale,
-définir les variables d’environnement `ZAM_AN_PATTERN_LISTE` et
-`ZAM_AN_PATTERN_AMENDEMENT`.
-
 Récupérer les données relatives aux
 [députés en exercice](http://data.assemblee-nationale.fr/acteurs/deputes-en-exercice) :
 

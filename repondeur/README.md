@@ -28,13 +28,6 @@ $ unzip -q -o groups.zip -d data/an/groups/
 $ rm groups.zip
 ```
 
-Define the following environment variables:
-
-```
-$ export ZAM_AN_PATTERN_LISTE="..."
-$ export ZAM_AN_PATTERN_AMENDEMENT="..."
-```
-
 ## Start the web app
 
 ```

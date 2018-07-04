@@ -1,9 +1,9 @@
 import json
-import os
 from collections import OrderedDict
 from http import HTTPStatus
 from pathlib import Path
 from typing import List, Tuple, Union
+from urllib.parse import urljoin
 
 import xmltodict
 
@@ -15,17 +15,23 @@ from .parser import _parse_subdiv
 
 BASE_URL = "http://www.assemblee-nationale.fr"
 
+# Deprecation warning: this API for fetching amendements will be removed in the future
+# and has no Service Level Agreement (SLA)
+PATTERN_LISTE = "/{legislature}/amendements/{texte}/AN/liste.xml"
+PATTERN_AMENDEMENT = "/{legislature}/xml/amendements/{texte}/AN/{numero}.xml"
+
 
 def build_url(legislature: int, texte: int, numero: int = 0) -> str:
     if numero:
-        pattern = os.environ["ZAM_AN_PATTERN_AMENDEMENT"]
-        path = pattern.format(
+        path = PATTERN_AMENDEMENT.format(
             legislature=legislature, texte=f"{texte:04}", numero=numero
         )
     else:
-        pattern = os.environ["ZAM_AN_PATTERN_LISTE"]
-        path = pattern.format(legislature=legislature, texte=f"{texte:04}")
-    return f"{BASE_URL}{path}"
+        path = PATTERN_LISTE.format(
+            legislature=legislature, texte=f"{texte:04}"
+        )
+    url: str = urljoin(BASE_URL, path)
+    return url
 
 
 def get_auteur(amendement: OrderedDict) -> str:

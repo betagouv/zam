@@ -1,11 +1,8 @@
-from contextlib import contextmanager
 from datetime import date
-from io import BytesIO, TextIOWrapper
 from json import load
-from typing import Dict, Generator, IO, Iterator, List, NamedTuple, Optional
-from zipfile import ZipFile
+from typing import Dict, Iterator, List, NamedTuple, Optional
 
-from ..http import cached_session
+from .common import extract_from_remote_zip, roman
 from .models import Chambre, Lecture, Dossier, Texte, TypeTexte
 
 
@@ -30,23 +27,6 @@ def fetch_dossiers_legislatifs(legislature: int) -> dict:
     with extract_from_remote_zip(url, filename) as json_file:
         data: dict = load(json_file)
     return data
-
-
-def roman(n: int) -> str:
-    if n == 15:
-        return "XV"
-    if n == 14:
-        return "XIV"
-    raise NotImplementedError
-
-
-@contextmanager
-def extract_from_remote_zip(url: str, filename: str) -> Generator[IO[str], None, None]:
-    response = cached_session.get(url)
-    assert response.headers["content-type"] == "application/zip"
-    with ZipFile(BytesIO(response.content)) as zip_file:
-        with zip_file.open(filename) as file_:
-            yield TextIOWrapper(file_, encoding="utf-8")
 
 
 def parse_textes(export: dict) -> Dict[str, Texte]:

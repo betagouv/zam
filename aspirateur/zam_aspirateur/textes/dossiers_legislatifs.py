@@ -17,14 +17,19 @@ class TexteRef(NamedTuple):
 
 
 def get_dossiers_legislatifs(legislature: int) -> Dict[str, Dossier]:
+    data = fetch_dossiers_legislatifs(legislature)
+    textes = parse_textes(data["export"])
+    dossiers = parse_dossiers(data["export"], textes)
+    return dossiers
+
+
+def fetch_dossiers_legislatifs(legislature: int) -> dict:
     legislature_roman = roman(legislature)
     filename = f"Dossiers_Legislatifs_{legislature_roman}.json"
     url = f"http://data.assemblee-nationale.fr/static/openData/repository/{legislature}/loi/dossiers_legislatifs/{filename}.zip"  # noqa
     with extract_from_remote_zip(url, filename) as json_file:
-        data = load(json_file)
-    textes = parse_textes(data["export"])
-    dossiers = parse_dossiers(data["export"], textes)
-    return dossiers
+        data: dict = load(json_file)
+    return data
 
 
 def roman(n: int) -> str:

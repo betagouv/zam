@@ -19,9 +19,6 @@ from zam_repondeur.models import DBSession, Amendement, Lecture
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 
-CURRENT_LEGISLATURE = 15
-
-
 class CSVError(Exception):
     pass
 
@@ -35,7 +32,8 @@ def lectures_list(request: Request) -> dict:
 class LecturesAdd:
     def __init__(self, request: Request) -> None:
         self.request = request
-        self.dossiers_by_uid = get_dossiers_legislatifs(legislature=CURRENT_LEGISLATURE)
+        current_legislature = int(request.registry.settings["zam.legislature"])
+        self.dossiers_by_uid = get_dossiers_legislatifs(legislature=current_legislature)
         self.lectures_by_dossier = {
             dossier.uid: {
                 lecture.texte.uid: f"{lecture.chambre} – {lecture.titre} (texte nº {lecture.texte.numero} déposé le {lecture.texte.date_depot.strftime('%d/%m/%Y')})"  # noqa
@@ -258,7 +256,9 @@ def fetch_amendements(request: Request) -> Response:
     if lecture is None:
         raise HTTPNotFound
 
-    organes = get_organes(legislature=CURRENT_LEGISLATURE)
+    current_legislature = int(request.registry.settings["zam.legislature"])
+
+    organes = get_organes(legislature=current_legislature)
 
     amendements, errored = get_amendements(
         chambre=lecture.chambre,

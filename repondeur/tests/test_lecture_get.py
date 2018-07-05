@@ -2,7 +2,7 @@ import transaction
 
 
 def test_get_lecture(app, dummy_lecture, dummy_amendements):
-    resp = app.get("http://localhost/lectures/an/15/269/")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/")
     assert resp.status_code == 200
     assert "Visualiser les réponses" not in resp.text
 
@@ -19,7 +19,7 @@ def test_get_lecture_with_avis(app, dummy_lecture, dummy_amendements):
         # our changes will be committed with the current transaction
         DBSession.add(amendement)
 
-    resp = app.get("http://localhost/lectures/an/15/269/")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/")
     assert resp.status_code == 200
     assert "Visualiser les réponses" in resp.text
 
@@ -36,7 +36,7 @@ def test_get_lecture_with_gouvernemental(app, dummy_lecture, dummy_amendements):
         # our changes will be committed with the current transaction
         DBSession.add(amendement)
 
-    resp = app.get("http://localhost/lectures/an/15/269/")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/")
     assert resp.status_code == 200
     assert "Visualiser les réponses" in resp.text
 

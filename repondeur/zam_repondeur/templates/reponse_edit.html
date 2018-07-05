@@ -42,8 +42,8 @@
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
-    <li class="breadcrumb-item"><a href="{{ request.route_url('lecture', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte) }}">{{ lecture_title(amendement.chambre, amendement.session, amendement.num_texte) }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ request.route_url('list_amendements', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte) }}">Amendements</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.route_url('lecture', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe) }}">{{ lecture_title(amendement.chambre, amendement.session, amendement.num_texte) }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.route_url('list_amendements', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe) }}">Amendements</a></li>
     <li class="breadcrumb-item active" aria-current="page">Nº&nbsp;{{ amendement.num_disp }}</li>
 {% endblock %}
 
@@ -118,7 +118,7 @@
 
         <div class="form-group">
             <input type="submit" name="submit" value="Enregistrer" class="btn btn-primary">
-            <a href="{{ request.route_url('list_amendements', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte) }}" class="btn">Annuler</a>
+            <a href="{{ request.route_url('list_amendements', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe) }}" class="btn">Annuler</a>
         </div>
 
     </form>

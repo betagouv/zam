@@ -5,7 +5,7 @@ def test_download_csv(app):
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = [], []
-        resp = app.get("/lectures/senat/2017-2018/63/amendements/download.csv")
+        resp = app.get("/lectures/senat/2017-2018/63/PO78718/amendements/download.csv")
 
     assert resp.status_code == 200
 
@@ -18,7 +18,8 @@ def test_download_csv(app):
 def test_download_csv_bad_request(app):
 
     resp = app.get(
-        "/lectures/bad/2017-2018/63/amendements/download.csv", expect_errors=True
+        "/lectures/bad/2017-2018/63/PO78718/amendements/download.csv",
+        expect_errors=True,
     )
 
     assert resp.status_code == 400
@@ -30,7 +31,7 @@ def test_download_xlsx(app):
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = [], []
-        resp = app.get("/lectures/senat/2017-2018/63/amendements/download.xlsx")
+        resp = app.get("/lectures/senat/2017-2018/63/PO78718/amendements/download.xlsx")
 
     assert resp.status_code == 200
 
@@ -44,7 +45,8 @@ def test_download_xlsx(app):
 def test_download_xlsx_bad_request(app):
 
     resp = app.get(
-        "/lectures/bad/2017-2018/63/amendements/download.xlsx", expect_errors=True
+        "/lectures/bad/2017-2018/63/PO78718/amendements/download.xlsx",
+        expect_errors=True,
     )
 
     assert resp.status_code == 400

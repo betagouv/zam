@@ -21,6 +21,7 @@ def list_reponses(request: Request) -> Response:
         chambre=request.matchdict["chambre"],
         session=request.matchdict["session"],
         num_texte=int(request.matchdict["num_texte"]),
+        organe=request.matchdict["organe"],
     )
     if lecture is None:
         raise HTTPNotFound
@@ -31,6 +32,7 @@ def list_reponses(request: Request) -> Response:
             AmendementModel.chambre == lecture.chambre,
             AmendementModel.session == lecture.session,
             AmendementModel.num_texte == lecture.num_texte,
+            AmendementModel.organe == lecture.organe,
         )
         .order_by(
             case([(AmendementModel.position.is_(None), 1)], else_=0),
@@ -51,6 +53,7 @@ class ReponseEdit:
         chambre = request.matchdict["chambre"]
         session = request.matchdict["session"]
         num_texte = int(request.matchdict["num_texte"])
+        organe = request.matchdict["organe"]
         num = int(request.matchdict["num"])
         if chambre not in CHAMBRES:
             raise HTTPBadRequest
@@ -60,6 +63,7 @@ class ReponseEdit:
                 AmendementModel.chambre == chambre,
                 AmendementModel.session == session,
                 AmendementModel.num_texte == num_texte,
+                AmendementModel.organe == organe,
                 AmendementModel.num == num,
             )
             .first()
@@ -82,5 +86,6 @@ class ReponseEdit:
                 chambre=self.amendement.chambre,
                 session=self.amendement.session,
                 num_texte=self.amendement.num_texte,
+                organe=self.amendement.organe,
             )
         )

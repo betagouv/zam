@@ -103,6 +103,7 @@ def fetch_amendement(
         chambre="an",
         session=str(legislature),
         num_texte=texte,
+        organe=organe,
         num=int(amendement["numero"]),
         subdiv_type=subdiv.type_,
         subdiv_num=subdiv.num,

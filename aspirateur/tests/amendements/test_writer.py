@@ -12,6 +12,7 @@ def amendements():
             chambre="senat",
             session="2017-2018",
             num_texte=63,
+            organe="PO78718",
             subdiv_type="article",
             subdiv_num="1",
             alinea="",
@@ -27,6 +28,7 @@ def amendements():
             chambre="senat",
             session="2017-2018",
             num_texte=63,
+            organe="PO78718",
             subdiv_type="article",
             subdiv_num="1",
             subdiv_pos="avant",
@@ -42,6 +44,7 @@ def amendements():
             chambre="senat",
             session="2017-2018",
             num_texte=63,
+            organe="PO78718",
             subdiv_type="article",
             subdiv_num="7",
             subdiv_mult="bis",
@@ -57,6 +60,7 @@ def amendements():
             chambre="senat",
             session="2017-2018",
             num_texte=63,
+            organe="PO78718",
             subdiv_type="article",
             subdiv_num="1",
             alinea="",
@@ -74,6 +78,7 @@ EXPECTED_FIELDS = [
     "Chambre",
     "Session",
     "Num_texte",
+    "Organe",
     "Subdiv_type",
     "Subdiv_num",
     "Subdiv_mult",
@@ -115,7 +120,7 @@ def test_write_csv(amendements, tmpdir):
 
     assert (
         rows[0]
-        == "senat;2017-2018;63;article;1;;;;;42;0;M. DUPONT;000000;RDSE;;;;;;L'article 1 est supprimé.;Cet article va à l'encontre du principe d'égalité.;Suppression de l'article;;;"  # noqa
+        == "senat;2017-2018;63;PO78718;article;1;;;;;42;0;M. DUPONT;000000;RDSE;;;;;;L'article 1 est supprimé.;Cet article va à l'encontre du principe d'égalité.;Suppression de l'article;;;"  # noqa
     )
 
 

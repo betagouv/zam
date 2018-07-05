@@ -11,6 +11,7 @@ class Amendement:
     chambre: str  # 'senat' or 'an'
     session: str  # session / législature
     num_texte: int  # numéro de texte / lecture
+    organe: str  # assemblée, commission...
 
     subdiv_type: str  # article, titre...
     subdiv_num: str  # numéro

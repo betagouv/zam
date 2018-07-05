@@ -22,8 +22,8 @@ class Lecture(Base):  # type: ignore
     chambre = Column(Text, primary_key=True)
     session = Column(Text, primary_key=True)
     num_texte = Column(Integer, primary_key=True)
+    organe = Column(Text, primary_key=True)
     titre = Column(Text)
-    organe = Column(Text)
 
     def __str__(self) -> str:
         return ", ".join(
@@ -63,10 +63,11 @@ class Lecture(Base):  # type: ignore
     def __lt__(self, other: Any) -> bool:
         if type(self) != type(other):
             return NotImplemented
-        return (self.chambre, self.session, self.num_texte) < (
+        return (self.chambre, self.session, self.num_texte, self.organe) < (
             other.chambre,
             other.session,
             other.num_texte,
+            other.organe,
         )
 
     @property
@@ -75,37 +76,40 @@ class Lecture(Base):  # type: ignore
             Amendement.chambre == self.chambre,
             Amendement.session == self.session,
             Amendement.num_texte == self.num_texte,
+            Amendement.organe == self.organe,
         )
         return any(amd.is_displayable for amd in query)
 
     @classmethod
     def all(cls) -> List["Lecture"]:
         lectures: List["Lecture"] = DBSession.query(cls).order_by(
-            cls.chambre, desc(cls.session), desc(cls.num_texte)
+            cls.chambre, desc(cls.session), desc(cls.num_texte), cls.organe
         ).all()
         return lectures
 
     @classmethod
-    def get(cls, chambre: str, session: str, num_texte: int) -> "Lecture":
+    def get(cls, chambre: str, session: str, num_texte: int, organe: str) -> "Lecture":
         res: "Lecture" = (
             DBSession.query(cls)
             .filter(
                 cls.chambre == chambre,
                 cls.session == session,
                 cls.num_texte == num_texte,
+                cls.organe == organe,
             )
             .first()
         )
         return res
 
     @classmethod
-    def exists(cls, chambre: str, session: str, num_texte: int) -> bool:
+    def exists(cls, chambre: str, session: str, num_texte: int, organe: str) -> bool:
         res: bool = DBSession.query(
             DBSession.query(cls)
             .filter(
                 cls.chambre == chambre,
                 cls.session == session,
                 cls.num_texte == num_texte,
+                cls.organe == organe,
             )
             .exists()
         ).scalar()

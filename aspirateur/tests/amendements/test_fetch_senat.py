@@ -461,7 +461,7 @@ def test_fetch_and_parse_discussed_not_found():
         m_fetch.side_effect = NotFound
 
         amendements = fetch_and_parse_discussed(
-            session="2016-2017", num=610, phase="commission"
+            session="2016-2017", num=610, organe="PO78718", phase="commission"
         )
 
     assert amendements == []

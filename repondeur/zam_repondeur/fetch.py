@@ -86,6 +86,7 @@ def add_article_contents_to_amendements(lecture: Lecture, articles: List[dict]) 
                 AmendementModel.chambre == lecture.chambre,
                 AmendementModel.session == lecture.session,
                 AmendementModel.num_texte == lecture.num_texte,
+                AmendementModel.organe == lecture.organe,
                 AmendementModel.subdiv_num == article_num,
                 AmendementModel.subdiv_mult == article_mult,
             ).update(

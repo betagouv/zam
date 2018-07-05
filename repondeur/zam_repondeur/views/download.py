@@ -26,6 +26,7 @@ def download_amendements(request: Request) -> Response:
     chambre = request.matchdict["chambre"]
     session = request.matchdict["session"]
     num_texte = int(request.matchdict["num_texte"])
+    organe = request.matchdict["organe"]
     fmt = request.matchdict["format"]
 
     if chambre not in CHAMBRES:
@@ -37,6 +38,7 @@ def download_amendements(request: Request) -> Response:
             Amendement.chambre == chambre,
             Amendement.session == session,
             Amendement.num_texte == num_texte,
+            Amendement.organe == organe,
         )
         .order_by(
             case([(Amendement.position.is_(None), 1)], else_=0),

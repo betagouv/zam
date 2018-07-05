@@ -5,10 +5,13 @@ def test_lecture_delete(app, dummy_lecture, dummy_amendements):
         chambre=dummy_lecture.chambre,
         session=dummy_lecture.session,
         num_texte=dummy_lecture.num_texte,
+        organe=dummy_lecture.organe,
     )
     assert DBSession.query(Amendement).count() == 2
 
-    form = app.get("http://localhost/lectures/an/15/269/").forms["delete-lecture"]
+    form = app.get("http://localhost/lectures/an/15/269/PO717460/").forms[
+        "delete-lecture"
+    ]
 
     resp = form.submit()
 
@@ -24,5 +27,6 @@ def test_lecture_delete(app, dummy_lecture, dummy_amendements):
         chambre=dummy_lecture.chambre,
         session=dummy_lecture.session,
         num_texte=dummy_lecture.num_texte,
+        organe=dummy_lecture.organe,
     )
     assert DBSession.query(Amendement).count() == 0

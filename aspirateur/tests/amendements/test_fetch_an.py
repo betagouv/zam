@@ -195,6 +195,7 @@ def test_fetch_amendement():
         chambre="an",
         session="14",
         num_texte=4072,
+        organe="PO717460",
         subdiv_type="article",
         subdiv_num="3",
         subdiv_mult="",

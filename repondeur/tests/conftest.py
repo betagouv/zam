@@ -49,6 +49,26 @@ def mock_dossiers():
 def mock_organes():
     with patch("zam_repondeur.data.get_organes") as m_organes:
         m_organes.return_value = {
+            "PO420120": {
+                "@xsi:type": "OrganeParlementaire_Type",
+                "uid": "PO420120",
+                "codeType": "COMPER",
+                "libelle": "Commission des affaires sociales",
+                "libelleEdition": "de la commission des affaires sociales",
+                "libelleAbrege": "Affaires sociales",
+                "libelleAbrev": "CION-SOC",
+                "viMoDe": {
+                    "dateDebut": "2009-06-25",
+                    "dateAgrement": None,
+                    "dateFin": None,
+                },
+                "regime": "5ème République",
+                "legislature": None,
+                "secretariat": {
+                    "secretaire01": "M. Philippe Hurtevent",
+                    "secretaire02": None,
+                },
+            },
             "PO59048": {
                 "@xsi:type": "OrganeParlementaire_Type",
                 "uid": "PO59048",
@@ -165,6 +185,7 @@ def dummy_amendements(app, dummy_lecture):
                 chambre=dummy_lecture.chambre,
                 session=dummy_lecture.session,
                 num_texte=dummy_lecture.num_texte,
+                organe=dummy_lecture.organe,
                 subdiv_type="article",
                 subdiv_num="1",
                 num=num,

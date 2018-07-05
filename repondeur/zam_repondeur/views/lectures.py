@@ -65,7 +65,7 @@ class LecturesAdd:
         else:
             session = "2017-2018"
 
-        if Lecture.exists(chambre, session, num_texte):
+        if Lecture.exists(chambre, session, num_texte, organe):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
         else:
             Lecture.create(chambre, session, num_texte, titre, organe)
@@ -73,7 +73,11 @@ class LecturesAdd:
 
         return HTTPFound(
             location=self.request.route_url(
-                "lecture", chambre=chambre, session=session, num_texte=num_texte
+                "lecture",
+                chambre=chambre,
+                session=session,
+                num_texte=num_texte,
+                organe=organe,
             )
         )
 
@@ -86,6 +90,7 @@ class LectureView:
             chambre=request.matchdict["chambre"],
             session=request.matchdict["session"],
             num_texte=int(request.matchdict["num_texte"]),
+            organe=request.matchdict["organe"],
         )
         if self.lecture is None:
             raise HTTPNotFound
@@ -93,6 +98,7 @@ class LectureView:
             Amendement.chambre == self.lecture.chambre,
             Amendement.session == self.lecture.session,
             Amendement.num_texte == self.lecture.num_texte,
+            Amendement.organe == self.lecture.organe,
         )
 
     @view_config(renderer="lecture.html")
@@ -107,6 +113,7 @@ class LectureView:
             Lecture.chambre == self.lecture.chambre,
             Lecture.session == self.lecture.session,
             Lecture.num_texte == self.lecture.num_texte,
+            Lecture.organe == self.lecture.organe,
         ).delete()
         self.request.session.flash(("success", "Lecture supprimée avec succès."))
         return HTTPFound(location=self.request.route_url("lectures_list"))
@@ -120,6 +127,7 @@ class ListAmendements:
             chambre=request.matchdict["chambre"],
             session=request.matchdict["session"],
             num_texte=int(request.matchdict["num_texte"]),
+            organe=request.matchdict["organe"],
         )
         if self.lecture is None:
             raise HTTPNotFound
@@ -130,6 +138,7 @@ class ListAmendements:
                 Amendement.chambre == self.lecture.chambre,
                 Amendement.session == self.lecture.session,
                 Amendement.num_texte == self.lecture.num_texte,
+                Amendement.organe == self.lecture.organe,
             )
             .order_by(
                 case([(Amendement.position.is_(None), 1)], else_=0),
@@ -178,6 +187,7 @@ class ListAmendements:
                 chambre=self.lecture.chambre,
                 session=self.lecture.session,
                 num_texte=self.lecture.num_texte,
+                organe=self.lecture.organe,
             )
         )
 
@@ -249,6 +259,7 @@ def fetch_amendements(request: Request) -> Response:
         chambre=request.matchdict["chambre"],
         session=request.matchdict["session"],
         num_texte=int(request.matchdict["num_texte"]),
+        organe=request.matchdict["organe"],
     )
     if lecture is None:
         raise HTTPNotFound
@@ -281,6 +292,7 @@ def fetch_amendements(request: Request) -> Response:
             chambre=lecture.chambre,
             session=lecture.session,
             num_texte=lecture.num_texte,
+            organe=lecture.organe,
         )
     )
 
@@ -296,6 +308,7 @@ def _add_or_update_amendements(
                 Amendement.chambre == amendement.chambre,
                 Amendement.session == amendement.session,
                 Amendement.num_texte == amendement.num_texte,
+                Amendement.organe == amendement.organe,
                 Amendement.num == amendement.num,
             )
             .first()
@@ -347,6 +360,7 @@ def fetch_articles(request: Request) -> Response:
         chambre=request.matchdict["chambre"],
         session=request.matchdict["session"],
         num_texte=int(request.matchdict["num_texte"]),
+        organe=request.matchdict["organe"],
     )
     if lecture is None:
         raise HTTPNotFound
@@ -360,5 +374,6 @@ def fetch_articles(request: Request) -> Response:
             chambre=lecture.chambre,
             session=lecture.session,
             num_texte=lecture.num_texte,
+            organe=lecture.organe,
         )
     )

@@ -28,9 +28,15 @@ amendements_table = Table(
     Column("chambre", Text, primary_key=True),
     Column("session", Text, primary_key=True),
     Column("num_texte", Integer, primary_key=True),
+    Column("organe", Integer, primary_key=True),
     ForeignKeyConstraint(
-        ["chambre", "session", "num_texte"],
-        ["lectures.chambre", "lectures.session", "lectures.num_texte"],
+        ["chambre", "session", "num_texte", "organe"],
+        [
+            "lectures.chambre",
+            "lectures.session",
+            "lectures.num_texte",
+            "lectures.organe",
+        ],
     ),
     #
     # Partie du texte visée

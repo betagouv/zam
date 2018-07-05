@@ -22,7 +22,9 @@ def test_parse_from_csv():
         "Url amendement ": "//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",  # noqa
     }
 
-    amendement = parse_from_csv(amend, session="2017-2018", num_texte=63)
+    amendement = parse_from_csv(
+        amend, session="2017-2018", num_texte=63, organe="PO78718"
+    )
 
     assert amendement.num == 1
     assert amendement.rectif == 1
@@ -106,7 +108,12 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
-            amend, position=1, session="2017-2018", num_texte=63, subdiv=subdiv
+            amend,
+            position=1,
+            session="2017-2018",
+            num_texte=63,
+            organe="PO78718",
+            subdiv=subdiv,
         )
 
         assert amendement.subdiv_type == "article"
@@ -154,7 +161,12 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
-            amend, position=1, session="2017-2018", num_texte=63, subdiv=subdiv
+            amend,
+            position=1,
+            session="2017-2018",
+            num_texte=63,
+            organe="PO78718",
+            subdiv=subdiv,
         )
 
         assert amendement.subdiv_type == "article"
@@ -193,7 +205,12 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
-            amend, position=1, session="2017-2018", num_texte=63, subdiv=subdiv
+            amend,
+            position=1,
+            session="2017-2018",
+            num_texte=63,
+            organe="PO78718",
+            subdiv=subdiv,
         )
 
         assert amendement.discussion_commune == 110541
@@ -224,7 +241,12 @@ class TestParseAmendementFromJSON:
         subdiv = {"libelle_subdivision": "Article 3"}
 
         amendement = parse_from_json(
-            amend, position=1, session="2017-2018", num_texte=63, subdiv=subdiv
+            amend,
+            position=1,
+            session="2017-2018",
+            num_texte=63,
+            organe="PO78718",
+            subdiv=subdiv,
         )
 
         assert amendement.discussion_commune is None

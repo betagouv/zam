@@ -3,7 +3,7 @@ import transaction
 
 def test_reponses_empty(app, dummy_lecture, dummy_amendements):
 
-    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert resp.status_code == 200
     assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
@@ -21,7 +21,7 @@ def test_reponses_full(app, dummy_lecture, dummy_amendements):
             amendement.reponse = f"Réponse pour {amendement.num}"
         DBSession.add_all(dummy_amendements)
 
-    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert resp.status_code == 200
     assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
@@ -38,7 +38,7 @@ def test_reponses_gouvernemental(app, dummy_lecture, dummy_amendements):
             amendement.auteur = "LE GOUVERNEMENT"
         DBSession.add_all(dummy_amendements)
 
-    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
     assert len(resp.parser.tags("section")) == 1
@@ -56,7 +56,7 @@ def test_reponses_menu(app, dummy_lecture, dummy_amendements):
             amendement.reponse = f"Réponse pour {amendement.num}"
         DBSession.add_all(dummy_amendements)
 
-    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert len(resp.parser.css(".menu a")) == 1
     assert resp.parser.css_first(".menu a").text() == "Art. 1"
@@ -73,7 +73,7 @@ def test_reponses_menu_with_textes(app, dummy_lecture, dummy_amendements):
             amendement.subdiv_titre = "Titre article"
         DBSession.add_all(dummy_amendements)
 
-    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert len(resp.parser.css(".menu p strong")) == 1
     assert resp.parser.css_first(".menu p strong").text() == "Titre article :"
@@ -91,7 +91,7 @@ def test_reponses_with_textes(app, dummy_lecture, dummy_amendements):
             amendement.subdiv_contenu = {"001": "Premier paragraphe"}
         DBSession.add_all(dummy_amendements)
 
-    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert len(resp.parser.css("#content-article-1")) == 1
     assert resp.parser.css_first("#content-article-1 dt").text() == "001"
@@ -111,7 +111,7 @@ def test_reponses_without_textes(app, dummy_lecture, dummy_amendements):
             amendement.reponse = f"Réponse pour {amendement.num}"
         DBSession.add_all(dummy_amendements)
 
-    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert len(resp.parser.css("#content-article-1")) == 0
 
@@ -129,7 +129,7 @@ def test_reponses_with_multiple_articles(app, dummy_lecture, dummy_amendements):
         amendement.subdiv_num = 2
         DBSession.add_all(dummy_amendements)
 
-    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert len(resp.parser.tags("section")) == 2
     assert len(resp.parser.tags("article")) == 2
@@ -156,7 +156,7 @@ def test_reponses_with_multiplicatif_articles(app, dummy_lecture, dummy_amendeme
         amendement.subdiv_mult = "bis"
         DBSession.add_all(dummy_amendements)
 
-    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert len(resp.parser.tags("section")) == 2
     assert len(resp.parser.tags("article")) == 2
@@ -179,7 +179,7 @@ def test_reponses_with_annexes(app, dummy_lecture, dummy_amendements):
         amendement.subdiv_type = "annexe"
         DBSession.add_all(dummy_amendements)
 
-    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert len(resp.parser.tags("section")) == 2
     assert len(resp.parser.tags("article")) == 2
@@ -199,7 +199,7 @@ def test_reponses_article_additionnel_avant(app, dummy_lecture, dummy_amendement
         dummy_amendements[0].subdiv_pos = "avant"
         DBSession.add_all(dummy_amendements)
 
-    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert resp.status_code == 200
 
@@ -223,7 +223,7 @@ def test_reponses_article_additionnel_après(app, dummy_lecture, dummy_amendemen
         dummy_amendements[1].subdiv_pos = "après"
         DBSession.add_all(dummy_amendements)
 
-    resp = app.get("http://localhost/lectures/an/15/269/reponses")
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert resp.status_code == 200
 

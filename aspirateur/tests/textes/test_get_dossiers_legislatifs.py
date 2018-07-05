@@ -69,6 +69,19 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
         ),
         Lecture(
             chambre=Chambre.AN,
+            titre="Première lecture – Commission saisie pour avis",
+            texte=Texte(
+                uid="PRJLANR5L15B0269",
+                type_=TypeTexte.PROJET,
+                numero=269,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 10, 11),
+            ),
+            organe="PO59048",
+        ),
+        Lecture(
+            chambre=Chambre.AN,
             titre="Première lecture – Séance publique",
             texte=Texte(
                 uid="PRJLANR5L15B0269",
@@ -92,6 +105,19 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
                 date_depot=datetime.date(2017, 11, 6),
             ),
             organe="PO211493",
+        ),
+        Lecture(
+            chambre=Chambre.SENAT,
+            titre="Première lecture – Commission saisie pour avis",
+            texte=Texte(
+                uid="PRJLSNR5S299B0063",
+                type_=TypeTexte.PROJET,
+                numero=63,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 11, 6),
+            ),
+            organe="PO211494",
         ),
         Lecture(
             chambre=Chambre.SENAT,
@@ -285,52 +311,50 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
     )
 
 
+@pytest.fixture
+def dossier_pacte_ferroviaire():
+    with open(HERE.parent / "sample_data" / "dossier-DLR5L15N36460.json") as f_:
+        return json.load(f_)["dossierParlementaire"]
+
+
+def test_dossier_pacte_ferroviaire(dossier_pacte_ferroviaire, textes):
+    from zam_aspirateur.textes.dossiers_legislatifs import parse_dossier
+
+    dossier = parse_dossier(dossier_pacte_ferroviaire, textes)
+
+    assert dossier.uid == "DLR5L15N36460"
+    assert len(dossier.lectures) > 4
+
+
 def test_extract_actes(dossier_essoc):
     from zam_aspirateur.textes.dossiers_legislatifs import extract_actes
 
     assert len(extract_actes(dossier_essoc)) == 4
 
 
-def test_gen_lectures(dossier_essoc, textes):
-    from zam_aspirateur.textes.dossiers_legislatifs import (
-        gen_lectures,
-        Chambre,
-        Lecture,
-        Texte,
-        TypeTexte,
-    )
+class TestGenLectures:
+    def test_gen_lectures_essoc(self, dossier_essoc, textes):
+        from zam_aspirateur.textes.dossiers_legislatifs import gen_lectures
 
-    acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
+        acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
 
-    res = list(gen_lectures(acte, textes))
-    assert res == [
-        Lecture(
-            chambre=Chambre.AN,
-            titre="Première lecture – Commission saisie au fond",
-            texte=Texte(
-                uid="PRJLANR5L15B0424",
-                type_=TypeTexte.PROJET,
-                numero=424,
-                titre_long="projet de loi pour un Etat au service d’une société de confiance",  # noqa
-                titre_court="Etat service société de confiance",
-                date_depot=datetime.date(2017, 11, 27),
-            ),
-            organe="PO744107",
-        ),
-        Lecture(
-            chambre=Chambre.AN,
-            titre="Première lecture – Séance publique",
-            texte=Texte(
-                uid="PRJLANR5L15BTC0575",
-                type_=TypeTexte.PROJET,
-                numero=575,
-                titre_long="projet de loi sur le projet de loi, après engagement de la procédure accélérée, pour un Etat au service d’une société de confiance (n°424).",  # noqa
-                titre_court="Etat service société de confiance",
-                date_depot=datetime.date(2018, 1, 18),
-            ),
-            organe="PO717460",
-        ),
-    ]
+        lectures = list(gen_lectures(acte, textes))
+
+        assert len(lectures) == 2
+        assert "Commission saisie au fond" in lectures[0].titre
+        assert "Séance publique" in lectures[1].titre
+
+    def test_gen_lectures_pacte_ferroviaire(self, dossier_pacte_ferroviaire, textes):
+        from zam_aspirateur.textes.dossiers_legislatifs import gen_lectures
+
+        acte = dossier_pacte_ferroviaire["actesLegislatifs"]["acteLegislatif"][0]
+
+        lectures = list(gen_lectures(acte, textes))
+
+        assert len(lectures) == 3
+        assert "Commission saisie au fond" in lectures[0].titre
+        assert "Commission saisie pour avis" in lectures[1].titre
+        assert "Séance publique" in lectures[2].titre
 
 
 def test_walk_actes(dossier_essoc, textes):

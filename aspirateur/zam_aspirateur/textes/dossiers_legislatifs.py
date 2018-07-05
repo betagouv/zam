@@ -106,6 +106,8 @@ def gen_lectures(acte: dict, textes: Dict[str, Texte]) -> Iterator[Lecture]:
         chambre, titre = TOP_LEVEL_ACTES[acte["codeActe"]]
         if result.phase == "COM-FOND":
             titre += " – Commission saisie au fond"
+        elif result.phase == "COM-AVIS":
+            titre += " – Commission saisie pour avis"
         elif result.phase == "DEBATS":
             titre += " – Séance publique"
         else:
@@ -134,7 +136,7 @@ def walk_actes(acte: dict) -> Iterator[WalkResult]:
         code = acte["codeActe"]
         phase = code.split("-", 1)[1] if "-" in code else ""
 
-        if phase in {"COM-FOND", "DEBATS"}:
+        if phase in {"COM-FOND", "COM-AVIS", "DEBATS"}:
             yield WalkResult(phase=phase, organe=acte["organeRef"], texte=current_texte)
 
         for key in ["texteAssocie", "texteAdopte"]:

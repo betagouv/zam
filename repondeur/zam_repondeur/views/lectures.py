@@ -9,11 +9,10 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
 
-from zam_aspirateur.textes.dossiers_legislatifs import get_dossiers_legislatifs
 from zam_aspirateur.textes.models import Chambre
-from zam_aspirateur.textes.organes import get_organes
 
 from zam_repondeur.clean import clean_html
+from zam_repondeur.data import get_data
 from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.models import DBSession, Amendement, Lecture
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
@@ -32,8 +31,7 @@ def lectures_list(request: Request) -> dict:
 class LecturesAdd:
     def __init__(self, request: Request) -> None:
         self.request = request
-        current_legislature = int(request.registry.settings["zam.legislature"])
-        self.dossiers_by_uid = get_dossiers_legislatifs(legislature=current_legislature)
+        self.dossiers_by_uid = get_data("dossiers")
         self.lectures_by_dossier = {
             dossier.uid: {
                 lecture.texte.uid: f"{lecture.chambre} – {lecture.titre} (texte nº {lecture.texte.numero} déposé le {lecture.texte.date_depot.strftime('%d/%m/%Y')})"  # noqa
@@ -256,9 +254,7 @@ def fetch_amendements(request: Request) -> Response:
     if lecture is None:
         raise HTTPNotFound
 
-    current_legislature = int(request.registry.settings["zam.legislature"])
-
-    organes = get_organes(legislature=current_legislature)
+    organes = get_data("organes")
 
     amendements, errored = get_amendements(
         chambre=lecture.chambre,

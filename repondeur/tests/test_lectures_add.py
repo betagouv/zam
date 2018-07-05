@@ -1,37 +1,4 @@
-from datetime import date
-from unittest.mock import patch
-
-import pytest
 from webtest.forms import Select
-
-
-@pytest.yield_fixture(autouse=True)
-def mock_dossiers_legislatifs():
-    from zam_aspirateur.textes.models import Chambre, Dossier, Lecture, Texte, TypeTexte
-
-    with patch("zam_repondeur.views.lectures.get_dossiers_legislatifs") as m_dossiers:
-        m_dossiers.return_value = {
-            "DLR5L15N36030": Dossier(
-                uid="DLR5L15N36030",
-                titre="Sécurité sociale : loi de financement 2018",
-                lectures={
-                    "PRJLANR5L15B0269": Lecture(
-                        chambre=Chambre.AN,
-                        titre="1ère lecture",
-                        texte=Texte(
-                            uid="PRJLANR5L15B0269",
-                            type_=TypeTexte.PROJET,
-                            numero=269,
-                            titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
-                            titre_court="PLFSS pour 2018",
-                            date_depot=date(2017, 10, 11),
-                        ),
-                        organe="PO717460",
-                    )
-                },
-            )
-        }
-        yield
 
 
 def test_get_form(app):

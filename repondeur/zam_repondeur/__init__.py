@@ -3,6 +3,7 @@ from pyramid.router import Router
 from pyramid.session import SignedCookieSessionFactory
 from sqlalchemy import engine_from_config
 
+from zam_repondeur.data import load_data
 from zam_repondeur.models import DBSession, Base
 
 
@@ -56,6 +57,8 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.add_static_view("static", "static", cache_max_age=3600)
 
         config.scan()
+
+        load_data(config)
 
         app = config.make_wsgi_app()
 

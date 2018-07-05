@@ -34,8 +34,7 @@ class LecturesAdd:
         self.dossiers_by_uid = get_data("dossiers")
         self.lectures_by_dossier = {
             dossier.uid: {
-                index: f"{lecture.chambre} – {lecture.titre} (texte nº {lecture.texte.numero} déposé le {lecture.texte.date_depot.strftime('%d/%m/%Y')})"  # noqa
-                for index, lecture in enumerate(dossier.lectures)
+                index: lecture.label for index, lecture in enumerate(dossier.lectures)
             }
             for dossier in self.dossiers_by_uid.values()
         }

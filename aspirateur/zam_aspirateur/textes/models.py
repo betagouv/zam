@@ -53,6 +53,14 @@ class Lecture:
     texte: Texte
     organe: str
 
+    @property
+    def label(self) -> str:
+        return (
+            f"{self.chambre} – {self.titre} "
+            f"(texte nº {self.texte.numero} "
+            f"déposé le {self.texte.date_depot.strftime('%d/%m/%Y')})"
+        )
+
 
 @dataclass
 class Dossier:

@@ -132,6 +132,7 @@ def app(wsgi_app):
 
     yield TestApp(wsgi_app)
 
+    DBSession.close()
     Base.metadata.drop_all()
     DBSession.remove()
 

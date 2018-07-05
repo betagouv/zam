@@ -2,8 +2,11 @@ from typing import Any, List
 
 from sqlalchemy import Column, Integer, Text, desc
 
+from zam_repondeur.data import get_data
+
 from .amendement import Amendement
 from .base import Base, DBSession
+
 
 CHAMBRES = {"an": "Assemblée nationale", "senat": "Sénat"}
 
@@ -22,12 +25,40 @@ class Lecture(Base):  # type: ignore
     titre = Column(Text)
     organe = Column(Text)
 
-    @property
-    def chambre_disp(self) -> str:
+    def __str__(self) -> str:
+        return ", ".join(
+            [
+                self.format_chambre(),
+                self.format_session(),
+                self.format_organe(),
+                self.format_texte(),
+            ]
+        )
+
+    def format_chambre(self) -> str:
         return CHAMBRES[self.chambre]
 
-    def __str__(self) -> str:
-        return f"{self.chambre_disp}, session {self.session}, texte nº {self.num_texte}"
+    def format_session(self) -> str:
+        if self.chambre == "an":
+            return f"{self.session}e législature"
+        else:
+            return f"session {self.session}"
+
+    def format_organe(self) -> str:
+        result: str = self.organe
+        organes = get_data("organes")
+        if self.organe in organes:
+            organe_data = organes[self.organe]
+            result = organe_data["libelleAbrege"]
+        return self.rewrite_organe(result)
+
+    def rewrite_organe(self, label: str) -> str:
+        if label in {"Assemblée", "Sénat"}:
+            return "Séance publique"
+        return f"Commission des {label.lower()}"
+
+    def format_texte(self) -> str:
+        return f"texte nº {self.num_texte}"
 
     def __lt__(self, other: Any) -> bool:
         if type(self) != type(other):

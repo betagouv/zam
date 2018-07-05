@@ -15,4 +15,7 @@ def test_get_list_not_empty(app, dummy_lecture):
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
-    assert "Assemblée nationale, session 15, texte nº 269" in resp.text
+    assert (
+        "Assemblée nationale, 15e législature, Séance publique, texte nº 269"
+        in resp.text
+    )

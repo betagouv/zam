@@ -4,6 +4,8 @@ from unittest.mock import patch
 import pytest
 import transaction
 
+from testapp import TestApp
+
 
 @pytest.fixture(scope="session")
 def settings():
@@ -124,7 +126,6 @@ def use_app_registry(wsgi_app):
 
 @pytest.yield_fixture
 def app(wsgi_app):
-    from webtest import TestApp
     from zam_repondeur.models import Base, DBSession
 
     Base.metadata.drop_all()

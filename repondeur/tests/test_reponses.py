@@ -1,17 +1,14 @@
 import transaction
 
-from selectolax.parser import HTMLParser
-
 
 def test_reponses_empty(app, dummy_lecture, dummy_amendements):
 
     resp = app.get("http://localhost/lectures/an/15/269/reponses")
 
     assert resp.status_code == 200
-    parser = HTMLParser(resp.text)
-    assert parser.tags("h1")[0].text() == str(dummy_lecture)
-    assert len(parser.tags("section")) == 0
-    assert len(parser.tags("article")) == 0
+    assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
+    assert len(resp.parser.tags("section")) == 0
+    assert len(resp.parser.tags("article")) == 0
 
 
 def test_reponses_full(app, dummy_lecture, dummy_amendements):
@@ -27,11 +24,10 @@ def test_reponses_full(app, dummy_lecture, dummy_amendements):
     resp = app.get("http://localhost/lectures/an/15/269/reponses")
 
     assert resp.status_code == 200
-    parser = HTMLParser(resp.text)
-    assert parser.tags("h1")[0].text() == str(dummy_lecture)
-    assert len(parser.tags("section")) == 1
-    assert len(parser.tags("article")) == 2
-    assert len(parser.css("article.gouvernemental")) == 0
+    assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
+    assert len(resp.parser.tags("section")) == 1
+    assert len(resp.parser.tags("article")) == 2
+    assert len(resp.parser.css("article.gouvernemental")) == 0
 
 
 def test_reponses_gouvernemental(app, dummy_lecture, dummy_amendements):
@@ -44,11 +40,10 @@ def test_reponses_gouvernemental(app, dummy_lecture, dummy_amendements):
 
     resp = app.get("http://localhost/lectures/an/15/269/reponses")
 
-    parser = HTMLParser(resp.text)
-    assert parser.tags("h1")[0].text() == str(dummy_lecture)
-    assert len(parser.tags("section")) == 1
-    assert len(parser.tags("article")) == 2
-    assert len(parser.css("article.gouvernemental")) == 2
+    assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
+    assert len(resp.parser.tags("section")) == 1
+    assert len(resp.parser.tags("article")) == 2
+    assert len(resp.parser.css("article.gouvernemental")) == 2
 
 
 def test_reponses_menu(app, dummy_lecture, dummy_amendements):
@@ -63,9 +58,8 @@ def test_reponses_menu(app, dummy_lecture, dummy_amendements):
 
     resp = app.get("http://localhost/lectures/an/15/269/reponses")
 
-    parser = HTMLParser(resp.text)
-    assert len(parser.css(".menu a")) == 1
-    assert parser.css_first(".menu a").text() == "Art. 1"
+    assert len(resp.parser.css(".menu a")) == 1
+    assert resp.parser.css_first(".menu a").text() == "Art. 1"
 
 
 def test_reponses_menu_with_textes(app, dummy_lecture, dummy_amendements):
@@ -81,9 +75,8 @@ def test_reponses_menu_with_textes(app, dummy_lecture, dummy_amendements):
 
     resp = app.get("http://localhost/lectures/an/15/269/reponses")
 
-    parser = HTMLParser(resp.text)
-    assert len(parser.css(".menu p strong")) == 1
-    assert parser.css_first(".menu p strong").text() == "Titre article :"
+    assert len(resp.parser.css(".menu p strong")) == 1
+    assert resp.parser.css_first(".menu p strong").text() == "Titre article :"
 
 
 def test_reponses_with_textes(app, dummy_lecture, dummy_amendements):
@@ -100,11 +93,11 @@ def test_reponses_with_textes(app, dummy_lecture, dummy_amendements):
 
     resp = app.get("http://localhost/lectures/an/15/269/reponses")
 
-    parser = HTMLParser(resp.text)
-    assert len(parser.css("#content-article-1")) == 1
-    assert parser.css_first("#content-article-1 dt").text() == "001"
+    assert len(resp.parser.css("#content-article-1")) == 1
+    assert resp.parser.css_first("#content-article-1 dt").text() == "001"
     assert (
-        parser.css_first("#content-article-1 dd").text().strip() == "Premier paragraphe"
+        resp.parser.css_first("#content-article-1 dd").text().strip()
+        == "Premier paragraphe"
     )
 
 
@@ -120,8 +113,7 @@ def test_reponses_without_textes(app, dummy_lecture, dummy_amendements):
 
     resp = app.get("http://localhost/lectures/an/15/269/reponses")
 
-    parser = HTMLParser(resp.text)
-    assert len(parser.css("#content-article-1")) == 0
+    assert len(resp.parser.css("#content-article-1")) == 0
 
 
 def test_reponses_with_multiple_articles(app, dummy_lecture, dummy_amendements):
@@ -139,16 +131,15 @@ def test_reponses_with_multiple_articles(app, dummy_lecture, dummy_amendements):
 
     resp = app.get("http://localhost/lectures/an/15/269/reponses")
 
-    parser = HTMLParser(resp.text)
-    assert len(parser.tags("section")) == 2
-    assert len(parser.tags("article")) == 2
-    assert len(parser.css(".titles")) == 2
-    for index, item in enumerate(parser.css(".titles h2"), 1):
+    assert len(resp.parser.tags("section")) == 2
+    assert len(resp.parser.tags("article")) == 2
+    assert len(resp.parser.css(".titles")) == 2
+    for index, item in enumerate(resp.parser.css(".titles h2"), 1):
         assert item.text() == f"Article {index}"
-    for index, item in enumerate(parser.css(".titles h3"), 1):
+    for index, item in enumerate(resp.parser.css(".titles h3"), 1):
         assert item.text() == f"Titre article {index}"
-    assert len(parser.css(".menu p strong")) == 2
-    for index, item in enumerate(parser.css(".menu p strong"), 1):
+    assert len(resp.parser.css(".menu p strong")) == 2
+    for index, item in enumerate(resp.parser.css(".menu p strong"), 1):
         assert item.text() == f"Titre article {index} :"
 
 
@@ -167,12 +158,11 @@ def test_reponses_with_multiplicatif_articles(app, dummy_lecture, dummy_amendeme
 
     resp = app.get("http://localhost/lectures/an/15/269/reponses")
 
-    parser = HTMLParser(resp.text)
-    assert len(parser.tags("section")) == 2
-    assert len(parser.tags("article")) == 2
-    assert len(parser.css(".titles")) == 2
-    assert parser.css(".titles h2")[0].text() == "Article 1"
-    assert parser.css(".titles h2")[1].text() == "Article 1 bis"
+    assert len(resp.parser.tags("section")) == 2
+    assert len(resp.parser.tags("article")) == 2
+    assert len(resp.parser.css(".titles")) == 2
+    assert resp.parser.css(".titles h2")[0].text() == "Article 1"
+    assert resp.parser.css(".titles h2")[1].text() == "Article 1 bis"
 
 
 def test_reponses_with_annexes(app, dummy_lecture, dummy_amendements):
@@ -191,12 +181,11 @@ def test_reponses_with_annexes(app, dummy_lecture, dummy_amendements):
 
     resp = app.get("http://localhost/lectures/an/15/269/reponses")
 
-    parser = HTMLParser(resp.text)
-    assert len(parser.tags("section")) == 2
-    assert len(parser.tags("article")) == 2
-    assert len(parser.css(".titles")) == 2
-    assert parser.css(".titles h2")[0].text() == "Article 1"
-    assert parser.css(".titles h2")[1].text() == "Annexes"
+    assert len(resp.parser.tags("section")) == 2
+    assert len(resp.parser.tags("article")) == 2
+    assert len(resp.parser.css(".titles")) == 2
+    assert resp.parser.css(".titles h2")[0].text() == "Article 1"
+    assert resp.parser.css(".titles h2")[1].text() == "Annexes"
 
 
 def test_reponses_article_additionnel_avant(app, dummy_lecture, dummy_amendements):
@@ -211,15 +200,15 @@ def test_reponses_article_additionnel_avant(app, dummy_lecture, dummy_amendement
         DBSession.add_all(dummy_amendements)
 
     resp = app.get("http://localhost/lectures/an/15/269/reponses")
-    assert resp.status_code == 200
-    parser = HTMLParser(resp.text)
 
-    assert [section.attributes["id"] for section in parser.tags("section")] == [
+    assert resp.status_code == 200
+
+    assert [section.attributes["id"] for section in resp.parser.tags("section")] == [
         "article-add-av-1",
         "article-1",
     ]
 
-    article_titles = [item.text() for item in parser.css(".titles h2")]
+    article_titles = [item.text() for item in resp.parser.css(".titles h2")]
     assert article_titles == ["Article add. av. 1", "Article 1"]
 
 
@@ -235,13 +224,13 @@ def test_reponses_article_additionnel_après(app, dummy_lecture, dummy_amendemen
         DBSession.add_all(dummy_amendements)
 
     resp = app.get("http://localhost/lectures/an/15/269/reponses")
-    assert resp.status_code == 200
-    parser = HTMLParser(resp.text)
 
-    assert [section.attributes["id"] for section in parser.tags("section")] == [
+    assert resp.status_code == 200
+
+    assert [section.attributes["id"] for section in resp.parser.tags("section")] == [
         "article-1",
         "article-add-ap-1",
     ]
 
-    titles = [item.text() for item in parser.css(".titles h2")]
+    titles = [item.text() for item in resp.parser.css(".titles h2")]
     assert titles == ["Article 1", "Article add. ap. 1"]

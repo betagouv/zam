@@ -2,14 +2,34 @@ import pytest
 import transaction
 
 
-@pytest.yield_fixture
-def app():
-    from webtest import TestApp
-    from zam_repondeur import make_app
-    from zam_repondeur.models import Base, DBSession
+@pytest.fixture(scope="session")
+def settings():
+    return {
+        "sqlalchemy.url": "sqlite:///test.db",
+        "zam.legislature": "15",
+        "zam.secret": "dummy",
+    }
 
-    settings = {"sqlalchemy.url": "sqlite:///test.db", "zam.secret": "dummy"}
-    wsgi_app = make_app(None, **settings)
+
+@pytest.fixture(scope="session")
+def wsgi_app(settings):
+    from zam_repondeur import make_app
+
+    return make_app(None, **settings)
+
+
+@pytest.yield_fixture(scope="session", autouse=True)
+def use_app_registry(wsgi_app):
+    from pyramid.testing import testConfig
+
+    with testConfig(registry=wsgi_app.registry):
+        yield
+
+
+@pytest.yield_fixture
+def app(wsgi_app):
+    from webtest import TestApp
+    from zam_repondeur.models import Base, DBSession
 
     Base.metadata.drop_all()
     Base.metadata.create_all()

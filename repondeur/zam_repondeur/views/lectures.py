@@ -34,8 +34,8 @@ class LecturesAdd:
         self.dossiers_by_uid = get_data("dossiers")
         self.lectures_by_dossier = {
             dossier.uid: {
-                lecture.texte.uid: f"{lecture.chambre} – {lecture.titre} (texte nº {lecture.texte.numero} déposé le {lecture.texte.date_depot.strftime('%d/%m/%Y')})"  # noqa
-                for lecture in dossier.lectures.values()
+                index: f"{lecture.chambre} – {lecture.titre} (texte nº {lecture.texte.numero} déposé le {lecture.texte.date_depot.strftime('%d/%m/%Y')})"  # noqa
+                for index, lecture in enumerate(dossier.lectures)
             }
             for dossier in self.dossiers_by_uid.values()
         }
@@ -50,10 +50,10 @@ class LecturesAdd:
     @view_config(request_method="POST")
     def post(self) -> Response:
         dossier_uid = self.request.POST["dossier"]
-        texte_uid = self.request.POST["lecture"]
-
         dossier = self.dossiers_by_uid[dossier_uid]
-        lecture = dossier.lectures[texte_uid]
+
+        lecture_index = int(self.request.POST["lecture"])
+        lecture = dossier.lectures[lecture_index]
 
         chambre = lecture.chambre.value
         num_texte = lecture.texte.numero

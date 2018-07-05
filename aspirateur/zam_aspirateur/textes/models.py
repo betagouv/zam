@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date
 from enum import Enum
-from typing import Dict
+from typing import List
 
 
 class Chambre(Enum):
@@ -58,4 +58,4 @@ class Lecture:
 class Dossier:
     uid: str
     titre: str
-    lectures: Dict[str, Lecture]
+    lectures: List[Lecture]

@@ -23,8 +23,8 @@ def mock_dossiers():
             "DLR5L15N36030": Dossier(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
-                lectures={
-                    "PRJLANR5L15B0269": Lecture(
+                lectures=[
+                    Lecture(
                         chambre=Chambre.AN,
                         titre="1ère lecture",
                         texte=Texte(
@@ -37,7 +37,7 @@ def mock_dossiers():
                         ),
                         organe="PO717460",
                     )
-                },
+                ],
             )
         }
         yield

@@ -85,11 +85,11 @@ TOP_LEVEL_ACTES = {
 
 
 def parse_dossier(dossier: dict, textes: Dict[str, Texte]) -> Dossier:
-    lectures = {
-        lecture.texte.uid: lecture
+    lectures = [
+        lecture
         for acte in top_level_actes(dossier)
         for lecture in gen_lectures(acte, textes)
-    }
+    ]
     return Dossier(  # type: ignore
         uid=dossier["uid"], titre=dossier["titreDossier"]["titre"], lectures=lectures
     )

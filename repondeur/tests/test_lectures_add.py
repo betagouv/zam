@@ -21,7 +21,7 @@ def test_get_form(app):
     assert isinstance(resp.form.fields["lecture"][0], Select)
     assert resp.form.fields["lecture"][0].options == [
         (
-            "PRJLANR5L15B0269",
+            "0",
             True,
             "Assemblée nationale – 1ère lecture (texte nº 269 déposé le 11/10/2017)",
         )
@@ -35,7 +35,7 @@ def test_post_form(app):
 
     form = app.get("/lectures/add").form
     form["dossier"] = "DLR5L15N36030"
-    form["lecture"] = "PRJLANR5L15B0269"
+    form["lecture"] = "0"
 
     assert not Lecture.exists(chambre="an", session="15", num_texte=269)
 
@@ -61,7 +61,7 @@ def test_post_form_already_exists(app, dummy_lecture):
 
     form = app.get("/lectures/add").form
     form["dossier"] = "DLR5L15N36030"
-    form["lecture"] = "PRJLANR5L15B0269"
+    form["lecture"] = "0"
 
     resp = form.submit()
 

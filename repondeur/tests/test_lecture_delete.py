@@ -2,7 +2,9 @@ def test_lecture_delete(app, dummy_lecture, dummy_amendements):
     from zam_repondeur.models import Amendement, DBSession, Lecture
 
     assert Lecture.exists(
-        chambre=dummy_lecture[0], session=dummy_lecture[1], num_texte=dummy_lecture[2]
+        chambre=dummy_lecture.chambre,
+        session=dummy_lecture.session,
+        num_texte=dummy_lecture.num_texte,
     )
     assert DBSession.query(Amendement).count() == 2
 
@@ -19,6 +21,8 @@ def test_lecture_delete(app, dummy_lecture, dummy_amendements):
     assert "Lecture supprimée avec succès." in resp.text
 
     assert not Lecture.exists(
-        chambre=dummy_lecture[0], session=dummy_lecture[1], num_texte=dummy_lecture[2]
+        chambre=dummy_lecture.chambre,
+        session=dummy_lecture.session,
+        num_texte=dummy_lecture.num_texte,
     )
     assert DBSession.query(Amendement).count() == 0

@@ -52,20 +52,21 @@ def test_post_form(app, dummy_lecture, dummy_amendements):
 
 @responses.activate
 def test_post_form_seance(app, dummy_lecture, dummy_amendements):
-    from zam_repondeur.models import DBSession, Amendement, Lecture
+    from zam_repondeur.models import DBSession, Amendement
 
     with transaction.manager:
-        lecture = Lecture.get(
-            chambre=dummy_lecture[0],
-            session=dummy_lecture[1],
-            num_texte=dummy_lecture[2],
-        )
-        lecture.num_texte = 575
-        lecture.titre = "Première lecture – Séance publique"
+        dummy_lecture.num_texte = 575
+        dummy_lecture.titre = "Première lecture – Séance publique"
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = dummy_amendements[0]
         amendement.num_texte = 575
         amendement.subdiv_num = "2"
+
+        # The objects are no longer bound to a session here, as they were created in a
+        # previous transaction, so we add them to the current session to make sure that
+        # our changes will be committed with the current transaction
+        DBSession.add(dummy_lecture)
+        DBSession.add(amendement)
 
     responses.add(
         responses.GET,
@@ -99,23 +100,24 @@ def test_post_form_seance(app, dummy_lecture, dummy_amendements):
 
 @responses.activate
 def test_post_form_senat(app, dummy_lecture, dummy_amendements):
-    from zam_repondeur.models import DBSession, Amendement, Lecture
+    from zam_repondeur.models import DBSession, Amendement
 
     with transaction.manager:
-        lecture = Lecture.get(
-            chambre=dummy_lecture[0],
-            session=dummy_lecture[1],
-            num_texte=dummy_lecture[2],
-        )
-        lecture.chambre = "senat"
-        lecture.session = "2017-2018"
-        lecture.num_texte = 63
+        dummy_lecture.chambre = "senat"
+        dummy_lecture.session = "2017-2018"
+        dummy_lecture.num_texte = 63
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = dummy_amendements[0]
         amendement.chambre = "senat"
         amendement.session = "2017-2018"
         amendement.num_texte = 63
         amendement.subdiv_num = "1"
+
+        # The objects are no longer bound to a session here, as they were created in a
+        # previous transaction, so we add them to the current session to make sure that
+        # our changes will be committed with the current transaction
+        DBSession.add(dummy_lecture)
+        DBSession.add(amendement)
 
     responses.add(
         responses.GET,
@@ -144,24 +146,25 @@ def test_post_form_senat(app, dummy_lecture, dummy_amendements):
 
 @responses.activate
 def test_post_form_senat_with_mult(app, dummy_lecture, dummy_amendements):
-    from zam_repondeur.models import DBSession, Amendement, Lecture
+    from zam_repondeur.models import DBSession, Amendement
 
     with transaction.manager:
-        lecture = Lecture.get(
-            chambre=dummy_lecture[0],
-            session=dummy_lecture[1],
-            num_texte=dummy_lecture[2],
-        )
-        lecture.chambre = "senat"
-        lecture.session = "2017-2018"
-        lecture.num_texte = 63
+        dummy_lecture.chambre = "senat"
+        dummy_lecture.session = "2017-2018"
+        dummy_lecture.num_texte = 63
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = dummy_amendements[0]
         amendement.chambre = "senat"
         amendement.session = "2017-2018"
         amendement.num_texte = 63
         amendement.subdiv_num = "4"
         amendement.subdiv_mult = "bis"
+
+        # The objects are no longer bound to a session here, as they were created in a
+        # previous transaction, so we add them to the current session to make sure that
+        # our changes will be committed with the current transaction
+        DBSession.add(dummy_lecture)
+        DBSession.add(amendement)
 
     responses.add(
         responses.GET,

@@ -141,41 +141,36 @@ def app(wsgi_app):
 def dummy_lecture(app):
     from zam_repondeur.models import DBSession, Lecture
 
-    chambre = "an"
-    session = "15"
-    num_texte = 269
-    titre = "Titre lecture"
-
     with transaction.manager:
         lecture = Lecture(
-            chambre=chambre,
-            session=session,
-            num_texte=num_texte,
-            titre=titre,
+            chambre="an",
+            session="15",
+            num_texte=269,
+            titre="Titre lecture",
             organe="PO717460",
         )
         DBSession.add(lecture)
 
-    return (chambre, session, num_texte, titre)
+    return lecture
 
 
 @pytest.fixture
 def dummy_amendements(app, dummy_lecture):
     from zam_repondeur.models import DBSession, Amendement
 
-    amendements = []
-    for position, num in enumerate((666, 999), 1):
-        amendement = Amendement(
-            chambre=dummy_lecture[0],
-            session=dummy_lecture[1],
-            num_texte=dummy_lecture[2],
-            subdiv_type="article",
-            subdiv_num="1",
-            num=num,
-            position=position,
-        )
-        amendements.append(amendement)
     with transaction.manager:
+        amendements = [
+            Amendement(
+                chambre=dummy_lecture.chambre,
+                session=dummy_lecture.session,
+                num_texte=dummy_lecture.num_texte,
+                subdiv_type="article",
+                subdiv_num="1",
+                num=num,
+                position=position,
+            )
+            for position, num in enumerate((666, 999), 1)
+        ]
         DBSession.add_all(amendements)
 
     return amendements

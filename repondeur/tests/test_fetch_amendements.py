@@ -8,10 +8,15 @@ def test_fetch_amendements(app, dummy_lecture, dummy_amendements):
 
     # Add a response to one of the amendements
     with transaction.manager:
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+        amendement = dummy_amendements[1]
         amendement.avis = "Favorable"
         amendement.observations = "Observations"
         amendement.reponse = "Réponse"
+
+        # The object is no longer bound to a session here, as it was created in a
+        # previous transaction, so we add it to the current session to make sure that
+        # our changes will be committed with the current transaction
+        DBSession.add(amendement)
 
     # Update amendements
     with patch("zam_repondeur.views.lectures.get_amendements") as mock_get_amendements:

@@ -55,7 +55,7 @@ def test_fetch_and_parse_all():
     )
 
     title, amendements, errored = fetch_and_parse_all(
-        legislature=14, texte=4072, organe="AN", groups_folder=SAMPLE_DATA_DIR
+        legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
     )
 
     assert title == "PLFSS 2017"
@@ -107,7 +107,7 @@ def test_fetch_and_parse_all_with_404():
     )
 
     title, amendements, errored = fetch_and_parse_all(
-        legislature=14, texte=4072, organe="AN", groups_folder=SAMPLE_DATA_DIR
+        legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
     )
 
     assert title == "PLFSS 2017"
@@ -132,7 +132,9 @@ def test_fetch_amendements():
         status=200,
     )
 
-    title, items = fetch_amendements(legislature=14, texte=4072, organe="AN")
+    title, items = fetch_amendements(
+        legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
+    )
 
     assert title == "PLFSS 2017"
     assert len(items) == 5
@@ -163,7 +165,9 @@ def test_fetch_amendements_not_found():
     responses.add(responses.GET, build_url(14, 4072), status=404)
 
     with pytest.raises(NotFound):
-        fetch_amendements(legislature=14, texte=4072, organe="AN")
+        fetch_amendements(
+            legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
+        )
 
 
 @responses.activate
@@ -182,7 +186,7 @@ def test_fetch_amendement():
         legislature=14,
         texte=4072,
         numero=177,
-        organe="AN",
+        organe="PO717460",
         groups_folder=SAMPLE_DATA_DIR,
         position=1,
     )
@@ -230,7 +234,7 @@ def test_fetch_amendement_gouvernement():
         legislature=14,
         texte=4072,
         numero=723,
-        organe="AN",
+        organe="PO717460",
         groups_folder=SAMPLE_DATA_DIR,
         position=1,
     )
@@ -254,7 +258,7 @@ def test_fetch_amendement_commission():
         legislature=14,
         texte=4072,
         numero=135,
-        organe="AN",
+        organe="PO717460",
         groups_folder=SAMPLE_DATA_DIR,
         position=1,
     )
@@ -279,7 +283,7 @@ def test_fetch_amendement_sort_nil():
         legislature=14,
         texte=4072,
         numero=38,
-        organe="AN",
+        organe="PO717460",
         groups_folder=SAMPLE_DATA_DIR,
         position=1,
     )
@@ -302,7 +306,7 @@ def test_fetch_amendement_apres():
         legislature=14,
         texte=4072,
         numero=192,
-        organe="AN",
+        organe="PO717460",
         groups_folder=SAMPLE_DATA_DIR,
         position=1,
     )
@@ -324,7 +328,7 @@ def test_fetch_amendement_not_found():
             legislature=14,
             texte=4072,
             numero=177,
-            organe="AN",
+            organe="PO717460",
             groups_folder=SAMPLE_DATA_DIR,
             position=1,
         )

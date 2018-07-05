@@ -17,21 +17,34 @@ BASE_URL = "http://www.assemblee-nationale.fr"
 
 # Deprecation warning: this API for fetching amendements will be removed in the future
 # and has no Service Level Agreement (SLA)
-PATTERN_LISTE = "/{legislature}/amendements/{texte}/{organe}/liste.xml"
-PATTERN_AMENDEMENT = "/{legislature}/xml/amendements/{texte}/{organe}/{numero}.xml"
+PATTERN_LISTE = "/{legislature}/amendements/{texte}/{organe_abrev}/liste.xml"
+PATTERN_AMENDEMENT = (
+    "/{legislature}/xml/amendements/{texte}/{organe_abrev}/{numero}.xml"
+)
 
 
-def build_url(legislature: int, texte: int, numero: int = 0, organe: str = "AN") -> str:
+def build_url(
+    legislature: int, texte: int, numero: int = 0, organe_abrev: str = "AN"
+) -> str:
     if numero:
         path = PATTERN_AMENDEMENT.format(
-            legislature=legislature, texte=f"{texte:04}", organe=organe, numero=numero
+            legislature=legislature,
+            texte=f"{texte:04}",
+            organe_abrev=organe_abrev,
+            numero=numero,
         )
     else:
         path = PATTERN_LISTE.format(
-            legislature=legislature, texte=f"{texte:04}", organe=organe
+            legislature=legislature, texte=f"{texte:04}", organe_abrev=organe_abrev
         )
     url: str = urljoin(BASE_URL, path)
     return url
+
+
+def get_organe_abrev(organe: str, groups_folder: Path) -> str:
+    data = json.loads((groups_folder / f"{organe}.json").read_text())
+    abrev: str = data["organe"]["libelleAbrev"]
+    return abrev
 
 
 def get_auteur(amendement: OrderedDict) -> str:
@@ -74,7 +87,10 @@ def fetch_amendement(
     """
     Récupère un amendement depuis son numéro.
     """
-    url = build_url(legislature=legislature, texte=texte, numero=numero, organe=organe)
+    organe_abrev = get_organe_abrev(organe, groups_folder)
+    url = build_url(
+        legislature=legislature, texte=texte, numero=numero, organe_abrev=organe_abrev
+    )
 
     resp = cached_session.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
@@ -114,12 +130,13 @@ def parse_division(division: dict) -> SubDiv:
 
 
 def fetch_amendements(
-    legislature: int, texte: int, organe: str
+    legislature: int, texte: int, organe: str, groups_folder: Path
 ) -> Tuple[str, List[OrderedDict]]:
     """
     Récupère la liste des références aux amendements, dans l'ordre de dépôt.
     """
-    url = build_url(legislature=legislature, texte=texte, organe=organe)
+    organe_abrev = get_organe_abrev(organe, groups_folder)
+    url = build_url(legislature=legislature, texte=texte, organe_abrev=organe_abrev)
 
     resp = cached_session.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
@@ -134,7 +151,9 @@ def fetch_amendements(
 def fetch_and_parse_all(
     legislature: int, texte: int, organe: str, groups_folder: Path
 ) -> Tuple[str, List[Amendement], List[str]]:
-    title, amendements_raw = fetch_amendements(legislature, texte, organe)
+    title, amendements_raw = fetch_amendements(
+        legislature, texte, organe, groups_folder
+    )
     amendements = []
     index = 1
     errored = []

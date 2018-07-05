@@ -111,7 +111,7 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--organe",
-        default="AN",
+        default="PO717460",
         help="organe examinant le texte (pour l'Assemblée nationale)",
     )
     parser.add_argument(

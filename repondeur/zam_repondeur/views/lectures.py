@@ -253,13 +253,11 @@ def fetch_amendements(request: Request) -> Response:
     if lecture is None:
         raise HTTPNotFound
 
-    organes = get_data("organes")
-
     amendements, errored = get_amendements(
         chambre=lecture.chambre,
         session=lecture.session,
         texte=lecture.num_texte,
-        organe=organes[lecture.organe]["libelleAbrev"],
+        organe=lecture.organe,
     )
 
     if errored:

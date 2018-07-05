@@ -28,7 +28,7 @@ def test_fetch_all():
         status=200,
     )
 
-    items = fetch_all("2017-2018", 63)
+    items = fetch_all(session="2017-2018", num=63)
 
     assert len(items) == 595
 
@@ -59,7 +59,7 @@ def test_fetch_all_not_found():
     )
 
     with pytest.raises(NotFound):
-        fetch_all("2080-2081", 42)
+        fetch_all(session="2080-2081", num=42)
 
 
 @responses.activate
@@ -460,6 +460,8 @@ def test_fetch_and_parse_discussed_not_found():
     with patch("zam_aspirateur.amendements.fetch_senat.fetch_discussed") as m_fetch:
         m_fetch.side_effect = NotFound
 
-        amendements = fetch_and_parse_discussed("2016-2017", 610, "commission")
+        amendements = fetch_and_parse_discussed(
+            session="2016-2017", num=610, phase="commission"
+        )
 
     assert amendements == []

@@ -5,6 +5,31 @@ import pytest
 import responses
 
 
+class TestGetPossibleUrls:
+    def test_assemblee_nationale(self):
+        from zam_repondeur.fetch import get_possible_texte_urls
+        from zam_repondeur.models import Lecture
+
+        lecture = Lecture(
+            chambre="an", session="15", num_texte=269, titre="Titre lecture"
+        )
+        assert get_possible_texte_urls(lecture) == [
+            "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+            "http://www.assemblee-nationale.fr/15/ta-commission/r0269-a0.asp",
+        ]
+
+    def test_senat(self):
+        from zam_repondeur.fetch import get_possible_texte_urls
+        from zam_repondeur.models import Lecture
+
+        lecture = Lecture(
+            chambre="senat", session="2017-2018", num_texte=63, titre="Titre lecture"
+        )
+        assert get_possible_texte_urls(lecture) == [
+            "https://www.senat.fr/leg/pjl17-063.html"
+        ]
+
+
 @responses.activate
 def test_get_articles(app, dummy_lecture, dummy_amendements):
     from zam_repondeur.fetch import get_articles

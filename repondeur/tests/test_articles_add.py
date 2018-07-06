@@ -69,6 +69,11 @@ def test_post_form_seance(app, dummy_lecture, dummy_amendements):
 
     responses.add(
         responses.GET,
+        "http://www.assemblee-nationale.fr/15/projets/pl0575.asp",
+        status=404,
+    )
+    responses.add(
+        responses.GET,
         "http://www.assemblee-nationale.fr/15/ta-commission/r0575-a0.asp",
         body=(Path(__file__).parent / "sample_data" / "r0575-a0.html").read_text(
             "utf-8", "ignore"

@@ -37,7 +37,10 @@ jobs:
           name: Run tests
           command: |
             cd aspirateur
-             ~/venv-aspirateur/bin/pytest -vv
+            mkdir -p test-reports
+             ~/venv-aspirateur/bin/pytest -vv --junitxml=test-reports/junit.xml
+      - store_test_results:
+          path: aspirateur/test-reports
   repondeur:
     docker:
       - image: circleci/python:3.6-stretch-browsers
@@ -70,4 +73,7 @@ jobs:
             cd repondeur
             sudo sed --in-place '/fr_FR.UTF-8/s/^#//' /etc/locale.gen
             sudo locale-gen fr_FR.UTF-8
-            pipenv run pytest -vv
+            mkdir -p test-reports
+            pipenv run pytest -vv --junitxml=test-reports/junit.xml
+      - store_test_results:
+          path: repondeur/test-reports

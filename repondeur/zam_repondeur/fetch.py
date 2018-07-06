@@ -5,6 +5,7 @@ from pyramid.threadlocal import get_current_registry
 from tlfp.tools.parse_texte import parse
 
 from zam_aspirateur.amendements.models import Amendement
+from zam_aspirateur.exceptions import NotFound
 from zam_aspirateur.__main__ import aspire_an, aspire_senat
 
 from zam_repondeur.models import DBSession, Amendement as AmendementModel, Lecture
@@ -48,20 +49,38 @@ def get_article_num_mult(article: Dict[str, Any]) -> Tuple[str, str]:
 
 
 def get_articles(lecture: Lecture) -> None:
+    urls = get_possible_texte_urls(lecture)
+    articles = parse_first_working_url(urls)
+    add_article_contents_to_amendements(lecture, articles)
+
+
+AN_URL = "http://www.assemblee-nationale.fr/"
+SENAT_URL = "https://www.senat.fr/"
+
+
+def get_possible_texte_urls(lecture: Lecture) -> List[str]:
     if lecture.chambre == "an":
-        BASE_URL = "http://www.assemblee-nationale.fr/"
-        if "Commission" in lecture.titre or "Séance" in lecture.titre:
-            url = f"{BASE_URL}{lecture.session}/ta-commission/r{lecture.num_texte:04}-a0.asp"  # noqa
-        else:
-            url = f"{BASE_URL}{lecture.session}/projets/pl{lecture.num_texte:04}.asp"
+        return [
+            f"{AN_URL}{lecture.session}/projets/pl{lecture.num_texte:04}.asp",
+            f"{AN_URL}{lecture.session}/ta-commission/r{lecture.num_texte:04}-a0.asp",
+        ]
     else:
-        BASE_URL = "https://www.senat.fr/"
-        url = f"{BASE_URL}leg/pjl{lecture.session[2:4]}-{lecture.num_texte:03}.html"
-    items = parse(url)
-    for article_content in items:
+        return [f"{SENAT_URL}leg/pjl{lecture.session[2:4]}-{lecture.num_texte:03}.html"]
+
+
+def parse_first_working_url(urls: List[str]) -> List[dict]:
+    for url in urls:
+        articles: List[dict] = parse(url)
+        if articles:
+            return articles
+    raise NotFound
+
+
+def add_article_contents_to_amendements(lecture: Lecture, articles: List[dict]) -> None:
+    for article_content in articles:
         if "alineas" in article_content and article_content["alineas"]:
             article_num, article_mult = get_article_num_mult(article_content)
-            section_title = get_section_title(items, article_content)
+            section_title = get_section_title(articles, article_content)
             DBSession.query(AmendementModel).filter(
                 AmendementModel.chambre == lecture.chambre,
                 AmendementModel.session == lecture.session,

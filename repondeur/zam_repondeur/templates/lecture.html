@@ -1,7 +1,5 @@
 {% extends "_base.html" %}
 
-{% from "_macros.html" import lecture_title %}
-
 
 {% block header %}
 <style type="text/css">
@@ -23,7 +21,7 @@
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{ lecture_title(lecture) }}</li>
+    <li class="breadcrumb-item active" aria-current="page">{{ lecture }}</li>
 {% endblock %}
 
 

@@ -31,7 +31,7 @@
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
-    <li class="breadcrumb-item"><a href="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}">{{ lecture_title(lecture.chambre, lecture.session, lecture.num_texte) }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}">{{ lecture_title(lecture) }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Amendements</li>
 {% endblock %}
 

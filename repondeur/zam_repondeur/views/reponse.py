@@ -57,6 +57,16 @@ class ReponseEdit:
         num = int(request.matchdict["num"])
         if chambre not in CHAMBRES:
             raise HTTPBadRequest
+        self.lecture = (
+            DBSession.query(Lecture)
+            .filter(
+                Lecture.chambre == chambre,
+                Lecture.session == session,
+                Lecture.num_texte == num_texte,
+                Lecture.organe == organe,
+            )
+            .first()
+        )
         self.amendement = (
             DBSession.query(AmendementModel)
             .filter(
@@ -73,7 +83,7 @@ class ReponseEdit:
 
     @view_config(request_method="GET")
     def get(self) -> dict:
-        return {"amendement": self.amendement, "avis": AVIS}
+        return {"lecture": self.lecture, "amendement": self.amendement, "avis": AVIS}
 
     @view_config(request_method="POST")
     def post(self) -> Response:

@@ -1,7 +1,7 @@
-{% macro lecture_title(chambre, session, num_texte) %}
-    {{- "Sénat" if chambre == "senat" else "Assemblée nationale"}},
-    session {{ session }},
-    texte nº&nbsp;{{ num_texte }}
+{% macro lecture_title(lecture) %}
+    {{- "Sénat" if lecture.chambre == "senat" else "Assemblée nationale"}},
+    session {{ lecture.session }},
+    texte nº&nbsp;{{ lecture.num_texte }}
 {% endmacro %}
 
 

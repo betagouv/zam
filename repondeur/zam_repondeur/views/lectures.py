@@ -47,8 +47,13 @@ class LecturesAdd:
     def post(self) -> Response:
         dossier_uid = self.request.POST["dossier"]
         dossier = self.dossiers_by_uid[dossier_uid]
-        lecture_index = int(self.request.POST["lecture"] or 0)
-        lecture = dossier.lectures[lecture_index]
+        lecture_uid = self.request.POST["lecture"]
+        lecture = None
+        for lecture_ in dossier.lectures:
+            if lecture_.texte.uid == lecture_uid:
+                lecture = lecture_
+        if lecture is None:
+            raise HTTPNotFound
 
         chambre = lecture.chambre.value
         num_texte = lecture.texte.numero

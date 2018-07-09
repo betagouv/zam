@@ -28,15 +28,16 @@ def test_get_form(app):
 def test_post_form(app):
     from zam_repondeur.models import Lecture
 
-    form = app.get("/lectures/add").form
-    form["dossier"] = "DLR5L15N36030"
-    form["lecture"] = ""
-
     assert not Lecture.exists(
         chambre="an", session="15", num_texte=269, organe="PO717460"
     )
 
-    resp = form.submit()
+    # We cannot use form.submit() given the form is dynamic and does not
+    # contain choices for lectures (dynamically loaded via JS).
+    resp = app.post("/lectures/add", {
+        "dossier": "DLR5L15N36030",
+        "lecture": "PRJLANR5L15B0269",
+    })
 
     assert resp.status_code == 302
     assert resp.location == "http://localhost/lectures/an/15/269/PO717460/"
@@ -56,11 +57,12 @@ def test_post_form_already_exists(app, dummy_lecture):
 
     assert Lecture.exists(chambre="an", session="15", num_texte=269, organe="PO717460")
 
-    form = app.get("/lectures/add").form
-    form["dossier"] = "DLR5L15N36030"
-    form["lecture"] = ""
-
-    resp = form.submit()
+    # We cannot use form.submit() given the form is dynamic and does not
+    # contain choices for lectures (dynamically loaded via JS).
+    resp = app.post("/lectures/add", {
+        "dossier": "DLR5L15N36030",
+        "lecture": "PRJLANR5L15B0269",
+    })
 
     assert resp.status_code == 302
     assert resp.location == "http://localhost/lectures/an/15/269/PO717460/"

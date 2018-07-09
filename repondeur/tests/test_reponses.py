@@ -8,9 +8,9 @@ def test_reponses_empty(app, dummy_lecture, dummy_amendements):
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert resp.status_code == 200
-    assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
-    assert len(resp.parser.tags("section")) == 0
-    assert len(resp.parser.tags("article")) == 0
+    assert resp.first_h1 == str(dummy_lecture)
+    assert resp.find_amendement(dummy_amendements[0]) is None
+    assert resp.find_amendement(dummy_amendements[1]) is None
 
 
 def test_reponses_full(app, dummy_lecture, dummy_amendements):
@@ -26,10 +26,17 @@ def test_reponses_full(app, dummy_lecture, dummy_amendements):
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert resp.status_code == 200
-    assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
-    assert len(resp.parser.tags("section")) == 1
-    assert len(resp.parser.tags("article")) == 2
-    assert len(resp.parser.css("article.gouvernemental")) == 0
+    assert resp.first_h1 == str(dummy_lecture)
+
+    test_amendement = resp.find_amendement(dummy_amendements[0])
+    assert test_amendement is not None
+    assert test_amendement.number_is_in_title()
+    assert not test_amendement.has_gouvernemental_class()
+
+    test_amendement = resp.find_amendement(dummy_amendements[1])
+    assert test_amendement is not None
+    assert test_amendement.number_is_in_title()
+    assert not test_amendement.has_gouvernemental_class()
 
 
 def test_reponses_gouvernemental(app, dummy_lecture, dummy_amendements):
@@ -42,10 +49,17 @@ def test_reponses_gouvernemental(app, dummy_lecture, dummy_amendements):
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
-    assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
-    assert len(resp.parser.tags("section")) == 1
-    assert len(resp.parser.tags("article")) == 2
-    assert len(resp.parser.css("article.gouvernemental")) == 2
+    assert resp.first_h1 == str(dummy_lecture)
+
+    test_amendement = resp.find_amendement(dummy_amendements[0])
+    assert test_amendement is not None
+    assert test_amendement.number_is_in_title()
+    assert test_amendement.has_gouvernemental_class()
+
+    test_amendement = resp.find_amendement(dummy_amendements[1])
+    assert test_amendement is not None
+    assert test_amendement.number_is_in_title()
+    assert test_amendement.has_gouvernemental_class()
 
 
 @pytest.mark.parametrize("sort", ["retiré", "irrecevable", "tombé"])
@@ -63,10 +77,14 @@ def test_reponses_abandonned_not_displayed(app, dummy_lecture, dummy_amendements
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
-    assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
-    assert len(resp.parser.tags("section")) == 1
-    assert len(resp.parser.tags("article")) == 1
-    assert len(resp.parser.css("article.gouvernemental")) == 0
+    assert resp.first_h1 == str(dummy_lecture)
+
+    test_amendement = resp.find_amendement(dummy_amendements[0])
+    assert test_amendement is not None
+    assert test_amendement.number_is_in_title()
+    assert not test_amendement.has_gouvernemental_class()
+
+    assert resp.find_amendement(dummy_amendements[1]) is None
 
 
 @pytest.mark.parametrize("sort", ["retiré", "irrecevable", "tombé"])
@@ -87,10 +105,13 @@ def test_reponses_abandonned_and_gouvernemental_not_displayed(
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
-    assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
-    assert len(resp.parser.tags("section")) == 1
-    assert len(resp.parser.tags("article")) == 1
-    assert len(resp.parser.css("article.gouvernemental")) == 1
+    assert resp.first_h1 == str(dummy_lecture)
+    test_amendement = resp.find_amendement(dummy_amendements[0])
+    assert test_amendement is not None
+    assert test_amendement.number_is_in_title()
+    assert test_amendement.has_gouvernemental_class()
+
+    assert resp.find_amendement(dummy_amendements[1]) is None
 
 
 def test_reponses_menu(app, dummy_lecture, dummy_amendements):
@@ -178,8 +199,6 @@ def test_reponses_with_multiple_articles(app, dummy_lecture, dummy_amendements):
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
-    assert len(resp.parser.tags("section")) == 2
-    assert len(resp.parser.tags("article")) == 2
     assert len(resp.parser.css(".titles")) == 2
     for index, item in enumerate(resp.parser.css(".titles h2"), 1):
         assert item.text() == f"Article {index}"
@@ -205,9 +224,6 @@ def test_reponses_with_multiplicatif_articles(app, dummy_lecture, dummy_amendeme
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
-    assert len(resp.parser.tags("section")) == 2
-    assert len(resp.parser.tags("article")) == 2
-    assert len(resp.parser.css(".titles")) == 2
     assert resp.parser.css(".titles h2")[0].text() == "Article 1"
     assert resp.parser.css(".titles h2")[1].text() == "Article 1 bis"
 
@@ -228,9 +244,6 @@ def test_reponses_with_annexes(app, dummy_lecture, dummy_amendements):
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
-    assert len(resp.parser.tags("section")) == 2
-    assert len(resp.parser.tags("article")) == 2
-    assert len(resp.parser.css(".titles")) == 2
     assert resp.parser.css(".titles h2")[0].text() == "Article 1"
     assert resp.parser.css(".titles h2")[1].text() == "Annexes"
 
@@ -248,15 +261,8 @@ def test_reponses_article_additionnel_avant(app, dummy_lecture, dummy_amendement
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
-    assert resp.status_code == 200
-
-    assert [section.attributes["id"] for section in resp.parser.tags("section")] == [
-        "article-add-av-1",
-        "article-1",
-    ]
-    assert len(resp.parser.tags("section")) == 2
-    assert len(resp.parser.tags("article")) == 2
-    assert len(resp.parser.css(".titles")) == 2
+    section_ids = [section.attributes["id"] for section in resp.parser.tags("section")]
+    assert section_ids == ["article-add-av-1", "article-1"]
     article_titles = [item.text() for item in resp.parser.css(".titles h2")]
     assert article_titles == ["Article add. av. 1", "Article 1"]
 
@@ -274,14 +280,10 @@ def test_reponses_article_additionnel_apres(app, dummy_lecture, dummy_amendement
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
-    assert resp.status_code == 200
-
-    assert [section.attributes["id"] for section in resp.parser.tags("section")] == [
-        "article-1",
-        "article-add-ap-1",
-    ]
-    titles = [item.text() for item in resp.parser.css(".titles h2")]
-    assert titles == ["Article 1", "Article add. ap. 1"]
+    section_ids = [section.attributes["id"] for section in resp.parser.tags("section")]
+    assert section_ids == ["article-1", "article-add-ap-1"]
+    article_titles = [item.text() for item in resp.parser.css(".titles h2")]
+    assert article_titles == ["Article 1", "Article add. ap. 1"]
 
 
 def test_reponses_amendement_rect(app, dummy_lecture, dummy_amendements):

@@ -46,6 +46,49 @@ def test_reponses_gouvernemental(app, dummy_lecture, dummy_amendements):
     assert len(resp.parser.css("article.gouvernemental")) == 2
 
 
+def test_reponses_retire_not_displayed(app, dummy_lecture, dummy_amendements):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        for amendement in dummy_amendements:
+            amendement.avis = "Favorable"
+            amendement.observations = f"Observations pour {amendement.num}"
+            amendement.reponse = f"Réponse pour {amendement.num}"
+        # Only the last one.
+        amendement.sort = "retiré"
+        DBSession.add_all(dummy_amendements)
+
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
+
+    assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
+    assert len(resp.parser.tags("section")) == 1
+    assert len(resp.parser.tags("article")) == 1
+    assert len(resp.parser.css("article.gouvernemental")) == 0
+
+
+def test_reponses_retire_and_gouvernemental_not_displayed(
+    app, dummy_lecture, dummy_amendements
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        for amendement in dummy_amendements:
+            amendement.avis = "Favorable"
+            amendement.observations = f"Observations pour {amendement.num}"
+            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.auteur = "LE GOUVERNEMENT"
+        # Only the last one.
+        amendement.sort = "retiré"
+        DBSession.add_all(dummy_amendements)
+
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
+
+    assert resp.parser.tags("h1")[0].text() == str(dummy_lecture)
+    assert len(resp.parser.tags("section")) == 1
+    assert len(resp.parser.tags("article")) == 1
+    assert len(resp.parser.css("article.gouvernemental")) == 1
+
+
 def test_reponses_menu(app, dummy_lecture, dummy_amendements):
     from zam_repondeur.models import DBSession
 

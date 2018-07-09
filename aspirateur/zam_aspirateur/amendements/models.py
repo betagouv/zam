@@ -99,7 +99,7 @@ class Amendement:
 
     @property
     def is_displayable(self) -> bool:
-        return bool(self.avis) or self.gouvernemental
+        return (bool(self.avis) or self.gouvernemental) and self.sort != "retiré"
 
     def replace(self, changes: dict) -> "Amendement":
         amendement = replace(self, **changes)  # type: Amendement

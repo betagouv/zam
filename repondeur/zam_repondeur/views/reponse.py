@@ -43,6 +43,7 @@ def list_reponses(request: Request) -> Response:
         chambre=lecture.chambre,
         session=lecture.session,
         num_texte=lecture.num_texte,
+        organe=lecture.organe,
     )
     return {
         "title": str(lecture),

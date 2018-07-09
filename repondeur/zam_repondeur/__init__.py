@@ -34,10 +34,11 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.add_route(
             "list_reponses",
             "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/reponses",
+        )
+        config.add_route(
             "lecture_check",
             "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/check",
         )
-
         config.add_route(
             "list_amendements",
             "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/amendements/list",

@@ -210,13 +210,11 @@ def test_reponses_article_additionnel_avant(app, dummy_lecture, dummy_amendement
     assert len(resp.parser.tags("section")) == 2
     assert len(resp.parser.tags("article")) == 2
     assert len(resp.parser.css(".titles")) == 2
-    assert resp.parser.css(".titles h2")[0].text() == "Article 1"
-    assert resp.parser.css(".titles h2")[1].text() == "Annexes"
     article_titles = [item.text() for item in resp.parser.css(".titles h2")]
     assert article_titles == ["Article add. av. 1", "Article 1"]
 
 
-def test_reponses_article_additionnel_après(app, dummy_lecture, dummy_amendements):
+def test_reponses_article_additionnel_apres(app, dummy_lecture, dummy_amendements):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:

@@ -388,6 +388,7 @@ def lecture_check(request: Request) -> dict:
         chambre=request.matchdict["chambre"],
         session=request.matchdict["session"],
         num_texte=int(request.matchdict["num_texte"]),
+        organe=request.matchdict["organe"],
     )
     if lecture is None:
         raise HTTPNotFound

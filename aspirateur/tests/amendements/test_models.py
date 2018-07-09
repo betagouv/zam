@@ -24,6 +24,7 @@ def test_num_disp(text, num, rectif):
         chambre="senat",
         session="2017-2018",
         num_texte=63,
+        organe="PO717460",
         subdiv_type="article",
         subdiv_num="1",
         alinea="",

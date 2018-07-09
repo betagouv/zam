@@ -1,0 +1,94 @@
+{
+    "export": {
+        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+        "organes": {
+            "organe": [
+                {
+                    "@xsi:type": "OrganeParlementaire_Type",
+                    "uid": "PO59048",
+                    "codeType": "COMPER",
+                    "libelle": "Commission des finances, de l'économie générale et du contrôle budgétaire",
+                    "libelleEdition": "de la commission des finances",
+                    "libelleAbrege": "Finances",
+                    "libelleAbrev": "CION_FIN",
+                    "viMoDe": {
+                        "dateDebut": "1958-12-09",
+                        "dateAgrement": null,
+                        "dateFin": null
+                    },
+                    "organeParent": null,
+                    "chambre": null,
+                    "regime": "5ème République",
+                    "legislature": null,
+                    "secretariat": {
+                        "secretaire01": "Mme Dominique Meunier-Ferry",
+                        "secretaire02": null
+                    }
+                },
+                {
+                    "@xsi:type": "OrganeParlementaire_Type",
+                    "uid": "PO717460",
+                    "codeType": "ASSEMBLEE",
+                    "libelle": "Assemblée nationale de la 15ème législature",
+                    "libelleEdition": "de l'Assemblée",
+                    "libelleAbrege": "Assemblée",
+                    "libelleAbrev": "AN",
+                    "viMoDe": {
+                        "dateDebut": "2017-06-21",
+                        "dateAgrement": null,
+                        "dateFin": null
+                    },
+                    "organeParent": null,
+                    "chambre": null,
+                    "regime": "5ème République",
+                    "legislature": "15",
+                    "secretariat": {
+                        "secretaire01": null,
+                        "secretaire02": null
+                    }
+                },
+                {
+                    "@xsi:type": "OrganeParlementaire_Type",
+                    "uid": "PO744107",
+                    "codeType": "CNPS",
+                    "libelle": "Commission spéciale chargée d'examiner le projet de loi pour un État au service d'une société de confiance",
+                    "libelleEdition": "de la commission spéciale chargée d'examiner le projet de loi pour un État au service d'une société de confiance",
+                    "libelleAbrege": "Commission spéciale sur la société de confiance",
+                    "libelleAbrev": "CSCONF",
+                    "viMoDe": {
+                        "dateDebut": "2017-11-27",
+                        "dateAgrement": null,
+                        "dateFin": null
+                    },
+                    "organeParent": null,
+                    "chambre": null,
+                    "regime": "5ème République",
+                    "legislature": "15",
+                    "secretariat": {
+                        "secretaire01": null,
+                        "secretaire02": null
+                    }
+                },
+                {
+                    "@xsi:type": "OrganeExterne_Type",
+                    "uid": "PO78718",
+                    "codeType": "SENAT",
+                    "libelle": "Sénat ( 5ème République )",
+                    "libelleEdition": "du sénat ( 5ème République )",
+                    "libelleAbrege": "Sénat",
+                    "libelleAbrev": "SENAT",
+                    "viMoDe": {
+                        "dateDebut": "1958-12-09",
+                        "dateAgrement": null,
+                        "dateFin": null
+                    },
+                    "organeParent": null
+                }
+           ]
+        },
+        "acteurs": {
+            "acteur": [
+           ]
+        }
+    }
+}

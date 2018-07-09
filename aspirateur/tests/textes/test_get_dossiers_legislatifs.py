@@ -47,76 +47,170 @@ def dossier_plfss_2018():
 
 def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
     from zam_aspirateur.textes.dossiers_legislatifs import parse_dossier
-    from zam_aspirateur.textes.models import Chambre, Lecture, Dossier, Texte, TypeTexte
+    from zam_aspirateur.textes.models import Chambre, Lecture, Texte, TypeTexte
 
     dossier = parse_dossier(dossier_plfss_2018, textes)
 
-    assert dossier == Dossier(
-        uid="DLR5L15N36030",
-        titre="Sécurité sociale : loi de financement 2018",
-        lectures={
-            "PRJLANR5L15B0269": Lecture(
-                chambre=Chambre.AN,
-                titre="Première lecture – Séance publique",
-                texte=Texte(
-                    uid="PRJLANR5L15B0269",
-                    type_=TypeTexte.PROJET,
-                    numero=269,
-                    titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
-                    titre_court="PLFSS pour 2018",
-                    date_depot=datetime.date(2017, 10, 11),
-                ),
+    assert dossier.uid == "DLR5L15N36030"
+    assert dossier.titre == "Sécurité sociale : loi de financement 2018"
+    assert dossier.lectures == [
+        Lecture(
+            chambre=Chambre.AN,
+            titre="Première lecture – Commission saisie au fond",
+            texte=Texte(
+                uid="PRJLANR5L15B0269",
+                type_=TypeTexte.PROJET,
+                numero=269,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 10, 11),
             ),
-            "PRJLSNR5S299B0063": Lecture(
-                chambre=Chambre.SENAT,
-                titre="Première lecture – Séance publique",
-                texte=Texte(
-                    uid="PRJLSNR5S299B0063",
-                    type_=TypeTexte.PROJET,
-                    numero=63,
-                    titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
-                    titre_court="PLFSS pour 2018",
-                    date_depot=datetime.date(2017, 11, 6),
-                ),
+            organe="PO420120",
+        ),
+        Lecture(
+            chambre=Chambre.AN,
+            titre="Première lecture – Commission saisie pour avis",
+            texte=Texte(
+                uid="PRJLANR5L15B0269",
+                type_=TypeTexte.PROJET,
+                numero=269,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 10, 11),
             ),
-            "PRJLANR5L15B0387": Lecture(
-                chambre=Chambre.AN,
-                titre="Nouvelle lecture – Séance publique",
-                texte=Texte(
-                    uid="PRJLANR5L15B0387",
-                    type_=TypeTexte.PROJET,
-                    numero=387,
-                    titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
-                    titre_court="PLFSS pour 2018",
-                    date_depot=datetime.date(2017, 11, 21),
-                ),
+            organe="PO59048",
+        ),
+        Lecture(
+            chambre=Chambre.AN,
+            titre="Première lecture – Séance publique",
+            texte=Texte(
+                uid="PRJLANR5L15B0269",
+                type_=TypeTexte.PROJET,
+                numero=269,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 10, 11),
             ),
-            "PRJLSNR5S299B0121": Lecture(
-                chambre=Chambre.SENAT,
-                titre="Nouvelle lecture – Séance publique",
-                texte=Texte(
-                    uid="PRJLSNR5S299B0121",
-                    type_=TypeTexte.PROJET,
-                    numero=121,
-                    titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
-                    titre_court="PLFSS pour 2018",
-                    date_depot=datetime.date(2017, 11, 30),
-                ),
+            organe="PO717460",
+        ),
+        Lecture(
+            chambre=Chambre.SENAT,
+            titre="Première lecture – Commission saisie au fond",
+            texte=Texte(
+                uid="PRJLSNR5S299B0063",
+                type_=TypeTexte.PROJET,
+                numero=63,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 11, 6),
             ),
-            "PRJLANR5L15B0434": Lecture(
-                chambre=Chambre.AN,
-                titre="Lecture définitive – Séance publique",
-                texte=Texte(
-                    uid="PRJLANR5L15B0434",
-                    type_=TypeTexte.PROJET,
-                    numero=434,
-                    titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
-                    titre_court="PLFSS pour 2018",
-                    date_depot=datetime.date(2017, 12, 1),
-                ),
+            organe="PO211493",
+        ),
+        Lecture(
+            chambre=Chambre.SENAT,
+            titre="Première lecture – Commission saisie pour avis",
+            texte=Texte(
+                uid="PRJLSNR5S299B0063",
+                type_=TypeTexte.PROJET,
+                numero=63,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 11, 6),
             ),
-        },
-    )
+            organe="PO211494",
+        ),
+        Lecture(
+            chambre=Chambre.SENAT,
+            titre="Première lecture – Séance publique",
+            texte=Texte(
+                uid="PRJLSNR5S299B0063",
+                type_=TypeTexte.PROJET,
+                numero=63,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 11, 6),
+            ),
+            organe="PO78718",
+        ),
+        Lecture(
+            chambre=Chambre.AN,
+            titre="Nouvelle lecture – Commission saisie au fond",
+            texte=Texte(
+                uid="PRJLANR5L15B0387",
+                type_=TypeTexte.PROJET,
+                numero=387,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 11, 21),
+            ),
+            organe="PO420120",
+        ),
+        Lecture(
+            chambre=Chambre.AN,
+            titre="Nouvelle lecture – Séance publique",
+            texte=Texte(
+                uid="PRJLANR5L15B0387",
+                type_=TypeTexte.PROJET,
+                numero=387,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 11, 21),
+            ),
+            organe="PO717460",
+        ),
+        Lecture(
+            chambre=Chambre.SENAT,
+            titre="Nouvelle lecture – Commission saisie au fond",
+            texte=Texte(
+                uid="PRJLSNR5S299B0121",
+                type_=TypeTexte.PROJET,
+                numero=121,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 11, 30),
+            ),
+            organe="PO211493",
+        ),
+        Lecture(
+            chambre=Chambre.SENAT,
+            titre="Nouvelle lecture – Séance publique",
+            texte=Texte(
+                uid="PRJLSNR5S299B0121",
+                type_=TypeTexte.PROJET,
+                numero=121,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 11, 30),
+            ),
+            organe="PO78718",
+        ),
+        Lecture(
+            chambre=Chambre.AN,
+            titre="Lecture définitive – Commission saisie au fond",
+            texte=Texte(
+                uid="PRJLANR5L15B0434",
+                type_=TypeTexte.PROJET,
+                numero=434,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 12, 1),
+            ),
+            organe="PO420120",
+        ),
+        Lecture(
+            chambre=Chambre.AN,
+            titre="Lecture définitive – Séance publique",
+            texte=Texte(
+                uid="PRJLANR5L15B0434",
+                type_=TypeTexte.PROJET,
+                numero=434,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=datetime.date(2017, 12, 1),
+            ),
+            organe="PO717460",
+        ),
+    ]
 
 
 @pytest.fixture
@@ -134,8 +228,8 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
     assert dossier == Dossier(
         uid="DLR5L15N36159",
         titre="Fonction publique : un Etat au service d'une société de confiance",
-        lectures={
-            "PRJLANR5L15B0424": Lecture(
+        lectures=[
+            Lecture(
                 chambre=Chambre.AN,
                 titre="Première lecture – Commission saisie au fond",
                 texte=Texte(
@@ -146,8 +240,9 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                     titre_court="Etat service société de confiance",
                     date_depot=datetime.date(2017, 11, 27),
                 ),
+                organe="PO744107",
             ),
-            "PRJLANR5L15BTC0575": Lecture(
+            Lecture(
                 chambre=Chambre.AN,
                 titre="Première lecture – Séance publique",
                 texte=Texte(
@@ -158,8 +253,9 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                     titre_court="Etat service société de confiance",
                     date_depot=datetime.date(2018, 1, 18),
                 ),
+                organe="PO717460",
             ),
-            "PRJLSNR5S299B0259": Lecture(
+            Lecture(
                 chambre=Chambre.SENAT,
                 titre="Première lecture – Commission saisie au fond",
                 texte=Texte(
@@ -170,8 +266,9 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                     titre_court="État au service d'une société de confiance",
                     date_depot=datetime.date(2018, 1, 31),
                 ),
+                organe="PO748821",
             ),
-            "PRJLSNR5S299BTC0330": Lecture(
+            Lecture(
                 chambre=Chambre.SENAT,
                 titre="Première lecture – Séance publique",
                 texte=Texte(
@@ -182,8 +279,9 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                     titre_court="État au service d'une société de confiance",
                     date_depot=datetime.date(2018, 2, 22),
                 ),
+                organe="PO78718",
             ),
-            "PRJLANR5L15B0806": Lecture(
+            Lecture(
                 chambre=Chambre.AN,
                 titre="Nouvelle lecture – Commission saisie au fond",
                 texte=Texte(
@@ -194,8 +292,9 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                     titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
                     date_depot=datetime.date(2018, 3, 21),
                 ),
+                organe="PO744107",
             ),
-            "PRJLANR5L15BTC1056": Lecture(
+            Lecture(
                 chambre=Chambre.AN,
                 titre="Nouvelle lecture – Séance publique",
                 texte=Texte(
@@ -206,9 +305,25 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                     titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
                     date_depot=datetime.date(2018, 6, 13),
                 ),
+                organe="PO717460",
             ),
-        },
+        ],
     )
+
+
+@pytest.fixture
+def dossier_pacte_ferroviaire():
+    with open(HERE.parent / "sample_data" / "dossier-DLR5L15N36460.json") as f_:
+        return json.load(f_)["dossierParlementaire"]
+
+
+def test_dossier_pacte_ferroviaire(dossier_pacte_ferroviaire, textes):
+    from zam_aspirateur.textes.dossiers_legislatifs import parse_dossier
+
+    dossier = parse_dossier(dossier_pacte_ferroviaire, textes)
+
+    assert dossier.uid == "DLR5L15N36460"
+    assert len(dossier.lectures) > 4
 
 
 def test_extract_actes(dossier_essoc):
@@ -217,51 +332,36 @@ def test_extract_actes(dossier_essoc):
     assert len(extract_actes(dossier_essoc)) == 4
 
 
-def test_gen_lectures(dossier_essoc, textes):
-    from zam_aspirateur.textes.dossiers_legislatifs import (
-        gen_lectures,
-        Chambre,
-        Lecture,
-        Texte,
-        TypeTexte,
-    )
+class TestGenLectures:
+    def test_gen_lectures_essoc(self, dossier_essoc, textes):
+        from zam_aspirateur.textes.dossiers_legislatifs import gen_lectures
 
-    acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
+        acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
 
-    res = list(gen_lectures(acte, textes))
-    assert res == [
-        Lecture(
-            chambre=Chambre.AN,
-            titre="Première lecture – Commission saisie au fond",
-            texte=Texte(
-                uid="PRJLANR5L15B0424",
-                type_=TypeTexte.PROJET,
-                numero=424,
-                titre_long="projet de loi pour un Etat au service d’une société de confiance",  # noqa
-                titre_court="Etat service société de confiance",
-                date_depot=datetime.date(2017, 11, 27),
-            ),
-        ),
-        Lecture(
-            chambre=Chambre.AN,
-            titre="Première lecture – Séance publique",
-            texte=Texte(
-                uid="PRJLANR5L15BTC0575",
-                type_=TypeTexte.PROJET,
-                numero=575,
-                titre_long="projet de loi sur le projet de loi, après engagement de la procédure accélérée, pour un Etat au service d’une société de confiance (n°424).",  # noqa
-                titre_court="Etat service société de confiance",
-                date_depot=datetime.date(2018, 1, 18),
-            ),
-        ),
-    ]
+        lectures = list(gen_lectures(acte, textes))
+
+        assert len(lectures) == 2
+        assert "Commission saisie au fond" in lectures[0].titre
+        assert "Séance publique" in lectures[1].titre
+
+    def test_gen_lectures_pacte_ferroviaire(self, dossier_pacte_ferroviaire, textes):
+        from zam_aspirateur.textes.dossiers_legislatifs import gen_lectures
+
+        acte = dossier_pacte_ferroviaire["actesLegislatifs"]["acteLegislatif"][0]
+
+        lectures = list(gen_lectures(acte, textes))
+
+        assert len(lectures) == 3
+        assert "Commission saisie au fond" in lectures[0].titre
+        assert "Commission saisie pour avis" in lectures[1].titre
+        assert "Séance publique" in lectures[2].titre
 
 
 def test_walk_actes(dossier_essoc, textes):
-    from zam_aspirateur.textes.dossiers_legislatifs import walk_actes
+    from zam_aspirateur.textes.dossiers_legislatifs import walk_actes, WalkResult
 
     acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
     assert list(walk_actes(acte)) == [
-        ("COM-FOND", "PRJLANR5L15B0424"),
-        ("DEBATS", "PRJLANR5L15BTC0575"),
+        WalkResult(phase="COM-FOND", organe="PO744107", texte="PRJLANR5L15B0424"),
+        WalkResult(phase="DEBATS", organe="PO717460", texte="PRJLANR5L15BTC0575"),
     ]

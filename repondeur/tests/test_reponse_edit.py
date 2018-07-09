@@ -1,5 +1,7 @@
 def test_get_reponse_edit_form(app, dummy_lecture, dummy_amendements):
-    resp = app.get("http://localhost/lectures/an/15/269/amendements/999/reponse")
+    resp = app.get(
+        "http://localhost/lectures/an/15/269/PO717460/amendements/999/reponse"
+    )
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -15,14 +17,18 @@ def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
     assert amendement.observations is None
     assert amendement.reponse is None
 
-    form = app.get("http://localhost/lectures/an/15/269/amendements/999/reponse").form
+    form = app.get(
+        "http://localhost/lectures/an/15/269/PO717460/amendements/999/reponse"
+    ).form
     form["avis"] = "Favorable"
     form["observations"] = "Des observations très pertinentes"
     form["reponse"] = "Une réponse très appropriée"
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an/15/269/amendements/list"
+    assert (
+        resp.location == "http://localhost/lectures/an/15/269/PO717460/amendements/list"
+    )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.avis == "Favorable"

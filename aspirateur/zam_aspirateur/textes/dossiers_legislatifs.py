@@ -1,11 +1,8 @@
-from contextlib import contextmanager
 from datetime import date
-from io import BytesIO, TextIOWrapper
 from json import load
-from typing import Dict, Generator, IO, Iterator, List, NamedTuple, Optional, Tuple
-from zipfile import ZipFile
+from typing import Dict, Iterator, List, NamedTuple, Optional
 
-from ..http import cached_session
+from .common import extract_from_remote_zip, roman
 from .models import Chambre, Lecture, Dossier, Texte, TypeTexte
 
 
@@ -17,31 +14,19 @@ class TexteRef(NamedTuple):
 
 
 def get_dossiers_legislatifs(legislature: int) -> Dict[str, Dossier]:
-    legislature_roman = roman(legislature)
-    filename = f"Dossiers_Legislatifs_{legislature_roman}.json"
-    url = f"http://data.assemblee-nationale.fr/static/openData/repository/{legislature}/loi/dossiers_legislatifs/{filename}.zip"  # noqa
-    with extract_from_remote_zip(url, filename) as json_file:
-        data = load(json_file)
+    data = fetch_dossiers_legislatifs(legislature)
     textes = parse_textes(data["export"])
     dossiers = parse_dossiers(data["export"], textes)
     return dossiers
 
 
-def roman(n: int) -> str:
-    if n == 15:
-        return "XV"
-    if n == 14:
-        return "XIV"
-    raise NotImplementedError
-
-
-@contextmanager
-def extract_from_remote_zip(url: str, filename: str) -> Generator[IO[str], None, None]:
-    response = cached_session.get(url)
-    assert response.headers["content-type"] == "application/zip"
-    with ZipFile(BytesIO(response.content)) as zip_file:
-        with zip_file.open(filename) as file_:
-            yield TextIOWrapper(file_, encoding="utf-8")
+def fetch_dossiers_legislatifs(legislature: int) -> dict:
+    legislature_roman = roman(legislature)
+    filename = f"Dossiers_Legislatifs_{legislature_roman}.json"
+    url = f"http://data.assemblee-nationale.fr/static/openData/repository/{legislature}/loi/dossiers_legislatifs/{filename}.zip"  # noqa
+    with extract_from_remote_zip(url, filename) as json_file:
+        data: dict = load(json_file)
+    return data
 
 
 def parse_textes(export: dict) -> Dict[str, Texte]:
@@ -100,11 +85,11 @@ TOP_LEVEL_ACTES = {
 
 
 def parse_dossier(dossier: dict, textes: Dict[str, Texte]) -> Dossier:
-    lectures = {
-        lecture.texte.uid: lecture
+    lectures = [
+        lecture
         for acte in top_level_actes(dossier)
         for lecture in gen_lectures(acte, textes)
-    }
+    ]
     return Dossier(  # type: ignore
         uid=dossier["uid"], titre=dossier["titreDossier"]["titre"], lectures=lectures
     )
@@ -117,43 +102,48 @@ def top_level_actes(dossier: dict) -> Iterator[dict]:
 
 
 def gen_lectures(acte: dict, textes: Dict[str, Texte]) -> Iterator[Lecture]:
-    for phase, texte_uid in walk_actes(acte):
+    for result in walk_actes(acte):
         chambre, titre = TOP_LEVEL_ACTES[acte["codeActe"]]
-        if phase == "COM-FOND":
+        if result.phase == "COM-FOND":
             titre += " – Commission saisie au fond"
-        elif phase == "DEBATS":
+        elif result.phase == "COM-AVIS":
+            titre += " – Commission saisie pour avis"
+        elif result.phase == "DEBATS":
             titre += " – Séance publique"
         else:
             raise NotImplementedError
 
-        assert texte_uid is not None
-        texte = textes[texte_uid]
+        assert result.texte is not None
+        texte = textes[result.texte]
 
-        yield Lecture(chambre=chambre, titre=titre, texte=texte)  # type: ignore
+        yield Lecture(  # type: ignore
+            chambre=chambre, titre=titre, texte=texte, organe=result.organe
+        )
 
 
-def walk_actes(acte: dict) -> Iterator[Tuple[str, Optional[str]]]:
+class WalkResult(NamedTuple):
+    phase: str
+    organe: str
+    texte: Optional[str]
+
+
+def walk_actes(acte: dict) -> Iterator[WalkResult]:
     current_texte = None
 
-    def _walk_actes(acte: dict) -> Iterator[Tuple[str, Optional[str]]]:
+    def _walk_actes(acte: dict) -> Iterator[WalkResult]:
         nonlocal current_texte
 
         code = acte["codeActe"]
         phase = code.split("-", 1)[1] if "-" in code else ""
 
-        if phase in {"COM-FOND", "DEBATS"}:
-            if current_texte is None:
-                yield (phase, None)
-            else:
-                yield (phase, current_texte.uid)
+        if phase in {"COM-FOND", "COM-AVIS", "DEBATS"}:
+            yield WalkResult(phase=phase, organe=acte["organeRef"], texte=current_texte)
 
         for key in ["texteAssocie", "texteAdopte"]:
             if key in acte and acte[key] is not None:
                 uid = acte[key]
                 if uid[:4] in {"PRJL", "PION"}:
-                    current_texte = TexteRef(
-                        acte["codeActe"], acte["@xsi:type"], key, uid
-                    )
+                    current_texte = uid
 
         for sous_acte in extract_actes(acte):
             yield from _walk_actes(sous_acte)

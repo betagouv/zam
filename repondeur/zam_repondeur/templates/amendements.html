@@ -1,7 +1,5 @@
 {% extends "_base.html" %}
 
-{% from "_macros.html" import lecture_title %}
-
 
 {% block header %}
 <style type="text/css">
@@ -31,7 +29,7 @@
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
-    <li class="breadcrumb-item"><a href="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte) }}">{{ lecture_title(lecture.chambre, lecture.session, lecture.num_texte) }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}">{{ lecture }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Amendements</li>
 {% endblock %}
 
@@ -91,7 +89,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a class="action" href="{{ request.route_url('reponse_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, num=amendement.num) }}">
+                    <a class="action" href="{{ request.route_url('reponse_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe, num=amendement.num) }}">
                         <i class="fas fa-edit"></i>Éditer...
                     </a>
                 </td>

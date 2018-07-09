@@ -3,6 +3,7 @@ from pyramid.router import Router
 from pyramid.session import SignedCookieSessionFactory
 from sqlalchemy import engine_from_config
 
+from zam_repondeur.data import load_data
 from zam_repondeur.models import DBSession, Base
 
 
@@ -26,36 +27,41 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.add_route("lectures_list", "/lectures/")
         config.add_route("lectures_add", "/lectures/add")
 
-        config.add_route("lecture", "/lectures/{chambre}/{session}/{num_texte:\d+}/")
         config.add_route(
-            "list_reponses", "/lectures/{chambre}/{session}/{num_texte:\d+}/reponses"
+            "lecture", "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/"
+        )
+        config.add_route(
+            "list_reponses",
+            "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/reponses",
         )
 
         config.add_route(
             "list_amendements",
-            "/lectures/{chambre}/{session}/{num_texte:\d+}/amendements/list",
+            "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/amendements/list",
         )
         config.add_route(
             "fetch_amendements",
-            "/lectures/{chambre}/{session}/{num_texte:\d+}/amendements/fetch",
+            "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/amendements/fetch",
         )
         config.add_route(
             "fetch_articles",
-            "/lectures/{chambre}/{session}/{num_texte:\d+}/articles/fetch",
+            "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/articles/fetch",
         )
         config.add_route(
             "download_amendements",
-            "/lectures/{chambre}/{session}/{num_texte:\d+}/amendements/download.{format:(csv|xlsx)}",  # noqa
+            "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/amendements/download.{format:(csv|xlsx)}",  # noqa
         )
 
         config.add_route(
             "reponse_edit",
-            "/lectures/{chambre}/{session}/{num_texte:\d+}/amendements/{num:\d+}/reponse",  # noqa
+            "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/amendements/{num:\d+}/reponse",  # noqa
         )
 
         config.add_static_view("static", "static", cache_max_age=3600)
 
         config.scan()
+
+        load_data(config)
 
         app = config.make_wsgi_app()
 

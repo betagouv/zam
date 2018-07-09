@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date
 from enum import Enum
-from typing import Dict
+from typing import List
 
 
 class Chambre(Enum):
@@ -51,10 +51,19 @@ class Lecture:
     chambre: Chambre
     titre: str
     texte: Texte
+    organe: str
+
+    @property
+    def label(self) -> str:
+        return (
+            f"{self.chambre} – {self.titre} "
+            f"(texte nº {self.texte.numero} "
+            f"déposé le {self.texte.date_depot.strftime('%d/%m/%Y')})"
+        )
 
 
 @dataclass
 class Dossier:
     uid: str
     titre: str
-    lectures: Dict[str, Lecture]
+    lectures: List[Lecture]

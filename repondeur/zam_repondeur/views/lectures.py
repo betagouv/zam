@@ -3,22 +3,19 @@ import io
 import logging
 from typing import BinaryIO, Dict, Iterable, TextIO, Tuple
 
-from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
 
-from zam_aspirateur.textes.dossiers_legislatifs import get_dossiers_legislatifs
 from zam_aspirateur.textes.models import Chambre
 
 from zam_repondeur.clean import clean_html
+from zam_repondeur.data import get_data
 from zam_repondeur.fetch import get_articles, get_amendements
-from zam_repondeur.models import DBSession, Amendement, Lecture, CHAMBRES
+from zam_repondeur.models import DBSession, Amendement, Lecture
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
-
-
-CURRENT_LEGISLATURE = 15
 
 
 class CSVError(Exception):
@@ -34,11 +31,10 @@ def lectures_list(request: Request) -> dict:
 class LecturesAdd:
     def __init__(self, request: Request) -> None:
         self.request = request
-        self.dossiers_by_uid = get_dossiers_legislatifs(legislature=CURRENT_LEGISLATURE)
+        self.dossiers_by_uid = get_data("dossiers")
         self.lectures_by_dossier = {
             dossier.uid: {
-                lecture.texte.uid: f"{lecture.chambre} – {lecture.titre} (texte nº {lecture.texte.numero} déposé le {lecture.texte.date_depot.strftime('%d/%m/%Y')})"  # noqa
-                for lecture in dossier.lectures.values()
+                index: lecture.label for index, lecture in enumerate(dossier.lectures)
             }
             for dossier in self.dossiers_by_uid.values()
         }
@@ -53,14 +49,15 @@ class LecturesAdd:
     @view_config(request_method="POST")
     def post(self) -> Response:
         dossier_uid = self.request.POST["dossier"]
-        texte_uid = self.request.POST["lecture"]
-
         dossier = self.dossiers_by_uid[dossier_uid]
-        lecture = dossier.lectures[texte_uid]
+
+        lecture_index = int(self.request.POST["lecture"])
+        lecture = dossier.lectures[lecture_index]
 
         chambre = lecture.chambre.value
         num_texte = lecture.texte.numero
         titre = lecture.titre
+        organe = lecture.organe
 
         # FIXME: use date_depot to find the right session?
         if lecture.chambre == Chambre.AN:
@@ -68,15 +65,19 @@ class LecturesAdd:
         else:
             session = "2017-2018"
 
-        if Lecture.exists(chambre, session, num_texte):
+        if Lecture.exists(chambre, session, num_texte, organe):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
         else:
-            Lecture.create(chambre, session, num_texte, titre)
+            Lecture.create(chambre, session, num_texte, titre, organe)
             self.request.session.flash(("success", "Lecture créée avec succès."))
 
         return HTTPFound(
             location=self.request.route_url(
-                "lecture", chambre=chambre, session=session, num_texte=num_texte
+                "lecture",
+                chambre=chambre,
+                session=session,
+                num_texte=num_texte,
+                organe=organe,
             )
         )
 
@@ -89,6 +90,7 @@ class LectureView:
             chambre=request.matchdict["chambre"],
             session=request.matchdict["session"],
             num_texte=int(request.matchdict["num_texte"]),
+            organe=request.matchdict["organe"],
         )
         if self.lecture is None:
             raise HTTPNotFound
@@ -96,6 +98,7 @@ class LectureView:
             Amendement.chambre == self.lecture.chambre,
             Amendement.session == self.lecture.session,
             Amendement.num_texte == self.lecture.num_texte,
+            Amendement.organe == self.lecture.organe,
         )
 
     @view_config(renderer="lecture.html")
@@ -110,6 +113,7 @@ class LectureView:
             Lecture.chambre == self.lecture.chambre,
             Lecture.session == self.lecture.session,
             Lecture.num_texte == self.lecture.num_texte,
+            Lecture.organe == self.lecture.organe,
         ).delete()
         self.request.session.flash(("success", "Lecture supprimée avec succès."))
         return HTTPFound(location=self.request.route_url("lectures_list"))
@@ -123,6 +127,7 @@ class ListAmendements:
             chambre=request.matchdict["chambre"],
             session=request.matchdict["session"],
             num_texte=int(request.matchdict["num_texte"]),
+            organe=request.matchdict["organe"],
         )
         if self.lecture is None:
             raise HTTPNotFound
@@ -133,6 +138,7 @@ class ListAmendements:
                 Amendement.chambre == self.lecture.chambre,
                 Amendement.session == self.lecture.session,
                 Amendement.num_texte == self.lecture.num_texte,
+                Amendement.organe == self.lecture.organe,
             )
             .order_by(
                 case([(Amendement.position.is_(None), 1)], else_=0),
@@ -181,6 +187,7 @@ class ListAmendements:
                 chambre=self.lecture.chambre,
                 session=self.lecture.session,
                 num_texte=self.lecture.num_texte,
+                organe=self.lecture.organe,
             )
         )
 
@@ -248,14 +255,21 @@ REPONSE_FIELDS = ["avis", "observations", "reponse"]
 
 @view_config(route_name="fetch_amendements")
 def fetch_amendements(request: Request) -> Response:
-    chambre = request.matchdict["chambre"]
-    session = request.matchdict["session"]
-    num_texte = int(request.matchdict["num_texte"])
+    lecture = Lecture.get(
+        chambre=request.matchdict["chambre"],
+        session=request.matchdict["session"],
+        num_texte=int(request.matchdict["num_texte"]),
+        organe=request.matchdict["organe"],
+    )
+    if lecture is None:
+        raise HTTPNotFound
 
-    if chambre not in CHAMBRES:
-        return HTTPBadRequest(f'Invalid value "{chambre}" for "chambre" param')
-
-    amendements, errored = get_amendements(chambre, session, num_texte)
+    amendements, errored = get_amendements(
+        chambre=lecture.chambre,
+        session=lecture.session,
+        texte=lecture.num_texte,
+        organe=lecture.organe,
+    )
 
     if errored:
         request.session.flash(
@@ -274,7 +288,11 @@ def fetch_amendements(request: Request) -> Response:
 
     return HTTPFound(
         location=request.route_url(
-            "lecture", chambre=chambre, session=session, num_texte=num_texte
+            "lecture",
+            chambre=lecture.chambre,
+            session=lecture.session,
+            num_texte=lecture.num_texte,
+            organe=lecture.organe,
         )
     )
 
@@ -290,6 +308,7 @@ def _add_or_update_amendements(
                 Amendement.chambre == amendement.chambre,
                 Amendement.session == amendement.session,
                 Amendement.num_texte == amendement.num_texte,
+                Amendement.organe == amendement.organe,
                 Amendement.num == amendement.num,
             )
             .first()
@@ -341,6 +360,7 @@ def fetch_articles(request: Request) -> Response:
         chambre=request.matchdict["chambre"],
         session=request.matchdict["session"],
         num_texte=int(request.matchdict["num_texte"]),
+        organe=request.matchdict["organe"],
     )
     if lecture is None:
         raise HTTPNotFound
@@ -354,5 +374,6 @@ def fetch_articles(request: Request) -> Response:
             chambre=lecture.chambre,
             session=lecture.session,
             num_texte=lecture.num_texte,
+            organe=lecture.organe,
         )
     )

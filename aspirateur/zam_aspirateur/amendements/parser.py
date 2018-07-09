@@ -8,7 +8,7 @@ from ..clean import clean_html
 from .models import Amendement, SubDiv
 
 
-def parse_from_csv(row: dict, session: str, num_texte: int) -> Amendement:
+def parse_from_csv(row: dict, session: str, num_texte: int, organe: str) -> Amendement:
     num, rectif = Amendement.parse_num(row["Numéro "])
     subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = _parse_subdiv(
         row["Subdivision "]
@@ -17,6 +17,7 @@ def parse_from_csv(row: dict, session: str, num_texte: int) -> Amendement:
         chambre="senat",
         session=session,
         num_texte=num_texte,
+        organe=organe,
         num=num,
         rectif=rectif,
         subdiv_type=subdiv_type,
@@ -52,7 +53,7 @@ def parse_date(text: str) -> Optional[date]:
 
 
 def parse_from_json(
-    amend: dict, position: int, session: str, num_texte: int, subdiv: dict
+    amend: dict, position: int, session: str, num_texte: int, organe: str, subdiv: dict
 ) -> Amendement:
     num, rectif = Amendement.parse_num(amend["num"])
     subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = _parse_subdiv(
@@ -62,6 +63,7 @@ def parse_from_json(
         chambre="senat",
         session=session,
         num_texte=num_texte,
+        organe=organe,
         subdiv_type=subdiv_type,
         subdiv_num=subdiv_num,
         subdiv_mult=subdiv_mult,

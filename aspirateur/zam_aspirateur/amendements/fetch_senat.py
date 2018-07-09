@@ -62,8 +62,10 @@ def fetch_all(session: str, num: int) -> List[OrderedDict]:
     return items
 
 
-def fetch_and_parse_all(session: str, num: int) -> List[Amendement]:
-    return [parse_from_csv(row, session, num) for row in fetch_all(session, num)]
+def fetch_and_parse_all(session: str, num: int, organe: str) -> List[Amendement]:
+    return [
+        parse_from_csv(row, session, num, organe) for row in fetch_all(session, num)
+    ]
 
 
 def fetch_discussed(session: str, num: int, phase: str) -> Any:
@@ -84,13 +86,15 @@ def fetch_discussed(session: str, num: int, phase: str) -> Any:
     return data
 
 
-def fetch_and_parse_discussed(session: str, num: int, phase: str) -> List[Amendement]:
+def fetch_and_parse_discussed(
+    session: str, num: int, organe: str, phase: str
+) -> List[Amendement]:
     try:
         data = fetch_discussed(session, num, phase)
     except NotFound:
         return []
     return [
-        parse_from_json(amend, position, session, num, subdiv)
+        parse_from_json(amend, position, session, num, organe, subdiv)
         for position, (subdiv, amend) in enumerate(
             (
                 (subdiv, amend)

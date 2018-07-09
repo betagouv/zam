@@ -21,6 +21,7 @@ def list_reponses(request: Request) -> Response:
         chambre=request.matchdict["chambre"],
         session=request.matchdict["session"],
         num_texte=int(request.matchdict["num_texte"]),
+        organe=request.matchdict["organe"],
     )
     if lecture is None:
         raise HTTPNotFound
@@ -31,6 +32,7 @@ def list_reponses(request: Request) -> Response:
             AmendementModel.chambre == lecture.chambre,
             AmendementModel.session == lecture.session,
             AmendementModel.num_texte == lecture.num_texte,
+            AmendementModel.organe == lecture.organe,
         )
         .order_by(
             case([(AmendementModel.position.is_(None), 1)], else_=0),
@@ -51,15 +53,27 @@ class ReponseEdit:
         chambre = request.matchdict["chambre"]
         session = request.matchdict["session"]
         num_texte = int(request.matchdict["num_texte"])
+        organe = request.matchdict["organe"]
         num = int(request.matchdict["num"])
         if chambre not in CHAMBRES:
             raise HTTPBadRequest
+        self.lecture = (
+            DBSession.query(Lecture)
+            .filter(
+                Lecture.chambre == chambre,
+                Lecture.session == session,
+                Lecture.num_texte == num_texte,
+                Lecture.organe == organe,
+            )
+            .first()
+        )
         self.amendement = (
             DBSession.query(AmendementModel)
             .filter(
                 AmendementModel.chambre == chambre,
                 AmendementModel.session == session,
                 AmendementModel.num_texte == num_texte,
+                AmendementModel.organe == organe,
                 AmendementModel.num == num,
             )
             .first()
@@ -69,7 +83,7 @@ class ReponseEdit:
 
     @view_config(request_method="GET")
     def get(self) -> dict:
-        return {"amendement": self.amendement, "avis": AVIS}
+        return {"lecture": self.lecture, "amendement": self.amendement, "avis": AVIS}
 
     @view_config(request_method="POST")
     def post(self) -> Response:
@@ -82,5 +96,6 @@ class ReponseEdit:
                 chambre=self.amendement.chambre,
                 session=self.amendement.session,
                 num_texte=self.amendement.num_texte,
+                organe=self.amendement.organe,
             )
         )

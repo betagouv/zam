@@ -22,29 +22,34 @@ from zam_aspirateur.senateurs.parse import parse_senateurs
 SystemStatus = NewType("SystemStatus", int)  # status code for sys.exit()
 
 
-def aspire_senat(session: str, num: int) -> Tuple[str, Iterable[Amendement]]:
+def aspire_senat(
+    session: str, num: int, organe: str
+) -> Tuple[str, Iterable[Amendement]]:
     print("Récupération du titre...")
     title = senat.fetch_title(session, num)
 
     print("Récupération des amendements déposés...")
     try:
-        amendements = senat.fetch_and_parse_all(session, num)
+        amendements = senat.fetch_and_parse_all(session, num, organe)
     except senat.NotFound:
         return "", []
 
     processed_amendements = process_amendements(
-        amendements=amendements, session=session, num=num
+        amendements=amendements, session=session, num=num, organe=organe
     )
     return title, processed_amendements
 
 
 def aspire_an(
-    legislature: int, texte: int, groups_folder: Path
+    legislature: int, texte: int, organe: str, groups_folder: Path
 ) -> Tuple[str, List[Amendement], List[str]]:
     print("Récupération du titre et des amendements déposés...")
     try:
         title, amendements, errored = an.fetch_and_parse_all(
-            legislature, texte, groups_folder
+            legislature=legislature,
+            texte=texte,
+            organe=organe,
+            groups_folder=groups_folder,
         )
     except an.NotFound:
         return "", [], []
@@ -56,7 +61,9 @@ def main(argv: Optional[List[str]] = None) -> SystemStatus:
     args = parse_args(argv=argv)
 
     if args.source == "senat":
-        title, amendements = aspire_senat(session=args.session, num=args.texte)
+        title, amendements = aspire_senat(
+            session=args.session, num=args.texte, organe=args.organe
+        )
     elif args.source == "an":
         if args.folder_groups is None:
             print("Le paramètre --folder-groups est requis pour l'assemblée nationale")
@@ -65,6 +72,7 @@ def main(argv: Optional[List[str]] = None) -> SystemStatus:
         title, amendements, errored = aspire_an(
             legislature=int(args.session),
             texte=int(args.texte),
+            organe=args.organe,
             groups_folder=Path(args.folder_groups),
         )
         if errored:
@@ -106,6 +114,11 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         help="institution fournissant les données",
     )
     parser.add_argument(
+        "--organe",
+        default="PO717460",
+        help="organe examinant le texte (pour l'Assemblée nationale)",
+    )
+    parser.add_argument(
         "--output-format",
         default="csv",
         choices=["csv", "xlsx", "json"],
@@ -115,13 +128,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
 
 
 def process_amendements(
-    amendements: Iterable[Amendement], session: str, num: int
+    amendements: Iterable[Amendement], session: str, num: int, organe: str
 ) -> Iterable[Amendement]:
 
     # Les amendements discutés en séance, par ordre de passage
     print("Récupération des amendements soumis à la discussion...")
     amendements_derouleur = senat.fetch_and_parse_discussed(
-        session=session, num=num, phase="seance"
+        session=session, num=num, organe=organe, phase="seance"
     )
     if len(amendements_derouleur) == 0:
         print("Aucun amendement soumis à la discussion pour l'instant!")

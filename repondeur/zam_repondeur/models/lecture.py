@@ -2,8 +2,11 @@ from typing import Any, List
 
 from sqlalchemy import Column, Integer, Text, desc
 
+from zam_repondeur.data import get_data
+
 from .amendement import Amendement
 from .base import Base, DBSession
+
 
 CHAMBRES = {"an": "Assemblée nationale", "senat": "Sénat"}
 
@@ -19,22 +22,52 @@ class Lecture(Base):  # type: ignore
     chambre = Column(Text, primary_key=True)
     session = Column(Text, primary_key=True)
     num_texte = Column(Integer, primary_key=True)
+    organe = Column(Text, primary_key=True)
     titre = Column(Text)
 
-    @property
-    def chambre_disp(self) -> str:
+    def __str__(self) -> str:
+        return ", ".join(
+            [
+                self.format_chambre(),
+                self.format_session(),
+                self.format_organe(),
+                self.format_texte(),
+            ]
+        )
+
+    def format_chambre(self) -> str:
         return CHAMBRES[self.chambre]
 
-    def __str__(self) -> str:
-        return f"{self.chambre_disp}, session {self.session}, texte nº {self.num_texte}"
+    def format_session(self) -> str:
+        if self.chambre == "an":
+            return f"{self.session}e législature"
+        else:
+            return f"session {self.session}"
+
+    def format_organe(self) -> str:
+        result: str = self.organe
+        organes = get_data("organes")
+        if self.organe in organes:
+            organe_data = organes[self.organe]
+            result = organe_data["libelleAbrege"]
+        return self.rewrite_organe(result)
+
+    def rewrite_organe(self, label: str) -> str:
+        if label in {"Assemblée", "Sénat"}:
+            return "Séance publique"
+        return f"Commission des {label.lower()}"
+
+    def format_texte(self) -> str:
+        return f"texte nº {self.num_texte}"
 
     def __lt__(self, other: Any) -> bool:
         if type(self) != type(other):
             return NotImplemented
-        return (self.chambre, self.session, self.num_texte) < (
+        return (self.chambre, self.session, self.num_texte, self.organe) < (
             other.chambre,
             other.session,
             other.num_texte,
+            other.organe,
         )
 
     @property
@@ -43,37 +76,40 @@ class Lecture(Base):  # type: ignore
             Amendement.chambre == self.chambre,
             Amendement.session == self.session,
             Amendement.num_texte == self.num_texte,
+            Amendement.organe == self.organe,
         )
         return any(amd.is_displayable for amd in query)
 
     @classmethod
     def all(cls) -> List["Lecture"]:
         lectures: List["Lecture"] = DBSession.query(cls).order_by(
-            cls.chambre, desc(cls.session), desc(cls.num_texte)
+            cls.chambre, desc(cls.session), desc(cls.num_texte), cls.organe
         ).all()
         return lectures
 
     @classmethod
-    def get(cls, chambre: str, session: str, num_texte: int) -> "Lecture":
+    def get(cls, chambre: str, session: str, num_texte: int, organe: str) -> "Lecture":
         res: "Lecture" = (
             DBSession.query(cls)
             .filter(
                 cls.chambre == chambre,
                 cls.session == session,
                 cls.num_texte == num_texte,
+                cls.organe == organe,
             )
             .first()
         )
         return res
 
     @classmethod
-    def exists(cls, chambre: str, session: str, num_texte: int) -> bool:
+    def exists(cls, chambre: str, session: str, num_texte: int, organe: str) -> bool:
         res: bool = DBSession.query(
             DBSession.query(cls)
             .filter(
                 cls.chambre == chambre,
                 cls.session == session,
                 cls.num_texte == num_texte,
+                cls.organe == organe,
             )
             .exists()
         ).scalar()
@@ -81,10 +117,14 @@ class Lecture(Base):  # type: ignore
 
     @classmethod
     def create(
-        cls, chambre: str, session: str, num_texte: int, titre: str
+        cls, chambre: str, session: str, num_texte: int, titre: str, organe: str
     ) -> "Lecture":
         lecture = cls(
-            chambre=chambre, session=session, num_texte=num_texte, titre=titre
+            chambre=chambre,
+            session=session,
+            num_texte=num_texte,
+            titre=titre,
+            organe=organe,
         )
         DBSession.add(lecture)
         return lecture

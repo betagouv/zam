@@ -18,6 +18,7 @@ tlfp = {git = "https://github.com/regardscitoyens/the-law-factory-parser.git", e
 "4f547c1" = {path = "./../aspirateur", editable = true}
 inscriptis = "*"
 selectolax = "*"
+pyramid-default-cors = "*"
 
 [dev-packages]
 webtest = "*"

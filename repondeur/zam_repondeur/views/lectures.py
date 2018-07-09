@@ -1,6 +1,7 @@
 import csv
 import io
 import logging
+from datetime import datetime
 from typing import BinaryIO, Dict, Iterable, TextIO, Tuple
 
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
@@ -164,9 +165,11 @@ class ListAmendements:
                         amendement.num: amendement for amendement in self.amendements
                     },
                 )
-                self.request.session.flash(
-                    ("success", f"{reponses_count} réponses chargées avec succès")
-                )
+                if reponses_count:
+                    self.request.session.flash(
+                        ("success", f"{reponses_count} réponses chargées avec succès")
+                    )
+                    self.lecture.modified_at = datetime.utcnow()
                 if errors_count:
                     self.request.session.flash(
                         (
@@ -377,3 +380,17 @@ def fetch_articles(request: Request) -> Response:
             organe=lecture.organe,
         )
     )
+
+
+@view_config(route_name="lecture_check", renderer="json")
+def lecture_check(request: Request) -> dict:
+    lecture = Lecture.get(
+        chambre=request.matchdict["chambre"],
+        session=request.matchdict["session"],
+        num_texte=int(request.matchdict["num_texte"]),
+        organe=request.matchdict["organe"],
+    )
+    if lecture is None:
+        raise HTTPNotFound
+
+    return {"modified_at": lecture.modified_at_timestamp}

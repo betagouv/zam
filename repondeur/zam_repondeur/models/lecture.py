@@ -1,6 +1,7 @@
+from datetime import datetime
 from typing import Any, List
 
-from sqlalchemy import Column, Integer, Text, desc
+from sqlalchemy import Column, DateTime, Integer, Text, desc
 
 from zam_repondeur.data import get_data
 
@@ -24,6 +25,8 @@ class Lecture(Base):  # type: ignore
     num_texte = Column(Integer, primary_key=True)
     organe = Column(Text, primary_key=True)
     titre = Column(Text)
+    created_at = Column(DateTime)
+    modified_at = Column(DateTime)
 
     def __str__(self) -> str:
         return ", ".join(
@@ -71,6 +74,11 @@ class Lecture(Base):  # type: ignore
         )
 
     @property
+    def modified_at_timestamp(self) -> float:
+        timestamp: float = (self.modified_at - datetime(1970, 1, 1)).total_seconds()
+        return timestamp
+
+    @property
     def displayable(self) -> bool:
         query = DBSession.query(Amendement).filter(
             Amendement.chambre == self.chambre,
@@ -83,7 +91,7 @@ class Lecture(Base):  # type: ignore
     @classmethod
     def all(cls) -> List["Lecture"]:
         lectures: List["Lecture"] = DBSession.query(cls).order_by(
-            cls.chambre, desc(cls.session), desc(cls.num_texte), cls.organe
+            desc(cls.created_at)
         ).all()
         return lectures
 
@@ -119,12 +127,15 @@ class Lecture(Base):  # type: ignore
     def create(
         cls, chambre: str, session: str, num_texte: int, titre: str, organe: str
     ) -> "Lecture":
+        now = datetime.utcnow()
         lecture = cls(
             chambre=chambre,
             session=session,
             num_texte=num_texte,
             titre=titre,
             organe=organe,
+            created_at=now,
+            modified_at=now,
         )
         DBSession.add(lecture)
         return lecture

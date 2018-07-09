@@ -1,3 +1,6 @@
+import transaction
+
+
 def test_get_reponse_edit_form(app, dummy_lecture, dummy_amendements):
     resp = app.get(
         "http://localhost/lectures/an/15/269/PO717460/amendements/999/reponse"
@@ -34,3 +37,29 @@ def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
     assert amendement.avis == "Favorable"
     assert amendement.observations == "Des observations très pertinentes"
     assert amendement.reponse == "Une réponse très appropriée"
+
+
+def test_post_reponse_edit_form_updates_modification_date(
+    app, dummy_lecture, dummy_amendements
+):
+    from zam_repondeur.models import Lecture
+
+    with transaction.manager:
+        initial_modified_at = dummy_lecture.modified_at
+
+    form = app.get(
+        "http://localhost/lectures/an/15/269/PO717460/amendements/999/reponse"
+    ).form
+    form["avis"] = "Favorable"
+    form["observations"] = "Des observations très pertinentes"
+    form["reponse"] = "Une réponse très appropriée"
+    form.submit()
+
+    with transaction.manager:
+        lecture = Lecture.get(
+            chambre=dummy_lecture.chambre,
+            session=dummy_lecture.session,
+            num_texte=dummy_lecture.num_texte,
+            organe=dummy_lecture.organe,
+        )
+        assert lecture.modified_at != initial_modified_at

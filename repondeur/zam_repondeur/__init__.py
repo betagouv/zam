@@ -18,6 +18,7 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         engine = engine_from_config(settings, "sqlalchemy.")
         DBSession.configure(bind=engine)
         Base.metadata.bind = engine
+        config.include("pyramid_default_cors")
 
         config.include("pyramid_jinja2")
         config.add_jinja2_renderer(".html")
@@ -34,7 +35,10 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
             "list_reponses",
             "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/reponses",
         )
-
+        config.add_route(
+            "lecture_check",
+            "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/check",
+        )
         config.add_route(
             "list_amendements",
             "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/amendements/list",

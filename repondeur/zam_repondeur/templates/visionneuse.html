@@ -77,24 +77,20 @@
     top: -6rem;
     visibility: hidden;
   }
+  header a {
+    color: black;
+  }
+  header h2 {
+    margin: 0;
+  }
+  header p {
+    margin: 0;
+  }
 
-  /* Merge below if amendements do not stay sticky after all. */
   section > header {
     position: -webkit-sticky;
     position: sticky;
     background: white;
-  }
-    header a {
-      color: black;
-    }
-    header h2 {
-      margin: 0;
-    }
-    header p {
-      margin: 0;
-    }
-
-  section > header {
     top: 0;
     z-index: 2;
     min-height: 5rem;
@@ -339,7 +335,24 @@
     text-transform: uppercase;
     font-size: small;
   }
+[role="status"] {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+  [role="status"] p {
+    margin: 0;
+    padding: 2rem 1rem;
+    text-align: center;
+    background: orange;
+    font-size: large;
+    font-weight: bold;
+    border: 2px solid #ec644b;
+  }
 </style>
+{# See https://inclusive-components.design/notifications/ #}
+<div role="status" aria-live="polite"></div>
 <h1>{{ title }}</h1>
 <main>
   {% for article in articles.values() %}
@@ -603,6 +616,26 @@
         }
       }
     })
+  })()
+  ;(function notifyOnUpdates () {
+    const delay = 1000 * 30 /* seconds. */
+    const timestamp = {{ timestamp }}
+    function displayNotificationUpdate () {
+      const message = '<p>De nouvelles informations sont à jour, <a href=>rafraîchir</a> !</p>'
+      document.querySelector('[role="status"]').innerHTML = message
+    }
+    function check () {
+      const options = {
+        credentials: 'include'
+      }
+      fetch('{{ check_url }}', options)
+        .then(reponse => reponse.json())
+        .then(json => {
+          if (json.modified_at !== timestamp)
+            displayNotificationUpdate()
+        })
+    }
+    setInterval(check, delay)
   })()
 </script>
 </html>

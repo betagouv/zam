@@ -30,7 +30,7 @@ def test_post_form(app):
 
     form = app.get("/lectures/add").form
     form["dossier"] = "DLR5L15N36030"
-    form["lecture"] = "0"
+    form["lecture"] = ""
 
     assert not Lecture.exists(
         chambre="an", session="15", num_texte=269, organe="PO717460"
@@ -58,7 +58,7 @@ def test_post_form_already_exists(app, dummy_lecture):
 
     form = app.get("/lectures/add").form
     form["dossier"] = "DLR5L15N36030"
-    form["lecture"] = "0"
+    form["lecture"] = ""
 
     resp = form.submit()
 

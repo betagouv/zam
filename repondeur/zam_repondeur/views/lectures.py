@@ -37,19 +37,18 @@ class LecturesAdd:
     @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:
         return {
-            "dossiers": {
-                dossier.uid: {
-                    index: lecture.label for index, lecture in enumerate(dossier.lectures)
-                }
-                for dossier in self.dossiers_by_uid.values()
-            }
+            "dossiers": [
+                {"uid": uid, "titre": dossier.titre}
+                for uid, dossier in self.dossiers_by_uid.items()
+            ]
         }
 
     @view_config(request_method="POST")
     def post(self) -> Response:
         dossier_uid = self.request.POST["dossier"]
         dossier = self.dossiers_by_uid[dossier_uid]
-        lecture = dossier.lectures[texte_uid]
+        lecture_index = int(self.request.POST["lecture"] or 0)
+        lecture = dossier.lectures[lecture_index]
 
         chambre = lecture.chambre.value
         num_texte = lecture.texte.numero
@@ -413,6 +412,6 @@ def choices_lectures(request: Request) -> dict:
                     ]
                 ),
             }
-            for lecture in dossier.lectures.values()
+            for lecture in dossier.lectures
         ]
     }

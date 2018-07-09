@@ -436,16 +436,16 @@
               <h2>
                 Amendement{% if multiple %}s{% endif %}
                 {% if amendements|length > 5 %}
-                  {{ amendements[0].id }},
-                  {{ amendements[1].id }},
+                  {{ amendements[0] }},
+                  {{ amendements[1] }},
                   ...,
-                  {{ amendements[-3].id }},
-                  {{ amendements[-2].id }} et
-                  {{ amendements[-1].id }}
+                  {{ amendements[-3] }},
+                  {{ amendements[-2] }} et
+                  {{ amendements[-1] }}
                   ({{ amendements|length }} au total)
                 {% else %}
                   {% for amendement in amendements %}
-                    {{ amendement.id }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                    {{ amendement }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
                   {% endfor %}
                 {% endif %}
               </h2>

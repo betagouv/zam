@@ -235,3 +235,21 @@ def test_reponses_article_additionnel_apres(app, dummy_lecture, dummy_amendement
     ]
     titles = [item.text() for item in resp.parser.css(".titles h2")]
     assert titles == ["Article 1", "Article add. ap. 1"]
+
+
+def test_reponses_amendement_rect(app, dummy_lecture, dummy_amendements):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        for amendement in dummy_amendements:
+            amendement.avis = "Favorable"
+            amendement.observations = f"Observations pour {amendement.num}"
+            amendement.reponse = f"Réponse pour {amendement.num}"
+        # Only the last one.
+        amendement.rectif = 1
+        DBSession.add_all(dummy_amendements)
+
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
+
+    assert "666" in resp
+    assert "999 rect." in resp

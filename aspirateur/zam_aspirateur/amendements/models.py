@@ -74,6 +74,8 @@ class Amendement:
 
     _NUM_RE = re.compile(r"(?P<num>\d+)(?P<rect> rect\.(?: (?P<suffix>\w+))?)?")
 
+    ABANDONNED = ("retiré", "irrecevable", "tombé")
+
     @staticmethod
     def parse_num(text: str) -> Tuple[int, int]:
         mo = Amendement._NUM_RE.match(text)
@@ -99,7 +101,9 @@ class Amendement:
 
     @property
     def is_displayable(self) -> bool:
-        return (bool(self.avis) or self.gouvernemental) and self.sort != "retiré"
+        return (
+            bool(self.avis) or self.gouvernemental
+        ) and self.sort not in self.ABANDONNED
 
     def replace(self, changes: dict) -> "Amendement":
         amendement = replace(self, **changes)  # type: Amendement

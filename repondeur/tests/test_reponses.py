@@ -1,5 +1,7 @@
 import transaction
 
+import pytest
+
 
 def test_reponses_empty(app, dummy_lecture, dummy_amendements):
 
@@ -46,7 +48,8 @@ def test_reponses_gouvernemental(app, dummy_lecture, dummy_amendements):
     assert len(resp.parser.css("article.gouvernemental")) == 2
 
 
-def test_reponses_retire_not_displayed(app, dummy_lecture, dummy_amendements):
+@pytest.mark.parametrize("sort", ["retiré", "irrecevable", "tombé"])
+def test_reponses_abandonned_not_displayed(app, dummy_lecture, dummy_amendements, sort):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -55,7 +58,7 @@ def test_reponses_retire_not_displayed(app, dummy_lecture, dummy_amendements):
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
         # Only the last one.
-        amendement.sort = "retiré"
+        amendement.sort = sort
         DBSession.add_all(dummy_amendements)
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
@@ -66,8 +69,9 @@ def test_reponses_retire_not_displayed(app, dummy_lecture, dummy_amendements):
     assert len(resp.parser.css("article.gouvernemental")) == 0
 
 
-def test_reponses_retire_and_gouvernemental_not_displayed(
-    app, dummy_lecture, dummy_amendements
+@pytest.mark.parametrize("sort", ["retiré", "irrecevable", "tombé"])
+def test_reponses_abandonned_and_gouvernemental_not_displayed(
+    app, dummy_lecture, dummy_amendements, sort
 ):
     from zam_repondeur.models import DBSession
 
@@ -78,7 +82,7 @@ def test_reponses_retire_and_gouvernemental_not_displayed(
             amendement.reponse = f"Réponse pour {amendement.num}"
             amendement.auteur = "LE GOUVERNEMENT"
         # Only the last one.
-        amendement.sort = "retiré"
+        amendement.sort = sort
         DBSession.add_all(dummy_amendements)
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")

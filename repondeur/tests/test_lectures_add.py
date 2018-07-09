@@ -15,17 +15,12 @@ def test_get_form(app):
 
     assert isinstance(resp.form.fields["dossier"][0], Select)
     assert resp.form.fields["dossier"][0].options == [
-        ("DLR5L15N36030", True, "Sécurité sociale : loi de financement 2018")
+        ("", True, ""),
+        ("DLR5L15N36030", False, "Sécurité sociale : loi de financement 2018"),
     ]
 
     assert isinstance(resp.form.fields["lecture"][0], Select)
-    assert resp.form.fields["lecture"][0].options == [
-        (
-            "0",
-            True,
-            "Assemblée nationale – 1ère lecture (texte nº 269 déposé le 11/10/2017)",
-        )
-    ]
+    assert resp.form.fields["lecture"][0].options == [("", True, "")]
 
     assert resp.form.fields["submit"][0].attrs["type"] == "submit"
 
@@ -35,7 +30,7 @@ def test_post_form(app):
 
     form = app.get("/lectures/add").form
     form["dossier"] = "DLR5L15N36030"
-    form["lecture"] = "0"
+    form["lecture"] = ""
 
     assert not Lecture.exists(
         chambre="an", session="15", num_texte=269, organe="PO717460"
@@ -63,7 +58,7 @@ def test_post_form_already_exists(app, dummy_lecture):
 
     form = app.get("/lectures/add").form
     form["dossier"] = "DLR5L15N36030"
-    form["lecture"] = "0"
+    form["lecture"] = ""
 
     resp = form.submit()
 
@@ -74,3 +69,23 @@ def test_post_form_already_exists(app, dummy_lecture):
 
     assert resp.status_code == 200
     assert "Cette lecture existe déjà..." in resp.text
+
+
+def test_choices_lectures(app):
+
+    resp = app.get("/choices/dossiers/DLR5L15N36030/")
+
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "application/json"
+    assert resp.json == {
+        "lectures": [
+            {
+                "chambre": "an",
+                "dateDepot": "11/10/2017",
+                "label": "Assemblée nationale – 1ère lecture – Texte Nº 269",
+                "numero": 269,
+                "titre": "1ère lecture",
+                "uid": "PRJLANR5L15B0269",
+            }
+        ]
+    }

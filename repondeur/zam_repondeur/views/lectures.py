@@ -28,31 +28,26 @@ def lectures_list(request: Request) -> dict:
     return {"lectures": Lecture.all()}
 
 
-@view_defaults(route_name="lectures_add", renderer="lectures_add.html")
+@view_defaults(route_name="lectures_add")
 class LecturesAdd:
     def __init__(self, request: Request) -> None:
         self.request = request
         self.dossiers_by_uid = get_data("dossiers")
-        self.lectures_by_dossier = {
-            dossier.uid: {
-                index: lecture.label for index, lecture in enumerate(dossier.lectures)
-            }
-            for dossier in self.dossiers_by_uid.values()
-        }
 
-    @view_config(request_method="GET")
+    @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:
         return {
-            "dossiers": list(self.dossiers_by_uid.values()),
-            "lectures_by_dossier": self.lectures_by_dossier,
+            "dossiers": [
+                {"uid": uid, "titre": dossier.titre}
+                for uid, dossier in self.dossiers_by_uid.items()
+            ]
         }
 
     @view_config(request_method="POST")
     def post(self) -> Response:
         dossier_uid = self.request.POST["dossier"]
         dossier = self.dossiers_by_uid[dossier_uid]
-
-        lecture_index = int(self.request.POST["lecture"])
+        lecture_index = int(self.request.POST["lecture"] or 0)
         lecture = dossier.lectures[lecture_index]
 
         chambre = lecture.chambre.value
@@ -394,3 +389,29 @@ def lecture_check(request: Request) -> dict:
         raise HTTPNotFound
 
     return {"modified_at": lecture.modified_at_timestamp}
+
+
+@view_config(route_name="choices_lectures", renderer="json")
+def choices_lectures(request: Request) -> dict:
+    uid = request.matchdict["uid"]
+    dossiers_by_uid = get_data("dossiers")
+    dossier = dossiers_by_uid[uid]
+    return {
+        "lectures": [
+            {
+                "uid": lecture.texte.uid,
+                "chambre": lecture.chambre.value,
+                "titre": lecture.titre,
+                "numero": lecture.texte.numero,
+                "dateDepot": lecture.texte.date_depot.strftime("%d/%m/%Y"),
+                "label": " – ".join(
+                    [
+                        str(lecture.chambre),
+                        lecture.titre,
+                        f"Texte Nº {lecture.texte.numero}",
+                    ]
+                ),
+            }
+            for lecture in dossier.lectures
+        ]
+    }

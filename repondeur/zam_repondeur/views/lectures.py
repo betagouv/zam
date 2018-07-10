@@ -4,13 +4,13 @@ import logging
 from datetime import datetime
 from typing import BinaryIO, Dict, Iterable, TextIO, Tuple
 
-from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
 
-from zam_aspirateur.textes.models import Chambre
+from zam_aspirateur.textes.models import Chambre, Dossier, Lecture as LectureData
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
@@ -45,15 +45,8 @@ class LecturesAdd:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        dossier_uid = self.request.POST["dossier"]
-        dossier = self.dossiers_by_uid[dossier_uid]
-        lecture_uid = self.request.POST["lecture"]
-        lecture = None
-        for lecture_ in dossier.lectures:
-            if lecture_.texte.uid == lecture_uid:
-                lecture = lecture_
-        if lecture is None:
-            raise HTTPNotFound
+        dossier = self._get_dossier()
+        lecture = self._get_lecture(dossier)
 
         chambre = lecture.chambre.value
         num_texte = lecture.texte.numero
@@ -81,6 +74,31 @@ class LecturesAdd:
                 organe=organe,
             )
         )
+
+    def _get_dossier(self) -> Dossier:
+        try:
+            dossier_uid = self.request.POST["dossier"]
+        except KeyError:
+            raise HTTPBadRequest
+        try:
+            dossier = self.dossiers_by_uid[dossier_uid]
+        except KeyError:
+            raise HTTPNotFound
+        return dossier
+
+    def _get_lecture(self, dossier: Dossier) -> LectureData:
+        try:
+            texte, organe = self.request.POST["lecture"].split("-", 1)
+        except (KeyError, ValueError):
+            raise HTTPBadRequest
+        matching = [
+            lecture
+            for lecture in dossier.lectures
+            if lecture.texte.uid == texte and lecture.organe == organe
+        ]
+        if len(matching) != 1:
+            raise HTTPNotFound
+        return matching[0]
 
 
 @view_defaults(route_name="lecture")
@@ -404,11 +422,7 @@ def choices_lectures(request: Request) -> dict:
     return {
         "lectures": [
             {
-                "uid": lecture.texte.uid,
-                "chambre": lecture.chambre.value,
-                "titre": lecture.titre,
-                "numero": lecture.texte.numero,
-                "dateDepot": lecture.texte.date_depot.strftime("%d/%m/%Y"),
+                "key": f"{lecture.texte.uid}-{lecture.organe}",
                 "label": " – ".join(
                     [
                         str(lecture.chambre),

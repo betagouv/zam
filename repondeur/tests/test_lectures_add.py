@@ -35,7 +35,8 @@ def test_post_form(app):
     # We cannot use form.submit() given the form is dynamic and does not
     # contain choices for lectures (dynamically loaded via JS).
     resp = app.post(
-        "/lectures/add", {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269"}
+        "/lectures/add",
+        {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460"},
     )
 
     assert resp.status_code == 302
@@ -59,7 +60,8 @@ def test_post_form_already_exists(app, dummy_lecture):
     # We cannot use form.submit() given the form is dynamic and does not
     # contain choices for lectures (dynamically loaded via JS).
     resp = app.post(
-        "/lectures/add", {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269"}
+        "/lectures/add",
+        {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460"},
     )
 
     assert resp.status_code == 302
@@ -80,12 +82,8 @@ def test_choices_lectures(app):
     assert resp.json == {
         "lectures": [
             {
-                "chambre": "an",
-                "dateDepot": "11/10/2017",
+                "key": "PRJLANR5L15B0269-PO717460",
                 "label": "Assemblée nationale – 1ère lecture – Texte Nº 269",
-                "numero": 269,
-                "titre": "1ère lecture",
-                "uid": "PRJLANR5L15B0269",
             }
         ]
     }

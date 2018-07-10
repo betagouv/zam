@@ -42,6 +42,7 @@ class Amendement:
     id: int
     groupe: dict
     reponse: Reponse
+    num_disp: str
     gouvernemental: bool = False
     auteur: Optional[str] = ""
     objet: Optional[str] = ""
@@ -51,7 +52,7 @@ class Amendement:
     etat: Optional[str] = ""
 
     def __str__(self) -> str:
-        return self.pk
+        return self.num_disp
 
     @classmethod
     def create(cls, amendement: AmendementModel, reponse: Reponse) -> "Amendement":
@@ -63,6 +64,7 @@ class Amendement:
                 "couleur": GROUPS_COLORS.get(amendement.groupe, "#ffffff"),
             },
             reponse=reponse,
+            num_disp=amendement.num_disp,
             auteur=amendement.auteur,
             dispositif=amendement.dispositif,
             objet=amendement.objet,

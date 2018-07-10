@@ -34,7 +34,7 @@
             </select>
         </div>
         <div class="form-group">
-            <input type="submit" name="submit" value="Ajouter" class="btn btn-primary btn-lg">
+            <input type="submit" name="submit" value="Ajouter" class="btn btn-primary btn-lg" disabled>
             <a href="{{ request.route_url('lectures_list') }}" class="btn">Annuler</a>
         </div>
     </form>
@@ -52,6 +52,9 @@
         var selectLectures = $("#select-lecture").selectize({
             valueField: "key",
             labelField: "label",
+            onChange: function(key) {
+                $("input[type=submit]").prop("disabled", (key === ""));
+            },
         })[0];
 
         $("#select-dossier").selectize({

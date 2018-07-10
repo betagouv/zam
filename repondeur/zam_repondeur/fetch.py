@@ -17,7 +17,7 @@ def get_amendements(
     title: str
     amendements: List[Amendement]
     if chambre == "senat":
-        title, amendements = aspire_senat(session=session, num=texte)
+        title, amendements = aspire_senat(session=session, num=texte, organe=organe)
         return amendements, []
     elif chambre == "an":
         settings = get_current_registry().settings

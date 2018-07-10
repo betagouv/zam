@@ -20,7 +20,7 @@
     <form action="{{ request.path }}" method="POST">
         <div class="form-group">
             <label for="dossier">Dossier législatif</label>
-            <select id="select-dossier" name="dossier" class="form-control" placeholder="Choisir un dossier législatif...">
+            <select id="select-dossier" name="dossier" class="form-control" placeholder="Choisir un dossier législatif..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 <option value="" selected="selected"></option>
                 {% for dossier in dossiers %}
                     <option value="{{ dossier['uid'] }}">{{ dossier['titre'] }}</option>
@@ -29,12 +29,12 @@
         </div>
         <div class="form-group">
             <label for="lecture">Lecture</label>
-            <select id="select-lecture" name="lecture" class="form-control" placeholder="Choisir une lecture...">
+            <select id="select-lecture" name="lecture" class="form-control" placeholder="Choisir une lecture..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 <option value="" selected="selected"></option>
             </select>
         </div>
         <div class="form-group">
-            <input type="submit" name="submit" value="Ajouter" class="btn btn-primary btn-lg">
+            <input type="submit" name="submit" value="Ajouter" class="btn btn-primary btn-lg" disabled>
             <a href="{{ request.route_url('lectures_list') }}" class="btn">Annuler</a>
         </div>
     </form>
@@ -52,13 +52,20 @@
         var selectLectures = $("#select-lecture").selectize({
             valueField: "key",
             labelField: "label",
+            onChange: function(key) {
+                $("input[type=submit]").prop("disabled", (key === ""));
+            },
         })[0];
 
         $("#select-dossier").selectize({
             valueField: "uid",
             labelField: "titre",
             searchField: ["titre"],
+            onInitialize: function () {
+                $("#select-dossier-selectized").attr("spellcheck", "false");
+            },
             onChange: function(uid) {
+                selectLectures.selectize.setValue("");
                 selectLectures.selectize.clearOptions();
                 if (uid === "") {
                     return;

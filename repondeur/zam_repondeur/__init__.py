@@ -5,6 +5,7 @@ from sqlalchemy import engine_from_config
 
 from zam_repondeur.data import load_data
 from zam_repondeur.models import DBSession, Base
+from zam_repondeur.version import load_version
 
 
 def make_app(global_settings: dict, **settings: dict) -> Router:
@@ -70,6 +71,7 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.scan()
 
         load_data(config)
+        load_version(config)
 
         app = config.make_wsgi_app()
 

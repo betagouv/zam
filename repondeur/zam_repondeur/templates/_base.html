@@ -41,7 +41,14 @@
         {% endblock %}
 
     </main>
+
     {% block scripts %}
     {% endblock %}
 </body>
 </html>
+{% with branch = request.registry.settings['version']['branch'],
+        sha1 = request.registry.settings['version']['sha1'],
+        date = request.registry.settings['version']['date']
+%}
+<!-- Version: {{ branch }} @ {{ sha1[:8] }} ({{ date }}) -->
+{% endwith %}

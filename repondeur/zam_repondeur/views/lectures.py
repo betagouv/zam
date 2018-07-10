@@ -10,12 +10,12 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
 
-from zam_aspirateur.textes.models import Chambre, Dossier, Lecture as LectureData
+from zam_aspirateur.textes.models import Chambre, Dossier, Lecture
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
 from zam_repondeur.fetch import get_articles, get_amendements
-from zam_repondeur.models import DBSession, Amendement, Lecture
+from zam_repondeur.models import DBSession, Amendement, Lecture as LectureModel
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 
@@ -25,7 +25,7 @@ class CSVError(Exception):
 
 @view_config(route_name="lectures_list", renderer="lectures_list.html")
 def lectures_list(request: Request) -> dict:
-    return {"lectures": Lecture.all()}
+    return {"lectures": LectureModel.all()}
 
 
 @view_defaults(route_name="lectures_add")
@@ -59,10 +59,10 @@ class LecturesAdd:
         else:
             session = "2017-2018"
 
-        if Lecture.exists(chambre, session, num_texte, organe):
+        if LectureModel.exists(chambre, session, num_texte, organe):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
         else:
-            Lecture.create(chambre, session, num_texte, titre, organe)
+            LectureModel.create(chambre, session, num_texte, titre, organe)
             self.request.session.flash(("success", "Lecture créée avec succès."))
 
         return HTTPFound(
@@ -86,7 +86,7 @@ class LecturesAdd:
             raise HTTPNotFound
         return dossier
 
-    def _get_lecture(self, dossier: Dossier) -> LectureData:
+    def _get_lecture(self, dossier: Dossier) -> Lecture:
         try:
             texte, organe = self.request.POST["lecture"].split("-", 1)
         except (KeyError, ValueError):
@@ -105,7 +105,7 @@ class LecturesAdd:
 class LectureView:
     def __init__(self, request: Request) -> None:
         self.request = request
-        self.lecture = Lecture.get(
+        self.lecture = LectureModel.get(
             chambre=request.matchdict["chambre"],
             session=request.matchdict["session"],
             num_texte=int(request.matchdict["num_texte"]),
@@ -128,11 +128,11 @@ class LectureView:
     @view_config(request_method="POST")
     def post(self) -> Response:
         self.amendements_query.delete()
-        DBSession.query(Lecture).filter(
-            Lecture.chambre == self.lecture.chambre,
-            Lecture.session == self.lecture.session,
-            Lecture.num_texte == self.lecture.num_texte,
-            Lecture.organe == self.lecture.organe,
+        DBSession.query(LectureModel).filter(
+            LectureModel.chambre == self.lecture.chambre,
+            LectureModel.session == self.lecture.session,
+            LectureModel.num_texte == self.lecture.num_texte,
+            LectureModel.organe == self.lecture.organe,
         ).delete()
         self.request.session.flash(("success", "Lecture supprimée avec succès."))
         return HTTPFound(location=self.request.route_url("lectures_list"))
@@ -142,7 +142,7 @@ class LectureView:
 class ListAmendements:
     def __init__(self, request: Request) -> None:
         self.request = request
-        self.lecture = Lecture.get(
+        self.lecture = LectureModel.get(
             chambre=request.matchdict["chambre"],
             session=request.matchdict["session"],
             num_texte=int(request.matchdict["num_texte"]),
@@ -276,7 +276,7 @@ REPONSE_FIELDS = ["avis", "observations", "reponse"]
 
 @view_config(route_name="fetch_amendements")
 def fetch_amendements(request: Request) -> Response:
-    lecture = Lecture.get(
+    lecture = LectureModel.get(
         chambre=request.matchdict["chambre"],
         session=request.matchdict["session"],
         num_texte=int(request.matchdict["num_texte"]),
@@ -377,7 +377,7 @@ def _set_flash_messages(
 
 @view_config(route_name="fetch_articles")
 def fetch_articles(request: Request) -> Response:
-    lecture = Lecture.get(
+    lecture = LectureModel.get(
         chambre=request.matchdict["chambre"],
         session=request.matchdict["session"],
         num_texte=int(request.matchdict["num_texte"]),
@@ -402,7 +402,7 @@ def fetch_articles(request: Request) -> Response:
 
 @view_config(route_name="lecture_check", renderer="json")
 def lecture_check(request: Request) -> dict:
-    lecture = Lecture.get(
+    lecture = LectureModel.get(
         chambre=request.matchdict["chambre"],
         session=request.matchdict["session"],
         num_texte=int(request.matchdict["num_texte"]),

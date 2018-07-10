@@ -20,7 +20,7 @@
     <form action="{{ request.path }}" method="POST">
         <div class="form-group">
             <label for="dossier">Dossier législatif</label>
-            <select id="select-dossier" name="dossier" class="form-control" placeholder="Choisir un dossier législatif...">
+            <select id="select-dossier" name="dossier" class="form-control" placeholder="Choisir un dossier législatif..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 <option value="" selected="selected"></option>
                 {% for dossier in dossiers %}
                     <option value="{{ dossier['uid'] }}">{{ dossier['titre'] }}</option>
@@ -29,7 +29,7 @@
         </div>
         <div class="form-group">
             <label for="lecture">Lecture</label>
-            <select id="select-lecture" name="lecture" class="form-control" placeholder="Choisir une lecture...">
+            <select id="select-lecture" name="lecture" class="form-control" placeholder="Choisir une lecture..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 <option value="" selected="selected"></option>
             </select>
         </div>

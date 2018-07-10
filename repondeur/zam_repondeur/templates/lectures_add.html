@@ -58,7 +58,11 @@
             valueField: "uid",
             labelField: "titre",
             searchField: ["titre"],
+            onInitialize: function () {
+                $("#select-dossier-selectized").attr("spellcheck", "false");
+            },
             onChange: function(uid) {
+                selectLectures.selectize.setValue("");
                 selectLectures.selectize.clearOptions();
                 if (uid === "") {
                     return;

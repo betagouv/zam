@@ -58,7 +58,6 @@
                 <th>Groupe</th>
                 <th>Sort</th>
                 <th>Avis</th>
-                <th class="nosort">Actions</th>
             </tr>
         </thead>
         {% for amendement in amendements %}
@@ -68,14 +67,13 @@
                 {{ amendement.subdiv_type }}
             {%- endif -%}">
                 <td data-sortkey="{{ amendement.subdiv_num }}">
-                    {{ amendement.subdiv_pos }}
-                    {% if amendement.subdiv_type == 'article' %}
-                        Art.
-                    {% else %}
-                        {{ amendement.subdiv_type }}
+                    {{ amendement.subdiv_disp }}<br>
+                    {% if amendement.subdiv_titre %}
+                        {{ amendement.subdiv_titre }}<br>
                     {% endif %}
-                    {{ amendement.subdiv_num }}
-                    {{ amendement.subdiv_mult }}
+                    <a class="action" href="{{ request.route_url('article_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe, subdiv_type=amendement.subdiv_type, subdiv_num=amendement.subdiv_num, subdiv_mult=amendement.subdiv_mult, subdiv_pos=amendement.subdiv_pos) }}">
+                        <i class="fas fa-edit"></i>Éditer
+                    </a>
                 </td>
                 <td data-sortkey="{{ amendement.num }}">
                     {{ amendement.num_disp }}
@@ -85,12 +83,10 @@
                 <td>{{ amendement.sort }}</td>
                 <td>
                     {% if amendement.avis %}
-                        {{ amendement.avis }}
+                        {{ amendement.avis }}<br>
                     {% endif %}
-                </td>
-                <td>
                     <a class="action" href="{{ request.route_url('reponse_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe, num=amendement.num) }}">
-                        <i class="fas fa-edit"></i>Éditer...
+                        <i class="fas fa-edit"></i>Éditer
                     </a>
                 </td>
             </tr>

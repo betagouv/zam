@@ -33,3 +33,30 @@ def test_num_disp(text, num, rectif):
         auteur="M. Dupont",
     )
     assert amendement.num_disp == text
+    assert amendement.subdiv_disp == "Art. 1"
+
+
+@pytest.mark.parametrize(
+    "type_,pos,num,mult,output",
+    [
+        ("article", "", "1", "", "Art. 1"),
+        ("annexe", "", "1", "", "Annexe 1"),
+        ("article", "", "1", "bis", "Art. 1 bis"),
+        ("article", "avant", "1", "", "Avant art. 1"),
+    ],
+)
+def test_subdiv_disp(type_, pos, num, mult, output):
+    from zam_aspirateur.amendements.models import Amendement
+
+    amendement = Amendement(
+        chambre="senat",
+        session="2017-2018",
+        num_texte=63,
+        organe="PO717460",
+        subdiv_type=type_,
+        subdiv_num=num,
+        subdiv_mult=mult,
+        subdiv_pos=pos,
+        num=num,
+    )
+    assert amendement.subdiv_disp == output

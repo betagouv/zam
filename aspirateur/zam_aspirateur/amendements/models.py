@@ -58,6 +58,12 @@ class Amendement:
             text += self._RECTIF_TO_SUFFIX[self.rectif]
         return text
 
+    @property
+    def subdiv_disp(self) -> str:
+        type_ = self.subdiv_type == "article" and "art." or self.subdiv_type
+        text = f"{self.subdiv_pos} {type_} {self.subdiv_num} {self.subdiv_mult}"
+        return text.strip().capitalize()
+
     _RECTIF_TO_SUFFIX = {
         2: "bis",
         3: "ter",

@@ -4,8 +4,8 @@ from typing import Optional
 from urllib.parse import urlparse
 
 from zam_aspirateur.amendements.models import Amendement
-from zam_aspirateur.clean import clean_html
 
+from zam_repondeur.clean import clean_html
 from zam_repondeur.fetch.division import _parse_subdiv
 
 

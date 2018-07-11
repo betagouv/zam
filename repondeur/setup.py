@@ -1,6 +1,7 @@
 from setuptools import setup
 
 requires = [
+    "bleach",
     "cachecontrol",
     "inscriptis",
     "lockfile",

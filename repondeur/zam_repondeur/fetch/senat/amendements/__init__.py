@@ -8,11 +8,12 @@ import requests
 from selectolax.parser import HTMLParser
 
 from zam_aspirateur.amendements.models import Amendement
-from zam_aspirateur.amendements.parser import parse_from_csv, parse_from_json
 from zam_aspirateur.exceptions import NotFound
 from zam_aspirateur.senateurs.fetch import fetch_senateurs
 from zam_aspirateur.senateurs.models import Senateur
 from zam_aspirateur.senateurs.parse import parse_senateurs
+
+from .parse import parse_from_csv, parse_from_json
 
 
 BASE_URL = "https://www.senat.fr"

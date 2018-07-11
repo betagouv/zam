@@ -10,7 +10,8 @@ import xmltodict
 from zam_aspirateur.exceptions import NotFound
 from zam_aspirateur.http import cached_session
 from zam_aspirateur.amendements.models import Amendement, SubDiv
-from zam_aspirateur.amendements.parser import _parse_subdiv
+
+from zam_repondeur.fetch.division import _parse_subdiv
 
 
 BASE_URL = "http://www.assemblee-nationale.fr"

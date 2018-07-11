@@ -5,7 +5,7 @@ import pytest
 
 def test_parse_from_csv():
 
-    from zam_aspirateur.amendements.parser import parse_from_csv
+    from zam_repondeur.fetch.senat.amendements.parse import parse_from_csv
 
     amend = {
         "Alinéa": " ",
@@ -44,44 +44,44 @@ def test_parse_from_csv():
 
 class TestExtractMatricule:
     def test_empty_url(self):
-        from zam_aspirateur.amendements.parser import extract_matricule
+        from zam_repondeur.fetch.senat.amendements.parse import extract_matricule
 
         assert extract_matricule("") is None
 
     def test_malformed_url(self):
-        from zam_aspirateur.amendements.parser import extract_matricule
+        from zam_repondeur.fetch.senat.amendements.parse import extract_matricule
 
         with pytest.raises(ValueError):
             extract_matricule("$amd.getUrlAuteur()")
 
     def test_csv_format(self):
-        from zam_aspirateur.amendements.parser import extract_matricule
+        from zam_repondeur.fetch.senat.amendements.parse import extract_matricule
 
         url = "//www.senat.fr/senfic/frassa_christophe_andre08018u.html"
         assert extract_matricule(url) == "08018U"
 
     def test_json_format(self):
-        from zam_aspirateur.amendements.parser import extract_matricule
+        from zam_repondeur.fetch.senat.amendements.parse import extract_matricule
 
         url = "bocquet_eric11040e.html"
         assert extract_matricule(url) == "11040E"
 
 
 def test_parse_date():
-    from zam_aspirateur.amendements.parser import parse_date
+    from zam_repondeur.fetch.senat.amendements.parse import parse_date
 
     assert parse_date("2017-11-13") == date(2017, 11, 13)
 
 
 def test_parse_date_empty_string():
-    from zam_aspirateur.amendements.parser import parse_date
+    from zam_repondeur.fetch.senat.amendements.parse import parse_date
 
     assert parse_date("") is None
 
 
 class TestParseAmendementFromJSON:
     def test_parse_basic_data(self):
-        from zam_aspirateur.amendements.parser import parse_from_json
+        from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
 
         amend = {
             "idAmendement": "1104289",
@@ -135,7 +135,7 @@ class TestParseAmendementFromJSON:
         Happens with `Economie : lutte contre la fraude
                       -> Sénat, session 2017-2018, texte nº 603.`
         """
-        from zam_aspirateur.amendements.parser import parse_from_json
+        from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
 
         amend = {
             "idAmendement": "1104289",
@@ -177,7 +177,7 @@ class TestParseAmendementFromJSON:
         assert amendement.sort is None
 
     def test_discussion_commune(self):
-        from zam_aspirateur.amendements.parser import parse_from_json
+        from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
 
         amend = {
             "idAmendement": "1110174",
@@ -216,7 +216,7 @@ class TestParseAmendementFromJSON:
         assert amendement.discussion_commune == 110541
 
     def test_not_discussion_commune(self):
-        from zam_aspirateur.amendements.parser import parse_from_json
+        from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
 
         amend = {
             "idAmendement": "1103376",
@@ -251,42 +251,3 @@ class TestParseAmendementFromJSON:
 
         assert amendement.discussion_commune is None
         assert amendement.sort == "Adopté"
-
-
-@pytest.mark.parametrize(
-    "text,type_,num,mult,pos",
-    [
-        ("", "", "", "", ""),
-        ("Intitulé du projet de loi", "titre", "", "", ""),
-        ("TITRE III : Un dispositif d'évaluation renouvelé", "section", "III", "", ""),
-        ("Article 1", "article", "1", "", ""),
-        ("Article PREMIER", "article", "1", "", ""),
-        (
-            "Article 1er - Annexe (Stratégie nationale d'orientation de l'action publique)",  # noqa
-            "article",
-            "1",
-            "",
-            "",
-        ),
-        ("Article 8\xa0bis", "article", "8", "bis", ""),
-        ("art. add. après Article 7", "article", "7", "", "après"),
-        ("art. add. avant Article 39", "article", "39", "", "avant"),
-        (
-            "Article(s) additionnel(s) après Article 15 ter",
-            "article",
-            "15",
-            "ter",
-            "après",
-        ),
-        ("Article 31 (précédemment examiné)", "article", "31", "", ""),
-        ("Annexe", "annexe", "", "", ""),
-        ("ANNEXE B", "annexe", "B", "", ""),
-        ("Chapitre III", "chapitre", "III", "", ""),
-        ("Article Article 3 bis AAA", "article", "3", "bis", ""),
-        ("Article additionnel après l'article 13", "article", "13", "", "après"),
-    ],
-)
-def test_parse_subdiv(text, type_, num, mult, pos):
-    from zam_aspirateur.amendements.parser import _parse_subdiv
-
-    assert _parse_subdiv(text) == (type_, num, mult, pos)

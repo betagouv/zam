@@ -7,6 +7,7 @@ requires = [
     "pyramid_tm",
     "SQLAlchemy",
     "transaction",
+    "xmltodict",
     "zope.sqlalchemy",
 ]
 

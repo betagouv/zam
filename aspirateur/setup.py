@@ -17,6 +17,5 @@ setup(
         "openpyxl",
         "requests",
         "selectolax",
-        "xmltodict",
     ],
 )

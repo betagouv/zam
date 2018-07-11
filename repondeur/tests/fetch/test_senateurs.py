@@ -11,7 +11,7 @@ HERE = os.path.dirname(__file__)
     [("89017R", "Adnot", "NI"), ("08015R", "Laurent", "Les Républicains")],
 )
 def test_parse(matricule, nom, groupe):
-    from zam_aspirateur.senateurs.parse import parse_senateurs
+    from zam_repondeur.fetch.senat.senateurs.parse import parse_senateurs
 
     filename = os.path.join(HERE, "sample_data", "ODSEN_GENERAL.csv")
     with open(filename, "r", encoding="cp1252") as file_:

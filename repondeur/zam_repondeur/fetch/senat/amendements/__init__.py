@@ -9,9 +9,8 @@ from selectolax.parser import HTMLParser
 
 from zam_aspirateur.amendements.models import Amendement
 from zam_aspirateur.exceptions import NotFound
-from zam_aspirateur.senateurs.fetch import fetch_senateurs
-from zam_aspirateur.senateurs.models import Senateur
-from zam_aspirateur.senateurs.parse import parse_senateurs
+
+from zam_repondeur.fetch.senat.senateurs import fetch_and_parse_senateurs, Senateur
 
 from .parse import parse_from_csv, parse_from_json
 
@@ -101,7 +100,7 @@ def _process_amendements(
         print("Aucun amendement soumis à la discussion pour l'instant!")
 
     print("Récupération de la liste des sénateurs...")
-    senateurs_by_matricule = _fetch_and_parse_senateurs()
+    senateurs_by_matricule = fetch_and_parse_senateurs()
 
     amendements_avec_groupe = _enrich_groupe_parlementaire(
         amendements, senateurs_by_matricule
@@ -148,12 +147,6 @@ def _fetch_discussed(session: str, num: int, phase: str) -> Any:
 
     data = resp.json()
     return data
-
-
-def _fetch_and_parse_senateurs() -> Dict[str, Senateur]:
-    lines = fetch_senateurs()
-    by_matricule = parse_senateurs(lines)  # type: Dict[str, Senateur]
-    return by_matricule
 
 
 def _enrich_groupe_parlementaire(

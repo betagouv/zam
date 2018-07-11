@@ -10,7 +10,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
 
-from zam_aspirateur.textes.models import Chambre, Dossier, Lecture
+from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Lecture
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
@@ -32,7 +32,7 @@ def lectures_list(request: Request) -> dict:
 class LecturesAdd:
     def __init__(self, request: Request) -> None:
         self.request = request
-        self.dossiers_by_uid = get_data("dossiers")
+        self.dossiers_by_uid: Dict[str, Dossier] = get_data("dossiers")
 
     @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:

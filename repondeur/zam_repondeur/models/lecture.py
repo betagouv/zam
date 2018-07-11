@@ -3,8 +3,6 @@ from typing import Any, List
 
 from sqlalchemy import Column, DateTime, Integer, Text, desc
 
-from zam_repondeur.data import get_data
-
 from .amendement import Amendement
 from .base import Base, DBSession
 
@@ -48,6 +46,8 @@ class Lecture(Base):  # type: ignore
             return f"session {self.session}"
 
     def format_organe(self) -> str:
+        from zam_repondeur.data import get_data  # avoid circular imports
+
         result: str = self.organe
         organes = get_data("organes")
         if self.organe in organes:

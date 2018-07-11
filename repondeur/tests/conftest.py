@@ -18,7 +18,13 @@ def settings():
 
 @pytest.yield_fixture(scope="session", autouse=True)
 def mock_dossiers():
-    from zam_aspirateur.textes.models import Chambre, Dossier, Lecture, Texte, TypeTexte
+    from zam_repondeur.fetch.an.dossiers.models import (
+        Chambre,
+        Dossier,
+        Lecture,
+        Texte,
+        TypeTexte,
+    )
 
     with patch("zam_repondeur.data.get_dossiers_legislatifs") as m_dossiers:
         m_dossiers.return_value = {

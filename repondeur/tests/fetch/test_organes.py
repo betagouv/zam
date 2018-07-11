@@ -8,9 +8,7 @@ import pytest
 
 HERE = Path(os.path.dirname(__file__))
 
-ORGANES = (
-    HERE.parent / "sample_data" / "AMO10_deputes_actifs_mandats_actifs_organes_XV.json"
-)
+ORGANES = HERE / "sample_data" / "AMO10_deputes_actifs_mandats_actifs_organes_XV.json"
 
 
 @pytest.fixture(scope="session")
@@ -21,9 +19,11 @@ def sample_data():
 
 
 def test_get_organes(sample_data):
-    from zam_aspirateur.textes.organes import get_organes
+    from zam_repondeur.fetch.an.organes import get_organes
 
-    with patch("zam_aspirateur.textes.organes.fetch_organes", return_value=sample_data):
+    with patch(
+        "zam_repondeur.fetch.an.organes.fetch_organes", return_value=sample_data
+    ):
         organes = get_organes(legislature=15)
 
     assert len(organes) == 4
@@ -32,7 +32,7 @@ def test_get_organes(sample_data):
 
 
 def test_parse_organes(sample_data):
-    from zam_aspirateur.textes.organes import parse_organes
+    from zam_repondeur.fetch.an.organes import parse_organes
 
     organes = parse_organes(sample_data["export"])
 

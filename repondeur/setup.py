@@ -7,6 +7,7 @@ requires = [
     "inscriptis",
     "lockfile",
     "openpyxl",
+    "pdfkit",
     "pyramid",
     "pyramid-jinja2",
     "pyramid_retry",

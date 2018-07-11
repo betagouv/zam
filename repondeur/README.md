@@ -6,6 +6,12 @@ Python 3.6+
 
 ## Setup
 
+Install [wkhtmltopdf](https://github.com/JazzCore/python-pdfkit#installation)
+
+```
+$ brew install caskroom/cask/wkhtmltopdf
+```
+
 ```
 $ pipenv install
 $ pipenv shell

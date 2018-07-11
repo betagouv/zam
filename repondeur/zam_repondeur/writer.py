@@ -4,10 +4,13 @@ from dataclasses import fields
 from itertools import groupby
 from typing import Iterable, Tuple
 
+import pdfkit
 from inscriptis import get_text
 from openpyxl import Workbook
 from openpyxl.styles import Color, Font, PatternFill
 from openpyxl.worksheet import Worksheet
+from pyramid.request import Request
+from pyramid_jinja2 import get_jinja2_environment
 
 from .models import Amendement
 
@@ -64,7 +67,9 @@ GROUPS_COLORS = {
 }
 
 
-def write_csv(amendements: Iterable[Amendement], filename: str) -> int:
+def write_csv(
+    title: str, amendements: Iterable[Amendement], filename: str, request: Request
+) -> int:
     nb_rows = 0
     with open(filename, "w", encoding="utf-8") as file_:
         file_.write(";".join(HEADERS) + "\n")
@@ -77,7 +82,22 @@ def write_csv(amendements: Iterable[Amendement], filename: str) -> int:
     return nb_rows
 
 
-def write_xlsx(amendements: Iterable[Amendement], filename: str) -> int:
+def write_pdf(
+    title: str, amendements: Iterable[Amendement], filename: str, request: Request
+) -> int:
+    from zam_repondeur.models.visionneuse import build_tree  # NOQA: circular
+
+    articles = build_tree(amendements)
+    env = get_jinja2_environment(request, name=".html")
+    template = env.get_template("print.html")
+    content = template.render(title=title, articles=articles)
+    pdfkit.from_string(content, filename)
+    return len(amendements)
+
+
+def write_xlsx(
+    title: str, amendements: Iterable[Amendement], filename: str, request: Request
+) -> int:
     wb = Workbook()
     ws = wb.active
     ws.title = "Amendements"

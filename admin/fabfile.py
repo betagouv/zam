@@ -48,7 +48,7 @@ def put_dir(ctx, local, remote, chown=None):
 @task
 def system(ctx):
     ctx.sudo("apt update")
-    ctx.sudo("apt install -y python3.6 nginx")
+    ctx.sudo("apt install -y python3.6 nginx wkhtmltopdf")
     ctx.sudo("mkdir -p /srv/zam")
     ctx.sudo("mkdir -p /srv/zam/letsencrypt/.well-known/acme-challenge")
     ctx.sudo("useradd -N zam -d /srv/zam/ || exit 0")

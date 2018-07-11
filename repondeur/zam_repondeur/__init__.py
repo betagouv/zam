@@ -55,7 +55,7 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         )
         config.add_route(
             "download_amendements",
-            "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/amendements/download.{format:(csv|xlsx)}",  # noqa
+            "/lectures/{chambre}/{session}/{num_texte:\d+}/{organe}/amendements/download.{format:(csv|xlsx|pdf)}",  # noqa
         )
         config.add_route(
             "article_edit",

@@ -40,7 +40,7 @@ def download_amendements(request: Request) -> Response:
             Amendement.organe == organe,
         )
         .order_by(
-            case([(Amendement.position.is_(None), 1)], else_=0),
+            case([(Amendement.position.is_(None), 1)], else_=0),  # type: ignore
             Amendement.position,
             Amendement.num,
         )

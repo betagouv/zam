@@ -7,11 +7,10 @@ from urllib.parse import urljoin
 
 import xmltodict
 
-from zam_aspirateur.amendements.models import Amendement, SubDiv
-
 from zam_repondeur.fetch.division import _parse_subdiv
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.fetch.http import cached_session
+from zam_repondeur.fetch.models import Amendement, SubDiv
 
 
 BASE_URL = "http://www.assemblee-nationale.fr"
@@ -110,7 +109,7 @@ def fetch_amendement(
     content = xmltodict.parse(resp.content)
     amendement = content["amendement"]
     subdiv = parse_division(amendement["division"])
-    return Amendement(
+    return Amendement(  # type: ignore
         chambre="an",
         session=str(legislature),
         num_texte=texte,

@@ -173,7 +173,7 @@ def test_fetch_amendements_not_found():
 @responses.activate
 def test_fetch_amendement():
     from zam_repondeur.fetch.an.amendements import fetch_amendement
-    from zam_aspirateur.amendements.models import Amendement
+    from zam_repondeur.fetch.models import Amendement
 
     responses.add(
         responses.GET,

@@ -1,6 +1,6 @@
 import re
 
-from zam_aspirateur.amendements.models import SubDiv
+from zam_repondeur.fetch.models import SubDiv
 
 
 SUBDIV_RE = re.compile(

@@ -11,14 +11,14 @@ EXAMPLES = [
 
 @pytest.mark.parametrize("text,num,rectif", EXAMPLES)
 def test_parse_num(text, num, rectif):
-    from zam_aspirateur.amendements.models import Amendement
+    from zam_repondeur.fetch.models import Amendement
 
     assert Amendement.parse_num(text) == (num, rectif)
 
 
 @pytest.mark.parametrize("text,num,rectif", EXAMPLES)
 def test_num_disp(text, num, rectif):
-    from zam_aspirateur.amendements.models import Amendement
+    from zam_repondeur.fetch.models import Amendement
 
     amendement = Amendement(
         chambre="senat",
@@ -46,7 +46,7 @@ def test_num_disp(text, num, rectif):
     ],
 )
 def test_subdiv_disp(type_, pos, num, mult, output):
-    from zam_aspirateur.amendements.models import Amendement
+    from zam_repondeur.fetch.models import Amendement
 
     amendement = Amendement(
         chambre="senat",

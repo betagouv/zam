@@ -31,7 +31,7 @@ def list_reponses(request: Request) -> Response:
             AmendementModel.organe == lecture.organe,
         )
         .order_by(
-            case([(AmendementModel.position.is_(None), 1)], else_=0),
+            case([(AmendementModel.position.is_(None), 1)], else_=0),  # type: ignore
             AmendementModel.position,
             AmendementModel.num,
         )

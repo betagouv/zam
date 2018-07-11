@@ -5,7 +5,7 @@ import pytest
 
 @pytest.fixture
 def amendements():
-    from zam_aspirateur.amendements.models import Amendement
+    from zam_repondeur.fetch.models import Amendement
 
     return [
         Amendement(

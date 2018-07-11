@@ -3,10 +3,9 @@ from datetime import date, datetime
 from typing import Optional
 from urllib.parse import urlparse
 
-from zam_aspirateur.amendements.models import Amendement
-
 from zam_repondeur.clean import clean_html
 from zam_repondeur.fetch.division import _parse_subdiv
+from zam_repondeur.fetch.models import Amendement
 
 
 def parse_from_csv(row: dict, session: str, num_texte: int, organe: str) -> Amendement:
@@ -14,7 +13,7 @@ def parse_from_csv(row: dict, session: str, num_texte: int, organe: str) -> Amen
     subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = _parse_subdiv(
         row["Subdivision "]
     )
-    return Amendement(
+    return Amendement(  # type: ignore
         chambre="senat",
         session=session,
         num_texte=num_texte,
@@ -42,7 +41,7 @@ def parse_from_json(
     subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = _parse_subdiv(
         subdiv["libelle_subdivision"]
     )
-    return Amendement(
+    return Amendement(  # type: ignore
         chambre="senat",
         session=session,
         num_texte=num_texte,

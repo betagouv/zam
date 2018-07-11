@@ -3,6 +3,7 @@ from setuptools import setup
 requires = [
     "bleach",
     "cachecontrol",
+    "dataclasses",
     "inscriptis",
     "lockfile",
     "openpyxl",

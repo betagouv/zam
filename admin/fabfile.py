@@ -120,7 +120,7 @@ def sshkeys(ctx):
 
 @task
 def deploy_changelog(ctx, source="../CHANGELOG.md"):
-    content = CommonMark.commonmark(Path(quote(source)).read_text())
+    content = CommonMark.commonmark(Path(source).read_text())
     with template_local_file("index.html.template", "index.html", {"content": content}):
         sudo_put(ctx, "index.html", "/srv/zam/index.html", chown="zam")
 

@@ -16,6 +16,5 @@ setup(
         "lockfile",
         "openpyxl",
         "requests",
-        "selectolax",
     ],
 )

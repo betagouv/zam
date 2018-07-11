@@ -5,6 +5,7 @@ requires = [
     "pyramid-jinja2",
     "pyramid_retry",
     "pyramid_tm",
+    "selectolax",
     "SQLAlchemy",
     "transaction",
     "xmltodict",

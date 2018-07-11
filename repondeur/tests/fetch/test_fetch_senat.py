@@ -6,7 +6,7 @@ import responses
 
 
 HERE = os.path.dirname(__file__)
-SAMPLE_DATA_DIR = os.path.join(os.path.dirname(HERE), "sample_data")
+SAMPLE_DATA_DIR = os.path.join(HERE, "sample_data")
 
 
 def read_sample_data(basename):
@@ -17,7 +17,7 @@ def read_sample_data(basename):
 
 @responses.activate
 def test_fetch_all():
-    from zam_aspirateur.amendements.fetch_senat import fetch_all
+    from zam_repondeur.fetch.senat.amendements import _fetch_all
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
 
@@ -28,7 +28,7 @@ def test_fetch_all():
         status=200,
     )
 
-    items = fetch_all(session="2017-2018", num=63)
+    items = _fetch_all(session="2017-2018", num=63)
 
     assert len(items) == 595
 
@@ -50,7 +50,7 @@ def test_fetch_all():
 
 @responses.activate
 def test_fetch_all_not_found():
-    from zam_aspirateur.amendements.fetch_senat import fetch_all, NotFound
+    from zam_repondeur.fetch.senat.amendements import _fetch_all, NotFound
 
     responses.add(
         responses.GET,
@@ -59,12 +59,12 @@ def test_fetch_all_not_found():
     )
 
     with pytest.raises(NotFound):
-        fetch_all(session="2080-2081", num=42)
+        _fetch_all(session="2080-2081", num=42)
 
 
 @responses.activate
 def test_fetch_discussed():
-    from zam_aspirateur.amendements.fetch_senat import fetch_discussed
+    from zam_repondeur.fetch.senat.amendements import _fetch_discussed
 
     fake_data = {
         "info_generales": {
@@ -375,14 +375,14 @@ def test_fetch_discussed():
         status=200,
     )
 
-    data = fetch_discussed("2016-2017", 610, "commission")
+    data = _fetch_discussed("2016-2017", 610, "commission")
 
     assert data == fake_data
 
 
 @responses.activate
 def test_fetch_discussed_not_found():
-    from zam_aspirateur.amendements.fetch_senat import fetch_discussed, NotFound
+    from zam_repondeur.fetch.senat.amendements import _fetch_discussed, NotFound
 
     responses.add(
         responses.GET,
@@ -391,12 +391,12 @@ def test_fetch_discussed_not_found():
     )
 
     with pytest.raises(NotFound):
-        fetch_discussed("2080-2081", 42, "commission")
+        _fetch_discussed("2080-2081", 42, "commission")
 
 
 @responses.activate
 def test_fetch_title():
-    from zam_aspirateur.amendements.fetch_senat import fetch_title
+    from zam_repondeur.fetch.senat.amendements import _fetch_title
 
     responses.add(
         responses.GET,
@@ -416,14 +416,14 @@ def test_fetch_title():
         status=200,
     )
 
-    title = fetch_title("2017-2018", 63)
+    title = _fetch_title("2017-2018", 63)
 
     assert title == "Financement de la sécurité sociale pour 2018"
 
 
 @responses.activate
 def test_fetch_title_unknown():
-    from zam_aspirateur.amendements.fetch_senat import fetch_title
+    from zam_repondeur.fetch.senat.amendements import _fetch_title
 
     responses.add(
         responses.GET,
@@ -432,14 +432,14 @@ def test_fetch_title_unknown():
         status=200,
     )
 
-    title = fetch_title("2017-2018", 63)
+    title = _fetch_title("2017-2018", 63)
 
     assert title == "Unknown"
 
 
 @responses.activate
 def test_fetch_title_not_found():
-    from zam_aspirateur.amendements.fetch_senat import fetch_title, NotFound
+    from zam_repondeur.fetch.senat.amendements import _fetch_title, NotFound
 
     responses.add(
         responses.GET,
@@ -448,19 +448,19 @@ def test_fetch_title_not_found():
     )
 
     with pytest.raises(NotFound):
-        fetch_title("2024-2025", 42)
+        _fetch_title("2024-2025", 42)
 
 
 def test_fetch_and_parse_discussed_not_found():
-    from zam_aspirateur.amendements.fetch_senat import (
-        fetch_and_parse_discussed,
+    from zam_repondeur.fetch.senat.amendements import (
+        _fetch_and_parse_discussed,
         NotFound,
     )
 
-    with patch("zam_aspirateur.amendements.fetch_senat.fetch_discussed") as m_fetch:
+    with patch("zam_repondeur.fetch.senat.amendements._fetch_discussed") as m_fetch:
         m_fetch.side_effect = NotFound
 
-        amendements = fetch_and_parse_discussed(
+        amendements = _fetch_and_parse_discussed(
             session="2016-2017", num=610, organe="PO78718", phase="commission"
         )
 

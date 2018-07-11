@@ -1,47 +1,47 @@
-"""
-Récupérer la liste des amendements relatifs à un texte de loi.
-"""
 from typing import Dict, Iterable, Iterator, List, Optional, Tuple
 
-import zam_aspirateur.amendements.fetch_senat as senat
+from zam_aspirateur.amendements.fetch_senat import (
+    fetch_and_parse_all,
+    fetch_and_parse_discussed,
+    fetch_title,
+    NotFound,
+)
 from zam_aspirateur.amendements.models import Amendement
 from zam_aspirateur.senateurs.fetch import fetch_senateurs
 from zam_aspirateur.senateurs.models import Senateur
 from zam_aspirateur.senateurs.parse import parse_senateurs
 
 
-def aspire_senat(
-    session: str, num: int, organe: str
-) -> Tuple[str, Iterable[Amendement]]:
+def aspire_senat(session: str, num: int, organe: str) -> Tuple[str, List[Amendement]]:
     print("Récupération du titre...")
-    title = senat.fetch_title(session, num)
+    title = fetch_title(session, num)
 
     print("Récupération des amendements déposés...")
     try:
-        amendements = senat.fetch_and_parse_all(session, num, organe)
-    except senat.NotFound:
+        amendements = fetch_and_parse_all(session, num, organe)
+    except NotFound:
         return "", []
 
-    processed_amendements = process_amendements(
+    processed_amendements = _process_amendements(
         amendements=amendements, session=session, num=num, organe=organe
     )
-    return title, processed_amendements
+    return title, list(processed_amendements)
 
 
-def process_amendements(
+def _process_amendements(
     amendements: Iterable[Amendement], session: str, num: int, organe: str
 ) -> Iterable[Amendement]:
 
     # Les amendements discutés en séance, par ordre de passage
     print("Récupération des amendements soumis à la discussion...")
-    amendements_derouleur = senat.fetch_and_parse_discussed(
+    amendements_derouleur = fetch_and_parse_discussed(
         session=session, num=num, organe=organe, phase="seance"
     )
     if len(amendements_derouleur) == 0:
         print("Aucun amendement soumis à la discussion pour l'instant!")
 
     print("Récupération de la liste des sénateurs...")
-    senateurs_by_matricule = fetch_and_parse_senateurs()
+    senateurs_by_matricule = _fetch_and_parse_senateurs()
 
     amendements_avec_groupe = _enrich_groupe_parlementaire(
         amendements, senateurs_by_matricule
@@ -52,7 +52,7 @@ def process_amendements(
     )
 
 
-def fetch_and_parse_senateurs() -> Dict[str, Senateur]:
+def _fetch_and_parse_senateurs() -> Dict[str, Senateur]:
     lines = fetch_senateurs()
     by_matricule = parse_senateurs(lines)  # type: Dict[str, Senateur]
     return by_matricule

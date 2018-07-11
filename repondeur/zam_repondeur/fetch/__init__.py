@@ -6,9 +6,9 @@ from tlfp.tools.parse_texte import parse
 
 from zam_aspirateur.amendements.models import Amendement
 from zam_aspirateur.exceptions import NotFound
-from zam_aspirateur.__main__ import aspire_senat
 
 from zam_repondeur.fetch.an import aspire_an
+from zam_repondeur.fetch.senat import aspire_senat
 from zam_repondeur.models import DBSession, Amendement as AmendementModel, Lecture
 
 

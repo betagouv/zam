@@ -1,11 +1,9 @@
 """
 Récupérer la liste des amendements relatifs à un texte de loi.
 """
-from pathlib import Path
 from typing import Dict, Iterable, Iterator, List, Optional, Tuple
 
 import zam_aspirateur.amendements.fetch_senat as senat
-import zam_aspirateur.amendements.fetch_an as an
 from zam_aspirateur.amendements.models import Amendement
 from zam_aspirateur.senateurs.fetch import fetch_senateurs
 from zam_aspirateur.senateurs.models import Senateur
@@ -28,23 +26,6 @@ def aspire_senat(
         amendements=amendements, session=session, num=num, organe=organe
     )
     return title, processed_amendements
-
-
-def aspire_an(
-    legislature: int, texte: int, organe: str, groups_folder: Path
-) -> Tuple[str, List[Amendement], List[str]]:
-    print("Récupération du titre et des amendements déposés...")
-    try:
-        title, amendements, errored = an.fetch_and_parse_all(
-            legislature=legislature,
-            texte=texte,
-            organe=organe,
-            groups_folder=groups_folder,
-        )
-    except an.NotFound:
-        return "", [], []
-
-    return title, amendements, errored
 
 
 def process_amendements(

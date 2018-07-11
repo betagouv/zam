@@ -19,6 +19,7 @@ inscriptis = "*"
 selectolax = "*"
 pyramid-default-cors = "*"
 pdfkit = "*"
+xvfbwrapper = "*"
 
 [dev-packages]
 webtest = "*"

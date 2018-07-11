@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3e0599431a8c5e74b98beb91a6cbc84186a4f2328c00aff8636f8e8afaf1d211"
+            "sha256": "72dccdde55a847f6bb975bab9e74e348d4afc0ec29223f172f0a146f32724e67"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -492,6 +492,13 @@
                 "sha256:add07d92089ff611badec526912747cf87afd4f9447af6661aca074eeaf32615"
             ],
             "version": "==0.11.0"
+        },
+        "xvfbwrapper": {
+            "hashes": [
+                "sha256:bcf4ae571941b40254faf7a73432dfc119ad21ce688f1fdec533067037ecfc24"
+            ],
+            "index": "pypi",
+            "version": "==0.2.9"
         },
         "zope.deprecation": {
             "hashes": [

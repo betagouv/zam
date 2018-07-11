@@ -17,6 +17,7 @@ requires = [
     "SQLAlchemy",
     "transaction",
     "xmltodict",
+    "xvfbwrapper",
     "zope.sqlalchemy",
 ]
 

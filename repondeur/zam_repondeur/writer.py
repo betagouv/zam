@@ -11,6 +11,7 @@ from openpyxl.styles import Color, Font, PatternFill
 from openpyxl.worksheet import Worksheet
 from pyramid.request import Request
 from pyramid_jinja2 import get_jinja2_environment
+from xvfbwrapper import Xvfb
 
 from .models import Amendement
 
@@ -91,7 +92,13 @@ def write_pdf(
     env = get_jinja2_environment(request, name=".html")
     template = env.get_template("print.html")
     content = template.render(title=title, articles=articles)
-    pdfkit.from_string(content, filename)
+    vdisplay = Xvfb()
+    try:
+        vdisplay.start()
+        pdfkit.from_string(content, filename)
+        vdisplay.stop()
+    except RuntimeError:
+        pdfkit.from_string(content, filename)
     return len(amendements)
 
 

@@ -16,6 +16,7 @@ from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
 from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.models import DBSession, Amendement, Lecture as LectureModel
+from zam_repondeur.resources import LectureCollection
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 
@@ -23,9 +24,9 @@ class CSVError(Exception):
     pass
 
 
-@view_config(route_name="lectures_list", renderer="lectures_list.html")
-def lectures_list(request: Request) -> dict:
-    return {"lectures": LectureModel.all()}
+@view_config(context=LectureCollection, renderer="lectures_list.html")
+def lectures_list(context: LectureCollection, request: Request) -> dict:
+    return {"lectures": context.models()}
 
 
 @view_defaults(route_name="lectures_add")
@@ -137,7 +138,9 @@ class LectureView:
             LectureModel.organe == self.lecture.organe,
         ).delete()
         self.request.session.flash(("success", "Lecture supprimée avec succès."))
-        return HTTPFound(location=self.request.route_url("lectures_list"))
+        return HTTPFound(
+            location=self.request.resource_url(self.request.root["lectures"])
+        )
 
 
 @view_defaults(route_name="list_amendements")

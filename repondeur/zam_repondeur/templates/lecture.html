@@ -20,7 +20,7 @@
 
 
 {% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.resource_url(request.root['lectures']) }}">Lectures</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ lecture.dossier_legislatif }} → {{ lecture }}</li>
 {% endblock %}
 

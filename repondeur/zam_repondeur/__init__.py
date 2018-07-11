@@ -28,8 +28,6 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.add_jinja2_renderer(".html")
         config.add_jinja2_search_path("zam_repondeur:templates", name=".html")
 
-        config.add_route("home", "/")
-        config.add_route("lectures_list", "/lectures/")
         config.add_route("lectures_add", "/lectures/add")
         config.add_route("choices_lectures", "/choices/dossiers/{uid}/")
 

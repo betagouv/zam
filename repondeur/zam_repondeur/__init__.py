@@ -5,6 +5,7 @@ from sqlalchemy import engine_from_config
 
 from zam_repondeur.data import load_data
 from zam_repondeur.models import DBSession, Base
+from zam_repondeur.resources import Root
 from zam_repondeur.version import load_version
 
 
@@ -12,7 +13,9 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
 
     session_factory = SignedCookieSessionFactory(settings["zam.secret"])
 
-    with Configurator(settings=settings, session_factory=session_factory) as config:
+    with Configurator(
+        settings=settings, root_factory=Root, session_factory=session_factory
+    ) as config:
 
         config.include("pyramid_tm")
 

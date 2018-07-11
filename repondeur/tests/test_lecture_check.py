@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 
 def test_lecture_check(app, dummy_lecture):
-    resp = app.get("http://localhost/lectures/an/15/269/PO717460/check")
+    resp = app.get("http://localhost/lectures/an.15.269.PO717460/check")
     assert resp.status_code == 200
     assert "modified_at" in resp.json
     now = datetime.utcnow()

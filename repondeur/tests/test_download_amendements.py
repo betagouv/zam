@@ -5,7 +5,7 @@ def test_download_csv(app, dummy_lecture):
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = [], []
-        resp = app.get("/lectures/an/15/269/PO717460/amendements/download.csv")
+        resp = app.get("/lectures/an.15.269.PO717460/amendements/download.csv")
 
     assert resp.status_code == 200
 
@@ -18,7 +18,7 @@ def test_download_csv(app, dummy_lecture):
 def test_download_csv_bad_request(app):
 
     resp = app.get(
-        "/lectures/bad/15/269/PO717460/amendements/download.csv", expect_errors=True
+        "/lectures/bad.15.269.PO717460/amendements/download.csv", expect_errors=True
     )
 
     assert resp.status_code == 404
@@ -28,7 +28,7 @@ def test_download_pdf(app, dummy_lecture):
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = [], []
-        resp = app.get("/lectures/an/15/269/PO717460/amendements/download.pdf")
+        resp = app.get("/lectures/an.15.269.PO717460/amendements/download.pdf")
 
     assert resp.status_code == 200
 
@@ -41,7 +41,7 @@ def test_download_pdf(app, dummy_lecture):
 def test_download_pdf_bad_request(app):
 
     resp = app.get(
-        "/lectures/bad/15/269/PO717460/amendements/download.pdf", expect_errors=True
+        "/lectures/bad.15.269.PO717460/amendements/download.pdf", expect_errors=True
     )
 
     assert resp.status_code == 404
@@ -51,7 +51,7 @@ def test_download_xlsx(app, dummy_lecture):
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = [], []
-        resp = app.get("/lectures/an/15/269/PO717460/amendements/download.xlsx")
+        resp = app.get("/lectures/an.15.269.PO717460/amendements/download.xlsx")
 
     assert resp.status_code == 200
 
@@ -65,7 +65,7 @@ def test_download_xlsx(app, dummy_lecture):
 def test_download_xlsx_bad_request(app):
 
     resp = app.get(
-        "/lectures/bad/15/269/PO717460/amendements/download.xlsx", expect_errors=True
+        "/lectures/bad.15.269.PO717460/amendements/download.xlsx", expect_errors=True
     )
 
     assert resp.status_code == 404

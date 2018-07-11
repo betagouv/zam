@@ -7,9 +7,8 @@ from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
 from sqlalchemy.sql.expression import case
 
-from zam_aspirateur.amendements.writer import write_csv, write_xlsx
-
 from zam_repondeur.models import DBSession, Amendement, CHAMBRES
+from zam_repondeur.writer import write_csv, write_xlsx
 
 
 DOWNLOAD_FORMATS = {

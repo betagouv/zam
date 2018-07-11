@@ -2,7 +2,9 @@ from setuptools import setup
 
 requires = [
     "cachecontrol",
+    "inscriptis",
     "lockfile",
+    "openpyxl",
     "pyramid",
     "pyramid-jinja2",
     "pyramid_retry",

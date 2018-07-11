@@ -105,7 +105,7 @@ EXPECTED_FIELDS = [
 
 
 def test_write_csv(amendements, tmpdir):
-    from zam_aspirateur.amendements.writer import write_csv
+    from zam_repondeur.writer import write_csv
 
     filename = str(tmpdir.join("test.csv"))
 
@@ -125,7 +125,7 @@ def test_write_csv(amendements, tmpdir):
 
 
 def test_write_json_for_viewer(amendements, tmpdir):
-    from zam_aspirateur.amendements.writer import write_json_for_viewer
+    from zam_repondeur.writer import write_json_for_viewer
 
     TITLE = "Projet Loi de Financement de la Sécurité Sociale 2018"
 

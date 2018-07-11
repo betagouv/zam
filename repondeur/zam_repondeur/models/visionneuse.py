@@ -4,7 +4,8 @@ from hashlib import sha256
 from typing import DefaultDict, List, Optional
 
 from dataclasses import dataclass, field
-from zam_aspirateur.amendements.writer import GROUPS_COLORS
+
+from zam_repondeur.writer import GROUPS_COLORS
 
 from .amendement import Amendement as AmendementModel
 

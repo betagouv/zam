@@ -4,10 +4,8 @@ certifi==2018.4.16
 chardet==3.0.4
 dataclasses==0.6
 idna==2.6
-inscriptis==0.0.3.2
 lockfile==0.12.2
 lxml==4.2.1
-openpyxl==2.5.3
 requests==2.18.4
 selectolax==0.1.6
 urllib3==1.22

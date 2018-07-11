@@ -5,6 +5,7 @@ from pathlib import Path
 from shlex import quote
 from string import Template
 
+import CommonMark
 from invoke import task
 
 
@@ -118,8 +119,10 @@ def sshkeys(ctx):
 
 
 @task
-def deploy(ctx, source):
-    put_dir(ctx, quote(source), "/srv/zam/", chown="zam")
+def deploy_changelog(ctx, source="../CHANGELOG.md"):
+    content = CommonMark.commonmark(Path(quote(source)).read_text())
+    with template_local_file("index.html.template", "index.html", {"content": content}):
+        sudo_put(ctx, "index.html", "/srv/zam/index.html", chown="zam")
 
 
 @task

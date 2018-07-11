@@ -1,1 +1,2 @@
+CommonMark==0.7.5
 Fabric==2.1.3

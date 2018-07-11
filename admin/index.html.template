@@ -1,0 +1,15 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>Changement récents Zam</title>
+<style type="text/css">
+    body {
+        max-width: 50rem;
+        margin: 1rem auto;
+    }
+    h1,
+    .repondeur {
+        text-align: center;
+    }
+</style>
+$$content
+<h2 class="repondeur"><a href="/repondeur/">Accès au répondeur</a></h2>

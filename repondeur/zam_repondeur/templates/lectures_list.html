@@ -8,7 +8,7 @@
 
 {% block body %}
 
-<a href="{{ request.route_url('lectures_add') }}" class="btn btn-primary btn-lg" style="float: right">Ajouter une lecture...</a>
+<a href="{{ request.resource_url(context, 'add') }}" class="btn btn-primary btn-lg" style="float: right">Ajouter une lecture...</a>
 
 <h2>Lectures</h2>
 

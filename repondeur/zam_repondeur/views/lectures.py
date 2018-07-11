@@ -29,9 +29,9 @@ def lectures_list(context: LectureCollection, request: Request) -> dict:
     return {"lectures": context.models()}
 
 
-@view_defaults(route_name="lectures_add")
+@view_defaults(context=LectureCollection, name="add")
 class LecturesAdd:
-    def __init__(self, request: Request) -> None:
+    def __init__(self, context: LectureCollection, request: Request) -> None:
         self.request = request
         self.dossiers_by_uid: Dict[str, Dossier] = get_data("dossiers")
 

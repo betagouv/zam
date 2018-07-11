@@ -10,11 +10,8 @@ setup(
     include_package_data=True,
     install_requires=[
         "bleach",
-        "cachecontrol",
         "dataclasses",
         "inscriptis",
-        "lockfile",
         "openpyxl",
-        "requests",
     ],
 )

@@ -1,10 +1,13 @@
 from setuptools import setup
 
 requires = [
+    "cachecontrol",
+    "lockfile",
     "pyramid",
     "pyramid-jinja2",
     "pyramid_retry",
     "pyramid_tm",
+    "requests",
     "selectolax",
     "SQLAlchemy",
     "transaction",

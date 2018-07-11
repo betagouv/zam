@@ -8,8 +8,8 @@ import requests
 from selectolax.parser import HTMLParser
 
 from zam_aspirateur.amendements.models import Amendement
-from zam_aspirateur.exceptions import NotFound
 
+from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.fetch.senat.senateurs import fetch_and_parse_senateurs, Senateur
 
 from .parse import parse_from_csv, parse_from_json

@@ -10,12 +10,12 @@ import pytest
 HERE = Path(os.path.dirname(__file__))
 
 
-DOSSIERS = HERE.parent / "sample_data" / "Dossiers_Legislatifs_XV.json"
+DOSSIERS = HERE / "sample_data" / "Dossiers_Legislatifs_XV.json"
 
 
 @pytest.fixture(scope="module")
 def textes():
-    from zam_aspirateur.textes.dossiers_legislatifs import parse_textes
+    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_textes
 
     with open(DOSSIERS) as f_:
         data = json.load(f_)
@@ -24,10 +24,12 @@ def textes():
 
 @pytest.fixture(scope="module")
 def dossiers():
-    from zam_aspirateur.textes.dossiers_legislatifs import get_dossiers_legislatifs
+    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
+        get_dossiers_legislatifs
+    )
 
     with patch(
-        "zam_aspirateur.textes.dossiers_legislatifs.extract_from_remote_zip"
+        "zam_repondeur.fetch.an.dossiers.dossiers_legislatifs.extract_from_remote_zip"
     ) as m_open:
         m_open.return_value = DOSSIERS.open()
         dossiers_by_uid = get_dossiers_legislatifs(legislature=15)
@@ -41,13 +43,18 @@ def test_number_of_dossiers(dossiers):
 
 @pytest.fixture
 def dossier_plfss_2018():
-    with open(HERE.parent / "sample_data" / "dossier-DLR5L15N36030.json") as f_:
+    with open(HERE / "sample_data" / "dossier-DLR5L15N36030.json") as f_:
         return json.load(f_)["dossierParlementaire"]
 
 
 def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
-    from zam_aspirateur.textes.dossiers_legislatifs import parse_dossier
-    from zam_aspirateur.textes.models import Chambre, Lecture, Texte, TypeTexte
+    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
+    from zam_repondeur.fetch.an.dossiers.models import (
+        Chambre,
+        Lecture,
+        Texte,
+        TypeTexte,
+    )
 
     dossier = parse_dossier(dossier_plfss_2018, textes)
 
@@ -215,13 +222,19 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
 
 @pytest.fixture
 def dossier_essoc():
-    with open(HERE.parent / "sample_data" / "dossier-DLR5L15N36159.json") as f_:
+    with open(HERE / "sample_data" / "dossier-DLR5L15N36159.json") as f_:
         return json.load(f_)["dossierParlementaire"]
 
 
 def test_parse_dossier_essoc(dossier_essoc, textes):
-    from zam_aspirateur.textes.dossiers_legislatifs import parse_dossier
-    from zam_aspirateur.textes.models import Chambre, Lecture, Dossier, Texte, TypeTexte
+    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
+    from zam_repondeur.fetch.an.dossiers.models import (
+        Chambre,
+        Lecture,
+        Dossier,
+        Texte,
+        TypeTexte,
+    )
 
     dossier = parse_dossier(dossier_essoc, textes)
 
@@ -313,12 +326,12 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
 
 @pytest.fixture
 def dossier_pacte_ferroviaire():
-    with open(HERE.parent / "sample_data" / "dossier-DLR5L15N36460.json") as f_:
+    with open(HERE / "sample_data" / "dossier-DLR5L15N36460.json") as f_:
         return json.load(f_)["dossierParlementaire"]
 
 
 def test_dossier_pacte_ferroviaire(dossier_pacte_ferroviaire, textes):
-    from zam_aspirateur.textes.dossiers_legislatifs import parse_dossier
+    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
 
     dossier = parse_dossier(dossier_pacte_ferroviaire, textes)
 
@@ -327,14 +340,14 @@ def test_dossier_pacte_ferroviaire(dossier_pacte_ferroviaire, textes):
 
 
 def test_extract_actes(dossier_essoc):
-    from zam_aspirateur.textes.dossiers_legislatifs import extract_actes
+    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import extract_actes
 
     assert len(extract_actes(dossier_essoc)) == 4
 
 
 class TestGenLectures:
     def test_gen_lectures_essoc(self, dossier_essoc, textes):
-        from zam_aspirateur.textes.dossiers_legislatifs import gen_lectures
+        from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import gen_lectures
 
         acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
 
@@ -345,7 +358,7 @@ class TestGenLectures:
         assert "Séance publique" in lectures[1].titre
 
     def test_gen_lectures_pacte_ferroviaire(self, dossier_pacte_ferroviaire, textes):
-        from zam_aspirateur.textes.dossiers_legislatifs import gen_lectures
+        from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import gen_lectures
 
         acte = dossier_pacte_ferroviaire["actesLegislatifs"]["acteLegislatif"][0]
 
@@ -358,7 +371,10 @@ class TestGenLectures:
 
 
 def test_walk_actes(dossier_essoc, textes):
-    from zam_aspirateur.textes.dossiers_legislatifs import walk_actes, WalkResult
+    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
+        walk_actes,
+        WalkResult,
+    )
 
     acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
     assert list(walk_actes(acte)) == [

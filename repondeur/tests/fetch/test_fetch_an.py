@@ -3,10 +3,10 @@ from pathlib import Path
 import pytest
 import responses
 
-from zam_aspirateur.amendements.fetch_an import build_url
+from zam_repondeur.fetch.an.amendements import build_url
 
 HERE = Path(__file__)
-SAMPLE_DATA_DIR = HERE.parent.parent / "sample_data"
+SAMPLE_DATA_DIR = HERE.parent / "sample_data"
 
 
 def read_sample_data(basename):
@@ -15,7 +15,7 @@ def read_sample_data(basename):
 
 @responses.activate
 def test_fetch_and_parse_all():
-    from zam_aspirateur.amendements.fetch_an import fetch_and_parse_all
+    from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
 
     responses.add(
         responses.GET,
@@ -72,7 +72,7 @@ def test_fetch_and_parse_all():
 
 @responses.activate
 def test_fetch_and_parse_all_with_404():
-    from zam_aspirateur.amendements.fetch_an import fetch_and_parse_all
+    from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
 
     responses.add(
         responses.GET,
@@ -123,7 +123,7 @@ def test_fetch_and_parse_all_with_404():
 
 @responses.activate
 def test_fetch_amendements():
-    from zam_aspirateur.amendements.fetch_an import fetch_amendements
+    from zam_repondeur.fetch.an.amendements import fetch_amendements
 
     responses.add(
         responses.GET,
@@ -160,7 +160,7 @@ def test_fetch_amendements():
 
 @responses.activate
 def test_fetch_amendements_not_found():
-    from zam_aspirateur.amendements.fetch_an import fetch_amendements, NotFound
+    from zam_repondeur.fetch.an.amendements import fetch_amendements, NotFound
 
     responses.add(responses.GET, build_url(14, 4072), status=404)
 
@@ -172,8 +172,8 @@ def test_fetch_amendements_not_found():
 
 @responses.activate
 def test_fetch_amendement():
-    from zam_aspirateur.amendements.fetch_an import fetch_amendement
-    from zam_aspirateur.amendements.models import Amendement
+    from zam_repondeur.fetch.an.amendements import fetch_amendement
+    from zam_repondeur.fetch.models import Amendement
 
     responses.add(
         responses.GET,
@@ -222,7 +222,7 @@ def test_fetch_amendement():
 
 @responses.activate
 def test_fetch_amendement_gouvernement():
-    from zam_aspirateur.amendements.fetch_an import fetch_amendement
+    from zam_repondeur.fetch.an.amendements import fetch_amendement
 
     responses.add(
         responses.GET,
@@ -246,7 +246,7 @@ def test_fetch_amendement_gouvernement():
 
 @responses.activate
 def test_fetch_amendement_commission():
-    from zam_aspirateur.amendements.fetch_an import fetch_amendement
+    from zam_repondeur.fetch.an.amendements import fetch_amendement
 
     responses.add(
         responses.GET,
@@ -271,7 +271,7 @@ def test_fetch_amendement_commission():
 
 @responses.activate
 def test_fetch_amendement_sort_nil():
-    from zam_aspirateur.amendements.fetch_an import fetch_amendement
+    from zam_repondeur.fetch.an.amendements import fetch_amendement
 
     responses.add(
         responses.GET,
@@ -294,7 +294,7 @@ def test_fetch_amendement_sort_nil():
 
 @responses.activate
 def test_fetch_amendement_apres():
-    from zam_aspirateur.amendements.fetch_an import fetch_amendement
+    from zam_repondeur.fetch.an.amendements import fetch_amendement
 
     responses.add(
         responses.GET,
@@ -320,7 +320,7 @@ def test_fetch_amendement_apres():
 
 @responses.activate
 def test_fetch_amendement_not_found():
-    from zam_aspirateur.amendements.fetch_an import fetch_amendement, NotFound
+    from zam_repondeur.fetch.an.amendements import fetch_amendement, NotFound
 
     responses.add(responses.GET, build_url(14, 4072, 177), status=404)
 
@@ -363,6 +363,6 @@ def test_fetch_amendement_not_found():
     ],
 )
 def test_parse_division(division, type_, num, mult, pos):
-    from zam_aspirateur.amendements.fetch_an import parse_division
+    from zam_repondeur.fetch.an.amendements import parse_division
 
     assert parse_division(division) == (type_, num, mult, pos)

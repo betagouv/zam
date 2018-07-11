@@ -1,6 +1,6 @@
 import pytest
 
-from zam_aspirateur.clean import clean_html
+from zam_repondeur.clean import clean_html
 
 
 def test_whitespace_is_stripped():

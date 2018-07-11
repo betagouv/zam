@@ -1,12 +1,21 @@
 from setuptools import setup
 
 requires = [
+    "bleach",
+    "cachecontrol",
+    "dataclasses",
+    "inscriptis",
+    "lockfile",
+    "openpyxl",
     "pyramid",
     "pyramid-jinja2",
     "pyramid_retry",
     "pyramid_tm",
+    "requests",
+    "selectolax",
     "SQLAlchemy",
     "transaction",
+    "xmltodict",
     "zope.sqlalchemy",
 ]
 

@@ -3,7 +3,7 @@ from io import BytesIO, TextIOWrapper
 from typing import Generator, IO
 from zipfile import ZipFile
 
-from ..http import cached_session
+from zam_repondeur.fetch.http import cached_session
 
 
 def roman(n: int) -> str:

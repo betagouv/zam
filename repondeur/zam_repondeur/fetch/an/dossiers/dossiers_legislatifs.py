@@ -2,7 +2,7 @@ from datetime import date
 from json import load
 from typing import Dict, Iterator, List, NamedTuple, Optional
 
-from .common import extract_from_remote_zip, roman
+from ..common import extract_from_remote_zip, roman
 from .models import Chambre, Lecture, Dossier, Texte, TypeTexte
 
 

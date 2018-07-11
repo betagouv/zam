@@ -4,10 +4,10 @@ from typing import Any, Dict, List, Tuple
 from pyramid.threadlocal import get_current_registry
 from tlfp.tools.parse_texte import parse
 
-from zam_aspirateur.amendements.models import Amendement
-from zam_aspirateur.exceptions import NotFound
-from zam_aspirateur.__main__ import aspire_an, aspire_senat
-
+from zam_repondeur.fetch.an.amendements import aspire_an
+from zam_repondeur.fetch.exceptions import NotFound
+from zam_repondeur.fetch.models import Amendement
+from zam_repondeur.fetch.senat.amendements import aspire_senat
 from zam_repondeur.models import DBSession, Amendement as AmendementModel, Lecture
 
 

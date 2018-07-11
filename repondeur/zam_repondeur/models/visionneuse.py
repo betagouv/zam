@@ -4,7 +4,8 @@ from hashlib import sha256
 from typing import DefaultDict, List, Optional
 
 from dataclasses import dataclass, field
-from zam_aspirateur.amendements.writer import GROUPS_COLORS
+
+from zam_repondeur.writer import GROUPS_COLORS
 
 from .amendement import Amendement as AmendementModel
 
@@ -120,7 +121,7 @@ class Articles(OrderedDict):
         return article
 
 
-def build_tree(amendements: AmendementModel) -> OrderedDict:
+def build_tree(amendements: List[AmendementModel]) -> OrderedDict:
     articles = Articles()
     for index, amendement in enumerate(amendements, 1):
         if amendement.is_displayable:
@@ -130,7 +131,7 @@ def build_tree(amendements: AmendementModel) -> OrderedDict:
                 reponse_pk = str(index)
             else:
                 reponse_pk = base64.b64encode(
-                    sha256(amendement.reponse.encode()).digest()
+                    sha256(getattr(amendement, "reponse", "").encode()).digest()
                 ).decode()
             reponse = Reponse(  # type: ignore
                 pk=reponse_pk,

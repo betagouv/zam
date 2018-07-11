@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, Column, Date, Integer, PickleType, Table, Text
 from sqlalchemy.orm import mapper
 from sqlalchemy.schema import ForeignKeyConstraint
 
-from zam_aspirateur.amendements.models import Amendement
+from zam_repondeur.fetch.models import Amendement
 
 from .base import metadata
 

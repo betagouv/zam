@@ -3,9 +3,9 @@ from datetime import date, datetime
 from typing import Optional
 from urllib.parse import urlparse
 
-from ..clean import clean_html
-
-from .models import Amendement, SubDiv
+from zam_repondeur.clean import clean_html
+from zam_repondeur.fetch.division import _parse_subdiv
+from zam_repondeur.fetch.models import Amendement
 
 
 def parse_from_csv(row: dict, session: str, num_texte: int, organe: str) -> Amendement:
@@ -32,24 +32,6 @@ def parse_from_csv(row: dict, session: str, num_texte: int, organe: str) -> Amen
         dispositif=clean_html(row["Dispositif "]),
         objet=clean_html(row["Objet "]),
     )
-
-
-FICHE_RE = re.compile(r"^[\w\/_]+(\d{5}[\da-z])\.html$")
-
-
-def extract_matricule(url: str) -> Optional[str]:
-    if url == "":
-        return None
-    mo = FICHE_RE.match(urlparse(url).path)
-    if mo is not None:
-        return mo.group(1).upper()
-    raise ValueError(f"Could not extract matricule from '{url}'")
-
-
-def parse_date(text: str) -> Optional[date]:
-    if text == "":
-        return None
-    return datetime.strptime(text, "%Y-%m-%d").date()
 
 
 def parse_from_json(
@@ -88,61 +70,27 @@ def parse_from_json(
     )
 
 
+FICHE_RE = re.compile(r"^[\w\/_]+(\d{5}[\da-z])\.html$")
+
+
+def extract_matricule(url: str) -> Optional[str]:
+    if url == "":
+        return None
+    mo = FICHE_RE.match(urlparse(url).path)
+    if mo is not None:
+        return mo.group(1).upper()
+    raise ValueError(f"Could not extract matricule from '{url}'")
+
+
+def parse_date(text: str) -> Optional[date]:
+    if text == "":
+        return None
+    return datetime.strptime(text, "%Y-%m-%d").date()
+
+
 def parse_bool(text: str) -> bool:
     if text == "true":
         return True
     if text == "false":
         return False
     raise ValueError
-
-
-SUBDIV_RE = re.compile(
-    r"""^
-        (?:
-            (
-                art\.\sadd\.
-                |
-                Article(?:\(s\))?\sadditionnel(?:\(s\))?
-            )
-            \s
-            (?P<pos>(avant|après))
-            \s
-        )?  # position
-        (?:(?:l')?article\s)+
-        (?P<num>\d+|1er|premier)
-        (?:\s(?P<mult>\w+))?        # bis, ter, etc.
-        (?:\s.*)?                   # junk
-        $
-    """,
-    (re.VERBOSE | re.IGNORECASE),
-)
-
-
-TITRE_RE = re.compile(r"Titre (?P<num>\w+)(?: .*)?", re.IGNORECASE)
-
-
-def _parse_subdiv(libelle: str) -> SubDiv:
-    if libelle == "":
-        return SubDiv("", "", "", "")
-
-    if libelle == "Intitulé du projet de loi":
-        return SubDiv("titre", "", "", "")
-
-    mo = TITRE_RE.match(libelle)
-    if mo is not None:
-        return SubDiv("section", mo.group("num"), "", "")
-
-    if libelle.lower().startswith("annexe"):
-        start = len("annexe")
-        return SubDiv("annexe", libelle[start:].strip(), "", "")
-
-    if libelle.startswith("Chapitre "):
-        start = len("Chapitre ")
-        return SubDiv("chapitre", libelle[start:], "", "")
-
-    mo = SUBDIV_RE.match(libelle)
-    if mo is not None:
-        num = "1" if mo.group("num").lower() in {"1er", "premier"} else mo.group("num")
-        return SubDiv("article", num, mo.group("mult") or "", mo.group("pos") or "")
-
-    raise ValueError(f"Could not parse subdivision {libelle!r}")

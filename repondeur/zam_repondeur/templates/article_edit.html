@@ -1,14 +1,6 @@
 {% extends "_base.html" %}
 
 
-{% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{ request.resource_url(context.__parent__.__parent__.__parent__) }}">Lectures</a></li>
-    <li class="breadcrumb-item"><a href="{{ request.resource_url(context.__parent__.__parent__) }}">{{ lecture }}</a></li>
-    <li class="breadcrumb-item">Articles</li>
-    <li class="breadcrumb-item active" aria-current="page">{{ amendement.subdiv_disp }}</li>
-{% endblock %}
-
-
 {% block body %}
     <h2>{{ amendement.subdiv_disp }}</h2>
     <div class="container">

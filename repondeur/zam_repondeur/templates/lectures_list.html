@@ -1,11 +1,6 @@
 {% extends "_base.html" %}
 
 
-{% block breadcrumbs %}
-    <li class="breadcrumb-item active" aria-current="page">Lectures</li>
-{% endblock %}
-
-
 {% block body %}
 
 <a href="{{ request.resource_url(context, 'add') }}" class="btn btn-primary btn-lg" style="float: right">Ajouter une lecture...</a>

@@ -38,14 +38,6 @@
 {% endblock %}
 
 
-{% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{ request.resource_url(context.__parent__.__parent__.__parent__) }}">Lectures</a></li>
-    <li class="breadcrumb-item"><a href="{{ request.resource_url(context.__parent__.__parent__) }}">{{ lecture }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ request.resource_url(context.__parent__) }}">Amendements</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Nº&nbsp;{{ amendement.num_disp }}</li>
-{% endblock %}
-
-
 {% block body %}
     <h2>Amendement nº&nbsp;{{ amendement.num_disp }}</h2>
 

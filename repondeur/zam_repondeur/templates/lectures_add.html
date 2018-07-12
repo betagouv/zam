@@ -9,7 +9,7 @@
 
 
 {% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{ request.resource_url(context) }}">Lectures</a></li>
+    {{ super() }}
     <li class="breadcrumb-item active" aria-current="page">Ajouter une lecture...</li>
 {% endblock %}
 

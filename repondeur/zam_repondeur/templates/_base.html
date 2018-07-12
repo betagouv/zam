@@ -25,10 +25,26 @@
     <main role="main" class="container">
 
         <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            {% block breadcrumbs %}
-            {% endblock %}
-          </ol>
+            <ol class="breadcrumb">
+                {% block breadcrumbs %}
+                {% for resource in context.ancestors[1:] %}
+                    <li class="breadcrumb-item">
+                    {%- if resource.breadcrumbs_link -%}
+                        <a href="{{ request.resource_url(resource) }}">{{ resource.breadcrumbs_title }}</a>
+                    {% else -%}
+                        {{ resource.breadcrumbs_title }}
+                    {% endif %}
+                    </li>
+                {% endfor %}
+                {% if request.view_name != "" and context.breadcrumbs_link %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ request.resource_url(context) }}">{{ context.breadcrumbs_title }}</a>
+                    </li>
+                {% else %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ context.breadcrumbs_title }}</li>
+                {% endif %}
+                {% endblock %}
+            </ol>
         </nav>
 
         {% for class_, message in request.session.pop_flash() %}

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Iterator, List, Optional
 
 from pyramid.request import Request
 
@@ -19,9 +19,26 @@ class Resource(dict):
     __name__: Optional[str] = None
     __parent__: Optional["Resource"] = None
 
+    @property
+    def breadcrumbs_title(self) -> str:
+        raise NotImplementedError
+
+    breadcrumbs_link: bool = True
+
     def __init__(self, name: str, parent: "Resource") -> None:
         self.__name__ = name
         self.__parent__ = parent
+
+    @property
+    def parents(self) -> Iterator["Resource"]:
+        parent = self.__parent__
+        while parent is not None:
+            yield parent
+            parent = parent.__parent__
+
+    @property
+    def ancestors(self) -> List["Resource"]:
+        return list(reversed(list(self.parents)))
 
     def add_child(self, child: "Resource") -> None:
         self[child.__name__] = child
@@ -33,6 +50,9 @@ class Root(Resource):
 
 
 class LectureCollection(Resource):
+
+    breadcrumbs_title = "Lectures"
+
     def models(self) -> List[LectureModel]:
         return LectureModel.all()
 
@@ -72,8 +92,15 @@ class LectureResource(Resource):
     def model(self) -> LectureModel:
         return LectureModel.get(self.chambre, self.session, self.num_texte, self.organe)
 
+    @property
+    def breadcrumbs_title(self) -> str:
+        return f"{self.model().dossier_legislatif} → {str(self.model())}"
+
 
 class AmendementCollection(Resource):
+
+    breadcrumbs_title = "Amendements"
+
     def __getitem__(self, key: str) -> Resource:
         return AmendementResource(name=key, parent=self)
 
@@ -100,8 +127,20 @@ class AmendementResource(Resource):
             .first()
         )
 
+    @property
+    def breadcrumbs_title(self) -> str:
+        amendement = self.model()
+        assert amendement is not None  # typing hint for mypy
+        return amendement.num_disp
+
+    breadcrumbs_link = False
+
 
 class ArticleCollection(Resource):
+
+    breadcrumbs_title = "Articles"
+    breadcrumbs_link = False
+
     def __getitem__(self, key: str) -> Resource:
         try:
             subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = key.split(".")
@@ -136,3 +175,9 @@ class ArticleResource(Resource):
     @property
     def lecture_resource(self) -> LectureResource:
         return self.__parent__.__parent__  # type: ignore
+
+    @property
+    def breadcrumbs_title(self) -> str:
+        type_ = self.subdiv_type == "article" and "art." or self.subdiv_type
+        text = f"{self.subdiv_pos} {type_} {self.subdiv_num} {self.subdiv_mult}"
+        return text.strip().capitalize()

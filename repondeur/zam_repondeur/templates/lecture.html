@@ -19,12 +19,6 @@
 {% endblock %}
 
 
-{% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{ request.resource_url(context.__parent__) }}">Lectures</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{ lecture.dossier_legislatif }} → {{ lecture }}</li>
-{% endblock %}
-
-
 {% block body %}
     <h2>{{ lecture }}</h2>
 

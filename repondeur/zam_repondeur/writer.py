@@ -88,6 +88,7 @@ def write_pdf(
 ) -> int:
     from zam_repondeur.models.visionneuse import build_tree  # NOQA: circular
 
+    amendements = list(amendements)
     articles = build_tree(amendements)
     env = get_jinja2_environment(request, name=".html")
     template = env.get_template("print.html")

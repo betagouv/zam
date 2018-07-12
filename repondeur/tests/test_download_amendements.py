@@ -5,7 +5,9 @@ def test_download_csv(app, dummy_lecture):
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = [], []
-        resp = app.get("/lectures/an.15.269.PO717460/amendements/download.csv")
+        resp = app.get(
+            "/lectures/an.15.269.PO717460/download_amendements", {"format": "csv"}
+        )
 
     assert resp.status_code == 200
 
@@ -15,20 +17,13 @@ def test_download_csv(app, dummy_lecture):
     assert resp.headers["Content-Disposition"] == f"attachment; filename={filename}"
 
 
-def test_download_csv_bad_request(app):
-
-    resp = app.get(
-        "/lectures/bad.15.269.PO717460/amendements/download.csv", expect_errors=True
-    )
-
-    assert resp.status_code == 404
-
-
 def test_download_pdf(app, dummy_lecture):
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = [], []
-        resp = app.get("/lectures/an.15.269.PO717460/amendements/download.pdf")
+        resp = app.get(
+            "/lectures/an.15.269.PO717460/download_amendements", {"format": "pdf"}
+        )
 
     assert resp.status_code == 200
 
@@ -38,20 +33,13 @@ def test_download_pdf(app, dummy_lecture):
     assert resp.headers["Content-Disposition"] == f"attachment; filename={filename}"
 
 
-def test_download_pdf_bad_request(app):
-
-    resp = app.get(
-        "/lectures/bad.15.269.PO717460/amendements/download.pdf", expect_errors=True
-    )
-
-    assert resp.status_code == 404
-
-
 def test_download_xlsx(app, dummy_lecture):
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = [], []
-        resp = app.get("/lectures/an.15.269.PO717460/amendements/download.xlsx")
+        resp = app.get(
+            "/lectures/an.15.269.PO717460/download_amendements", {"format": "xlsx"}
+        )
 
     assert resp.status_code == 200
 
@@ -62,10 +50,13 @@ def test_download_xlsx(app, dummy_lecture):
     assert resp.headers["Content-Disposition"] == f"attachment; filename={filename}"
 
 
-def test_download_xlsx_bad_request(app):
-
+def test_download_bad_format(app, dummy_lecture):
     resp = app.get(
-        "/lectures/bad.15.269.PO717460/amendements/download.xlsx", expect_errors=True
+        "/lectures/an.15.269.PO717460/download_amendements",
+        {"format": "docx"},
+        expect_errors=True,
     )
 
-    assert resp.status_code == 404
+    assert resp.status_code == 400
+    assert resp.content_type == "text/plain"
+    assert 'Invalid value "docx" for "format" param' in resp.text

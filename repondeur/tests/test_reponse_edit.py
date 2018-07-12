@@ -30,7 +30,7 @@ def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements"
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.avis == "Favorable"

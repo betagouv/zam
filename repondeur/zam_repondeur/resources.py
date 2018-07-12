@@ -2,7 +2,11 @@ from typing import List, Optional
 
 from pyramid.request import Request
 
-from zam_repondeur.models import Lecture as LectureModel
+from zam_repondeur.models import (
+    Amendement as AmendementModel,
+    Lecture as LectureModel,
+    DBSession,
+)
 
 
 class Resource(dict):
@@ -62,6 +66,35 @@ class LectureResource(Resource):
         self.session = session
         self.num_texte = num_texte
         self.organe = organe
+        self.add_child(AmendementCollection(name="amendements", parent=self))
 
     def model(self) -> LectureModel:
         return LectureModel.get(self.chambre, self.session, self.num_texte, self.organe)
+
+
+class AmendementCollection(Resource):
+    def __getitem__(self, key: str) -> Resource:
+        return AmendementResource(name=key, parent=self)
+
+
+class AmendementResource(Resource):
+    def __init__(self, name: str, parent: Resource) -> None:
+        super().__init__(name=name, parent=parent)
+        self.num = int(name)
+
+    @property
+    def lecture_resource(self) -> LectureResource:
+        return self.__parent__.__parent__  # type: ignore
+
+    def model(self) -> Optional[AmendementModel]:
+        return (  # type: ignore
+            DBSession.query(AmendementModel)
+            .filter_by(
+                chambre=self.lecture_resource.chambre,
+                session=self.lecture_resource.session,
+                num_texte=self.lecture_resource.num_texte,
+                organe=self.lecture_resource.organe,
+                num=self.num,
+            )
+            .first()
+        )

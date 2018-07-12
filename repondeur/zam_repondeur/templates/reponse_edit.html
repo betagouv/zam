@@ -39,9 +39,9 @@
 
 
 {% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{ request.resource_url(request.root['lectures']) }}">Lectures</a></li>
-    <li class="breadcrumb-item"><a href="{{ request.resource_url(request.root['lectures'][amendement.url_key]) }}">{{ lecture }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ request.resource_url(request.root['lectures'][amendement.url_key], 'amendements') }}">Amendements</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.resource_url(context.__parent__.__parent__.__parent__) }}">Lectures</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.resource_url(context.__parent__.__parent__) }}">{{ lecture }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.resource_url(context.__parent__) }}">Amendements</a></li>
     <li class="breadcrumb-item active" aria-current="page">Nº&nbsp;{{ amendement.num_disp }}</li>
 {% endblock %}
 
@@ -116,7 +116,7 @@
 
         <div class="form-group">
             <input type="submit" name="submit" value="Enregistrer" class="btn btn-primary">
-            <a href="{{ request.resource_url(request.root['lectures'][amendement.url_key], 'amendements') }}" class="btn">Annuler</a>
+            <a href="{{ request.resource_url(context.__parent__) }}" class="btn">Annuler</a>
         </div>
 
     </form>

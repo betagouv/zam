@@ -2,7 +2,7 @@ import csv
 import io
 import logging
 from datetime import datetime
-from typing import BinaryIO, Dict, Iterable, TextIO, Tuple
+from typing import BinaryIO, cast, Dict, Iterable, TextIO, Tuple
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -16,7 +16,11 @@ from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
 from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.models import DBSession, Amendement, Lecture as LectureModel
-from zam_repondeur.resources import LectureCollection, LectureResource
+from zam_repondeur.resources import (
+    AmendementCollection,
+    LectureCollection,
+    LectureResource,
+)
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 
@@ -128,17 +132,20 @@ class LectureView:
             LectureModel.organe == self.lecture.organe,
         ).delete()
         self.request.session.flash(("success", "Lecture supprimée avec succès."))
-        return HTTPFound(
-            location=self.request.resource_url(self.request.root["lectures"])
-        )
+        return HTTPFound(location=self.request.resource_url(self.context.__parent__))
 
 
-@view_defaults(context=LectureResource, name="amendements")
+@view_defaults(context=AmendementCollection)
 class ListAmendements:
-    def __init__(self, context: LectureResource, request: Request) -> None:
+    def __init__(self, context: AmendementCollection, request: Request) -> None:
         self.context = context
         self.request = request
-        self.lecture = context.model()
+
+        # We know the parent resource of the AmendementCollection is a LectureResource,
+        # and that it can't be None, so we give a little hint to the type checker
+        lecture_resource = cast(LectureResource, context.__parent__)
+
+        self.lecture = lecture_resource.model()
         if self.lecture is None:
             raise HTTPNotFound
 
@@ -197,9 +204,7 @@ class ListAmendements:
                 ("warning", "Veuillez d’abord sélectionner un fichier")
             )
 
-        return HTTPFound(
-            location=self.request.resource_url(self.context, "amendements")
-        )
+        return HTTPFound(location=self.request.resource_url(self.context))
 
     @staticmethod
     def _import_reponses_from_csv_file(

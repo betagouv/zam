@@ -1,144 +1,228 @@
 <!doctype html>
 <html lang=fr>
-<meta charset=utf-8>
-<style type="text/css">
-  body {
-    margin: 0;
-    padding: 0;
-    font-size: 18pt;
-    line-height: 1.4;
-  }
-  table {
-    border-collapse: collapse;
-    text-align: center;
-    font-size: 21pt;
-    width: 100%;
-  }
-  td {
-    border: 1px solid black;
-  }
-  .page {
-    page-break-after: always;
-  }
-  .first-page {
-    padding-top: 20rem;
-    text-align: center;
-    font-size: 30pt;
-  }
-  .article h2,
-  .article h3 {
-    text-align: center;
-  }
-  .article h2 {
-    font-size: 24pt;
-  }
-  .article h3 {
-    font-size: 21pt;
-  }
-  .article div,
-  .reponse div,
-  .amendement div {
-    margin: 50pt 30pt;
-  }
-</style>
+<head>
+  <meta charset=utf-8>
+  <style type="text/css">
+    body {
+      margin: 0;
+      padding: 0;
+      font-size: 18pt;
+      line-height: 1.4;
+    }
+    table {
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 21pt;
+      width: 100%;
+    }
+    td {
+      border: 1px solid black;
+    }
+      .cartouche td {
+        width: 50%;
+      }
+
+    .page {
+      page-break-after: always;
+    }
+    .page div {
+      margin: 50pt 30pt;
+      text-align: justify;
+    }
+    .first-page {
+      padding-top: 20rem;
+      text-align: center;
+      font-size: 27pt;
+    }
+    .page.reponse {
+      line-height: 1.5;
+      font-size: 20pt;
+    }
+    .page.amendement,
+    .page.article,
+    .page.article table {
+      line-height: 1.3;
+      font-size: 15pt;
+    }
+    .page.article h2,
+    .page.article h3 {
+      text-align: center;
+    }
+    .page h2 {
+      font-size: 24pt;
+      margin: 5rem auto;
+    }
+      .page.reponse h2,
+      .page.amendement h2 {
+        text-align: right;
+        margin-right: 30pt;
+      }
+    .page h3 {
+      font-size: 21pt;
+    }
+      .page.reponse h3 {
+        font-size: 24pt;
+      }
+    .article div dt {
+      display: inline;
+      float: left;
+      padding: .6rem;
+      border: 1px solid black;
+      border-radius: 20rem;
+      font-size: 9pt;
+      clear: both;
+    }
+    .article div dd {
+      margin-left: 3rem;
+    }
+    .reponse-presentation {
+      font-style: italic;
+    }
+  </style>
+</head>
 <body>
-<div class="first-page page">
-  <h1>{{ title }}</h1>
-</div>
-<main>
-  {% for article in articles.values() %}
-    <section class="page article">
-      <h2>
-        {%- if article.type_ == "article" -%}
-          Article {{ article }}
-        {%- else -%}
-          {{ article.type_.capitalize() }}s
-        {%- endif -%}
-      </h2>
-      <h3>{{ article.titre }}</h3>
-      {% if article.alineas %}
-        <div>
-          {% for number, content in article.alineas.items() %}
-            <dl>
-              <dt>{{ number }}</dt>
-              <dd>
-                <p>{{ content }}</p>
-              </dd>
-            </dl>
-          {% endfor %}
-        </div>
-      {% endif %}
-    </section>
-    {% for reponse, amendements in article.reponses.items() %}
-      {% set is_gouvernemental = amendements[0].gouvernemental %}
-      {% set multiple = amendements|length > 1 %}
-      <section class="page reponse">
-        <table>
-          <tr>
-            <td>Amendement{% if multiple %}s{% endif %}</td>
-            <td>
-              {% if amendements|length > 5 %}
-                {{ amendements[0] }},
-                {{ amendements[1] }},
-                ...,
-                {{ amendements[-3] }},
-                {{ amendements[-2] }} et
-                {{ amendements[-1] }}
-                ({{ amendements|length }} au total)
-              {% else %}
-                {% for amendement in amendements %}
-                  {{ amendement }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                {% endfor %}
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td>Auteur{% if multiple %}s{% endif %}</td>
-            <td>
-              {% if is_gouvernemental %}
-                Gouvernement
-              {% else %}
-                {% for amendement in amendements %}
-                  {% if loop.previtem is defined and amendement.auteur != loop.previtem.auteur or loop.previtem is not defined %}
-                    {{ amendement.auteur }}
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-            </td>
-          </tr>
-          {% if not is_gouvernemental %}
-            <tr>
-              <td>Avis</td>
-              <td>{{ reponse.avis }}</td>
-            </tr>
+  <div class="first-page page">
+    <h1>{{ title }}</h1>
+  </div>
+  <main>
+    {% for article in articles.values() %}
+      <section class="page article">
+        <h2>
+          {% if article.type_ == "article" %}
+            Article {{ article }}
+          {% else %}
+            {{ article.type_.capitalize() }}s
           {% endif %}
-        </table>
-        <div>
-          <p><strong>{{ reponse.presentation | safe }}</strong></p>
-          {% if reponse.content %}
-            <p>{{ reponse.content | safe }}</p>
-          {% endif %}
-        </div>
+        </h2>
+        <h3>{{ article.titre }}</h3>
+        {% if article.alineas %}
+          <div>
+            {% for number, content in article.alineas.items() %}
+              <dl>
+                <dt>{{ number }}</dt>
+                <dd>
+                  <p>{{ content.strip('"') | safe }}</p>
+                </dd>
+              </dl>
+            {% endfor %}
+          </div>
+        {% endif %}
       </section>
-      {% for amendement in amendements %}
-        <section class="page amendement">
-          <table>
+      {% for reponse, amendements in article.reponses.items() %}
+        {% set is_gouvernemental = amendements[0].gouvernemental %}
+        {% set multiple = amendements|length > 1 %}
+        <section class="page reponse">
+          <h2>Réponse</h2>
+          <table class="cartouche">
             <tr>
-              <td>Amendement</td>
-              <td>{{ amendement.id }}</td>
+              <td>Article</td>
+              <td>
+                {% if article.type_ == "article" %}
+                  {{ article }}
+                {% else %}
+                  {{ article.type_.capitalize() }}s
+                {% endif %}
+              </td>
             </tr>
             <tr>
-              <td>Auteur</td>
-              <td>{{ amendement.auteur }}</td>
+              <td>Amendement{% if multiple %}s{% endif %}</td>
+              <td>
+                {% if amendements|length > 5 %}
+                  {{ amendements[0] }},
+                  {{ amendements[1] }},
+                  ...,
+                  {{ amendements[-3] }},
+                  {{ amendements[-2] }} et
+                  {{ amendements[-1] }}
+                  ({{ amendements|length }} au total)
+                {% else %}
+                  {% for amendement in amendements %}
+                    {{ amendement }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                  {% endfor %}
+                {% endif %}
+              </td>
             </tr>
+            <tr>
+              <td>Auteur{% if multiple %}s{% endif %}</td>
+              <td>
+                {% if is_gouvernemental %}
+                  Gouvernement
+                {% else %}
+                  {% for amendement in amendements %}
+                    {% if loop.previtem is defined and amendement.auteur != loop.previtem.auteur or loop.previtem is not defined %}
+                      {{ amendement.auteur }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last and loop.nextitem.auteur != amendement.auteur %}, {% endif %}{% endif %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              </td>
+            </tr>
+            {% if not is_gouvernemental %}
+              <tr>
+                <td>Groupe{% if multiple %}s{% endif %}</td>
+                <td>
+                  {% for amendement in amendements %}
+                    {% if loop.previtem is defined and amendement.auteur != loop.previtem.auteur or loop.previtem is not defined %}
+                      {{ amendement.groupe.libelle }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last and loop.nextitem.auteur != amendement.auteur %}, {% endif %}{% endif %}
+                    {% endif %}
+                  {% endfor %}
+                </td>
+              </tr>
+              <tr>
+                <td>Avis</td>
+                <td>{{ reponse.avis }}</td>
+              </tr>
+            {% endif %}
           </table>
           <div>
-            {{ amendement.objet|safe }}
-            {{ amendement.dispositif|safe }}
+            <div class="reponse-presentation">
+              {% if reponse.presentation.startswith("<p>") %}
+                {{ reponse.presentation | safe }}
+              {% else %}
+                <p>{{ reponse.presentation }}</p>
+              {% endif %}
+            </div>
+            {% if reponse.content.strip() and reponse.content != "<p></p>" %}
+              <h3>Réponse :</h3>
+              {% if reponse.content.startswith("<p>") %}
+                {{ reponse.content | safe }}
+              {% else %}
+                <p>{{ reponse.content }}</p>
+              {% endif %}
+            {% endif %}
           </div>
         </section>
+        {% for amendement in amendements %}
+          <section class="page amendement">
+            <h2>Amendement</h2>
+            <table class="cartouche">
+              <tr>
+                <td>Article</td>
+                <td>
+                  {% if article.type_ == "article" %}
+                    {{ article }}
+                  {% else %}
+                    {{ article.type_.capitalize() }}s
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td>Amendement</td>
+                <td>{{ amendement.id }}</td>
+              </tr>
+              <tr>
+                <td>Auteur</td>
+                <td>{{ amendement.auteur }}</td>
+              </tr>
+            </table>
+            <div>
+              <h3>Exposé :</h3>
+              {{ amendement.objet|safe }}
+              <h3>Corps de l’amendement :</h3>
+              {{ amendement.dispositif|safe }}
+            </div>
+          </section>
+        {% endfor %}
       {% endfor %}
     {% endfor %}
-  {% endfor %}
-</main>
+  </main>
 </body>

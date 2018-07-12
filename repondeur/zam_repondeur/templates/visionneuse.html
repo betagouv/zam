@@ -168,6 +168,9 @@
     .reponse-detail .bottom {
       font-size: initial;
     }
+  .reponse-presentation {
+    font-style: italic;
+  }
   .article dt {
     border-radius: 5rem;
     background: white;
@@ -409,7 +412,7 @@
               <dl>
                 <dt>{{ number }}</dt>
                 <dd>
-                  <p>{{ content }}</p>
+                  <p>{{ content.strip('"') | safe }}</p>
                 </dd>
               </dl>
             {% endfor %}
@@ -500,9 +503,19 @@
           </header>
           <div class="is-hidden">
             <div id="reponse-detail-{{ amendements[0].pk }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
-              <p><strong>{{ reponse.presentation | safe }}</strong></p>
-              {% if reponse.content %}
-                <p>{{ reponse.content | safe }}</p>
+              <div class="reponse-presentation">
+                {% if reponse.presentation.startswith("<p>") %}
+                  {{ reponse.presentation | safe }}
+                {% else %}
+                  <p>{{ reponse.presentation }}</p>
+                {% endif %}
+              </div>
+              {% if reponse.content.strip() and reponse.content != '<p></p>' %}
+                {% if reponse.content.startswith('<p>') %}
+                  {{ reponse.content | safe }}
+                {% else %}
+                  <p>{{ reponse.content }}</p>
+                {% endif %}
               {% endif %}
               <p class="bottom">
                 <a href="#amendement-{{ amendements[0].pk }}">

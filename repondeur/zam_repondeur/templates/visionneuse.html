@@ -65,10 +65,15 @@
   h1 {
     text-align: center;
     font-family: "source_serif_pro";
+    background: #3167a6;
+    color: white;
+    margin: 0;
+    padding: 1.4rem 1rem 1rem;
   }
 
   article {
-    margin: 1rem 0 1.5rem;
+    margin: 1.5rem 1rem;
+    box-shadow: 0 5px 5px 2px #ccc;
   }
   /* Useful to stay below the sticky Article's header. */
   article .fake-anchor {
@@ -94,9 +99,7 @@
     top: 0;
     z-index: 2;
     min-height: 5rem;
-    border: 2px solid;
-    border-left: none;
-    border-right: none;
+    box-shadow: 0 7px 7px -1px #ccc;
     display: flex;
     flex-direction: column;
   }
@@ -123,48 +126,79 @@
       }
 
   article header {
+    position: -webkit-sticky;
+    position: sticky;
+    background: white;
     min-height: 5rem;
-    top: 5rem;
+    top: 5.5rem;
     z-index: 1;
-    display: flex;
-    justify-content: space-between;
-    border: 1px solid #e9e5e5;
     border-left: 8px solid;
     padding: .5rem 1rem;
   }
     article header div:first-child p {
-      font-size: small;
+      font-size: .95rem;
+      margin-right: 6rem;
     }
-    article header div:last-child {
-      display: flex;
-      flex-direction: column;
-      text-align: center;
-      justify-content: space-between;
-      margin: 0 .5rem;
+    article header .authors {
+      margin-top: .4rem;
     }
-      article header div:last-child .button {
-        min-width: 12rem;
+    article header .button {
+      float: right;
+    }
+      article header .gouvernemental .button {
+        float: none;
       }
+    article header hr {
+      margin: .5rem;
+      border: .5px solid;
+    }
+    article header div:last-child p {
+      margin: 1.2rem 1rem 1rem 0;
+      font-size: 1.2rem;
+    }
+      article header div:last-child p span {
+        font-weight: bold
+      }
+    article header div.gouvernemental {
+      text-align: right;
+      margin-bottom: .4rem;
+    }
 
   details div {
     padding: .1rem 1rem;
-  }
-
-  article > div {
-    padding-bottom: 1rem;
   }
 
   .amendement-detail {
     padding: 1rem;
     border: 1px solid #e9e5e5;
     border-left: 8px solid;
+    line-height: 1.7;
   }
+    .amendement-detail h3 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: .4rem;
+    }
+    .amendement-detail h4 {
+      font-size: x-large;
+      font-weight: 600;
+      margin-bottom: .4rem;
+    }
+    .amendement-detail h3:first-child,
+    .amendement-detail h4:first-child {
+      margin-top: .4rem;
+    }
   .reponse-detail {
     font-size: x-large;
     padding: 1rem;
     border: 1px solid #e9e5e5;
     border-left: 8px solid;
   }
+    .reponse-detail h4 {
+      font-size: xx-large;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
     .reponse-detail .bottom {
       font-size: initial;
     }
@@ -184,13 +218,29 @@
     border-left-color: #b8e986;
   }
   .sagesse {
-    border-left-color: #afd4fe;
+    border-left-color: #6db4ff;
   }
   .negative {
     border-left-color: #d0021b;
   }
   .gouvernemental header {
-    border: 8px solid #61c61b !important;
+    border: 4px solid #3167a6;
+  }
+    .gouvernemental h2 {
+      color: #3167a6;
+    }
+  span.avis.positive {
+    color: #5fa014;
+  }
+  span.avis.sagesse {
+    color: #1b77d7;
+  }
+  span.avis.negative {
+    color: #d0021b;
+  }
+  .gouvernemental .author {
+    color: #3167a6;
+    font-weight: 600;
   }
   .presentation strong {
     font-weight: 600;
@@ -220,35 +270,23 @@
     font-size: large;
   }
   a.button {
-    padding: .3rem .6rem .1rem;
-    border-bottom: 4px solid;
+    padding: .4rem .8rem .2rem 2.5rem;
     text-decoration: none;
+    border: 1px solid #3167a6;
+    color: #3167a6;
+    border-radius: .3rem;
     font-weight: 600;
+    background: no-repeat left url("{{ request.static_url('zam_repondeur:static/img/eye.svg') }}");
   }
-  a.jaune {
-    background: #f1c40f;
-    border-color: #e2b607;
-    color: white;
-    letter-spacing: .2px;
-  }
-  a.positive {
-    background: #b8e986;
-    border-color: #61c61b;
-  }
-  a.sagesse {
-    background: #afd4fe;
-    border-color: darkblue;
-  }
-  a.negative {
-    background: #d0021b;
-    border-color: #ec644b;
-    color: white;
-  }
-  a.gouvernemental {
-    background-color: #61c61b;
-    border-color: #b8e986;
-    color: white;
-  }
+    a.button.main {
+      border-width: 2px;
+    }
+    a.button.arrow-up {
+      background-image: url("{{ request.static_url('zam_repondeur:static/img/arrow_up.svg') }}");
+    }
+    a.button.arrow-down {
+      background-image: url("{{ request.static_url('zam_repondeur:static/img/arrow_down.svg') }}");
+    }
   div.jaune,
   div.article {
     border: 1px solid #e9e5e5;
@@ -263,7 +301,7 @@
     border-left-color: #6c7a89;
   }
   div.gouvernemental {
-    border-left-color: #61c61b;
+    border-left-color: #3167a6;
   }
 
   /* Comes from https://github.com/jonsuh/hamburgers
@@ -379,29 +417,14 @@
               <h3>{{ article.titre }}</h3>
             {% endif %}
           </div>
-          {% if article.jaune %}
-            <a href="#{{ article.slug }}"
-               class="button jaune"
-               data-toggle-target="jaune-{{ article.slug }}"
-              >Jaune</a>
-          {% endif %}
           {% if article.alineas %}
             <a href="#{{ article.slug }}"
+               class="button"
                data-toggle-target="content-{{ article.slug }}"
-              >Texte</a>
+              >Lire</a>
           {% endif %}
         </div>
       </header>
-      <div class="is-hidden">
-        {% if article.jaune %}
-          <div id="jaune-{{ article.slug }}" class="jaune">
-            {{ article.jaune }}
-            <p class="bottom">
-              <a href="#{{ article.slug }}">Replier le jaune</a>
-            </p>
-          </div>
-        {% endif %}
-      </div>
       <div class="is-hidden">
         {% if article.alineas %}
           <div id="content-{{ article.slug }}" class="article">
@@ -414,7 +437,7 @@
               </dl>
             {% endfor %}
             <p class="bottom">
-              <a href="#{{ article.slug }}">Replier le texte</a>
+              <a class="button main arrow-up" href="#{{ article.slug }}">Replier</a>
             </p>
           </div>
         {% endif %}
@@ -427,12 +450,19 @@
             {% set avis_class = 'positive' %}
           {% elif reponse.sagesse %}
             {% set avis_class = 'sagesse' %}
+          {% elif is_gouvernemental %}
+            {% set avis_class = 'gouvernemental' %}
           {% else %}
             {% set avis_class = 'negative' %}
           {% endif %}
           {% set multiple = amendements|length > 1 %}
           <header class="reponse {{ avis_class }}">
             <div>
+              <a href="#amendement-{{ amendements[0].pk }}"
+                 class="button"
+                 data-toggle-target="amendement-detail-{{ amendements[0].pk }}">
+                Lire
+              </a>
               <h2>
                 Amendement{% if multiple %}s{% endif %}
                 {% if amendements|length > 5 %}
@@ -459,7 +489,7 @@
                 </div>
               {% endif %}
               {% if is_gouvernemental %}
-                <p class="authors"><strong>Gouvernement</strong></p>
+                <p class="authors"><span class="author">Gouvernement</span></p>
               {% else %}
                 <p class="authors">
                   {% for amendement in amendements %}
@@ -478,39 +508,36 @@
                 </p>
               {% endif %}
             </div>
-            <div>
-              <a href="#amendement-{{ amendements[0].pk }}"
-                 data-toggle-target="amendement-detail-{{ amendements[0].pk }}">
-                Amendement{% if multiple %}s{% endif %}
-              </a>
-              {% if is_gouvernemental %}
+            {% if is_gouvernemental %}
+              <div class="gouvernemental">
                 <a href="#amendement-{{ amendements[0].pk }}"
-                   class="button {{ avis_class }} gouvernemental"
+                   class="button main gouvernemental"
                    data-toggle-target="reponse-detail-{{ amendements[0].pk }}">
-                  Présentation
+                  Voir la présentation
                 </a>
-              {% else %}
+              </div>
+            {% else %}
+              <hr>
+              <div>
                 <a href="#amendement-{{ amendements[0].pk }}"
-                   class="button {{ avis_class }}"
+                   class="button main"
                    data-toggle-target="reponse-detail-{{ amendements[0].pk }}">
-                  Réponse : {{ reponse.avis }}
+                  Lire
                 </a>
-              {% endif %}
-            </div>
+                <p>Avis : <span class="avis {{ avis_class }}">{{ reponse.avis }}</span></p>
+              </div>
+            {% endif %}
           </header>
           <div class="is-hidden">
             <div id="reponse-detail-{{ amendements[0].pk }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
-              <p><strong>{{ reponse.presentation | safe }}</strong></p>
+              <p><em>{{ reponse.presentation | safe }}</em></p>
               {% if reponse.content %}
+                <h4>Réponse :</h4>
                 <p>{{ reponse.content | safe }}</p>
               {% endif %}
               <p class="bottom">
-                <a href="#amendement-{{ amendements[0].pk }}">
-                  {% if is_gouvernemental %}
-                    Replier la présentation
-                  {% else %}
-                    Replier la réponse
-                  {% endif %}
+                <a class="button main arrow-up" href="#amendement-{{ amendements[0].pk }}">
+                  Replier
                 </a>
               </p>
             </div>
@@ -530,13 +557,15 @@
                   </h3>
                 {% endif %}
                 <div>
+                  <h4>Exposé :</h4>
                   {{ amendement.objet|safe }}
+                  <h4>Corps de l’amendement :</h4>
                   {{ amendement.dispositif|safe }}
                 </div>
               {% endfor %}
               <p class="bottom">
-                <a href="#amendement-{{ amendements[0].pk }}">
-                  Replier {% if multiple %}les amendements{% else %}l’amendement{% endif %}
+                <a class="button main arrow-up" href="#amendement-{{ amendements[0].pk }}">
+                  Replier
                 </a>
               </p>
             </div>
@@ -578,15 +607,23 @@
         const target = e.target
         const toggleTarget = document.querySelector(`#${target.dataset.toggleTarget}`)
         const toggleParent = toggleTarget.parentElement
+        const removeArrows = () => {
+          Array.from(document.querySelectorAll('.arrow-down')).forEach(arrowDownLink => {
+            arrowDownLink.classList.remove('arrow-down')
+          })
+        }
         const hideElement = () => {
           toggleParent.classList.replace('is-visible', 'is-hidden')
+          removeArrows()
         }
+        removeArrows()
         if (toggleParent.classList.contains('is-hidden')) {
           Array.from(document.querySelectorAll('.is-visible')).forEach(element => {
             element.classList.replace('is-visible', 'is-hidden')
           })
           toggleParent.classList.replace('is-hidden', 'is-visible')
           toggleParent.querySelector('.bottom a').onclick = hideElement
+          target.classList.add('arrow-down')
         } else {
           hideElement()
         }

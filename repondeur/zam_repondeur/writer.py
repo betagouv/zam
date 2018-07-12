@@ -1,8 +1,9 @@
 import csv
 import json
+from contextlib import contextmanager
 from dataclasses import fields
 from itertools import groupby
-from typing import Iterable, Tuple
+from typing import Generator, Iterable, Tuple
 
 import pdfkit
 from inscriptis import get_text
@@ -83,6 +84,15 @@ def write_csv(
     return nb_rows
 
 
+@contextmanager
+def xvfb_if_supported() -> Generator:
+    try:
+        with Xvfb():
+            yield
+    except (EnvironmentError, OSError, RuntimeError):
+        yield
+
+
 def write_pdf(
     title: str, amendements: Iterable[Amendement], filename: str, request: Request
 ) -> int:
@@ -93,12 +103,7 @@ def write_pdf(
     env = get_jinja2_environment(request, name=".html")
     template = env.get_template("print.html")
     content = template.render(title=title, articles=articles)
-    vdisplay = Xvfb()
-    try:
-        vdisplay.start()
-        pdfkit.from_string(content, filename)
-        vdisplay.stop()
-    except RuntimeError:
+    with xvfb_if_supported():
         pdfkit.from_string(content, filename)
     return len(amendements)
 

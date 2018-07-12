@@ -87,7 +87,7 @@
                     {% if amendement.subdiv_titre %}
                         <br>{{ amendement.subdiv_titre }}
                     {% endif %}
-                    <a class="action" href="{{ request.route_url('article_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe, subdiv_type=amendement.subdiv_type, subdiv_num=amendement.subdiv_num, subdiv_mult=amendement.subdiv_mult, subdiv_pos=amendement.subdiv_pos) }}">
+                    <a class="action" href="{{ request.resource_url(context.__parent__['articles'][amendement.article_url_key]) }}">
                         <i class="fas fa-edit"></i>
                     </a>
                 </td>

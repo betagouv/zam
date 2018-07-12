@@ -31,10 +31,6 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.add_route("choices_lectures", "/choices/dossiers/{uid}/")
 
         config.add_route(
-            "article_edit",
-            "/lectures/{chambre}.{session}.{num_texte:\d+}.{organe}/articles/{subdiv_type}/{subdiv_num:.*}/{subdiv_mult:.*}/{subdiv_pos:.*}",  # noqa
-        )
-        config.add_route(
             "amendement_edit",
             "/lectures/{chambre}.{session}.{num_texte:\d+}.{organe}/amendements/{num:\d+}",  # noqa
         )

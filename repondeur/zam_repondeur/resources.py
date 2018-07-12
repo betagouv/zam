@@ -67,6 +67,7 @@ class LectureResource(Resource):
         self.num_texte = num_texte
         self.organe = organe
         self.add_child(AmendementCollection(name="amendements", parent=self))
+        self.add_child(ArticleCollection(name="articles", parent=self))
 
     def model(self) -> LectureModel:
         return LectureModel.get(self.chambre, self.session, self.num_texte, self.organe)
@@ -98,3 +99,40 @@ class AmendementResource(Resource):
             )
             .first()
         )
+
+
+class ArticleCollection(Resource):
+    def __getitem__(self, key: str) -> Resource:
+        try:
+            subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = key.split(".")
+        except ValueError:
+            raise KeyError
+        return ArticleResource(
+            name=key,
+            parent=self,
+            subdiv_type=subdiv_type,
+            subdiv_num=subdiv_num,
+            subdiv_mult=subdiv_mult,
+            subdiv_pos=subdiv_pos,
+        )
+
+
+class ArticleResource(Resource):
+    def __init__(
+        self,
+        name: str,
+        parent: Resource,
+        subdiv_type: str,
+        subdiv_num: str,
+        subdiv_mult: str,
+        subdiv_pos: str,
+    ) -> None:
+        super().__init__(name=name, parent=parent)
+        self.subdiv_type = subdiv_type
+        self.subdiv_num = subdiv_num
+        self.subdiv_mult = subdiv_mult
+        self.subdiv_pos = subdiv_pos
+
+    @property
+    def lecture_resource(self) -> LectureResource:
+        return self.__parent__.__parent__  # type: ignore

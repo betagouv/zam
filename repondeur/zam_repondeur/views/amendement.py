@@ -44,6 +44,7 @@ class AmendementEdit:
             self.amendement.bookmarked_at = None
         return HTTPFound(
             location=self.request.resource_url(
-                self.request.root["lectures"][self.amendement.url_key], "amendements"
+                self.request.root["lectures"][self.amendement.lecture_url_key],
+                "amendements",
             )
         )

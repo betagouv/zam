@@ -134,8 +134,14 @@ class Amendement:
         }
 
     @property
-    def url_key(self) -> str:
+    def lecture_url_key(self) -> str:
         return f"{self.chambre}.{self.session}.{self.num_texte}.{self.organe}"
+
+    @property
+    def article_url_key(self) -> str:
+        return (
+            f"{self.subdiv_type}.{self.subdiv_num}.{self.subdiv_mult}.{self.subdiv_pos}"
+        )
 
 
 class SubDiv(NamedTuple):

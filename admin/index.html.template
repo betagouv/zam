@@ -1,15 +1,15 @@
 <!doctype html>
 <meta charset=utf-8>
-<title>Changement récents Zam</title>
+<title>Zam : alléger la charge de préparation par le gouvernement du débat parlementaire.</title>
 <style type="text/css">
     body {
-        max-width: 50rem;
+        max-width: 55rem;
         margin: 1rem auto;
+        font-size: 20px;
     }
     h1,
-    .repondeur {
+    .center {
         text-align: center;
     }
 </style>
 $$content
-<h2 class="repondeur"><a href="/repondeur/">Accès au répondeur</a></h2>

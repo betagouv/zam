@@ -56,7 +56,7 @@ def test_fetch_amendements(app, dummy_lecture, dummy_amendements):
             [],
         )
 
-        resp = app.post("/lectures/an.15.269.PO717460/amendements/fetch")
+        resp = app.post("/lectures/an.15.269.PO717460/fetch_amendements")
 
     assert resp.status_code == 302
     assert resp.location == "http://localhost/lectures/an.15.269.PO717460/"
@@ -97,7 +97,7 @@ def test_fetch_amendements_with_errored(app, dummy_lecture, dummy_amendements):
             ["111", "222"],
         )
 
-        resp = app.post("/lectures/an.15.269.PO717460/amendements/fetch")
+        resp = app.post("/lectures/an.15.269.PO717460/fetch_amendements")
 
     assert resp.status_code == 302
     assert resp.location == "http://localhost/lectures/an.15.269.PO717460/"
@@ -113,7 +113,7 @@ def test_fetch_amendements_none(app, dummy_lecture):
     with patch("zam_repondeur.views.lectures.get_amendements") as mock_get_amendements:
         mock_get_amendements.return_value = [], []
 
-        resp = app.post("/lectures/an.15.269.PO717460/amendements/fetch")
+        resp = app.post("/lectures/an.15.269.PO717460/fetch_amendements")
 
     assert resp.status_code == 302
     assert resp.location == "http://localhost/lectures/an.15.269.PO717460/"

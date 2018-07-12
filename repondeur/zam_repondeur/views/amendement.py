@@ -43,11 +43,7 @@ class AmendementEdit:
         else:
             self.amendement.bookmarked_at = None
         return HTTPFound(
-            location=self.request.route_url(
-                "list_amendements",
-                chambre=self.amendement.chambre,
-                session=self.amendement.session,
-                num_texte=self.amendement.num_texte,
-                organe=self.amendement.organe,
+            location=self.request.resource_url(
+                self.request.root["lectures"][self.amendement.url_key], "amendements"
             )
         )

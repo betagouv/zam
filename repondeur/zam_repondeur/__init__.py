@@ -31,29 +31,6 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.add_route("choices_lectures", "/choices/dossiers/{uid}/")
 
         config.add_route(
-            "lecture", "/lectures/{chambre}.{session}.{num_texte:\d+}.{organe}/"
-        )
-        config.add_route(
-            "list_reponses",
-            "/lectures/{chambre}.{session}.{num_texte:\d+}.{organe}/reponses",
-        )
-        config.add_route(
-            "lecture_check",
-            "/lectures/{chambre}.{session}.{num_texte:\d+}.{organe}/check",
-        )
-        config.add_route(
-            "list_amendements",
-            "/lectures/{chambre}.{session}.{num_texte:\d+}.{organe}/amendements/list",
-        )
-        config.add_route(
-            "fetch_amendements",
-            "/lectures/{chambre}.{session}.{num_texte:\d+}.{organe}/amendements/fetch",
-        )
-        config.add_route(
-            "fetch_articles",
-            "/lectures/{chambre}.{session}.{num_texte:\d+}.{organe}/articles/fetch",
-        )
-        config.add_route(
             "download_amendements",
             "/lectures/{chambre}.{session}.{num_texte:\d+}.{organe}/amendements/download.{format:(csv|xlsx|pdf)}",  # noqa
         )

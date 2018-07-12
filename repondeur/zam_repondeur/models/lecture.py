@@ -147,3 +147,7 @@ class Lecture(Base):  # type: ignore
         )
         DBSession.add(lecture)
         return lecture
+
+    @property
+    def url_key(self) -> str:
+        return f"{self.chambre}.{self.session}.{self.num_texte}.{self.organe}"

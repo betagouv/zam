@@ -9,16 +9,12 @@ from sqlalchemy.sql.expression import case
 from zam_repondeur.clean import clean_html
 from zam_repondeur.models import DBSession, Amendement as AmendementModel, AVIS, Lecture
 from zam_repondeur.models.visionneuse import build_tree
+from zam_repondeur.resources import LectureResource
 
 
-@view_config(route_name="list_reponses", renderer="visionneuse.html")
-def list_reponses(request: Request) -> Response:
-    lecture = Lecture.get(
-        chambre=request.matchdict["chambre"],
-        session=request.matchdict["session"],
-        num_texte=int(request.matchdict["num_texte"]),
-        organe=request.matchdict["organe"],
-    )
+@view_config(context=LectureResource, name="reponses", renderer="visionneuse.html")
+def list_reponses(context: LectureResource, request: Request) -> Response:
+    lecture = context.model()
     if lecture is None:
         raise HTTPNotFound
 
@@ -38,13 +34,7 @@ def list_reponses(request: Request) -> Response:
         .all()
     )
     articles = build_tree(amendements)
-    check_url = request.route_path(
-        "lecture_check",
-        chambre=lecture.chambre,
-        session=lecture.session,
-        num_texte=lecture.num_texte,
-        organe=lecture.organe,
-    )
+    check_url = request.resource_path(context, "check")
     return {
         "dossier_legislatif": lecture.dossier_legislatif,
         "lecture": str(lecture),
@@ -92,12 +82,8 @@ class ReponseEdit:
         self.amendement.observations = clean_html(self.request.POST["observations"])
         self.amendement.reponse = clean_html(self.request.POST["reponse"])
         self.lecture.modified_at = datetime.utcnow()
+
+        lecture_resource = self.request.root["lectures"][self.amendement.url_key]
         return HTTPFound(
-            location=self.request.route_url(
-                "list_amendements",
-                chambre=self.amendement.chambre,
-                session=self.amendement.session,
-                num_texte=self.amendement.num_texte,
-                organe=self.amendement.organe,
-            )
+            location=self.request.resource_url(lecture_resource, "amendements")
         )

@@ -13,7 +13,7 @@ def test_get_form(app, dummy_lecture, dummy_amendements):
     assert resp.forms["retrieve-textes"].method == "post"
     assert (
         resp.forms["retrieve-textes"].action
-        == "http://localhost/lectures/an.15.269.PO717460/articles/fetch"
+        == "http://localhost/lectures/an.15.269.PO717460/fetch_articles"
     )
 
     assert list(resp.forms["retrieve-textes"].fields.keys()) == ["fetch"]

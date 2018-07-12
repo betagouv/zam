@@ -37,11 +37,11 @@
             <div class="card-text">
                 <p>{{ amendements_count }} amendements déposés.</p>
                 <p>
-                    <a class="btn btn-primary" href="{{ request.route_url('list_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}">Consulter la liste</a>
+                    <a class="btn btn-primary" href="{{ request.resource_url(context, 'amendements') }}">Consulter la liste</a>
                     {% if lecture.displayable %}
-                        <a class="btn btn-primary" href="{{ request.route_url('list_reponses', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}" target="_blank">Visualiser les réponses</a>
+                        <a class="btn btn-primary" href="{{ request.resource_url(context, 'reponses') }}" target="_blank">Visualiser les réponses</a>
                     {% endif %}
-                    <form method="post" action="{{ request.route_url('fetch_articles', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}" id="retrieve-textes">
+                    <form method="post" action="{{ request.resource_url(context, 'fetch_articles') }}" id="retrieve-textes">
                         <input type="submit" name="fetch" class="btn btn-primary" value="Récupérer le texte des articles">
                     </form>
                 </p>
@@ -64,7 +64,7 @@
                     du Sénat
                 {%- endif -%}
                 .</p>
-                <form method="POST" action="{{ request.route_url('fetch_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}">
+                <form method="POST" action="{{ request.resource_url(context, 'fetch_amendements') }}">
                     <input type="submit" class="btn btn-primary" value="{{ verbe }}">
                 </form>
             </div>
@@ -91,7 +91,7 @@
             <div class="card-title">
                 <h4>⚠️ Zone de danger</h4>
             </div>
-                <form method="post" action="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}" id="delete-lecture">
+                <form method="post" action="" id="delete-lecture">
                     <input type="submit" class="btn btn-light btn-sm" value="Supprimer la lecture ainsi que tous les amendements et réponses associés">
                 </form>
             </div>

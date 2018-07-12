@@ -133,6 +133,10 @@ class Amendement:
             if getattr(self, field_name) != getattr(other, field_name)
         }
 
+    @property
+    def url_key(self) -> str:
+        return f"{self.chambre}.{self.session}.{self.num_texte}.{self.organe}"
+
 
 class SubDiv(NamedTuple):
     type_: str

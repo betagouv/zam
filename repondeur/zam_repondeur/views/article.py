@@ -50,12 +50,5 @@ class ArticleEdit:
         for amendement in self.amendements:
             amendement.subdiv_titre = subdiv_titre
         self.request.session.flash(("success", "Titre mis à jour avec succès."))
-        return HTTPFound(
-            location=self.request.route_url(
-                "list_amendements",
-                chambre=self.lecture.chambre,
-                session=self.lecture.session,
-                num_texte=self.lecture.num_texte,
-                organe=self.lecture.organe,
-            )
-        )
+        resource = self.request.root["lectures"][amendement.url_key]
+        return HTTPFound(location=self.request.resource_url(resource, "amendements"))

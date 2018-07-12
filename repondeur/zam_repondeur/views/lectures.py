@@ -16,7 +16,7 @@ from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
 from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.models import DBSession, Amendement, Lecture as LectureModel
-from zam_repondeur.resources import LectureCollection
+from zam_repondeur.resources import LectureCollection, LectureResource
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 
@@ -32,6 +32,7 @@ def lectures_list(context: LectureCollection, request: Request) -> dict:
 @view_defaults(context=LectureCollection, name="add")
 class LecturesAdd:
     def __init__(self, context: LectureCollection, request: Request) -> None:
+        self.context = context
         self.request = request
         self.dossiers_by_uid: Dict[str, Dossier] = get_data("dossiers")
 
@@ -68,15 +69,8 @@ class LecturesAdd:
             )
             self.request.session.flash(("success", "Lecture créée avec succès."))
 
-        return HTTPFound(
-            location=self.request.route_url(
-                "lecture",
-                chambre=chambre,
-                session=session,
-                num_texte=num_texte,
-                organe=organe,
-            )
-        )
+        resource = self.context[f"{chambre}.{session}.{num_texte}.{organe}"]
+        return HTTPFound(location=self.request.resource_url(resource))
 
     def _get_dossier(self) -> Dossier:
         try:
@@ -104,16 +98,12 @@ class LecturesAdd:
         return matching[0]
 
 
-@view_defaults(route_name="lecture")
+@view_defaults(context=LectureResource)
 class LectureView:
-    def __init__(self, request: Request) -> None:
+    def __init__(self, context: LectureResource, request: Request) -> None:
+        self.context = context
         self.request = request
-        self.lecture = LectureModel.get(
-            chambre=request.matchdict["chambre"],
-            session=request.matchdict["session"],
-            num_texte=int(request.matchdict["num_texte"]),
-            organe=request.matchdict["organe"],
-        )
+        self.lecture = context.model()
         if self.lecture is None:
             raise HTTPNotFound
         self.amendements_query = DBSession.query(Amendement).filter(
@@ -143,16 +133,12 @@ class LectureView:
         )
 
 
-@view_defaults(route_name="list_amendements")
+@view_defaults(context=LectureResource, name="amendements")
 class ListAmendements:
-    def __init__(self, request: Request) -> None:
+    def __init__(self, context: LectureResource, request: Request) -> None:
+        self.context = context
         self.request = request
-        self.lecture = LectureModel.get(
-            chambre=request.matchdict["chambre"],
-            session=request.matchdict["session"],
-            num_texte=int(request.matchdict["num_texte"]),
-            organe=request.matchdict["organe"],
-        )
+        self.lecture = context.model()
         if self.lecture is None:
             raise HTTPNotFound
 
@@ -212,13 +198,7 @@ class ListAmendements:
             )
 
         return HTTPFound(
-            location=self.request.route_url(
-                "list_amendements",
-                chambre=self.lecture.chambre,
-                session=self.lecture.session,
-                num_texte=self.lecture.num_texte,
-                organe=self.lecture.organe,
-            )
+            location=self.request.resource_url(self.context, "amendements")
         )
 
     @staticmethod
@@ -288,14 +268,9 @@ class ListAmendements:
 REPONSE_FIELDS = ["avis", "observations", "reponse"]
 
 
-@view_config(route_name="fetch_amendements")
-def fetch_amendements(request: Request) -> Response:
-    lecture = LectureModel.get(
-        chambre=request.matchdict["chambre"],
-        session=request.matchdict["session"],
-        num_texte=int(request.matchdict["num_texte"]),
-        organe=request.matchdict["organe"],
-    )
+@view_config(context=LectureResource, name="fetch_amendements")
+def fetch_amendements(context: LectureResource, request: Request) -> Response:
+    lecture = context.model()
     if lecture is None:
         raise HTTPNotFound
 
@@ -321,15 +296,7 @@ def fetch_amendements(request: Request) -> Response:
     else:
         request.session.flash(("danger", "Aucun amendement n’a pu être trouvé."))
 
-    return HTTPFound(
-        location=request.route_url(
-            "lecture",
-            chambre=lecture.chambre,
-            session=lecture.session,
-            num_texte=lecture.num_texte,
-            organe=lecture.organe,
-        )
-    )
+    return HTTPFound(location=request.resource_url(context))
 
 
 def _add_or_update_amendements(
@@ -389,39 +356,21 @@ def _set_flash_messages(
         request.session.flash(("success", message))
 
 
-@view_config(route_name="fetch_articles")
-def fetch_articles(request: Request) -> Response:
-    lecture = LectureModel.get(
-        chambre=request.matchdict["chambre"],
-        session=request.matchdict["session"],
-        num_texte=int(request.matchdict["num_texte"]),
-        organe=request.matchdict["organe"],
-    )
+@view_config(context=LectureResource, name="fetch_articles")
+def fetch_articles(context: LectureResource, request: Request) -> Response:
+    lecture = context.model()
     if lecture is None:
         raise HTTPNotFound
 
     get_articles(lecture)
     request.session.flash(("success", f"Articles récupérés"))
 
-    return HTTPFound(
-        location=request.route_url(
-            "lecture",
-            chambre=lecture.chambre,
-            session=lecture.session,
-            num_texte=lecture.num_texte,
-            organe=lecture.organe,
-        )
-    )
+    return HTTPFound(location=request.resource_url(context))
 
 
-@view_config(route_name="lecture_check", renderer="json")
-def lecture_check(request: Request) -> dict:
-    lecture = LectureModel.get(
-        chambre=request.matchdict["chambre"],
-        session=request.matchdict["session"],
-        num_texte=int(request.matchdict["num_texte"]),
-        organe=request.matchdict["organe"],
-    )
+@view_config(context=LectureResource, name="check", renderer="json")
+def lecture_check(context: LectureResource, request: Request) -> dict:
+    lecture = context.model()
     if lecture is None:
         raise HTTPNotFound
 

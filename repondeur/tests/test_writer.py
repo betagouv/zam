@@ -109,7 +109,7 @@ def test_write_csv(amendements, tmpdir):
 
     filename = str(tmpdir.join("test.csv"))
 
-    nb_rows = write_csv(amendements, filename)
+    nb_rows = write_csv("Titre", amendements, filename, request={})
 
     with open(filename, "r", encoding="utf-8") as f_:
         lines = f_.read().splitlines()

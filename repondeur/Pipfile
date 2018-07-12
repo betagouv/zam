@@ -18,6 +18,8 @@ tlfp = {git = "https://github.com/regardscitoyens/the-law-factory-parser.git", e
 inscriptis = "*"
 selectolax = "*"
 pyramid-default-cors = "*"
+pdfkit = "*"
+xvfbwrapper = "*"
 
 [dev-packages]
 webtest = "*"

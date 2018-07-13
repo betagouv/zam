@@ -16,4 +16,4 @@
 
 * édition des titres des articles depuis la liste des amendements
 
-<h2 class="center">[Accès au répondeur](/repondeur/) — [Effectuer des retours](mailto:melodie.dahi@beta.gouv.fr)</h2>
+<h2 class="center">[Accès au répondeur](/repondeur/) — [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>

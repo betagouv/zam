@@ -35,6 +35,9 @@ def _parse_subdiv(libelle: str) -> SubDiv:
     if libelle == "Intitulé du projet de loi":
         return SubDiv("titre", "", "", "")
 
+    if libelle == "Motions":
+        return SubDiv("motion", "", "", "")
+
     mo = TITRE_RE.match(libelle)
     if mo is not None:
         return SubDiv("section", mo.group("num"), "", "")

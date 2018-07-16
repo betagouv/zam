@@ -484,11 +484,7 @@
               </h2>
               {% if reponse.presentation|length < 200 %}
                 <div class="presentation">
-                  {% if reponse.presentation.startswith('<p>') %}
-                    {{ reponse.presentation|safe }}
-                  {% else %}
-                    <p>{{ reponse.presentation }}</p>
-                  {% endif %}
+                  {{ reponse.presentation | paragriphy }}
                 </div>
               {% endif %}
               {% if is_gouvernemental %}
@@ -534,19 +530,11 @@
           <div class="is-hidden">
             <div id="reponse-detail-{{ amendements[0].pk }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
               <div class="reponse-presentation">
-                {% if reponse.presentation.startswith("<p>") %}
-                  {{ reponse.presentation | safe }}
-                {% else %}
-                  <p>{{ reponse.presentation }}</p>
-                {% endif %}
+                {{ reponse.presentation | paragriphy }}
               </div>
               {% if reponse.content.strip() and reponse.content != '<p></p>' %}
                 <h4>Réponse :</h4>
-                {% if reponse.content.startswith('<p>') %}
-                  {{ reponse.content | safe }}
-                {% else %}
-                  <p>{{ reponse.content }}</p>
-                {% endif %}
+                {{ reponse.content | paragriphy }}
               {% endif %}
               <p class="bottom">
                 <a class="button main arrow-up" href="#amendement-{{ amendements[0].pk }}">

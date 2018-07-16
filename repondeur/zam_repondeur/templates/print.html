@@ -175,19 +175,11 @@
           </table>
           <div>
             <div class="reponse-presentation">
-              {% if reponse.presentation.startswith("<p>") %}
-                {{ reponse.presentation | safe }}
-              {% else %}
-                <p>{{ reponse.presentation }}</p>
-              {% endif %}
+              {{ reponse.presentation | paragriphy }}
             </div>
             {% if reponse.content.strip() and reponse.content != "<p></p>" %}
               <h3>Réponse :</h3>
-              {% if reponse.content.startswith("<p>") %}
-                {{ reponse.content | safe }}
-              {% else %}
-                <p>{{ reponse.content }}</p>
-              {% endif %}
+              {{ reponse.content | paragriphy }}
             {% endif %}
           </div>
         </section>

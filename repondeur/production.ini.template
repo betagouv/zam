@@ -18,6 +18,9 @@ zam.secret = $secret
 zam.legislature = 15
 zam.an_groups_folder = /var/lib/zam/data/an/groups/organe/
 
+jinja2.filters =
+    paragriphy = zam_repondeur.views.jinja2_filters:paragriphy
+
 [server:main]
 use = egg:waitress#main
 listen = localhost:6543

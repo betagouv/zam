@@ -7,7 +7,7 @@ SUBDIV_RE = re.compile(
     r"""^
         (?:
             (
-                art\.\sadd\.
+                (art|div)\.\sadd\.
                 |
                 Article(?:\(s\))?\sadditionnel(?:\(s\))?
             )

@@ -6,6 +6,8 @@ EXAMPLES = [
     ("42 rect.", 42, 1),
     ("42 rect. bis", 42, 2),
     ("42 rect. ter", 42, 3),
+    ("COM-1", 1, 0),
+    ("COM-48 rect.", 48, 1),
 ]
 
 

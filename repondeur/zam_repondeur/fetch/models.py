@@ -84,6 +84,10 @@ class Amendement:
 
     @staticmethod
     def parse_num(text: str) -> Tuple[int, int]:
+        if text.startswith("COM-"):
+            start = len("COM-")
+            text = text[start:]
+
         mo = Amendement._NUM_RE.match(text)
         if mo is None:
             raise ValueError(f"Cannot parse amendement number '{text}'")

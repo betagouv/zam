@@ -73,10 +73,18 @@ def _fetch_all(session: str, num: int) -> List[OrderedDict]:
     """
     Récupère tous les amendements, dans l'ordre de dépôt
     """
-    url = f"{BASE_URL}/amendements/{session}/{num}/jeu_complet_{session}_{num}.csv"
+    # Fallback to commissions.
+    urls = [
+        f"{BASE_URL}/amendements/{session}/{num}/jeu_complet_{session}_{num}.csv",
+        f"{BASE_URL}/amendements/commissions/{session}/{num}/jeu_complet_commission_{session}_{num}.csv",  # noqa
+    ]
 
-    resp = requests.get(url)
-    if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
+    for url in urls:
+        resp = requests.get(url)
+        if resp.status_code != HTTPStatus.NOT_FOUND:
+            break
+
+    if resp.status_code == HTTPStatus.NOT_FOUND:
         raise NotFound(url)
 
     text = resp.content.decode("cp1252")

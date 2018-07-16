@@ -103,8 +103,9 @@ def write_pdf(
     env = get_jinja2_environment(request, name=".html")
     template = env.get_template("print.html")
     content = template.render(title=title, articles=articles)
+    options = {"quiet": "", "footer-center": f"{title} • Page [page] sur [topage]"}
     with xvfb_if_supported():
-        pdfkit.from_string(content, filename)
+        pdfkit.from_string(content, filename, options=options)
     return len(amendements)
 
 

@@ -202,6 +202,9 @@
     .reponse-detail .bottom {
       font-size: initial;
     }
+  .reponse-presentation {
+    font-style: italic;
+  }
   .article dt {
     border-radius: 5rem;
     background: white;
@@ -432,7 +435,7 @@
               <dl>
                 <dt>{{ number }}</dt>
                 <dd>
-                  <p>{{ content }}</p>
+                  <p>{{ content.strip('"') | safe }}</p>
                 </dd>
               </dl>
             {% endfor %}
@@ -481,11 +484,7 @@
               </h2>
               {% if reponse.presentation|length < 200 %}
                 <div class="presentation">
-                  {% if reponse.presentation.startswith('<p>') %}
-                    {{ reponse.presentation|safe }}
-                  {% else %}
-                    <p>{{ reponse.presentation }}</p>
-                  {% endif %}
+                  {{ reponse.presentation | paragriphy }}
                 </div>
               {% endif %}
               {% if is_gouvernemental %}
@@ -530,10 +529,12 @@
           </header>
           <div class="is-hidden">
             <div id="reponse-detail-{{ amendements[0].pk }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
-              <p><em>{{ reponse.presentation | safe }}</em></p>
-              {% if reponse.content %}
+              <div class="reponse-presentation">
+                {{ reponse.presentation | paragriphy }}
+              </div>
+              {% if reponse.content.strip() and reponse.content != '<p></p>' %}
                 <h4>Réponse :</h4>
-                <p>{{ reponse.content | safe }}</p>
+                {{ reponse.content | paragriphy }}
               {% endif %}
               <p class="bottom">
                 <a class="button main arrow-up" href="#amendement-{{ amendements[0].pk }}">

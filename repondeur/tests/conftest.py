@@ -13,6 +13,7 @@ def settings():
         "sqlalchemy.url": "sqlite:///test.db",
         "zam.legislature": "15",
         "zam.secret": "dummy",
+        "jinja2.filters": "paragriphy = zam_repondeur.views.jinja2_filters:paragriphy",
     }
 
 

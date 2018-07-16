@@ -4,8 +4,7 @@
 
 Le dépôt regroupe plusieurs applications distinctes (monorepo) :
 
-*   [`/aspirateur/`](aspirateur/) contient l’outil permettant de récupérer les données publiques/ouvertes issues des sites du Sénat et de l’Assemblée Nationale.
-*   [`/repondeur/`](repondeur/) contient l’application web utilisant les données issues de l’aspirateur, ainsi que la préparation collaborative des réponses aux amendements.
+*   [`/repondeur/`](repondeur/) contient l’application web utilisant les données publiques/ouvertes issues des sites du Sénat et de l’Assemblée Nationale, ainsi que la préparation collaborative des réponses aux amendements.
 *   [`/admin/`](admin/) contient les tâches pour initialiser et déployer le serveur.
 
 Chacune des application est documentée de manière plus précise au sein du fichier README dédié.

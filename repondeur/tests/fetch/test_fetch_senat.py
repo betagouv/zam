@@ -49,12 +49,57 @@ def test_fetch_all():
 
 
 @responses.activate
+def test_fetch_all_commission():
+    from zam_repondeur.fetch.senat.amendements import _fetch_all
+
+    sample_data = read_sample_data("jeu_complet_commission_2017-2018_583.csv")
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/amendements/2017-2018/583/jeu_complet_2017-2018_583.csv",
+        status=404,
+    )
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/amendements/commissions/2017-2018/583/jeu_complet_commission_2017-2018_583.csv",  # noqa
+        body=sample_data,
+        status=200,
+    )
+
+    items = _fetch_all(session="2017-2018", num=583)
+
+    assert len(items) == 434
+
+    assert items[0] == {
+        "Nature ": "Amt",
+        "Numéro ": "COM-1",
+        "Subdivision ": "Article 40",
+        "Alinéa": "36",
+        "Auteur ": "M. FORISSIER, rapporteur",
+        "Au nom de ": "",
+        "Date de dépôt ": "2018-06-21",
+        "Dispositif ": "<body><p>Alin&#233;a 36</p><p>Apr&#232;s le mot :</p><p>services</p><p>Ins&#233;rer les mots :</p><p>ou &#224; des partenariats</p><p></p></body>                                                                                                                                                                                                                ",  # noqa
+        "Objet ": "<body><p>Cet amendement vise &#224; inclure parmi les d&#233;penses pouvant &#234;tre d&#233;duites de la contribution financi&#232;re annuelle, en plus des contrats de sous-traitance et de prestations, les <b>d&#233;penses aff&#233;rentes &#224; des partenariats</b> avec les entreprises adapt&#233;es, les Esat et les travailleurs handicap&#233;s ind&#233;pendants.</p><p>En effet, le nouveau mode de d&#233;duction des montants de ces contrats de la contribution annuelle risque de moins inciter les employeurs &#224; leur conclusion. D'o&#249; l'int&#233;r&#234;t d'&#233;largir cette d&#233;duction aux autres actions qu'ils sont susceptibles de mener aupr&#232;s des EA et des Esat notamment.</p></body>                                                                                                                                                                                                                                                                                                                                                                                                                                                         ",  # noqa
+        "Sort ": "Adopté",
+        "Url amendement ": "//www.senat.fr/amendements/commissions/2017-2018/583/Amdt_COM-1.html",  # noqa
+        "Fiche Sénateur": "//www.senat.fr/senfic/forissier_michel14087w.html",
+    }
+
+
+@responses.activate
 def test_fetch_all_not_found():
     from zam_repondeur.fetch.senat.amendements import _fetch_all, NotFound
 
     responses.add(
         responses.GET,
         "https://www.senat.fr/amendements/2080-2081/42/jeu_complet_2080-2081_42.csv",
+        status=404,
+    )
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/amendements/commissions/2080-2081/42/jeu_complet_commission_2080-2081_42.csv",  # noqa
         status=404,
     )
 

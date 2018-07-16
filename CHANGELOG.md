@@ -2,11 +2,13 @@
 
 ## Prochains évènements
 
-### Atelier « chaîne de validation » : 16 juillet à 14h30.
-
 ### Date de prochaine démonstration : 24 juillet à 15h.
 
 ## Changements récents
+
+### 16 juillet 2018
+
+* intégration d’un nouveau design pour le dossier de banc
 
 ### 12 juillet 2018
 

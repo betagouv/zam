@@ -23,6 +23,7 @@ class Lecture(Base):  # type: ignore
     num_texte = Column(Integer, primary_key=True)
     organe = Column(Text, primary_key=True)
     titre = Column(Text)
+    dossier_legislatif = Column(Text)
     created_at = Column(DateTime)
     modified_at = Column(DateTime)
 
@@ -125,7 +126,13 @@ class Lecture(Base):  # type: ignore
 
     @classmethod
     def create(
-        cls, chambre: str, session: str, num_texte: int, titre: str, organe: str
+        cls,
+        chambre: str,
+        session: str,
+        num_texte: int,
+        titre: str,
+        organe: str,
+        dossier_legislatif: str,
     ) -> "Lecture":
         now = datetime.utcnow()
         lecture = cls(
@@ -134,6 +141,7 @@ class Lecture(Base):  # type: ignore
             num_texte=num_texte,
             titre=titre,
             organe=organe,
+            dossier_legislatif=dossier_legislatif,
             created_at=now,
             modified_at=now,
         )

@@ -9,6 +9,7 @@
 ### 17 juillet 2018
 
 * Correction de bugs signalés par une utilisatrice relatifs aux commissions Sénat
+* Affichage du texte concerné pour la lecture en cours, ⚠︎ remise à zéro des données
 
 ### 16 juillet 2018
 

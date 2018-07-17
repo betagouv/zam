@@ -194,7 +194,11 @@ class ListAmendements:
                     self.request.session.flash(
                         (
                             "warning",
-                            f"{errors_count} réponses n’ont pas pu être chargées",
+                            f"{errors_count} réponses n’ont pas pu être chargées. "
+                            "Pour rappel, il faut que le fichier CSV contienne "
+                            "au moins les noms de colonnes suivants "
+                            "« N° amdt », « Avis du Gouvernement », « Objet amdt » "
+                            "et « Réponse ».",
                         )
                     )
             except CSVError as exc:
@@ -227,9 +231,17 @@ class ListAmendements:
         delimiter = ListAmendements._guess_csv_delimiter(reponses_text_file)
 
         for line in csv.DictReader(reponses_text_file, delimiter=delimiter):
+            try:
+                numero = line["N° amdt"]
+                avis = line["Avis du Gouvernement"]
+                objet = line["Objet amdt"]
+                reponse = line["Réponse"]
+            except KeyError:
+                errors_count += 1
+                continue
 
             try:
-                num = normalize_num(line["N°"])
+                num = normalize_num(numero)
             except ValueError:
                 logging.warning("Invalid amendement number %r", num)
                 errors_count += 1
@@ -241,12 +253,9 @@ class ListAmendements:
                 errors_count += 1
                 continue
 
-            amendement.avis = normalize_avis(line["Avis du Gouvernement"])
-            amendement.observations = clean_html(line["Objet (article / amdt)"])
-            reponse = normalize_reponse(
-                line["Avis et observations de l'administration référente"],
-                previous_reponse,
-            )
+            amendement.avis = normalize_avis(avis)
+            amendement.observations = clean_html(objet)
+            reponse = normalize_reponse(reponse, previous_reponse)
             amendement.reponse = clean_html(reponse)
             previous_reponse = reponse
             reponses_count += 1

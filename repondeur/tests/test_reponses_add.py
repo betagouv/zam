@@ -126,6 +126,28 @@ def test_post_form_with_bom(app, dummy_lecture, dummy_amendements):
     assert "2 réponses chargées" in resp.text
 
 
+def test_post_form_wrong_columns_names(app, dummy_lecture, dummy_amendements):
+    form = app.get("/lectures/an/15/269/PO717460/amendements/list").form
+    path = Path(__file__).parent / "sample_data" / "reponses_wrong_columns_names.csv"
+    form["reponses"] = Upload("file.csv", path.read_bytes())
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert (
+        resp.location == "http://localhost/lectures/an/15/269/PO717460/amendements/list"
+    )
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert (
+        "2 réponses n’ont pas pu être chargées. Pour rappel, il faut que le fichier "
+        "CSV contienne au moins les noms de colonnes suivants « N° amdt », "
+        "« Avis du Gouvernement », « Objet amdt » et « Réponse »." in resp.text
+    )
+
+
 def test_post_form_reponse_no_file(app, dummy_lecture, dummy_amendements):
 
     form = app.get("/lectures/an/15/269/PO717460/amendements/list").form

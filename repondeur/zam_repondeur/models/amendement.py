@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Date, Integer, PickleType, Table, Text
+from sqlalchemy import Boolean, Column, Date, DateTime, Integer, PickleType, Table, Text
 from sqlalchemy.orm import mapper
 from sqlalchemy.schema import ForeignKeyConstraint
 
@@ -87,6 +87,10 @@ amendements_table = Table(
     Column("avis", Text, nullable=True),  # position du gouvernemnt
     Column("observations", Text, nullable=True),
     Column("reponse", Text, nullable=True),
+    #
+    # Informations additionnelles
+    #
+    Column("bookmarked_at", DateTime, nullable=True),
 )
 
 

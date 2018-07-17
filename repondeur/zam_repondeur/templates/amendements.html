@@ -23,6 +23,10 @@
         width: 4rem;
         padding: 0 .25rem;
     }
+    .bookmark input[type="submit"] {
+        border:none;
+        background: inherit;
+    }
 </style>
 {% endblock %}
 
@@ -37,7 +41,7 @@
 {% block body %}
     <h2>{{ lecture }}</h2>
 
-    <form action="" enctype="multipart/form-data" method="post">
+    <form action="" enctype="multipart/form-data" method="post" id="import-form">
         <div class="form-row align-items-center">
             <div class="col-sm-6">
                 <input type="file" class="custom-file-input" id="reponses" name="reponses">
@@ -52,6 +56,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th></th>
                 <th>Article <input class="form-control form-control-sm" type="text"></th>
                 <th>Nº</th>
                 <th>Auteur</th>
@@ -66,13 +71,24 @@
             {%- else -%}
                 {{ amendement.subdiv_type }}
             {%- endif -%}">
+                <td data-sortkey="{{ amendement.bookmarked_at or '' }}" class="bookmark">
+                    <form method="post" action="{{ request.route_url('amendement_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe, num=amendement.num) }}" id="amendement-{{ amendement.num }}">
+                        {% if amendement.bookmarked_at %}
+                            <input type="hidden" name="bookmark" value="0">
+                            <input type="submit" name="submit" title="Cliquer pour enlever le favori" value="★">
+                        {% else %}
+                            <input type="hidden" name="bookmark" value="1">
+                            <input type="submit" name="submit" title="Cliquer pour mettre en favori" value="☆">
+                        {% endif %}
+                    </form>
+                </td>
                 <td data-sortkey="{{ amendement.subdiv_num }}">
-                    {{ amendement.subdiv_disp }}<br>
+                    {{ amendement.subdiv_disp }}
                     {% if amendement.subdiv_titre %}
-                        {{ amendement.subdiv_titre }}<br>
+                        <br>{{ amendement.subdiv_titre }}
                     {% endif %}
                     <a class="action" href="{{ request.route_url('article_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe, subdiv_type=amendement.subdiv_type, subdiv_num=amendement.subdiv_num, subdiv_mult=amendement.subdiv_mult, subdiv_pos=amendement.subdiv_pos) }}">
-                        <i class="fas fa-edit"></i>Éditer
+                        <i class="fas fa-edit"></i>
                     </a>
                 </td>
                 <td data-sortkey="{{ amendement.num }}">
@@ -82,12 +98,16 @@
                 <td>{{ amendement.groupe }}</td>
                 <td>{{ amendement.sort }}</td>
                 <td>
-                    {% if amendement.avis %}
-                        {{ amendement.avis }}<br>
-                    {% endif %}
-                    <a class="action" href="{{ request.route_url('reponse_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe, num=amendement.num) }}">
-                        <i class="fas fa-edit"></i>Éditer
-                    </a>
+                    <nobr>
+                        {% if amendement.avis %}
+                            {{ amendement.avis }}
+                        {% else %}
+                            Aucun
+                        {% endif %}
+                        <a class="action" href="{{ request.route_url('reponse_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe, num=amendement.num) }}">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </nobr>
                 </td>
             </tr>
         {% endfor %}
@@ -140,6 +160,32 @@
         var filename = input.files[0].name
         var label = document.querySelector('label[for="' + input.id + '"]')
         label.innerHTML = filename
+    })
+    var bookmarkForms = table.querySelectorAll('.bookmark form')
+    ;[].slice.call(bookmarkForms).forEach(function (bookmarkForm) {
+        bookmarkForm.addEventListener('submit', function (e) {
+            e.preventDefault()
+            var target = e.target
+            fetch(target.action, {
+                method: 'POST',
+                body: new FormData(target),
+                credentials: 'same-origin'
+            }).then(function(response) {
+                var bookmarkInput = target.querySelector('[name="bookmark"]')
+                var submitInput = target.querySelector('[name="submit"]')
+                if (submitInput.value == '☆') {
+                    submitInput.value = '★'
+                    submitInput.title = 'Cliquer pour enlever le favori'
+                    bookmarkInput.value = '0'
+                    target.parentElement.dataset.sortkey = 1
+                } else {
+                    submitInput.value = '☆'
+                    submitInput.title = 'Cliquer pour mettre en favori'
+                    bookmarkInput.value = '1'
+                    target.parentElement.dataset.sortkey = ''
+                }
+            })
+        })
     })
 </script>
 {% endblock %}

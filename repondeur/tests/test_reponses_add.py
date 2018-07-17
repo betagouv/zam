@@ -12,19 +12,19 @@ def test_get_form(app, dummy_lecture):
     assert resp.content_type == "text/html"
 
     # Check the form
-    assert resp.form.method == "post"
-    assert resp.form.action == ""
+    assert resp.forms["import-form"].method == "post"
+    assert resp.forms["import-form"].action == ""
 
-    assert list(resp.form.fields.keys()) == ["reponses", "upload"]
+    assert list(resp.forms["import-form"].fields.keys()) == ["reponses", "upload"]
 
-    assert isinstance(resp.form.fields["reponses"][0], File)
-    assert resp.form.fields["upload"][0].attrs["type"] == "submit"
+    assert isinstance(resp.forms["import-form"].fields["reponses"][0], File)
+    assert resp.forms["import-form"].fields["upload"][0].attrs["type"] == "submit"
 
 
 def test_post_form(app, dummy_lecture, dummy_amendements):
     from zam_repondeur.models import DBSession, Amendement
 
-    form = app.get("/lectures/an/15/269/PO717460/amendements/list").form
+    form = app.get("/lectures/an/15/269/PO717460/amendements/list").forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
 
@@ -60,7 +60,7 @@ def test_post_form_updates_modification_date(app, dummy_lecture, dummy_amendemen
     with transaction.manager:
         initial_modified_at = dummy_lecture.modified_at
 
-    form = app.get("/lectures/an/15/269/PO717460/amendements/list").form
+    form = app.get("/lectures/an/15/269/PO717460/amendements/list").forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
     form.submit()
@@ -78,7 +78,7 @@ def test_post_form_updates_modification_date(app, dummy_lecture, dummy_amendemen
 def test_post_form_semicolumns(app, dummy_lecture, dummy_amendements):
     from zam_repondeur.models import DBSession, Amendement
 
-    form = app.get("/lectures/an/15/269/PO717460/amendements/list").form
+    form = app.get("/lectures/an/15/269/PO717460/amendements/list").forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_semicolumns.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
 
@@ -109,7 +109,7 @@ def test_post_form_semicolumns(app, dummy_lecture, dummy_amendements):
 
 
 def test_post_form_with_bom(app, dummy_lecture, dummy_amendements):
-    form = app.get("/lectures/an/15/269/PO717460/amendements/list").form
+    form = app.get("/lectures/an/15/269/PO717460/amendements/list").forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_with_bom.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
 
@@ -128,7 +128,7 @@ def test_post_form_with_bom(app, dummy_lecture, dummy_amendements):
 
 def test_post_form_reponse_no_file(app, dummy_lecture, dummy_amendements):
 
-    form = app.get("/lectures/an/15/269/PO717460/amendements/list").form
+    form = app.get("/lectures/an/15/269/PO717460/amendements/list").forms["import-form"]
     resp = form.submit()
 
     assert resp.status_code == 302

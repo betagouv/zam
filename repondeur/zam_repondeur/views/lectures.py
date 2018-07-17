@@ -62,7 +62,9 @@ class LecturesAdd:
         if LectureModel.exists(chambre, session, num_texte, organe):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
         else:
-            LectureModel.create(chambre, session, num_texte, titre, organe)
+            LectureModel.create(
+                chambre, session, num_texte, titre, organe, dossier.titre
+            )
             self.request.session.flash(("success", "Lecture créée avec succès."))
 
         return HTTPFound(

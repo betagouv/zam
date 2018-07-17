@@ -29,7 +29,7 @@
 
 {% block breadcrumbs %}
     <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
-    <li class="breadcrumb-item"><a href="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}">{{ lecture }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}">{{ lecture.dossier_legislatif }} → {{ lecture }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Amendements</li>
 {% endblock %}
 

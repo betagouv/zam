@@ -50,6 +50,7 @@ def test_post_form(app):
     lecture = Lecture.get(chambre="an", session="15", num_texte=269, organe="PO717460")
     assert lecture.chambre == "an"
     assert lecture.titre == "1ère lecture"
+    assert lecture.dossier_legislatif == "Sécurité sociale : loi de financement 2018"
 
 
 def test_post_form_already_exists(app, dummy_lecture):

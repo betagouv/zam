@@ -26,9 +26,8 @@ class TestResponse(BaseTestResponse):
     def parser(self):
         return HTMLParser(self.text)
 
-    @property
-    def first_h1(self) -> str:
-        return self.parser.css_first("h1").text()
+    def first_element(self, name) -> str:
+        return self.parser.css_first(name).text()
 
     def find_amendement(self, amendement):
         anchor = self.parser.css_first(f"#amendement-{amendement.num:06}")

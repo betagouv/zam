@@ -176,6 +176,7 @@ def dummy_lecture(app):
             num_texte=269,
             titre="Titre lecture",
             organe="PO717460",
+            dossier_legislatif="Titre dossier legislatif",
         )
 
     return lecture

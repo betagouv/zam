@@ -48,7 +48,6 @@ def download_amendements(request: Request) -> Response:
         .all()
     )
     fmt = request.matchdict["format"]
-    title = str(lecture)
 
     with NamedTemporaryFile() as file_:
 
@@ -56,7 +55,7 @@ def download_amendements(request: Request) -> Response:
 
         write_func, content_type = DOWNLOAD_FORMATS[fmt]
 
-        write_func(title, amendements, tmp_file_path, request)
+        write_func(lecture, amendements, tmp_file_path, request)
 
         response = FileResponse(tmp_file_path)
         attach_name = (

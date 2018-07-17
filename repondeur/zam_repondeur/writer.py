@@ -14,7 +14,7 @@ from pyramid.request import Request
 from pyramid_jinja2 import get_jinja2_environment
 from xvfbwrapper import Xvfb
 
-from .models import Amendement
+from .models import Amendement, Lecture
 
 
 FIELDS_NAMES = {
@@ -70,7 +70,7 @@ GROUPS_COLORS = {
 
 
 def write_csv(
-    title: str, amendements: Iterable[Amendement], filename: str, request: Request
+    lecture: Lecture, amendements: Iterable[Amendement], filename: str, request: Request
 ) -> int:
     nb_rows = 0
     with open(filename, "w", encoding="utf-8") as file_:
@@ -94,7 +94,7 @@ def xvfb_if_supported() -> Generator:
 
 
 def write_pdf(
-    title: str, amendements: Iterable[Amendement], filename: str, request: Request
+    lecture: Lecture, amendements: Iterable[Amendement], filename: str, request: Request
 ) -> int:
     from zam_repondeur.models.visionneuse import build_tree  # NOQA: circular
 
@@ -102,15 +102,22 @@ def write_pdf(
     articles = build_tree(amendements)
     env = get_jinja2_environment(request, name=".html")
     template = env.get_template("print.html")
-    content = template.render(title=title, articles=articles)
-    options = {"quiet": "", "footer-center": f"{title} • Page [page] sur [topage]"}
+    content = template.render(
+        dossier_legislatif=lecture.dossier_legislatif,
+        lecture=str(lecture),
+        articles=articles,
+    )
+    options = {
+        "quiet": "",
+        "footer-center": f"{lecture.dossier_legislatif} • Page [page] sur [topage]",
+    }
     with xvfb_if_supported():
         pdfkit.from_string(content, filename, options=options)
     return len(amendements)
 
 
 def write_xlsx(
-    title: str, amendements: Iterable[Amendement], filename: str, request: Request
+    lecture: Lecture, amendements: Iterable[Amendement], filename: str, request: Request
 ) -> int:
     wb = Workbook()
     ws = wb.active

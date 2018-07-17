@@ -62,14 +62,21 @@
     margin: 0 auto;
   }
 
-  h1 {
+  header.main {
     text-align: center;
     font-family: "source_serif_pro";
     background: #3167a6;
     color: white;
     margin: 0;
-    padding: 1.4rem 1rem 1rem;
+    padding: 1.4rem 1rem;
   }
+    header.main h1,
+    header.main h2 {
+      line-height: .25;
+    }
+    header.main h2 {
+      font-weight: normal;
+    }
 
   article {
     margin: 1.5rem 1rem;
@@ -394,7 +401,10 @@
 </style>
 {# See https://inclusive-components.design/notifications/ #}
 <div role="status" aria-live="polite"></div>
-<h1>{{ title }}</h1>
+<header class="main">
+  <h1>{{ dossier_legislatif }}</h1>
+  <h2>{{ lecture }}</h2>
+</header>
 <main>
   {% for article in articles.values() %}
     <section id="{{ article.slug }}">

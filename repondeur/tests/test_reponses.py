@@ -8,7 +8,8 @@ def test_reponses_empty(app, dummy_lecture, dummy_amendements):
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert resp.status_code == 200
-    assert resp.first_h1 == str(dummy_lecture)
+    assert resp.first_element("h1") == dummy_lecture.dossier_legislatif
+    assert resp.first_element("h2") == str(dummy_lecture)
     assert resp.find_amendement(dummy_amendements[0]) is None
     assert resp.find_amendement(dummy_amendements[1]) is None
 
@@ -26,7 +27,8 @@ def test_reponses_full(app, dummy_lecture, dummy_amendements):
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
     assert resp.status_code == 200
-    assert resp.first_h1 == str(dummy_lecture)
+    assert resp.first_element("h1") == dummy_lecture.dossier_legislatif
+    assert resp.first_element("h2") == str(dummy_lecture)
 
     test_amendement = resp.find_amendement(dummy_amendements[0])
     assert test_amendement is not None
@@ -48,8 +50,6 @@ def test_reponses_gouvernemental(app, dummy_lecture, dummy_amendements):
         DBSession.add_all(dummy_amendements)
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
-
-    assert resp.first_h1 == str(dummy_lecture)
 
     test_amendement = resp.find_amendement(dummy_amendements[0])
     assert test_amendement is not None
@@ -77,8 +77,6 @@ def test_reponses_abandonned_not_displayed(app, dummy_lecture, dummy_amendements
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
-    assert resp.first_h1 == str(dummy_lecture)
-
     test_amendement = resp.find_amendement(dummy_amendements[0])
     assert test_amendement is not None
     assert test_amendement.number_is_in_title()
@@ -105,7 +103,6 @@ def test_reponses_abandonned_and_gouvernemental_not_displayed(
 
     resp = app.get("http://localhost/lectures/an/15/269/PO717460/reponses")
 
-    assert resp.first_h1 == str(dummy_lecture)
     test_amendement = resp.find_amendement(dummy_amendements[0])
     assert test_amendement is not None
     assert test_amendement.number_is_in_title()

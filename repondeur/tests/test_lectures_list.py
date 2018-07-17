@@ -55,6 +55,7 @@ def test_get_list_reverse_datetime_order(app, dummy_lecture):
             num_texte=dummy_lecture.num_texte + 1,
             titre="Titre lecture 2",
             organe=dummy_lecture.organe,
+            dossier_legislatif=dummy_lecture.dossier_legislatif,
         )
         title2 = str(lecture2)
         DBSession.add(lecture2)

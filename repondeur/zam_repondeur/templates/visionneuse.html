@@ -62,13 +62,13 @@
     margin: 0 auto;
   }
 
-  h1 {
+  header.main {
     text-align: center;
     font-family: "source_serif_pro";
     background: #3167a6;
     color: white;
     margin: 0;
-    padding: 1.4rem 1rem 1rem;
+    padding: 1.4rem 1rem;
   }
 
   article {
@@ -90,6 +90,13 @@
   }
   header p {
     margin: 0;
+  }
+  input[type="submit"] {
+    padding: .5rem 1rem;
+    border: 2px solid white;
+    color: white;
+    background-color: #3167a6;
+    border-radius: .3rem;
   }
 
   section > header {
@@ -376,25 +383,31 @@
     text-transform: uppercase;
     font-size: small;
   }
-[role="status"] {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  z-index: 3;
-}
-  [role="status"] p {
-    margin: 0;
-    padding: 2rem 1rem;
-    text-align: center;
-    background: orange;
-    font-size: large;
-    font-weight: bold;
-    border: 2px solid #ec644b;
+  [role="status"] {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 3;
   }
+    [role="status"] p {
+      margin: 0;
+      padding: 2rem 1rem;
+      text-align: center;
+      background: orange;
+      font-size: large;
+      font-weight: bold;
+      border: 2px solid #ec644b;
+    }
 </style>
 {# See https://inclusive-components.design/notifications/ #}
 <div role="status" aria-live="polite"></div>
-<h1>{{ title }}</h1>
+<header class="main">
+  <h1>{{ title }}</h1>
+  <form method="get" role="search" action="">
+    <input name="q" id="q" type="number" min="1" step="1" required placeholder="Numéro">
+    <input type="submit" name="submit" value="↓ Aller à l’amendement">
+  </form>
+</header>
 <main>
   {% for article in articles.values() %}
     <section id="{{ article.slug }}">
@@ -460,7 +473,12 @@
           {% endif %}
           {% set multiple = amendements|length > 1 %}
           <header class="reponse {{ avis_class }}">
-            <div>
+            <div
+            {%- for amendement in amendements %}
+              data-amendement-{{ amendement.id }}="{{ amendement }}"
+            {% endfor -%}
+            data-anchor="amendement-{{ amendements[0].pk }}"
+            >
               <a href="#amendement-{{ amendements[0].pk }}"
                  class="button"
                  data-toggle-target="amendement-detail-{{ amendements[0].pk }}">
@@ -674,6 +692,21 @@
         })
     }
     setInterval(check, delay)
+  })()
+  ;(function jumpToAmendement () {
+    const form = document.querySelector('header.main form')
+    form.addEventListener('submit', function (e) {
+      e.preventDefault()
+      const form = e.target
+      const data = new FormData(form)
+      const value = data.get('q').trim()
+      const amendement = document.querySelector(`[data-amendement-${value}]`)
+      if (amendement) {
+        document.querySelector(`#${amendement.dataset.anchor}`).scrollIntoView()
+        form.reset()
+      }
+    })
+
   })()
 </script>
 </html>

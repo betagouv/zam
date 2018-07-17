@@ -6,16 +6,20 @@
 
 ## Changements récents
 
+### 17 juillet 2018
+
+* Correction de bugs signalés par une utilisatrice relatifs aux commissions Sénat
+
 ### 16 juillet 2018
 
-* intégration d’un nouveau design pour le dossier de banc
+* Intégration d’un nouveau design pour le dossier de banc
 
 ### 12 juillet 2018
 
-* génération d’un export PDF basique prêt pour l’impression du dossier de banc
+* Génération d’un export PDF basique prêt pour l’impression du dossier de banc
 
 ### 10 juillet 2018
 
-* édition des titres des articles depuis la liste des amendements
+* Édition des titres des articles depuis la liste des amendements
 
 <h2 class="center">[Accès au répondeur](/repondeur/) — [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>

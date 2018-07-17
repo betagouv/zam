@@ -70,6 +70,14 @@
     margin: 0;
     padding: 1.4rem 1rem;
   }
+    header.main h1,
+    header.main h2 {
+      line-height: .25;
+    }
+    header.main h2 {
+      font-weight: normal;
+      margin-bottom: 1rem;
+    }
 
   article {
     margin: 1.5rem 1rem;
@@ -402,7 +410,8 @@
 {# See https://inclusive-components.design/notifications/ #}
 <div role="status" aria-live="polite"></div>
 <header class="main">
-  <h1>{{ title }}</h1>
+  <h1>{{ dossier_legislatif }}</h1>
+  <h2>{{ lecture }}</h2>
   <form method="get" role="search" action="">
     <input name="q" id="q" type="number" min="1" step="1" required placeholder="Numéro">
     <input type="submit" name="submit" value="↓ Aller à l’amendement">

@@ -16,6 +16,7 @@
     <table class="table table-striped table-bordered table-hover">
         <thead>
             <tr>
+                <th scope="col">Dossier législatif</th>
                 <th scope="col">Lecture</th>
                 <th scope="col">Dossier de banc</th>
             </tr>
@@ -23,6 +24,7 @@
       <tbody>
             {% for lecture in lectures %}
             <tr>
+                <td>{{ lecture.dossier_legislatif }}</td>
                 <td>
                     <a href="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}">{{ lecture }}</a>
                 </td>

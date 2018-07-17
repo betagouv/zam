@@ -46,7 +46,8 @@ def list_reponses(request: Request) -> Response:
         organe=lecture.organe,
     )
     return {
-        "title": str(lecture),
+        "dossier_legislatif": lecture.dossier_legislatif,
+        "lecture": str(lecture),
         "articles": articles,
         "timestamp": lecture.modified_at_timestamp,
         "check_url": check_url,

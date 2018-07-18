@@ -6,6 +6,12 @@
 
 ## Changements récents
 
+### 18 juillet 2018
+
+* Nouvelle [spécification d’import pour le nom des colonnes du tableau des réponses](https://github.com/betagouv/zam/pull/88#issue-202058312)
+* Possibilité de mettre un signet sur un ou plusieurs amendements depuis la liste, ⚠︎ remise à zéro des données
+* Possibilité d’accéder à un amendement dans la visionneuse à partir de son numéro
+
 ### 17 juillet 2018
 
 * Correction de bugs signalés par une utilisatrice relatifs aux commissions Sénat

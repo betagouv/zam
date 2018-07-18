@@ -406,6 +406,14 @@
       font-weight: bold;
       border: 2px solid #ec644b;
     }
+  .error {
+    border: 1px solid red;
+    background: white;
+    color: red;
+  }
+  .hide {
+    display: none;
+  }
 </style>
 {# See https://inclusive-components.design/notifications/ #}
 <div role="status" aria-live="polite"></div>
@@ -415,6 +423,7 @@
   <form method="get" role="search" action="">
     <input name="q" id="q" type="number" min="1" step="1" required placeholder="Numéro">
     <input type="submit" name="submit" value="↓ Aller à l’amendement">
+    <p class="error hide">Amendement non trouvé.</p>
   </form>
 </header>
 <main>
@@ -704,7 +713,8 @@
   })()
   ;(function jumpToAmendement () {
     const form = document.querySelector('header.main form')
-    form.addEventListener('submit', function (e) {
+    const input = form.querySelector('input[name="q"]')
+    form.addEventListener('submit', e => {
       e.preventDefault()
       const form = e.target
       const data = new FormData(form)
@@ -713,7 +723,12 @@
       if (amendement) {
         document.querySelector(`#${amendement.dataset.anchor}`).scrollIntoView()
         form.reset()
+      } else {
+        form.querySelector('.error').classList.remove('hide')
       }
+    })
+    input.addEventListener('keydown', e => {
+      input.parentElement.querySelector('.error').classList.add('hide')
     })
 
   })()

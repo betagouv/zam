@@ -8,7 +8,7 @@ def test_get_reponse_edit_form(app, dummy_lecture, dummy_amendements):
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
-    assert resp.form.method == "POST"
+    assert resp.forms["edit-reponse"].method == "POST"
 
 
 def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
@@ -20,9 +20,10 @@ def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
     assert amendement.observations is None
     assert amendement.reponse is None
 
-    form = app.get(
+    resp = app.get(
         "http://localhost/lectures/an/15/269/PO717460/amendements/999/reponse"
-    ).form
+    )
+    form = resp.forms["edit-reponse"]
     form["avis"] = "Favorable"
     form["observations"] = "Des observations très pertinentes"
     form["reponse"] = "Une réponse très appropriée"
@@ -47,9 +48,10 @@ def test_post_reponse_edit_form_updates_modification_date(
     with transaction.manager:
         initial_modified_at = dummy_lecture.modified_at
 
-    form = app.get(
+    resp = app.get(
         "http://localhost/lectures/an/15/269/PO717460/amendements/999/reponse"
-    ).form
+    )
+    form = resp.forms["edit-reponse"]
     form["avis"] = "Favorable"
     form["observations"] = "Des observations très pertinentes"
     form["reponse"] = "Une réponse très appropriée"

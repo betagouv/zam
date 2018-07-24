@@ -8,21 +8,22 @@ def test_get_form(app):
     assert resp.content_type == "text/html"
 
     # Check the form
-    assert resp.form.method == "POST"
-    assert resp.form.action == "/lectures/add"
+    form = resp.forms["add-lecture"]
+    assert form.method == "POST"
+    assert form.action == "/lectures/add"
 
-    assert list(resp.form.fields.keys()) == ["dossier", "lecture", "submit"]
+    assert list(form.fields.keys()) == ["dossier", "lecture", "submit"]
 
-    assert isinstance(resp.form.fields["dossier"][0], Select)
-    assert resp.form.fields["dossier"][0].options == [
+    assert isinstance(form.fields["dossier"][0], Select)
+    assert form.fields["dossier"][0].options == [
         ("", True, ""),
         ("DLR5L15N36030", False, "Sécurité sociale : loi de financement 2018"),
     ]
 
-    assert isinstance(resp.form.fields["lecture"][0], Select)
-    assert resp.form.fields["lecture"][0].options == [("", True, "")]
+    assert isinstance(form.fields["lecture"][0], Select)
+    assert form.fields["lecture"][0].options == [("", True, "")]
 
-    assert resp.form.fields["submit"][0].attrs["type"] == "submit"
+    assert form.fields["submit"][0].attrs["type"] == "submit"
 
 
 def test_post_form(app):

@@ -93,7 +93,7 @@
 {% macro form(amendement) %}
     <h4>Réponse</h4>
 
-    <form action="{{ request.path }}" method="POST" class="mt-3">
+    <form id="edit-reponse" action="{{ request.path }}" method="POST" class="mt-3">
         <div class="form-group">
             <label for="avis">Position du gouvernement</label>
             <select name="avis" class="form-control">

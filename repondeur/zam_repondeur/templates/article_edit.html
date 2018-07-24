@@ -37,7 +37,7 @@
 
 
 {% macro form(amendement) %}
-    <form action="{{ request.path }}" method="post" class="mt-3">
+    <form id="edit-article-title" action="{{ request.path }}" method="post" class="mt-3">
         <div class="form-group">
             <label for="subdiv_titre">Titre de l’article</label>
             <textarea name="subdiv_titre" class="form-control">{{ amendement.subdiv_titre or "" | safe }}</textarea>

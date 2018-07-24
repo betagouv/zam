@@ -3,7 +3,7 @@ def test_get_article_edit_form(app, dummy_lecture, dummy_amendements):
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
-    assert resp.form.method == "post"
+    assert resp.forms["edit-article-title"].method == "post"
 
 
 def test_post_article_edit_form(app, dummy_lecture, dummy_amendements):
@@ -13,9 +13,8 @@ def test_post_article_edit_form(app, dummy_lecture, dummy_amendements):
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.subdiv_titre == ""
 
-    form = app.get(
-        "http://localhost/lectures/an/15/269/PO717460/articles/article/1//"
-    ).form
+    resp = app.get("http://localhost/lectures/an/15/269/PO717460/articles/article/1//")
+    form = resp.forms["edit-article-title"]
     form["subdiv_titre"] = "Titre article"
     resp = form.submit()
 

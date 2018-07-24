@@ -66,11 +66,10 @@ def test_fetch_and_parse_all():
         status=200,
     )
 
-    title, amendements, errored = fetch_and_parse_all(
+    amendements, errored = fetch_and_parse_all(
         legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
     )
 
-    assert title == "PLFSS 2017"
     assert len(amendements) == 7
     assert amendements[0].num == 177
     assert amendements[1].num == 270
@@ -132,11 +131,10 @@ def test_fetch_and_parse_all_with_404():
         status=200,
     )
 
-    title, amendements, errored = fetch_and_parse_all(
+    amendements, errored = fetch_and_parse_all(
         legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
     )
 
-    assert title == "PLFSS 2017"
     assert len(amendements) == 6
     assert amendements[0].num == 177
     assert amendements[1].num == 723
@@ -160,11 +158,10 @@ def test_fetch_amendements():
         status=200,
     )
 
-    title, items = fetch_amendements(
+    items = fetch_amendements(
         legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
     )
 
-    assert title == "PLFSS 2017"
     assert len(items) == 7
     assert items[0] == {
         "@alineaLabel": "S",

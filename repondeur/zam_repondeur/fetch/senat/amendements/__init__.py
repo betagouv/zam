@@ -1,11 +1,9 @@
 import csv
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple
-from urllib.parse import urljoin
+from typing import Any, Dict, Iterable, Iterator, List, Optional
 
 import requests
-from selectolax.parser import HTMLParser
 
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.fetch.models import Amendement
@@ -17,50 +15,17 @@ from .parse import parse_from_csv, parse_from_json
 BASE_URL = "https://www.senat.fr"
 
 
-def aspire_senat(session: str, num: int, organe: str) -> Tuple[str, List[Amendement]]:
-    print("Récupération du titre...")
-    title = _fetch_title(session, num)
-
+def aspire_senat(session: str, num: int, organe: str) -> List[Amendement]:
     print("Récupération des amendements déposés...")
     try:
         amendements = _fetch_and_parse_all(session, num, organe)
     except NotFound:
-        return "", []
+        return []
 
     processed_amendements = _process_amendements(
         amendements=amendements, session=session, num=num, organe=organe
     )
-    return title, list(processed_amendements)
-
-
-def _fetch_title(session: str, num: int) -> str:
-    """
-    Récupère le titre du projet de loi de puis le site du Sénat.
-    """
-    url = f"{BASE_URL}/dossiers-legislatifs/depots/depots-{session[:4]}.html"
-
-    resp = requests.get(url)
-    if resp.status_code == HTTPStatus.NOT_FOUND:
-        raise NotFound(url)
-
-    project_url = None
-    for link in HTMLParser(resp.content).css(".flgris span a"):
-        if link.text() == f"N°\xa0{num}":
-            project_url = link.attributes.get("href")
-            break
-
-    if not project_url:
-        return "Unknown"
-
-    url = urljoin(BASE_URL, project_url)
-
-    resp = requests.get(url)
-    if resp.status_code == HTTPStatus.NOT_FOUND:
-        raise NotFound(url)
-
-    title: str = HTMLParser(resp.content).css_first("h1").text()
-
-    return title
+    return list(processed_amendements)
 
 
 def _fetch_and_parse_all(session: str, num: int, organe: str) -> List[Amendement]:

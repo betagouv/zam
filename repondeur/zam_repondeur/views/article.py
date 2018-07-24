@@ -3,26 +3,18 @@ from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
-from zam_repondeur.models import DBSession, Amendement, Lecture
+from zam_repondeur.models import DBSession, Amendement
+from zam_repondeur.resources import ArticleResource
 
 
-@view_defaults(route_name="article_edit")
+@view_defaults(context=ArticleResource)
 class ArticleEdit:
-    def __init__(self, request: Request) -> None:
+    def __init__(self, context: ArticleResource, request: Request) -> None:
+        self.context = context
         self.request = request
-        self.lecture = Lecture.get(
-            chambre=request.matchdict["chambre"],
-            session=request.matchdict["session"],
-            num_texte=int(request.matchdict["num_texte"]),
-            organe=request.matchdict["organe"],
-        )
-        if self.lecture is None:
-            raise HTTPBadRequest
 
-        subdiv_type = request.matchdict["subdiv_type"]
-        subdiv_num = request.matchdict["subdiv_num"]
-        subdiv_mult = request.matchdict["subdiv_mult"]
-        subdiv_pos = request.matchdict["subdiv_pos"]
+        self.lecture = context.lecture_resource.model()
+
         self.amendements = (
             DBSession.query(Amendement)
             .filter(
@@ -30,10 +22,10 @@ class ArticleEdit:
                 Amendement.session == self.lecture.session,
                 Amendement.num_texte == self.lecture.num_texte,
                 Amendement.organe == self.lecture.organe,
-                Amendement.subdiv_type == subdiv_type,
-                Amendement.subdiv_num == subdiv_num,
-                Amendement.subdiv_mult == subdiv_mult,
-                Amendement.subdiv_pos == subdiv_pos,
+                Amendement.subdiv_type == self.context.subdiv_type,
+                Amendement.subdiv_num == self.context.subdiv_num,
+                Amendement.subdiv_mult == self.context.subdiv_mult,
+                Amendement.subdiv_pos == self.context.subdiv_pos,
             )
             .all()
         )
@@ -50,12 +42,5 @@ class ArticleEdit:
         for amendement in self.amendements:
             amendement.subdiv_titre = subdiv_titre
         self.request.session.flash(("success", "Titre mis à jour avec succès."))
-        return HTTPFound(
-            location=self.request.route_url(
-                "list_amendements",
-                chambre=self.lecture.chambre,
-                session=self.lecture.session,
-                num_texte=self.lecture.num_texte,
-                organe=self.lecture.organe,
-            )
-        )
+        resource = self.context.lecture_resource["amendements"]
+        return HTTPFound(location=self.request.resource_url(resource))

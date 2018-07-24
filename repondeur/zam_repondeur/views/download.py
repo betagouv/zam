@@ -1,13 +1,14 @@
 import os
 from tempfile import NamedTemporaryFile
 
-from pyramid.httpexceptions import HTTPNotFound
+from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.request import Request
 from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
 from sqlalchemy.sql.expression import case
 
-from zam_repondeur.models import DBSession, Amendement, Lecture
+from zam_repondeur.models import DBSession, Amendement
+from zam_repondeur.resources import LectureResource
 from zam_repondeur.writer import write_csv, write_pdf, write_xlsx
 
 
@@ -21,16 +22,9 @@ DOWNLOAD_FORMATS = {
 }
 
 
-@view_config(route_name="download_amendements")
-def download_amendements(request: Request) -> Response:
-    lecture = Lecture.get(
-        chambre=request.matchdict["chambre"],
-        session=request.matchdict["session"],
-        num_texte=int(request.matchdict["num_texte"]),
-        organe=request.matchdict["organe"],
-    )
-    if lecture is None:
-        raise HTTPNotFound
+@view_config(context=LectureResource, name="download_amendements")
+def download_amendements(context: LectureResource, request: Request) -> Response:
+    lecture = context.model()
 
     amendements = (
         DBSession.query(Amendement)
@@ -47,7 +41,10 @@ def download_amendements(request: Request) -> Response:
         )
         .all()
     )
-    fmt = request.matchdict["format"]
+
+    fmt: str = request.params.get("format", "")
+    if fmt not in ("csv", "xlsx", "pdf"):
+        raise HTTPBadRequest(f'Invalid value "{fmt}" for "format" param')
 
     with NamedTemporaryFile() as file_:
 

@@ -54,7 +54,4 @@ server {
         proxy_temp_file_write_size 64k;
     }
 
-    # We have some routes where consecutive slashes are meaningful
-    # so we don't want nginx to normalize them and cause 404's
-    merge_slashes off;
 }

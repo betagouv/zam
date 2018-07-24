@@ -3,12 +3,20 @@ import transaction
 
 def test_get_reponse_edit_form(app, dummy_lecture, dummy_amendements):
     resp = app.get(
-        "http://localhost/lectures/an/15/269/PO717460/amendements/999/reponse"
+        "http://localhost/lectures/an.15.269.PO717460/amendements/999/reponse"
     )
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
     assert resp.forms["edit-reponse"].method == "POST"
+
+
+def test_get_reponse_edit_form_not_found(app, dummy_lecture, dummy_amendements):
+    resp = app.get(
+        "http://localhost/lectures/an.15.269.PO717460/amendements/998/reponse",
+        expect_errors=True,
+    )
+    assert resp.status_code == 404
 
 
 def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
@@ -21,7 +29,7 @@ def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
     assert amendement.reponse is None
 
     resp = app.get(
-        "http://localhost/lectures/an/15/269/PO717460/amendements/999/reponse"
+        "http://localhost/lectures/an.15.269.PO717460/amendements/999/reponse"
     )
     form = resp.forms["edit-reponse"]
     form["avis"] = "Favorable"
@@ -30,9 +38,7 @@ def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert (
-        resp.location == "http://localhost/lectures/an/15/269/PO717460/amendements/list"
-    )
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.avis == "Favorable"
@@ -49,7 +55,7 @@ def test_post_reponse_edit_form_updates_modification_date(
         initial_modified_at = dummy_lecture.modified_at
 
     resp = app.get(
-        "http://localhost/lectures/an/15/269/PO717460/amendements/999/reponse"
+        "http://localhost/lectures/an.15.269.PO717460/amendements/999/reponse"
     )
     form = resp.forms["edit-reponse"]
     form["avis"] = "Favorable"

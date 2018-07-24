@@ -5,7 +5,7 @@ import responses
 
 
 def test_get_form(app, dummy_lecture, dummy_amendements):
-    resp = app.get("/lectures/an/15/269/PO717460/")
+    resp = app.get("/lectures/an.15.269.PO717460/")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -13,7 +13,7 @@ def test_get_form(app, dummy_lecture, dummy_amendements):
     assert resp.forms["retrieve-textes"].method == "post"
     assert (
         resp.forms["retrieve-textes"].action
-        == "http://localhost/lectures/an/15/269/PO717460/articles/fetch"
+        == "http://localhost/lectures/an.15.269.PO717460/fetch_articles"
     )
 
     assert list(resp.forms["retrieve-textes"].fields.keys()) == ["fetch"]
@@ -34,12 +34,12 @@ def test_post_form(app, dummy_lecture, dummy_amendements):
         status=200,
     )
 
-    form = app.get("/lectures/an/15/269/PO717460/").forms["retrieve-textes"]
+    form = app.get("/lectures/an.15.269.PO717460/").forms["retrieve-textes"]
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an/15/269/PO717460/"
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/"
 
     resp = resp.follow()
 
@@ -87,12 +87,12 @@ def test_post_form_seance(app, dummy_lecture, dummy_amendements):
         status=200,
     )
 
-    form = app.get("/lectures/an/15/575/PO717460/").forms["retrieve-textes"]
+    form = app.get("/lectures/an.15.575.PO717460/").forms["retrieve-textes"]
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an/15/575/PO717460/"
+    assert resp.location == "http://localhost/lectures/an.15.575.PO717460/"
 
     resp = resp.follow()
 
@@ -135,12 +135,12 @@ def test_post_form_senat(app, dummy_lecture, dummy_amendements):
         status=200,
     )
 
-    form = app.get("/lectures/senat/2017-2018/63/PO78718/").forms["retrieve-textes"]
+    form = app.get("/lectures/senat.2017-2018.63.PO78718/").forms["retrieve-textes"]
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/senat/2017-2018/63/PO78718/"
+    assert resp.location == "http://localhost/lectures/senat.2017-2018.63.PO78718/"
 
     resp = resp.follow()
 
@@ -184,12 +184,12 @@ def test_post_form_senat_with_mult(app, dummy_lecture, dummy_amendements):
         status=200,
     )
 
-    form = app.get("/lectures/senat/2017-2018/63/PO78718/").forms["retrieve-textes"]
+    form = app.get("/lectures/senat.2017-2018.63.PO78718/").forms["retrieve-textes"]
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/senat/2017-2018/63/PO78718/"
+    assert resp.location == "http://localhost/lectures/senat.2017-2018.63.PO78718/"
 
     resp = resp.follow()
 

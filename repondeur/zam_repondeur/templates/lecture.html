@@ -19,12 +19,6 @@
 {% endblock %}
 
 
-{% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{ lecture.dossier_legislatif }} → {{ lecture }}</li>
-{% endblock %}
-
-
 {% block body %}
     <h2>{{ lecture }}</h2>
 
@@ -37,11 +31,11 @@
             <div class="card-text">
                 <p>{{ amendements_count }} amendements déposés.</p>
                 <p>
-                    <a class="btn btn-primary" href="{{ request.route_url('list_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}">Consulter la liste</a>
+                    <a class="btn btn-primary" href="{{ request.resource_url(context['amendements']) }}">Consulter la liste</a>
                     {% if lecture.displayable %}
-                        <a class="btn btn-primary" href="{{ request.route_url('list_reponses', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}" target="_blank">Visualiser les réponses</a>
+                        <a class="btn btn-primary" href="{{ request.resource_url(context, 'reponses') }}" target="_blank">Visualiser les réponses</a>
                     {% endif %}
-                    <form method="post" action="{{ request.route_url('fetch_articles', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}" id="retrieve-textes">
+                    <form method="post" action="{{ request.resource_url(context, 'fetch_articles') }}" id="retrieve-textes">
                         <input type="submit" name="fetch" class="btn btn-primary" value="Récupérer le texte des articles">
                     </form>
                 </p>
@@ -64,7 +58,7 @@
                     du Sénat
                 {%- endif -%}
                 .</p>
-                <form method="POST" action="{{ request.route_url('fetch_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}">
+                <form method="POST" action="{{ request.resource_url(context, 'fetch_amendements') }}">
                     <input type="submit" class="btn btn-primary" value="{{ verbe }}">
                 </form>
             </div>
@@ -79,9 +73,9 @@
                 <h4>Télécharger un tableau</h4>
             </div>
                 <p>Télécharger un tableau de tous les amendements déposés, triés par ordre de passage.</p>
-                <a class="btn btn-primary" href="{{ request.route_url('download_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe, format='csv') }}"><i class="fa fa-table"></i>Télécharger (CSV)</a>
-                <a class="btn btn-primary" href="{{ request.route_url('download_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe, format='xlsx') }}"><i class="fa fa-file-excel"></i>Télécharger (Excel)</a>
-                <a class="btn btn-primary" href="{{ request.route_url('download_amendements', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe, format='pdf') }}"><i class="fa fa-file-pdf"></i>Télécharger (PDF)</a>
+                <a class="btn btn-primary" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'csv'}) }}"><i class="fa fa-table"></i>Télécharger (CSV)</a>
+                <a class="btn btn-primary" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'xlsx'}) }}"><i class="fa fa-file-excel"></i>Télécharger (Excel)</a>
+                <a class="btn btn-primary" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'pdf'}) }}"><i class="fa fa-file-pdf"></i>Télécharger (PDF)</a>
             </div>
         </div>
     </div>
@@ -91,7 +85,7 @@
             <div class="card-title">
                 <h4>⚠️ Zone de danger</h4>
             </div>
-                <form method="post" action="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}" id="delete-lecture">
+                <form method="post" action="" id="delete-lecture">
                     <input type="submit" class="btn btn-light btn-sm" value="Supprimer la lecture ainsi que tous les amendements et réponses associés">
                 </form>
             </div>

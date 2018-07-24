@@ -31,13 +31,6 @@
 {% endblock %}
 
 
-{% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{ request.route_url('lectures_list') }}">Lectures</a></li>
-    <li class="breadcrumb-item"><a href="{{ request.route_url('lecture', chambre=lecture.chambre, session=lecture.session, num_texte=lecture.num_texte, organe=lecture.organe) }}">{{ lecture.dossier_legislatif }} → {{ lecture }}</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Amendements</li>
-{% endblock %}
-
-
 {% block body %}
     <h2>{{ lecture }}</h2>
 
@@ -72,7 +65,7 @@
                 {{ amendement.subdiv_type }}
             {%- endif -%}">
                 <td data-sortkey="{{ amendement.bookmarked_at or '' }}" class="bookmark">
-                    <form method="post" action="{{ request.route_url('amendement_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe, num=amendement.num) }}" id="amendement-{{ amendement.num }}">
+                    <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">
                         {% if amendement.bookmarked_at %}
                             <input type="hidden" name="bookmark" value="0">
                             <input type="submit" name="submit" title="Cliquer pour enlever le favori" value="★">
@@ -87,7 +80,7 @@
                     {% if amendement.subdiv_titre %}
                         <br>{{ amendement.subdiv_titre }}
                     {% endif %}
-                    <a class="action" href="{{ request.route_url('article_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe, subdiv_type=amendement.subdiv_type, subdiv_num=amendement.subdiv_num, subdiv_mult=amendement.subdiv_mult, subdiv_pos=amendement.subdiv_pos) }}">
+                    <a class="action" href="{{ request.resource_url(context.parent['articles'][amendement.article_url_key]) }}">
                         <i class="fas fa-edit"></i>
                     </a>
                 </td>
@@ -104,7 +97,7 @@
                         {% else %}
                             Aucun
                         {% endif %}
-                        <a class="action" href="{{ request.route_url('reponse_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe, num=amendement.num) }}">
+                        <a class="action" href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
                             <i class="fas fa-edit"></i>
                         </a>
                     </nobr>

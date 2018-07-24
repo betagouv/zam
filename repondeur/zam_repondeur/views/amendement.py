@@ -1,50 +1,20 @@
 from datetime import datetime
 
-from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
-from pyramid.view import view_config, view_defaults
+from pyramid.view import view_config
 
-from zam_repondeur.models import DBSession, Amendement as AmendementModel, Lecture
+from zam_repondeur.resources import AmendementResource
 
 
-@view_defaults(route_name="amendement_edit")
-class AmendementEdit:
-    def __init__(self, request: Request) -> None:
-        self.request = request
-        self.lecture = Lecture.get(
-            chambre=request.matchdict["chambre"],
-            session=request.matchdict["session"],
-            num_texte=int(request.matchdict["num_texte"]),
-            organe=request.matchdict["organe"],
-        )
-        if self.lecture is None:
-            raise HTTPBadRequest
+@view_config(context=AmendementResource, request_method="POST")
+def update_amendement(context: AmendementResource, request: Request) -> Response:
+    amendement = context.model()
 
-        num = int(request.matchdict["num"])
-        self.amendement = (
-            DBSession.query(AmendementModel)
-            .filter(
-                AmendementModel.chambre == self.lecture.chambre,
-                AmendementModel.session == self.lecture.session,
-                AmendementModel.num_texte == self.lecture.num_texte,
-                AmendementModel.organe == self.lecture.organe,
-                AmendementModel.num == num,
-            )
-            .first()
-        )
-        if self.amendement is None:
-            raise HTTPNotFound
+    if int(request.POST["bookmark"]):
+        amendement.bookmarked_at = datetime.utcnow()
+    else:
+        amendement.bookmarked_at = None
 
-    @view_config(request_method="POST")
-    def post(self) -> Response:
-        if int(self.request.POST["bookmark"]):
-            self.amendement.bookmarked_at = datetime.utcnow()
-        else:
-            self.amendement.bookmarked_at = None
-        return HTTPFound(
-            location=self.request.resource_url(
-                self.request.root["lectures"][self.amendement.lecture_url_key],
-                "amendements",
-            )
-        )
+    return HTTPFound(location=request.resource_url(context.parent))

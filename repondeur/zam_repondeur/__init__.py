@@ -30,11 +30,6 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
 
         config.add_route("choices_lectures", "/choices/dossiers/{uid}/")
 
-        config.add_route(
-            "amendement_edit",
-            "/lectures/{chambre}.{session}.{num_texte:\d+}.{organe}/amendements/{num:\d+}",  # noqa
-        )
-
         config.add_static_view("static", "static", cache_max_age=3600)
 
         config.scan()

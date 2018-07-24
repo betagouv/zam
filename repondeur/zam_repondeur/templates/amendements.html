@@ -65,7 +65,7 @@
                 {{ amendement.subdiv_type }}
             {%- endif -%}">
                 <td data-sortkey="{{ amendement.bookmarked_at or '' }}" class="bookmark">
-                    <form method="post" action="{{ request.route_url('amendement_edit', chambre=amendement.chambre, session=amendement.session, num_texte=amendement.num_texte, organe=amendement.organe, num=amendement.num) }}" id="amendement-{{ amendement.num }}">
+                    <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">
                         {% if amendement.bookmarked_at %}
                             <input type="hidden" name="bookmark" value="0">
                             <input type="submit" name="submit" title="Cliquer pour enlever le favori" value="★">
@@ -97,7 +97,7 @@
                         {% else %}
                             Aucun
                         {% endif %}
-                        <a class="action" href="{{ request.resource_url(context[amendement.num], 'reponse') }}">
+                        <a class="action" href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
                             <i class="fas fa-edit"></i>
                         </a>
                     </nobr>

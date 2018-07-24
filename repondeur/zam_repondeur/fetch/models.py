@@ -1,6 +1,6 @@
 import re
 from dataclasses import asdict, dataclass, fields, replace
-from datetime import date
+from datetime import date, datetime
 from typing import Iterable, NamedTuple, Optional, Tuple
 
 
@@ -46,6 +46,8 @@ class Amendement:
     observations: Optional[str] = None
     reponse: Optional[str] = None
 
+    bookmarked_at: Optional[datetime] = None
+
     @property
     def num_disp(self) -> str:
         text = str(self.num)
@@ -57,6 +59,10 @@ class Amendement:
             text += " "
             text += self._RECTIF_TO_SUFFIX[self.rectif]
         return text
+
+    @property
+    def num_str(self) -> str:
+        return str(self.num)
 
     @property
     def subdiv_disp(self) -> str:

@@ -1,4 +1,4 @@
-from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
@@ -14,8 +14,6 @@ class ArticleEdit:
         self.request = request
 
         self.lecture = context.lecture_resource.model()
-        if self.lecture is None:
-            raise HTTPNotFound
 
         self.amendements = (
             DBSession.query(Amendement)

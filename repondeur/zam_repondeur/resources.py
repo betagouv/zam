@@ -1,4 +1,4 @@
-from typing import Iterator, List, Optional
+from typing import Iterator, List, Optional, cast
 
 from pyramid.request import Request
 
@@ -7,6 +7,10 @@ from zam_repondeur.models import (
     Lecture as LectureModel,
     DBSession,
 )
+
+
+class ResourceNotFound(Exception):
+    pass
 
 
 class Resource(dict):
@@ -21,7 +25,7 @@ class Resource(dict):
 
     @property
     def breadcrumbs_title(self) -> str:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     breadcrumbs_link: bool = True
 
@@ -30,11 +34,15 @@ class Resource(dict):
         self.__parent__ = parent
 
     @property
+    def parent(self) -> Optional["Resource"]:
+        return self.__parent__
+
+    @property
     def parents(self) -> Iterator["Resource"]:
-        parent = self.__parent__
+        parent = self.parent
         while parent is not None:
             yield parent
-            parent = parent.__parent__
+            parent = parent.parent
 
     @property
     def ancestors(self) -> List["Resource"]:
@@ -90,7 +98,12 @@ class LectureResource(Resource):
         self.add_child(ArticleCollection(name="articles", parent=self))
 
     def model(self) -> LectureModel:
-        return LectureModel.get(self.chambre, self.session, self.num_texte, self.organe)
+        lecture = LectureModel.get(
+            self.chambre, self.session, self.num_texte, self.organe
+        )
+        if lecture is None:
+            raise ResourceNotFound(self)
+        return lecture
 
     @property
     def breadcrumbs_title(self) -> str:
@@ -104,6 +117,10 @@ class AmendementCollection(Resource):
     def __getitem__(self, key: str) -> Resource:
         return AmendementResource(name=key, parent=self)
 
+    @property
+    def parent(self) -> LectureResource:
+        return cast(LectureResource, self.__parent__)
+
 
 class AmendementResource(Resource):
     def __init__(self, name: str, parent: Resource) -> None:
@@ -111,11 +128,15 @@ class AmendementResource(Resource):
         self.num = int(name)
 
     @property
-    def lecture_resource(self) -> LectureResource:
-        return self.__parent__.__parent__  # type: ignore
+    def parent(self) -> AmendementCollection:
+        return cast(AmendementCollection, self.__parent__)
 
-    def model(self) -> Optional[AmendementModel]:
-        return (  # type: ignore
+    @property
+    def lecture_resource(self) -> LectureResource:
+        return self.parent.parent
+
+    def model(self) -> AmendementModel:
+        amendement: Optional[AmendementModel] = (
             DBSession.query(AmendementModel)
             .filter_by(
                 chambre=self.lecture_resource.chambre,
@@ -126,11 +147,13 @@ class AmendementResource(Resource):
             )
             .first()
         )
+        if amendement is None:
+            raise ResourceNotFound(self)
+        return amendement
 
     @property
     def breadcrumbs_title(self) -> str:
         amendement = self.model()
-        assert amendement is not None  # typing hint for mypy
         return amendement.num_disp
 
     breadcrumbs_link = False
@@ -155,6 +178,10 @@ class ArticleCollection(Resource):
             subdiv_pos=subdiv_pos,
         )
 
+    @property
+    def parent(self) -> LectureResource:
+        return cast(LectureResource, self.__parent__)
+
 
 class ArticleResource(Resource):
     def __init__(
@@ -173,8 +200,12 @@ class ArticleResource(Resource):
         self.subdiv_pos = subdiv_pos
 
     @property
+    def parent(self) -> ArticleCollection:
+        return cast(ArticleCollection, self.__parent__)
+
+    @property
     def lecture_resource(self) -> LectureResource:
-        return self.__parent__.__parent__  # type: ignore
+        return self.parent.parent
 
     @property
     def breadcrumbs_title(self) -> str:

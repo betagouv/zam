@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, List
+from typing import Any, List, Optional
 
 from sqlalchemy import Column, DateTime, Integer, Text, desc
 
@@ -97,8 +97,10 @@ class Lecture(Base):  # type: ignore
         return lectures
 
     @classmethod
-    def get(cls, chambre: str, session: str, num_texte: int, organe: str) -> "Lecture":
-        res: "Lecture" = (
+    def get(
+        cls, chambre: str, session: str, num_texte: int, organe: str
+    ) -> Optional["Lecture"]:
+        res: Optional["Lecture"] = (
             DBSession.query(cls)
             .filter(
                 cls.chambre == chambre,

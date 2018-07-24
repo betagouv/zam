@@ -11,6 +11,14 @@ def test_get_reponse_edit_form(app, dummy_lecture, dummy_amendements):
     assert resp.forms["edit-reponse"].method == "POST"
 
 
+def test_get_reponse_edit_form_not_found(app, dummy_lecture, dummy_amendements):
+    resp = app.get(
+        "http://localhost/lectures/an.15.269.PO717460/amendements/998/reponse",
+        expect_errors=True,
+    )
+    assert resp.status_code == 404
+
+
 def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
 
     from zam_repondeur.models import Amendement, DBSession

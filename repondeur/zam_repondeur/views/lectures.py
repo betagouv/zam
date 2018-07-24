@@ -2,7 +2,7 @@ import csv
 import io
 import logging
 from datetime import datetime
-from typing import BinaryIO, cast, Dict, Iterable, TextIO, Tuple
+from typing import BinaryIO, Dict, Iterable, TextIO, Tuple
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -108,8 +108,6 @@ class LectureView:
         self.context = context
         self.request = request
         self.lecture = context.model()
-        if self.lecture is None:
-            raise HTTPNotFound
         self.amendements_query = DBSession.query(Amendement).filter(
             Amendement.chambre == self.lecture.chambre,
             Amendement.session == self.lecture.session,
@@ -132,7 +130,7 @@ class LectureView:
             LectureModel.organe == self.lecture.organe,
         ).delete()
         self.request.session.flash(("success", "Lecture supprimée avec succès."))
-        return HTTPFound(location=self.request.resource_url(self.context.__parent__))
+        return HTTPFound(location=self.request.resource_url(self.context.parent))
 
 
 @view_defaults(context=AmendementCollection)
@@ -140,15 +138,7 @@ class ListAmendements:
     def __init__(self, context: AmendementCollection, request: Request) -> None:
         self.context = context
         self.request = request
-
-        # We know the parent resource of the AmendementCollection is a LectureResource,
-        # and that it can't be None, so we give a little hint to the type checker
-        lecture_resource = cast(LectureResource, context.__parent__)
-
-        self.lecture = lecture_resource.model()
-        if self.lecture is None:
-            raise HTTPNotFound
-
+        self.lecture = context.parent.model()
         self.amendements = (
             DBSession.query(Amendement)
             .filter(
@@ -276,8 +266,6 @@ REPONSE_FIELDS = ["avis", "observations", "reponse"]
 @view_config(context=LectureResource, name="fetch_amendements")
 def fetch_amendements(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
-    if lecture is None:
-        raise HTTPNotFound
 
     amendements, errored = get_amendements(
         chambre=lecture.chambre,
@@ -364,21 +352,14 @@ def _set_flash_messages(
 @view_config(context=LectureResource, name="fetch_articles")
 def fetch_articles(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
-    if lecture is None:
-        raise HTTPNotFound
-
     get_articles(lecture)
     request.session.flash(("success", f"Articles récupérés"))
-
     return HTTPFound(location=request.resource_url(context))
 
 
 @view_config(context=LectureResource, name="check", renderer="json")
 def lecture_check(context: LectureResource, request: Request) -> dict:
     lecture = context.model()
-    if lecture is None:
-        raise HTTPNotFound
-
     return {"modified_at": lecture.modified_at_timestamp}
 
 

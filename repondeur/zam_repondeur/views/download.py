@@ -1,7 +1,7 @@
 import os
 from tempfile import NamedTemporaryFile
 
-from pyramid.httpexceptions import HTTPBadRequest, HTTPNotFound
+from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.request import Request
 from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
@@ -25,8 +25,6 @@ DOWNLOAD_FORMATS = {
 @view_config(context=LectureResource, name="download_amendements")
 def download_amendements(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
-    if lecture is None:
-        raise HTTPNotFound
 
     amendements = (
         DBSession.query(Amendement)

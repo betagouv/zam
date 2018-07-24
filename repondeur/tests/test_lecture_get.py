@@ -41,6 +41,11 @@ def test_get_lecture_with_gouvernemental(app, dummy_lecture, dummy_amendements):
     assert "Visualiser les réponses" in resp.text
 
 
-def test_get_lecture_not_found(app):
+def test_get_lecture_not_found_bad_format(app):
     resp = app.get("http://localhost/lectures/senat.2017-2018.1/", expect_errors=True)
+    assert resp.status_code == 404
+
+
+def test_get_lecture_not_found_does_not_exist(app):
+    resp = app.get("http://localhost/lectures/an.15.269.PO717461/", expect_errors=True)
     assert resp.status_code == 404

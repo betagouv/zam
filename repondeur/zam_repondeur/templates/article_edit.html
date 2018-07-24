@@ -36,7 +36,7 @@
         </div>
         <div class="form-group">
             <input type="submit" name="submit" value="Enregistrer" class="btn btn-primary">
-            <a href="{{ request.resource_url(context.__parent__.__parent__['amendements']) }}" class="btn">Annuler</a>
+            <a href="{{ request.resource_url(context.parent.parent['amendements']) }}" class="btn">Annuler</a>
         </div>
     </form>
 {% endmacro %}

@@ -6,6 +6,13 @@ def test_get_article_edit_form(app, dummy_lecture, dummy_amendements):
     assert resp.forms["edit-article-title"].method == "post"
 
 
+def test_get_article_edit_form_not_found_bad_format(app, dummy_lecture):
+    resp = app.get(
+        "http://localhost/lectures/an.15.269.PO717460/articles/foo", expect_errors=True
+    )
+    assert resp.status_code == 404
+
+
 def test_post_article_edit_form(app, dummy_lecture, dummy_amendements):
 
     from zam_repondeur.models import Amendement, DBSession

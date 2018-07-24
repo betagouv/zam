@@ -1,23 +1,24 @@
 from datetime import datetime
 
-from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
 
 from zam_repondeur.clean import clean_html
-from zam_repondeur.models import DBSession, Amendement, AVIS, Lecture
+from zam_repondeur.models import DBSession, Amendement, AVIS
 from zam_repondeur.models.visionneuse import build_tree
-from zam_repondeur.resources import AmendementResource, LectureResource
+from zam_repondeur.resources import (
+    AmendementCollection,
+    AmendementResource,
+    LectureResource,
+)
 
 
 @view_config(context=LectureResource, name="reponses", renderer="visionneuse.html")
 def list_reponses(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
-    if lecture is None:
-        raise HTTPNotFound
-
     amendements = (
         DBSession.query(Amendement)
         .filter(
@@ -50,11 +51,7 @@ class ReponseEdit:
         self.context = context
         self.request = request
         self.amendement = context.model()
-        if self.amendement is None:
-            raise HTTPNotFound
-        self.lecture: Lecture = context.lecture_resource.model()
-        if self.lecture is None:
-            raise HTTPNotFound
+        self.lecture = context.lecture_resource.model()
 
     @view_config(request_method="GET")
     def get(self) -> dict:
@@ -62,10 +59,10 @@ class ReponseEdit:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        assert self.amendement is not None  # typing hint for mypy
         self.amendement.avis = self.request.POST["avis"]
         self.amendement.observations = clean_html(self.request.POST["observations"])
         self.amendement.reponse = clean_html(self.request.POST["reponse"])
         self.lecture.modified_at = datetime.utcnow()
 
-        return HTTPFound(location=self.request.resource_url(self.context.__parent__))
+        collection: AmendementCollection = self.context.parent
+        return HTTPFound(location=self.request.resource_url(collection))

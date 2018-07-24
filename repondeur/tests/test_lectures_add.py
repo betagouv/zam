@@ -18,6 +18,11 @@ def test_get_form(app):
     assert form.fields["dossier"][0].options == [
         ("", True, ""),
         ("DLR5L15N36030", False, "Sécurité sociale : loi de financement 2018"),
+        (
+            "DLR5L15N36159",
+            False,
+            "Fonction publique : un Etat au service d'une société de confiance",
+        ),
     ]
 
     assert isinstance(form.fields["lecture"][0], Select)

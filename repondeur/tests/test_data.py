@@ -12,3 +12,11 @@ def test_get_organes():
     organes = get_data("organes")
 
     assert "PO717460" in organes
+
+
+def test_get_acteurs():
+    from zam_repondeur.data import get_data
+
+    acteurs = get_data("acteurs")
+
+    assert "PA718838" in acteurs

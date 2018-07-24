@@ -151,12 +151,6 @@
             }
         })
     })
-    document.querySelector('[type="file"]').addEventListener('change', function (e) {
-        var input = e.target
-        var filename = input.files[0].name
-        var label = document.querySelector('label[for="' + input.id + '"]')
-        label.innerHTML = filename
-    })
     var bookmarkForms = table.querySelectorAll('.bookmark form')
     ;[].slice.call(bookmarkForms).forEach(function (bookmarkForm) {
         bookmarkForm.addEventListener('submit', function (e) {

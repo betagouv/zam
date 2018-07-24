@@ -127,7 +127,7 @@ def test_post_form_with_bom(app, dummy_lecture, dummy_amendements):
 
 
 def test_post_form_wrong_columns_names(app, dummy_lecture, dummy_amendements):
-    form = app.get("/lectures/an/15/269/PO717460/amendements/list").form
+    form = app.get("/lectures/an/15/269/PO717460/amendements/list").forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_wrong_columns_names.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
 

@@ -36,7 +36,7 @@ def rename_field(field_name: str) -> str:
     return FIELDS_NAMES.get(field_name, field_name.capitalize())
 
 
-EXCLUDED_FIELDS = ["subdiv_contenu", "bookmarked_at"]
+EXCLUDED_FIELDS = ["subdiv_contenu", "bookmarked_at", "parent"]
 FIELDS = [
     field.name for field in fields(Amendement) if field.name not in EXCLUDED_FIELDS
 ]

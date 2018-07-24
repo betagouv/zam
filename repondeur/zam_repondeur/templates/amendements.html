@@ -86,6 +86,9 @@
                 </td>
                 <td data-sortkey="{{ amendement.num }}">
                     {{ amendement.num_disp }}
+                    {% if amendement.parent %}
+                        (ss-amdt {{ amendement.parent }})
+                    {% endif %}
                 </td>
                 <td>{{ amendement.auteur }}</td>
                 <td>{{ amendement.groupe }}</td>

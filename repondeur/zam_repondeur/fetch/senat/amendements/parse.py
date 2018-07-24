@@ -29,6 +29,7 @@ def parse_from_csv(row: dict, session: str, num_texte: int, organe: str) -> Amen
         matricule=extract_matricule(row["Fiche Sénateur"]),
         date_depot=parse_date(row["Date de dépôt "]),
         sort=row["Sort "],
+        parent=get_parent(row),
         dispositif=clean_html(row["Dispositif "]),
         objet=clean_html(row["Objet "]),
     )
@@ -60,6 +61,7 @@ def parse_from_json(
             else None
         ),
         sort=amend.get("sort"),
+        parent=get_parent(amend),
         position=position,
         identique=parse_bool(amend["isIdentique"]),
         discussion_commune=(
@@ -94,3 +96,14 @@ def parse_bool(text: str) -> bool:
     if text == "false":
         return False
     raise ValueError
+
+
+def get_parent(row: dict) -> str:
+    if (
+        "isSousAmendement" in row
+        and row["isSousAmendement"]
+        and "idAmendementPere" in row
+    ):
+        id_pere: str = row["idAmendementPere"]
+        return id_pere
+    return ""

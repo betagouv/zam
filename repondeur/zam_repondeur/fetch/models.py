@@ -36,6 +36,7 @@ class Amendement:
     position: Optional[int] = None  # ordre de lecture
     discussion_commune: Optional[int] = None
     identique: Optional[bool] = None
+    parent: Optional[str] = None  # sous-amendement
 
     dispositif: Optional[str] = None  # texte de l'amendement
     objet: Optional[str] = None  # motivation

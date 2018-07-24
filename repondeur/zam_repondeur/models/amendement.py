@@ -75,6 +75,7 @@ amendements_table = Table(
     Column("position", Integer, nullable=True),
     Column("discussion_commune", Integer, nullable=True),
     Column("identique", Boolean, nullable=True),
+    Column("parent", Text, nullable=True),
     #
     # Contenu de l'amendement
     #

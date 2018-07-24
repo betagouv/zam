@@ -16,6 +16,25 @@ def read_sample_data(basename):
 
 
 @responses.activate
+def test_fetch_and_parse_all():
+    from zam_repondeur.fetch.senat.amendements import _fetch_and_parse_all
+
+    sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv",
+        body=sample_data,
+        status=200,
+    )
+
+    amendements = _fetch_and_parse_all(session="2017-2018", num=63, organe="PO78718")
+
+    assert len(amendements) == 595
+    assert amendements[0].parent == ""
+
+
+@responses.activate
 def test_fetch_all():
     from zam_repondeur.fetch.senat.amendements import _fetch_all
 

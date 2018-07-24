@@ -46,6 +46,7 @@ class Amendement:
     num_disp: str
     gouvernemental: bool = False
     auteur: Optional[str] = ""
+    parent: Optional[str] = ""
     objet: Optional[str] = ""
     dispositif: Optional[str] = ""
     resume: Optional[str] = ""
@@ -72,6 +73,7 @@ class Amendement:
             resume=amendement.resume,
             etat=amendement.sort,
             gouvernemental=amendement.gouvernemental,
+            parent=amendement.parent,
         )
 
 

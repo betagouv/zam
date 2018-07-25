@@ -1,18 +1,16 @@
+from pathlib import Path
 from unittest.mock import patch
-import os
 
 import pytest
 import responses
 
 
-HERE = os.path.dirname(__file__)
-SAMPLE_DATA_DIR = os.path.join(HERE, "sample_data")
+HERE = Path(__file__)
+SAMPLE_DATA_DIR = HERE.parent / "sample_data"
 
 
 def read_sample_data(basename):
-    filename = os.path.join(SAMPLE_DATA_DIR, basename)
-    with open(filename, "rb") as file_:
-        return file_.read()
+    return (SAMPLE_DATA_DIR / basename).read_bytes()
 
 
 @responses.activate

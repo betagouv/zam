@@ -1,9 +1,9 @@
 import re
-from datetime import date, datetime
 from typing import Optional
 from urllib.parse import urlparse
 
 from zam_repondeur.clean import clean_html
+from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import _parse_subdiv
 from zam_repondeur.fetch.models import Amendement
 
@@ -91,12 +91,6 @@ def extract_matricule(url: str) -> Optional[str]:
     if mo is not None:
         return mo.group(1).upper()
     raise ValueError(f"Could not extract matricule from '{url}'")
-
-
-def parse_date(text: str) -> Optional[date]:
-    if text == "":
-        return None
-    return datetime.strptime(text, "%Y-%m-%d").date()
 
 
 def parse_bool(text: str) -> bool:

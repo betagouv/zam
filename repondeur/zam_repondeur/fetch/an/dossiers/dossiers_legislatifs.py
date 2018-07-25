@@ -1,7 +1,7 @@
-from datetime import date
 from json import load
 from typing import Dict, Iterator, List, NamedTuple, Optional
 
+from ...dates import parse_date
 from ..common import extract_from_remote_zip, roman
 from .models import Chambre, Lecture, Dossier, Texte, TypeTexte
 
@@ -52,14 +52,6 @@ def type_texte(item: dict) -> TypeTexte:
     if code == "PRJL":
         return TypeTexte.PROJET
     raise NotImplementedError
-
-
-def parse_date(rfc339_datetime_string: str) -> date:
-    return date(
-        year=int(rfc339_datetime_string[0:4]),
-        month=int(rfc339_datetime_string[5:7]),
-        day=int(rfc339_datetime_string[8:10]),
-    )
 
 
 def parse_dossiers(export: dict, textes: Dict[str, Texte]) -> Dict[str, Dossier]:

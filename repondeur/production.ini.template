@@ -25,6 +25,10 @@ jinja2.filters =
 use = egg:waitress#main
 listen = localhost:6543
 
+[alembic]
+script_location = db_migrations
+sqlalchemy.url = sqlite:////var/lib/zam/repondeur.db
+
 
 ###
 # logging configuration
@@ -32,7 +36,7 @@ listen = localhost:6543
 ###
 
 [loggers]
-keys = root, sqlalchemy
+keys = root, sqlalchemy, alembic
 
 [handlers]
 keys = console
@@ -47,7 +51,12 @@ handlers = console
 [logger_sqlalchemy]
 qualname = sqlalchemy.engine
 level = WARN
-handlers = console
+handlers =
+
+[logger_alembic]
+qualname = alembic
+level = INFO
+handlers =
 
 [handler_console]
 class = StreamHandler

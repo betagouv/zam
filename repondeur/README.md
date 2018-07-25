@@ -20,7 +20,7 @@ $ pipenv shell
 ## Initialize the database
 
 ```
-$ zam_init_db development.ini
+$ alembic -c development.ini upgrade head
 ```
 
 ## Extra setup

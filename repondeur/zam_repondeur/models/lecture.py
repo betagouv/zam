@@ -59,6 +59,8 @@ class Lecture(Base):  # type: ignore
     def rewrite_organe(self, label: str) -> str:
         if label in {"Assemblée", "Sénat"}:
             return "Séance publique"
+        if label.startswith("Commission"):
+            return label
         return f"Commission des {label.lower()}"
 
     def format_texte(self) -> str:

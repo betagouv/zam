@@ -77,6 +77,21 @@ SAMPLE_ORGANES = {
         "secretariat": {"secretaire01": None, "secretaire02": None},
         "positionPolitique": "Opposition",
     },
+    "PO744107": {
+        "@xsi:type": "OrganeParlementaire_Type",
+        "uid": "PO744107",
+        "codeType": "CNPS",
+        "libelle": "Commission spéciale chargée d'examiner le projet de loi pour un État au service d'une société de confiance",  # noqa
+        "libelleEdition": "de la commission spéciale chargée d'examiner le projet de loi pour un État au service d'une société de confiance",  # noqa
+        "libelleAbrege": "Commission spéciale sur la société de confiance",
+        "libelleAbrev": "CSCONF",
+        "viMoDe": {"dateDebut": "2017-11-27", "dateAgrement": None, "dateFin": None},
+        "organeParent": None,
+        "chambre": None,
+        "regime": "5ème République",
+        "legislature": "15",
+        "secretariat": {"secretaire01": None, "secretaire02": None},
+    },
 }
 
 SAMPLE_ACTEURS = {

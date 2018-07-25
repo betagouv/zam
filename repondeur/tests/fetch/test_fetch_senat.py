@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from unittest.mock import patch
 
@@ -14,8 +15,8 @@ def read_sample_data(basename):
 
 
 @responses.activate
-def test_fetch_and_parse_all():
-    from zam_repondeur.fetch.senat.amendements import _fetch_and_parse_all
+def test_aspire_senat(app):
+    from zam_repondeur.fetch.senat.amendements import aspire_senat
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
 
@@ -26,10 +27,34 @@ def test_fetch_and_parse_all():
         status=200,
     )
 
-    amendements = _fetch_and_parse_all(session="2017-2018", num=63, organe="PO78718")
+    odsen_data = read_sample_data("ODSEN_GENERAL.csv")
+
+    responses.add(
+        responses.GET,
+        "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
+        body=odsen_data,
+        status=200,
+    )
+
+    json_data = json.loads(read_sample_data("liste_discussion_63.json"))
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json",
+        json=json_data,
+        status=200,
+    )
+
+    amendements = aspire_senat(session="2017-2018", num=63, organe="PO78718")
 
     assert len(amendements) == 595
-    assert amendements[0].parent == ""
+    assert amendements[0].parent_num == 0
+    assert amendements[0].parent_rectif == 0
+    sous_amendement = [
+        amendement for amendement in amendements if amendement.num == 596
+    ][0]
+    assert sous_amendement.parent_num == 229
+    assert sous_amendement.parent_rectif == 1
 
 
 @responses.activate
@@ -128,318 +153,18 @@ def test_fetch_all_not_found():
 def test_fetch_discussed():
     from zam_repondeur.fetch.senat.amendements import _fetch_discussed
 
-    fake_data = {
-        "info_generales": {
-            "natureLoi": "Proposition de loi organique",
-            "intituleLoi": "Qualité des études d'impact",
-            "lecture": "1ère lecture",
-            "tsgenhtml": "1519401742000",
-            "idtxt": "103216",
-            "nbAmdtsDeposes": "14",
-            "nbAmdtsAExaminer": "0",
-            "doslegsignet": "ppl16-610",
-        },
-        "Subdivisions": [
-            {
-                "libelle_subdivision": "Article 1er",
-                "id_subdivision": "153938",
-                "signet": "../../textes/2016-2017/610.html#AMELI_SUB_4__Article_1",
-                "Amendements": [
-                    {
-                        "idAmendement": "1109668",
-                        "posder": "1",
-                        "subpos": "-10",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-12.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-12",
-                        "libelleAlinea": "",
-                        "urlAuteur": "lamure_elisabeth04049k.html",
-                        "auteur": "Mme LAMURE",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Adopté",
-                        "isAdopte": "true",
-                        "isRejete": "false",
-                    },
-                    {
-                        "idAmendement": "1109662",
-                        "posder": "1",
-                        "subpos": "0",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-6.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-6",
-                        "libelleAlinea": "Suppr.",
-                        "urlAuteur": "sueur_jean_pierre01028r.html",
-                        "auteur": "M. SUEUR, rapporteur",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Adopté",
-                        "isAdopte": "true",
-                        "isRejete": "false",
-                    },
-                    {
-                        "idAmendement": "1109663",
-                        "posder": "1",
-                        "subpos": "20",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-7.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-7",
-                        "libelleAlinea": "",
-                        "urlAuteur": "sueur_jean_pierre01028r.html",
-                        "auteur": "M. SUEUR, rapporteur",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Adopté",
-                        "isAdopte": "true",
-                        "isRejete": "false",
-                    },
-                    {
-                        "idAmendement": "1109664",
-                        "posder": "2",
-                        "subpos": "20",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-8.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-8",
-                        "libelleAlinea": "",
-                        "urlAuteur": "sueur_jean_pierre01028r.html",
-                        "auteur": "M. SUEUR, rapporteur",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Adopté",
-                        "isAdopte": "true",
-                        "isRejete": "false",
-                    },
-                    {
-                        "idAmendement": "1109669",
-                        "posder": "3",
-                        "subpos": "20",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-13.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-13",
-                        "libelleAlinea": "",
-                        "urlAuteur": "lamure_elisabeth04049k.html",
-                        "auteur": "Mme LAMURE",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Rejeté",
-                        "isAdopte": "false",
-                        "isRejete": "true",
-                    },
-                ],
-            },
-            {
-                "libelle_subdivision": "Article 2",
-                "id_subdivision": "153939",
-                "signet": "../../textes/2016-2017/610.html#AMELI_SUB_4__Article_2",
-                "Amendements": [
-                    {
-                        "idAmendement": "1109665",
-                        "posder": "1",
-                        "subpos": "0",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-9.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-9",
-                        "libelleAlinea": "Al. 2",
-                        "urlAuteur": "sueur_jean_pierre01028r.html",
-                        "auteur": "M. SUEUR, rapporteur",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Adopté",
-                        "isAdopte": "true",
-                        "isRejete": "false",
-                    },
-                    {
-                        "idAmendement": "1109819",
-                        "posder": "1",
-                        "subpos": "0",
-                        "isSousAmendement": "true",
-                        "idAmendementPere": "1109665",
-                        "urlAmdt": "Amdt_COM-15.html",
-                        "typeAmdt": "S/Amt",
-                        "num": "COM-15",
-                        "libelleAlinea": "Al. 3",
-                        "urlAuteur": "bas_philippe05008e.html",
-                        "auteur": "M. BAS",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Adopté",
-                        "isAdopte": "true",
-                        "isRejete": "false",
-                    },
-                    {
-                        "idAmendement": "1109666",
-                        "posder": "2",
-                        "subpos": "0",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-10.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-10",
-                        "libelleAlinea": "Al. 3",
-                        "urlAuteur": "sueur_jean_pierre01028r.html",
-                        "auteur": "M. SUEUR, rapporteur",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Adopté",
-                        "isAdopte": "true",
-                        "isRejete": "false",
-                    },
-                    {
-                        "idAmendement": "1109363",
-                        "posder": "1",
-                        "subpos": "20",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-2.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-2",
-                        "libelleAlinea": "",
-                        "urlAuteur": "grand_jean_pierre14211g.html",
-                        "auteur": "M. GRAND",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Rejeté",
-                        "isAdopte": "false",
-                        "isRejete": "true",
-                    },
-                    {
-                        "idAmendement": "1109364",
-                        "posder": "2",
-                        "subpos": "20",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-3.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-3",
-                        "libelleAlinea": "",
-                        "urlAuteur": "grand_jean_pierre14211g.html",
-                        "auteur": "M. GRAND",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Rejeté",
-                        "isAdopte": "false",
-                        "isRejete": "true",
-                    },
-                    {
-                        "idAmendement": "1109667",
-                        "posder": "3",
-                        "subpos": "20",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-11.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-11",
-                        "libelleAlinea": "",
-                        "urlAuteur": "sueur_jean_pierre01028r.html",
-                        "auteur": "M. SUEUR, rapporteur",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Adopté",
-                        "isAdopte": "true",
-                        "isRejete": "false",
-                    },
-                    {
-                        "idAmendement": "1109366",
-                        "posder": "4",
-                        "subpos": "20",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-5.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-5",
-                        "libelleAlinea": "",
-                        "urlAuteur": "grand_jean_pierre14211g.html",
-                        "auteur": "M. GRAND",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Irrecevable",
-                        "isAdopte": "false",
-                        "isRejete": "false",
-                    },
-                    {
-                        "idAmendement": "1109365",
-                        "posder": "5",
-                        "subpos": "20",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-4.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-4",
-                        "libelleAlinea": "",
-                        "urlAuteur": "grand_jean_pierre14211g.html",
-                        "auteur": "M. GRAND",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Irrecevable",
-                        "isAdopte": "false",
-                        "isRejete": "false",
-                    },
-                ],
-            },
-            {
-                "libelle_subdivision": "Intitulé de la proposition de loi organique",
-                "id_subdivision": "153937",
-                "signet": "../../textes/2016-2017/610.html#AMELI_SUB_1__Loi",
-                "Amendements": [
-                    {
-                        "idAmendement": "1109362",
-                        "posder": "1",
-                        "subpos": "0",
-                        "isSousAmendement": "false",
-                        "idAmendementPere": "0",
-                        "urlAmdt": "Amdt_COM-1.html",
-                        "typeAmdt": "Amt",
-                        "num": "COM-1",
-                        "libelleAlinea": "",
-                        "urlAuteur": "grand_jean_pierre14211g.html",
-                        "auteur": "M. GRAND",
-                        "isDiscussionCommune": "false",
-                        "isDiscussionCommuneIsolee": "false",
-                        "isIdentique": "false",
-                        "sort": "Rejeté",
-                        "isAdopte": "false",
-                        "isRejete": "true",
-                    }
-                ],
-            },
-        ],
-    }
+    json_data = json.loads(read_sample_data("liste_discussion_610.json"))
 
     responses.add(
         responses.GET,
         "https://www.senat.fr/encommission/2016-2017/610/liste_discussion.json",
-        json=fake_data,
+        json=json_data,
         status=200,
     )
 
     data = _fetch_discussed("2016-2017", 610, "commission")
 
-    assert data == fake_data
+    assert data == json_data
 
 
 @responses.activate

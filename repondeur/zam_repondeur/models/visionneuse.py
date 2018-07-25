@@ -51,7 +51,7 @@ class Amendement:
     dispositif: Optional[str] = ""
     resume: Optional[str] = ""
     document: Optional[str] = ""
-    etat: Optional[str] = ""
+    sort: Optional[str] = ""
 
     def __str__(self) -> str:
         return self.num_disp
@@ -71,9 +71,9 @@ class Amendement:
             dispositif=amendement.dispositif,
             objet=amendement.objet,
             resume=amendement.resume,
-            etat=amendement.sort,
+            sort=amendement.sort,
             gouvernemental=amendement.gouvernemental,
-            parent=amendement.parent,
+            parent=amendement.parent and amendement.parent.num_disp or "",
         )
 
 

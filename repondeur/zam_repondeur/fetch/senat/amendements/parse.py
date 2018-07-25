@@ -29,18 +29,26 @@ def parse_from_csv(row: dict, session: str, num_texte: int, organe: str) -> Amen
         matricule=extract_matricule(row["Fiche Sénateur"]),
         date_depot=parse_date(row["Date de dépôt "]),
         sort=row["Sort "],
-        parent=get_parent(row),
         dispositif=clean_html(row["Dispositif "]),
         objet=clean_html(row["Objet "]),
     )
 
 
 def parse_from_json(
-    amend: dict, position: int, session: str, num_texte: int, organe: str, subdiv: dict
+    amends_by_ids: dict,
+    amend: dict,
+    position: int,
+    session: str,
+    num_texte: int,
+    organe: str,
+    subdiv: dict,
 ) -> Amendement:
     num, rectif = Amendement.parse_num(amend["num"])
     subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = _parse_subdiv(
         subdiv["libelle_subdivision"]
+    )
+    parent_num, parent_rectif = Amendement.parse_num(
+        get_parent_raw_num(amends_by_ids, amend)
     )
     return Amendement(  # type: ignore
         chambre="senat",
@@ -61,7 +69,8 @@ def parse_from_json(
             else None
         ),
         sort=amend.get("sort"),
-        parent=get_parent(amend),
+        parent_num=parent_num,
+        parent_rectif=parent_rectif,
         position=position,
         identique=parse_bool(amend["isIdentique"]),
         discussion_commune=(
@@ -98,12 +107,12 @@ def parse_bool(text: str) -> bool:
     raise ValueError
 
 
-def get_parent(row: dict) -> str:
+def get_parent_raw_num(amends_by_ids: dict, amend: dict) -> str:
     if (
-        "isSousAmendement" in row
-        and row["isSousAmendement"]
-        and "idAmendementPere" in row
+        "isSousAmendement" in amend
+        and parse_bool(amend["isSousAmendement"])
+        and "idAmendementPere" in amend
     ):
-        id_pere: str = row["idAmendementPere"]
-        return id_pere
+        num: str = amends_by_ids[amend["idAmendementPere"]]["num"]
+        return num
     return ""

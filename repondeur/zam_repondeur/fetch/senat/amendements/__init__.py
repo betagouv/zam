@@ -90,16 +90,15 @@ def _fetch_and_parse_discussed(
         data = _fetch_discussed(session, num, phase)
     except NotFound:
         return []
+    subdivs_amends = [
+        (subdiv, amend)
+        for subdiv in data["Subdivisions"]
+        for amend in subdiv["Amendements"]
+    ]
+    amends_by_ids = {amend["idAmendement"]: amend for subdiv, amend in subdivs_amends}
     return [
-        parse_from_json(amend, position, session, num, organe, subdiv)
-        for position, (subdiv, amend) in enumerate(
-            (
-                (subdiv, amend)
-                for subdiv in data["Subdivisions"]
-                for amend in subdiv["Amendements"]
-            ),
-            start=1,
-        )
+        parse_from_json(amends_by_ids, amend, position, session, num, organe, subdiv)
+        for position, (subdiv, amend) in enumerate(subdivs_amends, start=1)
     ]
 
 
@@ -167,6 +166,8 @@ def _enrich_one(
             "position": amend_discussion.position,
             "discussion_commune": amend_discussion.discussion_commune,
             "identique": amend_discussion.identique,
+            "parent_num": amend_discussion.parent_num,
+            "parent_rectif": amend_discussion.parent_rectif,
         }
     )
 

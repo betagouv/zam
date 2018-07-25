@@ -2,7 +2,7 @@ import json
 from collections import OrderedDict
 from http import HTTPStatus
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import List, Tuple, Union
 from urllib.parse import urljoin
 
 import xmltodict
@@ -108,6 +108,7 @@ def fetch_amendement(
     content = xmltodict.parse(resp.content)
     amendement = content["amendement"]
     subdiv = parse_division(amendement["division"])
+    parent_num, parent_rectif = Amendement.parse_num(get_parent_raw_num(amendement))
     return Amendement(  # type: ignore
         chambre="an",
         session=str(legislature),
@@ -123,7 +124,8 @@ def fetch_amendement(
         matricule=amendement["auteur"]["tribunId"],
         groupe=get_groupe(amendement, groups_folder),
         auteur=get_auteur(amendement),
-        parent=get_parent(amendement),
+        parent_num=parent_num,
+        parent_rectif=parent_rectif,
         dispositif=unjustify(amendement["dispositif"]),
         objet=unjustify(amendement["exposeSommaire"]),
     )
@@ -178,7 +180,7 @@ def get_sort(amendement: OrderedDict) -> str:
     return sort.lower()
 
 
-def get_parent(amendement: OrderedDict) -> Optional[str]:
+def get_parent_raw_num(amendement: OrderedDict) -> str:
     parent: Union[str, OrderedDict] = amendement["numeroParent"]
     if isinstance(parent, OrderedDict):
         if "@xsi:nil" in parent:

@@ -71,37 +71,29 @@ def amendements():
             objet="corge",
             dispositif="grault",
         ),
+        Amendement(
+            chambre="senat",
+            session="2017-2018",
+            num_texte=63,
+            organe="PO78718",
+            subdiv_type="article",
+            subdiv_num="1",
+            alinea="",
+            num=596,
+            rectif=1,
+            parent_num=229,
+            parent_rectif=1,
+            auteur="M. JEAN",
+            groupe="Les Indépendants",
+            matricule="000003",
+            objet="corge",
+            dispositif="grault",
+        ),
     ]
 
 
-EXPECTED_FIELDS = [
-    "Chambre",
-    "Session",
-    "Num_texte",
-    "Organe",
-    "Subdiv_type",
-    "Subdiv_num",
-    "Subdiv_mult",
-    "Subdiv_pos",
-    "Subdiv_titre",
-    "Alinéa",
-    "Nº amdt ou sous-amdt",
-    "Rectif",
-    "Auteur(s)",
-    "Matricule",
-    "Groupe",
-    "Date de dépôt",
-    "Sort",
-    "Position",
-    "Discussion commune ?",
-    "Identique ?",
-    "Dispositif",
-    "Corps de l'amendement (origine : parlementaire)",
-    "Exposé de l'amendement (origine : parlementaire)",
-    "Avis",
-    "Objet de l'amendement (origine : saisie coordinateur)",
-    "Réponse à l'amendement (origine : saisie rédacteur)",
-]
+def _csv_row_to_dict(headers, row):
+    return dict(zip(headers.split(";"), row.split(";")))
 
 
 def test_write_csv(amendements, tmpdir):
@@ -113,15 +105,85 @@ def test_write_csv(amendements, tmpdir):
 
     with open(filename, "r", encoding="utf-8") as f_:
         lines = f_.read().splitlines()
-    header, *rows = lines
-    assert header == ";".join(EXPECTED_FIELDS)
+    headers, *rows = lines
 
-    assert len(rows) == nb_rows == 4
+    assert len(rows) == nb_rows == 5
 
-    assert (
-        rows[0]
-        == "senat;2017-2018;63;PO78718;article;1;;;;;42;0;M. DUPONT;000000;RDSE;;;;;;L'article 1 est supprimé.;Cet article va à l'encontre du principe d'égalité.;Suppression de l'article;;;"  # noqa
-    )
+    assert _csv_row_to_dict(headers, rows[0]) == {
+        "Alinéa": "",
+        "Auteur(s)": "M. DUPONT",
+        "Avis du Gouvernement": "",
+        "Chambre": "senat",
+        "Corps amdt": "Cet article va à l'encontre du principe d'égalité.",
+        "Date de dépôt": "",
+        "Discussion commune ?": "",
+        "Dispositif": "L'article 1 est supprimé.",
+        "Exposé amdt": "Suppression de l'article",
+        "Groupe": "RDSE",
+        "Identique ?": "",
+        "Matricule": "000000",
+        "Num_texte": "63",
+        "N° amdt parent": "0",
+        "Rectif parent": "0",
+        "Nº amdt": "42",
+        "Objet amdt": "",
+        "Organe": "PO78718",
+        "Position": "",
+        "Rectif": "0",
+        "Réponse": "",
+        "Session": "2017-2018",
+        "Sort": "",
+        "Subdiv_mult": "",
+        "Subdiv_num": "1",
+        "Subdiv_pos": "",
+        "Subdiv_titre": "",
+        "Subdiv_type": "article",
+    }
+
+
+def test_write_csv_sous_amendement(amendements, tmpdir):
+    from zam_repondeur.writer import write_csv
+
+    filename = str(tmpdir.join("test.csv"))
+
+    nb_rows = write_csv("Titre", amendements, filename, request={})
+
+    with open(filename, "r", encoding="utf-8") as f_:
+        lines = f_.read().splitlines()
+    headers, *rows = lines
+
+    assert len(rows) == nb_rows == 5
+
+    assert _csv_row_to_dict(headers, rows[-1]) == {
+        "Chambre": "senat",
+        "Session": "2017-2018",
+        "Num_texte": "63",
+        "Organe": "PO78718",
+        "Subdiv_type": "article",
+        "Subdiv_num": "1",
+        "Subdiv_mult": "",
+        "Subdiv_pos": "",
+        "Subdiv_titre": "",
+        "Alinéa": "",
+        "Nº amdt": "596",
+        "Rectif": "1",
+        "Auteur(s)": "M. JEAN",
+        "Matricule": "000003",
+        "Groupe": "Les Indépendants",
+        "Date de dépôt": "",
+        "Sort": "",
+        "Position": "",
+        "Discussion commune ?": "",
+        "Identique ?": "",
+        "N° amdt parent": "229",
+        "Rectif parent": "1",
+        "Dispositif": "grault",
+        "Corps amdt": "corge",
+        "Exposé amdt": "",
+        "Avis du Gouvernement": "",
+        "Objet amdt": "",
+        "Réponse": "",
+    }
 
 
 def test_write_json_for_viewer(amendements, tmpdir):
@@ -152,6 +214,7 @@ def test_write_json_for_viewer(amendements, tmpdir):
                     "amendements": [
                         {
                             "id": 42,
+                            "rectif": "",
                             "pk": "000042",
                             "etat": "",
                             "gouvernemental": False,
@@ -161,9 +224,12 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             "dispositif": "<p>L'article 1 est supprimé.</p>",
                             "objet": "<p>Cet article va à l'encontre du principe d'égalité.</p>",  # noqa
                             "resume": "Suppression de l'article",
+                            "parent_num": "",
+                            "parent_rectif": "",
                         },
                         {
                             "id": 43,
+                            "rectif": "",
                             "pk": "000043",
                             "etat": "",
                             "gouvernemental": False,
@@ -176,6 +242,26 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             "dispositif": "grault",
                             "objet": "corge",
                             "resume": "",
+                            "parent_num": "",
+                            "parent_rectif": "",
+                        },
+                        {
+                            "id": 596,
+                            "rectif": 1,
+                            "pk": "000596",
+                            "etat": "",
+                            "gouvernemental": False,
+                            "auteur": "M. JEAN",
+                            "groupe": {
+                                "libelle": "Les Indépendants",
+                                "couleur": "#30bfe9",
+                            },
+                            "document": "000596-00.pdf",
+                            "dispositif": "grault",
+                            "objet": "corge",
+                            "resume": "",
+                            "parent_num": 229,
+                            "parent_rectif": 1,
                         },
                     ],
                 },
@@ -190,6 +276,7 @@ def test_write_json_for_viewer(amendements, tmpdir):
                     "amendements": [
                         {
                             "id": 57,
+                            "rectif": "",
                             "pk": "000057",
                             "etat": "",
                             "gouvernemental": False,
@@ -202,6 +289,8 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             "dispositif": "qux",
                             "objet": "baz",
                             "resume": "",
+                            "parent_num": "",
+                            "parent_rectif": "",
                         }
                     ],
                 },
@@ -216,6 +305,7 @@ def test_write_json_for_viewer(amendements, tmpdir):
                     "amendements": [
                         {
                             "id": 21,
+                            "rectif": "",
                             "pk": "000021",
                             "etat": "",
                             "gouvernemental": False,
@@ -225,6 +315,8 @@ def test_write_json_for_viewer(amendements, tmpdir):
                             "dispositif": "quuz",
                             "objet": "quux",
                             "resume": "",
+                            "parent_num": "",
+                            "parent_rectif": "",
                         }
                     ],
                 },

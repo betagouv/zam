@@ -20,15 +20,18 @@ from .models import Amendement, Lecture
 FIELDS_NAMES = {
     "article": "Nº article",
     "alinea": "Alinéa",
-    "num": "Nº amdt ou sous-amdt",
+    "num": "Nº amdt",
     "auteur": "Auteur(s)",
     "date_depot": "Date de dépôt",
     "discussion_commune": "Discussion commune ?",
     "identique": "Identique ?",
-    "objet": "Corps de l'amendement (origine : parlementaire)",
-    "resume": "Exposé de l'amendement (origine : parlementaire)",
-    "observations": "Objet de l'amendement (origine : saisie coordinateur)",
-    "reponse": "Réponse à l'amendement (origine : saisie rédacteur)",
+    "parent_num": "N° amdt parent",
+    "parent_rectif": "Rectif parent",
+    "objet": "Corps amdt",
+    "resume": "Exposé amdt",
+    "observations": "Objet amdt",
+    "reponse": "Réponse",
+    "avis": "Avis du Gouvernement",
 }
 
 
@@ -36,7 +39,7 @@ def rename_field(field_name: str) -> str:
     return FIELDS_NAMES.get(field_name, field_name.capitalize())
 
 
-EXCLUDED_FIELDS = ["subdiv_contenu", "bookmarked_at", "parent"]
+EXCLUDED_FIELDS = ["subdiv_contenu", "bookmarked_at"]
 FIELDS = [
     field.name for field in fields(Amendement) if field.name not in EXCLUDED_FIELDS
 ]
@@ -203,6 +206,7 @@ def _format_article(
 def _format_amendement(amendement: Amendement) -> dict:
     return {
         "id": amendement.num,
+        "rectif": amendement.rectif or "",
         "pk": f"{amendement.num:06}",
         "etat": amendement.sort or "",
         "gouvernemental": amendement.gouvernemental,
@@ -215,6 +219,8 @@ def _format_amendement(amendement: Amendement) -> dict:
         "dispositif": amendement.dispositif,
         "objet": amendement.objet,
         "resume": amendement.resume or "",
+        "parent_num": amendement.parent_num or "",
+        "parent_rectif": amendement.parent_rectif or "",
     }
 
 

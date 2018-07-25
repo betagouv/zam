@@ -75,7 +75,8 @@ amendements_table = Table(
     Column("position", Integer, nullable=True),
     Column("discussion_commune", Integer, nullable=True),
     Column("identique", Boolean, nullable=True),
-    Column("parent", Text, nullable=True),
+    Column("parent_num", Integer, default=0),
+    Column("parent_rectif", Integer, default=0),
     #
     # Contenu de l'amendement
     #
@@ -108,6 +109,8 @@ mapper(
         "alinea": amendements_table.c.alinea,
         "num": amendements_table.c.num,
         "rectif": amendements_table.c.rectif,
+        "parent_num": amendements_table.c.parent_num,
+        "parent_rectif": amendements_table.c.parent_rectif,
         "auteur": amendements_table.c.auteur,
         "groupe": amendements_table.c.groupe,
     },

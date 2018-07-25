@@ -26,8 +26,5 @@ setup(
     version="0.1.0",
     url="https://github.com/betagouv/zam",
     install_requires=requires,
-    entry_points={
-        "paste.app_factory": ["main = zam_repondeur:make_app"],
-        "console_scripts": ["zam_init_db = zam_repondeur.scripts.initialize_db:main"],
-    },
+    entry_points={"paste.app_factory": ["main = zam_repondeur:make_app"]},
 )

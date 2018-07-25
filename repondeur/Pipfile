@@ -20,6 +20,7 @@ selectolax = "*"
 pyramid-default-cors = "*"
 pdfkit = "*"
 xvfbwrapper = "*"
+alembic = "*"
 
 [dev-packages]
 webtest = "*"

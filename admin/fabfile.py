@@ -142,7 +142,7 @@ def deploy_repondeur(ctx, secret, branch="master", wipe=False):
     setup_config(ctx, app_dir=app_dir, user=user, secret=secret)
     if wipe:
         wipe_db(ctx, user=user)
-    initialize_db(ctx, app_dir=app_dir, user=user)
+    migrate_db(ctx, app_dir=app_dir, user=user)
     fetch_an_group_data(ctx, user=user)
     setup_service(ctx)
 
@@ -204,10 +204,16 @@ def wipe_db(ctx, user):
 
 
 @task
-def initialize_db(ctx, app_dir, user):
+def migrate_db(ctx, app_dir, user):
     create_directory(ctx, "/var/lib/zam", owner=user)
+    res = ctx.sudo(
+        f'bash -c "cd {app_dir} && pipenv run alembic -c production.ini current"',
+        user=user,
+    )
+    current = res.stdout
+    action = "upgrade" if current else "stamp"
     ctx.sudo(
-        f'bash -c "cd {app_dir} && pipenv run zam_init_db production.ini#repondeur"',
+        f'bash -c "cd {app_dir} && pipenv run alembic -c production.ini {action} head"',
         user=user,
     )
 

@@ -48,6 +48,7 @@ amendements_table = Table(
     Column("alinea", Text, nullable=True),  # libellé de l'alinéa de l'article concerné
     Column("subdiv_titre", Text, nullable=True),  # titre de l'article
     Column("subdiv_contenu", PickleType, nullable=True),  # contenu de l'article
+    Column("subdiv_jaune", PickleType, nullable=True),  # éléments de langage
     #
     # Numéro de l'amendement
     #
@@ -104,6 +105,7 @@ mapper(
         "subdiv_pos": amendements_table.c.subdiv_pos,
         "subdiv_titre": amendements_table.c.subdiv_titre,
         "subdiv_contenu": amendements_table.c.subdiv_contenu,
+        "subdiv_jaune": amendements_table.c.subdiv_jaune,
         "alinea": amendements_table.c.alinea,
         "num": amendements_table.c.num,
         "rectif": amendements_table.c.rectif,

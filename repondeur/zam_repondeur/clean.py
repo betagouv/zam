@@ -4,7 +4,20 @@ from typing import Iterable, Optional
 import bleach
 
 
-ALLOWED_TAGS = ["div", "p", "ul", "ol", "li", "b", "i", "strong", "em", "sub", "sup"]
+ALLOWED_TAGS = [
+    "div",
+    "p",
+    "h3",
+    "ul",
+    "ol",
+    "li",
+    "b",
+    "i",
+    "strong",
+    "em",
+    "sub",
+    "sup",
+]
 
 
 def clean_html(html: str, allowed_tags: Optional[Iterable[str]] = None) -> str:

@@ -19,6 +19,7 @@ class Amendement:
     subdiv_pos: str = ""  # avant / après
     subdiv_titre: str = ""  # titre article
     subdiv_contenu: str = ""  # contenu article
+    subdiv_jaune: str = ""  # élément de langage article
 
     alinea: str = ""  # libellé de l'alinéa de l'article concerné
 

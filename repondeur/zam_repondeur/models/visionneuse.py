@@ -115,6 +115,7 @@ class Articles(OrderedDict):
                 multiplicatif=amendement.subdiv_mult,
                 etat=amendement.subdiv_pos[:2],
                 type_=amendement.subdiv_type,
+                jaune=amendement.subdiv_jaune,
                 alineas=amendement.subdiv_contenu,
             )
             self[pk] = article

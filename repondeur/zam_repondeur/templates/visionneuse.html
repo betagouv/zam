@@ -451,7 +451,7 @@
               <h3>{{ article.titre }}</h3>
             {% endif %}
           </div>
-          {% if article.alineas %}
+          {% if article.alineas or article.jaune %}
             <a href="#{{ article.slug }}"
                class="button"
                data-toggle-target="content-{{ article.slug }}"
@@ -460,8 +460,13 @@
         </div>
       </header>
       <div class="is-hidden">
-        {% if article.alineas %}
-          <div id="content-{{ article.slug }}" class="article">
+        <div id="content-{{ article.slug }}" class="article">
+          {% if article.jaune %}
+            <h2>Éléments de langage</h2>
+            {{ article.jaune | safe }}
+          {% endif %}
+          {% if article.alineas %}
+            <h2>Texte de l’article</h2>
             {% for number, content in article.alineas.items() %}
               <dl>
                 <dt>{{ number }}</dt>
@@ -470,11 +475,11 @@
                 </dd>
               </dl>
             {% endfor %}
-            <p class="bottom">
-              <a class="button main arrow-up" href="#{{ article.slug }}">Replier</a>
-            </p>
-          </div>
-        {% endif %}
+          {% endif %}
+          <p class="bottom">
+            <a class="button main arrow-up" href="#{{ article.slug }}">Replier</a>
+          </p>
+        </div>
       </div>
       {% for reponse, amendements in article.reponses.items() %}
         {% set is_gouvernemental = amendements[0].gouvernemental %}

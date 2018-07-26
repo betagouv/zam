@@ -52,6 +52,7 @@
       font-size: 24pt;
       margin: 5rem auto;
     }
+      .page.jaune h2,
       .page.reponse h2,
       .page.amendement h2 {
         text-align: right;
@@ -109,6 +110,14 @@
           </div>
         {% endif %}
       </section>
+      {% if article.jaune %}
+        <section class="page jaune">
+          <h2>Éléments de langage</h2>
+          <div>
+            {{ article.jaune | safe }}
+          </div>
+        </section>
+      {% endif %}
       {% for reponse, amendements in article.reponses.items() %}
         {% set is_gouvernemental = amendements[0].gouvernemental %}
         {% set multiple = amendements|length > 1 %}

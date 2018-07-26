@@ -3,6 +3,7 @@ from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
+from zam_repondeur.clean import clean_html
 from zam_repondeur.models import DBSession, Amendement
 from zam_repondeur.resources import ArticleResource
 
@@ -39,8 +40,10 @@ class ArticleEdit:
     @view_config(request_method="POST")
     def post(self) -> Response:
         subdiv_titre = self.request.POST["subdiv_titre"]
+        subdiv_jaune = clean_html(self.request.POST["subdiv_jaune"])
         for amendement in self.amendements:
             amendement.subdiv_titre = subdiv_titre
-        self.request.session.flash(("success", "Titre mis à jour avec succès."))
+            amendement.subdiv_jaune = subdiv_jaune
+        self.request.session.flash(("success", "Article mis à jour avec succès."))
         resource = self.context.lecture_resource["amendements"]
         return HTTPFound(location=self.request.resource_url(resource))

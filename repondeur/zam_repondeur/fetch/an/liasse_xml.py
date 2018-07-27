@@ -79,7 +79,7 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
         matricule=auteur_uid,
         groupe=get_groupe_name(groupe_uid),
         date_depot=to_date(extract("dateDepot")),
-        sort=get_sort(extract("etat")),
+        sort=get_sort(sort=extract("sort", "sortEnSeance"), etat=extract("etat")),
         parent_num=parent_num,
         parent_rectif=parent_rectif,
         dispositif=clean_html(extract("corps", "dispositif") or ""),
@@ -141,12 +141,12 @@ def _find_texte(uid: str) -> Texte:
     raise ValueError(f"Unknown texte {uid}")
 
 
-def get_sort(text: Optional[str]) -> str:
-    if text is None:
-        return ""
-    if text == "En traitement":
-        return ""
-    return text
+def get_sort(sort: Optional[str], etat: Optional[str]) -> str:
+    if sort is not None:
+        return sort
+    if etat is not None and etat not in ("En traitement", "A discuter"):
+        return etat
+    return ""
 
 
 def get_auteur_name(uid: str) -> str:

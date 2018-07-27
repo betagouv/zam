@@ -51,6 +51,9 @@ def _check_amendement_0(amendement):
     assert amendement.discussion_commune is None
     assert amendement.identique is None
 
+    assert amendement.parent_num is None
+    assert amendement.parent_rectif is None
+
     assert (
         amendement.dispositif
         == "<div>Cet amendement est en cours de traitement par les services de l'Assemblée.</div>"  # noqa
@@ -97,6 +100,9 @@ def _check_amendement_1(amendement):
     assert amendement.position is None  # no order yet
     assert amendement.discussion_commune is None
     assert amendement.identique is None
+
+    assert amendement.parent_num == 28
+    assert amendement.parent_rectif == 0
 
     assert amendement.dispositif == (
         "<p>L’alinéa 12 est complété par l’alinéa suivant :</p>\n"

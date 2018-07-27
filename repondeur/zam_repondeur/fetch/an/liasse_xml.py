@@ -1,7 +1,7 @@
 import logging
 from datetime import date
 from functools import partial
-from typing import Dict, IO, List, Optional
+from typing import Dict, IO, List, Optional, Tuple
 
 from lxml import etree
 
@@ -37,10 +37,15 @@ def import_liasse_xml(xml_file: IO[bytes]) -> List[Amendement]:
         logger.error(message)
         raise ValueError(message)
 
-    return [_make_amendement(child) for child in root]
+    uid_map: Dict[str, Amendement] = {}
+    for child in root:
+        uid = child.find(f"./{NS}uid").text
+        amendement = _make_amendement(child, uid_map)
+        uid_map[uid] = amendement
+    return list(uid_map.values())
 
 
-def _make_amendement(node: etree.Element) -> Amendement:
+def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Amendement:
     extract = partial(extract_from_node, node)
 
     subdiv = _parse_division(node)
@@ -56,6 +61,8 @@ def _make_amendement(node: etree.Element) -> Amendement:
     groupe_uid = extract("signataires", "auteur", "groupePolitiqueRef")
     if groupe_uid is None:
         raise ValueError("Missing auteur groupePolitiqueRef")
+
+    parent_num, parent_rectif = get_parent(extract("amendementParent"), uid_map)
 
     return Amendement(  # type: ignore
         chambre=Chambre.AN.value,
@@ -73,6 +80,8 @@ def _make_amendement(node: etree.Element) -> Amendement:
         groupe=get_groupe_name(groupe_uid),
         date_depot=to_date(extract("dateDepot")),
         sort=get_sort(extract("etat")),
+        parent_num=parent_num,
+        parent_rectif=parent_rectif,
         dispositif=clean_html(extract("corps", "dispositif") or ""),
         objet=clean_html(extract("corps", "exposeSommaire") or ""),
     )
@@ -155,3 +164,15 @@ def get_groupe_name(uid: str) -> str:
         raise ValueError(f"Unknown groupe {uid}")
     libelle: str = organes[uid]["libelle"]
     return libelle
+
+
+def get_parent(
+    uid: Optional[str], uid_map: Dict[str, Amendement]
+) -> Tuple[Optional[int], Optional[int]]:
+    if uid is None:
+        return None, None
+    try:
+        amendement = uid_map[uid]
+        return amendement.num, amendement.rectif
+    except KeyError:
+        raise ValueError(f"Unknown parent amendement {uid}")

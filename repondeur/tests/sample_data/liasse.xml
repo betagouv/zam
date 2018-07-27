@@ -103,7 +103,7 @@
     <etapeTexte>Nouvelle Lecture</etapeTexte>
     <triAmendement>e</triAmendement>
     <cardinaliteAmdtMultiples>1</cardinaliteAmdtMultiples>
-    <amendementParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amendementParent>AMANR5L15PO744107B0806P0D1N28</amendementParent>
     <etat>Retiré</etat>
     <signataires>
         <auteur>

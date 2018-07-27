@@ -25,27 +25,25 @@ PATTERN_AMENDEMENT = (
 
 def aspire_an(
     legislature: int, texte: int, organe: str, groups_folder: Path
-) -> Tuple[str, List[Amendement], List[str]]:
+) -> Tuple[List[Amendement], List[str]]:
     print("Récupération du titre et des amendements déposés...")
     try:
-        title, amendements, errored = fetch_and_parse_all(
+        amendements, errored = fetch_and_parse_all(
             legislature=legislature,
             texte=texte,
             organe=organe,
             groups_folder=groups_folder,
         )
     except NotFound:
-        return "", [], []
+        return [], []
 
-    return title, amendements, errored
+    return amendements, errored
 
 
 def fetch_and_parse_all(
     legislature: int, texte: int, organe: str, groups_folder: Path
-) -> Tuple[str, List[Amendement], List[str]]:
-    title, amendements_raw = fetch_amendements(
-        legislature, texte, organe, groups_folder
-    )
+) -> Tuple[List[Amendement], List[str]]:
+    amendements_raw = fetch_amendements(legislature, texte, organe, groups_folder)
     amendements = []
     index = 1
     errored = []
@@ -64,12 +62,12 @@ def fetch_and_parse_all(
             continue
         amendements.append(amendement)
         index += 1
-    return title, amendements, errored
+    return amendements, errored
 
 
 def fetch_amendements(
     legislature: int, texte: int, organe: str, groups_folder: Path
-) -> Tuple[str, List[OrderedDict]]:
+) -> List[OrderedDict]:
     """
     Récupère la liste des références aux amendements, dans l'ordre de dépôt.
     """
@@ -81,9 +79,10 @@ def fetch_amendements(
         raise NotFound(url)
 
     content = xmltodict.parse(resp.content)
-    amendements_raw = content["amdtsParOrdreDeDiscussion"]["amendements"]["amendement"]
-    title = content["amdtsParOrdreDeDiscussion"]["@titre"]
-    return title, amendements_raw
+    amendement_raw: List[OrderedDict] = content["amdtsParOrdreDeDiscussion"][
+        "amendements"
+    ]["amendement"]
+    return amendement_raw
 
 
 def fetch_amendement(
@@ -109,6 +108,7 @@ def fetch_amendement(
     content = xmltodict.parse(resp.content)
     amendement = content["amendement"]
     subdiv = parse_division(amendement["division"])
+    parent_num, parent_rectif = Amendement.parse_num(get_parent_raw_num(amendement))
     return Amendement(  # type: ignore
         chambre="an",
         session=str(legislature),
@@ -124,6 +124,8 @@ def fetch_amendement(
         matricule=amendement["auteur"]["tribunId"],
         groupe=get_groupe(amendement, groups_folder),
         auteur=get_auteur(amendement),
+        parent_num=parent_num,
+        parent_rectif=parent_rectif,
         dispositif=unjustify(amendement["dispositif"]),
         objet=unjustify(amendement["exposeSommaire"]),
     )
@@ -176,6 +178,16 @@ def get_sort(amendement: OrderedDict) -> str:
         else:
             raise NotImplementedError
     return sort.lower()
+
+
+def get_parent_raw_num(amendement: OrderedDict) -> str:
+    parent: Union[str, OrderedDict] = amendement["numeroParent"]
+    if isinstance(parent, OrderedDict):
+        if "@xsi:nil" in parent:
+            return ""
+        else:
+            raise NotImplementedError
+    return parent
 
 
 def unjustify(content: str) -> str:

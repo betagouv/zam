@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendement>
+    <numero>941</numero>
+    <numeroLong>941</numeroLong>
+    <numeroParent>155</numeroParent>
+    <amendementEtendu>0</amendementEtendu>
+    <etat>DI</etat>
+    <missionVisee xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dispositif><![CDATA[<p>Supprimer les alin&#233;as 3 &#224; 7.</p>]]></dispositif>
+    <exposeSommaire><![CDATA[<p style="text-align: justify;">Le pr&#233;sent amendement retient la proposition visant &#224; appliquer &#224; la convention des pharmaciens la proc&#233;dure de r&#232;glement arbitral, qui s'applique d&#233;j&#224; pour les autres professions de sant&#233; conventionn&#233;es. En revanche, l'instauration d'un droit d'opposition n'est pas retenue, celui-ci n'&#233;tant pas op&#233;rant das la configuration actuelle de la repr&#233;sentation des pharmaciens.&#160;</p>]]></exposeSommaire>
+    <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <listeDesSignataires> le Gouvernement</listeDesSignataires>
+    <listeDesTribunCosignataires xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <libelleSeance></libelleSeance>
+    <sortEnSeance>Adopté</sortEnSeance>
+    <dateDepot>27/10/2016</dateDepot>
+    <datePublication>27/10/2016</datePublication>
+    <dateSaisieSort>28/10/2016</dateSaisieSort>
+    <article99>0</article99>
+    <triAmendement>jeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabik</triAmendement>
+    <codeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <refCodeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <urlPDF>/14/amendements/4072/AN/941.pdf</urlPDF>
+    <dateDepotAffiche>27 octobre 2016 </dateDepotAffiche>
+    <division>
+        <titre>Article 43</titre>
+        <divisionDesignation>APRÈS ART. 43</divisionDesignation>
+        <type>ARTICLE</type>
+        <avantApres>Apres</avantApres>
+        <divisionRattache>APRÈS L'ARTICLE 43</divisionRattache>
+        <articleAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <divisionAdditionnelle xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlDivisionTexteVise>/14/textes/4072.asp#D_Article_43</urlDivisionTexteVise>
+    </division>
+    <examen>
+        <examenId>6591</examenId>
+        <organeSaisi>Séance publique</organeSaisi>
+        <typeSaisie>En séance</typeSaisie>
+        <idOrganeProprietaire>644420</idOrganeProprietaire>
+    </examen>
+    <texte>
+        <titre>POUR 2017</titre>
+        <titreCourt>PLFSS 2017</titreCourt>
+        <numBibard>4072</numBibard>
+        <numsBibardsDesPropositions></numsBibardsDesPropositions>
+        <etapeTexte>1ère lecture (1ère assemblée saisie)</etapeTexte>
+        <numeroLegislature>14</numeroLegislature>
+        <mentionSecondeDeliberation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <numeroPartiePLF xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <idDossier>35276</idDossier>
+        <libelleDossier>Sécurité sociale : loi de financement 2017</libelleDossier>
+        <urlDossierWeb>http://www.assemblee-nationale.fr/14/dossiers/plfss_2017.asp</urlDossierWeb>
+    </texte>
+    <seance>
+        <legisId>20330</legisId>
+        <legisIdperiode>533</legisIdperiode>
+        <numero>31</numero>
+        <debut>28/10/2016 09:30</debut>
+        <fin xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlcr>/14/cri/2016-2017/20170031.asp</urlcr>
+        <quantieme>Première</quantieme>
+    </seance>
+    <alinea xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <auteur>
+        <tribunId>GVT</tribunId>
+        <civilite xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <nom xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <prenom xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <estGouvernement>1</estGouvernement>
+        <estRapporteur>0</estRapporteur>
+        <groupeTribunId xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </auteur>
+    <cosignataires/>
+    <auteurParent> de la commission des affaires sociales</auteurParent>
+    <amdtDejaMisADiscute>1</amdtDejaMisADiscute>
+    <typeRectification xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <causeDeRetrait xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <estMasque>0</estMasque>
+    <retireAvantPublication>0</retireAvantPublication>
+    <afficherEnRecevabilite>false</afficherEnRecevabilite>
+    <isLiasseRapporteur>false</isLiasseRapporteur>
+    <isMarqueDeRevisionVisible>false</isMarqueDeRevisionVisible>
+    <isPlfrMode>false</isPlfrMode>
+    <isPlfMode>false</isPlfMode>
+    <accordGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <statutDiffusion>normal</statutDiffusion>
+</amendement>

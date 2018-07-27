@@ -46,17 +46,20 @@ class Amendement:
     num_disp: str
     gouvernemental: bool = False
     auteur: Optional[str] = ""
+    parent: Optional[str] = ""
     objet: Optional[str] = ""
     dispositif: Optional[str] = ""
     resume: Optional[str] = ""
     document: Optional[str] = ""
-    etat: Optional[str] = ""
+    sort: Optional[str] = ""
 
     def __str__(self) -> str:
         return self.num_disp
 
     @classmethod
     def create(cls, amendement: AmendementModel, reponse: Reponse) -> "Amendement":
+        # Workaround: mypy doesn't know about "parent" as it's a dynamic attribute
+        parent: Optional[AmendementModel] = amendement.parent  # type: ignore
         return cls(  # type: ignore
             pk=f"{amendement.num:06}",
             id=amendement.num,
@@ -70,8 +73,9 @@ class Amendement:
             dispositif=amendement.dispositif,
             objet=amendement.objet,
             resume=amendement.resume,
-            etat=amendement.sort,
+            sort=amendement.sort,
             gouvernemental=amendement.gouvernemental,
+            parent=parent and parent.num_disp or "",
         )
 
 

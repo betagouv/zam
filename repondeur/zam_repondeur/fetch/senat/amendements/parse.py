@@ -35,11 +35,20 @@ def parse_from_csv(row: dict, session: str, num_texte: int, organe: str) -> Amen
 
 
 def parse_from_json(
-    amend: dict, position: int, session: str, num_texte: int, organe: str, subdiv: dict
+    amends_by_ids: dict,
+    amend: dict,
+    position: int,
+    session: str,
+    num_texte: int,
+    organe: str,
+    subdiv: dict,
 ) -> Amendement:
     num, rectif = Amendement.parse_num(amend["num"])
     subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = _parse_subdiv(
         subdiv["libelle_subdivision"]
+    )
+    parent_num, parent_rectif = Amendement.parse_num(
+        get_parent_raw_num(amends_by_ids, amend)
     )
     return Amendement(  # type: ignore
         chambre="senat",
@@ -60,6 +69,8 @@ def parse_from_json(
             else None
         ),
         sort=amend.get("sort"),
+        parent_num=parent_num,
+        parent_rectif=parent_rectif,
         position=position,
         identique=parse_bool(amend["isIdentique"]),
         discussion_commune=(
@@ -94,3 +105,14 @@ def parse_bool(text: str) -> bool:
     if text == "false":
         return False
     raise ValueError
+
+
+def get_parent_raw_num(amends_by_ids: dict, amend: dict) -> str:
+    if (
+        "isSousAmendement" in amend
+        and parse_bool(amend["isSousAmendement"])
+        and "idAmendementPere" in amend
+    ):
+        num: str = amends_by_ids[amend["idAmendementPere"]]["num"]
+        return num
+    return ""

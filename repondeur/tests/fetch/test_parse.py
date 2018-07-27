@@ -108,6 +108,7 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
+            {"1104289": amend},
             amend,
             position=1,
             session="2017-2018",
@@ -125,6 +126,8 @@ class TestParseAmendementFromJSON:
 
         assert amendement.num == 230
         assert amendement.rectif == 1
+        assert amendement.parent_num == 0
+        assert amendement.parent_rectif == 0
 
         assert amendement.auteur == "M. PELLEVAT"
 
@@ -161,6 +164,7 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
+            {"1104289": amend},
             amend,
             position=1,
             session="2017-2018",
@@ -205,6 +209,7 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
+            {"1110174": amend},
             amend,
             position=1,
             session="2017-2018",
@@ -241,6 +246,7 @@ class TestParseAmendementFromJSON:
         subdiv = {"libelle_subdivision": "Article 3"}
 
         amendement = parse_from_json(
+            {"1103376": amend},
             amend,
             position=1,
             session="2017-2018",
@@ -251,3 +257,65 @@ class TestParseAmendementFromJSON:
 
         assert amendement.discussion_commune is None
         assert amendement.sort == "Adopté"
+
+    def test_parse_sous_amendement(self):
+        from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
+
+        amend = {
+            "idAmendement": "1104289",
+            "posder": "1",
+            "subpos": "0",
+            "isSousAmendement": "false",
+            "idAmendementPere": "0",
+            "urlAmdt": "Amdt_230.html",
+            "typeAmdt": "Amt",
+            "num": "230 rect.",
+            "libelleAlinea": "Al. 2",
+            "urlAuteur": "pellevat_cyril14237s.html",
+            "auteur": "M. PELLEVAT",
+            "isDiscussionCommune": "false",
+            "isDiscussionCommuneIsolee": "false",
+            "isIdentique": "false",
+            "sort": "Rejeté",
+            "isAdopte": "false",
+            "isRejete": "true",
+        }
+        amend2 = {
+            "idAmendement": "1110174",
+            "posder": "1",
+            "subpos": "0",
+            "isSousAmendement": "true",
+            "idAmendementPere": "1104289",
+            "urlAmdt": "Amdt_131.html",
+            "typeAmdt": "Amt",
+            "num": "131",
+            "libelleAlinea": "",
+            "urlAuteur": "bocquet_eric11040e.html",
+            "auteur": "M. BOCQUET",
+            "isDiscussionCommune": "true",
+            "idDiscussionCommune": "110541",
+            "isDiscussionCommuneIsolee": "false",
+            "isIdentique": "false",
+            "sort": "Rejeté",
+            "isAdopte": "false",
+            "isRejete": "true",
+        }
+        subdiv = {
+            "libelle_subdivision": "Article 1er",
+            "isubdivision": "154182",
+            "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
+        }
+        amendement = parse_from_json(
+            {"1104289": amend, "1110174": amend2},
+            amend2,
+            position=1,
+            session="2017-2018",
+            num_texte=63,
+            organe="PO78718",
+            subdiv=subdiv,
+        )
+
+        assert amendement.num == 131
+        assert amendement.rectif == 0
+        assert amendement.parent_num == 230
+        assert amendement.parent_rectif == 1

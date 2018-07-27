@@ -2,7 +2,7 @@
 <html lang=fr>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,minimum-scale=1,initial-scale=1,shrink-to-fit=no">
-<title>{{ title }}</title>
+<title>{{ dossier_legislatif }} — {{ lecture }}</title>
 <link rel=icon href="data:;base64,iVBORw0KGgo=">
 <style>
 /* https://github.com/adobe-fonts/source-sans-pro/releases/tag/2.020R-ro%2F1.075R-it
@@ -82,6 +82,9 @@
   article {
     margin: 1.5rem 1rem;
     box-shadow: 0 5px 5px 2px #ccc;
+  }
+  article.sous-amendement {
+    margin: -1.4rem 1rem 1rem 2.5rem;
   }
   /* Useful to stay below the sticky Article's header. */
   article .fake-anchor {
@@ -478,7 +481,8 @@
       </div>
       {% for reponse, amendements in article.reponses.items() %}
         {% set is_gouvernemental = amendements[0].gouvernemental %}
-        <article{% if is_gouvernemental %} class="gouvernemental"{% endif %}>
+        {% set parent = amendements[0].parent %}
+        <article{% if is_gouvernemental %} class="gouvernemental"{% endif %}{% if parent %} class="sous-amendement"{% endif %}>
           <span class="fake-anchor" id="amendement-{{ amendements[0].pk }}"></span>
           {% if reponse.favorable %}
             {% set avis_class = 'positive' %}
@@ -517,6 +521,7 @@
                     {{ amendement }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
                   {% endfor %}
                 {% endif %}
+                {% if parent %} (sous-amendement de {{ parent }}){% endif %}
               </h2>
               {% if reponse.presentation|length < 200 %}
                 <div class="presentation">

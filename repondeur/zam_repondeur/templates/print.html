@@ -125,24 +125,43 @@
                 {% endif %}
               </td>
             </tr>
-            <tr>
-              <td>Amendement{% if multiple %}s{% endif %}</td>
-              <td>
-                {% if amendements|length > 5 %}
-                  {{ amendements[0] }},
-                  {{ amendements[1] }},
-                  ...,
-                  {{ amendements[-3] }},
-                  {{ amendements[-2] }} et
-                  {{ amendements[-1] }}
-                  ({{ amendements|length }} au total)
-                {% else %}
+            {% if amendements[0].parent %}
+              <tr>
+                <td>Amendement{% if multiple %}s{% endif %}</td>
+                <td>
+                  {% for amendement in amendements %}
+                    {{ amendement.parent }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                  {% endfor %}
+                </td>
+              </tr>
+              <tr>
+                <td>Sous-amendement{% if multiple %}s{% endif %}</td>
+                <td>
                   {% for amendement in amendements %}
                     {{ amendement }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
                   {% endfor %}
-                {% endif %}
-              </td>
-            </tr>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td>Amendement{% if multiple %}s{% endif %}</td>
+                <td>
+                  {% if amendements|length > 5 %}
+                    {{ amendements[0] }},
+                    {{ amendements[1] }},
+                    ...,
+                    {{ amendements[-3] }},
+                    {{ amendements[-2] }} et
+                    {{ amendements[-1] }}
+                    ({{ amendements|length }} au total)
+                  {% else %}
+                    {% for amendement in amendements %}
+                      {{ amendement }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                    {% endfor %}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endif %}
             <tr>
               <td>Auteur{% if multiple %}s{% endif %}</td>
               <td>
@@ -186,7 +205,11 @@
         </section>
         {% for amendement in amendements %}
           <section class="page amendement">
-            <h2>Amendement</h2>
+            {% if amendement.parent %}
+              <h2>Sous-amendement</h2>
+            {% else %}
+              <h2>Amendement</h2>
+            {% endif %}
             <table class="cartouche">
               <tr>
                 <td>Article</td>
@@ -198,14 +221,35 @@
                   {% endif %}
                 </td>
               </tr>
-              <tr>
-                <td>Amendement</td>
-                <td>{{ amendement.id }}</td>
-              </tr>
+              {% if amendement.parent %}
+                <tr>
+                  <td>Amendement</td>
+                  <td>{{ amendement.parent }}</td>
+                </tr>
+                <tr>
+                  <td>Sous-amendement</td>
+                  <td>{{ amendement.num_disp }}</td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td>Amendement</td>
+                  <td>{{ amendement.num_disp }}</td>
+                </tr>
+              {% endif %}
               <tr>
                 <td>Auteur</td>
                 <td>{{ amendement.auteur }}</td>
               </tr>
+              <tr>
+                <td>Groupe</td>
+                <td>{{ amendement.groupe.libelle }}</td>
+              </tr>
+              {% if amendement.sort %}
+                <tr>
+                  <td>Sort</td>
+                  <td>{{ amendement.sort }}</td>
+                </tr>
+              {% endif %}
             </table>
             <div>
               <h3>Exposé :</h3>

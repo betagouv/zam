@@ -1,0 +1,35 @@
+{% extends "_base.html" %}
+
+{% block header %}
+    <style type="text/css">
+        h4 {
+            margin-bottom: 0.75rem;
+        }
+        label {
+            font-weight: 500;
+        }
+        textarea {
+            height: 30vh;
+        }
+        div.mce-fullscreen {
+            z-index: 1030;
+        }
+    </style>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ request.static_url('zam_repondeur:static/tinymce/tinymce.min.js') }}"></script>
+    <script type="text/javascript">
+        tinymce.init({
+            selector: "textarea",
+            language: "fr_FR",
+            menubar: false,
+            plugins: "lists fullscreen paste",
+            toolbar: "undo redo | formatselect | bold italic removeformat | bullist numlist | cut copy paste | fullscreen",
+            branding: false,
+            elementpath: false,
+            content_style: "p, li { line-height: 1.5; margin: 1em 0; }",
+            block_formats: "Paragraphe=p;Titre=h3",
+        });
+    </script>
+{% endblock %}

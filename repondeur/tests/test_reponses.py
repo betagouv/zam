@@ -166,7 +166,30 @@ def test_reponses_with_textes(app, dummy_lecture, dummy_amendements):
     )
 
 
-def test_reponses_without_textes(app, dummy_lecture, dummy_amendements):
+def test_reponses_with_jaunes(app, dummy_lecture, dummy_amendements):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        for amendement in dummy_amendements:
+            amendement.avis = "Favorable"
+            amendement.observations = f"Observations pour {amendement.num}"
+            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.subdiv_jaune = "<p>Contenu du jaune</p>"
+        DBSession.add_all(dummy_amendements)
+
+    resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
+
+    assert len(resp.parser.css("#content-article-1")) == 1
+    assert (
+        resp.parser.css_first("#content-article-1 h2").text() == "Éléments de langage"
+    )
+    assert (
+        resp.parser.css_first("#content-article-1 p").text().strip()
+        == "Contenu du jaune"
+    )
+
+
+def test_reponses_without_textes_or_jaunes(app, dummy_lecture, dummy_amendements):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -178,7 +201,7 @@ def test_reponses_without_textes(app, dummy_lecture, dummy_amendements):
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
-    assert len(resp.parser.css("#content-article-1")) == 0
+    assert len(resp.parser.css("#content-article-1 h2")) == 0
 
 
 def test_reponses_with_multiple_articles(app, dummy_lecture, dummy_amendements):

@@ -15,6 +15,9 @@
             z-index: 1030;
         }
     </style>
+{% endblock %}
+
+{% block scripts %}
     <script src="{{ request.static_url('zam_repondeur:static/tinymce/tinymce.min.js') }}"></script>
     <script type="text/javascript">
         tinymce.init({

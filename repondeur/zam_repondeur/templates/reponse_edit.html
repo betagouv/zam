@@ -1,6 +1,7 @@
 {% extends "_base_edit.html" %}
 
 {% block header %}
+    {{ super() }}
     <style type="text/css">
         .auteur, .dispositif, .objet {
             margin-bottom: 1.5rem;
@@ -9,7 +10,6 @@
             font-style: italic;
         }
     </style>
-    {{ super() }}
 {% endblock %}
 
 

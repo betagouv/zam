@@ -37,6 +37,8 @@ class Amendement:
     position: Optional[int] = None  # ordre de lecture
     discussion_commune: Optional[int] = None
     identique: Optional[bool] = None
+    parent_num: Optional[int] = None  # sous-amendement
+    parent_rectif: Optional[int] = None  # sous-amendement
 
     dispositif: Optional[str] = None  # texte de l'amendement
     objet: Optional[str] = None  # motivation
@@ -91,6 +93,8 @@ class Amendement:
 
     @staticmethod
     def parse_num(text: str) -> Tuple[int, int]:
+        if text == "":
+            return 0, 0
         if text.startswith("COM-"):
             start = len("COM-")
             text = text[start:]

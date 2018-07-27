@@ -54,11 +54,10 @@ def test_fetch_and_parse_all():
         status=200,
     )
 
-    title, amendements, errored = fetch_and_parse_all(
+    amendements, errored = fetch_and_parse_all(
         legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
     )
 
-    assert title == "PLFSS 2017"
     assert len(amendements) == 5
     assert amendements[0].num == 177
     assert amendements[1].num == 270
@@ -106,11 +105,10 @@ def test_fetch_and_parse_all_with_404():
         status=200,
     )
 
-    title, amendements, errored = fetch_and_parse_all(
+    amendements, errored = fetch_and_parse_all(
         legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
     )
 
-    assert title == "PLFSS 2017"
     assert len(amendements) == 4
     assert amendements[0].num == 177
     assert amendements[1].num == 723
@@ -132,11 +130,10 @@ def test_fetch_amendements():
         status=200,
     )
 
-    title, items = fetch_amendements(
+    items = fetch_amendements(
         legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
     )
 
-    assert title == "PLFSS 2017"
     assert len(items) == 5
     assert items[0] == {
         "@alineaLabel": "S",
@@ -171,7 +168,7 @@ def test_fetch_amendements_not_found():
 
 
 @responses.activate
-def test_fetch_amendement():
+def test_fetch_amendement(app):
     from zam_repondeur.fetch.an.amendements import fetch_amendement
     from zam_repondeur.fetch.models import Amendement
 
@@ -211,6 +208,8 @@ def test_fetch_amendement():
         position=1,
         discussion_commune=None,
         identique=None,
+        parent_num=0,
+        parent_rectif=0,
         dispositif="<p>Supprimer cet article.</p>",
         objet="<p>Amendement d&#8217;appel.</p>\n<p>Pour couvrir les d&#233;passements attendus de l&#8217;ONDAM pour 2016, cet article pr&#233;voit un pr&#233;l&#232;vement de 200 millions d&#8217;&#8364; sur les fonds de roulement de l&#8217;association nationale pour la formation permanente du personnel hospitalier (ANFH) et du fonds pour l&#8217;emploi hospitalier (FEH) pour financer le <span>fonds pour la modernisation des &#233;tablissements de sant&#233; publics et priv&#233;s</span>(FMESPP) en remplacement de cr&#233;dit de l&#8217;ONDAM. Il participe donc &#224; la pr&#233;sentation insinc&#232;re de la construction de l&#8217;ONDAM, d&#233;nonc&#233;e par le Comit&#233; d&#8217;alerte le 12 octobre dernier.</p>",  # noqa
         resume=None,
@@ -218,6 +217,7 @@ def test_fetch_amendement():
         observations=None,
         reponse=None,
     )
+    assert amendement.parent is None
 
 
 @responses.activate
@@ -267,6 +267,30 @@ def test_fetch_amendement_commission():
     assert amendement.gouvernemental is False
     assert amendement.auteur == "Bapt Gérard"
     assert amendement.groupe == ""
+
+
+@responses.activate
+def test_fetch_sous_amendement(app):
+    from zam_repondeur.fetch.an.amendements import fetch_amendement
+
+    responses.add(
+        responses.GET,
+        build_url(14, 4072, 941),
+        body=read_sample_data("an_941.xml"),
+        status=200,
+    )
+
+    amendement = fetch_amendement(
+        legislature=14,
+        texte=4072,
+        numero=941,
+        organe="PO717460",
+        groups_folder=SAMPLE_DATA_DIR,
+        position=1,
+    )
+
+    assert amendement.parent_num == 155
+    assert amendement.parent_rectif == 0
 
 
 @responses.activate

@@ -16,6 +16,13 @@ def test_parse_num(text, num, rectif):
     assert Amendement.parse_num(text) == (num, rectif)
 
 
+@pytest.mark.parametrize("text,num,rectif", [("", 0, 0)])
+def test_parse_num_empty(text, num, rectif):
+    from zam_repondeur.fetch.models import Amendement
+
+    assert Amendement.parse_num(text) == (num, rectif)
+
+
 @pytest.mark.parametrize("text,num,rectif", [("COM-1", 1, 0), ("COM-48 rect.", 48, 1)])
 def test_parse_num_commissions(text, num, rectif):
     from zam_repondeur.fetch.models import Amendement

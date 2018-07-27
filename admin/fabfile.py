@@ -6,7 +6,13 @@ from shlex import quote
 from string import Template
 
 import CommonMark
+import requests
 from invoke import task
+
+
+# Rollbar token with permissions to post items & deploys
+# cf. https://rollbar.com/zam/zam/settings/access_tokens/
+ROLLBAR_TOKEN = "8173da84cb344c169bdee21f91e8f529"
 
 
 class NginxFriendlyTemplate(Template):
@@ -126,7 +132,10 @@ def deploy_changelog(ctx, source="../CHANGELOG.md"):
 
 
 @task
-def deploy_repondeur(ctx, secret, branch="master", wipe=False):
+def deploy_repondeur(
+    ctx, secret, rollbar_token=ROLLBAR_TOKEN, branch="master", wipe=False
+):
+    environment = ctx.host.split(".", 1)[0]
     user = "repondeur"
     install_locale(ctx, "fr_FR.utf8")
     create_user(ctx, name=user, home_dir="/srv/repondeur")
@@ -139,12 +148,23 @@ def deploy_repondeur(ctx, secret, branch="master", wipe=False):
     )
     app_dir = "/srv/repondeur/src/repondeur"
     install_requirements(ctx, app_dir=app_dir, user=user)
-    setup_config(ctx, app_dir=app_dir, user=user, secret=secret)
+    setup_config(
+        ctx,
+        app_dir=app_dir,
+        user=user,
+        context={
+            "environment": environment,
+            "branch": branch,
+            "secret": secret,
+            "rollbar_token": rollbar_token,
+        },
+    )
     if wipe:
         wipe_db(ctx, user=user)
     migrate_db(ctx, app_dir=app_dir, user=user)
     fetch_an_group_data(ctx, user=user)
     setup_service(ctx)
+    notify_rollbar(ctx, rollbar_token, branch, environment)
 
 
 @task
@@ -182,11 +202,9 @@ def install_requirements(ctx, app_dir, user):
 
 
 @task
-def setup_config(ctx, app_dir, user, secret):
+def setup_config(ctx, app_dir, user, context):
     with template_local_file(
-        "../repondeur/production.ini.template",
-        "../repondeur/production.ini",
-        {"secret": secret},
+        "../repondeur/production.ini.template", "../repondeur/production.ini", context
     ):
         sudo_put(
             ctx, "../repondeur/production.ini", f"{app_dir}/production.ini", chown=user
@@ -206,14 +224,8 @@ def wipe_db(ctx, user):
 @task
 def migrate_db(ctx, app_dir, user):
     create_directory(ctx, "/var/lib/zam", owner=user)
-    res = ctx.sudo(
-        f'bash -c "cd {app_dir} && pipenv run alembic -c production.ini current"',
-        user=user,
-    )
-    current = res.stdout
-    action = "upgrade" if current else "stamp"
     ctx.sudo(
-        f'bash -c "cd {app_dir} && pipenv run alembic -c production.ini {action} head"',
+        f'bash -c "cd {app_dir} && pipenv run alembic -c production.ini upgrade head"',
         user=user,
     )
 
@@ -245,6 +257,21 @@ def setup_service(ctx):
     sudo_put(ctx, "repondeur.service", "/etc/systemd/system/repondeur.service")
     ctx.sudo("systemctl enable repondeur")
     ctx.sudo("systemctl restart repondeur")
+
+
+def notify_rollbar(ctx, rollbar_token, branch, environment):
+    local_username = ctx.local('whoami').stdout
+    revision = ctx.local(f'git log -n 1 --pretty=format:"%H" origin/{branch}').stdout
+    resp = requests.post('https://api.rollbar.com/api/1/deploy/', {
+        'access_token': rollbar_token,
+        'environment': environment,
+        'local_username': local_username,
+        'revision': revision
+    }, timeout=3)
+    if resp.status_code == 200:
+        print("Deploy recorded successfully.")
+    else:
+        print(f"Error recording deploy: {resp.text}")
 
 
 @task

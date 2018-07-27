@@ -1,5 +1,15 @@
-from sqlalchemy import Boolean, Column, Date, DateTime, Integer, PickleType, Table, Text
-from sqlalchemy.orm import mapper
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    PickleType,
+    Table,
+    Text,
+)
+from sqlalchemy.orm import mapper, relationship
 from sqlalchemy.schema import ForeignKeyConstraint
 
 from zam_repondeur.fetch.models import Amendement
@@ -76,6 +86,8 @@ amendements_table = Table(
     Column("position", Integer, nullable=True),
     Column("discussion_commune", Integer, nullable=True),
     Column("identique", Boolean, nullable=True),
+    Column("parent_num", Integer, ForeignKey("amendements.num"), nullable=True),
+    Column("parent_rectif", Integer, nullable=True),
     #
     # Contenu de l'amendement
     #
@@ -109,6 +121,13 @@ mapper(
         "alinea": amendements_table.c.alinea,
         "num": amendements_table.c.num,
         "rectif": amendements_table.c.rectif,
+        "parent_num": amendements_table.c.parent_num,
+        "parent_rectif": amendements_table.c.parent_rectif,
+        "parent": relationship(
+            Amendement,
+            primaryjoin=(amendements_table.c.parent_num == amendements_table.c.num),
+            uselist=False,  # many-to-one relationship
+        ),
         "auteur": amendements_table.c.auteur,
         "groupe": amendements_table.c.groupe,
     },

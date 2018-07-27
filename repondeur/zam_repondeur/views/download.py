@@ -6,6 +6,7 @@ from pyramid.request import Request
 from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
 from sqlalchemy.sql.expression import case
+from sqlalchemy.orm import joinedload
 
 from zam_repondeur.models import DBSession, Amendement
 from zam_repondeur.resources import LectureResource
@@ -39,6 +40,7 @@ def download_amendements(context: LectureResource, request: Request) -> Response
             Amendement.position,
             Amendement.num,
         )
+        .options(joinedload(Amendement.parent))  # type: ignore
         .all()
     )
 

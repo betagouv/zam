@@ -58,7 +58,7 @@ amendements_table = Table(
     Column("alinea", Text, nullable=True),  # libellé de l'alinéa de l'article concerné
     Column("subdiv_titre", Text, nullable=True),  # titre de l'article
     Column("subdiv_contenu", PickleType, nullable=True),  # contenu de l'article
-    Column("subdiv_jaune", PickleType, nullable=True),  # éléments de langage
+    Column("subdiv_jaune", Text, nullable=True),  # éléments de langage
     #
     # Numéro de l'amendement
     #

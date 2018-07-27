@@ -1,8 +1,8 @@
 """Add jaune column for articles
 
-Revision ID: 3d120d80713d
-Revises: b86ab6e391df
-Create Date: 2018-07-26 14:37:38.974347
+Revision ID: cf35ebb8ad69
+Revises: d42ed17375d6
+Create Date: 2018-07-27 09:56:07.533858
 
 """
 from alembic import op
@@ -10,16 +10,14 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "3d120d80713d"
-down_revision = "b86ab6e391df"
+revision = "cf35ebb8ad69"
+down_revision = "d42ed17375d6"
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
-    op.add_column(
-        "amendements", sa.Column("subdiv_jaune", sa.PickleType(), nullable=True)
-    )
+    op.add_column("amendements", sa.Column("subdiv_jaune", sa.Text(), nullable=True))
 
 
 def downgrade():

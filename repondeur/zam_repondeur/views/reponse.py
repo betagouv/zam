@@ -5,6 +5,7 @@ from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
+from sqlalchemy.orm import joinedload
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.models import DBSession, Amendement, AVIS
@@ -32,6 +33,7 @@ def list_reponses(context: LectureResource, request: Request) -> Response:
             Amendement.position,
             Amendement.num,
         )
+        .options(joinedload(Amendement.parent))  # type: ignore
         .all()
     )
     articles = build_tree(amendements)

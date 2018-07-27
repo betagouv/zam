@@ -9,6 +9,7 @@ from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.sql.expression import case
+from sqlalchemy.orm import joinedload
 
 from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Lecture
 
@@ -152,6 +153,7 @@ class ListAmendements:
                 Amendement.position,
                 Amendement.num,
             )
+            .options(joinedload(Amendement.parent))  # type: ignore
             .all()
         )
 

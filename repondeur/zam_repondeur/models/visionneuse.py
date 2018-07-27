@@ -58,6 +58,8 @@ class Amendement:
 
     @classmethod
     def create(cls, amendement: AmendementModel, reponse: Reponse) -> "Amendement":
+        # Workaround: mypy doesn't know about "parent" as it's a dynamic attribute
+        parent: Optional[AmendementModel] = amendement.parent  # type: ignore
         return cls(  # type: ignore
             pk=f"{amendement.num:06}",
             id=amendement.num,
@@ -73,7 +75,7 @@ class Amendement:
             resume=amendement.resume,
             sort=amendement.sort,
             gouvernemental=amendement.gouvernemental,
-            parent=amendement.parent and amendement.parent.num_disp or "",
+            parent=parent and parent.num_disp or "",
         )
 
 

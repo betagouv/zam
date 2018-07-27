@@ -17,12 +17,19 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column("amendements", sa.Column("parent_num", sa.Integer(), nullable=True))
-    op.add_column(
-        "amendements", sa.Column("parent_rectif", sa.Integer(), nullable=True)
-    )
+    with op.batch_alter_table("amendements") as batch_op:
+        batch_op.add_column(
+            sa.Column(
+                "parent_num",
+                sa.Integer(),
+                sa.ForeignKey("amendements.num", name="fk_amendements_parent_num"),
+                nullable=True,
+            )
+        )
+        batch_op.add_column(sa.Column("parent_rectif", sa.Integer(), nullable=True))
 
 
 def downgrade():
-    op.drop_column("amendements", "parent_rectif")
-    op.drop_column("amendements", "parent_num")
+    with op.batch_alter_table("amendements") as batch_op:
+        batch_op.drop_column("parent_rectif")
+        batch_op.drop_column("parent_num")

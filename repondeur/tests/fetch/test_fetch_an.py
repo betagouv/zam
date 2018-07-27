@@ -217,7 +217,7 @@ def test_fetch_amendement(app):
         observations=None,
         reponse=None,
     )
-    assert not amendement.parent
+    assert amendement.parent is None
 
 
 @responses.activate

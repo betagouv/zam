@@ -36,8 +36,8 @@ class Amendement:
     position: Optional[int] = None  # ordre de lecture
     discussion_commune: Optional[int] = None
     identique: Optional[bool] = None
-    parent_num: Optional[int] = 0  # sous-amendement
-    parent_rectif: Optional[int] = 0  # sous-amendement
+    parent_num: Optional[int] = None  # sous-amendement
+    parent_rectif: Optional[int] = None  # sous-amendement
 
     dispositif: Optional[str] = None  # texte de l'amendement
     objet: Optional[str] = None  # motivation
@@ -49,23 +49,6 @@ class Amendement:
     reponse: Optional[str] = None
 
     bookmarked_at: Optional[datetime] = None
-
-    @property
-    def parent(self) -> Optional["Amendement"]:
-        if not self.parent_num:
-            return None
-
-        from zam_repondeur.models import DBSession
-
-        parent: Optional[Amendement] = (
-            DBSession.query(Amendement)
-            .filter(
-                Amendement.num == self.parent_num,
-                Amendement.rectif == self.parent_rectif,
-            )
-            .first()
-        )
-        return parent
 
     @property
     def num_disp(self) -> str:

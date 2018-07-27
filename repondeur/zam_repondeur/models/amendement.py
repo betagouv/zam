@@ -9,7 +9,7 @@ from sqlalchemy import (
     Table,
     Text,
 )
-from sqlalchemy.orm import mapper, relationship
+from sqlalchemy.orm import foreign, mapper, relationship
 from sqlalchemy.schema import ForeignKeyConstraint
 
 from zam_repondeur.fetch.models import Amendement
@@ -125,7 +125,9 @@ mapper(
         "parent_rectif": amendements_table.c.parent_rectif,
         "parent": relationship(
             Amendement,
-            primaryjoin=(amendements_table.c.parent_num == amendements_table.c.num),
+            primaryjoin=(
+                amendements_table.c.parent_num == foreign(amendements_table.c.num)
+            ),
             uselist=False,  # many-to-one relationship
         ),
         "auteur": amendements_table.c.auteur,

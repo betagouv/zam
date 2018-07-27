@@ -51,3 +51,12 @@ class TestLectureToStr:
             organe="PO78718",
         )
         assert str(lecture) == "Sénat, session 2017-2018, Séance publique, texte nº 63"
+
+
+def test_amendement_parent_relationship(dummy_amendements):
+    from zam_repondeur.models import DBSession
+
+    parent, child = dummy_amendements
+    child.parent_num = parent.num
+    DBSession.add(child)
+    assert child.parent.num == parent.num

@@ -21,6 +21,7 @@ pyramid-default-cors = "*"
 pdfkit = "*"
 xvfbwrapper = "*"
 alembic = "*"
+rollbar = "*"
 
 [dev-packages]
 webtest = "*"

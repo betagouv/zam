@@ -1,6 +1,8 @@
 from pyramid.config import Configurator
+from pyramid.request import Request
 from pyramid.router import Router
 from pyramid.session import SignedCookieSessionFactory
+from pyramid.view import view_config
 from sqlalchemy import engine_from_config
 
 from zam_repondeur.data import load_data
@@ -29,6 +31,7 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         config.add_jinja2_search_path("zam_repondeur:templates", name=".html")
 
         config.add_route("choices_lectures", "/choices/dossiers/{uid}/")
+        config.add_route("error", "/error")
 
         config.add_static_view("static", "static", cache_max_age=3600)
 
@@ -40,3 +43,8 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         app = config.make_wsgi_app()
 
     return app
+
+
+@view_config(route_name="error")
+def error(request: Request) -> None:
+    raise Exception("Not a real error (just for testing)")

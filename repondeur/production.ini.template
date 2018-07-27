@@ -1,5 +1,6 @@
 [pipeline:main]
 pipeline =
+    rollbar
     paste_prefix
     repondeur
 
@@ -7,10 +8,25 @@ pipeline =
 use = egg:PasteDeploy#prefix
 prefix = /repondeur
 
+[filter:rollbar]
+use = egg:rollbar#pyramid
+access_token = $$rollbar_token
+environment = $$environment
+branch = $$branch
+root = %(here)s
+
 [app:repondeur]
 use = egg:zam_repondeur
 
 pyramid.reload_templates = true
+
+pyramid.includes =
+    rollbar.contrib.pyramid
+
+rollbar.access_token = $$rollbar_token
+rollbar.environment = $$environment
+rollbar.branch = $$branch
+rollbar.root = %(here)s
 
 sqlalchemy.url = sqlite:////var/lib/zam/repondeur.db
 

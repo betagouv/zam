@@ -1,2 +1,3 @@
 CommonMark==0.7.5
 Fabric==2.1.3
+requests==2.19.1

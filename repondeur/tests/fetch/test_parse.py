@@ -67,18 +67,6 @@ class TestExtractMatricule:
         assert extract_matricule(url) == "11040E"
 
 
-def test_parse_date():
-    from zam_repondeur.fetch.senat.amendements.parse import parse_date
-
-    assert parse_date("2017-11-13") == date(2017, 11, 13)
-
-
-def test_parse_date_empty_string():
-    from zam_repondeur.fetch.senat.amendements.parse import parse_date
-
-    assert parse_date("") is None
-
-
 class TestParseAmendementFromJSON:
     def test_parse_basic_data(self):
         from zam_repondeur.fetch.senat.amendements.parse import parse_from_json

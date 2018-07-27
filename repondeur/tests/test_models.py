@@ -40,6 +40,21 @@ class TestLectureToStr:
             == "Assemblée nationale, 15e législature, Commission des finances, texte nº 269"  # noqa
         )
 
+    def test_an_commission_speciale(self):
+        from zam_repondeur.models import Lecture
+
+        lecture = Lecture(
+            chambre="an",
+            session="15",
+            num_texte=806,
+            titre="bla bla",
+            organe="PO744107",
+        )
+        assert (
+            str(lecture)
+            == "Assemblée nationale, 15e législature, Commission spéciale sur la société de confiance, texte nº 806"  # noqa
+        )
+
     def test_senat_seance_publique(self):
         from zam_repondeur.models import Lecture
 

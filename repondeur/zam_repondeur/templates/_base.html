@@ -58,6 +58,14 @@
 
     </main>
 
+    <script type="text/javascript">
+        document.querySelector('[type="file"]').addEventListener('change', function (e) {
+        var input = e.target
+        var filename = input.files[0].name
+        var label = document.querySelector('label[for="' + input.id + '"]')
+        label.innerHTML = filename
+    })
+    </script>
     {% block scripts %}
     {% endblock %}
 </body>

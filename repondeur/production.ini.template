@@ -18,8 +18,6 @@ root = %(here)s
 [app:repondeur]
 use = egg:zam_repondeur
 
-pyramid.reload_templates = true
-
 pyramid.includes =
     rollbar.contrib.pyramid
 

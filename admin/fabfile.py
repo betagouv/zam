@@ -224,14 +224,8 @@ def wipe_db(ctx, user):
 @task
 def migrate_db(ctx, app_dir, user):
     create_directory(ctx, "/var/lib/zam", owner=user)
-    res = ctx.sudo(
-        f'bash -c "cd {app_dir} && pipenv run alembic -c production.ini current"',
-        user=user,
-    )
-    current = res.stdout
-    action = "upgrade" if current else "stamp"
     ctx.sudo(
-        f'bash -c "cd {app_dir} && pipenv run alembic -c production.ini {action} head"',
+        f'bash -c "cd {app_dir} && pipenv run alembic -c production.ini upgrade head"',
         user=user,
     )
 

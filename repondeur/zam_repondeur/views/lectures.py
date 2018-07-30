@@ -213,9 +213,9 @@ class ListAmendements:
         for line in csv.DictReader(reponses_text_file, delimiter=delimiter):
             try:
                 numero = line["N° amdt"]
-                avis = line["Avis du Gouvernement"]
-                objet = line["Objet amdt"]
-                reponse = line["Réponse"]
+                avis = line["Avis du Gouvernement"] or ""
+                objet = line["Objet amdt"] or ""
+                reponse = line["Réponse"] or ""
             except KeyError:
                 errors_count += 1
                 continue

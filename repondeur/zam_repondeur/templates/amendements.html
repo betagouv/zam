@@ -52,6 +52,7 @@
                 <th></th>
                 <th>Article <input class="form-control form-control-sm" type="text"></th>
                 <th>Nº</th>
+                <th class="nosort">Objet</th>
                 <th>Auteur</th>
                 <th>Groupe</th>
                 <th>Sort</th>
@@ -90,6 +91,7 @@
                         (ss-amdt {{ amendement.parent.num_disp }})
                     {% endif %}
                 </td>
+                <td>{{ amendement.objet | striptags | truncate(length=100, killwords=False, end='…') }}</td>
                 <td>{{ amendement.auteur }}</td>
                 <td>{{ amendement.groupe }}</td>
                 <td>{{ amendement.sort }}</td>

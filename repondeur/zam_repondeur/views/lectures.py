@@ -213,9 +213,9 @@ class ListAmendements:
         for line in csv.DictReader(reponses_text_file, delimiter=delimiter):
             try:
                 numero = line["Nº amdt"]
-                avis = line["Avis du Gouvernement"]
-                objet = line["Objet amdt"]
-                reponse = line["Réponse"]
+                avis = line["Avis du Gouvernement"] or ""
+                objet = line["Objet amdt"] or ""
+                reponse = line["Réponse"] or ""
             except KeyError:
                 errors_count += 1
                 continue
@@ -245,9 +245,11 @@ class ListAmendements:
     @staticmethod
     def _guess_csv_delimiter(text_file: TextIO) -> str:
         try:
-            sample = text_file.read(2048)
+            sample = text_file.readline()
         except UnicodeDecodeError:
-            raise CSVError("Le fichier n’est pas un CSV, ou n’est pas encodé en UTF-8")
+            raise CSVError("Le fichier n’est pas encodé en UTF-8")
+        except Exception:
+            raise CSVError("Le format du fichier n’est pas reconnu")
 
         try:
             dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")

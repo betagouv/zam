@@ -245,7 +245,7 @@ class ListAmendements:
     @staticmethod
     def _guess_csv_delimiter(text_file: TextIO) -> str:
         try:
-            sample = text_file.read(2048)
+            sample = text_file.readline()
         except UnicodeDecodeError:
             raise CSVError("Le fichier n’est pas un CSV, ou n’est pas encodé en UTF-8")
 

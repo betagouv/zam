@@ -262,7 +262,7 @@ class ListAmendements:
         return dialect.delimiter
 
 
-REPONSE_FIELDS = ["avis", "observations", "reponse"]
+REPONSE_FIELDS = ["avis", "observations", "reponse", "comments"]
 
 
 @view_config(context=LectureResource, name="fetch_amendements")

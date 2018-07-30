@@ -100,6 +100,7 @@ amendements_table = Table(
     Column("avis", Text, nullable=True),  # position du gouvernemnt
     Column("observations", Text, nullable=True),
     Column("reponse", Text, nullable=True),
+    Column("comments", Text, nullable=True),
     #
     # Informations additionnelles
     #

@@ -35,6 +35,7 @@ def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
     form["avis"] = "Favorable"
     form["observations"] = "Des observations très pertinentes"
     form["reponse"] = "Une réponse très appropriée"
+    form["comments"] = "Avec des commentaires"
     resp = form.submit()
 
     assert resp.status_code == 302
@@ -44,6 +45,7 @@ def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
     assert amendement.avis == "Favorable"
     assert amendement.observations == "Des observations très pertinentes"
     assert amendement.reponse == "Une réponse très appropriée"
+    assert amendement.comments == "Avec des commentaires"
 
 
 def test_post_reponse_edit_form_updates_modification_date(

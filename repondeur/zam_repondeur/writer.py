@@ -31,6 +31,7 @@ FIELDS_NAMES = {
     "resume": "Exposé amdt",
     "observations": "Objet amdt",
     "reponse": "Réponse",
+    "comments": "Commentaires",
     "avis": "Avis du Gouvernement",
 }
 
@@ -224,7 +225,7 @@ def _format_amendement(amendement: Amendement) -> dict:
     }
 
 
-HTML_FIELDS = ["objet", "dispositif", "observations", "reponse"]
+HTML_FIELDS = ["objet", "dispositif", "observations", "reponse", "comments"]
 
 
 def export_amendement(amendement: Amendement) -> dict:

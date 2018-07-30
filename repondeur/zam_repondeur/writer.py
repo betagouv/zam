@@ -25,7 +25,7 @@ FIELDS_NAMES = {
     "date_depot": "Date de dépôt",
     "discussion_commune": "Discussion commune ?",
     "identique": "Identique ?",
-    "parent_num": "N° amdt parent",
+    "parent_num": "Nº amdt parent",
     "parent_rectif": "Rectif parent",
     "objet": "Corps amdt",
     "resume": "Exposé amdt",

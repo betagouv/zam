@@ -83,3 +83,30 @@ def dummy_amendements(app, dummy_lecture):
         DBSession.add_all(amendements)
 
     return amendements
+
+
+@pytest.fixture
+def dummy_amendements_with_reponses(app, dummy_lecture):
+    from zam_repondeur.models import DBSession, Amendement
+
+    with transaction.manager:
+        amendements = [
+            Amendement(
+                chambre=dummy_lecture.chambre,
+                session=dummy_lecture.session,
+                num_texte=dummy_lecture.num_texte,
+                organe=dummy_lecture.organe,
+                subdiv_type="article",
+                subdiv_num="1",
+                num=num,
+                position=position,
+                avis="Favorable",
+                observations="Des observations très pertinentes",
+                reponse="Une réponse très appropriée",
+                comments="Avec des commentaires",
+            )
+            for position, num in enumerate((333, 777), 1)
+        ]
+        DBSession.add_all(amendements)
+
+    return amendements

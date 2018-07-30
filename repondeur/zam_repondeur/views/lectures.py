@@ -247,7 +247,9 @@ class ListAmendements:
         try:
             sample = text_file.readline()
         except UnicodeDecodeError:
-            raise CSVError("Le fichier n’est pas un CSV, ou n’est pas encodé en UTF-8")
+            raise CSVError("Le fichier n’est pas encodé en UTF-8")
+        except Exception:
+            raise CSVError("Le format du fichier n’est pas reconnu")
 
         try:
             dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")

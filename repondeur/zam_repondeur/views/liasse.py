@@ -4,9 +4,7 @@ from pyramid.response import Response
 from pyramid.view import view_config
 
 from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
-from zam_repondeur.models import Lecture
 from zam_repondeur.resources import LectureResource
-from zam_repondeur.views.lectures import _add_or_update_amendements, _set_flash_messages
 
 
 @view_config(context=LectureResource, name="import_liasse_xml")
@@ -40,25 +38,17 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
 
     lecture = context.model()
     filtered_amendements = [
-        amendement
-        for amendement in amendements
-        if amendement.chambre == lecture.chambre
-        and amendement.session == lecture.session
-        and amendement.num_texte == lecture.num_texte
-        and amendement.organe == lecture.organe
+        amendement for amendement in amendements if amendement.lecture == lecture
     ]
     ignored = len(amendements) - len(filtered_amendements)
 
     if len(filtered_amendements) == 0:
         amendement = amendements[0]
-        other_lecture = Lecture(
-            chambre=amendement.chambre,
-            session=amendement.session,
-            num_texte=amendement.num_texte,
-            organe=amendement.organe,
-        )
         request.session.flash(
-            ("danger", f"La liasse correspond à une autre lecture ({other_lecture}).")
+            (
+                "danger",
+                f"La liasse correspond à une autre lecture ({amendement.lecture}).",
+            )
         )
         return
 
@@ -66,7 +56,9 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
         request.session.flash(
             ("warning", f"{ignored} amendements ignorés car non liés à cette lecture.")
         )
-
-    added, updated, unchanged = _add_or_update_amendements(filtered_amendements)
-    assert added + updated + unchanged == len(filtered_amendements)
-    _set_flash_messages(request, added, updated, unchanged)
+    if len(amendements):
+        if len(amendements) == 1:
+            message = "1 nouvel amendement récupéré."
+        else:
+            message = f"{len(amendements)} nouveaux amendements récupérés."
+        request.session.flash(("success", message))

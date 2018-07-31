@@ -1,7 +1,7 @@
 import logging
 from datetime import date
 from functools import partial
-from typing import Dict, IO, List, Optional, Tuple
+from typing import Dict, IO, List, Optional, Tuple, cast
 
 from lxml import etree
 
@@ -9,8 +9,14 @@ from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
 from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Texte
 from zam_repondeur.fetch.dates import parse_date
-from zam_repondeur.fetch.division import _parse_subdiv
-from zam_repondeur.fetch.models import Amendement, SubDiv
+from zam_repondeur.fetch.division import _parse_subdiv, SubDiv
+from zam_repondeur.models import (
+    DBSession,
+    Article,
+    Amendement,
+    Lecture,
+    get_one_or_create,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -64,27 +70,52 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
 
     parent_num, parent_rectif = get_parent(extract("amendementParent"), uid_map)
 
-    return Amendement(  # type: ignore
+    article, created = get_one_or_create(  # type: ignore
+        DBSession,
+        Article,
+        type=subdiv.type_,
+        num=subdiv.num,
+        mult=subdiv.mult,
+        pos=subdiv.pos,
+    )
+    lecture, created = get_one_or_create(  # type: ignore
+        DBSession,
+        Lecture,
         chambre=Chambre.AN.value,
         session=extract("identifiant", "legislature"),
         num_texte=get_texte_number(texte_uid),
         organe=extract("identifiant", "saisine", "organeExamen"),
-        subdiv_type=subdiv.type_,
-        subdiv_num=subdiv.num,
-        subdiv_mult=subdiv.mult,
-        subdiv_pos=subdiv.pos,
-        alinea=to_int(extract("pointeurFragmentTexte", "alinea", "numero")),
-        num=to_int(extract("identifiant", "numero")),
-        auteur=get_auteur_name(auteur_uid),
-        matricule=auteur_uid,
-        groupe=get_groupe_name(groupe_uid),
-        date_depot=to_date(extract("dateDepot")),
-        sort=get_sort(sort=extract("sort", "sortEnSeance"), etat=extract("etat")),
-        parent_num=parent_num,
-        parent_rectif=parent_rectif,
-        dispositif=clean_html(extract("corps", "dispositif") or ""),
-        objet=clean_html(extract("corps", "exposeSommaire") or ""),
     )
+    if parent_num:
+        parent, created = get_one_or_create(  # type: ignore
+            DBSession,
+            Amendement,
+            lecture=lecture,
+            article=article,
+            num=parent_num,
+            rectif=parent_rectif,
+        )
+    else:
+        parent = None
+    amendement, created = get_one_or_create(  # type: ignore
+        DBSession,
+        Amendement,
+        lecture=lecture,
+        article=article,
+        num=to_int(extract("identifiant", "numero")),
+    )
+    amendement.alinea = to_int(extract("pointeurFragmentTexte", "alinea", "numero"))
+    amendement.auteur = get_auteur_name(auteur_uid)
+    amendement.matricule = auteur_uid
+    amendement.groupe = get_groupe_name(groupe_uid)
+    amendement.date_depot = to_date(extract("dateDepot"))
+    amendement.sort = get_sort(
+        sort=extract("sort", "sortEnSeance"), etat=extract("etat")
+    )
+    amendement.parent = parent
+    amendement.dispositif = clean_html(extract("corps", "dispositif") or "")
+    amendement.objet = clean_html(extract("corps", "exposeSommaire") or "")
+    return cast(Amendement, amendement)
 
 
 def _parse_division(node: etree.Element) -> SubDiv:

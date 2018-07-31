@@ -1,7 +1,7 @@
 import transaction
 
 
-def test_get_reponse_edit_form(app, dummy_lecture, dummy_amendements):
+def test_get_reponse_edit_form(app, lecture_an, amendements_an):
     resp = app.get(
         "http://localhost/lectures/an.15.269.PO717460/amendements/999/reponse"
     )
@@ -11,7 +11,7 @@ def test_get_reponse_edit_form(app, dummy_lecture, dummy_amendements):
     assert resp.forms["edit-reponse"].method == "POST"
 
 
-def test_get_reponse_edit_form_not_found(app, dummy_lecture, dummy_amendements):
+def test_get_reponse_edit_form_not_found(app, lecture_an, amendements_an):
     resp = app.get(
         "http://localhost/lectures/an.15.269.PO717460/amendements/998/reponse",
         expect_errors=True,
@@ -19,7 +19,7 @@ def test_get_reponse_edit_form_not_found(app, dummy_lecture, dummy_amendements):
     assert resp.status_code == 404
 
 
-def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
+def test_post_reponse_edit_form(app, lecture_an, amendements_an):
 
     from zam_repondeur.models import Amendement, DBSession
 
@@ -47,12 +47,12 @@ def test_post_reponse_edit_form(app, dummy_lecture, dummy_amendements):
 
 
 def test_post_reponse_edit_form_updates_modification_date(
-    app, dummy_lecture, dummy_amendements
+    app, lecture_an, amendements_an
 ):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
-        initial_modified_at = dummy_lecture.modified_at
+        initial_modified_at = lecture_an.modified_at
 
     resp = app.get(
         "http://localhost/lectures/an.15.269.PO717460/amendements/999/reponse"
@@ -65,9 +65,9 @@ def test_post_reponse_edit_form_updates_modification_date(
 
     with transaction.manager:
         lecture = Lecture.get(
-            chambre=dummy_lecture.chambre,
-            session=dummy_lecture.session,
-            num_texte=dummy_lecture.num_texte,
-            organe=dummy_lecture.organe,
+            chambre=lecture_an.chambre,
+            session=lecture_an.session,
+            num_texte=lecture_an.num_texte,
+            organe=lecture_an.organe,
         )
         assert lecture.modified_at != initial_modified_at

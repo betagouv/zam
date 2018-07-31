@@ -1,17 +1,17 @@
 import transaction
 
 
-def test_get_lecture(app, dummy_lecture, dummy_amendements):
+def test_get_lecture(app, lecture_an, amendements_an):
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/")
     assert resp.status_code == 200
     assert "Visualiser les réponses" not in resp.text
 
 
-def test_get_lecture_with_avis(app, dummy_lecture, dummy_amendements):
+def test_get_lecture_with_avis(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        amendement = dummy_amendements[0]
+        amendement = amendements_an[0]
         amendement.avis = "Favorable"
 
         # The object is no longer bound to a session here, as it was created in a
@@ -24,11 +24,11 @@ def test_get_lecture_with_avis(app, dummy_lecture, dummy_amendements):
     assert "Visualiser les réponses" in resp.text
 
 
-def test_get_lecture_with_gouvernemental(app, dummy_lecture, dummy_amendements):
+def test_get_lecture_with_gouvernemental(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        amendement = dummy_amendements[0]
+        amendement = amendements_an[0]
         amendement.auteur = "LE GOUVERNEMENT"
 
         # The object is no longer bound to a session here, as it was created in a

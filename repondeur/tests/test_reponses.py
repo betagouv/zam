@@ -3,123 +3,123 @@ import transaction
 import pytest
 
 
-def test_reponses_empty(app, dummy_lecture, dummy_amendements):
+def test_reponses_empty(app, lecture_an, amendements_an):
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
     assert resp.status_code == 200
-    assert resp.first_element("h1") == dummy_lecture.dossier_legislatif
-    assert resp.first_element("h2") == str(dummy_lecture)
-    assert resp.find_amendement(dummy_amendements[0]) is None
-    assert resp.find_amendement(dummy_amendements[1]) is None
+    assert resp.first_element("h1") == lecture_an.dossier_legislatif
+    assert resp.first_element("h2") == str(lecture_an)
+    assert resp.find_amendement(amendements_an[0]) is None
+    assert resp.find_amendement(amendements_an[1]) is None
 
 
-def test_reponses_full(app, dummy_lecture, dummy_amendements):
+def test_reponses_full(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for amendement in dummy_amendements:
+        for amendement in amendements_an:
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-        DBSession.add_all(dummy_amendements)
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
     assert resp.status_code == 200
-    assert resp.first_element("h1") == dummy_lecture.dossier_legislatif
-    assert resp.first_element("h2") == str(dummy_lecture)
+    assert resp.first_element("h1") == lecture_an.dossier_legislatif
+    assert resp.first_element("h2") == str(lecture_an)
 
-    test_amendement = resp.find_amendement(dummy_amendements[0])
+    test_amendement = resp.find_amendement(amendements_an[0])
     assert test_amendement is not None
     assert test_amendement.number_is_in_title()
     assert not test_amendement.has_gouvernemental_class()
 
-    test_amendement = resp.find_amendement(dummy_amendements[1])
+    test_amendement = resp.find_amendement(amendements_an[1])
     assert test_amendement is not None
     assert test_amendement.number_is_in_title()
     assert not test_amendement.has_gouvernemental_class()
 
 
-def test_reponses_gouvernemental(app, dummy_lecture, dummy_amendements):
+def test_reponses_gouvernemental(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for amendement in dummy_amendements:
+        for amendement in amendements_an:
             amendement.auteur = "LE GOUVERNEMENT"
-        DBSession.add_all(dummy_amendements)
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
-    test_amendement = resp.find_amendement(dummy_amendements[0])
+    test_amendement = resp.find_amendement(amendements_an[0])
     assert test_amendement is not None
     assert test_amendement.number_is_in_title()
     assert test_amendement.has_gouvernemental_class()
 
-    test_amendement = resp.find_amendement(dummy_amendements[1])
+    test_amendement = resp.find_amendement(amendements_an[1])
     assert test_amendement is not None
     assert test_amendement.number_is_in_title()
     assert test_amendement.has_gouvernemental_class()
 
 
 @pytest.mark.parametrize("sort", ["retiré", "irrecevable", "tombé"])
-def test_reponses_abandonned_not_displayed(app, dummy_lecture, dummy_amendements, sort):
+def test_reponses_abandonned_not_displayed(app, lecture_an, amendements_an, sort):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for amendement in dummy_amendements:
+        for amendement in amendements_an:
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
         # Only the last one.
         amendement.sort = sort
-        DBSession.add_all(dummy_amendements)
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
-    test_amendement = resp.find_amendement(dummy_amendements[0])
+    test_amendement = resp.find_amendement(amendements_an[0])
     assert test_amendement is not None
     assert test_amendement.number_is_in_title()
     assert not test_amendement.has_gouvernemental_class()
 
-    assert resp.find_amendement(dummy_amendements[1]) is None
+    assert resp.find_amendement(amendements_an[1]) is None
 
 
 @pytest.mark.parametrize("sort", ["retiré", "irrecevable", "tombé"])
 def test_reponses_abandonned_and_gouvernemental_not_displayed(
-    app, dummy_lecture, dummy_amendements, sort
+    app, lecture_an, amendements_an, sort
 ):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for amendement in dummy_amendements:
+        for amendement in amendements_an:
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
             amendement.auteur = "LE GOUVERNEMENT"
         # Only the last one.
         amendement.sort = sort
-        DBSession.add_all(dummy_amendements)
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
-    test_amendement = resp.find_amendement(dummy_amendements[0])
+    test_amendement = resp.find_amendement(amendements_an[0])
     assert test_amendement is not None
     assert test_amendement.number_is_in_title()
     assert test_amendement.has_gouvernemental_class()
 
-    assert resp.find_amendement(dummy_amendements[1]) is None
+    assert resp.find_amendement(amendements_an[1]) is None
 
 
-def test_reponses_menu(app, dummy_lecture, dummy_amendements):
+def test_reponses_menu(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for amendement in dummy_amendements:
+        for amendement in amendements_an:
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-        DBSession.add_all(dummy_amendements)
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
@@ -127,16 +127,16 @@ def test_reponses_menu(app, dummy_lecture, dummy_amendements):
     assert resp.parser.css_first(".menu a").text() == "Art. 1"
 
 
-def test_reponses_menu_with_textes(app, dummy_lecture, dummy_amendements):
+def test_reponses_menu_with_textes(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for amendement in dummy_amendements:
+        for amendement in amendements_an:
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-            amendement.subdiv_titre = "Titre article"
-        DBSession.add_all(dummy_amendements)
+            amendement.article.titre = "Titre article"
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
@@ -144,17 +144,17 @@ def test_reponses_menu_with_textes(app, dummy_lecture, dummy_amendements):
     assert resp.parser.css_first(".menu p strong").text() == "Titre article :"
 
 
-def test_reponses_with_textes(app, dummy_lecture, dummy_amendements):
+def test_reponses_with_textes(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for amendement in dummy_amendements:
+        for amendement in amendements_an:
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-            amendement.subdiv_titre = "Titre article"
-            amendement.subdiv_contenu = {"001": "Premier paragraphe"}
-        DBSession.add_all(dummy_amendements)
+            amendement.article.titre = "Titre article"
+            amendement.article.contenu = {"001": "Premier paragraphe"}
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
@@ -166,16 +166,16 @@ def test_reponses_with_textes(app, dummy_lecture, dummy_amendements):
     )
 
 
-def test_reponses_with_jaunes(app, dummy_lecture, dummy_amendements):
+def test_reponses_with_jaunes(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for amendement in dummy_amendements:
+        for amendement in amendements_an:
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-            amendement.subdiv_jaune = "<p>Contenu du jaune</p>"
-        DBSession.add_all(dummy_amendements)
+            amendement.article.jaune = "<p>Contenu du jaune</p>"
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
@@ -189,78 +189,52 @@ def test_reponses_with_jaunes(app, dummy_lecture, dummy_amendements):
     )
 
 
-def test_reponses_without_textes_or_jaunes(app, dummy_lecture, dummy_amendements):
+def test_reponses_without_textes_or_jaunes(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for amendement in dummy_amendements:
+        for amendement in amendements_an:
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-        DBSession.add_all(dummy_amendements)
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
     assert len(resp.parser.css("#content-article-1 h2")) == 0
 
 
-def test_reponses_with_multiple_articles(app, dummy_lecture, dummy_amendements):
+def test_reponses_with_different_articles(app, lecture_an, amendements_an, article7bis):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for index, amendement in enumerate(dummy_amendements, 1):
+        for index, amendement in enumerate(amendements_an, 1):
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-            amendement.subdiv_titre = f"Titre article {index}"
+            amendement.article.titre = f"Titre article {index}"
         # Only the last one.
-        amendement.subdiv_num = 2
-        DBSession.add_all(dummy_amendements)
-
-    resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
-
-    assert len(resp.parser.css(".titles")) == 2
-    for index, item in enumerate(resp.parser.css(".titles h2"), 1):
-        assert item.text() == f"Article {index}"
-    for index, item in enumerate(resp.parser.css(".titles h3"), 1):
-        assert item.text() == f"Titre article {index}"
-    assert len(resp.parser.css(".menu p strong")) == 2
-    for index, item in enumerate(resp.parser.css(".menu p strong"), 1):
-        assert item.text() == f"Titre article {index} :"
-
-
-def test_reponses_with_multiplicatif_articles(app, dummy_lecture, dummy_amendements):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        for index, amendement in enumerate(dummy_amendements, 1):
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
-            amendement.subdiv_titre = f"Titre article {index}"
-        # Only the last one.
-        amendement.subdiv_mult = "bis"
-        DBSession.add_all(dummy_amendements)
+        amendement.article = article7bis
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
     assert resp.parser.css(".titles h2")[0].text() == "Article 1"
-    assert resp.parser.css(".titles h2")[1].text() == "Article 1 bis"
+    assert resp.parser.css(".titles h2")[1].text() == "Article 7 bis"
 
 
-def test_reponses_with_annexes(app, dummy_lecture, dummy_amendements):
+def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for index, amendement in enumerate(dummy_amendements, 1):
+        for index, amendement in enumerate(amendements_an, 1):
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-            amendement.subdiv_titre = f"Titre article {index}"
+            amendement.article.titre = f"Titre article {index}"
         # Only the last one.
-        amendement.subdiv_num = ""
-        amendement.subdiv_type = "annexe"
-        DBSession.add_all(dummy_amendements)
+        amendement.article = annexe
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
@@ -268,16 +242,18 @@ def test_reponses_with_annexes(app, dummy_lecture, dummy_amendements):
     assert resp.parser.css(".titles h2")[1].text() == "Annexes"
 
 
-def test_reponses_article_additionnel_avant(app, dummy_lecture, dummy_amendements):
+def test_reponses_article_additionnel_avant(
+    app, lecture_an, amendements_an, article1av
+):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for amendement in dummy_amendements:
+        for amendement in amendements_an:
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-        dummy_amendements[0].subdiv_pos = "avant"
-        DBSession.add_all(dummy_amendements)
+        amendements_an[0].article = article1av
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 
@@ -287,36 +263,17 @@ def test_reponses_article_additionnel_avant(app, dummy_lecture, dummy_amendement
     assert article_titles == ["Article add. av. 1", "Article 1"]
 
 
-def test_reponses_article_additionnel_apres(app, dummy_lecture, dummy_amendements):
+def test_reponses_amendement_rect(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        for amendement in dummy_amendements:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
-        dummy_amendements[1].subdiv_pos = "après"
-        DBSession.add_all(dummy_amendements)
-
-    resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
-
-    section_ids = [section.attributes["id"] for section in resp.parser.tags("section")]
-    assert section_ids == ["article-1", "article-add-ap-1"]
-    article_titles = [item.text() for item in resp.parser.css(".titles h2")]
-    assert article_titles == ["Article 1", "Article add. ap. 1"]
-
-
-def test_reponses_amendement_rect(app, dummy_lecture, dummy_amendements):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        for amendement in dummy_amendements:
+        for amendement in amendements_an:
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
         # Only the last one.
         amendement.rectif = 1
-        DBSession.add_all(dummy_amendements)
+        DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
 

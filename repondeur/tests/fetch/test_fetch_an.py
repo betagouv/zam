@@ -14,48 +14,48 @@ def read_sample_data(basename):
 
 
 @responses.activate
-def test_fetch_and_parse_all():
+def test_fetch_and_parse_all(lecture_an):
     from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
 
     responses.add(
         responses.GET,
-        build_url(14, 4072),
+        build_url(15, 269),
         body=read_sample_data("an_liste.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, 4072, 177),
+        build_url(15, 269, 177),
         body=read_sample_data("an_177.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, 4072, 270),
+        build_url(15, 269, 270),
         body=read_sample_data("an_270.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, 4072, 723),
+        build_url(15, 269, 723),
         body=read_sample_data("an_723.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, 4072, 135),
+        build_url(15, 269, 135),
         body=read_sample_data("an_135.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, 4072, 192),
+        build_url(15, 269, 192),
         body=read_sample_data("an_192.xml"),
         status=200,
     )
 
-    amendements, errored = fetch_and_parse_all(
-        legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
+    amendements, created, errored = fetch_and_parse_all(
+        lecture=lecture_an, groups_folder=SAMPLE_DATA_DIR
     )
 
     assert len(amendements) == 5
@@ -66,47 +66,48 @@ def test_fetch_and_parse_all():
     assert amendements[4].num == 192
 
     assert [amdt.position for amdt in amendements] == list(range(1, 6))
+    assert created == 5
     assert errored == []
 
 
 @responses.activate
-def test_fetch_and_parse_all_with_404():
+def test_fetch_and_parse_all_with_404(lecture_an):
     from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
 
     responses.add(
         responses.GET,
-        build_url(14, 4072),
+        build_url(15, 269),
         body=read_sample_data("an_liste.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, 4072, 177),
+        build_url(15, 269, 177),
         body=read_sample_data("an_177.xml"),
         status=200,
     )
-    responses.add(responses.GET, build_url(14, 4072, 270), status=404)
+    responses.add(responses.GET, build_url(15, 269, 270), status=404)
     responses.add(
         responses.GET,
-        build_url(14, 4072, 723),
+        build_url(15, 269, 723),
         body=read_sample_data("an_723.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, 4072, 135),
+        build_url(15, 269, 135),
         body=read_sample_data("an_135.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(14, 4072, 192),
+        build_url(15, 269, 192),
         body=read_sample_data("an_192.xml"),
         status=200,
     )
 
-    amendements, errored = fetch_and_parse_all(
-        legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
+    amendements, created, errored = fetch_and_parse_all(
+        lecture=lecture_an, groups_folder=SAMPLE_DATA_DIR
     )
 
     assert len(amendements) == 4
@@ -116,23 +117,22 @@ def test_fetch_and_parse_all_with_404():
     assert amendements[3].num == 192
 
     assert [amdt.position for amdt in amendements] == list(range(1, 5))
+    assert created == 4
     assert errored == ["270"]
 
 
 @responses.activate
-def test_fetch_amendements():
+def test_fetch_amendements(lecture_an):
     from zam_repondeur.fetch.an.amendements import fetch_amendements
 
     responses.add(
         responses.GET,
-        build_url(14, 4072),
+        build_url(15, 269),
         body=read_sample_data("an_liste.xml"),
         status=200,
     )
 
-    items = fetch_amendements(
-        legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
-    )
+    items = fetch_amendements(lecture=lecture_an, groups_folder=SAMPLE_DATA_DIR)
 
     assert len(items) == 5
     assert items[0] == {
@@ -156,88 +156,74 @@ def test_fetch_amendements():
 
 
 @responses.activate
-def test_fetch_amendements_not_found():
+def test_fetch_amendements_not_found(lecture_an):
     from zam_repondeur.fetch.an.amendements import fetch_amendements, NotFound
 
-    responses.add(responses.GET, build_url(14, 4072), status=404)
+    responses.add(responses.GET, build_url(15, 269), status=404)
 
     with pytest.raises(NotFound):
-        fetch_amendements(
-            legislature=14, texte=4072, organe="PO717460", groups_folder=SAMPLE_DATA_DIR
-        )
+        fetch_amendements(lecture=lecture_an, groups_folder=SAMPLE_DATA_DIR)
 
 
 @responses.activate
-def test_fetch_amendement(app):
+def test_fetch_amendement(app, lecture_an):
     from zam_repondeur.fetch.an.amendements import fetch_amendement
-    from zam_repondeur.fetch.models import Amendement
 
     responses.add(
         responses.GET,
-        build_url(14, 4072, 177),
+        build_url(15, 269, 177),
         body=read_sample_data("an_177.xml"),
         status=200,
     )
 
-    amendement = fetch_amendement(
-        legislature=14,
-        texte=4072,
-        numero=177,
-        organe="PO717460",
-        groups_folder=SAMPLE_DATA_DIR,
-        position=1,
+    amendement, created = fetch_amendement(
+        lecture=lecture_an, numero=177, groups_folder=SAMPLE_DATA_DIR, position=1
     )
 
-    assert amendement == Amendement(
-        chambre="an",
-        session="14",
-        num_texte=4072,
-        organe="PO717460",
-        subdiv_type="article",
-        subdiv_num="3",
-        subdiv_mult="",
-        subdiv_pos="",
-        alinea="",
-        num=177,
-        rectif=0,
-        auteur="Door Jean-Pierre",
-        matricule="267289",
-        groupe="Les Républicains",
-        date_depot=None,
-        sort="rejeté",
-        position=1,
-        discussion_commune=None,
-        identique=None,
-        parent_num=0,
-        parent_rectif=0,
-        dispositif="<p>Supprimer cet article.</p>",
-        objet="<p>Amendement d&#8217;appel.</p>\n<p>Pour couvrir les d&#233;passements attendus de l&#8217;ONDAM pour 2016, cet article pr&#233;voit un pr&#233;l&#232;vement de 200 millions d&#8217;&#8364; sur les fonds de roulement de l&#8217;association nationale pour la formation permanente du personnel hospitalier (ANFH) et du fonds pour l&#8217;emploi hospitalier (FEH) pour financer le <span>fonds pour la modernisation des &#233;tablissements de sant&#233; publics et priv&#233;s</span>(FMESPP) en remplacement de cr&#233;dit de l&#8217;ONDAM. Il participe donc &#224; la pr&#233;sentation insinc&#232;re de la construction de l&#8217;ONDAM, d&#233;nonc&#233;e par le Comit&#233; d&#8217;alerte le 12 octobre dernier.</p>",  # noqa
-        resume=None,
-        avis=None,
-        observations=None,
-        reponse=None,
-    )
+    assert amendement.lecture == lecture_an
+    assert amendement.num == 177
+    assert amendement.rectif == 0
+    assert amendement.auteur == "Door Jean-Pierre"
+    assert amendement.matricule == "267289"
+    assert amendement.date_depot is None
+    assert amendement.sort == "rejeté"
+    assert amendement.position == 1
+    assert amendement.discussion_commune is None
+    assert amendement.identique is None
     assert amendement.parent is None
+    assert amendement.dispositif == "<p>Supprimer cet article.</p>"
+    assert amendement.objet == (
+        "<p>Amendement d&#8217;appel.</p>\n<p>Pour couvrir les d&#233;passements "
+        "attendus de l&#8217;ONDAM pour 2016, cet article pr&#233;voit un "
+        "pr&#233;l&#232;vement de 200 millions d&#8217;&#8364; sur les fonds de "
+        "roulement de l&#8217;association nationale pour la formation permanente du "
+        "personnel hospitalier (ANFH) et du fonds pour l&#8217;emploi hospitalier "
+        "(FEH) pour financer le <span>fonds pour la modernisation des "
+        "&#233;tablissements de sant&#233; publics et priv&#233;s</span>(FMESPP) en "
+        "remplacement de cr&#233;dit de l&#8217;ONDAM. Il participe donc &#224; la "
+        "pr&#233;sentation insinc&#232;re de la construction de l&#8217;ONDAM, "
+        "d&#233;nonc&#233;e par le Comit&#233; d&#8217;alerte le 12 octobre dernier."
+        "</p>"
+    )
+    assert amendement.resume is None
+    assert amendement.avis is None
+    assert amendement.observations is None
+    assert amendement.reponse is None
 
 
 @responses.activate
-def test_fetch_amendement_gouvernement():
+def test_fetch_amendement_gouvernement(lecture_an):
     from zam_repondeur.fetch.an.amendements import fetch_amendement
 
     responses.add(
         responses.GET,
-        build_url(14, 4072, 723),
+        build_url(15, 269, 723),
         body=read_sample_data("an_723.xml"),
         status=200,
     )
 
-    amendement = fetch_amendement(
-        legislature=14,
-        texte=4072,
-        numero=723,
-        organe="PO717460",
-        groups_folder=SAMPLE_DATA_DIR,
-        position=1,
+    amendement, created = fetch_amendement(
+        lecture=lecture_an, numero=723, groups_folder=SAMPLE_DATA_DIR, position=1
     )
 
     assert amendement.gouvernemental is True
@@ -245,23 +231,18 @@ def test_fetch_amendement_gouvernement():
 
 
 @responses.activate
-def test_fetch_amendement_commission():
+def test_fetch_amendement_commission(lecture_an):
     from zam_repondeur.fetch.an.amendements import fetch_amendement
 
     responses.add(
         responses.GET,
-        build_url(14, 4072, 135),
+        build_url(15, 269, 135),
         body=read_sample_data("an_135.xml"),
         status=200,
     )
 
-    amendement = fetch_amendement(
-        legislature=14,
-        texte=4072,
-        numero=135,
-        organe="PO717460",
-        groups_folder=SAMPLE_DATA_DIR,
-        position=1,
+    amendement, created = fetch_amendement(
+        lecture=lecture_an, numero=135, groups_folder=SAMPLE_DATA_DIR, position=1
     )
 
     assert amendement.gouvernemental is False
@@ -270,92 +251,71 @@ def test_fetch_amendement_commission():
 
 
 @responses.activate
-def test_fetch_sous_amendement(app):
+def test_fetch_sous_amendement(app, lecture_an):
     from zam_repondeur.fetch.an.amendements import fetch_amendement
 
     responses.add(
         responses.GET,
-        build_url(14, 4072, 941),
+        build_url(15, 269, 941),
         body=read_sample_data("an_941.xml"),
         status=200,
     )
 
-    amendement = fetch_amendement(
-        legislature=14,
-        texte=4072,
-        numero=941,
-        organe="PO717460",
-        groups_folder=SAMPLE_DATA_DIR,
-        position=1,
+    amendement, created = fetch_amendement(
+        lecture=lecture_an, numero=941, groups_folder=SAMPLE_DATA_DIR, position=1
     )
 
-    assert amendement.parent_num == 155
-    assert amendement.parent_rectif == 0
+    assert amendement.parent.num == 155
 
 
 @responses.activate
-def test_fetch_amendement_sort_nil():
+def test_fetch_amendement_sort_nil(lecture_an):
     from zam_repondeur.fetch.an.amendements import fetch_amendement
 
     responses.add(
         responses.GET,
-        build_url(14, 4072, 38),
+        build_url(15, 269, 38),
         body=read_sample_data("an_38.xml"),
         status=200,
     )
 
-    amendement = fetch_amendement(
-        legislature=14,
-        texte=4072,
-        numero=38,
-        organe="PO717460",
-        groups_folder=SAMPLE_DATA_DIR,
-        position=1,
+    amendement, created = fetch_amendement(
+        lecture=lecture_an, numero=38, groups_folder=SAMPLE_DATA_DIR, position=1
     )
 
     assert amendement.sort == ""
 
 
 @responses.activate
-def test_fetch_amendement_apres():
+def test_fetch_amendement_apres(lecture_an):
     from zam_repondeur.fetch.an.amendements import fetch_amendement
 
     responses.add(
         responses.GET,
-        build_url(14, 4072, 192),
+        build_url(15, 269, 192),
         body=read_sample_data("an_192.xml"),
         status=200,
     )
 
-    amendement = fetch_amendement(
-        legislature=14,
-        texte=4072,
-        numero=192,
-        organe="PO717460",
-        groups_folder=SAMPLE_DATA_DIR,
-        position=1,
+    amendement, created = fetch_amendement(
+        lecture=lecture_an, numero=192, groups_folder=SAMPLE_DATA_DIR, position=1
     )
 
-    assert amendement.subdiv_type == "article"
-    assert amendement.subdiv_num == "8"
-    assert amendement.subdiv_mult == ""
-    assert amendement.subdiv_pos == "apres"
+    assert amendement.article.type == "article"
+    assert amendement.article.num == "8"
+    assert amendement.article.mult == ""
+    assert amendement.article.pos == "apres"
 
 
 @responses.activate
-def test_fetch_amendement_not_found():
+def test_fetch_amendement_not_found(lecture_an):
     from zam_repondeur.fetch.an.amendements import fetch_amendement, NotFound
 
-    responses.add(responses.GET, build_url(14, 4072, 177), status=404)
+    responses.add(responses.GET, build_url(15, 269, 177), status=404)
 
     with pytest.raises(NotFound):
         fetch_amendement(
-            legislature=14,
-            texte=4072,
-            numero=177,
-            organe="PO717460",
-            groups_folder=SAMPLE_DATA_DIR,
-            position=1,
+            lecture=lecture_an, numero=177, groups_folder=SAMPLE_DATA_DIR, position=1
         )
 
 

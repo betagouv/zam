@@ -2,7 +2,7 @@ import json
 from collections import OrderedDict
 from http import HTTPStatus
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import Dict, List, Tuple, Union
 from urllib.parse import urljoin
 
 import xmltodict
@@ -10,7 +10,14 @@ import xmltodict
 from zam_repondeur.fetch.division import _parse_subdiv
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.fetch.http import cached_session
-from zam_repondeur.fetch.models import Amendement, SubDiv
+from zam_repondeur.fetch.division import SubDiv
+from zam_repondeur.models import (
+    DBSession,
+    Article,
+    Amendement,
+    Lecture,
+    get_one_or_create,
+)
 
 
 BASE_URL = "http://www.assemblee-nationale.fr"
@@ -24,111 +31,128 @@ PATTERN_AMENDEMENT = (
 
 
 def aspire_an(
-    legislature: int, texte: int, organe: str, groups_folder: Path
-) -> Tuple[List[Amendement], List[str]]:
+    lecture: Lecture, groups_folder: Path
+) -> Tuple[List[Amendement], int, List[str]]:
     print("Récupération du titre et des amendements déposés...")
     try:
-        amendements, errored = fetch_and_parse_all(
-            legislature=legislature,
-            texte=texte,
-            organe=organe,
-            groups_folder=groups_folder,
+        amendements, created, errored = fetch_and_parse_all(
+            lecture=lecture, groups_folder=groups_folder
         )
     except NotFound:
-        return [], []
+        return [], 0, []
 
-    return amendements, errored
+    return amendements, created, errored
 
 
 def fetch_and_parse_all(
-    legislature: int, texte: int, organe: str, groups_folder: Path
-) -> Tuple[List[Amendement], List[str]]:
-    amendements_raw = fetch_amendements(legislature, texte, organe, groups_folder)
+    lecture: Lecture, groups_folder: Path
+) -> Tuple[List[Amendement], int, List[str]]:
+    amendements_raw = fetch_amendements(lecture, groups_folder)
     amendements = []
     index = 1
+    created = 0
     errored = []
     for item in amendements_raw:
         try:
-            amendement = fetch_amendement(
-                legislature=legislature,
-                texte=texte,
+            amendement, created_ = fetch_amendement(
+                lecture=lecture,
                 numero=item["@numero"],
-                organe=organe,
                 groups_folder=groups_folder,
                 position=index,
             )
+            created += int(created_)
         except NotFound:
             errored.append(item["@numero"])
             continue
         amendements.append(amendement)
         index += 1
-    return amendements, errored
+    return amendements, created, errored
 
 
-def fetch_amendements(
-    legislature: int, texte: int, organe: str, groups_folder: Path
-) -> List[OrderedDict]:
+def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
+    resp = cached_session.get(url)
+    if resp.status_code == HTTPStatus.NOT_FOUND:
+        raise NotFound(url)
+
+    result: OrderedDict = xmltodict.parse(resp.content)
+    return result
+
+
+def fetch_amendements(lecture: Lecture, groups_folder: Path) -> List[OrderedDict]:
     """
     Récupère la liste des références aux amendements, dans l'ordre de dépôt.
     """
-    organe_abrev = get_organe_abrev(organe, groups_folder)
-    url = build_url(legislature=legislature, texte=texte, organe_abrev=organe_abrev)
-
-    resp = cached_session.get(url)
-    if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
-        raise NotFound(url)
-
-    content = xmltodict.parse(resp.content)
-    amendement_raw: List[OrderedDict] = content["amdtsParOrdreDeDiscussion"][
+    organe_abrev = get_organe_abrev(lecture.organe, groups_folder)
+    url = build_url(
+        legislature=int(lecture.session),
+        texte=lecture.num_texte,
+        organe_abrev=organe_abrev,
+    )
+    content = _retrieve_content(url)
+    amendements_raw: List[OrderedDict] = content["amdtsParOrdreDeDiscussion"][
         "amendements"
     ]["amendement"]
-    return amendement_raw
+    return amendements_raw
+
+
+def _retrieve_amendement(
+    lecture: Lecture, numero: int, groups_folder: Path
+) -> OrderedDict:
+    organe_abrev = get_organe_abrev(lecture.organe, groups_folder)
+    url = build_url(
+        legislature=int(lecture.session),
+        texte=lecture.num_texte,
+        numero=numero,
+        organe_abrev=organe_abrev,
+    )
+    content = _retrieve_content(url)
+    return content["amendement"]
 
 
 def fetch_amendement(
-    legislature: int,
-    texte: int,
-    numero: int,
-    organe: str,
-    groups_folder: Path,
-    position: int,
-) -> Amendement:
+    lecture: Lecture, numero: int, groups_folder: Path, position: int
+) -> Tuple[Amendement, bool]:
     """
     Récupère un amendement depuis son numéro.
     """
-    organe_abrev = get_organe_abrev(organe, groups_folder)
-    url = build_url(
-        legislature=legislature, texte=texte, numero=numero, organe_abrev=organe_abrev
+    amend = _retrieve_amendement(lecture, numero, groups_folder)
+    subdiv = parse_division(amend["division"])
+    article, created = get_one_or_create(  # type: ignore
+        DBSession,
+        Article,
+        type=subdiv.type_,
+        num=subdiv.num,
+        mult=subdiv.mult,
+        pos=subdiv.pos,
     )
-
-    resp = cached_session.get(url)
-    if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
-        raise NotFound(url)
-
-    content = xmltodict.parse(resp.content)
-    amendement = content["amendement"]
-    subdiv = parse_division(amendement["division"])
-    parent_num, parent_rectif = Amendement.parse_num(get_parent_raw_num(amendement))
-    return Amendement(  # type: ignore
-        chambre="an",
-        session=str(legislature),
-        num_texte=texte,
-        organe=organe,
-        num=int(amendement["numero"]),
-        subdiv_type=subdiv.type_,
-        subdiv_num=subdiv.num,
-        subdiv_mult=subdiv.mult,
-        subdiv_pos=subdiv.pos,
-        sort=get_sort(amendement),
-        position=position,
-        matricule=amendement["auteur"]["tribunId"],
-        groupe=get_groupe(amendement, groups_folder),
-        auteur=get_auteur(amendement),
-        parent_num=parent_num,
-        parent_rectif=parent_rectif,
-        dispositif=unjustify(amendement["dispositif"]),
-        objet=unjustify(amendement["exposeSommaire"]),
+    parent_num, parent_rectif = Amendement.parse_num(get_parent_raw_num(amend))
+    if parent_num:
+        parent, created = get_one_or_create(  # type: ignore
+            DBSession,
+            Amendement,
+            lecture=lecture,
+            article=article,
+            num=parent_num,
+            rectif=parent_rectif,
+        )
+    else:
+        parent = None
+    amendement, created = get_one_or_create(  # type: ignore
+        DBSession,
+        Amendement,
+        lecture=lecture,
+        article=article,
+        num=int(amend["numero"]),
     )
+    amendement.sort = get_sort(amend)
+    amendement.position = position
+    amendement.matricule = amend["auteur"]["tribunId"]
+    amendement.groupe = get_groupe(amend, groups_folder)
+    amendement.auteur = get_auteur(amend)
+    amendement.parent = parent
+    amendement.dispositif = unjustify(amend["dispositif"])
+    amendement.objet = unjustify(amend["exposeSommaire"])
+    return amendement, created
 
 
 def build_url(

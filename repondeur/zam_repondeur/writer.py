@@ -1,9 +1,6 @@
 import csv
-import json
 from contextlib import contextmanager
-from dataclasses import fields
-from itertools import groupby
-from typing import Generator, Iterable, Tuple
+from typing import Generator, Iterable
 
 import pdfkit
 from inscriptis import get_text
@@ -25,8 +22,7 @@ FIELDS_NAMES = {
     "date_depot": "Date de dépôt",
     "discussion_commune": "Discussion commune ?",
     "identique": "Identique ?",
-    "parent_num": "N° amdt parent",
-    "parent_rectif": "Rectif parent",
+    "parent": "Parent",
     "objet": "Corps amdt",
     "resume": "Exposé amdt",
     "observations": "Objet amdt",
@@ -39,9 +35,30 @@ def rename_field(field_name: str) -> str:
     return FIELDS_NAMES.get(field_name, field_name.capitalize())
 
 
-EXCLUDED_FIELDS = ["subdiv_contenu", "subdiv_jaune", "bookmarked_at"]
+EXCLUDED_FIELDS = [
+    "Amendement",
+    "bookmarked_at",
+    "article_id",
+    "lecture_id",
+    "parent_pk",
+    "parent_rectif",
+]
 FIELDS = [
-    field.name for field in fields(Amendement) if field.name not in EXCLUDED_FIELDS
+    field
+    for field in Amendement.__table__.columns.keys()
+    if field not in EXCLUDED_FIELDS
+] + [
+    "parent",
+    "gouvernemental",
+    "subdiv_type",
+    "subdiv_titre",
+    "subdiv_num",
+    "subdiv_mult",
+    "subdiv_pos",
+    "chambre",
+    "num_texte",
+    "organe",
+    "session",
 ]
 
 
@@ -50,26 +67,6 @@ HEADERS = [rename_field(field_name) for field_name in FIELDS]
 
 DARK_BLUE = Color(rgb="00182848")
 WHITE = Color(rgb="00FFFFFF")
-GROUPS_COLORS = {
-    # Sénat.
-    "Les Républicains": "#2011e8",  # https://fr.wikipedia.org/wiki/Les_R%C3%A9publicains # noqa
-    "UC": "#1e90ff",  # https://fr.wikipedia.org/wiki/Groupe_Union_centriste_(S%C3%A9nat) # noqa
-    "SOCR": "#ff8080",  # https://fr.wikipedia.org/wiki/Groupe_socialiste_et_r%C3%A9publicain_(S%C3%A9nat) # noqa
-    "RDSE": "#a38ebc",  # https://fr.wikipedia.org/wiki/Groupe_du_Rassemblement_d%C3%A9mocratique_et_social_europ%C3%A9en # noqa
-    "Les Indépendants": "#30bfe9",  # https://fr.wikipedia.org/wiki/Groupe_Les_Ind%C3%A9pendants_%E2%80%93_R%C3%A9publique_et_territoires # noqa
-    "NI": "#ffffff",  # https://fr.wikipedia.org/wiki/Non-inscrit
-    "CRCE": "#dd0000",  # https://fr.wikipedia.org/wiki/Groupe_communiste,_r%C3%A9publicain,_citoyen_et_%C3%A9cologiste # noqa
-    "LaREM": "#ffeb00",  # https://fr.wikipedia.org/wiki/Groupe_La_R%C3%A9publique_en_marche_(S%C3%A9nat) # noqa
-    # AN.
-    "La République en Marche": "#ffeb00",  # https://fr.wikipedia.org/wiki/Groupe_La_R%C3%A9publique_en_marche_(Assembl%C3%A9e_nationale) # noqa
-    "Les Républicains": "#2011e8",  # https://fr.wikipedia.org/wiki/Groupe_Les_R%C3%A9publicains_(Assembl%C3%A9e_nationale) # noqa
-    "Mouvement Démocrate et apparentés": "#ff8000",  # https://fr.wikipedia.org/wiki/Groupe_du_Mouvement_d%C3%A9mocrate_et_apparent%C3%A9s # noqa
-    "Les Constructifs : républicains, UDI, indépendants": "#30bfe9",  # https://fr.wikipedia.org/wiki/Groupe_UDI,_Agir_et_ind%C3%A9pendants # noqa
-    "Nouvelle Gauche": "#ff8080",  # https://fr.wikipedia.org/wiki/Groupe_socialiste_(Assembl%C3%A9e_nationale) # noqa
-    "La France insoumise": "#cc2443",  # https://fr.wikipedia.org/wiki/Groupe_La_France_insoumise # noqa
-    "Gauche démocrate et républicaine": "#dd0000",  # https://fr.wikipedia.org/wiki/Groupe_de_la_Gauche_d%C3%A9mocrate_et_r%C3%A9publicaine # noqa
-    "Non inscrit": "#ffffff",  # https://fr.wikipedia.org/wiki/Non-inscrit
-}
 
 
 def write_csv(
@@ -152,83 +149,11 @@ def _write_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> int:
     return nb_rows
 
 
-def write_json_for_viewer(
-    id_projet: int, title: str, amendements: Iterable[Amendement], filename: str
-) -> int:
-    data = _format_amendements(id_projet, title, amendements)
-    with open(filename, "w") as file_:
-        json.dump(data, file_)
-    return len(list(amendements))
-
-
-def _format_amendements(
-    id_projet: int, title: str, amendements: Iterable[Amendement]
-) -> list:
-    def key_func(amendement: Amendement) -> Tuple[str, str, str, str]:
-        return (
-            amendement.subdiv_type,
-            amendement.subdiv_num,
-            amendement.subdiv_mult,
-            amendement.subdiv_pos,
-        )
-
-    sorted_amendements = sorted(amendements, key=key_func)
-    return [
-        {
-            "idProjet": id_projet,
-            "libelle": title,
-            "list": [
-                _format_article(num, mult, pos, items)
-                for (type_, num, mult, pos), items in groupby(
-                    sorted_amendements, key=key_func
-                )
-                if type_ == "article"
-            ],
-        }
-    ]
-
-
-def _format_article(
-    num: str, mult: str, pos: str, amendements: Iterable[Amendement]
-) -> dict:
-    return {
-        "id": int(num),
-        "pk": f"article-{num}{mult}{pos[:2]}",
-        "multiplicatif": mult,
-        "etat": pos[:2],
-        "titre": "TODO",
-        "jaune": f"jaune-{num}{mult}{pos[:2]}.pdf",
-        "document": f"article-{num}{mult}{pos[:2]}.pdf",
-        "amendements": [_format_amendement(amendement) for amendement in amendements],
-    }
-
-
-def _format_amendement(amendement: Amendement) -> dict:
-    return {
-        "id": amendement.num,
-        "rectif": amendement.rectif or "",
-        "pk": f"{amendement.num:06}",
-        "etat": amendement.sort or "",
-        "gouvernemental": amendement.gouvernemental,
-        "auteur": amendement.auteur,
-        "groupe": {
-            "libelle": amendement.groupe or "",
-            "couleur": GROUPS_COLORS.get(amendement.groupe, "#ffffff"),
-        },
-        "document": f"{amendement.num:06}-00.pdf",
-        "dispositif": amendement.dispositif,
-        "objet": amendement.objet,
-        "resume": amendement.resume or "",
-        "parent_num": amendement.parent_num or "",
-        "parent_rectif": amendement.parent_rectif or "",
-    }
-
-
 HTML_FIELDS = ["objet", "dispositif", "observations", "reponse"]
 
 
 def export_amendement(amendement: Amendement) -> dict:
-    data: dict = amendement.asdict()
+    data: dict = amendement.asdict(full=True)
     for field_name in HTML_FIELDS:
         if data[field_name] is not None:
             data[field_name] = html_to_text(data[field_name])

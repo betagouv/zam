@@ -39,7 +39,7 @@ class TestGetPossibleUrls:
 
 
 @responses.activate
-def test_get_articles(app, dummy_lecture, dummy_amendements):
+def test_get_articles(app, lecture_senat, amendements_senat):
     from zam_repondeur.fetch import get_articles
     from zam_repondeur.models import DBSession, Amendement
 
@@ -52,30 +52,14 @@ def test_get_articles(app, dummy_lecture, dummy_amendements):
         status=200,
     )
 
-    with transaction.manager:
-        dummy_lecture.chambre = "senat"
-        dummy_lecture.session = "2017-2018"
-        dummy_lecture.num_texte = 63
+    get_articles(lecture_senat)
 
-        amendement = dummy_amendements[0]
-        amendement.chambre = "senat"
-        amendement.session = "2017-2018"
-        amendement.num_texte = 63
-
-        # The objects are no longer bound to a session here, as they were created in a
-        # previous transaction, so we add them to the current session to make sure that
-        # our changes will be committed with the current transaction
-        DBSession.add(dummy_lecture)
-        DBSession.add(amendement)
-
-    get_articles(dummy_lecture)
-
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.subdiv_contenu["001"].startswith("Au titre de l'exercice 2016")
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
+    assert amendement.article.contenu["001"].startswith("Au titre de l'exercice 2016")
 
 
 @responses.activate
-def test_get_articles_with_mult(app, dummy_lecture, dummy_amendements):
+def test_get_articles_with_mult(app, lecture_senat, amendements_senat):
     from zam_repondeur.fetch import get_articles
     from zam_repondeur.models import DBSession, Amendement
 
@@ -89,27 +73,19 @@ def test_get_articles_with_mult(app, dummy_lecture, dummy_amendements):
     )
 
     with transaction.manager:
-        dummy_lecture.chambre = "senat"
-        dummy_lecture.session = "2017-2018"
-        dummy_lecture.num_texte = 63
-
-        amendement = dummy_amendements[0]
-        amendement.chambre = "senat"
-        amendement.session = "2017-2018"
-        amendement.num_texte = 63
-        amendement.subdiv_num = "4"
-        amendement.subdiv_mult = "bis"
+        amendement = amendements_senat[0]
+        amendement.article.num = "4"
+        amendement.article.mult = "bis"
 
         # The objects are no longer bound to a session here, as they were created in a
         # previous transaction, so we add them to the current session to make sure that
         # our changes will be committed with the current transaction
-        DBSession.add(dummy_lecture)
         DBSession.add(amendement)
 
-    get_articles(dummy_lecture)
+    get_articles(lecture_senat)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.subdiv_contenu["001"].startswith("Ne donnent pas lieu à")
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
+    assert amendement.article.contenu["001"].startswith("Ne donnent pas lieu à")
 
 
 def test_get_section_title():

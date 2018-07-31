@@ -1,6 +1,12 @@
 import re
+from typing import NamedTuple
 
-from zam_repondeur.fetch.models import SubDiv
+
+class SubDiv(NamedTuple):
+    type_: str
+    num: str
+    mult: str
+    pos: str
 
 
 SUBDIV_RE = re.compile(

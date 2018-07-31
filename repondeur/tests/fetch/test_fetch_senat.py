@@ -1,4 +1,5 @@
 import json
+import transaction
 from pathlib import Path
 from unittest.mock import patch
 
@@ -15,7 +16,7 @@ def read_sample_data(basename):
 
 
 @responses.activate
-def test_aspire_senat(app):
+def test_aspire_senat(app, lecture_senat):
     from zam_repondeur.fetch.senat.amendements import aspire_senat
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
@@ -45,20 +46,19 @@ def test_aspire_senat(app):
         status=200,
     )
 
-    amendements = aspire_senat(session="2017-2018", num=63, organe="PO78718")
+    amendements, created = aspire_senat(lecture_senat)
 
     assert len(amendements) == 595
-    assert amendements[0].parent_num == 0
-    assert amendements[0].parent_rectif == 0
+    assert amendements[0].parent is None
     sous_amendement = [
         amendement for amendement in amendements if amendement.num == 596
     ][0]
-    assert sous_amendement.parent_num == 229
-    assert sous_amendement.parent_rectif == 1
+    assert sous_amendement.parent.num == 229
+    assert sous_amendement.parent.rectif == 1
 
 
 @responses.activate
-def test_fetch_all():
+def test_fetch_all(lecture_senat):
     from zam_repondeur.fetch.senat.amendements import _fetch_all
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
@@ -70,7 +70,7 @@ def test_fetch_all():
         status=200,
     )
 
-    items = _fetch_all(session="2017-2018", num=63)
+    items = _fetch_all(lecture_senat)
 
     assert len(items) == 595
 
@@ -91,8 +91,13 @@ def test_fetch_all():
 
 
 @responses.activate
-def test_fetch_all_commission():
+def test_fetch_all_commission(lecture_senat):
+    from zam_repondeur.models import DBSession
     from zam_repondeur.fetch.senat.amendements import _fetch_all
+
+    with transaction.manager:
+        lecture_senat.num_texte = 583
+        DBSession.add(lecture_senat)
 
     sample_data = read_sample_data("jeu_complet_commission_2017-2018_583.csv")
 
@@ -109,7 +114,7 @@ def test_fetch_all_commission():
         status=200,
     )
 
-    items = _fetch_all(session="2017-2018", num=583)
+    items = _fetch_all(lecture_senat)
 
     assert len(items) == 434
 
@@ -130,28 +135,34 @@ def test_fetch_all_commission():
 
 
 @responses.activate
-def test_fetch_all_not_found():
+def test_fetch_all_not_found(lecture_senat):
     from zam_repondeur.fetch.senat.amendements import _fetch_all, NotFound
 
     responses.add(
         responses.GET,
-        "https://www.senat.fr/amendements/2080-2081/42/jeu_complet_2080-2081_42.csv",
+        "https://www.senat.fr/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv",
         status=404,
     )
 
     responses.add(
         responses.GET,
-        "https://www.senat.fr/amendements/commissions/2080-2081/42/jeu_complet_commission_2080-2081_42.csv",  # noqa
+        "https://www.senat.fr/amendements/commissions/2017-2018/63/jeu_complet_commission_2017-2018_63.csv",  # noqa
         status=404,
     )
 
     with pytest.raises(NotFound):
-        _fetch_all(session="2080-2081", num=42)
+        _fetch_all(lecture_senat)
 
 
 @responses.activate
-def test_fetch_discussed():
+def test_fetch_discussed(lecture_senat):
     from zam_repondeur.fetch.senat.amendements import _fetch_discussed
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        lecture_senat.session = "2016-2017"
+        lecture_senat.num_texte = 610
+        DBSession.add(lecture_senat)
 
     json_data = json.loads(read_sample_data("liste_discussion_610.json"))
 
@@ -162,26 +173,26 @@ def test_fetch_discussed():
         status=200,
     )
 
-    data = _fetch_discussed("2016-2017", 610, "commission")
+    data = _fetch_discussed(lecture_senat, "commission")
 
     assert data == json_data
 
 
 @responses.activate
-def test_fetch_discussed_not_found():
+def test_fetch_discussed_not_found(lecture_senat):
     from zam_repondeur.fetch.senat.amendements import _fetch_discussed, NotFound
 
     responses.add(
         responses.GET,
-        "https://www.senat.fr/encommission/2080-2081/42/liste_discussion.json",
+        "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json",
         status=404,
     )
 
     with pytest.raises(NotFound):
-        _fetch_discussed("2080-2081", 42, "commission")
+        _fetch_discussed(lecture_senat, "commission")
 
 
-def test_fetch_and_parse_discussed_not_found():
+def test_fetch_and_parse_discussed_not_found(lecture_senat):
     from zam_repondeur.fetch.senat.amendements import (
         _fetch_and_parse_discussed,
         NotFound,
@@ -190,8 +201,6 @@ def test_fetch_and_parse_discussed_not_found():
     with patch("zam_repondeur.fetch.senat.amendements._fetch_discussed") as m_fetch:
         m_fetch.side_effect = NotFound
 
-        amendements = _fetch_and_parse_discussed(
-            session="2016-2017", num=610, organe="PO78718", phase="commission"
-        )
+        amendements = _fetch_and_parse_discussed(lecture_senat, phase="commission")
 
     assert amendements == []

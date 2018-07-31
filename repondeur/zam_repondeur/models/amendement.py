@@ -1,20 +1,10 @@
-from sqlalchemy import (
-    Boolean,
-    Column,
-    Date,
-    DateTime,
-    ForeignKey,
-    Integer,
-    PickleType,
-    Table,
-    Text,
-)
-from sqlalchemy.orm import foreign, mapper, relationship
-from sqlalchemy.schema import ForeignKeyConstraint
+import re
+from typing import Tuple
 
-from zam_repondeur.fetch.models import Amendement
+from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Integer, Text
+from sqlalchemy.orm import relationship
 
-from .base import metadata
+from .base import Base, DBSession
 
 
 AVIS = [
@@ -29,108 +19,202 @@ AVIS = [
 ]
 
 
-amendements_table = Table(
-    "amendements",
-    metadata,
-    #
-    # Identification du texte
-    #
-    Column("chambre", Text, primary_key=True),
-    Column("session", Text, primary_key=True),
-    Column("num_texte", Integer, primary_key=True),
-    Column("organe", Integer, primary_key=True),
-    ForeignKeyConstraint(
-        ["chambre", "session", "num_texte", "organe"],
-        [
-            "lectures.chambre",
-            "lectures.session",
-            "lectures.num_texte",
-            "lectures.organe",
-        ],
-    ),
-    #
-    # Partie du texte visée
-    #
-    Column("subdiv_type", Text, nullable=False),  # article, ...
-    Column("subdiv_num", Text, nullable=False),  # numéro
-    Column("subdiv_mult", Text, nullable=True),  # bis, ter...
-    Column("subdiv_pos", Text, nullable=True),  # avant / après
-    Column("alinea", Text, nullable=True),  # libellé de l'alinéa de l'article concerné
-    Column("subdiv_titre", Text, nullable=True),  # titre de l'article
-    Column("subdiv_contenu", PickleType, nullable=True),  # contenu de l'article
-    Column("subdiv_jaune", Text, nullable=True),  # éléments de langage
-    #
-    # Numéro de l'amendement
-    #
-    Column("num", Integer, primary_key=True),
-    #
-    # Numéro de révision de l'amendement
-    #
-    Column("rectif", Integer, nullable=False, default=0),
-    #
-    # Auteur de l'amendement
-    #
-    Column("auteur", Text, nullable=True),
-    Column("matricule", Text, nullable=True),
-    Column("groupe", Text, nullable=True),  # groupe parlementaire
-    #
-    # Date de dépôt de l'amendement (est-ce la date initiale,
-    # ou bien est-ce mis à jour si l'amendement est rectifié ?)
-    #
-    Column("date_depot", Date, nullable=True),
-    #
-    Column("sort", Text, nullable=True),  # retiré, adopté, etc.
-    #
-    # Ordre et regroupement lors de la discussion
-    #
-    Column("position", Integer, nullable=True),
-    Column("discussion_commune", Integer, nullable=True),
-    Column("identique", Boolean, nullable=True),
-    Column("parent_num", Integer, ForeignKey("amendements.num"), nullable=True),
-    Column("parent_rectif", Integer, nullable=True),
-    #
-    # Contenu de l'amendement
-    #
-    Column("dispositif", Text, nullable=True),  # texte de l'amendement
-    Column("objet", Text, nullable=True),  # motivation
-    Column("resume", Text, nullable=True),  # résumé de l'objet
-    #
-    # Avis et réponse
-    #
-    Column("avis", Text, nullable=True),  # position du gouvernemnt
-    Column("observations", Text, nullable=True),
-    Column("reponse", Text, nullable=True),
-    #
-    # Informations additionnelles
-    #
-    Column("bookmarked_at", DateTime, nullable=True),
-)
+class Amendement(Base):  # type: ignore
+    __tablename__ = "amendements"
 
+    pk = Column(Integer, primary_key=True)
 
-mapper(
-    Amendement,
-    amendements_table,
-    properties={
-        # for some reason, those fields do not get mapped automatically,
-        # so we map them explicitly here
-        "subdiv_mult": amendements_table.c.subdiv_mult,
-        "subdiv_pos": amendements_table.c.subdiv_pos,
-        "subdiv_titre": amendements_table.c.subdiv_titre,
-        "subdiv_contenu": amendements_table.c.subdiv_contenu,
-        "subdiv_jaune": amendements_table.c.subdiv_jaune,
-        "alinea": amendements_table.c.alinea,
-        "num": amendements_table.c.num,
-        "rectif": amendements_table.c.rectif,
-        "parent_num": amendements_table.c.parent_num,
-        "parent_rectif": amendements_table.c.parent_rectif,
-        "parent": relationship(
-            Amendement,
-            primaryjoin=(
-                amendements_table.c.parent_num == foreign(amendements_table.c.num)
-            ),
-            uselist=False,  # many-to-one relationship
-        ),
-        "auteur": amendements_table.c.auteur,
-        "groupe": amendements_table.c.groupe,
-    },
-)
+    # Meta informations.
+    num = Column(Integer)
+    rectif = Column(Integer, nullable=False, default=0)
+    auteur = Column(Text, nullable=True)
+    matricule = Column(Text, nullable=True)
+    groupe = Column(Text, nullable=True)
+    date_depot = Column(Date, nullable=True)
+    sort = Column(Text, nullable=True)
+
+    # Ordre et regroupement lors de la discussion.
+    position = Column(Integer, nullable=True)
+    discussion_commune = Column(Integer, nullable=True)
+    identique = Column(Boolean, nullable=True)
+
+    # Contenu.
+    dispositif = Column(Text, nullable=True)  # texte de l'amendement
+    objet = Column(Text, nullable=True)  # motivation
+    resume = Column(Text, nullable=True)  # résumé de l'objet
+    alinea = Column(Text, nullable=True)  # libellé de l'alinéa de l'article concerné
+
+    # Relations.
+    parent_pk = Column(Integer, ForeignKey("amendements.pk"), nullable=True)
+    parent_rectif = Column(Integer, nullable=True)
+    parent = relationship("Amendement", uselist=False)
+    lecture_id = Column(Integer, ForeignKey("lectures.pk"))
+    lecture = relationship("Lecture", back_populates="amendements")
+    article_id = Column(Integer, ForeignKey("articles.pk"))
+    article = relationship("Article", back_populates="amendements")
+
+    # Extras. (TODO: move to dedicated table?)
+    avis = Column(Text, nullable=True)
+    observations = Column(Text, nullable=True)
+    reponse = Column(Text, nullable=True)
+    bookmarked_at = Column(DateTime, nullable=True)
+
+    @classmethod
+    def create(  # type: ignore
+        cls,
+        lecture,
+        article,
+        parent: "Amendement",
+        num: int,
+        rectif: int = 0,
+        auteur: str = "",
+        matricule: str = "",
+        date_depot: str = "",
+        sort: str = "",
+        position: int = 0,
+        discussion_commune: int = 0,
+        identique: bool = False,
+        dispositif: str = "",
+        objet: str = "",
+        resume: str = "",
+        alinea: str = "",
+        avis: str = "",
+        observations: str = "",
+        reponse: str = "",
+    ) -> "Amendement":
+        amendement = cls(
+            lecture=lecture,
+            article=article,
+            parent=parent,
+            num=num,
+            rectif=rectif,
+            auteur=auteur,
+            matricule=matricule,
+            date_depot=date_depot,
+            sort=sort,
+            position=position,
+            discussion_commune=discussion_commune,
+            identique=identique,
+            dispositif=dispositif,
+            objet=objet,
+            resume=resume,
+            alinea=alinea,
+            avis=avis,
+            observations=observations,
+            reponse=reponse,
+        )
+        DBSession.add(amendement)
+        return amendement
+
+    @property
+    def num_disp(self) -> str:
+        text = str(self.num)
+        if self.rectif > 0:
+            text += " rect."
+        if self.rectif > 1:
+            if self.rectif not in self._RECTIF_TO_SUFFIX:
+                raise NotImplementedError
+            text += " "
+            text += self._RECTIF_TO_SUFFIX[self.rectif]
+        return text
+
+    @property
+    def num_str(self) -> str:
+        return str(self.num)
+
+    _RECTIF_TO_SUFFIX = {
+        2: "bis",
+        3: "ter",
+        4: "quater",
+        5: "quinquies",
+        6: "sexies",
+        7: "septies",
+        8: "octies",
+        9: "nonies",
+        10: "decies",
+    }
+
+    _SUFFIX_TO_RECTIF = {suffix: rectif for rectif, suffix in _RECTIF_TO_SUFFIX.items()}
+
+    _NUM_RE = re.compile(r"(?P<num>\d+)(?P<rect> rect\.(?: (?P<suffix>\w+))?)?")
+
+    ABANDONNED = ("retiré", "irrecevable", "tombé")
+
+    @staticmethod
+    def parse_num(text: str) -> Tuple[int, int]:
+        if text == "":
+            return 0, 0
+        if text.startswith("COM-"):
+            start = len("COM-")
+            text = text[start:]
+
+        mo = Amendement._NUM_RE.match(text)
+        if mo is None:
+            raise ValueError(f"Cannot parse amendement number '{text}'")
+        num = int(mo.group("num"))
+        if mo.group("rect") is None:
+            rectif = 0
+        else:
+            suffix = mo.group("suffix")
+            if suffix is None:
+                rectif = 1
+            else:
+                if suffix in Amendement._SUFFIX_TO_RECTIF:
+                    rectif = Amendement._SUFFIX_TO_RECTIF[suffix]
+                else:
+                    raise ValueError(f"Cannot parse amendement number '{text}'")
+        return (num, rectif)
+
+    @property
+    def gouvernemental(self) -> bool:
+        return bool(self.auteur == "LE GOUVERNEMENT")
+
+    @property
+    def is_displayable(self) -> bool:
+        return (
+            bool(self.avis) or self.gouvernemental
+        ) and self.sort not in self.ABANDONNED
+
+    @property
+    def lecture_url_key(self) -> str:
+        return (
+            f"{self.lecture.chambre}.{self.lecture.session}."
+            f"{self.lecture.num_texte}.{self.lecture.organe}"
+        )
+
+    @property
+    def article_url_key(self) -> str:
+        return (
+            f"{self.article.type}.{self.article.num}."
+            f"{self.article.mult}.{self.article.pos}"
+        )
+
+    def asdict(self, full: bool = False) -> dict:
+        result = {
+            "num": self.num,
+            "rectif": self.rectif or "",
+            "pk": f"{self.num:06}",
+            "sort": self.sort or "",
+            "matricule": self.matricule or "",
+            "gouvernemental": self.gouvernemental,
+            "auteur": self.auteur,
+            "groupe": self.groupe or "",
+            "dispositif": self.dispositif,
+            "objet": self.objet,
+            "resume": self.resume or "",
+            "observations": self.observations or "",
+            "avis": self.avis or "",
+            "reponse": self.reponse or "",
+            "parent": self.parent and self.parent.num_disp or "",
+        }
+        if full:
+            result["chambre"] = self.lecture.chambre
+            result["num_texte"] = self.lecture.num_texte
+            result["organe"] = self.lecture.organe
+            result["session"] = self.lecture.session
+            result["subdiv_type"] = self.article.type
+            result["subdiv_titre"] = self.article.titre
+            result["subdiv_num"] = self.article.num
+            result["subdiv_pos"] = self.article.pos
+            result["subdiv_mult"] = self.article.mult
+        return result

@@ -1,24 +1,24 @@
 {% extends "_base_edit.html" %}
 
 {% block body %}
-    <h2>{{ amendement.subdiv_disp }}</h2>
+    <h2>{{ article.disp }}</h2>
     <div class="container">
         <div class="row">
             <div class="col-sm pl-0 mr-4">
-                {{ content(amendement) }}
+                {{ content(article) }}
             </div>
             <div class="col-sm px-0">
-                {{ form(amendement) }}
+                {{ form(article) }}
             </div>
         </div>
     </div>
 {% endblock %}
 
 
-{% macro content(amendement) %}
-    {% if amendement.subdiv_contenu %}
+{% macro content(article) %}
+    {% if article.contenu %}
         <dl>
-            {% for pastille, content in amendement.subdiv_contenu.items() %}
+            {% for pastille, content in article.contenu.items() %}
                 <dt>{{ pastille }}</dt>
                 <dd>{{ content }}</dd>
             {% endfor %}
@@ -27,19 +27,19 @@
 {% endmacro %}
 
 
-{% macro form(amendement) %}
+{% macro form(article) %}
     <form id="edit-article" action="{{ request.path }}" method="post" class="mt-3">
         <div class="form-group">
-            <label for="subdiv_titre">Titre de l’article</label>
-            <input name="subdiv_titre" class="form-control" value="{{ amendement.subdiv_titre or '' | safe }}">
+            <label for="titre">Titre de l’article</label>
+            <input name="titre" class="form-control" value="{{ article.titre or '' | safe }}">
         </div>
         <div class="form-group">
-            <label for="subdiv_jaune">Éléments de langage</label>
-            <textarea name="subdiv_jaune" class="form-control">{{ amendement.subdiv_jaune or "" | safe }}</textarea>
+            <label for="jaune">Éléments de langage</label>
+            <textarea name="jaune" class="form-control">{{ article.jaune or "" | safe }}</textarea>
         </div>
         <div class="form-group">
             <input type="submit" name="submit" value="Enregistrer" class="btn btn-primary">
-            <a href="{{ request.resource_url(context.parent.parent['amendements']) }}" class="btn">Annuler</a>
+            <a href="{{ request.resource_url(context.parent.parent) }}" class="btn">Annuler</a>
         </div>
     </form>
 {% endmacro %}

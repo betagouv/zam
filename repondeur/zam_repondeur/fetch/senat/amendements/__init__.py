@@ -1,12 +1,12 @@
 import csv
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import Any, Dict, Iterable, Iterator, List, Optional
+from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple
 
 import requests
 
 from zam_repondeur.fetch.exceptions import NotFound
-from zam_repondeur.fetch.models import Amendement
+from zam_repondeur.models import Amendement, Lecture
 from zam_repondeur.fetch.senat.senateurs import fetch_and_parse_senateurs, Senateur
 
 from .parse import parse_from_csv, parse_from_json
@@ -15,33 +15,37 @@ from .parse import parse_from_csv, parse_from_json
 BASE_URL = "https://www.senat.fr"
 
 
-def aspire_senat(session: str, num: int, organe: str) -> List[Amendement]:
+def aspire_senat(lecture: Lecture) -> Tuple[List[Amendement], int]:
     print("Récupération des amendements déposés...")
+    created = 0
+    amendements: List[Amendement] = []
     try:
-        amendements = _fetch_and_parse_all(session, num, organe)
+        amendements_created = _fetch_and_parse_all(lecture=lecture)
     except NotFound:
-        return []
+        return amendements, created
+
+    for amendement, created_ in amendements_created:
+        created += int(created_)
+        amendements.append(amendement)
 
     processed_amendements = _process_amendements(
-        amendements=amendements, session=session, num=num, organe=organe
+        amendements=amendements, lecture=lecture
     )
-    return list(processed_amendements)
+    return list(processed_amendements), created
 
 
-def _fetch_and_parse_all(session: str, num: int, organe: str) -> List[Amendement]:
-    return [
-        parse_from_csv(row, session, num, organe) for row in _fetch_all(session, num)
-    ]
+def _fetch_and_parse_all(lecture: Lecture) -> List[Tuple[Amendement, bool]]:
+    return [parse_from_csv(row, lecture) for row in _fetch_all(lecture)]
 
 
-def _fetch_all(session: str, num: int) -> List[OrderedDict]:
+def _fetch_all(lecture: Lecture) -> List[OrderedDict]:
     """
     Récupère tous les amendements, dans l'ordre de dépôt
     """
     # Fallback to commissions.
     urls = [
-        f"{BASE_URL}/amendements/{session}/{num}/jeu_complet_{session}_{num}.csv",
-        f"{BASE_URL}/amendements/commissions/{session}/{num}/jeu_complet_commission_{session}_{num}.csv",  # noqa
+        f"{BASE_URL}/amendements/{lecture.session}/{lecture.num_texte}/jeu_complet_{lecture.session}_{lecture.num_texte}.csv",  # noqa
+        f"{BASE_URL}/amendements/commissions/{lecture.session}/{lecture.num_texte}/jeu_complet_commission_{lecture.session}_{lecture.num_texte}.csv",  # noqa
     ]
 
     for url in urls:
@@ -60,14 +64,12 @@ def _fetch_all(session: str, num: int) -> List[OrderedDict]:
 
 
 def _process_amendements(
-    amendements: Iterable[Amendement], session: str, num: int, organe: str
+    amendements: Iterable[Amendement], lecture: Lecture
 ) -> Iterable[Amendement]:
 
     # Les amendements discutés en séance, par ordre de passage
     print("Récupération des amendements soumis à la discussion...")
-    amendements_derouleur = _fetch_and_parse_discussed(
-        session=session, num=num, organe=organe, phase="seance"
-    )
+    amendements_derouleur = _fetch_and_parse_discussed(lecture=lecture, phase="seance")
     if len(amendements_derouleur) == 0:
         print("Aucun amendement soumis à la discussion pour l'instant!")
 
@@ -83,11 +85,9 @@ def _process_amendements(
     )
 
 
-def _fetch_and_parse_discussed(
-    session: str, num: int, organe: str, phase: str
-) -> List[Amendement]:
+def _fetch_and_parse_discussed(lecture: Lecture, phase: str) -> List[Amendement]:
     try:
-        data = _fetch_discussed(session, num, phase)
+        data = _fetch_discussed(lecture, phase)
     except NotFound:
         return []
     subdivs_amends = [
@@ -97,12 +97,12 @@ def _fetch_and_parse_discussed(
     ]
     amends_by_ids = {amend["idAmendement"]: amend for subdiv, amend in subdivs_amends}
     return [
-        parse_from_json(amends_by_ids, amend, position, session, num, organe, subdiv)
+        parse_from_json(amends_by_ids, amend, position, lecture, subdiv)
         for position, (subdiv, amend) in enumerate(subdivs_amends, start=1)
     ]
 
 
-def _fetch_discussed(session: str, num: int, phase: str) -> Any:
+def _fetch_discussed(lecture: Lecture, phase: str) -> Any:
     """
     Récupère les amendements à discuter, dans l'ordre de passage
 
@@ -110,7 +110,7 @@ def _fetch_discussed(session: str, num: int, phase: str) -> Any:
     """
     assert phase in ("commission", "seance")
 
-    url = f"{BASE_URL}/en{phase}/{session}/{num}/liste_discussion.json"
+    url = f"{BASE_URL}/en{phase}/{lecture.session}/{lecture.num_texte}/liste_discussion.json"  # noqa
 
     resp = requests.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
@@ -126,16 +126,13 @@ def _enrich_groupe_parlementaire(
     """
     Enrichir les amendements avec le groupe parlementaire de l'auteur
     """
-    return (
-        amendement.replace(
-            {
-                "groupe": senateurs_by_matricule[amendement.matricule].groupe
-                if amendement.matricule is not None
-                else ""
-            }
+    for amendement in amendements:
+        amendement.groupe = (
+            senateurs_by_matricule[amendement.matricule].groupe
+            if amendement.matricule is not None
+            else ""
         )
-        for amendement in amendements
-    )
+        yield amendement
 
 
 def _enrich(
@@ -161,15 +158,11 @@ def _enrich_one(
 ) -> Amendement:
     if amend_discussion is None:
         return amend
-    return amend.replace(
-        {
-            "position": amend_discussion.position,
-            "discussion_commune": amend_discussion.discussion_commune,
-            "identique": amend_discussion.identique,
-            "parent_num": amend_discussion.parent_num,
-            "parent_rectif": amend_discussion.parent_rectif,
-        }
-    )
+    amend.position = amend_discussion.position
+    amend.discussion_commune = amend_discussion.discussion_commune
+    amend.identique = amend_discussion.identique
+    amend.parent = amend_discussion.parent
+    return amend
 
 
 def _sort(

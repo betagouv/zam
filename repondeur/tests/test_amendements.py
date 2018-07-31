@@ -2,7 +2,7 @@ import transaction
 from datetime import datetime
 
 
-def test_get_form(app, dummy_lecture, dummy_amendements):
+def test_get_form(app, lecture_an, amendements_an):
     resp = app.get("/lectures/an.15.269.PO717460/amendements/")
 
     assert resp.status_code == 200
@@ -18,10 +18,10 @@ def test_get_form(app, dummy_lecture, dummy_amendements):
     assert list(resp.forms["amendement-666"].fields.keys()) == ["bookmark", "submit"]
 
 
-def test_post_form_set(app, dummy_lecture, dummy_amendements):
+def test_post_form_set(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
-    assert dummy_amendements[0].bookmarked_at is None
+    assert amendements_an[0].bookmarked_at is None
 
     form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["amendement-666"]
     form["bookmark"] = "1"
@@ -39,12 +39,12 @@ def test_post_form_set(app, dummy_lecture, dummy_amendements):
     assert amendement.bookmarked_at
 
 
-def test_post_form_unset(app, dummy_lecture, dummy_amendements):
+def test_post_form_unset(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     with transaction.manager:
-        dummy_amendements[0].bookmarked_at = datetime.now()
-        DBSession.add(dummy_amendements[0])
+        amendements_an[0].bookmarked_at = datetime.now()
+        DBSession.add(amendements_an[0])
 
     form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["amendement-666"]
     form["bookmark"] = "0"
@@ -62,10 +62,10 @@ def test_post_form_unset(app, dummy_lecture, dummy_amendements):
     assert amendement.bookmarked_at is None
 
 
-def test_post_form_set_then_unset(app, dummy_lecture, dummy_amendements):
+def test_post_form_set_then_unset(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
-    assert dummy_amendements[0].bookmarked_at is None
+    assert amendements_an[0].bookmarked_at is None
 
     form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["amendement-666"]
     form["bookmark"] = "1"

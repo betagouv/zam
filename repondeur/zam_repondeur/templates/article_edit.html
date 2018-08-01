@@ -20,7 +20,7 @@
         <dl>
             {% for pastille, content in amendement.subdiv_contenu.items() %}
                 <dt>{{ pastille }}</dt>
-                <dd>{{ content }}</dd>
+                <dd>{{ content.strip('"') | safe }}</dd>
             {% endfor %}
         </dl>
     {% endif %}

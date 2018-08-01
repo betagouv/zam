@@ -88,7 +88,7 @@
                 <td data-sortkey="{{ amendement.num }}">
                     {{ amendement.num_disp }}
                     {% if amendement.parent %}
-                        (ss-amdt {{ amendement.parent.num_disp }})
+                        (ss-amdt au {{ amendement.parent.num_disp }})
                     {% endif %}
                 </td>
                 <td>{{ amendement.objet | striptags | truncate(length=100, killwords=False, end='…') }}</td>

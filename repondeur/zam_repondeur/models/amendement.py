@@ -57,6 +57,7 @@ class Amendement(Base):  # type: ignore
     avis = Column(Text, nullable=True)
     observations = Column(Text, nullable=True)
     reponse = Column(Text, nullable=True)
+    comments = Column(Text, nullable=True)
     bookmarked_at = Column(DateTime, nullable=True)
 
     @classmethod
@@ -81,6 +82,7 @@ class Amendement(Base):  # type: ignore
         avis: str = "",
         observations: str = "",
         reponse: str = "",
+        comments: str = "",
     ) -> "Amendement":
         amendement = cls(
             lecture=lecture,
@@ -102,6 +104,7 @@ class Amendement(Base):  # type: ignore
             avis=avis,
             observations=observations,
             reponse=reponse,
+            comments=comments,
         )
         DBSession.add(amendement)
         return amendement
@@ -205,6 +208,7 @@ class Amendement(Base):  # type: ignore
             "observations": self.observations or "",
             "avis": self.avis or "",
             "reponse": self.reponse or "",
+            "comments": self.comments or "",
             "parent": self.parent and self.parent.num_disp or "",
         }
         if full:

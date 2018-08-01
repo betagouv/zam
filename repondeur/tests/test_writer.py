@@ -89,6 +89,7 @@ def test_write_csv(lecture_senat, article1, article1av, article7bis, tmpdir):
         "Auteur(s)": "M. DUPONT",
         "Avis du Gouvernement": "",
         "Chambre": "senat",
+        "Commentaires": "",
         "Corps amdt": "Cet article va à l'encontre du principe d'égalité.",
         "Date de dépôt": "",
         "Discussion commune ?": "",
@@ -226,4 +227,5 @@ def test_write_csv_sous_amendement(
         "Réponse": "",
         "Gouvernemental": "False",
         "Pk": "000596",
+        "Commentaires": "",
     }

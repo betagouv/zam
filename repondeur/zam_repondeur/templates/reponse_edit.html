@@ -30,6 +30,11 @@
 
 
 {% macro content(amendement) %}
+    {% if amendement.parent %}
+        <h3>
+            Sous-amendement au {{ amendement.parent.num_disp }}
+        </h3>
+    {% endif %}
     <div class="auteur">
         Présenté par {{ amendement.auteur }} ({{ amendement.groupe }}).
     </div>
@@ -79,6 +84,11 @@
         <div class="form-group">
             <label for="reponse">Réponse à l’amendement</label>
             <textarea name="reponse" class="form-control">{{ amendement.reponse or "" | safe }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="comments">Commentaires</label>
+            <textarea name="comments" class="form-control">{{ amendement.comments or "" | safe }}</textarea>
         </div>
 
         <div class="form-group">

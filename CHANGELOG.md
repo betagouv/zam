@@ -2,9 +2,29 @@
 
 ## Prochains évènements
 
-### Date de prochaine démonstration : 24 juillet à 15h.
+### Date de prochaine démonstration : à fixer en septembre.
 
 ## Changements récents
+
+### 2 août 2018
+
+* Possibilité d’ajouter un commentaire sur un amendement donné (évolution de la [spécification d’import](https://github.com/betagouv/zam/pull/88#issue-202058312))
+* Possibilité de ré-importer un export CSV précédent (sauvegarde locale)
+
+### 1er août 2018
+
+* Gestion des sous-amendements, ⚠︎ remise à zéro des données
+* Possibilité d’importer une liasse XML
+* Possibilité d’ajouter des éléments de langage pour un article donné
+* Ajout de l’objet de l’amendement dans la liste des amendements
+
+### 30 juillet 2018
+
+* Correction d’un bug signalé par une utilisatrice relatif au format du CSV importé pour charger un lot de réponses
+
+### 24 juillet 2018
+
+* Organisation chronologique de la liste des lectures créées (la plus récente création en haut) et affichage des noms des projets de loi
 
 ### 18 juillet 2018
 

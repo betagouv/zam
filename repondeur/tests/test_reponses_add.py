@@ -135,7 +135,7 @@ def test_post_form_wrong_columns_names(app, lecture_an, amendements_an):
     assert resp.status_code == 200
     assert (
         "2 réponses n’ont pas pu être chargées. Pour rappel, il faut que le fichier "
-        "CSV contienne au moins les noms de colonnes suivants « N° amdt », "
+        "CSV contienne au moins les noms de colonnes suivants « Nº amdt », "
         "« Avis du Gouvernement », « Objet amdt » et « Réponse »." in resp.text
     )
 
@@ -152,3 +152,51 @@ def test_post_form_reponse_no_file(app, lecture_an, amendements_an):
 
     assert resp.status_code == 200
     assert "Veuillez d’abord sélectionner un fichier" in resp.text
+
+
+def test_post_form_from_export(app, lecture_an, article1, tmpdir):
+    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.writer import write_csv
+
+    filename = str(tmpdir.join("test.csv"))
+
+    with transaction.manager:
+        amendements = [
+            Amendement(
+                lecture=lecture_an,
+                article=article1,
+                num=num,
+                position=position,
+                avis="Favorable",
+                observations="Des observations très pertinentes",
+                reponse="Une réponse très appropriée",
+                comments="Avec des commentaires",
+            )
+            for position, num in enumerate((333, 777), 1)
+        ]
+        DBSession.add_all(amendements)
+        nb_rows = write_csv("Titre", amendements, filename, request={})
+
+    assert nb_rows == 2
+
+    with transaction.manager:
+        amendements[0].avis = None
+        amendements[1].avis = None
+
+    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    form["reponses"] = Upload("file.csv", Path(filename).read_bytes())
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "2 réponses chargées" in resp.text
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 333).first()
+    assert amendement.avis == "Favorable"
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 777).first()
+    assert amendement.avis == "Favorable"

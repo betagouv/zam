@@ -30,6 +30,11 @@
 
 
 {% macro content(amendement) %}
+    {% if amendement.parent %}
+        <h3>
+            Sous-amendement au {{ amendement.parent.num_disp }}
+        </h3>
+    {% endif %}
     <div class="auteur">
         Présenté par {{ amendement.auteur }} ({{ amendement.groupe }}).
     </div>

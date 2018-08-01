@@ -53,6 +53,7 @@
       margin: 5rem auto;
     }
       .page.jaune h2,
+      .page.jaune h3,
       .page.reponse h2,
       .page.amendement h2 {
         text-align: right;
@@ -113,6 +114,14 @@
       {% if article.jaune %}
         <section class="page jaune">
           <h2>Éléments de langage</h2>
+          <h3>
+            {% if article.type_ == "article" %}
+              Article {{ article }}
+            {% else %}
+              {{ article.type_.capitalize() }}s
+            {% endif %}
+          </h3>
+          <h3>{{ article.titre }}</h3>
           <div>
             {{ article.jaune | safe }}
           </div>

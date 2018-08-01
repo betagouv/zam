@@ -2,9 +2,18 @@
 
 ## Prochains évènements
 
-### Date de prochaine démonstration : 24 juillet à 15h.
+### Date de prochaine démonstration : à fixer en septembre.
 
 ## Changements récents
+
+### 30 juillet 2018
+
+* Correction d'un bug signalé par une utilisatrice relatif au format du CSV importé pour charger un lot de réponses
+
+### 24 juillet 2018
+
+* Barre de recherche par numéro d'amendement dans le dossier de banc
+* Organisation chronologique de la liste des lectures créées (la plus récente création en haut) et affichage des noms des projets de loi
 
 ### 18 juillet 2018
 

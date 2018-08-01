@@ -526,7 +526,7 @@
                     {{ amendement }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
                   {% endfor %}
                 {% endif %}
-                {% if parent %} (sous-amendement de {{ parent }}){% endif %}
+                {% if parent %} (sous-amendement au {{ parent }}){% endif %}
               </h2>
               {% if reponse.presentation|length < 200 %}
                 <div class="presentation">

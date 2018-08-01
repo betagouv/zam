@@ -6,13 +6,19 @@
 
 ## Changements récents
 
+### 1er août 2018
+
+* Gestion des sous-amendements, ⚠︎ remise à zéro des données
+* Possibilité d’importer une liasse XML
+* Possibilité d’ajouter des éléments de langage pour un article donné
+* Ajout de l’objet de l’amendement dans la liste des amendements
+
 ### 30 juillet 2018
 
-* Correction d'un bug signalé par une utilisatrice relatif au format du CSV importé pour charger un lot de réponses
+* Correction d’un bug signalé par une utilisatrice relatif au format du CSV importé pour charger un lot de réponses
 
 ### 24 juillet 2018
 
-* Barre de recherche par numéro d'amendement dans le dossier de banc
 * Organisation chronologique de la liste des lectures créées (la plus récente création en haut) et affichage des noms des projets de loi
 
 ### 18 juillet 2018

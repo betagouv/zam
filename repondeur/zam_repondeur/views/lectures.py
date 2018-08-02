@@ -185,7 +185,7 @@ class ListAmendements:
                             f"{errors_count} réponses n’ont pas pu être chargées. "
                             "Pour rappel, il faut que le fichier CSV contienne "
                             "au moins les noms de colonnes suivants "
-                            "« N° amdt », « Avis du Gouvernement », « Objet amdt » "
+                            "« Nº amdt », « Avis du Gouvernement », « Objet amdt » "
                             "et « Réponse ».",
                         )
                     )
@@ -212,7 +212,7 @@ class ListAmendements:
 
         for line in csv.DictReader(reponses_text_file, delimiter=delimiter):
             try:
-                numero = line["N° amdt"]
+                numero = line["Nº amdt"]
                 avis = line["Avis du Gouvernement"] or ""
                 objet = line["Objet amdt"] or ""
                 reponse = line["Réponse"] or ""
@@ -237,6 +237,8 @@ class ListAmendements:
             amendement.observations = clean_html(objet)
             reponse = normalize_reponse(reponse, previous_reponse)
             amendement.reponse = clean_html(reponse)
+            if "Commentaires" in line:
+                amendement.comments = clean_html(line["Commentaires"])
             previous_reponse = reponse
             reponses_count += 1
 
@@ -264,7 +266,7 @@ class ListAmendements:
         return dialect.delimiter
 
 
-REPONSE_FIELDS = ["avis", "observations", "reponse"]
+REPONSE_FIELDS = ["avis", "observations", "reponse", "comments"]
 
 
 @view_config(context=LectureResource, name="fetch_amendements")

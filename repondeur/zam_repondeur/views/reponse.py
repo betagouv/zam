@@ -64,6 +64,7 @@ class ReponseEdit:
         self.amendement.avis = self.request.POST["avis"]
         self.amendement.observations = clean_html(self.request.POST["observations"])
         self.amendement.reponse = clean_html(self.request.POST["reponse"])
+        self.amendement.comments = clean_html(self.request.POST["comments"])
         self.lecture.modified_at = datetime.utcnow()
 
         collection: AmendementCollection = self.context.parent

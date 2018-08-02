@@ -48,6 +48,7 @@ class Amendement:
     avis: Optional[str] = None  # position du gouvernemnt
     observations: Optional[str] = None
     reponse: Optional[str] = None
+    comments: Optional[str] = None
 
     bookmarked_at: Optional[datetime] = None
 

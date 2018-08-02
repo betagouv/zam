@@ -104,6 +104,32 @@ def test_post_form_semicolumns(app, dummy_lecture, dummy_amendements):
     assert amendement.position == 2
 
 
+def test_post_form_with_comments(app, dummy_lecture, dummy_amendements):
+    from zam_repondeur.models import DBSession, Amendement
+
+    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    path = Path(__file__).parent / "sample_data" / "reponses_with_comments.csv"
+    form["reponses"] = Upload("file.csv", path.read_bytes())
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "2 réponses chargées" in resp.text
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+    assert amendement.position == 1
+    assert amendement.comments == "A comment"
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+    assert amendement.position == 2
+    assert amendement.comments == ""
+
+
 def test_post_form_with_bom(app, dummy_lecture, dummy_amendements):
     form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_with_bom.csv"
@@ -135,7 +161,7 @@ def test_post_form_wrong_columns_names(app, dummy_lecture, dummy_amendements):
     assert resp.status_code == 200
     assert (
         "2 réponses n’ont pas pu être chargées. Pour rappel, il faut que le fichier "
-        "CSV contienne au moins les noms de colonnes suivants « N° amdt », "
+        "CSV contienne au moins les noms de colonnes suivants « Nº amdt », "
         "« Avis du Gouvernement », « Objet amdt » et « Réponse »." in resp.text
     )
 
@@ -152,3 +178,38 @@ def test_post_form_reponse_no_file(app, dummy_lecture, dummy_amendements):
 
     assert resp.status_code == 200
     assert "Veuillez d’abord sélectionner un fichier" in resp.text
+
+
+def test_post_form_from_export(
+    app, dummy_lecture, dummy_amendements_with_reponses, tmpdir
+):
+    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.writer import write_csv
+
+    filename = str(tmpdir.join("test.csv"))
+
+    nb_rows = write_csv("Titre", dummy_amendements_with_reponses, filename, request={})
+
+    assert nb_rows == 2
+
+    with transaction.manager:
+        dummy_amendements_with_reponses[0].avis = None
+        dummy_amendements_with_reponses[1].avis = None
+
+    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    form["reponses"] = Upload("file.csv", Path(filename).read_bytes())
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "2 réponses chargées" in resp.text
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 333).first()
+    assert amendement.avis == "Favorable"
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 777).first()
+    assert amendement.avis == "Favorable"

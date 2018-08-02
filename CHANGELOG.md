@@ -4,7 +4,14 @@
 
 ### Date de prochaine démonstration : à fixer en septembre.
 
+<h2 class="center">[Accès au répondeur](/repondeur/) — [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
+
 ## Changements récents
+
+### 2 août 2018
+
+* Possibilité d’ajouter un commentaire sur un amendement donné (évolution de la [spécification d’import](https://github.com/betagouv/zam/pull/88#issue-202058312))
+* Possibilité de ré-importer un export CSV précédent (sauvegarde locale)
 
 ### 1er août 2018
 

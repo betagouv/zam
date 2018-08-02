@@ -4,6 +4,8 @@
 
 ### Date de prochaine démonstration : à fixer en septembre.
 
+<h2 class="center">[Accès au répondeur](/repondeur/) — [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
+
 ## Changements récents
 
 ### 2 août 2018

@@ -2,13 +2,15 @@
 
 ## Prochains évènements
 
-### Date de prochaine démonstration : à fixer en septembre.
+### Date de prochaine démonstration : 4 septembre.
+
+<h2 class="center">[Accès au répondeur](/repondeur/) — [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
 
 ## Changements récents
 
 ### 2 août 2018
 
-* Possibilité d’ajouter un commentaire sur un amendement donné (évolution de la [spécification d’import](https://github.com/betagouv/zam/pull/88#issue-202058312))
+* Possibilité d’ajouter un commentaire sur un amendement donné (évolution de la [spécification d’import](https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses))
 * Possibilité de ré-importer un export CSV précédent (sauvegarde locale)
 
 ### 1er août 2018
@@ -28,7 +30,7 @@
 
 ### 18 juillet 2018
 
-* Nouvelle [spécification d’import pour le nom des colonnes du tableau des réponses](https://github.com/betagouv/zam/pull/88#issue-202058312)
+* Nouvelle [spécification d’import pour le nom des colonnes du tableau des réponses](https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses)
 * Possibilité de mettre un signet sur un ou plusieurs amendements depuis la liste, ⚠︎ remise à zéro des données
 * Possibilité d’accéder à un amendement dans la visionneuse à partir de son numéro
 

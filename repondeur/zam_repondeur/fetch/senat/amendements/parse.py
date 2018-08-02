@@ -1,5 +1,5 @@
 import re
-from typing import Optional, Tuple, cast
+from typing import Dict, Optional, Tuple, cast
 from urllib.parse import urlparse
 
 from zam_repondeur.clean import clean_html
@@ -39,7 +39,11 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
 
 
 def parse_from_json(
-    amends_by_ids: dict, amend: dict, position: int, lecture: Lecture, subdiv: dict
+    uid_map: Dict[str, Amendement],
+    amend: dict,
+    position: int,
+    lecture: Lecture,
+    subdiv: dict,
 ) -> Amendement:
     subdiv_ = _parse_subdiv(subdiv["libelle_subdivision"])
     article, created = get_one_or_create(  # type: ignore
@@ -50,20 +54,6 @@ def parse_from_json(
         mult=subdiv_.mult,
         pos=subdiv_.pos,
     )
-    parent_num, parent_rectif = Amendement.parse_num(
-        get_parent_raw_num(amends_by_ids, amend)
-    )
-    if parent_num:
-        parent, created = get_one_or_create(  # type: ignore
-            DBSession,
-            Amendement,
-            lecture=lecture,
-            article=article,
-            num=parent_num,
-            rectif=parent_rectif,
-        )
-    else:
-        parent = None
     num, rectif = Amendement.parse_num(amend["num"])
     amendement, created = get_one_or_create(  # type: ignore
         DBSession, Amendement, lecture=lecture, article=article, num=num, rectif=rectif
@@ -76,7 +66,6 @@ def parse_from_json(
         else None
     )
     amendement.sort = amend.get("sort")
-    amendement.parent = parent
     amendement.position = position
     amendement.identique = parse_bool(amend["isIdentique"])
     amendement.discussion_commune = (
@@ -84,6 +73,7 @@ def parse_from_json(
         if parse_bool(amend["isDiscussionCommune"])
         else None
     )
+    amendement.parent = get_parent(uid_map, amend)
     return cast(Amendement, amendement)
 
 
@@ -107,12 +97,12 @@ def parse_bool(text: str) -> bool:
     raise ValueError
 
 
-def get_parent_raw_num(amends_by_ids: dict, amend: dict) -> str:
+def get_parent(uid_map: Dict[str, Amendement], amend: dict) -> Optional[Amendement]:
     if (
         "isSousAmendement" in amend
         and parse_bool(amend["isSousAmendement"])
         and "idAmendementPere" in amend
     ):
-        num: str = amends_by_ids[amend["idAmendementPere"]]["num"]
-        return num
-    return ""
+        return uid_map[amend["idAmendementPere"]]
+    else:
+        return None

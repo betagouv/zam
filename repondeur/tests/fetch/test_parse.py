@@ -95,7 +95,7 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
-            {"1104289": amend}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
+            {}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
         )
 
         assert amendement.article.type == "article"
@@ -144,7 +144,7 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
-            {"1104289": amend}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
+            {}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
         )
 
         assert amendement.article.type == "article"
@@ -183,7 +183,7 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
-            {"1110174": amend}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
+            {}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
         )
 
         assert amendement.discussion_commune == 110541
@@ -214,7 +214,7 @@ class TestParseAmendementFromJSON:
         subdiv = {"libelle_subdivision": "Article 3"}
 
         amendement = parse_from_json(
-            {"1103376": amend}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
+            {}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
         )
 
         assert amendement.discussion_commune is None
@@ -223,7 +223,7 @@ class TestParseAmendementFromJSON:
     def test_parse_sous_amendement(self, lecture_senat):
         from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
 
-        amend = {
+        amend1 = {
             "idAmendement": "1104289",
             "posder": "1",
             "subpos": "0",
@@ -250,7 +250,7 @@ class TestParseAmendementFromJSON:
             "idAmendementPere": "1104289",
             "urlAmdt": "Amdt_131.html",
             "typeAmdt": "Amt",
-            "num": "131",
+            "num": "131 rect.",
             "libelleAlinea": "",
             "urlAuteur": "bocquet_eric11040e.html",
             "auteur": "M. BOCQUET",
@@ -267,15 +267,18 @@ class TestParseAmendementFromJSON:
             "isubdivision": "154182",
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
-        amendement = parse_from_json(
-            {"1104289": amend, "1110174": amend2},
+        amendement1 = parse_from_json(
+            {}, amend1, position=1, lecture=lecture_senat, subdiv=subdiv
+        )
+        amendement2 = parse_from_json(
+            {"1104289": amendement1},
             amend2,
-            position=1,
+            position=2,
             lecture=lecture_senat,
             subdiv=subdiv,
         )
 
-        assert amendement.num == 131
-        assert amendement.rectif == 0
-        assert amendement.parent.num == 230
-        assert amendement.parent.rectif == 1
+        assert amendement2.num == 131
+        assert amendement2.rectif == 1
+        assert amendement2.parent.num == 230
+        assert amendement2.parent.rectif == 1

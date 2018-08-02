@@ -9,7 +9,7 @@ SAMPLE_LIASSE = Path(__file__).parent / "sample_data" / "liasse.xml"
 
 
 @pytest.fixture
-def dummy_lecture_essoc(app):
+def lecture_essoc(app):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
@@ -25,7 +25,7 @@ def dummy_lecture_essoc(app):
     return lecture
 
 
-def test_get_form(app, dummy_lecture_essoc):
+def test_get_form(app, lecture_essoc):
     resp = app.get("/lectures/an.15.806.PO744107/")
 
     assert resp.status_code == 200
@@ -44,7 +44,7 @@ def test_get_form(app, dummy_lecture_essoc):
     assert form.fields["upload"][0].attrs["type"] == "submit"
 
 
-def test_upload_liasse_success(app, dummy_lecture_essoc):
+def test_upload_liasse_success(app, lecture_essoc):
     resp = app.get("/lectures/an.15.806.PO744107/")
     form = resp.forms["import-liasse-xml"]
     form["liasse"] = Upload("liasse.xml", SAMPLE_LIASSE.read_bytes())
@@ -54,11 +54,10 @@ def test_upload_liasse_success(app, dummy_lecture_essoc):
     assert resp.location == "http://localhost/lectures/an.15.806.PO744107/"
 
     resp = resp.follow()
-    # print(resp.text)
     assert "2 nouveaux amendements récupérés." in resp.text
 
 
-def test_upload_liasse_missing_file(app, dummy_lecture_essoc):
+def test_upload_liasse_missing_file(app, lecture_essoc):
     resp = app.get("/lectures/an.15.806.PO744107/")
     form = resp.forms["import-liasse-xml"]
     resp = form.submit()

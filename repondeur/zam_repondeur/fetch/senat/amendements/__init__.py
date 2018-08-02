@@ -95,11 +95,13 @@ def _fetch_and_parse_discussed(lecture: Lecture, phase: str) -> List[Amendement]
         for subdiv in data["Subdivisions"]
         for amend in subdiv["Amendements"]
     ]
-    amends_by_ids = {amend["idAmendement"]: amend for subdiv, amend in subdivs_amends}
-    return [
-        parse_from_json(amends_by_ids, amend, position, lecture, subdiv)
-        for position, (subdiv, amend) in enumerate(subdivs_amends, start=1)
-    ]
+    uid_map: Dict[str, Amendement] = {}
+    amendements = []
+    for position, (subdiv, amend) in enumerate(subdivs_amends, start=1):
+        amendement = parse_from_json(uid_map, amend, position, lecture, subdiv)
+        uid_map[amend["idAmendement"]] = amendement
+        amendements.append(amendement)
+    return amendements
 
 
 def _fetch_discussed(lecture: Lecture, phase: str) -> Any:

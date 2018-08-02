@@ -47,11 +47,11 @@ class Amendement(Base):  # type: ignore
     # Relations.
     parent_pk = Column(Integer, ForeignKey("amendements.pk"), nullable=True)
     parent_rectif = Column(Integer, nullable=True)
-    parent = relationship("Amendement", uselist=False)
+    parent = relationship("Amendement", uselist=False, primaryjoin=(parent_pk == pk))
     lecture_id = Column(Integer, ForeignKey("lectures.pk"))
     lecture = relationship("Lecture", back_populates="amendements")
     article_id = Column(Integer, ForeignKey("articles.pk"))
-    article = relationship("Article", back_populates="amendements")
+    article = relationship("Article", back_populates="amendements", lazy="joined")
 
     # Extras. (TODO: move to dedicated table?)
     avis = Column(Text, nullable=True)

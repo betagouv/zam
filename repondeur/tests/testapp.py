@@ -8,9 +8,9 @@ from webtest import (
 
 
 class TestAmendement:
-    def __init__(self, amendement, anchor):
+    def __init__(self, amendement, node):
         self.amendement = amendement
-        self.node = anchor.parent
+        self.node = node
 
     def number_is_in_title(self):
         return (
@@ -18,7 +18,7 @@ class TestAmendement:
         )
 
     def has_gouvernemental_class(self):
-        return self.node.attributes == {"class": "gouvernemental"}
+        return self.node.attributes.get("class") == "gouvernemental"
 
 
 class TestResponse(BaseTestResponse):
@@ -30,10 +30,10 @@ class TestResponse(BaseTestResponse):
         return self.parser.css_first(name).text()
 
     def find_amendement(self, amendement):
-        anchor = self.parser.css_first(f"#amendement-{amendement.num:06}")
-        if anchor is None:
+        node = self.parser.css_first(f"#amendement-{amendement.num:06}")
+        if node is None:
             return None
-        return TestAmendement(amendement, anchor)
+        return TestAmendement(amendement, node)
 
 
 class TestRequest(BaseTestRequest):

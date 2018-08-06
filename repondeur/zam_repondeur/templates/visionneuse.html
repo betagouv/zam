@@ -86,6 +86,13 @@
   article.sous-amendement {
     margin: -1.4rem 1rem 1rem 2.5rem;
   }
+  /* Useful to stay below the sticky Article's header. */
+  article .fake-anchor {
+    display: block;
+    position: relative;
+    top: -6rem;
+    visibility: hidden;
+  }
   header a {
     color: black;
   }
@@ -513,7 +520,8 @@
       {% for reponse, amendements in article.reponses.items() %}
         {% set is_gouvernemental = amendements[0].gouvernemental %}
         {% set parent = amendements[0].parent %}
-        <article id="amendement-{{ amendements[0].pk }}"{% if is_gouvernemental %} class="gouvernemental"{% endif %}{% if parent %} class="sous-amendement"{% endif %}>
+        <article{% if is_gouvernemental %} class="gouvernemental"{% endif %}{% if parent %} class="sous-amendement"{% endif %}>
+          <span class="fake-anchor" id="amendement-{{ amendements[0].pk }}"></span>
           {% if reponse.favorable %}
             {% set avis_class = 'positive' %}
           {% elif reponse.sagesse %}
@@ -673,29 +681,10 @@
 </template>
 
 <script>
-  const smoothScroll = (toHeader) => {
-    let articleHeaderSize = 0  /* Required for sticky article headers. */
-    let topScroll = 0
-    const isArticleHeader = toHeader.classList.contains('for-article')
-    if (isArticleHeader) {
-      topScroll = toHeader.parentElement.getBoundingClientRect().top
-    } else {
-      topScroll = toHeader.getBoundingClientRect().top
-      const targetArticleHeader = toHeader.closest('section').querySelector('header')
-      articleHeaderSize = targetArticleHeader.getBoundingClientRect().height
-    }
-    let top = topScroll + window.scrollY - articleHeaderSize
-    window.scroll({
-      left: 0,
-      top: top,
-      behavior: 'smooth',
-    })
-  }
   ;(function toggleContent () {
     const toggleLinks = Array.from(document.querySelectorAll('[data-toggle-target]'))
     toggleLinks.forEach(toggleLink => {
       toggleLink.onclick = (e) => {
-        e.preventDefault()
         const target = e.target
         const toggleTarget = document.querySelector(`#${target.dataset.toggleTarget}`)
         const toggleParent = toggleTarget.parentElement
@@ -706,16 +695,8 @@
             arrowDownLink.textContent = arrowDownLink.dataset.initialText
           }
         }
-        const hideElement = (e) => {
+        const hideElement = () => {
           toggleParent.classList.replace('is-visible', 'is-hidden')
-          if (e) {
-            e.preventDefault()
-            if (e.target.closest('article')) {
-              smoothScroll(e.target.closest('article').querySelector('header'))
-            } else {
-              smoothScroll(e.target.closest('section').querySelector('header.for-article'))
-            }
-          }
           removeArrows()
         }
         removeArrows()
@@ -732,8 +713,6 @@
         } else {
           hideElement()
         }
-        // Must be done once every un/folding is done for correct boudings.
-        smoothScroll(target.closest('header'))
       }
     })
   })()
@@ -791,7 +770,7 @@
       const value = data.get('q').trim()
       const amendement = document.querySelector(`[data-amendement-${value}]`)
       if (amendement) {
-        smoothScroll(document.querySelector(`#${amendement.dataset.anchor} header`))
+        document.querySelector(`#${amendement.dataset.anchor}`).scrollIntoView({'behavior': 'smooth'})
         form.reset()
       } else {
         form.querySelector('.error').classList.remove('hide')

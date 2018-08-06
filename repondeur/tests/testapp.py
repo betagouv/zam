@@ -8,9 +8,9 @@ from webtest import (
 
 
 class TestAmendement:
-    def __init__(self, amendement, node):
+    def __init__(self, amendement, anchor):
         self.amendement = amendement
-        self.node = node
+        self.node = anchor.parent
 
     def number_is_in_title(self):
         return (
@@ -30,10 +30,10 @@ class TestResponse(BaseTestResponse):
         return self.parser.css_first(name).text()
 
     def find_amendement(self, amendement):
-        node = self.parser.css_first(f"#amendement-{amendement.num:06}")
-        if node is None:
+        anchor = self.parser.css_first(f"#amendement-{amendement.num:06}")
+        if anchor is None:
             return None
-        return TestAmendement(amendement, node)
+        return TestAmendement(amendement, anchor)
 
 
 class TestRequest(BaseTestRequest):

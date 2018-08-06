@@ -18,7 +18,7 @@ SUBDIV_RE = re.compile(
         (?:(?:l')?article\s)+
         (?P<num>\d+|1er|premier)
         (?:\s(?P<mult>\w+))?        # bis, ter, etc.
-        (?:\s.*)?                   # junk
+        (?:\s?\(?.*\)?)?            # junk
         $
     """,
     (re.VERBOSE | re.IGNORECASE),

@@ -674,7 +674,7 @@
 
 <script>
   const smoothScroll = (toHeader) => {
-    let heightOffset = 0  /* Required for sticky headers. */
+    let articleHeaderSize = 0  /* Required for sticky article headers. */
     let topScroll = 0
     const isArticleHeader = toHeader.classList.contains('for-article')
     if (isArticleHeader) {
@@ -682,11 +682,12 @@
     } else {
       topScroll = toHeader.getBoundingClientRect().top
       const targetArticleHeader = toHeader.closest('section').querySelector('header')
-      heightOffset = targetArticleHeader.getBoundingClientRect().height
+      articleHeaderSize = targetArticleHeader.getBoundingClientRect().height
     }
+    let top = topScroll + window.scrollY - articleHeaderSize
     window.scroll({
       left: 0,
-      top: topScroll + window.scrollY - heightOffset,
+      top: top,
       behavior: 'smooth',
     })
   }
@@ -699,10 +700,11 @@
         const toggleTarget = document.querySelector(`#${target.dataset.toggleTarget}`)
         const toggleParent = toggleTarget.parentElement
         const removeArrows = () => {
-          Array.from(document.querySelectorAll('.arrow-down')).forEach(arrowDownLink => {
+          const arrowDownLink = document.querySelector('.arrow-down')
+          if (arrowDownLink) {
             arrowDownLink.classList.remove('arrow', 'arrow-down')
             arrowDownLink.textContent = arrowDownLink.dataset.initialText
-          })
+          }
         }
         const hideElement = (e) => {
           toggleParent.classList.replace('is-visible', 'is-hidden')
@@ -718,9 +720,10 @@
         }
         removeArrows()
         if (toggleParent.classList.contains('is-hidden')) {
-          Array.from(document.querySelectorAll('.is-visible')).forEach(element => {
-            element.classList.replace('is-visible', 'is-hidden')
-          })
+          const visibleElement = document.querySelector('.is-visible')
+          if (visibleElement) {
+            visibleElement.classList.replace('is-visible', 'is-hidden')
+          }
           toggleParent.classList.replace('is-hidden', 'is-visible')
           toggleParent.querySelector('.bottom a').onclick = hideElement
           target.dataset.initialText = target.textContent

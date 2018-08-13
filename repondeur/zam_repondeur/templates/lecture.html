@@ -32,9 +32,6 @@
                 <p>{{ amendements_count }} amendements déposés.</p>
                 <p>
                     <a class="btn btn-primary" href="{{ request.resource_url(context['amendements']) }}">Consulter la liste</a>
-                    {% if lecture.displayable %}
-                        <a class="btn btn-primary" href="{{ request.resource_url(context, 'reponses') }}" target="_blank">Visualiser les réponses</a>
-                    {% endif %}
                     <form method="post" action="{{ request.resource_url(context, 'fetch_articles') }}" id="retrieve-textes">
                         <input type="submit" name="fetch" class="btn btn-primary" value="Récupérer le texte des articles">
                     </form>

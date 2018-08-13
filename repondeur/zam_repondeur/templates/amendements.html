@@ -94,6 +94,15 @@
         </div>
     </div>
 
+    <h2 class="text-center mt-3">
+        {% if lecture.displayable %}
+            <a class="btn btn-primary btn-lg btn-block" href="{{ request.resource_url(context.parent, 'reponses') }}" target="_blank">Visualiser le dossier de banc</a>
+        {% else %}
+            Vous devez saisir des réponses pour pouvoir visualiser le dossier de banc.
+        {% endif %}
+
+    </h2>
+
     <table class="table table-striped">
         <thead>
             <tr>

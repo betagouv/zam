@@ -33,78 +33,95 @@
 </style>
 {% endblock %}
 
+{% block nav %}{% endblock %}
 
 {% block body %}
-    <h2>{{ lecture }}</h2>
-
-    <div class="card-deck">
-        <div class="card">
-            <div class="card-body">
-                <div class="card-title">
-                    <h4>Importer des réponses</h4>
-                </div>
-                <div class="card-text">
-                    <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses">suivant la spécification dédiée</a>.</p>
-                    <form action="" enctype="multipart/form-data" method="post" id="import-form" class="align-items-center">
-                        <div class="custom-file form-group">
-                            <input type="file" class="custom-file-input" id="reponses" name="reponses" required>
-                            <label class="custom-file-label" for="reponses">Fichier CSV</label>
+    <div class="card mb-3">
+        <h3 class="card-header">
+            <small><a href="{{ request.resource_url(context.parent.parent) }}" class="float-right">Retour aux lectures ⤴︎</a></small>
+            {{ lecture.dossier_legislatif }}
+        </h3>
+        <div class="card-body">
+            <h4 class="card-title">
+                {{ lecture }}
+                {% if lecture.amendements %}
+                    ({{ lecture.amendements|length }} amendements)
+                {% endif %}
+            </h4>
+            <details>
+                <summary>Usage avancé : imports/exports de données</summary>
+                <div class="card-deck">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h4>Importer des réponses</h4>
+                            </div>
+                            <div class="card-text">
+                                <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses">suivant la spécification dédiée</a>.</p>
+                                <form action="" enctype="multipart/form-data" method="post" id="import-form" class="align-items-center">
+                                    <div class="custom-file form-group">
+                                        <input type="file" class="custom-file-input" id="reponses" name="reponses" required>
+                                        <label class="custom-file-label" for="reponses">Fichier CSV</label>
+                                    </div>
+                                    <input type="submit" name="upload" class="btn btn-secondary btn-block mt-1" value="Charger les réponses">
+                                </form>
+                            </div>
                         </div>
-                        <input type="submit" name="upload" class="btn btn-secondary btn-block mt-1" value="Charger les réponses">
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <div class="card-title">
-                    <h4>Importer une liasse XML</h4>
-                </div>
-                <div class="card-text">
-                    <p>Importer des amendements à partir d'un fichier XML provenant
-                    de l’Assemblée nationale.</p>
-                    <form action="{{ request.resource_url(context.parent, 'import_liasse_xml') }}" enctype="multipart/form-data" method="post" id="import-liasse-xml" class="align-items-center">
-                        <div class="custom-file form-group">
-                            <input type="file" class="custom-file-input" id="liasse" name="liasse">
-                            <label class="custom-file-label" for="liasse">Fichier XML</label>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h4>Importer une liasse XML</h4>
+                            </div>
+                            <div class="card-text">
+                                <p>Importer des amendements à partir d'un fichier XML provenant
+                                de l’Assemblée nationale.</p>
+                                <form action="{{ request.resource_url(context.parent, 'import_liasse_xml') }}" enctype="multipart/form-data" method="post" id="import-liasse-xml" class="align-items-center">
+                                    <div class="custom-file form-group">
+                                        <input type="file" class="custom-file-input" id="liasse" name="liasse">
+                                        <label class="custom-file-label" for="liasse">Fichier XML</label>
+                                    </div>
+                                    <input type="submit" name="upload" class="btn btn-secondary btn-block mt-1" value="Charger la liasse">
+                                </form>
+                            </div>
                         </div>
-                        <input type="submit" name="upload" class="btn btn-secondary btn-block mt-1" value="Charger la liasse">
-                    </form>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h4>Exporter le tableau</h4>
+                            </div>
+                            <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
+                            <div class="btn-group" role="group" aria-label="Format de téléchargement">
+                                <a class="btn btn-secondary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'csv'}) }}">
+                                    <i class="fa fa-table"></i>
+                                    En CSV
+                                </a>
+                                <a class="btn btn-secondary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
+                                    <i class="fa fa-file-excel"></i>
+                                    En Excel
+                                </a>
+                                <a class="btn btn-secondary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
+                                    <i class="fa fa-file-pdf"></i>
+                                    En PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <div class="card-title">
-                    <h4>Exporter le tableau</h4>
-                </div>
-                <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
-                <div class="btn-group" role="group" aria-label="Format de téléchargement">
-                    <a class="btn btn-secondary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'csv'}) }}">
-                        <i class="fa fa-table"></i>
-                        En CSV
+            </details>
+            <h5 class="card-text text-center mt-3">
+                {% if lecture.displayable %}
+                    <a class="btn btn-primary btn-lg btn-block" href="{{ request.resource_url(context.parent, 'reponses') }}" target="_blank">
+                        <i class="fa fa-eye"></i>
+                        Visualiser le dossier de banc
                     </a>
-                    <a class="btn btn-secondary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
-                        <i class="fa fa-file-excel"></i>
-                        En Excel
-                    </a>
-                    <a class="btn btn-secondary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
-                        <i class="fa fa-file-pdf"></i>
-                        En PDF
-                    </a>
-                </div>
-            </div>
+                {% else %}
+                    Vous devez saisir des réponses pour pouvoir visualiser le dossier de banc.
+                {% endif %}
+            </h5>
         </div>
     </div>
-
-    <h2 class="text-center mt-3">
-        {% if lecture.displayable %}
-            <a class="btn btn-primary btn-lg btn-block" href="{{ request.resource_url(context.parent, 'reponses') }}" target="_blank">Visualiser le dossier de banc</a>
-        {% else %}
-            Vous devez saisir des réponses pour pouvoir visualiser le dossier de banc.
-        {% endif %}
-
-    </h2>
 
     <table class="table table-striped">
         <thead>

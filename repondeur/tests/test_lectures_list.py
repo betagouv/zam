@@ -39,7 +39,7 @@ def test_get_list_not_empty(app, lecture_an, lecture_commission):
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
-    assert len(resp.parser.css("tbody tr")) == 2
+    assert len(resp.parser.css(".card")) == 2
 
 
 def test_get_list_reverse_datetime_order(app, lecture_an):
@@ -62,5 +62,5 @@ def test_get_list_reverse_datetime_order(app, lecture_an):
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
-    assert title2 in resp.parser.css("tbody tr")[0].text()
-    assert title in resp.parser.css("tbody tr")[1].text()
+    assert title2 in resp.parser.css(".card")[0].text()
+    assert title in resp.parser.css(".card")[1].text()

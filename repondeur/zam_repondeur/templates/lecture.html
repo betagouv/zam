@@ -66,20 +66,6 @@
     </div>
     {% endwith %}
 
-    {% if amendements_count %}
-    <div class="card">
-        <div class="card-body">
-            <div class="card-title">
-                <h4>Télécharger un tableau</h4>
-            </div>
-                <p>Télécharger un tableau de tous les amendements déposés, triés par ordre de passage.</p>
-                <a class="btn btn-primary" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'csv'}) }}"><i class="fa fa-table"></i>Télécharger (CSV)</a>
-                <a class="btn btn-primary" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'xlsx'}) }}"><i class="fa fa-file-excel"></i>Télécharger (Excel)</a>
-                <a class="btn btn-primary" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'pdf'}) }}"><i class="fa fa-file-pdf"></i>Télécharger (PDF)</a>
-            </div>
-        </div>
-    </div>
-    {% endif %}
     <div class="card text-white bg-danger">
         <div class="card-body">
             <div class="card-title">

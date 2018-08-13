@@ -34,51 +34,61 @@
 {% block body %}
     <h2>{{ lecture }}</h2>
 
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-title">
-                        <h4>Importer des réponses en CSV</h4>
-                    </div>
-                    <div class="card-text">
-                        <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses">suivant la spécification dédiée</a>.</p>
-                        <form action="" enctype="multipart/form-data" method="post" id="import-form">
-                            <div class="form-row align-items-center">
-                                <div class="col-sm-6">
-                                    <input type="file" class="custom-file-input" id="reponses" name="reponses">
-                                    <label class="custom-file-label" for="reponses">Fichier CSV</label>
-                                </div>
-                                <div class="col-auto">
-                                  <input type="submit" name="upload" class="btn btn-primary" value="Charger un lot de réponses">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+    <div class="card-deck">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <h4>Importer des réponses</h4>
+                </div>
+                <div class="card-text">
+                    <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses">suivant la spécification dédiée</a>.</p>
+                    <form action="" enctype="multipart/form-data" method="post" id="import-form" class="align-items-center">
+                        <div class="custom-file form-group">
+                            <input type="file" class="custom-file-input" id="reponses" name="reponses" required>
+                            <label class="custom-file-label" for="reponses">Fichier CSV</label>
+                        </div>
+                        <input type="submit" name="upload" class="btn btn-secondary btn-block mt-1" value="Charger les réponses">
+                    </form>
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-title">
-                        <h4>Importer une liasse XML</h4>
-                    </div>
-                    <div class="card-text">
-                        <p>Importer des amendements à partir d'un fichier XML provenant
-                        de l’Assemblée nationale.</p>
-                        <form action="{{ request.resource_url(context.parent, 'import_liasse_xml') }}" enctype="multipart/form-data" method="post" id="import-liasse-xml">
-                            <div class="form-row align-items-center">
-                                <div class="col-sm-6">
-                                    <input type="file" class="custom-file-input" id="liasse" name="liasse">
-                                    <label class="custom-file-label" for="liasse">Fichier XML</label>
-                                </div>
-                                <div class="col-auto">
-                                  <input type="submit" name="upload" class="btn btn-primary" value="Charger la liasse">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <h4>Importer une liasse XML</h4>
+                </div>
+                <div class="card-text">
+                    <p>Importer des amendements à partir d'un fichier XML provenant
+                    de l’Assemblée nationale.</p>
+                    <form action="{{ request.resource_url(context.parent, 'import_liasse_xml') }}" enctype="multipart/form-data" method="post" id="import-liasse-xml" class="align-items-center">
+                        <div class="custom-file form-group">
+                            <input type="file" class="custom-file-input" id="liasse" name="liasse">
+                            <label class="custom-file-label" for="liasse">Fichier XML</label>
+                        </div>
+                        <input type="submit" name="upload" class="btn btn-secondary btn-block mt-1" value="Charger la liasse">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <h4>Exporter le tableau</h4>
+                </div>
+                <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
+                <div class="btn-group" role="group" aria-label="Format de téléchargement">
+                    <a class="btn btn-secondary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'csv'}) }}">
+                        <i class="fa fa-table"></i>
+                        En CSV
+                    </a>
+                    <a class="btn btn-secondary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
+                        <i class="fa fa-file-excel"></i>
+                        En Excel
+                    </a>
+                    <a class="btn btn-secondary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
+                        <i class="fa fa-file-pdf"></i>
+                        En PDF
+                    </a>
                 </div>
             </div>
         </div>

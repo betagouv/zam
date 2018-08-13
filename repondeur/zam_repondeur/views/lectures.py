@@ -72,8 +72,7 @@ class LecturesAdd:
             )
             self.request.session.flash(("success", "Lecture créée avec succès."))
 
-        resource = self.context[f"{chambre}.{session}.{num_texte}.{organe}"]
-        return HTTPFound(location=self.request.resource_url(resource, "amendements"))
+        return HTTPFound(location=self.request.resource_url(self.context))
 
     def _get_dossier(self) -> Dossier:
         try:

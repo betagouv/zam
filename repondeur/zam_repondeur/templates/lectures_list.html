@@ -24,12 +24,21 @@
                     <a href="{{ request.resource_url(context[lecture.url_key]) }}">{{ lecture }}</a>
                 </td>
                 <td>
+                    <p>
                     {% if lecture.displayable %}
-                        <a class="btn btn-primary btn-sm" href="{{ request.resource_url(context[lecture.url_key], 'reponses') }}" role="button" target="_blank">Dossier de banc</a>
+                        <a class="btn btn-primary" href="{{ request.resource_url(context[lecture.url_key], 'reponses') }}" role="button" target="_blank">Dossier de banc</a>
                     {% else %}
-                        <p>Saisie de réponses requise.</p>
+                        Saisie de réponses requise.
                     {% endif %}
-                    <a class="btn btn-secondary btn-sm" href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">Gestion des réponses</a>
+                    </p>
+                    <p>
+                        <a class="btn btn-secondary" href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">Gestion des réponses</a>
+                    </p>
+                    <p>
+                        <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'fetch_articles') }}" id="retrieve-textes">
+                            <input type="submit" name="fetch" class="btn btn-secondary" value="Récupérer le texte des articles">
+                        </form>
+                    </p>
                 </td>
             </tr>
             {% endfor %}

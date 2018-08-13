@@ -268,7 +268,7 @@ def fetch_articles(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
     get_articles(lecture)
     request.session.flash(("success", f"Articles récupérés"))
-    return HTTPFound(location=request.resource_url(context))
+    return HTTPFound(location=request.resource_url(context.parent))
 
 
 @view_config(context=LectureResource, name="check", renderer="json")

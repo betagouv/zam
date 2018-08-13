@@ -31,7 +31,6 @@
             <div class="card-text">
                 <p>{{ amendements_count }} amendements déposés.</p>
                 <p>
-                    <a class="btn btn-primary" href="{{ request.resource_url(context['amendements']) }}">Consulter la liste</a>
                     <form method="post" action="{{ request.resource_url(context, 'fetch_articles') }}" id="retrieve-textes">
                         <input type="submit" name="fetch" class="btn btn-primary" value="Récupérer le texte des articles">
                     </form>

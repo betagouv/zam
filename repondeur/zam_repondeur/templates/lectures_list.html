@@ -13,7 +13,7 @@
             <tr>
                 <th scope="col">Dossier législatif</th>
                 <th scope="col">Lecture</th>
-                <th scope="col">Dossier de banc</th>
+                <th scope="col">Actions</th>
             </tr>
         </thead>
       <tbody>
@@ -27,8 +27,9 @@
                     {% if lecture.displayable %}
                         <a class="btn btn-primary btn-sm" href="{{ request.resource_url(context[lecture.url_key], 'reponses') }}" role="button" target="_blank">Dossier de banc</a>
                     {% else %}
-                        Saisie de réponses requise.
+                        <p>Saisie de réponses requise.</p>
                     {% endif %}
+                    <a class="btn btn-secondary btn-sm" href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">Gestion des réponses</a>
                 </td>
             </tr>
             {% endfor %}

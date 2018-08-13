@@ -39,7 +39,9 @@ def test_get_list_not_empty(app, lecture_an, lecture_commission):
     links = resp.parser.css("td a")
     assert [link.text() for link in links] == [
         "Assemblée nationale, 15e législature, Séance publique, texte nº 269",
+        "Gestion des réponses",
         "Assemblée nationale, 15e législature, Commission des affaires sociales, texte nº 269",  # noqa
+        "Gestion des réponses",
     ]
     assert links[0].attributes["href"] != links[1].attributes["href"]
 
@@ -67,4 +69,6 @@ def test_get_list_reverse_datetime_order(app, lecture_an):
     assert title in resp.text
     assert title2 in resp.text
     assert resp.parser.css("tbody a")[0].text() == title2
-    assert resp.parser.css("tbody a")[1].text() == title
+    assert resp.parser.css("tbody a")[1].text() == "Gestion des réponses"
+    assert resp.parser.css("tbody a")[2].text() == title
+    assert resp.parser.css("tbody a")[3].text() == "Gestion des réponses"

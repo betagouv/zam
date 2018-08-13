@@ -18,6 +18,11 @@ def test_lecture_delete(app, lecture_an, amendements_an):
 
     resp = resp.follow()
 
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/add"
+
+    resp = resp.follow()
+
     assert resp.status_code == 200
     assert "Lecture supprimée avec succès." in resp.text
 

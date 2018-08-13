@@ -10,60 +10,55 @@
 
 <h2>Lectures</h2>
 
-{% if lectures %}
-    <table class="table table-striped table-bordered table-hover">
-        <thead>
-            <tr>
-                <th scope="col">Dossier législatif</th>
-                <th scope="col">Lecture</th>
-                <th scope="col">Liens</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for lecture in lectures %}
-            <tr>
-                <td>{{ lecture.dossier_legislatif }}</td>
-                <td>{{ lecture }}</td>
-                <td>
-                    <p>
-                    {% if lecture.displayable %}
-                        <a class="btn btn-primary" href="{{ request.resource_url(context[lecture.url_key], 'reponses') }}" role="button" target="_blank">Dossier de banc</a>
-                    {% else %}
-                        Saisie de réponses requise.
-                    {% endif %}
-                    </p>
-                    <p>
-                    {% if lecture.amendements %}
-                        <a class="btn btn-secondary" href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">Gestion des réponses</a>
-                    {% else %}
-                        Récupération des amendements requise.
-                    {% endif %}
-                    </p>
-                </td>
-                <td>
-                    <p>
-                        <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'fetch_articles') }}" id="retrieve-textes">
-                            <input type="submit" name="fetch" class="btn btn-secondary" value="Récupérer le texte des articles">
-                        </form>
-                    </p>
-                    {% with verbe = "Mettre à jour" if lecture.amendements else "Récupérer" %}
-                    <p>
-                        <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'fetch_amendements') }}">
-                            <input type="submit" class="btn btn-secondary" value="{{ verbe }} les amendements">
-                        </form>
-                    </p>
-                    {% endwith %}
-                    <form method="post" action="{{ request.resource_url(context[lecture.url_key]) }}" id="delete-lecture">
-                        <input type="submit" class="btn btn-danger" value="Supprimer complètement la lecture">
+<table class="table table-striped table-bordered table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Dossier législatif</th>
+            <th scope="col">Lecture</th>
+            <th scope="col">Liens</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lecture in lectures %}
+        <tr>
+            <td>{{ lecture.dossier_legislatif }}</td>
+            <td>{{ lecture }}</td>
+            <td>
+                <p>
+                {% if lecture.displayable %}
+                    <a class="btn btn-primary" href="{{ request.resource_url(context[lecture.url_key], 'reponses') }}" role="button" target="_blank">Dossier de banc</a>
+                {% else %}
+                    Saisie de réponses requise.
+                {% endif %}
+                </p>
+                <p>
+                {% if lecture.amendements %}
+                    <a class="btn btn-secondary" href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">Gestion des réponses</a>
+                {% else %}
+                    Récupération des amendements requise.
+                {% endif %}
+                </p>
+            </td>
+            <td>
+                <p>
+                    <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'fetch_articles') }}" id="retrieve-textes">
+                        <input type="submit" name="fetch" class="btn btn-secondary" value="Récupérer le texte des articles">
                     </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>Aucune lecture pour l’instant.</p>
-{% endif %}
-
+                </p>
+                {% with verbe = "Mettre à jour" if lecture.amendements else "Récupérer" %}
+                <p>
+                    <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'fetch_amendements') }}">
+                        <input type="submit" class="btn btn-secondary" value="{{ verbe }} les amendements">
+                    </form>
+                </p>
+                {% endwith %}
+                <form method="post" action="{{ request.resource_url(context[lecture.url_key]) }}" id="delete-lecture">
+                    <input type="submit" class="btn btn-danger" value="Supprimer complètement la lecture">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

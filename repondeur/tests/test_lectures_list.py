@@ -6,11 +6,13 @@ def test_get_list_empty(app):
 
     resp = app.get("/lectures/")
 
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/add"
+
+    resp = resp.follow()
+
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
-
-    assert "Aucune lecture pour l’instant." in resp.text
-    assert len(resp.parser.css("tbody tr")) == 0
 
 
 @pytest.fixture

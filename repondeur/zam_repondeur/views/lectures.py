@@ -2,7 +2,7 @@ import csv
 import io
 import logging
 from datetime import datetime
-from typing import BinaryIO, Dict, TextIO, Tuple
+from typing import BinaryIO, Dict, TextIO, Tuple, Union
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -28,8 +28,14 @@ class CSVError(Exception):
 
 
 @view_config(context=LectureCollection, renderer="lectures_list.html")
-def lectures_list(context: LectureCollection, request: Request) -> dict:
-    return {"lectures": context.models()}
+def lectures_list(
+    context: LectureCollection, request: Request
+) -> Union[Response, dict]:
+    lectures = context.models()
+    if not lectures:
+        return HTTPFound(request.resource_url(context, "add"))
+
+    return {"lectures": lectures}
 
 
 @view_defaults(context=LectureCollection, name="add")

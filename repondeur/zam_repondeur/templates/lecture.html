@@ -66,29 +66,6 @@
     </div>
     {% endwith %}
 
-    <div class="card">
-        <div class="card-body">
-            <div class="card-title">
-                <h4>Importer une liasse XML</h4>
-            </div>
-            <div class="card-text">
-                <p>Importer des amendements à partir d'un fichier XML provenant
-                de l’Assemblée nationale.</p>
-                <form action="{{ request.resource_url(context, 'import_liasse_xml') }}" enctype="multipart/form-data" method="post" id="import-liasse-xml">
-                    <div class="form-row align-items-center">
-                        <div class="col-sm-6">
-                            <input type="file" class="custom-file-input" id="liasse" name="liasse">
-                            <label class="custom-file-label" for="liasse">Fichier XML</label>
-                        </div>
-                        <div class="col-auto">
-                          <input type="submit" name="upload" class="btn btn-primary" value="Importer la liasse">
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     {% if amendements_count %}
     <div class="card">
         <div class="card-body">

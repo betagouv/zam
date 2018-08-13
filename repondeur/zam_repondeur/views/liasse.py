@@ -10,7 +10,7 @@ from zam_repondeur.resources import LectureResource
 @view_config(context=LectureResource, name="import_liasse_xml")
 def upload_liasse_xml(context: LectureResource, request: Request) -> Response:
     _do_upload_liasse_xml(context, request)
-    return HTTPFound(location=request.resource_url(context))
+    return HTTPFound(location=request.resource_url(context, "amendements"))
 
 
 def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Response:

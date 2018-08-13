@@ -21,9 +21,7 @@
             {% for lecture in lectures %}
             <tr>
                 <td>{{ lecture.dossier_legislatif }}</td>
-                <td>
-                    <a href="{{ request.resource_url(context[lecture.url_key]) }}">{{ lecture }}</a>
-                </td>
+                <td>{{ lecture }}</td>
                 <td>
                     <p>
                     {% if lecture.displayable %}

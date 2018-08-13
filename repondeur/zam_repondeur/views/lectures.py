@@ -73,7 +73,7 @@ class LecturesAdd:
             self.request.session.flash(("success", "Lecture créée avec succès."))
 
         resource = self.context[f"{chambre}.{session}.{num_texte}.{organe}"]
-        return HTTPFound(location=self.request.resource_url(resource))
+        return HTTPFound(location=self.request.resource_url(resource, "amendements"))
 
     def _get_dossier(self) -> Dossier:
         try:
@@ -107,12 +107,6 @@ class LectureView:
         self.context = context
         self.request = request
         self.lecture = context.model()
-        self.amendements = self.lecture.amendements
-
-    @view_config(renderer="lecture.html")
-    def get(self) -> dict:
-        amendements_count = len(self.amendements)
-        return {"lecture": self.lecture, "amendements_count": amendements_count}
 
     @view_config(request_method="POST")
     def post(self) -> Response:

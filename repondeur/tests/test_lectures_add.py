@@ -46,7 +46,7 @@ def test_post_form(app):
     )
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/"
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements"
 
     resp = resp.follow()
 
@@ -72,7 +72,7 @@ def test_post_form_already_exists(app, lecture_an):
     )
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/"
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements"
 
     resp = resp.follow()
 

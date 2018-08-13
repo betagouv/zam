@@ -2,8 +2,10 @@
 
 
 {% block body %}
-
-<a href="{{ request.resource_url(context, 'add') }}" class="btn btn-primary btn-lg" style="float: right">Ajouter une lecture...</a>
+<a href="{{ request.resource_url(context, 'add') }}" class="btn btn-primary btn-lg float-right">
+    <i class="fa fa-plus"></i>
+    Ajouter une lecture
+</a>
 
 <h2>Lectures</h2>
 

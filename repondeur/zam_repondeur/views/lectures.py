@@ -260,7 +260,7 @@ def fetch_amendements(context: LectureResource, request: Request) -> Response:
             )
         )
 
-    return HTTPFound(location=request.resource_url(context))
+    return HTTPFound(location=request.resource_url(context.parent))
 
 
 @view_config(context=LectureResource, name="fetch_articles")

@@ -141,7 +141,7 @@ def test_fetch_amendements_senat(app, lecture_senat, article1, amendements_senat
         resp = app.post("/lectures/senat.2017-2018.63.PO78718/fetch_amendements")
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/senat.2017-2018.63.PO78718/"
+    assert resp.location == "http://localhost/lectures/"
 
     resp = resp.follow()
     assert resp.status_code == 200
@@ -209,7 +209,7 @@ def test_fetch_amendements_an(app, lecture_an, article1, amendements_an):
         resp = app.post("/lectures/an.15.269.PO717460/fetch_amendements")
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/"
+    assert resp.location == "http://localhost/lectures/"
 
     resp = resp.follow()
     assert resp.status_code == 200
@@ -242,7 +242,7 @@ def test_fetch_amendements_with_errored(app, lecture_an, article1, amendements_a
         resp = app.post("/lectures/an.15.269.PO717460/fetch_amendements")
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/"
+    assert resp.location == "http://localhost/lectures/"
 
     resp = resp.follow()
     assert resp.status_code == 200
@@ -258,7 +258,7 @@ def test_fetch_amendements_none(app, lecture_an):
         resp = app.post("/lectures/an.15.269.PO717460/fetch_amendements")
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/"
+    assert resp.location == "http://localhost/lectures/"
 
     resp = resp.follow()
     assert resp.status_code == 200

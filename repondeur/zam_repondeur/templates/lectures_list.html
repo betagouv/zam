@@ -13,10 +13,11 @@
             <tr>
                 <th scope="col">Dossier législatif</th>
                 <th scope="col">Lecture</th>
+                <th scope="col">Liens</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
-      <tbody>
+        <tbody>
             {% for lecture in lectures %}
             <tr>
                 <td>{{ lecture.dossier_legislatif }}</td>
@@ -34,15 +35,24 @@
                     <p>
                         <a class="btn btn-secondary" href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">Gestion des réponses</a>
                     </p>
+                </td>
+                <td>
                     <p>
                         <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'fetch_articles') }}" id="retrieve-textes">
                             <input type="submit" name="fetch" class="btn btn-secondary" value="Récupérer le texte des articles">
                         </form>
                     </p>
+                    {% with verbe = "Mettre à jour" if lecture.amendements else "Récupérer" %}
+                    <p>
+                        <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'fetch_amendements') }}">
+                            <input type="submit" class="btn btn-secondary" value="{{ verbe }} les amendements">
+                        </form>
+                    </p>
+                    {% endwith %}
                 </td>
             </tr>
             {% endfor %}
-      </tbody>
+        </tbody>
     </table>
 {% else %}
     <p>Aucune lecture pour l’instant.</p>

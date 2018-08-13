@@ -49,6 +49,9 @@
                         </form>
                     </p>
                     {% endwith %}
+                    <form method="post" action="{{ request.resource_url(context[lecture.url_key]) }}" id="delete-lecture">
+                        <input type="submit" class="btn btn-danger" value="Supprimer complètement la lecture">
+                    </form>
                 </td>
             </tr>
             {% endfor %}

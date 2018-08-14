@@ -32,7 +32,10 @@ def test_get_form(app, lecture_an, amendements_an):
 
 @responses.activate
 def test_post_form(app, lecture_an, amendements_an):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import DBSession, Amendement, Lecture
+
+    with transaction.manager:
+        initial_modified_at = lecture_an.modified_at
 
     responses.add(
         responses.GET,
@@ -113,3 +116,13 @@ def test_post_form(app, lecture_an, amendements_an):
     # Check that article content is filled.
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.article.contenu["001"].startswith("Au titre de l'exercice 2016")
+
+    # Check the update timestamp has been updated.
+    with transaction.manager:
+        lecture = Lecture.get(
+            chambre=lecture_an.chambre,
+            session=lecture_an.session,
+            num_texte=lecture_an.num_texte,
+            organe=lecture_an.organe,
+        )
+        assert lecture.modified_at != initial_modified_at

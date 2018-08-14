@@ -261,6 +261,7 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
             )
         )
     get_articles(lecture)
+    lecture.modified_at = datetime.utcnow()
     return HTTPFound(location=request.resource_url(context.parent))
 
 

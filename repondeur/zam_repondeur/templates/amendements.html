@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-
+{% import "macros.html" as macros %}
 
 {% block header %}
 <style type="text/css">
@@ -122,18 +122,7 @@
             </h5>
         </div>
         <div class="card-footer text-muted">
-            Dernière mise à jour :
-            <time xsi:type="xsd:dateTime"
-                datetime="{{ lecture.modified_at.isoformat() }}"
-                data-timestamp="{{ lecture.modified_at_timestamp }}">
-                {{ lecture.modified_at.isoformat() }}
-            </time>
-            <form method="post" action="{{ request.resource_url(context.parent, 'manual_refresh') }}" id="manual-refresh" class="float-right">
-                <button type="submit" name="refresh" class="btn btn-secondary btn-sm">
-                    <i class="fa fa-sync"></i>
-                    Rafraichir manuellement
-                </button>
-            </form>
+            {{ macros.update_informations(lecture, request.resource_url(context.parent, 'manual_refresh')) }}
         </div>
     </div>
 

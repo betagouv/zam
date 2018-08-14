@@ -1,0 +1,14 @@
+{% macro update_informations(lecture, action_url) %}
+    Dernière mise à jour :
+    <time xsi:type="xsd:dateTime"
+        datetime="{{ lecture.modified_at.isoformat() }}"
+        data-timestamp="{{ lecture.modified_at_timestamp }}">
+        {{ lecture.modified_at.isoformat() }}
+    </time>
+    <form method="post" action="{{ action_url }}" id="manual-refresh" class="float-right">
+        <button type="submit" name="refresh" class="btn btn-secondary btn-sm">
+            <i class="fa fa-sync"></i>
+            Rafraichir manuellement
+        </button>
+    </form>
+{% endmacro %}

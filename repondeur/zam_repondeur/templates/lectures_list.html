@@ -47,14 +47,12 @@
                 {% endif %}
             </p>
         </div>
-        <div class="card-footer">
-            {% with verbe = "Mettre à jour" if lecture.amendements else "Récupérer" %}
-                <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'fetch_amendements') }}" class="float-left">
-                    <input type="submit" class="btn btn-secondary" value="{{ verbe }} les amendements">
-                </form>
-            {% endwith %}
-            <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'fetch_articles') }}" id="retrieve-textes" class="float-left">
-                <input type="submit" name="fetch" class="btn btn-secondary" value="Récupérer le texte des articles">
+        <div class="card-footer text-muted">
+            <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'manual_refresh') }}" id="manual-refresh" class="float-right">
+                <button type="submit" name="refresh" class="btn btn-secondary btn-sm">
+                    <i class="fa fa-sync"></i>
+                    Rafraichir manuellement
+                </button>
             </form>
         </div>
     </div>

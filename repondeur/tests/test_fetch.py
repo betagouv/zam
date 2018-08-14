@@ -39,7 +39,65 @@ class TestGetPossibleUrls:
 
 
 @responses.activate
-def test_get_articles(app, lecture_senat, amendements_senat, article1_an):
+def test_get_articles_an(app, lecture_an, amendements_an):
+    from zam_repondeur.fetch import get_articles
+    from zam_repondeur.models import DBSession, Amendement
+
+    responses.add(
+        responses.GET,
+        "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+        body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
+            "utf-8", "ignore"
+        ),
+        status=200,
+    )
+
+    get_articles(lecture_an)
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+    assert amendement.article.contenu["001"].startswith("Au titre de l'exercice 2016")
+
+
+@responses.activate
+def test_get_articles_an_seance(app, lecture_an, amendements_an):
+    from zam_repondeur.fetch import get_articles
+    from zam_repondeur.models import DBSession, Amendement
+
+    with transaction.manager:
+        lecture_an.num_texte = 575
+        lecture_an.organe = "PO717460"
+        lecture_an.titre = "Première lecture – Séance publique"
+
+        amendements_an[0].article.num = "2"
+
+        # The objects are no longer bound to a session here, as they were created in a
+        # previous transaction, so we add them to the current session to make sure that
+        # our changes will be committed with the current transaction
+        DBSession.add(lecture_an)
+        DBSession.add_all(amendements_an)
+
+    responses.add(
+        responses.GET,
+        "http://www.assemblee-nationale.fr/15/projets/pl0575.asp",
+        status=404,
+    )
+    responses.add(
+        responses.GET,
+        "http://www.assemblee-nationale.fr/15/ta-commission/r0575-a0.asp",
+        body=(Path(__file__).parent / "sample_data" / "r0575-a0.html").read_text(
+            "utf-8", "ignore"
+        ),
+        status=200,
+    )
+
+    get_articles(lecture_an)
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+    assert amendement.article.contenu["001"].startswith("Le code des relations entre")
+
+
+@responses.activate
+def test_get_articles_senat(app, lecture_senat, amendements_senat, article1_an):
     from zam_repondeur.fetch import get_articles
     from zam_repondeur.models import DBSession, Amendement, Article
 
@@ -64,7 +122,7 @@ def test_get_articles(app, lecture_senat, amendements_senat, article1_an):
 
 
 @responses.activate
-def test_get_articles_with_mult(app, lecture_senat, amendements_senat):
+def test_get_articles_senat_with_mult(app, lecture_senat, amendements_senat):
     from zam_repondeur.fetch import get_articles
     from zam_repondeur.models import DBSession, Amendement
 

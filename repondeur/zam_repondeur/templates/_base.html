@@ -114,6 +114,16 @@
                 })
             }
         })()
+
+        ;(function disableOnSubmit () {
+            const submitInputs = document.querySelectorAll('[type="submit"]')
+            submitInputs.forEach(submitInput => {
+                submitInput.onclick = (e) => {
+                    submitInput.classList.add('disabled')
+                    submitInput.textContent = 'En cours de traitement…'
+                }
+            })
+        })()
     </script>
     {% block scripts %}
     {% endblock %}

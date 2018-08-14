@@ -49,7 +49,12 @@
             </p>
         </div>
         <div class="card-footer text-muted">
-            {{ macros.update_informations(lecture, request.resource_url(context[lecture.url_key], 'manual_refresh')) }}
+            <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'manual_refresh') }}" id="manual-refresh" class="float-right">
+                <button type="submit" name="refresh" class="btn btn-secondary btn-sm">
+                    <i class="fa fa-sync"></i>
+                    Rafraichir manuellement
+                </button>
+            </form>
         </div>
     </div>
 {% endfor %}

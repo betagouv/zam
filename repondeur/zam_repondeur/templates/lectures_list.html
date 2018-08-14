@@ -49,6 +49,12 @@
             </p>
         </div>
         <div class="card-footer text-muted">
+            Dernière mise à jour :
+            <time xsi:type="xsd:dateTime"
+                datetime="{{ lecture.modified_at.isoformat() }}"
+                data-timestamp="{{ lecture.modified_at_timestamp }}">
+                {{ lecture.modified_at.isoformat() }}
+            </time>
             <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'manual_refresh') }}" id="manual-refresh" class="float-right">
                 <button type="submit" name="refresh" class="btn btn-secondary btn-sm">
                     <i class="fa fa-sync"></i>

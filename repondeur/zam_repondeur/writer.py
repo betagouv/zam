@@ -39,8 +39,8 @@ def rename_field(field_name: str) -> str:
 EXCLUDED_FIELDS = [
     "Amendement",
     "bookmarked_at",
-    "article_id",
-    "lecture_id",
+    "article_pk",
+    "lecture_pk",
     "parent_pk",
     "parent_rectif",
 ]

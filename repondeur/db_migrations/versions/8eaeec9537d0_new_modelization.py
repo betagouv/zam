@@ -1,4 +1,4 @@
-"""New modelisation
+"""New modelization
 
 Revision ID: 8eaeec9537d0
 Revises:
@@ -61,17 +61,18 @@ def upgrade():
         sa.Column("alinea", sa.Text(), nullable=True),
         sa.Column("parent_pk", sa.Integer(), nullable=True),
         sa.Column("parent_rectif", sa.Integer(), nullable=True),
-        sa.Column("lecture_id", sa.Integer(), nullable=True),
-        sa.Column("article_id", sa.Integer(), nullable=True),
+        sa.Column("lecture_pk", sa.Integer(), nullable=True),
+        sa.Column("article_pk", sa.Integer(), nullable=True),
         sa.Column("avis", sa.Text(), nullable=True),
         sa.Column("observations", sa.Text(), nullable=True),
         sa.Column("reponse", sa.Text(), nullable=True),
         sa.Column("comments", sa.Text(), nullable=True),
         sa.Column("bookmarked_at", sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(["article_id"], ["articles.pk"]),
-        sa.ForeignKeyConstraint(["lecture_id"], ["lectures.pk"]),
+        sa.ForeignKeyConstraint(["article_pk"], ["articles.pk"]),
+        sa.ForeignKeyConstraint(["lecture_pk"], ["lectures.pk"]),
         sa.ForeignKeyConstraint(["parent_pk"], ["amendements.pk"]),
         sa.PrimaryKeyConstraint("pk"),
+        sa.UniqueConstraint("num", "lecture_pk"),
     )
 
 

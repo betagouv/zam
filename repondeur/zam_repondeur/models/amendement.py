@@ -48,9 +48,9 @@ class Amendement(Base):  # type: ignore
     parent_pk = Column(Integer, ForeignKey("amendements.pk"), nullable=True)
     parent_rectif = Column(Integer, nullable=True)
     parent = relationship("Amendement", uselist=False, primaryjoin=(parent_pk == pk))
-    lecture_id = Column(Integer, ForeignKey("lectures.pk"))
+    lecture_pk = Column(Integer, ForeignKey("lectures.pk"))
     lecture = relationship("Lecture", back_populates="amendements")
-    article_id = Column(Integer, ForeignKey("articles.pk"))
+    article_pk = Column(Integer, ForeignKey("articles.pk"))
     article = relationship("Article", back_populates="amendements", lazy="joined")
 
     # Extras. (TODO: move to dedicated table?)
@@ -141,7 +141,7 @@ class Amendement(Base):  # type: ignore
 
     _NUM_RE = re.compile(r"(?P<num>\d+)(?P<rect> rect\.(?: (?P<suffix>\w+))?)?")
 
-    ABANDONNED = ("retiré", "irrecevable", "tombé")
+    ABANDONED = ("retiré", "irrecevable", "tombé")
 
     @staticmethod
     def parse_num(text: str) -> Tuple[int, int]:
@@ -176,7 +176,7 @@ class Amendement(Base):  # type: ignore
     def is_displayable(self) -> bool:
         return (
             bool(self.avis) or self.gouvernemental
-        ) and self.sort not in self.ABANDONNED
+        ) and self.sort not in self.ABANDONED
 
     @property
     def lecture_url_key(self) -> str:

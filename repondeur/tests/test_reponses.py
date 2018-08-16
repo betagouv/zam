@@ -63,7 +63,7 @@ def test_reponses_gouvernemental(app, lecture_an, amendements_an):
 
 
 @pytest.mark.parametrize("sort", ["retiré", "irrecevable", "tombé"])
-def test_reponses_abandonned_not_displayed(app, lecture_an, amendements_an, sort):
+def test_reponses_abandoned_not_displayed(app, lecture_an, amendements_an, sort):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -86,7 +86,7 @@ def test_reponses_abandonned_not_displayed(app, lecture_an, amendements_an, sort
 
 
 @pytest.mark.parametrize("sort", ["retiré", "irrecevable", "tombé"])
-def test_reponses_abandonned_and_gouvernemental_not_displayed(
+def test_reponses_abandoned_and_gouvernemental_not_displayed(
     app, lecture_an, amendements_an, sort
 ):
     from zam_repondeur.models import DBSession

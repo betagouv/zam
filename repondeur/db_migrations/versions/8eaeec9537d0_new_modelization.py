@@ -1,4 +1,4 @@
-"""New modelisation
+"""New modelization
 
 Revision ID: 8eaeec9537d0
 Revises:

@@ -141,7 +141,7 @@ class Amendement(Base):  # type: ignore
 
     _NUM_RE = re.compile(r"(?P<num>\d+)(?P<rect> rect\.(?: (?P<suffix>\w+))?)?")
 
-    ABANDONNED = ("retiré", "irrecevable", "tombé")
+    ABANDONED = ("retiré", "irrecevable", "tombé")
 
     @staticmethod
     def parse_num(text: str) -> Tuple[int, int]:
@@ -176,7 +176,7 @@ class Amendement(Base):  # type: ignore
     def is_displayable(self) -> bool:
         return (
             bool(self.avis) or self.gouvernemental
-        ) and self.sort not in self.ABANDONNED
+        ) and self.sort not in self.ABANDONED
 
     @property
     def lecture_url_key(self) -> str:

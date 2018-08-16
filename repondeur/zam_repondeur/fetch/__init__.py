@@ -67,7 +67,7 @@ def get_possible_texte_urls(lecture: Lecture) -> List[str]:
 def parse_first_working_url(urls: List[str]) -> List[dict]:
     for url in urls:
         articles: List[dict] = parse(url)
-        if articles:
+        if len(articles) > 1:
             return articles
     raise NotFound
 

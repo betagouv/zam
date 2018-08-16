@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="41px" height="20px" viewBox="0 0 41 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <g id="icon/arrow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <polygon id="Shape" fill="#3167A6" points="29 10 27.59 8.59 22 14.17 22 2 20 2 20 14.17 14.42 8.58 13 10 21 18"></polygon>
-    </g>
+    <polygon id="Shape" fill="#FFFFFF" points="29 10 27.59 8.59 22 14.17 22 2 20 2 20 14.17 14.42 8.58 13 10 21 18"></polygon>
 </svg>

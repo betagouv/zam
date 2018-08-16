@@ -60,6 +60,7 @@
   body {
     max-width: 55rem;
     margin: 0 auto;
+    background: #f2f2f2;
   }
 
   header.main {
@@ -70,9 +71,8 @@
     margin: 0;
     padding: 1.4rem 1rem;
   }
-    header.main h1,
-    header.main h2 {
-      line-height: .25;
+    header.main h1 {
+        margin-bottom: 0;
     }
     header.main h2 {
       font-weight: normal;
@@ -102,6 +102,12 @@
   header p {
     margin: 0;
   }
+  form {
+    margin: 1rem;
+  }
+  input {
+    font-size: 1.2rem;
+  }
   input[type="submit"] {
     padding: .5rem 1rem;
     border: 2px solid white;
@@ -109,13 +115,34 @@
     background-color: #3167a6;
     border-radius: .3rem;
   }
+  h4 {
+    position: relative;
+    font-size: 30px;
+    z-index: 1;
+    overflow: hidden;
+    text-align: center;
+  }
+  h4:before, h4:after {
+    position: absolute;
+    top: 48%;
+    overflow: hidden;
+    width: 45%;
+    height: 1px;
+    content: '\a0';
+    background-color: #9b9b9b;
+    margin-left: 5%;
+  }
+  h4:before {
+    margin-left: -50%;
+    text-align: right;
+  }
 
   section > header {
     position: -webkit-sticky;
     position: sticky;
     background: white;
     top: 0;
-    z-index: 2;
+    z-index: 3;
     min-height: 5rem;
     box-shadow: 0 7px 7px -1px #ccc;
     display: flex;
@@ -149,13 +176,14 @@
     background: white;
     min-height: 5rem;
     top: 5.5rem;
-    z-index: 1;
     border-left: 8px solid;
     padding: .5rem 1rem;
+    box-shadow: 0 5px 5px 2px #ccc;
+    z-index: 2;
   }
     article header div:first-child p {
       font-size: .95rem;
-      margin-right: 6rem;
+      margin-right: 16rem;
     }
     article header .authors {
       margin-top: .4rem;
@@ -168,7 +196,7 @@
       }
     article header hr {
       margin: .5rem;
-      border: .5px solid;
+      border: .5px solid #9b9b9b;
     }
     article header div:last-child p {
       margin: 1.2rem 1rem 1rem 0;
@@ -191,11 +219,14 @@
     border: 1px solid #e9e5e5;
     border-left: 8px solid;
     line-height: 1.7;
+    background: white;
   }
     .amendement-detail h3 {
       font-size: 1.8rem;
       font-weight: 600;
       margin-bottom: .4rem;
+      margin-top: 2.5rem;
+      text-align: center;
     }
     .amendement-detail h4 {
       font-size: x-large;
@@ -211,18 +242,17 @@
     padding: 1rem;
     border: 1px solid #e9e5e5;
     border-left: 8px solid;
+    background: white;
   }
     .reponse-detail h4 {
       font-size: xx-large;
       font-weight: 600;
       margin-bottom: 1rem;
+      margin-top: 3.5rem;
     }
     .reponse-detail .bottom {
       font-size: initial;
     }
-  .reponse-presentation {
-    font-style: italic;
-  }
   .article dt {
     border-radius: 5rem;
     background: white;
@@ -299,8 +329,10 @@
     font-weight: 600;
     background: no-repeat left url("{{ request.static_url('zam_repondeur:static/img/eye.svg') }}");
   }
-    a.button.main {
-      border-width: 2px;
+    a.button.arrow {
+      background-color: #3167a6;
+      color: white;
+      box-shadow: inset 1px 1px 3px 0 rgba(0,0,0,0.50);
     }
     a.button.arrow-up {
       background-image: url("{{ request.static_url('zam_repondeur:static/img/arrow_up.svg') }}");
@@ -314,6 +346,7 @@
     border-left: 8px solid black;
     padding: 1rem;
     margin: 1rem 0;
+    background: white;
   }
   div.jaune {
     border-left-color: #f1c40f;
@@ -432,7 +465,7 @@
 <main>
   {% for article in articles.values() %}
     <section id="{{ article.slug }}">
-      <header>
+      <header class="for-article">
         <div class="wrapper">
           <button class="hamburger hamburger--arrowturn-down-90-right" type="button">
             <span class="hamburger-label">Articles</span><br>
@@ -458,7 +491,7 @@
             <a href="#{{ article.slug }}"
                class="button"
                data-toggle-target="content-{{ article.slug }}"
-              >Lire</a>
+              >Texte</a>
           {% endif %}
         </div>
       </header>
@@ -480,7 +513,7 @@
             {% endfor %}
           {% endif %}
           <p class="bottom">
-            <a class="button main arrow-up" href="#{{ article.slug }}">Replier</a>
+            <a class="button arrow arrow-up" href="#{{ article.slug }}">Replier</a>
           </p>
         </div>
       </div>
@@ -509,7 +542,7 @@
               <a href="#amendement-{{ amendements[0].pk }}"
                  class="button"
                  data-toggle-target="amendement-detail-{{ amendements[0].pk }}">
-                Lire
+                Texte
               </a>
               <h2>
                 Amendement{% if multiple %}s{% endif %}
@@ -556,7 +589,7 @@
             {% if is_gouvernemental %}
               <div class="gouvernemental">
                 <a href="#amendement-{{ amendements[0].pk }}"
-                   class="button main gouvernemental"
+                   class="button gouvernemental"
                    data-toggle-target="reponse-detail-{{ amendements[0].pk }}">
                   Voir la présentation
                 </a>
@@ -565,9 +598,9 @@
               <hr>
               <div>
                 <a href="#amendement-{{ amendements[0].pk }}"
-                   class="button main"
+                   class="button"
                    data-toggle-target="reponse-detail-{{ amendements[0].pk }}">
-                  Lire
+                  Réponse
                 </a>
                 <p>Avis : <span class="avis {{ avis_class }}">{{ reponse.avis }}</span></p>
               </div>
@@ -575,15 +608,16 @@
           </header>
           <div class="is-hidden">
             <div id="reponse-detail-{{ amendements[0].pk }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
+              <h4>Objet</h4>
               <div class="reponse-presentation">
                 {{ reponse.presentation | paragriphy }}
               </div>
               {% if reponse.content.strip() and reponse.content != '<p></p>' %}
-                <h4>Réponse :</h4>
+                <h4>Réponse</h4>
                 {{ reponse.content | paragriphy }}
               {% endif %}
               <p class="bottom">
-                <a class="button main arrow-up" href="#amendement-{{ amendements[0].pk }}">
+                <a class="button arrow arrow-up" href="#amendement-{{ amendements[0].pk }}">
                   Replier
                 </a>
               </p>
@@ -604,14 +638,14 @@
                   </h3>
                 {% endif %}
                 <div>
-                  <h4>Exposé :</h4>
+                  <h4>Exposé</h4>
                   {{ amendement.objet|safe }}
-                  <h4>Corps de l’amendement :</h4>
+                  <h4>Corps de l’amendement</h4>
                   {{ amendement.dispositif|safe }}
                 </div>
               {% endfor %}
               <p class="bottom">
-                <a class="button main arrow-up" href="#amendement-{{ amendements[0].pk }}">
+                <a class="button arrow arrow-up" href="#amendement-{{ amendements[0].pk }}">
                   Replier
                 </a>
               </p>
@@ -655,9 +689,11 @@
         const toggleTarget = document.querySelector(`#${target.dataset.toggleTarget}`)
         const toggleParent = toggleTarget.parentElement
         const removeArrows = () => {
-          Array.from(document.querySelectorAll('.arrow-down')).forEach(arrowDownLink => {
-            arrowDownLink.classList.remove('arrow-down')
-          })
+          const arrowDownLink = document.querySelector('.arrow-down')
+          if (arrowDownLink) {
+            arrowDownLink.classList.remove('arrow', 'arrow-down')
+            arrowDownLink.textContent = arrowDownLink.dataset.initialText
+          }
         }
         const hideElement = () => {
           toggleParent.classList.replace('is-visible', 'is-hidden')
@@ -665,12 +701,15 @@
         }
         removeArrows()
         if (toggleParent.classList.contains('is-hidden')) {
-          Array.from(document.querySelectorAll('.is-visible')).forEach(element => {
-            element.classList.replace('is-visible', 'is-hidden')
-          })
+          const visibleElement = document.querySelector('.is-visible')
+          if (visibleElement) {
+            visibleElement.classList.replace('is-visible', 'is-hidden')
+          }
           toggleParent.classList.replace('is-hidden', 'is-visible')
           toggleParent.querySelector('.bottom a').onclick = hideElement
-          target.classList.add('arrow-down')
+          target.dataset.initialText = target.textContent
+          target.textContent = 'Replier'
+          target.classList.add('arrow', 'arrow-down')
         } else {
           hideElement()
         }
@@ -731,7 +770,7 @@
       const value = data.get('q').trim()
       const amendement = document.querySelector(`[data-amendement-${value}]`)
       if (amendement) {
-        document.querySelector(`#${amendement.dataset.anchor}`).scrollIntoView()
+        document.querySelector(`#${amendement.dataset.anchor}`).scrollIntoView({'behavior': 'smooth'})
         form.reset()
       } else {
         form.querySelector('.error').classList.remove('hide')

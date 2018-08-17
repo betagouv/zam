@@ -1,7 +1,16 @@
 import re
 from typing import Tuple
 
-from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Integer, Text
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import relationship
 
 from .base import Base, DBSession
@@ -21,6 +30,7 @@ AVIS = [
 
 class Amendement(Base):  # type: ignore
     __tablename__ = "amendements"
+    __table_args__ = (UniqueConstraint("num", "rectif", "lecture_pk"),)
 
     pk = Column(Integer, primary_key=True)
 
@@ -70,7 +80,7 @@ class Amendement(Base):  # type: ignore
         rectif: int = 0,
         auteur: str = "",
         matricule: str = "",
-        date_depot: str = "",
+        date_depot: str = None,
         sort: str = "",
         position: int = 0,
         discussion_commune: int = 0,

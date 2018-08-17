@@ -56,7 +56,12 @@ def parse_from_json(
     )
     num, rectif = Amendement.parse_num(amend["num"])
     amendement, created = get_one_or_create(  # type: ignore
-        DBSession, Amendement, lecture=lecture, article=article, num=num, rectif=rectif
+        DBSession,
+        Amendement,
+        create_method_kwargs={"article": article},
+        lecture=lecture,
+        num=num,
+        rectif=rectif,
     )
     amendement.alinea = amend["libelleAlinea"]
     amendement.auteur = amend["auteur"]

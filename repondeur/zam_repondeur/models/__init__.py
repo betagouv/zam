@@ -26,5 +26,11 @@ def get_one_or_create(
                 created = getattr(model, create_method, model)(**kwargs)
                 db_session.add(created)
             return created, True
-        except IntegrityError:
-            return db_session.query(model).filter_by(**kwargs).one(), False
+        except IntegrityError:  # Race condition.
+            try:
+                return db_session.query(model).filter_by(**kwargs).one(), False
+            except NoResultFound:  # Retry to raise the appropriated IntegrityError.
+                with db_session.begin_nested():
+                    created = getattr(model, create_method, model)(**kwargs)
+                    db_session.add(created)
+                return created, True

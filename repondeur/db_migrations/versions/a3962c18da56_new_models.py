@@ -1,8 +1,8 @@
-"""New modelization
+"""New models
 
-Revision ID: 8eaeec9537d0
+Revision ID: a3962c18da56
 Revises:
-Create Date: 2018-08-01 14:45:26.264255
+Create Date: 2018-08-17 10:38:50.315368
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "8eaeec9537d0"
+revision = "a3962c18da56"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -72,7 +72,7 @@ def upgrade():
         sa.ForeignKeyConstraint(["lecture_pk"], ["lectures.pk"]),
         sa.ForeignKeyConstraint(["parent_pk"], ["amendements.pk"]),
         sa.PrimaryKeyConstraint("pk"),
-        sa.UniqueConstraint("num", "lecture_pk"),
+        sa.UniqueConstraint("num", "rectif", "lecture_pk"),
     )
 
 

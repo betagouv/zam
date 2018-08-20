@@ -1,0 +1,22 @@
+{% extends "_base.html" %}
+
+{% block body %}
+    <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh" class="float-right">
+        <button type="submit" name="refresh" class="btn btn-secondary btn-sm">
+            <i class="fa fa-sync"></i>
+            Rafraichir manuellement
+        </button>
+    </form>
+    <h2>Journal</h2>
+
+    {% for item in journal %}
+        <div class="alert alert-{{ item.kind }}" role="alert">
+            {{ item.message }}
+            <time class="float-right font-italic" xsi:type="xsd:dateTime"
+                datetime="{{ item.created_at.isoformat() }}"
+                data-timestamp="{{ item.created_at_timestamp }}">
+                {{ item.created_at.isoformat() }}
+            </time>
+        </div>
+    {% endfor %}
+{% endblock %}

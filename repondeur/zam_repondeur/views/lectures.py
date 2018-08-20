@@ -13,13 +13,13 @@ from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Lecture
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
-from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.models import DBSession, Amendement, Lecture as LectureModel
 from zam_repondeur.resources import (
     AmendementCollection,
     LectureCollection,
     LectureResource,
 )
+from zam_repondeur.tasks.fetch import fetch_articles, fetch_amendements
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 
@@ -240,29 +240,9 @@ class ListAmendements:
 @view_config(context=LectureResource, name="manual_refresh")
 def manual_refresh(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
-    amendements, created, errored = get_amendements(lecture)
-
-    if not amendements:
-        request.session.flash(("danger", "Aucun amendement n’a pu être trouvé."))
-        return HTTPFound(location=request.resource_url(context.parent))
-
-    if created:
-        if created == 1:
-            message = "1 nouvel amendement récupéré."
-        else:
-            message = f"{created} nouveaux amendements récupérés."
-        request.session.flash(("success", message))
-
-    if errored:
-        request.session.flash(
-            (
-                "warning",
-                f"Les amendements {', '.join(errored)} n’ont pu être récupérés.",
-            )
-        )
-    get_articles(lecture)
-    lecture.modified_at = datetime.utcnow()
-    return HTTPFound(location=request.resource_url(context.parent))
+    fetch_amendements(lecture)
+    fetch_articles(lecture)
+    return HTTPFound(location=request.resource_url(context, "journal"))
 
 
 @view_config(context=LectureResource, name="check", renderer="json")

@@ -21,7 +21,9 @@ def settings():
 def wsgi_app(settings, mock_dossiers, mock_organes_acteurs):
     from zam_repondeur import make_app
 
-    return make_app(None, **settings)
+    app = make_app(None, **settings)
+    app.huey.always_eager = True
+    return app
 
 
 @pytest.yield_fixture(scope="session", autouse=True)

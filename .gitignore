@@ -105,3 +105,6 @@ ENV/
 
 # cachecontrol
 .web_cache/
+
+# redis
+*.rdb

@@ -3,6 +3,7 @@
 ## Requirements
 
 Python 3.6+
+Redis
 
 ## Setup
 
@@ -16,6 +17,8 @@ $ brew install caskroom/cask/wkhtmltopdf
 $ pipenv install
 $ pipenv shell
 ```
+
+Install and run Redis.
 
 ## Initialize the database
 
@@ -41,6 +44,12 @@ $ pserve development.ini --reload
 ```
 
 You can now access the web app at http://localhost:6543/
+
+## Start asynchronous tasks
+
+```
+$ huey_consumer zam_repondeur.huey_launcher.huey
+```
 
 ## Development
 

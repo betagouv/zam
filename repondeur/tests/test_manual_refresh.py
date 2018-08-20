@@ -14,7 +14,7 @@ def read_sample_data(basename):
 
 
 def test_get_form(app, lecture_an, amendements_an):
-    resp = app.get("/lectures/")
+    resp = app.get("/lectures/an.15.269.PO717460/journal/")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -95,11 +95,11 @@ def test_post_form(app, lecture_an, amendements_an):
         # our changes will be committed with the current transaction
         DBSession.add(amendement)
 
-    form = app.get("/lectures/").forms["manual-refresh"]
+    form = app.get("/lectures/an.15.269.PO717460/journal/").forms["manual-refresh"]
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/"
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/journal"
 
     resp = resp.follow()
 

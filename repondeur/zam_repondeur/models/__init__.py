@@ -9,6 +9,7 @@ from .base import Base, DBSession  # noqa
 from .amendement import Amendement, AVIS  # noqa
 from .article import Article  # noqa
 from .lecture import Lecture, CHAMBRES, SESSIONS  # noqa
+from .journal import Journal  # noqa
 
 
 def get_one_or_create(

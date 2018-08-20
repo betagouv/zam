@@ -22,6 +22,8 @@ pdfkit = "*"
 xvfbwrapper = "*"
 alembic = "*"
 rollbar = "*"
+huey = "*"
+redis = "*"
 
 [dev-packages]
 webtest = "*"

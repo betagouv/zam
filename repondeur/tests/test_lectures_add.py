@@ -51,12 +51,19 @@ def test_post_form(app):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "Lecture créée avec succès." in resp.text
+    assert "Lecture créée avec succès," in resp.text
 
     lecture = Lecture.get(chambre="an", session="15", num_texte=269, organe="PO717460")
     assert lecture.chambre == "an"
     assert lecture.titre == "1ère lecture"
     assert lecture.dossier_legislatif == "Sécurité sociale : loi de financement 2018"
+    assert lecture.journal[0].kind == "info"
+    assert lecture.journal[0].message == "Récupération des articles effectuée."
+    assert lecture.amendements[0].num == 564
+    assert (
+        lecture.amendements[0].article.titre
+        == "Dispositions relatives à l'exercice 2017"
+    )
 
 
 def test_post_form_already_exists(app, lecture_an):

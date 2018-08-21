@@ -1,10 +1,10 @@
+from huey import RedisHuey
 from pyramid.config import Configurator
 from pyramid.request import Request
 from pyramid.router import Router
 from pyramid.session import SignedCookieSessionFactory
 from pyramid.view import view_config
 from sqlalchemy import engine_from_config
-from huey import RedisHuey
 
 from zam_repondeur.data import load_data
 from zam_repondeur.models import DBSession, Base
@@ -45,7 +45,9 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
         load_version(config)
 
         app = config.make_wsgi_app()
-        app.huey = huey
+
+        if settings.get("huey.always_eager", False):
+            huey.always_eager = True
 
     return app
 

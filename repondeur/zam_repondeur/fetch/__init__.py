@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
-from pyramid.threadlocal import get_current_registry
 from tlfp.tools.parse_texte import parse
 
 from zam_repondeur.fetch.an.amendements import aspire_an
@@ -11,14 +10,15 @@ from zam_repondeur.fetch.senat.amendements import aspire_senat
 from zam_repondeur.models import DBSession, Article, Lecture
 
 
-def get_amendements(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
+def get_amendements(
+    lecture: Lecture, settings: dict
+) -> Tuple[List[Amendement], int, List[str]]:
     title: str
     amendements: List[Amendement]
     if lecture.chambre == "senat":
         amendements, created = aspire_senat(lecture=lecture)
         return amendements, created, []  # Not pertinent in that case (unique file).
     elif lecture.chambre == "an":
-        settings = get_current_registry().settings
         amendements, created, errored = aspire_an(
             lecture=lecture, groups_folder=Path(settings["zam.an_groups_folder"])
         )

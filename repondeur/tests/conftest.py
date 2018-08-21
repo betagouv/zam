@@ -14,6 +14,7 @@ def settings():
         "zam.secret": "dummy",
         "zam.an_groups_folder": "tests/fetch/sample_data/",
         "jinja2.filters": "paragriphy = zam_repondeur.views.jinja2_filters:paragriphy",
+        "huey.always_eager": True,
     }
 
 
@@ -21,9 +22,7 @@ def settings():
 def wsgi_app(settings, mock_dossiers, mock_organes_acteurs):
     from zam_repondeur import make_app
 
-    app = make_app(None, **settings)
-    app.huey.always_eager = True
-    return app
+    return make_app(None, **settings)
 
 
 @pytest.yield_fixture(scope="session", autouse=True)

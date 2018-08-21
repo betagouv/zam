@@ -1,6 +1,7 @@
 import csv
 import io
 import logging
+import transaction
 from datetime import datetime
 from typing import BinaryIO, Dict, TextIO, Tuple, Union
 
@@ -73,10 +74,21 @@ class LecturesAdd:
         if LectureModel.exists(chambre, session, num_texte, organe):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
         else:
-            LectureModel.create(
+            lecture = LectureModel.create(
                 chambre, session, num_texte, titre, organe, dossier.titre
             )
-            self.request.session.flash(("success", "Lecture créée avec succès."))
+            transaction.commit()
+            fetch_amendements(lecture, self.request.registry.settings)
+            fetch_articles(lecture)
+            self.request.session.flash(
+                (
+                    "success",
+                    (
+                        "Lecture créée avec succès, amendements et articles "
+                        "en cours de récupération."
+                    ),
+                )
+            )
 
         return HTTPFound(location=self.request.resource_url(self.context))
 
@@ -240,7 +252,7 @@ class ListAmendements:
 @view_config(context=LectureResource, name="manual_refresh")
 def manual_refresh(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
-    fetch_amendements(lecture)
+    fetch_amendements(lecture, request.registry.settings)
     fetch_articles(lecture)
     return HTTPFound(location=request.resource_url(context, "journal"))
 

@@ -21,9 +21,9 @@ def fetch_articles(lecture: Lecture) -> None:
 
 @huey.task(retries=3, retry_delay=60 * 5)  # Minutes.
 @huey.lock_task("fetch-amendements-lock")
-def fetch_amendements(lecture: Lecture) -> None:
+def fetch_amendements(lecture: Lecture, settings: dict) -> None:
     with transaction.manager:
-        amendements, created, errored = get_amendements(lecture)
+        amendements, created, errored = get_amendements(lecture, settings)
         if not amendements:
             message = "Aucun amendement n’a pu être trouvé."
             Journal.create(lecture=lecture, kind="danger", message=message)
@@ -46,8 +46,10 @@ def fetch_amendements(lecture: Lecture) -> None:
         DBSession.add(lecture)
 
 
-@huey.periodic_task(crontab(minute="5", hour="*"))
+@huey.periodic_task(crontab(minute="53", hour="*"))
 def fetch_all_amendements() -> None:
+    from zam_repondeur.huey_launcher import settings
+
     with transaction.manager:
         for lecture in DBSession.query(Lecture).all():
-            fetch_amendements(lecture)
+            fetch_amendements(lecture, settings)

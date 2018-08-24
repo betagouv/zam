@@ -12,11 +12,12 @@ def test_import_liasse_xml(article1_an):
     amendements = import_liasse_xml(SAMPLE_LIASSE.open(mode="rb"))
 
     assert isinstance(amendements, list)
-    assert len(amendements) == 2
+    assert len(amendements) == 3
     assert all(isinstance(item, Amendement) for item in amendements)
 
     _check_amendement_0(amendements[0])
     _check_amendement_1(amendements[1])
+    _check_amendement_gouvernemental(amendements[2])
 
 
 def _check_amendement_0(amendement):
@@ -128,3 +129,10 @@ def _check_amendement_1(amendement):
     assert amendement.reponse is None
 
     assert amendement.bookmarked_at is None
+
+
+def _check_amendement_gouvernemental(amendement):
+    assert amendement.auteur == "LE GOUVERNEMENT"
+    assert amendement.matricule is None
+    assert amendement.groupe is None
+    assert amendement.gouvernemental

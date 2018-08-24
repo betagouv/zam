@@ -60,13 +60,23 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
     if texte_uid is None:
         raise ValueError("Missing refTexteLegislatif")
 
-    auteur_uid = extract("signataires", "auteur", "acteurRef")
-    if auteur_uid is None:
-        raise ValueError("Missing auteur acteurRef")
+    is_gouvernemental = extract("signataires", "auteur", "typeAuteur") == "Gouvernement"
 
-    groupe_uid = extract("signataires", "auteur", "groupePolitiqueRef")
-    if groupe_uid is None:
-        raise ValueError("Missing auteur groupePolitiqueRef")
+    if is_gouvernemental:
+        auteur_name = "LE GOUVERNEMENT"
+        groupe_name = None
+        matricule = None
+    else:
+        auteur_uid = extract("signataires", "auteur", "acteurRef")
+        if auteur_uid is None:
+            raise ValueError("Missing auteur acteurRef")
+        auteur_name = get_auteur_name(auteur_uid)
+        matricule = auteur_uid
+
+        groupe_uid = extract("signataires", "auteur", "groupePolitiqueRef")
+        if groupe_uid is None:
+            raise ValueError("Missing auteur groupePolitiqueRef")
+        groupe_name = get_groupe_name(groupe_uid)
 
     lecture, created = get_one_or_create(
         DBSession,
@@ -93,9 +103,9 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
         num=to_int(extract("identifiant", "numero")),
     )
     amendement.alinea = to_int(extract("pointeurFragmentTexte", "alinea", "numero"))
-    amendement.auteur = get_auteur_name(auteur_uid)
-    amendement.matricule = auteur_uid
-    amendement.groupe = get_groupe_name(groupe_uid)
+    amendement.auteur = auteur_name
+    amendement.matricule = matricule
+    amendement.groupe = groupe_name
     amendement.date_depot = to_date(extract("dateDepot"))
     amendement.sort = get_sort(
         sort=extract("sort", "sortEnSeance"), etat=extract("etat")

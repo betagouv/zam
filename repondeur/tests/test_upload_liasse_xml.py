@@ -45,6 +45,11 @@ def test_get_form(app, lecture_essoc):
 
 
 def test_upload_liasse_success(app, lecture_essoc):
+    from zam_repondeur.models import DBSession, Journal, Lecture
+
+    with transaction.manager:
+        initial_modified_at = lecture_essoc.modified_at
+
     resp = app.get("/lectures/an.15.806.PO744107/amendements")
     form = resp.forms["import-liasse-xml"]
     form["liasse"] = Upload("liasse.xml", SAMPLE_LIASSE.read_bytes())
@@ -54,10 +59,30 @@ def test_upload_liasse_success(app, lecture_essoc):
     assert resp.location == "http://localhost/lectures/an.15.806.PO744107/amendements"
 
     resp = resp.follow()
-    assert "2 nouveaux amendements récupérés." in resp.text
+    assert "3 nouveaux amendements récupérés (import liasse XML)." in resp.text
+
+    # Check the update timestamp has been updated.
+    with transaction.manager:
+        lecture = Lecture.get(
+            chambre=lecture_essoc.chambre,
+            session=lecture_essoc.session,
+            num_texte=lecture_essoc.num_texte,
+            organe=lecture_essoc.organe,
+        )
+        assert lecture.modified_at != initial_modified_at
+
+    assert (
+        DBSession.query(Journal).first().message
+        == "3 nouveaux amendements récupérés (import liasse XML)."
+    )
 
 
 def test_upload_liasse_missing_file(app, lecture_essoc):
+    from zam_repondeur.models import DBSession, Journal, Lecture
+
+    with transaction.manager:
+        initial_modified_at = lecture_essoc.modified_at
+
     resp = app.get("/lectures/an.15.806.PO744107/amendements")
     form = resp.forms["import-liasse-xml"]
     resp = form.submit()
@@ -67,3 +92,15 @@ def test_upload_liasse_missing_file(app, lecture_essoc):
 
     resp = resp.follow()
     assert "Veuillez d’abord sélectionner un fichier" in resp.text
+
+    # Check the update timestamp has NOT been updated.
+    with transaction.manager:
+        lecture = Lecture.get(
+            chambre=lecture_essoc.chambre,
+            session=lecture_essoc.session,
+            num_texte=lecture_essoc.num_texte,
+            organe=lecture_essoc.organe,
+        )
+        assert lecture.modified_at == initial_modified_at
+
+    assert DBSession.query(Journal).first() is None

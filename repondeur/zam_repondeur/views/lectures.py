@@ -77,6 +77,10 @@ class LecturesAdd:
             lecture = LectureModel.create(
                 chambre, session, num_texte, titre, organe, dossier.titre
             )
+            # Call to fetch_* tasks below being asynchronous, we need to make
+            # sure the lecture already exists once and for all in the database
+            # for future access. Otherwise, it may create many instances and
+            # thus many objects within the database.
             transaction.commit()
             fetch_amendements(lecture, self.request.registry.settings)
             fetch_articles(lecture)

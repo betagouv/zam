@@ -112,15 +112,15 @@
         })()
 
         ;(function displaySelectedFilename () {
-            const fileInput = document.querySelector('[type="file"]')
-            if (fileInput) {
+            const fileInputs = document.querySelectorAll('[type="file"]')
+            fileInputs.forEach(fileInput => {
                 fileInput.addEventListener('change', (e) => {
                     const input = e.target
                     const filename = input.files[0].name
                     const label = document.querySelector('label[for="' + input.id + '"]')
                     label.innerHTML = filename
                 })
-            }
+            })
         })()
 
         ;(function disableOnSubmit () {

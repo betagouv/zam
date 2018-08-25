@@ -1,8 +1,6 @@
 import transaction
 from datetime import datetime
 
-from huey import crontab
-
 from zam_repondeur import huey
 from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.models import DBSession, Journal, Lecture
@@ -44,12 +42,3 @@ def fetch_amendements(lecture: Lecture, settings: dict) -> None:
             Journal.create(lecture=lecture, kind="info", message=message)
         lecture.modified_at = datetime.utcnow()
         DBSession.add(lecture)
-
-
-@huey.periodic_task(crontab(minute="53", hour="*"))
-def fetch_all_amendements() -> None:
-    from zam_repondeur.huey_launcher import settings
-
-    with transaction.manager:
-        for lecture in DBSession.query(Lecture).all():
-            fetch_amendements(lecture, settings)

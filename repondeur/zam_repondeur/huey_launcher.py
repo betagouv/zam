@@ -5,7 +5,8 @@ from sqlalchemy import engine_from_config
 from zam_repondeur import huey  # noqa
 from zam_repondeur.models import DBSession, Base
 from zam_repondeur.resources import Root
-from zam_repondeur.tasks.fetch import fetch_amendements, fetch_articles  # noqa
+from zam_repondeur.tasks.fetch import *  # noqa
+from zam_repondeur.tasks.periodic import *  # noqa
 
 
 HERE = Path(__file__).parent

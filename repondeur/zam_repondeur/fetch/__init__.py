@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 from tlfp.tools.parse_texte import parse
@@ -19,9 +18,7 @@ def get_amendements(
         amendements, created = aspire_senat(lecture=lecture)
         return amendements, created, []  # Not pertinent in that case (unique file).
     elif lecture.chambre == "an":
-        amendements, created, errored = aspire_an(
-            lecture=lecture, groups_folder=Path(settings["zam.an_groups_folder"])
-        )
+        amendements, created, errored = aspire_an(lecture=lecture)
         return amendements, created, errored
     else:
         raise NotImplementedError

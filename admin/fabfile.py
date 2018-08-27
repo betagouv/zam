@@ -162,7 +162,6 @@ def deploy_repondeur(
     if wipe:
         wipe_db(ctx, user=user)
     migrate_db(ctx, app_dir=app_dir, user=user)
-    fetch_an_group_data(ctx, user=user)
     setup_service(ctx)
     notify_rollbar(ctx, rollbar_token, branch, environment)
 
@@ -228,22 +227,6 @@ def migrate_db(ctx, app_dir, user):
         f'bash -c "cd {app_dir} && pipenv run alembic -c production.ini upgrade head"',
         user=user,
     )
-
-
-@task
-def fetch_an_group_data(ctx, user):
-    url = "http://data.assemblee-nationale.fr/static/openData/repository/15/amo/deputes_actifs_mandats_actifs_organes_divises/AMO40_deputes_actifs_mandats_actifs_organes_divises_XV.json.zip"  # noqa
-    filename = "/tmp/groups.zip"
-    ctx.sudo(f"curl --silent --show-error {url} -o {filename}", user=user)
-
-    data_dir = "/var/lib/zam/data/an/groups"
-    create_directory(ctx, data_dir, owner=user)
-
-    ctx.sudo("apt-get update")
-    ctx.sudo("apt-get install --yes unzip")
-    ctx.sudo(f"unzip -q -o {filename} -d {data_dir}/", user=user)
-
-    ctx.sudo(f"rm {filename}", user=user)
 
 
 @task

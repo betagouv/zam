@@ -19,5 +19,9 @@ def load_data(settings: dict, connection: Redis) -> None:
 
 def get_data(key: str) -> dict:
     from zam_repondeur import huey
+
     data = huey.storage.conn.get(key)
+    if data is None:
+        return {}
+
     return pickle.loads(data)

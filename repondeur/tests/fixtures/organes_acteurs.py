@@ -92,6 +92,38 @@ SAMPLE_ORGANES = {
         "legislature": "15",
         "secretariat": {"secretaire01": None, "secretaire02": None},
     },
+    "PO730964": {
+        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+        "uid": "PO730964",
+        "codeType": "GP",
+        "libelle": "La R\u00e9publique en Marche",
+        "libelleEdition": "du groupe La R\u00e9publique en Marche",
+        "libelleAbrege": "LaREM",
+        "libelleAbrev": "LAREM",
+        "viMoDe": {"dateDebut": "2017-06-27", "dateAgrement": None, "dateFin": None},
+        "regime": "5\u00e8me R\u00e9publique",
+        "legislature": "15",
+        "secretariat": {"secretaire01": None, "secretaire02": None},
+        "positionPolitique": "Majoritaire",
+    },
+    "PO707869": {
+        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+        "uid": "PO707869",
+        "codeType": "GP",
+        "libelle": "Les R\u00e9publicains",
+        "libelleEdition": "du groupe Les R\u00e9publicains",
+        "libelleAbrege": "Les R\u00e9publicains",
+        "libelleAbrev": "LES-REP",
+        "viMoDe": {
+            "dateDebut": "2015-06-02",
+            "dateAgrement": None,
+            "dateFin": "2017-06-20",
+        },
+        "regime": "5\u00e8me R\u00e9publique",
+        "legislature": "14",
+        "secretariat": {"secretaire01": None, "secretaire02": None},
+        "positionPolitique": "Opposition",
+    },
 }
 
 SAMPLE_ACTEURS = {

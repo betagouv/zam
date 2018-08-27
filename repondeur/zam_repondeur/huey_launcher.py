@@ -1,4 +1,3 @@
-from pathlib import Path
 from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
 
@@ -9,13 +8,10 @@ from zam_repondeur.tasks.fetch import *  # noqa
 from zam_repondeur.tasks.periodic import *  # noqa
 
 
-HERE = Path(__file__).parent
-
 settings = {
     "sqlalchemy.url": "sqlite:///repondeur.db",
     "zam.legislature": "15",
     "zam.secret": "dummy",
-    "zam.an_groups_folder": HERE.parent / "data" / "an" / "groups" / "organe",
 }
 
 with Configurator(settings=settings, root_factory=Root) as config:

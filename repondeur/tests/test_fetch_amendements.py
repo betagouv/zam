@@ -187,7 +187,7 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an, sett
             {"@numero": "999"},
         ]
 
-        def dynamic_return_value(lecture, numero, groups_folder):
+        def dynamic_return_value(lecture, numero):
             return {
                 "division": {"titre": "Article 1", "type": "ARTICLE", "avantApres": ""},
                 "numero": numero,

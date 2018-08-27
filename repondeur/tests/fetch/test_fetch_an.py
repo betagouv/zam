@@ -54,9 +54,7 @@ def test_fetch_and_parse_all(lecture_an):
         status=200,
     )
 
-    amendements, created, errored = fetch_and_parse_all(
-        lecture=lecture_an, groups_folder=SAMPLE_DATA_DIR
-    )
+    amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
 
     assert len(amendements) == 5
     assert amendements[0].num == 177
@@ -106,9 +104,7 @@ def test_fetch_and_parse_all_with_404(lecture_an):
         status=200,
     )
 
-    amendements, created, errored = fetch_and_parse_all(
-        lecture=lecture_an, groups_folder=SAMPLE_DATA_DIR
-    )
+    amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
 
     assert len(amendements) == 4
     assert amendements[0].num == 177
@@ -132,7 +128,7 @@ def test_fetch_amendements(lecture_an):
         status=200,
     )
 
-    items = fetch_amendements(lecture=lecture_an, groups_folder=SAMPLE_DATA_DIR)
+    items = fetch_amendements(lecture=lecture_an)
 
     assert len(items) == 5
     assert items[0] == {
@@ -162,7 +158,7 @@ def test_fetch_amendements_not_found(lecture_an):
     responses.add(responses.GET, build_url(15, 269), status=404)
 
     with pytest.raises(NotFound):
-        fetch_amendements(lecture=lecture_an, groups_folder=SAMPLE_DATA_DIR)
+        fetch_amendements(lecture=lecture_an)
 
 
 @responses.activate
@@ -176,9 +172,7 @@ def test_fetch_amendement(app, lecture_an):
         status=200,
     )
 
-    amendement, created = fetch_amendement(
-        lecture=lecture_an, numero=177, groups_folder=SAMPLE_DATA_DIR, position=1
-    )
+    amendement, created = fetch_amendement(lecture=lecture_an, numero=177, position=1)
 
     assert amendement.lecture == lecture_an
     assert amendement.num == 177
@@ -222,9 +216,7 @@ def test_fetch_amendement_gouvernement(lecture_an):
         status=200,
     )
 
-    amendement, created = fetch_amendement(
-        lecture=lecture_an, numero=723, groups_folder=SAMPLE_DATA_DIR, position=1
-    )
+    amendement, created = fetch_amendement(lecture=lecture_an, numero=723, position=1)
 
     assert amendement.gouvernemental is True
     assert amendement.groupe == ""
@@ -241,9 +233,7 @@ def test_fetch_amendement_commission(lecture_an):
         status=200,
     )
 
-    amendement, created = fetch_amendement(
-        lecture=lecture_an, numero=135, groups_folder=SAMPLE_DATA_DIR, position=1
-    )
+    amendement, created = fetch_amendement(lecture=lecture_an, numero=135, position=1)
 
     assert amendement.gouvernemental is False
     assert amendement.auteur == "Bapt Gérard"
@@ -261,9 +251,7 @@ def test_fetch_sous_amendement(app, lecture_an):
         status=200,
     )
 
-    amendement, created = fetch_amendement(
-        lecture=lecture_an, numero=941, groups_folder=SAMPLE_DATA_DIR, position=1
-    )
+    amendement, created = fetch_amendement(lecture=lecture_an, numero=941, position=1)
 
     assert amendement.parent.num == 155
 
@@ -279,9 +267,7 @@ def test_fetch_amendement_sort_nil(lecture_an):
         status=200,
     )
 
-    amendement, created = fetch_amendement(
-        lecture=lecture_an, numero=38, groups_folder=SAMPLE_DATA_DIR, position=1
-    )
+    amendement, created = fetch_amendement(lecture=lecture_an, numero=38, position=1)
 
     assert amendement.sort == ""
 
@@ -297,9 +283,7 @@ def test_fetch_amendement_apres(lecture_an):
         status=200,
     )
 
-    amendement, created = fetch_amendement(
-        lecture=lecture_an, numero=192, groups_folder=SAMPLE_DATA_DIR, position=1
-    )
+    amendement, created = fetch_amendement(lecture=lecture_an, numero=192, position=1)
 
     assert amendement.article.type == "article"
     assert amendement.article.num == "8"
@@ -314,9 +298,7 @@ def test_fetch_amendement_not_found(lecture_an):
     responses.add(responses.GET, build_url(15, 269, 177), status=404)
 
     with pytest.raises(NotFound):
-        fetch_amendement(
-            lecture=lecture_an, numero=177, groups_folder=SAMPLE_DATA_DIR, position=1
-        )
+        fetch_amendement(lecture=lecture_an, numero=177, position=1)
 
 
 @pytest.mark.parametrize(

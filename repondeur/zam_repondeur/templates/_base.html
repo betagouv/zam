@@ -87,11 +87,20 @@
                             }
                         }
                     }
+                    return {
+                        interval: 0,
+                        epoch: 'now'
+                    }
                 }
                 const timeAgoInSeconds = Math.floor((new Date() - date) / 1000)
                 const {interval, epoch} = getDuration(timeAgoInSeconds)
-                const suffix = interval === 1 ? '' : 's'
-                return `il y a ${interval} ${epoch}${suffix}`
+                if (epoch === 'now') {
+                    return `à lʼinstant`
+                }
+                else {
+                    const suffix = interval === 1 ? '' : 's'
+                    return `il y a ${interval} ${epoch}${suffix}`
+                }
             }
 
             const timestampElements = Array.from(document.querySelectorAll('[data-timestamp]'))

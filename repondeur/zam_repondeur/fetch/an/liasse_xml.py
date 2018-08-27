@@ -68,7 +68,7 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
     if groupe_uid is None:
         raise ValueError("Missing auteur groupePolitiqueRef")
 
-    lecture, created = get_one_or_create(  # type: ignore
+    lecture, created = get_one_or_create(
         DBSession,
         Lecture,
         chambre=Chambre.AN.value,
@@ -76,7 +76,7 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
         num_texte=get_texte_number(texte_uid),
         organe=extract("identifiant", "saisine", "organeExamen"),
     )
-    article, created = get_one_or_create(  # type: ignore
+    article, created = get_one_or_create(
         DBSession,
         Article,
         lecture=lecture,
@@ -85,7 +85,7 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
         mult=subdiv.mult,
         pos=subdiv.pos,
     )
-    amendement, created = get_one_or_create(  # type: ignore
+    amendement, created = get_one_or_create(
         DBSession,
         Amendement,
         lecture=lecture,

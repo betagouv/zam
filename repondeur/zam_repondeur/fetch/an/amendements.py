@@ -117,7 +117,7 @@ def fetch_amendement(
     """
     amend = _retrieve_amendement(lecture, numero, groups_folder)
     subdiv = parse_division(amend["division"])
-    article, created = get_one_or_create(  # type: ignore
+    article, created = get_one_or_create(
         DBSession,
         Article,
         lecture=lecture,
@@ -128,7 +128,7 @@ def fetch_amendement(
     )
     parent_num, parent_rectif = Amendement.parse_num(get_parent_raw_num(amend))
     if parent_num:
-        parent, created = get_one_or_create(  # type: ignore
+        parent, created = get_one_or_create(
             DBSession,
             Amendement,
             lecture=lecture,
@@ -138,7 +138,7 @@ def fetch_amendement(
         )
     else:
         parent = None
-    amendement, created = get_one_or_create(  # type: ignore
+    amendement, created = get_one_or_create(
         DBSession,
         Amendement,
         lecture=lecture,

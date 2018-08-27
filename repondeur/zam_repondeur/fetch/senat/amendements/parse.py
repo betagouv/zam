@@ -16,7 +16,7 @@ from zam_repondeur.models import (
 
 def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
     subdiv = _parse_subdiv(row["Subdivision "])
-    article, created = get_one_or_create(  # type: ignore
+    article, created = get_one_or_create(
         DBSession,
         Article,
         lecture=lecture,
@@ -26,7 +26,7 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
         pos=subdiv.pos,
     )
     num, rectif = Amendement.parse_num(row["Numéro "])
-    amendement, created = get_one_or_create(  # type: ignore
+    amendement, created = get_one_or_create(
         DBSession, Amendement, lecture=lecture, article=article, num=num, rectif=rectif
     )
     amendement.alinea = row["Alinéa"].strip()
@@ -47,7 +47,7 @@ def parse_from_json(
     subdiv: dict,
 ) -> Amendement:
     subdiv_ = _parse_subdiv(subdiv["libelle_subdivision"])
-    article, created = get_one_or_create(  # type: ignore
+    article, created = get_one_or_create(
         DBSession,
         Article,
         lecture=lecture,
@@ -57,7 +57,7 @@ def parse_from_json(
         pos=subdiv_.pos,
     )
     num, rectif = Amendement.parse_num(amend["num"])
-    amendement, created = get_one_or_create(  # type: ignore
+    amendement, created = get_one_or_create(
         DBSession,
         Amendement,
         create_method_kwargs={"article": article},

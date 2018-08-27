@@ -15,7 +15,7 @@ def get_one_or_create(
     model: Any,
     create_method: str = "",
     create_method_kwargs: Any = None,
-    **kwargs: dict
+    **kwargs: Any
 ) -> Tuple[Any, bool]:
     try:
         return db_session.query(model).filter_by(**kwargs).one(), False

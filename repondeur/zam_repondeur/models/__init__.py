@@ -1,6 +1,7 @@
 from typing import Any, Tuple
 
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 
 from .base import Base, DBSession  # noqa
@@ -11,7 +12,7 @@ from .lecture import Lecture, CHAMBRES, SESSIONS  # noqa
 
 
 def get_one_or_create(
-    db_session: DBSession,
+    db_session: Session,
     model: Any,
     create_method: str = "",
     create_method_kwargs: Any = None,

@@ -5,7 +5,7 @@ from typing import DefaultDict, List, Optional
 
 from dataclasses import dataclass, field
 
-from zam_repondeur.writer import GROUPS_COLORS
+from zam_repondeur.constants import GROUPS_COLORS
 
 from .amendement import Amendement as AmendementModel
 
@@ -58,8 +58,7 @@ class Amendement:
 
     @classmethod
     def create(cls, amendement: AmendementModel, reponse: Reponse) -> "Amendement":
-        # Workaround: mypy doesn't know about "parent" as it's a dynamic attribute
-        parent: Optional[AmendementModel] = amendement.parent  # type: ignore
+        parent = amendement.parent
         return cls(  # type: ignore
             pk=f"{amendement.num:06}",
             id=amendement.num,
@@ -106,21 +105,21 @@ class Article:
 
 class Articles(OrderedDict):
     def get_or_create(self, amendement: AmendementModel) -> Article:
-        pk = f"{amendement.subdiv_num}-{amendement.subdiv_mult}"
-        if amendement.subdiv_pos:
-            pk += f"-{amendement.subdiv_pos}"
+        pk = f"{amendement.article.num}-{amendement.article.mult}"
+        if amendement.article.pos:
+            pk += f"-{amendement.article.pos}"
         if pk in self:
             article: Article = self[pk]
         else:
             article: Article = Article(  # type: ignore
                 pk=pk,
-                id=amendement.subdiv_num,
-                titre=amendement.subdiv_titre,
-                multiplicatif=amendement.subdiv_mult,
-                etat=amendement.subdiv_pos[:2],
-                type_=amendement.subdiv_type,
-                jaune=amendement.subdiv_jaune,
-                alineas=amendement.subdiv_contenu,
+                id=amendement.article.num,
+                titre=amendement.article.titre,
+                multiplicatif=amendement.article.mult,
+                etat=amendement.article.pos[:2],
+                type_=amendement.article.type,
+                jaune=amendement.article.jaune,
+                alineas=amendement.article.contenu,
             )
             self[pk] = article
         return article

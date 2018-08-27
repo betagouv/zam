@@ -1,7 +1,7 @@
 import logging
 from datetime import date
 from functools import partial
-from typing import Dict, IO, List, Optional, Tuple
+from typing import Dict, IO, List, Optional, cast
 
 from lxml import etree
 
@@ -9,8 +9,14 @@ from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
 from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Texte
 from zam_repondeur.fetch.dates import parse_date
-from zam_repondeur.fetch.division import _parse_subdiv
-from zam_repondeur.fetch.models import Amendement, SubDiv
+from zam_repondeur.fetch.division import _parse_subdiv, SubDiv
+from zam_repondeur.models import (
+    DBSession,
+    Article,
+    Amendement,
+    Lecture,
+    get_one_or_create,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -62,29 +68,42 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
     if groupe_uid is None:
         raise ValueError("Missing auteur groupePolitiqueRef")
 
-    parent_num, parent_rectif = get_parent(extract("amendementParent"), uid_map)
-
-    return Amendement(  # type: ignore
+    lecture, created = get_one_or_create(
+        DBSession,
+        Lecture,
         chambre=Chambre.AN.value,
         session=extract("identifiant", "legislature"),
         num_texte=get_texte_number(texte_uid),
         organe=extract("identifiant", "saisine", "organeExamen"),
-        subdiv_type=subdiv.type_,
-        subdiv_num=subdiv.num,
-        subdiv_mult=subdiv.mult,
-        subdiv_pos=subdiv.pos,
-        alinea=to_int(extract("pointeurFragmentTexte", "alinea", "numero")),
-        num=to_int(extract("identifiant", "numero")),
-        auteur=get_auteur_name(auteur_uid),
-        matricule=auteur_uid,
-        groupe=get_groupe_name(groupe_uid),
-        date_depot=to_date(extract("dateDepot")),
-        sort=get_sort(sort=extract("sort", "sortEnSeance"), etat=extract("etat")),
-        parent_num=parent_num,
-        parent_rectif=parent_rectif,
-        dispositif=clean_html(extract("corps", "dispositif") or ""),
-        objet=clean_html(extract("corps", "exposeSommaire") or ""),
     )
+    article, created = get_one_or_create(
+        DBSession,
+        Article,
+        lecture=lecture,
+        type=subdiv.type_,
+        num=subdiv.num,
+        mult=subdiv.mult,
+        pos=subdiv.pos,
+    )
+    amendement, created = get_one_or_create(
+        DBSession,
+        Amendement,
+        lecture=lecture,
+        article=article,
+        num=to_int(extract("identifiant", "numero")),
+    )
+    amendement.alinea = to_int(extract("pointeurFragmentTexte", "alinea", "numero"))
+    amendement.auteur = get_auteur_name(auteur_uid)
+    amendement.matricule = auteur_uid
+    amendement.groupe = get_groupe_name(groupe_uid)
+    amendement.date_depot = to_date(extract("dateDepot"))
+    amendement.sort = get_sort(
+        sort=extract("sort", "sortEnSeance"), etat=extract("etat")
+    )
+    amendement.dispositif = clean_html(extract("corps", "dispositif") or "")
+    amendement.objet = clean_html(extract("corps", "exposeSommaire") or "")
+    amendement.parent = get_parent(extract("amendementParent"), uid_map)
+    return cast(Amendement, amendement)
 
 
 def _parse_division(node: etree.Element) -> SubDiv:
@@ -168,11 +187,10 @@ def get_groupe_name(uid: str) -> str:
 
 def get_parent(
     uid: Optional[str], uid_map: Dict[str, Amendement]
-) -> Tuple[Optional[int], Optional[int]]:
+) -> Optional[Amendement]:
     if uid is None:
-        return None, None
+        return None
     try:
-        amendement = uid_map[uid]
-        return amendement.num, amendement.rectif
+        return uid_map[uid]
     except KeyError:
         raise ValueError(f"Unknown parent amendement {uid}")

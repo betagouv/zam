@@ -13,7 +13,7 @@ def test_get_list_empty(app):
 
 
 @pytest.fixture
-def dummy_lecture_commission(app):
+def lecture_commission(app):
     from zam_repondeur.models import DBSession, Lecture
 
     with transaction.manager:
@@ -29,7 +29,7 @@ def dummy_lecture_commission(app):
     return lecture
 
 
-def test_get_list_not_empty(app, dummy_lecture, dummy_lecture_commission):
+def test_get_list_not_empty(app, lecture_an, lecture_commission):
 
     resp = app.get("/lectures/")
 
@@ -44,18 +44,18 @@ def test_get_list_not_empty(app, dummy_lecture, dummy_lecture_commission):
     assert links[0].attributes["href"] != links[1].attributes["href"]
 
 
-def test_get_list_reverse_datetime_order(app, dummy_lecture):
+def test_get_list_reverse_datetime_order(app, lecture_an):
     from zam_repondeur.models import DBSession, Lecture
 
     with transaction.manager:
-        title = str(dummy_lecture)
+        title = str(lecture_an)
         lecture2 = Lecture.create(
-            chambre=dummy_lecture.chambre,
-            session=dummy_lecture.session,
-            num_texte=dummy_lecture.num_texte + 1,
+            chambre=lecture_an.chambre,
+            session=lecture_an.session,
+            num_texte=lecture_an.num_texte + 1,
             titre="Titre lecture 2",
-            organe=dummy_lecture.organe,
-            dossier_legislatif=dummy_lecture.dossier_legislatif,
+            organe=lecture_an.organe,
+            dossier_legislatif=lecture_an.dossier_legislatif,
         )
         title2 = str(lecture2)
         DBSession.add(lecture2)

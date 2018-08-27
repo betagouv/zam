@@ -6,28 +6,23 @@ from tlfp.tools.parse_texte import parse
 
 from zam_repondeur.fetch.an.amendements import aspire_an
 from zam_repondeur.fetch.exceptions import NotFound
-from zam_repondeur.fetch.models import Amendement
+from zam_repondeur.models import Amendement
 from zam_repondeur.fetch.senat.amendements import aspire_senat
-from zam_repondeur.models import DBSession, Amendement as AmendementModel, Lecture
+from zam_repondeur.models import DBSession, Article, Lecture
 
 
-def get_amendements(
-    chambre: str, session: str, texte: int, organe: str
-) -> Tuple[List[Amendement], List[str]]:
+def get_amendements(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
     title: str
     amendements: List[Amendement]
-    if chambre == "senat":
-        amendements = aspire_senat(session=session, num=texte, organe=organe)
-        return amendements, []  # Not pertinent in that case.
-    elif chambre == "an":
+    if lecture.chambre == "senat":
+        amendements, created = aspire_senat(lecture=lecture)
+        return amendements, created, []  # Not pertinent in that case (unique file).
+    elif lecture.chambre == "an":
         settings = get_current_registry().settings
-        amendements, errored = aspire_an(
-            legislature=int(session),
-            texte=texte,
-            organe=organe,
-            groups_folder=Path(settings["zam.an_groups_folder"]),
+        amendements, created, errored = aspire_an(
+            lecture=lecture, groups_folder=Path(settings["zam.an_groups_folder"])
         )
-        return amendements, errored
+        return amendements, created, errored
     else:
         raise NotImplementedError
 
@@ -82,16 +77,6 @@ def add_article_contents_to_amendements(lecture: Lecture, articles: List[dict]) 
         if "alineas" in article_content and article_content["alineas"]:
             article_num, article_mult = get_article_num_mult(article_content)
             section_title = get_section_title(articles, article_content)
-            DBSession.query(AmendementModel).filter(
-                AmendementModel.chambre == lecture.chambre,
-                AmendementModel.session == lecture.session,
-                AmendementModel.num_texte == lecture.num_texte,
-                AmendementModel.organe == lecture.organe,
-                AmendementModel.subdiv_num == article_num,
-                AmendementModel.subdiv_mult == article_mult,
-            ).update(
-                {
-                    "subdiv_titre": section_title,
-                    "subdiv_contenu": article_content["alineas"],
-                }
-            )
+            DBSession.query(Article).filter_by(
+                lecture=lecture, num=article_num, mult=article_mult
+            ).update({"titre": section_title, "contenu": article_content["alineas"]})

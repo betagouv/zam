@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 
-def test_download_csv(app, dummy_lecture):
+def test_download_csv(app, lecture_an):
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = [], []
@@ -17,7 +17,7 @@ def test_download_csv(app, dummy_lecture):
     assert resp.headers["Content-Disposition"] == f"attachment; filename={filename}"
 
 
-def test_download_pdf(app, dummy_lecture):
+def test_download_pdf(app, lecture_an):
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = [], []
@@ -33,7 +33,7 @@ def test_download_pdf(app, dummy_lecture):
     assert resp.headers["Content-Disposition"] == f"attachment; filename={filename}"
 
 
-def test_download_xlsx(app, dummy_lecture):
+def test_download_xlsx(app, lecture_an):
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock:
         mock.return_value = [], []
@@ -50,7 +50,7 @@ def test_download_xlsx(app, dummy_lecture):
     assert resp.headers["Content-Disposition"] == f"attachment; filename={filename}"
 
 
-def test_download_bad_format(app, dummy_lecture):
+def test_download_bad_format(app, lecture_an):
     resp = app.get(
         "/lectures/an.15.269.PO717460/download_amendements",
         {"format": "docx"},

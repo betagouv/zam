@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Any, List, Optional
 
 from sqlalchemy import Column, DateTime, Integer, Text, desc
+from sqlalchemy.orm import relationship
 
 from .amendement import Amendement
 from .base import Base, DBSession
@@ -18,14 +19,21 @@ SESSIONS = {
 class Lecture(Base):  # type: ignore
     __tablename__ = "lectures"
 
-    chambre = Column(Text, primary_key=True)
-    session = Column(Text, primary_key=True)
-    num_texte = Column(Integer, primary_key=True)
-    organe = Column(Text, primary_key=True)
+    pk = Column(Integer, primary_key=True)
+    chambre = Column(Text)
+    session = Column(Text)
+    num_texte = Column(Integer)
+    organe = Column(Text)
     titre = Column(Text)
     dossier_legislatif = Column(Text)
     created_at = Column(DateTime)
     modified_at = Column(DateTime)
+    amendements = relationship(
+        Amendement,
+        order_by=(Amendement.position, Amendement.num),
+        back_populates="lecture",
+        cascade="all, delete, delete-orphan",
+    )
 
     def __str__(self) -> str:
         return ", ".join(
@@ -83,13 +91,7 @@ class Lecture(Base):  # type: ignore
 
     @property
     def displayable(self) -> bool:
-        query = DBSession.query(Amendement).filter(
-            Amendement.chambre == self.chambre,
-            Amendement.session == self.session,
-            Amendement.num_texte == self.num_texte,
-            Amendement.organe == self.organe,
-        )
-        return any(amd.is_displayable for amd in query)
+        return any(amd.is_displayable for amd in self.amendements)
 
     @classmethod
     def all(cls) -> List["Lecture"]:

@@ -3,7 +3,7 @@ from datetime import date
 import pytest
 
 
-def test_parse_from_csv():
+def test_parse_from_csv(lecture_senat):
 
     from zam_repondeur.fetch.senat.amendements.parse import parse_from_csv
 
@@ -22,10 +22,9 @@ def test_parse_from_csv():
         "Url amendement ": "//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",  # noqa
     }
 
-    amendement = parse_from_csv(
-        amend, session="2017-2018", num_texte=63, organe="PO78718"
-    )
+    amendement, created = parse_from_csv(amend, lecture_senat)
 
+    assert created
     assert amendement.num == 1
     assert amendement.rectif == 1
     assert amendement.num_disp == "1 rect."
@@ -68,7 +67,7 @@ class TestExtractMatricule:
 
 
 class TestParseAmendementFromJSON:
-    def test_parse_basic_data(self):
+    def test_parse_basic_data(self, lecture_senat):
         from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
 
         amend = {
@@ -96,32 +95,25 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
-            {"1104289": amend},
-            amend,
-            position=1,
-            session="2017-2018",
-            num_texte=63,
-            organe="PO78718",
-            subdiv=subdiv,
+            {}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
         )
 
-        assert amendement.subdiv_type == "article"
-        assert amendement.subdiv_num == "1"
-        assert amendement.subdiv_mult == ""
-        assert amendement.subdiv_pos == ""
+        assert amendement.article.type == "article"
+        assert amendement.article.num == "1"
+        assert amendement.article.mult == ""
+        assert amendement.article.pos == ""
 
         assert amendement.alinea == "Al. 2"
 
         assert amendement.num == 230
         assert amendement.rectif == 1
-        assert amendement.parent_num == 0
-        assert amendement.parent_rectif == 0
+        assert amendement.parent is None
 
         assert amendement.auteur == "M. PELLEVAT"
 
         assert amendement.identique is False
 
-    def test_parse_without_sort(self):
+    def test_parse_without_sort(self, lecture_senat):
         """
         Happens with `Economie : lutte contre la fraude
                       -> Sénat, session 2017-2018, texte nº 603.`
@@ -152,23 +144,17 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
-            {"1104289": amend},
-            amend,
-            position=1,
-            session="2017-2018",
-            num_texte=63,
-            organe="PO78718",
-            subdiv=subdiv,
+            {}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
         )
 
-        assert amendement.subdiv_type == "article"
-        assert amendement.subdiv_num == "1"
-        assert amendement.subdiv_mult == ""
-        assert amendement.subdiv_pos == ""
+        assert amendement.article.type == "article"
+        assert amendement.article.num == "1"
+        assert amendement.article.mult == ""
+        assert amendement.article.pos == ""
 
         assert amendement.sort is None
 
-    def test_discussion_commune(self):
+    def test_discussion_commune(self, lecture_senat):
         from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
 
         amend = {
@@ -197,18 +183,12 @@ class TestParseAmendementFromJSON:
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
         amendement = parse_from_json(
-            {"1110174": amend},
-            amend,
-            position=1,
-            session="2017-2018",
-            num_texte=63,
-            organe="PO78718",
-            subdiv=subdiv,
+            {}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
         )
 
         assert amendement.discussion_commune == 110541
 
-    def test_not_discussion_commune(self):
+    def test_not_discussion_commune(self, lecture_senat):
         from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
 
         amend = {
@@ -234,22 +214,16 @@ class TestParseAmendementFromJSON:
         subdiv = {"libelle_subdivision": "Article 3"}
 
         amendement = parse_from_json(
-            {"1103376": amend},
-            amend,
-            position=1,
-            session="2017-2018",
-            num_texte=63,
-            organe="PO78718",
-            subdiv=subdiv,
+            {}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
         )
 
         assert amendement.discussion_commune is None
         assert amendement.sort == "Adopté"
 
-    def test_parse_sous_amendement(self):
+    def test_parse_sous_amendement(self, lecture_senat):
         from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
 
-        amend = {
+        amend1 = {
             "idAmendement": "1104289",
             "posder": "1",
             "subpos": "0",
@@ -276,7 +250,7 @@ class TestParseAmendementFromJSON:
             "idAmendementPere": "1104289",
             "urlAmdt": "Amdt_131.html",
             "typeAmdt": "Amt",
-            "num": "131",
+            "num": "131 rect.",
             "libelleAlinea": "",
             "urlAuteur": "bocquet_eric11040e.html",
             "auteur": "M. BOCQUET",
@@ -293,17 +267,18 @@ class TestParseAmendementFromJSON:
             "isubdivision": "154182",
             "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
         }
-        amendement = parse_from_json(
-            {"1104289": amend, "1110174": amend2},
+        amendement1 = parse_from_json(
+            {}, amend1, position=1, lecture=lecture_senat, subdiv=subdiv
+        )
+        amendement2 = parse_from_json(
+            {"1104289": amendement1},
             amend2,
-            position=1,
-            session="2017-2018",
-            num_texte=63,
-            organe="PO78718",
+            position=2,
+            lecture=lecture_senat,
             subdiv=subdiv,
         )
 
-        assert amendement.num == 131
-        assert amendement.rectif == 0
-        assert amendement.parent_num == 230
-        assert amendement.parent_rectif == 1
+        assert amendement2.num == 131
+        assert amendement2.rectif == 1
+        assert amendement2.parent.num == 230
+        assert amendement2.parent.rectif == 1

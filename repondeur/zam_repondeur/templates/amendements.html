@@ -77,9 +77,9 @@
                     </form>
                 </td>
                 <td data-sortkey="{{ amendement.subdiv_num }}">
-                    {{ amendement.subdiv_disp }}
-                    {% if amendement.subdiv_titre %}
-                        <br>{{ amendement.subdiv_titre }}
+                    {{ amendement.article }}
+                    {% if amendement.article.titre %}
+                        <br>{{ amendement.article.titre }}
                     {% endif %}
                     <a class="action" href="{{ request.resource_url(context.parent['articles'][amendement.article_url_key]) }}">
                         <i class="fas fa-edit"></i>

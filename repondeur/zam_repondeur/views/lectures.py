@@ -2,14 +2,12 @@ import csv
 import io
 import logging
 from datetime import datetime
-from typing import BinaryIO, Dict, Iterable, TextIO, Tuple
+from typing import BinaryIO, Dict, TextIO, Tuple
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
-from sqlalchemy.sql.expression import case
-from sqlalchemy.orm import joinedload
 
 from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Lecture
 
@@ -109,27 +107,16 @@ class LectureView:
         self.context = context
         self.request = request
         self.lecture = context.model()
-        self.amendements_query = DBSession.query(Amendement).filter(
-            Amendement.chambre == self.lecture.chambre,
-            Amendement.session == self.lecture.session,
-            Amendement.num_texte == self.lecture.num_texte,
-            Amendement.organe == self.lecture.organe,
-        )
+        self.amendements = self.lecture.amendements
 
     @view_config(renderer="lecture.html")
     def get(self) -> dict:
-        amendements_count = self.amendements_query.count()
+        amendements_count = len(self.amendements)
         return {"lecture": self.lecture, "amendements_count": amendements_count}
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        self.amendements_query.delete()
-        DBSession.query(LectureModel).filter(
-            LectureModel.chambre == self.lecture.chambre,
-            LectureModel.session == self.lecture.session,
-            LectureModel.num_texte == self.lecture.num_texte,
-            LectureModel.organe == self.lecture.organe,
-        ).delete()
+        DBSession.delete(self.lecture)
         self.request.session.flash(("success", "Lecture supprimée avec succès."))
         return HTTPFound(location=self.request.resource_url(self.context.parent))
 
@@ -140,22 +127,7 @@ class ListAmendements:
         self.context = context
         self.request = request
         self.lecture = context.parent.model()
-        self.amendements = (
-            DBSession.query(Amendement)
-            .filter(
-                Amendement.chambre == self.lecture.chambre,
-                Amendement.session == self.lecture.session,
-                Amendement.num_texte == self.lecture.num_texte,
-                Amendement.organe == self.lecture.organe,
-            )
-            .order_by(
-                case([(Amendement.position.is_(None), 1)], else_=0),  # type: ignore
-                Amendement.position,
-                Amendement.num,
-            )
-            .options(joinedload(Amendement.parent))  # type: ignore
-            .all()
-        )
+        self.amendements = self.lecture.amendements
 
     @view_config(request_method="GET", renderer="amendements.html")
     def get(self) -> dict:
@@ -266,19 +238,19 @@ class ListAmendements:
         return dialect.delimiter
 
 
-REPONSE_FIELDS = ["avis", "observations", "reponse", "comments"]
-
-
 @view_config(context=LectureResource, name="fetch_amendements")
 def fetch_amendements(context: LectureResource, request: Request) -> Response:
-    lecture = context.model()
+    amendements, created, errored = get_amendements(context.model())
 
-    amendements, errored = get_amendements(
-        chambre=lecture.chambre,
-        session=lecture.session,
-        texte=lecture.num_texte,
-        organe=lecture.organe,
-    )
+    if not amendements:
+        request.session.flash(("danger", "Aucun amendement n’a pu être trouvé."))
+
+    if created:
+        if created == 1:
+            message = "1 nouvel amendement récupéré."
+        else:
+            message = f"{created} nouveaux amendements récupérés."
+        request.session.flash(("success", message))
 
     if errored:
         request.session.flash(
@@ -288,71 +260,7 @@ def fetch_amendements(context: LectureResource, request: Request) -> Response:
             )
         )
 
-    if amendements:
-        added, updated, unchanged = _add_or_update_amendements(amendements)
-        assert added + updated + unchanged == len(amendements)
-        _set_flash_messages(request, added, updated, unchanged)
-    else:
-        request.session.flash(("danger", "Aucun amendement n’a pu être trouvé."))
-
     return HTTPFound(location=request.resource_url(context))
-
-
-def _add_or_update_amendements(
-    amendements: Iterable[Amendement]
-) -> Tuple[int, int, int]:
-    added, updated, unchanged = 0, 0, 0
-    for amendement in amendements:
-        existing = (
-            DBSession.query(Amendement)
-            .filter(
-                Amendement.chambre == amendement.chambre,
-                Amendement.session == amendement.session,
-                Amendement.num_texte == amendement.num_texte,
-                Amendement.organe == amendement.organe,
-                Amendement.num == amendement.num,
-            )
-            .first()
-        )
-        if existing is None:
-            DBSession.add(amendement)
-            added += 1
-        else:
-            changes = amendement.changes(existing, ignored_fields=REPONSE_FIELDS)
-            if changes:
-                for field_name, (new_value, old_value) in changes.items():
-                    setattr(existing, field_name, new_value)
-                updated += 1
-            else:
-                unchanged += 1
-    if added or updated:
-        DBSession.flush()
-    return added, updated, unchanged
-
-
-def _set_flash_messages(
-    request: Request, added: int, updated: int, unchanged: int
-) -> None:
-    if added:
-        if added == 1:
-            message = "1 nouvel amendement récupéré."
-        else:
-            message = f"{added} nouveaux amendements récupérés."
-        request.session.flash(("success", message))
-
-    if updated:
-        if updated == 1:
-            message = "1 amendement mis à jour."
-        else:
-            message = f"{updated} amendements mis à jour."
-        request.session.flash(("success", message))
-
-    if unchanged:
-        if unchanged == 1:
-            message = "1 amendement inchangé."
-        else:
-            message = f"{unchanged} amendements inchangés."
-        request.session.flash(("success", message))
 
 
 @view_config(context=LectureResource, name="fetch_articles")

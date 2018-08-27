@@ -5,9 +5,9 @@ from pathlib import Path
 SAMPLE_LIASSE = Path(__file__).parent.parent / "sample_data" / "liasse.xml"
 
 
-def test_import_liasse_xml():
+def test_import_liasse_xml(article1_an):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
-    from zam_repondeur.fetch.models import Amendement
+    from zam_repondeur.models import Amendement
 
     amendements = import_liasse_xml(SAMPLE_LIASSE.open(mode="rb"))
 
@@ -21,18 +21,17 @@ def test_import_liasse_xml():
 
 def _check_amendement_0(amendement):
 
-    assert amendement.chambre == "an"
-    assert amendement.session == "15"  # legislature
+    assert amendement.lecture.chambre == "an"
+    assert amendement.lecture.session == "15"
+    assert amendement.lecture.num_texte == 806
+    assert amendement.lecture.organe == "PO744107"
 
-    assert amendement.num_texte == 806
-    assert amendement.organe == "PO744107"
-
-    assert amendement.subdiv_type == "article"
-    assert amendement.subdiv_num == "2"
-    assert amendement.subdiv_mult == ""
-    assert amendement.subdiv_pos == ""
-    assert amendement.subdiv_titre == ""
-    assert amendement.subdiv_contenu == ""
+    assert amendement.article.type == "article"
+    assert amendement.article.num == "2"
+    assert amendement.article.mult == ""
+    assert amendement.article.pos == ""
+    assert amendement.article.titre is None
+    assert amendement.article.contenu is None
 
     assert amendement.alinea == 24
 
@@ -51,8 +50,7 @@ def _check_amendement_0(amendement):
     assert amendement.discussion_commune is None
     assert amendement.identique is None
 
-    assert amendement.parent_num is None
-    assert amendement.parent_rectif is None
+    assert amendement.parent is None
 
     assert (
         amendement.dispositif
@@ -71,18 +69,17 @@ def _check_amendement_0(amendement):
 
 def _check_amendement_1(amendement):
 
-    assert amendement.chambre == "an"
-    assert amendement.session == "15"  # legislature
+    assert amendement.lecture.chambre == "an"
+    assert amendement.lecture.session == "15"
+    assert amendement.lecture.num_texte == 806
+    assert amendement.lecture.organe == "PO744107"
 
-    assert amendement.num_texte == 806
-    assert amendement.organe == "PO744107"
-
-    assert amendement.subdiv_type == "annexe"
-    assert amendement.subdiv_num == ""
-    assert amendement.subdiv_mult == ""
-    assert amendement.subdiv_pos == ""
-    assert amendement.subdiv_titre == ""
-    assert amendement.subdiv_contenu == ""
+    assert amendement.article.type == "annexe"
+    assert amendement.article.num == ""
+    assert amendement.article.mult == ""
+    assert amendement.article.pos == ""
+    assert amendement.article.titre is None
+    assert amendement.article.contenu is None
 
     assert amendement.alinea == 12
 
@@ -101,8 +98,8 @@ def _check_amendement_1(amendement):
     assert amendement.discussion_commune is None
     assert amendement.identique is None
 
-    assert amendement.parent_num == 28
-    assert amendement.parent_rectif == 0
+    assert amendement.parent.num == 28
+    assert amendement.parent.rectif == 0
 
     assert amendement.dispositif == (
         "<p>L’alinéa 12 est complété par l’alinéa suivant :</p>\n"

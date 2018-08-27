@@ -1,12 +1,9 @@
 from typing import Iterator, List, Optional, cast
 
 from pyramid.request import Request
+from sqlalchemy.orm.exc import NoResultFound
 
-from zam_repondeur.models import (
-    Amendement as AmendementModel,
-    Lecture as LectureModel,
-    DBSession,
-)
+from zam_repondeur.models import Amendement, Article, DBSession, Lecture
 
 
 class ResourceNotFound(Exception):
@@ -17,7 +14,8 @@ class Resource(dict):
     """
     Location-aware resource
 
-    See: https://docs.pylonsproject.org/projects/pyramid/en/latest/narr/resources.html#location-aware-resources  # noqa
+    See: https://docs.pylonsproject.org/projects/pyramid/en/latest/
+    narr/resources.html#location-aware-resources
     """
 
     __name__: Optional[str] = None
@@ -61,8 +59,8 @@ class LectureCollection(Resource):
 
     breadcrumbs_title = "Lectures"
 
-    def models(self) -> List[LectureModel]:
-        return LectureModel.all()
+    def models(self) -> List[Lecture]:
+        return Lecture.all()
 
     def __getitem__(self, key: str) -> Resource:
         try:
@@ -97,10 +95,8 @@ class LectureResource(Resource):
         self.add_child(AmendementCollection(name="amendements", parent=self))
         self.add_child(ArticleCollection(name="articles", parent=self))
 
-    def model(self) -> LectureModel:
-        lecture = LectureModel.get(
-            self.chambre, self.session, self.num_texte, self.organe
-        )
+    def model(self) -> Lecture:
+        lecture = Lecture.get(self.chambre, self.session, self.num_texte, self.organe)
         if lecture is None:
             raise ResourceNotFound(self)
         return lecture
@@ -123,6 +119,9 @@ class AmendementCollection(Resource):
 
 
 class AmendementResource(Resource):
+
+    breadcrumbs_link = False
+
     def __init__(self, name: str, parent: Resource) -> None:
         super().__init__(name=name, parent=parent)
         self.num = int(name)
@@ -135,19 +134,14 @@ class AmendementResource(Resource):
     def lecture_resource(self) -> LectureResource:
         return self.parent.parent
 
-    def model(self) -> AmendementModel:
-        amendement: Optional[AmendementModel] = (
-            DBSession.query(AmendementModel)
-            .filter_by(
-                chambre=self.lecture_resource.chambre,
-                session=self.lecture_resource.session,
-                num_texte=self.lecture_resource.num_texte,
-                organe=self.lecture_resource.organe,
-                num=self.num,
+    def model(self) -> Amendement:
+        try:
+            amendement: Amendement = (
+                DBSession.query(Amendement)
+                .filter_by(lecture=self.lecture_resource.model(), num=self.num)
+                .one()
             )
-            .first()
-        )
-        if amendement is None:
+        except NoResultFound:
             raise ResourceNotFound(self)
         return amendement
 
@@ -155,8 +149,6 @@ class AmendementResource(Resource):
     def breadcrumbs_title(self) -> str:
         amendement = self.model()
         return amendement.num_disp
-
-    breadcrumbs_link = False
 
 
 class ArticleCollection(Resource):
@@ -166,17 +158,10 @@ class ArticleCollection(Resource):
 
     def __getitem__(self, key: str) -> Resource:
         try:
-            subdiv_type, subdiv_num, subdiv_mult, subdiv_pos = key.split(".")
+            type, num, mult, pos = key.split(".")
         except ValueError:
             raise KeyError
-        return ArticleResource(
-            name=key,
-            parent=self,
-            subdiv_type=subdiv_type,
-            subdiv_num=subdiv_num,
-            subdiv_mult=subdiv_mult,
-            subdiv_pos=subdiv_pos,
-        )
+        return ArticleResource(key, self, type, num, mult, pos)
 
     @property
     def parent(self) -> LectureResource:
@@ -185,19 +170,13 @@ class ArticleCollection(Resource):
 
 class ArticleResource(Resource):
     def __init__(
-        self,
-        name: str,
-        parent: Resource,
-        subdiv_type: str,
-        subdiv_num: str,
-        subdiv_mult: str,
-        subdiv_pos: str,
+        self, name: str, parent: Resource, type: str, num: str, mult: str, pos: str
     ) -> None:
         super().__init__(name=name, parent=parent)
-        self.subdiv_type = subdiv_type
-        self.subdiv_num = subdiv_num
-        self.subdiv_mult = subdiv_mult
-        self.subdiv_pos = subdiv_pos
+        self.type = type
+        self.num = num
+        self.mult = mult
+        self.pos = pos
 
     @property
     def parent(self) -> ArticleCollection:
@@ -207,8 +186,26 @@ class ArticleResource(Resource):
     def lecture_resource(self) -> LectureResource:
         return self.parent.parent
 
+    def model(self) -> Article:
+        lecture: Lecture = self.lecture_resource.model()
+        try:
+            article: Article = (
+                DBSession.query(Article)
+                .filter_by(
+                    lecture=lecture,
+                    type=self.type,
+                    num=self.num,
+                    mult=self.mult,
+                    pos=self.pos,
+                )
+                .one()
+            )
+        except NoResultFound:
+            raise ResourceNotFound(self)
+        return article
+
     @property
     def breadcrumbs_title(self) -> str:
-        type_ = self.subdiv_type == "article" and "art." or self.subdiv_type
-        text = f"{self.subdiv_pos} {type_} {self.subdiv_num} {self.subdiv_mult}"
+        type_ = self.type == "article" and "art." or self.type
+        text = f"{self.pos} {type_} {self.num} {self.mult}"
         return text.strip().capitalize()

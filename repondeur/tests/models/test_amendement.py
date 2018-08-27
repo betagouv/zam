@@ -66,12 +66,11 @@ def test_amendement_unicity(amendements_an, article1av_an):
         Amendement.create(
             lecture=existing.lecture,
             num=existing.num,
-            rectif=existing.rectif,
+            rectif=existing.rectif + 1,
             article=article1av_an,
             parent=None,
         )
         DBSession.flush()
     assert (
-        "UNIQUE constraint failed: "
-        "amendements.num, amendements.rectif, amendements.lecture_pk"
+        "UNIQUE constraint failed: " "amendements.num, amendements.lecture_pk"
     ) in error_info.value._message()

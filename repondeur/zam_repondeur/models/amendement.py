@@ -30,7 +30,7 @@ AVIS = [
 
 class Amendement(Base):  # type: ignore
     __tablename__ = "amendements"
-    __table_args__ = (UniqueConstraint("num", "rectif", "lecture_pk"),)
+    __table_args__ = (UniqueConstraint("num", "lecture_pk"),)
 
     pk = Column(Integer, primary_key=True)
 

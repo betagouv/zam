@@ -74,7 +74,7 @@ def upgrade():
         sa.ForeignKeyConstraint(["lecture_pk"], ["lectures.pk"]),
         sa.ForeignKeyConstraint(["parent_pk"], ["amendements.pk"]),
         sa.PrimaryKeyConstraint("pk"),
-        sa.UniqueConstraint("num", "rectif", "lecture_pk"),
+        sa.UniqueConstraint("num", "lecture_pk"),
     )
 
 

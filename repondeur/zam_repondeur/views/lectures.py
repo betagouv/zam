@@ -2,7 +2,7 @@ import csv
 import io
 import logging
 from datetime import datetime
-from typing import BinaryIO, Dict, TextIO, Tuple
+from typing import BinaryIO, Dict, TextIO, Tuple, Union
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -28,8 +28,14 @@ class CSVError(Exception):
 
 
 @view_config(context=LectureCollection, renderer="lectures_list.html")
-def lectures_list(context: LectureCollection, request: Request) -> dict:
-    return {"lectures": context.models()}
+def lectures_list(
+    context: LectureCollection, request: Request
+) -> Union[Response, dict]:
+    lectures = context.models()
+    if not lectures:
+        return HTTPFound(request.resource_url(context, "add"))
+
+    return {"lectures": lectures}
 
 
 @view_defaults(context=LectureCollection, name="add")
@@ -72,8 +78,7 @@ class LecturesAdd:
             )
             self.request.session.flash(("success", "Lecture créée avec succès."))
 
-        resource = self.context[f"{chambre}.{session}.{num_texte}.{organe}"]
-        return HTTPFound(location=self.request.resource_url(resource))
+        return HTTPFound(location=self.request.resource_url(self.context))
 
     def _get_dossier(self) -> Dossier:
         try:
@@ -107,12 +112,6 @@ class LectureView:
         self.context = context
         self.request = request
         self.lecture = context.model()
-        self.amendements = self.lecture.amendements
-
-    @view_config(renderer="lecture.html")
-    def get(self) -> dict:
-        amendements_count = len(self.amendements)
-        return {"lecture": self.lecture, "amendements_count": amendements_count}
 
     @view_config(request_method="POST")
     def post(self) -> Response:
@@ -260,7 +259,7 @@ def fetch_amendements(context: LectureResource, request: Request) -> Response:
             )
         )
 
-    return HTTPFound(location=request.resource_url(context))
+    return HTTPFound(location=request.resource_url(context.parent))
 
 
 @view_config(context=LectureResource, name="fetch_articles")
@@ -268,7 +267,7 @@ def fetch_articles(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
     get_articles(lecture)
     request.session.flash(("success", f"Articles récupérés"))
-    return HTTPFound(location=request.resource_url(context))
+    return HTTPFound(location=request.resource_url(context.parent))
 
 
 @view_config(context=LectureResource, name="check", renderer="json")

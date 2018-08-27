@@ -26,7 +26,7 @@ def lecture_essoc(app):
 
 
 def test_get_form(app, lecture_essoc):
-    resp = app.get("/lectures/an.15.806.PO744107/")
+    resp = app.get("/lectures/an.15.806.PO744107/amendements")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -45,25 +45,25 @@ def test_get_form(app, lecture_essoc):
 
 
 def test_upload_liasse_success(app, lecture_essoc):
-    resp = app.get("/lectures/an.15.806.PO744107/")
+    resp = app.get("/lectures/an.15.806.PO744107/amendements")
     form = resp.forms["import-liasse-xml"]
     form["liasse"] = Upload("liasse.xml", SAMPLE_LIASSE.read_bytes())
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.806.PO744107/"
+    assert resp.location == "http://localhost/lectures/an.15.806.PO744107/amendements"
 
     resp = resp.follow()
     assert "2 nouveaux amendements récupérés." in resp.text
 
 
 def test_upload_liasse_missing_file(app, lecture_essoc):
-    resp = app.get("/lectures/an.15.806.PO744107/")
+    resp = app.get("/lectures/an.15.806.PO744107/amendements")
     form = resp.forms["import-liasse-xml"]
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.806.PO744107/"
+    assert resp.location == "http://localhost/lectures/an.15.806.PO744107/amendements"
 
     resp = resp.follow()
     assert "Veuillez d’abord sélectionner un fichier" in resp.text

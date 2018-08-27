@@ -6,10 +6,13 @@ def test_get_list_empty(app):
 
     resp = app.get("/lectures/")
 
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/add"
+
+    resp = resp.follow()
+
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
-
-    assert "Aucune lecture pour l’instant." in resp.text
 
 
 @pytest.fixture
@@ -36,12 +39,7 @@ def test_get_list_not_empty(app, lecture_an, lecture_commission):
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
-    links = resp.parser.css("td a")
-    assert [link.text() for link in links] == [
-        "Assemblée nationale, 15e législature, Séance publique, texte nº 269",
-        "Assemblée nationale, 15e législature, Commission des affaires sociales, texte nº 269",  # noqa
-    ]
-    assert links[0].attributes["href"] != links[1].attributes["href"]
+    assert len(resp.parser.css(".card")) == 2
 
 
 def test_get_list_reverse_datetime_order(app, lecture_an):
@@ -64,7 +62,5 @@ def test_get_list_reverse_datetime_order(app, lecture_an):
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
-    assert title in resp.text
-    assert title2 in resp.text
-    assert resp.parser.css("tbody a")[0].text() == title2
-    assert resp.parser.css("tbody a")[1].text() == title
+    assert title2 in resp.parser.css(".card")[0].text()
+    assert title in resp.parser.css(".card")[1].text()

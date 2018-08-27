@@ -78,6 +78,9 @@ class LectureCollection(Resource):
 
 
 class LectureResource(Resource):
+
+    breadcrumbs_link = False
+
     def __init__(
         self,
         name: str,
@@ -108,7 +111,7 @@ class LectureResource(Resource):
 
 class AmendementCollection(Resource):
 
-    breadcrumbs_title = "Amendements"
+    breadcrumbs_title = ""
 
     def __getitem__(self, key: str) -> Resource:
         return AmendementResource(name=key, parent=self)

@@ -1,41 +1,62 @@
 {% extends "_base.html" %}
 
+{% block nav %}{% endblock %}
 
 {% block body %}
-
-<a href="{{ request.resource_url(context, 'add') }}" class="btn btn-primary btn-lg" style="float: right">Ajouter une lecture...</a>
+<a href="{{ request.resource_url(context, 'add') }}" class="btn btn-primary btn-lg float-right">
+    <i class="fa fa-plus"></i>
+    Ajouter une lecture
+</a>
 
 <h2>Lectures</h2>
 
-{% if lectures %}
-    <table class="table table-striped table-bordered table-hover">
-        <thead>
-            <tr>
-                <th scope="col">Dossier législatif</th>
-                <th scope="col">Lecture</th>
-                <th scope="col">Dossier de banc</th>
-            </tr>
-        </thead>
-      <tbody>
-            {% for lecture in lectures %}
-            <tr>
-                <td>{{ lecture.dossier_legislatif }}</td>
-                <td>
-                    <a href="{{ request.resource_url(context[lecture.url_key]) }}">{{ lecture }}</a>
-                </td>
-                <td>
+{% for lecture in lectures %}
+    <div class="card mt-5">
+        <h3 class="card-header">
+            <form method="post" action="{{ request.resource_url(context[lecture.url_key]) }}" id="delete-lecture" class="float-right">
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="fa fa-trash"></i>
+                    Supprimer
+                </button>
+            </form>
+            {{ lecture.dossier_legislatif }}
+        </h3>
+        <div class="card-body">
+            <h4 class="card-title">
+                {{ lecture }}
+                {% if lecture.amendements %}
+                    ({{ lecture.amendements|length }} amendements)
+                {% endif %}
+            </h4>
+            <p class="card-text">
+                {% if lecture.amendements %}
                     {% if lecture.displayable %}
-                        <a class="btn btn-primary btn-sm" href="{{ request.resource_url(context[lecture.url_key], 'reponses') }}" role="button" target="_blank">Dossier de banc</a>
+                        <a class="btn btn-primary" href="{{ request.resource_url(context[lecture.url_key], 'reponses') }}" role="button" target="_blank">
+                            <i class="fa fa-eye"></i>
+                            Dossier de banc
+                        </a>
+                        <a class="btn btn-secondary" href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">
+                            <i class="fa fa-pencil-alt"></i>
+                            Gestion des réponses
+                        </a>
                     {% else %}
                         Saisie de réponses requise.
                     {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-      </tbody>
-    </table>
-{% else %}
-    <p>Aucune lecture pour l’instant.</p>
-{% endif %}
-
+                {% else %}
+                    Récupération des amendements requise.
+                {% endif %}
+            </p>
+        </div>
+        <div class="card-footer">
+            {% with verbe = "Mettre à jour" if lecture.amendements else "Récupérer" %}
+                <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'fetch_amendements') }}" class="float-left">
+                    <input type="submit" class="btn btn-secondary" value="{{ verbe }} les amendements">
+                </form>
+            {% endwith %}
+            <form method="post" action="{{ request.resource_url(context[lecture.url_key], 'fetch_articles') }}" id="retrieve-textes" class="float-left">
+                <input type="submit" name="fetch" class="btn btn-secondary" value="Récupérer le texte des articles">
+            </form>
+        </div>
+    </div>
+{% endfor %}
 {% endblock %}

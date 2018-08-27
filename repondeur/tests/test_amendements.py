@@ -2,6 +2,50 @@ import transaction
 from datetime import datetime
 
 
+def test_get_amendements(app, lecture_an, amendements_an):
+    resp = app.get("http://localhost/lectures/an.15.269.PO717460/amendements")
+    assert resp.status_code == 200
+    assert "Visualiser le dossier de banc" not in resp.text
+    assert (
+        "Vous devez saisir des réponses pour pouvoir visualiser le dossier de banc."
+        in resp.text
+    )
+
+
+def test_get_amendements_with_avis(app, lecture_an, amendements_an):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        amendement = amendements_an[0]
+        amendement.avis = "Favorable"
+
+        # The object is no longer bound to a session here, as it was created in a
+        # previous transaction, so we add it to the current session to make sure that
+        # our changes will be committed with the current transaction
+        DBSession.add(amendement)
+
+    resp = app.get("http://localhost/lectures/an.15.269.PO717460/amendements")
+    assert resp.status_code == 200
+    assert "Visualiser le dossier de banc" in resp.text
+
+
+def test_get_amendements_with_gouvernemental(app, lecture_an, amendements_an):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        amendement = amendements_an[0]
+        amendement.auteur = "LE GOUVERNEMENT"
+
+        # The object is no longer bound to a session here, as it was created in a
+        # previous transaction, so we add it to the current session to make sure that
+        # our changes will be committed with the current transaction
+        DBSession.add(amendement)
+
+    resp = app.get("http://localhost/lectures/an.15.269.PO717460/amendements")
+    assert resp.status_code == 200
+    assert "Visualiser le dossier de banc" in resp.text
+
+
 def test_get_form(app, lecture_an, amendements_an):
     resp = app.get("/lectures/an.15.269.PO717460/amendements/")
 
@@ -95,3 +139,17 @@ def test_post_form_set_then_unset(app, lecture_an, amendements_an):
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.bookmarked_at is None
+
+
+def test_get_amendements_not_found_bad_format(app):
+    resp = app.get(
+        "http://localhost/lectures/senat.2017-2018.1/amendements", expect_errors=True
+    )
+    assert resp.status_code == 404
+
+
+def test_get_amendements_not_found_does_not_exist(app):
+    resp = app.get(
+        "http://localhost/lectures/an.15.269.PO717461/amendements", expect_errors=True
+    )
+    assert resp.status_code == 404

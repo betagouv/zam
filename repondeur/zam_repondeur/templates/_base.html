@@ -24,6 +24,7 @@
 
     <main role="main" class="container">
 
+        {% block nav %}
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 {% block breadcrumbs %}
@@ -46,6 +47,7 @@
                 {% endblock %}
             </ol>
         </nav>
+        {% endblock %}
 
         {% for class_, message in request.session.pop_flash() %}
         <div class="alert alert-{{ class_ }}" role="alert">

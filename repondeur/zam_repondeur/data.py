@@ -1,5 +1,6 @@
-from pyramid.config import Configurator
-from pyramid.threadlocal import get_current_registry
+import pickle
+
+from redis import Redis
 
 from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
     get_dossiers_legislatifs
@@ -7,17 +8,16 @@ from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
 from zam_repondeur.fetch.an.organes_acteurs import get_organes_acteurs
 
 
-def load_data(config: Configurator) -> None:
-    data = config.registry.settings.setdefault("data", {})
-    current_legislature = int(config.registry.settings["zam.legislature"])
-    data["dossiers"] = get_dossiers_legislatifs(legislature=current_legislature)
+def load_data(settings: dict, connection: Redis) -> None:
+    current_legislature = int(settings["zam.legislature"])
+    dossiers = get_dossiers_legislatifs(legislature=current_legislature)
     organes, acteurs = get_organes_acteurs(legislature=current_legislature)
-    data["organes"] = organes
-    data["acteurs"] = acteurs
+    connection.set("dossiers", pickle.dumps(dossiers))
+    connection.set("organes", pickle.dumps(organes))
+    connection.set("acteurs", pickle.dumps(acteurs))
 
 
 def get_data(key: str) -> dict:
-    registry = get_current_registry()
-    settings = registry.settings
-    data: dict = settings["data"][key]
-    return data
+    from zam_repondeur import huey
+    data = huey.storage.conn.get(key)
+    return pickle.loads(data)

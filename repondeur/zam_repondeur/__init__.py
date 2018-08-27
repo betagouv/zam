@@ -41,7 +41,7 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
 
         config.scan()
 
-        load_data(config)
+        load_data(config.registry.settings, huey.storage.conn)
         load_version(config)
 
         app = config.make_wsgi_app()

@@ -7,14 +7,23 @@ from zam_repondeur.models import DBSession, Lecture
 from zam_repondeur.tasks.fetch import fetch_amendements
 
 
-@huey.periodic_task(crontab(minute="5", hour="*"))
+# TODISCUSS: hourly? daily?
+@huey.periodic_task(crontab(minute="1", hour="*"))
+def update_data() -> None:
+    from zam_repondeur import huey
+    from zam_repondeur.huey_launcher import settings
+    from zam_repondeur.data import load_data
+
+    load_data(settings, huey.storage.conn)
+
+
+# TODO: integrate fetch_an_group_data here.
+
+# Keep it last as it takes time and will add up with the growing number of lectures.
+@huey.periodic_task(crontab(minute="10", hour="*"))
 def fetch_all_amendements() -> None:
     from zam_repondeur.huey_launcher import settings
 
     with transaction.manager:
         for lecture in DBSession.query(Lecture).all():
             fetch_amendements(lecture, settings)
-
-
-# TODO: load data (get_dossiers_legislatifs and get_organes_acteurs).
-# TODISCUSS: store data/references in database?

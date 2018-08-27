@@ -10,8 +10,10 @@ import pytest
         ("article", "avant", "1", "", "Avant art. 1"),
     ],
 )
-def test_article_disp(type_, pos, num, mult, output):
+def test_article_disp(lecture_an, type_, pos, num, mult, output):
     from zam_repondeur.models import Article
 
-    article = Article.create(type=type_, num=num, mult=mult, pos=pos)
+    article = Article.create(
+        lecture=lecture_an, type=type_, num=num, mult=mult, pos=pos
+    )
     assert str(article) == output

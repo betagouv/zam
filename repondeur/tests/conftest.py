@@ -81,52 +81,92 @@ def lecture_senat(app):
 
 
 @pytest.fixture
-def article1(app):
+def article1_an(app, lecture_an):
     from zam_repondeur.models import Article
 
     with transaction.manager:
-        article = Article.create(type="article", num="1")
+        article = Article.create(lecture=lecture_an, type="article", num="1")
 
     return article
 
 
 @pytest.fixture
-def article1av(app):
+def article1av_an(app, lecture_an):
     from zam_repondeur.models import Article
 
     with transaction.manager:
-        article = Article.create(type="article", num="1", pos="avant")
+        article = Article.create(
+            lecture=lecture_an, type="article", num="1", pos="avant"
+        )
 
     return article
 
 
 @pytest.fixture
-def article7bis(app):
+def article7bis_an(app, lecture_an):
     from zam_repondeur.models import Article
 
     with transaction.manager:
-        article = Article.create(type="article", num="7", mult="bis")
+        article = Article.create(
+            lecture=lecture_an, type="article", num="7", mult="bis"
+        )
 
     return article
 
 
 @pytest.fixture
-def annexe(app):
+def annexe_an(app, lecture_an):
     from zam_repondeur.models import Article
 
     with transaction.manager:
-        article = Article.create(type="annexe")
+        article = Article.create(lecture=lecture_an, type="annexe")
 
     return article
 
 
 @pytest.fixture
-def amendements_an(app, lecture_an, article1):
+def article1_senat(app, lecture_senat):
+    from zam_repondeur.models import Article
+
+    with transaction.manager:
+        article = Article.create(lecture=lecture_senat, type="article", num="1")
+
+    return article
+
+
+@pytest.fixture
+def article1av_senat(app, lecture_senat):
+    from zam_repondeur.models import Article
+
+    with transaction.manager:
+        article = Article.create(
+            lecture=lecture_senat, type="article", num="1", pos="avant"
+        )
+
+    return article
+
+
+@pytest.fixture
+def article7bis_senat(app, lecture_senat):
+    from zam_repondeur.models import Article
+
+    with transaction.manager:
+        article = Article.create(
+            lecture=lecture_senat, type="article", num="7", mult="bis"
+        )
+
+    return article
+
+
+@pytest.fixture
+def amendements_an(app, lecture_an, article1_an):
     from zam_repondeur.models import DBSession, Amendement
 
     with transaction.manager:
         amendements = [
-            Amendement(lecture=lecture_an, article=article1, num=num, position=position)
+            Amendement(
+                lecture=lecture_an, article=article1_an, num=num, position=position
+            )
             for position, num in enumerate((666, 999), 1)
         ]
         DBSession.add_all(amendements)
@@ -135,13 +175,16 @@ def amendements_an(app, lecture_an, article1):
 
 
 @pytest.fixture
-def amendements_senat(app, lecture_senat, article1):
+def amendements_senat(app, lecture_senat, article1_senat):
     from zam_repondeur.models import DBSession, Amendement
 
     with transaction.manager:
         amendements = [
             Amendement(
-                lecture=lecture_senat, article=article1, num=num, position=position
+                lecture=lecture_senat,
+                article=article1_senat,
+                num=num,
+                position=position,
             )
             for position, num in enumerate((6666, 9999), 1)
         ]

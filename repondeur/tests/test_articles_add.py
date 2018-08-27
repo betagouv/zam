@@ -131,7 +131,9 @@ def test_post_form_senat_with_mult(app, lecture_senat, amendements_senat):
     from zam_repondeur.models import DBSession, Amendement, Article
 
     with transaction.manager:
-        article = Article.create(type="article", num="4", mult="bis")
+        article = Article.create(
+            lecture=lecture_senat, type="article", num="4", mult="bis"
+        )
         amendements_senat[0].article = article
         DBSession.add(article)
         DBSession.add_all(amendements_senat)

@@ -77,6 +77,6 @@ def add_article_contents_to_amendements(lecture: Lecture, articles: List[dict]) 
         if "alineas" in article_content and article_content["alineas"]:
             article_num, article_mult = get_article_num_mult(article_content)
             section_title = get_section_title(articles, article_content)
-            DBSession.query(Article).filter(
-                Article.num == article_num, Article.mult == article_mult
+            DBSession.query(Article).filter_by(
+                lecture=lecture, num=article_num, mult=article_mult
             ).update({"titre": section_title, "contenu": article_content["alineas"]})

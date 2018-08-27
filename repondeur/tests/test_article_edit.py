@@ -1,3 +1,10 @@
+import pytest
+
+
+# Make sure an article from another lecture exists in the DB to uncover any issues
+pytestmark = pytest.mark.usefixtures("article1_senat")
+
+
 def test_get_article_edit_form(app, lecture_an, amendements_an):
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/articles/article.1..")
 

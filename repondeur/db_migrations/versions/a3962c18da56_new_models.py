@@ -20,6 +20,7 @@ def upgrade():
     op.create_table(
         "articles",
         sa.Column("pk", sa.Integer(), nullable=False),
+        sa.Column("lecture_pk", sa.Integer(), nullable=False),
         sa.Column("type", sa.Text(), nullable=True),
         sa.Column("num", sa.Text(), nullable=True),
         sa.Column("mult", sa.Text(), nullable=True),
@@ -28,6 +29,7 @@ def upgrade():
         sa.Column("contenu", sa.PickleType(), nullable=True),
         sa.Column("jaune", sa.Text(), nullable=True),
         sa.PrimaryKeyConstraint("pk"),
+        sa.ForeignKeyConstraint(["lecture_pk"], ["lectures.pk"]),
     )
     op.create_table(
         "lectures",

@@ -1,6 +1,7 @@
 from typing import Iterator, List, Optional, cast
 
 from pyramid.request import Request
+from sqlalchemy.orm.exc import NoResultFound
 
 from zam_repondeur.models import Amendement, Article, DBSession, Lecture
 
@@ -134,12 +135,13 @@ class AmendementResource(Resource):
         return self.parent.parent
 
     def model(self) -> Amendement:
-        amendement: Optional[Amendement] = (
-            DBSession.query(Amendement)
-            .filter_by(lecture=self.lecture_resource.model(), num=self.num)
-            .first()
-        )
-        if amendement is None:
+        try:
+            amendement: Amendement = (
+                DBSession.query(Amendement)
+                .filter_by(lecture=self.lecture_resource.model(), num=self.num)
+                .one()
+            )
+        except NoResultFound:
             raise ResourceNotFound(self)
         return amendement
 
@@ -185,12 +187,20 @@ class ArticleResource(Resource):
         return self.parent.parent
 
     def model(self) -> Article:
-        article: Optional[Article] = (
-            DBSession.query(Article)
-            .filter_by(type=self.type, num=self.num, mult=self.mult, pos=self.pos)
-            .first()
-        )
-        if article is None:
+        lecture: Lecture = self.lecture_resource.model()
+        try:
+            article: Article = (
+                DBSession.query(Article)
+                .filter_by(
+                    lecture=lecture,
+                    type=self.type,
+                    num=self.num,
+                    mult=self.mult,
+                    pos=self.pos,
+                )
+                .one()
+            )
+        except NoResultFound:
             raise ResourceNotFound(self)
         return article
 

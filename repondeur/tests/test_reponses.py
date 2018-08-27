@@ -204,7 +204,9 @@ def test_reponses_without_textes_or_jaunes(app, lecture_an, amendements_an):
     assert len(resp.parser.css("#content-article-1 h2")) == 0
 
 
-def test_reponses_with_different_articles(app, lecture_an, amendements_an, article7bis):
+def test_reponses_with_different_articles(
+    app, lecture_an, amendements_an, article7bis_an
+):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -214,7 +216,7 @@ def test_reponses_with_different_articles(app, lecture_an, amendements_an, artic
             amendement.reponse = f"Réponse pour {amendement.num}"
             amendement.article.titre = f"Titre article {index}"
         # Only the last one.
-        amendement.article = article7bis
+        amendement.article = article7bis_an
         DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
@@ -223,7 +225,7 @@ def test_reponses_with_different_articles(app, lecture_an, amendements_an, artic
     assert resp.parser.css(".titles h2")[1].text() == "Article 7 bis"
 
 
-def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe):
+def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -233,7 +235,7 @@ def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe):
             amendement.reponse = f"Réponse pour {amendement.num}"
             amendement.article.titre = f"Titre article {index}"
         # Only the last one.
-        amendement.article = annexe
+        amendement.article = annexe_an
         DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")
@@ -243,7 +245,7 @@ def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe):
 
 
 def test_reponses_article_additionnel_avant(
-    app, lecture_an, amendements_an, article1av
+    app, lecture_an, amendements_an, article1av_an
 ):
     from zam_repondeur.models import DBSession
 
@@ -252,7 +254,7 @@ def test_reponses_article_additionnel_avant(
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-        amendements_an[0].article = article1av
+        amendements_an[0].article = article1av_an
         DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/reponses")

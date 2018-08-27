@@ -180,7 +180,7 @@ def test_post_form_reponse_no_file(app, lecture_an, amendements_an):
     assert "Veuillez d’abord sélectionner un fichier" in resp.text
 
 
-def test_post_form_from_export(app, lecture_an, article1, tmpdir):
+def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
     from zam_repondeur.models import DBSession, Amendement
     from zam_repondeur.writer import write_csv
 
@@ -190,7 +190,7 @@ def test_post_form_from_export(app, lecture_an, article1, tmpdir):
         amendements = [
             Amendement(
                 lecture=lecture_an,
-                article=article1,
+                article=article1_an,
                 num=num,
                 position=position,
                 avis="Favorable",

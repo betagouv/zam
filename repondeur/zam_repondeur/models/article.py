@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, PickleType, Text
+from sqlalchemy import Column, ForeignKey, Integer, PickleType, Text
 from sqlalchemy.orm import relationship
 
 from .base import Base, DBSession
+from .lecture import Lecture
 
 
 AVIS = [
@@ -20,7 +21,9 @@ class Article(Base):  # type: ignore
     __tablename__ = "articles"
 
     pk = Column(Integer, primary_key=True)
-    type = Column(Text)  # article, ...
+    lecture_pk = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
+    lecture = relationship(Lecture)
+    type = Column(Text, nullable=True)  # article, ...
     num = Column(Text, nullable=True)  # numéro
     mult = Column(Text, nullable=True)  # bis, ter...
     pos = Column(Text, nullable=True)  # avant / après
@@ -38,6 +41,7 @@ class Article(Base):  # type: ignore
     @classmethod
     def create(
         cls,
+        lecture: Lecture,
         type: str,
         num: str = "",
         mult: str = "",
@@ -47,6 +51,7 @@ class Article(Base):  # type: ignore
         jaune: str = "",
     ) -> "Article":
         article = cls(
+            lecture=lecture,
             type=type,
             num=num,
             mult=mult,

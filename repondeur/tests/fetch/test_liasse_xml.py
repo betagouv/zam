@@ -5,7 +5,7 @@ from pathlib import Path
 SAMPLE_LIASSE = Path(__file__).parent.parent / "sample_data" / "liasse.xml"
 
 
-def test_import_liasse_xml(article1):
+def test_import_liasse_xml(article1_an):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
     from zam_repondeur.models import Amendement
 

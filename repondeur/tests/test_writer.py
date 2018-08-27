@@ -5,7 +5,9 @@ def _csv_row_to_dict(headers, row):
     return dict(zip(headers.split(";"), row.split(";")))
 
 
-def test_write_csv(lecture_senat, article1, article1av, article7bis, tmpdir):
+def test_write_csv(
+    lecture_senat, article1_senat, article1av_senat, article7bis_senat, tmpdir
+):
     from zam_repondeur.writer import write_csv
     from zam_repondeur.models import DBSession, Amendement
 
@@ -14,7 +16,7 @@ def test_write_csv(lecture_senat, article1, article1av, article7bis, tmpdir):
     with transaction.manager:
         amendement = Amendement(
             lecture=lecture_senat,
-            article=article1,
+            article=article1_senat,
             alinea="",
             num=42,
             rectif=1,
@@ -29,7 +31,7 @@ def test_write_csv(lecture_senat, article1, article1av, article7bis, tmpdir):
             amendement,
             Amendement(
                 lecture=lecture_senat,
-                article=article1av,
+                article=article1av_senat,
                 alinea="",
                 num=57,
                 auteur="M. DURAND",
@@ -40,7 +42,7 @@ def test_write_csv(lecture_senat, article1, article1av, article7bis, tmpdir):
             ),
             Amendement(
                 lecture=lecture_senat,
-                article=article7bis,
+                article=article7bis_senat,
                 alinea="",
                 num=21,
                 auteur="M. MARTIN",
@@ -51,7 +53,7 @@ def test_write_csv(lecture_senat, article1, article1av, article7bis, tmpdir):
             ),
             Amendement(
                 lecture=lecture_senat,
-                article=article1,
+                article=article1_senat,
                 alinea="",
                 num=43,
                 auteur="M. JEAN",
@@ -62,7 +64,7 @@ def test_write_csv(lecture_senat, article1, article1av, article7bis, tmpdir):
             ),
             Amendement(
                 lecture=lecture_senat,
-                article=article1,
+                article=article1_senat,
                 alinea="",
                 num=596,
                 rectif=1,
@@ -118,7 +120,7 @@ def test_write_csv(lecture_senat, article1, article1av, article7bis, tmpdir):
 
 
 def test_write_csv_sous_amendement(
-    lecture_senat, article1, article1av, article7bis, tmpdir
+    lecture_senat, article1_senat, article1av_senat, article7bis_senat, tmpdir
 ):
     from zam_repondeur.writer import write_csv
     from zam_repondeur.models import DBSession, Amendement
@@ -128,7 +130,7 @@ def test_write_csv_sous_amendement(
     with transaction.manager:
         amendement = Amendement(
             lecture=lecture_senat,
-            article=article1,
+            article=article1_senat,
             alinea="",
             num=42,
             rectif=1,
@@ -143,7 +145,7 @@ def test_write_csv_sous_amendement(
             amendement,
             Amendement(
                 lecture=lecture_senat,
-                article=article1av,
+                article=article1av_senat,
                 alinea="",
                 num=57,
                 auteur="M. DURAND",
@@ -154,7 +156,7 @@ def test_write_csv_sous_amendement(
             ),
             Amendement(
                 lecture=lecture_senat,
-                article=article7bis,
+                article=article7bis_senat,
                 alinea="",
                 num=21,
                 auteur="M. MARTIN",
@@ -165,7 +167,7 @@ def test_write_csv_sous_amendement(
             ),
             Amendement(
                 lecture=lecture_senat,
-                article=article1,
+                article=article1_senat,
                 alinea="",
                 num=43,
                 auteur="M. JEAN",
@@ -176,7 +178,7 @@ def test_write_csv_sous_amendement(
             ),
             Amendement(
                 lecture=lecture_senat,
-                article=article1,
+                article=article1_senat,
                 alinea="",
                 num=596,
                 rectif=1,

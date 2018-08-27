@@ -39,9 +39,9 @@ class TestGetPossibleUrls:
 
 
 @responses.activate
-def test_get_articles(app, lecture_senat, amendements_senat):
+def test_get_articles(app, lecture_senat, amendements_senat, article1_an):
     from zam_repondeur.fetch import get_articles
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import DBSession, Amendement, Article
 
     responses.add(
         responses.GET,
@@ -56,6 +56,11 @@ def test_get_articles(app, lecture_senat, amendements_senat):
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
     assert amendement.article.contenu["001"].startswith("Au titre de l'exercice 2016")
+
+    # We should not modify articles from unrelated lectures
+    article = DBSession.query(Article).filter_by(pk=article1_an.pk).one()
+    assert article is not amendement.article
+    assert article.contenu == {}
 
 
 @responses.activate

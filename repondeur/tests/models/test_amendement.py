@@ -33,12 +33,12 @@ def test_parse_num_commissions(text, num, rectif):
 
 
 @pytest.mark.parametrize("text,num,rectif", EXAMPLES)
-def test_num_disp(lecture_senat, article1, text, num, rectif):
+def test_num_disp(lecture_senat, article1_senat, text, num, rectif):
     from zam_repondeur.models import Amendement
 
     amendement = Amendement.create(
         lecture=lecture_senat,
-        article=article1,
+        article=article1_senat,
         alinea="",
         num=num,
         rectif=rectif,
@@ -58,7 +58,7 @@ def test_amendement_parent_relationship(amendements_an):
     assert child.parent.num == parent.num
 
 
-def test_amendement_unicity(amendements_an, article1av):
+def test_amendement_unicity(amendements_an, article1av_an):
     from zam_repondeur.models import Amendement, DBSession
 
     existing = amendements_an[0]
@@ -67,7 +67,7 @@ def test_amendement_unicity(amendements_an, article1av):
             lecture=existing.lecture,
             num=existing.num,
             rectif=existing.rectif,
-            article=article1av,
+            article=article1av_an,
             parent=None,
         )
         DBSession.flush()

@@ -3,7 +3,7 @@ import transaction
 from unittest.mock import patch
 
 
-def test_fetch_amendements_senat(app, lecture_senat, article1, amendements_senat):
+def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements_senat):
     from zam_repondeur.models import Amendement, DBSession
 
     # Add a response to one of the amendements
@@ -161,7 +161,7 @@ def test_fetch_amendements_senat(app, lecture_senat, article1, amendements_senat
     assert amendement.position == 2
 
 
-def test_fetch_amendements_an(app, lecture_an, article1, amendements_an):
+def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
     from zam_repondeur.models import Amendement, DBSession
 
     # Add a response to one of the amendements
@@ -229,12 +229,12 @@ def test_fetch_amendements_an(app, lecture_an, article1, amendements_an):
     assert amendement.position == 2
 
 
-def test_fetch_amendements_with_errored(app, lecture_an, article1, amendements_an):
+def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendements_an):
     from zam_repondeur.models import Amendement
 
     with patch("zam_repondeur.views.lectures.get_amendements") as mock_get_amendements:
         mock_get_amendements.return_value = (
-            [Amendement(lecture=lecture_an, article=article1, num=777, position=1)],
+            [Amendement(lecture=lecture_an, article=article1_an, num=777, position=1)],
             1,
             ["111", "222"],
         )

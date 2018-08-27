@@ -19,6 +19,7 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
     article, created = get_one_or_create(  # type: ignore
         DBSession,
         Article,
+        lecture=lecture,
         type=subdiv.type_,
         num=subdiv.num,
         mult=subdiv.mult,
@@ -49,6 +50,7 @@ def parse_from_json(
     article, created = get_one_or_create(  # type: ignore
         DBSession,
         Article,
+        lecture=lecture,
         type=subdiv_.type_,
         num=subdiv_.num,
         mult=subdiv_.mult,

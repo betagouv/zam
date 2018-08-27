@@ -12,7 +12,7 @@ def settings():
         "sqlalchemy.url": "sqlite:///test.db",
         "zam.legislature": "15",
         "zam.secret": "dummy",
-        "zam.an_groups_folder": "tests/fixtures/organe/",
+        "zam.an_groups_folder": "tests/fetch/sample_data/",
         "jinja2.filters": "paragriphy = zam_repondeur.views.jinja2_filters:paragriphy",
     }
 

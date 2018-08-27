@@ -33,7 +33,7 @@ PATTERN_AMENDEMENT = (
 def aspire_an(
     lecture: Lecture, groups_folder: Path
 ) -> Tuple[List[Amendement], int, List[str]]:
-    print("Récupération du titre et des amendements déposés...")
+    print("Récupération des amendements déposés...")
     try:
         amendements, created, errored = fetch_and_parse_all(
             lecture=lecture, groups_folder=groups_folder

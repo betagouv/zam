@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-
+{% import "macros.html" as macros %}
 
 {% block header %}
 <style type="text/css">
@@ -120,6 +120,9 @@
                     Vous devez saisir des réponses pour pouvoir visualiser le dossier de banc.
                 {% endif %}
             </h5>
+        </div>
+        <div class="card-footer text-muted">
+            {{ macros.update_informations(lecture, request.resource_url(context.parent, 'manual_refresh')) }}
         </div>
     </div>
 

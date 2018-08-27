@@ -20,12 +20,13 @@ def lecture_commission(app):
     from zam_repondeur.models import DBSession, Lecture
 
     with transaction.manager:
-        lecture = Lecture(
+        lecture = Lecture.create(
             chambre="an",
             session="15",
             num_texte=269,
             titre="Titre lecture",
             organe="PO420120",
+            dossier_legislatif="Titre dossier legislatif",
         )
         DBSession.add(lecture)
 

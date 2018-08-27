@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 
 def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements_senat):
+    from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     # Add a response to one of the amendements
@@ -137,15 +138,11 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
                 }
             ],
         }
+        amendements, created, errored = get_amendements(lecture_senat)
 
-        resp = app.post("/lectures/senat.2017-2018.63.PO78718/fetch_amendements")
-
-    assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/"
-
-    resp = resp.follow()
-    assert resp.status_code == 200
-    assert "1 nouvel amendement récupéré." in resp.text
+    assert [amendement.num for amendement in amendements] == [6666, 7777, 9999]
+    assert created == 1
+    assert errored == []
 
     # Check that the response was preserved on the updated amendement
     amendement = DBSession.query(Amendement).filter(Amendement.num == 9999).one()
@@ -162,6 +159,7 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
 
 
 def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
+    from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     # Add a response to one of the amendements
@@ -206,14 +204,11 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
-        resp = app.post("/lectures/an.15.269.PO717460/fetch_amendements")
+        amendements, created, errored = get_amendements(lecture_an)
 
-    assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/"
-
-    resp = resp.follow()
-    assert resp.status_code == 200
-    assert "1 nouvel amendement récupéré." in resp.text
+    assert [amendement.num for amendement in amendements] == [666, 777, 999]
+    assert created == 1
+    assert errored == []
 
     # Check that the response was preserved on the updated amendement
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -230,36 +225,25 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
 
 
 def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendements_an):
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.fetch.exceptions import NotFound
 
-    with patch("zam_repondeur.views.lectures.get_amendements") as mock_get_amendements:
-        mock_get_amendements.return_value = (
-            [Amendement(lecture=lecture_an, article=article1_an, num=777, position=1)],
-            1,
-            ["111", "222"],
-        )
+    with patch(
+        "zam_repondeur.fetch.an.amendements.fetch_amendements"
+    ) as mock_fetch_amendements, patch(
+        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+    ) as mock_retrieve_amendement:
+        mock_fetch_amendements.return_value = [
+            {"@numero": "666"},
+            {"@numero": "777"},
+            {"@numero": "999"},
+        ]
+        mock_retrieve_amendement.side_effect = NotFound
 
-        resp = app.post("/lectures/an.15.269.PO717460/fetch_amendements")
+        amendements, created, errored = get_amendements(lecture_an)
 
-    assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/"
-
-    resp = resp.follow()
-    assert resp.status_code == 200
-    assert "Les amendements 111, 222 n’ont pu être récupérés." in resp.text
-    assert "1 nouvel amendement récupéré." in resp.text
-
-
-def test_fetch_amendements_none(app, lecture_an):
-
-    with patch("zam_repondeur.views.lectures.get_amendements") as mock_get_amendements:
-        mock_get_amendements.return_value = [], 0, []
-
-        resp = app.post("/lectures/an.15.269.PO717460/fetch_amendements")
-
-    assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/"
-
-    resp = resp.follow()
-    assert resp.status_code == 200
-    assert "Aucun amendement n’a pu être trouvé." in resp.text
+    assert amendements == []
+    assert created == 0
+    assert errored == ["666", "777", "999"]
+    assert DBSession.query(Amendement).count() == len(amendements_an) == 2

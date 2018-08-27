@@ -237,12 +237,14 @@ class ListAmendements:
         return dialect.delimiter
 
 
-@view_config(context=LectureResource, name="fetch_amendements")
-def fetch_amendements(context: LectureResource, request: Request) -> Response:
-    amendements, created, errored = get_amendements(context.model())
+@view_config(context=LectureResource, name="manual_refresh")
+def manual_refresh(context: LectureResource, request: Request) -> Response:
+    lecture = context.model()
+    amendements, created, errored = get_amendements(lecture)
 
     if not amendements:
         request.session.flash(("danger", "Aucun amendement n’a pu être trouvé."))
+        return HTTPFound(location=request.resource_url(context.parent))
 
     if created:
         if created == 1:
@@ -258,15 +260,8 @@ def fetch_amendements(context: LectureResource, request: Request) -> Response:
                 f"Les amendements {', '.join(errored)} n’ont pu être récupérés.",
             )
         )
-
-    return HTTPFound(location=request.resource_url(context.parent))
-
-
-@view_config(context=LectureResource, name="fetch_articles")
-def fetch_articles(context: LectureResource, request: Request) -> Response:
-    lecture = context.model()
     get_articles(lecture)
-    request.session.flash(("success", f"Articles récupérés"))
+    lecture.modified_at = datetime.utcnow()
     return HTTPFound(location=request.resource_url(context.parent))
 
 

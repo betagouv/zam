@@ -8,6 +8,7 @@ jobs:
   repondeur:
     docker:
       - image: circleci/python:3.6-stretch-browsers
+      - image: redis
     steps:
       - checkout
       - run:

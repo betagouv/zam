@@ -47,7 +47,7 @@ def upgrade():
     op.create_table(
         "amendements",
         sa.Column("pk", sa.Integer(), nullable=False),
-        sa.Column("num", sa.Integer(), nullable=True),
+        sa.Column("num", sa.Integer(), nullable=False),
         sa.Column("rectif", sa.Integer(), nullable=False),
         sa.Column("auteur", sa.Text(), nullable=True),
         sa.Column("matricule", sa.Text(), nullable=True),

@@ -35,7 +35,7 @@ class Amendement(Base):  # type: ignore
     pk = Column(Integer, primary_key=True)
 
     # Meta informations.
-    num = Column(Integer)
+    num = Column(Integer, nullable=False)
     rectif = Column(Integer, nullable=False, default=0)
     auteur = Column(Text, nullable=True)
     matricule = Column(Text, nullable=True)

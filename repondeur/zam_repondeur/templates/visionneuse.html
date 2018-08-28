@@ -477,14 +477,14 @@
             <h2>
               {%- if article.type_ == "article" -%}
                 Article {{ article }}
-              {%- else -%}
+              {%- elif article.type_ -%}
                 {{ article.type_.capitalize() }}s
               {%- endif -%}
             </h2>
             {% if article.titre == "TODO" %}
-              <h3>{{ loop.previtem.titre }}</h3>
+              <h3>{{ loop.previtem.titre or "" }}</h3>
             {% else %}
-              <h3>{{ article.titre }}</h3>
+              <h3>{{ article.titre or "" }}</h3>
             {% endif %}
           </div>
           {% if article.alineas or article.jaune %}
@@ -668,7 +668,7 @@
         <a href="#{{ article.slug }}">
           {%- if article.type_ == "article" -%}
             Art. {{ article }}
-          {%- else -%}
+          {%- elif article.type_ -%}
             {{ article.type_.capitalize() }}s
           {%- endif -%}
         </a>

@@ -20,8 +20,9 @@ def load_data(settings: dict, connection: Redis) -> None:
 def get_data(key: str) -> dict:
     from zam_repondeur import huey
 
-    data = huey.storage.conn.get(key)
-    if data is None:
+    raw_bytes = huey.storage.conn.get(key)
+    if raw_bytes is None:
         return {}
 
-    return pickle.loads(data)
+    data: dict = pickle.loads(raw_bytes)
+    return data

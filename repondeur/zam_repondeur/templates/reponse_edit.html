@@ -40,14 +40,14 @@
     </div>
     <div class="dispositif">
         <h4>
-            {% if amendement.subdiv_pos == 'avant' %}
-                Article additionnel avant l’{{ amendement.subdiv_type }}
-            {% elif amendement.subdiv_pos == 'apres' %}
-                Article additionnel après l’{{ amendement.subdiv_type }}
+            {% if amendement.article.pos == 'avant' %}
+                Article additionnel avant l’{{ amendement.article.type }}
+            {% elif amendement.article.pos == 'apres' %}
+                Article additionnel après l’{{ amendement.article.type }}
             {% else %}
-                {{ amendement.subdiv_type | capitalize }}
+                {{ amendement.article.type | capitalize }}
             {% endif %}
-            {{ amendement.subdiv_num }} {{ amendement.subdiv_mult }}
+            {{ amendement.article.num }} {{ amendement.article.mult }}
         </h4>
         {{ amendement.dispositif | safe }}
     </div>

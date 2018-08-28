@@ -140,10 +140,10 @@
             </tr>
         </thead>
         {% for amendement in amendements %}
-            <tr data-value="{%- if amendement.subdiv_type == 'article' -%}
-                {{ amendement.subdiv_num }} {{ amendement.subdiv_mult }}
+            <tr data-value="{%- if amendement.article.type == 'article' -%}
+                {{ amendement.article.num }} {{ amendement.article.mult }}
             {%- else -%}
-                {{ amendement.subdiv_type }}
+                {{ amendement.article.type }}
             {%- endif -%}">
                 <td data-sortkey="{{ amendement.bookmarked_at or '' }}" class="bookmark">
                     <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">
@@ -156,7 +156,7 @@
                         {% endif %}
                     </form>
                 </td>
-                <td data-sortkey="{{ amendement.subdiv_num }}">
+                <td data-sortkey="{{ amendement.article.num }}">
                     {{ amendement.article }}
                     {% if amendement.article.titre %}
                         <br>{{ amendement.article.titre }}

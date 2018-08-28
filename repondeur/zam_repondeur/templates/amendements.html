@@ -171,7 +171,11 @@
                         (ss-amdt au {{ amendement.parent.num_disp }})
                     {% endif %}
                 </td>
-                <td>{{ amendement.objet | striptags | truncate(length=100, killwords=False, end='…') }}</td>
+                <td>
+                    {% if amendement.observations %}
+                        {{ amendement.observations | striptags | truncate(length=100, killwords=False, end='…') }}
+                    {% endif %}
+                </td>
                 <td>{{ amendement.auteur }}</td>
                 <td>{{ amendement.groupe }}</td>
                 <td>{{ amendement.sort }}</td>

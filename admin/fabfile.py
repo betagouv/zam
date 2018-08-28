@@ -54,7 +54,7 @@ def put_dir(ctx, local, remote, chown=None):
 @task
 def system(ctx):
     ctx.sudo("apt update")
-    ctx.sudo("apt install -y python3.6 nginx wkhtmltopdf xvfb")
+    ctx.sudo("apt install -y python3.6 nginx wkhtmltopdf xvfb redis-server")
     ctx.sudo("mkdir -p /srv/zam")
     ctx.sudo("mkdir -p /srv/zam/letsencrypt/.well-known/acme-challenge")
     ctx.sudo("useradd -N zam -d /srv/zam/ || exit 0")
@@ -162,7 +162,8 @@ def deploy_repondeur(
     if wipe:
         wipe_db(ctx, user=user)
     migrate_db(ctx, app_dir=app_dir, user=user)
-    setup_service(ctx)
+    setup_webapp_service(ctx)
+    setup_worker_service(ctx)
     notify_rollbar(ctx, rollbar_token, branch, environment)
 
 
@@ -236,21 +237,44 @@ def create_directory(ctx, path, owner):
 
 
 @task
-def setup_service(ctx):
-    sudo_put(ctx, "repondeur.service", "/etc/systemd/system/repondeur.service")
-    ctx.sudo("systemctl enable repondeur")
-    ctx.sudo("systemctl restart repondeur")
+def setup_webapp_service(ctx):
+    # Clean up old service
+    ctx.sudo(
+        " && ".join(
+            [
+                "[ -f /etc/systemd/system/repondeur.service ]",
+                "systemctl stop repondeur",
+                "systemctl disable repondeur",
+                "rm -f /etc/systemd/system/repondeur.service",
+            ]
+        )
+        + " || exit 0"
+    )
+    sudo_put(ctx, "zam_webapp.service", "/etc/systemd/system/zam_webapp.service")
+    ctx.sudo("systemctl enable zam_webapp")
+    ctx.sudo("systemctl restart zam_webapp")
+
+
+@task
+def setup_worker_service(ctx):
+    sudo_put(ctx, "zam_worker.service", "/etc/systemd/system/zam_worker.service")
+    ctx.sudo("systemctl enable zam_worker")
+    ctx.sudo("systemctl restart zam_worker")
 
 
 def notify_rollbar(ctx, rollbar_token, branch, environment):
-    local_username = ctx.local('whoami').stdout
+    local_username = ctx.local("whoami").stdout
     revision = ctx.local(f'git log -n 1 --pretty=format:"%H" origin/{branch}').stdout
-    resp = requests.post('https://api.rollbar.com/api/1/deploy/', {
-        'access_token': rollbar_token,
-        'environment': environment,
-        'local_username': local_username,
-        'revision': revision
-    }, timeout=3)
+    resp = requests.post(
+        "https://api.rollbar.com/api/1/deploy/",
+        {
+            "access_token": rollbar_token,
+            "environment": environment,
+            "local_username": local_username,
+            "revision": revision,
+        },
+        timeout=3,
+    )
     if resp.status_code == 200:
         print("Deploy recorded successfully.")
     else:
@@ -258,5 +282,10 @@ def notify_rollbar(ctx, rollbar_token, branch, environment):
 
 
 @task
-def logs(ctx, lines=100):
-    ctx.sudo(f"journalctl --unit repondeur.service | tail -n {lines}")
+def logs_webapp(ctx, lines=100):
+    ctx.sudo(f"journalctl --unit zam_webapp.service | tail -n {lines}")
+
+
+@task
+def logs_worker(ctx, lines=100):
+    ctx.sudo(f"journalctl --unit zam_worker.service | tail -n {lines}")

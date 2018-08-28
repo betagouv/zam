@@ -53,7 +53,7 @@ sqlalchemy.url = sqlite:////var/lib/zam/repondeur.db
 ###
 
 [loggers]
-keys = root, sqlalchemy, alembic
+keys = root, huey, sqlalchemy, alembic
 
 [handlers]
 keys = console
@@ -64,6 +64,11 @@ keys = generic
 [logger_root]
 level = WARN
 handlers = console
+
+[logger_huey]
+qualname = huey
+level = INFO
+handlers =
 
 [logger_sqlalchemy]
 qualname = sqlalchemy.engine

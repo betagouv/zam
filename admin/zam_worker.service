@@ -1,0 +1,13 @@
+[Unit]
+Description=Zam Worker for asynchronous tasks
+After=network.target
+
+[Service]
+Type=simple
+User=repondeur
+WorkingDirectory=/srv/repondeur/src/repondeur/
+ExecStart=/usr/local/bin/pipenv run zam_worker production.ini#repondeur
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

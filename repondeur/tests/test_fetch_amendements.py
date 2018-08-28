@@ -3,9 +3,7 @@ import transaction
 from unittest.mock import patch
 
 
-def test_fetch_amendements_senat(
-    app, lecture_senat, article1_senat, amendements_senat, settings
-):
+def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements_senat):
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
@@ -140,7 +138,7 @@ def test_fetch_amendements_senat(
                 }
             ],
         }
-        amendements, created, errored = get_amendements(lecture_senat, settings)
+        amendements, created, errored = get_amendements(lecture_senat)
 
     assert [amendement.num for amendement in amendements] == [6666, 7777, 9999]
     assert created == 1
@@ -160,7 +158,7 @@ def test_fetch_amendements_senat(
     assert amendement.position == 2
 
 
-def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an, settings):
+def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
@@ -206,7 +204,7 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an, sett
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
-        amendements, created, errored = get_amendements(lecture_an, settings)
+        amendements, created, errored = get_amendements(lecture_an)
 
     assert [amendement.num for amendement in amendements] == [666, 777, 999]
     assert created == 1
@@ -226,9 +224,7 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an, sett
     assert amendement.position == 2
 
 
-def test_fetch_amendements_with_errored(
-    app, lecture_an, article1_an, amendements_an, settings
-):
+def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendements_an):
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.fetch.exceptions import NotFound
@@ -245,7 +241,7 @@ def test_fetch_amendements_with_errored(
         ]
         mock_retrieve_amendement.side_effect = NotFound
 
-        amendements, created, errored = get_amendements(lecture_an, settings)
+        amendements, created, errored = get_amendements(lecture_an)
 
     assert amendements == []
     assert created == 0

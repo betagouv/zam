@@ -9,9 +9,7 @@ from zam_repondeur.fetch.senat.amendements import aspire_senat
 from zam_repondeur.models import DBSession, Article, Lecture
 
 
-def get_amendements(
-    lecture: Lecture, settings: dict
-) -> Tuple[List[Amendement], int, List[str]]:
+def get_amendements(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
     title: str
     amendements: List[Amendement]
     if lecture.chambre == "senat":

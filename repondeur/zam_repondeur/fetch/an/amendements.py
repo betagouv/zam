@@ -164,8 +164,8 @@ def build_url(
 def get_organe_abrev(organe: str) -> str:
     from zam_repondeur.data import get_data
 
-    data = get_data("groupes")[organe]
-    abrev: str = data["organe"]["libelleAbrev"]
+    data = get_data("organes")[organe]
+    abrev: str = data["libelleAbrev"]
     return abrev
 
 
@@ -181,8 +181,9 @@ def get_groupe(amendement: OrderedDict) -> str:
     auteur = amendement["auteur"]
     if int(auteur["estGouvernement"]) or "@xsi:nil" in auteur["groupeTribunId"]:
         return ""
-    groupe = get_data("groupes")[f"PO{auteur['groupeTribunId']}"]
-    libelle: str = groupe["organe"]["libelle"]
+    groupes = get_data("organes")
+    groupe = groupes[f"PO{auteur['groupeTribunId']}"]
+    libelle: str = groupe["libelle"]
     return libelle
 
 

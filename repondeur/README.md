@@ -34,10 +34,10 @@ $ pserve development.ini --reload
 
 You can now access the web app at http://localhost:6543/
 
-## Start asynchronous tasks
+## Start the worker for asynchronous tasks
 
 ```
-$ huey_consumer zam_repondeur.huey_launcher.huey
+$ zam_worker development.ini
 ```
 
 ## Development

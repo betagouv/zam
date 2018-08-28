@@ -1,4 +1,3 @@
-from huey import RedisHuey
 from pyramid.config import Configurator
 from pyramid.request import Request
 from pyramid.router import Router
@@ -6,16 +5,13 @@ from pyramid.session import SignedCookieSessionFactory
 from pyramid.view import view_config
 from sqlalchemy import engine_from_config
 
-from zam_repondeur.data import load_data
 from zam_repondeur.models import DBSession, Base
 from zam_repondeur.resources import Root
+from zam_repondeur.tasks.huey import init_huey
 from zam_repondeur.version import load_version
 
 
-huey = RedisHuey()
-
-
-def make_app(global_settings: dict, **settings: dict) -> Router:
+def make_app(global_settings: dict, **settings: str) -> Router:
 
     session_factory = SignedCookieSessionFactory(settings["zam.secret"])
 
@@ -39,15 +35,13 @@ def make_app(global_settings: dict, **settings: dict) -> Router:
 
         config.add_static_view("static", "static", cache_max_age=3600)
 
-        config.scan()
-
-        load_data(config.registry.settings, huey.storage.conn)
+        init_huey(settings)
+        config.include("zam_repondeur.data")
         load_version(config)
 
-        app = config.make_wsgi_app()
+        config.scan()
 
-        if settings.get("huey.always_eager", False):
-            huey.always_eager = True
+        app = config.make_wsgi_app()
 
     return app
 

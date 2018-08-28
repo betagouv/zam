@@ -28,6 +28,10 @@ rollbar.root = %(here)s
 
 sqlalchemy.url = sqlite:////var/lib/zam/repondeur.db
 
+zam.tasks.redis_url = redis://localhost:6379/1
+
+zam.data.redis_url = redis://localhost:6379/2
+
 zam.secret = $$secret
 zam.legislature = 15
 

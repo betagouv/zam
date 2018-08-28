@@ -82,7 +82,7 @@ class LecturesAdd:
             # for future access. Otherwise, it may create many instances and
             # thus many objects within the database.
             transaction.commit()
-            fetch_amendements(lecture, self.request.registry.settings)
+            fetch_amendements(lecture)
             fetch_articles(lecture)
             self.request.session.flash(
                 (
@@ -256,7 +256,7 @@ class ListAmendements:
 @view_config(context=LectureResource, name="manual_refresh")
 def manual_refresh(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
-    fetch_amendements(lecture, request.registry.settings)
+    fetch_amendements(lecture)
     fetch_articles(lecture)
     return HTTPFound(location=request.resource_url(context, "journal"))
 

@@ -10,10 +10,12 @@ from testapp import TestApp
 def settings():
     return {
         "sqlalchemy.url": "sqlite:///test.db",
+        "zam.tasks.redis_url": "redis://localhost:6379/10",
+        "zam.tasks.always_eager": True,
+        "zam.data.redis_url": "redis://localhost:6379/11",
         "zam.legislature": "15",
         "zam.secret": "dummy",
         "jinja2.filters": "paragriphy = zam_repondeur.views.jinja2_filters:paragriphy",
-        "huey.always_eager": True,
     }
 
 
@@ -35,15 +37,21 @@ def use_app_registry(wsgi_app):
 @pytest.yield_fixture
 def app(wsgi_app):
     from zam_repondeur.models import Base, DBSession
+    from zam_repondeur.data import _repository
 
     Base.metadata.drop_all()
     Base.metadata.create_all()
+
+    _repository.clear_data()
+    _repository.load_data()
 
     yield TestApp(wsgi_app)
 
     DBSession.close()
     Base.metadata.drop_all()
     DBSession.remove()
+
+    _repository.clear_data()
 
 
 @pytest.fixture

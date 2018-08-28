@@ -1,3 +1,7 @@
+import pytest
+
+
+@pytest.mark.usefixtures("app")
 class TestLectureToStr:
     def test_an_seance_publique(self):
         from zam_repondeur.models import Lecture

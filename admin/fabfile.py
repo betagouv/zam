@@ -153,6 +153,7 @@ def deploy_repondeur(
         app_dir=app_dir,
         user=user,
         context={
+            "db_url": "sqlite:////var/lib/zam/repondeur.db",
             "environment": environment,
             "branch": branch,
             "secret": secret,

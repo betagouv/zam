@@ -14,7 +14,6 @@ from zam_repondeur.tasks.fetch import fetch_amendements
 @huey.periodic_task(crontab(minute="1", hour="*"))
 def update_data() -> None:
     from zam_repondeur.data import load_data
-
     load_data()
 
 
@@ -22,5 +21,5 @@ def update_data() -> None:
 @huey.periodic_task(crontab(minute="10", hour="*"))
 def fetch_all_amendements() -> None:
     with transaction.manager:
-        for lecture in DBSession.query(Lecture).all():
-            fetch_amendements(lecture)
+        for lecture in DBSession.query(Lecture):
+            fetch_amendements(lecture.pk)

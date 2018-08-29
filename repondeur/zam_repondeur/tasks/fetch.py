@@ -11,19 +11,20 @@ from zam_repondeur.models import DBSession, Journal, Lecture
 
 @huey.task(retries=3, retry_delay=60 * 5)  # Minutes.
 @huey.lock_task("fetch-articles-lock")
-def fetch_articles(lecture: Lecture) -> None:
+def fetch_articles(lecture_pk: int) -> None:
     with transaction.manager:
+        lecture = DBSession.query(Lecture).get(lecture_pk)
         get_articles(lecture)
         message = "Récupération des articles effectuée."
         Journal.create(lecture=lecture, kind="info", message=message)
         lecture.modified_at = datetime.utcnow()
-        DBSession.add(lecture)
 
 
 @huey.task(retries=3, retry_delay=60 * 5)  # Minutes.
 @huey.lock_task("fetch-amendements-lock")
-def fetch_amendements(lecture: Lecture) -> None:
+def fetch_amendements(lecture_pk: int) -> None:
     with transaction.manager:
+        lecture = DBSession.query(Lecture).get(lecture_pk)
         amendements, created, errored = get_amendements(lecture)
         if not amendements:
             message = "Aucun amendement n’a pu être trouvé."
@@ -44,4 +45,3 @@ def fetch_amendements(lecture: Lecture) -> None:
             message = "Les amendements étaient à jour."
             Journal.create(lecture=lecture, kind="info", message=message)
         lecture.modified_at = datetime.utcnow()
-        DBSession.add(lecture)

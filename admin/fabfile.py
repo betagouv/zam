@@ -1,5 +1,6 @@
 import os
 from contextlib import contextmanager
+from datetime import datetime
 from hashlib import md5
 from pathlib import Path
 from shlex import quote
@@ -54,16 +55,23 @@ def put_dir(ctx, local, remote, chown=None):
 @task
 def system(ctx):
     ctx.sudo("apt update")
-    ctx.sudo("apt install -y {}".format(" ".join([
-        "nginx",
-        "python3.6",
-        "redis-server",
-        "wkhtmltopdf",
-        "xvfb",
-    ])))
+    ctx.sudo(
+        "apt install -y {}".format(
+            " ".join(
+                [
+                    "nginx",
+                    "postgresql",
+                    "python3.6",
+                    "redis-server",
+                    "wkhtmltopdf",
+                    "xvfb",
+                ]
+            )
+        )
+    )
     ctx.sudo("mkdir -p /srv/zam")
     ctx.sudo("mkdir -p /srv/zam/letsencrypt/.well-known/acme-challenge")
-    ctx.sudo("useradd -N zam -d /srv/zam/ || exit 0")
+    create_user("zam", "/srv/zam/")
     ctx.sudo("chown zam:users /srv/zam/")
     ctx.sudo("chsh -s /bin/bash zam")
 
@@ -139,7 +147,14 @@ def deploy_changelog(ctx, source="../CHANGELOG.md"):
 
 @task
 def deploy_repondeur(
-    ctx, secret, rollbar_token=ROLLBAR_TOKEN, branch="master", wipe=False
+    ctx,
+    secret,
+    rollbar_token=ROLLBAR_TOKEN,
+    branch="master",
+    wipe=False,
+    dbname="zam",
+    dbuser="zam",
+    dbpassword="iloveamendements",
 ):
     environment = ctx.host.split(".", 1)[0]
     user = "repondeur"
@@ -159,13 +174,14 @@ def deploy_repondeur(
         app_dir=app_dir,
         user=user,
         context={
-            "db_url": "sqlite:////var/lib/zam/repondeur.db",
+            "db_url": f"postgres://{dbuser}:{dbpassword}@localhost:5432/{dbname}",
             "environment": environment,
             "branch": branch,
             "secret": secret,
             "rollbar_token": rollbar_token,
         },
     )
+    setup_db(ctx, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
     if wipe:
         wipe_db(ctx, user=user)
     migrate_db(ctx, app_dir=app_dir, user=user)
@@ -219,13 +235,46 @@ def setup_config(ctx, app_dir, user, context):
 
 
 @task
-def wipe_db(ctx, user):
-    create_directory(ctx, "/var/backups/zam", owner=user)
+def setup_db(ctx, dbname, dbuser, dbpassword, encoding="UTF8", locale="en_US.UTF8"):
+    # We cannot use `with ctx.cd()` because of
+    # https://github.com/pyinvoke/invoke/issues/459
+    # You might be tempted to use something like `bash -c cd "/tmp && `
+    # as a prefix but beware that you will have to imbricate 4 kind of quotes
+    # which is AFAIK not possible with bash.
+    # Finally, after spending 3 hours on the subject,
+    # it's just an error message in the console, we can still hide it!
+    # Actual message: could not change directory to "/root": Permission denied
     ctx.sudo(
-        f"cp --backup=numbered /var/lib/zam/repondeur.db /var/backups/zam/repondeur.db",
-        user=user,
+        f"""psql -c "CREATE USER {dbuser} ENCRYPTED PASSWORD '{dbpassword}';"  || exit 0""",
+        user="postgres",
+        hide=True,
     )
-    ctx.sudo(f"rm -f /var/lib/zam/repondeur.db", user=user)
+    ctx.sudo(
+        (
+            f"createdb --owner={dbuser} --template=template0 "
+            f"--encoding={encoding} --lc-ctype={locale} --lc-collate={locale} "
+            f"{dbname} || exit 0"
+        ),
+        user="postgres",
+        hide=True,
+    )
+
+
+@task
+def wipe_db(ctx, dbname):
+    backup_db(ctx, dbname)
+    ctx.sudo(f"dropdb {dbname}", user="postgres")
+
+
+@task
+def backup_db(ctx, dbname):
+    create_directory(ctx, "/var/backups/zam", owner="postgres")
+    timestamp = datetime.utcnow().isoformat()
+    backup_filename = f"/var/backups/zam/postgres-dump-{timestamp}.sql"
+    ctx.sudo(
+        f"pg_dump --dbname={dbname} --create --encoding=UTF8 --file={backup_filename}",
+        user="postgres",
+    )
 
 
 @task

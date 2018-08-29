@@ -22,7 +22,7 @@ class Article(Base):  # type: ignore
 
     pk = Column(Integer, primary_key=True)
     lecture_pk = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
-    lecture = relationship(Lecture)
+    lecture = relationship(Lecture, back_populates="articles")
     type = Column(Text, nullable=True)  # article, ...
     num = Column(Text, nullable=True)  # numéro
     mult = Column(Text, nullable=True)  # bis, ter...

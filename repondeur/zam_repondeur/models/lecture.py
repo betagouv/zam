@@ -34,6 +34,9 @@ class Lecture(Base):  # type: ignore
         back_populates="lecture",
         cascade="all, delete, delete-orphan",
     )
+    articles = relationship(
+        "Article", back_populates="lecture", cascade="all, delete, delete-orphan"
+    )
     journal = relationship(
         Journal,
         order_by=(Journal.created_at.desc()),

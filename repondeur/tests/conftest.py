@@ -1,3 +1,5 @@
+import os
+
 import pytest
 import transaction
 
@@ -9,10 +11,14 @@ from testapp import TestApp
 @pytest.fixture(scope="session")
 def settings():
     return {
-        "sqlalchemy.url": "sqlite:///test.db",
-        "zam.tasks.redis_url": "redis://localhost:6379/10",
+        "sqlalchemy.url": os.environ.get("ZAM_TEST_DB_URL", "sqlite:////test.db"),
+        "zam.tasks.redis_url": os.environ.get(
+            "ZAM_TEST_TASKS_REDIS_URL", "redis://localhost:6379/10"
+        ),
         "zam.tasks.always_eager": True,
-        "zam.data.redis_url": "redis://localhost:6379/11",
+        "zam.data.redis_url": os.environ.get(
+            "ZAM_TEST_DATA_REDIS_URL", "redis://localhost:6379/11"
+        ),
         "zam.legislature": "15",
         "zam.secret": "dummy",
         "jinja2.filters": "paragriphy = zam_repondeur.views.jinja2_filters:paragriphy",

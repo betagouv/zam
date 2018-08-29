@@ -14,6 +14,7 @@ from zam_repondeur.tasks.fetch import fetch_amendements
 @huey.periodic_task(crontab(minute="1", hour="*"))
 def update_data() -> None:
     from zam_repondeur.data import load_data
+
     load_data()
 
 

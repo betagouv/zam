@@ -74,16 +74,16 @@ class LecturesAdd:
         if LectureModel.exists(chambre, session, num_texte, organe):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
         else:
-            lecture = LectureModel.create(
+            lecture_model: LectureModel = LectureModel.create(
                 chambre, session, num_texte, titre, organe, dossier.titre
             )
             # Call to fetch_* tasks below being asynchronous, we need to make
-            # sure the lecture already exists once and for all in the database
+            # sure the lecture_model already exists once and for all in the database
             # for future access. Otherwise, it may create many instances and
             # thus many objects within the database.
             transaction.commit()
-            fetch_amendements(lecture.pk)
-            fetch_articles(lecture.pk)
+            fetch_amendements(lecture_model.pk)
+            fetch_articles(lecture_model.pk)
             self.request.session.flash(
                 (
                     "success",

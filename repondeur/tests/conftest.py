@@ -11,7 +11,7 @@ from testapp import TestApp
 @pytest.fixture(scope="session")
 def settings():
     return {
-        "sqlalchemy.url": os.environ.get("ZAM_TEST_DB_URL", "sqlite:////test.db"),
+        "sqlalchemy.url": os.environ.get("ZAM_TEST_DB_URL", "sqlite:///test.db"),
         "zam.tasks.redis_url": os.environ.get(
             "ZAM_TEST_TASKS_REDIS_URL", "redis://localhost:6379/10"
         ),

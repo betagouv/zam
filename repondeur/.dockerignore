@@ -1,0 +1,8 @@
+**/__pycache__
+.DS_Store
+.coverage
+.mypy_cache
+.pytest_cache
+.web_cache
+*.db
+docker-compose.yml

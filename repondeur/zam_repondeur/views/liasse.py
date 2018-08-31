@@ -1,9 +1,12 @@
+from datetime import datetime
+
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config
 
 from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+from zam_repondeur.models import DBSession, Journal
 from zam_repondeur.resources import LectureResource
 
 
@@ -58,7 +61,13 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
         )
     if len(amendements):
         if len(amendements) == 1:
-            message = "1 nouvel amendement récupéré."
+            message = "1 nouvel amendement récupéré (import liasse XML)."
         else:
-            message = f"{len(amendements)} nouveaux amendements récupérés."
+            message = (
+                f"{len(amendements)} nouveaux amendements récupérés "
+                "(import liasse XML)."
+            )
         request.session.flash(("success", message))
+        Journal.create(lecture=lecture, kind="success", message=message)
+        lecture.modified_at = datetime.utcnow()
+        DBSession.add(lecture)

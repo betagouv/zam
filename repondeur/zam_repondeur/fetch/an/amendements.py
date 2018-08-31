@@ -1,7 +1,5 @@
-import json
 from collections import OrderedDict
 from http import HTTPStatus
-from pathlib import Path
 from typing import Dict, List, Tuple, Union
 from urllib.parse import urljoin
 
@@ -30,24 +28,18 @@ PATTERN_AMENDEMENT = (
 )
 
 
-def aspire_an(
-    lecture: Lecture, groups_folder: Path
-) -> Tuple[List[Amendement], int, List[str]]:
+def aspire_an(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
     print("Récupération des amendements déposés...")
     try:
-        amendements, created, errored = fetch_and_parse_all(
-            lecture=lecture, groups_folder=groups_folder
-        )
+        amendements, created, errored = fetch_and_parse_all(lecture=lecture)
     except NotFound:
         return [], 0, []
 
     return amendements, created, errored
 
 
-def fetch_and_parse_all(
-    lecture: Lecture, groups_folder: Path
-) -> Tuple[List[Amendement], int, List[str]]:
-    amendements_raw = fetch_amendements(lecture, groups_folder)
+def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
+    amendements_raw = fetch_amendements(lecture)
     amendements = []
     index = 1
     created = 0
@@ -55,10 +47,7 @@ def fetch_and_parse_all(
     for item in amendements_raw:
         try:
             amendement, created_ = fetch_amendement(
-                lecture=lecture,
-                numero=item["@numero"],
-                groups_folder=groups_folder,
-                position=index,
+                lecture=lecture, numero=item["@numero"], position=index
             )
             created += int(created_)
         except NotFound:
@@ -78,11 +67,11 @@ def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
     return result
 
 
-def fetch_amendements(lecture: Lecture, groups_folder: Path) -> List[OrderedDict]:
+def fetch_amendements(lecture: Lecture) -> List[OrderedDict]:
     """
     Récupère la liste des références aux amendements, dans l'ordre de dépôt.
     """
-    organe_abrev = get_organe_abrev(lecture.organe, groups_folder)
+    organe_abrev = get_organe_abrev(lecture.organe)
     url = build_url(
         legislature=int(lecture.session),
         texte=lecture.num_texte,
@@ -95,10 +84,8 @@ def fetch_amendements(lecture: Lecture, groups_folder: Path) -> List[OrderedDict
     return amendements_raw
 
 
-def _retrieve_amendement(
-    lecture: Lecture, numero: int, groups_folder: Path
-) -> OrderedDict:
-    organe_abrev = get_organe_abrev(lecture.organe, groups_folder)
+def _retrieve_amendement(lecture: Lecture, numero: int) -> OrderedDict:
+    organe_abrev = get_organe_abrev(lecture.organe)
     url = build_url(
         legislature=int(lecture.session),
         texte=lecture.num_texte,
@@ -110,12 +97,12 @@ def _retrieve_amendement(
 
 
 def fetch_amendement(
-    lecture: Lecture, numero: int, groups_folder: Path, position: int
+    lecture: Lecture, numero: int, position: int
 ) -> Tuple[Amendement, bool]:
     """
     Récupère un amendement depuis son numéro.
     """
-    amend = _retrieve_amendement(lecture, numero, groups_folder)
+    amend = _retrieve_amendement(lecture, numero)
     subdiv = parse_division(amend["division"])
     article, created = get_one_or_create(
         DBSession,
@@ -148,7 +135,7 @@ def fetch_amendement(
     amendement.sort = get_sort(amend)
     amendement.position = position
     amendement.matricule = amend["auteur"]["tribunId"]
-    amendement.groupe = get_groupe(amend, groups_folder)
+    amendement.groupe = get_groupe(amend)
     amendement.auteur = get_auteur(amend)
     amendement.parent = parent
     amendement.dispositif = unjustify(amend["dispositif"])
@@ -174,9 +161,11 @@ def build_url(
     return url
 
 
-def get_organe_abrev(organe: str, groups_folder: Path) -> str:
-    data = json.loads((groups_folder / f"{organe}.json").read_text())
-    abrev: str = data["organe"]["libelleAbrev"]
+def get_organe_abrev(organe: str) -> str:
+    from zam_repondeur.data import get_data
+
+    data = get_data("organes")[organe]
+    abrev: str = data["libelleAbrev"]
     return abrev
 
 
@@ -186,12 +175,15 @@ def get_auteur(amendement: OrderedDict) -> str:
     return f"{amendement['auteur']['nom']} {amendement['auteur']['prenom']}"
 
 
-def get_groupe(amendement: OrderedDict, groups_folder: Path) -> str:
+def get_groupe(amendement: OrderedDict) -> str:
+    from zam_repondeur.data import get_data
+
     auteur = amendement["auteur"]
     if int(auteur["estGouvernement"]) or "@xsi:nil" in auteur["groupeTribunId"]:
         return ""
-    groupe_raw = (groups_folder / f"PO{auteur['groupeTribunId']}.json").read_text()
-    libelle: str = json.loads(groupe_raw)["organe"]["libelle"]
+    groupes = get_data("organes")
+    groupe = groupes[f"PO{auteur['groupeTribunId']}"]
+    libelle: str = groupe["libelle"]
     return libelle
 
 

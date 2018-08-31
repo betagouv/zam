@@ -8,6 +8,13 @@
 
 ## Changements récents
 
+### 3 septembre 2018
+
+*   Nouvelle modélisation des données, ⚠︎ remise à zéro des données
+*   Nouvelle navigation entre les lectures
+*   Mise à jour automatisée des amendements et articles en arrière plan
+*   Corrections de bugs
+
 ### 6 août 2018
 
 *   Nouvelle itération sur le design du dossier de banc

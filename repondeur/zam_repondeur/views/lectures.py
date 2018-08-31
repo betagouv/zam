@@ -1,6 +1,7 @@
 import csv
 import io
 import logging
+import transaction
 from datetime import datetime
 from typing import BinaryIO, Dict, TextIO, Tuple, Union
 
@@ -13,13 +14,13 @@ from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Lecture
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
-from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.models import DBSession, Amendement, Lecture as LectureModel
 from zam_repondeur.resources import (
     AmendementCollection,
     LectureCollection,
     LectureResource,
 )
+from zam_repondeur.tasks.fetch import fetch_articles, fetch_amendements
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 
@@ -73,10 +74,25 @@ class LecturesAdd:
         if LectureModel.exists(chambre, session, num_texte, organe):
             self.request.session.flash(("warning", "Cette lecture existe déjà..."))
         else:
-            LectureModel.create(
+            lecture_model: LectureModel = LectureModel.create(
                 chambre, session, num_texte, titre, organe, dossier.titre
             )
-            self.request.session.flash(("success", "Lecture créée avec succès."))
+            # Call to fetch_* tasks below being asynchronous, we need to make
+            # sure the lecture_model already exists once and for all in the database
+            # for future access. Otherwise, it may create many instances and
+            # thus many objects within the database.
+            transaction.commit()
+            fetch_amendements(lecture_model.pk)
+            fetch_articles(lecture_model.pk)
+            self.request.session.flash(
+                (
+                    "success",
+                    (
+                        "Lecture créée avec succès, amendements et articles "
+                        "en cours de récupération."
+                    ),
+                )
+            )
 
         return HTTPFound(location=self.request.resource_url(self.context))
 
@@ -240,29 +256,9 @@ class ListAmendements:
 @view_config(context=LectureResource, name="manual_refresh")
 def manual_refresh(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
-    amendements, created, errored = get_amendements(lecture)
-
-    if not amendements:
-        request.session.flash(("danger", "Aucun amendement n’a pu être trouvé."))
-        return HTTPFound(location=request.resource_url(context.parent))
-
-    if created:
-        if created == 1:
-            message = "1 nouvel amendement récupéré."
-        else:
-            message = f"{created} nouveaux amendements récupérés."
-        request.session.flash(("success", message))
-
-    if errored:
-        request.session.flash(
-            (
-                "warning",
-                f"Les amendements {', '.join(errored)} n’ont pu être récupérés.",
-            )
-        )
-    get_articles(lecture)
-    lecture.modified_at = datetime.utcnow()
-    return HTTPFound(location=request.resource_url(context.parent))
+    fetch_amendements(lecture.pk)
+    fetch_articles(lecture.pk)
+    return HTTPFound(location=request.resource_url(context, "journal"))
 
 
 @view_config(context=LectureResource, name="check", renderer="json")

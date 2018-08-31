@@ -1,5 +1,6 @@
 import os
 from contextlib import contextmanager
+from datetime import datetime
 from hashlib import md5
 from pathlib import Path
 from shlex import quote
@@ -54,10 +55,23 @@ def put_dir(ctx, local, remote, chown=None):
 @task
 def system(ctx):
     ctx.sudo("apt update")
-    ctx.sudo("apt install -y python3.6 nginx wkhtmltopdf xvfb")
+    ctx.sudo(
+        "apt install -y {}".format(
+            " ".join(
+                [
+                    "nginx",
+                    "postgresql",
+                    "python3.6",
+                    "redis-server",
+                    "wkhtmltopdf",
+                    "xvfb",
+                ]
+            )
+        )
+    )
     ctx.sudo("mkdir -p /srv/zam")
     ctx.sudo("mkdir -p /srv/zam/letsencrypt/.well-known/acme-challenge")
-    ctx.sudo("useradd -N zam -d /srv/zam/ || exit 0")
+    create_user("zam", "/srv/zam/")
     ctx.sudo("chown zam:users /srv/zam/")
     ctx.sudo("chsh -s /bin/bash zam")
 
@@ -133,7 +147,14 @@ def deploy_changelog(ctx, source="../CHANGELOG.md"):
 
 @task
 def deploy_repondeur(
-    ctx, secret, rollbar_token=ROLLBAR_TOKEN, branch="master", wipe=False
+    ctx,
+    secret,
+    rollbar_token=ROLLBAR_TOKEN,
+    branch="master",
+    wipe=False,
+    dbname="zam",
+    dbuser="zam",
+    dbpassword="iloveamendements",
 ):
     environment = ctx.host.split(".", 1)[0]
     user = "repondeur"
@@ -153,17 +174,19 @@ def deploy_repondeur(
         app_dir=app_dir,
         user=user,
         context={
+            "db_url": f"postgres://{dbuser}:{dbpassword}@localhost:5432/{dbname}",
             "environment": environment,
             "branch": branch,
             "secret": secret,
             "rollbar_token": rollbar_token,
         },
     )
+    setup_db(ctx, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
     if wipe:
         wipe_db(ctx, user=user)
     migrate_db(ctx, app_dir=app_dir, user=user)
-    fetch_an_group_data(ctx, user=user)
-    setup_service(ctx)
+    setup_webapp_service(ctx)
+    setup_worker_service(ctx)
     notify_rollbar(ctx, rollbar_token, branch, environment)
 
 
@@ -212,13 +235,46 @@ def setup_config(ctx, app_dir, user, context):
 
 
 @task
-def wipe_db(ctx, user):
-    create_directory(ctx, "/var/backups/zam", owner=user)
+def setup_db(ctx, dbname, dbuser, dbpassword, encoding="UTF8", locale="en_US.UTF8"):
+    # We cannot use `with ctx.cd()` because of
+    # https://github.com/pyinvoke/invoke/issues/459
+    # You might be tempted to use something like `bash -c cd "/tmp && `
+    # as a prefix but beware that you will have to imbricate 4 kind of quotes
+    # which is AFAIK not possible with bash.
+    # Finally, after spending 3 hours on the subject,
+    # it's just an error message in the console, we can still hide it!
+    # Actual message: could not change directory to "/root": Permission denied
     ctx.sudo(
-        f"cp --backup=numbered /var/lib/zam/repondeur.db /var/backups/zam/repondeur.db",
-        user=user,
+        f"""psql -c "CREATE USER {dbuser} ENCRYPTED PASSWORD '{dbpassword}';"  || exit 0""",
+        user="postgres",
+        hide=True,
     )
-    ctx.sudo(f"rm -f /var/lib/zam/repondeur.db", user=user)
+    ctx.sudo(
+        (
+            f"createdb --owner={dbuser} --template=template0 "
+            f"--encoding={encoding} --lc-ctype={locale} --lc-collate={locale} "
+            f"{dbname} || exit 0"
+        ),
+        user="postgres",
+        hide=True,
+    )
+
+
+@task
+def wipe_db(ctx, dbname):
+    backup_db(ctx, dbname)
+    ctx.sudo(f"dropdb {dbname}", user="postgres")
+
+
+@task
+def backup_db(ctx, dbname):
+    create_directory(ctx, "/var/backups/zam", owner="postgres")
+    timestamp = datetime.utcnow().isoformat()
+    backup_filename = f"/var/backups/zam/postgres-dump-{timestamp}.sql"
+    ctx.sudo(
+        f"pg_dump --dbname={dbname} --create --encoding=UTF8 --file={backup_filename}",
+        user="postgres",
+    )
 
 
 @task
@@ -231,43 +287,50 @@ def migrate_db(ctx, app_dir, user):
 
 
 @task
-def fetch_an_group_data(ctx, user):
-    url = "http://data.assemblee-nationale.fr/static/openData/repository/15/amo/deputes_actifs_mandats_actifs_organes_divises/AMO40_deputes_actifs_mandats_actifs_organes_divises_XV.json.zip"  # noqa
-    filename = "/tmp/groups.zip"
-    ctx.sudo(f"curl --silent --show-error {url} -o {filename}", user=user)
-
-    data_dir = "/var/lib/zam/data/an/groups"
-    create_directory(ctx, data_dir, owner=user)
-
-    ctx.sudo("apt-get update")
-    ctx.sudo("apt-get install --yes unzip")
-    ctx.sudo(f"unzip -q -o {filename} -d {data_dir}/", user=user)
-
-    ctx.sudo(f"rm {filename}", user=user)
-
-
-@task
 def create_directory(ctx, path, owner):
     ctx.sudo(f"mkdir -p {quote(path)}")
     ctx.sudo(f"chown {owner}: {quote(path)}")
 
 
 @task
-def setup_service(ctx):
-    sudo_put(ctx, "repondeur.service", "/etc/systemd/system/repondeur.service")
-    ctx.sudo("systemctl enable repondeur")
-    ctx.sudo("systemctl restart repondeur")
+def setup_webapp_service(ctx):
+    # Clean up old service
+    ctx.sudo(
+        " && ".join(
+            [
+                "[ -f /etc/systemd/system/repondeur.service ]",
+                "systemctl stop repondeur",
+                "systemctl disable repondeur",
+                "rm -f /etc/systemd/system/repondeur.service",
+            ]
+        )
+        + " || exit 0"
+    )
+    sudo_put(ctx, "zam_webapp.service", "/etc/systemd/system/zam_webapp.service")
+    ctx.sudo("systemctl enable zam_webapp")
+    ctx.sudo("systemctl restart zam_webapp")
+
+
+@task
+def setup_worker_service(ctx):
+    sudo_put(ctx, "zam_worker.service", "/etc/systemd/system/zam_worker.service")
+    ctx.sudo("systemctl enable zam_worker")
+    ctx.sudo("systemctl restart zam_worker")
 
 
 def notify_rollbar(ctx, rollbar_token, branch, environment):
-    local_username = ctx.local('whoami').stdout
+    local_username = ctx.local("whoami").stdout
     revision = ctx.local(f'git log -n 1 --pretty=format:"%H" origin/{branch}').stdout
-    resp = requests.post('https://api.rollbar.com/api/1/deploy/', {
-        'access_token': rollbar_token,
-        'environment': environment,
-        'local_username': local_username,
-        'revision': revision
-    }, timeout=3)
+    resp = requests.post(
+        "https://api.rollbar.com/api/1/deploy/",
+        {
+            "access_token": rollbar_token,
+            "environment": environment,
+            "local_username": local_username,
+            "revision": revision,
+        },
+        timeout=3,
+    )
     if resp.status_code == 200:
         print("Deploy recorded successfully.")
     else:
@@ -275,5 +338,10 @@ def notify_rollbar(ctx, rollbar_token, branch, environment):
 
 
 @task
-def logs(ctx, lines=100):
-    ctx.sudo(f"journalctl --unit repondeur.service | tail -n {lines}")
+def logs_webapp(ctx, lines=100):
+    ctx.sudo(f"journalctl --unit zam_webapp.service | tail -n {lines}")
+
+
+@task
+def logs_worker(ctx, lines=100):
+    ctx.sudo(f"journalctl --unit zam_worker.service | tail -n {lines}")

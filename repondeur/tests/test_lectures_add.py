@@ -1,4 +1,17 @@
+from pathlib import Path
+
+import responses
 from webtest.forms import Select
+
+from zam_repondeur.fetch.an.amendements import build_url
+
+
+HERE = Path(__file__)
+SAMPLE_DATA_DIR = HERE.parent / "fetch" / "sample_data"
+
+
+def read_sample_data(basename):
+    return (SAMPLE_DATA_DIR / basename).read_text()
 
 
 def test_get_form(app):
@@ -31,11 +44,56 @@ def test_get_form(app):
     assert form.fields["submit"][0].attrs["type"] == "submit"
 
 
+@responses.activate
 def test_post_form(app):
     from zam_repondeur.models import Lecture
 
     assert not Lecture.exists(
         chambre="an", session="15", num_texte=269, organe="PO717460"
+    )
+
+    responses.add(
+        responses.GET,
+        build_url(15, 269),
+        body=read_sample_data("an_liste.xml"),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        build_url(15, 269, 177),
+        body=read_sample_data("an_177.xml"),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        build_url(15, 269, 270),
+        body=read_sample_data("an_270.xml"),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        build_url(15, 269, 723),
+        body=read_sample_data("an_723.xml"),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        build_url(15, 269, 135),
+        body=read_sample_data("an_135.xml"),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        build_url(15, 269, 192),
+        body=read_sample_data("an_192.xml"),
+        status=200,
+    )
+
+    responses.add(
+        responses.GET,
+        "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+        body=(HERE.parent / "sample_data" / "pl0269.html").read_text("utf-8", "ignore"),
+        status=200,
     )
 
     # We cannot use form.submit() given the form is dynamic and does not
@@ -51,12 +109,25 @@ def test_post_form(app):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "Lecture créée avec succès." in resp.text
+    assert "Lecture créée avec succès," in resp.text
 
     lecture = Lecture.get(chambre="an", session="15", num_texte=269, organe="PO717460")
     assert lecture.chambre == "an"
     assert lecture.titre == "1ère lecture"
     assert lecture.dossier_legislatif == "Sécurité sociale : loi de financement 2018"
+
+    # We should have a journal entry for articles, and one for amendements
+    assert len(lecture.journal) == 2
+    assert lecture.journal[0].kind == "info"
+    assert lecture.journal[0].message == "Récupération des articles effectuée."
+    assert lecture.journal[1].kind == "success"
+    assert lecture.journal[1].message == f"5 nouveaux amendements récupérés."
+
+    # We should have loaded 3 articles
+    assert {article.num for article in lecture.articles} == {"3", "8", "9"}
+
+    # We should have loaded 5 amendements
+    assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 135, 192]
 
 
 def test_post_form_already_exists(app, lecture_an):

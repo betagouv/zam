@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 
 from .amendement import Amendement
 from .base import Base, DBSession
-
+from .journal import Journal
 
 CHAMBRES = {"an": "Assemblée nationale", "senat": "Sénat"}
 
@@ -31,6 +31,15 @@ class Lecture(Base):  # type: ignore
     amendements = relationship(
         Amendement,
         order_by=(Amendement.position, Amendement.num),
+        back_populates="lecture",
+        cascade="all, delete, delete-orphan",
+    )
+    articles = relationship(
+        "Article", back_populates="lecture", cascade="all, delete, delete-orphan"
+    )
+    journal = relationship(
+        Journal,
+        order_by=(Journal.created_at.desc()),
         back_populates="lecture",
         cascade="all, delete, delete-orphan",
     )

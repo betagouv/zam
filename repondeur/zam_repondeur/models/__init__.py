@@ -8,6 +8,7 @@ from .base import Base, DBSession  # noqa
 
 from .amendement import Amendement, AVIS  # noqa
 from .article import Article  # noqa
+from .journal import Journal  # noqa
 from .lecture import Lecture, CHAMBRES, SESSIONS  # noqa
 
 

@@ -30,26 +30,20 @@
                 {% endif %}
             </h4>
             <p class="card-text">
-                {% if lecture.amendements %}
-                    {% if lecture.displayable %}
-                        <a class="btn btn-primary" href="{{ request.resource_url(context[lecture.url_key], 'reponses') }}" role="button" target="_blank">
-                            <i class="fa fa-eye"></i>
-                            Dossier de banc
-                        </a>
-                        <a class="btn btn-secondary" href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">
-                            <i class="fa fa-pencil-alt"></i>
-                            Gestion des réponses
-                        </a>
-                    {% else %}
-                        Saisie de réponses requise.
-                    {% endif %}
-                {% else %}
-                    Récupération des amendements requise.
+                {% if lecture.displayable %}
+                    <a class="btn btn-primary" href="{{ request.resource_url(context[lecture.url_key], 'reponses') }}" role="button" target="_blank">
+                        <i class="fa fa-eye"></i>
+                        Dossier de banc
+                    </a>
                 {% endif %}
+                <a class="btn btn-secondary" href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">
+                    <i class="fa fa-pencil-alt"></i>
+                    Gestion des réponses
+                </a>
             </p>
         </div>
         <div class="card-footer text-muted">
-            {{ macros.update_informations(lecture, request.resource_url(context[lecture.url_key], 'manual_refresh')) }}
+            {{ macros.update_informations(lecture, request.resource_url(context[lecture.url_key], 'journal')) }}
         </div>
     </div>
 {% endfor %}

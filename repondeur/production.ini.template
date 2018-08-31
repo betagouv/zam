@@ -26,11 +26,14 @@ rollbar.environment = $$environment
 rollbar.branch = $$branch
 rollbar.root = %(here)s
 
-sqlalchemy.url = sqlite:////var/lib/zam/repondeur.db
+sqlalchemy.url = $$db_url
+
+zam.tasks.redis_url = redis://localhost:6379/1
+
+zam.data.redis_url = redis://localhost:6379/2
 
 zam.secret = $$secret
 zam.legislature = 15
-zam.an_groups_folder = /var/lib/zam/data/an/groups/organe/
 
 jinja2.filters =
     paragriphy = zam_repondeur.views.jinja2_filters:paragriphy
@@ -41,7 +44,7 @@ listen = localhost:6543
 
 [alembic]
 script_location = db_migrations
-sqlalchemy.url = sqlite:////var/lib/zam/repondeur.db
+sqlalchemy.url = $$db_url
 
 
 ###
@@ -50,7 +53,7 @@ sqlalchemy.url = sqlite:////var/lib/zam/repondeur.db
 ###
 
 [loggers]
-keys = root, sqlalchemy, alembic
+keys = root, huey, sqlalchemy, alembic
 
 [handlers]
 keys = console
@@ -61,6 +64,11 @@ keys = generic
 [logger_root]
 level = WARN
 handlers = console
+
+[logger_huey]
+qualname = huey
+level = INFO
+handlers =
 
 [logger_sqlalchemy]
 qualname = sqlalchemy.engine

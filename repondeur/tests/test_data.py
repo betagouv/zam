@@ -1,4 +1,4 @@
-def test_get_dossiers():
+def test_get_dossiers(app):
     from zam_repondeur.data import get_data
 
     dossiers = get_data("dossiers")
@@ -6,7 +6,7 @@ def test_get_dossiers():
     assert "DLR5L15N36030" in dossiers
 
 
-def test_get_organes():
+def test_get_organes(app):
     from zam_repondeur.data import get_data
 
     organes = get_data("organes")
@@ -14,7 +14,7 @@ def test_get_organes():
     assert "PO717460" in organes
 
 
-def test_get_acteurs():
+def test_get_acteurs(app):
     from zam_repondeur.data import get_data
 
     acteurs = get_data("acteurs")

@@ -89,7 +89,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title">
-                                <h4>Exporter le tableau</h4>
+                                <h4>Exporter</h4>
                             </div>
                             <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
                             <div class="btn-group" role="group" aria-label="Format de téléchargement">
@@ -122,7 +122,7 @@
             </h5>
         </div>
         <div class="card-footer text-muted">
-            {{ macros.update_informations(lecture, request.resource_url(context.parent, 'manual_refresh')) }}
+            {{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}
         </div>
     </div>
 
@@ -140,10 +140,10 @@
             </tr>
         </thead>
         {% for amendement in amendements %}
-            <tr data-value="{%- if amendement.subdiv_type == 'article' -%}
-                {{ amendement.subdiv_num }} {{ amendement.subdiv_mult }}
+            <tr data-value="{%- if amendement.article.type == 'article' -%}
+                {{ amendement.article.num }} {{ amendement.article.mult }}
             {%- else -%}
-                {{ amendement.subdiv_type }}
+                {{ amendement.article.type }}
             {%- endif -%}">
                 <td data-sortkey="{{ amendement.bookmarked_at or '' }}" class="bookmark">
                     <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">
@@ -156,7 +156,7 @@
                         {% endif %}
                     </form>
                 </td>
-                <td data-sortkey="{{ amendement.subdiv_num }}">
+                <td data-sortkey="{{ amendement.article.num }}">
                     {{ amendement.article }}
                     {% if amendement.article.titre %}
                         <br>{{ amendement.article.titre }}
@@ -171,7 +171,11 @@
                         (ss-amdt au {{ amendement.parent.num_disp }})
                     {% endif %}
                 </td>
-                <td>{{ amendement.objet | striptags | truncate(length=100, killwords=False, end='…') }}</td>
+                <td>
+                    {% if amendement.observations %}
+                        {{ amendement.observations | striptags | truncate(length=100, killwords=False, end='…') }}
+                    {% endif %}
+                </td>
                 <td>{{ amendement.auteur }}</td>
                 <td>{{ amendement.groupe }}</td>
                 <td>{{ amendement.sort }}</td>

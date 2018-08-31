@@ -18,6 +18,19 @@ depends_on = None
 
 def upgrade():
     op.create_table(
+        "lectures",
+        sa.Column("pk", sa.Integer(), nullable=False),
+        sa.Column("chambre", sa.Text(), nullable=True),
+        sa.Column("session", sa.Text(), nullable=True),
+        sa.Column("num_texte", sa.Integer(), nullable=True),
+        sa.Column("organe", sa.Text(), nullable=True),
+        sa.Column("titre", sa.Text(), nullable=True),
+        sa.Column("dossier_legislatif", sa.Text(), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=True),
+        sa.Column("modified_at", sa.DateTime(), nullable=True),
+        sa.PrimaryKeyConstraint("pk"),
+    )
+    op.create_table(
         "articles",
         sa.Column("pk", sa.Integer(), nullable=False),
         sa.Column("lecture_pk", sa.Integer(), nullable=False),
@@ -30,19 +43,6 @@ def upgrade():
         sa.Column("jaune", sa.Text(), nullable=True),
         sa.PrimaryKeyConstraint("pk"),
         sa.ForeignKeyConstraint(["lecture_pk"], ["lectures.pk"]),
-    )
-    op.create_table(
-        "lectures",
-        sa.Column("pk", sa.Integer(), nullable=False),
-        sa.Column("chambre", sa.Text(), nullable=True),
-        sa.Column("session", sa.Text(), nullable=True),
-        sa.Column("num_texte", sa.Integer(), nullable=True),
-        sa.Column("organe", sa.Text(), nullable=True),
-        sa.Column("titre", sa.Text(), nullable=True),
-        sa.Column("dossier_legislatif", sa.Text(), nullable=True),
-        sa.Column("created_at", sa.DateTime(), nullable=True),
-        sa.Column("modified_at", sa.DateTime(), nullable=True),
-        sa.PrimaryKeyConstraint("pk"),
     )
     op.create_table(
         "amendements",
@@ -80,5 +80,5 @@ def upgrade():
 
 def downgrade():
     op.drop_table("amendements")
-    op.drop_table("lectures")
     op.drop_table("articles")
+    op.drop_table("lectures")

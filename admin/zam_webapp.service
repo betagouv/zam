@@ -1,5 +1,5 @@
 [Unit]
-Description=Zam Repondeur Web Application
+Description=Zam Web Application
 After=network.target
 
 [Service]

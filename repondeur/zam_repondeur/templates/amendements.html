@@ -33,6 +33,9 @@
     tr.hidden-article, tr.hidden-avis {
         display: none;
     }
+    td.input-required a.action {
+        color: red;
+    }
 </style>
 {% endblock %}
 
@@ -196,7 +199,11 @@
                 <td>{{ amendement.auteur }}</td>
                 <td>{{ amendement.groupe }}</td>
                 <td>{{ amendement.sort }}</td>
-                <td>
+                <td
+                    {% if not amendement.gouvernemental and not amendement.avis %}
+                        class="input-required"
+                    {% endif %}
+                >
                     <nobr>
                         {% if amendement.avis %}
                             {{ amendement.avis }}

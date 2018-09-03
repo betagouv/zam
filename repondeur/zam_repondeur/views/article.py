@@ -4,6 +4,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.clean import clean_html
+from zam_repondeur.message import Message
 from zam_repondeur.resources import ArticleResource
 
 
@@ -22,6 +23,8 @@ class ArticleEdit:
     def post(self) -> Response:
         self.article.titre = self.request.POST["titre"]
         self.article.jaune = clean_html(self.request.POST["jaune"])
-        self.request.session.flash(("success", "Article mis à jour avec succès."))
+        self.request.session.flash(
+            Message(cls="success", text="Article mis à jour avec succès.")
+        )
         resource = self.context.lecture_resource["amendements"]
         return HTTPFound(location=self.request.resource_url(resource))

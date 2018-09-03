@@ -14,6 +14,7 @@ from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Lecture
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
+from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, Amendement, Lecture as LectureModel
 from zam_repondeur.resources import (
     AmendementCollection,
@@ -72,7 +73,9 @@ class LecturesAdd:
             session = "2017-2018"
 
         if LectureModel.exists(chambre, session, num_texte, organe):
-            self.request.session.flash(("warning", "Cette lecture existe déjà..."))
+            self.request.session.flash(
+                Message(cls="warning", text="Cette lecture existe déjà...")
+            )
         else:
             lecture_model: LectureModel = LectureModel.create(
                 chambre, session, num_texte, titre, organe, dossier.titre
@@ -85,9 +88,9 @@ class LecturesAdd:
             fetch_amendements(lecture_model.pk)
             fetch_articles(lecture_model.pk)
             self.request.session.flash(
-                (
-                    "success",
-                    (
+                Message(
+                    cls="success",
+                    text=(
                         "Lecture créée avec succès, amendements et articles "
                         "en cours de récupération."
                     ),
@@ -132,7 +135,9 @@ class LectureView:
     @view_config(request_method="POST")
     def post(self) -> Response:
         DBSession.delete(self.lecture)
-        self.request.session.flash(("success", "Lecture supprimée avec succès."))
+        self.request.session.flash(
+            Message(cls="success", text="Lecture supprimée avec succès.")
+        )
         return HTTPFound(location=self.request.resource_url(self.context.parent))
 
 
@@ -162,25 +167,30 @@ class ListAmendements:
                 )
                 if reponses_count:
                     self.request.session.flash(
-                        ("success", f"{reponses_count} réponses chargées avec succès")
+                        Message(
+                            cls="success",
+                            text=f"{reponses_count} réponses chargées avec succès",
+                        )
                     )
                     self.lecture.modified_at = datetime.utcnow()
                 if errors_count:
                     self.request.session.flash(
-                        (
-                            "warning",
-                            f"{errors_count} réponses n’ont pas pu être chargées. "
-                            "Pour rappel, il faut que le fichier CSV contienne "
-                            "au moins les noms de colonnes suivants "
-                            "« Nº amdt », « Avis du Gouvernement », « Objet amdt » "
-                            "et « Réponse ».",
+                        Message(
+                            cls="warning",
+                            text=(
+                                f"{errors_count} réponses n’ont pas pu être chargées. "
+                                "Pour rappel, il faut que le fichier CSV contienne "
+                                "au moins les noms de colonnes suivants "
+                                "« Nº amdt », « Avis du Gouvernement », « Objet amdt » "
+                                "et « Réponse »."
+                            ),
                         )
                     )
             except CSVError as exc:
-                self.request.session.flash(("danger", str(exc)))
+                self.request.session.flash(Message(cls="danger", text=str(exc)))
         else:
             self.request.session.flash(
-                ("warning", "Veuillez d’abord sélectionner un fichier")
+                Message(cls="warning", text="Veuillez d’abord sélectionner un fichier")
             )
 
         return HTTPFound(location=self.request.resource_url(self.context))

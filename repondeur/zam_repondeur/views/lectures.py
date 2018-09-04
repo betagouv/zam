@@ -210,7 +210,7 @@ class ListAmendements:
             try:
                 num = normalize_num(numero)
             except ValueError:
-                logging.warning("Invalid amendement number %r", num)
+                logging.warning("Invalid amendement number %r", numero)
                 errors_count += 1
                 continue
 

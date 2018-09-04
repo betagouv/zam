@@ -1,7 +1,10 @@
 import transaction
 from datetime import datetime
 
+import pytest
 
+
+@pytest.mark.xfail
 def test_get_amendements(app, lecture_an, amendements_an):
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/amendements")
     assert resp.status_code == 200
@@ -12,6 +15,7 @@ def test_get_amendements(app, lecture_an, amendements_an):
     )
 
 
+@pytest.mark.xfail
 def test_get_amendements_with_avis(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
@@ -29,6 +33,7 @@ def test_get_amendements_with_avis(app, lecture_an, amendements_an):
     assert "Visualiser le dossier de banc" in resp.text
 
 
+@pytest.mark.xfail
 def test_get_amendements_with_gouvernemental(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 

@@ -3,22 +3,90 @@
 
 {% block header %}
 <style type="text/css">
+    header.main nav.top-left {
+        margin-bottom: 1rem;
+    }
+    @media(min-width:768px) {
+        header.main nav.top-left {
+            float: left;
+        }
+        header.main .title {
+            clear: both;
+        }
+    }
+    .toggle:before {
+        content: "↓";
+    }
+    .toggle.enabled:before {
+        content: "↑";
+    }
+
+    /* Options avancées */
+    #advanced {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 0 auto 1rem auto;
+        max-width: 56rem;
+    }
+    #advanced > div {
+        flex-basis: 26rem;
+        padding: 2rem;
+        border-bottom: thin solid #979797;
+    }
+    #advanced > div h3 {
+        font-weight: 600;
+    }
+    #advanced div[role="group"] {
+        margin-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    #advanced .button {
+        margin: 0 0.75rem 0.75rem 0;
+        flex-basis: 10rem;
+    }
+    #advanced .button:last-child {
+        margin-right: 0;
+    }
+    #advanced .button i {
+        padding-right: 0.5rem;
+    }
+    @media(min-width:1900px) {
+        #advanced {
+            max-width: none;
+        }
+    }
+
     .action i {
         margin-right: 0.33rem;
+    }
+    .table thead th {
+        border: none;
+        font-weight: 600;
+    }
+    .table th, .table td {
+        vertical-align: middle;
     }
     th {
         white-space: nowrap;
     }
-    th::after {
+    .headers th {
+        cursor: pointer;
+    }
+    .headers th.nosort {
+        cursor: default;
+    }
+    .headers th::after {
         content: " ⇵";
     }
-    th[data-order="asc"]::after {
+    .headers th[data-order="asc"]::after {
         content: " ↓";
     }
-    th[data-order="desc"]::after {
+    .headers th[data-order="desc"]::after {
         content: " ↑";
     }
-    th.nosort::after {
+    .headers th.nosort::after {
         content: "";
     }
     th input.form-control {
@@ -41,112 +109,116 @@
 
 {% block nav %}{% endblock %}
 
-{% block body %}
-    <div class="card mb-3">
-        <h3 class="card-header">
-            <small><a href="{{ request.resource_url(context.parent.parent) }}" class="float-right">Retour aux lectures ⤴︎</a></small>
-            {{ lecture.dossier_legislatif }}
-        </h3>
-        <div class="card-body">
-            <h4 class="card-title">
-                {{ lecture }}
-                {% if lecture.amendements %}
-                    ({{ lecture.amendements|length }} amendements)
-                {% endif %}
-            </h4>
-            <details>
-                <summary>Usage avancé : imports/exports de données</summary>
-                <div class="card-deck">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="card-title">
-                                <h4>Importer des réponses</h4>
-                            </div>
-                            <div class="card-text">
-                                <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses">suivant la spécification dédiée</a>.</p>
-                                <form action="" enctype="multipart/form-data" method="post" id="import-form" class="align-items-center">
-                                    <div class="custom-file form-group">
-                                        <input type="file" class="custom-file-input" id="reponses" name="reponses" required>
-                                        <label class="custom-file-label" for="reponses">Fichier CSV</label>
-                                    </div>
-                                    <input type="submit" name="upload" class="btn btn-secondary btn-block mt-1" value="Charger les réponses">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="card-title">
-                                <h4>Importer une liasse XML</h4>
-                            </div>
-                            <div class="card-text">
-                                <p>Importer des amendements à partir d'un fichier XML provenant
-                                de l’Assemblée nationale.</p>
-                                <form action="{{ request.resource_url(context.parent, 'import_liasse_xml') }}" enctype="multipart/form-data" method="post" id="import-liasse-xml" class="align-items-center">
-                                    <div class="custom-file form-group">
-                                        <input type="file" class="custom-file-input" id="liasse" name="liasse">
-                                        <label class="custom-file-label" for="liasse">Fichier XML</label>
-                                    </div>
-                                    <input type="submit" name="upload" class="btn btn-secondary btn-block mt-1" value="Charger la liasse">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="card-title">
-                                <h4>Exporter</h4>
-                            </div>
-                            <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
-                            <div class="btn-group" role="group" aria-label="Format de téléchargement">
-                                <a class="btn btn-secondary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'csv'}) }}">
-                                    <i class="fa fa-table"></i>
-                                    En CSV
-                                </a>
-                                <a class="btn btn-secondary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
-                                    <i class="fa fa-file-excel"></i>
-                                    En Excel
-                                </a>
-                                <a class="btn btn-secondary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
-                                    <i class="fa fa-file-pdf"></i>
-                                    En PDF
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </details>
-            <h5 class="card-text text-center mt-3">
-                {% if lecture.displayable %}
-                    <a class="btn btn-primary btn-lg btn-block" href="{{ request.resource_url(context.parent, 'reponses') }}" target="_blank">
-                        <i class="fa fa-eye"></i>
-                        Visualiser le dossier de banc
-                    </a>
-                {% else %}
-                    Vous devez saisir des réponses pour pouvoir visualiser le dossier de banc.
-                {% endif %}
-            </h5>
-        </div>
-        <div class="card-footer text-muted">
-            {{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}
-        </div>
+{% block top %}
+    <nav class="top-left">
+        <a class="button" href="{{ request.resource_url(context.parent.parent) }}">←&nbsp;&nbsp;Retourner aux lectures</a>
+    </nav>
+    <div class="title">
+        <h2>{{ lecture.dossier_legislatif }}</h2>
+        <h3>{{ lecture }}</h3>
     </div>
+    <nav>
+        <a class="button" href="{{ request.resource_url(context.parent, 'journal') }}">Voir le journal</a>
+        {% if lecture.displayable %}
+            <a class="button" href="{{ request.resource_url(context.parent, 'reponses') }}" target="_blank">
+                Voir le dossier de banc
+            </a>
+        {% endif %}
+    </nav>
+{% endblock %}
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
+{% block body %}
+    <nav style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+        <a id="toggle-advanced" class="toggle button" href="#">
+            Options avancées
+        </a>
+        <a id="toggle-filter" class="toggle button" href="#">
+            Filtrer
+        </a>
+    </nav>
+
+    <section id="advanced" class="d-none">
+        <div>
+            <h3>Importer des réponses</h3>
+            <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses">suivant la spécification dédiée</a>.</p>
+            <form action="" enctype="multipart/form-data" method="post" id="import-form" class="">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="reponses" name="reponses" required>
+                    <label class="custom-file-label" for="reponses">Fichier CSV</label>
+                </div>
+                <div role="group">
+                    <input type="submit" name="upload" class="button" value="Importer les réponses">
+                </div>
+            </form>
+        </div>
+        <div>
+            <h3>Importer une liasse XML</h3>
+            <p>Importer des amendements à partir d'un fichier XML provenant
+            de l’Assemblée nationale.</p>
+            <form action="{{ request.resource_url(context.parent, 'import_liasse_xml') }}" enctype="multipart/form-data" method="post" id="import-liasse-xml" class="align-items-center">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="liasse" name="liasse">
+                    <label class="custom-file-label" for="liasse">Fichier XML</label>
+                </div>
+                <div role="group">
+                    <input type="submit" name="upload" class="button" value="Charger la liasse">
+                </div>
+            </form>
+        </div>
+        <div>
+            <h3>Télécharger ce tableau</h3>
+            <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
+            <div role="group" aria-label="Format de téléchargement">
+                <a class="button" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'csv'}) }}">
+                    <i class="fa fa-table"></i>
+                    Format CSV
+                </a>
+                <a class="button" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
+                    <i class="fa fa-file-excel"></i>
+                    Format Excel
+                </a>
+                <a class="button" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
+                    <i class="fa fa-file-pdf"></i>
+                    Format PDF
+                </a>
+            </div>
+        </div>
+        <div>
+            <h3>Supprimer</h3>
+            <p>Supprimer la lecture ainsi que tous les amendements et réponses associés.</p>
+            <form method="post" action="{{ request.resource_url(context.parent) }}">
+                <input type="submit" name="delete" class="danger button" value="Supprimer">
+            </form>
+        </div>
+    </section>
+
+    <table class="table" style="width:100%">
+        <thead class="box">
+            <tr class="headers">
                 <th></th>
                 <th>
                     Article
-                    <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº">
                 </th>
                 <th>Nº</th>
-                <th class="nosort">Objet</th>
+                {# <th class="nosort">Objet</th> #}
                 <th>Auteur</th>
                 <th>Groupe</th>
                 <th>Sort</th>
                 <th>
                     Avis
+                </th>
+            </tr>
+            <tr class="filters d-none">
+                <th></th>
+                <th>
+                    <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº">
+                </th>
+                <th></th>
+                {# <th></th> #}
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>
                     <select id="avis-filter">
                         <option value="all">Tous</option>
                         <option value="1">Avec</option>
@@ -192,12 +264,12 @@
                         (ss-amdt au {{ amendement.parent.num_disp }})
                     {% endif %}
                 </td>
-                <td>
+{#                 <td>
                     {% if amendement.observations %}
                         {{ amendement.observations | striptags | truncate(length=100, killwords=False, end='…') }}
                     {% endif %}
                 </td>
-                <td>{{ amendement.auteur }}</td>
+ #}                <td>{{ amendement.auteur }}</td>
                 <td>{{ amendement.groupe }}</td>
                 <td>{{ amendement.sort }}</td>
                 <td
@@ -206,6 +278,7 @@
                     {% endif %}
                 >
                     <nobr>
+                        <a href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
                         {% if amendement.avis %}
                             {{ amendement.avis }}
                         {% elif amendement.gouvernemental %}
@@ -213,8 +286,6 @@
                         {% else %}
                             Aucun
                         {% endif %}
-                        <a class="action" href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
-                            <i class="fas fa-edit"></i>
                         </a>
                     </nobr>
                 </td>
@@ -230,6 +301,37 @@
     var table = document.querySelector('table')
     var tableHead = table.querySelector('thead')
     var tableHeaders = tableHead.querySelectorAll('th')
+
+    // Options avancées
+    var toggleAdvanced = document.querySelector('#toggle-advanced')
+    toggleAdvanced.addEventListener('click', function(e) {
+        var advanced = document.querySelector('#advanced')
+        if (advanced.classList.contains('d-none')) {
+            toggleAdvanced.classList.add('enabled')
+            advanced.classList.remove('d-none')
+        }
+        else {
+            toggleAdvanced.classList.remove('enabled')
+            advanced.classList.add('d-none')
+        }
+        e.preventDefault()
+    })
+
+    // Filtrer
+    var toggleFilter = document.querySelector('#toggle-filter')
+    toggleFilter.addEventListener('click', function(e) {
+        var filterRow = table.querySelector('tr.filters')
+        if (filterRow.classList.contains('d-none')) {
+            toggleFilter.classList.add('enabled')
+            filterRow.classList.remove('d-none')
+        }
+        else {
+            toggleFilter.classList.remove('enabled')
+            filterRow.classList.add('d-none')
+        }
+        e.preventDefault()
+    })
+
     var tableBody = table.querySelector('tbody')
     var tableLines = tableBody.querySelectorAll('tr')
     tableHead.addEventListener('click', function (e) {

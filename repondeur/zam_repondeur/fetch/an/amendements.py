@@ -78,9 +78,9 @@ def fetch_amendements(lecture: Lecture) -> List[OrderedDict]:
         organe_abrev=organe_abrev,
     )
     content = _retrieve_content(url)
-    amendements_raw: List[OrderedDict] = content["amdtsParOrdreDeDiscussion"][
-        "amendements"
-    ]["amendement"]
+    amendements_raw: List[OrderedDict] = (
+        content["amdtsParOrdreDeDiscussion"].get("amendements", [])["amendement"]
+    )
     return amendements_raw
 
 

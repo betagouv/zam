@@ -33,6 +33,8 @@ class Article(Base):  # type: ignore
 
     amendements = relationship("Amendement", back_populates="article")
 
+    __repr_keys__ = ("pk", "lecture_pk", "type", "num", "mult", "pos")
+
     def __str__(self) -> str:
         type_ = self.type == "article" and "art." or self.type
         text = f"{self.pos} {type_} {self.num} {self.mult}"

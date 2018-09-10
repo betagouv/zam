@@ -119,9 +119,8 @@ def fetch_amendement(
             DBSession,
             Amendement,
             lecture=lecture,
-            article=article,
             num=parent_num,
-            rectif=parent_rectif,
+            create_method_kwargs={"article": article, "rectif": parent_rectif},
         )
     else:
         parent = None
@@ -129,8 +128,8 @@ def fetch_amendement(
         DBSession,
         Amendement,
         lecture=lecture,
-        article=article,
         num=int(amend["numero"]),
+        create_method_kwargs={"article": article},
     )
     amendement.sort = get_sort(amend)
     amendement.position = position

@@ -174,6 +174,7 @@ def _create_or_update_amendement(
     amendement.parent = parent
     amendement.dispositif = unjustify(amend["dispositif"])
     amendement.objet = unjustify(amend["exposeSommaire"])
+    DBSession.flush()  # make sure foreign keys are updated
     return amendement, created
 
 

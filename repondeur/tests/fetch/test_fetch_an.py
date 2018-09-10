@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 import responses
+import transaction
 
 from zam_repondeur.fetch.an.amendements import build_url
 
@@ -67,6 +68,61 @@ def test_fetch_and_parse_all(lecture_an, app):
     assert [amdt.position for amdt in amendements] == list(range(1, 6))
     assert created == 5
     assert errored == []
+
+
+@responses.activate
+def test_fetch_and_parse_all_sous_amendements(app):
+    from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
+    from zam_repondeur.models import Lecture
+
+    with transaction.manager:
+        lecture = Lecture.create(
+            chambre="an",
+            session="15",
+            num_texte=911,
+            titre="Titre lecture",
+            organe="PO717460",
+            dossier_legislatif="Titre dossier legislatif",
+        )
+
+    responses.add(
+        responses.GET,
+        build_url(15, 911),
+        body=read_sample_data("an/911/liste.xml"),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        build_url(15, 911, 347),
+        body=read_sample_data("an/911/347.xml"),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        build_url(15, 911, 2482),
+        body=read_sample_data("an/911/2482.xml"),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        build_url(15, 911, 2512),
+        body=read_sample_data("an/911/2512.xml"),
+        status=200,
+    )
+
+    amendements, created, errored = fetch_and_parse_all(lecture=lecture)
+
+    assert len(amendements) == 3
+    assert amendements[0].num == 347
+    assert amendements[1].num == 2482
+    assert amendements[2].num == 2512
+
+    assert created == 3
+    assert errored == []
+
+    for amendement in amendements[1:]:
+        assert amendement.parent is amendements[0]
+        assert amendement.parent_pk == amendements[0].pk
 
 
 @responses.activate
@@ -247,14 +303,24 @@ def test_fetch_sous_amendement(lecture_an, app):
 
     responses.add(
         responses.GET,
+        build_url(15, 269, 155),
+        body=read_sample_data("an/269/155.xml"),
+        status=200,
+    )
+
+    responses.add(
+        responses.GET,
         build_url(15, 269, 941),
         body=read_sample_data("an/269/941.xml"),
         status=200,
     )
 
-    amendement, created = fetch_amendement(lecture=lecture_an, numero=941, position=1)
+    amendement1, created = fetch_amendement(lecture=lecture_an, numero=155, position=1)
+    assert created
+    amendement2, created = fetch_amendement(lecture=lecture_an, numero=941, position=1)
+    assert created
 
-    assert amendement.parent.num == 155
+    assert amendement2.parent is amendement1
 
 
 @responses.activate
@@ -340,6 +406,49 @@ def test_fetch_amendement_again_article_has_changed(lecture_an, app):
     amendement2, created = fetch_amendement(lecture=lecture_an, numero=177, position=1)
     assert not created
     assert amendement2 is amendement1
+
+
+@responses.activate
+def test_fetch_again_parent_has_changed(lecture_an, app):
+    from zam_repondeur.fetch.an.amendements import fetch_amendement
+    from zam_repondeur.models import DBSession
+
+    responses.add(
+        responses.GET,
+        build_url(15, 269, 155),
+        body=read_sample_data("an/269/155.xml"),
+        status=200,
+    )
+
+    responses.add(
+        responses.GET,
+        build_url(15, 269, 941),
+        body=read_sample_data("an/269/941.xml"),
+        status=200,
+    )
+
+    parent1, created = fetch_amendement(lecture=lecture_an, numero=155, position=1)
+    assert created
+
+    child1, created = fetch_amendement(lecture=lecture_an, numero=941, position=1)
+    assert created
+
+    assert child1.parent is parent1
+    assert child1.parent_pk == parent1.pk
+
+    child1.parent = None  # let's change the parent amendement
+    DBSession.flush()
+
+    parent2, created = fetch_amendement(lecture=lecture_an, numero=155, position=1)
+    assert not created
+    assert parent2 is parent1
+
+    child2, created = fetch_amendement(lecture=lecture_an, numero=941, position=1)
+    assert not created
+    assert child2 is child1
+
+    assert child2.parent_pk == parent2.pk
+    assert child2.parent is parent2
 
 
 @pytest.mark.parametrize(

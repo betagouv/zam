@@ -1,3 +1,4 @@
+import logging
 from collections import OrderedDict
 from http import HTTPStatus
 from typing import Dict, List, Tuple, Union
@@ -18,6 +19,9 @@ from zam_repondeur.models import (
 )
 
 
+logger = logging.getLogger(__name__)
+
+
 BASE_URL = "http://www.assemblee-nationale.fr"
 
 # Deprecation warning: this API for fetching amendements will be removed in the future
@@ -29,7 +33,7 @@ PATTERN_AMENDEMENT = (
 
 
 def aspire_an(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
-    print("Récupération des amendements déposés...")
+    logger.info("Récupération des amendements sur %r", lecture)
     try:
         amendements, created, errored = fetch_and_parse_all(lecture=lecture)
     except NotFound:
@@ -51,6 +55,7 @@ def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[s
             )
             created += int(created_)
         except NotFound:
+            logger.warning("Could not find amendement %r", item["@numero"])
             errored.append(item["@numero"])
             continue
         amendements.append(amendement)
@@ -59,6 +64,7 @@ def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[s
 
 
 def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
+    logger.info("Récupération de %r", url)
     resp = cached_session.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:
         raise NotFound(url)
@@ -102,6 +108,7 @@ def fetch_amendement(
     """
     Récupère un amendement depuis son numéro.
     """
+    logger.info("Récupération de l'amendement %r", numero)
     amend = _retrieve_amendement(lecture, numero)
     subdiv = parse_division(amend["division"])
     article, created = get_one_or_create(

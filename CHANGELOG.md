@@ -2,7 +2,7 @@
 
 ## Prochains évènements
 
-### Date de prochaine démonstration : 19 septembre (exceptionnellement le mercredi au lieu du mardi).
+### Date de prochaine démonstration : 19 septembre à 15h (exceptionnellement le mercredi au lieu du mardi).
 
 <h2 class="center">[Accès au répondeur](/repondeur/) — [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
 

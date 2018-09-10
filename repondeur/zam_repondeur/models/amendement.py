@@ -151,7 +151,14 @@ class Amendement(Base):  # type: ignore
 
     _SUFFIX_TO_RECTIF = {suffix: rectif for rectif, suffix in _RECTIF_TO_SUFFIX.items()}
 
-    _NUM_RE = re.compile(r"(?P<num>\d+)(?P<rect> rect\.(?: (?P<suffix>\w+))?)?")
+    _NUM_RE = re.compile(
+        r"""
+            (?P<prefix>[A-Z\|\-]*)
+            (?P<num>\d+)
+            (?P<rect>\ rect\.(?:\ (?P<suffix>\w+))?)?
+        """,
+        re.VERBOSE,
+    )
 
     ABANDONED = ("retiré", "irrecevable", "tombé")
 
@@ -159,9 +166,6 @@ class Amendement(Base):  # type: ignore
     def parse_num(text: str) -> Tuple[int, int]:
         if text == "":
             return 0, 0
-        if text.startswith("COM-"):
-            start = len("COM-")
-            text = text[start:]
 
         mo = Amendement._NUM_RE.match(text)
         if mo is None:

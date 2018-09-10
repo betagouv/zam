@@ -42,11 +42,16 @@ def test_num_disp(lecture_senat, article1_senat, text, num, rectif, disp):
 def test_amendement_parent_relationship(amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
-    parent, child = DBSession.query(Amendement).all()
-    assert child.parent is None
-    child.parent = parent
-    DBSession.add(child)
-    assert child.parent.num == parent.num
+    a, b = DBSession.query(Amendement).all()
+
+    assert a.parent is None
+    assert b.parent is None
+
+    b.parent = a
+
+    # Note: when updating a relationship, the foreign key is only updated on a flush
+    DBSession.flush()
+    assert b.parent_pk == a.pk
 
 
 def test_amendement_unicity(amendements_an, article1av_an):

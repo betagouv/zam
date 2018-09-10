@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendement>
+    <numero>2512</numero>
+    <numeroLong>2512</numeroLong>
+    <numeroParent>347</numeroParent>
+    <amendementEtendu>0</amendementEtendu>
+    <etat>AC</etat>
+    <missionVisee xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dispositif><![CDATA[<p style="text-align: justify;">&#192; la fin de l&#8217;alin&#233;a&#160;2, substituer aux mots&#160;:</p>
+<p style="text-align: justify;">&#171;&#160;la date de sa promulgation&#160;&#187;</p>
+<p style="text-align: justify;">les mots&#160;:</p>
+<p style="text-align: justify;">&#171;&#160;son entr&#233;e en vigueur&#160;&#187;.</p>]]></dispositif>
+    <exposeSommaire><![CDATA[<p style="text-align: justify;">L&#8217;entr&#233;e en vigueur d&#8217;une loi peut &#234;tre diff&#233;r&#233;e par rapport &#224; la date de sa promulgation. A titre d&#8217;exemple, le pr&#233;l&#232;vement &#224; la source mis en place par la loi n&#176; 2016&#8209;1917 du&#160;29 d&#233;cembre 2016&#160;de finances pour 2017 n&#8217;est pas encore en vigueur. Il convient donc de contr&#244;ler l&#8217;application d&#8217;une loi six mois apr&#232;s son entr&#233;e en vigueur.</p>]]></exposeSommaire>
+    <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <listeDesSignataires> Mme&amp;#160;Untermaier,  Mme&amp;#160;Rabault, M.&amp;#160;Faure, M.&amp;#160;Aviragnet, Mme&amp;#160;Bareigts, Mme&amp;#160;Battistel, Mme&amp;#160;Bi&amp;#233;mouret, M.&amp;#160;Bouillon, M.&amp;#160;Jean-Louis&amp;#160;Bricout, M.&amp;#160;Carvounas, M.&amp;#160;Alain&amp;#160;David, Mme&amp;#160;Laurence&amp;#160;Dumont, M.&amp;#160;Garot, M.&amp;#160;David&amp;#160;Habib, M.&amp;#160;Hutin, M.&amp;#160;Juanico, Mme&amp;#160;Karamanli, M.&amp;#160;J&amp;#233;r&amp;#244;me&amp;#160;Lambert, M.&amp;#160;Le Foll, M.&amp;#160;Letchimy, Mme&amp;#160;Manin, Mme&amp;#160;Pau-Langevin, Mme&amp;#160;Pires Beaune, M.&amp;#160;Potier, M.&amp;#160;Pueyo, M.&amp;#160;Pupponi, M.&amp;#160;Saulignac, Mme&amp;#160;Vainqueur-Christophe, M.&amp;#160;Vallaud, Mme&amp;#160;Victory et les membres du groupe Nouvelle Gauche</listeDesSignataires>
+    <listeDesTribunCosignataires>609590;609332;642764;610681;342415;508;267233;605069;429893;1008;1198;333285;1592;333818;332614;335054;1809;588886;337483;720988;335532;608172;607553;608011;405480;340343;643145;719930;340357</listeDesTribunCosignataires>
+    <libelleSeance></libelleSeance>
+    <sortEnSeance xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dateDepot>11/07/2018</dateDepot>
+    <datePublication>12/07/2018</datePublication>
+    <dateSaisieSort xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <article99>0</article99>
+    <triAmendement>gaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafahoto</triAmendement>
+    <codeLoi>Constitution</codeLoi>
+    <refCodeLoi>51-3</refCodeLoi>
+    <urlPDF>/15/amendements/0911/AN/2512.pdf</urlPDF>
+    <dateDepotAffiche>11 juillet 2018 </dateDepotAffiche>
+    <division>
+        <titre>Article 9</titre>
+        <divisionDesignation>APRÈS ART. 9</divisionDesignation>
+        <type>ARTICLE</type>
+        <avantApres>Apres</avantApres>
+        <divisionRattache>APRÈS L'ARTICLE 9, insérer l'article suivant:</divisionRattache>
+        <articleAdditionnel>1</articleAdditionnel>
+        <divisionAdditionnelle xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlDivisionTexteVise>/15/textes/0911.asp#D_Article_9</urlDivisionTexteVise>
+    </division>
+    <examen>
+        <examenId>1244</examenId>
+        <organeSaisi>Séance publique</organeSaisi>
+        <typeSaisie>En séance</typeSaisie>
+        <idOrganeProprietaire>717460</idOrganeProprietaire>
+    </examen>
+    <texte>
+        <titre>POUR UNE DÉMOCRATIE PLUS REPRÉSENTATIVE, RESPONSABLE ET EFFICACE</titre>
+        <titreCourt>DÉMOCRATIE PLUS REPRÉSENTATIVE, RESPONSABLE ET EFFICACE</titreCourt>
+        <numBibard>911</numBibard>
+        <numsBibardsDesPropositions></numsBibardsDesPropositions>
+        <etapeTexte>1ère lecture (1ère assemblée saisie)</etapeTexte>
+        <numeroLegislature>15</numeroLegislature>
+        <mentionSecondeDeliberation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <numeroPartiePLF xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <idDossier>36615</idDossier>
+        <libelleDossier>Pouvoirs publics : pour une démocratie plus représentative, responsable et efficace</libelleDossier>
+        <urlDossierWeb>http://www.assemblee-nationale.fr/15/dossiers/democratie_plus_representative_responsable_efficace.asp</urlDossierWeb>
+    </texte>
+    <seance xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <alinea xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <auteur>
+        <tribunId>608695</tribunId>
+        <civilite>Mme</civilite>
+        <nom>Untermaier</nom>
+        <prenom>Cécile</prenom>
+        <auteurLabel>Mme Untermaier</auteurLabel>
+        <estGouvernement>0</estGouvernement>
+        <estRapporteur>0</estRapporteur>
+        <groupeTribunId>730946</groupeTribunId>
+    </auteur>
+    <cosignataires/>
+    <cosignatairesMentionLibre>
+        <titre>et les membres du groupe Nouvelle Gauche</titre>
+        <libAbregeGroupe>NG</libAbregeGroupe>
+        <libAbrevGroupe>NG</libAbrevGroupe>
+    </cosignatairesMentionLibre>
+    <auteurParent> de la commission des lois</auteurParent>
+    <amdtDejaMisADiscute>1</amdtDejaMisADiscute>
+    <typeRectification xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <causeDeRetrait xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <estMasque>0</estMasque>
+    <retireAvantPublication>0</retireAvantPublication>
+    <afficherEnRecevabilite>false</afficherEnRecevabilite>
+    <isLiasseRapporteur>false</isLiasseRapporteur>
+    <isMarqueDeRevisionVisible>false</isMarqueDeRevisionVisible>
+    <isPlfrMode>false</isPlfrMode>
+    <isPlfMode>false</isPlfMode>
+    <accordGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <statutDiffusion>normal</statutDiffusion>
+</amendement>

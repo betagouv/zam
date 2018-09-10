@@ -1,4 +1,5 @@
 import csv
+import logging
 from collections import OrderedDict
 from http import HTTPStatus
 from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple
@@ -12,11 +13,14 @@ from zam_repondeur.fetch.senat.senateurs import fetch_and_parse_senateurs, Senat
 from .parse import parse_from_csv, parse_from_json
 
 
+logger = logging.getLogger(__name__)
+
+
 BASE_URL = "https://www.senat.fr"
 
 
 def aspire_senat(lecture: Lecture) -> Tuple[List[Amendement], int]:
-    print("Récupération des amendements déposés...")
+    logger.info("Récupération des amendements déposés sur %r", lecture)
     created = 0
     amendements: List[Amendement] = []
     try:
@@ -68,12 +72,13 @@ def _process_amendements(
 ) -> Iterable[Amendement]:
 
     # Les amendements discutés en séance, par ordre de passage
-    print("Récupération des amendements soumis à la discussion...")
+    logger.info("Récupération des amendements soumis à la discussion sur %r", lecture)
+
     amendements_derouleur = _fetch_and_parse_discussed(lecture=lecture, phase="seance")
     if len(amendements_derouleur) == 0:
-        print("Aucun amendement soumis à la discussion pour l'instant!")
+        logger.info("Aucun amendement soumis à la discussion pour l'instant!")
 
-    print("Récupération de la liste des sénateurs...")
+    logger.info("Récupération de la liste des sénateurs...")
     senateurs_by_matricule = fetch_and_parse_senateurs()
 
     amendements_avec_groupe = _enrich_groupe_parlementaire(

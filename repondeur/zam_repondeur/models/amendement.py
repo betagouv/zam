@@ -11,7 +11,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 
 from .base import Base, DBSession
 
@@ -57,7 +57,9 @@ class Amendement(Base):  # type: ignore
     # Relations.
     parent_pk = Column(Integer, ForeignKey("amendements.pk"), nullable=True)
     parent_rectif = Column(Integer, nullable=True)
-    parent = relationship("Amendement", uselist=False, primaryjoin=(parent_pk == pk))
+    parent = relationship(
+        "Amendement", uselist=False, remote_side=[pk], backref=backref("children")
+    )
     lecture_pk = Column(Integer, ForeignKey("lectures.pk"))
     lecture = relationship("Lecture", back_populates="amendements")
     article_pk = Column(Integer, ForeignKey("articles.pk"))
@@ -70,7 +72,7 @@ class Amendement(Base):  # type: ignore
     comments = Column(Text, nullable=True)
     bookmarked_at = Column(DateTime, nullable=True)
 
-    __repr_keys__ = ("pk", "num", "rectif", "lecture_pk", "article_pk")
+    __repr_keys__ = ("pk", "num", "rectif", "lecture_pk", "article_pk", "parent_pk")
 
     @classmethod
     def create(  # type: ignore

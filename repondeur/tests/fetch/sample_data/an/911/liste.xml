@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amdtsParOrdreDeDiscussion  bibard="911"  bibardSuffixe=""  organe="AN"  legislature="15"  titre="d&#233;mocratie plus repr&#233;sentative, responsable et efficace"  type="projet de loi constitutionnelle"  nbrAmdtRestant="1471">
+  <amendements>
+    <amendement  place="Après l'article 9"  numero="347"  sort=""  parentNumero="X"  auteurLabel="CION_LOIS"  auteurLabelFull="CION_LOIS"  auteurGroupe=""  alineaLabel=""  missionLabel=""  discussionCommune="3448"  discussionCommuneAmdtPositon="milieu"  discussionCommuneSsAmdtPositon=""  discussionIdentique="8496"  discussionIdentiqueAmdtPositon="debut"  discussionIdentiqueSsAmdtPositon=""  position="1629/2347"  />
+    <amendement  place="Après l'article 9"  numero="2482"  sort=""  parentNumero="347"  auteurLabel="Mme MAUBORGNE"  auteurLabelFull="Mme MAUBORGNE Sereine"  auteurGroupe="LaREM"  alineaLabel=""  missionLabel=""  discussionCommune=""  discussionCommuneAmdtPositon="milieu"  discussionCommuneSsAmdtPositon=""  discussionIdentique=""  discussionIdentiqueAmdtPositon="milieu"  discussionIdentiqueSsAmdtPositon=""  position="1630/2347"  />
+    <amendement  place="Après l'article 9"  numero="2512"  sort=""  parentNumero="347"  auteurLabel="Mme UNTERMAIER"  auteurLabelFull="Mme UNTERMAIER C&#233;cile"  auteurGroupe="NG"  alineaLabel=""  missionLabel=""  discussionCommune=""  discussionCommuneAmdtPositon="milieu"  discussionCommuneSsAmdtPositon=""  discussionIdentique=""  discussionIdentiqueAmdtPositon="milieu"  discussionIdentiqueSsAmdtPositon=""  position="1631/2347"  />
+  </amendements>
+</amdtsParOrdreDeDiscussion>

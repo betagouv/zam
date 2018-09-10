@@ -70,6 +70,8 @@ class Amendement(Base):  # type: ignore
     comments = Column(Text, nullable=True)
     bookmarked_at = Column(DateTime, nullable=True)
 
+    __repr_keys__ = ("pk", "num", "rectif", "lecture_pk", "article_pk")
+
     @classmethod
     def create(  # type: ignore
         cls,

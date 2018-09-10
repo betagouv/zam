@@ -44,6 +44,8 @@ class Lecture(Base):  # type: ignore
         cascade="all, delete, delete-orphan",
     )
 
+    __repr_keys__ = ("pk", "chambre", "session", "organe", "num_texte")
+
     def __str__(self) -> str:
         return ", ".join(
             [

@@ -4,36 +4,27 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 EXAMPLES = [
-    ("42", 42, 0),
-    ("42 rect.", 42, 1),
-    ("42 rect. bis", 42, 2),
-    ("42 rect. ter", 42, 3),
+    ("", 0, 0, "0"),
+    ("COM-1", 1, 0, "1"),
+    ("COM-48 rect.", 48, 1, "48 rect."),
+    ("CE208", 208, 0, "208"),
+    ("CE|208", 208, 0, "208"),
+    ("42", 42, 0, "42"),
+    ("42 rect.", 42, 1, "42 rect."),
+    ("42 rect. bis", 42, 2, "42 rect. bis"),
+    ("42 rect. ter", 42, 3, "42 rect. ter"),
 ]
 
 
-@pytest.mark.parametrize("text,num,rectif", EXAMPLES)
-def test_parse_num(text, num, rectif):
+@pytest.mark.parametrize("text,num,rectif,disp", EXAMPLES)
+def test_parse_num(text, num, rectif, disp):
     from zam_repondeur.models import Amendement
 
     assert Amendement.parse_num(text) == (num, rectif)
 
 
-@pytest.mark.parametrize("text,num,rectif", [("", 0, 0)])
-def test_parse_num_empty(text, num, rectif):
-    from zam_repondeur.models import Amendement
-
-    assert Amendement.parse_num(text) == (num, rectif)
-
-
-@pytest.mark.parametrize("text,num,rectif", [("COM-1", 1, 0), ("COM-48 rect.", 48, 1)])
-def test_parse_num_commissions(text, num, rectif):
-    from zam_repondeur.models import Amendement
-
-    assert Amendement.parse_num(text) == (num, rectif)
-
-
-@pytest.mark.parametrize("text,num,rectif", EXAMPLES)
-def test_num_disp(lecture_senat, article1_senat, text, num, rectif):
+@pytest.mark.parametrize("text,num,rectif,disp", EXAMPLES)
+def test_num_disp(lecture_senat, article1_senat, text, num, rectif, disp):
     from zam_repondeur.models import Amendement
 
     amendement = Amendement.create(
@@ -45,7 +36,7 @@ def test_num_disp(lecture_senat, article1_senat, text, num, rectif):
         auteur="M. Dupont",
         parent=None,
     )
-    assert amendement.num_disp == text
+    assert amendement.num_disp == disp
 
 
 def test_amendement_parent_relationship(amendements_an):

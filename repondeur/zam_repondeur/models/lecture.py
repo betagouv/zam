@@ -32,16 +32,16 @@ class Lecture(Base):  # type: ignore
         Amendement,
         order_by=(Amendement.position, Amendement.num),
         back_populates="lecture",
-        cascade="all, delete, delete-orphan",
+        cascade="all, delete-orphan",
     )
     articles = relationship(
-        "Article", back_populates="lecture", cascade="all, delete, delete-orphan"
+        "Article", back_populates="lecture", cascade="all, delete-orphan"
     )
     journal = relationship(
         Journal,
         order_by=(Journal.created_at.desc()),
         back_populates="lecture",
-        cascade="all, delete, delete-orphan",
+        cascade="all, delete-orphan",
     )
 
     __repr_keys__ = ("pk", "chambre", "session", "organe", "num_texte")

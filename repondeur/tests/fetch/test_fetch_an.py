@@ -21,37 +21,37 @@ def test_fetch_and_parse_all(lecture_an, app):
     responses.add(
         responses.GET,
         build_url(15, 269),
-        body=read_sample_data("an_liste.xml"),
+        body=read_sample_data("an/269/liste.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
         build_url(15, 269, 177),
-        body=read_sample_data("an_177.xml"),
+        body=read_sample_data("an/269/177.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
         build_url(15, 269, 270),
-        body=read_sample_data("an_270.xml"),
+        body=read_sample_data("an/269/270.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
         build_url(15, 269, 723),
-        body=read_sample_data("an_723.xml"),
+        body=read_sample_data("an/269/723.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
         build_url(15, 269, 135),
-        body=read_sample_data("an_135.xml"),
+        body=read_sample_data("an/269/135.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
         build_url(15, 269, 192),
-        body=read_sample_data("an_192.xml"),
+        body=read_sample_data("an/269/192.xml"),
         status=200,
     )
 
@@ -76,32 +76,32 @@ def test_fetch_and_parse_all_with_404(lecture_an, app):
     responses.add(
         responses.GET,
         build_url(15, 269),
-        body=read_sample_data("an_liste.xml"),
+        body=read_sample_data("an/269/liste.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
         build_url(15, 269, 177),
-        body=read_sample_data("an_177.xml"),
+        body=read_sample_data("an/269/177.xml"),
         status=200,
     )
     responses.add(responses.GET, build_url(15, 269, 270), status=404)
     responses.add(
         responses.GET,
         build_url(15, 269, 723),
-        body=read_sample_data("an_723.xml"),
+        body=read_sample_data("an/269/723.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
         build_url(15, 269, 135),
-        body=read_sample_data("an_135.xml"),
+        body=read_sample_data("an/269/135.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
         build_url(15, 269, 192),
-        body=read_sample_data("an_192.xml"),
+        body=read_sample_data("an/269/192.xml"),
         status=200,
     )
 
@@ -125,7 +125,7 @@ def test_fetch_amendements(lecture_an, app):
     responses.add(
         responses.GET,
         build_url(15, 269),
-        body=read_sample_data("an_liste.xml"),
+        body=read_sample_data("an/269/liste.xml"),
         status=200,
     )
 
@@ -169,7 +169,7 @@ def test_fetch_amendement(lecture_an, app):
     responses.add(
         responses.GET,
         build_url(15, 269, 177),
-        body=read_sample_data("an_177.xml"),
+        body=read_sample_data("an/269/177.xml"),
         status=200,
     )
 
@@ -213,7 +213,7 @@ def test_fetch_amendement_gouvernement(lecture_an):
     responses.add(
         responses.GET,
         build_url(15, 269, 723),
-        body=read_sample_data("an_723.xml"),
+        body=read_sample_data("an/269/723.xml"),
         status=200,
     )
 
@@ -230,7 +230,7 @@ def test_fetch_amendement_commission(lecture_an):
     responses.add(
         responses.GET,
         build_url(15, 269, 135),
-        body=read_sample_data("an_135.xml"),
+        body=read_sample_data("an/269/135.xml"),
         status=200,
     )
 
@@ -248,7 +248,7 @@ def test_fetch_sous_amendement(lecture_an, app):
     responses.add(
         responses.GET,
         build_url(15, 269, 941),
-        body=read_sample_data("an_941.xml"),
+        body=read_sample_data("an/269/941.xml"),
         status=200,
     )
 
@@ -264,7 +264,7 @@ def test_fetch_amendement_sort_nil(lecture_an, app):
     responses.add(
         responses.GET,
         build_url(15, 269, 38),
-        body=read_sample_data("an_38.xml"),
+        body=read_sample_data("an/269/38.xml"),
         status=200,
     )
 
@@ -280,7 +280,7 @@ def test_fetch_amendement_apres(lecture_an, app):
     responses.add(
         responses.GET,
         build_url(15, 269, 192),
-        body=read_sample_data("an_192.xml"),
+        body=read_sample_data("an/269/192.xml"),
         status=200,
     )
 
@@ -309,7 +309,7 @@ def test_fetch_amendement_again(lecture_an, app):
     responses.add(
         responses.GET,
         build_url(15, 269, 177),
-        body=read_sample_data("an_177.xml"),
+        body=read_sample_data("an/269/177.xml"),
         status=200,
     )
 
@@ -328,7 +328,7 @@ def test_fetch_amendement_again_article_has_changed(lecture_an, app):
     responses.add(
         responses.GET,
         build_url(15, 269, 177),
-        body=read_sample_data("an_177.xml"),
+        body=read_sample_data("an/269/177.xml"),
         status=200,
     )
 

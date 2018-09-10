@@ -1,7 +1,7 @@
 import logging
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 from urllib.parse import urljoin
 
 import xmltodict
@@ -110,7 +110,18 @@ def fetch_amendement(
     """
     logger.info("Récupération de l'amendement %r", numero)
     amend = _retrieve_amendement(lecture, numero)
-    subdiv = parse_division(amend["division"])
+    article = _get_article(lecture, amend["division"])
+    parent = _get_parent(lecture, article, amend)
+    amendement, created = _create_or_update_amendement(
+        lecture, article, parent, amend, position
+    )
+    return amendement, created
+
+
+def _get_article(lecture: Lecture, division: dict) -> Article:
+    subdiv = parse_division(division)
+    article: Article
+    created: bool
     article, created = get_one_or_create(
         DBSession,
         Article,
@@ -120,7 +131,14 @@ def fetch_amendement(
         mult=subdiv.mult,
         pos=subdiv.pos,
     )
+    return article
+
+
+def _get_parent(
+    lecture: Lecture, article: Article, amend: OrderedDict
+) -> Optional[Amendement]:
     parent_num, parent_rectif = Amendement.parse_num(get_parent_raw_num(amend))
+    parent: Optional[Amendement]
     if parent_num:
         parent, created = get_one_or_create(
             DBSession,
@@ -131,6 +149,16 @@ def fetch_amendement(
         )
     else:
         parent = None
+    return parent
+
+
+def _create_or_update_amendement(
+    lecture: Lecture,
+    article: Article,
+    parent: Optional[Amendement],
+    amend: OrderedDict,
+    position: int,
+) -> Tuple[Amendement, bool]:
     amendement, created = get_one_or_create(
         DBSession,
         Amendement,

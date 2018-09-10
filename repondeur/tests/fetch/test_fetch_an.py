@@ -302,6 +302,46 @@ def test_fetch_amendement_not_found(lecture_an, app):
         fetch_amendement(lecture=lecture_an, numero=177, position=1)
 
 
+@responses.activate
+def test_fetch_amendement_again(lecture_an, app):
+    from zam_repondeur.fetch.an.amendements import fetch_amendement
+
+    responses.add(
+        responses.GET,
+        build_url(15, 269, 177),
+        body=read_sample_data("an_177.xml"),
+        status=200,
+    )
+
+    amendement1, created = fetch_amendement(lecture=lecture_an, numero=177, position=1)
+    assert created
+
+    amendement2, created = fetch_amendement(lecture=lecture_an, numero=177, position=1)
+    assert not created
+    assert amendement2 is amendement1
+
+
+@responses.activate
+def test_fetch_amendement_again_article_has_changed(lecture_an, app):
+    from zam_repondeur.fetch.an.amendements import fetch_amendement
+
+    responses.add(
+        responses.GET,
+        build_url(15, 269, 177),
+        body=read_sample_data("an_177.xml"),
+        status=200,
+    )
+
+    amendement1, created = fetch_amendement(lecture=lecture_an, numero=177, position=1)
+    assert created
+
+    amendement1.article = None  # let's change the article
+
+    amendement2, created = fetch_amendement(lecture=lecture_an, numero=177, position=1)
+    assert not created
+    assert amendement2 is amendement1
+
+
 @pytest.mark.parametrize(
     "division,type_,num,mult,pos",
     [

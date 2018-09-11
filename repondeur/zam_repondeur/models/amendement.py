@@ -58,7 +58,11 @@ class Amendement(Base):  # type: ignore
     parent_pk = Column(Integer, ForeignKey("amendements.pk"), nullable=True)
     parent_rectif = Column(Integer, nullable=True)
     parent = relationship(
-        "Amendement", uselist=False, remote_side=[pk], backref=backref("children")
+        "Amendement",
+        uselist=False,
+        remote_side=[pk],
+        backref=backref("children"),
+        post_update=True,
     )
     lecture_pk = Column(Integer, ForeignKey("lectures.pk"))
     lecture = relationship("Lecture", back_populates="amendements")

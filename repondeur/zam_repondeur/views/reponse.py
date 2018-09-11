@@ -45,10 +45,11 @@ class ReponseEdit:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        self.amendement.avis = self.request.POST["avis"]
-        self.amendement.observations = clean_html(self.request.POST["observations"])
-        self.amendement.reponse = clean_html(self.request.POST["reponse"])
-        self.amendement.comments = clean_html(self.request.POST["comments"])
+        if "avis" in self.request.POST:
+            self.amendement.avis = self.request.POST["avis"]
+        for field in ["observations", "reponse", "comments"]:
+            if field in self.request.POST:
+                setattr(self.amendement, field, clean_html(self.request.POST[field]))
         self.lecture.modified_at = datetime.utcnow()
         self.request.session.flash(
             Message(cls="success", text="Les modifications ont bien été enregistrées.")

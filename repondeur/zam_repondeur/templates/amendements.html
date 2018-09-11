@@ -183,6 +183,8 @@
                     <nobr>
                         {% if amendement.avis %}
                             {{ amendement.avis }}
+                        {% elif amendement.gouvernemental %}
+                            &mdash;
                         {% else %}
                             Aucun
                         {% endif %}

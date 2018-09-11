@@ -6,6 +6,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.clean import clean_html
+from zam_repondeur.message import Message
 from zam_repondeur.models import AVIS
 from zam_repondeur.models.visionneuse import build_tree
 from zam_repondeur.resources import (
@@ -49,6 +50,9 @@ class ReponseEdit:
         self.amendement.reponse = clean_html(self.request.POST["reponse"])
         self.amendement.comments = clean_html(self.request.POST["comments"])
         self.lecture.modified_at = datetime.utcnow()
+        self.request.session.flash(
+            Message(cls="success", text="Les modifications ont bien été enregistrées.")
+        )
 
         collection: AmendementCollection = self.context.parent
         return HTTPFound(location=self.request.resource_url(collection))

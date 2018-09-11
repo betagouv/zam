@@ -135,6 +135,7 @@ class LectureView:
     @view_config(request_method="POST")
     def post(self) -> Response:
         DBSession.delete(self.lecture)
+        DBSession.flush()
         self.request.session.flash(
             Message(cls="success", text="Lecture supprimée avec succès.")
         )

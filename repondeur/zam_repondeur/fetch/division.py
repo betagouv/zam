@@ -56,6 +56,10 @@ def _parse_subdiv(libelle: str) -> SubDiv:
         start = len("Chapitre ")
         return SubDiv("chapitre", libelle[start:], "", "")
 
+    if libelle.startswith("Section "):
+        start = len("Section ")
+        return SubDiv("section", libelle[start:], "", "")
+
     mo = SUBDIV_RE.match(libelle)
     if mo is not None:
         num = "1" if mo.group("num").lower() in {"1er", "premier"} else mo.group("num")

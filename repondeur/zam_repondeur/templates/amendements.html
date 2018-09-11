@@ -6,6 +6,9 @@
     .action i {
         margin-right: 0.33rem;
     }
+    th {
+        white-space: nowrap;
+    }
     th::after {
         content: " ⇵";
     }
@@ -27,8 +30,11 @@
         border:none;
         background: inherit;
     }
-    .article-header {
-        white-space: nowrap;
+    tr.hidden-article, tr.hidden-avis {
+        display: none;
+    }
+    td.input-required a.action {
+        color: red;
     }
 </style>
 {% endblock %}
@@ -130,21 +136,36 @@
         <thead>
             <tr>
                 <th></th>
-                <th class="article-header">Article <input class="form-control form-control-sm" type="text"></th>
+                <th>
+                    Article
+                    <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº">
+                </th>
                 <th>Nº</th>
                 <th class="nosort">Objet</th>
                 <th>Auteur</th>
                 <th>Groupe</th>
                 <th>Sort</th>
-                <th>Avis</th>
+                <th>
+                    Avis
+                    <select id="avis-filter">
+                        <option value="all">Tous</option>
+                        <option value="1">Avec</option>
+                        <option value="0">Sans</option>
+                    </select>
+                </th>
             </tr>
         </thead>
+        <tbody>
         {% for amendement in amendements %}
-            <tr data-value="{%- if amendement.article.type == 'article' -%}
-                {{ amendement.article.num }} {{ amendement.article.mult }}
-            {%- else -%}
-                {{ amendement.article.type }}
-            {%- endif -%}">
+            <tr data-article="
+                    {%- if amendement.article.type == 'article' -%}
+                        {{ amendement.article.num }} {{ amendement.article.mult }}
+                    {%- else -%}
+                        {{ amendement.article.type }}
+                    {%- endif -%}
+                "
+                data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}"
+            >
                 <td data-sortkey="{{ amendement.bookmarked_at or '' }}" class="bookmark">
                     <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">
                         {% if amendement.bookmarked_at %}
@@ -179,7 +200,11 @@
                 <td>{{ amendement.auteur }}</td>
                 <td>{{ amendement.groupe }}</td>
                 <td>{{ amendement.sort }}</td>
-                <td>
+                <td
+                    {% if not amendement.gouvernemental and not amendement.avis %}
+                        class="input-required"
+                    {% endif %}
+                >
                     <nobr>
                         {% if amendement.avis %}
                             {{ amendement.avis }}
@@ -224,18 +249,34 @@
         }
         tinysort(tableLines, options)
     })
-    var filterInput = table.querySelector('input')
-    filterInput.addEventListener('keyup', function (e) {
+    var articleFilter = table.querySelector('#article-filter')
+    articleFilter.addEventListener('keyup', function (e) {
         var value = e.target.value.trim()
         ;[].slice.call(tableLines).forEach(function (line) {
             if (!value) {
-                line.classList.remove("d-none")
+                line.classList.remove('hidden-article')
                 return
             }
-            if (line.dataset.value.trim() === value) {
-                line.classList.remove("d-none")
+            if (line.dataset.article.trim() === value) {
+                line.classList.remove('hidden-article')
             } else {
-                line.classList.add("d-none")
+                line.classList.add('hidden-article')
+            }
+        })
+    })
+    var avisFilter = table.querySelector('#avis-filter')
+    avisFilter.addEventListener('change', function (e) {
+        var value = e.target.value.trim()
+        ;[].slice.call(tableLines).forEach(function (line) {
+            if (value === 'all') {
+                line.classList.remove('hidden-avis')
+                return
+            }
+            if (line.dataset.avis === value) {
+                line.classList.remove('hidden-avis')
+            }
+            else {
+                line.classList.add('hidden-avis')
             }
         })
     })

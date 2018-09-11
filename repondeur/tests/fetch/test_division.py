@@ -29,6 +29,7 @@ import pytest
         ("Article 31 (précédemment examiné)", "article", "31", "", ""),
         ("Annexe", "annexe", "", "", ""),
         ("ANNEXE B", "annexe", "B", "", ""),
+        ("Section 2", "section", "2", "", ""),
         ("Chapitre III", "chapitre", "III", "", ""),
         ("Article Article 3 bis AAA", "article", "3", "bis", ""),
         ("Article additionnel après l'article 13", "article", "13", "", "après"),

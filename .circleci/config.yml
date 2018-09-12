@@ -9,7 +9,7 @@ jobs:
     docker:
       - image: circleci/python:3.6-stretch-browsers
         environment:
-          ZAM_TEST_DB_URL: postgresql://root@localhost/circle_test
+          ZAM_TEST_DB_URL: postgresql://postgres@localhost/circle_test
       - image: circleci/postgres:10.5-alpine-ram
       - image: redis
     steps:

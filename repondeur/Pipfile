@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 pyramid = "*"
 waitress = "*"
-"e1839a8" = {path = ".", editable = true}
 "pyramid-jinja2" = "*"
 requests = "*"
 bleach = "*"
@@ -25,6 +24,7 @@ rollbar = ">=0.14.4"
 huey = "*"
 redis = "*"
 "psycopg2" = "*"
+zam-repondeur = {editable = true, path = "."}
 
 [dev-packages]
 webtest = "*"

@@ -220,7 +220,7 @@ def clone_repo(ctx, repo, branch, path, user):
 def install_requirements(ctx, app_dir, user):
     ctx.sudo("apt-get update")
     ctx.sudo("apt-get install --yes python3-pip")
-    ctx.sudo("python3 -m pip install pipenv==2018.05.18")
+    ctx.sudo("python3 -m pip install pipenv==2018.7.1")
     ctx.sudo(f'bash -c "cd {app_dir} && pipenv install"', user=user)
 
 

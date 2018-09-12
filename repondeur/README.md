@@ -24,6 +24,7 @@ $ docker-compose exec webapp bash
 ### Requirements
 
 - Python 3.6+
+- Pipenv 2017.1.7
 - Postgres
 - Redis
 

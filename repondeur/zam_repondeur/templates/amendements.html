@@ -217,7 +217,6 @@
                 {# <th class="nosort">Objet</th> #}
                 <th>Auteur</th>
                 <th>Groupe</th>
-                <th>Sort</th>
                 <th>
                     Avis
                 </th>
@@ -229,7 +228,6 @@
                 </th>
                 <th></th>
                 {# <th></th> #}
-                <th></th>
                 <th></th>
                 <th></th>
                 <th>
@@ -285,7 +283,6 @@
                 </td>
  #}                <td>{{ amendement.auteur }}</td>
                 <td>{{ amendement.groupe }}</td>
-                <td>{{ amendement.sort }}</td>
                 <td
                     {% if not amendement.gouvernemental and not amendement.avis %}
                         class="input-required"

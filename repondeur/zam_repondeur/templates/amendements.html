@@ -15,6 +15,10 @@
         }
     }
 
+    .content {
+        margin: 0 1rem;
+    }
+
     /* Options avancées */
     .toggle:before {
         content: "↓";
@@ -164,6 +168,8 @@
 {% endblock %}
 
 {% block body %}
+<div class="content">
+
     <nav style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
         <a id="toggle-advanced" class="toggle button" href="#">
             Options avancées
@@ -232,10 +238,8 @@
         <thead class="box">
             <tr class="headers">
                 <th class="nosort"></th>
-                <th>
-                    Article
-                </th>
-                <th>Nº</th>
+                <th width="15%">Article</th>
+                <th width="15%">Nº</th>
                 <th>Auteur</th>
                 <th>Groupe</th>
                 <th>
@@ -319,6 +323,7 @@
         {% endfor %}
         </tbody>
     </table>
+</div>
 {% endblock %}
 
 {% block scripts %}

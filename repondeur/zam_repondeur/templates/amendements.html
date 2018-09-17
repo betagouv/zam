@@ -131,6 +131,10 @@
         margin-right: 0.33rem;
     }
 
+    td.article a {
+        text-decoration: underline;
+    }
+
 </style>
 {% endblock %}
 
@@ -274,13 +278,13 @@
                         {% endif %}
                     </form>
                 </td>
-                <td data-sortkey="{{ amendement.article.num }}">
-                    {{ amendement.article }}
+                <td class="article" data-sortkey="{{ amendement.article.num }}">
+                    <a href="{{ request.resource_url(context.parent['articles'][amendement.article_url_key]) }}"
                     {% if amendement.article.titre %}
-                        <br>{{ amendement.article.titre }}
+                        title="{{ amendement.article.titre }}"
                     {% endif %}
-                    <a class="action" href="{{ request.resource_url(context.parent['articles'][amendement.article_url_key]) }}">
-                        <i class="fas fa-edit"></i>
+                    >
+                        {{ amendement.article }}
                     </a>
                 </td>
                 <td data-sortkey="{{ amendement.num }}">

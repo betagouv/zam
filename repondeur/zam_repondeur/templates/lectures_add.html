@@ -52,6 +52,7 @@
         var selectLectures = $("#select-lecture").selectize({
             valueField: "key",
             labelField: "label",
+            searchField: ["label"],
             onChange: function(key) {
                 $("input[type=submit]").prop("disabled", (key === ""));
             },

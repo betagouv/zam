@@ -4,6 +4,14 @@
 
 ### Start the environment
 
+Create the Python package metadata (`zam_repondeur.egg_info`) on the host
+so that it exists when the app directory is mounted as a volume in the
+container (otherwise we would get a DistributionNotFound error at startup):
+
+```
+$ python3 setup.py egg_info
+```
+
 Build and start the whole system:
 
 ```

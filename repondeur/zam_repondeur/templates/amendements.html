@@ -110,12 +110,17 @@
         width: 4rem;
         padding: 0 .25rem;
     }
+    tr.hidden-article, tr.hidden-avis {
+        display: none;
+    }
+
+    /* Bookmarks */
     .bookmark input[type="submit"] {
         border:none;
         background: inherit;
     }
-    tr.hidden-article, tr.hidden-avis {
-        display: none;
+    .bookmark input.bookmarked {
+        color: #3167a6;
     }
 
     /* Mark amendements without a response */
@@ -217,7 +222,7 @@
     <table class="table" style="width:100%">
         <thead class="box">
             <tr class="headers">
-                <th></th>
+                <th class="nosort"></th>
                 <th>
                     Article
                 </th>
@@ -258,11 +263,11 @@
                 "
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}"
             >
-                <td data-sortkey="{{ amendement.bookmarked_at or '' }}" class="bookmark">
+                <td class="bookmark">
                     <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">
                         {% if amendement.bookmarked_at %}
                             <input type="hidden" name="bookmark" value="0">
-                            <input type="submit" name="submit" title="Cliquer pour enlever le favori" value="★">
+                            <input type="submit" name="submit" title="Cliquer pour enlever le favori" value="★" class="bookmarked">
                         {% else %}
                             <input type="hidden" name="bookmark" value="1">
                             <input type="submit" name="submit" title="Cliquer pour mettre en favori" value="☆">
@@ -416,11 +421,13 @@
                 if (submitInput.value == '☆') {
                     submitInput.value = '★'
                     submitInput.title = 'Cliquer pour enlever le favori'
+                    submitInput.classList.add("bookmarked")
                     bookmarkInput.value = '0'
                     target.parentElement.dataset.sortkey = 1
                 } else {
                     submitInput.value = '☆'
                     submitInput.title = 'Cliquer pour mettre en favori'
+                    submitInput.classList.remove("bookmarked")
                     bookmarkInput.value = '1'
                     target.parentElement.dataset.sortkey = ''
                 }

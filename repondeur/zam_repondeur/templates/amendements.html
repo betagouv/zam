@@ -14,14 +14,14 @@
             clear: both;
         }
     }
+
+    /* Options avancées */
     .toggle:before {
         content: "↓";
     }
     .toggle.enabled:before {
         content: "↑";
     }
-
-    /* Options avancées */
     #advanced {
         display: flex;
         flex-wrap: wrap;
@@ -58,6 +58,16 @@
         }
     }
 
+    /* Table formatting */
+    .table th, .table td {
+        vertical-align: middle;
+    }
+    .table thead th {
+        border: none;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
     /* Sticky table header */
     tr th {
         position: sticky;
@@ -72,19 +82,7 @@
         top: calc(50px + 48.5px);  /* just below */
     }
 
-    .action i {
-        margin-right: 0.33rem;
-    }
-    .table thead th {
-        border: none;
-        font-weight: 600;
-    }
-    .table th, .table td {
-        vertical-align: middle;
-    }
-    th {
-        white-space: nowrap;
-    }
+    /* Sorting */
     .headers th {
         cursor: pointer;
     }
@@ -103,6 +101,8 @@
     .headers th.nosort::after {
         content: "";
     }
+
+    /* Filtering */
     th input.form-control {
         display: inline;
         width: 4rem;
@@ -115,9 +115,15 @@
     tr.hidden-article, tr.hidden-avis {
         display: none;
     }
+
+    /* Mark amendements without a response */
     td.input-required a.action {
         color: red;
     }
+    .action i {
+        margin-right: 0.33rem;
+    }
+
 </style>
 {% endblock %}
 

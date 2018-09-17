@@ -89,16 +89,18 @@
     .headers th.nosort {
         cursor: default;
     }
-    .headers th::after {
-        content: " ⇵";
+    .headers th::before {
+        font-family: Font Awesome\ 5 Free;
+        font-weight: 900;
+        content: "\f0dc  ";  /* fa-sort */
     }
-    .headers th[data-order="asc"]::after {
-        content: " ↓";
+    .headers th[data-order="asc"]::before {
+        content: "\f0dd  ";  /* fa-sort-down */
     }
-    .headers th[data-order="desc"]::after {
-        content: " ↑";
+    .headers th[data-order="desc"]::before {
+        content: "\f0de  ";  /* fa-sort-up */
     }
-    .headers th.nosort::after {
+    .headers th.nosort::before {
         content: "";
     }
 

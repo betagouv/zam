@@ -100,6 +100,11 @@ header.main a:hover {
     }
 }
 
+/* Liens */
+a {
+    color: #3167a6;
+}
+
 /* Bouton */
 .button:hover {
     cursor: pointer;
@@ -110,17 +115,17 @@ header.main a:hover {
     font-size: inherit;
     font-family: inherit;
     background-color: transparent;
-    color: #1b77d7;
+    color: #3167a6;
     line-height: 1;
     padding: 0.75rem 1.5rem 0.5rem 1.5rem;
-    border: thin solid #1b77d7;
+    border: thin solid #3167a6;
     border-radius: 8px;
     white-space: nowrap;
     text-decoration: none;
 }
 .button:hover,
 .button.enabled {
-    background-color: #1b77d7;
+    background-color: #3167a6;
     color: white;
     text-decoration: none;
 }

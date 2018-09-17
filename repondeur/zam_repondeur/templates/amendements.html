@@ -244,7 +244,7 @@
             selector:'td:nth-child(' + (tableHeaderIndex + 1) + ')',
             order: order,
         }
-        if (tableHeaderIndex < 2) {
+        if (tableHeaderIndex <= 2) {
             options['data'] = 'sortkey'
         }
         tinysort(tableLines, options)

@@ -42,7 +42,9 @@ def main(argv: List[str] = sys.argv) -> None:
     from zam_repondeur.tasks.fetch import fetch_articles, fetch_amendements  # noqa
     from zam_repondeur.tasks.periodic import update_data, fetch_all_amendements  # noqa
 
-    consumer = huey.create_consumer(worker_type="thread", workers=1, max_delay=5.0)
+    consumer = huey.create_consumer(
+        worker_type="thread", workers=1, max_delay=5.0, flush_locks=True
+    )
     consumer.run()
 
 

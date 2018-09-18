@@ -3,46 +3,96 @@
 {% block header %}
     {{ super() }}
     <style type="text/css">
-        .auteur, .dispositif, .objet {
-            margin-bottom: 1.5rem;
+        main {
+            display: flex;
+            flex-direction: row;
         }
-        .auteur {
-            font-style: italic;
+        main > section {
+            flex-basis: 50%;
+            margin: 0 1rem;
+        }
+        main > section > div {
+            margin-bottom: 2rem;
+        }
+
+        /* Headers with line-through */
+        h4 {
+          overflow: hidden;
+          text-align: center;
+          font-weight: 600;
+          margin-bottom: 1.25rem;
+        }
+        h4:before,
+        h4:after {
+          background-color: #9b9b9b;
+          content: "";
+          display: inline-block;
+          height: 1px;
+          position: relative;
+          vertical-align: middle;
+          width: 50%;
+        }
+        h4:before {
+          right: 0.5em;
+          margin-left: -50%;
+        }
+        h4:after {
+          left: 0.5em;
+          margin-right: -50%;
         }
     </style>
 {% endblock %}
 
 
-{% block body %}
-    <h2>Amendement nº&nbsp;{{ amendement.num_disp }}</h2>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-sm pl-0 mr-4">
-              {{ content(amendement) }}
-            </div>
-            <div class="col-sm px-0">
-              {{ form(amendement) }}
-            </div>
-        </div>
+{% block top %}
+    <nav class="top-left">
+        <a class="button" href="{{ request.resource_url(context.parent) }}">←&nbsp;&nbsp;Retourner aux amendements</a>
+    </nav>
+    <div class="title">
+        <h2>{{ lecture.dossier_legislatif }}</h2>
+        <h3>{{ lecture }}</h3>
     </div>
 {% endblock %}
 
 
+{% block secondary_header %}
+    <header class="secondary">
+        <h2>Amendement nº&nbsp;{{ amendement.num_disp }}</h2>
+        {% if amendement.parent %}
+            <h3>Sous-amendement au {{ amendement.parent.num_disp }}</h3>
+        {% endif %}
+        <div class="auteur">
+            Présenté par {{ amendement.auteur }}
+            {%- if not amendement.gouvernemental %}
+                ({{ amendement.groupe }})
+            {% endif %}
+        </div>
+    </header>
+{% endblock %}
+
+
+{% block body %}
+    <section class="amendement">
+        {{ content(amendement) }}
+    </section>
+    <section class="reponse">
+        {{ form(amendement) }}
+    </section>
+{% endblock %}
+
+
 {% macro content(amendement) %}
-    {% if amendement.parent %}
-        <h3>
-            Sous-amendement au {{ amendement.parent.num_disp }}
-        </h3>
-    {% endif %}
-    <div class="auteur">
-        Présenté par {{ amendement.auteur }}
-        {%- if not amendement.gouvernemental %}
-            ({{ amendement.groupe }})
-        {% endif %}.
+    <div class="objet">
+        <h4>Exposé</h4>
+        {% if amendement.objet %}
+            {{ amendement.objet | safe }}
+        {% else %}
+            <i>Néant</i>
+        {% endif %}
     </div>
     <div class="dispositif">
-        <h4>
+        <h4>Corps de l’amendement</h4>
+        <h5>
             {% if amendement.article.pos == 'avant' %}
                 Article additionnel avant l’{{ amendement.article.type }}
             {% elif amendement.article.pos == 'apres' %}
@@ -51,16 +101,8 @@
                 {{ amendement.article.type | capitalize }}
             {% endif %}
             {{ amendement.article.num }} {{ amendement.article.mult }}
-        </h4>
+        </h5>
         {{ amendement.dispositif | safe }}
-    </div>
-    <div class="objet">
-        <h4>Exposé sommaire</h4>
-        {% if amendement.objet %}
-            {{ amendement.objet | safe }}
-        {% else %}
-            <i>Néant</i>
-        {% endif %}
     </div>
 {% endmacro %}
 

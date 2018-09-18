@@ -77,7 +77,6 @@ header.main {
     padding: 1rem;
     color: white;
     text-align: center;
-    margin-bottom: 1.5rem;
 }
 
 header.main > h2,
@@ -133,6 +132,19 @@ header.main nav.top-left {
     header.main nav.top-left ~ * {
         clear: both;
     }
+}
+
+header.secondary {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    text-align: center;
+    box-shadow: 2px 2px 5px 2px #CCC;
+}
+header.secondary h2 {
+    font-weight: 600;
+}
+
+main {
+    margin-top: 2rem;
 }
 
 /* Liens */

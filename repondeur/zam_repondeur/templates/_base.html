@@ -19,6 +19,9 @@
     {% endblock %}
     </header>
 
+    {% block secondary_header %}
+    {% endblock %}
+
     <main role="main" class="container-fluid">
 
         {% for class_, message in request.session.pop_flash() %}

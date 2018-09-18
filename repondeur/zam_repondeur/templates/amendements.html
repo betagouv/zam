@@ -1,6 +1,7 @@
 {% extends "_base.html" %}
 {% import "macros.html" as macros %}
 
+
 {% block header %}
 <style type="text/css">
 
@@ -136,7 +137,6 @@
 </style>
 {% endblock %}
 
-{% block nav %}{% endblock %}
 
 {% block top %}
     <nav class="top-left">
@@ -155,6 +155,7 @@
         {% endif %}
     </nav>
 {% endblock %}
+
 
 {% block body %}
 <div class="content">
@@ -314,6 +315,7 @@
     </table>
 </div>
 {% endblock %}
+
 
 {% block scripts %}
 <script src="{{ request.static_url('zam_repondeur:static/tinysort/tinysort.min.js') }}"></script>

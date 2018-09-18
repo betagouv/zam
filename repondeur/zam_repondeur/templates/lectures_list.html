@@ -1,6 +1,7 @@
 {% extends "_base.html" %}
 {% import "macros.html" as macros %}
 
+
 {% block header %}
 <style type="text/css">
 
@@ -67,7 +68,6 @@
 </style>
 {% endblock %}
 
-{% block nav %}{% endblock %}
 
 {% block top %}
     <h2>Lectures</h2>
@@ -77,6 +77,7 @@
         </a>
     </nav>
 {% endblock %}
+
 
 {% block body %}
 {% for lecture in lectures %}

@@ -54,4 +54,9 @@ server {
         proxy_temp_file_write_size 64k;
     }
 
+    location /repondeur/static/ {
+        root /srv/repondeur/src/repondeur/zam_repondeur/static/;
+        expires 30d;
+        add_header Cache-Control public;
+    }
 }

@@ -8,7 +8,7 @@ from .base import Base, DBSession
 KINDS = ("info", "success", "warning", "danger")
 
 
-class Journal(Base):  # type: ignore
+class Journal(Base):
     __tablename__ = "journal"
 
     pk = Column(Integer, primary_key=True)

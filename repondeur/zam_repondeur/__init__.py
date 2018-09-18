@@ -33,7 +33,7 @@ def make_app(global_settings: dict, **settings: str) -> Router:
         config.add_route("choices_lectures", "/choices/dossiers/{uid}/")
         config.add_route("error", "/error")
 
-        config.add_static_view("static", "static", cache_max_age=3600)
+        config.include("zam_repondeur.assets")
 
         init_huey(settings)
         config.include("zam_repondeur.data")

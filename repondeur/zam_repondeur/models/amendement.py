@@ -28,7 +28,7 @@ AVIS = [
 ]
 
 
-class Amendement(Base):  # type: ignore
+class Amendement(Base):
     __tablename__ = "amendements"
     __table_args__ = (UniqueConstraint("num", "lecture_pk"),)
 

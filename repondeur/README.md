@@ -49,7 +49,14 @@ $ pipenv install
 $ pipenv shell
 ```
 
-Install and run Redis.
+Install and run both Redis and Postgres.
+
+### Create the databases
+
+```
+$ createuser --createdb zam
+$ createdb --owner=zam zam
+```
 
 ### Initialize the database
 
@@ -72,6 +79,12 @@ $ zam_worker development.ini
 ```
 
 ### Development
+
+Create dedicated table for tests:
+
+```
+$ createdb --owner=zam zam-test
+```
 
 Run tests:
 

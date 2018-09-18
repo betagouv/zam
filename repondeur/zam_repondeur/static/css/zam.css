@@ -119,6 +119,20 @@ header.main a:hover {
     }
 }
 
+/* Back button */
+header.main nav.top-left {
+    margin-bottom: 1rem;
+}
+@media(min-width:768px) {
+    header.main nav.top-left {
+        float: left;
+        margin-bottom: 0.5rem;
+    }
+    header.main nav.top-left ~ * {
+        clear: both;
+    }
+}
+
 /* Liens */
 a {
     color: #3167a6;

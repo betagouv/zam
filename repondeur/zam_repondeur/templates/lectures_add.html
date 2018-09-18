@@ -13,6 +13,11 @@
 
 
 {% block top %}
+    {% if lectures %}
+    <nav class="top-left">
+        <a class="button" href="{{ request.resource_url(context.parent.parent) }}">←&nbsp;&nbsp;Retourner aux lectures</a>
+    </nav>
+    {% endif %}
     <h2>Ajouter une lecture...</h2>
 {% endblock %}
 

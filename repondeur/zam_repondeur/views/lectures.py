@@ -49,11 +49,13 @@ class LecturesAdd:
 
     @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:
+        lectures = self.context.models()
         return {
             "dossiers": [
                 {"uid": uid, "titre": dossier.titre}
                 for uid, dossier in self.dossiers_by_uid.items()
-            ]
+            ],
+            "lectures": lectures,
         }
 
     @view_config(request_method="POST")

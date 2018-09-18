@@ -8,6 +8,11 @@
 
 ## Changements récents
 
+### 18 septembre 2018
+
+*   Nouvelle itération sur le design du répondeur
+*   Diverses corrections de bugs
+
 ### 3 septembre 2018
 
 *   Nouvelle modélisation des données, ⚠︎ remise à zéro des données

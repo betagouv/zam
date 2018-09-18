@@ -8,15 +8,17 @@
 {% endblock %}
 
 
-{% block breadcrumbs %}
-    {{ super() }}
-    <li class="breadcrumb-item active" aria-current="page">Ajouter une lecture...</li>
+{% block top %}
+    {% if lectures %}
+    <nav class="top-left">
+        <a class="button" href="{{ request.resource_url(context.parent.parent) }}">←&nbsp;&nbsp;Retourner aux lectures</a>
+    </nav>
+    {% endif %}
+    <h2>Ajouter une lecture...</h2>
 {% endblock %}
 
 
 {% block body %}
-    <h2>Ajouter une lecture...</h2>
-
     <form id="add-lecture" action="{{ request.path }}" method="POST">
         <div class="form-group">
             <label for="dossier">Dossier législatif</label>

@@ -1,7 +1,28 @@
 {% extends "_base_edit.html" %}
 
+
+{% block top %}
+    <nav class="top-left">
+        <a class="button" href="{{ request.resource_url(context.parent.parent, 'amendements') }}">←&nbsp;&nbsp;Retourner aux amendements</a>
+    </nav>
+    <div class="title">
+        <h2>{{ lecture.dossier_legislatif }}</h2>
+        <h3>{{ lecture }}</h3>
+    </div>
+{% endblock %}
+
+
+{% block secondary_header %}
+    <header class="secondary">
+        <h2>{{ article }}</h2>
+        {% if article.titre %}
+            <div>{{ article.titre }}</div>
+        {% endif %}
+    </header>
+{% endblock %}
+
+
 {% block body %}
-    <h2>{{ article.disp }}</h2>
     <div class="container">
         <div class="row">
             <div class="col-sm pl-0 mr-4">
@@ -39,7 +60,7 @@
         </div>
         <div class="form-group">
             <input type="submit" name="submit" value="Enregistrer" class="btn btn-primary">
-            <a href="{{ request.resource_url(context.parent.parent) }}" class="btn">Annuler</a>
+            <a href="{{ request.resource_url(context.parent.parent, 'amendements') }}" class="btn">Annuler</a>
         </div>
     </form>
 {% endmacro %}

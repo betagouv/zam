@@ -102,11 +102,13 @@ header.main nav {
     margin: 0.5rem 0 1rem 0;
 }
 
-header.main a {
+header.main a,
+header.main button {
     color: white;
     border: thin solid white;
 }
-header.main a:hover {
+header.main a:hover,
+header.main button:hover {
     background-color: white;
     color: #3167a6;
 }

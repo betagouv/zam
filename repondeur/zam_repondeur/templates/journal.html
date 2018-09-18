@@ -1,14 +1,27 @@
 {% extends "_base.html" %}
 
-{% block body %}
-    <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh" class="float-right">
-        <button type="submit" name="refresh" class="btn btn-secondary btn-sm">
-            <i class="fa fa-sync"></i>
-            Rafraichir manuellement
-        </button>
-    </form>
-    <h2>Journal</h2>
 
+{% block nav %}
+{% endblock %}
+
+
+{% block top %}
+    <nav class="top-left">
+        <a class="button" href="{{ request.resource_url(context, 'amendements') }}">←&nbsp;&nbsp;Retourner aux amendements</a>
+    </nav>
+    <h2>Journal</h2>
+    <nav>
+        <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh" class="float-right">
+            <button type="submit" name="refresh" class="button">
+                <i class="fa fa-sync"></i>
+                Rafraichir manuellement
+            </button>
+        </form>
+    </nav>
+{% endblock %}
+
+
+{% block body %}
     {% for item in journal %}
         <div class="alert alert-{{ item.kind }}" role="alert">
             {{ item.message }}

@@ -17,7 +17,7 @@ AVIS = [
 ]
 
 
-class Article(Base):  # type: ignore
+class Article(Base):
     __tablename__ = "articles"
 
     pk = Column(Integer, primary_key=True)

@@ -16,7 +16,7 @@ SESSIONS = {
 }
 
 
-class Lecture(Base):  # type: ignore
+class Lecture(Base):
     __tablename__ = "lectures"
 
     pk = Column(Integer, primary_key=True)

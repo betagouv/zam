@@ -49,8 +49,27 @@ body {
     padding-top: 50px;  /* fixed nav bar */
 }
 
+/* Top bar */
 nav.fixed-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 50px;
+    background-color: #343a40;
+    padding: .5rem 1rem;
+    display: flex;
+    align-items: center;
+}
+nav.fixed-top a {
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    padding-top: .3125rem;
+    padding-bottom: .3125rem;
+    margin-right: 1rem;
+    font-size: 1.25rem;
+    white-space: nowrap;
 }
 
 header.main {

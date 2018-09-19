@@ -56,4 +56,6 @@ class ReponseEdit:
         )
 
         collection: AmendementCollection = self.context.parent
-        return HTTPFound(location=self.request.resource_url(collection))
+        return HTTPFound(
+            location=self.request.resource_url(collection, anchor=self.amendement.slug)
+        )

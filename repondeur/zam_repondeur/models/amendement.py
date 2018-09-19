@@ -128,8 +128,12 @@ class Amendement(Base):
         return amendement
 
     @property
+    def num_str(self) -> str:
+        return str(self.num)
+
+    @property
     def num_disp(self) -> str:
-        text = str(self.num)
+        text = self.num_str
         if self.rectif > 0:
             text += " rect."
         if self.rectif > 1:
@@ -140,8 +144,8 @@ class Amendement(Base):
         return text
 
     @property
-    def num_str(self) -> str:
-        return str(self.num)
+    def slug(self) -> str:
+        return f'amdt-{self.num_disp.replace(" ", "-").replace(".", "")}'
 
     _RECTIF_TO_SUFFIX = {
         2: "bis",

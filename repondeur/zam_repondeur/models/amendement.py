@@ -243,4 +243,9 @@ class Amendement(Base):
             result["subdiv_num"] = self.article.num
             result["subdiv_pos"] = self.article.pos
             result["subdiv_mult"] = self.article.mult
+            result["position"] = self.position or ""
+            result["discussion_commune"] = self.discussion_commune or ""
+            result["identique"] = self.identique or ""
+            result["alinea"] = self.alinea or ""
+            result["date_depot"] = self.date_depot or ""
         return result

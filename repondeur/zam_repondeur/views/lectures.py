@@ -158,7 +158,13 @@ class ListAmendements:
 
     @view_config(request_method="GET", renderer="amendements.html")
     def get(self) -> dict:
-        return {"lecture": self.lecture, "amendements": self.amendements}
+        check_url = self.request.resource_path(self.context.parent, "check")
+        return {
+            "lecture": self.lecture,
+            "amendements": self.amendements,
+            "check_url": check_url,
+            "timestamp": self.lecture.modified_at_timestamp,
+        }
 
     @view_config(request_method="POST")
     def post(self) -> Response:

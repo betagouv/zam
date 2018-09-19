@@ -128,8 +128,8 @@ class Articles(OrderedDict):
 def build_tree(amendements: List[AmendementModel]) -> OrderedDict:
     articles = Articles()
     for index, amendement in enumerate(amendements, 1):
+        article = articles.get_or_create(amendement)
         if amendement.is_displayable:
-            article = articles.get_or_create(amendement)
             if amendement.gouvernemental:
                 # Avoid later regroup by same (inexisting) response.
                 reponse_pk = str(index)

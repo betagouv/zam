@@ -10,6 +10,7 @@ def test_reponses_empty(app, lecture_an, amendements_an):
     assert resp.status_code == 200
     assert resp.first_element("h1") == lecture_an.dossier_legislatif
     assert resp.first_element("h2") == str(lecture_an)
+    assert resp.first_element(".titles h2") == "Article 1"
     assert resp.find_amendement(amendements_an[0]) is None
     assert resp.find_amendement(amendements_an[1]) is None
 

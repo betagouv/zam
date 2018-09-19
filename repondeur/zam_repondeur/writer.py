@@ -141,10 +141,10 @@ def _write_header_row(ws: Worksheet) -> None:
 def _write_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> int:
     nb_rows = 0
     for amend in amendements:
-        values = tuple(export_amendement(amend).values())
-        for column, value in enumerate(values, 1):
+        amend_dict = {rename_field(k): v for k, v in export_amendement(amend).items()}
+        for column, value in enumerate(HEADERS, 1):
             cell = ws.cell(row=nb_rows + 2, column=column)
-            cell.value = value
+            cell.value = amend_dict[value]
             cell.font = Font(sz=8)
         nb_rows += 1
     return nb_rows

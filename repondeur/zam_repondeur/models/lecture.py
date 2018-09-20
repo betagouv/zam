@@ -52,6 +52,7 @@ class Lecture(Base):
                 self.format_chambre(),
                 self.format_session(),
                 self.format_organe(),
+                self.format_num_lecture(),
                 self.format_texte(),
             ]
         )
@@ -81,6 +82,10 @@ class Lecture(Base):
         if label.startswith("Commission"):
             return label
         return f"Commission des {label.lower()}"
+
+    def format_num_lecture(self) -> str:
+        num_lecture, title = self.titre.split(" – ", 1)
+        return str(num_lecture.strip())
 
     def format_texte(self) -> str:
         return f"texte nº {self.num_texte}"

@@ -22,7 +22,7 @@ def mock_dossiers():
                 lectures=[
                     Lecture(
                         chambre=Chambre.AN,
-                        titre="1ère lecture",
+                        titre="Première lecture – Titre lecture",
                         texte=Texte(
                             uid="PRJLANR5L15B0269",
                             type_=TypeTexte.PROJET,
@@ -41,7 +41,7 @@ def mock_dossiers():
                 lectures=[
                     Lecture(
                         chambre=Chambre.AN,
-                        titre="Nouvelle lecture",
+                        titre="Nouvelle lecture – Titre lecture",
                         texte=Texte(
                             uid="PRJLANR5L15B0806",
                             type_=TypeTexte.PROJET,

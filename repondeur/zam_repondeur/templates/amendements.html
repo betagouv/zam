@@ -106,7 +106,9 @@
         width: 4rem;
         padding: 0 .25rem;
     }
-    tr.hidden-article, tr.hidden-avis {
+    tr.hidden-article,
+    tr.hidden-amendement,
+    tr.hidden-avis {
         display: none;
     }
 
@@ -267,7 +269,9 @@
                 <th>
                     <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
-                <th></th>
+                <th>
+                    <input id="amendement-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
+                </th>
                 <th></th>
                 <th></th>
                 <th>
@@ -288,6 +292,7 @@
                         {{ amendement.article.type }}
                     {%- endif -%}
                 "
+                data-amendement="{{ amendement.num }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}"
                 id="{{ amendement.slug }}"
             >
@@ -446,6 +451,21 @@
                 line.classList.remove('hidden-article')
             } else {
                 line.classList.add('hidden-article')
+            }
+        })
+    })
+    var amendementFilter = table.querySelector('#amendement-filter')
+    amendementFilter.addEventListener('keyup', function (e) {
+        var value = e.target.value.trim()
+        ;[].slice.call(tableLines).forEach(function (line) {
+            if (!value) {
+                line.classList.remove('hidden-amendement')
+                return
+            }
+            if (line.dataset.amendement.trim() === value) {
+                line.classList.remove('hidden-amendement')
+            } else {
+                line.classList.add('hidden-amendement')
             }
         })
     })

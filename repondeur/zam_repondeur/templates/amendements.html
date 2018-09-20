@@ -113,6 +113,7 @@
     .bookmark input[type="submit"] {
         border:none;
         background: inherit;
+        font-size: 1.25rem;
     }
     .bookmark input.bookmarked {
         color: #3167a6;
@@ -235,7 +236,7 @@
     <table class="table" style="width:100%">
         <thead class="box">
             <tr class="headers">
-                <th class="nosort"></th>
+                <th>★</th>
                 <th width="15%">Article</th>
                 <th width="15%">Nº</th>
                 <th>Auteur</th>
@@ -271,7 +272,7 @@
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}"
                 id="{{ amendement.slug }}"
             >
-                <td class="bookmark">
+                <td class="bookmark" data-sortkey="{{ amendement.bookmarked_at }}">
                     <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">
                         {% if amendement.bookmarked_at %}
                             <input type="hidden" name="bookmark" value="0">

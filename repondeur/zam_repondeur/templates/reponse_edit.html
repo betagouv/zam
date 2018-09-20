@@ -45,13 +45,15 @@
 
 
 {% block top %}
-    <nav class="top-left">
-        <a class="button" href="{{ request.resource_url(context.parent) }}">←&nbsp;&nbsp;Retourner aux amendements</a>
-    </nav>
     <div class="title">
         <h2>{{ lecture.dossier_legislatif }}</h2>
         <h3>{{ lecture }}</h3>
     </div>
+    <nav class="justify-content-start">
+        <p>
+            <a class="button" href="{{ request.resource_url(context.parent) }}">←&nbsp;&nbsp;Retourner aux amendements</a>
+        </p>
+    </nav>
 {% endblock %}
 
 

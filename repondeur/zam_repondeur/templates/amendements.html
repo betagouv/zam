@@ -145,20 +145,22 @@
 
 
 {% block top %}
-    <nav class="top-left">
-        <a class="button" href="{{ request.resource_url(context.parent.parent) }}">←&nbsp;&nbsp;Retourner aux lectures</a>
-    </nav>
     <div class="title">
         <h2>{{ lecture.dossier_legislatif }}</h2>
         <h3>{{ lecture }}</h3>
     </div>
-    <nav>
-        <a class="button" href="{{ request.resource_url(context.parent, 'journal') }}">Voir le journal</a>
-        {% if lecture.displayable %}
-            <a class="button" href="{{ request.resource_url(context.parent, 'reponses') }}" target="_blank">
-                Voir le dossier de banc
-            </a>
-        {% endif %}
+    <nav class="justify-content-around">
+        <p>
+            <a class="button" href="{{ request.resource_url(context.parent.parent) }}">←&nbsp;&nbsp;Retourner aux lectures</a>
+        </p>
+        <p>
+            <a class="button" href="{{ request.resource_url(context.parent, 'journal') }}">Voir le journal</a>
+            {% if lecture.displayable %}
+                <a class="button" href="{{ request.resource_url(context.parent, 'reponses') }}" target="_blank">
+                    Voir le dossier de banc
+                </a>
+            {% endif %}
+        </p>
     </nav>
 {% endblock %}
 

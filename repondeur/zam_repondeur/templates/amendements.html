@@ -55,12 +55,13 @@
     /* Table formatting */
     .table th, .table td {
         vertical-align: middle;
-        padding: .5rem .75rem;
+        padding: .25rem .75rem;
     }
     .table thead th {
         border: none;
         font-weight: 600;
         white-space: nowrap;
+        padding: .75rem;
     }
     .table th.avis {
         min-width: 100px;
@@ -160,6 +161,20 @@
         background-color: #d0021b;
     }
 
+    tr.summary td {
+        padding: 0;
+    }
+    details {
+        margin-left: 210px;
+    }
+    summary {
+        margin-top: -2rem;
+        width: 15px;
+    }
+    details div {
+        margin-top: 1.5rem;
+    }
+
 </style>
 {% endblock %}
 
@@ -257,9 +272,9 @@
     <table class="table" style="width:100%">
         <thead class="box">
             <tr class="headers">
-                <th>★</th>
-                <th width="15%">Article</th>
-                <th width="15%">Nº</th>
+                <th width="50px">★</th>
+                <th width="150px">Article</th>
+                <th width="180px">Nº</th>
                 <th>Auteur</th>
                 <th>Groupe</th>
                 <th class="avis">Avis</th>
@@ -353,6 +368,33 @@
                         {% endif %}
                         </a>
                     </nobr>
+                </td>
+            </tr>
+            <tr class="summary"
+                data-article="
+                    {%- if amendement.article.type == 'article' -%}
+                        {{ amendement.article.num }} {{ amendement.article.mult }}
+                    {%- else -%}
+                        {{ amendement.article.type }}
+                    {%- endif -%}
+                "
+                data-amendement="{{ amendement.num }}"
+                data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}">
+                <td colspan=6 data-sortkey="{{ amendement.bookmarked_at }}">
+                    <details>
+                        <summary></summary>
+                        <div>
+                            <p>
+                                <strong>{{ amendement.article }} :</strong>
+                                {{ amendement.article.titre }}
+                            </p>
+                            <p>
+                                {% if amendement.observations %}
+                                    {{ amendement.observations | striptags | truncate(length=300, killwords=False, end='…') }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </details>
                 </td>
             </tr>
         {% endfor %}

@@ -2,11 +2,17 @@
 
 ## Prochains évènements
 
-### Date de prochaine démonstration : 19 septembre à 15h (exceptionnellement le mercredi au lieu du mardi).
+### Date de prochaine démonstration : 2 octobre à 15h.
 
 <h2 class="center">[Accès au répondeur](/repondeur/) — [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
 
 ## Changements récents
+
+### 20 septembre 2018
+
+*   Indication de rafraichissement des données lors de la création d’une lecture
+*   Positionnement au niveau de l’amendement dont la réponse vient d’être éditée
+*   Affichage du numéro de lecture (première, nouvelle, etc) dans le titre
 
 ### 18 septembre 2018
 

@@ -17,7 +17,7 @@ def lecture_essoc(app):
             chambre="an",
             session="15",
             num_texte=806,
-            titre="Nouvelle lecture",
+            titre="Nouvelle lecture – Titre lecture",
             organe="PO744107",
             dossier_legislatif="Fonction publique : un Etat au service d'une société de confiance",  # noqa
         )

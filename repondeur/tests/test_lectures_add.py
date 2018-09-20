@@ -113,8 +113,13 @@ def test_post_form(app):
 
     lecture = Lecture.get(chambre="an", session="15", num_texte=269, organe="PO717460")
     assert lecture.chambre == "an"
-    assert lecture.titre == "1ère lecture"
+    assert lecture.titre == "Première lecture – Titre lecture"
     assert lecture.dossier_legislatif == "Sécurité sociale : loi de financement 2018"
+    result = (
+        "Assemblée nationale, 15e législature, Séance publique, Première lecture, "
+        "texte nº 269"
+    )
+    assert str(lecture) == result
 
     # We should have a journal entry for articles, and one for amendements
     assert len(lecture.journal) == 2
@@ -157,11 +162,7 @@ def test_choices_lectures(app):
 
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "application/json"
+    label = "Assemblée nationale – Première lecture – Titre lecture – Texte Nº 269"
     assert resp.json == {
-        "lectures": [
-            {
-                "key": "PRJLANR5L15B0269-PO717460",
-                "label": "Assemblée nationale – 1ère lecture – Texte Nº 269",
-            }
-        ]
+        "lectures": [{"key": "PRJLANR5L15B0269-PO717460", "label": label}]
     }

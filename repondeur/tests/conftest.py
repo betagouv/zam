@@ -71,7 +71,7 @@ def lecture_an(app):
             chambre="an",
             session="15",
             num_texte=269,
-            titre="Titre lecture",
+            titre="Numéro lecture – Titre lecture",
             organe="PO717460",
             dossier_legislatif="Titre dossier legislatif",
         )
@@ -88,7 +88,7 @@ def lecture_senat(app):
             chambre="senat",
             session="2017-2018",
             num_texte=63,
-            titre="Titre lecture sénat",
+            titre="Numéro lecture – Titre lecture sénat",
             organe="PO78718",
             dossier_legislatif="Titre dossier legislatif sénat",
         )

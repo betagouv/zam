@@ -55,6 +55,7 @@
     /* Table formatting */
     .table th, .table td {
         vertical-align: middle;
+        padding: .5rem .75rem;
     }
     .table thead th {
         border: none;
@@ -114,6 +115,7 @@
         border:none;
         background: inherit;
         font-size: 1.25rem;
+        cursor: pointer;
     }
     .bookmark input.bookmarked {
         color: #3167a6;
@@ -139,6 +141,23 @@
     :target {
         background: lightyellow;
     }
+    span.avis {
+        width: 6px;
+        display: block;
+        height: 1.5rem;
+        float: left;
+        margin: 0 1rem 0 0;
+    }
+    span.avis.positive {
+        background-color: #5fa014;
+    }
+    span.avis.sagesse {
+        background-color: #3167a6;
+    }
+    span.avis.negative {
+        background-color: #d0021b;
+    }
+
 </style>
 {% endblock %}
 
@@ -306,11 +325,24 @@
                     {% endif %}
                 >
                     <nobr>
+                        {% if amendement.gouvernemental %}
+                            <span class="avis"></span>
+                        {% elif amendement.avis %}
+                            {% if amendement.avis == "Sagesse" %}
+                                <span class="avis sagesse"></span>
+                            {% elif amendement.avis.startswith("Favorable") %}
+                                <span class="avis positive"></span>
+                            {% else %}
+                                <span class="avis negative"></span>
+                            {% endif %}
+                        {% else %}
+                            <span class="avis"></span>
+                        {% endif %}
                         <a href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
-                        {% if amendement.avis %}
-                            {{ amendement.avis }}
-                        {% elif amendement.gouvernemental %}
+                        {% if amendement.gouvernemental %}
                             &mdash;
+                        {% elif amendement.avis %}
+                            {{ amendement.avis }}
                         {% else %}
                             Aucun
                         {% endif %}

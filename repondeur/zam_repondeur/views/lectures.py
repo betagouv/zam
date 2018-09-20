@@ -78,28 +78,32 @@ class LecturesAdd:
             self.request.session.flash(
                 Message(cls="warning", text="Cette lecture existe déjà...")
             )
-        else:
-            lecture_model: LectureModel = LectureModel.create(
-                chambre, session, num_texte, titre, organe, dossier.titre
-            )
-            # Call to fetch_* tasks below being asynchronous, we need to make
-            # sure the lecture_model already exists once and for all in the database
-            # for future access. Otherwise, it may create many instances and
-            # thus many objects within the database.
-            transaction.commit()
-            fetch_amendements(lecture_model.pk)
-            fetch_articles(lecture_model.pk)
-            self.request.session.flash(
-                Message(
-                    cls="success",
-                    text=(
-                        "Lecture créée avec succès, amendements et articles "
-                        "en cours de récupération."
-                    ),
-                )
-            )
+            return HTTPFound(location=self.request.resource_url(self.context))
 
-        return HTTPFound(location=self.request.resource_url(self.context))
+        lecture_model: LectureModel = LectureModel.create(
+            chambre, session, num_texte, titre, organe, dossier.titre
+        )
+        # Call to fetch_* tasks below being asynchronous, we need to make
+        # sure the lecture_model already exists once and for all in the database
+        # for future access. Otherwise, it may create many instances and
+        # thus many objects within the database.
+        transaction.commit()
+        fetch_amendements(lecture_model.pk)
+        fetch_articles(lecture_model.pk)
+        self.request.session.flash(
+            Message(
+                cls="success",
+                text=(
+                    "Lecture créée avec succès, amendements et articles "
+                    "en cours de récupération."
+                ),
+            )
+        )
+        return HTTPFound(
+            location=self.request.resource_url(
+                self.context[lecture_model.url_key], "amendements"
+            )
+        )
 
     def _get_dossier(self) -> Dossier:
         try:
@@ -154,7 +158,13 @@ class ListAmendements:
 
     @view_config(request_method="GET", renderer="amendements.html")
     def get(self) -> dict:
-        return {"lecture": self.lecture, "amendements": self.amendements}
+        check_url = self.request.resource_path(self.context.parent, "check")
+        return {
+            "lecture": self.lecture,
+            "amendements": self.amendements,
+            "check_url": check_url,
+            "timestamp": self.lecture.modified_at_timestamp,
+        }
 
     @view_config(request_method="POST")
     def post(self) -> Response:

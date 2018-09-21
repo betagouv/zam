@@ -3,6 +3,7 @@
 
 
 {% block header %}
+<link href="{{ request.static_url('zam_repondeur:static/balloon/balloon.css') }}" rel="stylesheet" type="text/css" />
 <style type="text/css">
 
     .content {
@@ -161,18 +162,14 @@
         background-color: #d0021b;
     }
 
-    tr.summary td {
-        padding: 0;
+    td .button {
+        padding: .2rem .4rem;
+        border-radius: 20px;
+        font-size: 60%;
+        line-height: 0;
     }
-    details {
-        margin-left: 210px;
-    }
-    summary {
-        margin-top: -2rem;
-        width: 15px;
-    }
-    details div {
-        margin-top: 1.5rem;
+    [data-balloon]::after {
+        padding: 1rem;
     }
 
 </style>
@@ -330,12 +327,14 @@
                     >
                         {{ amendement.article }}
                     </a>
+                    <button class="button" data-balloon="{{ amendement.article.titre or "" }}" data-balloon-pos="right"><i class="fa fa-info"></i></button>
                 </td>
                 <td data-sortkey="{{ amendement.num }}">
                     {{ amendement.num_disp }}
                     {% if amendement.parent %}
                         (ss-amdt au {{ amendement.parent.num_disp }})
                     {% endif %}
+                    <button class="button" data-balloon="{{ amendement.observations | striptags | truncate(length=150, killwords=False, end='…') }}" data-balloon-pos="right"><i class="fa fa-info"></i></button>
                 </td>
                 <td>{{ amendement.auteur }}</td>
                 <td>{{ amendement.groupe }}</td>
@@ -368,33 +367,6 @@
                         {% endif %}
                         </a>
                     </nobr>
-                </td>
-            </tr>
-            <tr class="summary"
-                data-article="
-                    {%- if amendement.article.type == 'article' -%}
-                        {{ amendement.article.num }} {{ amendement.article.mult }}
-                    {%- else -%}
-                        {{ amendement.article.type }}
-                    {%- endif -%}
-                "
-                data-amendement="{{ amendement.num }}"
-                data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}">
-                <td colspan=6 data-sortkey="{{ amendement.bookmarked_at }}">
-                    <details>
-                        <summary></summary>
-                        <div>
-                            <p>
-                                <strong>{{ amendement.article }} :</strong>
-                                {{ amendement.article.titre }}
-                            </p>
-                            <p>
-                                {% if amendement.observations %}
-                                    {{ amendement.observations | striptags | truncate(length=300, killwords=False, end='…') }}
-                                {% endif %}
-                            </p>
-                        </div>
-                    </details>
                 </td>
             </tr>
         {% endfor %}

@@ -50,7 +50,6 @@ class Root(Resource):
 
 
 class LectureCollection(Resource):
-
     def models(self) -> List[Lecture]:
         return Lecture.all()
 
@@ -70,7 +69,6 @@ class LectureCollection(Resource):
 
 
 class LectureResource(Resource):
-
     def __init__(
         self,
         name: str,
@@ -96,7 +94,6 @@ class LectureResource(Resource):
 
 
 class AmendementCollection(Resource):
-
     def __getitem__(self, key: str) -> Resource:
         return AmendementResource(name=key, parent=self)
 
@@ -106,7 +103,6 @@ class AmendementCollection(Resource):
 
 
 class AmendementResource(Resource):
-
     def __init__(self, name: str, parent: Resource) -> None:
         super().__init__(name=name, parent=parent)
         self.num = int(name)
@@ -132,7 +128,6 @@ class AmendementResource(Resource):
 
 
 class ArticleCollection(Resource):
-
     def __getitem__(self, key: str) -> Resource:
         try:
             type, num, mult, pos = key.split(".")

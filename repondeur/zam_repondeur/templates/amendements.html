@@ -188,7 +188,7 @@
         <p>
             <a class="button" href="{{ request.resource_url(context.parent, 'journal') }}">Voir le journal</a>
             {% if lecture.displayable %}
-                <a class="button" href="{{ request.resource_url(context.parent, 'reponses') }}" target="_blank">
+                <a class="button" href="{{ request.resource_url(context.parent['articles'][amendements[0].article_url_key], 'reponses') }}" target="_blank">
                     Voir le dossier de banc
                 </a>
             {% endif %}

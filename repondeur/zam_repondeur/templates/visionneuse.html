@@ -465,6 +465,7 @@
 </header>
 <main>
   {% for article in articles.values() %}
+    {% if article.id == current_article.num and article.multiplicatif == current_article.mult and article.instance.pos == current_article.pos %}
     <section id="{{ article.slug }}">
       <header class="for-article">
         <div class="wrapper">
@@ -655,6 +656,7 @@
         </article>
       {% endfor %}
     </section>
+    {% endif %}
   {% endfor %}
 </main>
 
@@ -666,7 +668,7 @@
         {% if loop.previtem is defined and loop.previtem.titre != article.titre and article.titre not in ("TODO", "") or loop.previtem is not defined and article.titre %}
           <p><strong>{{ article.titre }} :</strong>
         {% endif %}
-        <a href="#{{ article.slug }}">
+        <a href="{{ request.resource_url(context.parent, article.url_key, 'reponses') }}">
           {%- if article.type_ == "article" -%}
             Art. {{ article }}
           {%- elif article.type_ -%}

@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from zam_repondeur.constants import GROUPS_COLORS
 
 from .amendement import Amendement as AmendementModel
+from .article import Article as ArticleModel
 
 
 @dataclass
@@ -83,6 +84,7 @@ class Article:
     pk: str
     id: int
     titre: str
+    instance: ArticleModel
     etat: Optional[str] = ""
     multiplicatif: Optional[str] = ""
     type_: str = ""
@@ -102,6 +104,12 @@ class Article:
     def slug(self) -> str:
         return f'article-{str(self).replace(" ", "-").replace(".", "")}'
 
+    @property
+    def url_key(self) -> str:
+        return (
+            f"{self.instance.type}.{self.id}.{self.multiplicatif}.{self.instance.pos}"
+        )
+
 
 class Articles(OrderedDict):
     def get_or_create(self, amendement: AmendementModel) -> Article:
@@ -115,6 +123,7 @@ class Articles(OrderedDict):
                 pk=pk,
                 id=amendement.article.num,
                 titre=amendement.article.titre,
+                instance=amendement.article,
                 multiplicatif=amendement.article.mult,
                 etat=amendement.article.pos[:2],
                 type_=amendement.article.type,
@@ -125,11 +134,20 @@ class Articles(OrderedDict):
         return article
 
 
-def build_tree(amendements: List[AmendementModel]) -> OrderedDict:
+def build_tree(
+    amendements: List[AmendementModel], target_article: Optional[ArticleModel] = None
+) -> OrderedDict:
     articles = Articles()
     for index, amendement in enumerate(amendements, 1):
         article = articles.get_or_create(amendement)
-        if amendement.is_displayable:
+        if target_article:
+            is_current_article = (
+                article.id == target_article.num
+                and article.multiplicatif == target_article.mult
+            )
+        else:
+            is_current_article = True
+        if amendement.is_displayable and is_current_article:
             if amendement.gouvernemental:
                 # Avoid later regroup by same (inexisting) response.
                 reponse_pk = str(index)

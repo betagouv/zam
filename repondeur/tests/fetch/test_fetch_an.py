@@ -355,7 +355,7 @@ def test_fetch_amendement_apres(lecture_an, app):
     assert amendement.article.type == "article"
     assert amendement.article.num == "8"
     assert amendement.article.mult == ""
-    assert amendement.article.pos == "apres"
+    assert amendement.article.pos == "après"
 
 
 @responses.activate

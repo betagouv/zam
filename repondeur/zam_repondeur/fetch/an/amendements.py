@@ -251,7 +251,16 @@ def parse_division(division: dict) -> SubDiv:
         return SubDiv("titre", "", "", "")
     subdiv = _parse_subdiv(division["titre"])
     if division["avantApres"]:
-        subdiv = subdiv._replace(pos=division["avantApres"].lower())
-        if subdiv.pos == "a":  # TODO: understand what it means...
-            subdiv = subdiv._replace(pos="")
+        pos = parse_avant_apres(division["avantApres"].lower())
+        subdiv = subdiv._replace(pos=pos)
     return subdiv
+
+
+def parse_avant_apres(value: str) -> str:
+    if value == "avant":
+        return "avant"
+    if value == "a":
+        return ""
+    if value == "apres":
+        return "après"
+    raise ValueError(f"Unknown value '{value}' for avantApres")

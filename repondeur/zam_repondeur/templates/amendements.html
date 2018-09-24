@@ -58,6 +58,11 @@
         vertical-align: middle;
         padding: .25rem .75rem;
     }
+    .table td > span,
+    .table td a {
+        display: inline-block;
+        line-height: 1;
+    }
     .table thead th {
         border: none;
         font-weight: 600;
@@ -135,14 +140,15 @@
 
     /* Links in table */
     td a, td a:hover {
-        display: inline-block;
         white-space: nowrap;
         text-decoration: none;
-        line-height: 0.9;
         border-bottom: thin solid #3167a6;
     }
 
     /* Tooltips */
+    span[data-balloon].dotted {
+        border-bottom: 1px dotted #3167a6;
+    }
     [data-balloon]:after {
         font-size: 14px !important;
     }
@@ -327,19 +333,25 @@
                 <td class="article" data-sortkey="{{ amendement.article.num }}">
                     <a href="{{ request.resource_url(context.parent['articles'][amendement.article_url_key]) }}"
                     {% if amendement.article.titre %}
-                        title="{{ amendement.article.titre }}"
+                        data-balloon="{{ amendement.article.titre }}" data-balloon-pos="right"
                     {% endif %}
                     >
                         {{ amendement.article }}
                     </a>
-                    <button class="button" data-balloon="{{ amendement.article.titre or "" }}" data-balloon-pos="right"><i class="fa fa-info"></i></button>
                 </td>
                 <td data-sortkey="{{ amendement.num }}">
-                    {{ amendement.num_disp }}
-                    {% if amendement.parent %}
-                        (ss-amdt au {{ amendement.parent.num_disp }})
-                    {% endif %}
-                    <button class="button" data-balloon="{{ amendement.observations | striptags | truncate(length=150, killwords=False, end='…') }}" data-balloon-pos="right"><i class="fa fa-info"></i></button>
+                    <span
+                        {% if amendement.observations %}
+                        data-balloon="{{ amendement.observations | striptags | truncate(length=150, killwords=False, end='…') }}"
+                        data-balloon-pos="right"
+                        class="dotted"
+                        {% endif %}
+                    >
+                        {{ amendement.num_disp }}
+                        {% if amendement.parent %}
+                            (ss-amdt au {{ amendement.parent.num_disp }})
+                        {% endif %}
+                    </span>
                 </td>
                 <td>{{ amendement.auteur }}</td>
                 <td>{{ amendement.groupe }}</td>

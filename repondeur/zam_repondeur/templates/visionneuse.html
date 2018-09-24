@@ -17,8 +17,8 @@
   </form>
 </header>
 <main>
-  {% for article in articles.values() %}
-    {% if article.id == current_article.num and article.multiplicatif == current_article.mult and article.instance.pos == current_article.pos %}
+  {% for article in articles %}
+    {% if article == current_article %}
     <section id="{{ article.slug }}">
       <header class="for-article">
         <div class="wrapper">
@@ -29,20 +29,14 @@
             </span>
           </button>
           <div class="titles">
-            <h2>
-              {%- if article.type_ == "article" -%}
-                Article {{ article }}
-              {%- elif article.type_ -%}
-                {{ article.type_.capitalize() }}s
-              {%- endif -%}
-            </h2>
+            <h2>{{ article.format(short=False) }}</h2>
             {% if article.titre == "TODO" %}
               <h3>{{ loop.previtem.titre or "" }}</h3>
             {% else %}
               <h3>{{ article.titre or "" }}</h3>
             {% endif %}
           </div>
-          {% if article.alineas or article.jaune %}
+          {% if article.contenu or article.jaune %}
             <a href="#{{ article.slug }}"
                class="button"
                data-toggle-target="content-{{ article.slug }}"
@@ -56,9 +50,9 @@
             <h2>Éléments de langage</h2>
             {{ article.jaune | safe }}
           {% endif %}
-          {% if article.alineas %}
+          {% if article.contenu %}
             <h2>Texte de l’article</h2>
-            {% for number, content in article.alineas.items() %}
+            {% for number, content in article.contenu.items() %}
               <dl>
                 <dt>{{ number }}</dt>
                 <dd>
@@ -72,14 +66,15 @@
           </p>
         </div>
       </div>
-      {% for reponse, amendements in article.reponses.items() %}
-        {% set is_gouvernemental = amendements[0].gouvernemental %}
-        {% set parent = amendements[0].parent %}
+      {% for amendements in article.grouped_displayable_amendements() %}
+        {% set amendement = amendements[0] %}
+        {% set is_gouvernemental = amendement.gouvernemental %}
+        {% set parent = amendement.parent %}
         <article{% if is_gouvernemental %} class="gouvernemental"{% endif %}{% if parent %} class="sous-amendement"{% endif %}>
-          <span class="fake-anchor" id="amendement-{{ amendements[0].pk }}"></span>
-          {% if reponse.favorable %}
+          <span class="fake-anchor" id="amendement-{{ amendement.num }}"></span>
+          {% if amendement.favorable %}
             {% set avis_class = 'positive' %}
-          {% elif reponse.sagesse %}
+          {% elif amendement.sagesse %}
             {% set avis_class = 'sagesse' %}
           {% elif is_gouvernemental %}
             {% set avis_class = 'gouvernemental' %}
@@ -90,13 +85,13 @@
           <header class="reponse {{ avis_class }}">
             <div
             {%- for amendement in amendements %}
-              data-amendement-{{ amendement.id }}="{{ amendement }}"
+              data-amendement-{{ amendement.num }}="{{ amendement }}"
             {% endfor -%}
-            data-anchor="amendement-{{ amendements[0].pk }}"
+            data-anchor="amendement-{{ amendement.num }}"
             >
-              <a href="#amendement-{{ amendements[0].pk }}"
+              <a href="#amendement-{{ amendement.num }}"
                  class="button"
-                 data-toggle-target="amendement-detail-{{ amendements[0].pk }}">
+                 data-toggle-target="amendement-detail-{{ amendement.num }}">
                 Texte
               </a>
               <h2>
@@ -111,14 +106,14 @@
                   ({{ amendements|length }} au total)
                 {% else %}
                   {% for amendement in amendements %}
-                    {{ amendement }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                    {{ amendement.num_disp }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
                   {% endfor %}
                 {% endif %}
                 {% if parent %} (sous-amendement au {{ parent }}){% endif %}
               </h2>
-              {% if reponse.presentation|length < 200 %}
+              {% if amendement.observations and (amendement.observations|length < 200) %}
                 <div class="presentation">
-                  {{ reponse.presentation | paragriphy }}
+                  {{ amendement.observations | paragriphy }}
                 </div>
               {% endif %}
               {% if is_gouvernemental %}
@@ -129,10 +124,10 @@
                     {% if loop.previtem is defined and amendement.auteur != loop.previtem.auteur or loop.previtem is not defined %}
                       <span class="author">
                         {{ amendement.auteur }}
-                        {% if amendement.groupe and amendement.groupe.libelle -%}
-                          ({{ amendement.groupe.libelle }}
-                          {%- if amendement.groupe.couleur != "#ffffff" %}
-                            <span class="group-color" style="background-color: {{ amendement.groupe.couleur }};"></span>
+                        {% if amendement.groupe -%}
+                          ({{ amendement.groupe }}
+                          {%- if amendement.couleur_groupe != "#ffffff" %}
+                            <span class="group-color" style="background-color: {{ amendement.couleur_groupe }};"></span>
                           {%- endif %})
                         {%- endif %}{% if not loop.last and loop.nextitem.auteur != amendement.auteur %}, {% endif %}
                       </span>
@@ -143,52 +138,52 @@
             </div>
             {% if is_gouvernemental %}
               <div class="gouvernemental">
-                <a href="#amendement-{{ amendements[0].pk }}"
+                <a href="#amendement-{{ amendement.num }}"
                    class="button gouvernemental"
-                   data-toggle-target="reponse-detail-{{ amendements[0].pk }}">
+                   data-toggle-target="reponse-detail-{{ amendement.num }}">
                   Voir la présentation
                 </a>
               </div>
             {% else %}
               <hr>
               <div>
-                <a href="#amendement-{{ amendements[0].pk }}"
+                <a href="#amendement-{{ amendement.num }}"
                    class="button"
-                   data-toggle-target="reponse-detail-{{ amendements[0].pk }}">
+                   data-toggle-target="reponse-detail-{{ amendement.num }}">
                   Réponse
                 </a>
-                <p>Avis : <span class="avis {{ avis_class }}">{{ reponse.avis }}</span></p>
+                <p>Avis : <span class="avis {{ avis_class }}">{{ amendement.avis }}</span></p>
               </div>
             {% endif %}
           </header>
           <div class="is-hidden">
-            <div id="reponse-detail-{{ amendements[0].pk }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
+            <div id="reponse-detail-{{ amendement.num }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
               <h4>Objet</h4>
               <div class="reponse-presentation">
-                {{ reponse.presentation | paragriphy }}
+                {{ amendement.observations | paragriphy }}
               </div>
-              {% if reponse.content.strip() and reponse.content != '<p></p>' %}
+              {% if amendement.reponse and amendement.reponse.strip() and amendement.reponse != '<p></p>' %}
                 <h4>Réponse</h4>
-                {{ reponse.content | paragriphy }}
+                {{ amendement.reponse | paragriphy }}
               {% endif %}
               <p class="bottom">
-                <a class="button arrow arrow-up" href="#amendement-{{ amendements[0].pk }}">
+                <a class="button arrow arrow-up" href="#amendement-{{ amendement.num }}">
                   Replier
                 </a>
               </p>
             </div>
           </div>
           <div class="is-hidden">
-            <div id="amendement-detail-{{ amendements[0].pk }}"
+            <div id="amendement-detail-{{ amendement.num }}"
                  class="amendement-detail {{ avis_class }}">
               {% for amendement in amendements %}
                 {% if multiple %}
                   <h3>
-                    Amendement {{ amendement.id }}
+                    Amendement {{ amendement.num }}
                     — {{ amendement.auteur }}
-                    {% if amendement.groupe and amendement.groupe.libelle -%}
-                      <small>({{ amendement.groupe.libelle }}
-                        <span class="group-color" style="background-color: {{ amendement.groupe.couleur }};"></span>)</small>
+                    {% if amendement.groupe -%}
+                      <small>({{ amendement.groupe }}
+                        <span class="group-color" style="background-color: {{ amendement.couleur_groupe }};"></span>)</small>
                     {%- endif %}
                   </h3>
                 {% endif %}
@@ -200,7 +195,7 @@
                 </div>
               {% endfor %}
               <p class="bottom">
-                <a class="button arrow arrow-up" href="#amendement-{{ amendements[0].pk }}">
+                <a class="button arrow arrow-up" href="#amendement-{{ amendement.num }}">
                   Replier
                 </a>
               </p>
@@ -215,18 +210,14 @@
 
 <template id="menu">
   <div class="menu">
-    {% for article in articles.values() %}
+    {% for article in articles|sort %}
       {# Once data are cleaner, use the groupby jinja filter here. #}
       {% if loop.previtem is defined and loop.previtem != article or loop.previtem is not defined %}
         {% if loop.previtem is defined and loop.previtem.titre != article.titre and article.titre not in ("TODO", "") or loop.previtem is not defined and article.titre %}
           <p><strong>{{ article.titre }} :</strong>
         {% endif %}
         <a href="{{ request.resource_url(context.parent, article.url_key, 'reponses') }}">
-          {%- if article.type_ == "article" -%}
-            Art. {{ article }}
-          {%- elif article.type_ -%}
-            {{ article.type_.capitalize() }}s
-          {%- endif -%}
+          {{- article -}}
         </a>
         {% if loop.nextitem is defined and loop.nextitem.titre != article.titre and loop.nextitem.titre not in ("TODO", "") or loop.nextitem is not defined %}
           </p>

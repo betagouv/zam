@@ -5,25 +5,7 @@ from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.message import Message
-from zam_repondeur.models.visionneuse import build_tree
 from zam_repondeur.resources import ArticleResource
-
-
-@view_config(context=ArticleResource, name="reponses", renderer="visionneuse.html")
-def list_reponses(context: ArticleResource, request: Request) -> Response:
-    article = context.model()
-    lecture = article.lecture
-    amendements = lecture.amendements
-    articles = build_tree(amendements, article)
-    check_url = request.resource_path(context.parent.parent, "check")
-    return {
-        "dossier_legislatif": lecture.dossier_legislatif,
-        "lecture": str(lecture),
-        "articles": articles,
-        "timestamp": lecture.modified_at_timestamp,
-        "check_url": check_url,
-        "current_article": article,
-    }
 
 
 @view_defaults(context=ArticleResource)

@@ -360,7 +360,12 @@
                         class="input-required"
                     {% endif %}
                 >
-                    <nobr>
+                    <nobr
+                    {% if amendement.has_reponse %}
+                        data-balloon="{{ amendement.reponse | striptags | truncate(length=150, killwords=False, end='…') }}"
+                        data-balloon-pos="left"
+                    {% endif %}
+                    >
                         {% if amendement.gouvernemental %}
                             <span class="avis"></span>
                         {% elif amendement.avis %}

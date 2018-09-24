@@ -1,5 +1,5 @@
 import re
-from typing import Tuple
+from typing import Optional, Tuple  # noqa
 
 from sqlalchemy import (
     Boolean,
@@ -70,10 +70,10 @@ class Amendement(Base):
     article = relationship("Article", back_populates="amendements", lazy="joined")
 
     # Extras. (TODO: move to dedicated table?)
-    avis = Column(Text, nullable=True)
-    observations = Column(Text, nullable=True)
-    reponse = Column(Text, nullable=True)
-    comments = Column(Text, nullable=True)
+    avis = Column(Text, nullable=True)  # type: Optional[str]
+    observations = Column(Text, nullable=True)  # type: Optional[str]
+    reponse = Column(Text, nullable=True)  # type: Optional[str]
+    comments = Column(Text, nullable=True)  # type: Optional[str]
     bookmarked_at = Column(DateTime, nullable=True)
 
     __repr_keys__ = ("pk", "num", "rectif", "lecture_pk", "article_pk", "parent_pk")
@@ -203,6 +203,14 @@ class Amendement(Base):
         return (
             bool(self.avis) or self.gouvernemental
         ) and self.sort not in self.ABANDONED
+
+    @property
+    def has_reponse(self) -> bool:
+        return (
+            self.reponse is not None
+            and self.reponse.strip() != ""
+            and self.reponse != "<p></p>"
+        )
 
     @property
     def lecture_url_key(self) -> str:

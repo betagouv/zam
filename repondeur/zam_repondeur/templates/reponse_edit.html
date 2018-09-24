@@ -51,7 +51,7 @@
     </div>
     <nav class="justify-content-start">
         <p>
-            <a class="button" href="{{ request.resource_url(context.parent) }}">←&nbsp;&nbsp;Retourner aux amendements</a>
+            <a class="button" href="{{ request.resource_url(context.parent, anchor=amendement.slug) }}">←&nbsp;&nbsp;Retourner aux amendements</a>
         </p>
     </nav>
 {% endblock %}
@@ -151,7 +151,7 @@
 
         <div class="form-group">
             <input type="submit" name="submit" value="Enregistrer" class="btn btn-primary">
-            <a href="{{ request.resource_url(context.parent) }}" class="btn">Annuler</a>
+            <a href="{{ request.resource_url(context.parent, anchor=amendement.slug) }}" class="btn">Annuler</a>
         </div>
 
     </form>

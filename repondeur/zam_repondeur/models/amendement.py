@@ -296,4 +296,5 @@ class Amendement(Base):
             result["identique"] = self.identique or ""
             result["alinea"] = self.alinea or ""
             result["date_depot"] = self.date_depot or ""
+            result["bookmarked_at"] = "Oui" if self.bookmarked_at else "Non"
         return result

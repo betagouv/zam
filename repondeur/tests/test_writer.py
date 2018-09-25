@@ -1,4 +1,5 @@
 import transaction
+from datetime import datetime
 
 
 def _csv_row_to_dict(headers, row):
@@ -109,6 +110,7 @@ def test_write_csv(
         "Réponse": "",
         "Resume": "Suppression de l'article",
         "Session": "2017-2018",
+        "Signalé": "Non",
         "Sort": "",
         "Subdiv_mult": "",
         "Subdiv_num": "1",
@@ -188,6 +190,7 @@ def test_write_csv_sous_amendement(
                 matricule="000003",
                 objet="corge",
                 dispositif="grault",
+                bookmarked_at=datetime.now(),
             ),
         ]
         DBSession.add_all(amendements)
@@ -202,6 +205,7 @@ def test_write_csv_sous_amendement(
     assert _csv_row_to_dict(headers, rows[-1]) == {
         "Chambre": "senat",
         "Session": "2017-2018",
+        "Signalé": "Oui",
         "Num_texte": "63",
         "Organe": "PO78718",
         "Subdiv_type": "article",

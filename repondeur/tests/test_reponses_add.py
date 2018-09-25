@@ -161,7 +161,7 @@ def test_post_form_wrong_columns_names(app, lecture_an, amendements_an):
     assert resp.status_code == 200
     assert (
         "2 réponses n’ont pas pu être chargées. Pour rappel, il faut que le fichier "
-        "CSV contienne au moins les noms de colonnes suivants « Nº amdt », "
+        "CSV contienne au moins les noms de colonnes suivants « Num amdt », "
         "« Avis du Gouvernement », « Objet amdt » et « Réponse »." in resp.text
     )
 

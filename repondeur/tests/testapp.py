@@ -30,7 +30,7 @@ class TestResponse(BaseTestResponse):
         return self.parser.css_first(name).text()
 
     def find_amendement(self, amendement):
-        anchor = self.parser.css_first(f"#amendement-{amendement.num:06}")
+        anchor = self.parser.css_first(f"#amendement-{amendement.num}")
         if anchor is None:
             return None
         return TestAmendement(amendement, anchor)

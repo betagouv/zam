@@ -3,6 +3,7 @@
 
 
 {% block header %}
+<link href="{{ request.static_url('zam_repondeur:static/balloon/balloon.css') }}" rel="stylesheet" type="text/css" />
 <style type="text/css">
 
     .content {
@@ -55,11 +56,18 @@
     /* Table formatting */
     .table th, .table td {
         vertical-align: middle;
+        padding: .25rem .75rem;
+    }
+    .table td > span,
+    .table td a {
+        display: inline-block;
+        line-height: 1;
     }
     .table thead th {
         border: none;
         font-weight: 600;
         white-space: nowrap;
+        padding: .75rem;
     }
     .table th.avis {
         min-width: 100px;
@@ -71,12 +79,10 @@
         position: -webkit-sticky;
         background: white;
         z-index: 10;
-    }
-    tr.headers th {
-        top: 50px;  /* top nav height */
+        top: 0;
     }
     tr.filters th {
-        top: calc(50px + 48.5px);  /* just below */
+        top: 48.5px;  /* just below first headers */
     }
 
     /* Sorting */
@@ -107,7 +113,9 @@
         width: 4rem;
         padding: 0 .25rem;
     }
-    tr.hidden-article, tr.hidden-avis {
+    tr.hidden-article,
+    tr.hidden-amendement,
+    tr.hidden-avis {
         display: none;
     }
 
@@ -115,6 +123,8 @@
     .bookmark input[type="submit"] {
         border:none;
         background: inherit;
+        font-size: 1.25rem;
+        cursor: pointer;
     }
     .bookmark input.bookmarked {
         color: #3167a6;
@@ -130,35 +140,67 @@
 
     /* Links in table */
     td a, td a:hover {
-        display: inline-block;
         white-space: nowrap;
         text-decoration: none;
-        line-height: 0.9;
         border-bottom: thin solid #3167a6;
+    }
+
+    /* Tooltips */
+    span[data-balloon].dotted {
+        border-bottom: 1px dotted #3167a6;
+    }
+    [data-balloon]:after {
+        font-size: 14px !important;
+        padding: 1rem;
     }
 
     :target {
         background: lightyellow;
+    }
+    span.avis {
+        width: 6px;
+        display: block;
+        height: 1.5rem;
+        float: left;
+        margin: 0 1rem 0 0;
+    }
+    span.avis.positive {
+        background-color: #5fa014;
+    }
+    span.avis.sagesse {
+        background-color: #3167a6;
+    }
+    span.avis.negative {
+        background-color: #d0021b;
+    }
+
+    td .button {
+        padding: .2rem .4rem;
+        border-radius: 20px;
+        font-size: 60%;
+        line-height: 0;
     }
 </style>
 {% endblock %}
 
 
 {% block top %}
-    <nav class="top-left">
-        <a class="button" href="{{ request.resource_url(context.parent.parent) }}">←&nbsp;&nbsp;Retourner aux lectures</a>
-    </nav>
     <div class="title">
         <h2>{{ lecture.dossier_legislatif }}</h2>
         <h3>{{ lecture }}</h3>
     </div>
-    <nav>
-        <a class="button" href="{{ request.resource_url(context.parent, 'journal') }}">Voir le journal</a>
-        {% if lecture.displayable %}
-            <a class="button" href="{{ request.resource_url(context.parent, 'reponses') }}" target="_blank">
-                Voir le dossier de banc
-            </a>
-        {% endif %}
+    <nav class="justify-content-around">
+        <p>
+            <a class="button" href="{{ request.resource_url(context.parent.parent) }}">←&nbsp;&nbsp;Retourner aux lectures</a>
+        </p>
+        <p>
+            <a class="button" href="{{ request.resource_url(context.parent, 'journal') }}">Voir le journal</a>
+            {% if lecture.displayable %}
+                <a class="button" href="{{ request.resource_url(context.parent['articles'][amendements[0].article_url_key], 'reponses') }}" target="_blank">
+                    Voir le dossier de banc
+                </a>
+            {% endif %}
+        </p>
     </nav>
 {% endblock %}
 
@@ -235,9 +277,9 @@
     <table class="table" style="width:100%">
         <thead class="box">
             <tr class="headers">
-                <th class="nosort"></th>
-                <th width="15%">Article</th>
-                <th width="15%">Nº</th>
+                <th width="50px">★</th>
+                <th width="150px">Article</th>
+                <th width="180px">Nº</th>
                 <th>Auteur</th>
                 <th>Groupe</th>
                 <th class="avis">Avis</th>
@@ -247,7 +289,9 @@
                 <th>
                     <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
-                <th></th>
+                <th>
+                    <input id="amendement-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
+                </th>
                 <th></th>
                 <th></th>
                 <th>
@@ -268,10 +312,11 @@
                         {{ amendement.article.type }}
                     {%- endif -%}
                 "
+                data-amendement="{{ amendement.num }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}"
                 id="{{ amendement.slug }}"
             >
-                <td class="bookmark">
+                <td class="bookmark" data-sortkey="{{ amendement.bookmarked_at }}">
                     <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">
                         {% if amendement.bookmarked_at %}
                             <input type="hidden" name="bookmark" value="0">
@@ -285,17 +330,25 @@
                 <td class="article" data-sortkey="{{ amendement.article.num }}">
                     <a href="{{ request.resource_url(context.parent['articles'][amendement.article_url_key]) }}"
                     {% if amendement.article.titre %}
-                        title="{{ amendement.article.titre }}"
+                        data-balloon="{{ amendement.article.titre }}" data-balloon-pos="right"
                     {% endif %}
                     >
                         {{ amendement.article }}
                     </a>
                 </td>
                 <td data-sortkey="{{ amendement.num }}">
-                    {{ amendement.num_disp }}
-                    {% if amendement.parent %}
-                        (ss-amdt au {{ amendement.parent.num_disp }})
-                    {% endif %}
+                    <span
+                        {% if amendement.observations %}
+                        data-balloon="{{ amendement.observations | striptags | truncate(length=150, killwords=False, end='…') }}"
+                        data-balloon-pos="right"
+                        class="dotted"
+                        {% endif %}
+                    >
+                        {{ amendement.num_disp }}
+                        {% if amendement.parent %}
+                            (ss-amdt au {{ amendement.parent.num_disp }})
+                        {% endif %}
+                    </span>
                 </td>
                 <td>{{ amendement.auteur }}</td>
                 <td>{{ amendement.groupe }}</td>
@@ -304,12 +357,30 @@
                         class="input-required"
                     {% endif %}
                 >
-                    <nobr>
+                    <nobr
+                    {% if amendement.has_reponse %}
+                        data-balloon="{{ amendement.reponse | striptags | truncate(length=150, killwords=False, end='…') }}"
+                        data-balloon-pos="left"
+                    {% endif %}
+                    >
+                        {% if amendement.gouvernemental %}
+                            <span class="avis"></span>
+                        {% elif amendement.avis %}
+                            {% if amendement.avis == "Sagesse" %}
+                                <span class="avis sagesse"></span>
+                            {% elif amendement.avis.startswith("Favorable") %}
+                                <span class="avis positive"></span>
+                            {% else %}
+                                <span class="avis negative"></span>
+                            {% endif %}
+                        {% else %}
+                            <span class="avis"></span>
+                        {% endif %}
                         <a href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
-                        {% if amendement.avis %}
-                            {{ amendement.avis }}
-                        {% elif amendement.gouvernemental %}
+                        {% if amendement.gouvernemental %}
                             &mdash;
+                        {% elif amendement.avis %}
+                            {{ amendement.avis }}
                         {% else %}
                             Aucun
                         {% endif %}
@@ -413,6 +484,21 @@
                 line.classList.remove('hidden-article')
             } else {
                 line.classList.add('hidden-article')
+            }
+        })
+    })
+    var amendementFilter = table.querySelector('#amendement-filter')
+    amendementFilter.addEventListener('keyup', function (e) {
+        var value = e.target.value.trim()
+        ;[].slice.call(tableLines).forEach(function (line) {
+            if (!value) {
+                line.classList.remove('hidden-amendement')
+                return
+            }
+            if (line.dataset.amendement.trim() === value) {
+                line.classList.remove('hidden-amendement')
+            } else {
+                line.classList.add('hidden-amendement')
             }
         })
     })

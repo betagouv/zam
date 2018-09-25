@@ -9,12 +9,14 @@
 
 
 {% block top %}
+    <h2>Ajouter une lecture...</h2>
     {% if lectures %}
-    <nav class="top-left">
-        <a class="button" href="{{ request.resource_url(context.parent.parent) }}">←&nbsp;&nbsp;Retourner aux lectures</a>
+    <nav class="justify-content-start">
+        <p>
+            <a class="button" href="{{ request.resource_url(context.parent.parent) }}">←&nbsp;&nbsp;Retourner aux lectures</a>
+        </p>
     </nav>
     {% endif %}
-    <h2>Ajouter une lecture...</h2>
 {% endblock %}
 
 

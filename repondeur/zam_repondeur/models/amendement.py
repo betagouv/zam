@@ -1,5 +1,5 @@
 import re
-from typing import Tuple
+from typing import Optional, Tuple  # noqa
 
 from sqlalchemy import (
     Boolean,
@@ -13,8 +13,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import backref, relationship
 
-from .base import Base, DBSession
+from zam_repondeur.constants import GROUPS_COLORS
 
+from .base import Base, DBSession
 
 AVIS = [
     "Favorable",
@@ -27,6 +28,8 @@ AVIS = [
     "Sagesse",
 ]
 
+VERY_BIG_NUMBER = 999_999_999
+
 
 class Amendement(Base):
     __tablename__ = "amendements"
@@ -35,16 +38,16 @@ class Amendement(Base):
     pk = Column(Integer, primary_key=True)
 
     # Meta informations.
-    num = Column(Integer, nullable=False)
+    num = Column(Integer, nullable=False)  # type: int
     rectif = Column(Integer, nullable=False, default=0)
-    auteur = Column(Text, nullable=True)
+    auteur = Column(Text, nullable=True)  # type: Optional[str]
     matricule = Column(Text, nullable=True)
     groupe = Column(Text, nullable=True)
     date_depot = Column(Date, nullable=True)
     sort = Column(Text, nullable=True)
 
     # Ordre et regroupement lors de la discussion.
-    position = Column(Integer, nullable=True)
+    position = Column(Integer, nullable=True)  # type: Optional[int]
     discussion_commune = Column(Integer, nullable=True)
     identique = Column(Boolean, nullable=True)
 
@@ -70,10 +73,10 @@ class Amendement(Base):
     article = relationship("Article", back_populates="amendements", lazy="joined")
 
     # Extras. (TODO: move to dedicated table?)
-    avis = Column(Text, nullable=True)
-    observations = Column(Text, nullable=True)
-    reponse = Column(Text, nullable=True)
-    comments = Column(Text, nullable=True)
+    avis = Column(Text, nullable=True)  # type: Optional[str]
+    observations = Column(Text, nullable=True)  # type: Optional[str]
+    reponse = Column(Text, nullable=True)  # type: Optional[str]
+    comments = Column(Text, nullable=True)  # type: Optional[str]
     bookmarked_at = Column(DateTime, nullable=True)
 
     __repr_keys__ = ("pk", "num", "rectif", "lecture_pk", "article_pk", "parent_pk")
@@ -127,6 +130,15 @@ class Amendement(Base):
         DBSession.add(amendement)
         return amendement
 
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, Amendement):
+            return NotImplemented
+        return self.sort_key < other.sort_key
+
+    @property
+    def sort_key(self) -> Tuple[int, int]:
+        return (self.position or VERY_BIG_NUMBER, self.num)
+
     @property
     def num_str(self) -> str:
         return str(self.num)
@@ -142,6 +154,13 @@ class Amendement(Base):
             text += " "
             text += self._RECTIF_TO_SUFFIX[self.rectif]
         return text
+
+    def __str__(self) -> str:
+        return self.num_disp
+
+    @property
+    def couleur_groupe(self) -> str:
+        return GROUPS_COLORS.get(self.groupe, "#ffffff")
 
     @property
     def slug(self) -> str:
@@ -196,13 +215,33 @@ class Amendement(Base):
 
     @property
     def gouvernemental(self) -> bool:
-        return bool(self.auteur == "LE GOUVERNEMENT")
+        return self.auteur == "LE GOUVERNEMENT"
 
     @property
     def is_displayable(self) -> bool:
         return (
             bool(self.avis) or self.gouvernemental
         ) and self.sort not in self.ABANDONED
+
+    @property
+    def has_reponse(self) -> bool:
+        return (
+            self.reponse is not None
+            and self.reponse.strip() != ""
+            and self.reponse != "<p></p>"
+        )
+
+    @property
+    def favorable(self) -> bool:
+        if self.avis is None:
+            return False
+        return self.avis.startswith("Favorable")
+
+    @property
+    def sagesse(self) -> bool:
+        if self.avis is None:
+            return False
+        return self.avis == "Sagesse"
 
     @property
     def lecture_url_key(self) -> str:
@@ -217,6 +256,11 @@ class Amendement(Base):
             f"{self.article.type}.{self.article.num}."
             f"{self.article.mult}.{self.article.pos}"
         )
+
+    def grouping_key(self) -> str:
+        if self.gouvernemental:
+            return self.num_str
+        return self.reponse or ""
 
     def asdict(self, full: bool = False) -> dict:
         result = {

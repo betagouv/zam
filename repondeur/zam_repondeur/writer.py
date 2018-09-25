@@ -97,16 +97,13 @@ def xvfb_if_supported() -> Generator:
 def write_pdf(
     lecture: Lecture, amendements: Iterable[Amendement], filename: str, request: Request
 ) -> int:
-    from zam_repondeur.models.visionneuse import build_tree  # NOQA: circular
-
     amendements = list(amendements)
-    articles = build_tree(amendements)
     env = get_jinja2_environment(request, name=".html")
     template = env.get_template("print.html")
     content = template.render(
         dossier_legislatif=lecture.dossier_legislatif,
         lecture=str(lecture),
-        articles=articles,
+        articles=lecture.articles,
     )
     options = {
         "quiet": "",

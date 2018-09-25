@@ -21,12 +21,6 @@ class Resource(dict):
     __name__: Optional[str] = None
     __parent__: Optional["Resource"] = None
 
-    @property
-    def breadcrumbs_title(self) -> str:
-        raise NotImplementedError  # pragma: no cover
-
-    breadcrumbs_link: bool = True
-
     def __init__(self, name: str, parent: "Resource") -> None:
         self.__name__ = name
         self.__parent__ = parent
@@ -56,9 +50,6 @@ class Root(Resource):
 
 
 class LectureCollection(Resource):
-
-    breadcrumbs_title = "Lectures"
-
     def models(self) -> List[Lecture]:
         return Lecture.all()
 
@@ -78,9 +69,6 @@ class LectureCollection(Resource):
 
 
 class LectureResource(Resource):
-
-    breadcrumbs_link = False
-
     def __init__(
         self,
         name: str,
@@ -104,15 +92,8 @@ class LectureResource(Resource):
             raise ResourceNotFound(self)
         return lecture
 
-    @property
-    def breadcrumbs_title(self) -> str:
-        return f"{self.model().dossier_legislatif} → {str(self.model())}"
-
 
 class AmendementCollection(Resource):
-
-    breadcrumbs_title = ""
-
     def __getitem__(self, key: str) -> Resource:
         return AmendementResource(name=key, parent=self)
 
@@ -122,9 +103,6 @@ class AmendementCollection(Resource):
 
 
 class AmendementResource(Resource):
-
-    breadcrumbs_link = False
-
     def __init__(self, name: str, parent: Resource) -> None:
         super().__init__(name=name, parent=parent)
         self.num = int(name)
@@ -148,17 +126,8 @@ class AmendementResource(Resource):
             raise ResourceNotFound(self)
         return amendement
 
-    @property
-    def breadcrumbs_title(self) -> str:
-        amendement = self.model()
-        return amendement.num_disp
-
 
 class ArticleCollection(Resource):
-
-    breadcrumbs_title = "Articles"
-    breadcrumbs_link = False
-
     def __getitem__(self, key: str) -> Resource:
         try:
             type, num, mult, pos = key.split(".")
@@ -206,9 +175,3 @@ class ArticleResource(Resource):
         except NoResultFound:
             raise ResourceNotFound(self)
         return article
-
-    @property
-    def breadcrumbs_title(self) -> str:
-        type_ = self.type == "article" and "art." or self.type
-        text = f"{self.pos} {type_} {self.num} {self.mult}"
-        return text.strip().capitalize()

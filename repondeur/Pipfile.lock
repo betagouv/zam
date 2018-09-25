@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "07a789d245d246632187a2dcd4a56fbf7f8769f34acc8842464d33e4bbf54f45"
+            "sha256": "693b75979c23a48a2d3b65d21ed97dd44b829fe46a66a0d24f446db63911b357"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -758,10 +758,10 @@
         },
         "ipython": {
             "hashes": [
-                "sha256:1d8c8c73815e2bb2cf0b7b749d573f09ee98440970b066de2b2edcd65230aac2",
-                "sha256:741b6cdd777a6ed951b82408115177acbc3328d1e99addf21fdf5d33abf803d7"
+                "sha256:78ddfb4ada05533584d3e66763bf1ceece5d981a0e60645a481647e3fa470500",
+                "sha256:dfeef54a2e843414db16c3614299a6558ebaf412fba2445ed8db30c5bb64d9c6"
             ],
-            "version": "==7.0.0b1"
+            "version": "==7.0.0rc1"
         },
         "ipython-genutils": {
             "hashes": [
@@ -811,6 +811,13 @@
             ],
             "index": "pypi",
             "version": "==0.620"
+        },
+        "mypy-extensions": {
+            "hashes": [
+                "sha256:37e0e956f41369209a3d5f34580150bcacfabaa57b33a15c0b25f4b5725e0812",
+                "sha256:b16cabe759f55e3409a7d231ebd2841378fb0c27a5d1994719e340e4f429ac3e"
+            ],
+            "version": "==0.4.1"
         },
         "parso": {
             "hashes": [
@@ -943,6 +950,13 @@
             "index": "pypi",
             "version": "==2.6.0"
         },
+        "pytest-sugar": {
+            "hashes": [
+                "sha256:ab8cc42faf121344a4e9b13f39a51257f26f410e416c52ea11078cdd00d98a2c"
+            ],
+            "index": "pypi",
+            "version": "==0.9.1"
+        },
         "repoze.lru": {
             "hashes": [
                 "sha256:0429a75e19380e4ed50c0694e26ac8819b4ea7851ee1fc7583c8572db80aff77",
@@ -978,6 +992,12 @@
                 "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb"
             ],
             "version": "==1.11.0"
+        },
+        "termcolor": {
+            "hashes": [
+                "sha256:1d6d69ce66211143803fbc56652b41d73b4a400a2891d7bf7a1cdf4c02de613b"
+            ],
+            "version": "==1.1.0"
         },
         "toml": {
             "hashes": [

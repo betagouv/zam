@@ -6,6 +6,7 @@ from unittest.mock import patch
 def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements_senat):
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.fetch.senat.senateurs.models import Senateur
 
     # Add a response to one of the amendements
     with transaction.manager:
@@ -24,7 +25,9 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
         "zam_repondeur.fetch.senat.amendements._fetch_all"
     ) as mock_fetch_all, patch(
         "zam_repondeur.fetch.senat.amendements._fetch_discussed"
-    ) as mock_fetch_discussed:
+    ) as mock_fetch_discussed, patch(
+        "zam_repondeur.fetch.senat.amendements.fetch_and_parse_senateurs"
+    ) as mock_fetch_and_parse_senateurs:
         mock_fetch_all.return_value = (
             {
                 "Numéro ": "6666",
@@ -138,6 +141,16 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
                 }
             ],
         }
+        mock_fetch_and_parse_senateurs.return_value = {
+            "01034P": Senateur(
+                matricule="01034P",
+                qualite="M.",
+                nom="Vanlerenberghe",
+                prenom="Jean-Marie",
+                groupe="UC",
+            )
+        }
+
         amendements, created, errored = get_amendements(lecture_senat)
 
     assert [amendement.num for amendement in amendements] == [6666, 7777, 9999]

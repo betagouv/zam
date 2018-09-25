@@ -1,5 +1,7 @@
+from typing import Iterable
+
 from sqlalchemy import Column, ForeignKey, Integer, PickleType, Text
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from .base import Base, DBSession
 from .lecture import Lecture
@@ -17,6 +19,33 @@ AVIS = [
 ]
 
 
+ALLOWED_TYPE = (
+    "",
+    "titre",
+    "motion",
+    "chapitre",
+    "section",
+    "sous-section",
+    "article",
+    "annexe",
+)
+
+ALLOWED_MULT = (
+    "",
+    "bis",
+    "ter",
+    "quater",
+    "quinquies",
+    "sexies",
+    "septies",
+    "octies",
+    "nonies",
+    "decies",
+)
+
+ALLOWED_POS = ("avant", "", "après")
+
+
 class Article(Base):
     __tablename__ = "articles"
 
@@ -32,6 +61,18 @@ class Article(Base):
     jaune = Column(Text, nullable=True)  # éléments de langage
 
     amendements = relationship("Amendement", back_populates="article")
+
+    @validates("type")
+    def validate_type(self, key: str, type: str) -> str:
+        return validate(key, type, ALLOWED_TYPE)
+
+    @validates("mult")
+    def validate_mult(self, key: str, mult: str) -> str:
+        return validate(key, mult, ALLOWED_MULT)
+
+    @validates("pos")
+    def validate_pos(self, key: str, pos: str) -> str:
+        return validate(key, pos, ALLOWED_POS)
 
     __repr_keys__ = ("pk", "lecture_pk", "type", "num", "mult", "pos")
 
@@ -64,3 +105,17 @@ class Article(Base):
         )
         DBSession.add(article)
         return article
+
+
+def validate(name: str, value: str, allowed: Iterable[str]) -> str:
+    if not isinstance(value, str):
+        raise ValueError(f"Invalid type '{type(value)}' for {name} (expected str)")
+    if value not in allowed:
+        raise ValueError(
+            f"Invalid value '{value}' for {name} (allowed: {format_list(allowed)})"
+        )
+    return value
+
+
+def format_list(items: Iterable[str]) -> str:
+    return ", ".join(f"'{item}'" for item in items)

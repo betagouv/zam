@@ -1,20 +1,31 @@
 """
 NB: make sure tasks.huey.init_huey() has been called before importing this module
 """
-import transaction
+import logging
 from datetime import datetime
+
+import transaction
 
 from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.tasks.huey import huey
 from zam_repondeur.models import DBSession, Journal, Lecture
 
 
+logger = logging.getLogger(__name__)
+
+
 @huey.task(retries=3, retry_delay=60 * 5)  # Minutes.
 @huey.lock_task("fetch-articles-lock")
 def fetch_articles(lecture_pk: int) -> None:
     with transaction.manager:
+
         lecture = DBSession.query(Lecture).get(lecture_pk)
+        if lecture is None:
+            logger.error(f"Lecture {lecture_pk} introuvable")
+            return
+
         get_articles(lecture)
+
         message = "Récupération des articles effectuée."
         Journal.create(lecture=lecture, kind="info", message=message)
         lecture.modified_at = datetime.utcnow()
@@ -24,8 +35,14 @@ def fetch_articles(lecture_pk: int) -> None:
 @huey.lock_task("fetch-amendements-lock")
 def fetch_amendements(lecture_pk: int) -> None:
     with transaction.manager:
+
         lecture = DBSession.query(Lecture).get(lecture_pk)
+        if lecture is None:
+            logger.error(f"Lecture {lecture_pk} introuvable")
+            return
+
         amendements, created, errored = get_amendements(lecture)
+
         if not amendements:
             message = "Aucun amendement n’a pu être trouvé."
             Journal.create(lecture=lecture, kind="danger", message=message)

@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Dict, List, Tuple
 
 from tlfp.tools.parse_texte import parse
@@ -7,6 +8,8 @@ from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.models import Amendement
 from zam_repondeur.fetch.senat.amendements import aspire_senat
 from zam_repondeur.models import DBSession, Article, Lecture
+
+logger = logging.getLogger(__name__)
 
 
 def get_amendements(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
@@ -41,7 +44,11 @@ def get_article_num_mult(article: Dict[str, Any]) -> Tuple[str, str]:
 
 def get_articles(lecture: Lecture) -> None:
     urls = get_possible_texte_urls(lecture)
-    articles = parse_first_working_url(urls)
+    try:
+        articles = parse_first_working_url(urls)
+    except NotFound:
+        logger.warning("Texte non trouvé : %r (%s)", lecture, urls)
+        return
     add_article_contents_to_amendements(lecture, articles)
 
 

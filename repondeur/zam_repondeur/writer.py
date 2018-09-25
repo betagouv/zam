@@ -16,6 +16,7 @@ from .models import Amendement, Lecture
 
 FIELDS_NAMES = {
     "article": "Num article",
+    "article_titre": "Titre article",
     "alinea": "Alinéa",
     "num": "Num amdt",
     "auteur": "Auteur(s)",
@@ -51,11 +52,8 @@ FIELDS = [
 ] + [
     "parent",
     "gouvernemental",
-    "subdiv_type",
-    "subdiv_titre",
-    "subdiv_num",
-    "subdiv_mult",
-    "subdiv_pos",
+    "article",
+    "article_titre",
     "chambre",
     "num_texte",
     "organe",

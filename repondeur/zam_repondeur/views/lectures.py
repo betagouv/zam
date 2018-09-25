@@ -194,8 +194,8 @@ class ListAmendements:
                                 f"{errors_count} réponses n’ont pas pu être chargées. "
                                 "Pour rappel, il faut que le fichier CSV contienne "
                                 "au moins les noms de colonnes suivants "
-                                "« Nº amdt », « Avis du Gouvernement », « Objet amdt » "
-                                "et « Réponse »."
+                                "« Num amdt », « Avis du Gouvernement », « Objet amdt »"
+                                " et « Réponse »."
                             ),
                         )
                     )
@@ -222,7 +222,7 @@ class ListAmendements:
 
         for line in csv.DictReader(reponses_text_file, delimiter=delimiter):
             try:
-                numero = line["Nº amdt"]
+                numero = line["Num amdt"]
                 avis = line["Avis du Gouvernement"] or ""
                 objet = line["Objet amdt"] or ""
                 reponse = line["Réponse"] or ""

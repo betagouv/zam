@@ -5,7 +5,6 @@
 {% block header %}
 <link href="{{ request.static_url('zam_repondeur:static/balloon/balloon.css') }}" rel="stylesheet" type="text/css" />
 <style type="text/css">
-
     .content {
         margin: 0 1rem;
     }
@@ -155,7 +154,7 @@
     }
 
     :target {
-        background: lightyellow;
+        background: #d4edda66;
     }
     span.avis {
         width: 6px;
@@ -189,21 +188,23 @@
         <h2>{{ lecture.dossier_legislatif }}</h2>
         <h3>{{ lecture }}</h3>
     </div>
-    <nav class="justify-content-around">
-        <p>
-            <a class="button" href="{{ request.resource_url(context.parent.parent) }}">←&nbsp;&nbsp;Retourner aux lectures</a>
-        </p>
-        <p>
-            <a class="button" href="{{ request.resource_url(context.parent, 'journal') }}">Voir le journal</a>
+{% endblock %}
+
+{% block secondary_header %}
+    <nav class="nav secondary justify-content-between">
+        <span class="nav-item">
+            <a class="arrow-left" href="{{ request.resource_url(context.parent.parent) }}">Retourner aux lectures</a>
+        </span>
+        <span class="nav-item">
+            <a class="arrow-right journal" href="{{ request.resource_url(context.parent, 'journal') }}">Voir le journal</a>
             {% if lecture.displayable %}
-                <a class="button" href="{{ request.resource_url(context.parent['articles'][amendements[0].article_url_key], 'reponses') }}" target="_blank">
+                <a class="arrow-right dossier-de-banc" href="{{ request.resource_url(context.parent['articles'][amendements[0].article_url_key], 'reponses') }}" target="_blank">
                     Voir le dossier de banc
                 </a>
             {% endif %}
-        </p>
+        </span>
     </nav>
 {% endblock %}
-
 
 {% block body %}
 <div class="content">

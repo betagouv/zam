@@ -50,7 +50,7 @@ body {
 
 header.main {
     background-color: #3167a6;
-    padding: 1rem;
+    padding: .5rem;
     color: white;
     text-align: center;
 }
@@ -110,13 +110,26 @@ header.main nav.top-left {
     }
 }
 
-header.secondary {
-    padding: 1.5rem 1.5rem 1rem 1.5rem;
+nav.secondary {
+    padding: 1.2rem 2rem 1rem 2rem;
     text-align: center;
-    box-shadow: 2px 2px 5px 2px #CCC;
-}
-header.secondary h2 {
+    box-shadow: 0 10px 5px -5px #CCC;
+    background: #f6f7fa;
     font-weight: 600;
+}
+.arrow-left {
+    padding-left: 1rem;
+    background: no-repeat left 40%/6% url("../img/big_left.svg");
+}
+.arrow-right {
+    padding-right: 1rem;
+    background: no-repeat right 40%/6% url("../img/big_right.svg");
+}
+.dossier-de-banc {
+    margin-left: 3rem;
+}
+.journal {
+    font-weight: normal;
 }
 
 main {
@@ -138,17 +151,17 @@ a {
     font-size: inherit;
     font-family: inherit;
     background-color: transparent;
-    color: #3167a6;
+    color: #1a1a1a;
     line-height: 1;
-    padding: 0.75rem 1.5rem 0.5rem 1.5rem;
-    border: thin solid #3167a6;
-    border-radius: 8px;
+    padding: 0.5rem 1rem 0.25rem 1rem;
+    border: thin solid #1a1a1a;
+    border-radius: 5px;
     white-space: nowrap;
     text-decoration: none;
 }
 .button:hover,
 .button.enabled {
-    background-color: #3167a6;
+    background-color: #1a1a1a;
     color: white;
     text-decoration: none;
 }

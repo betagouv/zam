@@ -185,7 +185,8 @@ def test_reponses_with_jaunes(app, lecture_an, amendements_an):
 
     assert len(resp.parser.css("#content-article-1")) == 1
     assert (
-        resp.parser.css_first("#content-article-1 h2").text() == "Éléments de langage"
+        resp.parser.css_first("#content-article-1 h2").text()
+        == "Présentation de l’article"
     )
     assert (
         resp.parser.css_first("#content-article-1 p").text().strip()

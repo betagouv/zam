@@ -64,7 +64,7 @@ class Article(Base):
     pos = Column(Text, nullable=True)  # type: Optional[str]
     titre = Column(Text, nullable=True)
     contenu = Column(PickleType, nullable=True)
-    jaune = Column(Text, nullable=True)  # éléments de langage
+    jaune = Column(Text, nullable=True)  # Présentation de l’article.
 
     amendements = relationship(
         Amendement,

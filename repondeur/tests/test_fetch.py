@@ -97,6 +97,28 @@ def test_get_articles_an_seance(app, lecture_an, amendements_an):
 
 
 @responses.activate
+def test_get_articles_an_unknown(app, lecture_an, amendements_an):
+    from zam_repondeur.fetch import get_articles
+    from zam_repondeur.models import DBSession, Amendement
+
+    responses.add(
+        responses.GET,
+        "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+        status=404,
+    )
+    responses.add(
+        responses.GET,
+        "http://www.assemblee-nationale.fr/15/ta-commission/r0269-a0.asp",
+        status=404,
+    )
+
+    get_articles(lecture_an)
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+    assert amendement.article.contenu == {}
+
+
+@responses.activate
 def test_get_articles_senat(app, lecture_senat, amendements_senat, article1_an):
     from zam_repondeur.fetch import get_articles
     from zam_repondeur.models import DBSession, Amendement, Article

@@ -71,7 +71,7 @@ def system(ctx):
     )
     ctx.sudo("mkdir -p /srv/zam")
     ctx.sudo("mkdir -p /srv/zam/letsencrypt/.well-known/acme-challenge")
-    create_user("zam", "/srv/zam/")
+    create_user(ctx, "zam", "/srv/zam/")
     ctx.sudo("chown zam:users /srv/zam/")
     ctx.sudo("chsh -s /bin/bash zam")
 

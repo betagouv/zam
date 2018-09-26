@@ -10,15 +10,17 @@
 
 {% block top %}
     <h2>Ajouter une lecture...</h2>
+{% endblock %}
+
+{% block secondary_header %}
     {% if lectures %}
-    <nav class="justify-content-start">
-        <p>
-            <a class="button" href="{{ request.resource_url(context.parent.parent) }}">←&nbsp;&nbsp;Retourner aux lectures</a>
-        </p>
+    <nav class="nav secondary justify-content-start">
+        <span class="nav-item">
+            <a class="arrow-left" href="{{ request.resource_url(context.parent.parent) }}">Retourner aux lectures</a>
+        </span>
     </nav>
     {% endif %}
 {% endblock %}
-
 
 {% block body %}
     <form id="add-lecture" action="{{ request.path }}" method="POST">

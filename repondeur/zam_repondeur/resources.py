@@ -1,12 +1,13 @@
 from typing import Iterator, List, Optional, cast
 
+from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
 from sqlalchemy.orm.exc import NoResultFound
 
 from zam_repondeur.models import Amendement, Article, DBSession, Lecture
 
 
-class ResourceNotFound(Exception):
+class ResourceNotFound(HTTPNotFound):
     pass
 
 

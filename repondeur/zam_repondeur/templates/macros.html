@@ -1,9 +1,10 @@
 {% macro update_informations(lecture, journal_link) %}
     Dernière mise à jour :
-    <time xsi:type="xsd:dateTime"
-        datetime="{{ lecture.modified_at.isoformat() }}"
-        data-timestamp="{{ lecture.modified_at_timestamp }}">
-        {{ lecture.modified_at.isoformat() }}
-    </time>
-    <a class="float-right btn btn-secondary btn-sm" href="{{ journal_link }}">Journal</a>
+    <a href="{{ journal_link }}">
+        <time xsi:type="xsd:dateTime"
+            datetime="{{ lecture.modified_at.isoformat() }}"
+            data-timestamp="{{ lecture.modified_at_timestamp }}">
+                {{ lecture.modified_at.isoformat() }}
+        </time>
+    </a>
 {% endmacro %}

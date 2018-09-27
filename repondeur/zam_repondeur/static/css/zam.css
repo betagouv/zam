@@ -165,7 +165,7 @@ a {
     background-color: transparent;
     color: #1a1a1a;
     line-height: 1;
-    padding: 0.5rem 1rem 0.25rem 1rem;
+    padding: 0.5rem 1.5rem 0.25rem 1.5rem;
     border: thin solid #1a1a1a;
     border-radius: 5px;
     white-space: nowrap;
@@ -237,5 +237,5 @@ nav .button:last-child {
     overflow: hidden;
 }
 .custom-file-label::after {
-    content: "Choisir";
+    content: "Parcourir";
 }

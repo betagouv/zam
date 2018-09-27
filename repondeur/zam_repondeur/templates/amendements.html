@@ -10,10 +10,10 @@
     }
 
     /* Options avancées */
-    .toggle:before {
+    .toggle.with-arrow:before {
         content: "↓";
     }
-    .toggle.enabled:before {
+    .toggle.with-arrow.enabled:before {
         content: "↑";
     }
     #advanced {
@@ -35,6 +35,7 @@
         margin-top: 1rem;
         display: flex;
         flex-wrap: wrap;
+        justify-content: space-around;
     }
     #advanced .button {
         margin: 0 0.75rem 0.75rem 0;
@@ -176,6 +177,9 @@
         font-size: 60%;
         line-height: 0;
     }
+    nav.secondary div {
+        font-weight: normal;
+    }
 </style>
 {% endblock %}
 
@@ -192,10 +196,12 @@
         <span class="nav-item">
             <a class="arrow-left" href="{{ request.resource_url(context.parent.parent) }}">Retourner aux lectures</a>
         </span>
+        <div>
+            {{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}
+        </div>
         <span class="nav-item">
-            <a class="arrow-right journal" href="{{ request.resource_url(context.parent, 'journal') }}">Voir le journal</a>
             {% if lecture.displayable %}
-                <a class="arrow-right dossier-de-banc" href="{{ request.resource_url(context.parent['articles'][amendements[0].article_url_key], 'reponses') }}" target="_blank">
+                <a class="arrow-right" href="{{ request.resource_url(context.parent['articles'][amendements[0].article_url_key], 'reponses') }}" target="_blank">
                     Voir le dossier de banc
                 </a>
             {% endif %}
@@ -209,7 +215,7 @@
     <div role="status" aria-live="polite"></div>
 
     <nav style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-        <a id="toggle-advanced" class="toggle button" href="#">
+        <a id="toggle-advanced" class="toggle with-arrow button" href="#">
             Options avancées
         </a>
         <a id="toggle-filter" class="toggle button" href="#">
@@ -227,9 +233,27 @@
                     <label class="custom-file-label" for="reponses">Fichier CSV</label>
                 </div>
                 <div role="group">
-                    <input type="submit" name="upload" class="button" value="Importer les réponses">
+                    <input type="submit" name="upload" class="button primary enabled centered" value="Importer les réponses">
                 </div>
             </form>
+        </div>
+        <div>
+            <h3>Télécharger ce tableau</h3>
+            <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
+            <div role="group" aria-label="Format de téléchargement">
+                <a class="button primary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'csv'}) }}">
+                    <i class="fa fa-table"></i>
+                    Format CSV
+                </a>
+                <a class="button primary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
+                    <i class="fa fa-file-excel"></i>
+                    Format Excel
+                </a>
+                <a class="button primary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
+                    <i class="fa fa-file-pdf"></i>
+                    Format PDF
+                </a>
+            </div>
         </div>
         <div>
             <h3>Importer une liasse XML</h3>
@@ -241,33 +265,17 @@
                     <label class="custom-file-label" for="liasse">Fichier XML</label>
                 </div>
                 <div role="group">
-                    <input type="submit" name="upload" class="button" value="Charger la liasse">
+                    <input type="submit" name="upload" class="button primary enabled" value="Importer la liasse">
                 </div>
             </form>
-        </div>
-        <div>
-            <h3>Télécharger ce tableau</h3>
-            <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
-            <div role="group" aria-label="Format de téléchargement">
-                <a class="button" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'csv'}) }}">
-                    <i class="fa fa-table"></i>
-                    Format CSV
-                </a>
-                <a class="button" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
-                    <i class="fa fa-file-excel"></i>
-                    Format Excel
-                </a>
-                <a class="button" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
-                    <i class="fa fa-file-pdf"></i>
-                    Format PDF
-                </a>
-            </div>
         </div>
         <div>
             <h3>Supprimer</h3>
             <p>Supprimer la lecture ainsi que tous les amendements et réponses associés.</p>
             <form method="post" action="{{ request.resource_url(context.parent) }}">
-                <input type="submit" name="delete" class="danger button" value="Supprimer">
+                <div role="group">
+                    <input type="submit" name="delete" class="danger button" value="Supprimer">
+                </div>
             </form>
         </div>
     </section>

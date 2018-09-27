@@ -5,6 +5,12 @@
 {% block header %}
     <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.css') }}">
     <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.bootstrap3.css') }}">
+    <style type="text/css">
+        form {
+            max-width: 50rem;
+            margin: 0 auto;
+        }
+    </style>
 {% endblock %}
 
 
@@ -39,10 +45,11 @@
                 <option value="" selected="selected"></option>
             </select>
         </div>
-        <div class="form-group">
-            <input type="submit" name="submit" value="Ajouter" class="btn btn-primary btn-lg" disabled>
-            <a href="{{ request.resource_url(context) }}" class="btn">Annuler</a>
+
+        <div class="form-group save-buttons">
+            <input type="submit" name="submit" value="Ajouter la lecture" class="button enabled primary" disabled>
         </div>
+
     </form>
 
 {% endblock %}

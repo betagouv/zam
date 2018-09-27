@@ -192,6 +192,24 @@ a {
     color: #d0021b;
 }
 
+/* Bouton bleu */
+.primary.button:hover,
+.primary.button.enabled {
+    background-color: #3167a6;
+    border-color: #3167a6;
+    color: white;
+}
+.primary.button,
+.primary.button.enabled:hover {
+    background-color: white;
+    border-color: #3167a6;
+    color: #3167a6;
+}
+
+.save-buttons {
+    display: flex;
+    justify-content: space-around;
+}
 nav .button {
     margin: auto 0.5rem;
 }

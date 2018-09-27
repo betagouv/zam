@@ -71,7 +71,7 @@
         {% set is_gouvernemental = amendement.gouvernemental %}
         {% set parent = amendement.parent %}
         <article{% if is_gouvernemental %} class="gouvernemental"{% endif %}{% if parent %} class="sous-amendement"{% endif %}>
-          <span class="fake-anchor" id="amendement-{{ amendement.num }}"></span>
+          <span class="fake-anchor" id="{{ amendement.slug }}"></span>
           {% if amendement.favorable %}
             {% set avis_class = 'positive' %}
           {% elif amendement.sagesse %}
@@ -87,9 +87,9 @@
             {%- for amendement in amendements %}
               data-amendement-{{ amendement.num }}="{{ amendement }}"
             {% endfor -%}
-            data-anchor="amendement-{{ amendement.num }}"
+            data-anchor="{{ amendement.slug }}"
             >
-              <a href="#amendement-{{ amendement.num }}"
+              <a href="#{{ amendement.slug }}"
                  class="button"
                  data-toggle-target="amendement-detail-{{ amendement.num }}">
                 Texte
@@ -138,7 +138,7 @@
             </div>
             {% if is_gouvernemental %}
               <div class="gouvernemental">
-                <a href="#amendement-{{ amendement.num }}"
+                <a href="#{{ amendement.slug }}"
                    class="button gouvernemental"
                    data-toggle-target="reponse-detail-{{ amendement.num }}">
                   Voir la présentation
@@ -147,7 +147,7 @@
             {% else %}
               <hr>
               <div>
-                <a href="#amendement-{{ amendement.num }}"
+                <a href="#{{ amendement.slug }}"
                    class="button"
                    data-toggle-target="reponse-detail-{{ amendement.num }}">
                   Réponse
@@ -167,7 +167,7 @@
                 {{ amendement.reponse | paragriphy }}
               {% endif %}
               <p class="bottom">
-                <a class="button arrow arrow-up" href="#amendement-{{ amendement.num }}">
+                <a class="button arrow arrow-up" href="#{{ amendement.slug }}">
                   Replier
                 </a>
               </p>
@@ -195,7 +195,7 @@
                 </div>
               {% endfor %}
               <p class="bottom">
-                <a class="button arrow arrow-up" href="#amendement-{{ amendement.num }}">
+                <a class="button arrow arrow-up" href="#{{ amendement.slug }}">
                   Replier
                 </a>
               </p>

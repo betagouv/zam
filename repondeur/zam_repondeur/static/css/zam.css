@@ -117,6 +117,10 @@ nav.secondary {
     background: #f6f7fa;
     font-weight: 600;
 }
+.secondary .nav-item {
+    align-self: center;
+}
+
 .arrow-left {
     padding-left: 1rem;
     background: no-repeat left 40%/6% url("../img/big_left.svg");

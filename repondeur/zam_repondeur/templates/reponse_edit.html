@@ -40,6 +40,12 @@
           left: 0.5em;
           margin-right: -50%;
         }
+        .secondary h2 {
+            font-weight: bold;
+        }
+        .auteur {
+            font-weight: normal;
+        }
     </style>
 {% endblock %}
 
@@ -49,29 +55,32 @@
         <h2>{{ lecture.dossier_legislatif }}</h2>
         <h3>{{ lecture }}</h3>
     </div>
-    <nav class="justify-content-start">
-        <p>
-            <a class="button" href="{{ request.resource_url(context.parent, anchor=amendement.slug) }}">←&nbsp;&nbsp;Retourner aux amendements</a>
-        </p>
-    </nav>
 {% endblock %}
-
 
 {% block secondary_header %}
-    <header class="secondary">
-        <h2>Amendement nº&nbsp;{{ amendement.num_disp }}</h2>
-        {% if amendement.parent %}
-            <h3>Sous-amendement au {{ amendement.parent.num_disp }}</h3>
-        {% endif %}
-        <div class="auteur">
-            Présenté par {{ amendement.auteur }}
-            {%- if not amendement.gouvernemental %}
-                ({{ amendement.groupe }})
+    <nav class="nav secondary justify-content-between">
+        <span class="nav-item">
+            <a class="arrow-left" href="{{ request.resource_url(context.parent, anchor=amendement.slug) }}">Retourner aux amendements</a>
+        </span>
+        <div class="secondary">
+            <h2>Amendement nº&nbsp;{{ amendement.num_disp }}</h2>
+            {% if amendement.parent %}
+                <h3>Sous-amendement au {{ amendement.parent.num_disp }}</h3>
             {% endif %}
+            <div class="auteur">
+                Présenté par {{ amendement.auteur }}
+                {%- if not amendement.gouvernemental %}
+                    ({{ amendement.groupe }})
+                {% endif %}
+            </div>
         </div>
-    </header>
+        <span class="nav-item">
+            {% if lecture.displayable %}
+                <a class="arrow-right" href="{{ request.resource_url(context.parent.parent['articles'][amendement.article_url_key], 'reponses', anchor=amendement.slug) }}" target="_blank">Visualiser dans le dossier</a>
+            {% endif %}
+        </span>
+    </nav>
 {% endblock %}
-
 
 {% block body %}
     <section class="amendement">

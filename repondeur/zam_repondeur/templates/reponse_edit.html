@@ -40,12 +40,6 @@
           left: 0.5em;
           margin-right: -50%;
         }
-        .secondary h2 {
-            font-weight: bold;
-        }
-        .auteur {
-            font-weight: normal;
-        }
     </style>
 {% endblock %}
 
@@ -62,7 +56,7 @@
         <span class="nav-item">
             <a class="arrow-left" href="{{ request.resource_url(context.parent, anchor=amendement.slug) }}">Retourner aux amendements</a>
         </span>
-        <div class="secondary">
+        <div>
             <h2>Amendement nº&nbsp;{{ amendement.num_disp }}</h2>
             {% if amendement.parent %}
                 <h3>Sous-amendement au {{ amendement.parent.num_disp }}</h3>

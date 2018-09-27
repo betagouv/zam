@@ -120,7 +120,15 @@ nav.secondary {
 .secondary .nav-item {
     align-self: center;
 }
-
+.secondary div h2 {
+    font-weight: bold;
+}
+.secondary div div {
+    font-weight: normal;
+}
+.secondary .nav-item:last-child {
+    flex-basis: 12rem;
+}
 .arrow-left {
     padding-left: 1rem;
     background: no-repeat left 40%/6% url("../img/big_left.svg");

@@ -68,7 +68,7 @@
                 Consulter la liste
             </a>
             {% if lecture.displayable %}
-            <a href="{{ request.resource_url(context[lecture.url_key]['articles'][lecture.amendements[0].article_url_key], 'reponses') }}" role="button" target="_blank">
+            <a href="{{ request.resource_url(context[lecture.url_key]['articles']) }}" role="button" target="_blank">
                 Voir le dossier de banc
             </a>
             {% endif %}

@@ -152,7 +152,7 @@
         border-top: 1px solid #e8e8e8;
       }
     .titles {
-      flex-basis: 60%;
+      flex-basis: 100%;
       font-family: "source_serif_pro";
       display: flex;
       flex-direction: column;
@@ -175,11 +175,11 @@
     }
       .arrow-left {
         padding-left: 1.5rem;
-        background: no-repeat left 30%/8% url("../img/big_left.svg");
+        background: no-repeat left 30%/.8rem url("../img/big_left.svg");
       }
       .arrow-right {
         padding-right: 1.5rem;
-        background: no-repeat right 30%/8% url("../img/big_right.svg");
+        background: no-repeat right 30%/.8rem url("../img/big_right.svg");
       }
 
   article header {

@@ -11,8 +11,6 @@ def test_reponses_empty(app, lecture_an, amendements_an):
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
 
     assert resp.status_code == 200
-    assert resp.first_element("h1") == lecture_an.dossier_legislatif
-    assert resp.first_element("h2") == str(lecture_an)
     assert resp.first_element(".titles h2") == "Article 1"
     assert resp.find_amendement(amendements_an[0]) is None
     assert resp.find_amendement(amendements_an[1]) is None
@@ -31,9 +29,6 @@ def test_reponses_full(app, lecture_an, amendements_an):
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
 
     assert resp.status_code == 200
-    assert resp.first_element("h1") == lecture_an.dossier_legislatif
-    assert resp.first_element("h2") == str(lecture_an)
-
     test_amendement = resp.find_amendement(amendements_an[0])
     assert test_amendement is not None
     assert test_amendement.number_is_in_title()
@@ -113,39 +108,6 @@ def test_reponses_abandoned_and_gouvernemental_not_displayed(
     assert test_amendement.has_gouvernemental_class()
 
     assert resp.find_amendement(amendements_an[1]) is None
-
-
-def test_reponses_menu(app, lecture_an, amendements_an):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
-        DBSession.add_all(amendements_an)
-
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
-
-    assert len(resp.parser.css(".menu a")) == 1
-    assert resp.parser.css_first(".menu a").text() == "Art. 1"
-
-
-def test_reponses_menu_with_textes(app, lecture_an, amendements_an):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
-            amendement.article.titre = "Titre article"
-        DBSession.add_all(amendements_an)
-
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
-
-    assert len(resp.parser.css(".menu p strong")) == 1
-    assert resp.parser.css_first(".menu p strong").text() == "Titre article :"
 
 
 def test_reponses_with_textes(app, lecture_an, amendements_an):

@@ -201,7 +201,7 @@
         </div>
         <span class="nav-item">
             {% if lecture.displayable %}
-                <a class="arrow-right" href="{{ request.resource_url(context.parent['articles'][amendements[0].article_url_key], 'reponses') }}" target="_blank">
+                <a class="arrow-right" href="{{ request.resource_url(context.parent['articles']) }}" target="_blank">
                     Voir le dossier de banc
                 </a>
             {% endif %}

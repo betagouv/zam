@@ -140,6 +140,15 @@ class ArticleCollection(Resource):
     def parent(self) -> LectureResource:
         return cast(LectureResource, self.__parent__)
 
+    @property
+    def lecture_resource(self) -> LectureResource:
+        return self.parent
+
+    def models(self) -> List[Article]:
+        lecture: Lecture = self.lecture_resource.model()
+        articles: List[Article] = lecture.articles
+        return articles
+
 
 class ArticleResource(Resource):
     def __init__(

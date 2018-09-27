@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang=fr>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,initial-scale=1,shrink-to-fit=no">
+<title>{{ lecture.dossier_legislatif }} — {{ lecture }}</title>
+<link rel=icon href="data:;base64,iVBORw0KGgo=">
+<link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/visionneuse.css') }}">
+<style type="text/css">
+  section:first-child .titles {
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem;
+  }
+  section {
+    margin-bottom: 1.5rem;
+  }
+  .home {
+    color: black;
+    font-family: "source_sans_pro";
+  }
+    .home h2 {
+      font-weight: 600;
+      display: block;
+      width: 100%;
+    }
+  .arrow-right {
+    display: block;
+    background-position: center right;
+    background-size: 1.5rem;
+    background-image: url("{{ request.static_url('zam_repondeur:static/img/big_right_gray.svg') }}");
+    color: black;
+  }
+</style>
+{# See https://inclusive-components.design/notifications/ #}
+<div role="status" aria-live="polite"></div>
+<header class="main">
+  <nav>
+    <span></span>
+    <span><a class="find" href="">Accès amendement</a></span>
+    <form method="get" role="search" action="">
+      <input name="q" id="q" type="number" min="1" step="1" required placeholder="Numéro">
+      <input type="submit" name="submit" value="Accès amendement">
+      <p class="error hide">Amendement non trouvé.</p>
+    </form>
+  </nav>
+</header>
+<main>
+  <section>
+    <header class="for-article">
+      <div class="wrapper">
+        <div class="titles">
+          <h2>{{ lecture.dossier_legislatif }}</h2>
+        </div>
+      </div>
+    </header>
+  </section>
+  {% for article in articles %}
+    {% if article.slug %}
+    <section id="{{ article.slug }}">
+      <header class="for-article">
+        <div class="wrapper">
+          <div class="titles home">
+            <h2><a class="arrow-right" href="{{ request.resource_url(context, article.url_key, 'reponses') }}">{{ article.format(short=False) }}</a></h2>
+            {% if article.titre == "TODO" %}
+              <h3>{{ loop.previtem.titre or "" }}</h3>
+            {% else %}
+              <h3>{{ article.titre or "" }}</h3>
+            {% endif %}
+          </div>
+        </div>
+      </header>
+    </section>
+    {% endif %}
+  {% endfor %}
+</main>
+</html>

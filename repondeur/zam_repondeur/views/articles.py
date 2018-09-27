@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
@@ -5,7 +7,14 @@ from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.message import Message
-from zam_repondeur.resources import ArticleResource
+from zam_repondeur.resources import ArticleCollection, ArticleResource
+
+
+@view_config(
+    context=ArticleCollection, request_method="GET", renderer="articles_list.html"
+)
+def list_articles(context: ArticleCollection, request: Request) -> Dict[str, Any]:
+    return {"lecture": context.lecture_resource.model(), "articles": context.models()}
 
 
 @view_defaults(context=ArticleResource)

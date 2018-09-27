@@ -8,13 +8,15 @@
 {# See https://inclusive-components.design/notifications/ #}
 <div role="status" aria-live="polite"></div>
 <header class="main">
-  <h1>{{ dossier_legislatif }}</h1>
-  <h2>{{ lecture }}</h2>
-  <form method="get" role="search" action="">
-    <input name="q" id="q" type="number" min="1" step="1" required placeholder="Numéro">
-    <input type="submit" name="submit" value="↓ Aller à l’amendement">
-    <p class="error hide">Amendement non trouvé.</p>
-  </form>
+  <nav>
+    <span><a class="list" href="">Liste des articles</a></span>
+    <span><a class="find" href="">Accès amendement</a></span>
+    <form method="get" role="search" action="">
+      <input name="q" id="q" type="number" min="1" step="1" required placeholder="Numéro">
+      <input type="submit" name="submit" value="Accès amendement">
+      <p class="error hide">Amendement non trouvé.</p>
+    </form>
+  </nav>
 </header>
 <main>
   {% for article in articles %}
@@ -22,12 +24,6 @@
     <section id="{{ article.slug }}">
       <header class="for-article">
         <div class="wrapper">
-          <button class="hamburger hamburger--arrowturn-down-90-right" type="button">
-            <span class="hamburger-label">Articles</span><br>
-            <span class="hamburger-box">
-              <span class="hamburger-inner"></span>
-            </span>
-          </button>
           <div class="titles">
             <h2>{{ article.format(short=False) }}</h2>
             {% if article.titre == "TODO" %}
@@ -43,6 +39,14 @@
               >Texte</a>
           {% endif %}
         </div>
+        <nav class="wrapper">
+          {% if loop.previtem %}
+            <a class="arrow-left" href="{{ request.resource_url(context.parent, loop.previtem.url_key, 'reponses') }}">{{ loop.previtem.format() }}</a>
+          {% endif %}
+          {% if loop.nextitem %}
+            <a class="arrow-right" href="{{ request.resource_url(context.parent, loop.nextitem.url_key, 'reponses') }}">{{ loop.nextitem.format() }}</a>
+          {% endif %}
+        </nav>
       </header>
       <div class="is-hidden">
         <div id="content-{{ article.slug }}" class="article">
@@ -208,24 +212,6 @@
   {% endfor %}
 </main>
 
-<template id="menu">
-  <div class="menu">
-    {% for article in articles|sort %}
-      {# Once data are cleaner, use the groupby jinja filter here. #}
-      {% if loop.previtem is defined and loop.previtem != article or loop.previtem is not defined %}
-        {% if loop.previtem is defined and loop.previtem.titre != article.titre and article.titre not in ("TODO", "") or loop.previtem is not defined and article.titre %}
-          <p><strong>{{ article.titre }} :</strong>
-        {% endif %}
-        <a href="{{ request.resource_url(context.parent, article.url_key, 'reponses') }}">
-          {{- article -}}
-        </a>
-        {% if loop.nextitem is defined and loop.nextitem.titre != article.titre and loop.nextitem.titre not in ("TODO", "") or loop.nextitem is not defined %}
-          </p>
-        {% endif %}
-      {% endif %}
-    {% endfor %}
-  </div>
-</template>
 <script src="{{ request.static_url('zam_repondeur:static/js/visionneuse.js') }}"></script>
 <script>
   ;(function notifyOnUpdates () {

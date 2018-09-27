@@ -33,30 +33,6 @@
     }
   })
 })()
-;(function toggleMenu () {
-  const menuButtons = Array.from(document.querySelectorAll('.hamburger'))
-  const menu = document.getElementById('menu')
-  menuButtons.forEach(menuButton => {
-    menuButton.onclick = (e) => {
-      const superParent = menuButton.parentElement.parentElement
-      const hideMenu = () => {
-        menuButton.classList.remove('is-active')
-        superParent.removeChild(superParent.querySelector('.menu'))
-      }
-      if (menuButton.classList.contains('is-active')) {
-        hideMenu()
-      } else {
-        menuButton.classList.add('is-active')
-        const clonedMenu = menu.content.cloneNode(true)
-        superParent.appendChild(clonedMenu)
-        const links = Array.from(superParent.querySelectorAll('.menu a'))
-        links.forEach(link => {
-          link.onclick = hideMenu
-        })
-      }
-    }
-  })
-})()
 ;(function jumpToAmendement () {
   const form = document.querySelector('header.main form')
   const input = form.querySelector('input[name="q"]')

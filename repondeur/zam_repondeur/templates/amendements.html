@@ -286,8 +286,8 @@
                 <th width="50px">★</th>
                 <th width="150px">Article</th>
                 <th width="180px">Nº</th>
-                <th>Auteur</th>
-                <th>Groupe</th>
+                <th class="nosort">Objet</th>
+                <th>Groupe (Auteur)</th>
                 <th class="avis">Avis</th>
             </tr>
             <tr class="filters d-none">
@@ -343,21 +343,22 @@
                     </a>
                 </td>
                 <td data-sortkey="{{ amendement.num }}">
-                    <span
-                        {% if amendement.observations %}
-                        data-balloon="{{ amendement.observations | striptags | truncate(length=150, killwords=False, end='…') }}"
-                        data-balloon-pos="right"
-                        class="dotted"
-                        {% endif %}
-                    >
                         {{ amendement.num_disp }}
                         {% if amendement.parent %}
                             (ss-amdt au {{ amendement.parent.num_disp }})
                         {% endif %}
-                    </span>
                 </td>
-                <td>{{ amendement.auteur }}</td>
-                <td>{{ amendement.groupe }}</td>
+                <td>
+                    {% if amendement.observations %}
+                        {{ amendement.observations | striptags | truncate(length=100, killwords=False, end='…') }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if amendement.groupe %}
+                        {{ amendement.groupe }} ({{ amendement.auteur }})</td>
+                    {% else %}
+                        {{ amendement.auteur }}
+                    {% endif %}
                 <td
                     {% if not amendement.gouvernemental and not amendement.avis %}
                         class="input-required"

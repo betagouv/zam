@@ -75,7 +75,6 @@
         {% set is_gouvernemental = amendement.gouvernemental %}
         {% set parent = amendement.parent %}
         <article{% if is_gouvernemental %} class="gouvernemental"{% endif %}{% if parent %} class="sous-amendement"{% endif %}>
-          <span class="fake-anchor" id="{{ amendement.slug }}"></span>
           {% if amendement.favorable %}
             {% set avis_class = 'positive' %}
           {% elif amendement.sagesse %}
@@ -86,7 +85,7 @@
             {% set avis_class = 'negative' %}
           {% endif %}
           {% set multiple = amendements|length > 1 %}
-          <header class="reponse {{ avis_class }}">
+          <header id="{{ amendement.slug }}" class="reponse {{ avis_class }}">
             <div
             {%- for amendement in amendements %}
               data-amendement-{{ amendement.num }}="{{ amendement }}"
@@ -212,6 +211,7 @@
   {% endfor %}
 </main>
 
+<script src="{{ request.static_url('zam_repondeur:static/headroom/headroom.min.js') }}"></script>
 <script src="{{ request.static_url('zam_repondeur:static/js/visionneuse.js') }}"></script>
 <script>
   ;(function notifyOnUpdates () {
@@ -233,6 +233,14 @@
         })
     }
     setInterval(check, delay)
+  })()
+  ;(function initHeadroom () {
+    const articleHeader = document.querySelector("header.for-article")
+    const headroom  = new Headroom(articleHeader, {
+      "offset": 200,
+      "tolerance": 5
+    })
+    headroom.init()
   })()
 </script>
 </html>

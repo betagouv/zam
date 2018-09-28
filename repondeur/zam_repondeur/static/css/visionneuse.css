@@ -86,13 +86,6 @@
   article.sous-amendement {
     margin: -1.4rem 1rem 1rem 2.5rem;
   }
-  /* Useful to stay below the sticky Article's header. */
-  article .fake-anchor {
-    display: block;
-    position: relative;
-    top: -6rem;
-    visibility: hidden;
-  }
   input {
     font-size: 1.1rem;
   }
@@ -193,7 +186,7 @@
     position: sticky;
     background: white;
     min-height: 5rem;
-    top: 10rem; /* Size of the article header (sticky too). */
+    top: 0;
     border-left: 8px solid;
     padding: .5rem 1rem;
     box-shadow: 0 5px 5px 2px #ccc;
@@ -403,4 +396,15 @@
   }
   .hide {
     display: none;
+  }
+
+.headroom {
+  will-change: transform;
+  transition: transform 200ms linear;
+}
+  .headroom--pinned {
+    transform: translateY(0%);
+  }
+  .headroom--unpinned {
+    transform: translateY(-100%);
   }

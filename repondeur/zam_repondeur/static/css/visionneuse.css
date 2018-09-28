@@ -94,15 +94,21 @@
     visibility: hidden;
   }
   input {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
   input[type="submit"] {
-    padding: .5rem 1rem;
-    border: 2px solid white;
-    color: white;
-    background-color: #3167a6;
+    padding: .2rem 2rem;
+    margin-left: 2rem;
+    border: 1px solid #3167a6;
+    color: #3167a6;
+    background-color: white;
     border-radius: .3rem;
   }
+    input[type="submit"]:hover {
+      border-color: #3167a6;
+      color: white;
+      background-color: #3167a6;
+    }
   h2 {
     margin-bottom: 0;
   }
@@ -392,6 +398,8 @@
     border: 1px solid red;
     background: white;
     color: red;
+    text-align: center;
+    padding: 1rem 1.5rem;
   }
   .hide {
     display: none;

@@ -30,6 +30,19 @@
     background-image: url("{{ request.static_url('zam_repondeur:static/img/big_right_gray.svg') }}");
     color: black;
   }
+  .search header {
+    min-height: inherit;
+  }
+    .search .titles {
+      align-items: center;
+      font-size: 1.1rem;
+    }
+    .search #q {
+      margin-left: .5rem;
+      border: 1px solid #979797;
+      padding: .2rem;
+      background: no-repeat 93% center/12% url("{{ request.static_url('zam_repondeur:static/img/loupe_gray.svg') }}");
+    }
 </style>
 {# See https://inclusive-components.design/notifications/ #}
 <div role="status" aria-live="polite"></div>
@@ -46,7 +59,7 @@
 </header>
 <main>
   <section>
-    <header class="for-article">
+    <header>
       <div class="wrapper">
         <div class="titles">
           <h2>{{ lecture.dossier_legislatif }}</h2>
@@ -54,23 +67,71 @@
       </div>
     </header>
   </section>
+  <section class="search">
+    <header>
+      <div class="wrapper">
+        <div class="titles home">
+          <form id="search-article" method="get" role="search" action="">
+            Article nº
+            <input name="q" id="q" type="number" min="1" step="1" placeholder="Numéro">
+            <input type="submit" name="submit" value="Valider">
+            <p class="error hide">Article non trouvé.</p>
+          </form>
+        </div>
+      </div>
+    </header>
+  </section>
   {% for article in articles %}
     {% if article.slug %}
-    <section id="{{ article.slug }}">
-      <header class="for-article">
-        <div class="wrapper">
-          <div class="titles home">
-            <h2><a class="arrow-right" href="{{ request.resource_url(context, article.url_key, 'reponses') }}">{{ article.format(short=False) }}</a></h2>
-            {% if article.titre == "TODO" %}
-              <h3>{{ loop.previtem.titre or "" }}</h3>
-            {% else %}
-              <h3>{{ article.titre or "" }}</h3>
-            {% endif %}
+      <section id="{{ article.slug }}" data-article-num="{{ article.num }}">
+        <header>
+          <div class="wrapper">
+            <div class="titles home">
+              <h2><a class="arrow-right" href="{{ request.resource_url(context, article.url_key, 'reponses') }}">{{ article.format(short=False) }}</a></h2>
+              {% if article.titre == "TODO" %}
+                <h3>{{ loop.previtem.titre or "" }}</h3>
+              {% else %}
+                <h3>{{ article.titre or "" }}</h3>
+              {% endif %}
+            </div>
           </div>
-        </div>
-      </header>
-    </section>
+        </header>
+      </section>
     {% endif %}
   {% endfor %}
 </main>
+<script type="text/javascript">
+  ;(function filterArticles () {
+    const form = document.querySelector('#search-article')
+    const input = form.querySelector('input[name="q"]')
+    const allArticles = Array.from(document.querySelectorAll('[data-article-num]'))
+    form.addEventListener('submit', e => {
+      e.preventDefault()
+      const form = e.target
+      const data = new FormData(form)
+      const value = data.get('q').trim()
+      if (!value) {
+        allArticles.forEach(article => {
+          article.classList.remove('is-hidden')
+        })
+        return
+      }
+      const articles = Array.from(document.querySelectorAll(`[data-article-num="${value}"]`))
+      if (articles.length) {
+        allArticles.forEach(article => {
+          article.classList.toggle('is-hidden', articles.indexOf(article) === -1)
+        })
+      } else {
+        allArticles.forEach(article => {
+          article.classList.remove('is-hidden')
+        })
+        form.querySelector('.error').classList.remove('hide')
+      }
+    })
+    input.addEventListener('keydown', e => {
+      input.parentElement.querySelector('.error').classList.add('hide')
+    })
+
+  })()
+</script>
 </html>

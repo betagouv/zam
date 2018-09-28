@@ -525,34 +525,43 @@
             }
         })
     })
-    var bookmarkForms = table.querySelectorAll('.bookmark form')
-    ;[].slice.call(bookmarkForms).forEach(function (bookmarkForm) {
-        bookmarkForm.addEventListener('submit', function (e) {
-            e.preventDefault()
-            var target = e.target
-            fetch(target.action, {
-                method: 'POST',
-                body: new FormData(target),
-                credentials: 'same-origin'
-            }).then(function(response) {
-                var bookmarkInput = target.querySelector('[name="bookmark"]')
-                var submitInput = target.querySelector('[name="submit"]')
+    ;(function bookmarks () {
+        const bookmarkForms = table.querySelectorAll('.bookmark form')
+        Array.from(bookmarkForms).forEach(bookmarkForm => {
+            bookmarkForm.addEventListener('submit', e => {
+                e.preventDefault()
+                const target = e.target
+                const bookmarkInput = target.querySelector('[name="bookmark"]')
+                const submitInput = target.querySelector('[name="submit"]')
+                // Immediate visual feedback without waiting for server's response.
                 if (submitInput.value == '☆') {
                     submitInput.value = '★'
                     submitInput.title = 'Cliquer pour enlever le favori'
                     submitInput.classList.add("bookmarked")
-                    bookmarkInput.value = '0'
                     target.parentElement.dataset.sortkey = 1
                 } else {
                     submitInput.value = '☆'
                     submitInput.title = 'Cliquer pour mettre en favori'
                     submitInput.classList.remove("bookmarked")
-                    bookmarkInput.value = '1'
                     target.parentElement.dataset.sortkey = ''
                 }
+                const body = new FormData(target)
+                fetch(target.action, {
+                    method: 'POST',
+                    body: body,
+                    credentials: 'same-origin'
+                }).then(response => {
+                    // The logic might be confusing:
+                    // remember we just changed the submitInput value above.
+                    if (submitInput.value == '★') {
+                        bookmarkInput.value = '0'
+                    } else {
+                        bookmarkInput.value = '1'
+                    }
+                })
             })
         })
-    })
+    })()
 
     /* Taking control over native jump to avoir position under sticky headers. */
     if (location.hash) {

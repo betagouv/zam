@@ -11,10 +11,8 @@ def list_reponses(context: ArticleResource, request: Request) -> Response:
     lecture = article.lecture
     check_url = request.resource_path(context.parent.parent, "check")
     return {
-        "dossier_legislatif": lecture.dossier_legislatif,
-        "lecture": str(lecture),
-        "articles": lecture.articles,
+        "lecture": lecture,
         "timestamp": lecture.modified_at_timestamp,
         "check_url": check_url,
-        "current_article": article,
+        "article": article,
     }

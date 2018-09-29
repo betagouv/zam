@@ -1,105 +1,86 @@
-<!doctype html>
-<html lang=fr>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,minimum-scale=1,initial-scale=1,shrink-to-fit=no">
-<title>{{ lecture.dossier_legislatif }} — {{ lecture }}</title>
-<link rel=icon href="data:;base64,iVBORw0KGgo=">
-<link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/visionneuse.css') }}">
+{% extends "_base_visionneuse.html" %}
+
+{% block extra_styles %}
 <style type="text/css">
-  section:first-child .titles {
-    align-items: center;
-    text-align: center;
-    margin: 1.5rem;
-  }
-  section {
+  .title {
+    background: white;
+    border: 1px solid #d9d9d9;
     margin-bottom: 1.5rem;
+    box-shadow: 0 7px 7px -1px #ccc;
   }
-  .home {
-    color: black;
-    font-family: "source_sans_pro";
-  }
-    .home h2 {
-      font-weight: 600;
-      display: block;
-      width: 100%;
+    .title h1 {
+      margin: 2.7rem 3rem;
+      text-align: center;
+      font-family: "source_serif_pro";
+      font-size: 1.7rem;
+      color: #3167a6;
     }
+
+  .search form {
+    margin: 0 auto;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  .search #q {
+    margin-left: .5rem;
+    border: 1px solid #979797;
+    padding: .3rem;
+    background: no-repeat 99% center/11% url("{{ request.static_url('zam_repondeur:static/img/loupe_gray.svg') }}");
+  }
   .arrow-right {
     display: block;
     background-position: center right;
-    background-size: 1.5rem;
+    background-size: 1.2rem;
     background-image: url("{{ request.static_url('zam_repondeur:static/img/big_right_gray.svg') }}");
     color: black;
   }
-  .search header {
-    min-height: inherit;
+  .article h2 {
+    font-weight: 600;
+    display: block;
+    width: 100%;
+    line-height: 1.5;
+    margin-top: 0;
+    font-size: 1.45rem;
   }
-    .search .titles {
-      align-items: center;
-      font-size: 1.1rem;
-    }
-    .search #q {
-      margin-left: .5rem;
-      border: 1px solid #979797;
-      padding: .2rem;
-      background: no-repeat 93% center/12% url("{{ request.static_url('zam_repondeur:static/img/loupe_gray.svg') }}");
-    }
+  .article h3 {
+    max-width: 25rem;
+    line-height: 1.2;
+    margin: 0;
+    font-weight: normal;
+    font-size: 1.1rem;
+  }
 </style>
-{# See https://inclusive-components.design/notifications/ #}
-<div role="status" aria-live="polite"></div>
-<header class="main">
-  <nav>
-    <span></span>
-    <span><a class="find" href="">Accès amendement</a></span>
-    <form method="get" role="search" action="">
-      <input name="q" id="q" type="number" min="1" step="1" required placeholder="Numéro">
-      <input type="submit" name="submit" value="Accès amendement">
-      <p class="error hide">Amendement non trouvé.</p>
+{% endblock %}
+
+{% block title %}
+  <h1>{{ lecture.dossier_legislatif }}</h1>
+{% endblock %}
+
+{% block main %}
+  <section class="box search">
+    <form id="search-article" method="get" role="search" action="">
+      Article nº
+      <input name="q" id="q" type="number" min="1" step="1" placeholder="(chiffres uniquement)">
+      <input type="submit" name="submit" value="Valider">
+      <p class="error hide">Article non trouvé.</p>
     </form>
-  </nav>
-</header>
-<main>
-  <section>
-    <header>
-      <div class="wrapper">
-        <div class="titles">
-          <h2>{{ lecture.dossier_legislatif }}</h2>
-        </div>
-      </div>
-    </header>
   </section>
-  <section class="search">
-    <header>
-      <div class="wrapper">
-        <div class="titles home">
-          <form id="search-article" method="get" role="search" action="">
-            Article nº
-            <input name="q" id="q" type="number" min="1" step="1" placeholder="Numéro">
-            <input type="submit" name="submit" value="Valider">
-            <p class="error hide">Article non trouvé.</p>
-          </form>
-        </div>
-      </div>
-    </header>
-  </section>
+
   {% for article in articles %}
     {% if article.slug %}
-      <section id="{{ article.slug }}" data-article-num="{{ article.num }}">
-        <header>
-          <div class="wrapper">
-            <div class="titles home">
-              <h2><a class="arrow-right" href="{{ request.resource_url(context, article.url_key, 'reponses') }}">{{ article.format(short=False) }}</a></h2>
-              {% if article.titre == "TODO" %}
-                <h3>{{ loop.previtem.titre or "" }}</h3>
-              {% else %}
-                <h3>{{ article.titre or "" }}</h3>
-              {% endif %}
-            </div>
-          </div>
-        </header>
+      <section class="box article" id="{{ article.slug }}" data-article-num="{{ article.num }}">
+        <h2><a class="arrow-right" href="{{ request.resource_url(context, article.url_key, 'reponses') }}">{{ article.format(short=False) }}</a></h2>
+        {% if article.titre == "TODO" %}
+          <h3>{{ loop.previtem.titre or "" }}</h3>
+        {% else %}
+          <h3>{{ article.titre or "" }}</h3>
+        {% endif %}
       </section>
     {% endif %}
   {% endfor %}
-</main>
+{% endblock %}
+
+{% block extra_scripts %}
 <script type="text/javascript">
   ;(function filterArticles () {
     const form = document.querySelector('#search-article')
@@ -134,4 +115,5 @@
 
   })()
 </script>
+{% endblock %}
 </html>

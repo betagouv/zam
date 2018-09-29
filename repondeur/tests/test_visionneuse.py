@@ -228,7 +228,11 @@ def test_reponses_article_additionnel_avant(
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1..avant/reponses")
 
-    section_ids = [section.attributes["id"] for section in resp.parser.tags("section")]
+    section_ids = [
+        section.attributes.get("id")
+        for section in resp.parser.tags("section")
+        if "id" in section.attributes
+    ]
     assert section_ids == ["article-add-av-1"]
     article_titles = [item.text() for item in resp.parser.css(".titles h2")]
     assert article_titles == ["Article add. av. 1"]

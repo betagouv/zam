@@ -1,3 +1,4 @@
+/* Fonts */
 /* https://github.com/adobe-fonts/source-sans-pro/releases/tag/2.020R-ro%2F1.075R-it
  + https://www.fontsquirrel.com/tools/webfont-generator */
 @font-face {
@@ -38,72 +39,98 @@
     font-style: normal;
 
 }
-  html {
-    /* Fallback based on http://markdotto.com/2018/02/07/github-system-fonts/ */
-    font-family: "source_sans_pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
-                 Helvetica, Arial, sans-serif,
-                 "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    line-height: 1.5;
-  }
 
-  * {
-    box-sizing: border-box;
-  }
+/* Base */
+html {
+  /* Fallback based on http://markdotto.com/2018/02/07/github-system-fonts/ */
+  font-family: "source_sans_pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Helvetica, Arial, sans-serif,
+               "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  line-height: 1.5;
+}
 
-  body {
-    max-width: 55rem;
-    margin: 0 auto;
-    background: #f2f2f2;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  header.main nav {
-    background-color: #3167a6;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
+body {
+  background: #f2f2f2;
+  margin: 0;
+}
+
+/* Headers */
+nav.main {
+  background-color: #3167a6;
+  padding: 1rem 0;
+  display: flex;
+  justify-content: space-between;
+}
+  nav.main form {
+    display: none; /* TODO */
   }
-    header.main nav form {
-      display: none;
+  nav.main a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+  }
+    nav.main a.list {
+      background: no-repeat left -.25rem/19% url("../img/hamburger.svg");
+      padding-left: 2.75rem;
+      margin-left: 3rem;
     }
-    header.main nav a {
-      color: white;
-      text-decoration: none;
-      font-size: 1.2rem;
+    nav.main a.find {
+      background: no-repeat right top/13% url("../img/loupe.svg");
+      padding-right: 2rem;
+      margin-right: 3rem;
     }
-      header.main nav a.list {
-        background: no-repeat left -.25rem/19% url("../img/hamburger.svg");
-        padding-left: 2.75rem;
-      }
-      header.main nav a.find {
-        background: no-repeat right top/12% url("../img/loupe.svg");
-        padding-right: 2rem;
-      }
+
+/* Secondary nav */
+nav.secondary {
+  display: flex;
+  justify-content: space-between;
+  background: #f6f7fa;
+  padding: 1.2rem 3rem;
+  border: 1px solid #d9d9d9;
+  border-left: none;
+  border-right: none;
+  margin-bottom: 1.5rem;
+  margin-top: -7px; /* Size of the above box shadow */
+  box-shadow: 0 7px 7px -1px #ccc;
+}
+.arrow-left,
+.arrow-right {
+  color: #3167a6;
+  text-decoration: none;
+}
+  .arrow-left {
+    padding-left: 1.5rem;
+    background: no-repeat left 30%/.8rem url("../img/big_left.svg");
+  }
+  .arrow-right {
+    padding-right: 1.5rem;
+    background: no-repeat right 30%/.8rem url("../img/big_right.svg");
+  }
+
+/* Amendements */
+  .box {
+    background: white;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 7px 7px -1px #ccc;
+    margin: 0 3rem 1.5rem 3rem;
+    padding: 1.2rem;
+  }
 
   article {
-    margin: 1.5rem 1rem;
+    margin: 1.5rem 3rem;
     box-shadow: 0 5px 5px 2px #ccc;
   }
   article.sous-amendement {
     margin: -1.4rem 1rem 1rem 2.5rem;
   }
-  input {
-    font-size: 1.1rem;
-  }
-  input[type="submit"] {
-    padding: .2rem 2rem;
-    margin-left: 2rem;
-    border: 1px solid #3167a6;
-    color: #3167a6;
-    background-color: white;
-    border-radius: .3rem;
-  }
-    input[type="submit"]:hover {
-      border-color: #3167a6;
-      color: white;
-      background-color: #3167a6;
-    }
   h2 {
-    margin-bottom: 0;
+    margin: .6rem 12rem .2rem 0;
+    line-height: 1.2;
+    font-size: 1.6rem;
   }
   h4 {
     position: relative;
@@ -127,12 +154,15 @@
     text-align: right;
   }
 
-  section > header {
+  .title {
     position: -webkit-sticky;
     position: sticky;
     background: white;
     top: 0;
     z-index: 3;
+  }
+
+  section > header {
     min-height: 5rem;
     box-shadow: 0 7px 7px -1px #ccc;
     display: flex;
@@ -143,12 +173,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 2rem;
+      padding: 1.2rem 0;
     }
-      nav.wrapper {
-        justify-content: space-between;
-        background: #f6f7fa;
-        border-top: 1px solid #e8e8e8;
+      .wrapper > a.button {
+        margin-right: 3rem;
       }
     .titles {
       flex-basis: 100%;
@@ -157,36 +185,27 @@
       flex-direction: column;
       align-items: flex-start;
       color: #3167a6;
+      margin-left: 3rem;
     }
       .titles h2 {
-        font-size: 2rem;
+        font-size: 1.7rem;
         margin: 0;
+        line-height: 1;
+        padding-top: .8rem;
       }
       .titles h3 {
         font-size: 1rem;
         margin: 0;
         font-weight: normal;
       }
-    .arrow-left,
-    .arrow-right {
-      color: #3167a6;
-      text-decoration: none;
-    }
-      .arrow-left {
-        padding-left: 1.5rem;
-        background: no-repeat left 30%/.8rem url("../img/big_left.svg");
-      }
-      .arrow-right {
-        padding-right: 1.5rem;
-        background: no-repeat right 30%/.8rem url("../img/big_right.svg");
-      }
+
 
   article header {
     position: -webkit-sticky;
     position: sticky;
     background: white;
     min-height: 5rem;
-    top: 0;
+    top: 6rem; /* Size of the main header also sticky */
     border-left: 8px solid;
     padding: .5rem 1rem;
     box-shadow: 0 5px 5px 2px #ccc;
@@ -194,7 +213,8 @@
   }
     article header div:first-child p {
       font-size: .95rem;
-      margin-right: 16rem;
+      margin-right: 12rem;
+      line-height: 1.2;
     }
     article header .authors {
       margin-top: .4rem;
@@ -207,7 +227,7 @@
       }
     article header hr {
       margin: .5rem;
-      border: .5px solid #9b9b9b;
+      border: .5px solid #ccc;
     }
     article header div:last-child p {
       margin: 1.2rem 1rem 1rem 0;
@@ -398,13 +418,32 @@
     display: none;
   }
 
-.headroom {
-  will-change: transform;
-  transition: transform 200ms linear;
+/* Inputs */
+input {
+  font-size: 1.1rem;
 }
-  .headroom--pinned {
-    transform: translateY(0%);
+  input[type="submit"] {
+    padding: .3rem 2rem;
+    margin-left: 2rem;
+    border: 1px solid #3167a6;
+    color: #3167a6;
+    background-color: white;
+    border-radius: .3rem;
   }
-  .headroom--unpinned {
-    transform: translateY(-100%);
-  }
+    input[type="submit"]:hover {
+      border-color: #3167a6;
+      color: white;
+      background-color: #3167a6;
+    }
+
+/* Clear arrows from number input fields. */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance:textfield;
+}

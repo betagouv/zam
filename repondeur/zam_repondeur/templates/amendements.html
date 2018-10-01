@@ -329,6 +329,7 @@
                 "
                 data-amendement="{{ amendement.num }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}"
+                data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 id="{{ amendement.slug }}"
             >
                 <td class="bookmark" data-sortkey="{{ amendement.bookmarked_at }}">
@@ -530,6 +531,9 @@
                 line.classList.remove('hidden-avis')
             }
             else {
+                line.classList.add('hidden-avis')
+            }
+            if (line.dataset.gouvernemental === "1") {
                 line.classList.add('hidden-avis')
             }
         })

@@ -11,6 +11,7 @@ from zam_repondeur.models import Article
         ("article", "", "1", "bis", "Art. 1 bis"),
         ("article", "avant", "1", "", "Avant art. 1"),
         ("article", "après", "1", "", "Après art. 1"),
+        ("chapitre", "", "III", "", "Chapitre III"),
     ],
 )
 def test_stringify(lecture_an, type_, pos, num, mult, output):
@@ -28,6 +29,7 @@ def test_stringify(lecture_an, type_, pos, num, mult, output):
         ("article", "", "1", "bis", "article-1-bis"),
         ("article", "avant", "1", "", "article-add-av-1"),
         ("article", "après", "1", "", "article-add-ap-1"),
+        ("chapitre", "", "III", "", "chapitre-iii"),
     ],
 )
 def test_slug(lecture_an, type_, pos, num, mult, output):
@@ -45,6 +47,7 @@ def test_slug(lecture_an, type_, pos, num, mult, output):
         ("article", "", "1", "bis", "Article 1 bis"),
         ("article", "avant", "1", "", "Article add. av. 1"),
         ("article", "après", "1", "", "Article add. ap. 1"),
+        ("chapitre", "", "III", "", "Chapitre III"),
     ],
 )
 def test_format(lecture_an, type_, pos, num, mult, output):

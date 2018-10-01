@@ -87,20 +87,29 @@ class Article(Base):
     __repr_keys__ = ("pk", "lecture_pk", "type", "num", "mult", "pos")
 
     def __str__(self) -> str:
-        if self.type == "annexe" and not self.num:
-            return "Annexes"
-        type_ = "art." if self.type == "article" else self.type or ""
-        text = f"{self.pos} {type_} {self.num} {self.mult}"
-        return text.strip().capitalize()
+        type_parts = [
+            self.pos or "",
+            "art." if self.type == "article" else self.type or "",
+        ]
+        return self._format_helper(type_parts)
 
     def format(self, short: bool = False) -> str:
+        type_ = "art." if self.type == "article" and short else self.type or ""
+        type_parts = [type_]
+        if self.pos:
+            type_parts += ["add.", f"{self.pos[:2]}."]
+        return self._format_helper(type_parts)
+
+    def _format_helper(self, type_parts: List[str]) -> str:
         if self.type == "annexe" and not self.num:
             return "Annexes"
-        type_ = "art." if self.type == "article" and short else self.type or ""
-        if self.pos:
-            type_ += f" add. {self.pos[:2]}."
-        text = f"{type_} {self.num} {self.mult}"
-        return text.strip().capitalize()
+        parts = type_parts + [self.num or "", self.mult or ""]
+        non_empty_parts = (part for part in parts if part)
+        capitalized_parts = (
+            part.capitalize() if index == 0 else part
+            for index, part in enumerate(non_empty_parts)
+        )
+        return " ".join(capitalized_parts)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Article):

@@ -97,6 +97,16 @@ def lecture_senat(app):
 
 
 @pytest.fixture
+def chapitre_1er_an(app, lecture_an):
+    from zam_repondeur.models import Article
+
+    with transaction.manager:
+        article = Article.create(lecture=lecture_an, type="chapitre", num="Ier")
+
+    return article
+
+
+@pytest.fixture
 def article1_an(app, lecture_an):
     from zam_repondeur.models import Article
 

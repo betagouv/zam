@@ -22,7 +22,7 @@ SUBDIV_RE = re.compile(
             \s
         )?  # position
         (?:(?:l')?article\s)+
-        (?P<num>\d+|1er|premier)
+        (?P<num>1er|premier|\d+)
         (?:\s(?P<mult>\w+))?        # bis, ter, etc.
         (?:\s?\(?.*\)?)?            # junk
         $

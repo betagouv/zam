@@ -74,13 +74,19 @@
     }
 
     /* Sticky table header */
-    thead {
+    tr.sticky th {
         position: sticky;
         position: -webkit-sticky;
         background: white;
         z-index: 10;
-        top: 0;
+        box-shadow: 0px 3px 3px 0px #CCC;
     }
+        tr.headers th {
+            top: 0;
+        }
+        tr.filters th {
+            top: 2rem;
+        }
 
     /* Sorting */
     .headers th {
@@ -285,7 +291,7 @@
 
     <table class="table" style="width:100%">
         <thead class="box">
-            <tr class="headers">
+            <tr class="headers sticky">
                 <th width="50px">★</th>
                 <th width="150px">Article</th>
                 <th width="180px">Nº</th>
@@ -293,7 +299,7 @@
                 <th>Groupe (Auteur)</th>
                 <th class="avis">Avis</th>
             </tr>
-            <tr class="filters d-none">
+            <tr class="filters sticky d-none">
                 <th></th>
                 <th>
                     <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">

@@ -128,7 +128,7 @@ nav.secondary {
     margin: -1.4rem 1rem 1rem 2.5rem;
   }
   /* Useful to stay below the sticky Article's header. */
-  article .fake-anchor {
+  .fake-anchor {
     display: block;
     position: relative;
     top: -6rem;

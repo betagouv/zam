@@ -13,15 +13,34 @@
           {% endif %}
         </div>
         {% if article.contenu or article.jaune %}
-          <a href="#{{ article.slug }}"
+          <a href="#content-{{ article.slug }}"
              class="button"
              data-toggle-target="content-{{ article.slug }}"
             >Texte</a>
         {% endif %}
       </div>
     </header>
+  </section>
+{% endblock %}
+
+{% block secondary_nav %}
+  {# TODO: avoid looping over all articles. #}
+  {% for art in lecture.articles|sort %}
+    {% if art == article %}
+      <nav class="secondary">
+        {% if loop.previtem %}
+          <a class="arrow-left" href="{{ request.resource_url(context.parent, loop.previtem.url_key, 'reponses') }}">{{ loop.previtem.format() }}</a>
+        {% else %}
+          <span></span>  {# placeholder so that the "next" link gets positioned properly #}
+        {% endif %}
+        {% if loop.nextitem %}
+          <a class="arrow-right" href="{{ request.resource_url(context.parent, loop.nextitem.url_key, 'reponses') }}">{{ loop.nextitem.format() }}</a>
+        {% endif %}
+      </nav>
+    {% endif %}
     <div class="is-hidden">
-      <div id="content-{{ article.slug }}" class="article">
+      <span class="fake-anchor" id="content-{{ article.slug }}"></span>
+      <div class="article">
         {% if article.jaune %}
           <h2>Présentation de l’article</h2>
           {{ article.jaune | safe }}
@@ -42,25 +61,7 @@
         </p>
       </div>
     </div>
-  </section>
-{% endblock %}
-
-{% block secondary_nav %}
-  {# TODO: avoid looping over all articles. #}
-  {% for art in lecture.articles|sort %}
-    {% if art == article %}
-      <nav class="secondary">
-        {% if loop.previtem %}
-          <a class="arrow-left" href="{{ request.resource_url(context.parent, loop.previtem.url_key, 'reponses') }}">{{ loop.previtem.format() }}</a>
-        {% else %}
-          <span></span>  {# placeholder so that the "next" link gets positioned properly #}
-        {% endif %}
-        {% if loop.nextitem %}
-          <a class="arrow-right" href="{{ request.resource_url(context.parent, loop.nextitem.url_key, 'reponses') }}">{{ loop.nextitem.format() }}</a>
-        {% endif %}
-      </nav>
-    {% endif %}
-{% endfor %}
+  {% endfor %}
 {% endblock %}
 
 {% block main %}

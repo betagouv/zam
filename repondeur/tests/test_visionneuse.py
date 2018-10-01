@@ -254,3 +254,14 @@ def test_reponses_amendement_rect(app, lecture_an, amendements_an):
 
     assert "666" in resp
     assert "999 rect." in resp
+
+
+def test_links_to_previous_and_next_articles(
+    app, lecture_an, amendements_an, article1av_an, article7bis_an
+):
+
+    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+
+    assert resp.status_code == 200
+    nav_links = [node.text() for node in resp.parser.css(".secondary a")]
+    assert nav_links == ["Article add. av. 1", "Article 7 bis"]

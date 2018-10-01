@@ -66,7 +66,7 @@
     </form>
   </section>
 
-  {% for article in articles %}
+  {% for article in articles|sort %}
     {% if article.slug %}
       <section class="box article" id="{{ article.slug }}" data-article-num="{{ article.num }}">
         <h2><a class="arrow-right" href="{{ request.resource_url(context, article.url_key, 'reponses') }}">{{ article.format(short=False) }}</a></h2>

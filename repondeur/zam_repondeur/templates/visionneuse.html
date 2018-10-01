@@ -47,7 +47,7 @@
 
 {% block secondary_nav %}
   {# TODO: avoid looping over all articles. #}
-  {% for art in lecture.articles %}
+  {% for art in lecture.articles|sort %}
     {% if art == article %}
       <nav class="secondary">
         {% if loop.previtem %}

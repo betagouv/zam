@@ -16,17 +16,19 @@
       color: #3167a6;
     }
 
-  .search form {
-    margin: 0 auto;
-    font-size: 1.1rem;
-    font-weight: 600;
+  .search {
+    text-align: center;
   }
-  .search #q {
-    margin-left: .5rem;
-    border: 1px solid #979797;
-    padding: .3rem;
-    background: no-repeat 99% center/11% url("{{ request.static_url('zam_repondeur:static/img/loupe_gray.svg') }}");
-  }
+    .search form {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .search #q {
+      margin-left: .5rem;
+      border: 1px solid #979797;
+      padding: .3rem;
+      background: no-repeat 99% center/11% url("{{ request.static_url('zam_repondeur:static/img/loupe_gray.svg') }}");
+    }
   .arrow-right {
     display: block;
     background-position: center right;

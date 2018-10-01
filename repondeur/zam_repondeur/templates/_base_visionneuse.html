@@ -11,7 +11,9 @@
 <div role="status" aria-live="polite"></div>
 
 <nav class="main">
-  <span><a class="list" href="{{ request.resource_url(context.parent) }}">Liste des articles</a></span>
+  <span>
+    <a class="list" href="{{ request.resource_url(context.parent if article else context) }}">Liste des articles</a>
+  </span>
   <span><a class="find" href="">Accès amendement</a></span>
   <form method="get" role="search" action="">
     <input name="q" id="q" type="number" min="1" step="1" required placeholder="Numéro">

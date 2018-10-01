@@ -276,6 +276,9 @@ nav.secondary {
     .gouvernemental h2 {
       color: #3167a6;
     }
+    .gouvernemental .positive {
+      border-left-color: #3167a6;
+    }
   span.avis.positive {
     color: #5fa014;
   }

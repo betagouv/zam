@@ -52,6 +52,8 @@
       <nav class="secondary">
         {% if loop.previtem %}
           <a class="arrow-left" href="{{ request.resource_url(context.parent, loop.previtem.url_key, 'reponses') }}">{{ loop.previtem.format() }}</a>
+        {% else %}
+          <span></span>  {# placeholder so that the "next" link gets positioned properly #}
         {% endif %}
         {% if loop.nextitem %}
           <a class="arrow-right" href="{{ request.resource_url(context.parent, loop.nextitem.url_key, 'reponses') }}">{{ loop.nextitem.format() }}</a>

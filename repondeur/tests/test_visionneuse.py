@@ -124,12 +124,10 @@ def test_reponses_with_textes(app, lecture_an, amendements_an):
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
 
-    assert len(resp.parser.css("#content-article-1")) == 1
-    assert resp.parser.css_first("#content-article-1 dt").text() == "001"
-    assert (
-        resp.parser.css_first("#content-article-1 dd").text().strip()
-        == "Premier paragraphe"
-    )
+    fake_anchor = resp.parser.css_first("#content-article-1")
+    article_content = fake_anchor.parent.css_first(".article")
+    assert article_content.css_first("dt").text() == "001"
+    assert article_content.css_first("dd").text().strip() == "Premier paragraphe"
 
 
 def test_reponses_with_jaunes(app, lecture_an, amendements_an):
@@ -145,15 +143,10 @@ def test_reponses_with_jaunes(app, lecture_an, amendements_an):
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
 
-    assert len(resp.parser.css("#content-article-1")) == 1
-    assert (
-        resp.parser.css_first("#content-article-1 h2").text()
-        == "Présentation de l’article"
-    )
-    assert (
-        resp.parser.css_first("#content-article-1 p").text().strip()
-        == "Contenu du jaune"
-    )
+    fake_anchor = resp.parser.css_first("#content-article-1")
+    article_content = fake_anchor.parent.css_first(".article")
+    assert article_content.css_first("h2").text() == "Présentation de l’article"
+    assert article_content.css_first("p").text().strip() == "Contenu du jaune"
 
 
 def test_reponses_without_textes_or_jaunes(app, lecture_an, amendements_an):
@@ -168,7 +161,9 @@ def test_reponses_without_textes_or_jaunes(app, lecture_an, amendements_an):
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
 
-    assert len(resp.parser.css("#content-article-1 h2")) == 0
+    fake_anchor = resp.parser.css_first("#content-article-1")
+    article_content = fake_anchor.parent.css_first(".article")
+    assert article_content.css_first("h2") is None
 
 
 def test_reponses_with_different_articles(

@@ -23,9 +23,6 @@ nav.main {
   display: flex;
   justify-content: space-between;
 }
-  nav.main form {
-    display: none; /* TODO */
-  }
   nav.main a {
     color: white;
     text-decoration: none;
@@ -41,6 +38,26 @@ nav.main {
       padding-right: 2rem;
       margin-right: 3rem;
     }
+
+/* Search */
+.search {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+  .search #q {
+    margin-left: .5rem;
+    border: 1px solid #979797;
+    padding: .3rem;
+    background: no-repeat 99% center/11% url("{{ request.static_url('zam_repondeur:static/img/loupe_gray.svg') }}");
+  }
+
+#search-amendements {
+  padding: 1rem;
+  background: white;
+  box-shadow: 0 7px 7px -1px #ccc;
+  margin-bottom: 1rem;
+}
 
 /* Secondary nav */
 nav.secondary {

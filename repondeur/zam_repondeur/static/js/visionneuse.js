@@ -33,18 +33,26 @@
     }
   })
 })()
+;(function displayJumpToAmendementForm () {
+  const link = document.querySelector('.find')
+  const form = document.querySelector('#search-amendements')
+  link.addEventListener('click', e => {
+    e.preventDefault()
+    form.classList.replace('is-hidden', 'is-visible')
+    form.querySelector('#q').focus()
+  })
+})()
 ;(function jumpToAmendement () {
-  const form = document.querySelector('header.main form')
+  const form = document.querySelector('#search-amendements')
   const input = form.querySelector('input[name="q"]')
+  const matches = JSON.parse(form.dataset.amendementMatches)
   form.addEventListener('submit', e => {
     e.preventDefault()
     const form = e.target
     const data = new FormData(form)
     const value = data.get('q').trim()
-    const amendement = document.querySelector(`[data-amendement-${value}]`)
-    if (amendement) {
-      document.querySelector(`#${amendement.dataset.anchor}`).scrollIntoView({'behavior': 'smooth'})
-      form.reset()
+    if (value in matches) {
+      window.location = matches[value]
     } else {
       form.querySelector('.error').classList.remove('hide')
     }

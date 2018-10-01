@@ -16,12 +16,14 @@
     <a class="list" href="{{ request.resource_url(context.parent if article else context) }}">Liste des articles</a>
   </span>
   <span><a class="find" href="">Accès amendement</a></span>
-  <form method="get" role="search" action="">
-    <input name="q" id="q" type="number" min="1" step="1" required placeholder="Numéro">
-    <input type="submit" name="submit" value="Accès amendement">
-    <p class="error hide">Amendement non trouvé.</p>
-  </form>
 </nav>
+
+<form class="search is-hidden" id="search-amendements" method="get" role="search" action="" data-amendement-matches='{{ lecture|amendement_matches|tojson }}'>
+  Amendement nº
+  <input name="q" id="q" type="number" min="1" step="1" required placeholder="(chiffres uniquement)">
+  <input type="submit" name="submit" value="Valider">
+  <p class="error hide">Amendement non trouvé.</p>
+</form>
 
 <div class="title">
   {% block title %}{% endblock %}

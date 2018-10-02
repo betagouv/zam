@@ -20,6 +20,31 @@ def test_import_liasse_xml(article1_an):
     _check_amendement_gouvernemental(amendements[2])
 
 
+def test_import_liasse_xml_again_preserve_response(article1_an):
+    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+    from zam_repondeur.models import Amendement
+
+    # Let's import amendements
+    amendements = import_liasse_xml(SAMPLE_LIASSE.open(mode="rb"))
+
+    assert isinstance(amendements, list)
+    assert len(amendements) == 3
+    assert all(isinstance(item, Amendement) for item in amendements)
+
+    # Now let's add a response
+    amendements[1].avis = "Favorable"
+    amendements[1].observations = "Observations"
+    amendements[1].reponse = "Réponse"
+
+    # And import the same amendement again
+    amendements2 = import_liasse_xml(SAMPLE_LIASSE.open(mode="rb"))
+
+    assert amendements == amendements2
+    assert amendements2[1].avis == "Favorable"
+    assert amendements2[1].observations == "Observations"
+    assert amendements2[1].reponse == "Réponse"
+
+
 def _check_amendement_0(amendement):
 
     assert amendement.lecture.chambre == "an"

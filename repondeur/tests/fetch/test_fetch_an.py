@@ -1,4 +1,5 @@
 from pathlib import Path
+from textwrap import dedent
 
 import pytest
 import responses
@@ -188,6 +189,57 @@ class TestFetchAmendements:
         items = fetch_amendements(lecture=lecture_an)
 
         assert len(items) == 5
+        assert items[0] == {
+            "@alineaLabel": "S",
+            "@auteurGroupe": "Les Républicains",
+            "@auteurLabel": "M. DOOR",
+            "@auteurLabelFull": "M. DOOR Jean-Pierre",
+            "@discussionCommune": "",
+            "@discussionCommuneAmdtPositon": "",
+            "@discussionCommuneSsAmdtPositon": "",
+            "@discussionIdentique": "20386",
+            "@discussionIdentiqueAmdtPositon": "debut",
+            "@discussionIdentiqueSsAmdtPositon": "",
+            "@missionLabel": "",
+            "@numero": "177",
+            "@parentNumero": "",
+            "@place": "Article 3",
+            "@position": "001/772",
+            "@sort": "Rejeté",
+        }
+
+    @responses.activate
+    def test_only_one_amendement(self, lecture_an, app):
+        from zam_repondeur.fetch.an.amendements import fetch_amendements
+
+        responses.add(
+            responses.GET,
+            build_url(15, 269),
+            body=dedent(
+                """\
+            <?xml version="1.0" encoding="UTF-8"?>
+            <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
+              legislature="14"  titre="PLFSS 2017"
+               type="projet de loi de financement de la sécurité sociale">
+              <amendements>
+                <amendement  place="Article 3"  numero="177"  sort="Rejeté"
+                    parentNumero=""  auteurLabel="M. DOOR"
+                    auteurLabelFull="M. DOOR Jean-Pierre"
+                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
+                    discussionCommune=""  discussionCommuneAmdtPositon=""
+                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
+                    discussionIdentiqueAmdtPositon="debut"
+                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+              </amendements>
+            </amdtsParOrdreDeDiscussion>
+            """
+            ),
+            status=200,
+        )
+
+        items = fetch_amendements(lecture=lecture_an)
+
+        assert isinstance(items, list)
         assert items[0] == {
             "@alineaLabel": "S",
             "@auteurGroupe": "Les Républicains",

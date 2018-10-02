@@ -84,9 +84,13 @@ def fetch_amendements(lecture: Lecture) -> List[OrderedDict]:
         organe_abrev=organe_abrev,
     )
     content = _retrieve_content(url)
-    amendements_raw: List[OrderedDict] = (
-        content["amdtsParOrdreDeDiscussion"].get("amendements", [])["amendement"]
+
+    # If there is only 1 amendement, xmltodict does not return a list :(
+    amendements_raw: Union[OrderedDict, List[OrderedDict]] = (
+        content["amdtsParOrdreDeDiscussion"]["amendements"]["amendement"]
     )
+    if isinstance(amendements_raw, OrderedDict):
+        return [amendements_raw]
     return amendements_raw
 
 

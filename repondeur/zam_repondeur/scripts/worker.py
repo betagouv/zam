@@ -8,6 +8,7 @@ from pyramid.paster import get_appsettings, setup_logging
 from rollbar.logger import RollbarHandler
 from sqlalchemy import engine_from_config
 
+from zam_repondeur import BASE_SETTINGS
 from zam_repondeur.data import init_repository
 from zam_repondeur.models import DBSession
 from zam_repondeur.tasks.huey import init_huey
@@ -27,6 +28,7 @@ def main(argv: List[str] = sys.argv) -> None:
     setup_logging(config_uri)
 
     settings = get_appsettings(config_uri)
+    settings = {**BASE_SETTINGS, **settings}
 
     rollbar_settings = extract_settings(settings, prefix="rollbar.")
     if "access_token" in rollbar_settings and "environment" in rollbar_settings:

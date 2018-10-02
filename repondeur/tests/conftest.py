@@ -10,7 +10,6 @@ from testapp import TestApp
 
 @pytest.fixture(scope="session")
 def settings():
-    jinja2_filters = "zam_repondeur.views.jinja2_filters"
     return {
         "sqlalchemy.url": os.environ.get(
             "ZAM_TEST_DB_URL", "postgresql://zam@localhost/zam-test"
@@ -22,12 +21,7 @@ def settings():
         "zam.data.redis_url": os.environ.get(
             "ZAM_TEST_DATA_REDIS_URL", "redis://localhost:6379/11"
         ),
-        "zam.legislature": "15",
         "zam.secret": "dummy",
-        "jinja2.filters": {
-            "paragriphy": f"{jinja2_filters}:paragriphy",
-            "amendement_matches": f"{jinja2_filters}:amendement_matches",
-        },
     }
 
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 from pyramid.config import Configurator
 from pyramid.request import Request
 from pyramid.router import Router
@@ -11,7 +13,18 @@ from zam_repondeur.tasks.huey import init_huey
 from zam_repondeur.version import load_version
 
 
-def make_app(global_settings: dict, **settings: str) -> Router:
+BASE_SETTINGS = {
+    "jinja2.filters": {
+        "paragriphy": "zam_repondeur.views.jinja2_filters:paragriphy",
+        "amendement_matches": "zam_repondeur.views.jinja2_filters:amendement_matches",
+    },
+    "zam.legislature": 15,
+}
+
+
+def make_app(global_settings: dict, **settings: Any) -> Router:
+
+    settings = {**BASE_SETTINGS, **settings}
 
     session_factory = SignedCookieSessionFactory(settings["zam.secret"])
 

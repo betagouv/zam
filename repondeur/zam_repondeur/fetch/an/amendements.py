@@ -6,6 +6,7 @@ from urllib.parse import urljoin
 
 import xmltodict
 
+from zam_repondeur.fetch.amendements import clear_position_if_removed
 from zam_repondeur.fetch.division import _parse_subdiv
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.fetch.http import cached_session
@@ -60,6 +61,7 @@ def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[s
             continue
         amendements.append(amendement)
         index += 1
+    clear_position_if_removed(lecture, amendements)
     return amendements, created, errored
 
 
@@ -164,12 +166,9 @@ def _create_or_update_amendement(
     position: int,
 ) -> Tuple[Amendement, bool]:
     amendement, created = get_one_or_create(
-        DBSession,
-        Amendement,
-        lecture=lecture,
-        num=int(amend["numero"]),
-        create_method_kwargs={"article": article},
+        DBSession, Amendement, lecture=lecture, num=int(amend["numero"])
     )
+    amendement.article = article
     amendement.sort = get_sort(amend)
     amendement.position = position
     amendement.matricule = amend["auteur"]["tribunId"]

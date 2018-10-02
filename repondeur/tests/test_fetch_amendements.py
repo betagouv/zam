@@ -175,6 +175,8 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
+    DBSession.add(lecture_an)
+
     # Add a response to one of the amendements
     with transaction.manager:
         amendement = amendements_an[1]
@@ -241,6 +243,8 @@ def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendement
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.fetch.exceptions import NotFound
+
+    DBSession.add(lecture_an)
 
     with patch(
         "zam_repondeur.fetch.an.amendements.fetch_amendements"

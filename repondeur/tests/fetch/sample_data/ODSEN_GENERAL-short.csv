@@ -1,0 +1,21 @@
+% Requête :select senmat as "Matricule", quacod as "Qualité", sennomuse as "Nom usuel", senprenomuse as "Prénom usuel", etasencod as "État", 
+% 	sendatnai as "Date naissance", sendatdec as "Date de décès", sengrppolliccou as "Groupe politique", tap.TYPAPPPOLLIB as "Type d'app au grp politique",
+% 	com.COMLIBAMELI as "Commission permanente", sencircou as "Circonscription", senburliccou as "Fonction au Bureau du Sénat",
+% 	case when senautema='OUI' then senema
+% 	else 'Non public'
+% 	end as "Courrier électronique",
+%   pcs.PCSLIL as "PCS INSEE",
+%   cp.CATPROLIB as "Catégorie professionnelle",
+%   s.SENDESPRO as "Description de la profession"
+% from senateurs.sen s
+% left outer join senateurs.typapppol tap ON s.sentypappcou =  tap.TYPAPPPOLLIC
+% left outer join senateurs.com com on s.SENCOMCODCOU = com.ORGCOD
+% left outer join senateurs.pcs pcs on s.PCSCOD = pcs.PCSCOD
+% left outer join senateurs.catpro cp on s.CATPROCOD = cp.CATPROCOD
+% where s.etasencod in ('ACTIF', 'ANCIEN')
+% order by s.sennomuse, s.senprenomuse, s.senmat
+% Aucun paramètre
+% 1732 ligne(s) de résultat
+Matricule,Qualité,Nom usuel,Prénom usuel,État,Date naissance,Date de décès,Groupe politique,Type d'app au grp politique,Commission permanente,Circonscription,Fonction au Bureau du Sénat,Courrier électronique,PCS INSEE,Catégorie professionnelle,Description de la profession
+01034P,M.,Vanlerenberghe,Jean-Marie,ACTIF,1939-03-29 00:00:00.0,,UC,,commission des affaires sociales,Pas-de-Calais,,jm.vanlerenberghe@senat.fr,Autres personnes sans activité professionnelle,Salariés (Ingénieurs),Ingénieur
+11031D,Mme,Cohen,Laurence,ACTIF,1953-01-15 00:00:00.0,,CRCE,,commission des affaires sociales,Val-de-Marne,,l.cohen@senat.fr,Autres personnes sans activité professionnelle,Professions judiciaires et libérales (Retraités),Orthophoniste

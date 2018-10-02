@@ -33,42 +33,26 @@
     }
   })
 })()
-;(function toggleMenu () {
-  const menuButtons = Array.from(document.querySelectorAll('.hamburger'))
-  const menu = document.getElementById('menu')
-  menuButtons.forEach(menuButton => {
-    menuButton.onclick = (e) => {
-      const superParent = menuButton.parentElement.parentElement
-      const hideMenu = () => {
-        menuButton.classList.remove('is-active')
-        superParent.removeChild(superParent.querySelector('.menu'))
-      }
-      if (menuButton.classList.contains('is-active')) {
-        hideMenu()
-      } else {
-        menuButton.classList.add('is-active')
-        const clonedMenu = menu.content.cloneNode(true)
-        superParent.appendChild(clonedMenu)
-        const links = Array.from(superParent.querySelectorAll('.menu a'))
-        links.forEach(link => {
-          link.onclick = hideMenu
-        })
-      }
-    }
+;(function displayJumpToAmendementForm () {
+  const link = document.querySelector('.find')
+  const form = document.querySelector('#search-amendements')
+  link.addEventListener('click', e => {
+    e.preventDefault()
+    form.classList.replace('is-hidden', 'is-visible')
+    form.querySelector('#q').focus()
   })
 })()
 ;(function jumpToAmendement () {
-  const form = document.querySelector('header.main form')
+  const form = document.querySelector('#search-amendements')
   const input = form.querySelector('input[name="q"]')
+  const matches = JSON.parse(form.dataset.amendementMatches)
   form.addEventListener('submit', e => {
     e.preventDefault()
     const form = e.target
     const data = new FormData(form)
     const value = data.get('q').trim()
-    const amendement = document.querySelector(`[data-amendement-${value}]`)
-    if (amendement) {
-      document.querySelector(`#${amendement.dataset.anchor}`).scrollIntoView({'behavior': 'smooth'})
-      form.reset()
+    if (value in matches) {
+      window.location = matches[value]
     } else {
       form.querySelector('.error').classList.remove('hide')
     }

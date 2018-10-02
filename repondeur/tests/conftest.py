@@ -21,9 +21,7 @@ def settings():
         "zam.data.redis_url": os.environ.get(
             "ZAM_TEST_DATA_REDIS_URL", "redis://localhost:6379/11"
         ),
-        "zam.legislature": "15",
         "zam.secret": "dummy",
-        "jinja2.filters": "paragriphy = zam_repondeur.views.jinja2_filters:paragriphy",
     }
 
 
@@ -94,6 +92,16 @@ def lecture_senat(app):
         )
 
     return lecture
+
+
+@pytest.fixture
+def chapitre_1er_an(app, lecture_an):
+    from zam_repondeur.models import Article
+
+    with transaction.manager:
+        article = Article.create(lecture=lecture_an, type="chapitre", num="Ier")
+
+    return article
 
 
 @pytest.fixture

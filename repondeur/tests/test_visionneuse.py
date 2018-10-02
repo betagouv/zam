@@ -11,8 +11,6 @@ def test_reponses_empty(app, lecture_an, amendements_an):
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
 
     assert resp.status_code == 200
-    assert resp.first_element("h1") == lecture_an.dossier_legislatif
-    assert resp.first_element("h2") == str(lecture_an)
     assert resp.first_element(".titles h2") == "Article 1"
     assert resp.find_amendement(amendements_an[0]) is None
     assert resp.find_amendement(amendements_an[1]) is None
@@ -31,9 +29,6 @@ def test_reponses_full(app, lecture_an, amendements_an):
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
 
     assert resp.status_code == 200
-    assert resp.first_element("h1") == lecture_an.dossier_legislatif
-    assert resp.first_element("h2") == str(lecture_an)
-
     test_amendement = resp.find_amendement(amendements_an[0])
     assert test_amendement is not None
     assert test_amendement.number_is_in_title()
@@ -115,39 +110,6 @@ def test_reponses_abandoned_and_gouvernemental_not_displayed(
     assert resp.find_amendement(amendements_an[1]) is None
 
 
-def test_reponses_menu(app, lecture_an, amendements_an):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
-        DBSession.add_all(amendements_an)
-
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
-
-    assert len(resp.parser.css(".menu a")) == 1
-    assert resp.parser.css_first(".menu a").text() == "Art. 1"
-
-
-def test_reponses_menu_with_textes(app, lecture_an, amendements_an):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
-            amendement.article.titre = "Titre article"
-        DBSession.add_all(amendements_an)
-
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
-
-    assert len(resp.parser.css(".menu p strong")) == 1
-    assert resp.parser.css_first(".menu p strong").text() == "Titre article :"
-
-
 def test_reponses_with_textes(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
@@ -162,12 +124,10 @@ def test_reponses_with_textes(app, lecture_an, amendements_an):
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
 
-    assert len(resp.parser.css("#content-article-1")) == 1
-    assert resp.parser.css_first("#content-article-1 dt").text() == "001"
-    assert (
-        resp.parser.css_first("#content-article-1 dd").text().strip()
-        == "Premier paragraphe"
-    )
+    fake_anchor = resp.parser.css_first("#content-article-1")
+    article_content = fake_anchor.parent.css_first(".article")
+    assert article_content.css_first("dt").text() == "001"
+    assert article_content.css_first("dd").text().strip() == "Premier paragraphe"
 
 
 def test_reponses_with_jaunes(app, lecture_an, amendements_an):
@@ -183,15 +143,10 @@ def test_reponses_with_jaunes(app, lecture_an, amendements_an):
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
 
-    assert len(resp.parser.css("#content-article-1")) == 1
-    assert (
-        resp.parser.css_first("#content-article-1 h2").text()
-        == "Présentation de l’article"
-    )
-    assert (
-        resp.parser.css_first("#content-article-1 p").text().strip()
-        == "Contenu du jaune"
-    )
+    fake_anchor = resp.parser.css_first("#content-article-1")
+    article_content = fake_anchor.parent.css_first(".article")
+    assert article_content.css_first("h2").text() == "Présentation de l’article"
+    assert article_content.css_first("p").text().strip() == "Contenu du jaune"
 
 
 def test_reponses_without_textes_or_jaunes(app, lecture_an, amendements_an):
@@ -206,7 +161,9 @@ def test_reponses_without_textes_or_jaunes(app, lecture_an, amendements_an):
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
 
-    assert len(resp.parser.css("#content-article-1 h2")) == 0
+    fake_anchor = resp.parser.css_first("#content-article-1")
+    article_content = fake_anchor.parent.css_first(".article")
+    assert article_content.css_first("h2") is None
 
 
 def test_reponses_with_different_articles(
@@ -266,7 +223,11 @@ def test_reponses_article_additionnel_avant(
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1..avant/reponses")
 
-    section_ids = [section.attributes["id"] for section in resp.parser.tags("section")]
+    section_ids = [
+        section.attributes.get("id")
+        for section in resp.parser.tags("section")
+        if "id" in section.attributes
+    ]
     assert section_ids == ["article-add-av-1"]
     article_titles = [item.text() for item in resp.parser.css(".titles h2")]
     assert article_titles == ["Article add. av. 1"]
@@ -288,3 +249,14 @@ def test_reponses_amendement_rect(app, lecture_an, amendements_an):
 
     assert "666" in resp
     assert "999 rect." in resp
+
+
+def test_links_to_previous_and_next_articles(
+    app, lecture_an, amendements_an, article1av_an, article7bis_an
+):
+
+    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+
+    assert resp.status_code == 200
+    nav_links = [node.text() for node in resp.parser.css(".secondary a")]
+    assert nav_links == ["Article add. av. 1", "Article 7 bis"]

@@ -5,16 +5,15 @@
 {% block header %}
 <link href="{{ request.static_url('zam_repondeur:static/balloon/balloon.css') }}" rel="stylesheet" type="text/css" />
 <style type="text/css">
-
     .content {
         margin: 0 1rem;
     }
 
     /* Options avancées */
-    .toggle:before {
+    .toggle.with-arrow:before {
         content: "↓";
     }
-    .toggle.enabled:before {
+    .toggle.with-arrow.enabled:before {
         content: "↑";
     }
     #advanced {
@@ -36,6 +35,7 @@
         margin-top: 1rem;
         display: flex;
         flex-wrap: wrap;
+        justify-content: space-around;
     }
     #advanced .button {
         margin: 0 0.75rem 0.75rem 0;
@@ -74,13 +74,19 @@
     }
 
     /* Sticky table header */
-    thead {
+    tr.sticky th {
         position: sticky;
         position: -webkit-sticky;
         background: white;
         z-index: 10;
-        top: 0;
+        box-shadow: 0px 3px 3px 0px #CCC;
     }
+        tr.headers th {
+            top: 0;
+        }
+        tr.filters th {
+            top: 2rem;
+        }
 
     /* Sorting */
     .headers th {
@@ -152,7 +158,10 @@
     }
 
     :target {
-        background: lightyellow;
+        background: #d4edda66;
+    }
+    nobr {
+        display: block;
     }
     span.avis {
         width: 6px;
@@ -177,6 +186,9 @@
         font-size: 60%;
         line-height: 0;
     }
+    nav.secondary div {
+        font-weight: normal;
+    }
 </style>
 {% endblock %}
 
@@ -186,21 +198,25 @@
         <h2>{{ lecture.dossier_legislatif }}</h2>
         <h3>{{ lecture }}</h3>
     </div>
-    <nav class="justify-content-around">
-        <p>
-            <a class="button" href="{{ request.resource_url(context.parent.parent) }}">←&nbsp;&nbsp;Retourner aux lectures</a>
-        </p>
-        <p>
-            <a class="button" href="{{ request.resource_url(context.parent, 'journal') }}">Voir le journal</a>
+{% endblock %}
+
+{% block secondary_header %}
+    <nav class="nav secondary justify-content-between">
+        <span class="nav-item">
+            <a class="arrow-left" href="{{ request.resource_url(context.parent.parent) }}">Retourner aux lectures</a>
+        </span>
+        <div>
+            {{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}
+        </div>
+        <span class="nav-item">
             {% if lecture.displayable %}
-                <a class="button" href="{{ request.resource_url(context.parent['articles'][amendements[0].article_url_key], 'reponses') }}" target="_blank">
+                <a class="arrow-right" href="{{ request.resource_url(context.parent['articles']) }}" target="_blank">
                     Voir le dossier de banc
                 </a>
             {% endif %}
-        </p>
+        </span>
     </nav>
 {% endblock %}
-
 
 {% block body %}
 <div class="content">
@@ -208,7 +224,7 @@
     <div role="status" aria-live="polite"></div>
 
     <nav style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-        <a id="toggle-advanced" class="toggle button" href="#">
+        <a id="toggle-advanced" class="toggle with-arrow button" href="#">
             Options avancées
         </a>
         <a id="toggle-filter" class="toggle button" href="#">
@@ -226,9 +242,27 @@
                     <label class="custom-file-label" for="reponses">Fichier CSV</label>
                 </div>
                 <div role="group">
-                    <input type="submit" name="upload" class="button" value="Importer les réponses">
+                    <input type="submit" name="upload" class="button primary enabled centered" value="Importer les réponses">
                 </div>
             </form>
+        </div>
+        <div>
+            <h3>Télécharger ce tableau</h3>
+            <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
+            <div role="group" aria-label="Format de téléchargement">
+                <a class="button primary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'csv'}) }}">
+                    <i class="fa fa-table"></i>
+                    Format CSV
+                </a>
+                <a class="button primary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
+                    <i class="fa fa-file-excel"></i>
+                    Format Excel
+                </a>
+                <a class="button primary" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
+                    <i class="fa fa-file-pdf"></i>
+                    Format PDF
+                </a>
+            </div>
         </div>
         <div>
             <h3>Importer une liasse XML</h3>
@@ -240,48 +274,32 @@
                     <label class="custom-file-label" for="liasse">Fichier XML</label>
                 </div>
                 <div role="group">
-                    <input type="submit" name="upload" class="button" value="Charger la liasse">
+                    <input type="submit" name="upload" class="button primary enabled" value="Importer la liasse">
                 </div>
             </form>
-        </div>
-        <div>
-            <h3>Télécharger ce tableau</h3>
-            <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
-            <div role="group" aria-label="Format de téléchargement">
-                <a class="button" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'csv'}) }}">
-                    <i class="fa fa-table"></i>
-                    Format CSV
-                </a>
-                <a class="button" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
-                    <i class="fa fa-file-excel"></i>
-                    Format Excel
-                </a>
-                <a class="button" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
-                    <i class="fa fa-file-pdf"></i>
-                    Format PDF
-                </a>
-            </div>
         </div>
         <div>
             <h3>Supprimer</h3>
             <p>Supprimer la lecture ainsi que tous les amendements et réponses associés.</p>
             <form method="post" action="{{ request.resource_url(context.parent) }}">
-                <input type="submit" name="delete" class="danger button" value="Supprimer">
+                <div role="group">
+                    <input type="submit" name="delete" class="danger button" value="Supprimer">
+                </div>
             </form>
         </div>
     </section>
 
     <table class="table" style="width:100%">
         <thead class="box">
-            <tr class="headers">
+            <tr class="headers sticky">
                 <th width="50px">★</th>
                 <th width="150px">Article</th>
                 <th width="180px">Nº</th>
-                <th>Auteur</th>
-                <th>Groupe</th>
+                <th class="nosort">Objet</th>
+                <th>Groupe (Auteur)</th>
                 <th class="avis">Avis</th>
             </tr>
-            <tr class="filters d-none">
+            <tr class="filters sticky d-none">
                 <th></th>
                 <th>
                     <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
@@ -311,6 +329,7 @@
                 "
                 data-amendement="{{ amendement.num }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}"
+                data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 id="{{ amendement.slug }}"
             >
                 <td class="bookmark" data-sortkey="{{ amendement.bookmarked_at }}">
@@ -334,21 +353,22 @@
                     </a>
                 </td>
                 <td data-sortkey="{{ amendement.num }}">
-                    <span
-                        {% if amendement.observations %}
-                        data-balloon="{{ amendement.observations | striptags | truncate(length=150, killwords=False, end='…') }}"
-                        data-balloon-pos="right"
-                        class="dotted"
-                        {% endif %}
-                    >
                         {{ amendement.num_disp }}
                         {% if amendement.parent %}
                             (ss-amdt au {{ amendement.parent.num_disp }})
                         {% endif %}
-                    </span>
                 </td>
-                <td>{{ amendement.auteur }}</td>
-                <td>{{ amendement.groupe }}</td>
+                <td>
+                    {% if amendement.observations %}
+                        {{ amendement.observations | striptags | truncate(length=100, killwords=False, end='…') }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if amendement.groupe %}
+                        {{ amendement.groupe }} ({{ amendement.auteur }})</td>
+                    {% else %}
+                        {{ amendement.auteur }}
+                    {% endif %}
                 <td
                     {% if not amendement.gouvernemental and not amendement.avis %}
                         class="input-required"
@@ -513,36 +533,48 @@
             else {
                 line.classList.add('hidden-avis')
             }
+            if (line.dataset.gouvernemental === "1") {
+                line.classList.add('hidden-avis')
+            }
         })
     })
-    var bookmarkForms = table.querySelectorAll('.bookmark form')
-    ;[].slice.call(bookmarkForms).forEach(function (bookmarkForm) {
-        bookmarkForm.addEventListener('submit', function (e) {
-            e.preventDefault()
-            var target = e.target
-            fetch(target.action, {
-                method: 'POST',
-                body: new FormData(target),
-                credentials: 'same-origin'
-            }).then(function(response) {
-                var bookmarkInput = target.querySelector('[name="bookmark"]')
-                var submitInput = target.querySelector('[name="submit"]')
+    ;(function bookmarks () {
+        const bookmarkForms = table.querySelectorAll('.bookmark form')
+        Array.from(bookmarkForms).forEach(bookmarkForm => {
+            bookmarkForm.addEventListener('submit', e => {
+                e.preventDefault()
+                const target = e.target
+                const bookmarkInput = target.querySelector('[name="bookmark"]')
+                const submitInput = target.querySelector('[name="submit"]')
+                // Immediate visual feedback without waiting for server's response.
                 if (submitInput.value == '☆') {
                     submitInput.value = '★'
                     submitInput.title = 'Cliquer pour enlever le favori'
                     submitInput.classList.add("bookmarked")
-                    bookmarkInput.value = '0'
                     target.parentElement.dataset.sortkey = 1
                 } else {
                     submitInput.value = '☆'
                     submitInput.title = 'Cliquer pour mettre en favori'
                     submitInput.classList.remove("bookmarked")
-                    bookmarkInput.value = '1'
                     target.parentElement.dataset.sortkey = ''
                 }
+                const body = new FormData(target)
+                fetch(target.action, {
+                    method: 'POST',
+                    body: body,
+                    credentials: 'same-origin'
+                }).then(response => {
+                    // The logic might be confusing:
+                    // remember we just changed the submitInput value above.
+                    if (submitInput.value == '★') {
+                        bookmarkInput.value = '0'
+                    } else {
+                        bookmarkInput.value = '1'
+                    }
+                })
             })
         })
-    })
+    })()
 
     /* Taking control over native jump to avoir position under sticky headers. */
     if (location.hash) {

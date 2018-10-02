@@ -6,23 +6,23 @@
         <h2>{{ lecture.dossier_legislatif }}</h2>
         <h3>{{ lecture }}</h3>
     </div>
-    <nav class="justify-content-start">
-        <p>
-            <a class="button" href="{{ request.resource_url(context.parent.parent, 'amendements') }}">←&nbsp;&nbsp;Retourner aux amendements</a>
-        </p>
-    </nav>
 {% endblock %}
-
 
 {% block secondary_header %}
-    <header class="secondary">
-        <h2>{{ article }}</h2>
-        {% if article.titre %}
-            <div>{{ article.titre }}</div>
-        {% endif %}
-    </header>
+    <nav class="nav secondary justify-content-between">
+        <span class="nav-item">
+            <a class="arrow-left" href="{{ request.resource_url(context.parent.parent, 'amendements') }}">Retourner aux amendements</a>
+        </span>
+        <div>
+            <h2>{{ article }}</h2>
+            {% if article.titre %}
+                <div>{{ article.titre }}</div>
+            {% endif %}
+        </div>
+        <span class="nav-item">
+        </span>
+    </nav>
 {% endblock %}
-
 
 {% block body %}
     <div class="container">
@@ -60,9 +60,11 @@
             <label for="jaune">Présentation de l’article</label>
             <textarea name="jaune" class="form-control">{{ article.jaune or "" | safe }}</textarea>
         </div>
-        <div class="form-group">
-            <input type="submit" name="submit" value="Enregistrer" class="btn btn-primary">
-            <a href="{{ request.resource_url(context.parent.parent, 'amendements') }}" class="btn">Annuler</a>
+
+        <div class="form-group save-buttons">
+            <a href="{{ request.resource_url(context.parent.parent, 'amendements') }}" class="button primary">Annuler mes modifications</a>
+            <input type="submit" name="submit" value="Enregistrer" class="button enabled primary">
         </div>
+
     </form>
 {% endmacro %}

@@ -1,0 +1,42 @@
+/* https://github.com/adobe-fonts/source-sans-pro/releases/tag/2.020R-ro%2F1.075R-it
+ + https://www.fontsquirrel.com/tools/webfont-generator */
+@font-face {
+    font-family: 'source_sans_pro';
+    src: url('../webfonts/sourcesanspro-bold-2020R.woff2') format('woff2'),
+         url('../webfonts/sourcesanspro-bold-2020R.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'source_sans_pro';
+    src: url('../webfonts/sourcesanspro-regular-2020R.woff2') format('woff2'),
+         url('../webfonts/sourcesanspro-regular-2020R.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'source_sans_pro';
+    src: url('../webfonts/sourcesanspro-semibold-2020R.woff2') format('woff2'),
+         url('../webfonts/sourcesanspro-semibold-2020R.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+}
+/* https://github.com/adobe-fonts/source-serif-pro/releases/tag/2.007R-ro%2F1.007R-it
+ + https://www.fontsquirrel.com/tools/webfont-generator */
+@font-face {
+    font-family: 'source_serif_pro';
+    src: url('../webfonts/sourceserifpro-regular-2007R.woff2') format('woff2'),
+         url('../webfonts/sourceserifpro-regular-2007R.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'source_serif_pro';
+    src: url('../webfonts/sourceserifpro-semibold-2007R.woff2') format('woff2'),
+         url('../webfonts/sourceserifpro-semibold-2007R.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+}

@@ -4,78 +4,52 @@
 
 {% block header %}
 <style type="text/css">
-
-    .lecture.box {
-        margin: 2rem 0.5rem;
+    nav.float-right {
+        padding: .8rem 1.5rem 0 0;
     }
-    .lecture.box:first-child {
+    .lecture {
+        margin: 2rem 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+    }
+    .lecture:first-child {
         margin-top: 2rem;
     }
-    .lecture.box nav {
+    .lecture nav {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         flex-wrap: wrap;
-        margin-top: 0.25rem;
+        flex-direction: column;
+        text-align: right;
+        min-width: 250px;
     }
-    .lecture.box nav a {
-        margin: 0.5rem 0.5rem 0 0.5rem;
+    .lecture nav a {
+        background: no-repeat right center url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}");
     }
-
-    @media(min-width:768px) {
-
-        header.main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        header.main nav {
-            position: absolute;
-            right: 1rem;
-            margin: 0;
-        }
-
-        .lecture.box {
-            display: flex;
-            justify-content: space-between;
-        }
-        .lecture.box nav {
-            margin: 0 0 0 1.5rem;
-            flex-direction: column;
-        }
-        .lecture.box nav a {
-            margin: 0.75rem 0 0 0;
-        }
-        .lecture.box nav a:first-child {
-            margin: 0 0 0 0;
-        }
+    .lecture nav a:last-child {
+        font-size: 1.1rem;
+        padding-right: 1.8rem;
+        background-position: 99% 42%;
+        background-size: 5%;
     }
-
-    @media(min-width:1280px) {
-        .lecture.box nav {
-            flex-shrink: 0;
-            flex-direction: row;
-        }
-        .lecture.box nav a {
-            margin: auto 0 auto 1rem;
-        }
-        .lecture.box nav a:first-child {
-            margin: auto 0 auto 0;
-        }
+    .lecture nav a:first-child {
+        font-size: 1.7rem;
+        padding-right: 2rem;
+        background-position: right 40%;
+        background-size: 7%;
     }
-
 </style>
 {% endblock %}
 
 
 {% block top %}
-    <h2>Lectures</h2>
-    <nav>
+    <nav class="float-right">
         <a class="button" href="{{ request.resource_url(context, 'add') }}">
             Ajouter une nouvelle lecture
         </a>
     </nav>
+    <h2>Lectures</h2>
 {% endblock %}
 
 
@@ -85,16 +59,17 @@
         <div>
             <h3>{{ lecture.dossier_legislatif }}</h3>
             <div>{{ lecture }}</div>
+            {% if lecture.amendements %}
+                <div>{{ lecture.amendements|length }} amendements</div>
+            {% endif %}
         </div>
         <nav>
-            <a class="button" href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">
-                <i class="fa fa-pencil-alt"></i>
-                &nbsp;&nbsp;Consulter la liste
+            <a href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">
+                Consulter la liste
             </a>
             {% if lecture.displayable %}
-            <a class="button" href="{{ request.resource_url(context[lecture.url_key]['articles'][lecture.amendements[0].article_url_key], 'reponses') }}" role="button" target="_blank">
-                <i class="fa fa-eye"></i>
-                &nbsp;&nbsp;Dossier de banc
+            <a href="{{ request.resource_url(context[lecture.url_key]['articles']) }}" role="button" target="_blank">
+                Voir le dossier de banc
             </a>
             {% endif %}
         </nav>

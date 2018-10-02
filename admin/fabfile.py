@@ -183,7 +183,7 @@ def deploy_repondeur(
     )
     setup_db(ctx, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
     if wipe:
-        wipe_db(ctx, user=user)
+        wipe_db(ctx, dbname=dbname)
     migrate_db(ctx, app_dir=app_dir, user=user)
     setup_webapp_service(ctx)
     setup_worker_service(ctx)

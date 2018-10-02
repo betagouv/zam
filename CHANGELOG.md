@@ -2,7 +2,7 @@
 
 ## Prochains évènements
 
-### Date de prochaine démonstration : 2 octobre à 15h.
+### Date de prochaine démonstration : 3 octobre à 15h.
 
 <h2 class="center">[Accès au répondeur](/repondeur/) — [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
 

@@ -36,19 +36,6 @@ ALLOWED_TYPE = (
     "annexe",
 )
 
-ALLOWED_MULT = (
-    "",
-    "bis",
-    "ter",
-    "quater",
-    "quinquies",
-    "sexies",
-    "septies",
-    "octies",
-    "nonies",
-    "decies",
-)
-
 ALLOWED_POS = ("avant", "", "après")
 
 
@@ -75,10 +62,6 @@ class Article(Base):
     @validates("type")
     def validate_type(self, key: str, type: str) -> str:
         return validate(key, type, ALLOWED_TYPE)
-
-    @validates("mult")
-    def validate_mult(self, key: str, mult: str) -> str:
-        return validate(key, mult, ALLOWED_MULT)
 
     @validates("pos")
     def validate_pos(self, key: str, pos: str) -> str:
@@ -207,7 +190,7 @@ class Article(Base):
             parts.extend(["add", self.pos[:2]])
         parts.append(str(self.num))
         if self.mult:
-            parts.append(self.mult)
+            parts.append(self.mult.replace(" ", "-"))
         return "-".join([part.lower() for part in parts])
 
     @property

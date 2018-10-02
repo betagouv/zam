@@ -99,8 +99,8 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
         DBSession,
         Amendement,
         lecture=lecture,
-        article=article,
         num=to_int(extract("identifiant", "numero")),
+        create_method_kwargs={"article": article},
     )
     amendement.alinea = to_int(extract("pointeurFragmentTexte", "alinea", "numero"))
     amendement.auteur = auteur_name

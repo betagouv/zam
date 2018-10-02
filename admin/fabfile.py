@@ -181,9 +181,9 @@ def deploy_repondeur(
             "rollbar_token": rollbar_token,
         },
     )
-    setup_db(ctx, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
     if wipe:
         wipe_db(ctx, dbname=dbname)
+    setup_db(ctx, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
     migrate_db(ctx, app_dir=app_dir, user=user)
     setup_webapp_service(ctx)
     setup_worker_service(ctx)
@@ -263,6 +263,9 @@ def setup_db(ctx, dbname, dbuser, dbpassword, encoding="UTF8", locale="en_US.UTF
 @task
 def wipe_db(ctx, dbname):
     backup_db(ctx, dbname)
+    # Will be restarted later in `deploy_repondeur`.
+    ctx.sudo("systemctl stop zam_webapp")
+    ctx.sudo("systemctl stop zam_worker")
     ctx.sudo(f"dropdb {dbname}", user="postgres")
 
 

@@ -23,4 +23,5 @@ def update_data() -> None:
 def fetch_all_amendements() -> None:
     with transaction.manager:
         for lecture in DBSession.query(Lecture):
-            fetch_amendements(lecture.pk)
+            delay = (lecture.pk % 15) * 60  # spread out updates over 15 minutes
+            fetch_amendements.schedule(args=(lecture.pk,), delay=delay)

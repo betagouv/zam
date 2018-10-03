@@ -2,7 +2,8 @@ import logging
 from itertools import groupby
 from typing import Iterable, List, Optional, Tuple, Union
 
-from sqlalchemy import Column, ForeignKey, Integer, PickleType, Text
+from sqlalchemy import Column, ForeignKey, Integer, PickleType, Text, UniqueConstraint
+
 from sqlalchemy.orm import relationship, validates
 
 from .base import Base, DBSession
@@ -41,6 +42,7 @@ ALLOWED_POS = ("avant", "", "après")
 
 class Article(Base):
     __tablename__ = "articles"
+    __table_args__ = (UniqueConstraint("lecture_pk", "type", "num", "mult", "pos"),)
 
     pk = Column(Integer, primary_key=True)
     lecture_pk = Column(Integer, ForeignKey("lectures.pk"), nullable=False)

@@ -12,5 +12,6 @@ def clear_position_if_removed(
 ) -> None:
     removed_from_discussion = set(lecture.amendements) - set(amendements)
     for amendement in removed_from_discussion:
-        logger.info("Amendement %s retiré de la discussion", amendement.num)
-        amendement.position = None
+        if amendement.position is not None:
+            logger.info("Amendement %s retiré de la discussion", amendement.num)
+            amendement.position = None

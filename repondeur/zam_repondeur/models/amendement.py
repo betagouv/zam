@@ -286,11 +286,8 @@ class Amendement(Base):
             result["num_texte"] = self.lecture.num_texte
             result["organe"] = self.lecture.organe
             result["session"] = self.lecture.session
-            result["subdiv_type"] = self.article.type
-            result["subdiv_titre"] = self.article.titre
-            result["subdiv_num"] = self.article.num
-            result["subdiv_pos"] = self.article.pos
-            result["subdiv_mult"] = self.article.mult
+            result["article"] = self.article.format()
+            result["article_titre"] = self.article.titre or ""
             result["position"] = self.position or ""
             result["discussion_commune"] = self.discussion_commune or ""
             result["identique"] = self.identique or ""

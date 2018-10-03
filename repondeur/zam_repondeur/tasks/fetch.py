@@ -18,9 +18,8 @@ RETRY_DELAY = 5 * 60  # 5 minutes
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
-@huey.lock_task("fetch-articles-lock")
 def fetch_articles(lecture_pk: int) -> None:
-    with transaction.manager:
+    with transaction.manager, huey.lock_task(f"fetch-articles-{lecture_pk}"):
 
         lecture = DBSession.query(Lecture).get(lecture_pk)
         if lecture is None:
@@ -35,10 +34,8 @@ def fetch_articles(lecture_pk: int) -> None:
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
-@huey.lock_task("fetch-amendements-lock")
 def fetch_amendements(lecture_pk: int) -> None:
-    with transaction.manager:
-
+    with transaction.manager, huey.lock_task(f"fetch-amendements-{lecture_pk}"):
         lecture = DBSession.query(Lecture).get(lecture_pk)
         if lecture is None:
             logger.error(f"Lecture {lecture_pk} introuvable")

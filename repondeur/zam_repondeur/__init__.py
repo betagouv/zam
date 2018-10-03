@@ -19,6 +19,7 @@ BASE_SETTINGS = {
         "amendement_matches": "zam_repondeur.views.jinja2_filters:amendement_matches",
     },
     "zam.legislature": 15,
+    "huey.workers": 8,
 }
 
 

@@ -31,11 +31,10 @@ def test_get_form(app, lecture_an, amendements_an):
 
 
 @responses.activate
-def test_post_form(app, lecture_an, amendements_an):
+def test_post_form(app, lecture_an, article1_an):
     from zam_repondeur.models import DBSession, Amendement, Lecture
 
-    with transaction.manager:
-        initial_modified_at = lecture_an.modified_at
+    initial_modified_at = lecture_an.modified_at
 
     responses.add(
         responses.GET,
@@ -83,18 +82,14 @@ def test_post_form(app, lecture_an, amendements_an):
         status=200,
     )
 
-    # Add a response to one of the amendements
+    # Initially, we only have one amendement (#135), with a response
     with transaction.manager:
-        amendement = amendements_an[1]
-        amendement.avis = "Favorable"
-        amendement.observations = "Observations"
-        amendement.reponse = "Réponse"
-
-        # The object is no longer bound to a session here, as it was created in a
-        # previous transaction, so we add it to the current session to make sure that
-        # our changes will be committed with the current transaction
+        amendement = Amendement(
+            lecture=lecture_an, article=article1_an, num=135, position=1
+        )
         DBSession.add(amendement)
 
+    # Then we ask for a refresh
     form = app.get("/lectures/an.15.269.PO717460/journal/").forms["manual-refresh"]
     resp = form.submit()
 
@@ -104,20 +99,9 @@ def test_post_form(app, lecture_an, amendements_an):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "5 nouveaux amendements récupérés." in resp.text
+    assert "4 nouveaux amendements récupérés." in resp.text
 
-    # Check that the response was preserved on the updated amendement
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
-    assert amendement.avis == "Favorable"
-    assert amendement.observations == "Observations"
-    assert amendement.reponse == "Réponse"
-    assert amendement.position == 2
-
-    # Check that article content is filled.
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.article.contenu["001"].startswith("Au titre de l'exercice 2016")
-
-    # Check the update timestamp has been updated.
+    # Check that the update timestamp has been updated
     with transaction.manager:
         lecture = Lecture.get(
             chambre=lecture_an.chambre,

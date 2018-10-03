@@ -27,8 +27,10 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
     )
     num, rectif = Amendement.parse_num(row["Numéro "])
     amendement, created = get_one_or_create(
-        DBSession, Amendement, lecture=lecture, article=article, num=num, rectif=rectif
+        DBSession, Amendement, lecture=lecture, num=num
     )
+    amendement.article = article
+    amendement.rectif = rectif
     amendement.alinea = row["Alinéa"].strip()
     amendement.auteur = row["Auteur "]
     amendement.matricule = extract_matricule(row["Fiche Sénateur"])
@@ -58,13 +60,10 @@ def parse_from_json(
     )
     num, rectif = Amendement.parse_num(amend["num"])
     amendement, created = get_one_or_create(
-        DBSession,
-        Amendement,
-        create_method_kwargs={"article": article},
-        lecture=lecture,
-        num=num,
-        rectif=rectif,
+        DBSession, Amendement, lecture=lecture, num=num
     )
+    amendement.article = article
+    amendement.rectif = rectif
     amendement.alinea = amend["libelleAlinea"]
     amendement.auteur = amend["auteur"]
     amendement.matricule = (

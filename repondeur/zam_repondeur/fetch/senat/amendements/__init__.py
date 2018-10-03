@@ -6,6 +6,7 @@ from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple
 
 import requests
 
+from zam_repondeur.fetch.amendements import clear_position_if_removed
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.models import Amendement, Lecture
 from zam_repondeur.fetch.senat.senateurs import fetch_and_parse_senateurs, Senateur
@@ -32,10 +33,11 @@ def aspire_senat(lecture: Lecture) -> Tuple[List[Amendement], int]:
         created += int(created_)
         amendements.append(amendement)
 
-    processed_amendements = _process_amendements(
-        amendements=amendements, lecture=lecture
+    processed_amendements = list(
+        _process_amendements(amendements=amendements, lecture=lecture)
     )
-    return list(processed_amendements), created
+
+    return processed_amendements, created
 
 
 def _fetch_and_parse_all(lecture: Lecture) -> List[Tuple[Amendement, bool]]:
@@ -77,6 +79,8 @@ def _process_amendements(
     amendements_derouleur = _fetch_and_parse_discussed(lecture=lecture, phase="seance")
     if len(amendements_derouleur) == 0:
         logger.info("Aucun amendement soumis à la discussion pour l'instant!")
+
+    clear_position_if_removed(lecture, amendements_derouleur)
 
     logger.info("Récupération de la liste des sénateurs...")
     senateurs_by_matricule = fetch_and_parse_senateurs()

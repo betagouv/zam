@@ -271,7 +271,7 @@ class TestFetchAmendements:
 
 class TestFetchAmendement:
     @responses.activate
-    def test_simople_amendement(self, lecture_an, app):
+    def test_simple_amendement(self, lecture_an, app):
         from zam_repondeur.fetch.an.amendements import fetch_amendement
 
         responses.add(
@@ -430,7 +430,7 @@ class TestFetchAmendement:
 
 class TestFetchAmendementAgain:
     @responses.activate
-    def test_unchanged(self, lecture_an, app):
+    def test_response_is_preserved(self, lecture_an, app):
         from zam_repondeur.fetch.an.amendements import fetch_amendement
 
         responses.add(
@@ -440,16 +440,28 @@ class TestFetchAmendementAgain:
             status=200,
         )
 
+        # Let's fetch a new amendement
         amendement1, created = fetch_amendement(
             lecture=lecture_an, numero=177, position=1
         )
         assert created
 
+        # Now let's add a response
+        amendement1.avis = "Favorable"
+        amendement1.observations = "Observations"
+        amendement1.reponse = "Réponse"
+
+        # And fetch the same amendement again
         amendement2, created = fetch_amendement(
             lecture=lecture_an, numero=177, position=1
         )
         assert not created
         assert amendement2 is amendement1
+
+        # The response has been preserved
+        assert amendement2.avis == "Favorable"
+        assert amendement2.observations == "Observations"
+        assert amendement2.reponse == "Réponse"
 
     @responses.activate
     def test_article_has_changed(self, lecture_an, app):

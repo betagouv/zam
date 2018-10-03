@@ -108,6 +108,20 @@ def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:
         pdfkit.from_string(content, filename, options=options)
 
 
+def write_pdf1(
+    lecture: Lecture, amendement: Amendement, filename: str, request: Request
+) -> None:
+    env = get_jinja2_environment(request, name=".html")
+    template = env.get_template("print1.html")
+    content = template.render(lecture=lecture, picked_amendement=amendement)
+    options = {
+        "quiet": "",
+        "footer-center": f"{lecture.dossier_legislatif} • Page [page] sur [topage]",
+    }
+    with xvfb_if_supported():
+        pdfkit.from_string(content, filename, options=options)
+
+
 def write_xlsx(lecture: Lecture, filename: str, request: Request) -> int:
     wb = Workbook()
     ws = wb.active

@@ -298,6 +298,7 @@
                 <th class="nosort">Objet</th>
                 <th>Groupe (Auteur)</th>
                 <th class="avis">Avis</th>
+                <th class="nosort">Télécharger</th>
             </tr>
             <tr class="filters sticky d-none">
                 <th></th>
@@ -403,6 +404,12 @@
                         {% endif %}
                         </a>
                     </nobr>
+                </td>
+                <td>
+                    <a class="button primary" href="{{ request.resource_url(context[amendement.num_str], 'download_amendement') }}">
+                        <i class="fa fa-file-pdf"></i>
+                        Format PDF
+                    </a>
                 </td>
             </tr>
         {% endfor %}

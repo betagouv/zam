@@ -14,7 +14,10 @@ from zam_repondeur.models import DBSession, Journal, Lecture
 logger = logging.getLogger(__name__)
 
 
-@huey.task(retries=3, retry_delay=60 * 5)  # Minutes.
+RETRY_DELAY = 5 * 60  # 5 minutes
+
+
+@huey.task(retries=3, retry_delay=RETRY_DELAY)
 @huey.lock_task("fetch-articles-lock")
 def fetch_articles(lecture_pk: int) -> None:
     with transaction.manager:
@@ -31,7 +34,7 @@ def fetch_articles(lecture_pk: int) -> None:
         lecture.modified_at = datetime.utcnow()
 
 
-@huey.task(retries=3, retry_delay=60 * 5)  # Minutes.
+@huey.task(retries=3, retry_delay=RETRY_DELAY)
 @huey.lock_task("fetch-amendements-lock")
 def fetch_amendements(lecture_pk: int) -> None:
     with transaction.manager:

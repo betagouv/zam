@@ -1,6 +1,17 @@
+from itertools import tee
+
 import pytest
 
 from zam_repondeur.models import Article
+
+
+def pairwise(iterable):
+    """
+    From https://docs.python.org/3/library/itertools.html#itertools-recipes
+    """
+    a, b = tee(iterable)
+    next(b, None)
+    return zip(a, b)
 
 
 @pytest.mark.parametrize(
@@ -76,6 +87,72 @@ class TestOrdering:
         assert (
             titre < motion < chapitre < section < sous_section < article < annexe < vide
         )
+
+    @pytest.mark.parametrize(
+        "before, after",
+        list(
+            pairwise(
+                [
+                    "11",
+                    "11 bis A",
+                    "11 bis",
+                    "11 ter",
+                    "11 quater",
+                    "11 quinquies",
+                    "11 sexies",
+                    "12 AA",
+                    "12 AB",
+                    "12 A",
+                    "12 BA",
+                    "12 BB",
+                    "12 BC",
+                    "12 BD",
+                    "12 B",
+                    "12 C",
+                    "12 D",
+                    "12",
+                    "12 bis",
+                    "13",
+                    "13 bis",
+                    "13 ter",
+                    "13 quater A",
+                    "13 quater",
+                    "13 quinquies",
+                    "13 sexies",
+                    "14",
+                    "14 bis A",
+                    "14 bis",
+                    "15",
+                    "16",
+                    "17",
+                    "17 bis AAA",
+                    "17 bis AA",
+                    "17 bis A",
+                    "17 bis BA",
+                    "17 bis BB",
+                    "17 bis B",
+                    "17 bis C",
+                    "17 bis",
+                    "17 ter",
+                ]
+            )
+        ),
+    )
+    def test_andouillette(self, lecture_an, before, after):
+        """
+        Examples from https://www.senat.fr/dossier-legislatif/tc/tc_pjl03-328.html
+        """
+
+        def make_article(s):
+            if " " in s:
+                num, mult = s.split(" ", 1)
+            else:
+                num, mult = s, ""
+            return Article.create(
+                lecture=lecture_an, type="article", num=num, mult=mult
+            )
+
+        assert make_article(before) < make_article(after)
 
     def test_avant_apres(self, lecture_an):
         article_6 = Article.create(lecture=lecture_an, type="article", num=6)

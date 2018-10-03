@@ -203,7 +203,7 @@
               <h3>Objet :</h3>
               {{ amendement.observations | paragriphy }}
             </div>
-            {% if amendement.reponse and amendement.reponse.strip() and amendement.reponse.content != "<p></p>" %}
+            {% if amendement.has_reponse %}
               <h3>Réponse :</h3>
               {{ amendement.reponse | paragriphy }}
             {% endif %}

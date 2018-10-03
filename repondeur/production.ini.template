@@ -49,7 +49,7 @@ sqlalchemy.url = $$db_url
 ###
 
 [loggers]
-keys = root, huey, sqlalchemy, alembic
+keys = root, huey, sqlalchemy, alembic, zam
 
 [handlers]
 keys = console
@@ -73,6 +73,11 @@ handlers =
 
 [logger_alembic]
 qualname = alembic
+level = INFO
+handlers =
+
+[logger_zam]
+qualname = zam_repondeur
 level = INFO
 handlers =
 

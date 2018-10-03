@@ -13,6 +13,7 @@
 * ⚠︎ Évolution de la [spécification d’import](https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses) (de `Nº` à `Num` afin d’éviter les erreurs)
 * Découpage de la visualisation du dossier de banc par article
 * Activation du correcteur orthographique du navigateur dans les champs de saisie
+* Améliorations ergonomiques du répondeur
 
 ### 20 septembre 2018
 

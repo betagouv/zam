@@ -16,6 +16,7 @@ from .models import Amendement, Lecture
 
 FIELDS_NAMES = {
     "article": "Num article",
+    "article_titre": "Titre article",
     "alinea": "Alinéa",
     "num": "Num amdt",
     "auteur": "Auteur(s)",
@@ -39,23 +40,26 @@ def rename_field(field_name: str) -> str:
 
 EXCLUDED_FIELDS = [
     "Amendement",
+    "pk",
     "article_pk",
     "lecture_pk",
     "parent_pk",
     "parent_rectif",
+    "subdiv_type",
+    "subdiv_titre",
+    "subdiv_num",
+    "subdiv_mult",
+    "subdiv_pos",
 ]
 FIELDS = [
     field
     for field in Amendement.__table__.columns.keys()
     if field not in EXCLUDED_FIELDS
 ] + [
+    "article",
+    "article_titre",
     "parent",
     "gouvernemental",
-    "subdiv_type",
-    "subdiv_titre",
-    "subdiv_num",
-    "subdiv_mult",
-    "subdiv_pos",
     "chambre",
     "num_texte",
     "organe",

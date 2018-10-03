@@ -87,7 +87,6 @@ def test_write_csv(
     assert len(rows) == nb_rows == 5
 
     assert _csv_row_to_dict(headers, rows[0]) == {
-        "Pk": "000042",
         "Alinéa": "",
         "Auteur(s)": "M. DUPONT",
         "Avis du Gouvernement": "",
@@ -101,6 +100,8 @@ def test_write_csv(
         "Identique ?": "",
         "Matricule": "000000",
         "Num_texte": "63",
+        "Num article": "Article 1",
+        "Titre article": "",
         "Parent": "",
         "Num amdt": "42",
         "Objet amdt": "",
@@ -112,11 +113,6 @@ def test_write_csv(
         "Session": "2017-2018",
         "Signalé": "Non",
         "Sort": "",
-        "Subdiv_mult": "",
-        "Subdiv_num": "1",
-        "Subdiv_pos": "",
-        "Subdiv_titre": "",
-        "Subdiv_type": "article",
         "Gouvernemental": "False",
     }
 
@@ -208,11 +204,8 @@ def test_write_csv_sous_amendement(
         "Signalé": "Oui",
         "Num_texte": "63",
         "Organe": "PO78718",
-        "Subdiv_type": "article",
-        "Subdiv_num": "1",
-        "Subdiv_mult": "",
-        "Subdiv_pos": "",
-        "Subdiv_titre": "",
+        "Num article": "Article 1",
+        "Titre article": "",
         "Alinéa": "",
         "Num amdt": "596",
         "Rectif": "1",
@@ -231,7 +224,6 @@ def test_write_csv_sous_amendement(
         "Objet amdt": "",
         "Réponse": "",
         "Gouvernemental": "False",
-        "Pk": "000596",
         "Commentaires": "",
         "Resume": "",
     }

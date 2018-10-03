@@ -113,7 +113,7 @@ def write_pdf1(
 ) -> None:
     env = get_jinja2_environment(request, name=".html")
     template = env.get_template("print1.html")
-    content = template.render(lecture=lecture, picked_amendement=amendement)
+    content = template.render(amendement=amendement)
     options = {
         "quiet": "",
         "footer-center": f"{lecture.dossier_legislatif} • Page [page] sur [topage]",

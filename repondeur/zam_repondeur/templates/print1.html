@@ -83,162 +83,124 @@
   </style>
 </head>
 <body>
-  <div class="first-page page">
-    <h1>{{ lecture.dossier_legislatif }}</h1>
-    <h2>{{ lecture }}</h2>
-  </div>
   <main>
-    {% for article in lecture.articles|sort %}
-      {% for amendements in article.grouped_displayable_amendements() %}
-        {% if picked_amendement in amendements %}
-          {% set amendement = amendements[0] %}
-          {% set is_gouvernemental = amendement.gouvernemental %}
-          {% set multiple = amendements|length > 1 %}
-          <section class="page reponse">
-            <h2>Réponse</h2>
-            <table class="cartouche">
-              <tr>
-                <td>Article</td>
-                <td>{{ article.format(short=True) }}</td>
-              </tr>
-              {% if amendements[0].parent %}
-                <tr>
-                  <td>Amendement{% if multiple %}s{% endif %}</td>
-                  <td>
-                    {% for amendement in amendements %}
-                      {{ amendement.parent.num_disp }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                    {% endfor %}
-                  </td>
-                </tr>
-                <tr>
-                  <td>Sous-amendement{% if multiple %}s{% endif %}</td>
-                  <td>
-                    {% for amendement in amendements %}
-                      {{ amendement.num_disp }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                    {% endfor %}
-                  </td>
-                </tr>
-              {% else %}
-                <tr>
-                  <td>Amendement{% if multiple %}s{% endif %}</td>
-                  <td>
-                    {% if amendements|length > 5 %}
-                      {{ amendements[0] }},
-                      {{ amendements[1] }},
-                      ...,
-                      {{ amendements[-3] }},
-                      {{ amendements[-2] }} et
-                      {{ amendements[-1] }}
-                      ({{ amendements|length }} au total)
-                    {% else %}
-                      {% for amendement in amendements %}
-                        {{ amendement.num_disp }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                      {% endfor %}
-                    {% endif %}
-                  </td>
-                </tr>
-              {% endif %}
-              <tr>
-                <td>Auteur{% if multiple %}s{% endif %}</td>
-                <td>
-                  {% if is_gouvernemental %}
-                    Gouvernement
-                  {% else %}
-                    {% for amendement in amendements %}
-                      {% if loop.previtem is defined and amendement.auteur != loop.previtem.auteur or loop.previtem is not defined %}
-                        {{ amendement.auteur }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last and loop.nextitem.auteur != amendement.auteur %}, {% endif %}{% endif %}
-                      {% endif %}
-                    {% endfor %}
-                  {% endif %}
-                </td>
-              </tr>
-              {% if not is_gouvernemental %}
-                <tr>
-                  <td>Groupe{% if multiple %}s{% endif %}</td>
-                  <td>
-                    {% for amendement in amendements %}
-                      {% if loop.previtem is defined and amendement.auteur != loop.previtem.auteur or loop.previtem is not defined %}
-                        {{ amendement.groupe }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last and loop.nextitem.auteur != amendement.auteur %}, {% endif %}{% endif %}
-                      {% endif %}
-                    {% endfor %}
-                  </td>
-                </tr>
-                <tr>
-                  <td>Avis</td>
-                  <td>{{ amendement.avis }}</td>
-                </tr>
-              {% endif %}
-            </table>
-            <div>
-              <div class="reponse-presentation">
-                <h3>Objet :</h3>
-                {{ amendement.observations | paragriphy }}
-              </div>
-              {% if amendement.has_reponse %}
-                <h3>Réponse :</h3>
-                {{ amendement.reponse | paragriphy }}
-              {% endif %}
-            </div>
-          </section>
-          {% for amendement in amendements %}
-            <section class="page amendement">
-              {% if amendement.parent %}
-                <h2>Sous-amendement</h2>
-              {% else %}
-                <h2>Amendement</h2>
-              {% endif %}
-              <table class="cartouche">
-                <tr>
-                  <td>Article</td>
-                  <td>{{ article }}</td>
-                </tr>
-                {% if amendement.parent %}
-                  <tr>
-                    <td>Amendement</td>
-                    <td>{{ amendement.parent.num_disp }}</td>
-                  </tr>
-                  <tr>
-                    <td>Sous-amendement</td>
-                    <td>{{ amendement.num_disp }}</td>
-                  </tr>
-                {% else %}
-                  <tr>
-                    <td>Amendement</td>
-                    <td>{{ amendement.num_disp }}</td>
-                  </tr>
-                {% endif %}
-                {% if is_gouvernemental %}
-                  <tr>
-                    <td>Auteur</td>
-                    <td>Gouvernement</td>
-                  </tr>
-                {% else %}
-                  <tr>
-                    <td>Auteur</td>
-                    <td>{{ amendement.auteur }}</td>
-                  </tr>
-                  <tr>
-                    <td>Groupe</td>
-                    <td>{{ amendement.groupe }}</td>
-                  </tr>
-                {% endif %}
-                {% if amendement.sort %}
-                  <tr>
-                    <td>Sort</td>
-                    <td>{{ amendement.sort }}</td>
-                  </tr>
-                {% endif %}
-              </table>
-              <div>
-                <h3>Exposé :</h3>
-                {{ amendement.objet|safe }}
-                <h3>Corps de l’amendement :</h3>
-                {{ amendement.dispositif|safe }}
-              </div>
-            </section>
-          {% endfor %}
+    {% set is_gouvernemental = amendement.gouvernemental %}
+
+    {% if amendement.avis or amendement.observations or amendement.has_reponse %}
+    <section class="page reponse">
+      <h2>Réponse</h2>
+      <table class="cartouche">
+        <tr>
+          <td>Article</td>
+          <td>{{ amendement.article.format(short=True) }}</td>
+        </tr>
+        {% if amendement.parent %}
+          <tr>
+            <td>Amendement</td>
+            <td>{{ amendement.parent.num_disp }}</td>
+          </tr>
+          <tr>
+            <td>Sous-amendement</td>
+            <td>{{ amendement.num_disp }}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td>Amendement</td>
+            <td>{{ amendement.num_disp }}</td>
+          </tr>
         {% endif %}
-      {% endfor %}
-    {% endfor %}
+        <tr>
+          <td>Auteur</td>
+          <td>
+            {% if is_gouvernemental %}
+              Gouvernement
+            {% else %}
+              {{ amendement.auteur }}
+            {% endif %}
+          </td>
+        </tr>
+        {% if not is_gouvernemental %}
+          <tr>
+            <td>Groupe</td>
+            <td>{{ amendement.groupe }}</td>
+          </tr>
+          <tr>
+            <td>Avis</td>
+            <td>
+              {% if amendement.avis %}
+                {{ amendement.avis }}
+              {% endif %}
+            </td>
+          </tr>
+        {% endif %}
+      </table>
+      <div>
+        <div class="reponse-presentation">
+          <h3>Objet :</h3>
+          {{ amendement.observations | paragriphy }}
+        </div>
+        {% if amendement.has_reponse %}
+          <h3>Réponse :</h3>
+          {{ amendement.reponse | paragriphy }}
+        {% endif %}
+      </div>
+    </section>
+    {% endif %}
+
+    <section class="page amendement">
+      {% if amendement.parent %}
+        <h2>Sous-amendement</h2>
+      {% else %}
+        <h2>Amendement</h2>
+      {% endif %}
+      <table class="cartouche">
+        <tr>
+          <td>Article</td>
+          <td>{{ amendement.article }}</td>
+        </tr>
+        {% if amendement.parent %}
+          <tr>
+            <td>Amendement</td>
+            <td>{{ amendement.parent.num_disp }}</td>
+          </tr>
+          <tr>
+            <td>Sous-amendement</td>
+            <td>{{ amendement.num_disp }}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td>Amendement</td>
+            <td>{{ amendement.num_disp }}</td>
+          </tr>
+        {% endif %}
+        {% if is_gouvernemental %}
+          <tr>
+            <td>Auteur</td>
+            <td>Gouvernement</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td>Auteur</td>
+            <td>{{ amendement.auteur }}</td>
+          </tr>
+          <tr>
+            <td>Groupe</td>
+            <td>{{ amendement.groupe }}</td>
+          </tr>
+        {% endif %}
+        {% if amendement.sort %}
+          <tr>
+            <td>Sort</td>
+            <td>{{ amendement.sort }}</td>
+          </tr>
+        {% endif %}
+      </table>
+      <div>
+        <h3>Exposé :</h3>
+        {{ amendement.objet|safe }}
+        <h3>Corps de l’amendement :</h3>
+        {{ amendement.dispositif|safe }}
+      </div>
+    </section>
   </main>
 </body>

@@ -201,7 +201,7 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
             for position, num in enumerate((333, 777), 1)
         ]
         DBSession.add_all(amendements)
-        nb_rows = write_csv("Titre", amendements, filename, request={})
+        nb_rows = write_csv(lecture_an, filename, request={})
 
     assert nb_rows == 2
 

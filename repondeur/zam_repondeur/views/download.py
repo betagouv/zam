@@ -23,7 +23,6 @@ DOWNLOAD_FORMATS = {
 @view_config(context=LectureResource, name="download_amendements")
 def download_amendements(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
-    amendements = lecture.amendements
 
     fmt: str = request.params.get("format", "")
     if fmt not in ("csv", "xlsx", "pdf"):
@@ -35,7 +34,7 @@ def download_amendements(context: LectureResource, request: Request) -> Response
 
         write_func, content_type = DOWNLOAD_FORMATS[fmt]
 
-        write_func(lecture, amendements, tmp_file_path, request)
+        write_func(lecture, tmp_file_path, request)
 
         response = FileResponse(tmp_file_path)
         attach_name = (

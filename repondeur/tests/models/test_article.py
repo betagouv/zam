@@ -17,6 +17,7 @@ def pairwise(iterable):
 @pytest.mark.parametrize(
     "type_,pos,num,mult,output",
     [
+        ("article", "", "0", "", "Art. liminaire"),
         ("article", "", "1", "", "Art. 1"),
         ("annexe", "", "1", "", "Annexe 1"),
         ("article", "", "1", "A", "Art. 1 A"),
@@ -37,6 +38,7 @@ def test_stringify(lecture_an, type_, pos, num, mult, output):
 @pytest.mark.parametrize(
     "type_,pos,num,mult,output",
     [
+        ("article", "", "0", "", "article-0"),
         ("article", "", "1", "", "article-1"),
         ("annexe", "", "1", "", "annexe-1"),
         ("article", "", "1", "A", "article-1-a"),
@@ -57,6 +59,7 @@ def test_slug(lecture_an, type_, pos, num, mult, output):
 @pytest.mark.parametrize(
     "type_,pos,num,mult,output",
     [
+        ("article", "", "0", "", "Article liminaire"),
         ("article", "", "1", "", "Article 1"),
         ("annexe", "", "1", "", "Annexe 1"),
         ("annexe", "", "1", "A", "Annexe 1 A"),

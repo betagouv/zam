@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from pyramid.httpexceptions import HTTPFound
@@ -9,6 +10,9 @@ from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, Journal
 from zam_repondeur.resources import LectureResource
+
+
+logger = logging.getLogger(__name__)
 
 
 @view_config(context=LectureResource, name="import_liasse_xml")
@@ -35,6 +39,7 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
     try:
         amendements = import_liasse_xml(liasse_field.file)
     except ValueError:
+        logger.exception("Erreur d'import de la liasse XML")
         request.session.flash(
             Message(cls="danger", text="Le format du fichier n’est pas valide.")
         )

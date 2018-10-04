@@ -7,6 +7,7 @@ import pytest
         ("", "", "", "", ""),
         ("Intitulé du projet de loi", "titre", "", "", ""),
         ("TITRE III : Un dispositif d'évaluation renouvelé", "section", "III", "", ""),
+        ("Article liminaire", "article", "0", "", ""),
         ("Article 1", "article", "1", "", ""),
         ("Article 1er bis", "article", "1", "bis", ""),
         ("Article PREMIER", "article", "1", "", ""),

@@ -88,13 +88,19 @@ class Article(Base):
     def _format_helper(self, type_parts: List[str]) -> str:
         if self.type == "annexe" and not self.num:
             return "Annexes"
-        parts = type_parts + [self.num or "", self.mult or ""]
+        parts = type_parts + [self._num_disp, self.mult or ""]
         non_empty_parts = (part for part in parts if part)
         capitalized_parts = (
             part.capitalize() if index == 0 else part
             for index, part in enumerate(non_empty_parts)
         )
         return " ".join(capitalized_parts)
+
+    @property
+    def _num_disp(self) -> str:
+        if self.type == "article" and self.num == "0":
+            return "liminaire"
+        return self.num or ""
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Article):

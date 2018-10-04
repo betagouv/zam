@@ -1,4 +1,5 @@
 import logging
+import re
 from datetime import date
 from functools import partial
 from typing import Dict, IO, List, Optional, cast
@@ -119,6 +120,8 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
 def _parse_division(node: etree.Element) -> SubDiv:
     extract = partial(extract_from_node, node)
 
+    division_titre = extract("pointeurFragmentTexte", "division", "titre")
+
     division_type = extract("pointeurFragmentTexte", "division", "type")
     if division_type is None:
         raise ValueError("Missing division type")
@@ -126,7 +129,11 @@ def _parse_division(node: etree.Element) -> SubDiv:
     if division_type == "TITRE":
         return SubDiv(type_="titre", num="", mult="", pos="")
 
-    division_titre = extract("pointeurFragmentTexte", "division", "titre")
+    if division_type == "CHAPITRE":
+        mo = re.match(r"^([A-Za-z0-9])+", division_titre or "")
+        num = mo.group(1) if mo is not None else ""
+        return SubDiv(type_="chapitre", num=num, mult="", pos="")
+
     if division_titre is None:
         raise ValueError("Missing division titre")
 

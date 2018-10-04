@@ -1,5 +1,6 @@
 import csv
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Generator, Iterable
 
 import pdfkit
@@ -13,6 +14,8 @@ from xvfbwrapper import Xvfb
 
 from .models import Amendement, Lecture
 
+
+STATIC_PATH = Path(__file__).parent / "static"
 
 FIELDS_NAMES = {
     "article": "Num article",
@@ -97,6 +100,7 @@ def xvfb_if_supported() -> Generator:
 
 
 def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:
+    css = str(STATIC_PATH / "css" / "print.css")
     env = get_jinja2_environment(request, name=".html")
     template = env.get_template("print.html")
     content = template.render(lecture=lecture)
@@ -105,12 +109,13 @@ def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:
         "footer-center": f"{lecture.dossier_legislatif} • Page [page] sur [topage]",
     }
     with xvfb_if_supported():
-        pdfkit.from_string(content, filename, options=options)
+        pdfkit.from_string(content, filename, options=options, css=css)
 
 
 def write_pdf1(
     lecture: Lecture, amendement: Amendement, filename: str, request: Request
 ) -> None:
+    css = str(STATIC_PATH / "css" / "print.css")
     env = get_jinja2_environment(request, name=".html")
     template = env.get_template("print1.html")
     content = template.render(amendement=amendement)
@@ -119,7 +124,7 @@ def write_pdf1(
         "footer-center": f"{lecture.dossier_legislatif} • Page [page] sur [topage]",
     }
     with xvfb_if_supported():
-        pdfkit.from_string(content, filename, options=options)
+        pdfkit.from_string(content, filename, options=options, css=css)
 
 
 def write_xlsx(lecture: Lecture, filename: str, request: Request) -> int:

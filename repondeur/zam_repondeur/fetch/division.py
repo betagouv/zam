@@ -22,7 +22,7 @@ SUBDIV_RE = re.compile(
             \s
         )?  # position
         (?:(?:l')?article\s)+
-        (?P<num>1er|premier|\d+)
+        (?P<num>liminaire|1er|premier|\d+)
         (?:\s(?P<mult>\w+))?        # bis, ter, etc.
         (?:\s?\(?.*\)?)?            # junk
         $
@@ -66,7 +66,12 @@ def _parse_subdiv(libelle: str) -> SubDiv:
 
     mo = SUBDIV_RE.match(libelle)
     if mo is not None:
-        num = "1" if mo.group("num").lower() in {"1er", "premier"} else mo.group("num")
+        if mo.group("num").lower() == "liminaire":
+            num = "0"
+        elif mo.group("num").lower() in {"1er", "premier"}:
+            num = "1"
+        else:
+            num = mo.group("num")
         return SubDiv("article", num, mo.group("mult") or "", mo.group("pos") or "")
 
     raise ValueError(f"Could not parse subdivision {libelle!r}")

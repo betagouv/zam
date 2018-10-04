@@ -237,8 +237,9 @@ def test_get_section_title_unknown_reference():
 @pytest.mark.parametrize(
     "input,num,mult",
     [
-        ("2", "2", ""),
+        ("liminaire", "0", ""),
         ("1er", "1", ""),
+        ("2", "2", ""),
         ("3 bis", "3", "bis"),
         ("5 ter AAA", "5", "ter AAA"),
     ],

@@ -34,7 +34,7 @@ def get_section_title(items: List[Dict[str, Any]], article: dict) -> str:
 
 
 def get_article_num_mult(article: Dict[str, Any]) -> Tuple[str, str]:
-    titre = article["titre"].replace("1er", "1")
+    titre = article["titre"].replace("1er", "1").replace("liminaire", "0")
     if " " in titre:
         num, mult = titre.split(" ", 1)
         return num, mult

@@ -97,16 +97,7 @@
     </div>
     <div class="dispositif">
         <h4>Corps de l’amendement</h4>
-        <h5>
-            {% if amendement.article.pos == 'avant' %}
-                Article additionnel avant l’{{ amendement.article.type }}
-            {% elif amendement.article.pos == 'apres' %}
-                Article additionnel après l’{{ amendement.article.type }}
-            {% else %}
-                {{ amendement.article.type | capitalize }}
-            {% endif %}
-            {{ amendement.article.num }} {{ amendement.article.mult }}
-        </h5>
+        <h5>{{ amendement.article.format() }}</h5>
         {{ amendement.dispositif | safe }}
     </div>
 {% endmacro %}

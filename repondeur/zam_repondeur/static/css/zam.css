@@ -31,6 +31,12 @@ header.main h3 {
     line-height: 1.33;
 }
 
+header.main h2,
+header.main h3 {
+    max-width: 70%;
+    margin: auto;
+}
+
 header.main nav {
     display: flex;
     justify-content: center;
@@ -89,12 +95,15 @@ nav.secondary {
 .secondary .nav-item:last-child {
     flex-basis: 12rem;
 }
+.arrow-left, .arrow-right {
+    white-space: nowrap;
+}
 .arrow-left {
-    padding-left: 1rem;
+    padding-left: 1.33rem;
     background: no-repeat left 40%/6% url("../img/big_left.svg");
 }
 .arrow-right {
-    padding-right: 1rem;
+    padding-right: 1.33rem;
     background: no-repeat right 40%/6% url("../img/big_right.svg");
 }
 .dossier-de-banc {
@@ -112,6 +121,15 @@ main {
 a {
     color: #3167a6;
 }
+a.underlined {
+    display: inline-block;
+    line-height: 1;
+    border-bottom: 1px solid #3167a6;
+}
+a.underlined:hover {
+    border-bottom: 2px solid #3167a6;
+    text-decoration: none;
+}
 
 /* Bouton */
 .button:hover {
@@ -124,7 +142,7 @@ a {
     font-family: inherit;
     background-color: transparent;
     color: #1a1a1a;
-    line-height: 1;
+    line-height: 1.5;
     padding: 0.5rem 1.5rem 0.25rem 1.5rem;
     border: thin solid #1a1a1a;
     border-radius: 5px;

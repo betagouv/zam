@@ -1,10 +1,10 @@
 {% macro update_informations(lecture, journal_link) %}
     Dernière mise à jour :
-    <a href="{{ journal_link }}">
+    <a class="underlined" href="{{ journal_link }}">
         <time xsi:type="xsd:dateTime"
             datetime="{{ lecture.modified_at.isoformat() }}"
             data-timestamp="{{ lecture.modified_at_timestamp }}">
-                {{ lecture.modified_at.isoformat() }}
+                {{ lecture.modified_at.strftime("%A %d %B à %I:%M%p") }}
         </time>
     </a>
 {% endmacro %}

@@ -22,7 +22,7 @@
             <time class="float-right font-italic" xsi:type="xsd:dateTime"
                 datetime="{{ item.created_at.isoformat() }}"
                 data-timestamp="{{ item.created_at_timestamp }}">
-                {{ item.created_at.isoformat() }}
+                {{ item.created_at.strftime("%A %d %B à %I:%M%p") }}
             </time>
         </div>
     {% endfor %}

@@ -1,4 +1,5 @@
 import os
+import sys
 from contextlib import contextmanager
 from datetime import datetime
 from hashlib import md5
@@ -148,7 +149,7 @@ def deploy_changelog(ctx, source="../CHANGELOG.md"):
 @task
 def deploy_repondeur(
     ctx,
-    secret,
+    secret="",
     rollbar_token=ROLLBAR_TOKEN,
     branch="master",
     wipe=False,
@@ -156,6 +157,18 @@ def deploy_repondeur(
     dbuser="zam",
     dbpassword="iloveamendements",
 ):
+    if not secret:
+        secret = ctx.run(
+            'grep "zam.secret" /srv/repondeur/src/repondeur/production.ini | cut -d" " -f3',  # noqa
+            hide=True,
+        ).stdout.strip()
+    if not secret:
+        print(
+            "Please provide a value for --secret on the first install",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     environment = ctx.host.split(".", 1)[0]
     user = "repondeur"
     install_locale(ctx, "fr_FR.utf8")

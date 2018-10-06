@@ -88,7 +88,7 @@ class Lecture(Base):
         return str(num_lecture.strip())
 
     def format_texte(self) -> str:
-        return f"texte nº {self.num_texte}"
+        return f"texte nº\u00a0{self.num_texte}"
 
     def __lt__(self, other: Any) -> bool:
         if type(self) != type(other):

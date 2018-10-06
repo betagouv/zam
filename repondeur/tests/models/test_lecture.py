@@ -15,7 +15,7 @@ class TestLectureToStr:
         )
         result = (
             "Assemblée nationale, 15e législature, Séance publique, Nouvelle lecture, "
-            "texte nº 269"
+            "texte nº\u00a0269"
         )
         assert str(lecture) == result
 
@@ -31,7 +31,7 @@ class TestLectureToStr:
         )
         result = (
             "Assemblée nationale, 15e législature, Commission des finances, "
-            "Nouvelle lecture, texte nº 269"
+            "Nouvelle lecture, texte nº\u00a0269"
         )
         assert str(lecture) == result
 
@@ -47,7 +47,7 @@ class TestLectureToStr:
         )
         result = (
             "Assemblée nationale, 15e législature, Commission spéciale sur la société "
-            "de confiance, Nouvelle lecture, texte nº 806"
+            "de confiance, Nouvelle lecture, texte nº\u00a0806"
         )
         assert str(lecture) == result
 
@@ -62,6 +62,7 @@ class TestLectureToStr:
             organe="PO78718",
         )
         result = (
-            "Sénat, session 2017-2018, Séance publique, Nouvelle lecture, texte nº 63"
+            "Sénat, session 2017-2018, Séance publique, Nouvelle lecture, "
+            "texte nº\u00a063"
         )
         assert str(lecture) == result

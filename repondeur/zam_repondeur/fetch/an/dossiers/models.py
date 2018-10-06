@@ -57,7 +57,7 @@ class Lecture:
     def label(self) -> str:
         return (
             f"{self.chambre} – {self.titre} "
-            f"(texte nº {self.texte.numero} "
+            f"(texte nº\u00a0{self.texte.numero} "
             f"déposé le {self.texte.date_depot.strftime('%d/%m/%Y')})"
         )
 

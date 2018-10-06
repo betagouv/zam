@@ -72,6 +72,9 @@
     .table th.avis {
         min-width: 100px;
     }
+    .table tbody tr:first-child td {
+        padding-top: 1rem;
+    }
 
     /* Sticky table header */
     tr.sticky th {
@@ -168,16 +171,19 @@
         display: block;
         height: 1.5rem;
         float: left;
-        margin: 0 1rem 0 0;
+        margin: 0 0.5rem 0 0;
     }
     span.avis.positive {
-        background-color: #5fa014;
+        background-color: #b8e986;
     }
     span.avis.sagesse {
-        background-color: #3167a6;
+        background-color: #6db4ff;
     }
     span.avis.negative {
         background-color: #d0021b;
+    }
+    span.avis.gouvernement {
+        background-color: #3167a6;
     }
 
     td .button {
@@ -235,7 +241,7 @@
     <section id="advanced" class="d-none">
         <div>
             <h3>Importer des réponses</h3>
-            <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses" target="_blank">suivant la spécification dédiée</a>.</p>
+            <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a class="underlined" href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses" target="_blank">suivant la spécification dédiée</a>.</p>
             <form action="" enctype="multipart/form-data" method="post" id="import-form" class="">
                 <div class="custom-file">
                     <input type="file" class="custom-file-input" id="reponses" name="reponses" required>
@@ -381,7 +387,7 @@
                     {% endif %}
                     >
                         {% if amendement.gouvernemental %}
-                            <span class="avis"></span>
+                            <span class="avis gouvernement"></span>
                         {% elif amendement.avis %}
                             {% if amendement.avis == "Sagesse" %}
                                 <span class="avis sagesse"></span>
@@ -395,7 +401,7 @@
                         {% endif %}
                         <a href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
                         {% if amendement.gouvernemental %}
-                            &mdash;
+                            Présentation
                         {% elif amendement.avis %}
                             {{ amendement.avis }}
                         {% else %}

@@ -117,7 +117,7 @@ def test_post_form(app):
     assert lecture.dossier_legislatif == "Sécurité sociale : loi de financement 2018"
     result = (
         "Assemblée nationale, 15e législature, Séance publique, Première lecture, "
-        "texte nº 269"
+        "texte nº\u00a0269"
     )
     assert str(lecture) == result
 

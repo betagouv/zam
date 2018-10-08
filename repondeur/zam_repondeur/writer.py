@@ -78,10 +78,14 @@ def write_csv(
     lecture: Lecture, amendements: Iterable[Amendement], filename: str, request: Request
 ) -> int:
     nb_rows = 0
-    with open(filename, "w", encoding="utf-8") as file_:
+    with open(filename, "w", encoding="utf-8-sig") as file_:
         file_.write(";".join(HEADERS) + "\n")
         writer = csv.DictWriter(
-            file_, fieldnames=FIELDS, delimiter=";", quoting=csv.QUOTE_MINIMAL
+            file_,
+            fieldnames=FIELDS,
+            delimiter=";",
+            quoting=csv.QUOTE_MINIMAL,
+            lineterminator="\n",
         )
         for amendement in amendements:
             writer.writerow(export_amendement(amendement))

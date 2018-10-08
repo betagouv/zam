@@ -29,15 +29,70 @@ def test_reponses_full(app, lecture_an, amendements_an):
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
 
     assert resp.status_code == 200
-    test_amendement = resp.find_amendement(amendements_an[0])
-    assert test_amendement is not None
-    assert test_amendement.number_is_in_title()
-    assert not test_amendement.has_gouvernemental_class()
+    test_amendement_666 = resp.find_amendement(amendements_an[0])
+    assert test_amendement_666 is not None
+    assert test_amendement_666.number_is_in_title()
+    assert not test_amendement_666.has_gouvernemental_class()
 
-    test_amendement = resp.find_amendement(amendements_an[1])
-    assert test_amendement is not None
-    assert test_amendement.number_is_in_title()
-    assert not test_amendement.has_gouvernemental_class()
+    test_amendement_999 = resp.find_amendement(amendements_an[1])
+    assert test_amendement_999 is not None
+    assert test_amendement_999.number_is_in_title()
+    assert not test_amendement_999.has_gouvernemental_class()
+
+    assert (
+        test_amendement_666.node.css_first("header h2").text().strip()
+        != test_amendement_999.node.css_first("header h2").text().strip()
+    )
+
+
+def test_reponses_grouping(app, lecture_an, amendements_an):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        for amendement in amendements_an:
+            amendement.avis = "Favorable"
+            amendement.observations = f"Observations"
+            amendement.reponse = f"Réponse"
+        DBSession.add_all(amendements_an)
+
+    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+
+    assert resp.status_code == 200
+    test_amendement_666 = resp.find_amendement(amendements_an[0])
+    assert test_amendement_666.number_is_in_title()
+
+    test_amendement_999 = resp.find_amendement(amendements_an[1])
+    assert test_amendement_999.number_is_in_title()
+
+    assert (
+        test_amendement_666.node.css_first("header h2").text().strip()
+        == test_amendement_999.node.css_first("header h2").text().strip()
+    )
+
+
+def test_reponses_not_grouping_on_same_reponse_only(app, lecture_an, amendements_an):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        for amendement in amendements_an:
+            amendement.avis = "Favorable"
+            amendement.observations = f"Observations pour {amendement.num}"
+            amendement.reponse = f"Réponse"
+        DBSession.add_all(amendements_an)
+
+    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+
+    assert resp.status_code == 200
+    test_amendement_666 = resp.find_amendement(amendements_an[0])
+    assert test_amendement_666.number_is_in_title()
+
+    test_amendement_999 = resp.find_amendement(amendements_an[1])
+    assert test_amendement_999.number_is_in_title()
+
+    assert (
+        test_amendement_666.node.css_first("header h2").text().strip()
+        != test_amendement_999.node.css_first("header h2").text().strip()
+    )
 
 
 def test_reponses_gouvernemental(app, lecture_an, amendements_an):

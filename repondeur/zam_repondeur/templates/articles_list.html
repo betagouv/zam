@@ -75,15 +75,18 @@
     const form = document.querySelector('#search-article')
     const input = form.querySelector('input[name="q"]')
     const allArticles = Array.from(document.querySelectorAll('[data-article-num]'))
+    function displayAllArticles () {
+      allArticles.forEach(article => {
+        article.classList.remove('is-hidden')
+      })
+    }
     form.addEventListener('submit', e => {
       e.preventDefault()
       const form = e.target
       const data = new FormData(form)
       const value = data.get('q').trim()
       if (!value) {
-        allArticles.forEach(article => {
-          article.classList.remove('is-hidden')
-        })
+        displayAllArticles()
         return
       }
       const articles = Array.from(document.querySelectorAll(`[data-article-num="${value}"]`))
@@ -92,11 +95,13 @@
           article.classList.toggle('is-hidden', articles.indexOf(article) === -1)
         })
       } else {
-        allArticles.forEach(article => {
-          article.classList.remove('is-hidden')
-        })
+        displayAllArticles()
         form.querySelector('.error').classList.remove('hide')
       }
+    })
+    input.addEventListener('keyup', e => {
+      if (!e.target.value.trim())
+        displayAllArticles()
     })
     input.addEventListener('keydown', e => {
       input.parentElement.querySelector('.error').classList.add('hide')

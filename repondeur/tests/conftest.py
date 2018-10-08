@@ -215,3 +215,21 @@ def amendements_senat(app, lecture_senat, article1_senat):
         DBSession.add_all(amendements)
 
     return amendements
+
+
+@pytest.fixture
+def lecture_essoc(app):
+    from zam_repondeur.models import DBSession, Lecture
+
+    with transaction.manager:
+        lecture = Lecture.create(
+            chambre="an",
+            session="15",
+            num_texte=806,
+            titre="Nouvelle lecture – Titre lecture",
+            organe="PO744107",
+            dossier_legislatif="Fonction publique : un Etat au service d'une société de confiance",  # noqa
+        )
+        DBSession.add(lecture)
+
+    return lecture

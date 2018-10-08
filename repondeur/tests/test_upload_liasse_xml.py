@@ -1,28 +1,10 @@
 from pathlib import Path
 
-import pytest
 import transaction
 from webtest import Upload
 
 
 SAMPLE_LIASSE = Path(__file__).parent / "sample_data" / "liasse.xml"
-
-
-@pytest.fixture
-def lecture_essoc(app):
-    from zam_repondeur.models import Lecture
-
-    with transaction.manager:
-        lecture = Lecture.create(
-            chambre="an",
-            session="15",
-            num_texte=806,
-            titre="Nouvelle lecture – Titre lecture",
-            organe="PO744107",
-            dossier_legislatif="Fonction publique : un Etat au service d'une société de confiance",  # noqa
-        )
-
-    return lecture
 
 
 def test_get_form(app, lecture_essoc):

@@ -6,7 +6,7 @@ def open_liasse(filename):
     return (Path(__file__).parent.parent / "sample_data" / filename).open(mode="rb")
 
 
-def test_import_liasse_xml(article1_an):
+def test_import_liasse_xml(lecture_essoc):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
     from zam_repondeur.models import Amendement
 
@@ -21,7 +21,7 @@ def test_import_liasse_xml(article1_an):
     _check_amendement_gouvernemental(amendements[2])
 
 
-def test_import_liasse_xml_article_additionnel(article1_an):
+def test_import_liasse_xml_article_additionnel(lecture_essoc):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     amendements = import_liasse_xml(open_liasse("liasse_apres.xml"))
@@ -30,7 +30,7 @@ def test_import_liasse_xml_article_additionnel(article1_an):
     assert amendements[0].article.pos == "après"
 
 
-def test_import_same_liasse_xml_again_preserve_response(article1_an):
+def test_import_same_liasse_xml_again_preserve_response(lecture_essoc):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     # Let's import amendements
@@ -50,7 +50,7 @@ def test_import_same_liasse_xml_again_preserve_response(article1_an):
     assert amendements2[1].reponse == "Réponse"
 
 
-def test_import_smaller_liasse_xml_preserves_responses(article1_an):
+def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
     from zam_repondeur.models import Amendement, DBSession
 
@@ -78,31 +78,6 @@ def test_import_smaller_liasse_xml_preserves_responses(article1_an):
     assert amendements2[1].reponse == "Réponse"
     assert DBSession.query(Amendement).count() == 3
     assert amendements[2].avis == "Défavorable"
-
-
-def test_import_modified_article_liasse_xml(article1_an):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
-
-    # Let's import amendements
-    amendements = import_liasse_xml(open_liasse("liasse.xml"))
-    assert amendements[0].article.num == "2"
-
-    # And import a liasse with a different target article
-    amendements2 = import_liasse_xml(open_liasse("liasse_modified_article.xml"))
-
-    assert amendements[0].article.num == amendements2[0].article.num == "3"
-
-
-def test_import_removed_parent_liasse_xml(article1_an):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
-
-    # Let's import amendements with a parent
-    amendements = import_liasse_xml(open_liasse("liasse.xml"))
-    assert amendements[1].parent.num == 28
-
-    # And import a liasse without the parent
-    amendements2 = import_liasse_xml(open_liasse("liasse_removed_parent.xml"))
-    assert amendements[1].parent == amendements2[1].parent is None
 
 
 def _check_amendement_0(amendement):

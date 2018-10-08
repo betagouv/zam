@@ -257,10 +257,10 @@ class Amendement(Base):
             f"{self.article.mult}.{self.article.pos}"
         )
 
-    def grouping_key(self) -> str:
+    def grouping_key(self) -> Tuple[str, str, str]:
         if self.gouvernemental:
-            return self.num_str
-        return self.reponse or ""
+            return (self.num_str, "", "")
+        return (self.avis or "", self.observations or "", self.reponse or "")
 
     def asdict(self, full: bool = False) -> dict:
         result = {

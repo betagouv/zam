@@ -21,6 +21,15 @@ def test_import_liasse_xml(article1_an):
     _check_amendement_gouvernemental(amendements[2])
 
 
+def test_import_liasse_xml_article_additionnel(article1_an):
+    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+
+    amendements = import_liasse_xml(open_liasse("liasse_apres.xml"))
+
+    assert amendements[0].article.num == "2"
+    assert amendements[0].article.pos == "après"
+
+
 def test_import_same_liasse_xml_again_preserve_response(article1_an):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 

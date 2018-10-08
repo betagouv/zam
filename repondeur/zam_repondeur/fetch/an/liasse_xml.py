@@ -19,6 +19,8 @@ from zam_repondeur.models import (
     get_one_or_create,
 )
 
+from .division import parse_avant_apres
+
 
 logger = logging.getLogger(__name__)
 
@@ -137,7 +139,13 @@ def _parse_division(node: etree.Element) -> SubDiv:
     if division_titre is None:
         raise ValueError("Missing division titre")
 
-    return _parse_subdiv(division_titre)
+    subdiv = _parse_subdiv(division_titre)
+
+    pos = parse_avant_apres(
+        extract("pointeurFragmentTexte", "division", "avant_A_Apres") or ""
+    )
+
+    return subdiv._replace(pos=pos)
 
 
 def extract_from_node(node: etree.Element, *path: str) -> Optional[str]:

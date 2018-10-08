@@ -18,6 +18,7 @@ from zam_repondeur.models import (
     Lecture,
     get_one_or_create,
 )
+from .division import parse_avant_apres
 
 
 logger = logging.getLogger(__name__)
@@ -254,16 +255,6 @@ def parse_division(division: dict) -> SubDiv:
         return SubDiv("titre", "", "", "")
     subdiv = _parse_subdiv(division["titre"])
     if division["avantApres"]:
-        pos = parse_avant_apres(division["avantApres"].lower())
+        pos = parse_avant_apres(division["avantApres"])
         subdiv = subdiv._replace(pos=pos)
     return subdiv
-
-
-def parse_avant_apres(value: str) -> str:
-    if value == "avant":
-        return "avant"
-    if value == "a":
-        return ""
-    if value == "apres":
-        return "après"
-    raise ValueError(f"Unknown value '{value}' for avantApres")

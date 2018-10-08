@@ -80,8 +80,11 @@ def test_write_csv(
         DBSession.add_all(amendements)
         nb_rows = write_csv("Titre", amendements, filename, request={})
 
-    with open(filename, "r", encoding="utf-8") as f_:
-        lines = f_.read().splitlines()
+    with open(filename, "r", encoding="utf-8-sig", newline="\n") as f_:
+        lines = [line.rstrip("\n") for line in f_]
+
+    assert not any(line.endswith("\r") for line in lines)
+
     headers, *rows = lines
 
     assert len(rows) == nb_rows == 5
@@ -192,8 +195,11 @@ def test_write_csv_sous_amendement(
         DBSession.add_all(amendements)
         nb_rows = write_csv("Titre", amendements, filename, request={})
 
-    with open(filename, "r", encoding="utf-8") as f_:
-        lines = f_.read().splitlines()
+    with open(filename, "r", encoding="utf-8-sig", newline="\n") as f_:
+        lines = [line.rstrip("\n") for line in f_]
+
+    assert not any(line.endswith("\r") for line in lines)
+
     headers, *rows = lines
 
     assert len(rows) == nb_rows == 5

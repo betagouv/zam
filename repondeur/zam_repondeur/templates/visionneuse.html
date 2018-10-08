@@ -38,30 +38,30 @@
         {% endif %}
       </nav>
     {% endif %}
-    <div class="is-hidden">
-      <span class="fake-anchor" id="content-{{ article.slug }}"></span>
-      <div class="article">
-        {% if article.jaune %}
-          <h2>Présentation de l’article</h2>
-          {{ article.jaune | safe }}
-        {% endif %}
-        {% if article.contenu %}
-          <h2>Texte de l’article</h2>
-          {% for number, content in article.contenu.items() %}
-            <dl>
-              <dt>{{ number }}</dt>
-              <dd>
-                <p>{{ content.strip('"') | safe }}</p>
-              </dd>
-            </dl>
-          {% endfor %}
-        {% endif %}
-        <p class="bottom">
-          <a class="button arrow arrow-up" href="#{{ article.slug }}">Replier</a>
-        </p>
-      </div>
-    </div>
   {% endfor %}
+  <div class="is-hidden">
+    <span class="fake-anchor" id="content-{{ article.slug }}"></span>
+    <div class="article">
+      {% if article.jaune %}
+        <h2>Présentation de l’article</h2>
+        {{ article.jaune | safe }}
+      {% endif %}
+      {% if article.contenu %}
+        <h2>Texte de l’article</h2>
+        {% for number, content in article.contenu.items() %}
+          <dl>
+            <dt>{{ number }}</dt>
+            <dd>
+              <p>{{ content.strip('"') | safe }}</p>
+            </dd>
+          </dl>
+        {% endfor %}
+      {% endif %}
+      <p class="bottom">
+        <a class="button arrow arrow-up" href="#{{ article.slug }}">Replier</a>
+      </p>
+    </div>
+  </div>
 {% endblock %}
 
 {% block main %}
@@ -206,6 +206,26 @@
       </article>
     {% endfor %}
   </section>
+{% endblock %}
+
+{% block bottom_nav %}
+  {% if article.grouped_displayable_amendements() | list %}
+    {# TODO: avoid looping over all articles. #}
+    {% for art in lecture.articles|sort %}
+      {% if art == article %}
+        <nav class="bottom secondary">
+          {% if loop.previtem %}
+            <a class="arrow-left" href="{{ request.resource_url(context.parent, loop.previtem.url_key, 'reponses') }}">{{ loop.previtem.format() }}</a>
+          {% else %}
+            <span></span>  {# placeholder so that the "next" link gets positioned properly #}
+          {% endif %}
+          {% if loop.nextitem %}
+            <a class="arrow-right" href="{{ request.resource_url(context.parent, loop.nextitem.url_key, 'reponses') }}">{{ loop.nextitem.format() }}</a>
+          {% endif %}
+        </nav>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
 {% endblock %}
 
 {% block extra_scripts %}

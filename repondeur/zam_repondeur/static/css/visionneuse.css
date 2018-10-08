@@ -5,6 +5,7 @@ html {
                Helvetica, Arial, sans-serif,
                "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   line-height: 1.5;
+  height: 100%;
 }
 
 * {
@@ -14,6 +15,12 @@ html {
 body {
   background: #f2f2f2;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+main {
+  margin-bottom: 4rem;
 }
 
 /* Headers */
@@ -72,6 +79,10 @@ nav.secondary {
   margin-top: -7px; /* Size of the above box shadow */
   box-shadow: 0 7px 7px -1px #ccc;
 }
+  nav.bottom.secondary {
+    margin-bottom: 0;
+    margin-top: auto;
+  }
 .arrow-left,
 .arrow-right {
   color: #3167a6;

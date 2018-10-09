@@ -521,56 +521,31 @@
         setInterval(check, delay)
     })()
 
+    function setupToggle(toggleSelector, targetSelector, scroll) {
+        var toggle = document.querySelector(toggleSelector)
+        toggle.addEventListener('click', function(e) {
+            var target = document.querySelector(targetSelector)
+            if (target.classList.contains('d-none')) {
+                toggle.classList.add('enabled')
+                target.classList.remove('d-none')
+                if (scroll) {
+                    target.scrollIntoView()
+                }
+            }
+            else {
+                toggle.classList.remove('enabled')
+                target.classList.add('d-none')
+            }
+            e.preventDefault()
+        })
+    }
+    setupToggle('#toggle-advanced', '#advanced', false)
+    setupToggle('#toggle-filter', 'tr.filters', false)
+    setupToggle('#toggle-articles', '#articles', true)
+
     var table = document.querySelector('table')
     var tableHead = table.querySelector('thead')
     var tableHeaders = tableHead.querySelectorAll('th')
-
-    // Articles
-    var toggleArticles = document.querySelector('#toggle-articles')
-    toggleArticles.addEventListener('click', function(e) {
-        var articles = document.querySelector('#articles')
-        if (articles.classList.contains('d-none')) {
-            toggleArticles.classList.add('enabled')
-            articles.classList.remove('d-none')
-            articles.scrollIntoView()
-        }
-        else {
-            toggleArticles.classList.remove('enabled')
-            articles.classList.add('d-none')
-        }
-        e.preventDefault()
-    })
-
-    // Options avancées
-    var toggleAdvanced = document.querySelector('#toggle-advanced')
-    toggleAdvanced.addEventListener('click', function(e) {
-        var advanced = document.querySelector('#advanced')
-        if (advanced.classList.contains('d-none')) {
-            toggleAdvanced.classList.add('enabled')
-            advanced.classList.remove('d-none')
-        }
-        else {
-            toggleAdvanced.classList.remove('enabled')
-            advanced.classList.add('d-none')
-        }
-        e.preventDefault()
-    })
-
-    // Filtrer
-    var toggleFilter = document.querySelector('#toggle-filter')
-    toggleFilter.addEventListener('click', function(e) {
-        var filterRow = table.querySelector('tr.filters')
-        if (filterRow.classList.contains('d-none')) {
-            toggleFilter.classList.add('enabled')
-            filterRow.classList.remove('d-none')
-        }
-        else {
-            toggleFilter.classList.remove('enabled')
-            filterRow.classList.add('d-none')
-        }
-        e.preventDefault()
-    })
-
     var tableBody = table.querySelector('tbody')
     var tableLines = tableBody.querySelectorAll('tr')
     tableHead.addEventListener('click', function (e) {

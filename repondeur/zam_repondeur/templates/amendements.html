@@ -543,6 +543,7 @@
     setupToggle('#toggle-filter', 'tr.filters', false)
     setupToggle('#toggle-articles', '#articles', true)
 
+    /* Column sorting */
     var table = document.querySelector('table')
     var tableHead = table.querySelector('thead')
     var tableHeaders = tableHead.querySelectorAll('th')
@@ -552,17 +553,60 @@
         var tableHeader = e.target
         if (tableHeader.classList.contains("nosort") || tableHeader.nodeName === 'INPUT')
             return
-        var tableHeaderIndex = Array.prototype.indexOf.call(tableHeaders, tableHeader)
         var isAscending = tableHeader.getAttribute('data-order') === 'asc'
         var order = isAscending ? 'desc' : 'asc'
+
+        var colIndex = Array.prototype.indexOf.call(tableHeaders, tableHeader) + 1
+        sortSpec = updateSortSpec(getSortSpecFromURL(), colIndex + order)
+        replaceSortSpecInURL(sortSpec)
+        sortColumn(tableHeader, colIndex, order)
+    })
+    function updateSortSpec(sortSpec, colSpec) {
+        var updatedSpec = sortSpec.split('-').filter(item => item !== "" && (item.charAt(0) !== colSpec.charAt(0)))
+        updatedSpec.push(colSpec)
+        return updatedSpec.join('-')
+    }
+    function getSortSpecFromURL() {
+        var urlParams = new URLSearchParams(window.location.search)
+        return urlParams.get('sort') || ""
+    }
+    function replaceSortSpecInURL(sortSpec) {
+        if (history.replaceState) {
+            const newURL = new URL(window.location.href)
+            newURL.search = '?sort=' + sortSpec
+            window.history.replaceState({path: newURL.href}, '', newURL.href)
+        }
+    }
+    function sortColumns(sortSpec) {
+        for (colSpec of sortSpec.split('-')) {
+            var colIndex = parseInt(colSpec.charAt(0), 10)
+            if ((colIndex < 1) || (colIndex == 4) || (colIndex > 6)) {
+                continue
+            }
+            var order = colSpec.slice(1);
+            if ((order !== 'asc') && (order !== 'desc')) {
+                continue
+            }
+            var tableHeader = tableHead.querySelector('tr:first-child th:nth-child(' + colIndex + ')')
+            sortColumn(tableHeader, colIndex, order)
+        }
+    }
+    function sortColumn(tableHeader, colIndex, order) {
         tableHeader.setAttribute('data-order', order)
         var options = {
             data: 'sortkey',
-            selector:'td:nth-child(' + (tableHeaderIndex + 1) + ')',
+            selector:'td:nth-child(' + colIndex + ')',
             order: order,
         }
         tinysort(tableLines, options)
-    })
+    }
+    (function sortColumnsFromQueryString() {
+        var sortSpec = getSortSpecFromURL()
+        if (sortSpec !== '') {
+            sortColumns(sortSpec)
+        }
+    })()
+
     var articleFilter = table.querySelector('#article-filter')
     articleFilter.addEventListener('keyup', function (e) {
         var value = e.target.value.trim()

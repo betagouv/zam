@@ -1,5 +1,6 @@
 import csv
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Generator, Iterable
 
 import pdfkit
@@ -13,6 +14,8 @@ from xvfbwrapper import Xvfb
 
 from .models import Amendement, Lecture
 
+
+STATIC_PATH = Path(__file__).parent / "static"
 
 FIELDS_NAMES = {
     "article": "Num article",
@@ -74,9 +77,7 @@ DARK_BLUE = Color(rgb="00182848")
 WHITE = Color(rgb="00FFFFFF")
 
 
-def write_csv(
-    lecture: Lecture, amendements: Iterable[Amendement], filename: str, request: Request
-) -> int:
+def write_csv(lecture: Lecture, filename: str, request: Request) -> int:
     nb_rows = 0
     with open(filename, "w", encoding="utf-8-sig") as file_:
         file_.write(";".join(HEADERS) + "\n")
@@ -87,7 +88,7 @@ def write_csv(
             quoting=csv.QUOTE_MINIMAL,
             lineterminator="\n",
         )
-        for amendement in amendements:
+        for amendement in lecture.amendements:
             writer.writerow(export_amendement(amendement))
             nb_rows += 1
     return nb_rows
@@ -102,35 +103,41 @@ def xvfb_if_supported() -> Generator:
         yield
 
 
-def write_pdf(
-    lecture: Lecture, amendements: Iterable[Amendement], filename: str, request: Request
-) -> int:
-    amendements = list(amendements)
+def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:
+    css = str(STATIC_PATH / "css" / "print.css")
     env = get_jinja2_environment(request, name=".html")
     template = env.get_template("print.html")
-    content = template.render(
-        dossier_legislatif=lecture.dossier_legislatif,
-        lecture=str(lecture),
-        articles=lecture.articles,
-    )
+    content = template.render(lecture=lecture)
     options = {
         "quiet": "",
         "footer-center": f"{lecture.dossier_legislatif} • Page [page] sur [topage]",
     }
     with xvfb_if_supported():
-        pdfkit.from_string(content, filename, options=options)
-    return len(amendements)
+        pdfkit.from_string(content, filename, options=options, css=css)
 
 
-def write_xlsx(
-    lecture: Lecture, amendements: Iterable[Amendement], filename: str, request: Request
-) -> int:
+def write_pdf1(
+    lecture: Lecture, amendement: Amendement, filename: str, request: Request
+) -> None:
+    css = str(STATIC_PATH / "css" / "print.css")
+    env = get_jinja2_environment(request, name=".html")
+    template = env.get_template("print1.html")
+    content = template.render(amendement=amendement)
+    options = {
+        "quiet": "",
+        "footer-center": f"{lecture.dossier_legislatif} • Page [page] sur [topage]",
+    }
+    with xvfb_if_supported():
+        pdfkit.from_string(content, filename, options=options, css=css)
+
+
+def write_xlsx(lecture: Lecture, filename: str, request: Request) -> int:
     wb = Workbook()
     ws = wb.active
     ws.title = "Amendements"
 
     _write_header_row(ws)
-    nb_rows = _write_data_rows(ws, amendements)
+    nb_rows = _write_data_rows(ws, lecture.amendements)
     wb.save(filename)
     return nb_rows
 

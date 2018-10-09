@@ -27,6 +27,7 @@ def test_write_csv(
             dispositif="<p>L'article 1 est supprimé.</p>",
             objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
             resume="Suppression de l'article",
+            position=1,
         )
         amendements = [
             amendement,
@@ -78,7 +79,7 @@ def test_write_csv(
             ),
         ]
         DBSession.add_all(amendements)
-        nb_rows = write_csv("Titre", amendements, filename, request={})
+        nb_rows = write_csv(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig", newline="\n") as f_:
         lines = [line.rstrip("\n") for line in f_]
@@ -109,7 +110,7 @@ def test_write_csv(
         "Num amdt": "42",
         "Objet amdt": "",
         "Organe": "PO78718",
-        "Position": "",
+        "Position": "1",
         "Rectif": "1",
         "Réponse": "",
         "Resume": "Suppression de l'article",
@@ -193,7 +194,7 @@ def test_write_csv_sous_amendement(
             ),
         ]
         DBSession.add_all(amendements)
-        nb_rows = write_csv("Titre", amendements, filename, request={})
+        nb_rows = write_csv(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig", newline="\n") as f_:
         lines = [line.rstrip("\n") for line in f_]

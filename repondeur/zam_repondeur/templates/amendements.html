@@ -150,6 +150,9 @@
         text-decoration: none;
         border-bottom: thin solid #3167a6;
     }
+    td a.download-pdf {
+        border-bottom: none;
+    }
 
     /* Tooltips */
     span[data-balloon].dotted {
@@ -304,6 +307,7 @@
                 <th class="nosort">Objet</th>
                 <th>Groupe (Auteur)</th>
                 <th class="avis">Avis</th>
+                <th class="nosort">⋯</th>
             </tr>
             <tr class="filters sticky d-none">
                 <th></th>
@@ -409,6 +413,11 @@
                         {% endif %}
                         </a>
                     </nobr>
+                </td>
+                <td>
+                    <a class="download-pdf" href="{{ request.resource_url(context[amendement.num_str], 'download_amendement') }}">
+                        <i class="far fa-file-pdf" title="Exporter en PDF"></i>
+                    </a>
                 </td>
             </tr>
         {% endfor %}

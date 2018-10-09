@@ -9,6 +9,19 @@
         margin: 0 1rem;
     }
 
+    /* Articles */
+    #bottom-nav {
+        margin-top: 5rem;
+        margin-bottom: 3rem;
+    }
+    #articles ul {
+        column-width: 12rem;
+         margin-bottom: 3rem;
+    }
+    #articles li {
+        margin-bottom: 0.75rem;
+    }
+
     /* Options avancées */
     .toggle.with-arrow:before {
         content: "↓";
@@ -157,6 +170,9 @@
     /* Tooltips */
     span[data-balloon].dotted {
         border-bottom: 1px dotted #3167a6;
+    }
+    [data-balloon] {
+        cursor: auto;
     }
     [data-balloon]:after {
         font-size: 14px !important;
@@ -354,13 +370,13 @@
                     </form>
                 </td>
                 <td class="article" data-sortkey="{{ amendement.article.num }}">
-                    <a href="{{ request.resource_url(context.parent['articles'][amendement.article.url_key]) }}"
+                    <span
                     {% if amendement.article.titre %}
                         data-balloon="{{ amendement.article.titre }}" data-balloon-pos="right"
                     {% endif %}
                     >
                         {{ amendement.article }}
-                    </a>
+                    </span>
                 </td>
                 <td data-sortkey="{{ amendement.num }}">
                         {{ amendement.num_disp }}
@@ -423,6 +439,27 @@
         {% endfor %}
         </tbody>
     </table>
+
+    <nav id="bottom-nav">
+        <a id="toggle-articles" class="toggle primary button" href="#">
+            Liste des articles&nbsp;&nbsp;&nbsp;↓
+        </a>
+    </nav>
+    <section id="articles" class="d-none">
+        <ul>
+            {% for article in lecture.articles | sort %}
+                {# On ne liste pas les inconnus ni les intersticiels ici #}
+                {% if article.type and not article.pos %}
+                    <li>
+                        <a class="underlined" href="{{ request.resource_url(context.parent['articles'][article.url_key]) }}">
+                            {{ article.format() }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </section>
+
 </div>
 {% endblock %}
 
@@ -454,6 +491,22 @@
     var table = document.querySelector('table')
     var tableHead = table.querySelector('thead')
     var tableHeaders = tableHead.querySelectorAll('th')
+
+    // Articles
+    var toggleArticles = document.querySelector('#toggle-articles')
+    toggleArticles.addEventListener('click', function(e) {
+        var articles = document.querySelector('#articles')
+        if (articles.classList.contains('d-none')) {
+            toggleArticles.classList.add('enabled')
+            articles.classList.remove('d-none')
+            articles.scrollIntoView()
+        }
+        else {
+            toggleArticles.classList.remove('enabled')
+            articles.classList.add('d-none')
+        }
+        e.preventDefault()
+    })
 
     // Options avancées
     var toggleAdvanced = document.querySelector('#toggle-advanced')

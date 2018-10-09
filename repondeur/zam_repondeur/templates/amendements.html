@@ -607,56 +607,61 @@
         }
     })()
 
+    /* Column filtering */
     var articleFilter = table.querySelector('#article-filter')
     articleFilter.addEventListener('keyup', function (e) {
         var value = e.target.value.trim()
-        ;[].slice.call(tableLines).forEach(function (line) {
-            if (!value) {
-                line.classList.remove('hidden-article')
-                return
-            }
-            if (line.dataset.article.trim() === value) {
-                line.classList.remove('hidden-article')
-            } else {
-                line.classList.add('hidden-article')
-            }
-        })
+        filterByArticle(value)
     })
     var amendementFilter = table.querySelector('#amendement-filter')
     amendementFilter.addEventListener('keyup', function (e) {
         var value = e.target.value.trim()
-        ;[].slice.call(tableLines).forEach(function (line) {
-            if (!value) {
-                line.classList.remove('hidden-amendement')
-                return
-            }
-            if (line.dataset.amendement.trim() === value) {
-                line.classList.remove('hidden-amendement')
-            } else {
-                line.classList.add('hidden-amendement')
-            }
-        })
+        filterByAmendement(value)
     })
     var avisFilter = table.querySelector('#avis-filter')
     avisFilter.addEventListener('change', function (e) {
         var value = e.target.value.trim()
-        ;[].slice.call(tableLines).forEach(function (line) {
+        filterByAvis(value)
+    })
+    function filterByArticle(value) {
+        filterColumn('hidden-article', line => {
+            if (!value) {
+                return true
+            }
+            return (line.dataset.article.trim() === value)
+        })
+    }
+    function filterByAmendement(value) {
+        filterColumn('hidden-amendement', line => {
+            if (!value) {
+                return true
+            }
+            return (line.dataset.amendement.trim() === value)
+        })
+    }
+    function filterByAvis(value) {
+        filterColumn('hidden-avis', line => {
             if (value === 'all') {
-                line.classList.remove('hidden-avis')
-                return
-            }
-            if (line.dataset.avis === value) {
-                line.classList.remove('hidden-avis')
-            }
-            else {
-                line.classList.add('hidden-avis')
+                return true
             }
             if (line.dataset.gouvernemental === "1"
                     || line.dataset.retireAvantSeance === "1") {
-                line.classList.add('hidden-avis')
+                return false
+            }
+            return (line.dataset.avis === value)
+        })
+    }
+    function filterColumn(className, shouldShow) {
+        ;[].slice.call(tableLines).forEach(function (line) {
+            if (shouldShow(line)) {
+                line.classList.remove(className)
+            }
+            else {
+                line.classList.add(className)
             }
         })
-    })
+    }
+
     ;(function bookmarks () {
         const bookmarkForms = table.querySelectorAll('.bookmark form')
         Array.from(bookmarkForms).forEach(bookmarkForm => {

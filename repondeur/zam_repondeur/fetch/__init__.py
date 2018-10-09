@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Dict, List, Tuple
+from functools import partial
+from typing import Any, Callable, Dict, List, Tuple
 
 from tlfp.tools.parse_texte import parse
 
@@ -7,7 +8,7 @@ from zam_repondeur.fetch.an.amendements import aspire_an
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.models import Amendement
 from zam_repondeur.fetch.senat.amendements import aspire_senat
-from zam_repondeur.models import DBSession, Article, Lecture
+from zam_repondeur.models import DBSession, Article, Lecture, get_one_or_create
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +50,7 @@ def get_articles(lecture: Lecture) -> None:
     except NotFound:
         logger.warning("Texte non trouvé : %r (%s)", lecture, urls)
         return
-    add_article_contents_to_amendements(lecture, articles)
+    update_lecture_articles(lecture, articles)
 
 
 AN_URL = "http://www.assemblee-nationale.fr/"
@@ -74,11 +75,44 @@ def parse_first_working_url(urls: List[str]) -> List[dict]:
     raise NotFound
 
 
-def add_article_contents_to_amendements(lecture: Lecture, articles: List[dict]) -> None:
-    for article_content in articles:
-        if "alineas" in article_content and article_content["alineas"]:
-            article_num, article_mult = get_article_num_mult(article_content)
-            section_title = get_section_title(articles, article_content)
-            DBSession.query(Article).filter_by(
-                lecture=lecture, num=article_num, mult=article_mult
-            ).update({"titre": section_title, "contenu": article_content["alineas"]})
+def update_lecture_articles(lecture: Lecture, all_article_data: List[dict]) -> None:
+    for article_data in all_article_data:
+        if article_data["type"] in {"texte", "section"}:
+            continue
+        find_or_create_article(lecture, article_data)
+        update_lecture_article(
+            lecture, article_data, partial(get_section_title, all_article_data)
+        )
+
+
+def find_or_create_article(lecture: Lecture, article_data: dict) -> Article:
+    num, mult = get_article_num_mult(article_data)
+    article: Article
+    article, _ = get_one_or_create(
+        DBSession,
+        Article,
+        lecture=lecture,
+        type=article_data["type"],
+        num=num,
+        mult=mult,
+        pos="",
+    )
+    return article
+
+
+def update_lecture_article(
+    lecture: Lecture, article_data: dict, find_title: Callable
+) -> None:
+    contenu = article_data.get("alineas")
+    if contenu is not None:
+        num, mult = get_article_num_mult(article_data)
+        titre = find_title(article_data)
+        _update_article(lecture, num, mult, titre, contenu)
+
+
+def _update_article(
+    lecture: Lecture, num: str, mult: str, titre: str, contenu: dict
+) -> None:
+    DBSession.query(Article).filter_by(lecture=lecture, num=num, mult=mult).update(
+        {"titre": titre, "contenu": contenu}
+    )

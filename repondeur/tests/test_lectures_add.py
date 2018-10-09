@@ -128,8 +128,8 @@ def test_post_form(app):
     assert lecture.journal[1].kind == "success"
     assert lecture.journal[1].message == f"5 nouveaux amendements récupérés."
 
-    # We should have loaded 3 articles
-    assert {article.num for article in lecture.articles} == {"3", "8", "9"}
+    # We should have articles from the page (1, 2) and from the amendements (3, 8, 9)
+    assert {article.num for article in lecture.articles} == {"1", "2", "3", "8", "9"}
 
     # We should have loaded 5 amendements
     assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 135, 192]

@@ -52,8 +52,17 @@ def test_get_articles_an(app, lecture_an, amendements_an):
         status=200,
     )
 
+    DBSession.add(lecture_an)
+
+    # We only have the article mentioned by the amendement
+    assert {article.num for article in lecture_an.articles} == {"1"}
+
     get_articles(lecture_an)
 
+    # We now also have article 2 after scraping the web page
+    assert {article.num for article in lecture_an.articles} == {"1", "2"}
+
+    # We can get the article contents from an amendement
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.article.contenu["001"].startswith("Au titre de l'exercice 2016")
 

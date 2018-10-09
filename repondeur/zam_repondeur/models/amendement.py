@@ -250,13 +250,6 @@ class Amendement(Base):
             f"{self.lecture.num_texte}.{self.lecture.organe}"
         )
 
-    @property
-    def article_url_key(self) -> str:
-        return (
-            f"{self.article.type}.{self.article.num}."
-            f"{self.article.mult}.{self.article.pos}"
-        )
-
     def grouping_key(self) -> Tuple[str, str, str]:
         if self.gouvernemental:
             return (self.num_str, "", "")

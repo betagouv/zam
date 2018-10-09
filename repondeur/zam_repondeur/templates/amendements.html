@@ -354,7 +354,7 @@
                     </form>
                 </td>
                 <td class="article" data-sortkey="{{ amendement.article.num }}">
-                    <a href="{{ request.resource_url(context.parent['articles'][amendement.article_url_key]) }}"
+                    <a href="{{ request.resource_url(context.parent['articles'][amendement.article.url_key]) }}"
                     {% if amendement.article.titre %}
                         data-balloon="{{ amendement.article.titre }}" data-balloon-pos="right"
                     {% endif %}

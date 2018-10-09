@@ -32,7 +32,7 @@ def test_get_form(app, lecture_an, amendements_an):
 
 @responses.activate
 def test_post_form(app, lecture_an, article1_an):
-    from zam_repondeur.models import DBSession, Amendement, Lecture
+    from zam_repondeur.models import DBSession, Amendement, Journal, Lecture
 
     initial_modified_at = lecture_an.modified_at
 
@@ -88,18 +88,22 @@ def test_post_form(app, lecture_an, article1_an):
             lecture=lecture_an, article=article1_an, num=135, position=1
         )
         DBSession.add(amendement)
+    assert DBSession.query(Journal).count() == 0
 
     # Then we ask for a refresh
     form = app.get("/lectures/an.15.269.PO717460/journal/").forms["manual-refresh"]
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/journal"
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements"
 
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "4 nouveaux amendements récupérés." in resp.text
+    journals = DBSession.query(Journal).all()
+    assert journals[0].message == "4 nouveaux amendements récupérés."
+    assert journals[1].message == "Récupération des articles effectuée."
+    assert "Rafraichissement des données relatives aux" in resp.text
 
     # Check that the update timestamp has been updated
     with transaction.manager:

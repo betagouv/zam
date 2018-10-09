@@ -335,7 +335,7 @@
                 <th></th>
                 <th>
                     <select id="avis-filter">
-                        <option value="all">Tous</option>
+                        <option value="">Tous</option>
                         <option value="1">Avec</option>
                         <option value="0">Sans</option>
                     </select>
@@ -641,7 +641,7 @@
     }
     function filterByAvis(value) {
         filterColumn('hidden-avis', line => {
-            if (value === 'all') {
+            if (value === '') {
                 return true
             }
             if (line.dataset.gouvernemental === "1"

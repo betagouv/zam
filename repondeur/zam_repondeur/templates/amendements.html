@@ -567,15 +567,10 @@
         return updatedSpec.join('-')
     }
     function getSortSpecFromURL() {
-        var urlParams = new URLSearchParams(window.location.search)
-        return urlParams.get('sort') || ""
+        return getURLParam('sort')
     }
     function replaceSortSpecInURL(sortSpec) {
-        if (history.replaceState) {
-            const newURL = new URL(window.location.href)
-            newURL.search = '?sort=' + sortSpec
-            window.history.replaceState({path: newURL.href}, '', newURL.href)
-        }
+        setURLParam('sort', sortSpec)
     }
     function sortColumns(sortSpec) {
         for (colSpec of sortSpec.split('-')) {
@@ -612,16 +607,19 @@
     articleFilter.addEventListener('keyup', function (e) {
         var value = e.target.value.trim()
         filterByArticle(value)
+        setURLParam('article', value)
     })
     var amendementFilter = table.querySelector('#amendement-filter')
     amendementFilter.addEventListener('keyup', function (e) {
         var value = e.target.value.trim()
         filterByAmendement(value)
+        setURLParam('amendement', value)
     })
     var avisFilter = table.querySelector('#avis-filter')
     avisFilter.addEventListener('change', function (e) {
         var value = e.target.value.trim()
         filterByAvis(value)
+        setURLParam('avis', value)
     })
     function filterByArticle(value) {
         filterColumn('hidden-article', line => {
@@ -660,6 +658,47 @@
                 line.classList.add(className)
             }
         })
+    }
+    function showFilters() {
+        document.querySelector('#toggle-filter').classList.add('enabled')
+        document.querySelector('tr.filters').classList.remove('d-none')
+    }
+    (function filterColumnsFromQueryString() {
+        var articleFilter = getURLParam('article')
+        if (articleFilter !== '') {
+            showFilters()
+            document.querySelector('#article-filter').value = articleFilter
+            filterByArticle(articleFilter)
+        }
+        var amendementFilter = getURLParam('amendement')
+        if (amendementFilter !== '') {
+            showFilters()
+            document.querySelector('#amendement-filter').value = amendementFilter
+            filterByAmendement(amendementFilter)
+        }
+        var avisFilter = getURLParam('avis')
+        if (avisFilter !== '') {
+            showFilters()
+            document.querySelector('#avis-filter').value = avisFilter
+            filterByAvis(avisFilter)
+        }
+    })()
+
+    function getURLParam(name) {
+        var urlParams = new URLSearchParams(window.location.search)
+        return urlParams.get(name) || ''
+    }
+    function setURLParam(name, value) {
+        if (history.replaceState) {
+            const newURL = new URL(window.location.href)
+            if (value !== "") {
+                newURL.searchParams.set(name, value)
+            }
+            else {
+                newURL.searchParams.delete(name)
+            }
+            window.history.replaceState({path: newURL.href}, '', newURL.href)
+        }
     }
 
     ;(function bookmarks () {

@@ -76,7 +76,7 @@
         </div>
         <span class="nav-item">
             {% if lecture.displayable %}
-                <a class="arrow-right" href="{{ request.resource_url(context.parent.parent['articles'][amendement.article_url_key], 'reponses', anchor=amendement.slug) }}" target="_blank">Visualiser dans le dossier</a>
+                <a class="arrow-right" href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key], 'reponses', anchor=amendement.slug) }}" target="_blank">Visualiser dans le dossier</a>
             {% endif %}
         </span>
     </nav>

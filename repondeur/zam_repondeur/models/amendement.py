@@ -28,10 +28,9 @@ AVIS = [
     "Sagesse",
 ]
 
-VERY_BIG_NUMBER = 999_999_999
-
 
 class Amendement(Base):
+    VERY_BIG_NUMBER = 999_999_999
     __tablename__ = "amendements"
     __table_args__ = (UniqueConstraint("num", "lecture_pk"),)
 
@@ -137,7 +136,7 @@ class Amendement(Base):
 
     @property
     def sort_key(self) -> Tuple[int, int]:
-        return (self.position or VERY_BIG_NUMBER, self.num)
+        return (self.position or self.VERY_BIG_NUMBER, self.num)
 
     @property
     def num_str(self) -> str:
@@ -218,10 +217,18 @@ class Amendement(Base):
         return self.auteur == "LE GOUVERNEMENT"
 
     @property
+    def retire_avant_seance(self) -> bool:
+        if self.sort:
+            return bool("retiré avant séance" in self.sort.lower())
+        return False
+
+    @property
     def is_displayable(self) -> bool:
         return (
-            bool(self.avis) or self.gouvernemental
-        ) and self.sort not in self.ABANDONED
+            (bool(self.avis) or self.gouvernemental)
+            and self.sort not in self.ABANDONED
+            and not self.retire_avant_seance
+        )
 
     @property
     def has_reponse(self) -> bool:

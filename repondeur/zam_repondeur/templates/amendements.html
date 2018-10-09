@@ -546,7 +546,7 @@
     /* Column sorting */
     var table = document.querySelector('table')
     var tableHead = table.querySelector('thead')
-    var tableHeaders = tableHead.querySelectorAll('th')
+    var tableHeaders = tableHead.querySelectorAll('tr.headers th')
     var tableBody = table.querySelector('tbody')
     var tableLines = tableBody.querySelectorAll('tr')
     tableHead.addEventListener('click', function (e) {

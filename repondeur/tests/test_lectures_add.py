@@ -3,8 +3,6 @@ from pathlib import Path
 import responses
 from webtest.forms import Select
 
-from zam_repondeur.fetch.an.amendements import build_url
-
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "fetch" / "sample_data"
@@ -54,37 +52,37 @@ def test_post_form(app):
 
     responses.add(
         responses.GET,
-        build_url(15, 269),
+        "http://www.assemblee-nationale.fr/15/amendements/0269/AN/liste.xml",
         body=read_sample_data("an/269/liste.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 177),
+        "http://www.assemblee-nationale.fr/15/xml/amendements/0269/AN/177.xml",
         body=read_sample_data("an/269/177.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 270),
+        "http://www.assemblee-nationale.fr/15/xml/amendements/0269/AN/270.xml",
         body=read_sample_data("an/269/270.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 723),
+        "http://www.assemblee-nationale.fr/15/xml/amendements/0269/AN/723.xml",
         body=read_sample_data("an/269/723.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 135),
+        "http://www.assemblee-nationale.fr/15/xml/amendements/0269/AN/135.xml",
         body=read_sample_data("an/269/135.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 192),
+        "http://www.assemblee-nationale.fr/15/xml/amendements/0269/AN/192.xml",
         body=read_sample_data("an/269/192.xml"),
         status=200,
     )

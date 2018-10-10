@@ -38,37 +38,37 @@ def test_post_form(app, lecture_an, article1_an):
 
     responses.add(
         responses.GET,
-        build_url(15, 269),
+        build_url(lecture_an),
         body=read_sample_data("an/269/liste.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 177),
+        build_url(lecture_an, 177),
         body=read_sample_data("an/269/177.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 270),
+        build_url(lecture_an, 270),
         body=read_sample_data("an/269/270.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 723),
+        build_url(lecture_an, 723),
         body=read_sample_data("an/269/723.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 135),
+        build_url(lecture_an, 135),
         body=read_sample_data("an/269/135.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 192),
+        build_url(lecture_an, 192),
         body=read_sample_data("an/269/192.xml"),
         status=200,
     )

@@ -26,7 +26,7 @@ def test_position_changed(lecture_an):
 
     responses.add(
         responses.GET,
-        build_url(15, 269),
+        build_url(lecture_an),
         body=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
@@ -58,7 +58,7 @@ def test_position_changed(lecture_an):
     )
     responses.add(
         responses.GET,
-        build_url(15, 269),
+        build_url(lecture_an),
         body=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
@@ -90,13 +90,13 @@ def test_position_changed(lecture_an):
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 177),
+        build_url(lecture_an, 177),
         body=read_sample_data("an/269/177.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 270),
+        build_url(lecture_an, 270),
         body=read_sample_data("an/269/270.xml"),
         status=200,
     )
@@ -123,7 +123,7 @@ def test_retire_avant_seance_ou_irrecevable(lecture_an):
 
     responses.add(
         responses.GET,
-        build_url(15, 269),
+        build_url(lecture_an),
         body=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
@@ -155,7 +155,7 @@ def test_retire_avant_seance_ou_irrecevable(lecture_an):
     )
     responses.add(
         responses.GET,
-        build_url(15, 269),
+        build_url(lecture_an),
         body=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
@@ -179,13 +179,13 @@ def test_retire_avant_seance_ou_irrecevable(lecture_an):
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 177),
+        build_url(lecture_an, 177),
         body=read_sample_data("an/269/177.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 270),
+        build_url(lecture_an, 270),
         body=read_sample_data("an/269/270.xml"),
         status=200,
     )
@@ -211,7 +211,7 @@ def test_article_changed(lecture_an):
 
     responses.add(
         responses.GET,
-        build_url(15, 269),
+        build_url(lecture_an),
         body=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
@@ -243,7 +243,7 @@ def test_article_changed(lecture_an):
     )
     responses.add(
         responses.GET,
-        build_url(15, 269),
+        build_url(lecture_an),
         body=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
@@ -275,13 +275,13 @@ def test_article_changed(lecture_an):
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 177),
+        build_url(lecture_an, 177),
         body=read_sample_data("an/269/177.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 177),
+        build_url(lecture_an, 177),
         body=read_sample_data("an/269/177.xml").replace(
             """\
     <division>
@@ -310,7 +310,7 @@ def test_article_changed(lecture_an):
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 270),
+        build_url(lecture_an, 270),
         body=read_sample_data("an/269/270.xml"),
         status=200,
     )
@@ -340,7 +340,7 @@ def test_add_parent_amendement(lecture_an):
 
     responses.add(
         responses.GET,
-        build_url(15, 269),
+        build_url(lecture_an),
         body=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
@@ -372,7 +372,7 @@ def test_add_parent_amendement(lecture_an):
     )
     responses.add(
         responses.GET,
-        build_url(15, 269),
+        build_url(lecture_an),
         body=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
@@ -404,19 +404,19 @@ def test_add_parent_amendement(lecture_an):
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 177),
+        build_url(lecture_an, 177),
         body=read_sample_data("an/269/177.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 270),
+        build_url(lecture_an, 270),
         body=read_sample_data("an/269/270.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 270),
+        build_url(lecture_an, 270),
         body=read_sample_data("an/269/270.xml").replace(
             '<numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>',  # noqa
             "<numeroParent>177 (Rect)</numeroParent>",
@@ -450,7 +450,7 @@ def test_remove_parent_amendement(lecture_an):
 
     responses.add(
         responses.GET,
-        build_url(15, 269),
+        build_url(lecture_an),
         body=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
@@ -482,7 +482,7 @@ def test_remove_parent_amendement(lecture_an):
     )
     responses.add(
         responses.GET,
-        build_url(15, 269),
+        build_url(lecture_an),
         body=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
@@ -514,13 +514,13 @@ def test_remove_parent_amendement(lecture_an):
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 177),
+        build_url(lecture_an, 177),
         body=read_sample_data("an/269/177.xml"),
         status=200,
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 270),
+        build_url(lecture_an, 270),
         body=read_sample_data("an/269/270.xml").replace(
             '<numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>',  # noqa
             "<numeroParent>177 (Rect)</numeroParent>",
@@ -529,7 +529,7 @@ def test_remove_parent_amendement(lecture_an):
     )
     responses.add(
         responses.GET,
-        build_url(15, 269, 270),
+        build_url(lecture_an, 270),
         body=read_sample_data("an/269/270.xml"),
         status=200,
     )

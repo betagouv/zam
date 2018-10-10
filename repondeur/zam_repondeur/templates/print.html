@@ -13,10 +13,22 @@
     {% for article in lecture.articles|sort %}
       {{ macros.article_page(article) }}
       {% for amendements in article.grouped_displayable_amendements() %}
-        {{ macros.response_page(amendements) }}
-        {% for amendement in amendements %}
-          {{ macros.amendement_page(amendement) }}
-        {% endfor %}
+        {# Insert sous-amendements before amendements:
+           excluded from main loop and then prepend if found. #}
+        {% if not amendements[0].parent %}
+          {% for amendement in amendements %}
+            {% if amendement.children %}
+              {{ macros.response_page(amendement.children) }}
+              {% for child in amendement.children %}
+                {{ macros.amendement_page(child) }}
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+          {{ macros.response_page(amendements) }}
+          {% for amendement in amendements %}
+            {{ macros.amendement_page(amendement) }}
+          {% endfor %}
+        {% endif %}
       {% endfor %}
     {% endfor %}
   </main>

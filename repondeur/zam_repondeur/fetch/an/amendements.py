@@ -28,9 +28,9 @@ BASE_URL = "http://www.assemblee-nationale.fr"
 
 # Deprecation warning: this API for fetching amendements will be removed in the future
 # and has no Service Level Agreement (SLA)
-PATTERN_LISTE = "/{legislature}/amendements/{texte}/{organe_abrev}/liste.xml"
+PATTERN_LISTE = "/{legislature}/amendements/{texte}{suffixe}/{organe_abrev}/liste.xml"
 PATTERN_AMENDEMENT = (
-    "/{legislature}/xml/amendements/{texte}/{organe_abrev}/{numero}.xml"
+    "/{legislature}/xml/amendements/{texte}{suffixe}/{organe_abrev}/{numero}.xml"
 )
 
 
@@ -80,12 +80,7 @@ def fetch_amendements(lecture: Lecture) -> List[OrderedDict]:
     """
     Récupère la liste des références aux amendements, dans l'ordre de dépôt.
     """
-    organe_abrev = get_organe_abrev(lecture.organe)
-    url = build_url(
-        legislature=int(lecture.session),
-        texte=lecture.num_texte,
-        organe_abrev=organe_abrev,
-    )
+    url = build_url(lecture)
     content = _retrieve_content(url)
 
     # If there is only 1 amendement, xmltodict does not return a list :(
@@ -98,13 +93,7 @@ def fetch_amendements(lecture: Lecture) -> List[OrderedDict]:
 
 
 def _retrieve_amendement(lecture: Lecture, numero: int) -> OrderedDict:
-    organe_abrev = get_organe_abrev(lecture.organe)
-    url = build_url(
-        legislature=int(lecture.session),
-        texte=lecture.num_texte,
-        numero=numero,
-        organe_abrev=organe_abrev,
-    )
+    url = build_url(lecture, numero)
     content = _retrieve_content(url)
     return content["amendement"]
 
@@ -182,20 +171,29 @@ def _create_or_update_amendement(
     return amendement, created
 
 
-def build_url(
-    legislature: int, texte: int, numero: int = 0, organe_abrev: str = "AN"
-) -> str:
+def build_url(lecture: Lecture, numero: int = 0) -> str:
+
+    legislature = int(lecture.session)
+    texte = f"{lecture.num_texte:04}"
+    suffixe = "A" if "loi de finances" in lecture.dossier_legislatif else ""
+    organe_abrev = get_organe_abrev(lecture.organe)
+
     if numero:
         path = PATTERN_AMENDEMENT.format(
             legislature=legislature,
-            texte=f"{texte:04}",
+            texte=texte,
+            suffixe=suffixe,
             organe_abrev=organe_abrev,
             numero=numero,
         )
     else:
         path = PATTERN_LISTE.format(
-            legislature=legislature, texte=f"{texte:04}", organe_abrev=organe_abrev
+            legislature=legislature,
+            texte=texte,
+            suffixe=suffixe,
+            organe_abrev=organe_abrev,
         )
+
     url: str = urljoin(BASE_URL, path)
     return url
 

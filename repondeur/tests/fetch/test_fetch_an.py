@@ -23,37 +23,37 @@ class TestFetchAndParseAll:
 
         responses.add(
             responses.GET,
-            build_url(15, 269),
+            build_url(lecture_an),
             body=read_sample_data("an/269/liste.xml"),
             status=200,
         )
         responses.add(
             responses.GET,
-            build_url(15, 269, 177),
+            build_url(lecture_an, 177),
             body=read_sample_data("an/269/177.xml"),
             status=200,
         )
         responses.add(
             responses.GET,
-            build_url(15, 269, 270),
+            build_url(lecture_an, 270),
             body=read_sample_data("an/269/270.xml"),
             status=200,
         )
         responses.add(
             responses.GET,
-            build_url(15, 269, 723),
+            build_url(lecture_an, 723),
             body=read_sample_data("an/269/723.xml"),
             status=200,
         )
         responses.add(
             responses.GET,
-            build_url(15, 269, 135),
+            build_url(lecture_an, 135),
             body=read_sample_data("an/269/135.xml"),
             status=200,
         )
         responses.add(
             responses.GET,
-            build_url(15, 269, 192),
+            build_url(lecture_an, 192),
             body=read_sample_data("an/269/192.xml"),
             status=200,
         )
@@ -88,25 +88,25 @@ class TestFetchAndParseAll:
 
         responses.add(
             responses.GET,
-            build_url(15, 911),
+            build_url(lecture),
             body=read_sample_data("an/911/liste.xml"),
             status=200,
         )
         responses.add(
             responses.GET,
-            build_url(15, 911, 347),
+            build_url(lecture, 347),
             body=read_sample_data("an/911/347.xml"),
             status=200,
         )
         responses.add(
             responses.GET,
-            build_url(15, 911, 2482),
+            build_url(lecture, 2482),
             body=read_sample_data("an/911/2482.xml"),
             status=200,
         )
         responses.add(
             responses.GET,
-            build_url(15, 911, 2512),
+            build_url(lecture, 2512),
             body=read_sample_data("an/911/2512.xml"),
             status=200,
         )
@@ -131,32 +131,32 @@ class TestFetchAndParseAll:
 
         responses.add(
             responses.GET,
-            build_url(15, 269),
+            build_url(lecture_an),
             body=read_sample_data("an/269/liste.xml"),
             status=200,
         )
         responses.add(
             responses.GET,
-            build_url(15, 269, 177),
+            build_url(lecture_an, 177),
             body=read_sample_data("an/269/177.xml"),
             status=200,
         )
-        responses.add(responses.GET, build_url(15, 269, 270), status=404)
+        responses.add(responses.GET, build_url(lecture_an, 270), status=404)
         responses.add(
             responses.GET,
-            build_url(15, 269, 723),
+            build_url(lecture_an, 723),
             body=read_sample_data("an/269/723.xml"),
             status=200,
         )
         responses.add(
             responses.GET,
-            build_url(15, 269, 135),
+            build_url(lecture_an, 135),
             body=read_sample_data("an/269/135.xml"),
             status=200,
         )
         responses.add(
             responses.GET,
-            build_url(15, 269, 192),
+            build_url(lecture_an, 192),
             body=read_sample_data("an/269/192.xml"),
             status=200,
         )
@@ -181,7 +181,7 @@ class TestFetchAmendements:
 
         responses.add(
             responses.GET,
-            build_url(15, 269),
+            build_url(lecture_an),
             body=read_sample_data("an/269/liste.xml"),
             status=200,
         )
@@ -214,7 +214,7 @@ class TestFetchAmendements:
 
         responses.add(
             responses.GET,
-            build_url(15, 269),
+            build_url(lecture_an),
             body=dedent(
                 """\
             <?xml version="1.0" encoding="UTF-8"?>
@@ -263,7 +263,7 @@ class TestFetchAmendements:
     def test_list_not_found(self, lecture_an, app):
         from zam_repondeur.fetch.an.amendements import fetch_amendements, NotFound
 
-        responses.add(responses.GET, build_url(15, 269), status=404)
+        responses.add(responses.GET, build_url(lecture_an), status=404)
 
         with pytest.raises(NotFound):
             fetch_amendements(lecture=lecture_an)
@@ -276,7 +276,7 @@ class TestFetchAmendement:
 
         responses.add(
             responses.GET,
-            build_url(15, 269, 177),
+            build_url(lecture_an, 177),
             body=read_sample_data("an/269/177.xml"),
             status=200,
         )
@@ -321,7 +321,7 @@ class TestFetchAmendement:
 
         responses.add(
             responses.GET,
-            build_url(15, 269, 723),
+            build_url(lecture_an, 723),
             body=read_sample_data("an/269/723.xml"),
             status=200,
         )
@@ -339,7 +339,7 @@ class TestFetchAmendement:
 
         responses.add(
             responses.GET,
-            build_url(15, 269, 135),
+            build_url(lecture_an, 135),
             body=read_sample_data("an/269/135.xml"),
             status=200,
         )
@@ -358,14 +358,14 @@ class TestFetchAmendement:
 
         responses.add(
             responses.GET,
-            build_url(15, 269, 155),
+            build_url(lecture_an, 155),
             body=read_sample_data("an/269/155.xml"),
             status=200,
         )
 
         responses.add(
             responses.GET,
-            build_url(15, 269, 941),
+            build_url(lecture_an, 941),
             body=read_sample_data("an/269/941.xml"),
             status=200,
         )
@@ -387,7 +387,7 @@ class TestFetchAmendement:
 
         responses.add(
             responses.GET,
-            build_url(15, 269, 38),
+            build_url(lecture_an, 38),
             body=read_sample_data("an/269/38.xml"),
             status=200,
         )
@@ -404,7 +404,7 @@ class TestFetchAmendement:
 
         responses.add(
             responses.GET,
-            build_url(15, 269, 192),
+            build_url(lecture_an, 192),
             body=read_sample_data("an/269/192.xml"),
             status=200,
         )
@@ -422,7 +422,7 @@ class TestFetchAmendement:
     def test_fetch_amendement_not_found(self, lecture_an, app):
         from zam_repondeur.fetch.an.amendements import fetch_amendement, NotFound
 
-        responses.add(responses.GET, build_url(15, 269, 177), status=404)
+        responses.add(responses.GET, build_url(lecture_an, 177), status=404)
 
         with pytest.raises(NotFound):
             fetch_amendement(lecture=lecture_an, numero=177, position=1)
@@ -435,7 +435,7 @@ class TestFetchAmendementAgain:
 
         responses.add(
             responses.GET,
-            build_url(15, 269, 177),
+            build_url(lecture_an, 177),
             body=read_sample_data("an/269/177.xml"),
             status=200,
         )
@@ -469,7 +469,7 @@ class TestFetchAmendementAgain:
 
         responses.add(
             responses.GET,
-            build_url(15, 269, 177),
+            build_url(lecture_an, 177),
             body=read_sample_data("an/269/177.xml"),
             status=200,
         )
@@ -494,14 +494,14 @@ class TestFetchAmendementAgain:
 
         responses.add(
             responses.GET,
-            build_url(15, 269, 155),
+            build_url(lecture_an, 155),
             body=read_sample_data("an/269/155.xml"),
             status=200,
         )
 
         responses.add(
             responses.GET,
-            build_url(15, 269, 941),
+            build_url(lecture_an, 941),
             body=read_sample_data("an/269/941.xml"),
             status=200,
         )

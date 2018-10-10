@@ -2,9 +2,20 @@
   const toggleLinks = Array.from(document.querySelectorAll('[data-toggle-target]'))
   toggleLinks.forEach(toggleLink => {
     toggleLink.onclick = (e) => {
+      e.preventDefault()
       const target = e.target
       const toggleTarget = document.querySelector(`#${target.dataset.toggleTarget}`)
       const toggleParent = toggleTarget.parentElement
+      const superParent = target.parentElement.parentElement.parentElement
+      const fakeAnchor = superParent.querySelector('.fake-anchor')
+      if (fakeAnchor) {
+        fakeAnchor.scrollIntoView({behavior: "smooth"})
+      } else /* In case of article text. */ {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        })
+      }
       const removeArrows = () => {
         const arrowDownLink = document.querySelector('.arrow-down')
         if (arrowDownLink) {

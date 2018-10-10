@@ -18,26 +18,29 @@ jobs:
           name: Install system deps
           command: sudo apt-get install -y wkhtmltopdf xvfb
       - run:
-          name: Install Python deps in a venv
+          name: Install Python deps
           command: |
             sudo pip install pipenv==2018.7.1
             cd repondeur
-            pipenv install --dev
+            pipenv lock -r >requirements.txt
+            sudo pip install -r requirements.txt
+            pipenv lock -r --dev >requirements-dev.txt
+            sudo pip install -r requirements-dev.txt
       - run:
           name: Check formatting with black
           command: |
             cd repondeur
-            pipenv run black --check .
+            black --check .
       - run:
           name: Check coding style with flake8
           command: |
             cd repondeur
-            pipenv run flake8
+            flake8
       - run:
           name: Check type annotations with mypy
           command: |
             cd repondeur
-            pipenv run mypy zam_repondeur
+            mypy zam_repondeur
       - run:
           name: Run tests
           command: |
@@ -45,6 +48,6 @@ jobs:
             sudo sed --in-place '/fr_FR.UTF-8/s/^#//' /etc/locale.gen
             sudo locale-gen fr_FR.UTF-8
             mkdir -p test-reports
-            pipenv run pytest -vv --junitxml=test-reports/junit.xml
+            pytest -vv --junitxml=test-reports/junit.xml tests/
       - store_test_results:
           path: repondeur/test-reports

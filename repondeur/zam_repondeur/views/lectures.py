@@ -281,7 +281,17 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
     fetch_amendements(lecture.pk)
     fetch_articles(lecture.pk)
-    return HTTPFound(location=request.resource_url(context, "journal"))
+    request.session.flash(
+        Message(
+            cls="success",
+            text=(
+                "Rafraichissement des amendements et des articles en cours. "
+                "Vous serez notifié·e dès que les nouvelles informations "
+                "seront disponibles."
+            ),
+        )
+    )
+    return HTTPFound(location=request.resource_url(context, "amendements"))
 
 
 @view_config(context=LectureResource, name="check", renderer="json")

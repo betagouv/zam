@@ -68,14 +68,18 @@
                 <h3>Sous-amendement au {{ amendement.parent.num_disp }}</h3>
             {% endif %}
             <div class="auteur">
-                Présenté par {{ amendement.auteur }}
-                {%- if not amendement.gouvernemental %}
-                    ({{ amendement.groupe }})
+                {% if amendement.auteur %}
+                    Présenté par {{ amendement.auteur }}
+                    {%- if not amendement.gouvernemental %}
+                        ({{ amendement.groupe }})
+                    {% endif %}
+                {% elif amendement.retire_avant_seance %}
+                    <h3>Cet amendement a été retiré avant séance</h3>
                 {% endif %}
             </div>
         </div>
         <span class="nav-item">
-            {% if lecture.displayable %}
+            {% if amendement.is_displayable %}
                 <a class="arrow-right" href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key], 'reponses', anchor=amendement.slug) }}" target="_blank">Visualiser dans le dossier</a>
             {% endif %}
         </span>

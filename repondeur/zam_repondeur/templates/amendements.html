@@ -137,6 +137,9 @@
     tr.hidden-avis {
         display: none;
     }
+    tr[data-retire-avant-seance="1"] {
+        background-color: #d9d9d9;
+    }
 
     /* Bookmarks */
     .bookmark input[type="submit"] {
@@ -147,14 +150,6 @@
     }
     .bookmark input.bookmarked {
         color: #3167a6;
-    }
-
-    /* Mark amendements without a response */
-    td.input-required a.action {
-        color: red;
-    }
-    .action i {
-        margin-right: 0.33rem;
     }
 
     /* Links in table */
@@ -203,6 +198,9 @@
     }
     span.avis.gouvernement {
         background-color: #3167a6;
+    }
+    span.avis.retire_avant_seance {
+        background-color: #979797;
     }
 
     td .button {
@@ -348,7 +346,9 @@
         <tbody>
         {% for amendement in amendements %}
             <tr data-article="
-                    {%- if amendement.article.type == 'article' -%}
+                    {%- if amendement.retire_avant_seance -%}
+                        {{ amendement.VERY_BIG_NUMBER }}
+                    {%- elif amendement.article.type == 'article' -%}
                         {{ amendement.article.num }} {{ amendement.article.mult }}
                     {%- else -%}
                         {{ amendement.article.type }}
@@ -357,6 +357,7 @@
                 data-amendement="{{ amendement.num }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
+                data-retire-avant-seance="{{ 1 if amendement.retire_avant_seance else 0 }}"
                 id="{{ amendement.slug }}"
             >
                 <td class="bookmark" data-sortkey="{{ amendement.bookmarked_at }}">
@@ -370,7 +371,12 @@
                         {% endif %}
                     </form>
                 </td>
-                <td class="article" data-sortkey="{{ amendement.article.num }}">
+                <td class="article" data-sortkey="
+                    {%- if amendement.retire_avant_seance -%}
+                        {{ amendement.VERY_BIG_NUMBER }}
+                    {%- else -%}
+                        {{ amendement.article.num }}
+                    {%- endif -%}">
                     <span
                     {% if amendement.article.titre %}
                         data-balloon="{{ amendement.article.titre }}" data-balloon-pos="right"
@@ -379,7 +385,12 @@
                         {{ amendement.article }}
                     </span>
                 </td>
-                <td data-sortkey="{{ amendement.num }}">
+                <td data-sortkey="
+                    {%- if amendement.retire_avant_seance -%}
+                        {{ amendement.VERY_BIG_NUMBER }} {# Keep at the end. #}
+                    {%- else -%}
+                        {{ amendement.num }}
+                    {%- endif -%}">
                         {{ amendement.num_disp }}
                         {% if amendement.parent %}
                             (ss-amdt au {{ amendement.parent.num_disp }})
@@ -390,7 +401,14 @@
                         {{ amendement.observations | striptags | truncate(length=100, killwords=False, end='…') }}
                     {% endif %}
                 </td>
-                <td>
+                <td data-sortkey="
+                    {%- if amendement.retire_avant_seance -%}
+                        ZZZ {# Keep at the end. #}
+                    {%- elif amendement.groupe -%}
+                        {{ amendement.groupe }} {{ amendement.auteur }}
+                    {%- else -%}
+                        {{ amendement.auteur }}
+                    {%- endif -%}">
                     {% if amendement.groupe %}
                         {{ amendement.groupe }} ({{ amendement.auteur }})</td>
                     {% else %}
@@ -400,6 +418,16 @@
                     {% if not amendement.gouvernemental and not amendement.avis %}
                         class="input-required"
                     {% endif %}
+                    data-sortkey="
+                    {%- if amendement.retire_avant_seance -%}
+                        ZZZ {# Keep at the end. #}
+                    {%- elif amendement.gouvernemental -%}
+                        Présentation
+                    {%- elif amendement.avis -%}
+                        {{ amendement.avis }}
+                    {%- else -%}
+                        Aucun
+                    {%- endif -%}"
                 >
                     <nobr
                     {% if amendement.has_reponse %}
@@ -407,7 +435,9 @@
                         data-balloon-pos="left"
                     {% endif %}
                     >
-                        {% if amendement.gouvernemental %}
+                        {% if amendement.retire_avant_seance %}
+                            <span class="avis retire_avant_seance"></span>
+                        {% elif amendement.gouvernemental %}
                             <span class="avis gouvernement"></span>
                         {% elif amendement.avis %}
                             {% if amendement.avis == "Sagesse" %}
@@ -421,7 +451,9 @@
                             <span class="avis"></span>
                         {% endif %}
                         <a href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
-                        {% if amendement.gouvernemental %}
+                        {% if amendement.retire_avant_seance %}
+                            Retiré avant séance
+                        {% elif amendement.gouvernemental %}
                             Présentation
                         {% elif amendement.avis %}
                             {{ amendement.avis }}
@@ -550,11 +582,9 @@
         var order = isAscending ? 'desc' : 'asc'
         tableHeader.setAttribute('data-order', order)
         var options = {
+            data: 'sortkey',
             selector:'td:nth-child(' + (tableHeaderIndex + 1) + ')',
             order: order,
-        }
-        if (tableHeaderIndex <= 2) {
-            options['data'] = 'sortkey'
         }
         tinysort(tableLines, options)
     })
@@ -602,7 +632,8 @@
             else {
                 line.classList.add('hidden-avis')
             }
-            if (line.dataset.gouvernemental === "1") {
+            if (line.dataset.gouvernemental === "1"
+                    || line.dataset.retireAvantSeance === "1") {
                 line.classList.add('hidden-avis')
             }
         })

@@ -139,6 +139,28 @@ def test_reponses_abandoned_not_displayed(app, lecture_an, amendements_an, sort)
     assert resp.find_amendement(amendements_an[1]) is None
 
 
+def test_reponses_retire_avant_seance_not_displayed(app, lecture_an, amendements_an):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        for amendement in amendements_an:
+            amendement.avis = "Favorable"
+            amendement.observations = f"Observations pour {amendement.num}"
+            amendement.reponse = f"Réponse pour {amendement.num}"
+        # Only the last one.
+        amendement.sort = "Cet amendement est retiré avant séance"
+        DBSession.add_all(amendements_an)
+
+    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+
+    test_amendement = resp.find_amendement(amendements_an[0])
+    assert test_amendement is not None
+    assert test_amendement.number_is_in_title()
+    assert not test_amendement.has_gouvernemental_class()
+
+    assert resp.find_amendement(amendements_an[1]) is None
+
+
 @pytest.mark.parametrize("sort", ["retiré", "irrecevable", "tombé"])
 def test_reponses_abandoned_and_gouvernemental_not_displayed(
     app, lecture_an, amendements_an, sort

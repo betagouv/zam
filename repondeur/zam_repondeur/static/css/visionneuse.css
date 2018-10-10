@@ -29,6 +29,10 @@ nav.main {
   padding: 1rem 0;
   display: flex;
   justify-content: space-between;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 3;
 }
   nav.main a {
     color: white;
@@ -51,12 +55,18 @@ nav.main {
   text-align: center;
   font-size: 1.1rem;
   font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  padding-top: .4rem;
 }
+  .search label {
+    margin-right: .3rem;
+  }
   .search #q {
-    margin-left: .5rem;
     border: 1px solid #979797;
     padding: .3rem;
-    background: no-repeat 99% center/11% url("{{ request.static_url('zam_repondeur:static/img/loupe_gray.svg') }}");
+    background: no-repeat 99% center/11% url("../img/loupe_gray.svg");
   }
 
 #search-amendements {
@@ -66,12 +76,18 @@ nav.main {
   margin-bottom: 1rem;
 }
 
+.number-with-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 /* Secondary nav */
 nav.secondary {
   display: flex;
   justify-content: space-between;
   background: #f6f7fa;
-  padding: 1.2rem 3rem;
+  padding: .6rem 3rem .4rem 3rem;
   border: 1px solid #d9d9d9;
   border-left: none;
   border-right: none;
@@ -87,14 +103,15 @@ nav.secondary {
 .arrow-right {
   color: #3167a6;
   text-decoration: none;
+  padding: .7rem;
 }
   .arrow-left {
     padding-left: 1.5rem;
-    background: no-repeat left 30%/.8rem url("../img/big_left.svg");
+    background: no-repeat left 45%/.8rem url("../img/big_left.svg");
   }
   .arrow-right {
     padding-right: 1.5rem;
-    background: no-repeat right 30%/.8rem url("../img/big_right.svg");
+    background: no-repeat right 45%/.8rem url("../img/big_right.svg");
   }
 
 /* Amendements */
@@ -117,7 +134,7 @@ nav.secondary {
   .fake-anchor {
     display: block;
     position: relative;
-    top: -6rem;
+    top: calc(-6rem - 60px);
     visibility: hidden;
   }
   h2 {
@@ -151,7 +168,7 @@ nav.secondary {
     position: -webkit-sticky;
     position: sticky;
     background: white;
-    top: 0;
+    top: 61px;
     z-index: 3;
   }
 
@@ -198,7 +215,7 @@ nav.secondary {
     position: sticky;
     background: white;
     min-height: 5rem;
-    top: 6rem; /* Size of the main header also sticky */
+    top: calc(60px + 6rem); /* Size of the nav + main header also sticky */
     border-left: 8px solid;
     padding: .5rem 1rem;
     box-shadow: 0 5px 5px 2px #ccc;
@@ -260,6 +277,10 @@ nav.secondary {
     .amendement-detail h3:first-child,
     .amendement-detail h4:first-child {
       margin-top: .4rem;
+    }
+    .amendement-detail div p {
+      max-width: 42rem;
+      margin: .5rem auto;
     }
   .reponse-detail {
     font-size: x-large;
@@ -336,28 +357,32 @@ nav.secondary {
   .authors .author {
     white-space: nowrap;
   }
-  .is-hidden {
+  .is-none {
     display: none;
   }
-  .is-visible {
+  .is-block {
     display: block;
+  }
+  .is-flex {
+    display: flex;
   }
   .bottom {
     text-align: right;
     padding-right: 1rem;
+    margin: 5rem auto 1.5rem;
   }
   .menu {
     font-family: "source_serif_pro";
     font-size: large;
   }
   a.button {
-    padding: .4rem .8rem .2rem 2.5rem;
+    padding: .7rem 1.2rem .5rem 2.9rem;
     text-decoration: none;
     border: 1px solid #3167a6;
     color: #3167a6;
     border-radius: .3rem;
     font-weight: 600;
-    background: no-repeat left url("../img/blue_eye.svg");
+    background: no-repeat 10% url("../img/blue_eye.svg");
   }
     a.button.arrow {
       background-color: #3167a6;
@@ -413,18 +438,25 @@ nav.secondary {
   .hide {
     display: none;
   }
+  .hint {
+    color: #565656;
+    font-size: .8rem;
+    font-weight: normal;
+    margin-top: .2rem;
+  }
 
 /* Inputs */
 input {
   font-size: 1.1rem;
 }
   input[type="submit"] {
-    padding: .3rem 2rem;
+    padding: .6rem 2rem;
     margin-left: 2rem;
     border: 1px solid #3167a6;
     color: #3167a6;
     background-color: white;
     border-radius: .3rem;
+    -webkit-appearance: none;
   }
     input[type="submit"]:hover {
       border-color: #3167a6;

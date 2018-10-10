@@ -18,9 +18,12 @@
   <span><a class="find" href="">Accès amendement</a></span>
 </nav>
 
-<form class="search is-hidden" id="search-amendements" method="get" role="search" action="" data-amendement-matches='{{ lecture|amendement_matches|tojson }}'>
-  Amendement nº
-  <input name="q" id="q" type="number" min="1" step="1" required placeholder="(chiffres uniquement)">
+<form class="search is-none" id="search-amendements" method="get" role="search" action="" data-amendement-matches='{{ lecture|amendement_matches|tojson }}'>
+  <label for="q-amendement">Amendement nº</label>
+  <span class="number-with-hint">
+    <input name="q-amendement" id="q-amendement" type="number" min="1" step="1">
+    <span class="hint">Chiffres uniquement</span>
+  </span>
   <input type="submit" name="submit" value="Valider">
   <p class="error hide">Amendement non trouvé.</p>
 </form>

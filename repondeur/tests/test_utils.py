@@ -32,3 +32,39 @@ def test_normalize_reponse(input, previous, output):
     from zam_repondeur.utils import normalize_reponse
 
     assert normalize_reponse(input, previous) == output
+
+
+class TestAddURLFragment:
+    def test_add(self):
+        from zam_repondeur.utils import add_url_fragment
+
+        assert (
+            add_url_fragment("http://example.com/a/b?c=1", "foo")
+            == "http://example.com/a/b?c=1#foo"
+        )
+
+    def test_update(self):
+        from zam_repondeur.utils import add_url_fragment
+
+        assert (
+            add_url_fragment("http://example.com/a/b?c=1#foo", "bar")
+            == "http://example.com/a/b?c=1#bar"
+        )
+
+
+class TestAddURLParams:
+    def test_add(self):
+        from zam_repondeur.utils import add_url_params
+
+        assert (
+            add_url_params("http://example.com/a/b#foo", c="1")
+            == "http://example.com/a/b?c=1#foo"
+        )
+
+    def test_update(self):
+        from zam_repondeur.utils import add_url_params
+
+        assert (
+            add_url_params("http://example.com/a/b?c=1#foo", c="2")
+            == "http://example.com/a/b?c=2#foo"
+        )

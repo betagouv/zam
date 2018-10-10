@@ -450,7 +450,7 @@
                         {% else %}
                             <span class="avis"></span>
                         {% endif %}
-                        <a href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
+                        <a class="edit-reponse" href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
                         {% if amendement.retire_avant_seance %}
                             Retiré avant séance
                         {% elif amendement.gouvernemental %}
@@ -752,5 +752,18 @@
             })
         }, 1)
     }
+
+    // Hijack edit links to inject the current page URL as a "back" query param
+    const editLinks = Array.from(document.querySelectorAll('a.edit-reponse'))
+    editLinks.forEach(editLink => {
+        editLink.addEventListener('click', e => {
+            const thisURL = new URL(window.location.href)
+            const linkURL = new URL(e.target.href)
+            linkURL.searchParams.set('back', thisURL.pathname + thisURL.search)
+            window.location.href = linkURL.toString()
+            e.preventDefault()
+        })
+    })
+
 </script>
 {% endblock %}

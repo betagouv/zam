@@ -1,3 +1,7 @@
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+
+from webob.multidict import MultiDict
+
 from zam_repondeur.models import AVIS
 
 
@@ -30,3 +34,16 @@ def normalize_reponse(reponse: str, previous_reponse: str) -> str:
     if reponse.lower() == "id.":
         reponse = previous_reponse
     return reponse
+
+
+def add_url_fragment(url: str, fragment: str) -> str:
+    scheme, netloc, path, params, query, _ = urlparse(url)
+    return urlunparse((scheme, netloc, path, params, query, fragment))
+
+
+def add_url_params(url: str, **extra_params: str) -> str:
+    scheme, netloc, path, params, query, fragment = urlparse(url)
+    query_dict = MultiDict(parse_qsl(query))
+    query_dict.update(**extra_params)
+    query = urlencode(query_dict)
+    return urlunparse((scheme, netloc, path, params, query, fragment))

@@ -23,21 +23,32 @@
     background-image: url("{{ request.static_url('zam_repondeur:static/img/big_right_gray.svg') }}");
     color: black;
   }
-  .article h2 {
-    font-weight: 600;
-    display: block;
-    width: 100%;
-    line-height: 1.5;
-    margin-top: 0;
-    font-size: 1.45rem;
+  .article {
+    position: relative;
   }
-  .article h3 {
-    max-width: 25rem;
-    line-height: 1.2;
-    margin: 0;
-    font-weight: normal;
-    font-size: 1.1rem;
-  }
+    .article h2 {
+      font-weight: 600;
+      display: block;
+      width: 100%;
+      line-height: 1.5;
+      margin-top: 0;
+      font-size: 1.45rem;
+    }
+    .article h3 {
+      max-width: 25rem;
+      line-height: 1.2;
+      margin: 0;
+      font-weight: normal;
+      font-size: 1.1rem;
+    }
+    .article a::after {
+      position: absolute;
+      content: '';
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+    }
 </style>
 {% endblock %}
 

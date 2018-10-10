@@ -1,5 +1,6 @@
 import re
-from typing import Optional, Tuple  # noqa
+from datetime import date, datetime
+from typing import Dict, Optional, Tuple, Union, TYPE_CHECKING  # noqa
 
 from sqlalchemy import (
     Boolean,
@@ -16,6 +17,13 @@ from sqlalchemy.orm import backref, relationship
 from zam_repondeur.constants import GROUPS_COLORS
 
 from .base import Base, DBSession
+
+
+# Make these types available to mypy, but avoid circular imports
+if TYPE_CHECKING:
+    from .article import Article  # noqa
+    from .lecture import Lecture  # noqa
+
 
 AVIS = [
     "Favorable",
@@ -34,49 +42,53 @@ class Amendement(Base):
     __tablename__ = "amendements"
     __table_args__ = (UniqueConstraint("num", "lecture_pk"),)
 
-    pk = Column(Integer, primary_key=True)
+    pk: int = Column(Integer, primary_key=True)
 
     # Meta informations.
-    num = Column(Integer, nullable=False)  # type: int
-    rectif = Column(Integer, nullable=False, default=0)
-    auteur = Column(Text, nullable=True)  # type: Optional[str]
-    matricule = Column(Text, nullable=True)
-    groupe = Column(Text, nullable=True)
-    date_depot = Column(Date, nullable=True)
-    sort = Column(Text, nullable=True)
+    num: int = Column(Integer, nullable=False)
+    rectif: int = Column(Integer, nullable=False, default=0)
+    auteur: Optional[str] = Column(Text, nullable=True)
+    matricule: Optional[str] = Column(Text, nullable=True)
+    groupe: Optional[str] = Column(Text, nullable=True)
+    date_depot: Optional[date] = Column(Date, nullable=True)
+    sort: Optional[str] = Column(Text, nullable=True)
 
     # Ordre et regroupement lors de la discussion.
-    position = Column(Integer, nullable=True)  # type: Optional[int]
-    discussion_commune = Column(Integer, nullable=True)
-    identique = Column(Boolean, nullable=True)
+    position: Optional[int] = Column(Integer, nullable=True)
+    discussion_commune: Optional[int] = Column(Integer, nullable=True)
+    identique: Optional[bool] = Column(Boolean, nullable=True)
 
     # Contenu.
-    dispositif = Column(Text, nullable=True)  # texte de l'amendement
-    objet = Column(Text, nullable=True)  # motivation
-    resume = Column(Text, nullable=True)  # résumé de l'objet
-    alinea = Column(Text, nullable=True)  # libellé de l'alinéa de l'article concerné
+    dispositif: Optional[str] = Column(Text, nullable=True)  # texte de l'amendement
+    objet: Optional[str] = Column(Text, nullable=True)  # motivation
+    resume: Optional[str] = Column(Text, nullable=True)  # résumé de l'objet
+    alinea: Optional[str] = Column(Text, nullable=True)  # libellé de l'alinéa ciblé
 
     # Relations.
-    parent_pk = Column(Integer, ForeignKey("amendements.pk"), nullable=True)
-    parent_rectif = Column(Integer, nullable=True)
-    parent = relationship(
+    parent_pk: Optional[int] = Column(
+        Integer, ForeignKey("amendements.pk"), nullable=True
+    )
+    parent_rectif: Optional[int] = Column(Integer, nullable=True)
+    parent: Optional["Amendement"] = relationship(
         "Amendement",
         uselist=False,
         remote_side=[pk],
         backref=backref("children"),
         post_update=True,
     )
-    lecture_pk = Column(Integer, ForeignKey("lectures.pk"))
-    lecture = relationship("Lecture", back_populates="amendements")
-    article_pk = Column(Integer, ForeignKey("articles.pk"))
-    article = relationship("Article", back_populates="amendements", lazy="joined")
+    lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"))
+    lecture: "Lecture" = relationship("Lecture", back_populates="amendements")
+    article_pk: int = Column(Integer, ForeignKey("articles.pk"))
+    article: "Article" = relationship(
+        "Article", back_populates="amendements", lazy="joined"
+    )
 
     # Extras. (TODO: move to dedicated table?)
-    avis = Column(Text, nullable=True)  # type: Optional[str]
-    observations = Column(Text, nullable=True)  # type: Optional[str]
-    reponse = Column(Text, nullable=True)  # type: Optional[str]
-    comments = Column(Text, nullable=True)  # type: Optional[str]
-    bookmarked_at = Column(DateTime, nullable=True)
+    avis: Optional[str] = Column(Text, nullable=True)
+    observations: Optional[str] = Column(Text, nullable=True)
+    reponse: Optional[str] = Column(Text, nullable=True)
+    comments: Optional[str] = Column(Text, nullable=True)
+    bookmarked_at: Optional[datetime] = Column(DateTime, nullable=True)
 
     __repr_keys__ = ("pk", "num", "rectif", "lecture_pk", "article_pk", "parent_pk")
 
@@ -159,7 +171,7 @@ class Amendement(Base):
 
     @property
     def couleur_groupe(self) -> str:
-        return GROUPS_COLORS.get(self.groupe, "#ffffff")
+        return GROUPS_COLORS.get(self.groupe or "", "#ffffff")
 
     @property
     def slug(self) -> str:
@@ -219,7 +231,7 @@ class Amendement(Base):
     @property
     def retire_avant_seance(self) -> bool:
         if self.sort:
-            return bool("retiré avant séance" in self.sort.lower())
+            return "retiré avant séance" in self.sort.lower()
         return False
 
     @property
@@ -263,17 +275,17 @@ class Amendement(Base):
         return (self.avis or "", self.observations or "", self.reponse or "")
 
     def asdict(self, full: bool = False) -> dict:
-        result = {
+        result: Dict[str, Union[str, int, date]] = {
             "num": self.num,
             "rectif": self.rectif or "",
             "pk": f"{self.num:06}",
             "sort": self.sort or "",
             "matricule": self.matricule or "",
             "gouvernemental": self.gouvernemental,
-            "auteur": self.auteur,
+            "auteur": self.auteur or "",
             "groupe": self.groupe or "",
-            "dispositif": self.dispositif,
-            "objet": self.objet,
+            "dispositif": self.dispositif or "",
+            "objet": self.objet or "",
             "resume": self.resume or "",
             "observations": self.observations or "",
             "avis": self.avis or "",

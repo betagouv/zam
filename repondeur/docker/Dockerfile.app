@@ -23,7 +23,10 @@ WORKDIR /app
 RUN python3.6 -m pip install pipenv==2018.7.1
 
 COPY . .
-RUN pipenv install --dev --deploy
+RUN pipenv lock -r >requirements.txt && \
+    python3.6 -m pip install --src=/src -r requirements.txt && \
+    pipenv lock -r --dev >requirements-dev.txt && \
+    python3.6 -m pip install --src=/src -r requirements-dev.txt
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1

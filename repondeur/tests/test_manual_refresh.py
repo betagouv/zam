@@ -103,7 +103,7 @@ def test_post_form(app, lecture_an, article1_an):
     journals = DBSession.query(Journal).all()
     assert journals[0].message == "4 nouveaux amendements récupérés."
     assert journals[1].message == "Récupération des articles effectuée."
-    assert "Rafraichissement des données relatives aux" in resp.text
+    assert "Rafraichissement des amendements et des articles en cours." in resp.text
 
     # Check that the update timestamp has been updated
     with transaction.manager:

@@ -285,8 +285,8 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
         Message(
             cls="success",
             text=(
-                "Rafraichissement des données relatives aux amendements et articles "
-                "en cours, vous serez notifié·e lorsque les nouvelles informations "
+                "Rafraichissement des amendements et des articles en cours. "
+                "Vous serez notifié·e dès que les nouvelles informations "
                 "seront disponibles."
             ),
         )

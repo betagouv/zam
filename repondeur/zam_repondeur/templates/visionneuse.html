@@ -39,7 +39,7 @@
       </nav>
     {% endif %}
   {% endfor %}
-  <div class="is-hidden">
+  <div class="is-none">
     <span class="fake-anchor" id="content-{{ article.slug }}"></span>
     <div class="article">
       {% if article.jaune %}
@@ -158,7 +158,7 @@
             </div>
           {% endif %}
         </header>
-        <div class="is-hidden">
+        <div class="is-none">
           <div id="reponse-detail-{{ amendement.num }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
             <h4>Objet</h4>
             <div class="reponse-presentation">
@@ -175,7 +175,7 @@
             </p>
           </div>
         </div>
-        <div class="is-hidden">
+        <div class="is-none">
           <div id="amendement-detail-{{ amendement.num }}"
                class="amendement-detail {{ avis_class }}">
             {% for amendement in amendements %}

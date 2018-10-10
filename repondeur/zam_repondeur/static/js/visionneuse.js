@@ -13,16 +13,16 @@
         }
       }
       const hideElement = () => {
-        toggleParent.classList.replace('is-visible', 'is-hidden')
+        toggleParent.classList.replace('is-block', 'is-none')
         removeArrows()
       }
       removeArrows()
-      if (toggleParent.classList.contains('is-hidden')) {
-        const visibleElement = document.querySelector('.is-visible')
+      if (toggleParent.classList.contains('is-none')) {
+        const visibleElement = document.querySelector('.is-block')
         if (visibleElement) {
-          visibleElement.classList.replace('is-visible', 'is-hidden')
+          visibleElement.classList.replace('is-block', 'is-none')
         }
-        toggleParent.classList.replace('is-hidden', 'is-visible')
+        toggleParent.classList.replace('is-none', 'is-block')
         toggleParent.querySelector('.bottom a').onclick = hideElement
         target.dataset.initialText = target.textContent
         target.textContent = 'Replier'
@@ -38,19 +38,23 @@
   const form = document.querySelector('#search-amendements')
   link.addEventListener('click', e => {
     e.preventDefault()
-    form.classList.replace('is-hidden', 'is-visible')
-    form.querySelector('#q').focus()
+    form.classList.replace('is-none', 'is-flex')
+    form.querySelector('#q-amendement').focus()
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    })
   })
 })()
 ;(function jumpToAmendement () {
   const form = document.querySelector('#search-amendements')
-  const input = form.querySelector('input[name="q"]')
+  const input = form.querySelector('input[name="q-amendement"]')
   const matches = JSON.parse(form.dataset.amendementMatches)
   form.addEventListener('submit', e => {
     e.preventDefault()
     const form = e.target
     const data = new FormData(form)
-    const value = data.get('q').trim()
+    const value = data.get('q-amendement').trim()
     if (value in matches) {
       window.location = matches[value]
     } else {

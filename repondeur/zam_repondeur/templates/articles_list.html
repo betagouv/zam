@@ -48,8 +48,11 @@
 {% block main %}
   <section class="box">
     <form class="search" id="search-article" method="get" role="search" action="">
-      Article nº
-      <input name="q" id="q" type="number" min="1" step="1" placeholder="(chiffres uniquement)">
+      <label for="q-article">Article nº</label>
+      <span class="number-with-hint">
+        <input name="q-article" id="q-article" type="number" min="1" step="1">
+        <span class="hint">Chiffres uniquement</span>
+      </span>
       <input type="submit" name="submit" value="Valider">
       <p class="error hide">Article non trouvé.</p>
     </form>
@@ -73,18 +76,18 @@
 <script type="text/javascript">
   ;(function filterArticles () {
     const form = document.querySelector('#search-article')
-    const input = form.querySelector('input[name="q"]')
+    const input = form.querySelector('input[name="q-article"]')
     const allArticles = Array.from(document.querySelectorAll('[data-article-num]'))
     function displayAllArticles () {
       allArticles.forEach(article => {
-        article.classList.remove('is-hidden')
+        article.classList.remove('is-none')
       })
     }
     form.addEventListener('submit', e => {
       e.preventDefault()
       const form = e.target
       const data = new FormData(form)
-      const value = data.get('q').trim()
+      const value = data.get('q-article').trim()
       if (!value) {
         displayAllArticles()
         return
@@ -92,7 +95,7 @@
       const articles = Array.from(document.querySelectorAll(`[data-article-num="${value}"]`))
       if (articles.length) {
         allArticles.forEach(article => {
-          article.classList.toggle('is-hidden', articles.indexOf(article) === -1)
+          article.classList.toggle('is-none', articles.indexOf(article) === -1)
         })
       } else {
         displayAllArticles()

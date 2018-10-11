@@ -19,7 +19,7 @@
           {% for amendement in amendements %}
             {% if amendement.children %}
               {{ macros.response_page(amendement.children) }}
-              {% for child in amendement.children %}
+              {% for child in amendement.children | sort %}
                 {{ macros.amendement_page(child) }}
               {% endfor %}
             {% endif %}

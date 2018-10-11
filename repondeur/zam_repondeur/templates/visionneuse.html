@@ -24,21 +24,16 @@
 {% endblock %}
 
 {% block secondary_nav %}
-  {# TODO: avoid looping over all articles. #}
-  {% for art in lecture.articles|sort %}
-    {% if art == article %}
-      <nav class="secondary">
-        {% if loop.previtem %}
-          <a class="arrow-left" href="{{ request.resource_url(context.parent, loop.previtem.url_key, 'reponses') }}">{{ loop.previtem.format() }}</a>
-        {% else %}
-          <span></span>  {# placeholder so that the "next" link gets positioned properly #}
-        {% endif %}
-        {% if loop.nextitem %}
-          <a class="arrow-right" href="{{ request.resource_url(context.parent, loop.nextitem.url_key, 'reponses') }}">{{ loop.nextitem.format() }}</a>
-        {% endif %}
-      </nav>
+  <nav class="secondary">
+    {% if previous_article %}
+      <a class="arrow-left" href="{{ request.resource_url(context.parent, previous_article.url_key, 'reponses') }}">{{ previous_article.format() }}</a>
+    {% else %}
+      <span></span>  {# placeholder so that the "next" link gets positioned properly #}
     {% endif %}
-  {% endfor %}
+    {% if next_article %}
+      <a class="arrow-right" href="{{ request.resource_url(context.parent, next_article.url_key, 'reponses') }}">{{ next_article.format() }}</a>
+    {% endif %}
+  </nav>
   <div class="is-none">
     <span class="fake-anchor" id="content-{{ article.slug }}"></span>
     <div class="article">
@@ -210,21 +205,16 @@
 
 {% block bottom_nav %}
   {% if article.grouped_displayable_amendements() | list %}
-    {# TODO: avoid looping over all articles. #}
-    {% for art in lecture.articles|sort %}
-      {% if art == article %}
-        <nav class="bottom secondary">
-          {% if loop.previtem %}
-            <a class="arrow-left" href="{{ request.resource_url(context.parent, loop.previtem.url_key, 'reponses') }}">{{ loop.previtem.format() }}</a>
-          {% else %}
-            <span></span>  {# placeholder so that the "next" link gets positioned properly #}
-          {% endif %}
-          {% if loop.nextitem %}
-            <a class="arrow-right" href="{{ request.resource_url(context.parent, loop.nextitem.url_key, 'reponses') }}">{{ loop.nextitem.format() }}</a>
-          {% endif %}
-        </nav>
+    <nav class="bottom secondary">
+      {% if previous_article %}
+        <a class="arrow-left" href="{{ request.resource_url(context.parent, previous_article.url_key, 'reponses') }}">{{ previous_article.format() }}</a>
+      {% else %}
+        <span></span>  {# placeholder so that the "next" link gets positioned properly #}
       {% endif %}
-    {% endfor %}
+      {% if next_article %}
+        <a class="arrow-right" href="{{ request.resource_url(context.parent, next_article.url_key, 'reponses') }}">{{ next_article.format() }}</a>
+      {% endif %}
+    </nav>
   {% endif %}
 {% endblock %}
 

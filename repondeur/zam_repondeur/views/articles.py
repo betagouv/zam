@@ -36,5 +36,11 @@ class ArticleEdit:
         self.request.session.flash(
             Message(cls="success", text="Article mis à jour avec succès.")
         )
-        resource = self.context.lecture_resource["amendements"]
-        return HTTPFound(location=self.request.resource_url(resource))
+        next_article = self.article.next_article
+        if next_article:
+            resource = self.context.lecture_resource["articles"]
+            location = self.request.resource_url(resource, next_article.url_key)
+        else:
+            resource = self.context.lecture_resource["amendements"]
+            location = self.request.resource_url(resource)
+        return HTTPFound(location=location)

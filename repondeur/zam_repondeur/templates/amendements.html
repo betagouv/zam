@@ -335,7 +335,7 @@
                 <th></th>
                 <th>
                     <select id="avis-filter">
-                        <option value="all">Tous</option>
+                        <option value="">Tous</option>
                         <option value="1">Avec</option>
                         <option value="0">Sans</option>
                     </select>
@@ -450,7 +450,7 @@
                         {% else %}
                             <span class="avis"></span>
                         {% endif %}
-                        <a href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
+                        <a class="edit-reponse" href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
                         {% if amendement.retire_avant_seance %}
                             Retiré avant séance
                         {% elif amendement.gouvernemental %}
@@ -500,145 +500,212 @@
 {% block scripts %}
 <script src="{{ request.static_url('zam_repondeur:static/tinysort/tinysort.min.js') }}"></script>
 <script type="text/javascript">
-    ;(function notifyOnUpdates () {
+    ;(function notifyOnUpdates() {
         const delay = 1000 * 10 /* seconds. */
-        const timestamp = {{ timestamp }}
-        function displayNotificationUpdate () {
-            const message = '<p class="alert alert-info text-center lead">De nouvelles informations sont disponibles, <a class="alert-link" href=><i class="fa fa-redo-alt"></i> rafraîchir</a> !</p>'
+        const timestamp = Number('{{ timestamp }}')
+        function displayNotificationUpdate() {
+            const message =
+                '<p class="alert alert-info text-center lead">De nouvelles informations sont disponibles, <a class="alert-link" href=><i class="fa fa-redo-alt"></i> rafraîchir</a> !</p>'
             document.querySelector('[role="status"]').innerHTML = message
         }
-        function check () {
+        function check() {
             const options = {
                 credentials: 'include'
             }
             fetch('{{ check_url }}', options)
                 .then(reponse => reponse.json())
                 .then(json => {
-                    if (json.modified_at !== timestamp)
-                        displayNotificationUpdate()
+                    if (json.modified_at !== timestamp) displayNotificationUpdate()
                 })
         }
         setInterval(check, delay)
     })()
 
-    var table = document.querySelector('table')
-    var tableHead = table.querySelector('thead')
-    var tableHeaders = tableHead.querySelectorAll('th')
+    function setupToggle(toggleSelector, targetSelector, scroll) {
+        const toggle = document.querySelector(toggleSelector)
+        toggle.addEventListener('click', e => {
+            const target = document.querySelector(targetSelector)
+            if (target.classList.contains('d-none')) {
+                toggle.classList.add('enabled')
+                target.classList.remove('d-none')
+                if (scroll) {
+                    target.scrollIntoView()
+                }
+            } else {
+                toggle.classList.remove('enabled')
+                target.classList.add('d-none')
+            }
+            e.preventDefault()
+        })
+    }
+    setupToggle('#toggle-advanced', '#advanced', false)
+    setupToggle('#toggle-filter', 'tr.filters', false)
+    setupToggle('#toggle-articles', '#articles', true)
 
-    // Articles
-    var toggleArticles = document.querySelector('#toggle-articles')
-    toggleArticles.addEventListener('click', function(e) {
-        var articles = document.querySelector('#articles')
-        if (articles.classList.contains('d-none')) {
-            toggleArticles.classList.add('enabled')
-            articles.classList.remove('d-none')
-            articles.scrollIntoView()
-        }
-        else {
-            toggleArticles.classList.remove('enabled')
-            articles.classList.add('d-none')
-        }
-        e.preventDefault()
-    })
-
-    // Options avancées
-    var toggleAdvanced = document.querySelector('#toggle-advanced')
-    toggleAdvanced.addEventListener('click', function(e) {
-        var advanced = document.querySelector('#advanced')
-        if (advanced.classList.contains('d-none')) {
-            toggleAdvanced.classList.add('enabled')
-            advanced.classList.remove('d-none')
-        }
-        else {
-            toggleAdvanced.classList.remove('enabled')
-            advanced.classList.add('d-none')
-        }
-        e.preventDefault()
-    })
-
-    // Filtrer
-    var toggleFilter = document.querySelector('#toggle-filter')
-    toggleFilter.addEventListener('click', function(e) {
-        var filterRow = table.querySelector('tr.filters')
-        if (filterRow.classList.contains('d-none')) {
-            toggleFilter.classList.add('enabled')
-            filterRow.classList.remove('d-none')
-        }
-        else {
-            toggleFilter.classList.remove('enabled')
-            filterRow.classList.add('d-none')
-        }
-        e.preventDefault()
-    })
-
-    var tableBody = table.querySelector('tbody')
-    var tableLines = tableBody.querySelectorAll('tr')
-    tableHead.addEventListener('click', function (e) {
-        var tableHeader = e.target
-        if (tableHeader.classList.contains("nosort") || tableHeader.nodeName === 'INPUT')
+    /* Column sorting */
+    const table = document.querySelector('table')
+    const tableHead = table.querySelector('thead')
+    const tableHeaders = tableHead.querySelectorAll('tr.headers th')
+    const tableBody = table.querySelector('tbody')
+    const tableLines = tableBody.querySelectorAll('tr')
+    tableHead.addEventListener('click', e => {
+        const tableHeader = e.target
+        if (
+            tableHeader.classList.contains('nosort') ||
+            tableHeader.nodeName === 'INPUT' ||
+            tableHeader.nodeName === 'OPTION' ||
+            tableHeader.nodeName === 'SELECT'
+        )
             return
-        var tableHeaderIndex = Array.prototype.indexOf.call(tableHeaders, tableHeader)
-        var isAscending = tableHeader.getAttribute('data-order') === 'asc'
-        var order = isAscending ? 'desc' : 'asc'
+        const isAscending = tableHeader.getAttribute('data-order') === 'asc'
+        const order = isAscending ? 'desc' : 'asc'
+
+        const colIndex = Array.prototype.indexOf.call(tableHeaders, tableHeader) + 1
+        sortSpec = updateSortSpec(getSortSpecFromURL(), colIndex + order)
+        replaceSortSpecInURL(sortSpec)
+        sortColumn(tableHeader, colIndex, order)
+    })
+    function updateSortSpec(sortSpec, colSpec) {
+        const updatedSpec = sortSpec
+            .split('-')
+            .filter(item => item !== '' && item.charAt(0) !== colSpec.charAt(0))
+        updatedSpec.push(colSpec)
+        return updatedSpec.join('-')
+    }
+    function getSortSpecFromURL() {
+        return getURLParam('sort')
+    }
+    function replaceSortSpecInURL(sortSpec) {
+        setURLParam('sort', sortSpec)
+    }
+    function sortColumns(sortSpec) {
+        for (colSpec of sortSpec.split('-')) {
+            const colIndex = parseInt(colSpec.charAt(0), 10)
+            if (colIndex == 4 || colIndex > 6) {
+                continue
+            }
+            const order = colSpec.slice(1)
+            if (order !== 'asc' && order !== 'desc') {
+                continue
+            }
+            const tableHeader = tableHead.querySelector(
+                'tr:first-child th:nth-child(' + colIndex + ')'
+            )
+            sortColumn(tableHeader, colIndex, order)
+        }
+    }
+    function sortColumn(tableHeader, colIndex, order) {
         tableHeader.setAttribute('data-order', order)
-        var options = {
+        const options = {
             data: 'sortkey',
-            selector:'td:nth-child(' + (tableHeaderIndex + 1) + ')',
-            order: order,
+            selector: 'td:nth-child(' + colIndex + ')',
+            order: order
         }
         tinysort(tableLines, options)
+    }
+    ;(function sortColumnsFromQueryString() {
+        const sortSpec = getSortSpecFromURL()
+        if (sortSpec !== '') {
+            sortColumns(sortSpec)
+        }
+    })()
+
+    /* Column filtering */
+    const articleFilter = table.querySelector('#article-filter')
+    articleFilter.addEventListener('keyup', e => {
+        const value = e.target.value.trim()
+        filterByArticle(value)
+        setURLParam('article', value)
     })
-    var articleFilter = table.querySelector('#article-filter')
-    articleFilter.addEventListener('keyup', function (e) {
-        var value = e.target.value.trim()
-        ;[].slice.call(tableLines).forEach(function (line) {
+    const amendementFilter = table.querySelector('#amendement-filter')
+    amendementFilter.addEventListener('keyup', e => {
+        const value = e.target.value.trim()
+        filterByAmendement(value)
+        setURLParam('amendement', value)
+    })
+    const avisFilter = table.querySelector('#avis-filter')
+    avisFilter.addEventListener('change', e => {
+        const value = e.target.value.trim()
+        filterByAvis(value)
+        setURLParam('avis', value)
+    })
+    function filterByArticle(value) {
+        filterColumn('hidden-article', line => {
             if (!value) {
-                line.classList.remove('hidden-article')
-                return
+                return true
             }
-            if (line.dataset.article.trim() === value) {
-                line.classList.remove('hidden-article')
-            } else {
-                line.classList.add('hidden-article')
-            }
+            return line.dataset.article.trim() === value
         })
-    })
-    var amendementFilter = table.querySelector('#amendement-filter')
-    amendementFilter.addEventListener('keyup', function (e) {
-        var value = e.target.value.trim()
-        ;[].slice.call(tableLines).forEach(function (line) {
+    }
+    function filterByAmendement(value) {
+        filterColumn('hidden-amendement', line => {
             if (!value) {
-                line.classList.remove('hidden-amendement')
-                return
+                return true
             }
-            if (line.dataset.amendement.trim() === value) {
-                line.classList.remove('hidden-amendement')
+            return line.dataset.amendement.trim() === value
+        })
+    }
+    function filterByAvis(value) {
+        filterColumn('hidden-avis', line => {
+            if (value === '') {
+                return true
+            }
+            if (
+                line.dataset.gouvernemental === '1' ||
+                line.dataset.retireAvantSeance === '1'
+            ) {
+                return false
+            }
+            return line.dataset.avis === value
+        })
+    }
+    function filterColumn(className, shouldShow) {
+        Array.from(tableLines).forEach(line => {
+            line.classList.toggle(className, !shouldShow(line))
+        })
+    }
+    function showFilters() {
+        document.querySelector('#toggle-filter').classList.add('enabled')
+        document.querySelector('tr.filters').classList.remove('d-none')
+    }
+    ;(function filterColumnsFromQueryString() {
+        const articleFilter = getURLParam('article')
+        if (articleFilter !== '') {
+            showFilters()
+            document.querySelector('#article-filter').value = articleFilter
+            filterByArticle(articleFilter)
+        }
+        const amendementFilter = getURLParam('amendement')
+        if (amendementFilter !== '') {
+            showFilters()
+            document.querySelector('#amendement-filter').value = amendementFilter
+            filterByAmendement(amendementFilter)
+        }
+        const avisFilter = getURLParam('avis')
+        if (avisFilter !== '') {
+            showFilters()
+            document.querySelector('#avis-filter').value = avisFilter
+            filterByAvis(avisFilter)
+        }
+    })()
+
+    function getURLParam(name) {
+        const urlParams = new URLSearchParams(window.location.search)
+        return urlParams.get(name) || ''
+    }
+    function setURLParam(name, value) {
+        if (history.replaceState) {
+            const newURL = new URL(window.location.href)
+            if (value !== '') {
+                newURL.searchParams.set(name, value)
             } else {
-                line.classList.add('hidden-amendement')
+                newURL.searchParams.delete(name)
             }
-        })
-    })
-    var avisFilter = table.querySelector('#avis-filter')
-    avisFilter.addEventListener('change', function (e) {
-        var value = e.target.value.trim()
-        ;[].slice.call(tableLines).forEach(function (line) {
-            if (value === 'all') {
-                line.classList.remove('hidden-avis')
-                return
-            }
-            if (line.dataset.avis === value) {
-                line.classList.remove('hidden-avis')
-            }
-            else {
-                line.classList.add('hidden-avis')
-            }
-            if (line.dataset.gouvernemental === "1"
-                    || line.dataset.retireAvantSeance === "1") {
-                line.classList.add('hidden-avis')
-            }
-        })
-    })
-    ;(function bookmarks () {
+            window.history.replaceState({ path: newURL.href }, '', newURL.href)
+        }
+    }
+
+    ;(function bookmarks() {
         const bookmarkForms = table.querySelectorAll('.bookmark form')
         Array.from(bookmarkForms).forEach(bookmarkForm => {
             bookmarkForm.addEventListener('submit', e => {
@@ -650,12 +717,12 @@
                 if (submitInput.value == '☆') {
                     submitInput.value = '★'
                     submitInput.title = 'Cliquer pour enlever le favori'
-                    submitInput.classList.add("bookmarked")
+                    submitInput.classList.add('bookmarked')
                     target.parentElement.dataset.sortkey = 1
                 } else {
                     submitInput.value = '☆'
                     submitInput.title = 'Cliquer pour mettre en favori'
-                    submitInput.classList.remove("bookmarked")
+                    submitInput.classList.remove('bookmarked')
                     target.parentElement.dataset.sortkey = ''
                 }
                 const body = new FormData(target)
@@ -679,15 +746,27 @@
     /* Taking control over native jump to avoir position under sticky headers. */
     if (location.hash) {
         /* Waiting for the next tick to supplement previous browser behavior. */
-        setTimeout(function() {
-            var element = document.querySelector(window.location.hash)
-            var target = element.getBoundingClientRect()
+        setTimeout(() => {
+            const element = document.querySelector(window.location.hash)
+            const target = element.getBoundingClientRect()
             window.scrollTo({
                 /* Position the highlighted element in the middle of the page. */
-                top: window.scrollY + target.top - (window.innerHeight / 2),
-                behavior: "smooth"
+                top: window.scrollY + target.top - window.innerHeight / 2,
+                behavior: 'smooth'
             })
         }, 1)
     }
+
+    // Hijack edit links to inject the current page URL as a "back" query param
+    const editLinks = Array.from(document.querySelectorAll('a.edit-reponse'))
+    editLinks.forEach(editLink => {
+        editLink.addEventListener('click', e => {
+            const thisURL = new URL(window.location.href)
+            const linkURL = new URL(e.target.href)
+            linkURL.searchParams.set('back', thisURL.pathname + thisURL.search)
+            window.location.href = linkURL.toString()
+            e.preventDefault()
+        })
+    })
 </script>
 {% endblock %}

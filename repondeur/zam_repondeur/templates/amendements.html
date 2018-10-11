@@ -654,12 +654,7 @@
     }
     function filterColumn(className, shouldShow) {
         ;[].slice.call(tableLines).forEach(function (line) {
-            if (shouldShow(line)) {
-                line.classList.remove(className)
-            }
-            else {
-                line.classList.add(className)
-            }
+            line.classList.toggle(className, !shouldShow(line))
         })
     }
     function showFilters() {

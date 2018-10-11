@@ -37,7 +37,7 @@ class ArticleEdit:
             Message(cls="success", text="Article mis à jour avec succès.")
         )
         next_article = self.article.next_article
-        if next_article:
+        if next_article is not None:
             resource = self.context.lecture_resource["articles"]
             location = self.request.resource_url(resource, next_article.url_key)
         else:

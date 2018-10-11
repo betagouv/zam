@@ -179,11 +179,11 @@ class TestOrdering:
         )
         article_7 = Article.create(lecture=lecture_an, type="article", num=7)
 
-        assert article_6.previous_article is False
+        assert article_6.previous_article is None
         assert article_6.next_article == apres_article_6
         assert apres_article_6.previous_article == article_6
         assert apres_article_6.next_article == avant_article_7
         assert avant_article_7.previous_article == apres_article_6
         assert avant_article_7.next_article == article_7
         assert article_7.previous_article == avant_article_7
-        assert article_7.next_article is False
+        assert article_7.next_article is None

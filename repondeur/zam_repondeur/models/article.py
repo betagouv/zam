@@ -200,19 +200,19 @@ class Article(Base):
         return article
 
     @property
-    def previous_article(self) -> Union["Article", bool]:
+    def previous_article(self) -> Optional["Article"]:
         sorted_articles: List[Article] = sorted(self.lecture.articles)
         previous_index = sorted_articles.index(self) - 1
         if previous_index < 0:
-            return False
+            return None
         return sorted_articles[previous_index]
 
     @property
-    def next_article(self) -> Union["Article", bool]:
+    def next_article(self) -> Optional["Article"]:
         sorted_articles: List[Article] = sorted(self.lecture.articles)
         next_index = sorted_articles.index(self) + 1
         if next_index >= len(sorted_articles):
-            return False
+            return None
         return sorted_articles[next_index]
 
     @property

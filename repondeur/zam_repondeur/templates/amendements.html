@@ -551,7 +551,10 @@
     var tableLines = tableBody.querySelectorAll('tr')
     tableHead.addEventListener('click', function (e) {
         var tableHeader = e.target
-        if (tableHeader.classList.contains("nosort") || tableHeader.nodeName === 'INPUT')
+        if (tableHeader.classList.contains("nosort")
+                || tableHeader.nodeName === 'INPUT'
+                || tableHeader.nodeName === 'OPTION'
+                || tableHeader.nodeName === 'SELECT')
             return
         var isAscending = tableHeader.getAttribute('data-order') === 'asc'
         var order = isAscending ? 'desc' : 'asc'
@@ -575,7 +578,7 @@
     function sortColumns(sortSpec) {
         for (colSpec of sortSpec.split('-')) {
             var colIndex = parseInt(colSpec.charAt(0), 10)
-            if ((colIndex < 1) || (colIndex == 4) || (colIndex > 6)) {
+            if (colIndex == 4 || colIndex > 6) {
                 continue
             }
             var order = colSpec.slice(1);

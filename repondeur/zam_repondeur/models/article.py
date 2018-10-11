@@ -237,16 +237,15 @@ class Article(Base):
         return f"{self.type}.{self.num}.{self.mult}.{self.pos}"
 
     def grouped_amendements(self) -> Iterable[List[Amendement]]:
-        return Article._group_amendements(self.amendements)
+        return self.group_amendements(self.amendements)
 
     def grouped_displayable_amendements(self) -> Iterable[List[Amendement]]:
-        return Article._group_amendements(
+        return self.group_amendements(
             amdt for amdt in self.amendements if amdt.is_displayable
         )
 
-    @staticmethod
-    def _group_amendements(
-        amendements: Iterable[Amendement]
+    def group_amendements(
+        self, amendements: Iterable[Amendement]
     ) -> Iterable[List[Amendement]]:
         return (
             list(group)

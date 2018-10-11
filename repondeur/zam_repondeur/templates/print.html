@@ -18,9 +18,11 @@
         {% if not amendements[0].parent %}
           {% for amendement in amendements %}
             {% if amendement.children %}
-              {{ macros.response_page(amendement.children) }}
-              {% for child in amendement.children | sort %}
-                {{ macros.amendement_page(child) }}
+              {% for children_amendements in article.group_amendements(amendements.children) %}
+                {{ macros.response_page(children_amendements) }}
+                {% for child in children_amendements %}
+                  {{ macros.amendement_page(child) }}
+                {% endfor %}
               {% endfor %}
             {% endif %}
           {% endfor %}

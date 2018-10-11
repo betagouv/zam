@@ -96,8 +96,8 @@ nav.secondary {
   box-shadow: 0 7px 7px -1px #ccc;
 }
   nav.bottom.secondary {
-    margin-bottom: 0;
-    margin-top: auto;
+    margin: auto auto 0;
+    width: 100%;
   }
 .arrow-left,
 .arrow-right {

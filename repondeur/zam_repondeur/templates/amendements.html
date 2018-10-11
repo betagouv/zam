@@ -521,10 +521,10 @@
         setInterval(check, delay)
     })()
 
-    function setupToggle(toggleSelector, targetSelector, scroll) {
-        var toggle = document.querySelector(toggleSelector)
-        toggle.addEventListener('click', function(e) {
-            var target = document.querySelector(targetSelector)
+    function setupToggle (toggleSelector, targetSelector, scroll) {
+        const toggle = document.querySelector(toggleSelector)
+        toggle.addEventListener('click', e => {
+            const target = document.querySelector(targetSelector)
             if (target.classList.contains('d-none')) {
                 toggle.classList.add('enabled')
                 target.classList.remove('d-none')
@@ -544,87 +544,87 @@
     setupToggle('#toggle-articles', '#articles', true)
 
     /* Column sorting */
-    var table = document.querySelector('table')
-    var tableHead = table.querySelector('thead')
-    var tableHeaders = tableHead.querySelectorAll('tr.headers th')
-    var tableBody = table.querySelector('tbody')
-    var tableLines = tableBody.querySelectorAll('tr')
-    tableHead.addEventListener('click', function (e) {
-        var tableHeader = e.target
+    const table = document.querySelector('table')
+    const tableHead = table.querySelector('thead')
+    const tableHeaders = tableHead.querySelectorAll('tr.headers th')
+    const tableBody = table.querySelector('tbody')
+    const tableLines = tableBody.querySelectorAll('tr')
+    tableHead.addEventListener('click', e => {
+        const tableHeader = e.target
         if (tableHeader.classList.contains("nosort")
                 || tableHeader.nodeName === 'INPUT'
                 || tableHeader.nodeName === 'OPTION'
                 || tableHeader.nodeName === 'SELECT')
             return
-        var isAscending = tableHeader.getAttribute('data-order') === 'asc'
-        var order = isAscending ? 'desc' : 'asc'
+        const isAscending = tableHeader.getAttribute('data-order') === 'asc'
+        const order = isAscending ? 'desc' : 'asc'
 
-        var colIndex = Array.prototype.indexOf.call(tableHeaders, tableHeader) + 1
+        const colIndex = Array.prototype.indexOf.call(tableHeaders, tableHeader) + 1
         sortSpec = updateSortSpec(getSortSpecFromURL(), colIndex + order)
         replaceSortSpecInURL(sortSpec)
         sortColumn(tableHeader, colIndex, order)
     })
-    function updateSortSpec(sortSpec, colSpec) {
-        var updatedSpec = sortSpec.split('-').filter(item => item !== "" && (item.charAt(0) !== colSpec.charAt(0)))
+    function updateSortSpec (sortSpec, colSpec) {
+        const updatedSpec = sortSpec.split('-').filter(item => item !== "" && (item.charAt(0) !== colSpec.charAt(0)))
         updatedSpec.push(colSpec)
         return updatedSpec.join('-')
     }
-    function getSortSpecFromURL() {
+    function getSortSpecFromURL () {
         return getURLParam('sort')
     }
-    function replaceSortSpecInURL(sortSpec) {
+    function replaceSortSpecInURL (sortSpec) {
         setURLParam('sort', sortSpec)
     }
-    function sortColumns(sortSpec) {
+    function sortColumns (sortSpec) {
         for (colSpec of sortSpec.split('-')) {
-            var colIndex = parseInt(colSpec.charAt(0), 10)
+            const colIndex = parseInt(colSpec.charAt(0), 10)
             if (colIndex == 4 || colIndex > 6) {
                 continue
             }
-            var order = colSpec.slice(1);
+            const order = colSpec.slice(1);
             if ((order !== 'asc') && (order !== 'desc')) {
                 continue
             }
-            var tableHeader = tableHead.querySelector('tr:first-child th:nth-child(' + colIndex + ')')
+            const tableHeader = tableHead.querySelector('tr:first-child th:nth-child(' + colIndex + ')')
             sortColumn(tableHeader, colIndex, order)
         }
     }
-    function sortColumn(tableHeader, colIndex, order) {
+    function sortColumn (tableHeader, colIndex, order) {
         tableHeader.setAttribute('data-order', order)
-        var options = {
+        const options = {
             data: 'sortkey',
-            selector:'td:nth-child(' + colIndex + ')',
+            selector: 'td:nth-child(' + colIndex + ')',
             order: order,
         }
         tinysort(tableLines, options)
     }
-    (function sortColumnsFromQueryString() {
-        var sortSpec = getSortSpecFromURL()
+    (function sortColumnsFromQueryString () {
+        const sortSpec = getSortSpecFromURL()
         if (sortSpec !== '') {
             sortColumns(sortSpec)
         }
     })()
 
     /* Column filtering */
-    var articleFilter = table.querySelector('#article-filter')
-    articleFilter.addEventListener('keyup', function (e) {
-        var value = e.target.value.trim()
+    const articleFilter = table.querySelector('#article-filter')
+    articleFilter.addEventListener('keyup', e => {
+        const value = e.target.value.trim()
         filterByArticle(value)
         setURLParam('article', value)
     })
-    var amendementFilter = table.querySelector('#amendement-filter')
-    amendementFilter.addEventListener('keyup', function (e) {
-        var value = e.target.value.trim()
+    const amendementFilter = table.querySelector('#amendement-filter')
+    amendementFilter.addEventListener('keyup', e => {
+        const value = e.target.value.trim()
         filterByAmendement(value)
         setURLParam('amendement', value)
     })
-    var avisFilter = table.querySelector('#avis-filter')
-    avisFilter.addEventListener('change', function (e) {
-        var value = e.target.value.trim()
+    const avisFilter = table.querySelector('#avis-filter')
+    avisFilter.addEventListener('change', e => {
+        const value = e.target.value.trim()
         filterByAvis(value)
         setURLParam('avis', value)
     })
-    function filterByArticle(value) {
+    function filterByArticle (value) {
         filterColumn('hidden-article', line => {
             if (!value) {
                 return true
@@ -632,7 +632,7 @@
             return (line.dataset.article.trim() === value)
         })
     }
-    function filterByAmendement(value) {
+    function filterByAmendement (value) {
         filterColumn('hidden-amendement', line => {
             if (!value) {
                 return true
@@ -640,7 +640,7 @@
             return (line.dataset.amendement.trim() === value)
         })
     }
-    function filterByAvis(value) {
+    function filterByAvis (value) {
         filterColumn('hidden-avis', line => {
             if (value === '') {
                 return true
@@ -652,29 +652,29 @@
             return (line.dataset.avis === value)
         })
     }
-    function filterColumn(className, shouldShow) {
-        ;[].slice.call(tableLines).forEach(function (line) {
+    function filterColumn (className, shouldShow) {
+        Array.from(tableLines).forEach(line => {
             line.classList.toggle(className, !shouldShow(line))
         })
     }
-    function showFilters() {
+    function showFilters () {
         document.querySelector('#toggle-filter').classList.add('enabled')
         document.querySelector('tr.filters').classList.remove('d-none')
     }
-    (function filterColumnsFromQueryString() {
-        var articleFilter = getURLParam('article')
+    (function filterColumnsFromQueryString () {
+        const articleFilter = getURLParam('article')
         if (articleFilter !== '') {
             showFilters()
             document.querySelector('#article-filter').value = articleFilter
             filterByArticle(articleFilter)
         }
-        var amendementFilter = getURLParam('amendement')
+        const amendementFilter = getURLParam('amendement')
         if (amendementFilter !== '') {
             showFilters()
             document.querySelector('#amendement-filter').value = amendementFilter
             filterByAmendement(amendementFilter)
         }
-        var avisFilter = getURLParam('avis')
+        const avisFilter = getURLParam('avis')
         if (avisFilter !== '') {
             showFilters()
             document.querySelector('#avis-filter').value = avisFilter
@@ -682,11 +682,11 @@
         }
     })()
 
-    function getURLParam(name) {
-        var urlParams = new URLSearchParams(window.location.search)
+    function getURLParam (name) {
+        const urlParams = new URLSearchParams(window.location.search)
         return urlParams.get(name) || ''
     }
-    function setURLParam(name, value) {
+    function setURLParam (name, value) {
         if (history.replaceState) {
             const newURL = new URL(window.location.href)
             if (value !== "") {
@@ -740,9 +740,9 @@
     /* Taking control over native jump to avoir position under sticky headers. */
     if (location.hash) {
         /* Waiting for the next tick to supplement previous browser behavior. */
-        setTimeout(function() {
-            var element = document.querySelector(window.location.hash)
-            var target = element.getBoundingClientRect()
+        setTimeout(() => {
+            const element = document.querySelector(window.location.hash)
+            const target = element.getBoundingClientRect()
             window.scrollTo({
                 /* Position the highlighted element in the middle of the page. */
                 top: window.scrollY + target.top - (window.innerHeight / 2),

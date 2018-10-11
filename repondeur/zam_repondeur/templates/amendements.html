@@ -763,6 +763,7 @@
         editLink.addEventListener('click', e => {
             const thisURL = new URL(window.location.href)
             const linkURL = new URL(e.target.href)
+            thisURL.hash = ''
             linkURL.searchParams.set('back', thisURL.pathname + thisURL.search)
             window.location.href = linkURL.toString()
             e.preventDefault()

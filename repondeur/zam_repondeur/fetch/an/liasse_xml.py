@@ -49,9 +49,16 @@ def import_liasse_xml(xml_file: IO[bytes]) -> List[Amendement]:
 
     uid_map: Dict[str, Amendement] = {}
     for child in root:
+
+        if extract_from_node(child, "etat") == "A déposer":
+            num_long = extract_from_node(child, "numeroLong")
+            logger.warning(f"Ignoring amendement {num_long} (à déposer)")
+            continue
+
         uid = child.find(f"./{NS}uid").text
         amendement = _make_amendement(child, uid_map)
         uid_map[uid] = amendement
+
     return list(uid_map.values())
 
 

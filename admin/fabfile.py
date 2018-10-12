@@ -55,16 +55,21 @@ def put_dir(ctx, local, remote, chown=None):
 
 @task
 def system(ctx):
+    ctx.sudo("curl -L -O https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb")
     ctx.sudo("apt update")
     ctx.sudo(
         "apt install -y {}".format(
             " ".join(
                 [
+                    "git",
+                    "libpq-dev",
+                    "locales",
                     "nginx",
                     "postgresql",
-                    "python3.6",
+                    "python3",
+                    "python3-pip",
                     "redis-server",
-                    "wkhtmltopdf",
+                    "./wkhtmltox_0.12.5-1.bionic_amd64.deb",
                     "xvfb",
                 ]
             )
@@ -231,8 +236,6 @@ def clone_repo(ctx, repo, branch, path, user):
 
 @task
 def install_requirements(ctx, app_dir, user):
-    ctx.sudo("apt-get update")
-    ctx.sudo("apt-get install --yes python3-pip")
     ctx.sudo("python3 -m pip install pipenv==2018.7.1")
     ctx.sudo(f'bash -c "cd {app_dir} && pipenv install"', user=user)
 

@@ -174,8 +174,11 @@
         padding: 1rem;
     }
 
-    :target {
+    .highlighted {
         background: #d4edda66;
+    }
+    :target {
+        background: #ededed66;
     }
     nobr {
         display: block;
@@ -344,6 +347,7 @@
             </tr>
         </thead>
         <tbody>
+        {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
         {% for amendement in amendements %}
             <tr data-article="
                     {%- if amendement.retire_avant_seance -%}
@@ -359,6 +363,9 @@
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 data-retire-avant-seance="{{ 1 if amendement.retire_avant_seance else 0 }}"
                 id="{{ amendement.slug }}"
+                {% if amendement.slug == highlighted_amdt %}
+                class="highlighted"
+                {% endif %}
             >
                 <td class="bookmark" data-sortkey="{{ amendement.bookmarked_at }}">
                     <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">

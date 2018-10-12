@@ -88,6 +88,18 @@ def test_upload_liasse_with_table(app, lecture_essoc):
         assert "<table>\n<tbody>\n<tr>\n<td>Durée minimale de services" in objet
 
 
+def test_upload_liasse_success_with_a_deposer(app, lecture_essoc):
+    resp = app.get("/lectures/an.15.806.PO744107/amendements")
+    form = resp.forms["import-liasse-xml"]
+    # The second amendement has `etat == "A déposer"` and thus is ignored.
+    form["liasse"] = Upload(
+        "liasse.xml", (SAMPLE_DATA / "liasse_with_a_deposer.xml").read_bytes()
+    )
+    resp = form.submit()
+    resp = resp.follow()
+    assert "2 nouveaux amendements récupérés (import liasse XML)." in resp.text
+
+
 def test_upload_liasse_missing_file(app, lecture_essoc):
     from zam_repondeur.models import DBSession, Journal, Lecture
 

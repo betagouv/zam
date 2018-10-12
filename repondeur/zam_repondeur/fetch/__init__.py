@@ -113,6 +113,6 @@ def update_lecture_article(
 def _update_article(
     lecture: Lecture, num: str, mult: str, titre: str, contenu: dict
 ) -> None:
-    DBSession.query(Article).filter_by(lecture=lecture, num=num, mult=mult).update(
-        {"titre": titre, "contenu": contenu}
-    )
+    DBSession.query(Article).filter_by(
+        lecture=lecture, num=num, mult=mult, pos=""
+    ).update({"titre": titre, "contenu": contenu})

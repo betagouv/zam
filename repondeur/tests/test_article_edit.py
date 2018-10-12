@@ -94,7 +94,7 @@ def test_post_article_edit_form_title_redirect_amendements_if_intersticial_is_la
     assert amendement.article.titre == "Titre article"
 
 
-def test_post_article_edit_form_title_redirect_next_except_apres(
+def test_post_article_edit_form_title_redirect_next_with_apres(
     app, lecture_an, amendements_an
 ):
 
@@ -106,6 +106,43 @@ def test_post_article_edit_form_title_redirect_next_except_apres(
         )
         DBSession.add(article_1_apres)
         article_2 = Article.create(lecture=lecture_an, type="article", num="2")
+        DBSession.add(article_2)
+        DBSession.add(lecture_an)
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    assert amendement.article.titre == ""
+
+    resp = app.get("http://localhost/lectures/an.15.269.PO717460/articles/article.1..")
+    form = resp.forms["edit-article"]
+    form["titre"] = "Titre article"
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == "http://localhost/lectures/an.15.269.PO717460/articles/article.2.."
+    )
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    assert amendement.article.titre == "Titre article"
+
+
+def test_post_article_edit_form_title_redirect_next_with_apres_and_avant(
+    app, lecture_an, amendements_an
+):
+
+    from zam_repondeur.models import Amendement, Article, DBSession
+
+    with transaction.manager:
+        article_1_apres = Article.create(
+            lecture=lecture_an, type="article", num="1", pos="après"
+        )
+        DBSession.add(article_1_apres)
+        article_2_avant = Article.create(
+            lecture=lecture_an, type="article", num="2", pos="avant"
+        )
+        article_2 = Article.create(lecture=lecture_an, type="article", num="2")
+        DBSession.add(article_2_avant)
         DBSession.add(article_2)
         DBSession.add(lecture_an)
 

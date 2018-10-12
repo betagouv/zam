@@ -42,7 +42,7 @@ class ArticleEdit:
         if next_article is None:
             return HTTPFound(location=location)
         # Skip intersticial articles.
-        if next_article.pos:
+        while next_article.pos:
             next_article = next_article.next_article
             if next_article is None:
                 return HTTPFound(location=location)

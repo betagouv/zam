@@ -42,11 +42,12 @@ class ReponseEdit:
         self.request.session.flash(
             Message(cls="success", text="Les modifications ont bien été enregistrées.")
         )
+        self.request.session["highlighted_amdt"] = self.amendement.slug
         return HTTPFound(location=self.back_url)
 
     @reify
     def back_url(self) -> str:
-        url = self.request.GET.get("back")
+        url: str = self.request.GET.get("back")
         if url is None or not url.startswith("/"):
             url = self.request.resource_url(self.context.parent)
         return add_url_fragment(url, self.amendement.slug)

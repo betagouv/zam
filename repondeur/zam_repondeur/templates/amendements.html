@@ -175,6 +175,10 @@
     }
 
     :target {
+        background: #ededed66;
+    }
+    /* To keep under :target for priority. */
+    .highlighted {
         background: #d4edda66;
     }
     nobr {
@@ -344,6 +348,7 @@
             </tr>
         </thead>
         <tbody>
+        {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
         {% for amendement in amendements %}
             <tr data-article="
                     {%- if amendement.retire_avant_seance -%}
@@ -359,6 +364,9 @@
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 data-retire-avant-seance="{{ 1 if amendement.retire_avant_seance else 0 }}"
                 id="{{ amendement.slug }}"
+                {% if amendement.slug == highlighted_amdt %}
+                class="highlighted"
+                {% endif %}
             >
                 <td class="bookmark" data-sortkey="{{ amendement.bookmarked_at }}">
                     <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">
@@ -763,6 +771,7 @@
         editLink.addEventListener('click', e => {
             const thisURL = new URL(window.location.href)
             const linkURL = new URL(e.target.href)
+            thisURL.hash = ''
             linkURL.searchParams.set('back', thisURL.pathname + thisURL.search)
             window.location.href = linkURL.toString()
             e.preventDefault()

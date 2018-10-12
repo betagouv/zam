@@ -15,4 +15,6 @@ def list_reponses(context: ArticleResource, request: Request) -> Response:
         "timestamp": lecture.modified_at_timestamp,
         "check_url": check_url,
         "article": article,
+        "next_article": article.next_article,
+        "previous_article": article.previous_article,
     }

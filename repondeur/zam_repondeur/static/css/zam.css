@@ -106,6 +106,12 @@ nav.secondary {
     padding-right: 1.33rem;
     background: no-repeat right 40%/6% url("../img/big_right.svg");
 }
+.save-buttons .arrow-left {
+    padding-top: .4rem;
+    margin-top: .2rem;
+    background-position: left 45%;
+    margin-right: 2rem;
+}
 .dossier-de-banc {
     margin-left: 3rem;
 }

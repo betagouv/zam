@@ -64,7 +64,34 @@ def test_get_articles_an(app, lecture_an, amendements_an):
 
     # We can get the article contents from an amendement
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+    assert amendement.article.titre == "Dispositions relatives l'exercice 2016"
     assert amendement.article.contenu["001"].startswith("Au titre de l'exercice 2016")
+
+
+@responses.activate
+def test_get_articles_an_with_pos(app, lecture_an, amendements_an):
+    from zam_repondeur.fetch import get_articles
+    from zam_repondeur.models import DBSession, Article
+
+    article_avant_2 = Article.create(
+        lecture=lecture_an, type="article", num="2", pos="avant"
+    )
+    DBSession.add(article_avant_2)
+
+    responses.add(
+        responses.GET,
+        "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+        body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
+            "utf-8", "ignore"
+        ),
+        status=200,
+    )
+
+    get_articles(lecture_an)
+
+    article = DBSession.query(Article).filter(Article.pos == "avant").first()
+    assert article.titre == ""
+    assert article.contenu == {}
 
 
 @responses.activate

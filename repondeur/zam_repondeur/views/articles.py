@@ -37,4 +37,15 @@ class ArticleEdit:
             Message(cls="success", text="Article mis à jour avec succès.")
         )
         resource = self.context.lecture_resource["amendements"]
-        return HTTPFound(location=self.request.resource_url(resource))
+        location = self.request.resource_url(resource)
+        next_article = self.article.next_article
+        if next_article is None:
+            return HTTPFound(location=location)
+        # Skip intersticial articles.
+        while next_article.pos:
+            next_article = next_article.next_article
+            if next_article is None:
+                return HTTPFound(location=location)
+        resource = self.context.lecture_resource["articles"]
+        location = self.request.resource_url(resource, next_article.url_key)
+        return HTTPFound(location=location)

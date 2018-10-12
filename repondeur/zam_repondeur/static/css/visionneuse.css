@@ -278,9 +278,17 @@ nav.secondary {
     .amendement-detail h4:first-child {
       margin-top: .4rem;
     }
-    .amendement-detail div p {
+    .amendement-detail div p,
+    .amendement-detail div table {
       max-width: 42rem;
       margin: .5rem auto;
+    }
+    .amendement-detail div table {
+      border-collapse: collapse;
+    }
+    .amendement-detail div td {
+      border: 1px solid black;
+      padding: .2rem 1rem;
     }
   .reponse-detail {
     font-size: x-large;

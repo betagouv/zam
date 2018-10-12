@@ -40,6 +40,8 @@
 
 {% block bottom_nav %}{% endblock %}
 
+<script type="text/javascript">window.__forceSmoothScrollPolyfill__ = true</script>
+<script src="{{ request.static_url('zam_repondeur:static/smoothscroll/smoothscroll.js') }}"></script>
 <script src="{{ request.static_url('zam_repondeur:static/js/visionneuse.js') }}"></script>
 {% block extra_scripts %}{% endblock %}
 </html>

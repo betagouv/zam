@@ -6,7 +6,7 @@ from typing import Dict, IO, List, Optional, cast
 
 from lxml import etree
 
-from zam_repondeur.clean import clean_html
+from zam_repondeur.clean import ALLOWED_TAGS, clean_html
 from zam_repondeur.data import get_data
 from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Texte
 from zam_repondeur.fetch.dates import parse_date
@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 NS = "{http://schemas.assemblee-nationale.fr/referentiel}"
+LIASSE_ALLOWED_TAGS = ALLOWED_TAGS + ["table", "thead", "th", "tbody", "tr", "td"]
 
 
 def import_liasse_xml(xml_file: IO[bytes]) -> List[Amendement]:
@@ -113,8 +114,12 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
     amendement.sort = get_sort(
         sort=extract("sort", "sortEnSeance"), etat=extract("etat")
     )
-    amendement.dispositif = clean_html(extract("corps", "dispositif") or "")
-    amendement.objet = clean_html(extract("corps", "exposeSommaire") or "")
+    amendement.dispositif = clean_html(
+        extract("corps", "dispositif") or "", allowed_tags=LIASSE_ALLOWED_TAGS
+    )
+    amendement.objet = clean_html(
+        extract("corps", "exposeSommaire") or "", allowed_tags=LIASSE_ALLOWED_TAGS
+    )
     amendement.parent = get_parent(extract("amendementParent"), uid_map)
     return cast(Amendement, amendement)
 

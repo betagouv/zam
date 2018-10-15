@@ -26,7 +26,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile.app
-    command: pipenv run zam_worker development-docker.ini
+    command: zam_worker development-docker.ini
     volumes:
       - ./:/app
     depends_on:

@@ -1,5 +1,4 @@
 import sys
-from datetime import datetime
 from pathlib import Path
 
 import CommonMark
@@ -16,6 +15,7 @@ from tools import (
     run_as_postgres,
     sudo_put,
     template_local_file,
+    timestamp,
 )
 
 
@@ -202,6 +202,13 @@ def setup_db(ctx, dbname, dbuser, dbpassword, encoding="UTF8", locale="en_US.UTF
 
 
 @task
+def setup_backups(ctx):
+    ctx.sudo("python3 -m pip install rotate-backups")
+    sudo_put(ctx, "cron-zam-backups.sh", "/etc/cron.hourly/zam-backups")
+    ctx.sudo("chmod 755 /etc/cron.hourly/zam-backups")
+
+
+@task
 def wipe_db(ctx, dbname):
     backup_db(ctx, dbname)
     # Will be restarted later in `deploy_repondeur`.
@@ -213,8 +220,7 @@ def wipe_db(ctx, dbname):
 @task
 def backup_db(ctx, dbname="zam"):
     create_directory(ctx, "/var/backups/zam", owner="postgres")
-    timestamp = datetime.utcnow().isoformat()
-    backup_filename = f"/var/backups/zam/postgres-dump-{timestamp}.sql"
+    backup_filename = f"/var/backups/zam/postgres-dump-{timestamp()}.sql"
     run_as_postgres(
         ctx,
         f"pg_dump --dbname={dbname} --create --encoding=UTF8 --file={backup_filename}",

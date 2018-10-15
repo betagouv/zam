@@ -1,9 +1,12 @@
 import os
 from contextlib import contextmanager
+from datetime import datetime
 from hashlib import md5
 from pathlib import Path
 from shlex import quote
 from string import Template
+
+from pytz import UTC
 
 
 class NginxFriendlyTemplate(Template):
@@ -87,3 +90,7 @@ def create_postgres_database(ctx, dbname, owner, encoding, locale):
 
 def run_as_postgres(ctx, cmd):
     return ctx.run(f"sudo -Hiu postgres {cmd}")
+
+
+def timestamp():
+    return UTC.localize(datetime.utcnow()).isoformat(timespec="seconds")

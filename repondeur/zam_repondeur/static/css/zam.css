@@ -223,3 +223,11 @@ nav .button:last-child {
 .custom-file-label::after {
     content: "Parcourir";
 }
+
+.amendement table {
+    width: 100%;
+}
+.amendement td {
+    border: 1px solid black;
+    padding: .2rem 1rem;
+}

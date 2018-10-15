@@ -93,6 +93,38 @@ class TestGetArticlesAN:
         )
 
     @responses.activate
+    def test_custom_article_titles_are_preserved(self, app, lecture_an, amendements_an):
+        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.models import DBSession, Amendement
+
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+            body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
+                "utf-8", "ignore"
+            ),
+            status=200,
+        )
+
+        DBSession.add(lecture_an)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.article.titre == ""
+        assert amendement.article.contenu == {}
+
+        # Let's set a custom article title
+        amendement.article.titre = "My custom title"
+
+        get_articles(lecture_an)
+
+        # We can get the article contents from an amendement
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.article.titre == "My custom title"
+        assert amendement.article.contenu["001"].startswith(
+            "Au titre de l'exercice 2016"
+        )
+
+    @responses.activate
     def test_intersticial_articles_are_not_updated(self, app, lecture_an):
         from zam_repondeur.fetch import get_articles
         from zam_repondeur.models import DBSession, Article

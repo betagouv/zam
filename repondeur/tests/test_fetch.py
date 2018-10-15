@@ -38,175 +38,238 @@ class TestGetPossibleUrls:
         ]
 
 
-@responses.activate
-def test_get_articles_an(app, lecture_an, amendements_an):
-    from zam_repondeur.fetch import get_articles
-    from zam_repondeur.models import DBSession, Amendement
+class TestGetArticlesAN:
+    @responses.activate
+    def test_new_articles_are_created(self, app, lecture_an, amendements_an):
+        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.models import DBSession
 
-    responses.add(
-        responses.GET,
-        "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
-        body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
-            "utf-8", "ignore"
-        ),
-        status=200,
-    )
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+            body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
+                "utf-8", "ignore"
+            ),
+            status=200,
+        )
 
-    DBSession.add(lecture_an)
-
-    # We only have the article mentioned by the amendement
-    assert {article.num for article in lecture_an.articles} == {"1"}
-
-    get_articles(lecture_an)
-
-    # We now also have article 2 after scraping the web page
-    assert {article.num for article in lecture_an.articles} == {"1", "2"}
-
-    # We can get the article contents from an amendement
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.article.titre == "Dispositions relatives l'exercice 2016"
-    assert amendement.article.contenu["001"].startswith("Au titre de l'exercice 2016")
-
-
-@responses.activate
-def test_get_articles_an_with_pos(app, lecture_an, amendements_an):
-    from zam_repondeur.fetch import get_articles
-    from zam_repondeur.models import DBSession, Article
-
-    article_avant_2 = Article.create(
-        lecture=lecture_an, type="article", num="2", pos="avant"
-    )
-    DBSession.add(article_avant_2)
-
-    responses.add(
-        responses.GET,
-        "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
-        body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
-            "utf-8", "ignore"
-        ),
-        status=200,
-    )
-
-    get_articles(lecture_an)
-
-    article = DBSession.query(Article).filter(Article.pos == "avant").first()
-    assert article.titre == ""
-    assert article.contenu == {}
-
-
-@responses.activate
-def test_get_articles_an_seance(app, lecture_an, amendements_an):
-    from zam_repondeur.fetch import get_articles
-    from zam_repondeur.models import DBSession, Amendement
-
-    with transaction.manager:
-        lecture_an.num_texte = 575
-        lecture_an.organe = "PO717460"
-        lecture_an.titre = "Première lecture – Séance publique"
-
-        amendements_an[0].article.num = "2"
-
-        # The objects are no longer bound to a session here, as they were created in a
-        # previous transaction, so we add them to the current session to make sure that
-        # our changes will be committed with the current transaction
         DBSession.add(lecture_an)
-        DBSession.add_all(amendements_an)
 
-    responses.add(
-        responses.GET,
-        "http://www.assemblee-nationale.fr/15/projets/pl0575.asp",
-        status=404,
-    )
-    responses.add(
-        responses.GET,
-        "http://www.assemblee-nationale.fr/15/ta-commission/r0575-a0.asp",
-        body=(Path(__file__).parent / "sample_data" / "r0575-a0.html").read_text(
-            "utf-8", "ignore"
-        ),
-        status=200,
-    )
+        # We only have the article mentioned by the amendement
+        assert {article.num for article in lecture_an.articles} == {"1"}
 
-    get_articles(lecture_an)
+        get_articles(lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.article.contenu["001"].startswith("Le code des relations entre")
+        # We now also have article 2 after scraping the web page
+        assert {article.num for article in lecture_an.articles} == {"1", "2"}
+
+    @responses.activate
+    def test_existing_articles_are_updated(self, app, lecture_an, amendements_an):
+        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.models import DBSession, Amendement
+
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+            body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
+                "utf-8", "ignore"
+            ),
+            status=200,
+        )
+
+        DBSession.add(lecture_an)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.article.titre == ""
+        assert amendement.article.contenu == {}
+
+        get_articles(lecture_an)
+
+        # We can get the article contents from an amendement
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.article.titre == "Dispositions relatives l'exercice 2016"
+        assert amendement.article.contenu["001"].startswith(
+            "Au titre de l'exercice 2016"
+        )
+
+    @responses.activate
+    def test_custom_article_titles_are_preserved(self, app, lecture_an, amendements_an):
+        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.models import DBSession, Amendement
+
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+            body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
+                "utf-8", "ignore"
+            ),
+            status=200,
+        )
+
+        DBSession.add(lecture_an)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.article.titre == ""
+        assert amendement.article.contenu == {}
+
+        # Let's set a custom article title
+        amendement.article.titre = "My custom title"
+
+        get_articles(lecture_an)
+
+        # We can get the article contents from an amendement
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.article.titre == "My custom title"
+        assert amendement.article.contenu["001"].startswith(
+            "Au titre de l'exercice 2016"
+        )
+
+    @responses.activate
+    def test_intersticial_articles_are_not_updated(self, app, lecture_an):
+        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.models import DBSession, Article
+
+        article_avant_2 = Article.create(
+            lecture=lecture_an, type="article", num="2", pos="avant"
+        )
+        DBSession.add(article_avant_2)
+
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+            body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
+                "utf-8", "ignore"
+            ),
+            status=200,
+        )
+
+        get_articles(lecture_an)
+
+        article = DBSession.query(Article).filter(Article.pos == "avant").first()
+        assert article.titre == ""
+        assert article.contenu == {}
+
+    @responses.activate
+    def test_fallback_to_alternative_url_pattern(self, app, lecture_an, amendements_an):
+        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.models import DBSession, Amendement
+
+        with transaction.manager:
+            lecture_an.num_texte = 575
+            lecture_an.organe = "PO717460"
+            lecture_an.titre = "Première lecture – Séance publique"
+
+            amendements_an[0].article.num = "2"
+
+            # The objects are no longer bound to a session here, as they were created in
+            # a previous transaction, so we add them to the current session to make sure
+            # that our changes will be committed with the current transaction
+            DBSession.add(lecture_an)
+            DBSession.add_all(amendements_an)
+
+        # This URL pattern will fail
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/projets/pl0575.asp",
+            status=404,
+        )
+
+        # So we want to use this one instead
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/ta-commission/r0575-a0.asp",
+            body=(Path(__file__).parent / "sample_data" / "r0575-a0.html").read_text(
+                "utf-8", "ignore"
+            ),
+            status=200,
+        )
+
+        get_articles(lecture_an)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.article.contenu["001"].startswith(
+            "Le code des relations entre"
+        )
+
+    @responses.activate
+    def test_not_found(self, app, lecture_an, amendements_an):
+        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.models import DBSession, Amendement
+
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+            status=404,
+        )
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/ta-commission/r0269-a0.asp",
+            status=404,
+        )
+
+        get_articles(lecture_an)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.article.contenu == {}
 
 
-@responses.activate
-def test_get_articles_an_unknown(app, lecture_an, amendements_an):
-    from zam_repondeur.fetch import get_articles
-    from zam_repondeur.models import DBSession, Amendement
+class TestGetArticlesSenat:
+    @responses.activate
+    def test_get_articles_senat(
+        self, app, lecture_senat, amendements_senat, article1_an
+    ):
+        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.models import DBSession, Amendement, Article
 
-    responses.add(
-        responses.GET,
-        "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
-        status=404,
-    )
-    responses.add(
-        responses.GET,
-        "http://www.assemblee-nationale.fr/15/ta-commission/r0269-a0.asp",
-        status=404,
-    )
+        responses.add(
+            responses.GET,
+            "https://www.senat.fr/leg/pjl17-063.html",
+            body=(Path(__file__).parent / "sample_data" / "pjl17-063.html").read_text(
+                "utf-8", "ignore"
+            ),
+            status=200,
+        )
 
-    get_articles(lecture_an)
+        get_articles(lecture_senat)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.article.contenu == {}
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
+        assert amendement.article.contenu["001"].startswith(
+            "Au titre de l'exercice 2016"
+        )
 
+        # We should not modify articles from unrelated lectures
+        article = DBSession.query(Article).filter_by(pk=article1_an.pk).one()
+        assert article is not amendement.article
+        assert article.contenu == {}
 
-@responses.activate
-def test_get_articles_senat(app, lecture_senat, amendements_senat, article1_an):
-    from zam_repondeur.fetch import get_articles
-    from zam_repondeur.models import DBSession, Amendement, Article
+    @responses.activate
+    def test_get_articles_senat_with_mult(self, app, lecture_senat, amendements_senat):
+        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.models import DBSession, Amendement
 
-    responses.add(
-        responses.GET,
-        "https://www.senat.fr/leg/pjl17-063.html",
-        body=(Path(__file__).parent / "sample_data" / "pjl17-063.html").read_text(
-            "utf-8", "ignore"
-        ),
-        status=200,
-    )
+        responses.add(
+            responses.GET,
+            "https://www.senat.fr/leg/pjl17-063.html",
+            body=(Path(__file__).parent / "sample_data" / "pjl17-063.html").read_text(
+                "utf-8", "ignore"
+            ),
+            status=200,
+        )
 
-    get_articles(lecture_senat)
+        with transaction.manager:
+            amendement = amendements_senat[0]
+            amendement.article.num = "4"
+            amendement.article.mult = "bis"
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
-    assert amendement.article.contenu["001"].startswith("Au titre de l'exercice 2016")
+            # The objects are no longer bound to a session here, as they were created in
+            # a previous transaction, so we add them to the current session to make sure
+            # that our changes will be committed with the current transaction
+            DBSession.add(amendement)
 
-    # We should not modify articles from unrelated lectures
-    article = DBSession.query(Article).filter_by(pk=article1_an.pk).one()
-    assert article is not amendement.article
-    assert article.contenu == {}
+        get_articles(lecture_senat)
 
-
-@responses.activate
-def test_get_articles_senat_with_mult(app, lecture_senat, amendements_senat):
-    from zam_repondeur.fetch import get_articles
-    from zam_repondeur.models import DBSession, Amendement
-
-    responses.add(
-        responses.GET,
-        "https://www.senat.fr/leg/pjl17-063.html",
-        body=(Path(__file__).parent / "sample_data" / "pjl17-063.html").read_text(
-            "utf-8", "ignore"
-        ),
-        status=200,
-    )
-
-    with transaction.manager:
-        amendement = amendements_senat[0]
-        amendement.article.num = "4"
-        amendement.article.mult = "bis"
-
-        # The objects are no longer bound to a session here, as they were created in a
-        # previous transaction, so we add them to the current session to make sure that
-        # our changes will be committed with the current transaction
-        DBSession.add(amendement)
-
-    get_articles(lecture_senat)
-
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
-    assert amendement.article.contenu["001"].startswith("Ne donnent pas lieu à")
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
+        assert amendement.article.contenu["001"].startswith("Ne donnent pas lieu à")
 
 
 def test_get_section_title():

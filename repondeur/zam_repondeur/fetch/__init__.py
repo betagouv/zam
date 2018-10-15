@@ -79,9 +79,10 @@ def update_lecture_articles(lecture: Lecture, all_article_data: List[dict]) -> N
     for article_data in all_article_data:
         if article_data["type"] in {"texte", "section"}:
             continue
-        find_or_create_article(lecture, article_data)
-        update_lecture_article(
-            lecture, article_data, partial(get_section_title, all_article_data)
+        article = find_or_create_article(lecture, article_data)
+        update_article_contents(article, article_data)
+        set_default_article_title(
+            article, article_data, partial(get_section_title, all_article_data)
         )
 
 
@@ -100,19 +101,17 @@ def find_or_create_article(lecture: Lecture, article_data: dict) -> Article:
     return article
 
 
-def update_lecture_article(
-    lecture: Lecture, article_data: dict, find_title: Callable
-) -> None:
+def update_article_contents(article: Article, article_data: dict) -> None:
     contenu = article_data.get("alineas")
     if contenu is not None:
-        num, mult = get_article_num_mult(article_data)
-        titre = find_title(article_data)
-        _update_article(lecture, num, mult, titre, contenu)
+        article.contenu = contenu
 
 
-def _update_article(
-    lecture: Lecture, num: str, mult: str, titre: str, contenu: dict
+def set_default_article_title(
+    article: Article, article_data: dict, get_default_title: Callable
 ) -> None:
-    DBSession.query(Article).filter_by(
-        lecture=lecture, num=num, mult=mult, pos=""
-    ).update({"titre": titre, "contenu": contenu})
+    """
+    If the article does not have a title, we set it to the parent section title
+    """
+    if not article.titre:
+        article.titre = get_default_title(article_data)

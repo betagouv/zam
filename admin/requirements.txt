@@ -1,3 +1,4 @@
 CommonMark==0.7.5
 Fabric==2.1.3
+pytz==2018.5
 requests==2.19.1

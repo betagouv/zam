@@ -34,6 +34,7 @@ AVIS = [
     "Retrait sinon rejet",
     "Retrait sous réserve de",
     "Sagesse",
+    "Satisfait donc rejet",
 ]
 
 
@@ -260,7 +261,7 @@ class Amendement(Base):
     def sagesse(self) -> bool:
         if self.avis is None:
             return False
-        return self.avis == "Sagesse"
+        return self.avis == "Sagesse" or self.avis == "Satisfait donc rejet"
 
     @property
     def lecture_url_key(self) -> str:

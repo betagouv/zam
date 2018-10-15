@@ -448,9 +448,9 @@
                         {% elif amendement.gouvernemental %}
                             <span class="avis gouvernement"></span>
                         {% elif amendement.avis %}
-                            {% if amendement.avis == "Sagesse" %}
+                            {% if amendement.sagesse %}
                                 <span class="avis sagesse"></span>
-                            {% elif amendement.avis.startswith("Favorable") %}
+                            {% elif amendement.favorable %}
                                 <span class="avis positive"></span>
                             {% else %}
                                 <span class="avis negative"></span>

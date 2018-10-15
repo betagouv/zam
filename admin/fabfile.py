@@ -1,56 +1,27 @@
-import os
 import sys
-from contextlib import contextmanager
 from datetime import datetime
-from hashlib import md5
 from pathlib import Path
-from shlex import quote
-from string import Template
 
 import CommonMark
 import requests
 from invoke import task
 
+from tools import (
+    clone_repo,
+    create_directory,
+    create_postgres_user,
+    create_postgres_database,
+    create_user,
+    install_locale,
+    run_as_postgres,
+    sudo_put,
+    template_local_file,
+)
+
 
 # Rollbar token with permissions to post items & deploys
 # cf. https://rollbar.com/zam/zam/settings/access_tokens/
 ROLLBAR_TOKEN = "8173da84cb344c169bdee21f91e8f529"
-
-
-class NginxFriendlyTemplate(Template):
-    delimiter = "$$"
-
-
-@contextmanager
-def template_local_file(template_filename, output_filename, data):
-    with open(template_filename, encoding="utf-8") as template_file:
-        template = NginxFriendlyTemplate(template_file.read())
-    with open(output_filename, mode="w", encoding="utf-8") as output_file:
-        output_file.write(template.substitute(**data))
-    yield
-    os.remove(output_filename)
-
-
-def sudo_put(ctx, local, remote, chown=None):
-    tmp = str(Path("/tmp") / md5(remote.encode()).hexdigest())
-    ctx.put(local, tmp)
-    ctx.sudo(f"mv {quote(tmp)} {quote(remote)}")
-    if chown:
-        ctx.sudo(f"chown {chown}: {quote(remote)}")
-
-
-def put_dir(ctx, local, remote, chown=None):
-    local = Path(local)
-    remote = Path(remote)
-    for path in local.rglob("*"):
-        relative_path = path.relative_to(local)
-        if str(relative_path).startswith("."):
-            # Avoid pushing hidden files.
-            continue
-        if path.is_dir():
-            ctx.sudo(f"mkdir -p {quote(remote / relative_path)}")
-        else:
-            sudo_put(ctx, str(path), str(remote / relative_path), chown)
 
 
 @task
@@ -209,32 +180,6 @@ def deploy_repondeur(
 
 
 @task
-def install_locale(ctx, locale_name):
-    installed_locales = [
-        line.strip() for line in ctx.sudo(f"locale -a", hide=True).stdout.splitlines()
-    ]
-    if locale_name not in installed_locales:
-        ctx.sudo(f"locale-gen {locale_name}")
-
-
-@task
-def create_user(ctx, name, home_dir):
-    if ctx.sudo(f"getent passwd {name}", warn=True, hide=True).failed:
-        ctx.sudo(f"useradd --system --create-home --home-dir {quote(home_dir)} {name}")
-
-
-@task
-def clone_repo(ctx, repo, branch, path, user):
-    if ctx.run(f"test -d {quote(path)}", warn=True, hide=True).failed:
-        ctx.sudo(f"git clone --branch={branch} {repo} {quote(path)}", user=user)
-    else:
-        git = f"git --work-tree={quote(path)} --git-dir={quote(path + '/.git')}"
-        ctx.sudo(f"{git} fetch", user=user)
-        ctx.sudo(f"{git} checkout {branch}", user=user)
-        ctx.sudo(f"{git} reset --hard origin/{branch}", user=user)
-
-
-@task
 def install_requirements(ctx, app_dir, user):
     ctx.sudo("python3 -m pip install pipenv==2018.7.1")
     ctx.sudo(f'bash -c "cd {app_dir} && pipenv install"', user=user)
@@ -252,28 +197,8 @@ def setup_config(ctx, app_dir, user, context):
 
 @task
 def setup_db(ctx, dbname, dbuser, dbpassword, encoding="UTF8", locale="en_US.UTF8"):
-    # We cannot use `with ctx.cd()` because of
-    # https://github.com/pyinvoke/invoke/issues/459
-    # You might be tempted to use something like `bash -c cd "/tmp && `
-    # as a prefix but beware that you will have to imbricate 4 kind of quotes
-    # which is AFAIK not possible with bash.
-    # Finally, after spending 3 hours on the subject,
-    # it's just an error message in the console, we can still hide it!
-    # Actual message: could not change directory to "/root": Permission denied
-    ctx.sudo(
-        f"""psql -c "CREATE USER {dbuser} ENCRYPTED PASSWORD '{dbpassword}';"  || exit 0""",
-        user="postgres",
-        hide=True,
-    )
-    ctx.sudo(
-        (
-            f"createdb --owner={dbuser} --template=template0 "
-            f"--encoding={encoding} --lc-ctype={locale} --lc-collate={locale} "
-            f"{dbname} || exit 0"
-        ),
-        user="postgres",
-        hide=True,
-    )
+    create_postgres_user(ctx, dbuser, dbpassword)
+    create_postgres_database(ctx, dbname, dbuser, encoding, locale)
 
 
 @task
@@ -282,17 +207,17 @@ def wipe_db(ctx, dbname):
     # Will be restarted later in `deploy_repondeur`.
     ctx.sudo("systemctl stop zam_webapp")
     ctx.sudo("systemctl stop zam_worker")
-    ctx.sudo(f"dropdb {dbname}", user="postgres")
+    run_as_postgres(ctx, f"dropdb {dbname}")
 
 
 @task
-def backup_db(ctx, dbname):
+def backup_db(ctx, dbname="zam"):
     create_directory(ctx, "/var/backups/zam", owner="postgres")
     timestamp = datetime.utcnow().isoformat()
     backup_filename = f"/var/backups/zam/postgres-dump-{timestamp}.sql"
-    ctx.sudo(
+    run_as_postgres(
+        ctx,
         f"pg_dump --dbname={dbname} --create --encoding=UTF8 --file={backup_filename}",
-        user="postgres",
     )
 
 
@@ -303,12 +228,6 @@ def migrate_db(ctx, app_dir, user):
         f'bash -c "cd {app_dir} && pipenv run alembic -c production.ini upgrade head"',
         user=user,
     )
-
-
-@task
-def create_directory(ctx, path, owner):
-    ctx.sudo(f"mkdir -p {quote(path)}")
-    ctx.sudo(f"chown {owner}: {quote(path)}")
 
 
 @task

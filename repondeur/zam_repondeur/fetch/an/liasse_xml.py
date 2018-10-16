@@ -121,12 +121,8 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
     amendement.sort = get_sort(
         sort=extract("sort", "sortEnSeance"), etat=extract("etat")
     )
-    amendement.dispositif = clean_html(
-        extract("corps", "dispositif") or "", allowed_tags=LIASSE_ALLOWED_TAGS
-    )
-    amendement.objet = clean_html(
-        extract("corps", "exposeSommaire") or "", allowed_tags=LIASSE_ALLOWED_TAGS
-    )
+    amendement.dispositif = clean_html(extract("corps", "dispositif") or "")
+    amendement.objet = clean_html(extract("corps", "exposeSommaire") or "")
     amendement.parent = get_parent(extract("amendementParent"), uid_map)
     return cast(Amendement, amendement)
 

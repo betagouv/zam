@@ -34,8 +34,8 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
     form = resp.forms["edit-reponse"]
     form["avis"] = "Favorable"
     form["observations"] = "Des observations très pertinentes"
-    form["reponse"] = "Une réponse très appropriée"
-    form["comments"] = "Avec des commentaires"
+    form["reponse"] = "Une réponse <strong>très</strong> appropriée"
+    form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
     resp = form.submit()
 
     assert resp.status_code == 302
@@ -47,8 +47,11 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.avis == "Favorable"
     assert amendement.observations == "Des observations très pertinentes"
-    assert amendement.reponse == "Une réponse très appropriée"
-    assert amendement.comments == "Avec des commentaires"
+    assert amendement.reponse == "Une réponse <strong>très</strong> appropriée"
+    assert (
+        amendement.comments
+        == "Avec des <table><tbody><tr><td>commentaires</td></tr></tbody></table>"
+    )
 
 
 def test_post_reponse_edit_form_updates_modification_date(

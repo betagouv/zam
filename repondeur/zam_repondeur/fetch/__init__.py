@@ -29,18 +29,28 @@ def get_amendements(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]
 def get_section_title(items: List[Dict[str, Any]], article: dict) -> str:
     for item in items:
         if article.get("section", False) == item.get("id"):
-            titre: str = item["titre"]
-            return titre
+            title: str = item["titre"]
+            return title
     return ""
 
 
-def get_article_num_mult(article: Dict[str, Any]) -> Tuple[str, str]:
-    titre = article["titre"].replace("1er", "1").replace("liminaire", "0")
-    if " " in titre:
-        num, mult = titre.split(" ", 1)
+def get_article_num_mult(title: str) -> Tuple[str, str]:
+    title = title.replace("1er", "1").replace("liminaire", "0")
+    if " " in title:
+        num, mult = title.split(" ", 1)
         return num, mult
     else:
-        return titre, ""
+        return title, ""
+
+
+def get_article_nums_mults(article: Dict[str, Any]) -> List[Tuple[str, str]]:
+    title = article["titre"]
+    if " à " in title:
+        start, end = title.split(" à ")
+        # We are not handling `5 bis à 8 ter AAA` (yet?).
+        return [(str(num), "") for num in range(int(start), int(end) + 1)]
+    else:
+        return [get_article_num_mult(title)]
 
 
 def get_articles(lecture: Lecture) -> None:
@@ -79,26 +89,28 @@ def update_lecture_articles(lecture: Lecture, all_article_data: List[dict]) -> N
     for article_data in all_article_data:
         if article_data["type"] in {"texte", "section"}:
             continue
-        article = find_or_create_article(lecture, article_data)
-        update_article_contents(article, article_data)
-        set_default_article_title(
-            article, article_data, partial(get_section_title, all_article_data)
-        )
+        articles = find_or_create_articles(lecture, article_data)
+        for article in articles:
+            update_article_contents(article, article_data)
+            set_default_article_title(
+                article, article_data, partial(get_section_title, all_article_data)
+            )
 
 
-def find_or_create_article(lecture: Lecture, article_data: dict) -> Article:
-    num, mult = get_article_num_mult(article_data)
-    article: Article
-    article, _ = get_one_or_create(
-        DBSession,
-        Article,
-        lecture=lecture,
-        type=article_data["type"],
-        num=num,
-        mult=mult,
-        pos="",
-    )
-    return article
+def find_or_create_articles(lecture: Lecture, article_data: dict) -> List[Article]:
+    nums_mults = get_article_nums_mults(article_data)
+    return [
+        get_one_or_create(
+            DBSession,
+            Article,
+            lecture=lecture,
+            type=article_data["type"],
+            num=num,
+            mult=mult,
+            pos="",
+        )[0]
+        for num, mult in nums_mults
+    ]
 
 
 def update_article_contents(article: Article, article_data: dict) -> None:

@@ -483,3 +483,12 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
   -moz-appearance:textfield;
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+  table td {
+    padding: .4rem .6rem;
+    border: 1px solid #565656;
+  }

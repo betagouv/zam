@@ -10,10 +10,10 @@
 
 ### 16 octobre 2018
 
-* Alimentation à la chaîne des éléments relatifs à l'article
+* Alimentation à la chaîne des éléments relatifs aux articles
 * Survie des titres personnalisés d'articles après le rafraîchissement automatique
-* Ajout d'un avis du Gouvernement "Satisfait donc retrait"
-* Aspiration corrects des tableaux insérés dans les amendements
+* Ajout d'un avis du gouvernement « Satisfait donc retrait »
+* Aspiration correcte des tableaux insérés dans les amendements
 
 ### 12 octobre 2018
 

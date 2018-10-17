@@ -64,9 +64,7 @@ class TestGetArticlesAN:
         assert {article.num for article in lecture_an.articles} == {"1", "2"}
 
     @responses.activate
-    def test_new_articles_from_foo_to_bar_are_created(
-        self, app, lecture_an, amendements_an
-    ):
+    def test_article_ranges(self, app, lecture_an):
         from zam_repondeur.fetch import get_articles
         from zam_repondeur.models import DBSession
 
@@ -81,24 +79,18 @@ class TestGetArticlesAN:
 
         DBSession.add(lecture_an)
 
-        # We only have the article mentioned by the amendement
-        assert {article.num for article in lecture_an.articles} == {"1"}
+        # No articles initially
+        assert {article.num for article in lecture_an.articles} == set()
 
         get_articles(lecture_an)
 
-        # We now also have articles from 19 to 24.
-        assert {article.num for article in lecture_an.articles} == {
-            "1",
-            "2",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-        }
+        nums = {article.num for article in lecture_an.articles}
+
+        # "Articles 1er et 2"
+        assert {"1", "2"}.issubset(nums)
+
+        # "Articles 19 à 24"
+        assert {"19", "20", "21", "22", "23", "24"}.issubset(nums)
 
     @responses.activate
     def test_existing_articles_are_updated(self, app, lecture_an, amendements_an):

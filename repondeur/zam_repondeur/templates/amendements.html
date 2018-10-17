@@ -368,7 +368,7 @@
                 class="highlighted"
                 {% endif %}
             >
-                <td class="bookmark" data-sortkey="{{ amendement.bookmarked_at }}">
+                <td class="bookmark" data-sortkey="{{ 0 if amendement.bookmarked_at else 1 }}">
                     <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">
                         {% if amendement.bookmarked_at %}
                             <input type="hidden" name="bookmark" value="0">
@@ -726,12 +726,12 @@
                     submitInput.value = '★'
                     submitInput.title = 'Cliquer pour enlever le favori'
                     submitInput.classList.add('bookmarked')
-                    target.parentElement.dataset.sortkey = 1
+                    target.parentElement.dataset.sortkey = '0'
                 } else {
                     submitInput.value = '☆'
                     submitInput.title = 'Cliquer pour mettre en favori'
                     submitInput.classList.remove('bookmarked')
-                    target.parentElement.dataset.sortkey = ''
+                    target.parentElement.dataset.sortkey = '1'
                 }
                 const body = new FormData(target)
                 fetch(target.action, {

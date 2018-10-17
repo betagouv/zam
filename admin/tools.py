@@ -74,7 +74,7 @@ def install_locale(ctx, locale_name):
 
 
 def create_postgres_user(ctx, dbuser, dbpassword):
-    sql = "CREATE USER {dbuser} ENCRYPTED PASSWORD '{dbpassword}';"
+    sql = f"CREATE USER {dbuser} ENCRYPTED PASSWORD '{dbpassword}';"
     run_as_postgres(ctx, f'psql -c "{sql}" || exit 0')
 
 

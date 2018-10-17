@@ -172,7 +172,7 @@ class Article(Base):
                 mult, intersticiel = s, ""
             else:
                 mult, intersticiel = "", s
-        return (Article._ORDER_MULT[mult], intersticiel.ljust(10, "_"))
+        return (Article._ORDER_MULT.get(mult, 0), intersticiel.ljust(10, "_"))
 
     @classmethod
     def create(

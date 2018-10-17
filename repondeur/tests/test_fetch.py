@@ -64,6 +64,35 @@ class TestGetArticlesAN:
         assert {article.num for article in lecture_an.articles} == {"1", "2"}
 
     @responses.activate
+    def test_article_ranges(self, app, lecture_an):
+        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.models import DBSession
+
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+            body=(Path(__file__).parent / "sample_data" / "pl0387.html")
+            .read_text("latin-1")
+            .encode("latin-1"),
+            status=200,
+        )
+
+        DBSession.add(lecture_an)
+
+        # No articles initially
+        assert {article.num for article in lecture_an.articles} == set()
+
+        get_articles(lecture_an)
+
+        nums = {article.num for article in lecture_an.articles}
+
+        # "Articles 1er et 2"
+        assert {"1", "2"}.issubset(nums)
+
+        # "Articles 19 à 24"
+        assert {"19", "20", "21", "22", "23", "24"}.issubset(nums)
+
+    @responses.activate
     def test_existing_articles_are_updated(self, app, lecture_an, amendements_an):
         from zam_repondeur.fetch import get_articles
         from zam_repondeur.models import DBSession, Amendement
@@ -346,4 +375,21 @@ def test_get_section_title_unknown_reference():
 def test_get_article_num_mult(input, num, mult):
     from zam_repondeur.fetch import get_article_num_mult
 
-    assert get_article_num_mult({"titre": input}) == (num, mult)
+    assert get_article_num_mult(input) == (num, mult)
+
+
+@pytest.mark.parametrize(
+    "input,output",
+    [
+        ("liminaire", [("0", "")]),
+        ("1er", [("1", "")]),
+        ("2", [("2", "")]),
+        ("3 bis", [("3", "bis")]),
+        ("5 ter AAA", [("5", "ter AAA")]),
+        ("19 à 21", [("19", ""), ("20", ""), ("21", "")]),
+    ],
+)
+def test_get_article_nums_mults(input, output):
+    from zam_repondeur.fetch import get_article_nums_mults
+
+    assert get_article_nums_mults({"titre": input}) == output

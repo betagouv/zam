@@ -6,7 +6,7 @@ from typing import Dict, IO, List, Optional, cast
 
 from lxml import etree
 
-from zam_repondeur.clean import ALLOWED_TAGS, TABLE_TAGS, clean_html
+from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
 from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Texte
 from zam_repondeur.fetch.dates import parse_date
@@ -26,7 +26,6 @@ logger = logging.getLogger(__name__)
 
 
 NS = "{http://schemas.assemblee-nationale.fr/referentiel}"
-LIASSE_ALLOWED_TAGS = ALLOWED_TAGS + TABLE_TAGS
 
 
 def import_liasse_xml(xml_file: IO[bytes]) -> List[Amendement]:

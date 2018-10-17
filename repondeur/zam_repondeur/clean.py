@@ -17,8 +17,13 @@ ALLOWED_TAGS = [
     "em",
     "sub",
     "sup",
+    "table",
+    "thead",
+    "th",
+    "tbody",
+    "tr",
+    "td",
 ]
-TABLE_TAGS = ["table", "thead", "th", "tbody", "tr", "td"]
 
 
 def clean_html(html: str, allowed_tags: Optional[Iterable[str]] = None) -> str:

@@ -2,11 +2,27 @@
 
 ## Prochains évènements
 
-### Date de prochaine démonstration : 3 octobre à 15h.
+### Date prévisionnelle de prochaine démonstration : 30 octobre à 15h (à confirmer).
 
 <h2 class="center">[Accès au répondeur](/repondeur/) — [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
 
 ## Changements récents
+
+### 16 octobre 2018
+
+* Alimentation à la chaîne des éléments relatifs à l'article
+* Survie des titres personnalisés d'articles après le rafraîchissement automatique
+* Ajout d'un avis du Gouvernement "Satisfait donc retrait"
+* Aspiration corrects des tableaux insérés dans les amendements
+
+### 12 octobre 2018
+
+* Mise à jour du module de création du PDF pour améliorer la performance de la génération du document
+* Retour à la liste filtrée dans le répondeur
+* Smooth scroll dans la visionneuse
+* Prise en compte d'une particularité de numérotation PLF dans l'aspiration des données
+* Création du menu Liste des articles pour permettre l'édition des infos de l'article même en l'absence d'amendement sur cet article
+* Génération du PDF unitaire (par amendement)
 
 ### 2 octobre 2018
 

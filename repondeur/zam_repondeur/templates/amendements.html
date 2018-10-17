@@ -368,7 +368,7 @@
                 class="highlighted"
                 {% endif %}
             >
-                <td class="bookmark" data-sortkey="{{ amendement.bookmarked_at }}">
+                <td class="bookmark" data-sortkey="{{ 0 if amendement.bookmarked_at else 1 }}">
                     <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">
                         {% if amendement.bookmarked_at %}
                             <input type="hidden" name="bookmark" value="0">
@@ -383,7 +383,7 @@
                     {%- if amendement.retire_avant_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }}
                     {%- else -%}
-                        {{ amendement.article.num }}
+                        {{ amendement.article.sort_key_as_str }}
                     {%- endif -%}">
                     <span
                     {% if amendement.article.titre %}
@@ -604,12 +604,42 @@
     }
     function sortColumn(tableHeader, colIndex, order) {
         tableHeader.setAttribute('data-order', order)
+        const selector = 'td:nth-child(' + colIndex + ')'
         const options = {
-            data: 'sortkey',
-            selector: 'td:nth-child(' + colIndex + ')',
+            sortFunction: (a, b) => {
+                return compareArrays(
+                    extractItems(a.elm, selector),
+                    extractItems(b.elm, selector)
+                )
+            },
             order: order
         }
         tinysort(tableLines, options)
+    }
+    function extractItems(elem, selector) {
+        const value = elem.querySelector(selector).dataset.sortkey
+        return value.split('|').map(maybeNumber)
+    }
+    function maybeNumber(value) {
+        const number = parseInt(value, 10)
+        if (isNaN(number)) {
+            return value
+        }
+        return number
+    }
+    function compareArrays(a, b) {
+        const length = Math.min(a.length, b.length)
+        for (let i = 0; i < length; i++) {
+            const elA = a[i],
+                elB = b[i]
+            if (elA > elB) {
+                return 1
+            }
+            if (elA < elB) {
+                return -1
+            }
+        }
+        return b.length - a.length
     }
     ;(function sortColumnsFromQueryString() {
         const sortSpec = getSortSpecFromURL()
@@ -726,12 +756,12 @@
                     submitInput.value = '★'
                     submitInput.title = 'Cliquer pour enlever le favori'
                     submitInput.classList.add('bookmarked')
-                    target.parentElement.dataset.sortkey = 1
+                    target.parentElement.dataset.sortkey = '0'
                 } else {
                     submitInput.value = '☆'
                     submitInput.title = 'Cliquer pour mettre en favori'
                     submitInput.classList.remove('bookmarked')
-                    target.parentElement.dataset.sortkey = ''
+                    target.parentElement.dataset.sortkey = '1'
                 }
                 const body = new FormData(target)
                 fetch(target.action, {

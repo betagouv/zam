@@ -164,6 +164,11 @@ class Article(Base):
             Article._ORDER_POS[self.pos or ""],
         )
 
+    @property
+    def sort_key_as_str(self) -> str:
+        s = self.sort_key
+        return "|".join(map(str, (s[0], s[1], s[2][0], s[2][1], s[3])))
+
     def _mult_key(self, s: str) -> Tuple[int, str]:
         if " " in s:
             mult, intersticiel = s.split(" ", 1)

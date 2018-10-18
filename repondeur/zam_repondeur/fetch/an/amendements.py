@@ -219,9 +219,17 @@ def get_groupe(amendement: OrderedDict) -> str:
     if int(auteur["estGouvernement"]) or "@xsi:nil" in auteur["groupeTribunId"]:
         return ""
     groupes = get_data("organes")
-    groupe = groupes[f"PO{auteur['groupeTribunId']}"]
-    libelle: str = groupe["libelle"]
-    return libelle
+    try:
+        groupe_tribun_id = f"PO{auteur['groupeTribunId']}"
+    except KeyError:
+        logger.error(
+            "Unknown groupe %r for amendement %s",
+            groupe_tribun_id,
+            amendement["numero"],
+        )
+        return ""
+    groupe: Dict[str, str] = groupes[groupe_tribun_id]
+    return groupe["libelle"]
 
 
 def get_sort(amendement: OrderedDict) -> str:

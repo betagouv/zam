@@ -53,14 +53,14 @@ def get_article_nums_mults(article: Dict[str, Any]) -> List[Tuple[str, str]]:
         return [get_article_num_mult(title)]
 
 
-def get_articles(lecture: Lecture) -> None:
+def get_articles(lecture: Lecture) -> bool:
     urls = get_possible_texte_urls(lecture)
     try:
         articles = parse_first_working_url(urls)
     except NotFound:
         logger.warning("Texte non trouvé : %r (%s)", lecture, urls)
-        return
-    update_lecture_articles(lecture, articles)
+        return False
+    return update_lecture_articles(lecture, articles)
 
 
 AN_URL = "http://www.assemblee-nationale.fr/"
@@ -85,16 +85,18 @@ def parse_first_working_url(urls: List[str]) -> List[dict]:
     raise NotFound
 
 
-def update_lecture_articles(lecture: Lecture, all_article_data: List[dict]) -> None:
+def update_lecture_articles(lecture: Lecture, all_article_data: List[dict]) -> bool:
+    changed = False
     for article_data in all_article_data:
         if article_data["type"] in {"texte", "section"}:
             continue
         articles = find_or_create_articles(lecture, article_data)
         for article in articles:
-            update_article_contents(article, article_data)
-            set_default_article_title(
+            changed |= update_article_contents(article, article_data)
+            changed |= set_default_article_title(
                 article, article_data, partial(get_section_title, all_article_data)
             )
+    return changed
 
 
 def find_or_create_articles(lecture: Lecture, article_data: dict) -> List[Article]:
@@ -113,17 +115,23 @@ def find_or_create_articles(lecture: Lecture, article_data: dict) -> List[Articl
     ]
 
 
-def update_article_contents(article: Article, article_data: dict) -> None:
+def update_article_contents(article: Article, article_data: dict) -> bool:
     contenu = article_data.get("alineas")
-    if contenu is not None:
+    if contenu is not None and contenu != article.contenu:
         article.contenu = contenu
+        return True
+    return False
 
 
 def set_default_article_title(
     article: Article, article_data: dict, get_default_title: Callable
-) -> None:
+) -> bool:
     """
     If the article does not have a title, we set it to the parent section title
     """
     if not article.titre:
-        article.titre = get_default_title(article_data)
+        default_title = get_default_title(article_data)
+        if default_title:
+            article.titre = default_title
+            return True
+    return False

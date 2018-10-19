@@ -58,7 +58,9 @@ class TestGetArticlesAN:
         # We only have the article mentioned by the amendement
         assert {article.num for article in lecture_an.articles} == {"1"}
 
-        get_articles(lecture_an)
+        changed = get_articles(lecture_an)
+
+        assert changed
 
         # We now also have article 2 after scraping the web page
         assert {article.num for article in lecture_an.articles} == {"1", "2"}
@@ -82,7 +84,9 @@ class TestGetArticlesAN:
         # No articles initially
         assert {article.num for article in lecture_an.articles} == set()
 
-        get_articles(lecture_an)
+        changed = get_articles(lecture_an)
+
+        assert changed
 
         nums = {article.num for article in lecture_an.articles}
 
@@ -112,7 +116,9 @@ class TestGetArticlesAN:
         assert amendement.article.titre == ""
         assert amendement.article.contenu == {}
 
-        get_articles(lecture_an)
+        changed = get_articles(lecture_an)
+
+        assert changed
 
         # We can get the article contents from an amendement
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
@@ -144,7 +150,9 @@ class TestGetArticlesAN:
         # Let's set a custom article title
         amendement.article.titre = "My custom title"
 
-        get_articles(lecture_an)
+        changed = get_articles(lecture_an)
+
+        assert changed
 
         # We can get the article contents from an amendement
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
@@ -172,7 +180,9 @@ class TestGetArticlesAN:
             status=200,
         )
 
-        get_articles(lecture_an)
+        changed = get_articles(lecture_an)
+
+        assert changed
 
         article = DBSession.query(Article).filter(Article.pos == "avant").first()
         assert article.titre == ""
@@ -213,7 +223,9 @@ class TestGetArticlesAN:
             status=200,
         )
 
-        get_articles(lecture_an)
+        changed = get_articles(lecture_an)
+
+        assert changed
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.article.contenu["001"].startswith(
@@ -236,7 +248,9 @@ class TestGetArticlesAN:
             status=404,
         )
 
-        get_articles(lecture_an)
+        changed = get_articles(lecture_an)
+
+        assert not changed
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.article.contenu == {}
@@ -259,7 +273,9 @@ class TestGetArticlesSenat:
             status=200,
         )
 
-        get_articles(lecture_senat)
+        changed = get_articles(lecture_senat)
+
+        assert changed
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
         assert amendement.article.contenu["001"].startswith(
@@ -295,7 +311,9 @@ class TestGetArticlesSenat:
             # that our changes will be committed with the current transaction
             DBSession.add(amendement)
 
-        get_articles(lecture_senat)
+        changed = get_articles(lecture_senat)
+
+        assert changed
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
         assert amendement.article.contenu["001"].startswith("Ne donnent pas lieu à")

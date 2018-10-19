@@ -26,11 +26,11 @@ def fetch_articles(lecture_pk: int) -> None:
             logger.error(f"Lecture {lecture_pk} introuvable")
             return
 
-        get_articles(lecture)
+        changed: bool = get_articles(lecture)
 
-        message = "Récupération des articles effectuée."
-        Journal.create(lecture=lecture, kind="info", message=message)
-        lecture.modified_at = datetime.utcnow()
+        if changed:
+            message = "Récupération des articles effectuée."
+            Journal.create(lecture=lecture, kind="info", message=message)
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)

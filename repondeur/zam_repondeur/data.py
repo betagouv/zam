@@ -1,5 +1,5 @@
 import pickle
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from pyramid.config import Configurator
 from redis import Redis
@@ -27,16 +27,16 @@ class DataRepository:
     Store and access global data in Redis
     """
 
-    def __init__(self, redis_url: str, current_legislature: int) -> None:
+    def __init__(self, redis_url: str, legislatures: List[int]) -> None:
         self.connection = Redis.from_url(redis_url)
-        self.current_legislature = current_legislature
+        self.legislatures = legislatures
 
     def clear_data(self) -> None:
         self.connection.flushdb()
 
     def load_data(self) -> None:
-        dossiers = get_dossiers_legislatifs(legislature=self.current_legislature)
-        organes, acteurs = get_organes_acteurs(legislature=self.current_legislature)
+        dossiers = get_dossiers_legislatifs(*self.legislatures)
+        organes, acteurs = get_organes_acteurs()
         self.connection.set("dossiers", pickle.dumps(dossiers))
         self.connection.set("organes", pickle.dumps(organes))
         self.connection.set("acteurs", pickle.dumps(acteurs))
@@ -54,7 +54,7 @@ def init_repository(settings: Dict[str, Any]) -> DataRepository:
     global _repository
     _repository = DataRepository(
         redis_url=settings["zam.data.redis_url"],
-        current_legislature=int(settings["zam.legislature"]),
+        legislatures=[int(legi) for legi in settings["zam.legislatures"].split(",")],
     )
     return _repository
 

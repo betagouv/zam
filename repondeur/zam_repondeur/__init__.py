@@ -24,7 +24,7 @@ BASE_SETTINGS = {
         "filter_out_empty_additionals": f"{FILTERS_PATH}:filter_out_empty_additionals",
     },
     "jinja2.undefined": "strict",
-    "zam.legislature": 15,
+    "zam.legislatures": "14,15",
     "huey.workers": (cpu_count() * 2) + 1,
 }
 

@@ -283,9 +283,9 @@ def notify_rollbar(ctx, rollbar_token, branch, environment):
 
 @task
 def logs_webapp(ctx, lines=100):
-    ctx.sudo(f"journalctl --unit zam_webapp.service | tail -n {lines}")
+    ctx.sudo(f"journalctl --unit zam_webapp.service -n {lines}")
 
 
 @task
 def logs_worker(ctx, lines=100):
-    ctx.sudo(f"journalctl --unit zam_worker.service | tail -n {lines}")
+    ctx.sudo(f"journalctl --unit zam_worker.service -n {lines}")

@@ -104,6 +104,21 @@
                 }
             })
         })()
+
+        ;(function preventMultipleClicks () {
+            const links = document.querySelectorAll('.prevent-multiple-clicks')
+            links.forEach(link => {
+                link.onclick = (e) => {
+                    link.classList.add('disabled')
+                    const initialInnerHTML = link.innerHTML
+                    link.innerHTML = 'En cours de traitement…'
+                    window.setTimeout(_ => {
+                        link.innerHTML = initialInnerHTML
+                        link.classList.remove('disabled')
+                    }, 1000 * 10) // Seconds.
+                }
+            })
+        })()
     </script>
     {% block scripts %}
     {% endblock %}

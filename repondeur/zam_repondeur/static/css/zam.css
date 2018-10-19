@@ -161,6 +161,10 @@ a.underlined:hover {
     color: white;
     text-decoration: none;
 }
+.button.disabled {
+    opacity: 0.65;
+    pointer-events: none;
+}
 
 /* Bouton rouge */
 .danger.button,

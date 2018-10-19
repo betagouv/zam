@@ -34,6 +34,8 @@ zam.data.redis_url = redis://localhost:6379/2
 
 zam.secret = $$secret
 
+zam.uploads_backup_dir = /srv/repondeur/data/uploads
+
 [server:main]
 use = egg:waitress#main
 listen = localhost:6543

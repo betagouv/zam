@@ -1,5 +1,9 @@
 import logging
+import os
+import shutil
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Optional
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
@@ -35,6 +39,11 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
             Message(cls="warning", text="Veuillez d’abord sélectionner un fichier")
         )
         return
+
+    # Backup uploaded file to make troubleshooting easier
+    backup_path = get_backup_path(request)
+    if backup_path is not None:
+        save_uploaded_file(liasse_field, backup_path)
 
     try:
         amendements = import_liasse_xml(liasse_field.file)
@@ -91,3 +100,23 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
         Journal.create(lecture=lecture, kind="success", message=message)
         lecture.modified_at = datetime.utcnow()
         DBSession.add(lecture)
+
+
+def get_backup_path(request: Request) -> Optional[Path]:
+    backup_dir: Optional[str] = request.registry.settings.get("zam.uploads_backup_dir")
+    if not backup_dir:
+        return None
+    backup_path = Path(backup_dir)
+    backup_path.mkdir(parents=True, exist_ok=True)
+    return backup_path
+
+
+def save_uploaded_file(form_field: Any, backup_dir: Path) -> None:
+    form_field.file.seek(0)
+    timestamp = datetime.utcnow().isoformat(timespec="seconds")
+    sanitized_filename = os.path.basename(form_field.filename)
+    backup_filename = Path(backup_dir) / f"liasse-{timestamp}-{sanitized_filename}"
+    with backup_filename.open("wb") as backup_file:
+        shutil.copyfileobj(form_field.file, backup_file)
+    logger.info("Uploaded file saved to %s", backup_filename)
+    form_field.file.seek(0)

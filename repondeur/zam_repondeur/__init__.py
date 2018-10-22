@@ -1,3 +1,4 @@
+from multiprocessing import cpu_count
 from typing import Any
 
 from pyramid.config import Configurator
@@ -19,7 +20,7 @@ BASE_SETTINGS = {
         "amendement_matches": "zam_repondeur.views.jinja2_filters:amendement_matches",
     },
     "zam.legislature": 15,
-    "huey.workers": 8,
+    "huey.workers": (cpu_count() * 2) + 1,
 }
 
 

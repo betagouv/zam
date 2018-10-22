@@ -297,3 +297,13 @@ def logs_webapp(ctx, lines=100):
 @task
 def logs_worker(ctx, lines=100):
     ctx.sudo(f"journalctl --unit zam_worker.service -n {lines}")
+
+
+@task
+def logs_http(ctx, lines=10):
+    ctx.sudo(" | ".join([
+        "cat /var/log/nginx/access.log",
+        r"grep -v ' - - \['",  # skip unauthenticated requests
+        "grep -v '/check'",  # skip periodic update checks
+        f"tail -n {lines}",
+    ]))

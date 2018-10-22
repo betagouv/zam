@@ -164,6 +164,7 @@ def deploy_repondeur(
 
     install_requirements(ctx, app_dir=app_dir, user=user)
     gunicorn_workers = (cpu_count(ctx) * 2) + 1
+    gunicorn_timeout = 180
     setup_config(
         ctx,
         app_dir=app_dir,
@@ -175,6 +176,7 @@ def deploy_repondeur(
             "secret": secret,
             "rollbar_token": rollbar_token,
             "gunicorn_workers": gunicorn_workers,
+            "gunicorn_timeout": gunicorn_timeout,
         },
     )
     if wipe:

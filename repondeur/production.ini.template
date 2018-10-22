@@ -41,6 +41,7 @@ use = egg:gunicorn#main
 host = 127.0.0.1
 port = 6543
 workers = $$gunicorn_workers
+timeout = $$gunicorn_timeout
 
 [alembic]
 script_location = db_migrations

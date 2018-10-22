@@ -228,22 +228,22 @@ class Amendement(Base):
         return self.auteur == "LE GOUVERNEMENT"
 
     @property
-    def retire_avant_seance(self) -> bool:
-        if self.sort:
-            return "retiré avant séance" in self.sort.lower()
-        return False
+    def is_withdrawn(self) -> bool:
+        if not self.sort:
+            return False
+        return "retiré" in self.sort.lower()
 
     @property
     def is_abandoned_before_seance(self) -> bool:
         if not self.sort:
             return False
-        return self.sort.lower() == "irrecevable" or self.retire_avant_seance
+        return self.sort.lower() == "irrecevable" or self.is_withdrawn
 
     @property
     def is_abandoned_during_seance(self) -> bool:
         if not self.sort:
             return False
-        return self.sort.lower() in ("retiré", "tombé")
+        return self.sort.lower() == "tombé" or self.is_withdrawn
 
     @property
     def is_abandoned(self) -> bool:

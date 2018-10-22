@@ -460,8 +460,8 @@
                         {% endif %}
                         <a class="edit-reponse" href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
                         {% if amendement.is_abandoned_before_seance %}
-                            {% if amendement.retire_avant_seance %}
-                                Retiré avant séance
+                            {% if amendement.is_withdrawn %}
+                                Retiré
                             {% else %}
                                 Irrecevable
                             {% endif %}

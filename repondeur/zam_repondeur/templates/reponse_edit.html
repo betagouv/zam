@@ -76,8 +76,8 @@
                         ({{ amendement.groupe }})
                     {% endif %}
                 {% elif amendement.is_abandoned_before_seance %}
-                    {% if amendement.retire_avant_seance %}
-                        <h3>Cet amendement a été retiré avant séance</h3>
+                    {% if amendement.is_withdrawn %}
+                        <h3>Cet amendement a été retiré</h3>
                     {% else %}
                         <h3>Cet amendement est irrecevable</h3>
                     {% endif %}

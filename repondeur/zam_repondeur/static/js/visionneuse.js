@@ -77,7 +77,7 @@
     }
   })
   input.addEventListener('keydown', e => {
-    input.parentElement.querySelector('.error').classList.add('hide')
+    form.querySelector('.error').classList.add('hide')
   })
 
 })()

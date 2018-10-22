@@ -228,7 +228,15 @@ def get_groupe(amendement: OrderedDict) -> str:
             amendement["numero"],
         )
         return ""
-    groupe: Dict[str, str] = groupes[groupe_tribun_id]
+    try:
+        groupe: Dict[str, str] = groupes[groupe_tribun_id]
+    except KeyError:
+        logger.error(
+            "Unknown groupe tribun %r in groupes for amendement %s",
+            groupe_tribun_id,
+            amendement["numero"],
+        )
+        return ""
     return groupe["libelle"]
 
 

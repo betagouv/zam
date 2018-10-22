@@ -278,8 +278,7 @@ nav.secondary {
     .amendement-detail h4:first-child {
       margin-top: .4rem;
     }
-    .amendement-detail div p,
-    .amendement-detail div table {
+    .amendement-detail div * {
       max-width: 42rem;
       margin: .5rem auto;
     }
@@ -303,8 +302,7 @@ nav.secondary {
       margin-bottom: 1rem;
       margin-top: 3.5rem;
     }
-    .reponse-detail div p,
-    .reponse-detail div table {
+    .reponse-detail div * {
       max-width: 42rem;
       margin: .5rem auto;
     }

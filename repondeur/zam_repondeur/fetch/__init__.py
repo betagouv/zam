@@ -46,6 +46,7 @@ def iterate_over_mults(start: str, end: str) -> List[str]:
                 if letter == end[-1]:
                     break
             return result
+    return []
 
 
 def get_article_num_mult(title: str) -> Tuple[str, str]:
@@ -69,6 +70,8 @@ def get_article_nums_mults(article: Dict[str, Any]) -> List[Tuple[str, str]]:
             return [
                 (start_num, mult) for mult in iterate_over_mults(start_mult, end_mult)
             ]
+        else:
+            raise NotImplementedError("Unsupported article range definition")
     else:
         return [get_article_num_mult(title)]
 

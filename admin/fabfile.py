@@ -7,6 +7,7 @@ from invoke import task
 
 from tools import (
     clone_repo,
+    cpu_count,
     create_directory,
     create_postgres_user,
     create_postgres_database,
@@ -157,7 +158,12 @@ def deploy_repondeur(
         user=user,
     )
     app_dir = "/srv/repondeur/src/repondeur"
+
+    # Stop workers to free up some system resources during deployment
+    ctx.sudo("systemctl stop zam_worker", warn=True)
+
     install_requirements(ctx, app_dir=app_dir, user=user)
+    gunicorn_workers = (cpu_count(ctx) * 2) + 1
     setup_config(
         ctx,
         app_dir=app_dir,
@@ -168,6 +174,7 @@ def deploy_repondeur(
             "branch": branch,
             "secret": secret,
             "rollbar_token": rollbar_token,
+            "gunicorn_workers": gunicorn_workers,
         },
     )
     if wipe:
@@ -183,6 +190,7 @@ def deploy_repondeur(
 def install_requirements(ctx, app_dir, user):
     ctx.sudo("python3 -m pip install pipenv==2018.7.1")
     ctx.sudo(f'bash -c "cd {app_dir} && pipenv install"', user=user)
+    ctx.sudo(f'bash -c "cd {app_dir} && pipenv run pip install gunicorn==19.9.0"', user=user)
 
 
 @task

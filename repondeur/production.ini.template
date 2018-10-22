@@ -37,8 +37,10 @@ zam.secret = $$secret
 zam.uploads_backup_dir = /srv/repondeur/data/uploads
 
 [server:main]
-use = egg:waitress#main
-listen = localhost:6543
+use = egg:gunicorn#main
+host = 127.0.0.1
+port = 6543
+workers = $$gunicorn_workers
 
 [alembic]
 script_location = db_migrations

@@ -8,6 +8,7 @@ User=repondeur
 WorkingDirectory=/srv/repondeur/src/repondeur/
 ExecStart=/usr/local/bin/pipenv run zam_worker production.ini#repondeur
 Restart=on-failure
+CPUWeight=1
 
 [Install]
 WantedBy=multi-user.target

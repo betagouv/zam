@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 User=repondeur
 WorkingDirectory=/srv/repondeur/src/repondeur/
-ExecStart=/usr/local/bin/pipenv run pserve production.ini
+ExecStart=/usr/local/bin/pipenv run gunicorn --paste production.ini
 Restart=on-failure
 
 [Install]

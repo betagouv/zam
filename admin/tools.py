@@ -94,3 +94,7 @@ def run_as_postgres(ctx, cmd):
 
 def timestamp():
     return UTC.localize(datetime.utcnow()).isoformat(timespec="seconds")
+
+
+def cpu_count(ctx):
+    return int(ctx.run("cat /proc/cpuinfo | grep Processor | wc -l").stdout.strip())

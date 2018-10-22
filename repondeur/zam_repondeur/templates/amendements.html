@@ -351,7 +351,7 @@
         {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
         {% for amendement in amendements %}
             <tr data-article="
-                    {%- if amendement.abandoned_before_seance -%}
+                    {%- if amendement.is_abandoned_before_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }}
                     {%- elif amendement.article.type == 'article' -%}
                         {{ amendement.article.num }} {{ amendement.article.mult }}
@@ -362,7 +362,7 @@
                 data-amendement="{{ amendement.num }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
-                data-abandoned-before-seance="{{ 1 if amendement.abandoned_before_seance else 0 }}"
+                data-abandoned-before-seance="{{ 1 if amendement.is_abandoned_before_seance else 0 }}"
                 id="{{ amendement.slug }}"
                 {% if amendement.slug == highlighted_amdt %}
                 class="highlighted"
@@ -380,7 +380,7 @@
                     </form>
                 </td>
                 <td class="article" data-sortkey="
-                    {%- if amendement.abandoned_before_seance -%}
+                    {%- if amendement.is_abandoned_before_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }}
                     {%- else -%}
                         {{ amendement.article.sort_key_as_str }}
@@ -394,7 +394,7 @@
                     </span>
                 </td>
                 <td data-sortkey="
-                    {%- if amendement.abandoned_before_seance -%}
+                    {%- if amendement.is_abandoned_before_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }} {# Keep at the end. #}
                     {%- else -%}
                         {{ amendement.num }}
@@ -410,7 +410,7 @@
                     {% endif %}
                 </td>
                 <td data-sortkey="
-                    {%- if amendement.abandoned_before_seance -%}
+                    {%- if amendement.is_abandoned_before_seance -%}
                         ZZZ {# Keep at the end. #}
                     {%- elif amendement.groupe -%}
                         {{ amendement.groupe }} {{ amendement.auteur }}
@@ -427,7 +427,7 @@
                         class="input-required"
                     {% endif %}
                     data-sortkey="
-                    {%- if amendement.abandoned_before_seance -%}
+                    {%- if amendement.is_abandoned_before_seance -%}
                         ZZZ {# Keep at the end. #}
                     {%- elif amendement.gouvernemental -%}
                         Présentation
@@ -443,7 +443,7 @@
                         data-balloon-pos="left"
                     {% endif %}
                     >
-                        {% if amendement.abandoned_before_seance %}
+                        {% if amendement.is_abandoned_before_seance %}
                             <span class="avis abandoned_before_seance"></span>
                         {% elif amendement.gouvernemental %}
                             <span class="avis gouvernement"></span>
@@ -459,7 +459,7 @@
                             <span class="avis"></span>
                         {% endif %}
                         <a class="edit-reponse" href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
-                        {% if amendement.abandoned_before_seance %}
+                        {% if amendement.is_abandoned_before_seance %}
                             {% if amendement.retire_avant_seance %}
                                 Retiré avant séance
                             {% else %}

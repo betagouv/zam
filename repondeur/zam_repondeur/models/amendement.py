@@ -238,12 +238,12 @@ class Amendement(Base):
         return self.sort == "irrecevable" or self.retire_avant_seance
 
     @property
-    def is_abandoned_after_seance(self) -> bool:
+    def is_abandoned_during_seance(self) -> bool:
         return self.sort in ("retiré", "tombé")
 
     @property
     def is_abandoned(self) -> bool:
-        return self.is_abandoned_before_seance or self.is_abandoned_after_seance
+        return self.is_abandoned_before_seance or self.is_abandoned_during_seance
 
     @property
     def is_displayable(self) -> bool:

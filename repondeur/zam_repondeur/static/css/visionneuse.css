@@ -303,6 +303,11 @@ nav.secondary {
       margin-bottom: 1rem;
       margin-top: 3.5rem;
     }
+    .reponse-detail div p,
+    .reponse-detail div table {
+      max-width: 42rem;
+      margin: .5rem auto;
+    }
     .reponse-detail .bottom {
       font-size: initial;
     }

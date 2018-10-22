@@ -27,5 +27,6 @@ def amendement_matches(context: Context, lecture: Lecture) -> dict:
             anchor=amendement.slug,
         )
         for amendement in lecture.amendements
+        if amendement.is_displayable
     }
     return matches

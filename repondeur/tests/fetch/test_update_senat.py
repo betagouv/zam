@@ -66,7 +66,7 @@ def test_position_changed(lecture_senat):
 
 
 @responses.activate
-def test_retire_avant_seance_ou_irrecevable(lecture_senat):
+def test_abandoned_before_seance(lecture_senat):
     """
     An amendement that is either withdrawn by its author or declared invalid
     will be removed from the "liste_discussion"

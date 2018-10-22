@@ -11,7 +11,8 @@ function notifyOnUpdates(delay, timestamp, checkUrl) {
         fetch(checkUrl, options)
             .then(reponse => reponse.json())
             .then(json => {
-                if (json.modified_at !== Number(timestamp)) displayNotificationUpdate()
+                if (json.modified_at !== Number(timestamp))
+                    displayNotificationUpdate()
             })
     }
     setInterval(check, 1000 * delay)

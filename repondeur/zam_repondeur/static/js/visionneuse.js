@@ -44,17 +44,21 @@
     }
   })
 })()
-;(function displayJumpToAmendementForm () {
+;(function toggleAmendementSearchForm () {
   const link = document.querySelector('.find')
   const form = document.querySelector('#search-amendements')
   link.addEventListener('click', e => {
     e.preventDefault()
-    form.classList.replace('is-none', 'is-flex')
-    form.querySelector('#q-amendement').focus()
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    })
+    if (form.classList.contains('is-none')) {
+      form.classList.replace('is-none', 'is-flex')
+      form.querySelector('#q-amendement').focus()
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      })
+    } else {
+      form.classList.replace('is-flex', 'is-none')
+    }
   })
 })()
 ;(function jumpToAmendement () {

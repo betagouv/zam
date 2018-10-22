@@ -513,6 +513,6 @@
 <script src="{{ request.static_url('zam_repondeur:static/tinysort/tinysort.min.js') }}"></script>
 <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
 <script type="text/javascript">
-    notifyOnUpdates(10 /* seconds */, '{{ timestamp }}', '{{ check_url }}')
+    notifyOnUpdates(60 /* seconds */, '{{ timestamp }}', '{{ check_url }}')
 </script>
 {% endblock %}

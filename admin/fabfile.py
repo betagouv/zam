@@ -158,6 +158,10 @@ def deploy_repondeur(
         user=user,
     )
     app_dir = "/srv/repondeur/src/repondeur"
+
+    # Stop workers to free up some system resources during deployment
+    ctx.sudo("systemctl stop zam_worker", warn=True)
+
     install_requirements(ctx, app_dir=app_dir, user=user)
     gunicorn_workers = (cpu_count(ctx) * 2) + 1
     setup_config(

@@ -395,7 +395,7 @@ nav.secondary {
     color: #3167a6;
     border-radius: .3rem;
     font-weight: 600;
-    background: no-repeat 10% url("../img/blue_eye.svg");
+    background: no-repeat .3rem url("../img/blue_eye.svg");
   }
     a.button.arrow {
       background-color: #3167a6;

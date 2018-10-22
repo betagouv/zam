@@ -161,7 +161,9 @@
             </div>
             {% if amendement.reponse and amendement.reponse.strip() and amendement.reponse != '<p></p>' %}
               <h4>Réponse</h4>
-              {{ amendement.reponse | paragriphy }}
+              <div>
+                {{ amendement.reponse | paragriphy }}
+              </div>
             {% endif %}
             <p class="bottom">
               <a class="button arrow arrow-up" href="#{{ amendement.slug }}">

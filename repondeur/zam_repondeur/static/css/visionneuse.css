@@ -309,6 +309,10 @@ nav.secondary {
     .reponse-detail .bottom {
       font-size: initial;
     }
+  .article h2:first-child {
+    text-align: center;
+    margin: 1rem 1rem 2rem;
+  }
   .article dt {
     border-radius: 5rem;
     background: white;

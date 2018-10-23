@@ -1,4 +1,5 @@
 import logging
+import string
 from functools import partial
 from typing import Any, Callable, Dict, List, Tuple
 
@@ -11,6 +12,8 @@ from zam_repondeur.fetch.senat.amendements import aspire_senat
 from zam_repondeur.models import DBSession, Article, Lecture, get_one_or_create
 
 logger = logging.getLogger(__name__)
+
+ORDER_MULTS = Article._ORDER_MULT.keys()
 
 
 def get_amendements(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
@@ -34,6 +37,36 @@ def get_section_title(items: List[Dict[str, Any]], article: dict) -> str:
     return ""
 
 
+def iterate_over_mults(start: str, end: str) -> List[str]:
+    result = []
+    if not start and end in ORDER_MULTS:
+        # Like `3` to `3 ter`.
+        for mult in ORDER_MULTS:
+            result.append(mult)
+            if mult == end:
+                break
+    elif start in ORDER_MULTS and end in ORDER_MULTS:
+        # Like `4 ter` to `4 quinquies`.
+        in_range = False
+        for mult in ORDER_MULTS:
+            if mult == start:
+                in_range = True
+            if in_range:
+                result.append(mult)
+            if mult == end:
+                in_range = False
+    elif len(start) > 1 and " " in start:
+        # Like `5 bis A` to `5 bis D`.
+        prefix, letter = start.split(" ", 1)
+        if letter in string.ascii_uppercase:
+            result.append(f"{prefix} {letter}")
+            for letter in string.ascii_uppercase.split(letter, 1)[1]:
+                result.append(f"{prefix} {letter}")
+                if letter == end[-1]:
+                    break
+    return result
+
+
 def get_article_num_mult(title: str) -> Tuple[str, str]:
     title = title.replace("1er", "1").replace("liminaire", "0")
     if " " in title:
@@ -47,8 +80,16 @@ def get_article_nums_mults(article: Dict[str, Any]) -> List[Tuple[str, str]]:
     title = article["titre"]
     if " à " in title:
         start, end = title.split(" à ")
-        # We are not handling `5 bis à 8 ter AAA` (yet?).
-        return [(str(num), "") for num in range(int(start), int(end) + 1)]
+        start_num, start_mult = get_article_num_mult(start)
+        end_num, end_mult = get_article_num_mult(end)
+        if not start_mult and not end_mult:
+            return [(str(num), "") for num in range(int(start_num), int(end_num) + 1)]
+        elif start_num == end_num:
+            return [
+                (start_num, mult) for mult in iterate_over_mults(start_mult, end_mult)
+            ]
+        else:
+            raise NotImplementedError("Unsupported article range definition")
     else:
         return [get_article_num_mult(title)]
 

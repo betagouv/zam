@@ -12,11 +12,13 @@
   <main>
     {% for article in lecture.articles|sort %}
 
-      {{ macros.article_page(article) }}
+      {% if not article.pos %}
+        {{ macros.article_page(article) }}
+      {% endif %}
 
       {% for amendements in article.grouped_displayable_top_level_amendements() %}
         {% for amendement in amendements %}
-          {% for children_amendements in amendement.grouped_children() %}
+          {% for children_amendements in amendement.grouped_displayable_children() %}
             {{ macros.response_page(children_amendements) }}
             {% for child in children_amendements %}
               {{ macros.amendement_page(child) }}

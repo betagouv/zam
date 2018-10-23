@@ -103,11 +103,16 @@ def xvfb_if_supported() -> Generator:
         yield
 
 
+def generate_html_for_pdf(request: Request, template_name: str, context: dict) -> str:
+    """Mostly useful for testing purpose."""
+    env = get_jinja2_environment(request, name=".html")
+    template = env.get_template(template_name)
+    return template.render(**context)
+
+
 def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:
     css = str(STATIC_PATH / "css" / "print.css")
-    env = get_jinja2_environment(request, name=".html")
-    template = env.get_template("print.html")
-    content = template.render(lecture=lecture)
+    content = generate_html_for_pdf(request, "print.html", {"lecture": lecture})
     options = {
         "quiet": "",
         "footer-center": f"{lecture.dossier_legislatif} • Page [page] sur [topage]",
@@ -120,9 +125,7 @@ def write_pdf1(
     lecture: Lecture, amendement: Amendement, filename: str, request: Request
 ) -> None:
     css = str(STATIC_PATH / "css" / "print.css")
-    env = get_jinja2_environment(request, name=".html")
-    template = env.get_template("print1.html")
-    content = template.render(amendement=amendement)
+    content = generate_html_for_pdf(request, "print1.html", {"amendement": amendement})
     options = {
         "quiet": "",
         "footer-center": f"{lecture.dossier_legislatif} • Page [page] sur [topage]",

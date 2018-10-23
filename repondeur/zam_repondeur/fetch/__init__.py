@@ -13,6 +13,8 @@ from zam_repondeur.models import DBSession, Article, Lecture, get_one_or_create
 
 logger = logging.getLogger(__name__)
 
+ORDER_MULTS = Article._ORDER_MULT.keys()
+
 
 def get_amendements(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
     title: str
@@ -36,17 +38,33 @@ def get_section_title(items: List[Dict[str, Any]], article: dict) -> str:
 
 
 def iterate_over_mults(start: str, end: str) -> List[str]:
-    """Like `bis A` to `bis D`."""
-    if len(start) > 1 and " " in start:
+    result = []
+    if not start and end in ORDER_MULTS:
+        # Like `3` to `3 ter`.
+        for mult in ORDER_MULTS:
+            result.append(mult)
+            if mult == end:
+                break
+    elif start in ORDER_MULTS and end in ORDER_MULTS:
+        # Like `4 ter` to `4 quinquies`.
+        in_range = False
+        for mult in ORDER_MULTS:
+            if mult == start:
+                in_range = True
+            if in_range:
+                result.append(mult)
+            if mult == end:
+                in_range = False
+    elif len(start) > 1 and " " in start:
+        # Like `5 bis A` to `5 bis D`.
         prefix, letter = start.split(" ", 1)
         if letter in string.ascii_uppercase:
-            result = [f"{prefix} {letter}"]
+            result.append(f"{prefix} {letter}")
             for letter in string.ascii_uppercase.split(letter, 1)[1]:
                 result.append(f"{prefix} {letter}")
                 if letter == end[-1]:
                     break
-            return result
-    return []
+    return result
 
 
 def get_article_num_mult(title: str) -> Tuple[str, str]:

@@ -407,6 +407,8 @@ def test_get_article_num_mult(input, num, mult):
         ("19 à 21", [("19", ""), ("20", ""), ("21", "")]),
         ("34 bis A à 34 bis C", [("34", "bis A"), ("34", "bis B"), ("34", "bis C")]),
         ("34 bis B à 34 bis D", [("34", "bis B"), ("34", "bis C"), ("34", "bis D")]),
+        ("3 à 3 ter", [("3", ""), ("3", "bis"), ("3", "ter")]),
+        ("4 ter à 4 quinquies", [("4", "ter"), ("4", "quater"), ("4", "quinquies")]),
     ],
 )
 def test_get_article_nums_mults(input, output):

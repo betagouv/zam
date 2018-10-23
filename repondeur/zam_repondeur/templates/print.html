@@ -18,7 +18,7 @@
         {% if not amendements[0].parent %}
           {% for amendement in amendements %}
             {% if amendement.children %}
-              {% for children_amendements in article.group_amendements(amendements.children) %}
+              {% for children_amendements in article.group_amendements(amendement.children) %}
                 {{ macros.response_page(children_amendements) }}
                 {% for child in children_amendements %}
                   {{ macros.amendement_page(child) }}

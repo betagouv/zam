@@ -45,12 +45,8 @@
         </tr>
         {% if amendement.parent %}
           <tr>
-            <td>Amendement{% if multiple %}s{% endif %}</td>
-            <td>
-              {% for amendement in amendements %}
-                {{ amendement.parent.num_disp }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-              {% endfor %}
-            </td>
+            <td>Amendement</td>
+            <td>{{ amendement.parent.num_disp }}</td>
           </tr>
           <tr>
             <td>Sous-amendement{% if multiple %}s{% endif %}</td>

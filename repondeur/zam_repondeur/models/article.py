@@ -244,6 +244,13 @@ class Article(Base):
             amdt for amdt in self.amendements if amdt.is_displayable
         )
 
+    def grouped_displayable_top_level_amendements(self) -> Iterable[List[Amendement]]:
+        return self.group_amendements(
+            amdt
+            for amdt in self.amendements
+            if amdt.is_displayable and not amdt.is_sous_amendement
+        )
+
     def group_amendements(
         self, amendements: Iterable[Amendement]
     ) -> Iterable[List[Amendement]]:

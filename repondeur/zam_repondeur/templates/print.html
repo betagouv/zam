@@ -11,27 +11,24 @@
   </div>
   <main>
     {% for article in lecture.articles|sort %}
+
       {{ macros.article_page(article) }}
-      {% for amendements in article.grouped_displayable_amendements() %}
-        {# Insert sous-amendements before amendements:
-           excluded from main loop and then prepend if found. #}
-        {% if not amendements[0].parent %}
-          {% for amendement in amendements %}
-            {% if amendement.children %}
-              {% for children_amendements in article.group_amendements(amendement.children) %}
-                {{ macros.response_page(children_amendements) }}
-                {% for child in children_amendements %}
-                  {{ macros.amendement_page(child) }}
-                {% endfor %}
-              {% endfor %}
-            {% endif %}
+
+      {% for amendements in article.grouped_displayable_top_level_amendements() %}
+        {% for amendement in amendements %}
+          {% for children_amendements in amendement.grouped_children() %}
+            {{ macros.response_page(children_amendements) }}
+            {% for child in children_amendements %}
+              {{ macros.amendement_page(child) }}
+            {% endfor %}
           {% endfor %}
-          {{ macros.response_page(amendements) }}
-          {% for amendement in amendements %}
-            {{ macros.amendement_page(amendement) }}
-          {% endfor %}
-        {% endif %}
+        {% endfor %}
+        {{ macros.response_page(amendements) }}
+        {% for amendement in amendements %}
+          {{ macros.amendement_page(amendement) }}
+        {% endfor %}
       {% endfor %}
+
     {% endfor %}
   </main>
 </body>

@@ -32,7 +32,7 @@
   <div class="is-none">
     <span class="fake-anchor" id="content-{{ article.slug }}"></span>
     <div class="article">
-      <h2>{{ article.titre or "" }}</h2>
+      <h2 class="article-title">{{ article.titre or "" }}</h2>
       {% if article.jaune %}
         <h2>Présentation de l’article</h2>
         {{ article.jaune | safe }}

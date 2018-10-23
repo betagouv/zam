@@ -257,8 +257,10 @@ class Amendement(Base):
     def is_sous_amendement(self) -> bool:
         return self.parent_pk is not None
 
-    def grouped_children(self) -> Iterable[List["Amendement"]]:
-        return self.article.group_amendements(self.children)
+    def grouped_displayable_children(self) -> Iterable[List["Amendement"]]:
+        return self.article.group_amendements(
+            amdt for amdt in self.children if amdt.is_displayable
+        )
 
     @property
     def has_reponse(self) -> bool:

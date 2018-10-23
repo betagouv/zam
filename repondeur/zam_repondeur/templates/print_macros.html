@@ -131,7 +131,7 @@
     <table class="cartouche">
       <tr>
         <td>Article</td>
-        <td>{{ amendement.article }}</td>
+        <td>{{ amendement.article.format(short=True) }}</td>
       </tr>
       {% if amendement.parent %}
         <tr>

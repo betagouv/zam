@@ -6,11 +6,6 @@
       <div class="wrapper">
         <div class="titles">
           <h2>{{ article.format(short=False) }}</h2>
-          {% if article.titre == "TODO" %}
-            <h3>{{ loop.previtem.titre or "" }}</h3>
-          {% else %}
-            <h3>{{ article.titre or "" }}</h3>
-          {% endif %}
         </div>
         {% if article.contenu or article.jaune %}
           <a href="#content-{{ article.slug }}"
@@ -37,12 +32,13 @@
   <div class="is-none">
     <span class="fake-anchor" id="content-{{ article.slug }}"></span>
     <div class="article">
+      <h2 class="article-title">{{ article.titre or "" }}</h2>
       {% if article.jaune %}
-        <h2>Présentation de l’article</h2>
+        <h3>Présentation de l’article</h3>
         {{ article.jaune | safe }}
       {% endif %}
       {% if article.contenu %}
-        <h2>Texte de l’article</h2>
+        <h3>Texte de l’article</h3>
         {% for number, content in article.contenu.items() %}
           <dl>
             <dt>{{ number }}</dt>

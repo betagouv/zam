@@ -11,15 +11,6 @@
       )
       const toggleParent = toggleTarget.parentElement
       const superParent = target.parentElement.parentElement.parentElement
-      const fakeAnchor = superParent.querySelector('.fake-anchor')
-      if (fakeAnchor) {
-        fakeAnchor.scrollIntoView({ behavior: 'smooth' })
-      } /* In case of article text. */ else {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        })
-      }
       const removeArrows = () => {
         const arrowDownLink = document.querySelector('.arrow-down')
         if (arrowDownLink) {
@@ -27,11 +18,25 @@
           arrowDownLink.textContent = arrowDownLink.dataset.initialText
         }
       }
+      removeArrows()
+      /* Wait for content to be actually removed through removeArrows
+         otherwise scrollIntoView will fail to do the maths correctly.
+         TODO: use Promises? */
+      setTimeout(() => {
+        const fakeAnchor = superParent.querySelector('.fake-anchor')
+        if (fakeAnchor) {
+          fakeAnchor.scrollIntoView({ behavior: 'smooth' })
+        } /* In case of article text. */ else {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          })
+        }
+      }, 1)
       const hideElement = () => {
         toggleParent.classList.replace('is-block', 'is-none')
         removeArrows()
       }
-      removeArrows()
       if (toggleParent.classList.contains('is-none')) {
         const visibleElement = document.querySelector('.is-block')
         if (visibleElement) {

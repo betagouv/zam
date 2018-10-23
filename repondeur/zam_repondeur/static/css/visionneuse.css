@@ -26,7 +26,7 @@ main {
 /* Headers */
 nav.main {
   background-color: #3167a6;
-  padding: 1rem 0;
+  padding: .7rem 0;
   display: flex;
   justify-content: space-between;
   position: -webkit-sticky;
@@ -134,7 +134,7 @@ nav.secondary {
   .fake-anchor {
     display: block;
     position: relative;
-    top: calc(-6rem - 60px);
+    top: calc(-5rem - 50px);
     visibility: hidden;
   }
   h2 {
@@ -168,7 +168,7 @@ nav.secondary {
     position: -webkit-sticky;
     position: sticky;
     background: white;
-    top: 61px;
+    top: 51px;
     z-index: 3;
   }
 
@@ -215,7 +215,7 @@ nav.secondary {
     position: sticky;
     background: white;
     min-height: 5rem;
-    top: calc(60px + 6rem); /* Size of the nav + main header also sticky */
+    top: calc(50px + 5rem); /* Size of the nav + main header also sticky */
     border-left: 8px solid;
     padding: .5rem 1rem;
     box-shadow: 0 5px 5px 2px #ccc;
@@ -279,7 +279,7 @@ nav.secondary {
       margin-top: .4rem;
     }
     .amendement-detail div * {
-      max-width: 42rem;
+      max-width: 47rem;
       margin: .5rem auto;
     }
     .amendement-detail div table {
@@ -303,12 +303,16 @@ nav.secondary {
       margin-top: 3.5rem;
     }
     .reponse-detail div * {
-      max-width: 42rem;
+      max-width: 47rem;
       margin: .5rem auto;
     }
     .reponse-detail .bottom {
       font-size: initial;
     }
+  .article h2.article-title {
+    text-align: center;
+    margin: 1rem 1rem 2rem;
+  }
   .article dt {
     border-radius: 5rem;
     background: white;

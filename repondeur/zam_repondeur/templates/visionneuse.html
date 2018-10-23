@@ -34,11 +34,11 @@
     <div class="article">
       <h2 class="article-title">{{ article.titre or "" }}</h2>
       {% if article.jaune %}
-        <h2>Présentation de l’article</h2>
+        <h3>Présentation de l’article</h3>
         {{ article.jaune | safe }}
       {% endif %}
       {% if article.contenu %}
-        <h2>Texte de l’article</h2>
+        <h3>Texte de l’article</h3>
         {% for number, content in article.contenu.items() %}
           <dl>
             <dt>{{ number }}</dt>

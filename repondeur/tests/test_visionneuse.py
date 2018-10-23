@@ -185,6 +185,8 @@ def test_reponses_with_textes(app, lecture_an, amendements_an):
 
     fake_anchor = resp.parser.css_first("#content-article-1")
     article_content = fake_anchor.parent.css_first(".article")
+    assert article_content.css_first("h2").text() == "Titre article"
+    assert article_content.css_first("h3").text() == "Texte de l’article"
     assert article_content.css_first("dt").text() == "001"
     assert article_content.css_first("dd").text().strip() == "Premier paragraphe"
 
@@ -204,7 +206,7 @@ def test_reponses_with_jaunes(app, lecture_an, amendements_an):
 
     fake_anchor = resp.parser.css_first("#content-article-1")
     article_content = fake_anchor.parent.css_first(".article")
-    assert article_content.css_first("h2").text() == "Présentation de l’article"
+    assert article_content.css_first("h3").text() == "Présentation de l’article"
     assert article_content.css_first("p").text().strip() == "Contenu du jaune"
 
 
@@ -222,7 +224,7 @@ def test_reponses_without_textes_or_jaunes(app, lecture_an, amendements_an):
 
     fake_anchor = resp.parser.css_first("#content-article-1")
     article_content = fake_anchor.parent.css_first(".article")
-    assert article_content.css_first("h2") is None
+    assert article_content.css_first("h3") is None
 
 
 def test_reponses_with_different_articles(

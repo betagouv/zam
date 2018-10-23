@@ -1,19 +1,23 @@
-;(function toggleContent () {
-  const toggleLinks = Array.from(document.querySelectorAll('[data-toggle-target]'))
+;(function toggleContent() {
+  const toggleLinks = Array.from(
+    document.querySelectorAll('[data-toggle-target]')
+  )
   toggleLinks.forEach(toggleLink => {
-    toggleLink.onclick = (e) => {
+    toggleLink.onclick = e => {
       e.preventDefault()
       const target = e.target
-      const toggleTarget = document.querySelector(`#${target.dataset.toggleTarget}`)
+      const toggleTarget = document.querySelector(
+        `#${target.dataset.toggleTarget}`
+      )
       const toggleParent = toggleTarget.parentElement
       const superParent = target.parentElement.parentElement.parentElement
       const fakeAnchor = superParent.querySelector('.fake-anchor')
       if (fakeAnchor) {
-        fakeAnchor.scrollIntoView({behavior: "smooth"})
-      } else /* In case of article text. */ {
+        fakeAnchor.scrollIntoView({ behavior: 'smooth' })
+      } /* In case of article text. */ else {
         window.scrollTo({
           top: 0,
-          behavior: "smooth"
+          behavior: 'smooth'
         })
       }
       const removeArrows = () => {
@@ -44,20 +48,24 @@
     }
   })
 })()
-;(function displayJumpToAmendementForm () {
+;(function toggleAmendementSearchForm() {
   const link = document.querySelector('.find')
   const form = document.querySelector('#search-amendements')
   link.addEventListener('click', e => {
     e.preventDefault()
-    form.classList.replace('is-none', 'is-flex')
-    form.querySelector('#q-amendement').focus()
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    })
+    if (form.classList.contains('is-none')) {
+      form.classList.replace('is-none', 'is-flex')
+      form.querySelector('#q-amendement').focus()
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
+    } else {
+      form.classList.replace('is-flex', 'is-none')
+    }
   })
 })()
-;(function jumpToAmendement () {
+;(function jumpToAmendement() {
   const form = document.querySelector('#search-amendements')
   const input = form.querySelector('input[name="q-amendement"]')
   const matches = JSON.parse(form.dataset.amendementMatches)
@@ -73,7 +81,6 @@
     }
   })
   input.addEventListener('keydown', e => {
-    input.parentElement.querySelector('.error').classList.add('hide')
+    form.querySelector('.error').classList.add('hide')
   })
-
 })()

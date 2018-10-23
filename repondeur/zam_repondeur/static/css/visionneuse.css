@@ -278,8 +278,7 @@ nav.secondary {
     .amendement-detail h4:first-child {
       margin-top: .4rem;
     }
-    .amendement-detail div p,
-    .amendement-detail div table {
+    .amendement-detail div * {
       max-width: 42rem;
       margin: .5rem auto;
     }
@@ -302,6 +301,10 @@ nav.secondary {
       font-weight: 600;
       margin-bottom: 1rem;
       margin-top: 3.5rem;
+    }
+    .reponse-detail div * {
+      max-width: 42rem;
+      margin: .5rem auto;
     }
     .reponse-detail .bottom {
       font-size: initial;
@@ -390,7 +393,7 @@ nav.secondary {
     color: #3167a6;
     border-radius: .3rem;
     font-weight: 600;
-    background: no-repeat 10% url("../img/blue_eye.svg");
+    background: no-repeat .3rem url("../img/blue_eye.svg");
   }
     a.button.arrow {
       background-color: #3167a6;
@@ -442,6 +445,7 @@ nav.secondary {
     color: red;
     text-align: center;
     padding: 1rem 1.5rem;
+    margin: 0 1rem;
   }
   .hide {
     display: none;

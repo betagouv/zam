@@ -3,8 +3,9 @@ from itertools import groupby
 from typing import Iterable, List, Optional, Tuple, Union
 
 from sqlalchemy import Column, ForeignKey, Integer, PickleType, Text, UniqueConstraint
-
 from sqlalchemy.orm import relationship, validates
+
+from zam_repondeur.decorator import reify
 
 from .base import Base, DBSession
 from .amendement import Amendement
@@ -147,7 +148,7 @@ class Article(Base):
             raise ValueError
         return self.sort_key < other.sort_key
 
-    @property
+    @reify
     def sort_key(self) -> Tuple[int, Union[int, str], Tuple[int, str], int]:
         return (
             Article._ORDER_TYPE[self.type or ""],
@@ -156,7 +157,7 @@ class Article(Base):
             Article._ORDER_POS[self.pos or ""],
         )
 
-    @property
+    @reify
     def sort_key_as_str(self) -> str:
         s = self.sort_key
         return "|".join(map(str, (s[0], s[1], s[2][0], s[2][1], s[3])))

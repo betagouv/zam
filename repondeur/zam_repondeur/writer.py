@@ -107,7 +107,8 @@ def generate_html_for_pdf(request: Request, template_name: str, context: dict) -
     """Mostly useful for testing purpose."""
     env = get_jinja2_environment(request, name=".html")
     template = env.get_template(template_name)
-    return template.render(**context)
+    content: str = template.render(**context)
+    return content
 
 
 def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:

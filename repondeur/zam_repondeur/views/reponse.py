@@ -19,7 +19,7 @@ class ReponseEdit:
         self.context = context
         self.request = request
         self.amendement = context.model()
-        self.lecture = context.lecture_resource.model()
+        self.lecture = self.amendement.lecture
 
     @view_config(request_method="GET")
     def get(self) -> dict:

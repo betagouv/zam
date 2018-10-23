@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any, List, Optional
 
 from sqlalchemy import Column, DateTime, Integer, Text, desc
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import joinedload, relationship
 
 from .amendement import Amendement
 from .base import Base, DBSession
@@ -111,14 +111,17 @@ class Lecture(Base):
 
     @classmethod
     def all(cls) -> List["Lecture"]:
-        lectures: List["Lecture"] = DBSession.query(cls).order_by(
-            desc(cls.created_at)
-        ).all()
+        lectures: List["Lecture"] = (
+            DBSession.query(cls)
+            .options(joinedload("amendements"))
+            .order_by(desc(cls.created_at))
+            .all()
+        )
         return lectures
 
     @classmethod
     def get(
-        cls, chambre: str, session: str, num_texte: int, organe: str
+        cls, chambre: str, session: str, num_texte: int, organe: str, *options: Any
     ) -> Optional["Lecture"]:
         res: Optional["Lecture"] = (
             DBSession.query(cls)
@@ -128,6 +131,7 @@ class Lecture(Base):
                 cls.num_texte == num_texte,
                 cls.organe == organe,
             )
+            .options(*options)
             .first()
         )
         return res

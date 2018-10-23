@@ -9,6 +9,7 @@ from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
+from sqlalchemy.orm import joinedload
 
 from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Lecture
 
@@ -153,7 +154,7 @@ class ListAmendements:
     def __init__(self, context: AmendementCollection, request: Request) -> None:
         self.context = context
         self.request = request
-        self.lecture = context.parent.model()
+        self.lecture = context.parent.model(joinedload("articles"))
         self.amendements = self.lecture.amendements
 
     @view_config(request_method="GET", renderer="amendements.html")

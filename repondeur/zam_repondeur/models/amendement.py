@@ -80,9 +80,7 @@ class Amendement(Base):
     lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"))
     lecture: "Lecture" = relationship("Lecture", back_populates="amendements")
     article_pk: int = Column(Integer, ForeignKey("articles.pk"))
-    article: "Article" = relationship(
-        "Article", back_populates="amendements", lazy="joined"
-    )
+    article: "Article" = relationship("Article", back_populates="amendements")
 
     # Extras. (TODO: move to dedicated table?)
     avis: Optional[str] = Column(Text, nullable=True)

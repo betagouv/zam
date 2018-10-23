@@ -26,7 +26,7 @@ class ArticleEdit:
 
     @view_config(request_method="GET", renderer="article_edit.html")
     def get(self) -> dict:
-        lecture = self.context.lecture_resource.model()
+        lecture = self.article.lecture
         return {"article": self.article, "lecture": lecture}
 
     @view_config(request_method="POST")

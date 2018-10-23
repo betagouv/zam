@@ -1,7 +1,8 @@
-from typing import Iterator, List, Optional, cast
+from typing import Any, Iterator, List, Optional, cast
 
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
 from zam_repondeur.models import Amendement, Article, DBSession, Lecture
@@ -87,8 +88,10 @@ class LectureResource(Resource):
         self.add_child(AmendementCollection(name="amendements", parent=self))
         self.add_child(ArticleCollection(name="articles", parent=self))
 
-    def model(self) -> Lecture:
-        lecture = Lecture.get(self.chambre, self.session, self.num_texte, self.organe)
+    def model(self, *options: Any) -> Lecture:
+        lecture = Lecture.get(
+            self.chambre, self.session, self.num_texte, self.organe, *options
+        )
         if lecture is None:
             raise ResourceNotFound(self)
         return lecture
@@ -121,6 +124,7 @@ class AmendementResource(Resource):
             amendement: Amendement = (
                 DBSession.query(Amendement)
                 .filter_by(lecture=self.lecture_resource.model(), num=self.num)
+                .options(joinedload("article"), joinedload("lecture"))
                 .one()
             )
         except NoResultFound:
@@ -145,7 +149,7 @@ class ArticleCollection(Resource):
         return self.parent
 
     def models(self) -> List[Article]:
-        lecture: Lecture = self.lecture_resource.model()
+        lecture: Lecture = self.lecture_resource.model(joinedload("articles"))
         articles: List[Article] = lecture.articles
         return articles
 
@@ -168,7 +172,7 @@ class ArticleResource(Resource):
     def lecture_resource(self) -> LectureResource:
         return self.parent.parent
 
-    def model(self) -> Article:
+    def model(self, *options: Any) -> Article:
         lecture: Lecture = self.lecture_resource.model()
         try:
             article: Article = (
@@ -180,6 +184,7 @@ class ArticleResource(Resource):
                     mult=self.mult,
                     pos=self.pos,
                 )
+                .options(*options)
                 .one()
             )
         except NoResultFound:

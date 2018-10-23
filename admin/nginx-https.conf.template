@@ -8,7 +8,16 @@ server {
 
     include /etc/nginx/snippets/letsencrypt.conf;
 
-    return 301 https://$$host$request_uri;
+    location / {
+        return 301 https://$$host$request_uri;
+    }
+
+    location /nginx_status {
+        stub_status on;
+        access_log off;
+        allow 127.0.0.1;
+        deny all;
+    }
 }
 
 server {
@@ -65,4 +74,9 @@ server {
         expires 30d;
         add_header Cache-Control public;
     }
+
+    location /_stats/ {
+        alias /var/cache/munin/www/;
+    }
+
 }

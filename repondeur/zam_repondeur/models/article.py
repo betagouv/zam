@@ -149,18 +149,10 @@ class Article(Base):
 
     @property
     def sort_key(self) -> Tuple[int, Union[int, str], Tuple[int, str], int]:
-        def maybe_int(value: Optional[str]) -> Union[int, str]:
-            if value is None:
-                return 0
-            try:
-                return int(value)
-            except ValueError:
-                return value
-
         return (
             Article._ORDER_TYPE[self.type or ""],
-            maybe_int(self.num),
-            self._mult_key(self.mult or ""),
+            _maybe_int(self.num),
+            _mult_key(self.mult or ""),
             Article._ORDER_POS[self.pos or ""],
         )
 
@@ -168,16 +160,6 @@ class Article(Base):
     def sort_key_as_str(self) -> str:
         s = self.sort_key
         return "|".join(map(str, (s[0], s[1], s[2][0], s[2][1], s[3])))
-
-    def _mult_key(self, s: str) -> Tuple[int, str]:
-        if " " in s:
-            mult, intersticiel = s.split(" ", 1)
-        else:
-            if s in Article._ORDER_MULT:
-                mult, intersticiel = s, ""
-            else:
-                mult, intersticiel = "", s
-        return (Article._ORDER_MULT.get(mult, 0), intersticiel.ljust(10, "_"))
 
     @classmethod
     def create(
@@ -269,3 +251,23 @@ def validate(name: str, value: str, allowed: Iterable[str]) -> str:
 
 def format_list(items: Iterable[str]) -> str:
     return ", ".join(f"'{item}'" for item in items)
+
+
+def _maybe_int(value: Optional[str]) -> Union[int, str]:
+    if value is None:
+        return 0
+    try:
+        return int(value)
+    except ValueError:
+        return value
+
+
+def _mult_key(s: str) -> Tuple[int, str]:
+    if " " in s:
+        mult, intersticiel = s.split(" ", 1)
+    else:
+        if s in Article._ORDER_MULT:
+            mult, intersticiel = s, ""
+        else:
+            mult, intersticiel = "", s
+    return (Article._ORDER_MULT.get(mult, 0), intersticiel.ljust(10, "_"))

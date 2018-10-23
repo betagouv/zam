@@ -1,3 +1,32 @@
+function getURLParam(name) {
+    const urlParams = new URLSearchParams(window.location.search)
+    return urlParams.get(name) || ''
+}
+function setURLParam(name, value) {
+    if (history.replaceState) {
+        const newURL = new URL(window.location.href)
+        if (value !== '') {
+            newURL.searchParams.set(name, value)
+        } else {
+            newURL.searchParams.delete(name)
+        }
+        window.history.replaceState({ path: newURL.href }, '', newURL.href)
+    }
+}
+function getSortSpecFromURL() {
+    return getURLParam('sort')
+}
+function replaceSortSpecInURL(sortSpec) {
+    setURLParam('sort', sortSpec)
+}
+function updateSortSpec(sortSpec, colSpec) {
+    const updatedSpec = sortSpec
+        .split('-')
+        .filter(item => item !== '' && item.charAt(0) !== colSpec.charAt(0))
+    updatedSpec.push(colSpec)
+    return updatedSpec.join('-')
+}
+
 function notifyOnUpdates(delay, timestamp, checkUrl) {
     function displayNotificationUpdate() {
         const message =
@@ -35,45 +64,27 @@ function setupToggle(toggleSelector, targetSelector, scroll) {
         e.preventDefault()
     })
 }
-setupToggle('#toggle-advanced', '#advanced', false)
-setupToggle('#toggle-filter', 'tr.filters', false)
-setupToggle('#toggle-articles', '#articles', true)
 
-/* Column sorting */
-const table = document.querySelector('table')
-const tableHead = table.querySelector('thead')
-const tableHeaders = tableHead.querySelectorAll('tr.headers th')
-const tableBody = table.querySelector('tbody')
-const tableLines = tableBody.querySelectorAll('tr')
-tableHead.addEventListener('click', e => {
-    const tableHeader = e.target
-    if (
-        tableHeader.classList.contains('nosort') ||
-        tableHeader.nodeName === 'INPUT' ||
-        tableHeader.nodeName === 'OPTION' ||
-        tableHeader.nodeName === 'SELECT'
-    )
-        return
-    const isAscending = tableHeader.getAttribute('data-order') === 'asc'
-    const order = isAscending ? 'desc' : 'asc'
+function makeHeadersSortable(tableHead) {
+    tableHead.addEventListener('click', e => {
+        const tableHeader = e.target
+        if (
+            tableHeader.classList.contains('nosort') ||
+            tableHeader.nodeName === 'INPUT' ||
+            tableHeader.nodeName === 'OPTION' ||
+            tableHeader.nodeName === 'SELECT'
+        )
+            return
+        const isAscending = tableHeader.getAttribute('data-order') === 'asc'
+        const order = isAscending ? 'desc' : 'asc'
 
-    const colIndex = Array.prototype.indexOf.call(tableHeaders, tableHeader) + 1
-    sortSpec = updateSortSpec(getSortSpecFromURL(), colIndex + order)
-    replaceSortSpecInURL(sortSpec)
-    sortColumn(tableHeader, colIndex, order)
-})
-function updateSortSpec(sortSpec, colSpec) {
-    const updatedSpec = sortSpec
-        .split('-')
-        .filter(item => item !== '' && item.charAt(0) !== colSpec.charAt(0))
-    updatedSpec.push(colSpec)
-    return updatedSpec.join('-')
-}
-function getSortSpecFromURL() {
-    return getURLParam('sort')
-}
-function replaceSortSpecInURL(sortSpec) {
-    setURLParam('sort', sortSpec)
+        const tableHeaders = tableHead.querySelectorAll('tr.headers th')
+        const colIndex =
+            Array.prototype.indexOf.call(tableHeaders, tableHeader) + 1
+        sortSpec = updateSortSpec(getSortSpecFromURL(), colIndex + order)
+        replaceSortSpecInURL(sortSpec)
+        sortColumn(tableHeader, colIndex, order)
+    })
 }
 function sortColumns(sortSpec) {
     for (colSpec of sortSpec.split('-')) {
@@ -85,8 +96,8 @@ function sortColumns(sortSpec) {
         if (order !== 'asc' && order !== 'desc') {
             continue
         }
-        const tableHeader = tableHead.querySelector(
-            'tr:first-child th:nth-child(' + colIndex + ')'
+        const tableHeader = document.querySelector(
+            'thead tr:first-child th:nth-child(' + colIndex + ')'
         )
         sortColumn(tableHeader, colIndex, order)
     }
@@ -103,7 +114,7 @@ function sortColumn(tableHeader, colIndex, order) {
         },
         order: order
     }
-    tinysort(tableLines, options)
+    tinysort(document.querySelectorAll('tbody tr'), options)
 }
 function extractItems(elem, selector) {
     const value = elem.querySelector(selector).dataset.sortkey
@@ -137,25 +148,6 @@ function compareArrays(a, b) {
     }
 })()
 
-/* Column filtering */
-const articleFilter = table.querySelector('#article-filter')
-articleFilter.addEventListener('keyup', e => {
-    const value = e.target.value.trim()
-    filterByArticle(value)
-    setURLParam('article', value)
-})
-const amendementFilter = table.querySelector('#amendement-filter')
-amendementFilter.addEventListener('keyup', e => {
-    const value = e.target.value.trim()
-    filterByAmendement(value)
-    setURLParam('amendement', value)
-})
-const avisFilter = table.querySelector('#avis-filter')
-avisFilter.addEventListener('change', e => {
-    const value = e.target.value.trim()
-    filterByAvis(value)
-    setURLParam('avis', value)
-})
 function filterByArticle(value) {
     filterColumn('hidden-article', line => {
         if (!value) {
@@ -187,7 +179,7 @@ function filterByAvis(value) {
     })
 }
 function filterColumn(className, shouldShow) {
-    Array.from(tableLines).forEach(line => {
+    Array.from(document.querySelectorAll('tbody tr')).forEach(line => {
         line.classList.toggle(className, !shouldShow(line))
     })
 }
@@ -195,7 +187,24 @@ function showFilters() {
     document.querySelector('#toggle-filter').classList.add('enabled')
     document.querySelector('tr.filters').classList.remove('d-none')
 }
-;(function filterColumnsFromQueryString() {
+
+function filterColumns(table) {
+    table.querySelector('#article-filter').addEventListener('keyup', e => {
+        const value = e.target.value.trim()
+        filterByArticle(value)
+        setURLParam('article', value)
+    })
+    table.querySelector('#amendement-filter').addEventListener('keyup', e => {
+        const value = e.target.value.trim()
+        filterByAmendement(value)
+        setURLParam('amendement', value)
+    })
+    table.querySelector('#avis-filter').addEventListener('change', e => {
+        const value = e.target.value.trim()
+        filterByAvis(value)
+        setURLParam('avis', value)
+    })
+
     const articleFilter = getURLParam('article')
     if (articleFilter !== '') {
         showFilters()
@@ -214,26 +223,10 @@ function showFilters() {
         document.querySelector('#avis-filter').value = avisFilter
         filterByAvis(avisFilter)
     }
-})()
-
-function getURLParam(name) {
-    const urlParams = new URLSearchParams(window.location.search)
-    return urlParams.get(name) || ''
-}
-function setURLParam(name, value) {
-    if (history.replaceState) {
-        const newURL = new URL(window.location.href)
-        if (value !== '') {
-            newURL.searchParams.set(name, value)
-        } else {
-            newURL.searchParams.delete(name)
-        }
-        window.history.replaceState({ path: newURL.href }, '', newURL.href)
-    }
 }
 
-;(function bookmarks() {
-    const bookmarkForms = table.querySelectorAll('.bookmark form')
+function handleBookmarks() {
+    const bookmarkForms = document.querySelectorAll('.bookmark form')
     Array.from(bookmarkForms).forEach(bookmarkForm => {
         bookmarkForm.addEventListener('submit', e => {
             e.preventDefault()
@@ -268,31 +261,35 @@ function setURLParam(name, value) {
             })
         })
     })
-})()
-
-/* Taking control over native jump to avoir position under sticky headers. */
-if (location.hash) {
-    /* Waiting for the next tick to supplement previous browser behavior. */
-    setTimeout(() => {
-        const element = document.querySelector(window.location.hash)
-        const target = element.getBoundingClientRect()
-        window.scrollTo({
-            /* Position the highlighted element in the middle of the page. */
-            top: window.scrollY + target.top - window.innerHeight / 2,
-            behavior: 'smooth'
-        })
-    }, 1)
 }
 
-// Hijack edit links to inject the current page URL as a "back" query param
-const editLinks = Array.from(document.querySelectorAll('a.edit-reponse'))
-editLinks.forEach(editLink => {
-    editLink.addEventListener('click', e => {
-        const thisURL = new URL(window.location.href)
-        const linkURL = new URL(e.target.href)
-        thisURL.hash = ''
-        linkURL.searchParams.set('back', thisURL.pathname + thisURL.search)
-        window.location.href = linkURL.toString()
-        e.preventDefault()
+function hijackEditLinks() {
+    /* To inject the current page URL as a "back" query param */
+    const editLinks = document.querySelectorAll('a.edit-reponse')
+    Array.from(editLinks).forEach(editLink => {
+        editLink.addEventListener('click', e => {
+            const thisURL = new URL(window.location.href)
+            const linkURL = new URL(e.target.href)
+            thisURL.hash = ''
+            linkURL.searchParams.set('back', thisURL.pathname + thisURL.search)
+            window.location.href = linkURL.toString()
+            e.preventDefault()
+        })
     })
-})
+}
+
+function takeControlOverNativeJump() {
+    /* To avoid position under sticky headers. */
+    if (location.hash) {
+        /* Waiting for the next tick to supplement previous browser behavior. */
+        setTimeout(() => {
+            const element = document.querySelector(window.location.hash)
+            const target = element.getBoundingClientRect()
+            window.scrollTo({
+                /* Position the highlighted element in the middle of the page. */
+                top: window.scrollY + target.top - window.innerHeight / 2,
+                behavior: 'smooth'
+            })
+        }, 1)
+    }
+}

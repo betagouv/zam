@@ -514,5 +514,13 @@
 <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
 <script type="text/javascript">
     notifyOnUpdates(60 /* seconds */, '{{ timestamp }}', '{{ check_url }}')
+    setupToggle('#toggle-advanced', '#advanced', false)
+    setupToggle('#toggle-filter', 'tr.filters', false)
+    setupToggle('#toggle-articles', '#articles', true)
+    makeHeadersSortable(document.querySelector('thead'))
+    filterColumns(document.querySelector('table'))
+    handleBookmarks()
+    hijackEditLinks()
+    takeControlOverNativeJump()
 </script>
 {% endblock %}

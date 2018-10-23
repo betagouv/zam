@@ -236,17 +236,20 @@ class Article(Base):
     def url_key(self) -> str:
         return f"{self.type}.{self.num}.{self.mult}.{self.pos}"
 
-    def grouped_amendements(self) -> Iterable[List[Amendement]]:
-        return Article._group_amendements(self.amendements)
-
     def grouped_displayable_amendements(self) -> Iterable[List[Amendement]]:
-        return Article._group_amendements(
+        return self.group_amendements(
             amdt for amdt in self.amendements if amdt.is_displayable
         )
 
-    @staticmethod
-    def _group_amendements(
-        amendements: Iterable[Amendement]
+    def grouped_displayable_top_level_amendements(self) -> Iterable[List[Amendement]]:
+        return self.group_amendements(
+            amdt
+            for amdt in self.amendements
+            if amdt.is_displayable and not amdt.is_sous_amendement
+        )
+
+    def group_amendements(
+        self, amendements: Iterable[Amendement]
     ) -> Iterable[List[Amendement]]:
         return (
             list(group)

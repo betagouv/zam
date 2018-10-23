@@ -13,7 +13,7 @@
 
 <nav class="main">
   <span>
-    <a class="list" href="{{ request.resource_url(context.parent if article else context) }}">Liste des articles</a>
+    <a class="list" href="{{ request.resource_url(context.parent if article is defined else context) }}">Liste des articles</a>
   </span>
   <span><a class="find" href="">Accès amendement</a></span>
 </nav>

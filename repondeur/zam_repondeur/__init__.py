@@ -19,6 +19,7 @@ BASE_SETTINGS = {
         "paragriphy": "zam_repondeur.views.jinja2_filters:paragriphy",
         "amendement_matches": "zam_repondeur.views.jinja2_filters:amendement_matches",
     },
+    "jinja2.undefined": "strict",
     "zam.legislature": 15,
     "huey.workers": (cpu_count() * 2) + 1,
 }

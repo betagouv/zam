@@ -1,6 +1,6 @@
 import re
 from datetime import date, datetime
-from typing import Dict, Optional, Tuple, Union, TYPE_CHECKING  # noqa
+from typing import Dict, Iterable, List, Optional, Tuple, Union, TYPE_CHECKING  # noqa
 
 from sqlalchemy import (
     Boolean,
@@ -252,6 +252,13 @@ class Amendement(Base):
     @property
     def is_displayable(self) -> bool:
         return (bool(self.avis) or self.gouvernemental) and not self.is_abandoned
+
+    @property
+    def is_sous_amendement(self) -> bool:
+        return self.parent_pk is not None
+
+    def grouped_children(self) -> Iterable[List["Amendement"]]:
+        return self.article.group_amendements(self.children)
 
     @property
     def has_reponse(self) -> bool:

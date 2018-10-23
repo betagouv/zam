@@ -486,9 +486,9 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
         "Article 1",
         "Réponse",
-        "Sous-amendement",
-        "Réponse",
         "Amendement",
+        "Réponse",
+        "Sous-amendement",
         "Article 7 bis",
     ]
 
@@ -562,7 +562,6 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
             matricule="000003",
             objet="corge",
             dispositif="grault",
-            avis="Défavorable",
         ),
     ]
     DBSession.add_all(amendements)
@@ -574,8 +573,6 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         "Réponse",
         "Amendement",
         "Article 1",
-        "Réponse",
-        "Sous-amendement",
         "Réponse",
         "Amendement",
         "Article 7 bis",

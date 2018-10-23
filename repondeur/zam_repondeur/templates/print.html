@@ -17,6 +17,10 @@
       {% endif %}
 
       {% for amendements in article.grouped_displayable_top_level_amendements() %}
+        {{ macros.response_page(amendements) }}
+        {% for amendement in amendements %}
+          {{ macros.amendement_page(amendement) }}
+        {% endfor %}
         {% for amendement in amendements %}
           {% for children_amendements in amendement.grouped_displayable_children() %}
             {{ macros.response_page(children_amendements) }}
@@ -24,10 +28,6 @@
               {{ macros.amendement_page(child) }}
             {% endfor %}
           {% endfor %}
-        {% endfor %}
-        {{ macros.response_page(amendements) }}
-        {% for amendement in amendements %}
-          {{ macros.amendement_page(amendement) }}
         {% endfor %}
       {% endfor %}
 

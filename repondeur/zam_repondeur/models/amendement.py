@@ -15,6 +15,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import backref, relationship
 
 from zam_repondeur.constants import GROUPS_COLORS
+from zam_repondeur.decorator import reify
 
 from .base import Base, DBSession
 
@@ -80,9 +81,7 @@ class Amendement(Base):
     lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"))
     lecture: "Lecture" = relationship("Lecture", back_populates="amendements")
     article_pk: int = Column(Integer, ForeignKey("articles.pk"))
-    article: "Article" = relationship(
-        "Article", back_populates="amendements", lazy="joined"
-    )
+    article: "Article" = relationship("Article", back_populates="amendements")
 
     # Extras. (TODO: move to dedicated table?)
     avis: Optional[str] = Column(Text, nullable=True)
@@ -151,11 +150,11 @@ class Amendement(Base):
     def sort_key(self) -> Tuple[int, int]:
         return (self.position or self.VERY_BIG_NUMBER, self.num)
 
-    @property
+    @reify
     def num_str(self) -> str:
         return str(self.num)
 
-    @property
+    @reify
     def num_disp(self) -> str:
         text = self.num_str
         if self.rectif > 0:
@@ -223,7 +222,7 @@ class Amendement(Base):
                     raise ValueError(f"Cannot parse amendement number '{text}'")
         return (num, rectif)
 
-    @property
+    @reify
     def gouvernemental(self) -> bool:
         return self.auteur == "LE GOUVERNEMENT"
 
@@ -233,7 +232,7 @@ class Amendement(Base):
             return False
         return "retiré" in self.sort.lower()
 
-    @property
+    @reify
     def is_abandoned_before_seance(self) -> bool:
         if not self.sort:
             return False

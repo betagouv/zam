@@ -5,6 +5,7 @@ from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.request import Request
 from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
+from sqlalchemy.orm import joinedload
 
 from zam_repondeur.resources import AmendementResource, LectureResource
 from zam_repondeur.writer import write_csv, write_pdf, write_pdf1, write_xlsx
@@ -22,11 +23,19 @@ DOWNLOAD_FORMATS = {
 
 @view_config(context=LectureResource, name="download_amendements")
 def download_amendements(context: LectureResource, request: Request) -> Response:
-    lecture = context.model()
 
     fmt: str = request.params.get("format", "")
     if fmt not in ("csv", "xlsx", "pdf"):
         raise HTTPBadRequest(f'Invalid value "{fmt}" for "format" param')
+
+    if fmt == "pdf":
+        options = [
+            joinedload("articles").joinedload("amendements").joinedload("children")
+        ]
+    else:
+        options = [joinedload("articles")]
+
+    lecture = context.model(*options)
 
     with NamedTemporaryFile() as file_:
 

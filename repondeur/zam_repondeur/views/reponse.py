@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.clean import clean_html
+from zam_repondeur.decorator import reify
 from zam_repondeur.message import Message
 from zam_repondeur.models import AVIS
 from zam_repondeur.resources import AmendementResource
@@ -19,7 +19,7 @@ class ReponseEdit:
         self.context = context
         self.request = request
         self.amendement = context.model()
-        self.lecture = context.lecture_resource.model()
+        self.lecture = self.amendement.lecture
 
     @view_config(request_method="GET")
     def get(self) -> dict:

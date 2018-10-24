@@ -3,7 +3,7 @@ from typing import Any, Tuple
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-from .base import Base, DBSession  # noqa
+from .base import Base, DBSession, log_query_with_origin  # noqa
 
 from .amendement import Amendement, AVIS  # noqa
 from .article import Article  # noqa

@@ -88,6 +88,37 @@ def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
     assert errors == []
 
 
+def test_import_liasse_xml_with_unknown_parent(lecture_essoc):
+    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+
+    # Let's import a liasse with only a child amendement
+    amendements, errors = import_liasse_xml(open_liasse("liasse_only_child.xml"))
+
+    assert amendements == []
+    assert len(errors) == 1
+    uid, cause = errors[0]
+    assert uid == "AMANR5L15PO744107B0806P0D1N26"
+    assert cause == "Unknown parent amendement 28"
+
+
+def test_import_liasse_xml_with_known_but_missing_parent(lecture_essoc):
+    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+
+    # Let's import the parent amendement
+    amendements, errors = import_liasse_xml(open_liasse("liasse_only_parent.xml"))
+    assert len(amendements) == 1
+    assert amendements[0].num == 28
+    assert amendements[0].parent is None
+    assert errors == []
+
+    # Now let's import a liasse with only a child amendement
+    amendements, errors = import_liasse_xml(open_liasse("liasse_only_child.xml"))
+    assert len(amendements) == 1
+    assert amendements[0].num == 26
+    assert amendements[0].parent.num == 28
+    assert errors == []
+
+
 def _check_amendement_0(amendement):
 
     assert amendement.lecture.chambre == "an"

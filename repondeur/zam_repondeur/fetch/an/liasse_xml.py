@@ -128,7 +128,7 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
     )
     amendement.dispositif = clean_html(extract("corps", "dispositif") or "")
     amendement.objet = clean_html(extract("corps", "exposeSommaire") or "")
-    amendement.parent = get_parent(extract("amendementParent"), uid_map)
+    amendement.parent = get_parent(extract("amendementParent"), uid_map, lecture)
     return cast(Amendement, amendement)
 
 
@@ -224,11 +224,32 @@ def get_groupe_name(uid: str) -> str:
 
 
 def get_parent(
-    uid: Optional[str], uid_map: Dict[str, Amendement]
+    uid: Optional[str], uid_map: Dict[str, Amendement], lecture: Lecture
 ) -> Optional[Amendement]:
     if uid is None:
         return None
     try:
         return uid_map[uid]
     except KeyError:
-        raise ValueError(f"Unknown parent amendement {uid}")
+        num = get_number_from_uid(uid)
+        parent: Optional[Amendement] = (
+            DBSession.query(Amendement)
+            .filter(Amendement.lecture == lecture, Amendement.num == num)
+            .first()
+        )
+        if parent is None:
+            raise ValueError(f"Unknown parent amendement {num}") from None
+        return parent
+
+
+def get_number_from_uid(uid: str) -> int:
+    """
+    Get the amendement number from the UID
+
+    UIDs are supposed to be opaque, but if the parent amendement is not included
+    then we have to extract the number anyway :-/
+    """
+    mo = re.match(r"^AM.+N(?P<num>\d+)$", uid)
+    if mo is None:
+        raise ValueError(f"Cannot extract amendement number from {uid}") from None
+    return int(mo.group("num"))

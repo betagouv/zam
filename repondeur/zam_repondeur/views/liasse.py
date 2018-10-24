@@ -46,7 +46,7 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
         save_uploaded_file(liasse_field, backup_path)
 
     try:
-        amendements = import_liasse_xml(liasse_field.file)
+        amendements, errors = import_liasse_xml(liasse_field.file)
     except ValueError:
         logger.exception("Erreur d'import de la liasse XML")
         request.session.flash(
@@ -54,10 +54,21 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
         )
         return
 
+    if errors:
+        if len(errors) == 1:
+            what = "l'amendement"
+        else:
+            what = "les amendements"
+        uids = ", ".join(uid for uid, cause in errors)
+        request.session.flash(
+            Message(cls="warning", text=f"Impossible d'importer {what} {uids}.")
+        )
+
     if len(amendements) == 0:
         request.session.flash(
             Message(
-                cls="warning", text="Aucun amendement n’a été trouvé dans ce fichier."
+                cls="warning",
+                text="Aucun amendement valide n’a été trouvé dans ce fichier.",
             )
         )
         return

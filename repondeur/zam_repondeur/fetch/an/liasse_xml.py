@@ -2,7 +2,7 @@ import logging
 import re
 from datetime import date
 from functools import partial
-from typing import Dict, IO, List, Optional, cast
+from typing import Dict, IO, List, Optional, Tuple, cast
 
 from lxml import etree
 
@@ -28,7 +28,9 @@ logger = logging.getLogger(__name__)
 NS = "{http://schemas.assemblee-nationale.fr/referentiel}"
 
 
-def import_liasse_xml(xml_file: IO[bytes]) -> List[Amendement]:
+def import_liasse_xml(
+    xml_file: IO[bytes]
+) -> Tuple[List[Amendement], List[Tuple[str, str]]]:
     try:
         tree = etree.parse(xml_file)
     except etree.XMLSyntaxError:
@@ -47,18 +49,22 @@ def import_liasse_xml(xml_file: IO[bytes]) -> List[Amendement]:
         raise ValueError(message)
 
     uid_map: Dict[str, Amendement] = {}
+    errors = []
     for child in root:
-
         if extract_from_node(child, "etat") == "A déposer":
             num_long = extract_from_node(child, "numeroLong")
             logger.warning(f"Ignoring amendement {num_long} (à déposer)")
             continue
 
         uid = child.find(f"./{NS}uid").text
-        amendement = _make_amendement(child, uid_map)
-        uid_map[uid] = amendement
+        try:
+            amendement = _make_amendement(child, uid_map)
+            uid_map[uid] = amendement
+        except Exception as exc:
+            logger.exception(f"Failed to import amendement {uid} from liasse")
+            errors.append((uid, str(exc)))
 
-    return list(uid_map.values())
+    return list(uid_map.values()), errors
 
 
 def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Amendement:
@@ -122,7 +128,7 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
     )
     amendement.dispositif = clean_html(extract("corps", "dispositif") or "")
     amendement.objet = clean_html(extract("corps", "exposeSommaire") or "")
-    amendement.parent = get_parent(extract("amendementParent"), uid_map)
+    amendement.parent = get_parent(extract("amendementParent"), uid_map, lecture)
     return cast(Amendement, amendement)
 
 
@@ -218,11 +224,32 @@ def get_groupe_name(uid: str) -> str:
 
 
 def get_parent(
-    uid: Optional[str], uid_map: Dict[str, Amendement]
+    uid: Optional[str], uid_map: Dict[str, Amendement], lecture: Lecture
 ) -> Optional[Amendement]:
     if uid is None:
         return None
     try:
         return uid_map[uid]
     except KeyError:
-        raise ValueError(f"Unknown parent amendement {uid}")
+        num = get_number_from_uid(uid)
+        parent: Optional[Amendement] = (
+            DBSession.query(Amendement)
+            .filter(Amendement.lecture == lecture, Amendement.num == num)
+            .first()
+        )
+        if parent is None:
+            raise ValueError(f"Unknown parent amendement {num}") from None
+        return parent
+
+
+def get_number_from_uid(uid: str) -> int:
+    """
+    Get the amendement number from the UID
+
+    UIDs are supposed to be opaque, but if the parent amendement is not included
+    then we have to extract the number anyway :-/
+    """
+    mo = re.match(r"^AM.+N(?P<num>\d+)$", uid)
+    if mo is None:
+        raise ValueError(f"Cannot extract amendement number from {uid}") from None
+    return int(mo.group("num"))

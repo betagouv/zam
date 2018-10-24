@@ -1,17 +1,16 @@
 import logging
 import os
 import sys
-from typing import Dict, List
+from typing import List
 
-import rollbar
 from huey import RedisHuey
 from pyramid.paster import get_appsettings, setup_logging
 from redis.exceptions import ConnectionError
-from rollbar.logger import RollbarHandler
 from sqlalchemy import engine_from_config
 
 from zam_repondeur import BASE_SETTINGS
 from zam_repondeur.data import init_repository
+from zam_repondeur.errors import extract_settings, setup_rollbar_log_handler
 from zam_repondeur.models import DBSession
 from zam_repondeur.tasks.huey import init_huey
 
@@ -37,7 +36,7 @@ def main(argv: List[str] = sys.argv) -> None:
 
     rollbar_settings = extract_settings(settings, prefix="rollbar.")
     if "access_token" in rollbar_settings and "environment" in rollbar_settings:
-        setup_rollbar_error_reporting(rollbar_settings)
+        setup_rollbar_log_handler(rollbar_settings)
 
     engine = engine_from_config(settings, "sqlalchemy.")
     DBSession.configure(bind=engine)
@@ -62,26 +61,6 @@ def main(argv: List[str] = sys.argv) -> None:
         flush_locks=True,
     )
     consumer.run()
-
-
-def extract_settings(settings: Dict[str, str], prefix: str) -> Dict[str, str]:
-    prefix_length = len(prefix)
-    return {
-        key[prefix_length:]: settings[key] for key in settings if key.startswith(prefix)
-    }
-
-
-def setup_rollbar_error_reporting(rollbar_settings: Dict[str, str]) -> None:
-    """
-    All log messages with level ERROR or higher will be sent to Rollbar
-    """
-    rollbar.init(**rollbar_settings)
-
-    rollbar_handler = RollbarHandler()
-    rollbar_handler.setLevel(logging.ERROR)
-
-    root_logger = logging.getLogger()
-    root_logger.addHandler(rollbar_handler)
 
 
 def flush_stale_locks(huey: RedisHuey) -> None:

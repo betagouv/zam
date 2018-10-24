@@ -349,7 +349,7 @@
         </thead>
         <tbody>
         {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
-        {% for amendement in amendements %}
+        {% for amendement in amendements | sort %}
             <tr data-article="
                     {%- if amendement.is_abandoned_before_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }}

@@ -2,7 +2,7 @@
 
 ## Prochains évènements
 
-### Date prévisionnelle de prochaine démonstration : 30 octobre à 15h (à confirmer).
+### Date prévisionnelle de prochaine démonstration : 20 novembre à 15h (à confirmer).
 
 <h2 class="center">[Accès au répondeur](/repondeur/) — [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
 

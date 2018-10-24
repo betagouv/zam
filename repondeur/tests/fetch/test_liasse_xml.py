@@ -10,7 +10,7 @@ def test_import_liasse_xml(lecture_essoc):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
     from zam_repondeur.models import Amendement
 
-    amendements = import_liasse_xml(open_liasse("liasse.xml"))
+    amendements, errors = import_liasse_xml(open_liasse("liasse.xml"))
 
     assert isinstance(amendements, list)
     assert len(amendements) == 3
@@ -20,21 +20,25 @@ def test_import_liasse_xml(lecture_essoc):
     _check_amendement_1(amendements[1])
     _check_amendement_gouvernemental(amendements[2])
 
+    assert errors == []
+
 
 def test_import_liasse_xml_article_additionnel(lecture_essoc):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
-    amendements = import_liasse_xml(open_liasse("liasse_apres.xml"))
+    amendements, errors = import_liasse_xml(open_liasse("liasse_apres.xml"))
 
     assert amendements[0].article.num == "2"
     assert amendements[0].article.pos == "après"
+
+    assert errors == []
 
 
 def test_import_same_liasse_xml_again_preserve_response(lecture_essoc):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     # Let's import amendements
-    amendements = import_liasse_xml(open_liasse("liasse.xml"))
+    amendements, _ = import_liasse_xml(open_liasse("liasse.xml"))
 
     # Now let's add a response
     amendements[1].avis = "Favorable"
@@ -42,12 +46,14 @@ def test_import_same_liasse_xml_again_preserve_response(lecture_essoc):
     amendements[1].reponse = "Réponse"
 
     # And import the same amendements again
-    amendements2 = import_liasse_xml(open_liasse("liasse.xml"))
+    amendements2, errors = import_liasse_xml(open_liasse("liasse.xml"))
 
     assert amendements == amendements2
     assert amendements2[1].avis == "Favorable"
     assert amendements2[1].observations == "Observations"
     assert amendements2[1].reponse == "Réponse"
+
+    assert errors == []
 
 
 def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
@@ -55,7 +61,7 @@ def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
     from zam_repondeur.models import Amendement, DBSession
 
     # Let's import amendements
-    amendements = import_liasse_xml(open_liasse("liasse.xml"))
+    amendements, _ = import_liasse_xml(open_liasse("liasse.xml"))
 
     # Now let's add a response
     amendements[1].avis = "Favorable"
@@ -68,7 +74,7 @@ def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
     amendements[2].reponse = "Réponse"
 
     # And import a smaller liasse
-    amendements2 = import_liasse_xml(open_liasse("liasse_smaller.xml"))
+    amendements2, errors = import_liasse_xml(open_liasse("liasse_smaller.xml"))
 
     assert amendements[0] == amendements2[0]
     assert amendements[1] == amendements2[1]
@@ -78,6 +84,8 @@ def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
     assert amendements2[1].reponse == "Réponse"
     assert DBSession.query(Amendement).count() == 3
     assert amendements[2].avis == "Défavorable"
+
+    assert errors == []
 
 
 def _check_amendement_0(amendement):

@@ -2,7 +2,7 @@ import logging
 import re
 from datetime import date
 from functools import partial
-from typing import Dict, IO, List, Optional, cast
+from typing import Dict, IO, List, Optional, Tuple, cast
 
 from lxml import etree
 
@@ -28,7 +28,9 @@ logger = logging.getLogger(__name__)
 NS = "{http://schemas.assemblee-nationale.fr/referentiel}"
 
 
-def import_liasse_xml(xml_file: IO[bytes]) -> List[Amendement]:
+def import_liasse_xml(
+    xml_file: IO[bytes]
+) -> Tuple[List[Amendement], List[Tuple[str, str]]]:
     try:
         tree = etree.parse(xml_file)
     except etree.XMLSyntaxError:
@@ -47,18 +49,22 @@ def import_liasse_xml(xml_file: IO[bytes]) -> List[Amendement]:
         raise ValueError(message)
 
     uid_map: Dict[str, Amendement] = {}
+    errors = []
     for child in root:
-
         if extract_from_node(child, "etat") == "A déposer":
             num_long = extract_from_node(child, "numeroLong")
             logger.warning(f"Ignoring amendement {num_long} (à déposer)")
             continue
 
         uid = child.find(f"./{NS}uid").text
-        amendement = _make_amendement(child, uid_map)
-        uid_map[uid] = amendement
+        try:
+            amendement = _make_amendement(child, uid_map)
+            uid_map[uid] = amendement
+        except Exception as exc:
+            logger.exception(f"Failed to import amendement {uid} from liasse")
+            errors.append((uid, str(exc)))
 
-    return list(uid_map.values())
+    return list(uid_map.values()), errors
 
 
 def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Amendement:

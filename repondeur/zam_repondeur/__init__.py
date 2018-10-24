@@ -8,6 +8,7 @@ from pyramid.session import SignedCookieSessionFactory
 from pyramid.view import view_config
 from sqlalchemy import engine_from_config
 
+from zam_repondeur.errors import extract_settings, setup_rollbar_log_handler
 from zam_repondeur.models import DBSession, Base
 from zam_repondeur.resources import Root
 from zam_repondeur.tasks.huey import init_huey
@@ -34,6 +35,10 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
     with Configurator(
         settings=settings, root_factory=Root, session_factory=session_factory
     ) as config:
+
+        rollbar_settings = extract_settings(settings, prefix="rollbar.")
+        if "access_token" in rollbar_settings and "environment" in rollbar_settings:
+            setup_rollbar_log_handler(rollbar_settings)
 
         config.include("pyramid_tm")
 

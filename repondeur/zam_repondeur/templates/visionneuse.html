@@ -61,7 +61,7 @@
       {% set amendement = amendements[0] %}
       {% set is_gouvernemental = amendement.gouvernemental %}
       {% set parent = amendement.parent %}
-      <article{% if is_gouvernemental %} class="gouvernemental"{% endif %}{% if parent %} class="sous-amendement"{% endif %}>
+      <article class="{% if is_gouvernemental %}gouvernemental{% endif %} {% if parent %}sous-amendement{% endif %}">
         {% for amdt in amendements %}
           <span class="fake-anchor" id="{{ amdt.slug }}"></span>
         {% endfor %}

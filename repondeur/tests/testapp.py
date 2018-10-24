@@ -18,7 +18,7 @@ class TestAmendement:
         )
 
     def has_gouvernemental_class(self):
-        return self.node.attributes.get("class") == "gouvernemental"
+        return "gouvernemental" in self.node.attributes.get("class")
 
 
 class TestResponse(BaseTestResponse):

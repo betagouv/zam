@@ -15,10 +15,12 @@ from zam_repondeur.tasks.huey import init_huey
 from zam_repondeur.version import load_version
 
 
+FILTERS_PATH = "zam_repondeur.views.jinja2_filters"
 BASE_SETTINGS = {
     "jinja2.filters": {
-        "paragriphy": "zam_repondeur.views.jinja2_filters:paragriphy",
-        "amendement_matches": "zam_repondeur.views.jinja2_filters:amendement_matches",
+        "paragriphy": f"{FILTERS_PATH}:paragriphy",
+        "amendement_matches": f"{FILTERS_PATH}:amendement_matches",
+        "filter_out_empty_additionals": f"{FILTERS_PATH}:filter_out_empty_additionals",
     },
     "jinja2.undefined": "strict",
     "zam.legislature": 15,

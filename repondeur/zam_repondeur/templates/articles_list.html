@@ -70,15 +70,11 @@
     </form>
   </section>
 
-  {% for article in articles|sort %}
+  {% for article in articles|sort|filter_out_empty_additionals %}
     {% if article.slug %}
       <section class="box article" id="{{ article.slug }}" data-article-num="{{ article.num }}">
         <h2><a class="arrow-right" href="{{ request.resource_url(context, article.url_key, 'reponses') }}">{{ article.format(short=False) }}</a></h2>
-        {% if article.titre == "TODO" %}
-          <h3>{{ loop.previtem.titre or "" }}</h3>
-        {% else %}
-          <h3>{{ article.titre or "" }}</h3>
-        {% endif %}
+        <h3>{{ article.titre or "" }}</h3>
       </section>
     {% endif %}
   {% endfor %}

@@ -196,12 +196,38 @@ class Article(Base):
         return sorted_articles[previous_index]
 
     @property
+    def previous_displayable_article(self) -> Optional["Article"]:
+        previous_article = self.previous_article
+        if previous_article and previous_article.pos:
+            while previous_article:
+                for amendement in previous_article.amendements:
+                    if amendement.is_displayable:
+                        return previous_article
+                previous_article = previous_article.previous_article
+                if previous_article and not previous_article.pos:
+                    return previous_article
+        return previous_article
+
+    @property
     def next_article(self) -> Optional["Article"]:
         sorted_articles: List[Article] = sorted(self.lecture.articles)
         next_index = sorted_articles.index(self) + 1
         if next_index >= len(sorted_articles):
             return None
         return sorted_articles[next_index]
+
+    @property
+    def next_displayable_article(self) -> Optional["Article"]:
+        next_article = self.next_article
+        if next_article and next_article.pos:
+            while next_article:
+                for amendement in next_article.amendements:
+                    if amendement.is_displayable:
+                        return next_article
+                next_article = next_article.next_article
+                if next_article and not next_article.pos:
+                    return next_article
+        return next_article
 
     @property
     def slug(self) -> str:

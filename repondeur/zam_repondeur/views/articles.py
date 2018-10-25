@@ -17,6 +17,12 @@ def list_articles(context: ArticleCollection, request: Request) -> Dict[str, Any
     return {"lecture": context.lecture_resource.model(), "articles": context.models()}
 
 
+@view_config(context=ArticleResource, name="check", renderer="json")
+def article_check(context: ArticleResource, request: Request) -> dict:
+    article = context.model()
+    return {"modified_at": article.modified_at_timestamp}
+
+
 @view_defaults(context=ArticleResource)
 class ArticleEdit:
     def __init__(self, context: ArticleResource, request: Request) -> None:

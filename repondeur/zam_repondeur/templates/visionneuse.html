@@ -218,9 +218,7 @@
 
 {% block extra_scripts %}
 <script>
-  ;(function notifyOnUpdates () {
-    const delay = 1000 * 30 /* seconds. */
-    const timestamp = {{ timestamp }}
+  function notifyOnUpdates (delay, timestamp, checkUrl) {
     function displayNotificationUpdate () {
       const message = '<p>De nouvelles informations sont disponibles, <a href=>rafraîchir</a> !</p>'
       document.querySelector('[role="status"]').innerHTML = message
@@ -229,15 +227,16 @@
       const options = {
         credentials: 'include'
       }
-      fetch('{{ check_url }}', options)
+      fetch(checkUrl, options)
         .then(reponse => reponse.json())
         .then(json => {
-          if (json.modified_at !== timestamp)
+          if (json.modified_at && json.modified_at !== Number(timestamp))
             displayNotificationUpdate()
         })
     }
-    setInterval(check, delay)
-  })()
+    setInterval(check, 1000 * delay)
+  }
+  notifyOnUpdates(30 /* seconds */, '{{ timestamp }}', '{{ check_url }}')
 </script>
 {% endblock %}
 </html>

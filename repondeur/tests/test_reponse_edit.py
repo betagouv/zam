@@ -24,9 +24,10 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
-    assert amendement.avis is None
-    assert amendement.observations is None
-    assert amendement.reponse is None
+    assert amendement.avis == ""
+    assert amendement.observations == ""
+    assert amendement.reponse == ""
+    initial_amendement_modified_at = amendement.modified_at
 
     resp = app.get(
         "http://localhost/lectures/an.15.269.PO717460/amendements/999/reponse"
@@ -52,18 +53,25 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
         amendement.comments
         == "Avec des <table><tbody><tr><td>commentaires</td></tr></tbody></table>"
     )
+    assert initial_amendement_modified_at < amendement.modified_at
 
 
-def test_post_reponse_edit_form_updates_modification_date(
+def test_post_reponse_edit_form_updates_modification_dates_only_if_modified(
     app, lecture_an, amendements_an
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Amendement, DBSession, Lecture
 
     with transaction.manager:
-        initial_modified_at = lecture_an.modified_at
+        initial_lecture_modified_at = lecture_an.modified_at
+        amendement = amendements_an[0]
+        initial_amendement_modified_at = amendement.modified_at
+        amendement.avis = "Favorable"
+        amendement.observations = "Des observations très pertinentes"
+        amendement.reponse = "Une réponse très appropriée"
+        DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "http://localhost/lectures/an.15.269.PO717460/amendements/999/reponse"
+        "http://localhost/lectures/an.15.269.PO717460/amendements/666/reponse"
     )
     form = resp.forms["edit-reponse"]
     form["avis"] = "Favorable"
@@ -78,4 +86,10 @@ def test_post_reponse_edit_form_updates_modification_date(
             num_texte=lecture_an.num_texte,
             organe=lecture_an.organe,
         )
-        assert lecture.modified_at != initial_modified_at
+        assert initial_lecture_modified_at == lecture.modified_at
+        amendement = (
+            DBSession.query(Amendement)
+            .filter(Amendement.num == amendements_an[0].num)
+            .first()
+        )
+        assert initial_amendement_modified_at == amendement.modified_at

@@ -45,6 +45,8 @@ class Amendement(Base):
     __table_args__ = (UniqueConstraint("num", "lecture_pk"),)
 
     pk: int = Column(Integer, primary_key=True)
+    created_at: datetime = Column(DateTime, nullable=False)
+    modified_at: datetime = Column(DateTime, nullable=False)
 
     # Meta informations.
     num: int = Column(Integer, nullable=False)
@@ -115,7 +117,10 @@ class Amendement(Base):
         observations: str = "",
         reponse: str = "",
         comments: str = "",
+        groupe: str = "",
+        bookmarked_at: Optional[datetime] = None,
     ) -> "Amendement":
+        now = datetime.utcnow()
         amendement = cls(
             lecture=lecture,
             article=article,
@@ -123,6 +128,7 @@ class Amendement(Base):
             num=num,
             rectif=rectif,
             auteur=auteur,
+            groupe=groupe,
             matricule=matricule,
             date_depot=date_depot,
             sort=sort,
@@ -137,6 +143,9 @@ class Amendement(Base):
             observations=observations,
             reponse=reponse,
             comments=comments,
+            created_at=now,
+            modified_at=now,
+            bookmarked_at=bookmarked_at,
         )
         DBSession.add(amendement)
         return amendement
@@ -145,6 +154,11 @@ class Amendement(Base):
         if not isinstance(other, Amendement):
             return NotImplemented
         return self.sort_key < other.sort_key
+
+    @property
+    def modified_at_timestamp(self) -> float:
+        timestamp: float = (self.modified_at - datetime(1970, 1, 1)).total_seconds()
+        return timestamp
 
     @property
     def sort_key(self) -> Tuple[bool, int, int]:

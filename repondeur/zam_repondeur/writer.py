@@ -53,6 +53,8 @@ EXCLUDED_FIELDS = [
     "subdiv_num",
     "subdiv_mult",
     "subdiv_pos",
+    "created_at",
+    "modified_at",
 ]
 FIELDS = [
     field
@@ -88,7 +90,7 @@ def write_csv(lecture: Lecture, filename: str, request: Request) -> int:
             quoting=csv.QUOTE_MINIMAL,
             lineterminator="\n",
         )
-        for amendement in lecture.amendements:
+        for amendement in sorted(lecture.amendements):
             writer.writerow(export_amendement(amendement))
             nb_rows += 1
     return nb_rows
@@ -141,7 +143,7 @@ def write_xlsx(lecture: Lecture, filename: str, request: Request) -> int:
     ws.title = "Amendements"
 
     _write_header_row(ws)
-    nb_rows = _write_data_rows(ws, lecture.amendements)
+    nb_rows = _write_data_rows(ws, sorted(lecture.amendements))
     wb.save(filename)
     return nb_rows
 

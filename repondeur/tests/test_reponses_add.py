@@ -188,7 +188,7 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
 
     with transaction.manager:
         amendements = [
-            Amendement(
+            Amendement.create(
                 lecture=lecture_an,
                 article=article1_an,
                 num=num,
@@ -197,10 +197,10 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
                 observations="Des observations très pertinentes",
                 reponse="Une réponse très appropriée",
                 comments="Avec des commentaires",
+                parent=None,
             )
             for position, num in enumerate((333, 777), 1)
         ]
-        DBSession.add_all(amendements)
         nb_rows = write_csv(lecture_an, filename, request={})
 
     assert nb_rows == 2

@@ -70,6 +70,15 @@ class Article(Base):
     def validate_pos(self, key: str, pos: str) -> str:
         return validate(key, pos, ALLOWED_POS)
 
+    @property
+    def modified_at_timestamp(self) -> float:
+        if not self.amendements:
+            return 0
+        max_modified_at: float = max(
+            amendement.modified_at_timestamp for amendement in self.amendements
+        )
+        return max_modified_at
+
     __repr_keys__ = ("pk", "lecture_pk", "type", "num", "mult", "pos")
 
     def __str__(self) -> str:

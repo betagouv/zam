@@ -27,8 +27,14 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
     )
     num, rectif = Amendement.parse_num(row["Numéro "])
     amendement, created = get_one_or_create(
-        DBSession, Amendement, lecture=lecture, num=num
+        DBSession,
+        Amendement,
+        create_method="create",
+        create_method_kwargs={"article": article, "parent": None},
+        lecture=lecture,
+        num=num,
     )
+    # Why do we still need this line?!
     amendement.article = article
     amendement.rectif = rectif
     amendement.alinea = row["Alinéa"].strip()
@@ -59,10 +65,18 @@ def parse_from_json(
         pos=subdiv_.pos,
     )
     num, rectif = Amendement.parse_num(amend["num"])
+    parent = get_parent(uid_map, amend)
     amendement, created = get_one_or_create(
-        DBSession, Amendement, lecture=lecture, num=num
+        DBSession,
+        Amendement,
+        create_method="create",
+        create_method_kwargs={"article": article, "parent": parent},
+        lecture=lecture,
+        num=num,
     )
+    # Why do we still need these two lines?!
     amendement.article = article
+    amendement.parent = parent
     amendement.rectif = rectif
     amendement.alinea = amend["libelleAlinea"]
     amendement.auteur = amend["auteur"]
@@ -79,7 +93,6 @@ def parse_from_json(
         if parse_bool(amend["isDiscussionCommune"])
         else None
     )
-    amendement.parent = get_parent(uid_map, amend)
     return cast(Amendement, amendement)
 
 

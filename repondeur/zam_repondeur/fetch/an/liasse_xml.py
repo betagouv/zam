@@ -111,13 +111,18 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
         mult=subdiv.mult,
         pos=subdiv.pos,
     )
+    parent = get_parent(extract("amendementParent"), uid_map, lecture)
     amendement, created = get_one_or_create(
         DBSession,
         Amendement,
+        create_method="create",
+        create_method_kwargs={"article": article, "parent": parent},
         lecture=lecture,
         num=to_int(extract("identifiant", "numero")),
     )
+    # Why do we still need these two lines?!
     amendement.article = article
+    amendement.parent = parent
     amendement.alinea = to_int(extract("pointeurFragmentTexte", "alinea", "numero"))
     amendement.auteur = auteur_name
     amendement.matricule = matricule
@@ -128,7 +133,6 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
     )
     amendement.dispositif = clean_html(extract("corps", "dispositif") or "")
     amendement.objet = clean_html(extract("corps", "exposeSommaire") or "")
-    amendement.parent = get_parent(extract("amendementParent"), uid_map, lecture)
     return cast(Amendement, amendement)
 
 

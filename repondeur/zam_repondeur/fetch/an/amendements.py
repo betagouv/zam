@@ -1,5 +1,6 @@
 import logging
 from collections import OrderedDict
+from datetime import datetime
 from http import HTTPStatus
 from typing import Dict, List, Optional, Tuple, Union
 from urllib.parse import urljoin
@@ -139,9 +140,14 @@ def _get_parent(
         parent, created = get_one_or_create(
             DBSession,
             Amendement,
+            create_method="create",
+            create_method_kwargs={
+                "article": article,
+                "rectif": parent_rectif,
+                "parent": None,
+            },
             lecture=lecture,
             num=parent_num,
-            create_method_kwargs={"article": article, "rectif": parent_rectif},
         )
     else:
         parent = None
@@ -156,17 +162,44 @@ def _create_or_update_amendement(
     position: int,
 ) -> Tuple[Amendement, bool]:
     amendement, created = get_one_or_create(
-        DBSession, Amendement, lecture=lecture, num=int(amend["numero"])
+        DBSession,
+        Amendement,
+        create_method="create",
+        create_method_kwargs={"article": article, "parent": parent},
+        lecture=lecture,
+        num=int(amend["numero"]),
     )
+
+    sort = get_sort(amend)
+    matricule = amend["auteur"]["tribunId"]
+    groupe = get_groupe(amend)
+    auteur = get_auteur(amend)
+    dispositif = unjustify(amend["dispositif"])
+    objet = unjustify(amend["exposeSommaire"])
+
+    if not created and (
+        article != amendement.article
+        or parent != amendement.parent
+        or sort != amendement.sort
+        or position != amendement.position
+        or matricule != amendement.matricule
+        or groupe != amendement.groupe
+        or auteur != amendement.auteur
+        or dispositif != amendement.dispositif
+        or objet != amendement.objet
+    ):
+        amendement.modified_at = datetime.utcnow()
+
+    # Why do we still need these two lines?!
     amendement.article = article
-    amendement.sort = get_sort(amend)
-    amendement.position = position
-    amendement.matricule = amend["auteur"]["tribunId"]
-    amendement.groupe = get_groupe(amend)
-    amendement.auteur = get_auteur(amend)
     amendement.parent = parent
-    amendement.dispositif = unjustify(amend["dispositif"])
-    amendement.objet = unjustify(amend["exposeSommaire"])
+    amendement.sort = sort
+    amendement.position = position
+    amendement.matricule = matricule
+    amendement.groupe = groupe
+    amendement.auteur = auteur
+    amendement.dispositif = dispositif
+    amendement.objet = objet
     DBSession.flush()  # make sure foreign keys are updated
     return amendement, created
 

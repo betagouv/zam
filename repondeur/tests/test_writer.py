@@ -17,12 +17,12 @@ def test_write_csv(
     lecture_senat, article1_senat, article1av_senat, article7bis_senat, tmpdir
 ):
     from zam_repondeur.writer import write_csv
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement
 
     filename = str(tmpdir.join("test.csv"))
 
     with transaction.manager:
-        amendement = Amendement(
+        amendement = Amendement.create(
             lecture=lecture_senat,
             article=article1_senat,
             alinea="",
@@ -35,57 +35,57 @@ def test_write_csv(
             objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
             resume="Suppression de l'article",
             position=1,
+            parent=None,
         )
-        amendements = [
-            amendement,
-            Amendement(
-                lecture=lecture_senat,
-                article=article1av_senat,
-                alinea="",
-                num=57,
-                auteur="M. DURAND",
-                groupe="Les Républicains",
-                matricule="000001",
-                objet="baz",
-                dispositif="qux",
-            ),
-            Amendement(
-                lecture=lecture_senat,
-                article=article7bis_senat,
-                alinea="",
-                num=21,
-                auteur="M. MARTIN",
-                groupe=None,
-                matricule="000002",
-                objet="quux",
-                dispositif="quuz",
-            ),
-            Amendement(
-                lecture=lecture_senat,
-                article=article1_senat,
-                alinea="",
-                num=43,
-                auteur="M. JEAN",
-                groupe="Les Indépendants",
-                matricule="000003",
-                objet="corge",
-                dispositif="grault",
-            ),
-            Amendement(
-                lecture=lecture_senat,
-                article=article1_senat,
-                alinea="",
-                num=596,
-                rectif=1,
-                parent=amendement,
-                auteur="M. JEAN",
-                groupe="Les Indépendants",
-                matricule="000003",
-                objet="corge",
-                dispositif="grault",
-            ),
-        ]
-        DBSession.add_all(amendements)
+        Amendement.create(
+            lecture=lecture_senat,
+            article=article1av_senat,
+            alinea="",
+            num=57,
+            auteur="M. DURAND",
+            groupe="Les Républicains",
+            matricule="000001",
+            objet="baz",
+            dispositif="qux",
+            parent=None,
+        )
+        Amendement.create(
+            lecture=lecture_senat,
+            article=article7bis_senat,
+            alinea="",
+            num=21,
+            auteur="M. MARTIN",
+            groupe=None,
+            matricule="000002",
+            objet="quux",
+            dispositif="quuz",
+            parent=None,
+        )
+        Amendement.create(
+            lecture=lecture_senat,
+            article=article1_senat,
+            alinea="",
+            num=43,
+            auteur="M. JEAN",
+            groupe="Les Indépendants",
+            matricule="000003",
+            objet="corge",
+            dispositif="grault",
+            parent=None,
+        )
+        Amendement.create(
+            lecture=lecture_senat,
+            article=article1_senat,
+            alinea="",
+            num=596,
+            rectif=1,
+            parent=amendement,
+            auteur="M. JEAN",
+            groupe="Les Indépendants",
+            matricule="000003",
+            objet="corge",
+            dispositif="grault",
+        )
         nb_rows = write_csv(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig", newline="\n") as f_:
@@ -132,12 +132,12 @@ def test_write_csv_sous_amendement(
     lecture_senat, article1_senat, article1av_senat, article7bis_senat, tmpdir
 ):
     from zam_repondeur.writer import write_csv
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement
 
     filename = str(tmpdir.join("test.csv"))
 
     with transaction.manager:
-        amendement = Amendement(
+        amendement = Amendement.create(
             lecture=lecture_senat,
             article=article1_senat,
             alinea="",
@@ -149,58 +149,58 @@ def test_write_csv_sous_amendement(
             dispositif="<p>L'article 1 est supprimé.</p>",
             objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
             resume="Suppression de l'article",
+            parent=None,
         )
-        amendements = [
-            amendement,
-            Amendement(
-                lecture=lecture_senat,
-                article=article1av_senat,
-                alinea="",
-                num=57,
-                auteur="M. DURAND",
-                groupe="Les Républicains",
-                matricule="000001",
-                objet="baz",
-                dispositif="qux",
-            ),
-            Amendement(
-                lecture=lecture_senat,
-                article=article7bis_senat,
-                alinea="",
-                num=21,
-                auteur="M. MARTIN",
-                groupe=None,
-                matricule="000002",
-                objet="quux",
-                dispositif="quuz",
-            ),
-            Amendement(
-                lecture=lecture_senat,
-                article=article1_senat,
-                alinea="",
-                num=43,
-                auteur="M. JEAN",
-                groupe="Les Indépendants",
-                matricule="000003",
-                objet="corge",
-                dispositif="grault",
-            ),
-            Amendement(
-                lecture=lecture_senat,
-                article=article1_senat,
-                alinea="",
-                num=596,
-                rectif=1,
-                parent=amendement,
-                auteur="M. JEAN",
-                groupe="Les Indépendants",
-                matricule="000003",
-                objet="corge",
-                dispositif="grault",
-                bookmarked_at=datetime.now(),
-            ),
-        ]
-        DBSession.add_all(amendements)
+        Amendement.create(
+            lecture=lecture_senat,
+            article=article1av_senat,
+            alinea="",
+            num=57,
+            auteur="M. DURAND",
+            groupe="Les Républicains",
+            matricule="000001",
+            objet="baz",
+            dispositif="qux",
+            parent=None,
+        )
+        Amendement.create(
+            lecture=lecture_senat,
+            article=article7bis_senat,
+            alinea="",
+            num=21,
+            auteur="M. MARTIN",
+            groupe=None,
+            matricule="000002",
+            objet="quux",
+            dispositif="quuz",
+            parent=None,
+        )
+        Amendement.create(
+            lecture=lecture_senat,
+            article=article1_senat,
+            alinea="",
+            num=43,
+            auteur="M. JEAN",
+            groupe="Les Indépendants",
+            matricule="000003",
+            objet="corge",
+            dispositif="grault",
+            parent=None,
+        )
+        Amendement.create(
+            lecture=lecture_senat,
+            article=article1_senat,
+            alinea="",
+            num=596,
+            rectif=1,
+            parent=amendement,
+            auteur="M. JEAN",
+            groupe="Les Indépendants",
+            matricule="000003",
+            objet="corge",
+            dispositif="grault",
+            bookmarked_at=datetime.now(),
+        )
         nb_rows = write_csv(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig", newline="\n") as f_:
@@ -247,9 +247,9 @@ def test_generate_pdf_without_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
     from zam_repondeur.writer import generate_html_for_pdf
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement
 
-    amendement = Amendement(
+    amendement = Amendement.create(
         lecture=lecture_senat,
         article=article1_senat,
         alinea="",
@@ -262,57 +262,57 @@ def test_generate_pdf_without_responses(
         objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
         resume="Suppression de l'article",
         position=1,
+        parent=None,
     )
-    amendements = [
-        amendement,
-        Amendement(
-            lecture=lecture_senat,
-            article=article1av_senat,
-            alinea="",
-            num=57,
-            auteur="M. DURAND",
-            groupe="Les Républicains",
-            matricule="000001",
-            objet="baz",
-            dispositif="qux",
-        ),
-        Amendement(
-            lecture=lecture_senat,
-            article=article7bis_senat,
-            alinea="",
-            num=21,
-            auteur="M. MARTIN",
-            groupe=None,
-            matricule="000002",
-            objet="quux",
-            dispositif="quuz",
-        ),
-        Amendement(
-            lecture=lecture_senat,
-            article=article1_senat,
-            alinea="",
-            num=43,
-            auteur="M. JEAN",
-            groupe="Les Indépendants",
-            matricule="000003",
-            objet="corge",
-            dispositif="grault",
-        ),
-        Amendement(
-            lecture=lecture_senat,
-            article=article1_senat,
-            alinea="",
-            num=596,
-            rectif=1,
-            parent=amendement,
-            auteur="M. JEAN",
-            groupe="Les Indépendants",
-            matricule="000003",
-            objet="corge",
-            dispositif="grault",
-        ),
-    ]
-    DBSession.add_all(amendements)
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article1av_senat,
+        alinea="",
+        num=57,
+        auteur="M. DURAND",
+        groupe="Les Républicains",
+        matricule="000001",
+        objet="baz",
+        dispositif="qux",
+        parent=None,
+    )
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article7bis_senat,
+        alinea="",
+        num=21,
+        auteur="M. MARTIN",
+        groupe=None,
+        matricule="000002",
+        objet="quux",
+        dispositif="quuz",
+        parent=None,
+    )
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article1_senat,
+        alinea="",
+        num=43,
+        auteur="M. JEAN",
+        groupe="Les Indépendants",
+        matricule="000003",
+        objet="corge",
+        dispositif="grault",
+        parent=None,
+    )
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article1_senat,
+        alinea="",
+        num=596,
+        rectif=1,
+        parent=amendement,
+        auteur="M. JEAN",
+        groupe="Les Indépendants",
+        matricule="000003",
+        objet="corge",
+        dispositif="grault",
+    )
     parser = HTMLParser(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )
@@ -328,9 +328,9 @@ def test_generate_pdf_with_amendement_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
     from zam_repondeur.writer import generate_html_for_pdf
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement
 
-    amendement = Amendement(
+    amendement = Amendement.create(
         lecture=lecture_senat,
         article=article1_senat,
         alinea="",
@@ -344,57 +344,57 @@ def test_generate_pdf_with_amendement_responses(
         resume="Suppression de l'article",
         position=1,
         avis="Favorable",
+        parent=None,
     )
-    amendements = [
-        amendement,
-        Amendement(
-            lecture=lecture_senat,
-            article=article1av_senat,
-            alinea="",
-            num=57,
-            auteur="M. DURAND",
-            groupe="Les Républicains",
-            matricule="000001",
-            objet="baz",
-            dispositif="qux",
-        ),
-        Amendement(
-            lecture=lecture_senat,
-            article=article7bis_senat,
-            alinea="",
-            num=21,
-            auteur="M. MARTIN",
-            groupe=None,
-            matricule="000002",
-            objet="quux",
-            dispositif="quuz",
-        ),
-        Amendement(
-            lecture=lecture_senat,
-            article=article1_senat,
-            alinea="",
-            num=43,
-            auteur="M. JEAN",
-            groupe="Les Indépendants",
-            matricule="000003",
-            objet="corge",
-            dispositif="grault",
-        ),
-        Amendement(
-            lecture=lecture_senat,
-            article=article1_senat,
-            alinea="",
-            num=596,
-            rectif=1,
-            parent=amendement,
-            auteur="M. JEAN",
-            groupe="Les Indépendants",
-            matricule="000003",
-            objet="corge",
-            dispositif="grault",
-        ),
-    ]
-    DBSession.add_all(amendements)
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article1av_senat,
+        alinea="",
+        num=57,
+        auteur="M. DURAND",
+        groupe="Les Républicains",
+        matricule="000001",
+        objet="baz",
+        dispositif="qux",
+        parent=None,
+    )
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article7bis_senat,
+        alinea="",
+        num=21,
+        auteur="M. MARTIN",
+        groupe=None,
+        matricule="000002",
+        objet="quux",
+        dispositif="quuz",
+        parent=None,
+    )
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article1_senat,
+        alinea="",
+        num=43,
+        auteur="M. JEAN",
+        groupe="Les Indépendants",
+        matricule="000003",
+        objet="corge",
+        dispositif="grault",
+        parent=None,
+    )
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article1_senat,
+        alinea="",
+        num=596,
+        rectif=1,
+        parent=amendement,
+        auteur="M. JEAN",
+        groupe="Les Indépendants",
+        matricule="000003",
+        objet="corge",
+        dispositif="grault",
+    )
     parser = HTMLParser(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )
@@ -411,9 +411,9 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
     from zam_repondeur.writer import generate_html_for_pdf
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement
 
-    amendement = Amendement(
+    amendement = Amendement.create(
         lecture=lecture_senat,
         article=article1_senat,
         alinea="",
@@ -427,58 +427,58 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         resume="Suppression de l'article",
         position=1,
         avis="Favorable",
+        parent=None,
     )
-    amendements = [
-        amendement,
-        Amendement(
-            lecture=lecture_senat,
-            article=article1av_senat,
-            alinea="",
-            num=57,
-            auteur="M. DURAND",
-            groupe="Les Républicains",
-            matricule="000001",
-            objet="baz",
-            dispositif="qux",
-        ),
-        Amendement(
-            lecture=lecture_senat,
-            article=article7bis_senat,
-            alinea="",
-            num=21,
-            auteur="M. MARTIN",
-            groupe=None,
-            matricule="000002",
-            objet="quux",
-            dispositif="quuz",
-        ),
-        Amendement(
-            lecture=lecture_senat,
-            article=article1_senat,
-            alinea="",
-            num=43,
-            auteur="M. JEAN",
-            groupe="Les Indépendants",
-            matricule="000003",
-            objet="corge",
-            dispositif="grault",
-        ),
-        Amendement(
-            lecture=lecture_senat,
-            article=article1_senat,
-            alinea="",
-            num=596,
-            rectif=1,
-            parent=amendement,
-            auteur="M. JEAN",
-            groupe="Les Indépendants",
-            matricule="000003",
-            objet="corge",
-            dispositif="grault",
-            avis="Défavorable",
-        ),
-    ]
-    DBSession.add_all(amendements)
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article1av_senat,
+        alinea="",
+        num=57,
+        auteur="M. DURAND",
+        groupe="Les Républicains",
+        matricule="000001",
+        objet="baz",
+        dispositif="qux",
+        parent=None,
+    )
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article7bis_senat,
+        alinea="",
+        num=21,
+        auteur="M. MARTIN",
+        groupe=None,
+        matricule="000002",
+        objet="quux",
+        dispositif="quuz",
+        parent=None,
+    )
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article1_senat,
+        alinea="",
+        num=43,
+        auteur="M. JEAN",
+        groupe="Les Indépendants",
+        matricule="000003",
+        objet="corge",
+        dispositif="grault",
+        parent=None,
+    )
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article1_senat,
+        alinea="",
+        num=596,
+        rectif=1,
+        parent=amendement,
+        auteur="M. JEAN",
+        groupe="Les Indépendants",
+        matricule="000003",
+        objet="corge",
+        dispositif="grault",
+        avis="Défavorable",
+    )
     parser = HTMLParser(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )
@@ -497,9 +497,9 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
     from zam_repondeur.writer import generate_html_for_pdf
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement
 
-    amendement = Amendement(
+    amendement = Amendement.create(
         lecture=lecture_senat,
         article=article1_senat,
         alinea="",
@@ -513,58 +513,58 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         resume="Suppression de l'article",
         position=1,
         avis="Favorable",
+        parent=None,
     )
-    amendements = [
-        amendement,
-        Amendement(
-            lecture=lecture_senat,
-            article=article1av_senat,
-            alinea="",
-            num=57,
-            auteur="M. DURAND",
-            groupe="Les Républicains",
-            matricule="000001",
-            objet="baz",
-            dispositif="qux",
-            avis="Favorable",
-        ),
-        Amendement(
-            lecture=lecture_senat,
-            article=article7bis_senat,
-            alinea="",
-            num=21,
-            auteur="M. MARTIN",
-            groupe=None,
-            matricule="000002",
-            objet="quux",
-            dispositif="quuz",
-        ),
-        Amendement(
-            lecture=lecture_senat,
-            article=article1_senat,
-            alinea="",
-            num=43,
-            auteur="M. JEAN",
-            groupe="Les Indépendants",
-            matricule="000003",
-            objet="corge",
-            dispositif="grault",
-        ),
-        Amendement(
-            lecture=lecture_senat,
-            article=article1_senat,
-            alinea="",
-            num=596,
-            rectif=1,
-            parent=amendement,
-            auteur="M. JEAN",
-            groupe="Les Indépendants",
-            matricule="000003",
-            objet="corge",
-            dispositif="grault",
-        ),
-    ]
-    DBSession.add_all(amendements)
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article1av_senat,
+        alinea="",
+        num=57,
+        auteur="M. DURAND",
+        groupe="Les Républicains",
+        matricule="000001",
+        objet="baz",
+        dispositif="qux",
+        avis="Favorable",
+        parent=None,
+    )
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article7bis_senat,
+        alinea="",
+        num=21,
+        auteur="M. MARTIN",
+        groupe=None,
+        matricule="000002",
+        objet="quux",
+        dispositif="quuz",
+        parent=None,
+    )
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article1_senat,
+        alinea="",
+        num=43,
+        auteur="M. JEAN",
+        groupe="Les Indépendants",
+        matricule="000003",
+        objet="corge",
+        dispositif="grault",
+        parent=None,
+    )
+    Amendement.create(
+        lecture=lecture_senat,
+        article=article1_senat,
+        alinea="",
+        num=596,
+        rectif=1,
+        parent=amendement,
+        auteur="M. JEAN",
+        groupe="Les Indépendants",
+        matricule="000003",
+        objet="corge",
+        dispositif="grault",
+    )
     parser = HTMLParser(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )

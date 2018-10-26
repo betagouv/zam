@@ -79,6 +79,17 @@ class Article(Base):
         )
         return max_modified_at
 
+    def modifications_since(self, timestamp: float) -> dict:
+        if not self.amendements:
+            return {}
+        return {
+            "modifications": [
+                str(amendement)
+                for amendement in self.amendements
+                if amendement.modified_at_timestamp > timestamp
+            ]
+        }
+
     __repr_keys__ = ("pk", "lecture_pk", "type", "num", "mult", "pos")
 
     def __str__(self) -> str:

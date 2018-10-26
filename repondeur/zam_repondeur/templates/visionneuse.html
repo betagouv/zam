@@ -218,25 +218,37 @@
 
 {% block extra_scripts %}
 <script>
-  function notifyOnUpdates (delay, timestamp, checkUrl) {
-    function displayNotificationUpdate () {
-      const message = '<p>De nouvelles informations sont disponibles, <a href=>rafraîchir</a> !</p>'
-      document.querySelector('[role="status"]').innerHTML = message
-    }
-    function check () {
-      const options = {
-        credentials: 'include'
-      }
-      fetch(checkUrl, options)
-        .then(reponse => reponse.json())
-        .then(json => {
-          if (json.modified_at && json.modified_at !== Number(timestamp))
-            displayNotificationUpdate()
-        })
-    }
-    setInterval(check, 1000 * delay)
+function notifyOnUpdates(delay, timestamp, checkUrl) {
+  timestamp = Number(timestamp)
+  function fooCommaBarAndBaz(table) {
+    // ['foo', 'bar', 'baz'] => 'foo, bar et baz'
+    return `${table.slice(0, -1).join(', ')} et ${table.slice(-1)}`
   }
-  notifyOnUpdates(30 /* seconds */, '{{ timestamp }}', '{{ check_url }}')
+  function displayNotificationUpdate(modifications) {
+    let message
+    if (modifications.length === 1) {
+      message = `L’amendement ${modifications} a été mis à jour`
+    } else {
+      message = `Les amendements ${fooCommaBarAndBaz(modifications)} ont été mis à jour`
+    }
+    document.querySelector(
+      '[role="status"]'
+    ).innerHTML = `<p>${message}, <a href=>rafraîchir</a> !</p>`
+  }
+  function check() {
+    const options = {
+      credentials: 'include'
+    }
+    fetch(`${checkUrl}?since=${timestamp}`, options)
+      .then(reponse => reponse.json())
+      .then(json => {
+        if (json.modifications.length)
+          displayNotificationUpdate(json.modifications)
+      })
+  }
+  setInterval(check, 1000 * delay)
+}
+notifyOnUpdates(30 /* seconds */, '{{ timestamp }}', '{{ check_url }}')
 </script>
 {% endblock %}
 </html>

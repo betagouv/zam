@@ -165,6 +165,9 @@ def _create_or_update_amendement(
         lecture=lecture,
         num=int(amend["numero"]),
     )
+    if not created:
+        amendement.article = article
+        amendement.parent = parent
 
     sort = get_sort(amend)
     matricule = amend["auteur"]["tribunId"]
@@ -186,9 +189,6 @@ def _create_or_update_amendement(
     ):
         amendement.modified_at = datetime.utcnow()
 
-    # Why do we still need these two lines?!
-    amendement.article = article
-    amendement.parent = parent
     amendement.sort = sort
     amendement.position = position
     amendement.matricule = matricule

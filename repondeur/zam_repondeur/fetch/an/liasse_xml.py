@@ -120,9 +120,9 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
         lecture=lecture,
         num=to_int(extract("identifiant", "numero")),
     )
-    # Why do we still need these two lines?!
-    amendement.article = article
-    amendement.parent = parent
+    if not created:
+        amendement.article = article
+        amendement.parent = parent
     amendement.alinea = to_int(extract("pointeurFragmentTexte", "alinea", "numero"))
     amendement.auteur = auteur_name
     amendement.matricule = matricule

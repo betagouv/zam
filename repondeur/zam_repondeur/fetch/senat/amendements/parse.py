@@ -34,8 +34,8 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
         lecture=lecture,
         num=num,
     )
-    # Why do we still need this line?!
-    amendement.article = article
+    if not created:
+        amendement.article = article
     amendement.rectif = rectif
     amendement.alinea = row["Alinéa"].strip()
     amendement.auteur = row["Auteur "]
@@ -74,9 +74,9 @@ def parse_from_json(
         lecture=lecture,
         num=num,
     )
-    # Why do we still need these two lines?!
-    amendement.article = article
-    amendement.parent = parent
+    if not created:
+        amendement.article = article
+        amendement.parent = parent
     amendement.rectif = rectif
     amendement.alinea = amend["libelleAlinea"]
     amendement.auteur = amend["auteur"]

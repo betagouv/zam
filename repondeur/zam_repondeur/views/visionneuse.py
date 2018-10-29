@@ -9,11 +9,10 @@ from zam_repondeur.resources import ArticleResource
 @view_config(context=ArticleResource, name="reponses", renderer="visionneuse.html")
 def list_reponses(context: ArticleResource, request: Request) -> Response:
     article = context.model(joinedload("lecture"), joinedload("amendements"))
-    lecture = article.lecture
-    check_url = request.resource_path(context.parent.parent, "check")
+    check_url = request.resource_path(context, "check")
     return {
-        "lecture": lecture,
-        "timestamp": lecture.modified_at_timestamp,
+        "lecture": article.lecture,
+        "timestamp": article.modified_at_timestamp,
         "check_url": check_url,
         "article": article,
         "next_article": article.next_displayable_article,

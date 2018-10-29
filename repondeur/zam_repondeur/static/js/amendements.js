@@ -40,7 +40,7 @@ function notifyOnUpdates(delay, timestamp, checkUrl) {
         fetch(checkUrl, options)
             .then(reponse => reponse.json())
             .then(json => {
-                if (json.modified_at !== Number(timestamp))
+                if (json.modified_at && json.modified_at !== Number(timestamp))
                     displayNotificationUpdate()
             })
     }

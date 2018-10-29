@@ -184,27 +184,26 @@ def article7bis_senat(app, lecture_senat):
 
 @pytest.fixture
 def amendements_an(app, lecture_an, article1_an):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement
 
     with transaction.manager:
         amendements = [
-            Amendement(
+            Amendement.create(
                 lecture=lecture_an, article=article1_an, num=num, position=position
             )
             for position, num in enumerate((666, 999), 1)
         ]
-        DBSession.add_all(amendements)
 
     return amendements
 
 
 @pytest.fixture
 def amendements_senat(app, lecture_senat, article1_senat):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement
 
     with transaction.manager:
         amendements = [
-            Amendement(
+            Amendement.create(
                 lecture=lecture_senat,
                 article=article1_senat,
                 num=num,
@@ -212,14 +211,13 @@ def amendements_senat(app, lecture_senat, article1_senat):
             )
             for position, num in enumerate((6666, 9999), 1)
         ]
-        DBSession.add_all(amendements)
 
     return amendements
 
 
 @pytest.fixture
 def lecture_essoc(app):
-    from zam_repondeur.models import DBSession, Lecture
+    from zam_repondeur.models import Lecture
 
     with transaction.manager:
         lecture = Lecture.create(
@@ -230,6 +228,5 @@ def lecture_essoc(app):
             organe="PO744107",
             dossier_legislatif="Fonction publique : un Etat au service d'une société de confiance",  # noqa
         )
-        DBSession.add(lecture)
 
     return lecture

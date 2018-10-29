@@ -45,6 +45,8 @@ class Amendement(Base):
     __table_args__ = (UniqueConstraint("num", "lecture_pk"),)
 
     pk: int = Column(Integer, primary_key=True)
+    created_at: datetime = Column(DateTime, nullable=False)
+    modified_at: datetime = Column(DateTime, nullable=False)
 
     # Meta informations.
     num: int = Column(Integer, nullable=False)
@@ -97,33 +99,36 @@ class Amendement(Base):
         cls,
         lecture,
         article,
-        parent: "Amendement",
         num: int,
         rectif: int = 0,
-        auteur: str = "",
-        matricule: str = "",
-        date_depot: str = None,
-        sort: str = "",
-        position: int = 0,
-        discussion_commune: int = 0,
-        identique: bool = False,
-        dispositif: str = "",
-        objet: str = "",
-        resume: str = "",
-        alinea: str = "",
-        avis: str = "",
-        observations: str = "",
-        reponse: str = "",
-        comments: str = "",
+        auteur: Optional[str] = None,
+        matricule: Optional[str] = None,
+        groupe: Optional[str] = None,
+        date_depot: Optional[date] = None,
+        sort: Optional[str] = None,
+        position: Optional[int] = None,
+        discussion_commune: Optional[int] = None,
+        identique: Optional[bool] = None,
+        dispositif: Optional[str] = None,
+        objet: Optional[str] = None,
+        resume: Optional[str] = None,
+        alinea: Optional[str] = None,
+        parent: Optional["Amendement"] = None,
+        avis: Optional[str] = None,
+        observations: Optional[str] = None,
+        reponse: Optional[str] = None,
+        comments: Optional[str] = None,
+        bookmarked_at: Optional[datetime] = None,
     ) -> "Amendement":
+        now = datetime.utcnow()
         amendement = cls(
             lecture=lecture,
             article=article,
-            parent=parent,
             num=num,
             rectif=rectif,
             auteur=auteur,
             matricule=matricule,
+            groupe=groupe,
             date_depot=date_depot,
             sort=sort,
             position=position,
@@ -133,10 +138,14 @@ class Amendement(Base):
             objet=objet,
             resume=resume,
             alinea=alinea,
+            parent=parent,
             avis=avis,
             observations=observations,
             reponse=reponse,
             comments=comments,
+            bookmarked_at=bookmarked_at,
+            created_at=now,
+            modified_at=now,
         )
         DBSession.add(amendement)
         return amendement
@@ -145,6 +154,11 @@ class Amendement(Base):
         if not isinstance(other, Amendement):
             return NotImplemented
         return self.sort_key < other.sort_key
+
+    @property
+    def modified_at_timestamp(self) -> float:
+        timestamp: float = (self.modified_at - datetime(1970, 1, 1)).total_seconds()
+        return timestamp
 
     @property
     def sort_key(self) -> Tuple[bool, int, int]:

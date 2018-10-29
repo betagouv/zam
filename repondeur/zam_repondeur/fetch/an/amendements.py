@@ -1,5 +1,6 @@
 import logging
 from collections import OrderedDict
+from datetime import datetime
 from http import HTTPStatus
 from typing import Dict, List, Optional, Tuple, Union
 from urllib.parse import urljoin
@@ -119,7 +120,6 @@ def _get_article(lecture: Lecture, division: dict) -> Article:
     article: Article
     created: bool
     article, created = get_one_or_create(
-        DBSession,
         Article,
         lecture=lecture,
         type=subdiv.type_,
@@ -137,11 +137,11 @@ def _get_parent(
     parent: Optional[Amendement]
     if parent_num:
         parent, created = get_one_or_create(
-            DBSession,
             Amendement,
+            create_method="create",
+            create_method_kwargs={"article": article, "rectif": parent_rectif},
             lecture=lecture,
             num=parent_num,
-            create_method_kwargs={"article": article, "rectif": parent_rectif},
         )
     else:
         parent = None
@@ -156,17 +156,43 @@ def _create_or_update_amendement(
     position: int,
 ) -> Tuple[Amendement, bool]:
     amendement, created = get_one_or_create(
-        DBSession, Amendement, lecture=lecture, num=int(amend["numero"])
+        Amendement,
+        create_method="create",
+        create_method_kwargs={"article": article, "parent": parent},
+        lecture=lecture,
+        num=int(amend["numero"]),
     )
-    amendement.article = article
-    amendement.sort = get_sort(amend)
+    if not created:
+        amendement.article = article
+        amendement.parent = parent
+
+    sort = get_sort(amend)
+    matricule = amend["auteur"]["tribunId"]
+    groupe = get_groupe(amend)
+    auteur = get_auteur(amend)
+    dispositif = unjustify(amend["dispositif"])
+    objet = unjustify(amend["exposeSommaire"])
+
+    if not created and (
+        article != amendement.article
+        or parent != amendement.parent
+        or sort != amendement.sort
+        or position != amendement.position
+        or matricule != amendement.matricule
+        or groupe != amendement.groupe
+        or auteur != amendement.auteur
+        or dispositif != amendement.dispositif
+        or objet != amendement.objet
+    ):
+        amendement.modified_at = datetime.utcnow()
+
+    amendement.sort = sort
     amendement.position = position
-    amendement.matricule = amend["auteur"]["tribunId"]
-    amendement.groupe = get_groupe(amend)
-    amendement.auteur = get_auteur(amend)
-    amendement.parent = parent
-    amendement.dispositif = unjustify(amend["dispositif"])
-    amendement.objet = unjustify(amend["exposeSommaire"])
+    amendement.matricule = matricule
+    amendement.groupe = groupe
+    amendement.auteur = auteur
+    amendement.dispositif = dispositif
+    amendement.objet = objet
     DBSession.flush()  # make sure foreign keys are updated
     return amendement, created
 

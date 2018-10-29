@@ -5,19 +5,12 @@ from urllib.parse import urlparse
 from zam_repondeur.clean import clean_html
 from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import _parse_subdiv
-from zam_repondeur.models import (
-    DBSession,
-    Article,
-    Amendement,
-    Lecture,
-    get_one_or_create,
-)
+from zam_repondeur.models import Article, Amendement, Lecture, get_one_or_create
 
 
 def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
     subdiv = _parse_subdiv(row["Subdivision "])
     article, created = get_one_or_create(
-        DBSession,
         Article,
         lecture=lecture,
         type=subdiv.type_,
@@ -27,7 +20,6 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
     )
     num, rectif = Amendement.parse_num(row["Numéro "])
     amendement, created = get_one_or_create(
-        DBSession,
         Amendement,
         create_method="create",
         create_method_kwargs={"article": article},
@@ -56,7 +48,6 @@ def parse_from_json(
 ) -> Amendement:
     subdiv_ = _parse_subdiv(subdiv["libelle_subdivision"])
     article, created = get_one_or_create(
-        DBSession,
         Article,
         lecture=lecture,
         type=subdiv_.type_,
@@ -67,7 +58,6 @@ def parse_from_json(
     num, rectif = Amendement.parse_num(amend["num"])
     parent = get_parent(uid_map, amend)
     amendement, created = get_one_or_create(
-        DBSession,
         Amendement,
         create_method="create",
         create_method_kwargs={"article": article, "parent": parent},

@@ -9,7 +9,7 @@ from zam_repondeur.fetch.an.amendements import aspire_an
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.models import Amendement
 from zam_repondeur.fetch.senat.amendements import aspire_senat
-from zam_repondeur.models import DBSession, Article, Lecture, get_one_or_create
+from zam_repondeur.models import Article, Lecture, get_one_or_create
 
 logger = logging.getLogger(__name__)
 
@@ -144,7 +144,6 @@ def find_or_create_articles(lecture: Lecture, article_data: dict) -> List[Articl
     nums_mults = get_article_nums_mults(article_data)
     return [
         get_one_or_create(
-            DBSession,
             Article,
             lecture=lecture,
             type=article_data["type"],

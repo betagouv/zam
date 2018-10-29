@@ -95,7 +95,6 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
         groupe_name = get_groupe_name(groupe_uid)
 
     lecture, created = get_one_or_create(
-        DBSession,
         Lecture,
         chambre=Chambre.AN.value,
         session=extract("identifiant", "legislature"),
@@ -103,7 +102,6 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
         organe=extract("identifiant", "saisine", "organeExamen"),
     )
     article, created = get_one_or_create(
-        DBSession,
         Article,
         lecture=lecture,
         type=subdiv.type_,
@@ -113,7 +111,6 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
     )
     parent = get_parent(extract("amendementParent"), uid_map, lecture)
     amendement, created = get_one_or_create(
-        DBSession,
         Amendement,
         create_method="create",
         create_method_kwargs={"article": article, "parent": parent},

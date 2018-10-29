@@ -120,7 +120,6 @@ def _get_article(lecture: Lecture, division: dict) -> Article:
     article: Article
     created: bool
     article, created = get_one_or_create(
-        DBSession,
         Article,
         lecture=lecture,
         type=subdiv.type_,
@@ -138,7 +137,6 @@ def _get_parent(
     parent: Optional[Amendement]
     if parent_num:
         parent, created = get_one_or_create(
-            DBSession,
             Amendement,
             create_method="create",
             create_method_kwargs={"article": article, "rectif": parent_rectif},
@@ -158,7 +156,6 @@ def _create_or_update_amendement(
     position: int,
 ) -> Tuple[Amendement, bool]:
     amendement, created = get_one_or_create(
-        DBSession,
         Amendement,
         create_method="create",
         create_method_kwargs={"article": article, "parent": parent},

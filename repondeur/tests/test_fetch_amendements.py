@@ -175,11 +175,13 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
-    amendement = amendements_an[1]
-    amendement.avis = "Favorable"
-    amendement.observations = "Observations"
-    amendement.reponse = "Réponse"
-    DBSession.add(amendement)
+    amendement_999 = amendements_an[1]
+    amendement_999.avis = "Favorable"
+    amendement_999.observations = "Observations"
+    amendement_999.reponse = "Réponse"
+    DBSession.add(amendement_999)
+
+    initial_modified_at_999 = amendement_999.modified_at
 
     with patch(
         "zam_repondeur.fetch.an.amendements.fetch_amendements"
@@ -218,17 +220,25 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
     assert errored == []
 
     # Check that the response was preserved on the updated amendement
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
-    assert amendement.avis == "Favorable"
-    assert amendement.observations == "Observations"
-    assert amendement.reponse == "Réponse"
+    amendement_999 = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    assert amendement_999.avis == "Favorable"
+    assert amendement_999.observations == "Observations"
+    assert amendement_999.reponse == "Réponse"
 
     # Check that the position was changed on the updated amendement
-    assert amendement.position == 3
+    assert amendement_999.position == 3
 
-    # Check that the position is set for the new amendement
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 777).one()
-    assert amendement.position == 2
+    # Check that the modified date was updated
+    assert amendement_999.modified_at > amendement_999.created_at
+    assert amendement_999.modified_at > initial_modified_at_999
+
+    # Check that the position was set for the new amendement
+    amendement_777 = DBSession.query(Amendement).filter(Amendement.num == 777).one()
+    assert amendement_777.position == 2
+
+    # Check that the modified date was initialized
+    assert amendement_777.modified_at is not None
+    assert amendement_777.modified_at == amendement_777.created_at
 
 
 def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendements_an):

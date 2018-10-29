@@ -189,11 +189,7 @@ def amendements_an(app, lecture_an, article1_an):
     with transaction.manager:
         amendements = [
             Amendement.create(
-                lecture=lecture_an,
-                article=article1_an,
-                num=num,
-                position=position,
-                parent=None,
+                lecture=lecture_an, article=article1_an, num=num, position=position
             )
             for position, num in enumerate((666, 999), 1)
         ]
@@ -212,7 +208,6 @@ def amendements_senat(app, lecture_senat, article1_senat):
                 article=article1_senat,
                 num=num,
                 position=position,
-                parent=None,
             )
             for position, num in enumerate((6666, 9999), 1)
         ]

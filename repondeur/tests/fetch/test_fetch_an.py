@@ -293,8 +293,8 @@ class TestFetchAmendement:
         assert amendement.date_depot is None
         assert amendement.sort == "rejeté"
         assert amendement.position == 1
-        assert amendement.discussion_commune == 0
-        assert not amendement.identique
+        assert amendement.discussion_commune is None
+        assert amendement.identique is None
         assert amendement.parent is None
         assert amendement.dispositif == "<p>Supprimer cet article.</p>"
         assert amendement.objet == (
@@ -310,10 +310,10 @@ class TestFetchAmendement:
             "d&#233;nonc&#233;e par le Comit&#233; d&#8217;alerte le 12 octobre "
             "dernier.</p>"
         )
-        assert amendement.resume == ""
-        assert amendement.avis == ""
-        assert amendement.observations == ""
-        assert amendement.reponse == ""
+        assert amendement.resume is None
+        assert amendement.avis is None
+        assert amendement.observations is None
+        assert amendement.reponse is None
 
     @responses.activate
     def test_fetch_amendement_gouvernement(self, lecture_an):

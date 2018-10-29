@@ -146,9 +146,9 @@ def _check_amendement_0(amendement):
 
     assert amendement.sort == ""
 
-    assert amendement.position == 0  # no order yet
-    assert amendement.discussion_commune == 0
-    assert not amendement.identique
+    assert amendement.position is None  # no order yet
+    assert amendement.discussion_commune is None
+    assert amendement.identique is None
 
     assert amendement.parent is None
 
@@ -158,11 +158,11 @@ def _check_amendement_0(amendement):
     )
     assert amendement.objet == ""
 
-    assert amendement.resume == ""
+    assert amendement.resume is None
 
-    assert amendement.avis == ""
-    assert amendement.observations == ""
-    assert amendement.reponse == ""
+    assert amendement.avis is None
+    assert amendement.observations is None
+    assert amendement.reponse is None
 
     assert amendement.bookmarked_at is None
 
@@ -194,9 +194,9 @@ def _check_amendement_1(amendement):
 
     assert amendement.sort == "Retiré"
 
-    assert amendement.position == 0  # no order yet
-    assert amendement.discussion_commune == 0
-    assert not amendement.identique
+    assert amendement.position is None  # no order yet
+    assert amendement.discussion_commune is None
+    assert amendement.identique is None
 
     assert amendement.parent.num == 28
     assert amendement.parent.rectif == 0
@@ -221,11 +221,11 @@ def _check_amendement_1(amendement):
         "celles qui sont maintenues à l’issue de la procédure de redressement</p>"
     )
 
-    assert amendement.resume == ""
+    assert amendement.resume is None
 
-    assert amendement.avis == ""
-    assert amendement.observations == ""
-    assert amendement.reponse == ""
+    assert amendement.avis is None
+    assert amendement.observations is None
+    assert amendement.reponse is None
 
     assert amendement.bookmarked_at is None
 

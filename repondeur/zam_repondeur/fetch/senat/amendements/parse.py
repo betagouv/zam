@@ -30,7 +30,7 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
         DBSession,
         Amendement,
         create_method="create",
-        create_method_kwargs={"article": article, "parent": None},
+        create_method_kwargs={"article": article},
         lecture=lecture,
         num=num,
     )

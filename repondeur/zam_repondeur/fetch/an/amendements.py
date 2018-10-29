@@ -141,11 +141,7 @@ def _get_parent(
             DBSession,
             Amendement,
             create_method="create",
-            create_method_kwargs={
-                "article": article,
-                "rectif": parent_rectif,
-                "parent": None,
-            },
+            create_method_kwargs={"article": article, "rectif": parent_rectif},
             lecture=lecture,
             num=parent_num,
         )

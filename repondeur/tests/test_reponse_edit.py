@@ -24,9 +24,9 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
-    assert amendement.avis == ""
-    assert amendement.observations == ""
-    assert amendement.reponse == ""
+    assert amendement.avis is None
+    assert amendement.observations is None
+    assert amendement.reponse is None
     initial_amendement_modified_at = amendement.modified_at
 
     resp = app.get(
@@ -61,15 +61,20 @@ def test_post_reponse_edit_form_updates_modification_dates_only_if_modified(
 ):
     from zam_repondeur.models import Amendement, DBSession, Lecture
 
+    amendement = amendements_an[0]
+
+    # Let's remember the initial modification dates
+    initial_lecture_modified_at = lecture_an.modified_at
+    initial_amendement_modified_at = amendement.modified_at
+
+    # Let's set a response on the amendement
     with transaction.manager:
-        initial_lecture_modified_at = lecture_an.modified_at
-        amendement = amendements_an[0]
-        initial_amendement_modified_at = amendement.modified_at
         amendement.avis = "Favorable"
         amendement.observations = "Des observations très pertinentes"
         amendement.reponse = "Une réponse très appropriée"
-        DBSession.add_all(amendements_an)
+        DBSession.add(amendement)
 
+    # Let's post the response edit form, but with unchanged values
     resp = app.get(
         "http://localhost/lectures/an.15.269.PO717460/amendements/666/reponse"
     )
@@ -79,17 +84,19 @@ def test_post_reponse_edit_form_updates_modification_dates_only_if_modified(
     form["reponse"] = "Une réponse très appropriée"
     form.submit()
 
-    with transaction.manager:
-        lecture = Lecture.get(
-            chambre=lecture_an.chambre,
-            session=lecture_an.session,
-            num_texte=lecture_an.num_texte,
-            organe=lecture_an.organe,
-        )
-        assert initial_lecture_modified_at == lecture.modified_at
-        amendement = (
-            DBSession.query(Amendement)
-            .filter(Amendement.num == amendements_an[0].num)
-            .first()
-        )
-        assert initial_amendement_modified_at == amendement.modified_at
+    # The lecture modification date should not be updated
+    lecture = Lecture.get(
+        chambre=lecture_an.chambre,
+        session=lecture_an.session,
+        num_texte=lecture_an.num_texte,
+        organe=lecture_an.organe,
+    )
+    assert initial_lecture_modified_at == lecture.modified_at
+
+    # The amendement modification date should not be updated
+    amendement = (
+        DBSession.query(Amendement)
+        .filter(Amendement.num == amendements_an[0].num)
+        .first()
+    )
+    assert initial_amendement_modified_at == amendement.modified_at

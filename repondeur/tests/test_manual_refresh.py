@@ -84,9 +84,7 @@ def test_post_form(app, lecture_an, article1_an):
 
     # Initially, we only have one amendement (#135), with a response
     with transaction.manager:
-        Amendement.create(
-            lecture=lecture_an, article=article1_an, num=135, position=1, parent=None
-        )
+        Amendement.create(lecture=lecture_an, article=article1_an, num=135, position=1)
     assert DBSession.query(Journal).count() == 0
 
     # Then we ask for a refresh

@@ -38,11 +38,12 @@ class ReponseEdit:
         observations = clean_html(self.request.POST.get("observations", ""))
         reponse = clean_html(self.request.POST.get("reponse", ""))
         comments = clean_html(self.request.POST.get("comments", ""))
+
         if (
-            avis != self.amendement.avis
-            or observations != self.amendement.observations
-            or reponse != self.amendement.reponse
-            or comments != self.amendement.comments
+            avis != (self.amendement.avis or "")
+            or observations != (self.amendement.observations or "")
+            or reponse != (self.amendement.reponse or "")
+            or comments != (self.amendement.comments or "")
         ):
             self.amendement.modified_at = now
             self.lecture.modified_at = now

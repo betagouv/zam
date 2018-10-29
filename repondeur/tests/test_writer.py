@@ -35,7 +35,6 @@ def test_write_csv(
             objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
             resume="Suppression de l'article",
             position=1,
-            parent=None,
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -47,7 +46,6 @@ def test_write_csv(
             matricule="000001",
             objet="baz",
             dispositif="qux",
-            parent=None,
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -59,7 +57,6 @@ def test_write_csv(
             matricule="000002",
             objet="quux",
             dispositif="quuz",
-            parent=None,
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -71,7 +68,6 @@ def test_write_csv(
             matricule="000003",
             objet="corge",
             dispositif="grault",
-            parent=None,
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -149,7 +145,6 @@ def test_write_csv_sous_amendement(
             dispositif="<p>L'article 1 est supprimé.</p>",
             objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
             resume="Suppression de l'article",
-            parent=None,
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -161,7 +156,6 @@ def test_write_csv_sous_amendement(
             matricule="000001",
             objet="baz",
             dispositif="qux",
-            parent=None,
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -173,7 +167,6 @@ def test_write_csv_sous_amendement(
             matricule="000002",
             objet="quux",
             dispositif="quuz",
-            parent=None,
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -185,7 +178,6 @@ def test_write_csv_sous_amendement(
             matricule="000003",
             objet="corge",
             dispositif="grault",
-            parent=None,
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -262,7 +254,6 @@ def test_generate_pdf_without_responses(
         objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
         resume="Suppression de l'article",
         position=1,
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -274,7 +265,6 @@ def test_generate_pdf_without_responses(
         matricule="000001",
         objet="baz",
         dispositif="qux",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -286,7 +276,6 @@ def test_generate_pdf_without_responses(
         matricule="000002",
         objet="quux",
         dispositif="quuz",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -298,7 +287,6 @@ def test_generate_pdf_without_responses(
         matricule="000003",
         objet="corge",
         dispositif="grault",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -344,7 +332,6 @@ def test_generate_pdf_with_amendement_responses(
         resume="Suppression de l'article",
         position=1,
         avis="Favorable",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -356,7 +343,6 @@ def test_generate_pdf_with_amendement_responses(
         matricule="000001",
         objet="baz",
         dispositif="qux",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -368,7 +354,6 @@ def test_generate_pdf_with_amendement_responses(
         matricule="000002",
         objet="quux",
         dispositif="quuz",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -380,7 +365,6 @@ def test_generate_pdf_with_amendement_responses(
         matricule="000003",
         objet="corge",
         dispositif="grault",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -427,7 +411,6 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         resume="Suppression de l'article",
         position=1,
         avis="Favorable",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -439,7 +422,6 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         matricule="000001",
         objet="baz",
         dispositif="qux",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -451,7 +433,6 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         matricule="000002",
         objet="quux",
         dispositif="quuz",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -463,7 +444,6 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         matricule="000003",
         objet="corge",
         dispositif="grault",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -513,7 +493,6 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         resume="Suppression de l'article",
         position=1,
         avis="Favorable",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -526,7 +505,6 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         objet="baz",
         dispositif="qux",
         avis="Favorable",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -538,7 +516,6 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         matricule="000002",
         objet="quux",
         dispositif="quuz",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -550,7 +527,6 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         matricule="000003",
         objet="corge",
         dispositif="grault",
-        parent=None,
     )
     Amendement.create(
         lecture=lecture_senat,

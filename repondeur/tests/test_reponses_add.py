@@ -197,7 +197,6 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
                 observations="Des observations très pertinentes",
                 reponse="Une réponse très appropriée",
                 comments="Avec des commentaires",
-                parent=None,
             )
             for position, num in enumerate((333, 777), 1)
         ]

@@ -9,6 +9,7 @@ def test_lecture_delete(app, lecture_an, amendements_an):
         chambre=lecture_an.chambre,
         session=lecture_an.session,
         num_texte=lecture_an.num_texte,
+        partie=None,
         organe=lecture_an.organe,
     )
     assert DBSession.query(Amendement).count() == 2
@@ -34,6 +35,7 @@ def test_lecture_delete(app, lecture_an, amendements_an):
         chambre=lecture_an.chambre,
         session=lecture_an.session,
         num_texte=lecture_an.num_texte,
+        partie=None,
         organe=lecture_an.organe,
     )
     assert DBSession.query(Amendement).count() == 0

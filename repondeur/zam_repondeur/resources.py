@@ -58,6 +58,12 @@ class LectureCollection(Resource):
     def __getitem__(self, key: str) -> Resource:
         try:
             chambre, session, num_texte, organe = key.split(".")
+            partie: Optional[int]
+            if "-" in num_texte:
+                num_texte, partie_str = num_texte.split("-", 1)
+                partie = int(partie_str)
+            else:
+                partie = None
         except ValueError:
             raise KeyError
         return LectureResource(
@@ -66,6 +72,7 @@ class LectureCollection(Resource):
             chambre=chambre,
             session=session,
             num_texte=int(num_texte),
+            partie=partie,
             organe=organe,
         )
 
@@ -78,19 +85,26 @@ class LectureResource(Resource):
         chambre: str,
         session: str,
         num_texte: int,
+        partie: Optional[int],
         organe: str,
     ) -> None:
         super().__init__(name=name, parent=parent)
         self.chambre = chambre
         self.session = session
         self.num_texte = num_texte
+        self.partie = partie
         self.organe = organe
         self.add_child(AmendementCollection(name="amendements", parent=self))
         self.add_child(ArticleCollection(name="articles", parent=self))
 
     def model(self, *options: Any) -> Lecture:
         lecture = Lecture.get(
-            self.chambre, self.session, self.num_texte, self.organe, *options
+            self.chambre,
+            self.session,
+            self.num_texte,
+            self.partie,
+            self.organe,
+            *options
         )
         if lecture is None:
             raise ResourceNotFound(self)

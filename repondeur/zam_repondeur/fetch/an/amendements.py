@@ -201,7 +201,15 @@ def build_url(lecture: Lecture, numero: int = 0) -> str:
 
     legislature = int(lecture.session)
     texte = f"{lecture.num_texte:04}"
-    suffixe = "A" if "loi de finances" in lecture.dossier_legislatif else ""
+
+    # Projet de loi de finances (PLF) has two parts
+    if lecture.partie == 1:
+        suffixe = "A"
+    elif lecture.partie == 2:
+        suffixe = "C"
+    else:
+        suffixe = ""
+
     organe_abrev = get_organe_abrev(lecture.organe)
 
     if numero:

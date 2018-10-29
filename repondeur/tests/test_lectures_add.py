@@ -47,7 +47,7 @@ def test_post_form(app):
     from zam_repondeur.models import Lecture
 
     assert not Lecture.exists(
-        chambre="an", session="15", num_texte=269, organe="PO717460"
+        chambre="an", session="15", num_texte=269, partie=None, organe="PO717460"
     )
 
     responses.add(
@@ -98,7 +98,7 @@ def test_post_form(app):
     # contain choices for lectures (dynamically loaded via JS).
     resp = app.post(
         "/lectures/add",
-        {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460"},
+        {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460-"},
     )
 
     assert resp.status_code == 302
@@ -109,7 +109,9 @@ def test_post_form(app):
     assert resp.status_code == 200
     assert "Lecture créée avec succès," in resp.text
 
-    lecture = Lecture.get(chambre="an", session="15", num_texte=269, organe="PO717460")
+    lecture = Lecture.get(
+        chambre="an", session="15", num_texte=269, partie=None, organe="PO717460"
+    )
     assert lecture.chambre == "an"
     assert lecture.titre == "Première lecture – Titre lecture"
     assert lecture.dossier_legislatif == "Sécurité sociale : loi de financement 2018"
@@ -136,13 +138,15 @@ def test_post_form(app):
 def test_post_form_already_exists(app, lecture_an):
     from zam_repondeur.models import Lecture
 
-    assert Lecture.exists(chambre="an", session="15", num_texte=269, organe="PO717460")
+    assert Lecture.exists(
+        chambre="an", session="15", num_texte=269, partie=None, organe="PO717460"
+    )
 
     # We cannot use form.submit() given the form is dynamic and does not
     # contain choices for lectures (dynamically loaded via JS).
     resp = app.post(
         "/lectures/add",
-        {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460"},
+        {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460-"},
     )
 
     assert resp.status_code == 302
@@ -162,5 +166,5 @@ def test_choices_lectures(app):
     assert resp.headers["content-type"] == "application/json"
     label = "Assemblée nationale – Première lecture – Titre lecture – Texte Nº 269"
     assert resp.json == {
-        "lectures": [{"key": "PRJLANR5L15B0269-PO717460", "label": label}]
+        "lectures": [{"key": "PRJLANR5L15B0269-PO717460-", "label": label}]
     }

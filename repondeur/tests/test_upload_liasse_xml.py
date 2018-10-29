@@ -49,6 +49,7 @@ def test_upload_liasse_success(app, lecture_essoc):
             chambre=lecture_essoc.chambre,
             session=lecture_essoc.session,
             num_texte=lecture_essoc.num_texte,
+            partie=None,
             organe=lecture_essoc.organe,
         )
         assert lecture.modified_at != initial_modified_at
@@ -80,6 +81,7 @@ def test_upload_liasse_with_table(app, lecture_essoc):
             chambre=lecture_essoc.chambre,
             session=lecture_essoc.session,
             num_texte=lecture_essoc.num_texte,
+            partie=None,
             organe=lecture_essoc.organe,
         )
         dispositif = lecture.amendements[1].dispositif
@@ -122,6 +124,7 @@ def test_upload_liasse_missing_file(app, lecture_essoc):
             chambre=lecture_essoc.chambre,
             session=lecture_essoc.session,
             num_texte=lecture_essoc.num_texte,
+            partie=None,
             organe=lecture_essoc.organe,
         )
         assert lecture.modified_at == initial_modified_at

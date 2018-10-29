@@ -175,19 +175,11 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
-    DBSession.add(lecture_an)
-
-    # Add a response to one of the amendements
-    with transaction.manager:
-        amendement = amendements_an[1]
-        amendement.avis = "Favorable"
-        amendement.observations = "Observations"
-        amendement.reponse = "Réponse"
-
-        # The object is no longer bound to a session here, as it was created in a
-        # previous transaction, so we add it to the current session to make sure that
-        # our changes will be committed with the current transaction
-        DBSession.add(amendement)
+    amendement = amendements_an[1]
+    amendement.avis = "Favorable"
+    amendement.observations = "Observations"
+    amendement.reponse = "Réponse"
+    DBSession.add(amendement)
 
     with patch(
         "zam_repondeur.fetch.an.amendements.fetch_amendements"

@@ -170,8 +170,8 @@ def _create_or_update_amendement(
     matricule = amend["auteur"]["tribunId"]
     groupe = get_groupe(amend)
     auteur = get_auteur(amend)
-    dispositif = unjustify(amend["dispositif"])
-    objet = unjustify(amend["exposeSommaire"])
+    dispositif = unjustify(get_str_or_none(amend, "dispositif") or "")
+    objet = unjustify(get_str_or_none(amend, "exposeSommaire") or "")
 
     if not created and (
         article != amendement.article
@@ -250,7 +250,9 @@ def get_groupe(amendement: OrderedDict) -> str:
     from zam_repondeur.data import get_data
 
     auteur = amendement["auteur"]
-    if int(auteur["estGouvernement"]) or "@xsi:nil" in auteur["groupeTribunId"]:
+    gouvernemental = bool(int(auteur["estGouvernement"]))
+    groupe_tribun_id = get_str_or_none(auteur, "groupeTribunId")
+    if gouvernemental or (groupe_tribun_id is None):
         return ""
     groupes = get_data("organes")
     try:
@@ -275,23 +277,20 @@ def get_groupe(amendement: OrderedDict) -> str:
 
 
 def get_sort(amendement: OrderedDict) -> str:
-    sort: Union[str, OrderedDict] = amendement["sortEnSeance"]
-    if isinstance(sort, OrderedDict):
-        if "@xsi:nil" in sort:
-            return ""
-        else:
-            raise NotImplementedError
-    return sort.lower()
+    return (get_str_or_none(amendement, "sortEnSeance") or "").lower()
 
 
 def get_parent_raw_num(amendement: OrderedDict) -> str:
-    parent: Union[str, OrderedDict] = amendement["numeroParent"]
-    if isinstance(parent, OrderedDict):
-        if "@xsi:nil" in parent:
-            return ""
-        else:
-            raise NotImplementedError
-    return parent
+    return get_str_or_none(amendement, "numeroParent") or ""
+
+
+def get_str_or_none(amendement: OrderedDict, key: str) -> Optional[str]:
+    value = amendement[key]
+    if isinstance(value, str):
+        return value
+    if isinstance(value, OrderedDict) and value.get("@xsi:nil") == "true":
+        return None
+    raise ValueError(f"Unexpected value {value!r} for key {key!r}")
 
 
 def unjustify(content: str) -> str:
@@ -301,7 +300,10 @@ def unjustify(content: str) -> str:
 def parse_division(division: dict) -> SubDiv:
     if division["type"] == "TITRE":
         return SubDiv("titre", "", "", "")
-    subdiv = _parse_subdiv(division["titre"])
+    if division["type"] == "ARTICLE":
+        subdiv = _parse_subdiv(division["titre"])
+    else:
+        subdiv = _parse_subdiv(division["divisionRattache"])
     if division["avantApres"]:
         pos = parse_avant_apres(division["avantApres"])
         subdiv = subdiv._replace(pos=pos)

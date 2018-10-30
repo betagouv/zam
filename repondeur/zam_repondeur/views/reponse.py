@@ -24,11 +24,11 @@ class ReponseEdit:
     @view_config(request_method="GET")
     def get(self) -> dict:
         return {
-            "lecture": self.lecture,
             "amendement": self.amendement,
             "avis": AVIS,
             "back_url": self.back_url,
             "submit_url": self.submit_url,
+            "reponses": self.amendement.article.grouped_displayable_amendements(),
         }
 
     @view_config(request_method="POST")

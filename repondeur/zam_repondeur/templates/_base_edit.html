@@ -6,7 +6,7 @@
         h4 {
             margin-bottom: 0.75rem;
         }
-        .form-group {
+        .form-group:not('.secondary') {
             margin-bottom: 3rem;
         }
         label {
@@ -38,4 +38,5 @@
             browser_spellcheck: true,
         });
     </script>
+    {% block extra_scripts %}{% endblock %}
 {% endblock %}

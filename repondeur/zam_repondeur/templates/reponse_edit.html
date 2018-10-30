@@ -1,5 +1,5 @@
 {% extends "_base_edit.html" %}
-
+{% import "macros.html" as macros %}
 
 {% block header %}
     {{ super() }}
@@ -47,14 +47,58 @@
           left: 0.5em;
           margin-right: -50%;
         }
+        .button.secondary {
+            border-color: #3167a6;
+            color: #3167a6;
+            background: white;
+        }
+            .button.secondary:hover {
+                border-color: #3167a6;
+                color: white;
+                background: #3167a6;
+            }
+        #prefill-reponse {
+            margin-bottom: 2rem;
+        }
+            #prefill-reponse .save-buttons {
+                justify-content: flex-end;
+                align-items: baseline;
+            }
+            #prefill-reponse #cancel {
+                margin-right: 1.5rem;
+            }
+        #edit-reponse .save-buttons {
+            position: -webkit-sticky;
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 1rem;
+        }
     </style>
 {% endblock %}
 
 
 {% block top %}
     <div class="title">
-        <h2>{{ lecture.dossier_legislatif }}</h2>
-        <h3>{{ lecture }}</h3>
+        <h2>Amendement nº&nbsp;{{ amendement }}</h2>
+        {% if amendement.parent %}
+            <h3>Sous-amendement au {{ amendement.parent }}</h3>
+        {% endif %}
+        - {{ amendement.article.format() }} -
+        <div class="auteur">
+            {% if amendement.auteur %}
+                Présenté par {{ amendement.auteur }}
+                {%- if not amendement.gouvernemental %}
+                    ({{ amendement.groupe }})
+                {% endif %}
+            {% elif amendement.is_abandoned_before_seance %}
+                {% if amendement.is_withdrawn %}
+                    <h3>Cet amendement a été retiré</h3>
+                {% else %}
+                    <h3>Cet amendement est irrecevable</h3>
+                {% endif %}
+            {% endif %}
+        </div>
     </div>
 {% endblock %}
 
@@ -64,26 +108,6 @@
         <span class="nav-item">
             <a class="arrow-left" href="{{ back_url }}">Retourner aux amendements</a>
         </span>
-        <div>
-            <h2>Amendement nº&nbsp;{{ amendement.num_disp }}</h2>
-            {% if amendement.parent %}
-                <h3>Sous-amendement au {{ amendement.parent.num_disp }}</h3>
-            {% endif %}
-            <div class="auteur">
-                {% if amendement.auteur %}
-                    Présenté par {{ amendement.auteur }}
-                    {%- if not amendement.gouvernemental %}
-                        ({{ amendement.groupe }})
-                    {% endif %}
-                {% elif amendement.is_abandoned_before_seance %}
-                    {% if amendement.is_withdrawn %}
-                        <h3>Cet amendement a été retiré</h3>
-                    {% else %}
-                        <h3>Cet amendement est irrecevable</h3>
-                    {% endif %}
-                {% endif %}
-            </div>
-        </div>
         <span class="nav-item">
             {% if amendement.is_displayable %}
                 <a class="arrow-right" href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key], 'reponses', anchor=amendement.slug) }}" target="_blank">Visualiser dans le dossier</a>
@@ -121,11 +145,42 @@
 
 
 {% macro form(amendement) %}
+
+    {% if not amendement.gouvernemental %}
+        <h4>Réutiliser</h4>
+        <form id="prefill-reponse" action="" method="POST" class="mt-3">
+            <div class="form-group">
+                <label for="autofill">Remplir à partir de…</label>
+                <select name="autofill" class="form-control">
+                    <option value="">Choisir dans la liste…</option>
+                    {% for reponse, amendements in reponses %}
+                        {% if amendement not in amendements %}
+                            <option value="{{ loop.index }}"
+                                    data-reponse-avis="{{ reponse.avis }}"
+                                    data-reponse-observations="{{ reponse.observations }}"
+                                    data-reponse-content="{{ reponse.content }}">
+                                {{ macros.multiple_amendements_title(amendements) }}
+                                {% if amendements[0].is_redactionnel %}
+                                    (rédactionnel)
+                                {% endif %}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group save-buttons">
+                <a href="" id="cancel">Annuler</a>
+                <input type="submit" name="submit" value="Remplir"
+                    class="button allow-multiple-submit secondary">
+            </div>
+        </form>
+    {% endif %}
+
     <h4>
         {% if not amendement.gouvernemental %}
-        Réponse
+            Répondre
         {% else %}
-        Présentation
+            Présentation
         {% endif %}
     </h4>
 
@@ -135,7 +190,7 @@
         <div class="form-group">
             <label for="avis">Position du gouvernement</label>
             <select name="avis" class="form-control">
-                <option value="">Choisir dans la liste...</option>
+                <option value="">Choisir dans la liste…</option>
                 {% for value in avis %}
                     <option value="{{ value }}" {%- if amendement.avis == value %} selected{% endif %}>{{ value }}</option>
                 {% endfor %}
@@ -167,3 +222,49 @@
 
     </form>
 {% endmacro %}
+
+{% block extra_scripts %}
+{% if not amendement.gouvernemental %}
+    <script type="text/javascript">
+        window.onload = () => {
+            // Wait for iframes to be loaded.
+            setTimeout(() => {
+                const prefillForm = document.querySelector('form#prefill-reponse')
+                const editReponseForm = document.querySelector('form#edit-reponse')
+                const initialAvis = editReponseForm.querySelector('option:checked')
+                    .value
+                const observationsWindow = document.querySelector(
+                    'iframe#observations_ifr'
+                ).contentWindow
+                const observationsBody = observationsWindow.document.body
+                const initialObservation = observationsBody.innerHTML
+                const reponseWindow = document.querySelector('iframe#reponse_ifr')
+                    .contentWindow
+                const reponseBody = reponseWindow.document.body
+                const initialReponse = reponseBody.innerHTML
+                prefillForm.addEventListener('submit', e => {
+                    e.preventDefault()
+                    const data = new FormData(e.target)
+                    const index = data.get('autofill')
+                    const option = e.target.querySelector(
+                        `select[name="autofill"] option[value="${index}"]`
+                    )
+                    editReponseForm.querySelector(
+                        `option[value="${option.dataset.reponseAvis}"]`
+                    ).selected = true
+                    observationsBody.innerHTML = option.dataset.reponseObservations
+                    reponseBody.innerHTML = option.dataset.reponseContent
+                })
+                document.querySelector('#cancel').addEventListener('click', e => {
+                    e.preventDefault()
+                    editReponseForm.querySelector(
+                        `option[value="${initialAvis}"]`
+                    ).selected = true
+                    observationsBody.innerHTML = initialObservation
+                    reponseBody.innerHTML = initialReponse
+                })
+            }, 1)
+        }
+    </script>
+{% endif %}
+{% endblock %}

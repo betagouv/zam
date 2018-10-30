@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship, validates
 from zam_repondeur.decorator import reify
 
 from .base import Base, DBSession
-from .amendement import Amendement
+from .amendement import Amendement, Reponse
 from .lecture import Lecture
 
 
@@ -265,12 +265,16 @@ class Article(Base):
     def url_key(self) -> str:
         return f"{self.type}.{self.num}.{self.mult}.{self.pos}"
 
-    def grouped_displayable_amendements(self) -> Iterable[List[Amendement]]:
+    def grouped_displayable_amendements(
+        self
+    ) -> Iterable[Tuple[Reponse, List[Amendement]]]:
         return self.group_amendements(
             amdt for amdt in self.amendements if amdt.is_displayable
         )
 
-    def grouped_displayable_top_level_amendements(self) -> Iterable[List[Amendement]]:
+    def grouped_displayable_top_level_amendements(
+        self
+    ) -> Iterable[Tuple[Reponse, List[Amendement]]]:
         return self.group_amendements(
             amdt
             for amdt in self.amendements
@@ -279,10 +283,10 @@ class Article(Base):
 
     def group_amendements(
         self, amendements: Iterable[Amendement]
-    ) -> Iterable[List[Amendement]]:
+    ) -> Iterable[Tuple[Reponse, List[Amendement]]]:
         return (
-            list(group)
-            for _, group in groupby(amendements, key=Amendement.grouping_key)
+            (reponse, list(group))
+            for reponse, group in groupby(amendements, key=Amendement.grouping_key)
         )
 
 

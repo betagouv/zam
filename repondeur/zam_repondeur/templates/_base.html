@@ -96,7 +96,7 @@
         })()
 
         ;(function disableOnSubmit () {
-            const submitInputs = document.querySelectorAll('[type="submit"]')
+            const submitInputs = document.querySelectorAll('[type="submit"]:not(.allow-multiple-submit)')
             submitInputs.forEach(submitInput => {
                 submitInput.onclick = (e) => {
                     submitInput.classList.add('disabled')

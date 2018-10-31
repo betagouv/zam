@@ -164,8 +164,6 @@ def _check_amendement_0(amendement):
     assert amendement.observations is None
     assert amendement.reponse is None
 
-    assert amendement.bookmarked_at is None
-
 
 def _check_amendement_1(amendement):
 
@@ -226,8 +224,6 @@ def _check_amendement_1(amendement):
     assert amendement.avis is None
     assert amendement.observations is None
     assert amendement.reponse is None
-
-    assert amendement.bookmarked_at is None
 
 
 def _check_amendement_gouvernemental(amendement):

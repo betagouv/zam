@@ -1,5 +1,4 @@
 import transaction
-from datetime import datetime
 
 from pyramid.testing import DummyRequest
 from selectolax.parser import HTMLParser
@@ -118,7 +117,6 @@ def test_write_csv(
         "Réponse": "",
         "Resume": "Suppression de l'article",
         "Session": "2017-2018",
-        "Signalé": "Non",
         "Sort": "",
         "Gouvernemental": "False",
     }
@@ -191,7 +189,6 @@ def test_write_csv_sous_amendement(
             matricule="000003",
             objet="corge",
             dispositif="grault",
-            bookmarked_at=datetime.now(),
         )
         nb_rows = write_csv(lecture_senat, filename, request={})
 
@@ -207,7 +204,6 @@ def test_write_csv_sous_amendement(
     assert _csv_row_to_dict(headers, rows[-1]) == {
         "Chambre": "senat",
         "Session": "2017-2018",
-        "Signalé": "Oui",
         "Num_texte": "63",
         "Organe": "PO78718",
         "Num article": "Article 1",

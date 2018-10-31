@@ -141,12 +141,12 @@ function compareArrays(a, b) {
     }
     return b.length - a.length
 }
-;(function sortColumnsFromQueryString() {
+function sortColumnsFromQueryString() {
     const sortSpec = getSortSpecFromURL()
     if (sortSpec !== '') {
         sortColumns(sortSpec)
     }
-})()
+}
 
 function filterByArticle(value) {
     filterColumn('hidden-article', line => {
@@ -223,44 +223,6 @@ function filterColumns(table) {
         document.querySelector('#avis-filter').value = avisFilter
         filterByAvis(avisFilter)
     }
-}
-
-function handleBookmarks() {
-    const bookmarkForms = document.querySelectorAll('.bookmark form')
-    Array.from(bookmarkForms).forEach(bookmarkForm => {
-        bookmarkForm.addEventListener('submit', e => {
-            e.preventDefault()
-            const target = e.target
-            const bookmarkInput = target.querySelector('[name="bookmark"]')
-            const submitInput = target.querySelector('[name="submit"]')
-            // Immediate visual feedback without waiting for server's response.
-            if (submitInput.value == '☆') {
-                submitInput.value = '★'
-                submitInput.title = 'Cliquer pour enlever le favori'
-                submitInput.classList.add('bookmarked')
-                target.parentElement.dataset.sortkey = '0'
-            } else {
-                submitInput.value = '☆'
-                submitInput.title = 'Cliquer pour mettre en favori'
-                submitInput.classList.remove('bookmarked')
-                target.parentElement.dataset.sortkey = '1'
-            }
-            const body = new FormData(target)
-            fetch(target.action, {
-                method: 'POST',
-                body: body,
-                credentials: 'same-origin'
-            }).then(response => {
-                // The logic might be confusing:
-                // remember we just changed the submitInput value above.
-                if (submitInput.value == '★') {
-                    bookmarkInput.value = '0'
-                } else {
-                    bookmarkInput.value = '1'
-                }
-            })
-        })
-    })
 }
 
 function hijackEditLinks() {

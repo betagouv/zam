@@ -3,7 +3,6 @@
 
 
 {% block header %}
-<link href="{{ request.static_url('zam_repondeur:static/balloon/balloon.css') }}" rel="stylesheet" type="text/css" />
 <style type="text/css">
     .content {
         margin: 0 1rem;
@@ -160,18 +159,6 @@
     }
     td a.download-pdf {
         border-bottom: none;
-    }
-
-    /* Tooltips */
-    span[data-balloon].dotted {
-        border-bottom: 1px dotted #3167a6;
-    }
-    [data-balloon] {
-        cursor: auto;
-    }
-    [data-balloon]:after {
-        font-size: 14px !important;
-        padding: 1rem;
     }
 
     :target {
@@ -385,13 +372,7 @@
                     {%- else -%}
                         {{ amendement.article.sort_key_as_str }}
                     {%- endif -%}">
-                    <span
-                    {% if amendement.article.titre %}
-                        data-balloon="{{ amendement.article.titre }}" data-balloon-pos="right"
-                    {% endif %}
-                    >
-                        {{ amendement.article }}
-                    </span>
+                    {{ amendement.article }}
                 </td>
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
@@ -437,12 +418,7 @@
                         Aucun
                     {%- endif -%}"
                 >
-                    <nobr
-                    {% if amendement.has_reponse %}
-                        data-balloon="{{ amendement.reponse | striptags | truncate(length=150, killwords=False, end='…') }}"
-                        data-balloon-pos="left"
-                    {% endif %}
-                    >
+                    <nobr>
                         {% if amendement.is_abandoned_before_seance %}
                             <span class="avis abandoned_before_seance"></span>
                         {% elif amendement.gouvernemental %}

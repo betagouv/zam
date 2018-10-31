@@ -118,7 +118,6 @@ class Amendement(Base):
         observations: Optional[str] = None,
         reponse: Optional[str] = None,
         comments: Optional[str] = None,
-        bookmarked_at: Optional[datetime] = None,
     ) -> "Amendement":
         now = datetime.utcnow()
         amendement = cls(
@@ -143,7 +142,6 @@ class Amendement(Base):
             observations=observations,
             reponse=reponse,
             comments=comments,
-            bookmarked_at=bookmarked_at,
             created_at=now,
             modified_at=now,
         )
@@ -338,5 +336,4 @@ class Amendement(Base):
             result["identique"] = self.identique or ""
             result["alinea"] = self.alinea or ""
             result["date_depot"] = self.date_depot or ""
-            result["bookmarked_at"] = "Oui" if self.bookmarked_at else "Non"
         return result

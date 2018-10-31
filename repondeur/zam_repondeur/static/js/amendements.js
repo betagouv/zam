@@ -268,12 +268,22 @@ function hijackEditLinks() {
     const editLinks = document.querySelectorAll('a.edit-reponse')
     Array.from(editLinks).forEach(editLink => {
         editLink.addEventListener('click', e => {
+            e.preventDefault()
             const thisURL = new URL(window.location.href)
             const linkURL = new URL(e.target.href)
             thisURL.hash = ''
             linkURL.searchParams.set('back', thisURL.pathname + thisURL.search)
-            window.location.href = linkURL.toString()
-            e.preventDefault()
+            const href = linkURL.toString()
+            if (
+                e.ctrlKey ||
+                e.shiftKey ||
+                e.metaKey || // apple
+                (e.button && e.button == 1) // middle click, >IE9 + everyone else
+            ) {
+                window.open(href).focus()
+            } else {
+                window.location.href = href
+            }
         })
     })
 }

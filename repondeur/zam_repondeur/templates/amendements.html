@@ -3,7 +3,6 @@
 
 
 {% block header %}
-<link href="{{ request.static_url('zam_repondeur:static/balloon/balloon.css') }}" rel="stylesheet" type="text/css" />
 <style type="text/css">
     .content {
         margin: 0 1rem;
@@ -141,17 +140,6 @@
         background-color: #d9d9d9;
     }
 
-    /* Bookmarks */
-    .bookmark input[type="submit"] {
-        border:none;
-        background: inherit;
-        font-size: 1.25rem;
-        cursor: pointer;
-    }
-    .bookmark input.bookmarked {
-        color: #3167a6;
-    }
-
     /* Links in table */
     td a, td a:hover {
         white-space: nowrap;
@@ -160,18 +148,6 @@
     }
     td a.download-pdf {
         border-bottom: none;
-    }
-
-    /* Tooltips */
-    span[data-balloon].dotted {
-        border-bottom: 1px dotted #3167a6;
-    }
-    [data-balloon] {
-        cursor: auto;
-    }
-    [data-balloon]:after {
-        font-size: 14px !important;
-        padding: 1rem;
     }
 
     :target {
@@ -319,7 +295,6 @@
     <table class="table" style="width:100%">
         <thead class="box">
             <tr class="headers sticky">
-                <th width="50px">★</th>
                 <th width="150px">Article</th>
                 <th width="180px">Nº</th>
                 <th class="nosort">Objet</th>
@@ -328,7 +303,6 @@
                 <th class="nosort">⋯</th>
             </tr>
             <tr class="filters sticky d-none">
-                <th></th>
                 <th>
                     <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
@@ -368,30 +342,13 @@
                 class="highlighted"
                 {% endif %}
             >
-                <td class="bookmark" data-sortkey="{{ 0 if amendement.bookmarked_at else 1 }}">
-                    <form method="post" action="{{ request.resource_url(context[amendement.num_str]) }}" id="amendement-{{ amendement.num }}">
-                        {% if amendement.bookmarked_at %}
-                            <input type="hidden" name="bookmark" value="0">
-                            <input type="submit" name="submit" title="Cliquer pour enlever le favori" value="★" class="bookmarked">
-                        {% else %}
-                            <input type="hidden" name="bookmark" value="1">
-                            <input type="submit" name="submit" title="Cliquer pour mettre en favori" value="☆">
-                        {% endif %}
-                    </form>
-                </td>
                 <td class="article" data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }}
                     {%- else -%}
                         {{ amendement.article.sort_key_as_str }}
                     {%- endif -%}">
-                    <span
-                    {% if amendement.article.titre %}
-                        data-balloon="{{ amendement.article.titre }}" data-balloon-pos="right"
-                    {% endif %}
-                    >
-                        {{ amendement.article }}
-                    </span>
+                    {{ amendement.article }}
                 </td>
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
@@ -437,12 +394,7 @@
                         Aucun
                     {%- endif -%}"
                 >
-                    <nobr
-                    {% if amendement.has_reponse %}
-                        data-balloon="{{ amendement.reponse | striptags | truncate(length=150, killwords=False, end='…') }}"
-                        data-balloon-pos="left"
-                    {% endif %}
-                    >
+                    <nobr>
                         {% if amendement.is_abandoned_before_seance %}
                             <span class="avis abandoned_before_seance"></span>
                         {% elif amendement.gouvernemental %}
@@ -518,8 +470,8 @@
     setupToggle('#toggle-filter', 'tr.filters', false)
     setupToggle('#toggle-articles', '#articles', true)
     makeHeadersSortable(document.querySelector('thead'))
+    sortColumnsFromQueryString()
     filterColumns(document.querySelector('table'))
-    handleBookmarks()
     hijackEditLinks()
     takeControlOverNativeJump()
 </script>

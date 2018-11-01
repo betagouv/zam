@@ -33,7 +33,6 @@ FIELDS_NAMES = {
     "reponse": "Réponse",
     "comments": "Commentaires",
     "avis": "Avis du Gouvernement",
-    "bookmarked_at": "Signalé",
 }
 
 
@@ -55,6 +54,7 @@ EXCLUDED_FIELDS = [
     "subdiv_pos",
     "created_at",
     "modified_at",
+    "bookmarked_at",
 ]
 FIELDS = [
     field

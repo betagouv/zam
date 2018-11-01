@@ -300,6 +300,14 @@ class Amendement(Base):
         )
 
     @property
+    def has_observations(self) -> bool:
+        return (
+            self.observations is not None
+            and self.observations.strip() != ""
+            and self.observations != "<p></p>"
+        )
+
+    @property
     def has_reponse(self) -> bool:
         return (
             self.reponse is not None

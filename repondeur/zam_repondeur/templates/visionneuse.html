@@ -138,12 +138,18 @@
         </header>
         <div class="is-none">
           <div id="reponse-detail-{{ amendement.num }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
-            <h4>Objet</h4>
-            <div class="reponse-presentation">
-              {{ amendement.observations | paragriphy }}
-            </div>
-            {% if amendement.reponse and amendement.reponse.strip() and amendement.reponse != '<p></p>' %}
-              <h4>Réponse</h4>
+            {% if amendement.has_observations %}
+              <h4>Objet</h4>
+              <div>
+                {{ amendement.observations | paragriphy }}
+              </div>
+            {% endif %}
+            {% if amendement.has_reponse %}
+              {% if is_gouvernemental %}
+                <h4>Présentation</h4>
+              {% else %}
+                <h4>Réponse</h4>
+              {% endif %}
               <div>
                 {{ amendement.reponse | paragriphy }}
               </div>

@@ -108,10 +108,12 @@
         {% endif %}
       </table>
       <div>
-        <div class="reponse-presentation">
-          <h3>Objet :</h3>
-          {{ amendement.observations | paragriphy }}
-        </div>
+        {% if amendement.has_observations %}
+          <div class="reponse-presentation">
+            <h3>Objet :</h3>
+            {{ amendement.observations | paragriphy }}
+          </div>
+        {% endif %}
         {% if amendement.has_reponse %}
           <h3>Réponse :</h3>
           {{ amendement.reponse | paragriphy }}

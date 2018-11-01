@@ -1,4 +1,5 @@
 {% extends "_base_visionneuse.html" %}
+{% import "macros.html" as macros %}
 
 {% block title %}
   <section id="{{ article.slug }}">
@@ -57,7 +58,7 @@
 
 {% block main %}
   <section>
-    {% for amendements in article.grouped_displayable_amendements() %}
+    {% for reponse, amendements in grouped_displayable_amendements %}
       {% set amendement = amendements[0] %}
       {% set is_gouvernemental = amendement.gouvernemental %}
       {% set parent = amendement.parent %}
@@ -88,21 +89,7 @@
               Texte
             </a>
             <h2>
-              Amendement{% if multiple %}s{% endif %}
-              {% if amendements|length > 5 %}
-                {{ amendements[0] }},
-                {{ amendements[1] }},
-                ...,
-                {{ amendements[-3] }},
-                {{ amendements[-2] }} et
-                {{ amendements[-1] }}
-                ({{ amendements|length }} au total)
-              {% else %}
-                {% for amendement in amendements %}
-                  {{ amendement.num_disp }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                {% endfor %}
-              {% endif %}
-              {% if parent %} (sous-amendement au {{ parent }}){% endif %}
+              {{ macros.multiple_amendements_title(amendements) }}
             </h2>
             {% if amendement.observations and (amendement.observations|length < 200) %}
               <div class="presentation">
@@ -202,7 +189,7 @@
 {% endblock %}
 
 {% block bottom_nav %}
-  {% if article.grouped_displayable_amendements() | list %}
+  {% if grouped_displayable_amendements | list %}
     <nav class="bottom secondary">
       {% if previous_article %}
         <a class="arrow-left" href="{{ request.resource_url(context.parent, previous_article.url_key, 'reponses') }}">{{ previous_article.format() }}</a>

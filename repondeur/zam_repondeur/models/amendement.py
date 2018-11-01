@@ -1,6 +1,15 @@
 import re
 from datetime import date, datetime
-from typing import Dict, Iterable, List, Optional, Tuple, Union, TYPE_CHECKING  # noqa
+from typing import (
+    Dict,
+    Iterable,
+    List,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Union,
+    TYPE_CHECKING,
+)  # noqa
 
 from sqlalchemy import (
     Boolean,
@@ -37,6 +46,12 @@ AVIS = [
     "Sagesse",
     "Satisfait donc rejet",
 ]
+
+
+class Reponse(NamedTuple):
+    avis: str
+    observations: str
+    content: str
 
 
 class Amendement(Base):
@@ -268,9 +283,20 @@ class Amendement(Base):
     def is_sous_amendement(self) -> bool:
         return self.parent_pk is not None
 
-    def grouped_displayable_children(self) -> Iterable[List["Amendement"]]:
+    def grouped_displayable_children(
+        self
+    ) -> Iterable[Tuple[Reponse, List["Amendement"]]]:
         return self.article.group_amendements(
             amdt for amdt in self.children if amdt.is_displayable
+        )
+
+    @property
+    def is_redactionnel(self) -> bool:
+        return (
+            self.avis == "Favorable"
+            and self.objet is not None
+            and "rédactionnel" in self.objet.lower()
+            and not self.has_reponse
         )
 
     @property
@@ -300,10 +326,10 @@ class Amendement(Base):
             f"{self.lecture.num_texte}.{self.lecture.organe}"
         )
 
-    def grouping_key(self) -> Tuple[str, str, str]:
+    def grouping_key(self) -> Reponse:
         if self.gouvernemental:
-            return (self.num_str, "", "")
-        return (self.avis or "", self.observations or "", self.reponse or "")
+            return Reponse(self.num_str, "", "")
+        return Reponse(self.avis or "", self.observations or "", self.reponse or "")
 
     def asdict(self, full: bool = False) -> dict:
         result: Dict[str, Union[str, int, date]] = {

@@ -100,19 +100,19 @@
               <p class="authors"><span class="author">Gouvernement</span></p>
             {% else %}
               <p class="authors">
-                {% for amendement in amendements %}
-                  {% if loop.previtem is defined and amendement.auteur != loop.previtem.auteur or loop.previtem is not defined %}
+                {% for groupe, amdts_groupe in amendements|groupby('groupe') -%}
+                  {%- for auteur, _ in amdts_groupe|groupby('auteur') -%}
                     <span class="author">
-                      {{ amendement.auteur }}
-                      {% if amendement.groupe -%}
-                        ({{ amendement.groupe }}
-                        {%- if amendement.couleur_groupe != "#ffffff" %}
-                          <span class="group-color" style="background-color: {{ amendement.couleur_groupe }};"></span>
-                        {%- endif %})
-                      {%- endif %}{% if not loop.last and loop.nextitem.auteur != amendement.auteur %}, {% endif %}
+                      {{ auteur }}{% if loop.revindex == 2 %} et {%- else -%}{% if not loop.last %}, {% endif %}{%- endif -%}
                     </span>
-                  {% endif %}
-                {% endfor %}
+                  {%- endfor %}
+                  {% if groupe -%}
+                    ({{ groupe }}
+                    {%- if amdts_groupe[0].couleur_groupe != "#ffffff" %}
+                      <span class="group-color" style="background-color: {{ amdts_groupe[0].couleur_groupe }};"></span>
+                    {%- endif -%})
+                  {%- endif %}{% if not loop.last %}, {% endif %}
+                {%- endfor %}
               </p>
             {% endif %}
           </div>

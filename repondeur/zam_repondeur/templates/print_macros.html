@@ -60,7 +60,7 @@
           <tr>
             <td>Amendement{% if multiple %}s{% endif %}</td>
             <td>
-              {% if amendements|length > 5 %}
+              {% if amendements|length > 5 -%}
                 {{ amendements[0] }},
                 {{ amendements[1] }},
                 …,
@@ -68,11 +68,11 @@
                 {{ amendements[-2] }} et
                 {{ amendements[-1] }}
                 ({{ amendements|length }} au total)
-              {% else %}
-                {% for amendement in amendements %}
+              {%- else -%}
+                {% for amendement in amendements -%}
                   {{ amendement.num_disp }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                {% endfor %}
-              {% endif %}
+                {%- endfor %}
+              {%- endif %}
             </td>
           </tr>
         {% endif %}
@@ -82,11 +82,11 @@
             {% if amendement.gouvernemental %}
               Gouvernement
             {% else %}
-              {% for amendement in amendements %}
-                {% if loop.previtem is defined and amendement.auteur != loop.previtem.auteur or loop.previtem is not defined %}
-                  {{ amendement.auteur }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last and loop.nextitem.auteur != amendement.auteur %}, {% endif %}{% endif %}
-                {% endif %}
-              {% endfor %}
+              {% for auteur, _ in amendements|groupby('auteur') -%}
+                {% if loop.previtem is defined and auteur != loop.previtem or loop.previtem is not defined -%}
+                  {{ auteur }}{% if loop.revindex == 2 and loop.nextitem != auteur %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                {%- endif %}
+              {%- endfor %}
             {% endif %}
           </td>
         </tr>
@@ -94,11 +94,11 @@
           <tr>
             <td>Groupe{% if multiple %}s{% endif %}</td>
             <td>
-              {% for amendement in amendements %}
-                {% if loop.previtem is defined and amendement.auteur != loop.previtem.auteur or loop.previtem is not defined %}
-                  {{ amendement.groupe }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last and loop.nextitem.auteur != amendement.auteur %}, {% endif %}{% endif %}
-                {% endif %}
-              {% endfor %}
+              {% for groupe, _ in amendements|groupby('groupe') -%}
+                {% if loop.previtem is defined and groupe != loop.previtem or loop.previtem is not defined -%}
+                  {{ groupe }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                {%- endif %}
+              {%- endfor %}
             </td>
           </tr>
           <tr>

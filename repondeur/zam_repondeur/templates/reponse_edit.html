@@ -196,19 +196,23 @@
                 {% endfor %}
             </select>
         </div>
-        {% endif %}
 
         <div class="form-group">
             <label for="observations">Objet de l’amendement</label>
             <textarea name="observations" class="form-control">{{ amendement.observations or "" | safe }}</textarea>
         </div>
+        {% endif %}
 
-        {% if not amendement.gouvernemental %}
         <div class="form-group">
-            <label for="reponse">Réponse à l’amendement</label>
+            <label for="reponse">
+                {% if not amendement.gouvernemental %}
+                    Réponse à l’amendement
+                {% else %}
+                    Présentation de l’amendement
+                {% endif %}
+            </label>
             <textarea name="reponse" class="form-control">{{ amendement.reponse or "" | safe }}</textarea>
         </div>
-        {% endif %}
 
         <div class="form-group">
             <label for="comments">Commentaires</label>

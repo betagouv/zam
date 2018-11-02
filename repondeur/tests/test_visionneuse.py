@@ -6,6 +6,12 @@ import pytest
 LECTURE_AN_URL = "http://localhost/lectures/an.15.269.PO717460"
 
 
+def _text_from_node(node, selector):
+    return " ".join(
+        part.strip() for part in node.css_first(selector).text().strip().split("\n")
+    )
+
+
 def test_reponses_empty(app, lecture_an, amendements_an):
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
@@ -43,6 +49,7 @@ def test_reponses_full(app, lecture_an, amendements_an):
         test_amendement_666.node.css_first("header h2").text().strip()
         != test_amendement_999.node.css_first("header h2").text().strip()
     )
+    assert _text_from_node(test_amendement_666.node, "header h2") == "Amendement 666"
 
 
 def test_reponses_grouping(app, lecture_an, amendements_an):
@@ -51,8 +58,8 @@ def test_reponses_grouping(app, lecture_an, amendements_an):
     with transaction.manager:
         for amendement in amendements_an:
             amendement.avis = "Favorable"
-            amendement.observations = f"Observations"
-            amendement.reponse = f"Réponse"
+            amendement.observations = "Observations"
+            amendement.reponse = "Réponse"
         DBSession.add_all(amendements_an)
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
@@ -68,6 +75,171 @@ def test_reponses_grouping(app, lecture_an, amendements_an):
         test_amendement_666.node.css_first("header h2").text().strip()
         == test_amendement_999.node.css_first("header h2").text().strip()
     )
+    assert (
+        _text_from_node(test_amendement_666.node, "header h2")
+        == "Amendements 666 et 999"
+    )
+
+
+def test_reponses_authors_not_grouping(app, lecture_an, amendements_an):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        for amendement in amendements_an:
+            amendement.avis = "Favorable"
+            amendement.observations = "Observations"
+            amendement.reponse = "Réponse"
+            amendement.auteur = "M. JEAN"
+            amendement.groupe = "Les Indépendants"
+        amendement.auteur = "M. CLAUDE"
+        amendement.groupe = "Les Mécontents"
+        DBSession.add_all(amendements_an)
+
+    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+
+    assert resp.status_code == 200
+    test_amendement_666 = resp.find_amendement(amendements_an[0])
+    assert test_amendement_666.number_is_in_title()
+
+    test_amendement_999 = resp.find_amendement(amendements_an[1])
+    assert test_amendement_999.number_is_in_title()
+
+    assert (
+        _text_from_node(test_amendement_666.node, "header .authors")
+        == "M. JEAN (Les Indépendants ), M. CLAUDE (Les Mécontents)"
+    )
+
+
+def test_reponses_authors_grouping(app, lecture_an, amendements_an):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        for amendement in amendements_an:
+            amendement.avis = "Favorable"
+            amendement.observations = "Observations"
+            amendement.reponse = "Réponse"
+            amendement.auteur = "M. JEAN"
+            amendement.groupe = "Les Indépendants"
+        DBSession.add_all(amendements_an)
+
+    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+
+    assert resp.status_code == 200
+    test_amendement_666 = resp.find_amendement(amendements_an[0])
+    assert test_amendement_666.number_is_in_title()
+
+    test_amendement_999 = resp.find_amendement(amendements_an[1])
+    assert test_amendement_999.number_is_in_title()
+
+    assert (
+        _text_from_node(test_amendement_666.node, "header .authors")
+        == "M. JEAN (Les Indépendants )"
+    )
+
+
+def test_reponses_groupe_grouping(app, lecture_an, amendements_an):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        for amendement in amendements_an:
+            amendement.avis = "Favorable"
+            amendement.observations = "Observations"
+            amendement.reponse = "Réponse"
+            amendement.auteur = "M. JEAN"
+            amendement.groupe = "Les Indépendants"
+        amendement.auteur = "M. CLAUDE"  # Only the last one.
+        DBSession.add_all(amendements_an)
+
+    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+
+    assert resp.status_code == 200
+    test_amendement_666 = resp.find_amendement(amendements_an[0])
+    assert test_amendement_666.number_is_in_title()
+
+    test_amendement_999 = resp.find_amendement(amendements_an[1])
+    assert test_amendement_999.number_is_in_title()
+
+    assert (
+        _text_from_node(test_amendement_666.node, "header .authors")
+        == "M. CLAUDE et M. JEAN (Les Indépendants )"
+    )
+
+
+def test_reponses_many_grouping(app, lecture_an, article1_an, amendements_an):
+    from zam_repondeur.models import Amendement, DBSession
+
+    with transaction.manager:
+        for amendement in amendements_an:
+            amendement.avis = "Défavorable"
+            amendement.observations = "Observations"
+            amendement.reponse = "Réponse"
+            amendement.auteur = "M. JEAN"
+            amendement.groupe = "Les Indépendants"
+        amendement.auteur = "M. CLAUDE"  # Only the last one.
+        DBSession.add_all(amendements_an)
+        Amendement.create(
+            lecture=lecture_an,
+            article=article1_an,
+            num=42,
+            position=3,
+            auteur="M. DUPONT",
+            groupe="RDSE",
+            avis="Défavorable",
+            observations="Observations",
+            reponse="Réponse",
+        )
+        Amendement.create(
+            lecture=lecture_an,
+            article=article1_an,
+            num=57,
+            position=4,
+            auteur="M. DURAND",
+            groupe="Les Républicains",
+            avis="Défavorable",
+            observations="Observations",
+            reponse="Réponse",
+        )
+        Amendement.create(
+            lecture=lecture_an,
+            article=article1_an,
+            num=72,
+            position=5,
+            auteur="M. MARTIN",
+            groupe="Les Républicains",
+            avis="Défavorable",
+            observations="Observations",
+            reponse="Réponse",
+        )
+        Amendement.create(
+            lecture=lecture_an,
+            article=article1_an,
+            num=83,
+            position=6,
+            auteur="M. MARTIN",
+            groupe="Les Républicains",
+            avis="Défavorable",
+            observations="Observations",
+            reponse="Réponse",
+        )
+
+    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+
+    assert resp.status_code == 200
+    test_amendement_666 = resp.find_amendement(amendements_an[0])
+    assert test_amendement_666.number_is_in_title()
+
+    test_amendement_999 = resp.find_amendement(amendements_an[1])
+    assert test_amendement_999.number_is_in_title()
+
+    assert (
+        _text_from_node(test_amendement_666.node, "header h2")
+        == "Amendements 666, 999, …, 57, 72 et 83 (6 au total)"
+    )
+    assert _text_from_node(test_amendement_666.node, "header .authors") == (
+        "M. CLAUDE et M. JEAN (Les Indépendants ), "
+        "M. DURAND et M. MARTIN (Les Républicains ), "
+        "M. DUPONT (RDSE )"
+    )
 
 
 def test_reponses_not_grouping_on_same_reponse_only(app, lecture_an, amendements_an):
@@ -77,7 +249,7 @@ def test_reponses_not_grouping_on_same_reponse_only(app, lecture_an, amendements
         for amendement in amendements_an:
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse"
+            amendement.reponse = "Réponse"
         DBSession.add_all(amendements_an)
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")

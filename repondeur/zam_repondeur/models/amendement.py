@@ -116,9 +116,9 @@ class Amendement(Base):
         article,
         num: int,
         rectif: int = 0,
-        auteur: Optional[str] = None,
+        auteur: str = "",
+        groupe: str = "",
         matricule: Optional[str] = None,
-        groupe: Optional[str] = None,
         date_depot: Optional[date] = None,
         sort: Optional[str] = None,
         position: Optional[int] = None,
@@ -297,6 +297,14 @@ class Amendement(Base):
             and self.objet is not None
             and "rédactionnel" in self.objet.lower()
             and not self.has_reponse
+        )
+
+    @property
+    def has_observations(self) -> bool:
+        return (
+            self.observations is not None
+            and self.observations.strip() != ""
+            and self.observations != "<p></p>"
         )
 
     @property

@@ -9,6 +9,37 @@ def test_get_reponse_edit_form(app, lecture_an, amendements_an):
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
     assert resp.forms["edit-reponse"].method == "POST"
+    assert list(resp.forms["edit-reponse"].fields.keys()) == [
+        "avis",
+        "observations",
+        "reponse",
+        "comments",
+        "submit",
+    ]
+    assert resp.forms["prefill-reponse"].method == "POST"
+
+
+def test_get_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
+    from zam_repondeur.models import DBSession
+
+    amendement = amendements_an[1]
+    with transaction.manager:
+        amendement.auteur = "LE GOUVERNEMENT"
+        DBSession.add(amendement)
+
+    resp = app.get(
+        "http://localhost/lectures/an.15.269.PO717460/amendements/999/reponse"
+    )
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+    assert resp.forms["edit-reponse"].method == "POST"
+    assert list(resp.forms["edit-reponse"].fields.keys()) == [
+        "reponse",
+        "comments",
+        "submit",
+    ]
+    assert resp.forms.get("prefill-reponse") is None
 
 
 def test_get_reponse_edit_form_not_found(app, lecture_an, amendements_an):
@@ -20,7 +51,6 @@ def test_get_reponse_edit_form_not_found(app, lecture_an, amendements_an):
 
 
 def test_post_reponse_edit_form(app, lecture_an, amendements_an):
-
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -48,6 +78,46 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.avis == "Favorable"
     assert amendement.observations == "Des observations très pertinentes"
+    assert amendement.reponse == "Une réponse <strong>très</strong> appropriée"
+    assert (
+        amendement.comments
+        == "Avec des <table><tbody><tr><td>commentaires</td></tr></tbody></table>"
+    )
+    assert initial_amendement_modified_at < amendement.modified_at
+
+
+def test_post_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
+    from zam_repondeur.models import Amendement, DBSession
+
+    amendement = amendements_an[1]
+    with transaction.manager:
+        amendement.auteur = "LE GOUVERNEMENT"
+        DBSession.add(amendement)
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    assert amendement.avis is None
+    assert amendement.observations is None
+    assert amendement.reponse is None
+    assert amendement.gouvernemental
+    initial_amendement_modified_at = amendement.modified_at
+
+    resp = app.get(
+        "http://localhost/lectures/an.15.269.PO717460/amendements/999/reponse"
+    )
+    form = resp.forms["edit-reponse"]
+    form["reponse"] = "Une réponse <strong>très</strong> appropriée"
+    form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == "http://localhost/lectures/an.15.269.PO717460/amendements/#amdt-999"
+    )
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    assert amendement.avis == ""
+    assert amendement.observations == ""
     assert amendement.reponse == "Une réponse <strong>très</strong> appropriée"
     assert (
         amendement.comments

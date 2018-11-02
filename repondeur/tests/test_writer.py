@@ -127,7 +127,15 @@ def test_write_csv(
         "Session": "2017-2018",
         "Sort": "",
         "Gouvernemental": "False",
+        "Ordre article": "6|001|01|__________|1",
     }
+    assert [_csv_row_to_dict(headers, row)["Ordre article"] for row in rows] == [
+        "6|001|01|__________|1",
+        "6|007|02|__________|1",
+        "6|001|01|__________|1",
+        "6|001|01|__________|0",
+        "6|001|01|__________|1",
+    ]
 
 
 def test_write_csv_sous_amendement(
@@ -236,6 +244,7 @@ def test_write_csv_sous_amendement(
         "Gouvernemental": "False",
         "Commentaires": "",
         "Resume": "",
+        "Ordre article": "6|001|01|__________|1",
     }
 
 

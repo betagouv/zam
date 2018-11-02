@@ -20,6 +20,7 @@ STATIC_PATH = Path(__file__).parent / "static"
 FIELDS_NAMES = {
     "article": "Num article",
     "article_titre": "Titre article",
+    "article_order": "Ordre article",
     "alinea": "Alinéa",
     "num": "Num amdt",
     "auteur": "Auteur(s)",
@@ -63,6 +64,7 @@ FIELDS = [
 ] + [
     "article",
     "article_titre",
+    "article_order",
     "parent",
     "gouvernemental",
     "chambre",

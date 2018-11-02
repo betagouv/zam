@@ -138,7 +138,7 @@
     </div>
     <div class="dispositif">
         <h4>Corps de l’amendement</h4>
-        <h5>{{ amendement.article.format() }}</h5>
+        <h5><a href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a></h5>
         {{ amendement.dispositif | safe }}
     </div>
 {% endmacro %}

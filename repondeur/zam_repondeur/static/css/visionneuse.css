@@ -428,21 +428,6 @@ nav.secondary {
     border-left-color: #3167a6;
   }
 
-  [role="status"] {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-    [role="status"] p {
-      margin: 0;
-      padding: 2rem 1rem;
-      text-align: center;
-      background: orange;
-      font-size: large;
-      font-weight: bold;
-      border: 2px solid #ec644b;
-    }
   .error {
     border: 1px solid red;
     background: white;

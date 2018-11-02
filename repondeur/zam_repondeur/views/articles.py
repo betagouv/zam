@@ -22,9 +22,15 @@ def article_check(context: ArticleResource, request: Request) -> dict:
     article = context.model()
     timestamp = float(request.GET["since"])
     modified_at = article.modified_at_timestamp
+    modified_amendements_numbers: list = []
     if timestamp < modified_at:
-        return article.modifications_since(timestamp)
-    return {"modifications": []}
+        modified_amendements_numbers = article.modified_amendements_numbers_since(
+            timestamp
+        )
+    return {
+        "modified_amendements_numbers": modified_amendements_numbers,
+        "modified_at": modified_at,
+    }
 
 
 @view_defaults(context=ArticleResource)

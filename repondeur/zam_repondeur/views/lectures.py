@@ -314,7 +314,17 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
 @view_config(context=LectureResource, name="check", renderer="json")
 def lecture_check(context: LectureResource, request: Request) -> dict:
     lecture = context.model()
-    return {"modified_at": lecture.modified_at_timestamp}
+    timestamp = float(request.GET["since"])
+    modified_at = lecture.modified_at_timestamp
+    modified_amendements_numbers: list = []
+    if timestamp < modified_at:
+        modified_amendements_numbers = lecture.modified_amendements_numbers_since(
+            timestamp
+        )
+    return {
+        "modified_amendements_numbers": modified_amendements_numbers,
+        "modified_at": modified_at,
+    }
 
 
 @view_config(route_name="choices_lectures", renderer="json")

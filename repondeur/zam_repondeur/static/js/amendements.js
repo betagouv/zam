@@ -27,26 +27,6 @@ function updateSortSpec(sortSpec, colSpec) {
     return updatedSpec.join('-')
 }
 
-function notifyOnUpdates(delay, timestamp, checkUrl) {
-    function displayNotificationUpdate() {
-        const message =
-            '<p class="alert alert-info text-center lead">De nouvelles informations sont disponibles, <a class="alert-link" href=><i class="fa fa-redo-alt"></i> rafraîchir</a> !</p>'
-        document.querySelector('[role="status"]').innerHTML = message
-    }
-    function check() {
-        const options = {
-            credentials: 'include'
-        }
-        fetch(checkUrl, options)
-            .then(reponse => reponse.json())
-            .then(json => {
-                if (json.modified_at && json.modified_at !== Number(timestamp))
-                    displayNotificationUpdate()
-            })
-    }
-    setInterval(check, 1000 * delay)
-}
-
 function setupToggle(toggleSelector, targetSelector, scroll) {
     const toggle = document.querySelector(toggleSelector)
     toggle.addEventListener('click', e => {

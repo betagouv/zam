@@ -6,6 +6,12 @@ import pytest
 LECTURE_AN_URL = "http://localhost/lectures/an.15.269.PO717460"
 
 
+def _text_from_node(node, selector):
+    return " ".join(
+        part.strip() for part in node.css_first(selector).text().strip().split("\n")
+    )
+
+
 def test_reponses_empty(app, lecture_an, amendements_an):
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
@@ -43,16 +49,7 @@ def test_reponses_full(app, lecture_an, amendements_an):
         test_amendement_666.node.css_first("header h2").text().strip()
         != test_amendement_999.node.css_first("header h2").text().strip()
     )
-    assert (
-        " ".join(
-            part.strip()
-            for part in test_amendement_666.node.css_first("header h2")
-            .text()
-            .strip()
-            .split("\n")
-        )
-        == "Amendement 666"
-    )
+    assert _text_from_node(test_amendement_666.node, "header h2") == "Amendement 666"
 
 
 def test_reponses_grouping(app, lecture_an, amendements_an):
@@ -79,13 +76,7 @@ def test_reponses_grouping(app, lecture_an, amendements_an):
         == test_amendement_999.node.css_first("header h2").text().strip()
     )
     assert (
-        " ".join(
-            part.strip()
-            for part in test_amendement_666.node.css_first("header h2")
-            .text()
-            .strip()
-            .split("\n")
-        )
+        _text_from_node(test_amendement_666.node, "header h2")
         == "Amendements 666 et 999"
     )
 
@@ -114,13 +105,7 @@ def test_reponses_authors_not_grouping(app, lecture_an, amendements_an):
     assert test_amendement_999.number_is_in_title()
 
     assert (
-        " ".join(
-            part.strip()
-            for part in test_amendement_666.node.css_first("header .authors")
-            .text()
-            .strip()
-            .split("\n")
-        )
+        _text_from_node(test_amendement_666.node, "header .authors")
         == "M. JEAN (Les Indépendants ), M. CLAUDE (Les Mécontents)"
     )
 
@@ -147,13 +132,7 @@ def test_reponses_authors_grouping(app, lecture_an, amendements_an):
     assert test_amendement_999.number_is_in_title()
 
     assert (
-        " ".join(
-            part.strip()
-            for part in test_amendement_666.node.css_first("header .authors")
-            .text()
-            .strip()
-            .split("\n")
-        )
+        _text_from_node(test_amendement_666.node, "header .authors")
         == "M. JEAN (Les Indépendants )"
     )
 
@@ -181,13 +160,7 @@ def test_reponses_groupe_grouping(app, lecture_an, amendements_an):
     assert test_amendement_999.number_is_in_title()
 
     assert (
-        " ".join(
-            part.strip()
-            for part in test_amendement_666.node.css_first("header .authors")
-            .text()
-            .strip()
-            .split("\n")
-        )
+        _text_from_node(test_amendement_666.node, "header .authors")
         == "M. CLAUDE et M. JEAN (Les Indépendants )"
     )
 
@@ -259,22 +232,10 @@ def test_reponses_many_grouping(app, lecture_an, article1_an, amendements_an):
     assert test_amendement_999.number_is_in_title()
 
     assert (
-        " ".join(
-            part.strip()
-            for part in test_amendement_666.node.css_first("header h2")
-            .text()
-            .strip()
-            .split("\n")
-        )
+        _text_from_node(test_amendement_666.node, "header h2")
         == "Amendements 666, 999, …, 57, 72 et 83 (6 au total)"
     )
-    assert " ".join(
-        part.strip()
-        for part in test_amendement_666.node.css_first("header .authors")
-        .text()
-        .strip()
-        .split("\n")
-    ) == (
+    assert _text_from_node(test_amendement_666.node, "header .authors") == (
         "M. CLAUDE et M. JEAN (Les Indépendants ), "
         "M. DURAND et M. MARTIN (Les Républicains ), "
         "M. DUPONT (RDSE )"

@@ -228,10 +228,12 @@ nav .button:last-child {
     content: "Parcourir";
 }
 
-.amendement table {
+.amendement table,
+dd table {
     width: 100%;
 }
-.amendement td {
+.amendement td,
+dd td {
     border: 1px solid black;
     padding: .2rem 1rem;
 }

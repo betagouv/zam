@@ -113,6 +113,23 @@
             })
         })()
 
+        ;(function confirmDeletes() {
+            const deleteButtons = document.querySelectorAll('[name="delete"]')
+            Array.from(deleteButtons).forEach(deleteButton => {
+                deleteButton.addEventListener('click', e => {
+                    if (
+                        window.confirm(
+                            'Êtes-vous sûr·e de vouloir supprimer toutes les données ' +
+                            'relatives à cette lecture incluant les avis et les réponses ?'
+                        )
+                    ) {
+                        return
+                    } else {
+                        e.preventDefault()
+                    }
+                })
+            })
+        })()
         {% for kind, message in request.session.pop_flash() %}
             displayNotificationUpdate("{{ message }}", "{{ kind }}")
         {% endfor %}

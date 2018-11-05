@@ -45,7 +45,7 @@ class Lecture(Base):
         cascade="all, delete-orphan",
     )
 
-    __repr_keys__ = ("pk", "chambre", "session", "organe", "num_texte")
+    __repr_keys__ = ("pk", "chambre", "session", "organe", "num_texte", "partie")
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Lecture):

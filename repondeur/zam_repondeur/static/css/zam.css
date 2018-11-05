@@ -231,6 +231,7 @@ nav .button:last-child {
 .amendement table,
 dd table {
     width: 100%;
+    max-width: 100%;
 }
 .amendement td,
 dd td {

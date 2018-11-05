@@ -96,48 +96,49 @@ class TestOrdering:
         list(
             pairwise(
                 [
-                    "",
-                    "11",
-                    "11 bis A",
-                    "11 bis",
-                    "11 ter",
-                    "11 quater",
-                    "11 quinquies",
-                    "11 sexies",
-                    "12 AA",
-                    "12 AB",
-                    "12 A",
-                    "12 BA",
-                    "12 BB",
-                    "12 BC",
-                    "12 BD",
-                    "12 B",
-                    "12 C",
-                    "12 D",
-                    "12",
-                    "12 bis",
-                    "13",
-                    "13 bis",
-                    "13 ter",
-                    "13 quater A",
-                    "13 quater",
-                    "13 quinquies",
-                    "13 sexies",
-                    "14",
-                    "14 bis A",
-                    "14 bis",
-                    "15",
-                    "16",
-                    "17",
-                    "17 bis AAA",
-                    "17 bis AA",
-                    "17 bis A",
-                    "17 bis BA",
-                    "17 bis BB",
-                    "17 bis B",
-                    "17 bis C",
-                    "17 bis",
-                    "17 ter",
+                    ("article", ""),
+                    ("article", "11"),
+                    ("article", "11 bis A"),
+                    ("article", "11 bis"),
+                    ("article", "11 ter"),
+                    ("article", "11 quater"),
+                    ("article", "11 quinquies"),
+                    ("article", "11 sexies"),
+                    ("article", "12 AA"),
+                    ("article", "12 AB"),
+                    ("article", "12 A"),
+                    ("article", "12 BA"),
+                    ("article", "12 BB"),
+                    ("article", "12 BC"),
+                    ("article", "12 BD"),
+                    ("article", "12 B"),
+                    ("article", "12 C"),
+                    ("article", "12 D"),
+                    ("article", "12"),
+                    ("article", "12 bis"),
+                    ("article", "13"),
+                    ("article", "13 bis"),
+                    ("article", "13 ter"),
+                    ("article", "13 quater A"),
+                    ("article", "13 quater"),
+                    ("article", "13 quinquies"),
+                    ("article", "13 sexies"),
+                    ("article", "14"),
+                    ("article", "14 bis A"),
+                    ("article", "14 bis"),
+                    ("article", "15"),
+                    ("article", "16"),
+                    ("article", "17"),
+                    ("article", "17 bis AAA"),
+                    ("article", "17 bis AA"),
+                    ("article", "17 bis A"),
+                    ("article", "17 bis BA"),
+                    ("article", "17 bis BB"),
+                    ("article", "17 bis B"),
+                    ("article", "17 bis C"),
+                    ("article", "17 bis"),
+                    ("article", "17 ter"),
+                    ("annexe", "B"),
                 ]
             )
         ),
@@ -147,16 +148,17 @@ class TestOrdering:
         Examples from https://www.senat.fr/dossier-legislatif/tc/tc_pjl03-328.html
         """
 
-        def make_article(s):
+        def make_article(type_, s):
             if " " in s:
                 num, mult = s.split(" ", 1)
             else:
                 num, mult = s, ""
-            return Article.create(
-                lecture=lecture_an, type="article", num=num, mult=mult
-            )
+            return Article.create(lecture=lecture_an, type=type_, num=num, mult=mult)
 
-        assert make_article(before) < make_article(after)
+        article_before = make_article(*before)
+        article_after = make_article(*after)
+        assert article_before < article_after
+        assert article_before.sort_key_as_str < article_after.sort_key_as_str
 
     def test_avant_apres(self, lecture_an):
         article_6 = Article.create(lecture=lecture_an, type="article", num=6)

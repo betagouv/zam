@@ -1,6 +1,6 @@
 import logging
 from itertools import groupby
-from typing import Iterable, List, Optional, Tuple, Union
+from typing import Iterable, List, Optional, Tuple
 
 from sqlalchemy import Column, ForeignKey, Integer, PickleType, Text, UniqueConstraint
 from sqlalchemy.orm import relationship, validates
@@ -167,10 +167,10 @@ class Article(Base):
         return self.sort_key < other.sort_key
 
     @reify
-    def sort_key(self) -> Tuple[int, Union[int, str], Tuple[int, str], int]:
+    def sort_key(self) -> Tuple[int, str, Tuple[int, str], int]:
         return (
             Article._ORDER_TYPE[self.type or ""],
-            _maybe_int(self.num),
+            str(self.num) or "",
             _mult_key(self.mult or ""),
             Article._ORDER_POS[self.pos or ""],
         )
@@ -178,7 +178,9 @@ class Article(Base):
     @reify
     def sort_key_as_str(self) -> str:
         s = self.sort_key
-        return "|".join(map(str, (s[0], f"{s[1]:03}", f"{s[2][0]:02}", s[2][1], s[3])))
+        return "|".join(
+            map(str, (s[0], f"{s[1].zfill(3)}", f"{s[2][0]:02}", s[2][1], s[3]))
+        )
 
     @classmethod
     def create(
@@ -300,15 +302,6 @@ def validate(name: str, value: str, allowed: Iterable[str]) -> str:
 
 def format_list(items: Iterable[str]) -> str:
     return ", ".join(f"'{item}'" for item in items)
-
-
-def _maybe_int(value: Optional[str]) -> Union[int, str]:
-    if value is None or not value:
-        return 0
-    try:
-        return int(value)
-    except ValueError:
-        return value
 
 
 def _mult_key(s: str) -> Tuple[int, str]:

@@ -358,6 +358,7 @@ class Amendement(Base):
             result["session"] = self.lecture.session
             result["article"] = self.article.format()
             result["article_titre"] = self.article.titre or ""
+            result["article_order"] = self.article.sort_key_as_str
             result["position"] = self.position or ""
             result["discussion_commune"] = self.discussion_commune or ""
             result["identique"] = self.identique or ""

@@ -178,7 +178,7 @@ class Article(Base):
     @reify
     def sort_key_as_str(self) -> str:
         s = self.sort_key
-        return "|".join(map(str, (s[0], s[1], s[2][0], s[2][1], s[3])))
+        return "|".join(map(str, (s[0], f"{s[1]:03}", f"{s[2][0]:02}", s[2][1], s[3])))
 
     @classmethod
     def create(

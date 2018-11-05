@@ -23,6 +23,7 @@ class Lecture(Base):
     chambre = Column(Text)
     session = Column(Text)
     num_texte = Column(Integer)
+    partie = Column(Integer, nullable=True)  # only for PLF
     organe = Column(Text)
     titre = Column(Text)
     dossier_legislatif = Column(Text)
@@ -88,7 +89,13 @@ class Lecture(Base):
         return str(num_lecture.strip())
 
     def format_texte(self) -> str:
-        return f"texte nº\u00a0{self.num_texte}"
+        if self.partie == 1:
+            partie = " (1re partie)"
+        elif self.partie == 2:
+            partie = " (2nde partie)"
+        else:
+            partie = ""
+        return f"texte nº\u00a0{self.num_texte}{partie}"
 
     def __lt__(self, other: Any) -> bool:
         if type(self) != type(other):
@@ -121,7 +128,13 @@ class Lecture(Base):
 
     @classmethod
     def get(
-        cls, chambre: str, session: str, num_texte: int, organe: str, *options: Any
+        cls,
+        chambre: str,
+        session: str,
+        num_texte: int,
+        partie: Optional[int],
+        organe: str,
+        *options: Any,
     ) -> Optional["Lecture"]:
         res: Optional["Lecture"] = (
             DBSession.query(cls)
@@ -129,6 +142,7 @@ class Lecture(Base):
                 cls.chambre == chambre,
                 cls.session == session,
                 cls.num_texte == num_texte,
+                cls.partie == partie,
                 cls.organe == organe,
             )
             .options(*options)
@@ -137,13 +151,21 @@ class Lecture(Base):
         return res
 
     @classmethod
-    def exists(cls, chambre: str, session: str, num_texte: int, organe: str) -> bool:
+    def exists(
+        cls,
+        chambre: str,
+        session: str,
+        num_texte: int,
+        partie: Optional[int],
+        organe: str,
+    ) -> bool:
         res: bool = DBSession.query(
             DBSession.query(cls)
             .filter(
                 cls.chambre == chambre,
                 cls.session == session,
                 cls.num_texte == num_texte,
+                cls.partie == partie,
                 cls.organe == organe,
             )
             .exists()
@@ -159,12 +181,14 @@ class Lecture(Base):
         titre: str,
         organe: str,
         dossier_legislatif: str,
+        partie: Optional[int] = None,
     ) -> "Lecture":
         now = datetime.utcnow()
         lecture = cls(
             chambre=chambre,
             session=session,
             num_texte=num_texte,
+            partie=partie,
             titre=titre,
             organe=organe,
             dossier_legislatif=dossier_legislatif,
@@ -176,4 +200,8 @@ class Lecture(Base):
 
     @property
     def url_key(self) -> str:
-        return f"{self.chambre}.{self.session}.{self.num_texte}.{self.organe}"
+        if self.partie is not None:
+            partie = f"-{self.partie}"
+        else:
+            partie = ""
+        return f"{self.chambre}.{self.session}.{self.num_texte}{partie}.{self.organe}"

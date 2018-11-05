@@ -39,6 +39,9 @@ import pytest
         ("div. add. après Article 13", "article", "13", "", "après"),
         ("Motions", "motion", "", "", ""),
         ("art. add. après Article 44(nouveau)", "article", "44", "", "après"),
+        ("AVANT  L'ARTICLE 12", "article", "12", "", "avant"),
+        ("APRÈS L'ARTICLE 12", "article", "12", "", "après"),
+        ("APRES L'ARTICLE 12", "article", "12", "", "après"),
     ],
 )
 def test_parse_subdiv(text, type_, num, mult, pos):

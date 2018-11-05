@@ -16,11 +16,12 @@ SUBDIV_RE = re.compile(
                 (art|div)\.\sadd\.
                 |
                 Article(?:\(s\))?\sadditionnel(?:\(s\))?
-            )
-            \s
-            (?P<pos>(avant|après))
+            )?
+            \s?
+            (?P<pos>((?i)avant|après|apres))
             \s
         )?  # position
+        \s?
         (?:(?:l')?article\s)+
         (?P<num>liminaire|1er|premier|\d+)
         (?:\s(?P<mult>\w+))?        # bis, ter, etc.
@@ -72,6 +73,12 @@ def _parse_subdiv(libelle: str) -> SubDiv:
             num = "1"
         else:
             num = mo.group("num")
-        return SubDiv("article", num, mo.group("mult") or "", mo.group("pos") or "")
+        if mo.group("pos"):
+            pos = mo.group("pos").lower()
+            if pos == "apres":
+                pos = "après"
+        else:
+            pos = ""
+        return SubDiv("article", num, mo.group("mult") or "", pos)
 
     raise ValueError(f"Could not parse subdivision {libelle!r}")

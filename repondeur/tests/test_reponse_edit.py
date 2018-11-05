@@ -159,6 +159,7 @@ def test_post_reponse_edit_form_updates_modification_dates_only_if_modified(
         chambre=lecture_an.chambre,
         session=lecture_an.session,
         num_texte=lecture_an.num_texte,
+        partie=None,
         organe=lecture_an.organe,
     )
     assert initial_lecture_modified_at == lecture.modified_at

@@ -327,13 +327,6 @@ class Amendement(Base):
             return False
         return self.avis == "Sagesse" or self.avis == "Satisfait donc rejet"
 
-    @property
-    def lecture_url_key(self) -> str:
-        return (
-            f"{self.lecture.chambre}.{self.lecture.session}."
-            f"{self.lecture.num_texte}.{self.lecture.organe}"
-        )
-
     def grouping_key(self) -> Reponse:
         if self.gouvernemental:
             return Reponse(self.num_str, "", "")

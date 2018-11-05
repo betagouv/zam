@@ -3,7 +3,7 @@ import io
 import logging
 import transaction
 from datetime import datetime
-from typing import BinaryIO, Dict, TextIO, Tuple, Union
+from typing import BinaryIO, Dict, Optional, TextIO, Tuple, Union
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -68,6 +68,7 @@ class LecturesAdd:
         num_texte = lecture.texte.numero
         titre = lecture.titre
         organe = lecture.organe
+        partie = lecture.partie
 
         # FIXME: use date_depot to find the right session?
         if lecture.chambre == Chambre.AN:
@@ -75,14 +76,20 @@ class LecturesAdd:
         else:
             session = "2017-2018"
 
-        if LectureModel.exists(chambre, session, num_texte, organe):
+        if LectureModel.exists(chambre, session, num_texte, partie, organe):
             self.request.session.flash(
                 Message(cls="warning", text="Cette lecture existe déjà...")
             )
             return HTTPFound(location=self.request.resource_url(self.context))
 
         lecture_model: LectureModel = LectureModel.create(
-            chambre, session, num_texte, titre, organe, dossier.titre
+            chambre=chambre,
+            session=session,
+            num_texte=num_texte,
+            partie=partie,
+            titre=titre,
+            organe=organe,
+            dossier_legislatif=dossier.titre,
         )
         # Call to fetch_* tasks below being asynchronous, we need to make
         # sure the lecture_model already exists once and for all in the database
@@ -119,13 +126,22 @@ class LecturesAdd:
 
     def _get_lecture(self, dossier: Dossier) -> Lecture:
         try:
-            texte, organe = self.request.POST["lecture"].split("-", 1)
+            texte, organe, partie_str = self.request.POST["lecture"].split("-", 2)
         except (KeyError, ValueError):
             raise HTTPBadRequest
+        partie: Optional[int]
+        if partie_str == "":
+            partie = None
+        else:
+            partie = int(partie_str)
         matching = [
             lecture
             for lecture in dossier.lectures
-            if lecture.texte.uid == texte and lecture.organe == organe
+            if (
+                lecture.texte.uid == texte
+                and lecture.organe == organe
+                and lecture.partie == partie
+            )
         ]
         if len(matching) != 1:
             raise HTTPNotFound
@@ -308,16 +324,6 @@ def choices_lectures(request: Request) -> dict:
     dossier = dossiers_by_uid[uid]
     return {
         "lectures": [
-            {
-                "key": f"{lecture.texte.uid}-{lecture.organe}",
-                "label": " – ".join(
-                    [
-                        str(lecture.chambre),
-                        lecture.titre,
-                        f"Texte Nº {lecture.texte.numero}",
-                    ]
-                ),
-            }
-            for lecture in dossier.lectures
+            {"key": lecture.key, "label": lecture.label} for lecture in dossier.lectures
         ]
     }

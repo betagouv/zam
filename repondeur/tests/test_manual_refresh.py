@@ -108,6 +108,7 @@ def test_post_form(app, lecture_an, article1_an):
             chambre=lecture_an.chambre,
             session=lecture_an.session,
             num_texte=lecture_an.num_texte,
+            partie=None,
             organe=lecture_an.organe,
         )
         assert lecture.modified_at != initial_modified_at

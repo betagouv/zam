@@ -77,14 +77,15 @@ TOP_LEVEL_ACTES = {
 
 
 def parse_dossier(dossier: dict, textes: Dict[str, Texte]) -> Dossier:
+    uid = dossier["uid"]
+    titre = dossier["titreDossier"]["titre"]
+    is_plf = "PLF" in dossier
     lectures = [
         lecture
         for acte in top_level_actes(dossier)
-        for lecture in gen_lectures(acte, textes)
+        for lecture in gen_lectures(acte, textes, is_plf)
     ]
-    return Dossier(  # type: ignore
-        uid=dossier["uid"], titre=dossier["titreDossier"]["titre"], lectures=lectures
-    )
+    return Dossier(uid=uid, titre=titre, lectures=lectures)  # type: ignore
 
 
 def top_level_actes(dossier: dict) -> Iterator[dict]:
@@ -93,7 +94,9 @@ def top_level_actes(dossier: dict) -> Iterator[dict]:
             yield acte
 
 
-def gen_lectures(acte: dict, textes: Dict[str, Texte]) -> Iterator[Lecture]:
+def gen_lectures(
+    acte: dict, textes: Dict[str, Texte], is_plf: bool = False
+) -> Iterator[Lecture]:
     for result in walk_actes(acte):
         chambre, titre = TOP_LEVEL_ACTES[acte["codeActe"]]
         if result.phase == "COM-FOND":
@@ -108,9 +111,16 @@ def gen_lectures(acte: dict, textes: Dict[str, Texte]) -> Iterator[Lecture]:
         assert result.texte is not None
         texte = textes[result.texte]
 
-        yield Lecture(  # type: ignore
-            chambre=chambre, titre=titre, texte=texte, organe=result.organe
-        )
+        parties: List[Optional[int]] = [1, 2] if is_plf else [None]
+
+        for partie in parties:
+            yield Lecture(  # type: ignore
+                chambre=chambre,
+                titre=titre,
+                texte=texte,
+                partie=partie,
+                organe=result.organe,
+            )
 
 
 class WalkResult(NamedTuple):

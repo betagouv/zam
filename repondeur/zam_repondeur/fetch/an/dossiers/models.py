@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 
 class Chambre(Enum):
@@ -52,14 +52,21 @@ class Lecture:
     titre: str
     texte: Texte
     organe: str
+    partie: Optional[int] = None
+
+    @property
+    def key(self) -> str:
+        return f"{self.texte.uid}-{self.organe}-{self.partie or ''}"
 
     @property
     def label(self) -> str:
-        return (
-            f"{self.chambre} – {self.titre} "
-            f"(texte nº\u00a0{self.texte.numero} "
-            f"déposé le {self.texte.date_depot.strftime('%d/%m/%Y')})"
-        )
+        if self.partie == 1:
+            partie = " (première partie)"
+        elif self.partie == 2:
+            partie = " (seconde partie)"
+        else:
+            partie = ""
+        return f"{self.chambre} – {self.titre} – Texte Nº {self.texte.numero}{partie}"
 
 
 @dataclass

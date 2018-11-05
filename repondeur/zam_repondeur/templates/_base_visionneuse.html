@@ -11,8 +11,6 @@
 </head>
 
 <body>
-{# See https://inclusive-components.design/notifications/ #}
-<div role="status" aria-live="polite"></div>
 
 <nav class="main">
   <span>
@@ -40,6 +38,9 @@
 <main>
   {% block main %}{% endblock %}
 </main>
+
+{# See https://inclusive-components.design/notifications/ #}
+<div role="status" aria-live="polite"></div>
 
 {% block bottom_nav %}{% endblock %}
 

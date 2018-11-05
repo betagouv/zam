@@ -20,18 +20,11 @@
     {% endblock %}
 
     <main role="main" class="container-fluid">
-
-        {% for class_, message in request.session.pop_flash() %}
-        <div class="alert alert-{{ class_ }}" role="alert">
-            {{ message }}
-        </div>
-        {% endfor %}
-
         {% block body %}
         {% endblock %}
-
     </main>
 
+    <script src="{{ request.static_url('zam_repondeur:static/js/notifications.js') }}"></script>
     <script type="text/javascript">
         ;(function readableLastUpdate () {
             const timestampToDate = (timestamp) => {
@@ -119,6 +112,10 @@
                 }
             })
         })()
+
+        {% for kind, message in request.session.pop_flash() %}
+            displayNotificationUpdate("{{ message }}", "{{ kind }}")
+        {% endfor %}
     </script>
     {% block scripts %}
     {% endblock %}

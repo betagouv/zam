@@ -1,0 +1,52 @@
+[role="status"] {
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: .5rem;
+  z-index: 10;
+  max-width: 45rem;
+  margin: 0 auto;
+  padding-top: 1rem;
+}
+  [role="status"] p {
+    margin: 1rem;
+    padding: 1.5rem 3rem;
+    text-align: center;
+    background: white;
+    font-size: large;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 7px 7px -1px #ccc;
+  }
+  [role="status"] .button,
+  [role="status"] .button:hover {
+    margin-left: 2rem;
+    color: #3167a6;
+    background-color: white;
+    background: no-repeat .3rem url("../img/actualiser.svg");
+    padding: .7rem 1.2rem .5rem 2.9rem;
+  }
+  [role="status"] .success-notification {
+    background: no-repeat top left url("../img/validation.svg");
+    width: 32px;
+    height: 32px;
+    display: block;
+    float: left;
+  }
+  [role="status"] .danger-notification {
+    background: no-repeat top left url("../img/alerte.svg");
+    width: 32px;
+    height: 32px;
+    display: block;
+    float: left;
+  }
+  [role="status"] .close-notification {
+    text-align: center;
+    font-size: 2.5rem;
+    height: 2rem;
+    width: 2rem;
+    line-height: 1;
+    float: right;
+    background: black;
+    color: white;
+    border-radius: 2rem;
+    text-decoration: none;
+  }

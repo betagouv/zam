@@ -112,6 +112,15 @@ class Lecture(Base):
         timestamp: float = (self.modified_at - datetime(1970, 1, 1)).total_seconds()
         return timestamp
 
+    def modified_amendements_numbers_since(self, timestamp: float) -> List[str]:
+        if not self.amendements:
+            return []
+        return [
+            str(amendement)
+            for amendement in self.amendements
+            if amendement.modified_at_timestamp > timestamp
+        ]
+
     @property
     def displayable(self) -> bool:
         return any(amd.is_displayable for amd in self.amendements)

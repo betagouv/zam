@@ -3,6 +3,7 @@
 
 
 {% block header %}
+<link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/notifications.css') }}">
 <style type="text/css">
     .content {
         margin: 0 1rem;
@@ -223,9 +224,6 @@
 
 {% block body %}
 <div class="content">
-    {# See https://inclusive-components.design/notifications/ #}
-    <div role="status" aria-live="polite"></div>
-
     <nav style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
         <a id="toggle-advanced" class="toggle with-arrow button" href="#">
             Options avancées
@@ -456,6 +454,9 @@
             {% endfor %}
         </ul>
     </section>
+
+    {# See https://inclusive-components.design/notifications/ #}
+    <div role="status" aria-live="polite"></div>
 
 </div>
 {% endblock %}

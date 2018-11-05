@@ -99,6 +99,7 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
         chambre=Chambre.AN.value,
         session=extract("identifiant", "legislature"),
         num_texte=get_texte_number(texte_uid),
+        partie=extract_partie(node),
         organe=extract("identifiant", "saisine", "organeExamen"),
     )
     article, created = get_one_or_create(
@@ -197,6 +198,13 @@ def _find_texte(uid: str) -> Texte:
             if lecture.texte.uid == uid:
                 return lecture.texte
     raise ValueError(f"Unknown texte {uid}")
+
+
+def extract_partie(node: etree.Element) -> Optional[int]:
+    text = extract_from_node(node, "identifiant", "saisine", "numeroPartiePLF")
+    if text is not None and text != "0":
+        return int(text)
+    return None
 
 
 def get_sort(sort: Optional[str], etat: Optional[str]) -> str:

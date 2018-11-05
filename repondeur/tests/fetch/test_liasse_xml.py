@@ -1,6 +1,8 @@
 from datetime import date
 from pathlib import Path
 
+import transaction
+
 
 def open_liasse(filename):
     return (Path(__file__).parent.parent / "sample_data" / filename).open(mode="rb")
@@ -117,6 +119,39 @@ def test_import_liasse_xml_with_known_but_missing_parent(lecture_essoc):
     assert amendements[0].num == 26
     assert amendements[0].parent.num == 28
     assert errors == []
+
+
+def test_import_liasse_second_part(app):
+    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+    from zam_repondeur.models import DBSession, Lecture
+
+    with transaction.manager:
+        Lecture.create(
+            chambre="an",
+            session="15",
+            num_texte=806,
+            partie=1,
+            titre="Nouvelle lecture – Titre lecture",
+            organe="PO744107",
+            dossier_legislatif="Fonction publique : un Etat au service d'une société de confiance",  # noqa
+        )
+        part2 = Lecture.create(
+            chambre="an",
+            session="15",
+            num_texte=806,
+            partie=2,
+            titre="Nouvelle lecture – Titre lecture",
+            organe="PO744107",
+            dossier_legislatif="Fonction publique : un Etat au service d'une société de confiance",  # noqa
+        )
+
+    DBSession.add(part2)
+
+    amendements, errors = import_liasse_xml(open_liasse("liasse_second_part.xml"))
+
+    assert (len(amendements), len(errors)) == (3, 0)
+    for amendement in amendements:
+        assert amendement.lecture == part2
 
 
 def _check_amendement_0(amendement):

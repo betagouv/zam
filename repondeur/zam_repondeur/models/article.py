@@ -303,7 +303,7 @@ def format_list(items: Iterable[str]) -> str:
 
 
 def _maybe_int(value: Optional[str]) -> Union[int, str]:
-    if value is None:
+    if value is None or not value:
         return 0
     try:
         return int(value)

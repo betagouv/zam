@@ -8,7 +8,11 @@ from lxml import etree
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
-from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Texte
+from zam_repondeur.fetch.an.dossiers.models import (
+    Chambre,
+    Dossier,
+    Lecture as LectureRef,
+)
 from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import _parse_subdiv, SubDiv
 from zam_repondeur.models import (
@@ -28,9 +32,28 @@ logger = logging.getLogger(__name__)
 NS = "{http://schemas.assemblee-nationale.fr/referentiel}"
 
 
+class BadChambre(Exception):
+    """
+    Liasse import is only for Assemblée nationale
+    """
+
+
+class LectureDoesNotMatch(Exception):
+    """
+    The liasse contains amendements for another lecture
+    """
+
+    def __init__(self, lecture: Lecture) -> None:
+        self.lecture = lecture
+
+
 def import_liasse_xml(
-    xml_file: IO[bytes]
+    xml_file: IO[bytes], lecture: Lecture
 ) -> Tuple[List[Amendement], List[Tuple[str, str]]]:
+
+    if lecture.chambre != Chambre.AN.value:
+        raise BadChambre
+
     try:
         tree = etree.parse(xml_file)
     except etree.XMLSyntaxError:
@@ -58,8 +81,10 @@ def import_liasse_xml(
 
         uid = child.find(f"./{NS}uid").text
         try:
-            amendement = _make_amendement(child, uid_map)
+            amendement = _make_amendement(child, uid_map, lecture)
             uid_map[uid] = amendement
+        except LectureDoesNotMatch:
+            raise
         except Exception as exc:
             logger.exception(f"Failed to import amendement {uid} from liasse")
             errors.append((uid, str(exc)))
@@ -67,7 +92,9 @@ def import_liasse_xml(
     return list(uid_map.values()), errors
 
 
-def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Amendement:
+def _make_amendement(
+    node: etree.Element, uid_map: Dict[str, Amendement], lecture: Lecture
+) -> Amendement:
     extract = partial(extract_from_node, node)
 
     subdiv = _parse_division(node)
@@ -94,13 +121,14 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
             raise ValueError("Missing auteur groupePolitiqueRef")
         groupe_name = get_groupe_name(groupe_uid)
 
-    lecture, created = get_one_or_create(
-        Lecture,
-        chambre=Chambre.AN.value,
+    check_same_lecture(
+        lecture=lecture,
         session=extract("identifiant", "legislature"),
-        num_texte=get_texte_number(texte_uid),
+        partie=extract_partie(node),
         organe=extract("identifiant", "saisine", "organeExamen"),
+        texte_uid=texte_uid,
     )
+
     article, created = get_one_or_create(
         Article,
         lecture=lecture,
@@ -131,6 +159,36 @@ def _make_amendement(node: etree.Element, uid_map: Dict[str, Amendement]) -> Ame
     amendement.dispositif = clean_html(extract("corps", "dispositif") or "")
     amendement.objet = clean_html(extract("corps", "exposeSommaire") or "")
     return cast(Amendement, amendement)
+
+
+def check_same_lecture(
+    lecture: Lecture,
+    session: Optional[str],
+    partie: Optional[int],
+    organe: Optional[str],
+    texte_uid: str,
+) -> None:
+    if session is None:
+        raise ValueError("Missing legislature")
+
+    if organe is None:
+        raise ValueError("Missing organeExamen")
+
+    dossier_ref, lecture_ref = _find_dossier_lecture(texte_uid)
+
+    # This Lecture is only created for the sake of comparison and error message
+    # formatting, and is not persisted so we don't add it to the database session
+    liasse_lecture = Lecture(
+        chambre=Chambre.AN.value,
+        session=session,
+        num_texte=lecture_ref.texte.numero,
+        partie=partie,
+        organe=organe,
+        titre=lecture_ref.titre,
+        dossier_legislatif=dossier_ref.titre,
+    )
+    if liasse_lecture != lecture:
+        raise LectureDoesNotMatch(liasse_lecture)
 
 
 def _parse_division(node: etree.Element) -> SubDiv:
@@ -183,20 +241,21 @@ def to_date(text: Optional[str]) -> Optional[date]:
     return parse_date(text)
 
 
-def get_texte_number(uid: str) -> int:
-    texte = _find_texte(uid)
-    numero: int = texte.numero
-    return numero
-
-
-def _find_texte(uid: str) -> Texte:
+def _find_dossier_lecture(texte_uid: str) -> Tuple[Dossier, LectureRef]:
     # FIXME: this is not efficient
     dossiers: Dict[str, Dossier] = get_data("dossiers")
     for dossier in dossiers.values():
         for lecture in dossier.lectures:
-            if lecture.texte.uid == uid:
-                return lecture.texte
-    raise ValueError(f"Unknown texte {uid}")
+            if lecture.texte.uid == texte_uid:
+                return dossier, lecture
+    raise ValueError(f"Unknown texte {texte_uid}")
+
+
+def extract_partie(node: etree.Element) -> Optional[int]:
+    text = extract_from_node(node, "identifiant", "saisine", "numeroPartiePLF")
+    if text is not None and text != "0":
+        return int(text)
+    return None
 
 
 def get_sort(sort: Optional[str], etat: Optional[str]) -> str:

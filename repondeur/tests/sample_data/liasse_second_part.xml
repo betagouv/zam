@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendements>
+<amendement xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.assemblee-nationale.fr/referentiel">
+    <uid>AMANR5L15PO744107B0806P0D1N28</uid>
+    <identifiant>
+        <legislature>15</legislature>
+        <numero>28</numero>
+        <numRect>0</numRect>
+        <saisine>
+            <refTexteLegislatif>PRJLANR5L15B0806</refTexteLegislatif>
+            <numeroPartiePLF>2</numeroPartiePLF>
+            <organeExamen>PO744107</organeExamen>
+            <mentionSecondeDeliberation>0</mentionSecondeDeliberation>
+        </saisine>
+    </identifiant>
+    <numeroLong>28</numeroLong>
+    <etapeTexte>Nouvelle Lecture</etapeTexte>
+    <triAmendement>l</triAmendement>
+    <cardinaliteAmdtMultiples>1</cardinaliteAmdtMultiples>
+    <amendementParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <etat>En traitement</etat>
+    <signataires>
+        <auteur>
+            <typeAuteur>Depute</typeAuteur>
+            <acteurRef>PA718838</acteurRef>
+            <organeRef xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupePolitiqueRef>PO730934</groupePolitiqueRef>
+        </auteur>
+        <cosignataires>
+            <acteurRef>PA718838</acteurRef>
+        </cosignataires>
+        <texteAffichable> M.&amp;#160;Brun</texteAffichable>
+    </signataires>
+    <pointeurFragmentTexte>
+        <missionVisee xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <division>
+            <titre>Article 2</titre>
+            <articleDesignationCourte>ART. 2</articleDesignationCourte>
+            <type>ARTICLE</type>
+            <avant_A_Apres>A</avant_A_Apres>
+            <divisionRattachee>ARTICLE 2</divisionRattachee>
+            <articleAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <chapitreAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <urlDivisionTexteVise>/15/textes/0806.asp#D_Article_2</urlDivisionTexteVise>
+        </division>
+        <alinea>
+            <avant_A_Apres xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <numero>24</numero>
+            <alineaDesignation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        </alinea>
+    </pointeurFragmentTexte>
+    <corps>
+        <dispositif><![CDATA[<div>Cet amendement est en cours de traitement par les services de l'Assemblée.</div><BR/><BR/>]]></dispositif>
+        <exposeSommaire></exposeSommaire>
+        <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </corps>
+    <representations>
+        <representation>
+            <nom>PDF</nom>
+            <typeMime>
+                <type>application</type>
+                <subType>PDF</subType>
+            </typeMime>
+            <statutRepresentation>
+                <verbatim>true</verbatim>
+                <canonique>true</canonique>
+                <officielle>true</officielle>
+                <transcription>false</transcription>
+                <enregistrement>false</enregistrement>
+            </statutRepresentation>
+            <repSource xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <offset xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <contenu>
+                <documentURI>/15/amendements/0806/CSCONF/28.pdf</documentURI>
+            </contenu>
+            <dateDispoRepresentation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        </representation>
+    </representations>
+    <seanceDiscussion xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <sort xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dateDepot>2018-06-07</dateDepot>
+    <dateDistribution xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <article99>0</article99>
+    <loiReference>
+        <codeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <divisionCodeLoi>s 24</divisionCodeLoi>
+    </loiReference>
+</amendement>
+<amendement xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.assemblee-nationale.fr/referentiel">
+    <uid>AMANR5L15PO744107B0806P0D1N26</uid>
+    <identifiant>
+        <legislature>15</legislature>
+        <numero>26</numero>
+        <numRect>0</numRect>
+        <saisine>
+            <refTexteLegislatif>PRJLANR5L15B0806</refTexteLegislatif>
+            <numeroPartiePLF>2</numeroPartiePLF>
+            <organeExamen>PO744107</organeExamen>
+            <mentionSecondeDeliberation>0</mentionSecondeDeliberation>
+        </saisine>
+    </identifiant>
+    <numeroLong>26</numeroLong>
+    <etapeTexte>Nouvelle Lecture</etapeTexte>
+    <triAmendement>e</triAmendement>
+    <cardinaliteAmdtMultiples>1</cardinaliteAmdtMultiples>
+    <amendementParent>AMANR5L15PO744107B0806P0D1N28</amendementParent>
+    <etat>Retiré</etat>
+    <signataires>
+        <auteur>
+            <typeAuteur>Depute</typeAuteur>
+            <acteurRef>PA718838</acteurRef>
+            <organeRef xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupePolitiqueRef>PO730934</groupePolitiqueRef>
+        </auteur>
+        <cosignataires>
+            <acteurRef>PA718838</acteurRef>
+        </cosignataires>
+        <texteAffichable> M.&amp;#160;Brun</texteAffichable>
+    </signataires>
+    <pointeurFragmentTexte>
+        <missionVisee xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <division>
+            <titre>ANNEXE</titre>
+            <articleDesignationCourte>ART. PREMIER</articleDesignationCourte>
+            <type>ANNEXE</type>
+            <avant_A_Apres>A</avant_A_Apres>
+            <divisionRattachee>ARTICLE PREMIER</divisionRattachee>
+            <articleAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <chapitreAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <urlDivisionTexteVise>/15/textes/0806.asp#D_Annexe</urlDivisionTexteVise>
+        </division>
+        <alinea>
+            <avant_A_Apres xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <numero>12</numero>
+            <alineaDesignation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        </alinea>
+    </pointeurFragmentTexte>
+    <corps>
+        <dispositif><![CDATA[<p style="text-align: justify;">L&#8217;alin&#233;a&#160;12 est compl&#233;t&#233; par l&#8217;alin&#233;a suivant&#160;:</p>
+<p style="text-align: justify;">&#171;&#160;L&#8217;article pr&#233;liminaire du projet de loi pour un &#233;tat au service d&#8217;une soci&#233;t&#233; de confiance d&#233;finit les objectifs de l&#8217;action publique &#224; horizon 2022. Elle s&#8217;articule autour de l&#8217;affirmation de principes g&#233;n&#233;raux d&#8217;organisation et d&#8217;action, lesquels n&#233;cessitent des compl&#233;ments.&#160;&#187;</p>]]></dispositif>
+        <exposeSommaire><![CDATA[<p style="text-align: justify;">L&#8217;article pr&#233;liminaire du projet de loi pour un &#233;tat au service d&#8217;une soci&#233;t&#233; de confiance d&#233;finit les objectifs de l&#8217;action publique &#224; horizon 2022. Elle s&#8217;articule autour de l&#8217;affirmation de principes g&#233;n&#233;raux d&#8217;organisation et d&#8217;action, lesquels n&#233;cessitent des compl&#233;ments, c&#8217;est l&#8217;objet du pr&#233;sent amendement qui pr&#233;voit que les statistiques sur la mise en &#339;uvre des p&#233;nalit&#233;s devront &#234;tre publi&#233;es, en distinguant celles qui figurent dans les propositions de rectification ou les notifications de bases impos&#233;es d&#8217;office et celles qui sont maintenues &#224; l&#8217;issue de la proc&#233;dure de redressement</p>]]></exposeSommaire>
+        <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </corps>
+    <representations>
+        <representation>
+            <nom>PDF</nom>
+            <typeMime>
+                <type>application</type>
+                <subType>PDF</subType>
+            </typeMime>
+            <statutRepresentation>
+                <verbatim>true</verbatim>
+                <canonique>true</canonique>
+                <officielle>true</officielle>
+                <transcription>false</transcription>
+                <enregistrement>false</enregistrement>
+            </statutRepresentation>
+            <repSource xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <offset xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <contenu>
+                <documentURI>/15/amendements/0806/CSCONF/26.pdf</documentURI>
+            </contenu>
+            <dateDispoRepresentation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        </representation>
+    </representations>
+    <seanceDiscussion xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <sort xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dateDepot>2018-06-07</dateDepot>
+    <dateDistribution xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <article99>0</article99>
+    <loiReference>
+        <codeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <divisionCodeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </loiReference>
+</amendement>
+<amendement xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.assemblee-nationale.fr/referentiel">
+    <uid>AMANR5L15PO420120B1168P0D1N103</uid>
+    <identifiant>
+        <legislature>15</legislature>
+        <numero>103</numero>
+        <numRect>0</numRect>
+        <saisine>
+            <refTexteLegislatif>PRJLANR5L15B0806</refTexteLegislatif>
+            <numeroPartiePLF>2</numeroPartiePLF>
+            <organeExamen>PO744107</organeExamen>
+            <mentionSecondeDeliberation>0</mentionSecondeDeliberation>
+        </saisine>
+    </identifiant>
+    <numeroLong>AS103</numeroLong>
+    <etapeTexte>Nouvelle Lecture</etapeTexte>
+    <triAmendement>i</triAmendement>
+    <cardinaliteAmdtMultiples>1</cardinaliteAmdtMultiples>
+    <amendementParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <etat>Discuté</etat>
+    <signataires>
+        <auteur>
+            <typeAuteur>Gouvernement</typeAuteur>
+            <acteurRef xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <organeRef xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupePolitiqueRef xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        </auteur>
+        <cosignataires xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <texteAffichable> le Gouvernement</texteAffichable>
+    </signataires>
+    <pointeurFragmentTexte>
+        <missionVisee xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <division>
+            <titre>Article 40 quater</titre>
+            <articleDesignationCourte>ART. 40 QUATER</articleDesignationCourte>
+            <type>ARTICLE</type>
+            <avant_A_Apres>A</avant_A_Apres>
+            <divisionRattachee>ARTICLE 40 QUATER</divisionRattachee>
+            <articleAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <chapitreAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <urlDivisionTexteVise>/15/textes/1168.asp#D_Article_40_quater</urlDivisionTexteVise>
+        </division>
+        <alinea xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </pointeurFragmentTexte>
+    <corps>
+        <dispositif><![CDATA[<p style="text-align: justify;">R&#233;tablir un article&#160;40 quater dans la r&#233;daction suivante&#160;:</p>
+<p style="text-align: justify;">&#171;&#160;Dans les conditions pr&#233;vues &#224; l&#8217;article&#160;38 de la Constitution, le Gouvernement est autoris&#233; &#224; prendre par voie d&#8217;ordonnance, au plus tard le 31&#160;d&#233;cembre 2019, toutes mesures relevant du domaine de la loi visant &#224; red&#233;finir les missions, l&#8217;organisation et le financement des institutions, organismes et services concourant &#224; l&#8217;insertion professionnelle et au maintien dans l&#8217;emploi des personnes handicap&#233;es ainsi que toutes mesures en accompagnant les cons&#233;quences.</p>
+<p style="text-align: justify;">&#171;&#160;Un projet de loi de ratification est d&#233;pos&#233; devant le Parlement dans un d&#233;lai de quatre mois &#224; compter de la publication de l&#8217;ordonnance.&#160;&#187;</p>]]></dispositif>
+        <exposeSommaire><![CDATA[<p style="text-align: justify;">Cet amendement vise &#224; r&#233;tablir la disposition supprim&#233;e lors du vote du projet de loi au S&#233;nat, disposition qui propose d&#8217;habiliter le Gouvernement &#224; prendre par voie d&#8217;ordonnance, d&#8217;ici le 31 d&#233;cembre 2019, les mesures relatives aux conditions de refondation de la politique d&#8217;emploi des travailleurs handicap&#233;s.</p>
+<p style="text-align: justify;">Le comit&#233; interminist&#233;riel du handicap (CIH), organis&#233; le 20 septembre 2017, a r&#233;pondu &#224; la volont&#233; du Pr&#233;sident de la R&#233;publique de faire de la politique du handicap une priorit&#233;. Le Gouvernement a ainsi engag&#233; un travail approfondi et des concertations sur plusieurs priorit&#233;s partag&#233;es, dont l&#8217;une destin&#233;e &#224; r&#233;former la politique de l&#8217;emploi en faveur des personnes handicap&#233;es.</p>
+<p style="text-align: justify;">La concertation avec les repr&#233;sentants des partenaires sociaux et des associations, qui s&#8217;est ouverte &#224; la mi-f&#233;vrier, a &#233;t&#233; organis&#233;e en deux temps.</p>
+<p style="text-align: justify;">Une premi&#232;re &#233;tape, d&#233;di&#233;e &#224; la r&#233;novation de l&#8217;obligation d&#8217;emploi des travailleurs handicap&#233;s, s&#8217;est achev&#233;e le 31 mai dernier. Elle a abouti &#224; des dispositions l&#233;gislatives soumises au vote du Parlement dans le pr&#233;sent projet de loi &#171;&#160;Avenir professionnel&#160;&#187;.</p>
+<p style="text-align: justify;">La deuxi&#232;me &#233;tape de la concertation a &#233;t&#233; engag&#233;e le 19 juillet dernier afin de r&#233;inventer l&#8217;offre de service &#224; destination des employeurs et des travailleurs handicap&#233;s. Elle permettra de proposer des mesures destin&#233;es &#224; am&#233;liorer l&#8217;offre de service, afin qu&#8217;elle soit plus lisible, plus simple d&#8217;acc&#232;s et mieux adapt&#233;e aux besoins des employeurs et des personnes handicap&#233;es.</p>
+<p style="text-align: justify;">Ces propositions s&#8217;accompagneront d&#8217;une r&#233;flexion sur la gouvernance de la politique d&#8217;emploi des personnes handicap&#233;es. Pour mettre en &#339;uvre une meilleure offre de service, il para&#238;t en effet n&#233;cessaire de revoir l&#8217;organisation et les modalit&#233;s de financement des diff&#233;rents acteurs concourant &#224; l&#8217;insertion professionnelle et au maintien dans l&#8217;emploi des personnes handicap&#233;es. Une meilleure coordination et/ou des regroupements d&#8217;acteurs pourront &#234;tre propos&#233;es.</p>
+<p style="text-align: justify;">Le Gouvernement propose que l&#8217;ensemble de ces &#233;volutions, ainsi que les mesures d&#8217;accompagnement qui seraient n&#233;cessaires pour les mettre en oeuvre, fassent l&#8217;objet d&#8217;une ordonnance au plus tard le 31 d&#233;cembre 2019.</p>]]></exposeSommaire>
+        <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </corps>
+    <representations>
+        <representation>
+            <nom>PDF</nom>
+            <typeMime>
+                <type>application</type>
+                <subType>PDF</subType>
+            </typeMime>
+            <statutRepresentation>
+                <verbatim>true</verbatim>
+                <canonique>true</canonique>
+                <officielle>true</officielle>
+                <transcription>false</transcription>
+                <enregistrement>false</enregistrement>
+            </statutRepresentation>
+            <repSource xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <offset xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <contenu>
+                <documentURI>/15/amendements/1168/CION-SOC/AS103.pdf</documentURI>
+            </contenu>
+            <dateDispoRepresentation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        </representation>
+    </representations>
+    <seanceDiscussion xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <sort>
+        <dateSaisie>2018-07-18T18:28:03</dateSaisie>
+        <sortEnSeance>Adopté</sortEnSeance>
+    </sort>
+    <dateDepot>2018-07-17</dateDepot>
+    <dateDistribution>2018-07-18</dateDistribution>
+    <article99>0</article99>
+    <loiReference>
+        <codeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <divisionCodeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </loiReference>
+</amendement>
+</amendements>

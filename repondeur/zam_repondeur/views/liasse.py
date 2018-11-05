@@ -10,7 +10,7 @@ from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config
 
-from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml, LectureDoesNotMatch
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, Journal
 from zam_repondeur.resources import LectureResource
@@ -45,12 +45,22 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
     if backup_path is not None:
         save_uploaded_file(liasse_field, backup_path)
 
+    lecture = context.model()
+
     try:
-        amendements, errors = import_liasse_xml(liasse_field.file)
+        amendements, errors = import_liasse_xml(liasse_field.file, lecture)
     except ValueError:
         logger.exception("Erreur d'import de la liasse XML")
         request.session.flash(
             Message(cls="danger", text="Le format du fichier n’est pas valide.")
+        )
+        return
+    except LectureDoesNotMatch as exc:
+        request.session.flash(
+            Message(
+                cls="danger",
+                text=f"La liasse correspond à une autre lecture ({exc.lecture}).",
+            )
         )
         return
 
@@ -73,44 +83,16 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
         )
         return
 
-    lecture = context.model()
-    filtered_amendements = [
-        amendement for amendement in amendements if amendement.lecture == lecture
-    ]
-    ignored = len(amendements) - len(filtered_amendements)
-
-    if len(filtered_amendements) == 0:
-        amendement = amendements[0]
-        request.session.flash(
-            Message(
-                cls="danger",
-                text=(
-                    f"La liasse correspond à une autre lecture"
-                    f" ({amendement.lecture})."
-                ),
-            )
+    if len(amendements) == 1:
+        message = "1 nouvel amendement récupéré (import liasse XML)."
+    else:
+        message = (
+            f"{len(amendements)} nouveaux amendements récupérés (import liasse XML)."
         )
-        return
-
-    if ignored > 0:
-        request.session.flash(
-            Message(
-                cls="warning",
-                text=f"{ignored} amendements ignorés car non liés à cette lecture.",
-            )
-        )
-    if len(amendements):
-        if len(amendements) == 1:
-            message = "1 nouvel amendement récupéré (import liasse XML)."
-        else:
-            message = (
-                f"{len(amendements)} nouveaux amendements récupérés "
-                "(import liasse XML)."
-            )
-        request.session.flash(Message(cls="success", text=message))
-        Journal.create(lecture=lecture, kind="success", message=message)
-        lecture.modified_at = datetime.utcnow()
-        DBSession.add(lecture)
+    request.session.flash(Message(cls="success", text=message))
+    Journal.create(lecture=lecture, kind="success", message=message)
+    lecture.modified_at = datetime.utcnow()
+    DBSession.add(lecture)
 
 
 def get_backup_path(request: Request) -> Optional[Path]:

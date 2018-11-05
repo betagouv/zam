@@ -96,6 +96,7 @@ class TestOrdering:
         list(
             pairwise(
                 [
+                    "",
                     "11",
                     "11 bis A",
                     "11 bis",

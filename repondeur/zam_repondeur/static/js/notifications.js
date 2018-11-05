@@ -16,12 +16,19 @@ function displayNotificationUpdate(message, kind) {
 }
 
 function amendementsNumbersToMessage(amendementsNumbers) {
-  if (amendementsNumbers.length === 1) {
+  const length = amendementsNumbers.length
+  if (length === 1) {
     return `L’amendement ${amendementsNumbers} a été mis à jour !`
-  } else {
+  } else if (length < 10) {
     return `Les amendements ${fooCommaBarAndBaz(
       amendementsNumbers
     )} ont été mis à jour !`
+  } else {
+    return `Les amendements ${amendementsNumbers
+      .slice(0, 4)
+      .join(', ')} … ${amendementsNumbers
+      .slice(-4, length)
+      .join(', ')} (${length} au total) ont été mis à jour !`
   }
 }
 
@@ -47,10 +54,12 @@ function notifyOnUpdates(delay, timestamp, checkUrl) {
 }
 
 function listenToClose() {
-  Array.from(document.querySelectorAll('.close-notification')).forEach(closeLink => {
-    closeLink.addEventListener('click', e => {
-      e.preventDefault()
-      document.querySelector('[role="status"]').innerHTML = ''
-    })
-  })
+  Array.from(document.querySelectorAll('.close-notification')).forEach(
+    closeLink => {
+      closeLink.addEventListener('click', e => {
+        e.preventDefault()
+        document.querySelector('[role="status"]').innerHTML = ''
+      })
+    }
+  )
 }

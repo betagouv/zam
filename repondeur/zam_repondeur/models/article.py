@@ -284,7 +284,7 @@ class Article(Base):
     ) -> Iterable[Tuple[Reponse, List[Amendement]]]:
         return (
             (reponse, list(group))
-            for reponse, group in groupby(amendements, key=Amendement.grouping_key)
+            for reponse, group in groupby(amendements, key=Amendement.full_reponse)
         )
 
 

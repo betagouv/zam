@@ -43,10 +43,15 @@ header.main nav {
     margin: 0.5rem 0 1rem 0;
 }
 
-header.main a,
+header.main a {
+    color: white;
+    text-decoration: underline;
+}
+header.main a.button,
 header.main button {
     color: white;
     border: thin solid white;
+    text-decoration: none;
 }
 header.main a:hover,
 header.main button:hover {

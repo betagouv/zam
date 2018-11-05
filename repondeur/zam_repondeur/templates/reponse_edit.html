@@ -100,6 +100,22 @@
                 {% endif %}
             {% endif %}
         </div>
+        {% if amendement.identique %}
+            {% set identiques = amendement.identiques %}
+            {% set identiques_length = identiques|length %}
+            <p>
+                <em>
+                    Identique {% if identiques_length > 1 %}aux{% else %}à{% endif %}
+                    {% for identique in identiques -%}
+                        <a href="{{ request.resource_url(context.parent[identique.num_str], 'reponse') }}">{{ identique }}</a>
+                        {% if identique.full_reponse() != amendement.full_reponse() %}
+                            <span title="Cet amendement identique n’a pas une réponse similaire">⚠️</span>
+                        {% endif %}
+                        {% if loop.revindex == 2 and identiques_length > 1 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                    {%- endfor %}
+                </em>
+            </p>
+        {% endif %}
     </div>
 {% endblock %}
 

@@ -1,6 +1,7 @@
 from datetime import date
 from pathlib import Path
 
+import pytest
 import transaction
 
 
@@ -12,7 +13,7 @@ def test_import_liasse_xml(lecture_essoc):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
     from zam_repondeur.models import Amendement
 
-    amendements, errors = import_liasse_xml(open_liasse("liasse.xml"))
+    amendements, errors = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
 
     assert isinstance(amendements, list)
     assert len(amendements) == 3
@@ -28,7 +29,9 @@ def test_import_liasse_xml(lecture_essoc):
 def test_import_liasse_xml_article_additionnel(lecture_essoc):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
-    amendements, errors = import_liasse_xml(open_liasse("liasse_apres.xml"))
+    amendements, errors = import_liasse_xml(
+        open_liasse("liasse_apres.xml"), lecture_essoc
+    )
 
     assert amendements[0].article.num == "2"
     assert amendements[0].article.pos == "après"
@@ -40,7 +43,7 @@ def test_import_same_liasse_xml_again_preserve_response(lecture_essoc):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     # Let's import amendements
-    amendements, _ = import_liasse_xml(open_liasse("liasse.xml"))
+    amendements, _ = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
 
     # Now let's add a response
     amendements[1].avis = "Favorable"
@@ -48,7 +51,7 @@ def test_import_same_liasse_xml_again_preserve_response(lecture_essoc):
     amendements[1].reponse = "Réponse"
 
     # And import the same amendements again
-    amendements2, errors = import_liasse_xml(open_liasse("liasse.xml"))
+    amendements2, errors = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
 
     assert amendements == amendements2
     assert amendements2[1].avis == "Favorable"
@@ -63,7 +66,7 @@ def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
     from zam_repondeur.models import Amendement, DBSession
 
     # Let's import amendements
-    amendements, _ = import_liasse_xml(open_liasse("liasse.xml"))
+    amendements, _ = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
 
     # Now let's add a response
     amendements[1].avis = "Favorable"
@@ -76,7 +79,9 @@ def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
     amendements[2].reponse = "Réponse"
 
     # And import a smaller liasse
-    amendements2, errors = import_liasse_xml(open_liasse("liasse_smaller.xml"))
+    amendements2, errors = import_liasse_xml(
+        open_liasse("liasse_smaller.xml"), lecture_essoc
+    )
 
     assert amendements[0] == amendements2[0]
     assert amendements[1] == amendements2[1]
@@ -94,7 +99,9 @@ def test_import_liasse_xml_with_unknown_parent(lecture_essoc):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     # Let's import a liasse with only a child amendement
-    amendements, errors = import_liasse_xml(open_liasse("liasse_only_child.xml"))
+    amendements, errors = import_liasse_xml(
+        open_liasse("liasse_only_child.xml"), lecture_essoc
+    )
 
     assert amendements == []
     assert len(errors) == 1
@@ -107,14 +114,18 @@ def test_import_liasse_xml_with_known_but_missing_parent(lecture_essoc):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     # Let's import the parent amendement
-    amendements, errors = import_liasse_xml(open_liasse("liasse_only_parent.xml"))
+    amendements, errors = import_liasse_xml(
+        open_liasse("liasse_only_parent.xml"), lecture_essoc
+    )
     assert len(amendements) == 1
     assert amendements[0].num == 28
     assert amendements[0].parent is None
     assert errors == []
 
     # Now let's import a liasse with only a child amendement
-    amendements, errors = import_liasse_xml(open_liasse("liasse_only_child.xml"))
+    amendements, errors = import_liasse_xml(
+        open_liasse("liasse_only_child.xml"), lecture_essoc
+    )
     assert len(amendements) == 1
     assert amendements[0].num == 26
     assert amendements[0].parent.num == 28
@@ -122,11 +133,11 @@ def test_import_liasse_xml_with_known_but_missing_parent(lecture_essoc):
 
 
 def test_import_liasse_second_part(app):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml, LectureDoesNotMatch
     from zam_repondeur.models import DBSession, Lecture
 
     with transaction.manager:
-        Lecture.create(
+        part1 = Lecture.create(
             chambre="an",
             session="15",
             num_texte=806,
@@ -147,11 +158,30 @@ def test_import_liasse_second_part(app):
 
     DBSession.add(part2)
 
-    amendements, errors = import_liasse_xml(open_liasse("liasse_second_part.xml"))
+    with pytest.raises(LectureDoesNotMatch):
+        import_liasse_xml(open_liasse("liasse_second_part.xml"), part1)
+
+    amendements, errors = import_liasse_xml(
+        open_liasse("liasse_second_part.xml"), part2
+    )
 
     assert (len(amendements), len(errors)) == (3, 0)
     for amendement in amendements:
         assert amendement.lecture == part2
+
+
+def test_import_liasse_xml_lecture_is_not_an(lecture_senat):
+    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml, BadChambre
+
+    with pytest.raises(BadChambre):
+        import_liasse_xml(open_liasse("liasse.xml"), lecture_senat)
+
+
+def test_import_liasse_xml_lecture_does_not_match(lecture_an):
+    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml, LectureDoesNotMatch
+
+    with pytest.raises(LectureDoesNotMatch):
+        import_liasse_xml(open_liasse("liasse.xml"), lecture_an)
 
 
 def _check_amendement_0(amendement):

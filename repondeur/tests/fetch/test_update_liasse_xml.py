@@ -13,11 +13,13 @@ def open_liasse(filename):
 def test_article_changed(lecture_essoc):
 
     # Let's import amendements
-    amendements, _ = import_liasse_xml(open_liasse("liasse.xml"))
+    amendements, _ = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
     assert amendements[0].article.num == "2"
 
     # And import a liasse with a different target article
-    amendements2, errors = import_liasse_xml(open_liasse("liasse_modified_article.xml"))
+    amendements2, errors = import_liasse_xml(
+        open_liasse("liasse_modified_article.xml"), lecture_essoc
+    )
     assert amendements[0].article.num == amendements2[0].article.num == "3"
     assert errors == []
 
@@ -25,11 +27,13 @@ def test_article_changed(lecture_essoc):
 def test_add_parent_amendement(lecture_essoc):
 
     # Let's import amendements without a parent
-    amendements, _ = import_liasse_xml(open_liasse("liasse_removed_parent.xml"))
+    amendements, _ = import_liasse_xml(
+        open_liasse("liasse_removed_parent.xml"), lecture_essoc
+    )
     assert amendements[1].parent is None
 
     # And import a liasse without the parent
-    amendements2, errors = import_liasse_xml(open_liasse("liasse.xml"))
+    amendements2, errors = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
     assert amendements[1].parent.num == amendements2[1].parent.num == 28
     assert errors == []
 
@@ -37,10 +41,12 @@ def test_add_parent_amendement(lecture_essoc):
 def test_remove_parent_amendement(lecture_essoc):
 
     # Let's import amendements with a parent
-    amendements, _ = import_liasse_xml(open_liasse("liasse.xml"))
+    amendements, _ = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
     assert amendements[1].parent.num == 28
 
     # And import a liasse without the parent
-    amendements2, errors = import_liasse_xml(open_liasse("liasse_removed_parent.xml"))
+    amendements2, errors = import_liasse_xml(
+        open_liasse("liasse_removed_parent.xml"), lecture_essoc
+    )
     assert amendements[1].parent == amendements2[1].parent is None
     assert errors == []

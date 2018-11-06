@@ -1,9 +1,9 @@
 import sys
 from pathlib import Path
 
-import CommonMark
+from commonmark import commonmark
 import requests
-from invoke import task
+from fabric.tasks import task
 
 from tools import (
     clone_repo,
@@ -119,7 +119,7 @@ def sshkeys(ctx):
 
 @task
 def deploy_changelog(ctx, source="../CHANGELOG.md"):
-    content = CommonMark.commonmark(Path(source).read_text())
+    content = commonmark(Path(source).read_text())
     with template_local_file("index.html.template", "index.html", {"content": content}):
         sudo_put(ctx, "index.html", "/srv/zam/index.html", chown="zam")
 

@@ -41,7 +41,11 @@ function notifyOnUpdates(delay, timestamp, checkUrl) {
     fetch(`${checkUrl}?since=${timestamp}`, options)
       .then(reponse => reponse.json())
       .then(json => {
-        if (json.modified_at && json.modified_at !== timestamp) {
+        if (
+          json.modified_at &&
+          json.modified_at !== timestamp &&
+          json.modified_amendements_numbers.length
+        ) {
           timestamp = Number(json.modified_at)
           displayNotificationUpdate(
             amendementsNumbersToMessage(json.modified_amendements_numbers),

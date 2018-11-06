@@ -1,9 +1,9 @@
 import sys
 from pathlib import Path
 
-import CommonMark
+from commonmark import commonmark
 import requests
-from invoke import task
+from fabric.tasks import task
 
 from tools import (
     clone_repo,
@@ -13,6 +13,7 @@ from tools import (
     create_postgres_database,
     create_user,
     install_locale,
+    install_packages,
     run_as_postgres,
     sudo_put,
     template_local_file,
@@ -31,24 +32,19 @@ ROLLBAR_TOKEN = "8173da84cb344c169bdee21f91e8f529"
 @task
 def system(ctx):
     ctx.sudo("curl -L -O https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb")
-    ctx.sudo("apt update")
-    ctx.sudo(
-        "apt install -y {}".format(
-            " ".join(
-                [
-                    "git",
-                    "libpq-dev",
-                    "locales",
-                    "nginx",
-                    "postgresql",
-                    "python3",
-                    "python3-pip",
-                    "redis-server",
-                    "./wkhtmltox_0.12.5-1.bionic_amd64.deb",
-                    "xvfb",
-                ]
-            )
-        )
+    install_packages(
+        ctx,
+        "git",
+        "libpq-dev",
+        "locales",
+        "nginx",
+        "postgresql",
+        "python3",
+        "python3-pip",
+        "python3-venv",
+        "redis-server",
+        "./wkhtmltox_0.12.5-1.bionic_amd64.deb",
+        "xvfb",
     )
     ctx.sudo("mkdir -p /srv/zam")
     ctx.sudo("mkdir -p /srv/zam/letsencrypt/.well-known/acme-challenge")
@@ -93,8 +89,7 @@ def bootstrap(ctx):
 
 @task
 def basicauth(ctx):
-    ctx.sudo("apt update")
-    ctx.sudo("apt install -y apache2-utils")
+    install_packages(ctx, "apache2-utils")
     # Will prompt for password.
     ctx.sudo("htpasswd -c /etc/nginx/.htpasswd demozam")
 
@@ -102,8 +97,7 @@ def basicauth(ctx):
 @task
 def letsencrypt(ctx):
     ctx.sudo("add-apt-repository ppa:certbot/certbot")
-    ctx.sudo("apt update")
-    ctx.sudo("apt install -y certbot software-properties-common")
+    install_packages(ctx, "certbot", "software-properties-common")
     with template_local_file("certbot.ini.template", "certbot.ini", {"host": ctx.host}):
         sudo_put(ctx, "certbot.ini", "/srv/zam/certbot.ini")
     sudo_put(ctx, "ssl-renew", "/etc/cron.weekly/ssl-renew")
@@ -125,7 +119,7 @@ def sshkeys(ctx):
 
 @task
 def deploy_changelog(ctx, source="../CHANGELOG.md"):
-    content = CommonMark.commonmark(Path(source).read_text())
+    content = commonmark(Path(source).read_text())
     with template_local_file("index.html.template", "index.html", {"content": content}):
         sudo_put(ctx, "index.html", "/srv/zam/index.html", chown="zam")
 
@@ -165,11 +159,13 @@ def deploy_repondeur(
         user=user,
     )
     app_dir = "/srv/repondeur/src/repondeur"
+    venv_dir = "/srv/repondeur/venv"
 
     # Stop workers to free up some system resources during deployment
     ctx.sudo("systemctl stop zam_worker", warn=True)
 
-    install_requirements(ctx, app_dir=app_dir, user=user)
+    create_virtualenv(ctx, venv_dir=venv_dir, user=user)
+    install_requirements(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
     gunicorn_workers = (cpu_count(ctx) * 2) + 1
     setup_config(
         ctx,
@@ -188,17 +184,21 @@ def deploy_repondeur(
     if wipe:
         wipe_db(ctx, dbname=dbname)
     setup_db(ctx, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
-    migrate_db(ctx, app_dir=app_dir, user=user)
+    migrate_db(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
     setup_webapp_service(ctx)
     setup_worker_service(ctx)
     notify_rollbar(ctx, rollbar_token, branch, environment)
 
 
-@task
-def install_requirements(ctx, app_dir, user):
-    ctx.sudo("python3 -m pip install pipenv==2018.7.1")
-    ctx.sudo(f'bash -c "cd {app_dir} && pipenv install"', user=user)
-    ctx.sudo(f'bash -c "cd {app_dir} && pipenv run pip install gunicorn==19.9.0"', user=user)
+def create_virtualenv(ctx, venv_dir, user):
+    ctx.sudo(f"python3 -m venv {venv_dir}", user=user)
+
+
+def install_requirements(ctx, app_dir, venv_dir, user):
+    cmd = (
+        f"{venv_dir}/bin/pip install -r requirements.txt -r requirements-prod.txt -e ."
+    )
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 
 @task
@@ -244,12 +244,10 @@ def backup_db(ctx, dbname="zam"):
 
 
 @task
-def migrate_db(ctx, app_dir, user):
+def migrate_db(ctx, app_dir, venv_dir, user):
     create_directory(ctx, "/var/lib/zam", owner=user)
-    ctx.sudo(
-        f'bash -c "cd {app_dir} && pipenv run alembic -c production.ini upgrade head"',
-        user=user,
-    )
+    cmd = f"{venv_dir}/bin/alembic -c production.ini upgrade head"
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 
 @task
@@ -322,18 +320,12 @@ def monitoring(ctx):
     """
     Setup basic system monitoring using munin
     """
-    ctx.sudo("apt-get update")
-    ctx.sudo(
-        "apt install -y {}".format(
-            " ".join(
-                [
-                    "munin",
-                    "munin-node",
-                    "libdbd-pg-perl",
-                    "libparse-http-useragent-perl",
-                ]
-            )
-        )
+    install_packages(
+        ctx,
+        "munin",
+        "munin-node",
+        "libdbd-pg-perl",
+        "libparse-http-useragent-perl",
     )
     sudo_put(ctx, "munin/munin.conf", "/etc/munin/munin.conf")
     sudo_put(ctx, "munin/munin-node.conf", "/etc/munin/munin-node.conf")

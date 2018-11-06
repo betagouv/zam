@@ -98,3 +98,8 @@ def timestamp():
 
 def cpu_count(ctx):
     return int(ctx.run("cat /proc/cpuinfo | grep Processor | wc -l").stdout.strip())
+
+
+def install_packages(ctx, *names):
+    ctx.sudo("apt-get update")
+    ctx.sudo("apt-get install --yes {}".format(" ".join(names)))

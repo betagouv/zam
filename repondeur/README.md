@@ -29,29 +29,53 @@ $ docker-compose exec webapp bash
 
 ## Option 2: Native local development setup
 
-### Requirements
+### Install requirements
 
-- Python 3.6+
-- Pipenv 2017.1.7
-- Postgres
-- Redis
+#### Python 3.6+
 
-### Setup
+To install Python 3 (macOS):
 
-Install [wkhtmltopdf](https://github.com/JazzCore/python-pdfkit#installation)
+```
+$ brew install python
+```
+
+#### PostgreSQL
+
+To install PostgreSQL (macOS):
+
+```
+$ brew install postgresql
+```
+
+#### Redis
+
+To install Redis (macOS):
+
+```
+$ brew install redis
+```
+
+#### wkhtmltopdf
+
+To install [wkhtmltopdf](https://github.com/JazzCore/python-pdfkit#installation) (macOS):
 
 ```
 $ brew install caskroom/cask/wkhtmltopdf
 ```
 
+### Setup the Python virtual environment
+
+Create a Python virtual environment and install dependencies:
+
 ```
-$ pipenv install
-$ pipenv shell
+$ python3 -m venv ~/.virtualenvs/zam
+$ source ~/.virtualenvs/zam/bin/activate
+(zam)$ pip install -r requirements.txt
+(zam)$ pip install -r requirements-dev.txt
+(zam)$ pip install -e .
 ```
 
-Install and run both Redis and Postgres.
-
-### Create the databases
+### Create the database
 
 ```
 $ createuser --createdb zam
@@ -61,13 +85,13 @@ $ createdb --owner=zam zam
 ### Initialize the database
 
 ```
-$ alembic -c development.ini upgrade head
+(zam)$ alembic -c development.ini upgrade head
 ```
 
 ### Start the web app
 
 ```
-$ pserve development.ini --reload
+(zam)$ pserve development.ini --reload
 ```
 
 You can now access the web app at http://localhost:6543/
@@ -75,12 +99,12 @@ You can now access the web app at http://localhost:6543/
 ### Start the worker for asynchronous tasks
 
 ```
-$ zam_worker development.ini
+(zam)$ zam_worker development.ini
 ```
 
 ### Development
 
-Create dedicated table for tests:
+Create a separate database for tests:
 
 ```
 $ createdb --owner=zam zam-test
@@ -89,23 +113,23 @@ $ createdb --owner=zam zam-test
 Run tests:
 
 ```
-$ pytest
+(zam)$ pytest
 ```
 
 Reformat code:
 
 ```
-$ black .
+(zam)$ black .
 ```
 
 Check style guide:
 
 ```
-$ flake8
+(zam)$ flake8
 ```
 
 Check type annotations:
 
 ```
-mypy zam_repondeur
+(zam)$ mypy zam_repondeur
 ```

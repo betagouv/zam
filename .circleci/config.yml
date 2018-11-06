@@ -20,12 +20,8 @@ jobs:
       - run:
           name: Install Python deps
           command: |
-            sudo pip install pipenv==2018.7.1
             cd repondeur
-            pipenv lock -r >requirements.txt
-            sudo pip install -r requirements.txt
-            pipenv lock -r --dev >requirements-dev.txt
-            sudo pip install -r requirements-dev.txt
+            sudo pip install -r requirements.txt -r requirements-dev.txt -e .
       - run:
           name: Check formatting with black
           command: |

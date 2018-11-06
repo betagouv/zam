@@ -18,6 +18,7 @@ RUN curl -L -O https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12
         locales \
         postgresql-client-10 \
         python3 \
+        python3-setuptools \
         python3-pip \
         ./wkhtmltox_0.12.5-1.bionic_amd64.deb \
         xvfb \
@@ -33,19 +34,19 @@ ENV LC_ALL=fr_FR.UTF-8
 ENV LANG=fr_FR.UTF-8
 
 # Install app and Python dependencies
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
 WORKDIR /app
-RUN python3.6 -m pip install --no-cache-dir pipenv==2018.7.1
-COPY . .
+COPY requirements.txt requirements-dev.txt ./
 RUN apt-get update && \
     apt-get -f install --yes --no-install-recommends \
         build-essential \
         libpq-dev \
         python3-dev \
     && \
-    pipenv lock -r >requirements.txt && \
-    python3.6 -m pip install --no-cache-dir --src=/src -r requirements.txt && \
-    pipenv lock -r --dev >requirements-dev.txt && \
-    python3.6 -m pip install --no-cache-dir --src=/src -r requirements-dev.txt && \
+    python3.6 -m pip install --no-cache-dir --src=/src \
+        -r requirements.txt \
+        -r requirements-dev.txt && \
     apt-get remove --yes \
         build-essential \
         libpq-dev \
@@ -53,6 +54,5 @@ RUN apt-get update && \
     && \
     apt-get autoremove --yes && \
     rm -rf /var/lib/apt/lists/*
-
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
+COPY . ./
+RUN python3.6 -m pip install --no-cache-dir --src=/src -e .

@@ -43,6 +43,7 @@ def system(ctx):
                     "postgresql",
                     "python3",
                     "python3-pip",
+                    "python3-venv",
                     "redis-server",
                     "./wkhtmltox_0.12.5-1.bionic_amd64.deb",
                     "xvfb",
@@ -165,11 +166,13 @@ def deploy_repondeur(
         user=user,
     )
     app_dir = "/srv/repondeur/src/repondeur"
+    venv_dir = "/srv/repondeur/venv"
 
     # Stop workers to free up some system resources during deployment
     ctx.sudo("systemctl stop zam_worker", warn=True)
 
-    install_requirements(ctx, app_dir=app_dir, user=user)
+    create_virtualenv(ctx, venv_dir=venv_dir, user=user)
+    install_requirements(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
     gunicorn_workers = (cpu_count(ctx) * 2) + 1
     setup_config(
         ctx,
@@ -188,17 +191,21 @@ def deploy_repondeur(
     if wipe:
         wipe_db(ctx, dbname=dbname)
     setup_db(ctx, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
-    migrate_db(ctx, app_dir=app_dir, user=user)
+    migrate_db(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
     setup_webapp_service(ctx)
     setup_worker_service(ctx)
     notify_rollbar(ctx, rollbar_token, branch, environment)
 
 
-@task
-def install_requirements(ctx, app_dir, user):
-    ctx.sudo("python3 -m pip install pipenv==2018.7.1")
-    ctx.sudo(f'bash -c "cd {app_dir} && pipenv install"', user=user)
-    ctx.sudo(f'bash -c "cd {app_dir} && pipenv run pip install gunicorn==19.9.0"', user=user)
+def create_virtualenv(ctx, venv_dir, user):
+    ctx.sudo(f"python3 -m venv {venv_dir}", user=user)
+
+
+def install_requirements(ctx, app_dir, venv_dir, user):
+    cmd = (
+        f"{venv_dir}/bin/pip install -r requirements.txt -r requirements-prod.txt -e ."
+    )
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 
 @task
@@ -244,12 +251,10 @@ def backup_db(ctx, dbname="zam"):
 
 
 @task
-def migrate_db(ctx, app_dir, user):
+def migrate_db(ctx, app_dir, venv_dir, user):
     create_directory(ctx, "/var/lib/zam", owner=user)
-    ctx.sudo(
-        f'bash -c "cd {app_dir} && pipenv run alembic -c production.ini upgrade head"',
-        user=user,
-    )
+    cmd = f"{venv_dir}/bin/alembic -c production.ini upgrade head"
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 
 @task

@@ -170,7 +170,7 @@ class Article(Base):
     def sort_key(self) -> Tuple[int, str, Tuple[int, str], int]:
         return (
             Article._ORDER_TYPE[self.type or ""],
-            str(self.num) or "",
+            str(self.num or "").zfill(3),
             _mult_key(self.mult or ""),
             Article._ORDER_POS[self.pos or ""],
         )
@@ -178,9 +178,7 @@ class Article(Base):
     @reify
     def sort_key_as_str(self) -> str:
         s = self.sort_key
-        return "|".join(
-            map(str, (s[0], f"{s[1].zfill(3)}", f"{s[2][0]:02}", s[2][1], s[3]))
-        )
+        return "|".join(map(str, (s[0], f"{s[1]}", f"{s[2][0]:02}", s[2][1], s[3])))
 
     @classmethod
     def create(

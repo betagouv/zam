@@ -97,6 +97,9 @@ class TestOrdering:
             pairwise(
                 [
                     ("article", ""),
+                    ("article", "1"),
+                    ("article", "2"),
+                    ("article", "10"),
                     ("article", "11"),
                     ("article", "11 bis A"),
                     ("article", "11 bis"),

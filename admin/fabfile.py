@@ -13,6 +13,7 @@ from tools import (
     create_postgres_database,
     create_user,
     install_locale,
+    install_packages,
     run_as_postgres,
     sudo_put,
     template_local_file,
@@ -31,25 +32,19 @@ ROLLBAR_TOKEN = "8173da84cb344c169bdee21f91e8f529"
 @task
 def system(ctx):
     ctx.sudo("curl -L -O https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb")
-    ctx.sudo("apt update")
-    ctx.sudo(
-        "apt install -y {}".format(
-            " ".join(
-                [
-                    "git",
-                    "libpq-dev",
-                    "locales",
-                    "nginx",
-                    "postgresql",
-                    "python3",
-                    "python3-pip",
-                    "python3-venv",
-                    "redis-server",
-                    "./wkhtmltox_0.12.5-1.bionic_amd64.deb",
-                    "xvfb",
-                ]
-            )
-        )
+    install_packages(
+        ctx,
+        "git",
+        "libpq-dev",
+        "locales",
+        "nginx",
+        "postgresql",
+        "python3",
+        "python3-pip",
+        "python3-venv",
+        "redis-server",
+        "./wkhtmltox_0.12.5-1.bionic_amd64.deb",
+        "xvfb",
     )
     ctx.sudo("mkdir -p /srv/zam")
     ctx.sudo("mkdir -p /srv/zam/letsencrypt/.well-known/acme-challenge")
@@ -94,8 +89,7 @@ def bootstrap(ctx):
 
 @task
 def basicauth(ctx):
-    ctx.sudo("apt update")
-    ctx.sudo("apt install -y apache2-utils")
+    install_packages(ctx, "apache2-utils")
     # Will prompt for password.
     ctx.sudo("htpasswd -c /etc/nginx/.htpasswd demozam")
 
@@ -103,8 +97,7 @@ def basicauth(ctx):
 @task
 def letsencrypt(ctx):
     ctx.sudo("add-apt-repository ppa:certbot/certbot")
-    ctx.sudo("apt update")
-    ctx.sudo("apt install -y certbot software-properties-common")
+    install_packages(ctx, "certbot", "software-properties-common")
     with template_local_file("certbot.ini.template", "certbot.ini", {"host": ctx.host}):
         sudo_put(ctx, "certbot.ini", "/srv/zam/certbot.ini")
     sudo_put(ctx, "ssl-renew", "/etc/cron.weekly/ssl-renew")
@@ -327,18 +320,12 @@ def monitoring(ctx):
     """
     Setup basic system monitoring using munin
     """
-    ctx.sudo("apt-get update")
-    ctx.sudo(
-        "apt install -y {}".format(
-            " ".join(
-                [
-                    "munin",
-                    "munin-node",
-                    "libdbd-pg-perl",
-                    "libparse-http-useragent-perl",
-                ]
-            )
-        )
+    install_packages(
+        ctx,
+        "munin",
+        "munin-node",
+        "libdbd-pg-perl",
+        "libparse-http-useragent-perl",
     )
     sudo_put(ctx, "munin/munin.conf", "/etc/munin/munin.conf")
     sudo_put(ctx, "munin/munin-node.conf", "/etc/munin/munin-node.conf")

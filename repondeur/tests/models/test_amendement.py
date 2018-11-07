@@ -90,7 +90,7 @@ def test_amendement_identiques(amendements_an):
     assert amendement_999.identiques == [amendement_666]
 
 
-def test_amendement_identiques_and_similaires(amendements_an):
+def test_amendement_identiques_are_similaires(amendements_an):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement_666, amendement_999 = DBSession.query(Amendement).all()
@@ -107,11 +107,11 @@ def test_amendement_identiques_and_similaires(amendements_an):
 
     assert amendement_666.identiques == [amendement_999]
     assert amendement_999.identiques == [amendement_666]
-    assert amendement_666.identiques_and_similaires
-    assert amendement_999.identiques_and_similaires
+    assert amendement_666.identiques_are_similaires
+    assert amendement_999.identiques_are_similaires
 
 
-def test_amendement_identiques_and_similaires_reponses(amendements_an):
+def test_amendement_identiques_are_similaires_reponses(amendements_an):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement_666, amendement_999 = DBSession.query(Amendement).all()
@@ -130,11 +130,11 @@ def test_amendement_identiques_and_similaires_reponses(amendements_an):
 
     assert amendement_666.identiques == [amendement_999]
     assert amendement_999.identiques == [amendement_666]
-    assert amendement_666.identiques_and_similaires
-    assert amendement_999.identiques_and_similaires
+    assert amendement_666.identiques_are_similaires
+    assert amendement_999.identiques_are_similaires
 
 
-def test_amendement_identiques_and_similaires_reponses_with_spaces(amendements_an):
+def test_amendement_identiques_are_similaires_reponses_with_spaces(amendements_an):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement_666, amendement_999 = DBSession.query(Amendement).all()
@@ -155,11 +155,11 @@ def test_amendement_identiques_and_similaires_reponses_with_spaces(amendements_a
 
     assert amendement_666.identiques == [amendement_999]
     assert amendement_999.identiques == [amendement_666]
-    assert amendement_666.identiques_and_similaires
-    assert amendement_999.identiques_and_similaires
+    assert amendement_666.identiques_are_similaires
+    assert amendement_999.identiques_are_similaires
 
 
-def test_amendement_identiques_and_similaires_reponses_with_tags(amendements_an):
+def test_amendement_identiques_are_similaires_reponses_with_tags(amendements_an):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement_666, amendement_999 = DBSession.query(Amendement).all()
@@ -180,11 +180,11 @@ def test_amendement_identiques_and_similaires_reponses_with_tags(amendements_an)
 
     assert amendement_666.identiques == [amendement_999]
     assert amendement_999.identiques == [amendement_666]
-    assert amendement_666.identiques_and_similaires
-    assert amendement_999.identiques_and_similaires
+    assert amendement_666.identiques_are_similaires
+    assert amendement_999.identiques_are_similaires
 
 
-def test_amendement_identiques_and_not_similaires(amendements_an):
+def test_amendement_identiques_are_not_similaires(amendements_an):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement_666, amendement_999 = DBSession.query(Amendement).all()
@@ -201,11 +201,11 @@ def test_amendement_identiques_and_not_similaires(amendements_an):
 
     assert amendement_666.identiques == [amendement_999]
     assert amendement_999.identiques == [amendement_666]
-    assert not amendement_666.identiques_and_similaires
-    assert not amendement_999.identiques_and_similaires
+    assert not amendement_666.identiques_are_similaires
+    assert not amendement_999.identiques_are_similaires
 
 
-def test_amendement_identiques_and_not_similaires_reponses(amendements_an):
+def test_amendement_identiques_are_not_similaires_reponses(amendements_an):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement_666, amendement_999 = DBSession.query(Amendement).all()
@@ -224,5 +224,5 @@ def test_amendement_identiques_and_not_similaires_reponses(amendements_an):
 
     assert amendement_666.identiques == [amendement_999]
     assert amendement_999.identiques == [amendement_666]
-    assert not amendement_666.identiques_and_similaires
-    assert not amendement_999.identiques_and_similaires
+    assert not amendement_666.identiques_are_similaires
+    assert not amendement_999.identiques_are_similaires

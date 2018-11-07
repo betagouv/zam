@@ -127,7 +127,11 @@ def write_pdf1(
     lecture: Lecture, amendement: Amendement, filename: str, request: Request
 ) -> None:
     css = str(STATIC_PATH / "css" / "print.css")
-    content = generate_html_for_pdf(request, "print1.html", {"amendement": amendement})
+    content = generate_html_for_pdf(
+        request,
+        "print1.html",
+        {"amendement": amendement, "similaires": amendement.similaires or []},
+    )
     options = {"quiet": ""}
     with xvfb_if_supported():
         pdfkit.from_string(content, filename, options=options, css=css)

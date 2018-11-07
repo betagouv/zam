@@ -301,7 +301,7 @@ class Amendement(Base):
     def identiques(self) -> List["Amendement"]:
         return sorted(
             amendement
-            for amendement in self.lecture.amendements
+            for amendement in self.article.amendements
             if (
                 amendement.identique
                 and amendement.discussion_commune == self.discussion_commune
@@ -311,11 +311,20 @@ class Amendement(Base):
         )
 
     @property
-    def identiques_and_similaires(self) -> bool:
-        return all(
-            amendement.full_reponse() == self.full_reponse()
-            for amendement in self.identiques
+    def similaires(self) -> List["Amendement"]:
+        return sorted(
+            amendement
+            for amendement in self.article.amendements
+            if (
+                amendement.full_reponse() == self.full_reponse()
+                and amendement.num != self.num
+                and amendement.is_displayable
+            )
         )
+
+    @property
+    def identiques_are_similaires(self) -> bool:
+        return self.identiques == self.similaires
 
     def grouped_displayable_children(
         self

@@ -72,6 +72,8 @@ class Lecture:
         if self.chambre == Chambre.AN:
             return "15"  # FIXME
         else:
+            if not self.texte.date_depot:
+                return "2017-2018"  # FIXME: sane default?
             # The session changes the first working day of October.
             if self.texte.date_depot.month >= 10:
                 year = self.texte.date_depot.year

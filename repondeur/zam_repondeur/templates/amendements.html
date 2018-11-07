@@ -365,10 +365,15 @@
                             (ss-amdt au {{ amendement.parent.num_disp }})
                         {% endif %}
                         {% if amendement.identique %}
-                            {% if not amendement.identiques_are_similaires %}
-                                <span title="Les amendements identiques {% for amdt in amendement.identiques -%}
+                            {% set identiques = amendement.identiques %}
+                            {% if not amendement.identiques_are_similaires and identiques %}
+                                <span title="{% if identiques|length > 1 -%}
+                                    Les amendements identiques {% for amdt in identiques -%}
                                     {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                                {%- endfor %} n’ont pas des réponses similaires">⚠️</span>
+                                    {%- endfor %} n’ont pas des réponses similaires
+                                {%- else -%}
+                                    L’amendement identique {{ identiques[0] }} n’a pas une réponse similaire
+                                {%- endif %}">⚠️</span>
                             {% endif %}
                         {% endif %}
                 </td>

@@ -930,3 +930,143 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         "Amendement nº 42 rect.",
         "Article 7 bis",
     ]
+
+
+def test_generate_pdf_unitary_without_responses(app, lecture_senat, article1_senat):
+    from zam_repondeur.writer import generate_html_for_pdf
+    from zam_repondeur.models import Amendement
+
+    amendement = Amendement.create(
+        lecture=lecture_senat,
+        article=article1_senat,
+        alinea="",
+        num=42,
+        rectif=1,
+        auteur="M. DUPONT",
+        groupe="RDSE",
+        matricule="000000",
+        dispositif="<p>L'article 1 est supprimé.</p>",
+        objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        resume="Suppression de l'article",
+        position=1,
+    )
+    parser = HTMLParser(
+        generate_html_for_pdf(
+            DummyRequest(), "print1.html", {"amendement": amendement, "similaires": []}
+        )
+    )
+    assert _html_titles_list(parser) == ["Amendement nº 42 rect."]
+
+
+def test_generate_pdf_unitary_with_amendement_responses(
+    app, lecture_senat, article1_senat
+):
+    from zam_repondeur.writer import generate_html_for_pdf
+    from zam_repondeur.models import Amendement
+
+    amendement = Amendement.create(
+        lecture=lecture_senat,
+        article=article1_senat,
+        alinea="",
+        num=42,
+        rectif=1,
+        auteur="M. DUPONT",
+        groupe="RDSE",
+        matricule="000000",
+        dispositif="<p>L'article 1 est supprimé.</p>",
+        objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        resume="Suppression de l'article",
+        position=1,
+        avis="Favorable",
+    )
+    parser = HTMLParser(
+        generate_html_for_pdf(
+            DummyRequest(), "print1.html", {"amendement": amendement, "similaires": []}
+        )
+    )
+    assert _html_titles_list(parser) == ["Réponse", "Amendement nº 42 rect."]
+
+
+def test_generate_pdf_unitary_with_amendement_content(
+    app, lecture_senat, article1_senat, amendements_senat
+):
+    from zam_repondeur.writer import generate_html_for_pdf
+    from zam_repondeur.models import DBSession
+
+    amendement_6666 = amendements_senat[0]
+    amendement_6666.auteur = "M. JEAN"
+    amendement_6666.groupe = "Les Indépendants"
+    amendement_6666.avis = "Favorable"
+    amendement_6666.observations = "Les observations"
+    amendement_6666.reponse = "La réponse"
+    DBSession.add(amendement_6666)
+    parser = HTMLParser(
+        generate_html_for_pdf(
+            DummyRequest(),
+            "print1.html",
+            {"amendement": amendement_6666, "similaires": []},
+        )
+    )
+    assert _html_titles_list(parser) == ["Réponse", "Amendement nº 6666"]
+    response_node = parser.css_first(".reponse")
+    assert _cartouche_to_list(response_node) == [
+        "Article",
+        "Art. 1",
+        "Amendement",
+        "6666",
+        "Auteur",
+        "M. JEAN",
+        "Groupe",
+        "Les Indépendants",
+        "Avis",
+        "Favorable",
+    ]
+    assert response_node.css_first("div h3").text() == "Objet"
+    assert "Les observations" in response_node.css_first("div p").text()
+    assert response_node.css("div h3")[-1].text() == "Réponse"
+    assert "La réponse" in response_node.css("div p")[-1].text()
+
+
+def test_generate_pdf_unitary_with_amendement_similaire(
+    app, lecture_senat, article1_senat, amendements_senat
+):
+    from zam_repondeur.writer import generate_html_for_pdf
+    from zam_repondeur.models import DBSession
+
+    amendement_6666, amendement_9999 = amendements_senat
+    amendement_6666.auteur = "M. JEAN"
+    amendement_6666.groupe = "Les Indépendants"
+    amendement_6666.avis = "Favorable"
+    amendement_6666.observations = "Les observations"
+    amendement_6666.reponse = "La réponse"
+    amendement_9999.auteur = "M. CLAUDE"
+    amendement_9999.groupe = "Les Mécontents"
+    amendement_9999.avis = "Favorable"
+    amendement_9999.observations = "Les observations"
+    amendement_9999.reponse = "La réponse"
+    DBSession.add_all(amendements_senat)
+    parser = HTMLParser(
+        generate_html_for_pdf(
+            DummyRequest(),
+            "print1.html",
+            {"amendement": amendement_6666, "similaires": [amendement_9999]},
+        )
+    )
+    assert _html_titles_list(parser) == ["Réponse", "Amendement nº 6666"]
+    response_node = parser.css_first(".reponse")
+    assert _cartouche_to_list(response_node) == [
+        "Article",
+        "Art. 1",
+        "Amendements",
+        "6666 et 9999",
+        "Auteurs",
+        "M. CLAUDE et M. JEAN",
+        "Groupes",
+        "Les Indépendants et Les Mécontents",
+        "Avis",
+        "Favorable",
+    ]
+    assert response_node.css_first("div h3").text() == "Objet"
+    assert "Les observations" in response_node.css_first("div p").text()
+    assert response_node.css("div h3")[-1].text() == "Réponse"
+    assert "La réponse" in response_node.css("div p")[-1].text()

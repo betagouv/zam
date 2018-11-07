@@ -14,8 +14,9 @@ from xvfbwrapper import Xvfb
 
 from .models import Amendement, Lecture
 
-
+PDFKIT_OPTIONS = {"quiet": ""}
 STATIC_PATH = Path(__file__).parent / "static"
+PDF_CSS = str(STATIC_PATH / "css" / "print.css")
 
 FIELDS_NAMES = {
     "article": "Num article",
@@ -116,21 +117,21 @@ def generate_html_for_pdf(request: Request, template_name: str, context: dict) -
 
 
 def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:
-    css = str(STATIC_PATH / "css" / "print.css")
     content = generate_html_for_pdf(request, "print.html", {"lecture": lecture})
-    options = {"quiet": ""}
     with xvfb_if_supported():
-        pdfkit.from_string(content, filename, options=options, css=css)
+        pdfkit.from_string(content, filename, options=PDFKIT_OPTIONS, css=PDF_CSS)
 
 
 def write_pdf1(
     lecture: Lecture, amendement: Amendement, filename: str, request: Request
 ) -> None:
-    css = str(STATIC_PATH / "css" / "print.css")
-    content = generate_html_for_pdf(request, "print1.html", {"amendement": amendement})
-    options = {"quiet": ""}
+    content = generate_html_for_pdf(
+        request,
+        "print1.html",
+        {"amendement": amendement, "similaires": amendement.similaires},
+    )
     with xvfb_if_supported():
-        pdfkit.from_string(content, filename, options=options, css=css)
+        pdfkit.from_string(content, filename, options=PDFKIT_OPTIONS, css=PDF_CSS)
 
 
 def write_xlsx(lecture: Lecture, filename: str, request: Request) -> int:

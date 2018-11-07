@@ -91,8 +91,9 @@ td {
   .page.jaune h3,
   .page.reponse h2,
   .page.amendement h2 {
-    text-align: right;
-    margin-right: 30pt;
+    text-align: center;
+    background-color: #f0f0f0;
+    padding: 12pt 0;
   }
 .page h3 {
   font-size: 21pt;
@@ -111,7 +112,4 @@ td {
 }
 .article div dd {
   margin-left: 3rem;
-}
-.reponse-presentation {
-  font-style: italic;
 }

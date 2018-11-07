@@ -118,10 +118,7 @@ def generate_html_for_pdf(request: Request, template_name: str, context: dict) -
 def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:
     css = str(STATIC_PATH / "css" / "print.css")
     content = generate_html_for_pdf(request, "print.html", {"lecture": lecture})
-    options = {
-        "quiet": "",
-        "footer-center": f"{lecture.dossier_legislatif} • Page [page] sur [topage]",
-    }
+    options = {"quiet": ""}
     with xvfb_if_supported():
         pdfkit.from_string(content, filename, options=options, css=css)
 
@@ -131,10 +128,7 @@ def write_pdf1(
 ) -> None:
     css = str(STATIC_PATH / "css" / "print.css")
     content = generate_html_for_pdf(request, "print1.html", {"amendement": amendement})
-    options = {
-        "quiet": "",
-        "footer-center": f"{lecture.dossier_legislatif} • Page [page] sur [topage]",
-    }
+    options = {"quiet": ""}
     with xvfb_if_supported():
         pdfkit.from_string(content, filename, options=options, css=css)
 

@@ -109,13 +109,11 @@
       </table>
       <div>
         {% if amendement.has_observations %}
-          <div class="reponse-presentation">
-            <h3>Objet :</h3>
-            {{ amendement.observations | paragriphy }}
-          </div>
+          <h3>Objet</h3>
+          {{ amendement.observations | paragriphy }}
         {% endif %}
         {% if amendement.has_reponse %}
-          <h3>Réponse :</h3>
+          <h3>Réponse</h3>
           {{ amendement.reponse | paragriphy }}
         {% endif %}
       </div>
@@ -126,9 +124,9 @@
 {%- macro amendement_page(amendement) -%}
   <section class="page amendement">
     {% if amendement.parent %}
-      <h2>Sous-amendement</h2>
+      <h2>Sous-amendement nº {{ amendement.num_disp }}</h2>
     {% else %}
-      <h2>Amendement</h2>
+      <h2>Amendement nº {{ amendement.num_disp }}</h2>
     {% endif %}
     <table class="cartouche">
       <tr>
@@ -173,9 +171,9 @@
       {% endif %}
     </table>
     <div>
-      <h3>Exposé :</h3>
+      <h3>Exposé</h3>
       {{ amendement.objet|safe }}
-      <h3>Corps de l’amendement :</h3>
+      <h3>Corps de l’amendement</h3>
       {{ amendement.dispositif|safe }}
     </div>
   </section>

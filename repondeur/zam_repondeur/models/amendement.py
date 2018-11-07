@@ -1,6 +1,7 @@
 import re
 from datetime import date, datetime
 from typing import (
+    Any,
     Dict,
     Iterable,
     List,
@@ -52,6 +53,13 @@ class Reponse(NamedTuple):
     avis: str
     observations: str
     content: str
+
+    def __eq__(self, other: Any) -> bool:
+        return bool(
+            self.avis == other.avis
+            and self.observations.strip() == other.observations.strip()
+            and self.content.strip() == other.content.strip()
+        )
 
 
 class Amendement(Base):
@@ -283,6 +291,26 @@ class Amendement(Base):
     def is_sous_amendement(self) -> bool:
         return self.parent_pk is not None
 
+    @property
+    def identiques(self) -> List["Amendement"]:
+        return sorted(
+            amendement
+            for amendement in self.lecture.amendements
+            if (
+                amendement.identique
+                and amendement.discussion_commune == self.discussion_commune
+                and amendement.num != self.num
+                and amendement.is_displayable
+            )
+        )
+
+    @property
+    def identiques_and_similaires(self) -> bool:
+        return all(
+            amendement.full_reponse() == self.full_reponse()
+            for amendement in self.identiques
+        )
+
     def grouped_displayable_children(
         self
     ) -> Iterable[Tuple[Reponse, List["Amendement"]]]:
@@ -327,7 +355,7 @@ class Amendement(Base):
             return False
         return self.avis == "Sagesse" or self.avis == "Satisfait donc rejet"
 
-    def grouping_key(self) -> Reponse:
+    def full_reponse(self) -> Reponse:
         if self.gouvernemental:
             return Reponse(self.num_str, "", "")
         return Reponse(self.avis or "", self.observations or "", self.reponse or "")

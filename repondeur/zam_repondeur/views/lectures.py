@@ -70,11 +70,7 @@ class LecturesAdd:
         organe = lecture.organe
         partie = lecture.partie
 
-        # FIXME: use date_depot to find the right session?
-        if lecture.chambre == Chambre.AN:
-            session = "15"
-        else:
-            session = "2017-2018"
+        session = lecture.get_session(dossier)
 
         if LectureModel.exists(chambre, session, num_texte, partie, organe):
             self.request.session.flash(

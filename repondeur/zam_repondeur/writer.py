@@ -130,7 +130,7 @@ def write_pdf1(
     content = generate_html_for_pdf(
         request,
         "print1.html",
-        {"amendement": amendement, "similaires": amendement.similaires or []},
+        {"amendement": amendement, "similaires": amendement.similaires},
     )
     options = {"quiet": ""}
     with xvfb_if_supported():

@@ -120,7 +120,7 @@ def get_possible_texte_urls(lecture: Lecture) -> List[str]:
 
 def parse_first_working_url(urls: List[str]) -> List[dict]:
     for url in urls:
-        articles: List[dict] = parse(url)
+        articles: List[dict] = parse(url, include_annexes=True)
         if len(articles) > 1:
             return articles
     raise NotFound
@@ -128,10 +128,20 @@ def parse_first_working_url(urls: List[str]) -> List[dict]:
 
 def update_lecture_articles(lecture: Lecture, all_article_data: List[dict]) -> bool:
     changed = False
-    for article_data in all_article_data:
+    for index, article_data in enumerate(all_article_data):
         if article_data["type"] in {"texte", "section"}:
             continue
-        articles = find_or_create_articles(lecture, article_data)
+        elif article_data["type"] == "annexe":
+            articles = [
+                get_one_or_create(
+                    Article,
+                    lecture=lecture,
+                    type=article_data["type"],
+                    num=str(index),  # To avoid override in case of many annexes.
+                )[0]
+            ]
+        else:
+            articles = find_or_create_articles(lecture, article_data)
         for article in articles:
             changed |= update_article_contents(article, article_data)
             changed |= set_default_article_title(
@@ -170,7 +180,10 @@ def set_default_article_title(
     If the article does not have a title, we set it to the parent section title
     """
     if not article.titre:
-        default_title = get_default_title(article_data)
+        if article.type == "annexe":
+            default_title = article_data["titre"]
+        else:
+            default_title = get_default_title(article_data)
         if default_title:
             article.titre = default_title
             return True

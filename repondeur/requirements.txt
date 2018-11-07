@@ -3,7 +3,7 @@
 -e git+https://github.com/regardscitoyens/lawfactory_utils.git@a0933b3351e38414674102bfc74632dae9627725#egg=lawfactory-utils
 -e git+https://github.com/regardscitoyens/legipy.git@4952a042704b9a1835162cd089feaa2508acf87e#egg=legipy
 -e git+https://github.com/regardscitoyens/senapy.git@90d3f8714c397ecbe7dc5ebde840c1f9d23c5943#egg=senapy
--e git+https://github.com/regardscitoyens/the-law-factory-parser.git@65b038ff6d5b8e6291389e20b9015c46283e75ef#egg=tlfp
+-e git+https://github.com/regardscitoyens/the-law-factory-parser.git@39907ffe5dedc344f93b520a35113a3328d8a4a6#egg=tlfp
 alembic==1.0.0
 attrs==17.4.0
 beautifulsoup4==4.6.3

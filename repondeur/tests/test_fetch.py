@@ -128,6 +128,46 @@ class TestGetArticlesAN:
         )
 
     @responses.activate
+    def test_annexes_are_retrieved(self, app, lecture_an, amendements_an):
+        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.models import DBSession, Article
+
+        lecture_an.num_texte = 1056
+        lecture_an.organe = "PO717460"
+        lecture_an.titre = "Première lecture – Séance publique"
+        DBSession.add(lecture_an)
+
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/projets/pl1056.asp",
+            status=404,
+        )
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/ta-commission/r1056-a0.asp",
+            body=(Path(__file__).parent / "sample_data" / "r1056-a0.html")
+            .read_text("latin-1")
+            .encode("latin-1"),
+            status=200,
+        )
+
+        assert get_articles(lecture_an)
+
+        annexe = DBSession.query(Article).filter(Article.type == "annexe").first()
+        assert annexe.num == "93"
+        assert annexe.titre == "Stratégie nationale d'orientation de l'action publique"
+        assert annexe.contenu["001"].startswith(
+            "ANNEXE Stratégie nationale d'orientation de l'action publique"
+        )
+        assert annexe.contenu["002"].startswith(
+            (
+                "La présente stratégie nationale énonce les orientations et les "
+                "objectifs de l'action publique vers une société de confiance, "
+                "d'ici à 2022."
+            )
+        )
+
+    @responses.activate
     def test_custom_article_titles_are_preserved(self, app, lecture_an, amendements_an):
         from zam_repondeur.fetch import get_articles
         from zam_repondeur.models import DBSession, Amendement

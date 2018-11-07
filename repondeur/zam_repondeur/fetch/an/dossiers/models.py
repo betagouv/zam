@@ -43,7 +43,7 @@ class Texte:
     numero: int
     titre_long: str
     titre_court: str
-    date_depot: date
+    date_depot: Optional[date]
 
 
 @dataclass

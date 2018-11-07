@@ -69,7 +69,7 @@ function makeHeadersSortable(tableHead) {
 function sortColumns(sortSpec) {
     for (colSpec of sortSpec.split('-')) {
         const colIndex = parseInt(colSpec.charAt(0), 10)
-        if (colIndex == 4 || colIndex > 6) {
+        if (colIndex == 4 || colIndex > 7) {
             continue
         }
         const order = colSpec.slice(1)
@@ -144,6 +144,14 @@ function filterByAmendement(value) {
         return line.dataset.amendement.trim() === value
     })
 }
+function filterByAffectation(value) {
+    filterColumn('hidden-affectation', line => {
+        if (!value) {
+            return true
+        }
+        return line.dataset.affectation.trim() === value
+    })
+}
 function filterByAvis(value) {
     filterColumn('hidden-avis', line => {
         if (value === '') {
@@ -184,6 +192,11 @@ function filterColumns(table) {
         filterByAvis(value)
         setURLParam('avis', value)
     })
+    table.querySelector('#affectation-filter').addEventListener('keyup', e => {
+        const value = e.target.value.trim()
+        filterByAffectation(value)
+        setURLParam('affectation', value)
+    })
 
     const articleFilter = getURLParam('article')
     if (articleFilter !== '') {
@@ -196,6 +209,12 @@ function filterColumns(table) {
         showFilters()
         document.querySelector('#amendement-filter').value = amendementFilter
         filterByAmendement(amendementFilter)
+    }
+    const affectationFilter = getURLParam('affectation')
+    if (affectationFilter !== '') {
+        showFilters()
+        document.querySelector('#affectation-filter').value = affectationFilter
+        filterByAffectation(affectationFilter)
     }
     const avisFilter = getURLParam('avis')
     if (avisFilter !== '') {

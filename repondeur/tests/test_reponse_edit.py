@@ -13,6 +13,7 @@ def test_get_reponse_edit_form(app, lecture_an, amendements_an):
         "avis",
         "observations",
         "reponse",
+        "affectation",
         "comments",
         "submit",
     ]
@@ -36,6 +37,7 @@ def test_get_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
     assert resp.forms["edit-reponse"].method == "POST"
     assert list(resp.forms["edit-reponse"].fields.keys()) == [
         "reponse",
+        "affectation",
         "comments",
         "submit",
     ]
@@ -66,6 +68,7 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
     form["avis"] = "Favorable"
     form["observations"] = "Des observations très pertinentes"
     form["reponse"] = "Une réponse <strong>très</strong> appropriée"
+    form["affectation"] = "6B"
     form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
     resp = form.submit()
 
@@ -79,6 +82,7 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
     assert amendement.avis == "Favorable"
     assert amendement.observations == "Des observations très pertinentes"
     assert amendement.reponse == "Une réponse <strong>très</strong> appropriée"
+    assert amendement.affectation == "6B"
     assert (
         amendement.comments
         == "Avec des <table><tbody><tr><td>commentaires</td></tr></tbody></table>"

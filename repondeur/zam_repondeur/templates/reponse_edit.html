@@ -241,6 +241,11 @@
         </div>
 
         <div class="form-group">
+            <label for="affectation">Affectation</label>
+            <input name="affectation" class="form-control" value="{{ amendement.affectation or '' }}">
+        </div>
+
+        <div class="form-group">
             <label for="comments">Commentaires</label>
             <textarea name="comments" class="form-control">{{ amendement.comments or "" | safe }}</textarea>
         </div>

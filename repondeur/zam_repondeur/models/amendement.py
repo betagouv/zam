@@ -12,6 +12,7 @@ from typing import (
     TYPE_CHECKING,
 )  # noqa
 
+from jinja2.filters import do_striptags
 from sqlalchemy import (
     Boolean,
     Column,
@@ -57,8 +58,10 @@ class Reponse(NamedTuple):
     def __eq__(self, other: Any) -> bool:
         return bool(
             self.avis == other.avis
-            and self.observations.strip() == other.observations.strip()
-            and self.content.strip() == other.content.strip()
+            and do_striptags(self.observations)  # type: ignore
+            == do_striptags(other.observations)  # type: ignore
+            and do_striptags(self.content)  # type: ignore
+            == do_striptags(other.content)  # type: ignore
         )
 
 

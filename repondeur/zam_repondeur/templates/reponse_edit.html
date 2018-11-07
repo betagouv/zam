@@ -4,6 +4,7 @@
 {% block header %}
     {{ super() }}
     <style type="text/css">
+        /* Two-column layout */
         main {
             display: flex;
             flex-direction: row;
@@ -30,24 +31,30 @@
           font-weight: 600;
           margin-bottom: 1.25rem;
         }
-        h4:before,
-        h4:after {
-          background-color: #9b9b9b;
-          content: "";
-          display: inline-block;
-          height: 1px;
-          position: relative;
-          vertical-align: middle;
-          width: 50%;
+            h4:before,
+            h4:after {
+              background-color: #9b9b9b;
+              content: "";
+              display: inline-block;
+              height: 1px;
+              position: relative;
+              vertical-align: middle;
+              width: 50%;
+            }
+            h4:before {
+              right: 0.5em;
+              margin-left: -50%;
+            }
+            h4:after {
+              left: 0.5em;
+              margin-right: -50%;
+            }
+
+        /* Link to article */
+        h5 a {
+            text-decoration: underline;
         }
-        h4:before {
-          right: 0.5em;
-          margin-left: -50%;
-        }
-        h4:after {
-          left: 0.5em;
-          margin-right: -50%;
-        }
+
         .button.secondary {
             border-color: #3167a6;
             color: #3167a6;
@@ -58,6 +65,7 @@
                 color: white;
                 background: #3167a6;
             }
+
         #prefill-reponse {
             margin-bottom: 2rem;
         }
@@ -68,6 +76,7 @@
             #prefill-reponse #cancel {
                 margin-right: 1.5rem;
             }
+
         #edit-reponse .save-buttons {
             position: -webkit-sticky;
             position: sticky;

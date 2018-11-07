@@ -134,6 +134,7 @@
     }
     tr.hidden-article,
     tr.hidden-amendement,
+    tr.hidden-affectation,
     tr.hidden-avis {
         display: none;
     }
@@ -298,6 +299,7 @@
                 <th class="nosort">Objet</th>
                 <th>Groupe (Auteur)</th>
                 <th class="avis">Avis</th>
+                <th class="affectation">Affectation</th>
                 <th class="nosort">⋯</th>
             </tr>
             <tr class="filters sticky d-none">
@@ -316,6 +318,9 @@
                         <option value="0">Sans</option>
                     </select>
                 </th>
+                <th>
+                    <input id="affectation-filter" class="form-control form-control-sm" type="text" autocomplete="off" autocorrect="off">
+                </th>
                 <th></th>
             </tr>
         </thead>
@@ -332,6 +337,7 @@
                     {%- endif -%}
                 "
                 data-amendement="{{ amendement.num }}"
+                data-affectation="{{ amendement.affectation }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 data-abandoned-before-seance="{{ 1 if amendement.is_abandoned_before_seance else 0 }}"
@@ -431,6 +437,14 @@
                         {% endif %}
                         </a>
                     </nobr>
+                </td>
+                <td data-sortkey="
+                    {%- if amendement.is_abandoned_before_seance -%}
+                        ZZZ {# Keep at the end. #}
+                    {%- else -%}
+                        {{ amendement.affectation }}
+                    {%- endif -%}">
+                    {{ amendement.affectation or "" }}
                 </td>
                 <td>
                     <a class="download-pdf" href="{{ request.resource_url(context[amendement.num_str], 'download_amendement') }}">

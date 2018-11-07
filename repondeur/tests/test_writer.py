@@ -123,6 +123,7 @@ def test_write_csv(
         "Position": "1",
         "Rectif": "1",
         "Réponse": "",
+        "Affectation": "",
         "Resume": "Suppression de l'article",
         "Session": "2017-2018",
         "Sort": "",
@@ -136,6 +137,75 @@ def test_write_csv(
         "6|001|01|__________|0",
         "6|001|01|__________|1",
     ]
+
+
+def test_write_csv_full(lecture_senat, article1_senat, tmpdir):
+    from zam_repondeur.writer import write_csv
+    from zam_repondeur.models import Amendement
+
+    filename = str(tmpdir.join("test.csv"))
+
+    with transaction.manager:
+        Amendement.create(
+            lecture=lecture_senat,
+            article=article1_senat,
+            alinea="",
+            num=42,
+            rectif=1,
+            auteur="M. DUPONT",
+            groupe="RDSE",
+            matricule="000000",
+            dispositif="<p>L'article 1 est supprimé.</p>",
+            objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+            resume="Suppression de l'article",
+            position=1,
+            avis="Défavorable",
+            observations="Un objet",
+            reponse="<p>La réponse</p>",
+            affectation="4C",
+            comments="<strong>Lisez-moi</strong>",
+        )
+        nb_rows = write_csv(lecture_senat, filename, request={})
+
+    with open(filename, "r", encoding="utf-8-sig", newline="\n") as f_:
+        lines = [line.rstrip("\n") for line in f_]
+
+    assert not any(line.endswith("\r") for line in lines)
+
+    headers, *rows = lines
+
+    assert len(rows) == nb_rows == 1
+
+    assert _csv_row_to_dict(headers, rows[0]) == {
+        "Alinéa": "",
+        "Auteur(s)": "M. DUPONT",
+        "Avis du Gouvernement": "Défavorable",
+        "Chambre": "senat",
+        "Commentaires": "Lisez-moi",
+        "Corps amdt": "L'article 1 est supprimé.",
+        "Date de dépôt": "",
+        "Discussion commune ?": "",
+        "Exposé amdt": "Cet article va à l'encontre du principe d'égalité.",
+        "Groupe": "RDSE",
+        "Identique ?": "",
+        "Matricule": "000000",
+        "Num_texte": "63",
+        "Num article": "Article 1",
+        "Titre article": "",
+        "Parent": "",
+        "Num amdt": "42",
+        "Objet amdt": "Un objet",
+        "Organe": "PO78718",
+        "Position": "1",
+        "Rectif": "1",
+        "Réponse": "La réponse",
+        "Affectation": "4C",
+        "Resume": "Suppression de l'article",
+        "Session": "2017-2018",
+        "Sort": "",
+        "Gouvernemental": "False",
+        "Ordre article": "6|001|01|__________|1",
+    }
 
 
 def test_write_csv_sous_amendement(
@@ -241,6 +311,7 @@ def test_write_csv_sous_amendement(
         "Avis du Gouvernement": "",
         "Objet amdt": "",
         "Réponse": "",
+        "Affectation": "",
         "Gouvernemental": "False",
         "Commentaires": "",
         "Resume": "",

@@ -115,6 +115,7 @@ class Amendement(Base):
     avis: Optional[str] = Column(Text, nullable=True)
     observations: Optional[str] = Column(Text, nullable=True)
     reponse: Optional[str] = Column(Text, nullable=True)
+    affectation: Optional[str] = Column(Text, nullable=True)
     comments: Optional[str] = Column(Text, nullable=True)
     bookmarked_at: Optional[datetime] = Column(DateTime, nullable=True)
 
@@ -143,6 +144,7 @@ class Amendement(Base):
         avis: Optional[str] = None,
         observations: Optional[str] = None,
         reponse: Optional[str] = None,
+        affectation: Optional[str] = None,
         comments: Optional[str] = None,
     ) -> "Amendement":
         now = datetime.utcnow()
@@ -167,6 +169,7 @@ class Amendement(Base):
             avis=avis,
             observations=observations,
             reponse=reponse,
+            affectation=affectation,
             comments=comments,
             created_at=now,
             modified_at=now,
@@ -379,6 +382,7 @@ class Amendement(Base):
             "observations": self.observations or "",
             "avis": self.avis or "",
             "reponse": self.reponse or "",
+            "affectation": self.affectation or "",
             "comments": self.comments or "",
             "parent": self.parent and self.parent.num_disp or "",
         }

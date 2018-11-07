@@ -11,7 +11,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.orm import joinedload
 
-from zam_repondeur.fetch.an.dossiers.models import Chambre, Dossier, Lecture
+from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
@@ -70,11 +70,7 @@ class LecturesAdd:
         organe = lecture.organe
         partie = lecture.partie
 
-        # FIXME: use date_depot to find the right session?
-        if lecture.chambre == Chambre.AN:
-            session = "15"
-        else:
-            session = "2017-2018"
+        session = lecture.get_session()
 
         if LectureModel.exists(chambre, session, num_texte, partie, organe):
             self.request.session.flash(

@@ -54,5 +54,24 @@ def mock_dossiers():
                     )
                 ],
             ),
+            "DLR5L15N36892": Dossier(
+                uid="DLR5L15N36892",
+                titre="Sécurité sociale : loi de financement 2019",
+                lectures=[
+                    Lecture(
+                        chambre=Chambre.SENAT,
+                        titre="Première lecture – Titre lecture",
+                        texte=Texte(
+                            uid="PRJLSNR5S319B0106",
+                            type_=TypeTexte.PROJET,
+                            numero=106,
+                            titre_long="projet de loi de financement de la sécurité sociale pour 2019",  # noqa
+                            titre_court="PLFSS pour 2019",
+                            date_depot=date(2018, 11, 5),
+                        ),
+                        organe="PO78718",  # séance publique
+                    )
+                ],
+            ),
         }
         yield

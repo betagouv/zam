@@ -68,6 +68,17 @@ class Lecture:
             partie = ""
         return f"{self.chambre} – {self.titre} – Texte Nº {self.texte.numero}{partie}"
 
+    def get_session(self) -> str:
+        if self.chambre == Chambre.AN:
+            return "15"  # FIXME
+        else:
+            # The session changes the first working day of October.
+            if self.texte.date_depot.month >= 10:
+                year = self.texte.date_depot.year
+            else:
+                year = self.texte.date_depot.year - 1
+            return f"{year}-{year + 1}"
+
 
 @dataclass
 class Dossier:

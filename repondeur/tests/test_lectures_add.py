@@ -34,6 +34,7 @@ def test_get_form(app):
             False,
             "Fonction publique : un Etat au service d'une société de confiance",
         ),
+        ("DLR5L15N36892", False, "Sécurité sociale : loi de financement 2019"),
     ]
 
     assert isinstance(form.fields["lecture"][0], Select)
@@ -133,6 +134,49 @@ def test_post_form(app):
 
     # We should have loaded 5 amendements
     assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 135, 192]
+
+
+def test_post_form_senat_2019(app):
+    from zam_repondeur.models import Lecture
+
+    assert not Lecture.exists(
+        chambre="senat",
+        session="2018-2019",
+        num_texte=106,
+        partie=None,
+        organe="PO78718",
+    )
+
+    # We cannot use form.submit() given the form is dynamic and does not
+    # contain choices for lectures (dynamically loaded via JS).
+    resp = app.post(
+        "/lectures/add",
+        {"dossier": "DLR5L15N36892", "lecture": "PRJLSNR5S319B0106-PO78718-"},
+    )
+
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == "http://localhost/lectures/senat.2018-2019.106.PO78718/amendements"
+    )
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "Lecture créée avec succès," in resp.text
+
+    lecture = Lecture.get(
+        chambre="senat",
+        session="2018-2019",
+        num_texte=106,
+        partie=None,
+        organe="PO78718",
+    )
+    assert lecture.chambre == "senat"
+    assert lecture.titre == "Première lecture – Titre lecture"
+    assert lecture.dossier_legislatif == "Sécurité sociale : loi de financement 2019"
+    result = "Sénat, session 2018-2019, Séance publique, Première lecture, texte nº 106"
+    assert str(lecture) == result
 
 
 def test_post_form_already_exists(app, lecture_an):

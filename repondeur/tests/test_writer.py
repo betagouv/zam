@@ -444,9 +444,9 @@ def test_generate_pdf_with_amendement_content(
         "Avis",
         "Favorable",
     ]
-    assert response_node.css_first("div h3").text() == "Objet :"
+    assert response_node.css_first("div h3").text() == "Objet"
     assert "Les observations" in response_node.css_first("div p").text()
-    assert response_node.css("div h3")[-1].text() == "Réponse :"
+    assert response_node.css("div h3")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
 
@@ -498,9 +498,9 @@ def test_generate_pdf_with_amendement_content_factor_authors_groups(
         "Avis",
         "Favorable",
     ]
-    assert response_node.css_first("div h3").text() == "Objet :"
+    assert response_node.css_first("div h3").text() == "Objet"
     assert "Les observations" in response_node.css_first("div p").text()
-    assert response_node.css("div h3")[-1].text() == "Réponse :"
+    assert response_node.css("div h3")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
 
@@ -552,9 +552,9 @@ def test_generate_pdf_with_amendement_content_factor_only_groups(
         "Avis",
         "Favorable",
     ]
-    assert response_node.css_first("div h3").text() == "Objet :"
+    assert response_node.css_first("div h3").text() == "Objet"
     assert "Les observations" in response_node.css_first("div p").text()
-    assert response_node.css("div h3")[-1].text() == "Réponse :"
+    assert response_node.css("div h3")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
 
@@ -654,9 +654,9 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         "Avis",
         "Défavorable",
     ]
-    assert response_node.css_first("div h3").text() == "Objet :"
+    assert response_node.css_first("div h3").text() == "Objet"
     assert "Les observations" in response_node.css_first("div p").text()
-    assert response_node.css("div h3")[-1].text() == "Réponse :"
+    assert response_node.css("div h3")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
 
@@ -693,7 +693,7 @@ def test_generate_pdf_with_amendement_content_gouvernemental(
         "Auteur",
         "Gouvernement",
     ]
-    assert response_node.css_first("div h3").text() == "Réponse :"
+    assert response_node.css_first("div h3").text() == "Réponse"
     assert "La présentation" in response_node.css_first("div p").text()
 
 

@@ -399,7 +399,7 @@ def test_generate_pdf_with_amendement_responses(
         "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
         "Article 1",
         "Réponse",
-        "Amendement",
+        "Amendement nº 42 rect.",
         "Article 7 bis",
     ]
 
@@ -429,7 +429,7 @@ def test_generate_pdf_with_amendement_content(
         "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
         "Article 1",
         "Réponse",
-        "Amendement",
+        "Amendement nº 6666",
     ]
     response_node = parser.css_first(".reponse")
     assert _cartouche_to_list(response_node) == [
@@ -482,8 +482,8 @@ def test_generate_pdf_with_amendement_content_factor_authors_groups(
         "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
         "Article 1",
         "Réponse",
-        "Amendement",
-        "Amendement",
+        "Amendement nº 6666",
+        "Amendement nº 9999",
     ]
     response_node = parser.css_first(".reponse")
     assert _cartouche_to_list(response_node) == [
@@ -536,8 +536,8 @@ def test_generate_pdf_with_amendement_content_factor_only_groups(
         "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
         "Article 1",
         "Réponse",
-        "Amendement",
-        "Amendement",
+        "Amendement nº 6666",
+        "Amendement nº 9999",
     ]
     response_node = parser.css_first(".reponse")
     assert _cartouche_to_list(response_node) == [
@@ -634,12 +634,12 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
         "Article 1",
         "Réponse",
-        "Amendement",
-        "Amendement",
-        "Amendement",
-        "Amendement",
-        "Amendement",
-        "Amendement",
+        "Amendement nº 6666",
+        "Amendement nº 9999",
+        "Amendement nº 42",
+        "Amendement nº 57",
+        "Amendement nº 72",
+        "Amendement nº 83",
     ]
     response_node = parser.css_first(".reponse")
     assert _cartouche_to_list(response_node) == [
@@ -682,7 +682,7 @@ def test_generate_pdf_with_amendement_content_gouvernemental(
         "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
         "Article 1",
         "Réponse",
-        "Amendement",
+        "Amendement nº 6666",
     ]
     response_node = parser.css_first(".reponse")
     assert _cartouche_to_list(response_node) == [
@@ -772,9 +772,9 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
         "Article 1",
         "Réponse",
-        "Amendement",
+        "Amendement nº 42 rect.",
         "Réponse",
-        "Sous-amendement",
+        "Sous-amendement nº 596 rect.",
         "Article 7 bis",
     ]
 
@@ -853,9 +853,9 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
     assert _html_titles_list(parser) == [
         "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
         "Réponse",
-        "Amendement",
+        "Amendement nº 57",
         "Article 1",
         "Réponse",
-        "Amendement",
+        "Amendement nº 42 rect.",
         "Article 7 bis",
     ]

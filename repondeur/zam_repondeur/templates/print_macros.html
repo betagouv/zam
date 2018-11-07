@@ -126,9 +126,9 @@
 {%- macro amendement_page(amendement) -%}
   <section class="page amendement">
     {% if amendement.parent %}
-      <h2>Sous-amendement</h2>
+      <h2>Sous-amendement nº {{ amendement.num_disp }}</h2>
     {% else %}
-      <h2>Amendement</h2>
+      <h2>Amendement nº {{ amendement.num_disp }}</h2>
     {% endif %}
     <table class="cartouche">
       <tr>

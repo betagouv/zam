@@ -199,7 +199,7 @@
 {% endblock %}
 
 {% block bottom_nav %}
-  {% if grouped_displayable_amendements | list %}
+  {% if grouped_displayable_amendements %}
     <nav class="bottom secondary">
       {% if previous_article %}
         <a class="arrow-left" href="{{ request.resource_url(context.parent, previous_article.url_key, 'reponses') }}">{{ previous_article.format() }}</a>

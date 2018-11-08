@@ -15,7 +15,9 @@ def list_reponses(context: ArticleResource, request: Request) -> Response:
         "timestamp": article.modified_at_timestamp,
         "check_url": check_url,
         "article": article,
-        "grouped_displayable_amendements": article.grouped_displayable_amendements(),
+        "grouped_displayable_amendements": list(
+            article.grouped_displayable_amendements()
+        ),
         "next_article": article.next_displayable_article,
         "previous_article": article.previous_displayable_article,
     }

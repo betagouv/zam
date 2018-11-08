@@ -36,6 +36,7 @@ def test_get_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
     assert resp.content_type == "text/html"
     assert resp.forms["edit-reponse"].method == "POST"
     assert list(resp.forms["edit-reponse"].fields.keys()) == [
+        "observations",
         "reponse",
         "affectation",
         "comments",

@@ -24,8 +24,8 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
     with patch(
         "zam_repondeur.fetch.senat.amendements._fetch_all"
     ) as mock_fetch_all, patch(
-        "zam_repondeur.fetch.senat.amendements._fetch_discussed"
-    ) as mock_fetch_discussed, patch(
+        "zam_repondeur.fetch.senat.amendements._fetch_discussion_details"
+    ) as mock_fetch_discussion_details, patch(
         "zam_repondeur.fetch.senat.amendements.fetch_and_parse_senateurs"
     ) as mock_fetch_and_parse_senateurs:
         mock_fetch_all.return_value = (
@@ -63,7 +63,7 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
                 "Objet ": "",
             },
         )
-        mock_fetch_discussed.return_value = {
+        mock_fetch_discussion_details.return_value = {
             "info_generales": {
                 "natureLoi": "Projet de loi",
                 "intituleLoi": "Financement de la sécurité sociale pour 2018",

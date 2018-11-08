@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Optional, Tuple, cast
+from typing import Dict, NamedTuple, Optional, Tuple
 from urllib.parse import urlparse
 
 from zam_repondeur.clean import clean_html
@@ -39,51 +39,30 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
     return amendement, created
 
 
-def parse_from_json(
-    uid_map: Dict[str, Amendement],
-    amend: dict,
-    position: int,
-    lecture: Lecture,
-    subdiv: dict,
-) -> Amendement:
-    subdiv_ = _parse_subdiv(subdiv["libelle_subdivision"])
-    article, created = get_one_or_create(
-        Article,
-        lecture=lecture,
-        type=subdiv_.type_,
-        num=subdiv_.num,
-        mult=subdiv_.mult,
-        pos=subdiv_.pos,
-    )
+class DiscussionDetails(NamedTuple):
+    num: int
+    position: int
+    discussion_commune: Optional[int]
+    identique: bool
+    parent_num: Optional[int]
+
+
+def parse_discussion_details(
+    uid_map: Dict[str, int], amend: dict, position: int
+) -> DiscussionDetails:
     num, rectif = Amendement.parse_num(amend["num"])
-    parent = get_parent(uid_map, amend)
-    amendement, created = get_one_or_create(
-        Amendement,
-        create_method="create",
-        create_method_kwargs={"article": article, "parent": parent},
-        lecture=lecture,
+    details = DiscussionDetails(
         num=num,
+        position=position,
+        discussion_commune=(
+            int(amend["idDiscussionCommune"])
+            if parse_bool(amend["isDiscussionCommune"])
+            else None
+        ),
+        identique=parse_bool(amend["isIdentique"]),
+        parent_num=get_parent_num(uid_map, amend),
     )
-    if not created:
-        amendement.article = article
-        amendement.parent = parent
-    amendement.rectif = rectif
-    amendement.alinea = amend["libelleAlinea"]
-    amendement.auteur = amend["auteur"]
-    amendement.matricule = (
-        extract_matricule(amend["urlAuteur"])
-        if amend["auteur"] != "LE GOUVERNEMENT"
-        else None
-    )
-    amendement.sort = amend.get("sort")
-    amendement.position = position
-    amendement.identique = parse_bool(amend["isIdentique"])
-    amendement.discussion_commune = (
-        int(amend["idDiscussionCommune"])
-        if parse_bool(amend["isDiscussionCommune"])
-        else None
-    )
-    return cast(Amendement, amendement)
+    return details
 
 
 FICHE_RE = re.compile(r"^[\w\/_]+(\d{5}[\da-z])\.html$")
@@ -106,7 +85,7 @@ def parse_bool(text: str) -> bool:
     raise ValueError
 
 
-def get_parent(uid_map: Dict[str, Amendement], amend: dict) -> Optional[Amendement]:
+def get_parent_num(uid_map: Dict[str, int], amend: dict) -> Optional[int]:
     if (
         "isSousAmendement" in amend
         and parse_bool(amend["isSousAmendement"])

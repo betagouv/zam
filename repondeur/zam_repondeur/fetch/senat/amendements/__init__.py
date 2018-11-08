@@ -2,16 +2,15 @@ import csv
 import logging
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import requests
 
-from zam_repondeur.fetch.amendements import clear_position_if_removed
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.models import Amendement, Lecture
 from zam_repondeur.fetch.senat.senateurs import fetch_and_parse_senateurs, Senateur
 
-from .parse import parse_from_csv, parse_from_json
+from .parse import DiscussionDetails, parse_from_csv, parse_discussion_details
 
 
 logger = logging.getLogger(__name__)
@@ -76,27 +75,25 @@ def _process_amendements(
     # Les amendements discutés en séance, par ordre de passage
     logger.info("Récupération des amendements soumis à la discussion sur %r", lecture)
 
-    amendements_derouleur = _fetch_and_parse_discussed(lecture=lecture, phase="seance")
-    if len(amendements_derouleur) == 0:
+    discussion_details = _fetch_and_parse_discussion_details(
+        lecture=lecture, phase="seance"
+    )
+    if len(discussion_details) == 0:
         logger.info("Aucun amendement soumis à la discussion pour l'instant!")
-
-    clear_position_if_removed(lecture, amendements_derouleur)
+    _enrich_discussion_details(amendements, discussion_details, lecture)
 
     logger.info("Récupération de la liste des sénateurs...")
     senateurs_by_matricule = fetch_and_parse_senateurs()
+    _enrich_groupe_parlementaire(amendements, senateurs_by_matricule)
 
-    amendements_avec_groupe = _enrich_groupe_parlementaire(
-        amendements, senateurs_by_matricule
-    )
-
-    return _sort(
-        _enrich(amendements_avec_groupe, amendements_derouleur), amendements_derouleur
-    )
+    return _sort(amendements)
 
 
-def _fetch_and_parse_discussed(lecture: Lecture, phase: str) -> List[Amendement]:
+def _fetch_and_parse_discussion_details(
+    lecture: Lecture, phase: str
+) -> List[DiscussionDetails]:
     try:
-        data = _fetch_discussed(lecture, phase)
+        data = _fetch_discussion_details(lecture, phase)
     except NotFound:
         return []
     subdivs_amends = [
@@ -104,16 +101,16 @@ def _fetch_and_parse_discussed(lecture: Lecture, phase: str) -> List[Amendement]
         for subdiv in data["Subdivisions"]
         for amend in subdiv["Amendements"]
     ]
-    uid_map: Dict[str, Amendement] = {}
-    amendements = []
+    uid_map: Dict[str, int] = {}
+    discussion_details = []
     for position, (subdiv, amend) in enumerate(subdivs_amends, start=1):
-        amendement = parse_from_json(uid_map, amend, position, lecture, subdiv)
-        uid_map[amend["idAmendement"]] = amendement
-        amendements.append(amendement)
-    return amendements
+        details = parse_discussion_details(uid_map, amend, position)
+        uid_map[amend["idAmendement"]] = details.num
+        discussion_details.append(details)
+    return discussion_details
 
 
-def _fetch_discussed(lecture: Lecture, phase: str) -> Any:
+def _fetch_discussion_details(lecture: Lecture, phase: str) -> Any:
     """
     Récupère les amendements à discuter, dans l'ordre de passage
 
@@ -133,7 +130,7 @@ def _fetch_discussed(lecture: Lecture, phase: str) -> Any:
 
 def _enrich_groupe_parlementaire(
     amendements: Iterable[Amendement], senateurs_by_matricule: Dict[str, Senateur]
-) -> Iterator[Amendement]:
+) -> None:
     """
     Enrichir les amendements avec le groupe parlementaire de l'auteur
     """
@@ -143,42 +140,47 @@ def _enrich_groupe_parlementaire(
             if amendement.matricule is not None
             else ""
         )
-        yield amendement
 
 
-def _enrich(
-    amendements: Iterable[Amendement], amendements_derouleur: Iterable[Amendement]
-) -> Iterator[Amendement]:
+def _enrich_discussion_details(
+    amendements: Iterable[Amendement],
+    discussion_details: Iterable[DiscussionDetails],
+    lecture: Lecture,
+) -> None:
     """
     Enrichir les amendements avec les informations du dérouleur
 
     - discussion commune ?
     - amendement identique ?
     """
-    amendements_discussion_by_num = {
-        amend.num: amend for amend in amendements_derouleur
-    }
-    return (
-        _enrich_one(amend, amendements_discussion_by_num.get(amend.num))
-        for amend in amendements
-    )
+    discussion_details_by_num = {details.num: details for details in discussion_details}
+    for amend in amendements:
+        _enrich_one(amend, discussion_details_by_num.get(amend.num))
+
+    discussed = {details.num for details in discussion_details}
+    for amendement in lecture.amendements:
+        if amendement.position is not None and amendement.num not in discussed:
+            logger.info("Amendement %s retiré de la discussion", amendement.num)
+            amendement.position = None
 
 
 def _enrich_one(
-    amend: Amendement, amend_discussion: Optional[Amendement]
-) -> Amendement:
-    if amend_discussion is None:
-        return amend
-    amend.position = amend_discussion.position
-    amend.discussion_commune = amend_discussion.discussion_commune
-    amend.identique = amend_discussion.identique
-    amend.parent = amend_discussion.parent
-    return amend
+    amend: Amendement, discussion_details: Optional[DiscussionDetails]
+) -> None:
+    if discussion_details is None:
+        return
+    amend.position = discussion_details.position
+    amend.discussion_commune = discussion_details.discussion_commune
+    amend.identique = discussion_details.identique
+    if discussion_details.parent_num is not None:
+        amend.parent = Amendement.get(
+            lecture=amend.lecture, num=discussion_details.parent_num
+        )
+    else:
+        amend.parent = None
 
 
-def _sort(
-    amendements: Iterable[Amendement], amendements_derouleur: Iterable[Amendement]
-) -> List[Amendement]:
+def _sort(amendements: Iterable[Amendement]) -> List[Amendement]:
     """
     Trier les amendements par ordre de passage, puis par numéro
     """

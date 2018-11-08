@@ -122,6 +122,13 @@ class Amendement(Base):
     __repr_keys__ = ("pk", "num", "rectif", "lecture_pk", "article_pk", "parent_pk")
 
     @classmethod
+    def get(cls, lecture: "Lecture", num: int) -> "Amendement":
+        amendement: "Amendement" = DBSession.query(cls).filter_by(
+            lecture=lecture, num=num
+        ).one()
+        return amendement
+
+    @classmethod
     def create(  # type: ignore
         cls,
         lecture,

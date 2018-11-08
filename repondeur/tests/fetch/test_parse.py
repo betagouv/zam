@@ -66,9 +66,9 @@ class TestExtractMatricule:
         assert extract_matricule(url) == "11040E"
 
 
-class TestParseAmendementFromJSON:
-    def test_parse_basic_data(self, lecture_senat):
-        from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
+class TestParseDiscussionDetails:
+    def test_parse_basic_data(self):
+        from zam_repondeur.fetch.senat.amendements.parse import parse_discussion_details
 
         amend = {
             "idAmendement": "1104289",
@@ -89,73 +89,16 @@ class TestParseAmendementFromJSON:
             "isAdopte": "false",
             "isRejete": "true",
         }
-        subdiv = {
-            "libelle_subdivision": "Article 1er - Annexe (Stratégie nationale d'orientation de l'action publique)",  # noqa
-            "isubdivision": "154182",
-            "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
-        }
-        amendement = parse_from_json(
-            {}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
-        )
+        details = parse_discussion_details({}, amend, position=1)
 
-        assert amendement.article.type == "article"
-        assert amendement.article.num == "1"
-        assert amendement.article.mult == ""
-        assert amendement.article.pos == ""
+        assert details.num == 230
+        assert details.position == 1
+        assert details.discussion_commune is None
+        assert details.identique is False
+        assert details.parent_num is None
 
-        assert amendement.alinea == "Al. 2"
-
-        assert amendement.num == 230
-        assert amendement.rectif == 1
-        assert amendement.parent is None
-
-        assert amendement.auteur == "M. PELLEVAT"
-
-        assert amendement.identique is False
-
-    def test_parse_without_sort(self, lecture_senat):
-        """
-        Happens with `Economie : lutte contre la fraude
-                      -> Sénat, session 2017-2018, texte nº 603.`
-        """
-        from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
-
-        amend = {
-            "idAmendement": "1104289",
-            "posder": "1",
-            "subpos": "0",
-            "isSousAmendement": "false",
-            "idAmendementPere": "0",
-            "urlAmdt": "Amdt_230.html",
-            "typeAmdt": "Amt",
-            "num": "230 rect.",
-            "libelleAlinea": "Al. 2",
-            "urlAuteur": "pellevat_cyril14237s.html",
-            "auteur": "M. PELLEVAT",
-            "isDiscussionCommune": "false",
-            "isDiscussionCommuneIsolee": "false",
-            "isIdentique": "false",
-            "isAdopte": "false",
-            "isRejete": "true",
-        }
-        subdiv = {
-            "libelle_subdivision": "Article 1er - Annexe (Stratégie nationale d'orientation de l'action publique)",  # noqa
-            "isubdivision": "154182",
-            "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
-        }
-        amendement = parse_from_json(
-            {}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
-        )
-
-        assert amendement.article.type == "article"
-        assert amendement.article.num == "1"
-        assert amendement.article.mult == ""
-        assert amendement.article.pos == ""
-
-        assert amendement.sort is None
-
-    def test_discussion_commune(self, lecture_senat):
-        from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
+    def test_discussion_commune(self):
+        from zam_repondeur.fetch.senat.amendements.parse import parse_discussion_details
 
         amend = {
             "idAmendement": "1110174",
@@ -177,19 +120,12 @@ class TestParseAmendementFromJSON:
             "isAdopte": "false",
             "isRejete": "true",
         }
-        subdiv = {
-            "libelle_subdivision": "Article 1er - Annexe (Stratégie nationale d'orientation de l'action publique)",  # noqa
-            "id_subdivision": "154182",
-            "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
-        }
-        amendement = parse_from_json(
-            {}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
-        )
+        details = parse_discussion_details({}, amend, position=1)
 
-        assert amendement.discussion_commune == 110541
+        assert details.discussion_commune == 110541
 
-    def test_not_discussion_commune(self, lecture_senat):
-        from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
+    def test_not_discussion_commune(self):
+        from zam_repondeur.fetch.senat.amendements.parse import parse_discussion_details
 
         amend = {
             "idAmendement": "1103376",
@@ -211,17 +147,12 @@ class TestParseAmendementFromJSON:
             "isRejete": "false",
         }
 
-        subdiv = {"libelle_subdivision": "Article 3"}
+        details = parse_discussion_details({}, amend, position=1)
 
-        amendement = parse_from_json(
-            {}, amend, position=1, lecture=lecture_senat, subdiv=subdiv
-        )
+        assert details.discussion_commune is None
 
-        assert amendement.discussion_commune is None
-        assert amendement.sort == "Adopté"
-
-    def test_parse_sous_amendement(self, lecture_senat):
-        from zam_repondeur.fetch.senat.amendements.parse import parse_from_json
+    def test_parse_sous_amendement(self):
+        from zam_repondeur.fetch.senat.amendements.parse import parse_discussion_details
 
         amend1 = {
             "idAmendement": "1104289",
@@ -262,23 +193,10 @@ class TestParseAmendementFromJSON:
             "isAdopte": "false",
             "isRejete": "true",
         }
-        subdiv = {
-            "libelle_subdivision": "Article 1er",
-            "isubdivision": "154182",
-            "signet": "../../textes/2017-2018/330.html#AMELI_SUB_4__Article_1",
-        }
-        amendement1 = parse_from_json(
-            {}, amend1, position=1, lecture=lecture_senat, subdiv=subdiv
-        )
-        amendement2 = parse_from_json(
-            {"1104289": amendement1},
-            amend2,
-            position=2,
-            lecture=lecture_senat,
-            subdiv=subdiv,
+        details1 = parse_discussion_details({}, amend1, position=1)
+        details2 = parse_discussion_details(
+            {"1104289": details1.num}, amend2, position=2
         )
 
-        assert amendement2.num == 131
-        assert amendement2.rectif == 1
-        assert amendement2.parent.num == 230
-        assert amendement2.parent.rectif == 1
+        assert details2.num == 131
+        assert details2.parent_num == 230

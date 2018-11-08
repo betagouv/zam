@@ -48,8 +48,18 @@ def test_aspire_senat(app, lecture_senat):
 
     amendements, created = aspire_senat(lecture_senat)
 
+    # All amendements are fetched
     assert len(amendements) == 595
-    assert amendements[0].parent is None
+
+    # Check details of #1
+    amendement = [amendement for amendement in amendements if amendement.num == 1][0]
+    assert amendement.num == 1
+    assert amendement.rectif == 1
+    assert amendement.article.num == "7"
+    assert amendement.article.pos == "après"
+    assert amendement.parent is None
+
+    # Check that #596 has a parent
     sous_amendement = [
         amendement for amendement in amendements if amendement.num == 596
     ][0]
@@ -155,8 +165,8 @@ def test_fetch_all_not_found(lecture_senat):
 
 
 @responses.activate
-def test_fetch_discussed(lecture_senat):
-    from zam_repondeur.fetch.senat.amendements import _fetch_discussed
+def test_fetch_discussion_details(lecture_senat):
+    from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -173,14 +183,14 @@ def test_fetch_discussed(lecture_senat):
         status=200,
     )
 
-    data = _fetch_discussed(lecture_senat, "commission")
+    data = _fetch_discussion_details(lecture_senat, "commission")
 
     assert data == json_data
 
 
 @responses.activate
-def test_fetch_discussed_not_found(lecture_senat):
-    from zam_repondeur.fetch.senat.amendements import _fetch_discussed, NotFound
+def test_fetch_discussion_details_not_found(lecture_senat):
+    from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details, NotFound
 
     responses.add(
         responses.GET,
@@ -189,18 +199,22 @@ def test_fetch_discussed_not_found(lecture_senat):
     )
 
     with pytest.raises(NotFound):
-        _fetch_discussed(lecture_senat, "commission")
+        _fetch_discussion_details(lecture_senat, "commission")
 
 
-def test_fetch_and_parse_discussed_not_found(lecture_senat):
-    from zam_repondeur.fetch.senat.amendements import (
-        _fetch_and_parse_discussed,
+def testfetch_and_parse_discussion_details_not_found(lecture_senat):
+    from zam_repondeur.fetch.senat.derouleur import (
+        fetch_and_parse_discussion_details,
         NotFound,
     )
 
-    with patch("zam_repondeur.fetch.senat.amendements._fetch_discussed") as m_fetch:
+    with patch(
+        "zam_repondeur.fetch.senat.derouleur._fetch_discussion_details"
+    ) as m_fetch:
         m_fetch.side_effect = NotFound
 
-        amendements = _fetch_and_parse_discussed(lecture_senat, phase="commission")
+        amendements = fetch_and_parse_discussion_details(
+            lecture_senat, phase="commission"
+        )
 
     assert amendements == []

@@ -417,10 +417,26 @@ def test_reponses_with_different_articles(
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
 
     assert resp.parser.css(".titles h2")[0].text() == "Article 1"
+    assert len(resp.parser.css("nav.secondary")) == 2
+    assert (
+        resp.parser.css_first("nav.secondary .arrow-right").text().strip()
+        == "Article 7 bis"
+    )
+    assert (
+        resp.parser.css_first("nav.secondary.bottom .arrow-right").text().strip()
+        == "Article 7 bis"
+    )
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.7.bis./reponses")
 
     assert resp.parser.css(".titles h2")[0].text() == "Article 7 bis"
+    assert (
+        resp.parser.css_first("nav.secondary .arrow-left").text().strip() == "Article 1"
+    )
+    assert (
+        resp.parser.css_first("nav.secondary.bottom .arrow-left").text().strip()
+        == "Article 1"
+    )
 
 
 def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe_an):

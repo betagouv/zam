@@ -24,7 +24,7 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
     with patch(
         "zam_repondeur.fetch.senat.amendements._fetch_all"
     ) as mock_fetch_all, patch(
-        "zam_repondeur.fetch.senat.amendements._fetch_discussion_details"
+        "zam_repondeur.fetch.senat.derouleur._fetch_discussion_details"
     ) as mock_fetch_discussion_details, patch(
         "zam_repondeur.fetch.senat.amendements.fetch_and_parse_senateurs"
     ) as mock_fetch_and_parse_senateurs:

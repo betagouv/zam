@@ -1,16 +1,21 @@
 import csv
 import logging
+import re
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from urllib.parse import urlparse
+from typing import Dict, Iterable, List, Optional, Tuple
 
 import requests
 
+from zam_repondeur.clean import clean_html
+from zam_repondeur.fetch.dates import parse_date
+from zam_repondeur.fetch.division import _parse_subdiv
 from zam_repondeur.fetch.exceptions import NotFound
-from zam_repondeur.models import Amendement, Lecture
 from zam_repondeur.fetch.senat.senateurs import fetch_and_parse_senateurs, Senateur
+from zam_repondeur.models import Article, Amendement, Lecture, get_one_or_create
 
-from .parse import DiscussionDetails, parse_from_csv, parse_discussion_details
+from .derouleur import DiscussionDetails, fetch_and_parse_discussion_details
 
 
 logger = logging.getLogger(__name__)
@@ -68,6 +73,49 @@ def _fetch_all(lecture: Lecture) -> List[OrderedDict]:
     return items
 
 
+def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
+    subdiv = _parse_subdiv(row["Subdivision "])
+    article, created = get_one_or_create(
+        Article,
+        lecture=lecture,
+        type=subdiv.type_,
+        num=subdiv.num,
+        mult=subdiv.mult,
+        pos=subdiv.pos,
+    )
+    num, rectif = Amendement.parse_num(row["Numéro "])
+    amendement, created = get_one_or_create(
+        Amendement,
+        create_method="create",
+        create_method_kwargs={"article": article},
+        lecture=lecture,
+        num=num,
+    )
+    if not created:
+        amendement.article = article
+    amendement.rectif = rectif
+    amendement.alinea = row["Alinéa"].strip()
+    amendement.auteur = row["Auteur "]
+    amendement.matricule = extract_matricule(row["Fiche Sénateur"])
+    amendement.date_depot = parse_date(row["Date de dépôt "])
+    amendement.sort = row["Sort "]
+    amendement.dispositif = clean_html(row["Dispositif "])
+    amendement.objet = clean_html(row["Objet "])
+    return amendement, created
+
+
+FICHE_RE = re.compile(r"^[\w\/_]+(\d{5}[\da-z])\.html$")
+
+
+def extract_matricule(url: str) -> Optional[str]:
+    if url == "":
+        return None
+    mo = FICHE_RE.match(urlparse(url).path)
+    if mo is not None:
+        return mo.group(1).upper()
+    raise ValueError(f"Could not extract matricule from '{url}'")
+
+
 def _process_amendements(
     amendements: Iterable[Amendement], lecture: Lecture
 ) -> Iterable[Amendement]:
@@ -75,7 +123,7 @@ def _process_amendements(
     # Les amendements discutés en séance, par ordre de passage
     logger.info("Récupération des amendements soumis à la discussion sur %r", lecture)
 
-    discussion_details = _fetch_and_parse_discussion_details(
+    discussion_details = fetch_and_parse_discussion_details(
         lecture=lecture, phase="seance"
     )
     if len(discussion_details) == 0:
@@ -87,45 +135,6 @@ def _process_amendements(
     _enrich_groupe_parlementaire(amendements, senateurs_by_matricule)
 
     return _sort(amendements)
-
-
-def _fetch_and_parse_discussion_details(
-    lecture: Lecture, phase: str
-) -> List[DiscussionDetails]:
-    try:
-        data = _fetch_discussion_details(lecture, phase)
-    except NotFound:
-        return []
-    subdivs_amends = [
-        (subdiv, amend)
-        for subdiv in data["Subdivisions"]
-        for amend in subdiv["Amendements"]
-    ]
-    uid_map: Dict[str, int] = {}
-    discussion_details = []
-    for position, (subdiv, amend) in enumerate(subdivs_amends, start=1):
-        details = parse_discussion_details(uid_map, amend, position)
-        uid_map[amend["idAmendement"]] = details.num
-        discussion_details.append(details)
-    return discussion_details
-
-
-def _fetch_discussion_details(lecture: Lecture, phase: str) -> Any:
-    """
-    Récupère les amendements à discuter, dans l'ordre de passage
-
-    NB : les amendements jugés irrecevables ne sont pas inclus.
-    """
-    assert phase in ("commission", "seance")
-
-    url = f"{BASE_URL}/en{phase}/{lecture.session}/{lecture.num_texte}/liste_discussion.json"  # noqa
-
-    resp = requests.get(url)
-    if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
-        raise NotFound(url)
-
-    data = resp.json()
-    return data
 
 
 def _enrich_groupe_parlementaire(

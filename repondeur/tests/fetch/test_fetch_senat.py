@@ -166,7 +166,7 @@ def test_fetch_all_not_found(lecture_senat):
 
 @responses.activate
 def test_fetch_discussion_details(lecture_senat):
-    from zam_repondeur.fetch.senat.amendements import _fetch_discussion_details
+    from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -190,10 +190,7 @@ def test_fetch_discussion_details(lecture_senat):
 
 @responses.activate
 def test_fetch_discussion_details_not_found(lecture_senat):
-    from zam_repondeur.fetch.senat.amendements import (
-        _fetch_discussion_details,
-        NotFound,
-    )
+    from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details, NotFound
 
     responses.add(
         responses.GET,
@@ -205,18 +202,18 @@ def test_fetch_discussion_details_not_found(lecture_senat):
         _fetch_discussion_details(lecture_senat, "commission")
 
 
-def test_fetch_and_parse_discussion_details_not_found(lecture_senat):
-    from zam_repondeur.fetch.senat.amendements import (
-        _fetch_and_parse_discussion_details,
+def testfetch_and_parse_discussion_details_not_found(lecture_senat):
+    from zam_repondeur.fetch.senat.derouleur import (
+        fetch_and_parse_discussion_details,
         NotFound,
     )
 
     with patch(
-        "zam_repondeur.fetch.senat.amendements._fetch_discussion_details"
+        "zam_repondeur.fetch.senat.derouleur._fetch_discussion_details"
     ) as m_fetch:
         m_fetch.side_effect = NotFound
 
-        amendements = _fetch_and_parse_discussion_details(
+        amendements = fetch_and_parse_discussion_details(
             lecture_senat, phase="commission"
         )
 

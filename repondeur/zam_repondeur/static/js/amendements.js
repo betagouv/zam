@@ -149,7 +149,7 @@ function filterByAffectation(value) {
         if (!value) {
             return true
         }
-        return line.dataset.affectation.trim() === value
+        return line.dataset.affectation.toLowerCase().includes(value.toLowerCase())
     })
 }
 function filterByAvis(value) {

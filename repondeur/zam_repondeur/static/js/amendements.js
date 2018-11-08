@@ -127,6 +127,22 @@ function sortColumnsFromQueryString() {
         sortColumns(sortSpec)
     }
 }
+function allowUnsort(tableHead) {
+    document.querySelector('#unsort').addEventListener('click', e => {
+        e.preventDefault()
+        Array.from(tableHead.querySelectorAll('th[data-order]')).forEach(th => {
+            th.removeAttribute('data-order')
+        })
+        setURLParam('sort', '')
+        const options = {
+            sortFunction: (a, b) => {
+                return Number(a.elm.dataset.order) > Number(b.elm.dataset.order)
+            },
+            order: 'asc'
+        }
+        tinysort(document.querySelectorAll('tbody tr'), options)
+    })
+}
 
 function filterByArticle(value) {
     filterColumn('hidden-article', line => {
@@ -149,7 +165,9 @@ function filterByAffectation(value) {
         if (!value) {
             return true
         }
-        return line.dataset.affectation.toLowerCase().includes(value.toLowerCase())
+        return line.dataset.affectation
+            .toLowerCase()
+            .includes(value.toLowerCase())
     })
 }
 function filterByAvis(value) {

@@ -222,12 +222,12 @@
                 {% endfor %}
             </select>
         </div>
+        {% endif %}
 
         <div class="form-group">
             <label for="observations">Objet de l’amendement</label>
             <textarea name="observations" class="form-control">{{ amendement.observations or "" | safe }}</textarea>
         </div>
-        {% endif %}
 
         <div class="form-group">
             <label for="reponse">

@@ -45,16 +45,16 @@ class Article(Base):
     __tablename__ = "articles"
     __table_args__ = (UniqueConstraint("lecture_pk", "type", "num", "mult", "pos"),)
 
-    pk = Column(Integer, primary_key=True)
-    lecture_pk = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
-    lecture = relationship(Lecture, back_populates="articles")
-    type = Column(Text, nullable=True)  # type: Optional[str]
-    num = Column(Text, nullable=True)  # type: Optional[str]
-    mult = Column(Text, nullable=True)  # type: Optional[str]
-    pos = Column(Text, nullable=True)  # type: Optional[str]
-    titre = Column(Text, nullable=True)
-    contenu = Column(PickleType, nullable=True)
-    jaune = Column(Text, nullable=True)  # Présentation de l’article.
+    pk: int = Column(Integer, primary_key=True)
+    lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
+    lecture: Lecture = relationship(Lecture, back_populates="articles")
+    type: str = Column(Text, nullable=False, default="")
+    num: str = Column(Text, nullable=False, default="")
+    mult: str = Column(Text, nullable=False, default="")
+    pos: str = Column(Text, nullable=False, default="")
+    titre: Optional[str] = Column(Text, nullable=True)
+    contenu: Optional[dict] = Column(PickleType, nullable=True)
+    jaune: Optional[str] = Column(Text, nullable=True)  # Présentation de l’article.
 
     amendements = relationship(
         Amendement,

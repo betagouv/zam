@@ -59,6 +59,22 @@ def test_slug(lecture_an, type_, pos, num, mult, output):
 @pytest.mark.parametrize(
     "type_,pos,num,mult,output",
     [
+        ("article", "", "0", "", "article.0.."),
+        ("article", "", "1", "", "article.1.."),
+        ("article", "", "1", "bis", "article.1.bis."),
+        ("annexe", "", "104", "", "annexe.104.."),
+    ],
+)
+def test_url_key(lecture_an, type_, pos, num, mult, output):
+    article = Article.create(
+        lecture=lecture_an, type=type_, num=num, mult=mult, pos=pos
+    )
+    assert article.url_key == output
+
+
+@pytest.mark.parametrize(
+    "type_,pos,num,mult,output",
+    [
         ("article", "", "0", "", "Article liminaire"),
         ("article", "", "1", "", "Article 1"),
         ("annexe", "", "1", "", "Annexe 1"),

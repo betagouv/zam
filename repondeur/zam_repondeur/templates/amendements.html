@@ -194,6 +194,16 @@
     nav.secondary div {
         font-weight: normal;
     }
+    nav.options {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        margin-bottom: 1rem;
+    }
+        nav.options #unsort {
+            text-decoration: underline;
+            margin-left: 1rem;
+        }
 </style>
 {% endblock %}
 
@@ -225,13 +235,16 @@
 
 {% block body %}
 <div class="content">
-    <nav style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-        <a id="toggle-advanced" class="toggle with-arrow button" href="#">
-            Options avancées
-        </a>
-        <a id="toggle-filter" class="toggle button" href="#">
-            Filtrer
-        </a>
+    <nav class="options">
+        <a href="#" id="unsort">Annuler le tri</a>
+        <span>
+            <a id="toggle-advanced" class="toggle with-arrow button" href="#">
+                Options avancées
+            </a>
+            <a id="toggle-filter" class="toggle button" href="#">
+                Filtrer
+            </a>
+        </span>
     </nav>
 
     <section id="advanced" class="d-none">
@@ -336,6 +349,7 @@
                         {{ amendement.article.type }}
                     {%- endif -%}
                 "
+                data-order="{{ loop.index }}"
                 data-amendement="{{ amendement.num }}"
                 data-affectation="{{ amendement.affectation }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}"
@@ -498,6 +512,7 @@
     setupToggle('#toggle-articles', '#articles', true)
     makeHeadersSortable(document.querySelector('thead'))
     sortColumnsFromQueryString()
+    allowUnsort(document.querySelector('thead'))
     filterColumns(document.querySelector('table'))
     hijackEditLinks()
     takeControlOverNativeJump()

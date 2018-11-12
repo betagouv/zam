@@ -289,7 +289,8 @@ def test_reponses_gouvernemental(app, lecture_an, amendements_an):
 
 
 @pytest.mark.parametrize(
-    "sort", ["retiré", "irrecevable", "tombé", "retiré avant séance"]
+    "sort",
+    ["retiré", "irrecevable", "Irrecevable art. 40 C", "tombé", "retiré avant séance"],
 )
 def test_reponses_abandoned_not_displayed(app, lecture_an, amendements_an, sort):
     from zam_repondeur.models import DBSession
@@ -314,7 +315,8 @@ def test_reponses_abandoned_not_displayed(app, lecture_an, amendements_an, sort)
 
 
 @pytest.mark.parametrize(
-    "sort", ["retiré", "irrecevable", "tombé", "retiré avant séance"]
+    "sort",
+    ["retiré", "irrecevable", "Irrecevable art. 40 C", "tombé", "retiré avant séance"],
 )
 def test_reponses_abandoned_and_gouvernemental_not_displayed(
     app, lecture_an, amendements_an, sort

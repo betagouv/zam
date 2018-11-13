@@ -67,10 +67,18 @@ def _fetch_all(lecture: Lecture) -> List[OrderedDict]:
         raise NotFound(url)
 
     text = resp.content.decode("cp1252")
-    lines = text.splitlines()[1:]
+    lines = [_filter_line(line) for line in text.splitlines()[1:]]
     reader = csv.DictReader(lines, delimiter="\t")
     items = list(reader)
     return items
+
+
+def _filter_line(line: str) -> str:
+    """
+    Fix buggy TSVs with unescaped tabs around a <link> tag in an HTML cell
+    """
+    filtered_line, count = re.subn(r"\t?(<link .*?>)\t?", r" \1 ", line)
+    return filtered_line
 
 
 def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:

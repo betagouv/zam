@@ -81,7 +81,7 @@ class Senat(RemoteSource):
             amendement,
             article=article,
             alinea=row["Alinéa"].strip(),
-            auteur=row["Auteur "],
+            auteur=extract_auteur(row),
             matricule=extract_matricule(row["Fiche Sénateur"]),
             date_depot=parse_date(row["Date de dépôt "]),
         )
@@ -201,6 +201,14 @@ def _filter_line(line: str) -> str:
     """
     filtered_line, count = re.subn(r"\t?(<link .*?>)\t?", r" \1 ", line)
     return filtered_line
+
+
+def extract_auteur(row: dict) -> str:
+    auteur: str = row["Auteur "]
+    au_nom_de = row.get("Au nom de ", "")
+    if au_nom_de.startswith("commission"):
+        auteur += f", au nom de la {au_nom_de}"
+    return auteur
 
 
 FICHE_RE = re.compile(r"^[\w\/_]+(\d{5}[\da-z])\.html$")

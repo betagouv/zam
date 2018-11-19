@@ -142,6 +142,31 @@
         background-color: #d9d9d9;
     }
 
+    td.identique {
+        position: relative;
+    }
+    td.identique:after {
+        content: "";
+        background-color: lightblue;
+        position: absolute;
+        width: 6px;
+        top: 0;
+        right: 0;
+        height: calc(100% + 1px);  /* extra pixel to cover tr bottom border */
+    }
+    td.identique.first:after {
+        bottom: -1px;  /* move down 1 pixel to cover tr bottom border */
+        top: inherit;
+        height: calc(100% - 4px);
+    }
+    td.identique.last:after {
+        height: calc(100% - 5px);
+    }
+    td.identique.first.last:after {
+        top: 5px;
+        height: calc(100% - 10px);
+    }
+
     /* Links in table */
     td a, td a:hover {
         white-space: nowrap;
@@ -373,14 +398,25 @@
                         {{ amendement.VERY_BIG_NUMBER }} {# Keep at the end. #}
                     {%- else -%}
                         {{ amendement.num }}
-                    {%- endif -%}">
+                    {%- endif -%}"
+                    {%- if amendement.identique %}
+                    class="identique
+                        {% if loop.previtem is not defined or loop.previtem not in amendement.all_identiques %}
+                            first
+                        {% endif %}
+                        {% if loop.nextitem is not defined or loop.nextitem not in amendement.all_identiques %}
+                            last
+                        {% endif %}
+                    "
+                    {% endif -%}
+                >
                         {{ amendement.num_disp }}
                         {% if amendement.parent %}
                             (ss-amdt au {{ amendement.parent.num_disp }})
                         {% endif %}
                         {% if amendement.identique %}
-                            {% set identiques = amendement.identiques %}
-                            {% if not amendement.identiques_are_similaires and identiques %}
+                            {% set identiques = amendement.displayable_identiques %}
+                            {% if not amendement.displayable_identiques_are_similaires and identiques %}
                                 <span title="{% if identiques|length > 1 -%}
                                     Les amendements identiques {% for amdt in identiques -%}
                                     {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}

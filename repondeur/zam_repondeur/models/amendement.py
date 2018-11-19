@@ -311,7 +311,9 @@ class Amendement(Base):
         return self.parent_pk is not None
 
     @property
-    def identiques(self) -> List["Amendement"]:
+    def all_identiques(self) -> List["Amendement"]:
+        if self.identique is None:
+            return []
         return sorted(
             amendement
             for amendement in self.article.amendements
@@ -319,9 +321,16 @@ class Amendement(Base):
                 amendement.identique
                 and amendement.discussion_commune == self.discussion_commune
                 and amendement.num != self.num
-                and amendement.is_displayable
             )
         )
+
+    @property
+    def displayable_identiques(self) -> List["Amendement"]:
+        return [
+            amendement
+            for amendement in self.all_identiques
+            if amendement.is_displayable
+        ]
 
     @property
     def similaires(self) -> List["Amendement"]:
@@ -336,8 +345,8 @@ class Amendement(Base):
         )
 
     @property
-    def identiques_are_similaires(self) -> bool:
-        return self.identiques == self.similaires
+    def displayable_identiques_are_similaires(self) -> bool:
+        return self.displayable_identiques == self.similaires
 
     def grouped_displayable_children(
         self

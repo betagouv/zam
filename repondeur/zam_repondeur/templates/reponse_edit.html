@@ -110,7 +110,7 @@
             {% endif %}
         </div>
         {% if amendement.identique %}
-            {% set identiques = amendement.identiques %}
+            {% set identiques = amendement.all_identiques %}
             {% set identiques_length = identiques|length %}
             <p>
                 <em>

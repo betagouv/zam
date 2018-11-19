@@ -95,6 +95,7 @@ function sortColumn(tableHeader, colIndex, order) {
         order: order
     }
     tinysort(document.querySelectorAll('tbody tr'), options)
+    document.querySelector('table').classList.add('sorted')
 }
 function extractItems(elem, selector) {
     const value = elem.querySelector(selector).dataset.sortkey
@@ -141,6 +142,7 @@ function allowUnsort(tableHead) {
             order: 'asc'
         }
         tinysort(document.querySelectorAll('tbody tr'), options)
+        document.querySelector('table').classList.remove('sorted')
     })
 }
 

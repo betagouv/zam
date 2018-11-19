@@ -158,13 +158,22 @@
         bottom: -1px;  /* move down 1 pixel to cover tr bottom border */
         top: inherit;
         height: calc(100% - 4px);
+        border-radius: 6px 6px 0 0;
     }
     td.identique.last:after {
         height: calc(100% - 5px);
+        border-radius: 0 0 6px 6px;
     }
     td.identique.first.last:after {
         top: 5px;
         height: calc(100% - 10px);
+        border-radius: 6px;
+    }
+    table.sorted td.identique:after,
+    table.sorted td.identique.first.last:after {
+        top: calc(50% - 3px);
+        height: 6px;
+        border-radius: 6px;
     }
 
     /* Links in table */

@@ -5,7 +5,16 @@ import transaction
 
 from fixtures.dossiers import mock_dossiers  # noqa: F401
 from fixtures.organes_acteurs import mock_organes_acteurs  # noqa: F401
+from selenium import webdriver
 from testapp import TestApp
+from webtest.http import StopableWSGIServer
+
+
+@pytest.fixture(scope="session")
+def browser():
+    browser = webdriver.Firefox()
+    yield browser
+    browser.quit()
 
 
 @pytest.fixture(scope="session")
@@ -30,6 +39,13 @@ def wsgi_app(settings, mock_dossiers, mock_organes_acteurs):
     from zam_repondeur import make_app
 
     return make_app(None, **settings)
+
+
+@pytest.fixture(scope="session")
+def wsgi_server(wsgi_app):
+    server = StopableWSGIServer.create(wsgi_app, port="8080")
+    yield server
+    server.shutdown()
 
 
 @pytest.yield_fixture(scope="session", autouse=True)

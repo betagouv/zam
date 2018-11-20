@@ -61,13 +61,32 @@ class TestFetchAndParseAll:
         amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
 
         assert len(amendements) == 5
-        assert amendements[0].num == 177
-        assert amendements[1].num == 270
-        assert amendements[2].num == 723
-        assert amendements[3].num == 135
-        assert amendements[4].num == 192
 
-        assert [amdt.position for amdt in amendements] == list(range(1, 6))
+        assert amendements[0].num == 177
+        assert amendements[0].position == 1
+        assert amendements[0].id_discussion_commune is None
+        assert amendements[0].id_identique == 20386
+
+        assert amendements[1].num == 270
+        assert amendements[1].position == 2
+        assert amendements[1].id_discussion_commune is None
+        assert amendements[1].id_identique == 20386
+
+        assert amendements[2].num == 723
+        assert amendements[2].position == 3
+        assert amendements[2].id_discussion_commune is None
+        assert amendements[2].id_identique is None
+
+        assert amendements[3].num == 135
+        assert amendements[3].position == 4
+        assert amendements[3].id_discussion_commune is None
+        assert amendements[3].id_identique is None
+
+        assert amendements[4].num == 192
+        assert amendements[4].position == 5
+        assert amendements[4].id_discussion_commune is None
+        assert amendements[4].id_identique == 20439
+
         assert created == 5
         assert errored == []
 
@@ -114,16 +133,28 @@ class TestFetchAndParseAll:
         amendements, created, errored = fetch_and_parse_all(lecture=lecture)
 
         assert len(amendements) == 3
-        assert amendements[0].num == 347
-        assert amendements[1].num == 2482
-        assert amendements[2].num == 2512
 
-        assert created == 3
-        assert errored == []
+        assert amendements[0].num == 347
+        assert amendements[0].position == 1
+        assert amendements[0].id_discussion_commune == 3448
+        assert amendements[0].id_identique == 8496
+
+        assert amendements[1].num == 2482
+        assert amendements[1].position == 2
+        assert amendements[1].id_discussion_commune is None
+        assert amendements[1].id_identique is None
+
+        assert amendements[2].num == 2512
+        assert amendements[2].position == 3
+        assert amendements[2].id_discussion_commune is None
+        assert amendements[1].id_identique is None
 
         for amendement in amendements[1:]:
             assert amendement.parent is amendements[0]
             assert amendement.parent_pk == amendements[0].pk
+
+        assert created == 3
+        assert errored == []
 
     @responses.activate
     def test_with_404(self, lecture_an, app):

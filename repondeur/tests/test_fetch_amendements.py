@@ -189,9 +189,9 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
         "zam_repondeur.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         mock_fetch_amendements.return_value = [
-            {"@numero": "666"},
-            {"@numero": "777"},
-            {"@numero": "999"},
+            {"@numero": "666", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "777", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "999", "@discussionCommune": "", "@discussionIdentique": ""},
         ]
 
         def dynamic_return_value(lecture, numero):
@@ -259,9 +259,9 @@ def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendement
         "zam_repondeur.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         mock_fetch_amendements.return_value = [
-            {"@numero": "666"},
-            {"@numero": "777"},
-            {"@numero": "999"},
+            {"@numero": "666", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "777", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "999", "@discussionCommune": "", "@discussionIdentique": ""},
         ]
         mock_retrieve_amendement.side_effect = NotFound
 

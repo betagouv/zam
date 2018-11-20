@@ -26,7 +26,7 @@ FIELDS_NAMES = {
     "num": "Num amdt",
     "auteur": "Auteur(s)",
     "date_depot": "Date de dépôt",
-    "discussion_commune": "Discussion commune ?",
+    "id_discussion_commune": "Discussion commune ?",
     "identique": "Identique ?",
     "parent": "Parent",
     "dispositif": "Corps amdt",

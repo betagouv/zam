@@ -85,7 +85,7 @@ class Amendement(Base):
 
     # Ordre et regroupement lors de la discussion.
     position: Optional[int] = Column(Integer, nullable=True)
-    discussion_commune: Optional[int] = Column(Integer, nullable=True)
+    id_discussion_commune: Optional[int] = Column(Integer, nullable=True)
     identique: Optional[bool] = Column(Boolean, nullable=True)
 
     # Contenu.
@@ -141,7 +141,7 @@ class Amendement(Base):
         date_depot: Optional[date] = None,
         sort: Optional[str] = None,
         position: Optional[int] = None,
-        discussion_commune: Optional[int] = None,
+        id_discussion_commune: Optional[int] = None,
         identique: Optional[bool] = None,
         dispositif: Optional[str] = None,
         objet: Optional[str] = None,
@@ -166,7 +166,7 @@ class Amendement(Base):
             date_depot=date_depot,
             sort=sort,
             position=position,
-            discussion_commune=discussion_commune,
+            id_discussion_commune=id_discussion_commune,
             identique=identique,
             dispositif=dispositif,
             objet=objet,
@@ -319,7 +319,7 @@ class Amendement(Base):
             for amendement in self.article.amendements
             if (
                 amendement.identique
-                and amendement.discussion_commune == self.discussion_commune
+                and amendement.id_discussion_commune == self.id_discussion_commune
                 and amendement.num != self.num
             )
         )
@@ -426,7 +426,7 @@ class Amendement(Base):
             result["article_titre"] = self.article.titre or ""
             result["article_order"] = self.article.sort_key_as_str
             result["position"] = self.position or ""
-            result["discussion_commune"] = self.discussion_commune or ""
+            result["id_discussion_commune"] = self.id_discussion_commune or ""
             result["identique"] = self.identique or ""
             result["alinea"] = self.alinea or ""
             result["date_depot"] = self.date_depot or ""

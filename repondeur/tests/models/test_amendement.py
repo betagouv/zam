@@ -81,8 +81,8 @@ def test_amendement_displayable_identiques(amendements_an):
 
     amendement_666.identique = True
     amendement_999.identique = True
-    amendement_666.discussion_commune = 42
-    amendement_999.discussion_commune = 42
+    amendement_666.id_discussion_commune = 42
+    amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Sagesse"
     amendement_999.avis = "Sagesse"
 
@@ -100,8 +100,8 @@ def test_amendement_displayable_identiques_are_similaires(amendements_an):
 
     amendement_666.identique = True
     amendement_999.identique = True
-    amendement_666.discussion_commune = 42
-    amendement_999.discussion_commune = 42
+    amendement_666.id_discussion_commune = 42
+    amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Favorable"
     amendement_999.avis = "Favorable"
 
@@ -121,8 +121,8 @@ def test_amendement_displayable_identiques_are_similaires_reponses(amendements_a
 
     amendement_666.identique = True
     amendement_999.identique = True
-    amendement_666.discussion_commune = 42
-    amendement_999.discussion_commune = 42
+    amendement_666.id_discussion_commune = 42
+    amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Favorable"
     amendement_999.avis = "Favorable"
     amendement_666.reponse = "Une réponse"
@@ -146,8 +146,8 @@ def test_amendement_displayable_identiques_are_similaires_reponses_with_spaces(
 
     amendement_666.identique = True
     amendement_999.identique = True
-    amendement_666.discussion_commune = 42
-    amendement_999.discussion_commune = 42
+    amendement_666.id_discussion_commune = 42
+    amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Favorable"
     amendement_999.avis = "Favorable"
     amendement_666.reponse = "Une réponse"
@@ -173,8 +173,8 @@ def test_amendement_displayable_identiques_are_similaires_reponses_with_tags(
 
     amendement_666.identique = True
     amendement_999.identique = True
-    amendement_666.discussion_commune = 42
-    amendement_999.discussion_commune = 42
+    amendement_666.id_discussion_commune = 42
+    amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Favorable"
     amendement_999.avis = "Favorable"
     amendement_666.reponse = "Une réponse"
@@ -198,8 +198,8 @@ def test_amendement_displayable_identiques_are_not_similaires(amendements_an):
 
     amendement_666.identique = True
     amendement_999.identique = True
-    amendement_666.discussion_commune = 42
-    amendement_999.discussion_commune = 42
+    amendement_666.id_discussion_commune = 42
+    amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Favorable"
     amendement_999.avis = "Défavorable"
 
@@ -219,8 +219,8 @@ def test_amendement_displayable_identiques_are_not_similaires_reponses(amendemen
 
     amendement_666.identique = True
     amendement_999.identique = True
-    amendement_666.discussion_commune = 42
-    amendement_999.discussion_commune = 42
+    amendement_666.id_discussion_commune = 42
+    amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Favorable"
     amendement_999.avis = "Favorable"
     amendement_666.reponse = "Une réponse"

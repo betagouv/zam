@@ -293,7 +293,7 @@ class TestFetchAmendement:
         assert amendement.date_depot is None
         assert amendement.sort == "rejeté"
         assert amendement.position == 1
-        assert amendement.discussion_commune is None
+        assert amendement.id_discussion_commune is None
         assert amendement.identique is None
         assert amendement.parent is None
         assert amendement.dispositif == "<p>Supprimer cet article.</p>"

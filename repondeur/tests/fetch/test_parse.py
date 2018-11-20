@@ -93,7 +93,7 @@ class TestParseDiscussionDetails:
 
         assert details.num == 230
         assert details.position == 1
-        assert details.discussion_commune is None
+        assert details.id_discussion_commune is None
         assert details.identique is False
         assert details.parent_num is None
 
@@ -122,7 +122,7 @@ class TestParseDiscussionDetails:
         }
         details = parse_discussion_details({}, amend, position=1)
 
-        assert details.discussion_commune == 110541
+        assert details.id_discussion_commune == 110541
 
     def test_not_discussion_commune(self):
         from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
@@ -149,7 +149,7 @@ class TestParseDiscussionDetails:
 
         details = parse_discussion_details({}, amend, position=1)
 
-        assert details.discussion_commune is None
+        assert details.id_discussion_commune is None
 
     def test_parse_sous_amendement(self):
         from zam_repondeur.fetch.senat.derouleur import parse_discussion_details

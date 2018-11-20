@@ -212,7 +212,7 @@ def _check_amendement_0(amendement):
     assert amendement.sort == ""
 
     assert amendement.position is None  # no order yet
-    assert amendement.discussion_commune is None
+    assert amendement.id_discussion_commune is None
     assert amendement.identique is None
 
     assert amendement.parent is None
@@ -258,7 +258,7 @@ def _check_amendement_1(amendement):
     assert amendement.sort == "Retiré"
 
     assert amendement.position is None  # no order yet
-    assert amendement.discussion_commune is None
+    assert amendement.id_discussion_commune is None
     assert amendement.identique is None
 
     assert amendement.parent.num == 28

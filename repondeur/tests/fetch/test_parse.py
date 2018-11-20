@@ -94,7 +94,7 @@ class TestParseDiscussionDetails:
         assert details.num == 230
         assert details.position == 1
         assert details.id_discussion_commune is None
-        assert details.identique is False
+        assert details.id_identique is None
         assert details.parent_num is None
 
     def test_discussion_commune(self):

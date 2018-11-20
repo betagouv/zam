@@ -14,7 +14,6 @@ from typing import (
 
 from jinja2.filters import do_striptags
 from sqlalchemy import (
-    Boolean,
     Column,
     Date,
     DateTime,
@@ -86,7 +85,7 @@ class Amendement(Base):
     # Ordre et regroupement lors de la discussion.
     position: Optional[int] = Column(Integer, nullable=True)
     id_discussion_commune: Optional[int] = Column(Integer, nullable=True)
-    identique: Optional[bool] = Column(Boolean, nullable=True)
+    id_identique: Optional[int] = Column(Integer, nullable=True)
 
     # Contenu.
     dispositif: Optional[str] = Column(Text, nullable=True)  # texte de l'amendement
@@ -142,7 +141,7 @@ class Amendement(Base):
         sort: Optional[str] = None,
         position: Optional[int] = None,
         id_discussion_commune: Optional[int] = None,
-        identique: Optional[bool] = None,
+        id_identique: Optional[int] = None,
         dispositif: Optional[str] = None,
         objet: Optional[str] = None,
         resume: Optional[str] = None,
@@ -167,7 +166,7 @@ class Amendement(Base):
             sort=sort,
             position=position,
             id_discussion_commune=id_discussion_commune,
-            identique=identique,
+            id_identique=id_identique,
             dispositif=dispositif,
             objet=objet,
             resume=resume,
@@ -311,15 +310,18 @@ class Amendement(Base):
         return self.parent_pk is not None
 
     @property
+    def identique(self) -> bool:
+        return self.id_identique is not None
+
+    @property
     def all_identiques(self) -> List["Amendement"]:
-        if self.identique is None:
+        if self.id_identique is None:
             return []
         return sorted(
             amendement
             for amendement in self.article.amendements
             if (
-                amendement.identique
-                and amendement.id_discussion_commune == self.id_discussion_commune
+                amendement.id_identique == self.id_identique
                 and amendement.num != self.num
             )
         )
@@ -427,7 +429,7 @@ class Amendement(Base):
             result["article_order"] = self.article.sort_key_as_str
             result["position"] = self.position or ""
             result["id_discussion_commune"] = self.id_discussion_commune or ""
-            result["identique"] = self.identique or ""
+            result["id_identique"] = self.id_identique or ""
             result["alinea"] = self.alinea or ""
             result["date_depot"] = self.date_depot or ""
         return result

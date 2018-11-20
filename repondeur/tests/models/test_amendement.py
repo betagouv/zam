@@ -79,8 +79,8 @@ def test_amendement_displayable_identiques(amendements_an):
     assert amendement_666.displayable_identiques == []
     assert amendement_999.displayable_identiques == []
 
-    amendement_666.identique = True
-    amendement_999.identique = True
+    amendement_666.id_identique = 41
+    amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Sagesse"
@@ -98,8 +98,8 @@ def test_amendement_displayable_identiques_are_similaires(amendements_an):
     assert amendement_666.displayable_identiques == []
     assert amendement_999.displayable_identiques == []
 
-    amendement_666.identique = True
-    amendement_999.identique = True
+    amendement_666.id_identique = 41
+    amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Favorable"
@@ -119,8 +119,8 @@ def test_amendement_displayable_identiques_are_similaires_reponses(amendements_a
     assert amendement_666.displayable_identiques == []
     assert amendement_999.displayable_identiques == []
 
-    amendement_666.identique = True
-    amendement_999.identique = True
+    amendement_666.id_identique = 41
+    amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Favorable"
@@ -144,8 +144,8 @@ def test_amendement_displayable_identiques_are_similaires_reponses_with_spaces(
     assert amendement_666.displayable_identiques == []
     assert amendement_999.displayable_identiques == []
 
-    amendement_666.identique = True
-    amendement_999.identique = True
+    amendement_666.id_identique = 41
+    amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Favorable"
@@ -171,8 +171,8 @@ def test_amendement_displayable_identiques_are_similaires_reponses_with_tags(
     assert amendement_666.displayable_identiques == []
     assert amendement_999.displayable_identiques == []
 
-    amendement_666.identique = True
-    amendement_999.identique = True
+    amendement_666.id_identique = 41
+    amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Favorable"
@@ -196,8 +196,8 @@ def test_amendement_displayable_identiques_are_not_similaires(amendements_an):
     assert amendement_666.displayable_identiques == []
     assert amendement_999.displayable_identiques == []
 
-    amendement_666.identique = True
-    amendement_999.identique = True
+    amendement_666.id_identique = 41
+    amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Favorable"
@@ -217,8 +217,8 @@ def test_amendement_displayable_identiques_are_not_similaires_reponses(amendemen
     assert amendement_666.displayable_identiques == []
     assert amendement_999.displayable_identiques == []
 
-    amendement_666.identique = True
-    amendement_999.identique = True
+    amendement_666.id_identique = 41
+    amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
     amendement_666.avis = "Favorable"

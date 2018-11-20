@@ -10,7 +10,7 @@ from zam_repondeur.models import DBSession
 
 
 HERE = Path(__file__)
-SAMPLE_DATA_DIR = HERE.parent / "sample_data"
+SAMPLE_DATA_DIR = HERE.parent / "sample_data" / "senat"
 
 
 def read_sample_data(basename):

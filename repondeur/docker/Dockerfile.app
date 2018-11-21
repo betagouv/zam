@@ -14,6 +14,7 @@ RUN echo "deb https://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main" > /et
 RUN curl -L -O https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb && \
     apt-get update && \
     apt-get -f install --yes --no-install-recommends \
+        firefox \
         git \
         locales \
         postgresql-client-10 \
@@ -24,6 +25,9 @@ RUN curl -L -O https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12
         xvfb \
     && rm wkhtmltox_0.12.5-1.bionic_amd64.deb \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Geckodriver to run browser tests in Firefox
+RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz | tar xz -C /usr/local/bin
 
 # Setup french locale
 RUN echo 'fr_FR.UTF-8 UTF-8' >> /etc/locale.gen && \

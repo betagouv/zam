@@ -161,6 +161,7 @@ function filterByAmendement(value) {
         }
         return line.dataset.amendement.trim() === value
     })
+    document.querySelector('table').classList.toggle('filtered-amendement', value)
 }
 function filterByAffectation(value) {
     filterColumn('hidden-affectation', line => {
@@ -171,6 +172,7 @@ function filterByAffectation(value) {
             .toLowerCase()
             .includes(value.toLowerCase())
     })
+    document.querySelector('table').classList.toggle('filtered-affectation', value)
 }
 function filterByAvis(value) {
     filterColumn('hidden-avis', line => {
@@ -185,6 +187,7 @@ function filterByAvis(value) {
         }
         return line.dataset.avis === value
     })
+    document.querySelector('table').classList.toggle('filtered-avis', value)
 }
 function filterColumn(className, shouldShow) {
     Array.from(document.querySelectorAll('tbody tr')).forEach(line => {

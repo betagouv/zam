@@ -163,7 +163,13 @@ td.identique.first.last:after {
     border-radius: 6px;
 }
 table.sorted td.identique:after,
-table.sorted td.identique.first.last:after {
+table.sorted td.identique.first.last:after,
+table.filtered-amendement td.identique:after,
+table.filtered-amendement td.identique.first.last:after,
+table.filtered-avis td.identique:after,
+table.filtered-avis td.identique.first.last:after,
+table.filtered-affectation td.identique:after,
+table.filtered-affectation td.identique.first.last:after {
     top: calc(50% - 3px);
     height: 6px;
     border-radius: 6px;

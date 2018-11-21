@@ -2,12 +2,13 @@ import os
 
 import pytest
 import transaction
+from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
+from webtest.http import StopableWSGIServer
 
 from fixtures.dossiers import mock_dossiers  # noqa: F401
 from fixtures.organes_acteurs import mock_organes_acteurs  # noqa: F401
-from selenium import webdriver
 from testapp import TestApp
-from webtest.http import StopableWSGIServer
 
 
 @pytest.fixture(scope="session")
@@ -15,9 +16,12 @@ def browser():
     options = webdriver.firefox.options.Options()
     options.add_argument("-headless")
 
-    browser = webdriver.Firefox(options=options)
-    yield browser
-    browser.quit()
+    try:
+        browser = webdriver.Firefox(options=options)
+        yield browser
+        browser.quit()
+    except WebDriverException:
+        pytest.skip("You need Firefox and geckodriver to run browser tests")
 
 
 @pytest.fixture(scope="session")

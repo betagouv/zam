@@ -54,7 +54,19 @@ def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[s
     for item in amendements_raw:
         try:
             amendement, created_ = fetch_amendement(
-                lecture=lecture, numero=item["@numero"], position=index
+                lecture=lecture,
+                numero=item["@numero"],
+                position=index,
+                id_discussion_commune=(
+                    int(item["@discussionCommune"])
+                    if item["@discussionCommune"]
+                    else None
+                ),
+                id_identique=(
+                    int(item["@discussionIdentique"])
+                    if item["@discussionIdentique"]
+                    else None
+                ),
             )
             created += int(created_)
         except NotFound:
@@ -100,7 +112,11 @@ def _retrieve_amendement(lecture: Lecture, numero: int) -> OrderedDict:
 
 
 def fetch_amendement(
-    lecture: Lecture, numero: int, position: int
+    lecture: Lecture,
+    numero: int,
+    position: int,
+    id_discussion_commune: Optional[int] = None,
+    id_identique: Optional[int] = None,
 ) -> Tuple[Amendement, bool]:
     """
     Récupère un amendement depuis son numéro.
@@ -110,7 +126,7 @@ def fetch_amendement(
     article = _get_article(lecture, amend["division"])
     parent = _get_parent(lecture, article, amend)
     amendement, created = _create_or_update_amendement(
-        lecture, article, parent, amend, position
+        lecture, article, parent, amend, position, id_discussion_commune, id_identique
     )
     return amendement, created
 
@@ -154,6 +170,8 @@ def _create_or_update_amendement(
     parent: Optional[Amendement],
     amend: OrderedDict,
     position: int,
+    id_discussion_commune: Optional[int],
+    id_identique: Optional[int],
 ) -> Tuple[Amendement, bool]:
     amendement, created = get_one_or_create(
         Amendement,
@@ -178,6 +196,8 @@ def _create_or_update_amendement(
         or parent != amendement.parent
         or sort != amendement.sort
         or position != amendement.position
+        or id_discussion_commune != amendement.id_discussion_commune
+        or id_identique != amendement.id_identique
         or matricule != amendement.matricule
         or groupe != amendement.groupe
         or auteur != amendement.auteur
@@ -188,6 +208,8 @@ def _create_or_update_amendement(
 
     amendement.sort = sort
     amendement.position = position
+    amendement.id_discussion_commune = id_discussion_commune
+    amendement.id_identique = id_identique
     amendement.matricule = matricule
     amendement.groupe = groupe
     amendement.auteur = auteur

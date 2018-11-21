@@ -1,9 +1,10 @@
-import os
+from pathlib import Path
 
 import pytest
 
 
-HERE = os.path.dirname(__file__)
+HERE = Path(__file__)
+SAMPLE_DATA_DIR = HERE.parent / "sample_data" / "senat"
 
 
 @pytest.mark.parametrize(
@@ -13,8 +14,8 @@ HERE = os.path.dirname(__file__)
 def test_parse(matricule, nom, groupe):
     from zam_repondeur.fetch.senat.senateurs.parse import parse_senateurs
 
-    filename = os.path.join(HERE, "sample_data", "ODSEN_GENERAL.csv")
-    with open(filename, "r", encoding="cp1252") as file_:
+    filename = SAMPLE_DATA_DIR / "ODSEN_GENERAL.csv"
+    with filename.open("r", encoding="cp1252") as file_:
         senateurs_by_matricule = parse_senateurs(file_)
 
     senateur = senateurs_by_matricule[matricule]

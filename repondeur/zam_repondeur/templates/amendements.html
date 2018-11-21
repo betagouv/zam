@@ -4,207 +4,7 @@
 
 {% block header %}
 <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/notifications.css') }}">
-<style type="text/css">
-    .content {
-        margin: 0 1rem;
-    }
-
-    /* Articles */
-    #bottom-nav {
-        margin-top: 5rem;
-        margin-bottom: 3rem;
-    }
-    #articles ul {
-        column-width: 12rem;
-         margin-bottom: 3rem;
-    }
-    #articles li {
-        margin-bottom: 0.75rem;
-    }
-
-    /* Options avancées */
-    .toggle.with-arrow:before {
-        content: "↓";
-    }
-    .toggle.with-arrow.enabled:before {
-        content: "↑";
-    }
-    #advanced {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin: 0 auto 1rem auto;
-        max-width: 56rem;
-    }
-    #advanced > div {
-        flex-basis: 26rem;
-        padding: 2rem;
-        border-bottom: thin solid #979797;
-    }
-    #advanced > div h3 {
-        font-weight: 600;
-    }
-    #advanced div[role="group"] {
-        margin-top: 1rem;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-    }
-    #advanced .button {
-        margin: 0 0.75rem 0.75rem 0;
-        flex-basis: 10rem;
-    }
-    #advanced .button:last-child {
-        margin-right: 0;
-    }
-    #advanced .button i {
-        padding-right: 0.5rem;
-    }
-    @media(min-width:1900px) {
-        #advanced {
-            max-width: none;
-        }
-    }
-
-    /* Table formatting */
-    .table th, .table td {
-        vertical-align: middle;
-        padding: .25rem .75rem;
-    }
-    .table td > span,
-    .table td a {
-        display: inline-block;
-        line-height: 1;
-    }
-    .table thead th {
-        border: none;
-        font-weight: 600;
-        white-space: nowrap;
-        padding: .75rem;
-    }
-    .table th.avis {
-        min-width: 100px;
-    }
-    .table tbody tr:first-child td {
-        padding-top: 1rem;
-    }
-
-    /* Sticky table header */
-    tr.sticky th {
-        position: sticky;
-        position: -webkit-sticky;
-        background: white;
-        z-index: 10;
-        box-shadow: 0px 3px 3px 0px #CCC;
-    }
-        tr.headers th {
-            top: 0;
-        }
-        tr.filters th {
-            top: 2rem;
-        }
-
-    /* Sorting */
-    .headers th {
-        cursor: pointer;
-    }
-    .headers th.nosort {
-        cursor: default;
-    }
-    .headers th::before {
-        font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        content: "\f0dc  ";  /* fa-sort */
-    }
-    .headers th[data-order="asc"]::before {
-        content: "\f0dd  ";  /* fa-sort-down */
-    }
-    .headers th[data-order="desc"]::before {
-        content: "\f0de  ";  /* fa-sort-up */
-    }
-    .headers th.nosort::before {
-        content: "";
-    }
-
-    /* Filtering */
-    th input.form-control {
-        display: inline;
-        width: 4rem;
-        padding: 0 .25rem;
-    }
-    tr.hidden-article,
-    tr.hidden-amendement,
-    tr.hidden-affectation,
-    tr.hidden-avis {
-        display: none;
-    }
-    tr[data-retire-avant-seance="1"] {
-        background-color: #d9d9d9;
-    }
-
-    /* Links in table */
-    td a, td a:hover {
-        white-space: nowrap;
-        text-decoration: none;
-        border-bottom: thin solid #3167a6;
-    }
-    td a.download-pdf {
-        border-bottom: none;
-    }
-
-    :target {
-        background: #ededed66;
-    }
-    /* To keep under :target for priority. */
-    .highlighted {
-        background: #d4edda66;
-    }
-    nobr {
-        display: block;
-    }
-    span.avis {
-        width: 6px;
-        display: block;
-        height: 1.5rem;
-        float: left;
-        margin: 0 0.5rem 0 0;
-    }
-    span.avis.positive {
-        background-color: #b8e986;
-    }
-    span.avis.sagesse {
-        background-color: #6db4ff;
-    }
-    span.avis.negative {
-        background-color: #d0021b;
-    }
-    span.avis.gouvernement {
-        background-color: #3167a6;
-    }
-    span.avis.abandoned_before_seance {
-        background-color: #979797;
-    }
-
-    td .button {
-        padding: .2rem .4rem;
-        border-radius: 20px;
-        font-size: 60%;
-        line-height: 0;
-    }
-    nav.secondary div {
-        font-weight: normal;
-    }
-    nav.options {
-        display: flex;
-        justify-content: space-between;
-        align-items: end;
-        margin-bottom: 1rem;
-    }
-        nav.options #unsort {
-            text-decoration: underline;
-            margin-left: 1rem;
-        }
-</style>
+<link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/amendements.css') }}">
 {% endblock %}
 
 
@@ -373,14 +173,25 @@
                         {{ amendement.VERY_BIG_NUMBER }} {# Keep at the end. #}
                     {%- else -%}
                         {{ amendement.num }}
-                    {%- endif -%}">
+                    {%- endif -%}"
+                    {%- if amendement.identique %}
+                    class="identique
+                        {% if loop.previtem is not defined or loop.previtem not in amendement.all_identiques %}
+                            first
+                        {% endif %}
+                        {% if loop.nextitem is not defined or loop.nextitem not in amendement.all_identiques %}
+                            last
+                        {% endif %}
+                    "
+                    {% endif -%}
+                >
                         {{ amendement.num_disp }}
                         {% if amendement.parent %}
                             (ss-amdt au {{ amendement.parent.num_disp }})
                         {% endif %}
                         {% if amendement.identique %}
-                            {% set identiques = amendement.identiques %}
-                            {% if not amendement.identiques_are_similaires and identiques %}
+                            {% set identiques = amendement.displayable_identiques %}
+                            {% if not amendement.displayable_identiques_are_similaires and identiques %}
                                 <span title="{% if identiques|length > 1 -%}
                                     Les amendements identiques {% for amdt in identiques -%}
                                     {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}

@@ -110,11 +110,11 @@
             {% endif %}
         </div>
         {% if amendement.identique %}
-            {% set identiques = amendement.identiques %}
+            {% set identiques = amendement.all_identiques %}
             {% set identiques_length = identiques|length %}
             <p>
                 <em>
-                    Identique {% if identiques_length > 1 %}aux{% else %}à{% endif %}
+                    Identique au{% if identiques_length > 1 %}x{% endif %} nº
                     {% for identique in identiques -%}
                         <a href="{{ request.resource_url(context.parent[identique.num_str], 'reponse') }}">{{ identique }}</a>
                         {% if identique.full_reponse() != amendement.full_reponse() %}

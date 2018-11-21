@@ -13,8 +13,8 @@ BASE_URL = "https://www.senat.fr"
 class DiscussionDetails(NamedTuple):
     num: int
     position: int
-    discussion_commune: Optional[int]
-    identique: bool
+    id_discussion_commune: Optional[int]
+    id_identique: Optional[int]
     parent_num: Optional[int]
 
 
@@ -64,12 +64,14 @@ def parse_discussion_details(
     details = DiscussionDetails(
         num=num,
         position=position,
-        discussion_commune=(
+        id_discussion_commune=(
             int(amend["idDiscussionCommune"])
             if parse_bool(amend["isDiscussionCommune"])
             else None
         ),
-        identique=parse_bool(amend["isIdentique"]),
+        id_identique=(
+            int(amend["idIdentique"]) if parse_bool(amend["isIdentique"]) else None
+        ),
         parent_num=get_parent_num(uid_map, amend),
     )
     return details

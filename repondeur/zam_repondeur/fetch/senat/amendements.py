@@ -187,8 +187,8 @@ def _enrich_one(
     if discussion_details is None:
         return
     amend.position = discussion_details.position
-    amend.discussion_commune = discussion_details.discussion_commune
-    amend.identique = discussion_details.identique
+    amend.id_discussion_commune = discussion_details.id_discussion_commune
+    amend.id_identique = discussion_details.id_identique
     if discussion_details.parent_num is not None:
         amend.parent = Amendement.get(
             lecture=amend.lecture, num=discussion_details.parent_num

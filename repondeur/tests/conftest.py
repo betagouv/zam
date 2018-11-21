@@ -12,7 +12,10 @@ from webtest.http import StopableWSGIServer
 
 @pytest.fixture(scope="session")
 def browser():
-    browser = webdriver.Firefox()
+    options = webdriver.firefox.options.Options()
+    options.add_argument("-headless")
+
+    browser = webdriver.Firefox(options=options)
     yield browser
     browser.quit()
 

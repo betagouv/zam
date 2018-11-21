@@ -2,26 +2,10 @@ import os
 
 import pytest
 import transaction
-from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
-from webtest.http import StopableWSGIServer
 
 from fixtures.dossiers import mock_dossiers  # noqa: F401
 from fixtures.organes_acteurs import mock_organes_acteurs  # noqa: F401
 from testapp import TestApp
-
-
-@pytest.fixture(scope="session")
-def browser():
-    options = webdriver.firefox.options.Options()
-    options.add_argument("-headless")
-
-    try:
-        browser = webdriver.Firefox(options=options)
-        yield browser
-        browser.quit()
-    except WebDriverException:
-        pytest.skip("You need Firefox and geckodriver to run browser tests")
 
 
 @pytest.fixture(scope="session")
@@ -46,13 +30,6 @@ def wsgi_app(settings, mock_dossiers, mock_organes_acteurs):
     from zam_repondeur import make_app
 
     return make_app(None, **settings)
-
-
-@pytest.fixture(scope="session")
-def wsgi_server(wsgi_app):
-    server = StopableWSGIServer.create(wsgi_app, port="8080")
-    yield server
-    server.shutdown()
 
 
 @pytest.yield_fixture(scope="session", autouse=True)

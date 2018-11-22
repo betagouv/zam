@@ -42,6 +42,7 @@ import pytest
         ("AVANT  L'ARTICLE 12", "article", "12", "", "avant"),
         ("APRÈS L'ARTICLE 12", "article", "12", "", "après"),
         ("APRES L'ARTICLE 12", "article", "12", "", "après"),
+        ("Article 54 bis B", "article", "54", "bis B", ""),
     ],
 )
 def test_parse_subdiv(text, type_, num, mult, pos):

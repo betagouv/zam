@@ -50,12 +50,15 @@ table {
   font-size: 21pt;
   width: 100%;
 }
-td {
-  border: 1px solid black;
-}
-  .cartouche td {
-    width: 50%;
+  table td {
+    border: 1px solid black;
   }
+    .cartouche td {
+      width: 50%;
+    }
+    table td p {
+      margin: 0;
+    }
 
 .page {
   page-break-after: always;

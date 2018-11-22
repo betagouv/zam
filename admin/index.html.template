@@ -1,18 +1,53 @@
 <!doctype html>
 <meta charset=utf-8>
 <title>Zam : alléger la charge de préparation par le gouvernement du débat parlementaire.</title>
+<link rel="stylesheet" href="/repondeur/static/css/zam.css">
 <style type="text/css">
     body {
-        max-width: 55rem;
-        margin: 1rem auto;
         font-size: 20px;
+        margin: 0;
     }
-    h1,
+    header h2,
+    main * {
+        max-width: 55rem;
+        margin: 0 auto;
+    }
+    header.main > h2 {
+        margin: auto;
+    }
+    h3,
+    h4 {
+        margin: 1.5rem auto 1rem auto;
+    }
     .center {
         text-align: center;
+        margin: 1.5rem auto 4rem auto;
+    }
+    figure {
+        text-align: center;
+        margin: 1.5rem auto 4rem auto;
+        border-bottom: 1px solid #999;
     }
     img {
-        max-width: 600px;
+        display: block;
+        max-width: 100%;
+        height: auto;
+        margin: 0;
+        border: 1px solid #999;
+        padding: .3rem;
+        background: #fff;
+    }
+    figcaption {
+        margin: 1rem .5rem;
+        text-align: center;
+        line-height: 1.5;
     }
 </style>
+<header class="main">
+    <h2>
+        Zam : alléger la charge de préparation par le gouvernement du débat parlementaire.
+    </h2>
+</header>
+<main role="main" class="container-fluid">
 $$content
+</main

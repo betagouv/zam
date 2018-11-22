@@ -131,6 +131,32 @@ def test_post_form_with_comments(app, lecture_an, amendements_an):
     assert amendement.comments == ""
 
 
+def test_post_form_with_affectations(app, lecture_an, amendements_an):
+    from zam_repondeur.models import DBSession, Amendement
+
+    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    path = Path(__file__).parent / "sample_data" / "reponses_with_affectations.csv"
+    form["reponses"] = Upload("file.csv", path.read_bytes())
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "2 réponses chargées" in resp.text
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+    assert amendement.position == 1
+    assert amendement.affectation == "Bureau"
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+    assert amendement.position == 2
+    assert amendement.affectation == ""
+
+
 def test_post_form_with_bom(app, lecture_an, amendements_an):
     form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_with_bom.csv"

@@ -42,6 +42,9 @@
         text-align: center;
         line-height: 1.5;
     }
+    hr {
+        display: none; /* Useful for marp/pdf generation */
+    }
 </style>
 <header class="main">
     <h2>

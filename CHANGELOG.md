@@ -29,6 +29,8 @@
     </figcaption>
 </figure>
 
+---
+
 <figure>
     <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-affectations.png">
         <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-affectations.png">
@@ -37,6 +39,8 @@
         Ajout d’une colonne relative aux affectations.
     </figcaption>
 </figure>
+
+---
 
 <figure>
     <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-identiques-non-similaires.png">
@@ -47,6 +51,8 @@
     </figcaption>
 </figure>
 
+---
+
 <figure>
     <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-confirmation-suppression-lecture.png">
         <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-confirmation-suppression-lecture.png">
@@ -55,6 +61,8 @@
         Demande de confirmation de suppression d’une lecture via les options avancées.
     </figcaption>
 </figure>
+
+---
 
 <figure>
     <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-uniformisation-notifications.png">
@@ -65,6 +73,8 @@
     </figcaption>
 </figure>
 
+---
+
 <figure>
     <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-pertinence-notifications.png">
         <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-pertinence-notifications.png">
@@ -73,6 +83,8 @@
         Pertinence des notifications de mise à jour incluant l’amendement concerné.
     </figcaption>
 </figure>
+
+---
 
 <figure>
     <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-reutiliser-reponse.png">

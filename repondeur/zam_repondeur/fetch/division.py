@@ -24,8 +24,8 @@ SUBDIV_RE = re.compile(
         \s?
         (?:(?:l')?article\s)+
         (?P<num>liminaire|1er|premier|\d+)
-        (?:\s(?P<mult>\w+))?        # bis, ter, etc.
-        (?:\s?\(?.*\)?)?            # junk
+        (?:\s(?P<mult>\w+(\s[A-Z]$)?))?  # bis, ter, bis C, etc.
+        (?:\s?\(?.*\)?)?  # junk
         $
     """,
     (re.VERBOSE | re.IGNORECASE),

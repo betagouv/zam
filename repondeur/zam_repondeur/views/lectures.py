@@ -260,6 +260,8 @@ class ListAmendements:
             amendement.observations = clean_html(objet)
             reponse = normalize_reponse(reponse, previous_reponse)
             amendement.reponse = clean_html(reponse)
+            if "Affectation" in line:
+                amendement.affectation = clean_html(line["Affectation"])
             if "Commentaires" in line:
                 amendement.comments = clean_html(line["Commentaires"])
             previous_reponse = reponse

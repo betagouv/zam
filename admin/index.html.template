@@ -11,5 +11,8 @@
     .center {
         text-align: center;
     }
+    img {
+        max-width: 600px;
+    }
 </style>
 $$content

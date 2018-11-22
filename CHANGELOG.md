@@ -8,6 +8,44 @@
 
 ## Changements récents
 
+### En cours
+
+* Meilleure gestion des amendements identiques représentés dans la liste par un trait de regroupement bleu
+
+[![Alt text](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-regroupement-identiques.png)](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-regroupement-identiques.png)
+
+
+### 21 novembre 2018
+
+* Faculté à annuler le tri des colonnes dans la liste
+
+[![Alt text](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-annule-tri.png)](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-annule-tri.png)
+
+* Ajout d’une colonne relative aux affectations
+
+[![Alt text](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-affectations.png)](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-affectations.png)
+
+* Signalement des amendements identiques n’ayant pas une réponse similaire
+
+[![Alt text](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-identiques-non-similaires.png)](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-identiques-non-similaires.png)
+
+* Demande de confirmation de suppression d’une lecture via les options avancées
+
+[![Alt text](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-confirmation-suppression-lecture.png)](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-confirmation-suppression-lecture.png)
+
+* Uniformisation des notifications et possibilité de les fermer
+
+[![Alt text](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-uniformisation-notifications.png)](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-uniformisation-notifications.png)
+
+* Pertinence des notifications de mise à jour incluant l’amendement concerné
+
+[![Alt text](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-pertinence-notifications.png)](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-pertinence-notifications.png)
+
+* Capacité à réutiliser une réponse déjà saisie pour un amendement (identique)
+
+[![Alt text](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-reutiliser-reponse.png)](https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-reutiliser-reponse.png)
+
+
 ### 16 octobre 2018
 
 * Alimentation à la chaîne des éléments relatifs aux articles

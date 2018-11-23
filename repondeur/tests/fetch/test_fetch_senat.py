@@ -321,3 +321,12 @@ def testfetch_and_parse_discussion_details_not_found(lecture_senat):
         )
 
     assert amendements == []
+
+
+def test_derouleur_url(lecture_senat):
+    from zam_repondeur.fetch.senat.derouleur import derouleur_url
+
+    assert (
+        derouleur_url(lecture_senat, "seance")
+        == "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json"
+    )

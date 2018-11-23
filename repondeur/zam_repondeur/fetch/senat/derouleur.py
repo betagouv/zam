@@ -47,7 +47,7 @@ def _fetch_discussion_details(lecture: Lecture, phase: str) -> Any:
     """
     assert phase in ("commission", "seance")
 
-    url = f"{BASE_URL}/en{phase}/{lecture.session}/{lecture.num_texte}/liste_discussion.json"  # noqa
+    url = derouleur_url(lecture, phase)
 
     resp = requests.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
@@ -55,6 +55,10 @@ def _fetch_discussion_details(lecture: Lecture, phase: str) -> Any:
 
     data = resp.json()
     return data
+
+
+def derouleur_url(lecture: Lecture, phase: str) -> str:
+    return f"{BASE_URL}/en{phase}/{lecture.session}/{lecture.num_texte}/liste_discussion.json"  # noqa
 
 
 def parse_discussion_details(

@@ -68,6 +68,120 @@ def test_aspire_senat(app, lecture_senat):
 
 
 @responses.activate
+def test_aspire_senat_plf2019_1re_partie(app):
+    from zam_repondeur.fetch.senat.amendements import aspire_senat
+    from zam_repondeur.models import Lecture
+
+    with transaction.manager:
+        lecture = Lecture.create(
+            chambre="senat",
+            session="2018-2019",
+            num_texte=146,
+            partie=1,
+            titre="Numéro lecture – Titre lecture sénat",
+            organe="PO78718",
+            dossier_legislatif="Titre dossier legislatif sénat",
+        )
+
+    sample_data = read_sample_data("jeu_complet_2018-2019_146.csv")
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/amendements/2018-2019/146/jeu_complet_2018-2019_146.csv",
+        body=sample_data,
+        status=200,
+    )
+
+    odsen_data = read_sample_data("ODSEN_GENERAL.csv")
+
+    responses.add(
+        responses.GET,
+        "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
+        body=odsen_data,
+        status=200,
+    )
+
+    json_data = json.loads(read_sample_data("liste_discussion_103393.json"))
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103393.json",
+        json=json_data,
+        status=200,
+    )
+
+    amendements, created = aspire_senat(lecture)
+
+    # All amendements from part 1 are fetched
+    assert len(amendements) == 1005
+
+
+@responses.activate
+def test_aspire_senat_plf2019_2e_partie(app):
+    from zam_repondeur.fetch.senat.amendements import aspire_senat
+    from zam_repondeur.models import Lecture
+
+    with transaction.manager:
+        lecture = Lecture.create(
+            chambre="senat",
+            session="2018-2019",
+            num_texte=146,
+            partie=2,
+            titre="Numéro lecture – Titre lecture sénat",
+            organe="PO78718",
+            dossier_legislatif="Titre dossier legislatif sénat",
+        )
+
+    sample_data = read_sample_data("jeu_complet_2018-2019_146.csv")
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/amendements/2018-2019/146/jeu_complet_2018-2019_146.csv",
+        body=sample_data,
+        status=200,
+    )
+
+    odsen_data = read_sample_data("ODSEN_GENERAL.csv")
+
+    responses.add(
+        responses.GET,
+        "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
+        body=odsen_data,
+        status=200,
+    )
+
+    json_data = json.loads(read_sample_data("liste_discussion_103394.json"))
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103394.json",
+        json=json_data,
+        status=200,
+    )
+
+    json_data = json.loads(read_sample_data("liste_discussion_103395.json"))
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103395.json",
+        json=json_data,
+        status=200,
+    )
+
+    for i in range(103396, 103445 + 1):
+        responses.add(
+            responses.GET,
+            f"https://www.senat.fr/enseance/2018-2019/146/liste_discussion_{i}.json",
+            status=404,
+        )
+
+    amendements, created = aspire_senat(lecture)
+
+    # All amendements from part 2 are fetched
+    assert len(amendements) == 35
+
+
+@responses.activate
 def test_fetch_all(lecture_senat):
     from zam_repondeur.fetch.senat.amendements import _fetch_all
 
@@ -286,9 +400,10 @@ def test_fetch_discussion_details(lecture_senat):
         status=200,
     )
 
-    data = _fetch_discussion_details(lecture_senat, "commission")
+    data = list(_fetch_discussion_details(lecture_senat, "commission"))
 
-    assert data == json_data
+    assert len(data) == 1
+    assert data[0] == json_data
 
 
 @responses.activate
@@ -302,7 +417,7 @@ def test_fetch_discussion_details_not_found(lecture_senat):
     )
 
     with pytest.raises(NotFound):
-        _fetch_discussion_details(lecture_senat, "commission")
+        list(_fetch_discussion_details(lecture_senat, "commission"))
 
 
 def test_fetch_and_parse_discussion_details_not_found(lecture_senat):
@@ -323,29 +438,61 @@ def test_fetch_and_parse_discussion_details_not_found(lecture_senat):
     assert amendements == []
 
 
-def test_derouleur_url(lecture_senat):
-    from zam_repondeur.fetch.senat.derouleur import derouleur_url
+def test_derouleur_urls(lecture_senat):
+    from zam_repondeur.fetch.senat.derouleur import derouleur_urls
 
-    assert (
-        derouleur_url(lecture_senat, "seance")
-        == "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json"
-    )
+    assert list(derouleur_urls(lecture_senat, "seance")) == [
+        "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json"
+    ]
 
 
-def test_derouleur_url_plf():
-    from zam_repondeur.fetch.senat.derouleur import derouleur_url
+def test_derouleur_urls_plf2019_1re_partie():
+    from zam_repondeur.fetch.senat.derouleur import derouleur_urls
     from zam_repondeur.models import Lecture
 
     lecture = Lecture.create(
         chambre="senat",
         session="2018-2019",
         num_texte=146,
-        titre="Première lecture – Séance publique",
+        partie=1,
+        titre="Première lecture – Séance publique (1re partie)",
         organe="PO78718",
         dossier_legislatif="Budget : loi de finances 2019",
     )
 
-    assert (
-        derouleur_url(lecture, "seance")
-        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103393.json"
+    assert list(derouleur_urls(lecture, "seance")) == [
+        "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103393.json"
+    ]
+
+
+def test_derouleur_urls_plf2019_2e_partie():
+    from zam_repondeur.fetch.senat.derouleur import derouleur_urls
+    from zam_repondeur.models import Lecture
+
+    lecture = Lecture.create(
+        chambre="senat",
+        session="2018-2019",
+        num_texte=146,
+        partie=2,
+        titre="Première lecture – Séance publique (2e partie)",
+        organe="PO78718",
+        dossier_legislatif="Budget : loi de finances 2019",
     )
+
+    urls = list(derouleur_urls(lecture, "seance"))
+    assert len(urls) > 1
+    assert (
+        urls[0]
+        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103394.json"
+    )
+    assert (
+        urls[-1]
+        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103445.json"
+    )
+
+
+@pytest.mark.parametrize("numero,partie", [("I-12", 1), ("II-4", 2), ("18", None)])
+def test_parse_partie(numero, partie):
+    from zam_repondeur.fetch.senat.amendements import parse_partie
+
+    assert parse_partie(numero) == partie

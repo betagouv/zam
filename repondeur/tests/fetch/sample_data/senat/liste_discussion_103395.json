@@ -1,0 +1,29 @@
+{
+    "info_generales": {
+        "natureLoi": "Projet de loi",
+        "intituleLoi": "Projet de loi de finances pour 2019",
+        "lecture": "1ère lecture",
+        "tsgenhtml": "1542906858000",
+        "idtxt": "103395",
+        "nbAmdtsDeposes": "0",
+        "nbAmdtsAExaminer": "0",
+        "doslegsignet" : "pjlf2019"
+    },
+
+    "Subdivisions": [
+        {
+        "libelle_subdivision": "Article 40",
+        "id_subdivision": "160091",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_40",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 40 - État C (crédits du budget annexe)",
+        "id_subdivision": "160092",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_40",
+        "Amendements": [
+
+        ]
+        }    ]
+}

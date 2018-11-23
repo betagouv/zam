@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any, Dict, List, NamedTuple, Optional
+from typing import Any, Dict, Iterator, List, NamedTuple, Optional
 
 import requests
 
@@ -21,10 +21,32 @@ class DiscussionDetails(NamedTuple):
 def fetch_and_parse_discussion_details(
     lecture: Lecture, phase: str
 ) -> List[DiscussionDetails]:
+    discussion_details = []
     try:
-        data = _fetch_discussion_details(lecture, phase)
+        for data in _fetch_discussion_details(lecture, phase):
+            discussion_details.extend(_parse_derouleur_data(data))
     except NotFound:
-        return []
+        pass
+    return discussion_details
+
+
+def _fetch_discussion_details(lecture: Lecture, phase: str) -> Iterator[Any]:
+    """
+    Récupère les amendements à discuter, dans l'ordre de passage
+
+    NB : les amendements jugés irrecevables ne sont pas inclus.
+    """
+    assert phase in ("commission", "seance")
+
+    for url in derouleur_urls(lecture, phase):
+        resp = requests.get(url)
+        if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
+            raise NotFound(url)
+
+        yield resp.json()
+
+
+def _parse_derouleur_data(data: Any) -> List[DiscussionDetails]:
     subdivs_amends = [
         (subdiv, amend)
         for subdiv in data["Subdivisions"]
@@ -39,33 +61,25 @@ def fetch_and_parse_discussion_details(
     return discussion_details
 
 
-def _fetch_discussion_details(lecture: Lecture, phase: str) -> Any:
-    """
-    Récupère les amendements à discuter, dans l'ordre de passage
-
-    NB : les amendements jugés irrecevables ne sont pas inclus.
-    """
-    assert phase in ("commission", "seance")
-
-    url = derouleur_url(lecture, phase)
-
-    resp = requests.get(url)
-    if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
-        raise NotFound(url)
-
-    data = resp.json()
-    return data
+# Special case for PLF 2019
+IDTXTS = {"2018-2019": {146: {1: [103393], 2: range(103394, 103445 + 1)}}}
 
 
-def derouleur_url(lecture: Lecture, phase: str) -> str:
-    # Special case for PLF2019
-    is_plf = (
-        lecture.session == "2018-2019"
-        and lecture.num_texte == 146
-        and phase == "seance"
+def derouleur_urls(lecture: Lecture, phase: str) -> Iterator[str]:
+    idtxts = (
+        IDTXTS.get(lecture.session, {}).get(lecture.num_texte, {}).get(lecture.partie)
     )
-    suffix = "_103393" if is_plf else ""
-    return f"{BASE_URL}/en{phase}/{lecture.session}/{lecture.num_texte}/liste_discussion{suffix}.json"  # noqa
+    if idtxts is not None:
+        for idtxt in idtxts:
+            yield (
+                f"{BASE_URL}/en{phase}/{lecture.session}/{lecture.num_texte}"
+                f"/liste_discussion_{idtxt}.json"
+            )
+    else:
+        yield (
+            f"{BASE_URL}/en{phase}/{lecture.session}/{lecture.num_texte}"
+            f"/liste_discussion.json"
+        )
 
 
 def parse_discussion_details(

@@ -330,3 +330,22 @@ def test_derouleur_url(lecture_senat):
         derouleur_url(lecture_senat, "seance")
         == "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json"
     )
+
+
+def test_derouleur_url_plf():
+    from zam_repondeur.fetch.senat.derouleur import derouleur_url
+    from zam_repondeur.models import Lecture
+
+    lecture = Lecture.create(
+        chambre="senat",
+        session="2018-2019",
+        num_texte=146,
+        titre="Première lecture – Séance publique",
+        organe="PO78718",
+        dossier_legislatif="Budget : loi de finances 2019",
+    )
+
+    assert (
+        derouleur_url(lecture, "seance")
+        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103393.json"
+    )

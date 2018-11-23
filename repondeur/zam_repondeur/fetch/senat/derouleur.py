@@ -58,7 +58,14 @@ def _fetch_discussion_details(lecture: Lecture, phase: str) -> Any:
 
 
 def derouleur_url(lecture: Lecture, phase: str) -> str:
-    return f"{BASE_URL}/en{phase}/{lecture.session}/{lecture.num_texte}/liste_discussion.json"  # noqa
+    # Special case for PLF2019
+    is_plf = (
+        lecture.session == "2018-2019"
+        and lecture.num_texte == 146
+        and phase == "seance"
+    )
+    suffix = "_103393" if is_plf else ""
+    return f"{BASE_URL}/en{phase}/{lecture.session}/{lecture.num_texte}/liste_discussion{suffix}.json"  # noqa
 
 
 def parse_discussion_details(

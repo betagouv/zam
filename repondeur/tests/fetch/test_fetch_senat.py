@@ -305,7 +305,7 @@ def test_fetch_discussion_details_not_found(lecture_senat):
         _fetch_discussion_details(lecture_senat, "commission")
 
 
-def testfetch_and_parse_discussion_details_not_found(lecture_senat):
+def test_fetch_and_parse_discussion_details_not_found(lecture_senat):
     from zam_repondeur.fetch.senat.derouleur import (
         fetch_and_parse_discussion_details,
         NotFound,

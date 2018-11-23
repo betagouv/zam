@@ -51,6 +51,8 @@ def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[s
     index = 1
     created = 0
     errored = []
+    if not amendements_raw:
+        logger.warning("Could not find amendements from %r", lecture)
     for item in amendements_raw:
         try:
             amendement, created_ = fetch_amendement(
@@ -96,10 +98,14 @@ def fetch_amendements(lecture: Lecture) -> List[OrderedDict]:
     url = build_url(lecture)
     content = _retrieve_content(url)
 
-    # If there is only 1 amendement, xmltodict does not return a list :(
-    amendements_raw: Union[OrderedDict, List[OrderedDict]] = (
-        content["amdtsParOrdreDeDiscussion"]["amendements"]["amendement"]
-    )
+    try:
+        # If there is only 1 amendement, xmltodict does not return a list :(
+        amendements_raw: Union[OrderedDict, List[OrderedDict]] = (
+            content["amdtsParOrdreDeDiscussion"]["amendements"]["amendement"]
+        )
+    except TypeError:
+        return []
+
     if isinstance(amendements_raw, OrderedDict):
         return [amendements_raw]
     return amendements_raw

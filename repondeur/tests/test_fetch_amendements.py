@@ -271,3 +271,22 @@ def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendement
     assert created == 0
     assert errored == ["666", "777", "999"]
     assert DBSession.query(Amendement).count() == len(amendements_an) == 2
+
+
+def test_fetch_amendements_with_emptiness(app, lecture_an, article1_an, amendements_an):
+    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.models import Amendement, DBSession
+
+    DBSession.add(lecture_an)
+
+    with patch(
+        "zam_repondeur.fetch.an.amendements._retrieve_content"
+    ) as mock_retrieve_content:
+        mock_retrieve_content.return_value = {"amdtsParOrdreDeDiscussion": None}
+
+        amendements, created, errored = get_amendements(lecture_an)
+
+    assert amendements == []
+    assert created == 0
+    assert errored == []
+    assert DBSession.query(Amendement).count() == len(amendements_an) == 2

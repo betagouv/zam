@@ -1,0 +1,1050 @@
+{
+    "info_generales": {
+        "natureLoi": "Projet de loi",
+        "intituleLoi": "Projet de loi de finances pour 2019",
+        "lecture": "1ère lecture",
+        "tsgenhtml": "1542999664000",
+        "idtxt": "103394",
+        "nbAmdtsDeposes": "14",
+        "nbAmdtsAExaminer": "13",
+        "doslegsignet" : "pjlf2019"
+    },
+
+    "Subdivisions": [
+        {
+        "libelle_subdivision": "SECONDE PARTIE : MOYENS DES POLITIQUES PUBLIQUES ET DISPOSITIONS SPÉCIALES",
+        "id_subdivision": "160407",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_2__Partie_SECONDE",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "TITRE IER : AUTORISATIONS BUDGÉTAIRES POUR 2019. - CRÉDITS ET DÉCOUVERTS",
+        "id_subdivision": "160408",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_2__Titre_I__Partie_SECONDE",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 42",
+        "id_subdivision": "160390",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_42",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 42 - État E (Article 42 du projet de loi)",
+        "id_subdivision": "160391",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_42",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "TITRE II : AUTORISATIONS BUDGÉTAIRES POUR 2019. - PLAFONDS DES AUTORISATIONS D'EMPLOIS",
+        "id_subdivision": "160392",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_2__Titre_II__Partie_SECONDE",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 43",
+        "id_subdivision": "160393",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_43",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 44",
+        "id_subdivision": "160394",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_44",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 45",
+        "id_subdivision": "160395",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_45",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 46",
+        "id_subdivision": "160396",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_46",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "TITRE III : REPORTS DE CRÉDITS DE 2018 SUR 2019",
+        "id_subdivision": "160397",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_2__Titre_III__Partie_SECONDE",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 47",
+        "id_subdivision": "160398",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_47",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "TITRE IV : DISPOSITIONS PERMANENTES",
+        "id_subdivision": "160399",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_2__Titre_IV__Partie_SECONDE",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 48",
+        "id_subdivision": "160239",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_48",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 48 bis",
+        "id_subdivision": "160240",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_48_bis",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 49",
+        "id_subdivision": "160241",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_49",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 50",
+        "id_subdivision": "160242",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_50",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 51",
+        "id_subdivision": "160243",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_51",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 51 bis",
+        "id_subdivision": "160244",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_51_bis",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 51 ter",
+        "id_subdivision": "160245",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_51_ter",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 51 quater",
+        "id_subdivision": "160246",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_51_quater",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 51 quinquies",
+        "id_subdivision": "160247",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_51_quinquies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 51 sexies",
+        "id_subdivision": "160248",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_51_sexies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 51 septies",
+        "id_subdivision": "160249",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_51_septies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 51 octies",
+        "id_subdivision": "160250",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_51_octies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 51 nonies",
+        "id_subdivision": "160251",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_51_nonies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 51 decies",
+        "id_subdivision": "160252",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_51_decies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 51 undecies",
+        "id_subdivision": "160253",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_51_undecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 51 duodecies",
+        "id_subdivision": "160254",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_51_duodecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 52",
+        "id_subdivision": "160400",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_52",
+        "Amendements": [
+
+        
+        {
+            "idAmendement":"1128685",
+            "posder":"1",
+            "subpos":"0",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-7.html",
+            "typeAmdt":"Amt",
+            "num":"II-7",
+            "libelleAlinea":"Suppr.",
+            "urlAuteur":"estrosi_sassone_dominique14187a.html",
+            "auteur":"Mme ESTROSI SASSONE",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }
+        ]
+        },         {
+        "libelle_subdivision": "Article 52 bis",
+        "id_subdivision": "160290",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_52_bis",
+        "Amendements": [
+
+        
+        {
+            "idAmendement":"1129692",
+            "posder":"1",
+            "subpos":"0",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-65.html",
+            "typeAmdt":"Amt",
+            "num":"II-65",
+            "libelleAlinea":"Suppr.",
+            "urlAuteur":"fouche_alain02002k.html",
+            "auteur":"M. FOUCHÉ",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }
+        ]
+        },         {
+        "libelle_subdivision": "Article 52 ter",
+        "id_subdivision": "160291",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_52_ter",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 53",
+        "id_subdivision": "160292",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_53",
+        "Amendements": [
+
+        
+            {
+            "idAmendement":"1129664",
+            "posder":"1",
+            "subpos":"20",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-32.html",
+            "typeAmdt":"Amt",
+            "num":"II-32",
+            "libelleAlinea":"",
+            "urlAuteur":"ferat_francoise01025n.html",
+            "auteur":"Mme FÉRAT",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }
+        ]
+        },         {
+        "libelle_subdivision": "Article 53 bis",
+        "id_subdivision": "160293",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_53_bis",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 53 ter",
+        "id_subdivision": "160294",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_53_ter",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 53 quater",
+        "id_subdivision": "160295",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_53_quater",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 54",
+        "id_subdivision": "160296",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_54",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55",
+        "id_subdivision": "160297",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 bis",
+        "id_subdivision": "160298",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_bis",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 ter",
+        "id_subdivision": "160299",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_ter",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 quater",
+        "id_subdivision": "160300",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_quater",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 quinquies",
+        "id_subdivision": "160301",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_quinquies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 sexies",
+        "id_subdivision": "160302",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_sexies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 septies",
+        "id_subdivision": "160303",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_septies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 octies",
+        "id_subdivision": "160304",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_octies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 nonies",
+        "id_subdivision": "160305",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_nonies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 decies",
+        "id_subdivision": "160306",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_decies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 undecies",
+        "id_subdivision": "160307",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_undecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 duodecies",
+        "id_subdivision": "160308",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_duodecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 terdecies",
+        "id_subdivision": "160309",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_terdecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 quaterdecies",
+        "id_subdivision": "160310",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_quaterdecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 quindecies",
+        "id_subdivision": "160311",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_quindecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 sexdecies",
+        "id_subdivision": "160312",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_sexdecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 septdecies",
+        "id_subdivision": "160313",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_septdecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 octodecies",
+        "id_subdivision": "160314",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_octodecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 novodecies",
+        "id_subdivision": "160315",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_novodecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 vicies",
+        "id_subdivision": "160316",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_vicies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 unvicies",
+        "id_subdivision": "160317",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_unvicies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 duovicies",
+        "id_subdivision": "160318",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_duovicies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 tervicies",
+        "id_subdivision": "160319",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_tervicies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 quatervicies",
+        "id_subdivision": "160320",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_quatervicies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 55 quinvicies",
+        "id_subdivision": "160321",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_55_quinvicies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56",
+        "id_subdivision": "160401",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56",
+        "Amendements": [
+
+        
+            {
+            "idAmendement":"1128676",
+            "posder":"1",
+            "subpos":"20",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-13.html",
+            "typeAmdt":"Amt",
+            "num":"II-13",
+            "libelleAlinea":"",
+            "urlAuteur":"henno_olivier19569h.html",
+            "auteur":"M. HENNO",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }, 
+        {
+            "idAmendement":"1129091",
+            "posder":"2",
+            "subpos":"20",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-16.html",
+            "typeAmdt":"Amt",
+            "num":"II-16",
+            "libelleAlinea":"",
+            "urlAuteur":"iacovelli_xavier19591f.html",
+            "auteur":"M. IACOVELLI",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }, 
+        {
+            "idAmendement":"1129319",
+            "posder":"3",
+            "subpos":"20",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-17.html",
+            "typeAmdt":"Amt",
+            "num":"II-17",
+            "libelleAlinea":"",
+            "urlAuteur":"gremillet_daniel14033t.html",
+            "auteur":"M. GREMILLET",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }, 
+        {
+            "idAmendement":"1129701",
+            "posder":"4",
+            "subpos":"20",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-33.html",
+            "typeAmdt":"Amt",
+            "num":"II-33",
+            "libelleAlinea":"",
+            "urlAuteur":"lavarde_christine19711u.html",
+            "auteur":"Mme LAVARDE",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 bis",
+        "id_subdivision": "160322",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_bis",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 ter",
+        "id_subdivision": "160323",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_ter",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 quater",
+        "id_subdivision": "160324",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_quater",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 quinquies",
+        "id_subdivision": "160325",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_quinquies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 sexies",
+        "id_subdivision": "160326",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_sexies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 septies",
+        "id_subdivision": "160327",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_septies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 octies",
+        "id_subdivision": "160328",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_octies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 nonies",
+        "id_subdivision": "160329",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_nonies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 decies",
+        "id_subdivision": "160330",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_decies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 undecies",
+        "id_subdivision": "160331",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_undecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 duodecies",
+        "id_subdivision": "160332",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_duodecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 terdecies",
+        "id_subdivision": "160333",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_terdecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 quaterdecies",
+        "id_subdivision": "160334",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_quaterdecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 quindecies",
+        "id_subdivision": "160335",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_quindecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 sexdecies",
+        "id_subdivision": "160336",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_sexdecies",
+        "Amendements": [
+
+        
+            {
+            "idAmendement":"1129605",
+            "posder":"1",
+            "subpos":"20",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-24.html",
+            "typeAmdt":"Amt",
+            "num":"II-24",
+            "libelleAlinea":"Al. 7",
+            "urlAuteur":"morhet_richaud_patricia14265w.html",
+            "auteur":"Mme MORHET-RICHAUD",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 septdecies",
+        "id_subdivision": "160337",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_septdecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 56 octodecies",
+        "id_subdivision": "160338",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_56_octodecies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 57",
+        "id_subdivision": "160339",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_57",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 58",
+        "id_subdivision": "160340",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_58",
+        "Amendements": [
+
+        
+        {
+            "idAmendement":"1129636",
+            "posder":"1",
+            "subpos":"0",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-4.html",
+            "typeAmdt":"Amt",
+            "num":"II-4",
+            "libelleAlinea":"Al. 23",
+            "urlAuteur":"vermeillet_sylvie19479g.html",
+            "auteur":"Mme VERMEILLET",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }
+        ]
+        },         {
+        "libelle_subdivision": "Article 58 bis",
+        "id_subdivision": "160341",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_58_bis",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 58 ter",
+        "id_subdivision": "160342",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_58_ter",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 58 quater",
+        "id_subdivision": "160343",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_58_quater",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 58 quinquies",
+        "id_subdivision": "160402",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_58_quinquies",
+        "Amendements": [
+
+        
+        {
+            "idAmendement":"1128687",
+            "posder":"1",
+            "subpos":"0",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-9.html",
+            "typeAmdt":"Amt",
+            "num":"II-9",
+            "libelleAlinea":"",
+            "urlAuteur":"estrosi_sassone_dominique14187a.html",
+            "auteur":"Mme ESTROSI SASSONE",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }
+        , 
+            {
+            "idAmendement":"1128686",
+            "posder":"1",
+            "subpos":"20",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-8.html",
+            "typeAmdt":"Amt",
+            "num":"II-8",
+            "libelleAlinea":"",
+            "urlAuteur":"estrosi_sassone_dominique14187a.html",
+            "auteur":"Mme ESTROSI SASSONE",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }
+        ]
+        },         {
+        "libelle_subdivision": "Article 59",
+        "id_subdivision": "160403",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_59",
+        "Amendements": [
+
+        
+        {
+            "idAmendement":"1128730",
+            "posder":"1",
+            "subpos":"0",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-6.html",
+            "typeAmdt":"Amt",
+            "num":"II-6",
+            "libelleAlinea":"Al. 6",
+            "urlAuteur":"darcos_laure19693l.html",
+            "auteur":"Mme Laure DARCOS",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }
+        ]
+        },         {
+        "libelle_subdivision": "Article 59 bis",
+        "id_subdivision": "160344",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_59_bis",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 60",
+        "id_subdivision": "160263",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_60",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 60 bis",
+        "id_subdivision": "160264",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_60_bis",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 60 ter",
+        "id_subdivision": "160265",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_60_ter",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 60 quater",
+        "id_subdivision": "160266",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_60_quater",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 60 quinquies",
+        "id_subdivision": "160267",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_60_quinquies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 61",
+        "id_subdivision": "160268",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_61",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 62",
+        "id_subdivision": "160269",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_62",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 62 bis",
+        "id_subdivision": "160270",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_62_bis",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 62 ter",
+        "id_subdivision": "160271",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_62_ter",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 63",
+        "id_subdivision": "160272",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_63",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 63 bis",
+        "id_subdivision": "160273",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_63_bis",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 63 ter",
+        "id_subdivision": "160274",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_63_ter",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 63 quater",
+        "id_subdivision": "160275",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_63_quater",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 63 quinquies",
+        "id_subdivision": "160276",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_63_quinquies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 63 sexies",
+        "id_subdivision": "160277",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_63_sexies",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 64",
+        "id_subdivision": "160278",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_64",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 64 bis",
+        "id_subdivision": "160279",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_64_bis",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 64 ter",
+        "id_subdivision": "160280",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_64_ter",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 65",
+        "id_subdivision": "160281",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_65",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 66",
+        "id_subdivision": "160282",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_66",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 67",
+        "id_subdivision": "160283",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_67",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 68",
+        "id_subdivision": "160284",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_68",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 69",
+        "id_subdivision": "160285",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_69",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 70",
+        "id_subdivision": "160286",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_70",
+        "Amendements": [
+
+        ]
+        },         {
+        "libelle_subdivision": "Article 71",
+        "id_subdivision": "160404",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_71",
+        "Amendements": [
+
+        
+            {
+            "idAmendement":"1128716",
+            "posder":"1",
+            "subpos":"20",
+            "isSousAmendement":"false",
+            "idAmendementPere":"0",
+            "urlAmdt":"Amdt_II-5.html",
+            "typeAmdt":"Amt",
+            "num":"II-5",
+            "libelleAlinea":"",
+            "urlAuteur":"panunzi_jean_jacques14191v.html",
+            "auteur":"M. PANUNZI",
+            "isDiscussionCommune":"false",
+            "isDiscussionCommuneIsolee" :"false",
+            "isIdentique":"false",
+            "isAdopte":"false",
+            "isRejete":"false"
+        }
+        ]
+        },         {
+        "libelle_subdivision": "Article 71 bis",
+        "id_subdivision": "160262",
+        "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_71_bis",
+        "Amendements": [
+
+        ]
+        }    ]
+}

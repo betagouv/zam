@@ -45,7 +45,19 @@ def aspire_senat(lecture: Lecture) -> Tuple[List[Amendement], int]:
 
 
 def _fetch_and_parse_all(lecture: Lecture) -> List[Tuple[Amendement, bool]]:
-    return [parse_from_csv(row, lecture) for row in _fetch_all(lecture)]
+    return [
+        parse_from_csv(row, lecture)
+        for row in _fetch_all(lecture)
+        if lecture.partie == parse_partie(row["Numéro "])
+    ]
+
+
+def parse_partie(numero: str) -> Optional[int]:
+    if numero.startswith("I-"):
+        return 1
+    if numero.startswith("II-"):
+        return 2
+    return None
 
 
 def _fetch_all(lecture: Lecture) -> List[OrderedDict]:

@@ -176,17 +176,27 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
     assert amendement.position == 2
 
 
-def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
+def test_fetch_amendements_an(app, lecture_an, article1_an):
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
-    amendement_999 = amendements_an[1]
-    amendement_999.avis = "Favorable"
-    amendement_999.observations = "Observations"
-    amendement_999.reponse = "Réponse"
-    DBSession.add(amendement_999)
+    amendement_6 = Amendement.create(
+        lecture=lecture_an, article=article1_an, num=6, position=1
+    )
+    DBSession.add(amendement_6)
 
-    initial_modified_at_999 = amendement_999.modified_at
+    amendement_9 = Amendement.create(
+        lecture=lecture_an,
+        article=article1_an,
+        num=9,
+        position=2,
+        avis="Favorable",
+        observations="Observations",
+        reponse="Réponse",
+    )
+    DBSession.add(amendement_9)
+
+    initial_modified_at_9 = amendement_9.modified_at
 
     with patch(
         "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
@@ -194,15 +204,15 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
         "zam_repondeur.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = [
-            {"@numero": "666", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "777", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "999", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
         ]
 
         def dynamic_return_value(lecture, numero):
             from zam_repondeur.fetch.exceptions import NotFound
 
-            if numero not in {666, 777, 999}:
+            if numero not in {6, 7, 9}:
                 raise NotFound
 
             return {
@@ -230,30 +240,30 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
 
         amendements, created, errored = get_amendements(lecture_an)
 
-    assert [amendement.num for amendement in amendements] == [666, 777, 999]
+    assert [amendement.num for amendement in amendements] == [6, 7, 9]
     assert created == 1
     assert errored == []
 
     # Check that the response was preserved on the updated amendement
-    amendement_999 = DBSession.query(Amendement).filter(Amendement.num == 999).one()
-    assert amendement_999.avis == "Favorable"
-    assert amendement_999.observations == "Observations"
-    assert amendement_999.reponse == "Réponse"
+    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
+    assert amendement_9.avis == "Favorable"
+    assert amendement_9.observations == "Observations"
+    assert amendement_9.reponse == "Réponse"
 
     # Check that the position was changed on the updated amendement
-    assert amendement_999.position == 3
+    assert amendement_9.position == 3
 
     # Check that the modified date was updated
-    assert amendement_999.modified_at > amendement_999.created_at
-    assert amendement_999.modified_at > initial_modified_at_999
+    assert amendement_9.modified_at > amendement_9.created_at
+    assert amendement_9.modified_at > initial_modified_at_9
 
     # Check that the position was set for the new amendement
-    amendement_777 = DBSession.query(Amendement).filter(Amendement.num == 777).one()
-    assert amendement_777.position == 2
+    amendement_7 = DBSession.query(Amendement).filter(Amendement.num == 7).one()
+    assert amendement_7.position == 2
 
     # Check that the modified date was initialized
-    assert amendement_777.modified_at is not None
-    assert amendement_777.modified_at == amendement_777.created_at
+    assert amendement_7.modified_at is not None
+    assert amendement_7.modified_at == amendement_7.created_at
 
 
 def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendements_an):
@@ -269,9 +279,9 @@ def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendement
         "zam_repondeur.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = [
-            {"@numero": "666", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "777", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "999", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
         ]
         mock_retrieve_amendement.side_effect = NotFound
 
@@ -279,7 +289,7 @@ def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendement
 
     assert amendements == []
     assert created == 0
-    assert errored == ["666", "777", "999"]
+    assert errored == ["6", "7", "9"]
     assert DBSession.query(Amendement).count() == len(amendements_an) == 2
 
 

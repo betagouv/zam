@@ -33,3 +33,6 @@ class Journal(Base):
     def created_at_timestamp(self) -> float:
         timestamp: float = (self.created_at - datetime(1970, 1, 1)).total_seconds()
         return timestamp
+
+    def __repr__(self) -> str:
+        return f"Journal(kind={self.kind!r}, message={self.message!r})"

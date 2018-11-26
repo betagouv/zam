@@ -7,6 +7,8 @@ import transaction
 
 from zam_repondeur.fetch.an.amendements import build_url
 
+from fetch.mock_an import setup_mock_responses
+
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data"
@@ -21,44 +23,18 @@ class TestFetchAndParseAll:
     def test_simple_amendements(self, lecture_an, app):
         from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
 
-        responses.add(
-            responses.GET,
-            build_url(lecture_an),
-            body=read_sample_data("an/269/liste.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 177),
-            body=read_sample_data("an/269/177.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 270),
-            body=read_sample_data("an/269/270.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 723),
-            body=read_sample_data("an/269/723.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 135),
-            body=read_sample_data("an/269/135.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 192),
-            body=read_sample_data("an/269/192.xml"),
-            status=200,
-        )
-
-        amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+        with setup_mock_responses(
+            lecture=lecture_an,
+            liste=read_sample_data("an/269/liste.xml"),
+            amendements=(
+                (177, read_sample_data("an/269/177.xml")),
+                (270, read_sample_data("an/269/270.xml")),
+                (723, read_sample_data("an/269/723.xml")),
+                (135, read_sample_data("an/269/135.xml")),
+                (192, read_sample_data("an/269/192.xml")),
+            ),
+        ):
+            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
 
         assert len(amendements) == 5
 
@@ -105,32 +81,16 @@ class TestFetchAndParseAll:
                 dossier_legislatif="Titre dossier legislatif",
             )
 
-        responses.add(
-            responses.GET,
-            build_url(lecture),
-            body=read_sample_data("an/911/liste.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture, 347),
-            body=read_sample_data("an/911/347.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture, 2482),
-            body=read_sample_data("an/911/2482.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture, 2512),
-            body=read_sample_data("an/911/2512.xml"),
-            status=200,
-        )
-
-        amendements, created, errored = fetch_and_parse_all(lecture=lecture)
+        with setup_mock_responses(
+            lecture=lecture,
+            liste=read_sample_data("an/911/liste.xml"),
+            amendements=(
+                (347, read_sample_data("an/911/347.xml")),
+                (2482, read_sample_data("an/911/2482.xml")),
+                (2512, read_sample_data("an/911/2512.xml")),
+            ),
+        ):
+            amendements, created, errored = fetch_and_parse_all(lecture=lecture)
 
         assert len(amendements) == 3
 
@@ -160,39 +120,18 @@ class TestFetchAndParseAll:
     def test_with_404(self, lecture_an, app):
         from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
 
-        responses.add(
-            responses.GET,
-            build_url(lecture_an),
-            body=read_sample_data("an/269/liste.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 177),
-            body=read_sample_data("an/269/177.xml"),
-            status=200,
-        )
-        responses.add(responses.GET, build_url(lecture_an, 270), status=404)
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 723),
-            body=read_sample_data("an/269/723.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 135),
-            body=read_sample_data("an/269/135.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 192),
-            body=read_sample_data("an/269/192.xml"),
-            status=200,
-        )
-
-        amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+        with setup_mock_responses(
+            lecture=lecture_an,
+            liste=read_sample_data("an/269/liste.xml"),
+            amendements=(
+                (177, read_sample_data("an/269/177.xml")),
+                # removed 270...
+                (723, read_sample_data("an/269/723.xml")),
+                (135, read_sample_data("an/269/135.xml")),
+                (192, read_sample_data("an/269/192.xml")),
+            ),
+        ):
+            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
 
         assert len(amendements) == 4
         assert amendements[0].num == 177

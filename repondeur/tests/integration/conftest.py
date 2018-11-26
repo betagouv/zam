@@ -4,7 +4,7 @@ from selenium.common.exceptions import WebDriverException
 from webtest.http import StopableWSGIServer
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture#(scope="session")
 def browser():
     options = webdriver.firefox.options.Options()
     options.add_argument("-headless")

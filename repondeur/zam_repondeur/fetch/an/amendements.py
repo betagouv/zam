@@ -46,14 +46,14 @@ def aspire_an(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
 
 
 def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
-    amendements_raw = fetch_amendements(lecture)
+    discussion_items = fetch_discussion_list(lecture)
     amendements = []
     index = 1
     created = 0
     errored = []
-    if not amendements_raw:
+    if not discussion_items:
         logger.warning("Could not find amendements from %r", lecture)
-    for item in amendements_raw:
+    for item in discussion_items:
         try:
             amendement, created_ = fetch_amendement(
                 lecture=lecture,
@@ -91,24 +91,26 @@ def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
     return result
 
 
-def fetch_amendements(lecture: Lecture) -> List[OrderedDict]:
+def fetch_discussion_list(lecture: Lecture) -> List[OrderedDict]:
     """
-    Récupère la liste des références aux amendements, dans l'ordre de dépôt.
+    Récupère la liste ordonnée des amendements soumis à la discussion.
+
+    Les amendements irrecevables ou encore en traitement ne sont pas inclus.
     """
     url = build_url(lecture)
     content = _retrieve_content(url)
 
     try:
         # If there is only 1 amendement, xmltodict does not return a list :(
-        amendements_raw: Union[OrderedDict, List[OrderedDict]] = (
+        discussed_amendements: Union[OrderedDict, List[OrderedDict]] = (
             content["amdtsParOrdreDeDiscussion"]["amendements"]["amendement"]
         )
     except TypeError:
         return []
 
-    if isinstance(amendements_raw, OrderedDict):
-        return [amendements_raw]
-    return amendements_raw
+    if isinstance(discussed_amendements, OrderedDict):
+        return [discussed_amendements]
+    return discussed_amendements
 
 
 def _retrieve_amendement(lecture: Lecture, numero: int) -> OrderedDict:

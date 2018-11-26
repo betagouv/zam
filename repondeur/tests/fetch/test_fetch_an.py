@@ -205,10 +205,10 @@ class TestFetchAndParseAll:
         assert errored == ["270"]
 
 
-class TestFetchAmendements:
+class TestFetchDiscussionList:
     @responses.activate
     def test_simple_amendements(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendements
+        from zam_repondeur.fetch.an.amendements import fetch_discussion_list
 
         responses.add(
             responses.GET,
@@ -217,7 +217,7 @@ class TestFetchAmendements:
             status=200,
         )
 
-        items = fetch_amendements(lecture=lecture_an)
+        items = fetch_discussion_list(lecture=lecture_an)
 
         assert len(items) == 5
         assert items[0] == {
@@ -241,7 +241,7 @@ class TestFetchAmendements:
 
     @responses.activate
     def test_only_one_amendement(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendements
+        from zam_repondeur.fetch.an.amendements import fetch_discussion_list
 
         responses.add(
             responses.GET,
@@ -268,7 +268,7 @@ class TestFetchAmendements:
             status=200,
         )
 
-        items = fetch_amendements(lecture=lecture_an)
+        items = fetch_discussion_list(lecture=lecture_an)
 
         assert isinstance(items, list)
         assert items[0] == {
@@ -292,12 +292,12 @@ class TestFetchAmendements:
 
     @responses.activate
     def test_list_not_found(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendements, NotFound
+        from zam_repondeur.fetch.an.amendements import fetch_discussion_list, NotFound
 
         responses.add(responses.GET, build_url(lecture_an), status=404)
 
         with pytest.raises(NotFound):
-            fetch_amendements(lecture=lecture_an)
+            fetch_discussion_list(lecture=lecture_an)
 
 
 class TestFetchAmendement:

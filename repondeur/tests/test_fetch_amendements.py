@@ -186,11 +186,11 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
     initial_modified_at_999 = amendement_999.modified_at
 
     with patch(
-        "zam_repondeur.fetch.an.amendements.fetch_amendements"
-    ) as mock_fetch_amendements, patch(
+        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+    ) as mock_fetch_discussion_list, patch(
         "zam_repondeur.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
-        mock_fetch_amendements.return_value = [
+        mock_fetch_discussion_list.return_value = [
             {"@numero": "666", "@discussionCommune": "", "@discussionIdentique": ""},
             {"@numero": "777", "@discussionCommune": "", "@discussionIdentique": ""},
             {"@numero": "999", "@discussionCommune": "", "@discussionIdentique": ""},
@@ -256,11 +256,11 @@ def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendement
     DBSession.add(lecture_an)
 
     with patch(
-        "zam_repondeur.fetch.an.amendements.fetch_amendements"
-    ) as mock_fetch_amendements, patch(
+        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+    ) as mock_fetch_discussion_list, patch(
         "zam_repondeur.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
-        mock_fetch_amendements.return_value = [
+        mock_fetch_discussion_list.return_value = [
             {"@numero": "666", "@discussionCommune": "", "@discussionIdentique": ""},
             {"@numero": "777", "@discussionCommune": "", "@discussionIdentique": ""},
             {"@numero": "999", "@discussionCommune": "", "@discussionIdentique": ""},

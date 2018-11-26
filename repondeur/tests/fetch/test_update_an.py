@@ -164,14 +164,14 @@ def test_abandoned_before_seance(lecture_an):
               legislature="14"  titre="PLFSS 2017"
                type="projet de loi de financement de la sécurité sociale">
               <amendements>
-                <amendement  place="Article 3"  numero="177"  sort="Rejeté"
-                    parentNumero=""  auteurLabel="M. DOOR"
-                    auteurLabelFull="M. DOOR Jean-Pierre"
+                <amendement  place="Article 3"  numero="270"  sort="Rejeté"
+                    parentNumero=""  auteurLabel="M. ACCOYER"
+                    auteurLabelFull="M. ACCOYER Bernard"
                     auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
-                    discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueAmdtPositon="milieu"
+                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -184,7 +184,7 @@ def test_abandoned_before_seance(lecture_an):
         fetch_and_parse_all(lecture=lecture_an)
 
     assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
-    assert [amdt.position for amdt in lecture_an.amendements] == [1, None]
+    assert [amdt.position for amdt in lecture_an.amendements] == [None, 1]
 
 
 @responses.activate

@@ -1,6 +1,9 @@
 from collections import OrderedDict
+from textwrap import dedent
 import transaction
 from unittest.mock import patch
+
+from fetch.mock_an import setup_mock_responses
 
 
 def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements_senat):
@@ -197,6 +200,11 @@ def test_fetch_amendements_an(app, lecture_an, article1_an, amendements_an):
         ]
 
         def dynamic_return_value(lecture, numero):
+            from zam_repondeur.fetch.exceptions import NotFound
+
+            if numero not in {666, 777, 999}:
+                raise NotFound
+
             return {
                 "division": {
                     "titre": "Article 1",
@@ -281,11 +289,16 @@ def test_fetch_amendements_with_emptiness(app, lecture_an, article1_an, amendeme
 
     DBSession.add(lecture_an)
 
-    with patch(
-        "zam_repondeur.fetch.an.amendements._retrieve_content"
-    ) as mock_retrieve_content:
-        mock_retrieve_content.return_value = {"amdtsParOrdreDeDiscussion": None}
-
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
+            """\
+            <?xml version="1.0" encoding="UTF-8"?>
+            <amdtsParOrdreDeDiscussion></amdtsParOrdreDeDiscussion>
+            """
+        ),
+        amendements=(),
+    ):
         amendements, created, errored = get_amendements(lecture_an)
 
     assert amendements == []

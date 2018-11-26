@@ -67,6 +67,53 @@ class TestFetchAndParseAll:
         assert errored == []
 
     @responses.activate
+    def test_amendements_not_in_discussion_list_are_fetched(self, lecture_an, app):
+        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
+
+        with setup_mock_responses(
+            lecture=lecture_an,
+            liste=dedent(
+                """\
+                <?xml version="1.0" encoding="UTF-8"?>
+                <amdtsParOrdreDeDiscussion bibard="4072" bibardSuffixe="" organe="AN"
+                  legislature="14" titre="PLFSS 2017"
+                  type="projet de loi de financement de la sécurité sociale">
+                  <amendements>
+                    <amendement place="Article 3" numero="177" sort="Rejeté"
+                        parentNumero="" auteurLabel="M. DOOR"
+                        auteurLabelFull="M. DOOR Jean-Pierre"
+                        auteurGroupe="Les Républicains" alineaLabel="S" missionLabel=""
+                        discussionCommune="" discussionCommuneAmdtPositon=""
+                        discussionCommuneSsAmdtPositon="" discussionIdentique="20386"
+                        discussionIdentiqueAmdtPositon="debut"
+                        discussionIdentiqueSsAmdtPositon="" position="001/772" />
+                  </amendements>
+                </amdtsParOrdreDeDiscussion>
+                """
+            ),
+            amendements=(
+                (177, read_sample_data("an/269/177.xml")),
+                (192, read_sample_data("an/269/192.xml")),
+            ),
+        ):
+            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+
+        assert len(amendements) == 2
+
+        assert amendements[0].num == 177
+        assert amendements[0].position == 1
+        assert amendements[0].id_discussion_commune is None
+        assert amendements[0].id_identique == 20386
+
+        assert amendements[1].num == 192
+        assert amendements[1].position is None
+        assert amendements[1].id_discussion_commune is None
+        assert amendements[1].id_identique is None
+
+        assert created == 2
+        assert errored == []
+
+    @responses.activate
     def test_sous_amendements(self, app):
         from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
         from zam_repondeur.models import Lecture
@@ -139,7 +186,7 @@ class TestFetchAndParseAll:
         assert amendements[2].num == 135
         assert amendements[3].num == 192
 
-        assert [amdt.position for amdt in amendements] == list(range(1, 5))
+        assert [amdt.position for amdt in amendements] == [1, 3, 4, 5]
         assert created == 4
         assert errored == ["270"]
 

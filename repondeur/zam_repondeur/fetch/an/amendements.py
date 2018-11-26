@@ -2,7 +2,7 @@ import logging
 from collections import OrderedDict
 from datetime import datetime
 from http import HTTPStatus
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Set, Tuple, Union
 from urllib.parse import urljoin
 
 import xmltodict
@@ -46,38 +46,93 @@ def aspire_an(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
 
 
 def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
-    discussion_items = fetch_discussion_list(lecture)
-    amendements = []
-    index = 1
+    amendements: List[Amendement] = []
     created = 0
-    errored = []
+    errored: List[str] = []
+
+    discussion_items = fetch_discussion_list(lecture)
     if not discussion_items:
         logger.warning("Could not find amendements from %r", lecture)
-    for item in discussion_items:
+
+    discussion_nums = {int(item["@numero"]) for item in discussion_items}
+
+    amendements_disc, created_disc, errored_disc = _fetch_amendements_discussed(
+        lecture, discussion_items
+    )
+    amendements_other, created_other, errored_other = _fetch_amendements_other(
+        lecture, discussion_nums
+    )
+
+    amendements = amendements_disc + amendements_other
+    created = created_disc + created_other
+    errored = errored_disc + errored_other
+
+    clear_position_if_removed(lecture, amendements)
+
+    return amendements, created, errored
+
+
+def _fetch_amendements_discussed(
+    lecture: Lecture, discussion_items: List[OrderedDict]
+) -> Tuple[List[Amendement], int, List[str]]:
+    amendements: List[Amendement] = []
+    created = 0
+    errored: List[str] = []
+
+    for position, item in enumerate(discussion_items, start=1):
+        numero = int(item["@numero"])
+        id_discussion_commune = (
+            int(item["@discussionCommune"]) if item["@discussionCommune"] else None
+        )
+        id_identique = (
+            int(item["@discussionIdentique"]) if item["@discussionIdentique"] else None
+        )
         try:
             amendement, created_ = fetch_amendement(
                 lecture=lecture,
-                numero=item["@numero"],
-                position=index,
-                id_discussion_commune=(
-                    int(item["@discussionCommune"])
-                    if item["@discussionCommune"]
-                    else None
-                ),
-                id_identique=(
-                    int(item["@discussionIdentique"])
-                    if item["@discussionIdentique"]
-                    else None
-                ),
+                numero=numero,
+                position=position,
+                id_discussion_commune=id_discussion_commune,
+                id_identique=id_identique,
             )
-            created += int(created_)
         except NotFound:
-            logger.warning("Could not find amendement %r", item["@numero"])
-            errored.append(item["@numero"])
+            logger.warning("Could not find amendement %r", numero)
+            errored.append(str(numero))
             continue
         amendements.append(amendement)
-        index += 1
-    clear_position_if_removed(lecture, amendements)
+        created += int(created_)
+    return amendements, created, errored
+
+
+def _fetch_amendements_other(
+    lecture: Lecture, discussion_nums: Set[int]
+) -> Tuple[List[Amendement], int, List[str]]:
+    amendements: List[Amendement] = []
+    created = 0
+    errored: List[str] = []
+
+    max_num_seen = max(discussion_nums) if discussion_nums else 0
+    numero = 0
+
+    # We can't try all possible numbers, so we'll stop after a string of 404s
+    while numero < (max_num_seen + 20):
+        numero += 1
+        if numero in discussion_nums:
+            continue
+        try:
+            amendement, created_ = fetch_amendement(
+                lecture=lecture,
+                numero=numero,
+                position=None,
+                id_discussion_commune=None,
+                id_identique=None,
+            )
+        except NotFound:
+            continue
+        amendements.append(amendement)
+        created += int(created_)
+        if numero > max_num_seen:
+            max_num_seen = numero
     return amendements, created, errored
 
 
@@ -122,7 +177,7 @@ def _retrieve_amendement(lecture: Lecture, numero: int) -> OrderedDict:
 def fetch_amendement(
     lecture: Lecture,
     numero: int,
-    position: int,
+    position: Optional[int],
     id_discussion_commune: Optional[int] = None,
     id_identique: Optional[int] = None,
 ) -> Tuple[Amendement, bool]:
@@ -174,10 +229,10 @@ def _get_parent(
 
 def _create_or_update_amendement(
     lecture: Lecture,
-    article: Article,
+    article: Optional[Article],
     parent: Optional[Amendement],
     amend: OrderedDict,
-    position: int,
+    position: Optional[int],
     id_discussion_commune: Optional[int],
     id_identique: Optional[int],
 ) -> Tuple[Amendement, bool]:

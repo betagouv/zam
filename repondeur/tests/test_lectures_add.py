@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import responses
@@ -86,6 +87,13 @@ def test_post_form(app):
         "http://www.assemblee-nationale.fr/15/xml/amendements/0269/AN/192.xml",
         body=read_sample_data("an/269/192.xml"),
         status=200,
+    )
+    responses.add(
+        responses.GET,
+        re.compile(
+            r"http://www\.assemblee-nationale\.fr/15/xml/amendements/0269/AN/\d+\.xml"
+        ),
+        status=404,
     )
 
     responses.add(

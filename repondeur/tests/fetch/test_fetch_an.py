@@ -85,26 +85,26 @@ class TestFetchAndParseAll:
             lecture=lecture,
             liste=read_sample_data("an/911/liste.xml"),
             amendements=(
-                (347, read_sample_data("an/911/347.xml")),
-                (2482, read_sample_data("an/911/2482.xml")),
-                (2512, read_sample_data("an/911/2512.xml")),
+                (1, read_sample_data("an/911/1.xml")),
+                (2, read_sample_data("an/911/2.xml")),
+                (3, read_sample_data("an/911/3.xml")),
             ),
         ):
             amendements, created, errored = fetch_and_parse_all(lecture=lecture)
 
         assert len(amendements) == 3
 
-        assert amendements[0].num == 347
+        assert amendements[0].num == 1
         assert amendements[0].position == 1
         assert amendements[0].id_discussion_commune == 3448
         assert amendements[0].id_identique == 8496
 
-        assert amendements[1].num == 2482
+        assert amendements[1].num == 2
         assert amendements[1].position == 2
         assert amendements[1].id_discussion_commune is None
         assert amendements[1].id_identique is None
 
-        assert amendements[2].num == 2512
+        assert amendements[2].num == 3
         assert amendements[2].position == 3
         assert amendements[2].id_discussion_commune is None
         assert amendements[1].id_identique is None

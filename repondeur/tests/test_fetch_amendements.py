@@ -234,6 +234,8 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
                 "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
                 "numeroParent": OrderedDict({"@xsi:nil": "true"}),
                 "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                "etat": "AC",
+                "retireAvantPublication": "0",
             }
 
         mock_retrieve_amendement.side_effect = dynamic_return_value

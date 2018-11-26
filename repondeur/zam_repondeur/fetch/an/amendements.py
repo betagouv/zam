@@ -361,8 +361,29 @@ def get_groupe(amendement: OrderedDict) -> str:
     return groupe["libelle"]
 
 
+ETATS_OK = {
+    "AT",  # à traiter
+    "T",  # traité
+    "ER",  # en recevabilité
+    "R",  # recevable
+    "AC",  # à discuter
+    "DI",  # discuté
+}
+
+
 def get_sort(amendement: OrderedDict) -> str:
-    return (get_str_or_none(amendement, "sortEnSeance") or "").lower()
+    sort = get_str_or_none(amendement, "sortEnSeance")
+    if sort is not None:
+        return sort.lower()
+    if (
+        amendement["retireAvantPublication"] == "1"
+        or amendement.get("retireApresPublication", "0") == "1"
+    ):
+        return "Retiré"
+    etat = get_str_or_none(amendement, "etat")
+    if etat not in ETATS_OK:
+        return "Irrecevable"
+    return ""
 
 
 def get_parent_raw_num(amendement: OrderedDict) -> str:

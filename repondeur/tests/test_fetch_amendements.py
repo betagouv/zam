@@ -209,10 +209,10 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
             {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
         ]
 
-        def dynamic_return_value(lecture, numero):
+        def dynamic_return_value(lecture, numero_prefixe):
             from zam_repondeur.fetch.exceptions import NotFound
 
-            if numero not in {6, 7, 9}:
+            if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
 
             return {
@@ -222,7 +222,7 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
                     "avantApres": "",
                     "divisionRattache": "ARTICLE 1",
                 },
-                "numero": numero,
+                "numero": numero_prefixe,
                 "auteur": {
                     "tribunId": "642788",
                     "groupeTribunId": "730964",

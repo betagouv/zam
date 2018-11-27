@@ -1,4 +1,5 @@
 import logging
+import re
 from collections import OrderedDict
 from datetime import datetime
 from http import HTTPStatus
@@ -31,7 +32,8 @@ BASE_URL = "http://www.assemblee-nationale.fr"
 # and has no Service Level Agreement (SLA)
 PATTERN_LISTE = "/{legislature}/amendements/{texte}{suffixe}/{organe_abrev}/liste.xml"
 PATTERN_AMENDEMENT = (
-    "/{legislature}/xml/amendements/{texte}{suffixe}/{organe_abrev}/{numero}.xml"
+    "/{legislature}/xml/amendements/"
+    "{texte}{suffixe}/{organe_abrev}/{numero_prefixe}.xml"
 )
 
 
@@ -54,13 +56,16 @@ def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[s
     if not discussion_items:
         logger.warning("Could not find amendements from %r", lecture)
 
-    discussion_nums = {int(item["@numero"]) for item in discussion_items}
+    discussion_nums = {
+        parse_num_in_liste(item["@numero"])[1] for item in discussion_items
+    }
+    prefix = find_prefix(discussion_items, lecture)
 
     amendements_disc, created_disc, errored_disc = _fetch_amendements_discussed(
         lecture, discussion_items
     )
     amendements_other, created_other, errored_other = _fetch_amendements_other(
-        lecture, discussion_nums
+        lecture, discussion_nums, prefix
     )
 
     amendements = amendements_disc + amendements_other
@@ -72,6 +77,31 @@ def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[s
     return amendements, created, errored
 
 
+def find_prefix(discussion_items: List[OrderedDict], lecture: Lecture) -> str:
+    if discussion_items:
+        numero_prefixe = discussion_items[0]["@numero"]
+        prefix, _ = parse_num_in_liste(numero_prefixe)
+        return prefix
+    return get_organe_prefix(lecture.organe)
+
+
+def get_organe_prefix(organe: str) -> str:
+    abrev = get_organe_abrev(organe)
+    return _ORGANE_PREFIX.get(abrev, "")
+
+
+_ORGANE_PREFIX = {
+    "CION_FIN": "CF",  # Finances
+    "CION-SOC": "AS",  # Affaires sociales
+    "CION-CEDU": "AC",  # Affaires culturelles et éducation
+    "CION-ECO": "CE",  # Affaires économiques
+    "CION_AFETR": "AE",  # Affaires étrangères
+    "CION_DEF": "DN",  # Défense
+    "CION_LOIS": "CL",  # Lois
+    "CION-DVP": "CD",  # Développement durable
+}
+
+
 def _fetch_amendements_discussed(
     lecture: Lecture, discussion_items: List[OrderedDict]
 ) -> Tuple[List[Amendement], int, List[str]]:
@@ -80,7 +110,7 @@ def _fetch_amendements_discussed(
     errored: List[str] = []
 
     for position, item in enumerate(discussion_items, start=1):
-        numero = int(item["@numero"])
+        numero_prefixe = item["@numero"]
         id_discussion_commune = (
             int(item["@discussionCommune"]) if item["@discussionCommune"] else None
         )
@@ -90,14 +120,15 @@ def _fetch_amendements_discussed(
         try:
             amendement, created_ = fetch_amendement(
                 lecture=lecture,
-                numero=numero,
+                numero_prefixe=numero_prefixe,
                 position=position,
                 id_discussion_commune=id_discussion_commune,
                 id_identique=id_identique,
             )
         except NotFound:
-            logger.warning("Could not find amendement %r", numero)
-            errored.append(str(numero))
+            prefix, num = parse_num_in_liste(numero_prefixe)
+            logger.warning("Could not find amendement %r", num)
+            errored.append(str(num))
             continue
         amendements.append(amendement)
         created += int(created_)
@@ -105,7 +136,7 @@ def _fetch_amendements_discussed(
 
 
 def _fetch_amendements_other(
-    lecture: Lecture, discussion_nums: Set[int]
+    lecture: Lecture, discussion_nums: Set[int], prefix: str
 ) -> Tuple[List[Amendement], int, List[str]]:
     amendements: List[Amendement] = []
     created = 0
@@ -122,7 +153,7 @@ def _fetch_amendements_other(
         try:
             amendement, created_ = fetch_amendement(
                 lecture=lecture,
-                numero=numero,
+                numero_prefixe=f"{prefix}{numero}",
                 position=None,
                 id_discussion_commune=None,
                 id_identique=None,
@@ -168,15 +199,15 @@ def fetch_discussion_list(lecture: Lecture) -> List[OrderedDict]:
     return discussed_amendements
 
 
-def _retrieve_amendement(lecture: Lecture, numero: int) -> OrderedDict:
-    url = build_url(lecture, numero)
+def _retrieve_amendement(lecture: Lecture, numero_prefixe: str) -> OrderedDict:
+    url = build_url(lecture, numero_prefixe)
     content = _retrieve_content(url)
     return content["amendement"]
 
 
 def fetch_amendement(
     lecture: Lecture,
-    numero: int,
+    numero_prefixe: str,
     position: Optional[int],
     id_discussion_commune: Optional[int] = None,
     id_identique: Optional[int] = None,
@@ -184,8 +215,8 @@ def fetch_amendement(
     """
     Récupère un amendement depuis son numéro.
     """
-    logger.info("Récupération de l'amendement %r", numero)
-    amend = _retrieve_amendement(lecture, numero)
+    logger.info("Récupération de l'amendement %r", numero_prefixe)
+    amend = _retrieve_amendement(lecture, numero_prefixe)
     article = _get_article(lecture, amend["division"])
     parent = _get_parent(lecture, article, amend)
     amendement, created = _create_or_update_amendement(
@@ -282,7 +313,7 @@ def _create_or_update_amendement(
     return amendement, created
 
 
-def build_url(lecture: Lecture, numero: int = 0) -> str:
+def build_url(lecture: Lecture, numero_prefixe: str = "") -> str:
 
     legislature = int(lecture.session)
     texte = f"{lecture.num_texte:04}"
@@ -297,13 +328,13 @@ def build_url(lecture: Lecture, numero: int = 0) -> str:
 
     organe_abrev = get_organe_abrev(lecture.organe)
 
-    if numero:
+    if numero_prefixe:
         path = PATTERN_AMENDEMENT.format(
             legislature=legislature,
             texte=texte,
             suffixe=suffixe,
             organe_abrev=organe_abrev,
-            numero=numero,
+            numero_prefixe=numero_prefixe,
         )
     else:
         path = PATTERN_LISTE.format(
@@ -323,6 +354,16 @@ def get_organe_abrev(organe: str) -> str:
     data = get_data("organes")[organe]
     abrev: str = data["libelleAbrev"]
     return abrev
+
+
+def parse_num_in_liste(num_long: str) -> Tuple[str, int]:
+    mo = _RE_NUM.match(num_long)
+    if mo is None:
+        raise ValueError(f"Cannot parse amendement number {num_long!r}")
+    return mo.group("acronyme"), int(mo.group("num"))
+
+
+_RE_NUM = re.compile(r"(?P<acronyme>[A-Z]*)(?P<num>\d+)")
 
 
 def get_auteur(amendement: OrderedDict) -> str:

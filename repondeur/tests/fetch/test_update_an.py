@@ -58,8 +58,8 @@ def test_position_changed(lecture_an):
             """
         ),
         amendements=(
-            (177, read_sample_data("an/269/177.xml")),
-            (270, read_sample_data("an/269/270.xml")),
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
         fetch_and_parse_all(lecture=lecture_an)
@@ -97,8 +97,8 @@ def test_position_changed(lecture_an):
             """
         ),
         amendements=(
-            (177, read_sample_data("an/269/177.xml")),
-            (270, read_sample_data("an/269/270.xml")),
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
         fetch_and_parse_all(lecture=lecture_an)
@@ -146,8 +146,8 @@ def test_abandoned_before_seance(lecture_an):
             """
         ),
         amendements=(
-            (177, read_sample_data("an/269/177.xml")),
-            (270, read_sample_data("an/269/270.xml")),
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
         fetch_and_parse_all(lecture=lecture_an)
@@ -177,8 +177,8 @@ def test_abandoned_before_seance(lecture_an):
             """
         ),
         amendements=(
-            (177, read_sample_data("an/269/177.xml")),
-            (270, read_sample_data("an/269/270.xml")),
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
         fetch_and_parse_all(lecture=lecture_an)
@@ -226,8 +226,8 @@ def test_article_changed(lecture_an):
             """
         ),
         amendements=(
-            (177, read_sample_data("an/269/177.xml")),
-            (270, read_sample_data("an/269/270.xml")),
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
         fetch_and_parse_all(lecture=lecture_an)
@@ -267,7 +267,7 @@ def test_article_changed(lecture_an):
         ),
         amendements=(
             (
-                177,
+                "177",
                 read_sample_data("an/269/177.xml").replace(
                     """\
     <division>
@@ -293,7 +293,7 @@ def test_article_changed(lecture_an):
     </division>""",
                 ),
             ),
-            (270, read_sample_data("an/269/270.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
         fetch_and_parse_all(lecture=lecture_an)
@@ -341,8 +341,8 @@ def test_add_parent_amendement(lecture_an):
             """
         ),
         amendements=(
-            (177, read_sample_data("an/269/177.xml")),
-            (270, read_sample_data("an/269/270.xml")),
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
         fetch_and_parse_all(lecture=lecture_an)
@@ -381,9 +381,9 @@ def test_add_parent_amendement(lecture_an):
             """
         ),
         amendements=(
-            (177, read_sample_data("an/269/177.xml")),
+            ("177", read_sample_data("an/269/177.xml")),
             (
-                270,
+                "270",
                 read_sample_data("an/269/270.xml").replace(
                     '<numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>',  # noqa
                     "<numeroParent>177 (Rect)</numeroParent>",
@@ -437,9 +437,9 @@ def test_remove_parent_amendement(lecture_an):
             """
         ),
         amendements=(
-            (177, read_sample_data("an/269/177.xml")),
+            ("177", read_sample_data("an/269/177.xml")),
             (
-                270,
+                "270",
                 read_sample_data("an/269/270.xml").replace(
                     '<numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>',  # noqa
                     "<numeroParent>177 (Rect)</numeroParent>",
@@ -484,8 +484,8 @@ def test_remove_parent_amendement(lecture_an):
             """
         ),
         amendements=(
-            (177, read_sample_data("an/269/177.xml")),
-            (270, read_sample_data("an/269/270.xml")),
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
         fetch_and_parse_all(lecture=lecture_an)

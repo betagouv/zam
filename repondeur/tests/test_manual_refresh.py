@@ -46,11 +46,11 @@ def test_post_form(app, lecture_an, article1_an):
         lecture=lecture_an,
         liste=read_sample_data("an/269/liste.xml"),
         amendements=(
-            (177, read_sample_data("an/269/177.xml")),
-            (270, read_sample_data("an/269/270.xml")),
-            (723, read_sample_data("an/269/723.xml")),
-            (135, read_sample_data("an/269/135.xml")),
-            (192, read_sample_data("an/269/192.xml")),
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
+            ("723", read_sample_data("an/269/723.xml")),
+            ("135", read_sample_data("an/269/135.xml")),
+            ("192", read_sample_data("an/269/192.xml")),
         ),
     ) as mock_resp:
 

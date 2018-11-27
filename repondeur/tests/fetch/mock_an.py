@@ -21,7 +21,7 @@ def setup_mock_responses(lecture, liste, amendements):
             )
 
         # Other amendements will return a 404
-        url_pattern = re.escape(build_url(lecture, "X")).replace("X", r"\d+")
+        url_pattern = re.escape(build_url(lecture, "X")).replace("X", r"[A-Z]*\d+")
         mock_resp.add(responses.GET, re.compile(url_pattern), status=404)
 
         yield mock_resp

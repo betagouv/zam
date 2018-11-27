@@ -2,7 +2,7 @@ import transaction
 
 
 def test_visionneuse_detail_amendement(
-    wsgi_server, browser, lecture_an, amendements_an
+    wsgi_server, new_driver, lecture_an, amendements_an
 ):
     from zam_repondeur.models import DBSession
 
@@ -13,8 +13,8 @@ def test_visionneuse_detail_amendement(
         amendements_an[0].groupe = "Les Heureux"
         DBSession.add_all(amendements_an)
 
-    browser.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
-    article = browser.find_element_by_css_selector("article")
+    new_driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
+    article = new_driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")
     assert header.find_element_by_css_selector("h2").text == "Amendement 666"
     assert (
@@ -27,7 +27,7 @@ def test_visionneuse_detail_amendement(
 
 
 def test_visionneuse_detail_amendement_reponse(
-    wsgi_server, browser, lecture_an, amendements_an
+    wsgi_server, new_driver, lecture_an, amendements_an
 ):
     from zam_repondeur.models import DBSession
 
@@ -37,8 +37,8 @@ def test_visionneuse_detail_amendement_reponse(
         amendements_an[0].reponse = "La réponse"
         DBSession.add_all(amendements_an)
 
-    browser.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
-    article = browser.find_element_by_css_selector("article")
+    new_driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
+    article = new_driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")
     header.find_element_by_link_text("Réponse").click()
     assert article.find_element_by_css_selector(".reponse-detail").is_displayed()
@@ -51,7 +51,7 @@ def test_visionneuse_detail_amendement_reponse(
 
 
 def test_visionneuse_detail_amendement_texte(
-    wsgi_server, browser, lecture_an, amendements_an
+    wsgi_server, new_driver, lecture_an, amendements_an
 ):
     from zam_repondeur.models import DBSession
 
@@ -61,8 +61,8 @@ def test_visionneuse_detail_amendement_texte(
         amendements_an[0].objet = "L’objet"
         DBSession.add_all(amendements_an)
 
-    browser.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
-    article = browser.find_element_by_css_selector("article")
+    new_driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
+    article = new_driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")
     header.find_element_by_link_text("Texte").click()
     assert not article.find_element_by_css_selector(".reponse-detail").is_displayed()
@@ -75,7 +75,7 @@ def test_visionneuse_detail_amendement_texte(
 
 
 def test_visionneuse_detail_amendement_reponse_then_texte(
-    wsgi_server, browser, lecture_an, amendements_an
+    wsgi_server, new_driver, lecture_an, amendements_an
 ):
     from zam_repondeur.models import DBSession
 
@@ -86,8 +86,8 @@ def test_visionneuse_detail_amendement_reponse_then_texte(
         amendements_an[0].objet = "L’objet"
         DBSession.add_all(amendements_an)
 
-    browser.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
-    article = browser.find_element_by_css_selector("article")
+    new_driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
+    article = new_driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")
     header.find_element_by_link_text("Réponse").click()
     assert article.find_element_by_css_selector(".reponse-detail").is_displayed()

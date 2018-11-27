@@ -3,7 +3,8 @@ import transaction
 
 import responses
 
-from zam_repondeur.fetch.an.amendements import build_url
+from fetch.mock_an import setup_mock_responses
+
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "fetch" / "sample_data"
@@ -36,60 +37,35 @@ def test_post_form(app, lecture_an, article1_an):
 
     initial_modified_at = lecture_an.modified_at
 
-    responses.add(
-        responses.GET,
-        build_url(lecture_an),
-        body=read_sample_data("an/269/liste.xml"),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 177),
-        body=read_sample_data("an/269/177.xml"),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 270),
-        body=read_sample_data("an/269/270.xml"),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 723),
-        body=read_sample_data("an/269/723.xml"),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 135),
-        body=read_sample_data("an/269/135.xml"),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 192),
-        body=read_sample_data("an/269/192.xml"),
-        status=200,
-    )
-
-    responses.add(
-        responses.GET,
-        "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
-        body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
-            "utf-8", "ignore"
-        ),
-        status=200,
-    )
-
     # Initially, we only have one amendement (#135), with a response
     with transaction.manager:
         Amendement.create(lecture=lecture_an, article=article1_an, num=135, position=1)
     assert DBSession.query(Journal).count() == 0
 
-    # Then we ask for a refresh
-    form = app.get("/lectures/an.15.269.PO717460/journal/").forms["manual-refresh"]
-    resp = form.submit()
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=read_sample_data("an/269/liste.xml"),
+        amendements=(
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
+            ("723", read_sample_data("an/269/723.xml")),
+            ("135", read_sample_data("an/269/135.xml")),
+            ("192", read_sample_data("an/269/192.xml")),
+        ),
+    ) as mock_resp:
+
+        mock_resp.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+            body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
+                "utf-8", "ignore"
+            ),
+            status=200,
+        )
+
+        # Then we ask for a refresh
+        form = app.get("/lectures/an.15.269.PO717460/journal/").forms["manual-refresh"]
+        resp = form.submit()
 
     assert resp.status_code == 302
     assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements"

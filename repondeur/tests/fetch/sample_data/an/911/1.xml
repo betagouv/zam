@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <amendement>
-    <numero>347</numero>
-    <numeroLong>347</numeroLong>
+    <numero>1</numero>
+    <numeroLong>1</numeroLong>
     <numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <amendementEtendu>0</amendementEtendu>
     <etat>AC</etat>
@@ -22,7 +22,7 @@
     <triAmendement>gaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafahoti</triAmendement>
     <codeLoi>Constitution</codeLoi>
     <refCodeLoi>51-3</refCodeLoi>
-    <urlPDF>/15/amendements/0911/AN/347.pdf</urlPDF>
+    <urlPDF>/15/amendements/0911/AN/1.pdf</urlPDF>
     <dateDepotAffiche>4 juillet 2018 </dateDepotAffiche>
     <division>
         <titre>Article 9</titre>

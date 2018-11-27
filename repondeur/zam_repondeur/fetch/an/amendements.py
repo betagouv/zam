@@ -1,8 +1,9 @@
 import logging
+import re
 from collections import OrderedDict
 from datetime import datetime
 from http import HTTPStatus
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Set, Tuple, Union
 from urllib.parse import urljoin
 
 import xmltodict
@@ -31,7 +32,8 @@ BASE_URL = "http://www.assemblee-nationale.fr"
 # and has no Service Level Agreement (SLA)
 PATTERN_LISTE = "/{legislature}/amendements/{texte}{suffixe}/{organe_abrev}/liste.xml"
 PATTERN_AMENDEMENT = (
-    "/{legislature}/xml/amendements/{texte}{suffixe}/{organe_abrev}/{numero}.xml"
+    "/{legislature}/xml/amendements/"
+    "{texte}{suffixe}/{organe_abrev}/{numero_prefixe}.xml"
 )
 
 
@@ -46,38 +48,122 @@ def aspire_an(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
 
 
 def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
-    amendements_raw = fetch_amendements(lecture)
-    amendements = []
-    index = 1
+    amendements: List[Amendement] = []
     created = 0
-    errored = []
-    if not amendements_raw:
+    errored: List[str] = []
+
+    discussion_items = fetch_discussion_list(lecture)
+    if not discussion_items:
         logger.warning("Could not find amendements from %r", lecture)
-    for item in amendements_raw:
+
+    discussion_nums = {
+        parse_num_in_liste(item["@numero"])[1] for item in discussion_items
+    }
+    prefix = find_prefix(discussion_items, lecture)
+
+    amendements_disc, created_disc, errored_disc = _fetch_amendements_discussed(
+        lecture, discussion_items
+    )
+    amendements_other, created_other, errored_other = _fetch_amendements_other(
+        lecture, discussion_nums, prefix
+    )
+
+    amendements = amendements_disc + amendements_other
+    created = created_disc + created_other
+    errored = errored_disc + errored_other
+
+    clear_position_if_removed(lecture, amendements)
+
+    return amendements, created, errored
+
+
+def find_prefix(discussion_items: List[OrderedDict], lecture: Lecture) -> str:
+    if discussion_items:
+        numero_prefixe = discussion_items[0]["@numero"]
+        prefix, _ = parse_num_in_liste(numero_prefixe)
+        return prefix
+    return get_organe_prefix(lecture.organe)
+
+
+def get_organe_prefix(organe: str) -> str:
+    abrev = get_organe_abrev(organe)
+    return _ORGANE_PREFIX.get(abrev, "")
+
+
+_ORGANE_PREFIX = {
+    "CION_FIN": "CF",  # Finances
+    "CION-SOC": "AS",  # Affaires sociales
+    "CION-CEDU": "AC",  # Affaires culturelles et éducation
+    "CION-ECO": "CE",  # Affaires économiques
+    "CION_AFETR": "AE",  # Affaires étrangères
+    "CION_DEF": "DN",  # Défense
+    "CION_LOIS": "CL",  # Lois
+    "CION-DVP": "CD",  # Développement durable
+}
+
+
+def _fetch_amendements_discussed(
+    lecture: Lecture, discussion_items: List[OrderedDict]
+) -> Tuple[List[Amendement], int, List[str]]:
+    amendements: List[Amendement] = []
+    created = 0
+    errored: List[str] = []
+
+    for position, item in enumerate(discussion_items, start=1):
+        numero_prefixe = item["@numero"]
+        id_discussion_commune = (
+            int(item["@discussionCommune"]) if item["@discussionCommune"] else None
+        )
+        id_identique = (
+            int(item["@discussionIdentique"]) if item["@discussionIdentique"] else None
+        )
         try:
             amendement, created_ = fetch_amendement(
                 lecture=lecture,
-                numero=item["@numero"],
-                position=index,
-                id_discussion_commune=(
-                    int(item["@discussionCommune"])
-                    if item["@discussionCommune"]
-                    else None
-                ),
-                id_identique=(
-                    int(item["@discussionIdentique"])
-                    if item["@discussionIdentique"]
-                    else None
-                ),
+                numero_prefixe=numero_prefixe,
+                position=position,
+                id_discussion_commune=id_discussion_commune,
+                id_identique=id_identique,
             )
-            created += int(created_)
         except NotFound:
-            logger.warning("Could not find amendement %r", item["@numero"])
-            errored.append(item["@numero"])
+            prefix, num = parse_num_in_liste(numero_prefixe)
+            logger.warning("Could not find amendement %r", num)
+            errored.append(str(num))
             continue
         amendements.append(amendement)
-        index += 1
-    clear_position_if_removed(lecture, amendements)
+        created += int(created_)
+    return amendements, created, errored
+
+
+def _fetch_amendements_other(
+    lecture: Lecture, discussion_nums: Set[int], prefix: str
+) -> Tuple[List[Amendement], int, List[str]]:
+    amendements: List[Amendement] = []
+    created = 0
+    errored: List[str] = []
+
+    max_num_seen = max(discussion_nums) if discussion_nums else 0
+    numero = 0
+
+    # We can't try all possible numbers, so we'll stop after a string of 404s
+    while numero < (max_num_seen + 20):
+        numero += 1
+        if numero in discussion_nums:
+            continue
+        try:
+            amendement, created_ = fetch_amendement(
+                lecture=lecture,
+                numero_prefixe=f"{prefix}{numero}",
+                position=None,
+                id_discussion_commune=None,
+                id_identique=None,
+            )
+        except NotFound:
+            continue
+        amendements.append(amendement)
+        created += int(created_)
+        if numero > max_num_seen:
+            max_num_seen = numero
     return amendements, created, errored
 
 
@@ -91,44 +177,46 @@ def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
     return result
 
 
-def fetch_amendements(lecture: Lecture) -> List[OrderedDict]:
+def fetch_discussion_list(lecture: Lecture) -> List[OrderedDict]:
     """
-    Récupère la liste des références aux amendements, dans l'ordre de dépôt.
+    Récupère la liste ordonnée des amendements soumis à la discussion.
+
+    Les amendements irrecevables ou encore en traitement ne sont pas inclus.
     """
     url = build_url(lecture)
     content = _retrieve_content(url)
 
     try:
         # If there is only 1 amendement, xmltodict does not return a list :(
-        amendements_raw: Union[OrderedDict, List[OrderedDict]] = (
+        discussed_amendements: Union[OrderedDict, List[OrderedDict]] = (
             content["amdtsParOrdreDeDiscussion"]["amendements"]["amendement"]
         )
     except TypeError:
         return []
 
-    if isinstance(amendements_raw, OrderedDict):
-        return [amendements_raw]
-    return amendements_raw
+    if isinstance(discussed_amendements, OrderedDict):
+        return [discussed_amendements]
+    return discussed_amendements
 
 
-def _retrieve_amendement(lecture: Lecture, numero: int) -> OrderedDict:
-    url = build_url(lecture, numero)
+def _retrieve_amendement(lecture: Lecture, numero_prefixe: str) -> OrderedDict:
+    url = build_url(lecture, numero_prefixe)
     content = _retrieve_content(url)
     return content["amendement"]
 
 
 def fetch_amendement(
     lecture: Lecture,
-    numero: int,
-    position: int,
+    numero_prefixe: str,
+    position: Optional[int],
     id_discussion_commune: Optional[int] = None,
     id_identique: Optional[int] = None,
 ) -> Tuple[Amendement, bool]:
     """
     Récupère un amendement depuis son numéro.
     """
-    logger.info("Récupération de l'amendement %r", numero)
-    amend = _retrieve_amendement(lecture, numero)
+    logger.info("Récupération de l'amendement %r", numero_prefixe)
+    amend = _retrieve_amendement(lecture, numero_prefixe)
     article = _get_article(lecture, amend["division"])
     parent = _get_parent(lecture, article, amend)
     amendement, created = _create_or_update_amendement(
@@ -172,10 +260,10 @@ def _get_parent(
 
 def _create_or_update_amendement(
     lecture: Lecture,
-    article: Article,
+    article: Optional[Article],
     parent: Optional[Amendement],
     amend: OrderedDict,
-    position: int,
+    position: Optional[int],
     id_discussion_commune: Optional[int],
     id_identique: Optional[int],
 ) -> Tuple[Amendement, bool]:
@@ -225,7 +313,7 @@ def _create_or_update_amendement(
     return amendement, created
 
 
-def build_url(lecture: Lecture, numero: int = 0) -> str:
+def build_url(lecture: Lecture, numero_prefixe: str = "") -> str:
 
     legislature = int(lecture.session)
     texte = f"{lecture.num_texte:04}"
@@ -240,13 +328,13 @@ def build_url(lecture: Lecture, numero: int = 0) -> str:
 
     organe_abrev = get_organe_abrev(lecture.organe)
 
-    if numero:
+    if numero_prefixe:
         path = PATTERN_AMENDEMENT.format(
             legislature=legislature,
             texte=texte,
             suffixe=suffixe,
             organe_abrev=organe_abrev,
-            numero=numero,
+            numero_prefixe=numero_prefixe,
         )
     else:
         path = PATTERN_LISTE.format(
@@ -266,6 +354,16 @@ def get_organe_abrev(organe: str) -> str:
     data = get_data("organes")[organe]
     abrev: str = data["libelleAbrev"]
     return abrev
+
+
+def parse_num_in_liste(num_long: str) -> Tuple[str, int]:
+    mo = _RE_NUM.match(num_long)
+    if mo is None:
+        raise ValueError(f"Cannot parse amendement number {num_long!r}")
+    return mo.group("acronyme"), int(mo.group("num"))
+
+
+_RE_NUM = re.compile(r"(?P<acronyme>[A-Z]*)(?P<num>\d+)")
 
 
 def get_auteur(amendement: OrderedDict) -> str:
@@ -304,8 +402,29 @@ def get_groupe(amendement: OrderedDict) -> str:
     return groupe["libelle"]
 
 
+ETATS_OK = {
+    "AT",  # à traiter
+    "T",  # traité
+    "ER",  # en recevabilité
+    "R",  # recevable
+    "AC",  # à discuter
+    "DI",  # discuté
+}
+
+
 def get_sort(amendement: OrderedDict) -> str:
-    return (get_str_or_none(amendement, "sortEnSeance") or "").lower()
+    sort = get_str_or_none(amendement, "sortEnSeance")
+    if sort is not None:
+        return sort.lower()
+    if (
+        amendement["retireAvantPublication"] == "1"
+        or amendement.get("retireApresPublication", "0") == "1"
+    ):
+        return "Retiré"
+    etat = get_str_or_none(amendement, "etat")
+    if etat not in ETATS_OK:
+        return "Irrecevable"
+    return ""
 
 
 def get_parent_raw_num(amendement: OrderedDict) -> str:

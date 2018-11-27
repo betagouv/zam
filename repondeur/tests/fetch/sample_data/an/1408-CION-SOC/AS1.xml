@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendement>
+    <numero>1</numero>
+    <numeroLong>AS1</numeroLong>
+    <numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amendementEtendu>0</amendementEtendu>
+    <etat>DI</etat>
+    <missionVisee xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <cartoucheDelaiDepotDepasse xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dispositif><![CDATA[<p style="text-align: justify;">Supprimer l&#8217;alin&#233;a&#160;4.</p>]]></dispositif>
+    <exposeSommaire><![CDATA[<p>Avec cet article, le Gouvernement propose d&#8217;&#233;tendre les possibilit&#233;s d&#8217;exercice lib&#233;ral pour les praticiens hospitaliers salari&#233;s d&#8217;un h&#244;pital public, dans les zones caract&#233;ris&#233;es par une offre de soins insuffisante.</p>
+<p>Tout d&#8217;abord, l&#8217;article ne pr&#233;cise pas comment ces zones sont caract&#233;ris&#233;es, ce qui laisse un flou l&#233;gislatif qui peut conduire &#224; des exc&#232;s.</p>
+<p>Ensuite, les donn&#233;es publi&#233;es par certaines commissions d&#8217;activit&#233; lib&#233;rale r&#233;v&#232;lent une hausse significative des honoraires li&#233;s &#224; l&#8217;activit&#233; lib&#233;rale. Ainsi, pour l&#8217;AP-HP, les honoraires ont progress&#233; de 6&#160;% sur une ann&#233;e, pour une hausse de consultations de 5&#160;%. Malgr&#233; les avanc&#233;es en la mati&#232;re de la loi visant &#224; moderniser le syst&#232;me de sant&#233;, les interrogations point&#233;es en 2012 par l&#8217;IGAS en mati&#232;re de transparence et de suivi demeurent.</p>
+<p>Par exemple, voici ce qui est &#233;crit dans le dernier rapport de la commission locale d&#8217;activit&#233; lib&#233;rale de l&#8217;AP-HP&#160;: &#171;&#160;Afin d&#8217;analyser la part d&#8217;activit&#233; lib&#233;rale par rapport &#224; l&#8217;activit&#233; publique, il est n&#233;cessaire que les donn&#233;es d&#8217;activit&#233; publique soient connues. La CCAL note encore &#224; de trop nombreuses reprises la difficult&#233; rencontr&#233;e par diff&#233;rents GH &#224; r&#233;pertorier l&#8217;activit&#233; publique. La CCAL souhaite que ces difficult&#233;s soient rapidement lev&#233;es et &#234;tre inform&#233;e des dispositions prises pour assurer un suivi de l&#8217;activit&#233; publique des praticiens exer&#231;ant une activit&#233; lib&#233;rale&#160;&#187; (voici le lien&#160;: http&#160;://www.france-assos-sante.org/node/6840). Ce commentaire illustre les difficult&#233;s de suivi du respect des obligations pr&#233;vues par la loi, puisque tout simplement le d&#233;compte des heures en public et en activit&#233; lib&#233;rale semble difficile &#224; mettre en &#339;uvre.&#160;</p>]]></exposeSommaire>
+    <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <listeDesSignataires> M.&amp;#160;Aviragnet,  Mme&amp;#160;Rabault, Mme&amp;#160;Bareigts, Mme&amp;#160;Bi&amp;#233;mouret, Mme&amp;#160;Vainqueur-Christophe, M.&amp;#160;Vallaud, Mme&amp;#160;Battistel, M.&amp;#160;Bouillon, M.&amp;#160;Jean-Louis&amp;#160;Bricout, M.&amp;#160;Carvounas, M.&amp;#160;Alain&amp;#160;David, Mme&amp;#160;Laurence&amp;#160;Dumont, M.&amp;#160;Faure, M.&amp;#160;Garot, M.&amp;#160;David&amp;#160;Habib, M.&amp;#160;Hutin, M.&amp;#160;Juanico, Mme&amp;#160;Karamanli, M.&amp;#160;J&amp;#233;r&amp;#244;me&amp;#160;Lambert, M.&amp;#160;Letchimy, Mme&amp;#160;Manin, Mme&amp;#160;Pau-Langevin, Mme&amp;#160;Pires Beaune, M.&amp;#160;Potier, M.&amp;#160;Pueyo, M.&amp;#160;Saulignac, Mme&amp;#160;Tolmont, Mme&amp;#160;Untermaier et Mme&amp;#160;Victory</listeDesSignataires>
+    <listeDesTribunCosignataires>609590;610681;508;643145;719930;342415;267233;605069;429893;1008;1198;609332;333285;1592;333818;332614;335054;1809;337483;720988;335532;608172;607553;608011;340343;608741;608695;340357</listeDesTribunCosignataires>
+    <libelleSeance></libelleSeance>
+    <sortEnSeance>Retiré</sortEnSeance>
+    <dateDepot>21/11/2018</dateDepot>
+    <datePublication>21/11/2018</datePublication>
+    <dateSaisieSort>21/11/2018</dateSaisieSort>
+    <article99>0</article99>
+    <triAmendement>elaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab</triAmendement>
+    <codeLoi>1</codeLoi>
+    <refCodeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <urlPDF>/15/amendements/1408/CION-SOC/AS1.pdf</urlPDF>
+    <dateDepotAffiche>21 novembre 2018 </dateDepotAffiche>
+    <division>
+        <titre>Article 29</titre>
+        <divisionDesignation>ART. 29</divisionDesignation>
+        <type>ARTICLE</type>
+        <avantApres>A</avantApres>
+        <divisionRattache>ARTICLE 29</divisionRattache>
+        <articleAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <divisionAdditionnelle xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlDivisionTexteVise>/15/textes/1408.asp#D_Article_29</urlDivisionTexteVise>
+    </division>
+    <examen>
+        <examenId>1865</examenId>
+        <organeSaisi>Affaires sociales</organeSaisi>
+        <typeSaisie>Au fond</typeSaisie>
+        <idOrganeProprietaire>420120</idOrganeProprietaire>
+    </examen>
+    <texte>
+        <titre>POUR 2019</titre>
+        <titreCourt>PLFSS POUR 2019</titreCourt>
+        <numBibard>1408</numBibard>
+        <numsBibardsDesPropositions></numsBibardsDesPropositions>
+        <etapeTexte>Nouvelle Lecture</etapeTexte>
+        <numeroLegislature>15</numeroLegislature>
+        <mentionSecondeDeliberation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <numeroPartiePLF xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <idDossier>36892</idDossier>
+        <libelleDossier>Sécurité sociale : loi de financement 2019</libelleDossier>
+        <urlDossierWeb>http://www.assemblee-nationale.fr/15/dossiers/plfss_2019.asp</urlDossierWeb>
+    </texte>
+    <seance xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <alinea>
+        <avantApres xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <numero>4</numero>
+        <alineaDesignation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </alinea>
+    <auteur>
+        <tribunId>642764</tribunId>
+        <civilite>M.</civilite>
+        <nom>Aviragnet</nom>
+        <prenom>Joël</prenom>
+        <auteurLabel>M. Aviragnet</auteurLabel>
+        <estGouvernement>0</estGouvernement>
+        <estRapporteur>0</estRapporteur>
+        <groupeTribunId>758835</groupeTribunId>
+    </auteur>
+    <cosignataires>
+        <cosignataire>
+            <tribunId>609590</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Rabault</nom>
+            <prenom>Valérie</prenom>
+            <auteurLabel>Mme Rabault</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>610681</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Bareigts</nom>
+            <prenom>Ericka</prenom>
+            <auteurLabel>Mme Bareigts</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>508</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Biémouret</nom>
+            <prenom>Gisèle</prenom>
+            <auteurLabel>Mme Biémouret</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>643145</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Vainqueur-Christophe</nom>
+            <prenom>Hélène</prenom>
+            <auteurLabel>Mme Vainqueur-Christophe</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>719930</tribunId>
+            <civilite>M.</civilite>
+            <nom>Vallaud</nom>
+            <prenom>Boris</prenom>
+            <auteurLabel>M. Vallaud</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>342415</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Battistel</nom>
+            <prenom>Marie-Noëlle</prenom>
+            <auteurLabel>Mme Battistel</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>267233</tribunId>
+            <civilite>M.</civilite>
+            <nom>Bouillon</nom>
+            <prenom>Christophe</prenom>
+            <auteurLabel>M. Bouillon</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>605069</tribunId>
+            <civilite>M.</civilite>
+            <nom>Bricout</nom>
+            <prenom>Jean-Louis</prenom>
+            <auteurLabel>M. Jean-Louis Bricout</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>429893</tribunId>
+            <civilite>M.</civilite>
+            <nom>Carvounas</nom>
+            <prenom>Luc</prenom>
+            <auteurLabel>M. Carvounas</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>1008</tribunId>
+            <civilite>M.</civilite>
+            <nom>David</nom>
+            <prenom>Alain</prenom>
+            <auteurLabel>M. Alain David</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>1198</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Dumont</nom>
+            <prenom>Laurence</prenom>
+            <auteurLabel>Mme Laurence Dumont</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>609332</tribunId>
+            <civilite>M.</civilite>
+            <nom>Faure</nom>
+            <prenom>Olivier</prenom>
+            <auteurLabel>M. Faure</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>333285</tribunId>
+            <civilite>M.</civilite>
+            <nom>Garot</nom>
+            <prenom>Guillaume</prenom>
+            <auteurLabel>M. Garot</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>1592</tribunId>
+            <civilite>M.</civilite>
+            <nom>Habib</nom>
+            <prenom>David</prenom>
+            <auteurLabel>M. David Habib</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>333818</tribunId>
+            <civilite>M.</civilite>
+            <nom>Hutin</nom>
+            <prenom>Christian</prenom>
+            <auteurLabel>M. Hutin</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>332614</tribunId>
+            <civilite>M.</civilite>
+            <nom>Juanico</nom>
+            <prenom>Régis</prenom>
+            <auteurLabel>M. Juanico</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>335054</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Karamanli</nom>
+            <prenom>Marietta</prenom>
+            <auteurLabel>Mme Karamanli</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>1809</tribunId>
+            <civilite>M.</civilite>
+            <nom>Lambert</nom>
+            <prenom>Jérôme</prenom>
+            <auteurLabel>M. Jérôme Lambert</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>337483</tribunId>
+            <civilite>M.</civilite>
+            <nom>Letchimy</nom>
+            <prenom>Serge</prenom>
+            <auteurLabel>M. Letchimy</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>720988</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Manin</nom>
+            <prenom>Josette</prenom>
+            <auteurLabel>Mme Manin</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>335532</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Pau-Langevin</nom>
+            <prenom>George</prenom>
+            <auteurLabel>Mme Pau-Langevin</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>608172</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Pires Beaune</nom>
+            <prenom>Christine</prenom>
+            <auteurLabel>Mme Pires Beaune</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>607553</tribunId>
+            <civilite>M.</civilite>
+            <nom>Potier</nom>
+            <prenom>Dominique</prenom>
+            <auteurLabel>M. Potier</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>608011</tribunId>
+            <civilite>M.</civilite>
+            <nom>Pueyo</nom>
+            <prenom>Joaquim</prenom>
+            <auteurLabel>M. Pueyo</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>340343</tribunId>
+            <civilite>M.</civilite>
+            <nom>Saulignac</nom>
+            <prenom>Hervé</prenom>
+            <auteurLabel>M. Saulignac</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>608741</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Tolmont</nom>
+            <prenom>Sylvie</prenom>
+            <auteurLabel>Mme Tolmont</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>608695</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Untermaier</nom>
+            <prenom>Cécile</prenom>
+            <auteurLabel>Mme Untermaier</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+        <cosignataire>
+            <tribunId>340357</tribunId>
+            <civilite>Mme</civilite>
+            <nom>Victory</nom>
+            <prenom>Michèle</prenom>
+            <auteurLabel>Mme Victory</auteurLabel>
+            <estGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <estRapporteur xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupeTribunId>758835</groupeTribunId>
+        </cosignataire>
+    </cosignataires>
+    <auteurParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amdtDejaMisADiscute>1</amdtDejaMisADiscute>
+    <typeRectification xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <causeDeRetrait xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <estMasque>0</estMasque>
+    <retireAvantPublication>0</retireAvantPublication>
+    <afficherEnRecevabilite>false</afficherEnRecevabilite>
+    <isLiasseRapporteur>false</isLiasseRapporteur>
+    <isMarqueDeRevisionVisible>false</isMarqueDeRevisionVisible>
+    <isPlfrMode>false</isPlfrMode>
+    <isPlfMode>false</isPlfMode>
+    <accordGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <statutDiffusion>normal</statutDiffusion>
+</amendement>

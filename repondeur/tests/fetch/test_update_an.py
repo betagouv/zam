@@ -6,8 +6,10 @@ from textwrap import dedent
 
 import responses
 
-from zam_repondeur.fetch.an.amendements import fetch_and_parse_all, build_url
+from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
 from zam_repondeur.models import Amendement, DBSession
+
+from fetch.mock_an import setup_mock_responses
 
 
 HERE = Path(__file__)
@@ -24,91 +26,82 @@ def test_position_changed(lecture_an):
     The discussion order of amendements may change
     """
 
-    responses.add(
-        responses.GET,
-        build_url(lecture_an),
-        body=dedent(
-            """\
-            <?xml version="1.0" encoding="UTF-8"?>
-            <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
-              legislature="14"  titre="PLFSS 2017"
-               type="projet de loi de financement de la sécurité sociale">
-              <amendements>
-                <amendement  place="Article 3"  numero="177"  sort="Rejeté"
-                    parentNumero=""  auteurLabel="M. DOOR"
-                    auteurLabelFull="M. DOOR Jean-Pierre"
-                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
-                    discussionCommune=""  discussionCommuneAmdtPositon=""
-                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
-                    discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
-                <amendement  place="Article 3"  numero="270"  sort="Rejeté"
-                    parentNumero=""  auteurLabel="M. ACCOYER"
-                    auteurLabelFull="M. ACCOYER Bernard"
-                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
-                    discussionCommune=""  discussionCommuneAmdtPositon=""
-                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
-                    discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
-              </amendements>
-            </amdtsParOrdreDeDiscussion>
-            """
-        ),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an),
-        body=dedent(
-            """\
-            <?xml version="1.0" encoding="UTF-8"?>
-            <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
-              legislature="14"  titre="PLFSS 2017"
-               type="projet de loi de financement de la sécurité sociale">
-              <amendements>
-                <amendement  place="Article 3"  numero="270"  sort="Rejeté"
-                    parentNumero=""  auteurLabel="M. ACCOYER"
-                    auteurLabelFull="M. ACCOYER Bernard"
-                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
-                    discussionCommune=""  discussionCommuneAmdtPositon=""
-                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
-                    discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
-                <amendement  place="Article 3"  numero="177"  sort="Rejeté"
-                    parentNumero=""  auteurLabel="M. DOOR"
-                    auteurLabelFull="M. DOOR Jean-Pierre"
-                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
-                    discussionCommune=""  discussionCommuneAmdtPositon=""
-                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
-                    discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
-              </amendements>
-            </amdtsParOrdreDeDiscussion>
-            """
-        ),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 177),
-        body=read_sample_data("an/269/177.xml"),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 270),
-        body=read_sample_data("an/269/270.xml"),
-        status=200,
-    )
-
     DBSession.add(lecture_an)
 
-    fetch_and_parse_all(lecture=lecture_an)
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
+            """\
+            <?xml version="1.0" encoding="UTF-8"?>
+            <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
+              legislature="14"  titre="PLFSS 2017"
+               type="projet de loi de financement de la sécurité sociale">
+              <amendements>
+                <amendement  place="Article 3"  numero="177"  sort="Rejeté"
+                    parentNumero=""  auteurLabel="M. DOOR"
+                    auteurLabelFull="M. DOOR Jean-Pierre"
+                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
+                    discussionCommune=""  discussionCommuneAmdtPositon=""
+                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
+                    discussionIdentiqueAmdtPositon="debut"
+                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                <amendement  place="Article 3"  numero="270"  sort="Rejeté"
+                    parentNumero=""  auteurLabel="M. ACCOYER"
+                    auteurLabelFull="M. ACCOYER Bernard"
+                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
+                    discussionCommune=""  discussionCommuneAmdtPositon=""
+                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
+                    discussionIdentiqueAmdtPositon="milieu"
+                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+              </amendements>
+            </amdtsParOrdreDeDiscussion>
+            """
+        ),
+        amendements=(
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
+        ),
+    ):
+        fetch_and_parse_all(lecture=lecture_an)
 
     assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
     assert [amdt.position for amdt in lecture_an.amendements] == [1, 2]
 
-    fetch_and_parse_all(lecture=lecture_an)
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
+            """\
+            <?xml version="1.0" encoding="UTF-8"?>
+            <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
+              legislature="14"  titre="PLFSS 2017"
+               type="projet de loi de financement de la sécurité sociale">
+              <amendements>
+                <amendement  place="Article 3"  numero="270"  sort="Rejeté"
+                    parentNumero=""  auteurLabel="M. ACCOYER"
+                    auteurLabelFull="M. ACCOYER Bernard"
+                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
+                    discussionCommune=""  discussionCommuneAmdtPositon=""
+                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
+                    discussionIdentiqueAmdtPositon="milieu"
+                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                <amendement  place="Article 3"  numero="177"  sort="Rejeté"
+                    parentNumero=""  auteurLabel="M. DOOR"
+                    auteurLabelFull="M. DOOR Jean-Pierre"
+                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
+                    discussionCommune=""  discussionCommuneAmdtPositon=""
+                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
+                    discussionIdentiqueAmdtPositon="debut"
+                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+              </amendements>
+            </amdtsParOrdreDeDiscussion>
+            """
+        ),
+        amendements=(
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
+        ),
+    ):
+        fetch_and_parse_all(lecture=lecture_an)
 
     assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
     assert [amdt.position for amdt in lecture_an.amendements] == [2, 1]
@@ -121,10 +114,11 @@ def test_abandoned_before_seance(lecture_an):
     will be removed from the list
     """
 
-    responses.add(
-        responses.GET,
-        build_url(lecture_an),
-        body=dedent(
+    DBSession.add(lecture_an)
+
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
             <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
@@ -151,56 +145,46 @@ def test_abandoned_before_seance(lecture_an):
             </amdtsParOrdreDeDiscussion>
             """
         ),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an),
-        body=dedent(
+        amendements=(
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
+        ),
+    ):
+        fetch_and_parse_all(lecture=lecture_an)
+
+    assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
+    assert [amdt.position for amdt in lecture_an.amendements] == [1, 2]
+
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
             <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
               legislature="14"  titre="PLFSS 2017"
                type="projet de loi de financement de la sécurité sociale">
               <amendements>
-                <amendement  place="Article 3"  numero="177"  sort="Rejeté"
-                    parentNumero=""  auteurLabel="M. DOOR"
-                    auteurLabelFull="M. DOOR Jean-Pierre"
+                <amendement  place="Article 3"  numero="270"  sort="Rejeté"
+                    parentNumero=""  auteurLabel="M. ACCOYER"
+                    auteurLabelFull="M. ACCOYER Bernard"
                     auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
-                    discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueAmdtPositon="milieu"
+                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
         ),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 177),
-        body=read_sample_data("an/269/177.xml"),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 270),
-        body=read_sample_data("an/269/270.xml"),
-        status=200,
-    )
-
-    DBSession.add(lecture_an)
-
-    fetch_and_parse_all(lecture=lecture_an)
+        amendements=(
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
+        ),
+    ):
+        fetch_and_parse_all(lecture=lecture_an)
 
     assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
-    assert [amdt.position for amdt in lecture_an.amendements] == [1, 2]
-
-    fetch_and_parse_all(lecture=lecture_an)
-
-    assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
-    assert [amdt.position for amdt in lecture_an.amendements] == [1, None]
+    assert [amdt.position for amdt in lecture_an.amendements] == [None, 1]
 
 
 @responses.activate
@@ -209,10 +193,12 @@ def test_article_changed(lecture_an):
     The targeted article may change
     """
 
-    responses.add(
-        responses.GET,
-        build_url(lecture_an),
-        body=dedent(
+    DBSession.add(lecture_an)
+
+    # Initial fetch
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
             <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
@@ -239,12 +225,20 @@ def test_article_changed(lecture_an):
             </amdtsParOrdreDeDiscussion>
             """
         ),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an),
-        body=dedent(
+        amendements=(
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
+        ),
+    ):
+        fetch_and_parse_all(lecture=lecture_an)
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
+    assert str(amendement.article) == "Art. 3"
+
+    # Fetch updates
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
             <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
@@ -271,19 +265,11 @@ def test_article_changed(lecture_an):
             </amdtsParOrdreDeDiscussion>
             """
         ),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 177),
-        body=read_sample_data("an/269/177.xml"),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 177),
-        body=read_sample_data("an/269/177.xml").replace(
-            """\
+        amendements=(
+            (
+                "177",
+                read_sample_data("an/269/177.xml").replace(
+                    """\
     <division>
         <titre>Article 3</titre>
         <divisionDesignation>ART. 3</divisionDesignation>
@@ -294,7 +280,7 @@ def test_article_changed(lecture_an):
         <divisionAdditionnelle>0</divisionAdditionnelle>
         <urlDivisionTexteVise>/14/textes/4072.asp#D_Article_3</urlDivisionTexteVise>
     </division>""",
-            """\
+                    """\
     <division>
         <titre>Article 4</titre>
         <divisionDesignation>ART. 4</divisionDesignation>
@@ -305,28 +291,12 @@ def test_article_changed(lecture_an):
         <divisionAdditionnelle>0</divisionAdditionnelle>
         <urlDivisionTexteVise>/14/textes/4072.asp#D_Article_4</urlDivisionTexteVise>
     </division>""",
+                ),
+            ),
+            ("270", read_sample_data("an/269/270.xml")),
         ),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 270),
-        body=read_sample_data("an/269/270.xml"),
-        status=200,
-    )
-
-    DBSession.add(lecture_an)
-
-    # Initial fetch
-
-    fetch_and_parse_all(lecture=lecture_an)
-
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
-    assert str(amendement.article) == "Art. 3"
-
-    # Fetch updates
-
-    fetch_and_parse_all(lecture=lecture_an)
+    ):
+        fetch_and_parse_all(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert str(amendement.article) == "Art. 4"
@@ -338,10 +308,12 @@ def test_add_parent_amendement(lecture_an):
     A standalone amendement can become a « sous-amendement »
     """
 
-    responses.add(
-        responses.GET,
-        build_url(lecture_an),
-        body=dedent(
+    DBSession.add(lecture_an)
+
+    # Initial fetch
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
             <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
@@ -368,12 +340,20 @@ def test_add_parent_amendement(lecture_an):
             </amdtsParOrdreDeDiscussion>
             """
         ),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an),
-        body=dedent(
+        amendements=(
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
+        ),
+    ):
+        fetch_and_parse_all(lecture=lecture_an)
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
+    assert amendement.parent is None
+
+    # Fetch updates
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
             <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
@@ -400,42 +380,18 @@ def test_add_parent_amendement(lecture_an):
             </amdtsParOrdreDeDiscussion>
             """
         ),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 177),
-        body=read_sample_data("an/269/177.xml"),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 270),
-        body=read_sample_data("an/269/270.xml"),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 270),
-        body=read_sample_data("an/269/270.xml").replace(
-            '<numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>',  # noqa
-            "<numeroParent>177 (Rect)</numeroParent>",
+        amendements=(
+            ("177", read_sample_data("an/269/177.xml")),
+            (
+                "270",
+                read_sample_data("an/269/270.xml").replace(
+                    '<numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>',  # noqa
+                    "<numeroParent>177 (Rect)</numeroParent>",
+                ),
+            ),
         ),
-        status=200,
-    )
-
-    DBSession.add(lecture_an)
-
-    # Initial fetch
-
-    fetch_and_parse_all(lecture=lecture_an)
-
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
-    assert amendement.parent is None
-
-    # Fetch updates
-
-    fetch_and_parse_all(lecture=lecture_an)
+    ):
+        fetch_and_parse_all(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
     assert amendement.parent is not None
@@ -448,10 +404,12 @@ def test_remove_parent_amendement(lecture_an):
     A « sous-amendement » can become a standalone one
     """
 
-    responses.add(
-        responses.GET,
-        build_url(lecture_an),
-        body=dedent(
+    DBSession.add(lecture_an)
+
+    # Initial fetch
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
             <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
@@ -478,12 +436,27 @@ def test_remove_parent_amendement(lecture_an):
             </amdtsParOrdreDeDiscussion>
             """
         ),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an),
-        body=dedent(
+        amendements=(
+            ("177", read_sample_data("an/269/177.xml")),
+            (
+                "270",
+                read_sample_data("an/269/270.xml").replace(
+                    '<numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>',  # noqa
+                    "<numeroParent>177 (Rect)</numeroParent>",
+                ),
+            ),
+        ),
+    ):
+        fetch_and_parse_all(lecture=lecture_an)
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
+    assert amendement.parent is not None
+    assert amendement.parent.num == 177
+
+    # Fetch updates
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
             """\
             <?xml version="1.0" encoding="UTF-8"?>
             <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
@@ -510,43 +483,12 @@ def test_remove_parent_amendement(lecture_an):
             </amdtsParOrdreDeDiscussion>
             """
         ),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 177),
-        body=read_sample_data("an/269/177.xml"),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 270),
-        body=read_sample_data("an/269/270.xml").replace(
-            '<numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>',  # noqa
-            "<numeroParent>177 (Rect)</numeroParent>",
+        amendements=(
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
         ),
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        build_url(lecture_an, 270),
-        body=read_sample_data("an/269/270.xml"),
-        status=200,
-    )
-
-    DBSession.add(lecture_an)
-
-    # Initial fetch
-
-    fetch_and_parse_all(lecture=lecture_an)
-
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
-    assert amendement.parent is not None
-    assert amendement.parent.num == 177
-
-    # Fetch updates
-
-    fetch_and_parse_all(lecture=lecture_an)
+    ):
+        fetch_and_parse_all(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
     assert amendement.parent is None

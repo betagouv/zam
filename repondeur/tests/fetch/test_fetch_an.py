@@ -7,6 +7,8 @@ import transaction
 
 from zam_repondeur.fetch.an.amendements import build_url
 
+from fetch.mock_an import setup_mock_responses
+
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data"
@@ -21,44 +23,18 @@ class TestFetchAndParseAll:
     def test_simple_amendements(self, lecture_an, app):
         from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
 
-        responses.add(
-            responses.GET,
-            build_url(lecture_an),
-            body=read_sample_data("an/269/liste.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 177),
-            body=read_sample_data("an/269/177.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 270),
-            body=read_sample_data("an/269/270.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 723),
-            body=read_sample_data("an/269/723.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 135),
-            body=read_sample_data("an/269/135.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 192),
-            body=read_sample_data("an/269/192.xml"),
-            status=200,
-        )
-
-        amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+        with setup_mock_responses(
+            lecture=lecture_an,
+            liste=read_sample_data("an/269/liste.xml"),
+            amendements=(
+                ("177", read_sample_data("an/269/177.xml")),
+                ("270", read_sample_data("an/269/270.xml")),
+                ("723", read_sample_data("an/269/723.xml")),
+                ("135", read_sample_data("an/269/135.xml")),
+                ("192", read_sample_data("an/269/192.xml")),
+            ),
+        ):
+            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
 
         assert len(amendements) == 5
 
@@ -91,6 +67,78 @@ class TestFetchAndParseAll:
         assert errored == []
 
     @responses.activate
+    def test_amendements_not_in_discussion_list_are_fetched(self, lecture_an, app):
+        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
+
+        with setup_mock_responses(
+            lecture=lecture_an,
+            liste=dedent(
+                """\
+                <?xml version="1.0" encoding="UTF-8"?>
+                <amdtsParOrdreDeDiscussion bibard="4072" bibardSuffixe="" organe="AN"
+                  legislature="14" titre="PLFSS 2017"
+                  type="projet de loi de financement de la sécurité sociale">
+                  <amendements>
+                    <amendement place="Article 3" numero="177" sort="Rejeté"
+                        parentNumero="" auteurLabel="M. DOOR"
+                        auteurLabelFull="M. DOOR Jean-Pierre"
+                        auteurGroupe="Les Républicains" alineaLabel="S" missionLabel=""
+                        discussionCommune="" discussionCommuneAmdtPositon=""
+                        discussionCommuneSsAmdtPositon="" discussionIdentique="20386"
+                        discussionIdentiqueAmdtPositon="debut"
+                        discussionIdentiqueSsAmdtPositon="" position="001/772" />
+                  </amendements>
+                </amdtsParOrdreDeDiscussion>
+                """
+            ),
+            amendements=(
+                ("177", read_sample_data("an/269/177.xml")),
+                ("192", read_sample_data("an/269/192.xml")),
+            ),
+        ):
+            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+
+        assert len(amendements) == 2
+
+        assert amendements[0].num == 177
+        assert amendements[0].position == 1
+        assert amendements[0].id_discussion_commune is None
+        assert amendements[0].id_identique == 20386
+
+        assert amendements[1].num == 192
+        assert amendements[1].position is None
+        assert amendements[1].id_discussion_commune is None
+        assert amendements[1].id_identique is None
+
+        assert created == 2
+        assert errored == []
+
+    @responses.activate
+    def test_commission(self, lecture_an, app):
+        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
+
+        with setup_mock_responses(
+            lecture=lecture_an,
+            liste=read_sample_data("an/1408-CION-SOC/liste.xml"),
+            amendements=(
+                ("AS1", read_sample_data("an/1408-CION-SOC/AS1.xml")),
+                ("AS2", read_sample_data("an/1408-CION-SOC/AS2.xml")),
+            ),
+        ):
+            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+
+        assert len(amendements) == 2
+
+        assert amendements[0].num == 1
+        assert amendements[0].position == 1
+
+        assert amendements[1].num == 2
+        assert amendements[1].position is None
+
+        assert created == 2
+        assert errored == []
+
+    @responses.activate
     def test_sous_amendements(self, app):
         from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
         from zam_repondeur.models import Lecture
@@ -105,46 +153,30 @@ class TestFetchAndParseAll:
                 dossier_legislatif="Titre dossier legislatif",
             )
 
-        responses.add(
-            responses.GET,
-            build_url(lecture),
-            body=read_sample_data("an/911/liste.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture, 347),
-            body=read_sample_data("an/911/347.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture, 2482),
-            body=read_sample_data("an/911/2482.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture, 2512),
-            body=read_sample_data("an/911/2512.xml"),
-            status=200,
-        )
-
-        amendements, created, errored = fetch_and_parse_all(lecture=lecture)
+        with setup_mock_responses(
+            lecture=lecture,
+            liste=read_sample_data("an/911/liste.xml"),
+            amendements=(
+                ("1", read_sample_data("an/911/1.xml")),
+                ("2", read_sample_data("an/911/2.xml")),
+                ("3", read_sample_data("an/911/3.xml")),
+            ),
+        ):
+            amendements, created, errored = fetch_and_parse_all(lecture=lecture)
 
         assert len(amendements) == 3
 
-        assert amendements[0].num == 347
+        assert amendements[0].num == 1
         assert amendements[0].position == 1
         assert amendements[0].id_discussion_commune == 3448
         assert amendements[0].id_identique == 8496
 
-        assert amendements[1].num == 2482
+        assert amendements[1].num == 2
         assert amendements[1].position == 2
         assert amendements[1].id_discussion_commune is None
         assert amendements[1].id_identique is None
 
-        assert amendements[2].num == 2512
+        assert amendements[2].num == 3
         assert amendements[2].position == 3
         assert amendements[2].id_discussion_commune is None
         assert amendements[1].id_identique is None
@@ -160,39 +192,18 @@ class TestFetchAndParseAll:
     def test_with_404(self, lecture_an, app):
         from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
 
-        responses.add(
-            responses.GET,
-            build_url(lecture_an),
-            body=read_sample_data("an/269/liste.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 177),
-            body=read_sample_data("an/269/177.xml"),
-            status=200,
-        )
-        responses.add(responses.GET, build_url(lecture_an, 270), status=404)
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 723),
-            body=read_sample_data("an/269/723.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 135),
-            body=read_sample_data("an/269/135.xml"),
-            status=200,
-        )
-        responses.add(
-            responses.GET,
-            build_url(lecture_an, 192),
-            body=read_sample_data("an/269/192.xml"),
-            status=200,
-        )
-
-        amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+        with setup_mock_responses(
+            lecture=lecture_an,
+            liste=read_sample_data("an/269/liste.xml"),
+            amendements=(
+                ("177", read_sample_data("an/269/177.xml")),
+                # removed 270...
+                ("723", read_sample_data("an/269/723.xml")),
+                ("135", read_sample_data("an/269/135.xml")),
+                ("192", read_sample_data("an/269/192.xml")),
+            ),
+        ):
+            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
 
         assert len(amendements) == 4
         assert amendements[0].num == 177
@@ -200,15 +211,15 @@ class TestFetchAndParseAll:
         assert amendements[2].num == 135
         assert amendements[3].num == 192
 
-        assert [amdt.position for amdt in amendements] == list(range(1, 5))
+        assert [amdt.position for amdt in amendements] == [1, 3, 4, 5]
         assert created == 4
         assert errored == ["270"]
 
 
-class TestFetchAmendements:
+class TestFetchDiscussionList:
     @responses.activate
     def test_simple_amendements(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendements
+        from zam_repondeur.fetch.an.amendements import fetch_discussion_list
 
         responses.add(
             responses.GET,
@@ -217,7 +228,7 @@ class TestFetchAmendements:
             status=200,
         )
 
-        items = fetch_amendements(lecture=lecture_an)
+        items = fetch_discussion_list(lecture=lecture_an)
 
         assert len(items) == 5
         assert items[0] == {
@@ -241,7 +252,7 @@ class TestFetchAmendements:
 
     @responses.activate
     def test_only_one_amendement(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendements
+        from zam_repondeur.fetch.an.amendements import fetch_discussion_list
 
         responses.add(
             responses.GET,
@@ -268,7 +279,7 @@ class TestFetchAmendements:
             status=200,
         )
 
-        items = fetch_amendements(lecture=lecture_an)
+        items = fetch_discussion_list(lecture=lecture_an)
 
         assert isinstance(items, list)
         assert items[0] == {
@@ -292,12 +303,12 @@ class TestFetchAmendements:
 
     @responses.activate
     def test_list_not_found(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendements, NotFound
+        from zam_repondeur.fetch.an.amendements import fetch_discussion_list, NotFound
 
         responses.add(responses.GET, build_url(lecture_an), status=404)
 
         with pytest.raises(NotFound):
-            fetch_amendements(lecture=lecture_an)
+            fetch_discussion_list(lecture=lecture_an)
 
 
 class TestFetchAmendement:
@@ -313,7 +324,7 @@ class TestFetchAmendement:
         )
 
         amendement, created = fetch_amendement(
-            lecture=lecture_an, numero=177, position=1
+            lecture=lecture_an, numero_prefixe="177", position=1
         )
 
         assert amendement.lecture == lecture_an
@@ -358,7 +369,7 @@ class TestFetchAmendement:
         )
 
         amendement, created = fetch_amendement(
-            lecture=lecture_an, numero=723, position=1
+            lecture=lecture_an, numero_prefixe="723", position=1
         )
 
         assert amendement.gouvernemental is True
@@ -376,7 +387,7 @@ class TestFetchAmendement:
         )
 
         amendement, created = fetch_amendement(
-            lecture=lecture_an, numero=135, position=1
+            lecture=lecture_an, numero_prefixe="135", position=1
         )
 
         assert amendement.gouvernemental is False
@@ -402,11 +413,11 @@ class TestFetchAmendement:
         )
 
         amendement1, created = fetch_amendement(
-            lecture=lecture_an, numero=155, position=1
+            lecture=lecture_an, numero_prefixe="155", position=1
         )
         assert created
         amendement2, created = fetch_amendement(
-            lecture=lecture_an, numero=941, position=1
+            lecture=lecture_an, numero_prefixe="941", position=1
         )
         assert created
 
@@ -424,7 +435,7 @@ class TestFetchAmendement:
         )
 
         amendement, created = fetch_amendement(
-            lecture=lecture_an, numero=38, position=1
+            lecture=lecture_an, numero_prefixe="38", position=1
         )
 
         assert amendement.sort == ""
@@ -441,7 +452,7 @@ class TestFetchAmendement:
         )
 
         amendement, created = fetch_amendement(
-            lecture=lecture_an, numero=192, position=1
+            lecture=lecture_an, numero_prefixe="192", position=1
         )
 
         assert amendement.article.type == "article"
@@ -456,7 +467,7 @@ class TestFetchAmendement:
         responses.add(responses.GET, build_url(lecture_an, 177), status=404)
 
         with pytest.raises(NotFound):
-            fetch_amendement(lecture=lecture_an, numero=177, position=1)
+            fetch_amendement(lecture=lecture_an, numero_prefixe="177", position=1)
 
 
 class TestFetchAmendementAgain:
@@ -473,7 +484,7 @@ class TestFetchAmendementAgain:
 
         # Let's fetch a new amendement
         amendement1, created = fetch_amendement(
-            lecture=lecture_an, numero=177, position=1
+            lecture=lecture_an, numero_prefixe="177", position=1
         )
         assert created
 
@@ -484,7 +495,7 @@ class TestFetchAmendementAgain:
 
         # And fetch the same amendement again
         amendement2, created = fetch_amendement(
-            lecture=lecture_an, numero=177, position=1
+            lecture=lecture_an, numero_prefixe="177", position=1
         )
         assert not created
         assert amendement2 is amendement1
@@ -506,14 +517,14 @@ class TestFetchAmendementAgain:
         )
 
         amendement1, created = fetch_amendement(
-            lecture=lecture_an, numero=177, position=1
+            lecture=lecture_an, numero_prefixe="177", position=1
         )
         assert created
 
         amendement1.article = None  # let's change the article
 
         amendement2, created = fetch_amendement(
-            lecture=lecture_an, numero=177, position=1
+            lecture=lecture_an, numero_prefixe="177", position=1
         )
         assert not created
         assert amendement2 is amendement1
@@ -537,10 +548,14 @@ class TestFetchAmendementAgain:
             status=200,
         )
 
-        parent1, created = fetch_amendement(lecture=lecture_an, numero=155, position=1)
+        parent1, created = fetch_amendement(
+            lecture=lecture_an, numero_prefixe="155", position=1
+        )
         assert created
 
-        child1, created = fetch_amendement(lecture=lecture_an, numero=941, position=1)
+        child1, created = fetch_amendement(
+            lecture=lecture_an, numero_prefixe="941", position=1
+        )
         assert created
 
         assert child1.parent is parent1
@@ -549,11 +564,15 @@ class TestFetchAmendementAgain:
         child1.parent = None  # let's change the parent amendement
         DBSession.flush()
 
-        parent2, created = fetch_amendement(lecture=lecture_an, numero=155, position=1)
+        parent2, created = fetch_amendement(
+            lecture=lecture_an, numero_prefixe="155", position=1
+        )
         assert not created
         assert parent2 is parent1
 
-        child2, created = fetch_amendement(lecture=lecture_an, numero=941, position=1)
+        child2, created = fetch_amendement(
+            lecture=lecture_an, numero_prefixe="941", position=1
+        )
         assert not created
         assert child2 is child1
 

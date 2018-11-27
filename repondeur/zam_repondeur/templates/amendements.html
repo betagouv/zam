@@ -98,7 +98,7 @@
             <p>Supprimer la lecture ainsi que tous les amendements et réponses associés.</p>
             <form method="post" action="{{ request.resource_url(context.parent) }}">
                 <div role="group">
-                    <input type="submit" name="delete" class="danger button" value="Supprimer">
+                    <input type="submit" name="delete" class="danger allow-multiple-submit button" value="Supprimer">
                 </div>
             </form>
         </div>

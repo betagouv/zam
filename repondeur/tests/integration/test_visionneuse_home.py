@@ -1,16 +1,16 @@
 import transaction
 
 
-def test_visionneuse_article(wsgi_server, browser, lecture_an, amendements_an):
+def test_visionneuse_article(wsgi_server, driver, lecture_an, amendements_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    browser.get(f"{LECTURE_URL}/articles/")
-    articles = browser.find_elements_by_css_selector("section.article")
+    driver.get(f"{LECTURE_URL}/articles/")
+    articles = driver.find_elements_by_css_selector("section.article")
     assert len(articles) == 1
     assert articles[0].find_element_by_css_selector("h2").text == "Article 1"
 
 
 def test_visionneuse_articles(
-    wsgi_server, browser, lecture_an, article7bis_an, amendements_an
+    wsgi_server, driver, lecture_an, article7bis_an, amendements_an
 ):
     from zam_repondeur.models import DBSession
 
@@ -19,8 +19,8 @@ def test_visionneuse_articles(
         amendements_an[0].article = article7bis_an
         DBSession.add_all(amendements_an)
 
-    browser.get(f"{LECTURE_URL}/articles/")
-    articles = browser.find_elements_by_css_selector("section.article")
+    driver.get(f"{LECTURE_URL}/articles/")
+    articles = driver.find_elements_by_css_selector("section.article")
     assert len(articles) == 2
     assert articles[0].find_element_by_css_selector("h2").text == "Article 1"
     assert articles[1].find_element_by_css_selector("h2").text == "Article 7 bis"

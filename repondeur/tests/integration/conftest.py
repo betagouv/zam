@@ -5,14 +5,14 @@ from webtest.http import StopableWSGIServer
 
 
 @pytest.fixture(scope="session")
-def browser():
+def driver():
     options = webdriver.firefox.options.Options()
     options.add_argument("-headless")
 
     try:
-        browser = webdriver.Firefox(options=options)
-        yield browser
-        browser.quit()
+        driver = webdriver.Firefox(options=options)
+        yield driver
+        driver.quit()
     except WebDriverException:
         pytest.skip("You need Firefox and geckodriver to run browser tests")
 

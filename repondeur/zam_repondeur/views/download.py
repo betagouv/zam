@@ -8,11 +8,11 @@ from pyramid.view import view_config
 from sqlalchemy.orm import joinedload
 
 from zam_repondeur.resources import AmendementResource, LectureResource
-from zam_repondeur.writer import write_csv, write_pdf, write_pdf1, write_xlsx
+from zam_repondeur.writer import write_json, write_pdf, write_pdf1, write_xlsx
 
 
 DOWNLOAD_FORMATS = {
-    "csv": (write_csv, "text/csv"),
+    "json": (write_json, "application/json"),
     "pdf": (write_pdf, "application/pdf"),
     "xlsx": (
         write_xlsx,
@@ -25,7 +25,7 @@ DOWNLOAD_FORMATS = {
 def download_amendements(context: LectureResource, request: Request) -> Response:
 
     fmt: str = request.params.get("format", "")
-    if fmt not in ("csv", "xlsx", "pdf"):
+    if fmt not in DOWNLOAD_FORMATS.keys():
         raise HTTPBadRequest(f'Invalid value "{fmt}" for "format" param')
 
     if fmt == "pdf":

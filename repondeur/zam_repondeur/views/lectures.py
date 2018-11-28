@@ -5,16 +5,16 @@ import transaction
 from datetime import datetime
 from typing import BinaryIO, Dict, Optional, TextIO, Tuple, Union
 
+import ujson as json
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.orm import joinedload
 
-from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
-
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import get_data
+from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, Amendement, Lecture as LectureModel
 from zam_repondeur.resources import (
@@ -181,43 +181,85 @@ class ListAmendements:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        # We cannot just do `if not POST["reponses"]`, as FieldStorage does not want
-        # to be cast to a boolean...
-        if self.request.POST["reponses"] != b"":
-            try:
-                reponses_count, errors_count = self._import_reponses_from_csv_file(
-                    reponses_file=self.request.POST["reponses"].file,
-                    amendements={
-                        amendement.num: amendement for amendement in self.amendements
-                    },
+        if "reponses" in self.request.POST:
+            # We cannot just do `if not POST["reponses"]`, as FieldStorage does not want
+            # to be cast to a boolean...
+            if self.request.POST["reponses"] != b"":
+                try:
+                    reponses_count, errors_count = self._import_reponses_from_csv_file(
+                        reponses_file=self.request.POST["reponses"].file,
+                        amendements={
+                            amendement.num: amendement
+                            for amendement in self.amendements
+                        },
+                    )
+                    if reponses_count:
+                        self.request.session.flash(
+                            Message(
+                                cls="success",
+                                text=f"{reponses_count} réponses chargées avec succès",
+                            )
+                        )
+                        self.lecture.modified_at = datetime.utcnow()
+                    if errors_count:
+                        self.request.session.flash(
+                            Message(
+                                cls="warning",
+                                text=(
+                                    f"{errors_count} réponses n’ont pas pu être "
+                                    "chargées. Pour rappel, il faut que le fichier CSV "
+                                    "contienne au moins les noms de colonnes suivants "
+                                    "« Num amdt », « Avis du Gouvernement », "
+                                    "« Objet amdt » et « Réponse »."
+                                ),
+                            )
+                        )
+                except CSVError as exc:
+                    self.request.session.flash(Message(cls="danger", text=str(exc)))
+            else:
+                self.request.session.flash(
+                    Message(
+                        cls="warning", text="Veuillez d’abord sélectionner un fichier"
+                    )
                 )
-                if reponses_count:
-                    self.request.session.flash(
-                        Message(
-                            cls="success",
-                            text=f"{reponses_count} réponses chargées avec succès",
-                        )
+        if "backup" in self.request.POST:
+            # We cannot just do `if not POST["backup"]`, as FieldStorage does not want
+            # to be cast to a boolean...
+            if self.request.POST["backup"] != b"":
+                try:
+                    reponses_count, errors_count = self._import_backup_from_json_file(
+                        backup_file=self.request.POST["backup"].file,
+                        amendements={
+                            amendement.num: amendement
+                            for amendement in self.amendements
+                        },
                     )
-                    self.lecture.modified_at = datetime.utcnow()
-                if errors_count:
-                    self.request.session.flash(
-                        Message(
-                            cls="warning",
-                            text=(
-                                f"{errors_count} réponses n’ont pas pu être chargées. "
-                                "Pour rappel, il faut que le fichier CSV contienne "
-                                "au moins les noms de colonnes suivants "
-                                "« Num amdt », « Avis du Gouvernement », « Objet amdt »"
-                                " et « Réponse »."
-                            ),
+                    if reponses_count:
+                        self.request.session.flash(
+                            Message(
+                                cls="success",
+                                text=f"{reponses_count} réponses chargées avec succès",
+                            )
                         )
+                        self.lecture.modified_at = datetime.utcnow()
+                    if errors_count:
+                        self.request.session.flash(
+                            Message(
+                                cls="warning",
+                                text=(
+                                    "Le fichier de sauvegarde n’a pas pu être chargé "
+                                    f"pour {errors_count} amendement(s)."
+                                ),
+                            )
+                        )
+                except CSVError as exc:
+                    self.request.session.flash(Message(cls="danger", text=str(exc)))
+            else:
+                self.request.session.flash(
+                    Message(
+                        cls="warning", text="Veuillez d’abord sélectionner un fichier"
                     )
-            except CSVError as exc:
-                self.request.session.flash(Message(cls="danger", text=str(exc)))
-        else:
-            self.request.session.flash(
-                Message(cls="warning", text="Veuillez d’abord sélectionner un fichier")
-            )
+                )
 
         return HTTPFound(location=self.request.resource_url(self.context))
 
@@ -264,6 +306,50 @@ class ListAmendements:
                 amendement.affectation = clean_html(line["Affectation"])
             if "Commentaires" in line:
                 amendement.comments = clean_html(line["Commentaires"])
+            previous_reponse = reponse
+            reponses_count += 1
+
+        return reponses_count, errors_count
+
+    @staticmethod
+    def _import_backup_from_json_file(
+        backup_file: BinaryIO, amendements: Dict[int, Amendement]
+    ) -> Tuple[int, int]:
+        previous_reponse = ""
+        reponses_count = 0
+        errors_count = 0
+
+        for line in json.loads(backup_file.read().decode("utf-8-sig"))["amendements"]:
+            try:
+                numero = line["num"]
+                avis = line["avis"] or ""
+                objet = line["observations"] or ""
+                reponse = line["reponse"] or ""
+            except KeyError:
+                errors_count += 1
+                continue
+
+            try:
+                num = normalize_num(numero)
+            except ValueError:
+                logging.warning("Invalid amendement number %r", numero)
+                errors_count += 1
+                continue
+
+            amendement = amendements.get(num)
+            if not amendement:
+                logging.warning("Could not find amendement number %r", num)
+                errors_count += 1
+                continue
+
+            amendement.avis = normalize_avis(avis)
+            amendement.observations = objet
+            reponse = normalize_reponse(reponse, previous_reponse)
+            amendement.reponse = reponse
+            if "affectation" in line:
+                amendement.affectation = line["affectation"]
+            if "comments" in line:
+                amendement.comments = line["comments"]
             previous_reponse = reponse
             reponses_count += 1
 

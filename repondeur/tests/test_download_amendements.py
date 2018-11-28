@@ -1,53 +1,30 @@
 from unittest.mock import patch
 
-
-def test_download_csv(app, lecture_an):
-
-    with patch("zam_repondeur.fetch.get_amendements") as mock:
-        mock.return_value = [], []
-        resp = app.get(
-            "/lectures/an.15.269.PO717460/download_amendements", {"format": "csv"}
-        )
-
-    assert resp.status_code == 200
-
-    assert resp.content_type == "text/csv"
-
-    filename = "amendements-an-15-269-PO717460.csv"
-    assert resp.headers["Content-Disposition"] == f"attachment; filename={filename}"
+import pytest
 
 
-def test_download_pdf(app, lecture_an):
+@pytest.mark.parametrize(
+    "format_,content_type",
+    [
+        ("json", "application/json"),
+        ("pdf", "application/pdf"),
+        ("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+    ],
+)
+def test_download(app, lecture_an, format_, content_type):
 
     with patch("zam_repondeur.fetch.get_amendements") as mock:
         mock.return_value = [], []
         resp = app.get(
-            "/lectures/an.15.269.PO717460/download_amendements", {"format": "pdf"}
+            "/lectures/an.15.269.PO717460/download_amendements", {"format": format_}
         )
 
     assert resp.status_code == 200
-
-    assert resp.content_type == "application/pdf"
-
-    filename = "amendements-an-15-269-PO717460.pdf"
-    assert resp.headers["Content-Disposition"] == f"attachment; filename={filename}"
-
-
-def test_download_xlsx(app, lecture_an):
-
-    with patch("zam_repondeur.fetch.get_amendements") as mock:
-        mock.return_value = [], []
-        resp = app.get(
-            "/lectures/an.15.269.PO717460/download_amendements", {"format": "xlsx"}
-        )
-
-    assert resp.status_code == 200
-
-    content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     assert resp.content_type == content_type
-
-    filename = "amendements-an-15-269-PO717460.xlsx"
-    assert resp.headers["Content-Disposition"] == f"attachment; filename={filename}"
+    assert (
+        resp.headers["Content-Disposition"]
+        == f"attachment; filename=amendements-an-15-269-PO717460.{format_}"
+    )
 
 
 def test_download_bad_format(app, lecture_an):

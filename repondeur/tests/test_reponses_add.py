@@ -36,7 +36,7 @@ def test_post_form(app, lecture_an, amendements_an):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "2 réponses chargées" in resp.text
+    assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.avis == "Défavorable"
@@ -89,7 +89,7 @@ def test_post_form_semicolumns(app, lecture_an, amendements_an):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "2 réponses chargées" in resp.text
+    assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.avis == "Défavorable"
@@ -120,7 +120,7 @@ def test_post_form_with_comments(app, lecture_an, amendements_an):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "2 réponses chargées" in resp.text
+    assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.position == 1
@@ -146,7 +146,7 @@ def test_post_form_with_affectations(app, lecture_an, amendements_an):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "2 réponses chargées" in resp.text
+    assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.position == 1
@@ -170,7 +170,7 @@ def test_post_form_with_bom(app, lecture_an, amendements_an):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "2 réponses chargées" in resp.text
+    assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
 
 def test_post_form_wrong_columns_names(app, lecture_an, amendements_an):
@@ -187,8 +187,8 @@ def test_post_form_wrong_columns_names(app, lecture_an, amendements_an):
 
     assert resp.status_code == 200
     assert (
-        "2 réponses n’ont pas pu être chargées. Pour rappel, il faut que le fichier "
-        "CSV contienne au moins les noms de colonnes suivants « Num amdt », "
+        "2 réponse(s) n’ont pas pu être chargée(s). Pour rappel, il faut que le "
+        "fichier CSV contienne au moins les noms de colonnes suivants « Num amdt », "
         "« Avis du Gouvernement », « Objet amdt » et « Réponse »." in resp.text
     )
 
@@ -246,7 +246,7 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "2 réponses chargées" in resp.text
+    assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 333).first()
     assert amendement.avis == "Favorable"

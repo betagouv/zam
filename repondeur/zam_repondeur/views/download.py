@@ -47,7 +47,7 @@ def download_amendements(context: LectureResource, request: Request) -> Response
 
         response = FileResponse(tmp_file_path)
         attach_name = (
-            f"amendements-{lecture.chambre}-{lecture.session}-{lecture.num_texte}-"
+            f"lecture-{lecture.chambre}-{lecture.session}-{lecture.num_texte}-"
             f"{lecture.organe}.{fmt}"
         )
         response.content_type = content_type

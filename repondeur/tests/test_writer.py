@@ -30,6 +30,8 @@ def test_write_json(
     filename = str(tmpdir.join("test.json"))
 
     with transaction.manager:
+        article1_senat.titre = "Titre art. 1 Sénat"
+        article1_senat.contenu = "Contenu art. 1 Sénat"
         amendement = Amendement.create(
             lecture=lecture_senat,
             article=article1_senat,
@@ -93,9 +95,11 @@ def test_write_json(
         nb_rows = write_json(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig") as f_:
-        amendements = json.loads(f_.read())["amendements"]
+        backup = json.loads(f_.read())
+        amendements = backup["amendements"]
+        articles = backup["articles"]
 
-    assert nb_rows == len(amendements) == 5
+    assert nb_rows == len(amendements) + len(articles) == 5 + 3
 
     assert amendements[0] == {
         "alinea": "",
@@ -112,7 +116,7 @@ def test_write_json(
         "matricule": "000000",
         "num_texte": 63,
         "article": "Article 1",
-        "article_titre": "",
+        "article_titre": "Titre art. 1 Sénat",
         "parent": "",
         "num": 42,
         "observations": "",
@@ -133,6 +137,15 @@ def test_write_json(
         "6|001|01|__________|1",
         "6|001|01|__________|0",
         "6|001|01|__________|1",
+    ]
+    assert articles == [
+        {"contenu": "", "sort_key_as_str": "6|001|01|__________|0", "titre": ""},
+        {
+            "contenu": "Contenu art. 1 Sénat",
+            "sort_key_as_str": "6|001|01|__________|1",
+            "titre": "Titre art. 1 Sénat",
+        },
+        {"contenu": "", "sort_key_as_str": "6|007|02|__________|1", "titre": ""},
     ]
 
 
@@ -165,9 +178,11 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
         nb_rows = write_json(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig") as f_:
-        amendements = json.loads(f_.read())["amendements"]
+        backup = json.loads(f_.read())
+        amendements = backup["amendements"]
+        articles = backup["articles"]
 
-    assert nb_rows == len(amendements) == 1
+    assert nb_rows == len(amendements) + len(articles) == 1 + 1
 
     assert amendements[0] == {
         "alinea": "",
@@ -272,9 +287,11 @@ def test_write_json_sous_amendement(
         nb_rows = write_json(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig") as f_:
-        amendements = json.loads(f_.read())["amendements"]
+        backup = json.loads(f_.read())
+        amendements = backup["amendements"]
+        articles = backup["articles"]
 
-    assert nb_rows == len(amendements) == 5
+    assert nb_rows == len(amendements) + len(articles) == 5 + 3
 
     assert amendements[-1] == {
         "alinea": "",

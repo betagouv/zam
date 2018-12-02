@@ -287,6 +287,13 @@ class Article(Base):
             for reponse, group in groupby(amendements, key=Amendement.full_reponse)
         )
 
+    def asdict(self) -> dict:
+        return {
+            "sort_key_as_str": self.sort_key_as_str,
+            "titre": self.titre or "",
+            "contenu": self.contenu or "",
+        }
+
 
 def validate(name: str, value: str, allowed: Iterable[str]) -> str:
     if not isinstance(value, str):

@@ -107,7 +107,13 @@ def write_json(lecture: Lecture, filename: str, request: Request) -> int:
         for amendement in sorted(lecture.amendements):
             amendements.append(export_amendement(amendement, strip_html=False))
             nb_rows += 1
-        file_.write(json.dumps({"amendements": amendements}, indent=4))
+        articles = []
+        for article in sorted(lecture.articles):
+            articles.append(article.asdict())
+            nb_rows += 1
+        file_.write(
+            json.dumps({"amendements": amendements, "articles": articles}, indent=4)
+        )
     return nb_rows
 
 

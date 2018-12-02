@@ -312,7 +312,7 @@
     </nav>
     <section id="articles" class="d-none">
         <ul>
-            {% for article in lecture.articles | sort %}
+            {% for article in articles | sort %}
                 {# On ne liste pas les inconnus ni les intersticiels ici #}
                 {% if article.type and not article.pos %}
                     <li>

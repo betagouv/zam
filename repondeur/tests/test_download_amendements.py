@@ -23,7 +23,7 @@ def test_download(app, lecture_an, format_, content_type):
     assert resp.content_type == content_type
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=amendements-an-15-269-PO717460.{format_}"
+        == f"attachment; filename=lecture-an-15-269-PO717460.{format_}"
     )
 
 

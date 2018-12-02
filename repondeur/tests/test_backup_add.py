@@ -36,7 +36,7 @@ def test_post_form(app, lecture_an, amendements_an, tmpdir):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "2 réponses chargées" in resp.text
+    assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.avis == "Défavorable"
@@ -89,7 +89,7 @@ def test_post_form_with_comments(app, lecture_an, amendements_an):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "2 réponses chargées" in resp.text
+    assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.position == 1
@@ -115,7 +115,7 @@ def test_post_form_with_affectations(app, lecture_an, amendements_an):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "2 réponses chargées" in resp.text
+    assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.position == 1
@@ -124,6 +124,31 @@ def test_post_form_with_affectations(app, lecture_an, amendements_an):
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
     assert amendement.position == 2
     assert amendement.affectation == ""
+
+
+def test_post_form_with_articles(app, lecture_an, article1_an, amendements_an):
+    from zam_repondeur.models import DBSession, Amendement
+
+    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["backup-form"]
+    path = Path(__file__).parent / "sample_data" / "backup_with_articles.json"
+    form["backup"] = Upload("file.json", path.read_bytes())
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert (
+        "2 réponse(s) chargée(s) avec succès, 1 article(s) chargé(s) avec succès"
+        in resp.text
+    )
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+    assert amendement.article.titre == "Titre"
+    assert amendement.article.contenu == "Contenu"
 
 
 def test_post_form_wrong_number(app, lecture_an, amendements_an):
@@ -140,7 +165,7 @@ def test_post_form_wrong_number(app, lecture_an, amendements_an):
 
     assert resp.status_code == 200
     assert (
-        "Le fichier de sauvegarde n’a pas pu être chargé pour 1 amendement(s)."
+        "Le fichier de sauvegarde n’a pas pu être chargé pour 1 amendement(s)"
         in resp.text
     )
 
@@ -160,13 +185,14 @@ def test_post_form_reponse_no_file(app, lecture_an, amendements_an):
 
 
 def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import DBSession, Amendement, Article
     from zam_repondeur.writer import write_json
 
     filename = str(tmpdir.join("test.json"))
 
     with transaction.manager:
-        amendements = [
+        article1_an.titre = "Titre"
+        [
             Amendement.create(
                 lecture=lecture_an,
                 article=article1_an,
@@ -181,11 +207,10 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
         ]
         nb_rows = write_json(lecture_an, filename, request={})
 
-    assert nb_rows == 2
+    assert nb_rows == 2 + 1  # amendements + article
 
     with transaction.manager:
-        amendements[0].avis = None
-        amendements[1].avis = None
+        article1_an.titre = ""
 
     form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["backup-form"]
     form["backup"] = Upload("file.json", Path(filename).read_bytes())
@@ -198,9 +223,10 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "2 réponses chargées" in resp.text
+    assert (
+        "2 réponse(s) chargée(s) avec succès, 1 article(s) chargé(s) avec succès"
+        in resp.text
+    )
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 333).first()
-    assert amendement.avis == "Favorable"
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 777).first()
-    assert amendement.avis == "Favorable"
+    article = DBSession.query(Article).filter(Article.num == "1").first()
+    assert article.titre == "Titre"

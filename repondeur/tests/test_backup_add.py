@@ -13,7 +13,10 @@ def test_get_form(app, lecture_an):
 
     # Check the form
     assert resp.forms["backup-form"].method == "post"
-    assert resp.forms["backup-form"].action == ""
+    assert (
+        resp.forms["backup-form"].action
+        == "http://localhost/lectures/an.15.269.PO717460/import_backup"
+    )
 
     assert list(resp.forms["backup-form"].fields.keys()) == ["backup", "upload"]
 

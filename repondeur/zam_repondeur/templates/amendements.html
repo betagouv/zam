@@ -51,7 +51,7 @@
         <div>
             <h3>Importer des réponses</h3>
             <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a class="underlined" href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses" target="_blank">suivant la spécification dédiée</a>.</p>
-            <form action="" enctype="multipart/form-data" method="post" id="import-form" class="">
+            <form action="{{ request.resource_url(context.parent, 'import_csv') }}" enctype="multipart/form-data" method="post" id="import-form" class="">
                 <div class="custom-file">
                     <input type="file" class="custom-file-input" id="reponses" name="reponses" required>
                     <label class="custom-file-label" for="reponses">Fichier CSV</label>
@@ -101,7 +101,7 @@
         <div>
             <h3>Importer une sauvegarde</h3>
             <p>À partir d’un fichier précédemment sauvegardé.</p>
-            <form action="" enctype="multipart/form-data" method="post" id="backup-form" class="">
+            <form action="{{ request.resource_url(context.parent, 'import_backup') }}" enctype="multipart/form-data" method="post" id="backup-form" class="">
                 <div class="custom-file">
                     <input type="file" class="custom-file-input" id="backup" name="backup" required>
                     <label class="custom-file-label" for="backup">Fichier JSON</label>

@@ -13,9 +13,6 @@ def test_visionneuse_detail_amendement(wsgi_server, driver, lecture_an, amendeme
 
     driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
 
-    # Force a page refresh as the browser may have cached the previous version
-    driver.refresh()
-
     article = driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")
     assert header.find_element_by_css_selector("h2").text == "Amendement 666"
@@ -40,9 +37,6 @@ def test_visionneuse_detail_amendement_reponse(
         DBSession.add_all(amendements_an)
 
     driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
-
-    # Force a page refresh as the browser may have cached the previous version
-    driver.refresh()
 
     article = driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")
@@ -69,9 +63,6 @@ def test_visionneuse_detail_amendement_texte(
 
     driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
 
-    # Force a page refresh as the browser may have cached the previous version
-    driver.refresh()
-
     article = driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")
     header.find_element_by_link_text("Texte").click()
@@ -97,9 +88,6 @@ def test_visionneuse_detail_amendement_reponse_then_texte(
         DBSession.add_all(amendements_an)
 
     driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
-
-    # Force a page refresh as the browser may have cached the previous version
-    driver.refresh()
 
     article = driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")

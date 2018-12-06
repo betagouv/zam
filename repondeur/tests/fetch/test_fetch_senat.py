@@ -483,11 +483,11 @@ def test_derouleur_urls_plf2019_2e_partie():
     assert len(urls) > 1
     assert (
         urls[0]
-        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103394.json"
+        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103427.json"
     )
     assert (
         urls[-1]
-        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103445.json"
+        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103394.json"
     )
 
 

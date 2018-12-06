@@ -238,26 +238,6 @@
         "id_subdivision": "160290",
         "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_52_bis",
         "Amendements": [
-
-        
-        {
-            "idAmendement":"1129692",
-            "posder":"1",
-            "subpos":"0",
-            "isSousAmendement":"false",
-            "idAmendementPere":"0",
-            "urlAmdt":"Amdt_II-65.html",
-            "typeAmdt":"Amt",
-            "num":"II-65",
-            "libelleAlinea":"Suppr.",
-            "urlAuteur":"fouche_alain02002k.html",
-            "auteur":"M. FOUCHÉ",
-            "isDiscussionCommune":"false",
-            "isDiscussionCommuneIsolee" :"false",
-            "isIdentique":"false",
-            "isAdopte":"false",
-            "isRejete":"false"
-        }
         ]
         },         {
         "libelle_subdivision": "Article 52 ter",
@@ -817,26 +797,6 @@
         "id_subdivision": "160403",
         "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_59",
         "Amendements": [
-
-        
-        {
-            "idAmendement":"1128730",
-            "posder":"1",
-            "subpos":"0",
-            "isSousAmendement":"false",
-            "idAmendementPere":"0",
-            "urlAmdt":"Amdt_II-6.html",
-            "typeAmdt":"Amt",
-            "num":"II-6",
-            "libelleAlinea":"Al. 6",
-            "urlAuteur":"darcos_laure19693l.html",
-            "auteur":"Mme Laure DARCOS",
-            "isDiscussionCommune":"false",
-            "isDiscussionCommuneIsolee" :"false",
-            "isIdentique":"false",
-            "isAdopte":"false",
-            "isRejete":"false"
-        }
         ]
         },         {
         "libelle_subdivision": "Article 59 bis",
@@ -1018,26 +978,6 @@
         "id_subdivision": "160404",
         "signet":"../../textes/2018-2019/146.html#AMELI_SUB_4__Article_71",
         "Amendements": [
-
-        
-            {
-            "idAmendement":"1128716",
-            "posder":"1",
-            "subpos":"20",
-            "isSousAmendement":"false",
-            "idAmendementPere":"0",
-            "urlAmdt":"Amdt_II-5.html",
-            "typeAmdt":"Amt",
-            "num":"II-5",
-            "libelleAlinea":"",
-            "urlAuteur":"panunzi_jean_jacques14191v.html",
-            "auteur":"M. PANUNZI",
-            "isDiscussionCommune":"false",
-            "isDiscussionCommuneIsolee" :"false",
-            "isIdentique":"false",
-            "isAdopte":"false",
-            "isRejete":"false"
-        }
         ]
         },         {
         "libelle_subdivision": "Article 71 bis",

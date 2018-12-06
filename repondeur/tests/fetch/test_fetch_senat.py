@@ -1,7 +1,6 @@
 import json
 import transaction
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 import responses
@@ -179,6 +178,10 @@ def test_aspire_senat_plf2019_2e_partie(app):
 
     # All amendements from part 2 are fetched
     assert len(amendements) == 35
+
+    # Positions are unique
+    positions = [amdt.position for amdt in amendements if amdt.position is not None]
+    assert len(set(positions)) == len(positions) == 12
 
 
 @responses.activate
@@ -408,7 +411,7 @@ def test_fetch_discussion_details(lecture_senat):
 
 @responses.activate
 def test_fetch_discussion_details_not_found(lecture_senat):
-    from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details, NotFound
+    from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details
 
     responses.add(
         responses.GET,
@@ -416,26 +419,23 @@ def test_fetch_discussion_details_not_found(lecture_senat):
         status=404,
     )
 
-    with pytest.raises(NotFound):
-        list(_fetch_discussion_details(lecture_senat, "commission"))
+    assert list(_fetch_discussion_details(lecture_senat, "commission")) == []
 
 
-def test_fetch_and_parse_discussion_details_not_found(lecture_senat):
-    from zam_repondeur.fetch.senat.derouleur import (
-        fetch_and_parse_discussion_details,
-        NotFound,
+@responses.activate
+def test_fetch_and_parse_discussion_details_not_found(lecture_senat, caplog):
+    from zam_repondeur.fetch.senat.derouleur import fetch_and_parse_discussion_details
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json",
+        status=404,
     )
 
-    with patch(
-        "zam_repondeur.fetch.senat.derouleur._fetch_discussion_details"
-    ) as m_fetch:
-        m_fetch.side_effect = NotFound
+    assert fetch_and_parse_discussion_details(lecture_senat, phase="commission") == []
 
-        amendements = fetch_and_parse_discussion_details(
-            lecture_senat, phase="commission"
-        )
-
-    assert amendements == []
+    url = "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json"
+    assert f"Could not fetch {url}" in [rec.message for rec in caplog.records]
 
 
 def test_derouleur_urls(lecture_senat):

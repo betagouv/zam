@@ -1,13 +1,16 @@
+import logging
 from http import HTTPStatus
-from typing import Any, Dict, Iterator, List, NamedTuple, Optional
+from typing import Any, Dict, Iterable, Iterator, List, NamedTuple, Optional
 
 import requests
 
-from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.models import Amendement, Lecture
 
 
 BASE_URL = "https://www.senat.fr"
+
+
+logger = logging.getLogger(__name__)
 
 
 class DiscussionDetails(NamedTuple):
@@ -21,13 +24,8 @@ class DiscussionDetails(NamedTuple):
 def fetch_and_parse_discussion_details(
     lecture: Lecture, phase: str
 ) -> List[DiscussionDetails]:
-    discussion_details = []
-    try:
-        for data in _fetch_discussion_details(lecture, phase):
-            discussion_details.extend(_parse_derouleur_data(data))
-    except NotFound:
-        pass
-    return discussion_details
+    data_iter = _fetch_discussion_details(lecture, phase)
+    return _parse_derouleur_data(data_iter)
 
 
 def _fetch_discussion_details(lecture: Lecture, phase: str) -> Iterator[Any]:
@@ -41,14 +39,15 @@ def _fetch_discussion_details(lecture: Lecture, phase: str) -> Iterator[Any]:
     for url in derouleur_urls(lecture, phase):
         resp = requests.get(url)
         if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
-            raise NotFound(url)
-
+            logger.warning(f"Could not fetch {url}")
+            continue
         yield resp.json()
 
 
-def _parse_derouleur_data(data: Any) -> List[DiscussionDetails]:
+def _parse_derouleur_data(data_iter: Iterable[Any]) -> List[DiscussionDetails]:
     subdivs_amends = [
         (subdiv, amend)
+        for data in data_iter
         for subdiv in data["Subdivisions"]
         for amend in subdiv["Amendements"]
     ]

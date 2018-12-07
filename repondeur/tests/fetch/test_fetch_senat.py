@@ -410,7 +410,7 @@ def test_fetch_discussion_details(lecture_senat):
 
 
 @responses.activate
-def test_fetch_discussion_details_not_found(lecture_senat):
+def test_fetch_discussion_details_empty_when_url_not_found(lecture_senat):
     from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details
 
     responses.add(
@@ -423,7 +423,9 @@ def test_fetch_discussion_details_not_found(lecture_senat):
 
 
 @responses.activate
-def test_fetch_and_parse_discussion_details_not_found(lecture_senat, caplog):
+def test_fetch_and_parse_discussion_details_empty_and_logs_when_url_not_found(
+    lecture_senat, caplog
+):
     from zam_repondeur.fetch.senat.derouleur import fetch_and_parse_discussion_details
 
     responses.add(

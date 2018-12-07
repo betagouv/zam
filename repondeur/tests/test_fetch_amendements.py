@@ -248,11 +248,16 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
     assert created == 1
     assert errored == []
 
-    # Check that the response was preserved on the updated amendement
     amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
+    # Check that the response was preserved on the updated amendement
     assert amendement_9.avis == "Favorable"
     assert amendement_9.observations == "Observations"
     assert amendement_9.reponse == "Réponse"
+
+    # Check that the auteur key leads to matricule, groupe and auteur filling
+    assert amendement_9.matricule == "642788"
+    assert amendement_9.groupe == "La République en Marche"
+    assert amendement_9.auteur == "Véran Olivier"
 
     # Check that the position was changed on the updated amendement
     assert amendement_9.position == 3
@@ -268,6 +273,79 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
     # Check that the modified date was initialized
     assert amendement_7.modified_at is not None
     assert amendement_7.modified_at == amendement_7.created_at
+
+
+def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, caplog):
+    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.models import Amendement, DBSession
+
+    amendement_6 = Amendement.create(
+        lecture=lecture_an, article=article1_an, num=6, position=1
+    )
+    DBSession.add(amendement_6)
+
+    amendement_9 = Amendement.create(
+        lecture=lecture_an,
+        article=article1_an,
+        num=9,
+        position=2,
+        avis="Favorable",
+        observations="Observations",
+        reponse="Réponse",
+    )
+    DBSession.add(amendement_9)
+
+    with patch(
+        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+    ) as mock_fetch_discussion_list, patch(
+        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+    ) as mock_retrieve_amendement:
+        mock_fetch_discussion_list.return_value = [
+            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
+        ]
+
+        def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.fetch.exceptions import NotFound
+
+            if numero_prefixe not in {"6", "7", "9"}:
+                raise NotFound
+
+            return {
+                "division": {
+                    "titre": "Article 1",
+                    "type": "ARTICLE",
+                    "avantApres": "",
+                    "divisionRattache": "ARTICLE 1",
+                },
+                "numero": numero_prefixe,
+                # No auteur key.
+                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
+                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                "etat": "AC",
+                "retireAvantPublication": "0",
+            }
+
+        mock_retrieve_amendement.side_effect = dynamic_return_value
+
+        amendements, created, errored = get_amendements(lecture_an)
+
+    assert [amendement.num for amendement in amendements] == [6, 7, 9]
+    assert created == 1
+    assert errored == []
+
+    for num, record in zip([6, 7, 9], caplog.records):
+        assert record.levelname == "WARNING"
+        assert record.message.startswith(f"Unknown auteur for amendement {num}")
+
+    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
+    # Check that the missing auteur key leads to empty strings
+    assert amendement_9.matricule == ""
+    assert amendement_9.groupe == ""
+    assert amendement_9.auteur == ""
 
 
 def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendements_an):

@@ -18,6 +18,7 @@ from sqlalchemy import (
     Date,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     Text,
     UniqueConstraint,
@@ -67,7 +68,10 @@ class Reponse(NamedTuple):
 class Amendement(Base):
     VERY_BIG_NUMBER = 999_999_999
     __tablename__ = "amendements"
-    __table_args__ = (UniqueConstraint("num", "lecture_pk"),)
+    __table_args__ = (
+        Index("ix_amendements__lecture_pk", "lecture_pk"),
+        UniqueConstraint("num", "lecture_pk"),
+    )
 
     pk: int = Column(Integer, primary_key=True)
     created_at: datetime = Column(DateTime, nullable=False)

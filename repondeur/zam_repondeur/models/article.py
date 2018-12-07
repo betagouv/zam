@@ -2,7 +2,15 @@ import logging
 from itertools import groupby
 from typing import Iterable, List, Optional, Tuple
 
-from sqlalchemy import Column, ForeignKey, Integer, PickleType, Text, UniqueConstraint
+from sqlalchemy import (
+    Column,
+    ForeignKey,
+    Index,
+    Integer,
+    PickleType,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import relationship, validates
 
 from zam_repondeur.decorator import reify
@@ -43,7 +51,10 @@ ALLOWED_POS = ("avant", "", "après")
 
 class Article(Base):
     __tablename__ = "articles"
-    __table_args__ = (UniqueConstraint("lecture_pk", "type", "num", "mult", "pos"),)
+    __table_args__ = (
+        Index("ix_articles__lecture_pk", "lecture_pk"),
+        UniqueConstraint("lecture_pk", "type", "num", "mult", "pos"),
+    )
 
     pk: int = Column(Integer, primary_key=True)
     lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"), nullable=False)

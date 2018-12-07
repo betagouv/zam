@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, List, Optional
 
-from sqlalchemy import Column, DateTime, Integer, Text, desc
+from sqlalchemy import Column, DateTime, Index, Integer, Text, desc
 from sqlalchemy.orm import joinedload, relationship
 
 from .amendement import Amendement
@@ -18,6 +18,17 @@ SESSIONS = {
 
 class Lecture(Base):
     __tablename__ = "lectures"
+    __table_args__ = (
+        Index(
+            "ix_lectures__chambre__session__num_texte__partie__organe",
+            "chambre",
+            "session",
+            "num_texte",
+            "partie",
+            "organe",
+            unique=True,
+        ),
+    )
 
     pk = Column(Integer, primary_key=True)
     chambre = Column(Text)

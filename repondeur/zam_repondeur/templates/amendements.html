@@ -51,7 +51,7 @@
         <div>
             <h3>Importer des réponses</h3>
             <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a class="underlined" href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses" target="_blank">suivant la spécification dédiée</a>.</p>
-            <form action="" enctype="multipart/form-data" method="post" id="import-form" class="">
+            <form action="{{ request.resource_url(context.parent, 'import_csv') }}" enctype="multipart/form-data" method="post" id="import-form" class="">
                 <div class="custom-file">
                     <input type="file" class="custom-file-input" id="reponses" name="reponses" required>
                     <label class="custom-file-label" for="reponses">Fichier CSV</label>
@@ -65,10 +65,6 @@
             <h3>Télécharger ce tableau</h3>
             <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
             <div role="group" aria-label="Format de téléchargement">
-                <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'csv'}) }}">
-                    <i class="fa fa-table"></i>
-                    Format CSV
-                </a>
                 <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
                     <i class="fa fa-file-excel"></i>
                     Format Excel
@@ -101,6 +97,29 @@
                     <input type="submit" name="delete" class="danger allow-multiple-submit button" value="Supprimer">
                 </div>
             </form>
+        </div>
+        <div>
+            <h3>Importer une sauvegarde</h3>
+            <p>À partir d’un fichier précédemment sauvegardé.</p>
+            <form action="{{ request.resource_url(context.parent, 'import_backup') }}" enctype="multipart/form-data" method="post" id="backup-form" class="">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="backup" name="backup" required>
+                    <label class="custom-file-label" for="backup">Fichier JSON</label>
+                </div>
+                <div role="group">
+                    <input type="submit" name="upload" class="button primary enabled centered" value="Importer la sauvegarde">
+                </div>
+            </form>
+        </div>
+        <div>
+            <h3>Exporter une sauvegarde</h3>
+            <p>Télécharger et conserver une sauvegarde pour un futur import.</p>
+            <div role="group" aria-label="Format de téléchargement">
+                <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'json'}) }}">
+                    <i class="fa fa-file-archive"></i>
+                    Fichier de sauvegarde
+                </a>
+            </div>
         </div>
     </section>
 
@@ -293,7 +312,7 @@
     </nav>
     <section id="articles" class="d-none">
         <ul>
-            {% for article in lecture.articles | sort %}
+            {% for article in articles | sort %}
                 {# On ne liste pas les inconnus ni les intersticiels ici #}
                 {% if article.type and not article.pos %}
                     <li>

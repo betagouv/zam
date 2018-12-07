@@ -12,24 +12,24 @@ def test_get_form(app, lecture_an):
     assert resp.content_type == "text/html"
 
     # Check the form
-    assert resp.forms["import-form"].method == "post"
+    assert resp.forms["backup-form"].method == "post"
     assert (
-        resp.forms["import-form"].action
-        == "http://localhost/lectures/an.15.269.PO717460/import_csv"
+        resp.forms["backup-form"].action
+        == "http://localhost/lectures/an.15.269.PO717460/import_backup"
     )
 
-    assert list(resp.forms["import-form"].fields.keys()) == ["reponses", "upload"]
+    assert list(resp.forms["backup-form"].fields.keys()) == ["backup", "upload"]
 
-    assert isinstance(resp.forms["import-form"].fields["reponses"][0], File)
-    assert resp.forms["import-form"].fields["upload"][0].attrs["type"] == "submit"
+    assert isinstance(resp.forms["backup-form"].fields["backup"][0], File)
+    assert resp.forms["backup-form"].fields["upload"][0].attrs["type"] == "submit"
 
 
-def test_post_form(app, lecture_an, amendements_an):
+def test_post_form(app, lecture_an, amendements_an, tmpdir):
     from zam_repondeur.models import DBSession, Amendement
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["backup-form"]
+    path = Path(__file__).parent / "sample_data" / "backup.json"
+    form["backup"] = Upload("file.json", path.read_bytes())
 
     resp = form.submit()
 
@@ -61,9 +61,9 @@ def test_post_form_updates_modification_date(app, lecture_an, amendements_an):
     with transaction.manager:
         initial_modified_at = lecture_an.modified_at
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["backup-form"]
+    path = Path(__file__).parent / "sample_data" / "backup.json"
+    form["backup"] = Upload("file.json", path.read_bytes())
     form.submit()
 
     with transaction.manager:
@@ -77,43 +77,12 @@ def test_post_form_updates_modification_date(app, lecture_an, amendements_an):
         assert lecture.modified_at != initial_modified_at
 
 
-def test_post_form_semicolumns(app, lecture_an, amendements_an):
-    from zam_repondeur.models import DBSession, Amendement
-
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses_semicolumns.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
-
-    resp = form.submit()
-
-    assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
-
-    resp = resp.follow()
-
-    assert resp.status_code == 200
-    assert "2 réponse(s) chargée(s) avec succès" in resp.text
-
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.avis == "Défavorable"
-    assert amendement.position == 1
-    assert "<strong>ipsum</strong>" in amendement.observations
-    assert "<blink>amet</blink>" not in amendement.observations
-
-    assert "<i>tempor</i>" in amendement.reponse
-    assert "<u>aliqua</u>" not in amendement.reponse
-
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-    assert amendement.observations.startswith("Lorem")
-    assert amendement.position == 2
-
-
 def test_post_form_with_comments(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses_with_comments.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["backup-form"]
+    path = Path(__file__).parent / "sample_data" / "backup_with_comments.json"
+    form["backup"] = Upload("file.json", path.read_bytes())
 
     resp = form.submit()
 
@@ -137,9 +106,9 @@ def test_post_form_with_comments(app, lecture_an, amendements_an):
 def test_post_form_with_affectations(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses_with_affectations.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["backup-form"]
+    path = Path(__file__).parent / "sample_data" / "backup_with_affectations.json"
+    form["backup"] = Upload("file.json", path.read_bytes())
 
     resp = form.submit()
 
@@ -160,26 +129,12 @@ def test_post_form_with_affectations(app, lecture_an, amendements_an):
     assert amendement.affectation == ""
 
 
-def test_post_form_with_bom(app, lecture_an, amendements_an):
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses_with_bom.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+def test_post_form_with_articles(app, lecture_an, article1_an, amendements_an):
+    from zam_repondeur.models import DBSession, Amendement
 
-    resp = form.submit()
-
-    assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
-
-    resp = resp.follow()
-
-    assert resp.status_code == 200
-    assert "2 réponse(s) chargée(s) avec succès" in resp.text
-
-
-def test_post_form_wrong_columns_names(app, lecture_an, amendements_an):
-    form = app.get("/lectures/an.15.269.PO717460/amendements").forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses_wrong_columns_names.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["backup-form"]
+    path = Path(__file__).parent / "sample_data" / "backup_with_articles.json"
+    form["backup"] = Upload("file.json", path.read_bytes())
 
     resp = form.submit()
 
@@ -190,15 +145,37 @@ def test_post_form_wrong_columns_names(app, lecture_an, amendements_an):
 
     assert resp.status_code == 200
     assert (
-        "2 réponse(s) n’ont pas pu être chargée(s). Pour rappel, il faut que le "
-        "fichier CSV contienne au moins les noms de colonnes suivants « Num amdt », "
-        "« Avis du Gouvernement », « Objet amdt » et « Réponse »." in resp.text
+        "2 réponse(s) chargée(s) avec succès, 1 article(s) chargé(s) avec succès"
+        in resp.text
+    )
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+    assert amendement.article.titre == "Titre"
+    assert amendement.article.contenu == "Contenu"
+
+
+def test_post_form_wrong_number(app, lecture_an, amendements_an):
+    form = app.get("/lectures/an.15.269.PO717460/amendements").forms["backup-form"]
+    path = Path(__file__).parent / "sample_data" / "backup_wrong_number.json"
+    form["backup"] = Upload("file.json", path.read_bytes())
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert (
+        "Le fichier de sauvegarde n’a pas pu être chargé pour 1 amendement(s)"
+        in resp.text
     )
 
 
 def test_post_form_reponse_no_file(app, lecture_an, amendements_an):
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["backup-form"]
     resp = form.submit()
 
     assert resp.status_code == 302
@@ -211,13 +188,14 @@ def test_post_form_reponse_no_file(app, lecture_an, amendements_an):
 
 
 def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
-    from zam_repondeur.models import DBSession, Amendement
-    from zam_repondeur.writer import write_csv
+    from zam_repondeur.models import DBSession, Amendement, Article
+    from zam_repondeur.writer import write_json
 
-    filename = str(tmpdir.join("test.csv"))
+    filename = str(tmpdir.join("test.json"))
 
     with transaction.manager:
-        amendements = [
+        article1_an.titre = "Titre"
+        [
             Amendement.create(
                 lecture=lecture_an,
                 article=article1_an,
@@ -230,16 +208,15 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
             )
             for position, num in enumerate((333, 777), 1)
         ]
-        nb_rows = write_csv(lecture_an, filename, request={})
+        nb_rows = write_json(lecture_an, filename, request={})
 
-    assert nb_rows == 2
+    assert nb_rows == 2 + 1  # amendements + article
 
     with transaction.manager:
-        amendements[0].avis = None
-        amendements[1].avis = None
+        article1_an.titre = ""
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
-    form["reponses"] = Upload("file.csv", Path(filename).read_bytes())
+    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["backup-form"]
+    form["backup"] = Upload("file.json", Path(filename).read_bytes())
 
     resp = form.submit()
 
@@ -249,9 +226,10 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "2 réponse(s) chargée(s) avec succès" in resp.text
+    assert (
+        "2 réponse(s) chargée(s) avec succès, 1 article(s) chargé(s) avec succès"
+        in resp.text
+    )
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 333).first()
-    assert amendement.avis == "Favorable"
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 777).first()
-    assert amendement.avis == "Favorable"
+    article = DBSession.query(Article).filter(Article.num == "1").first()
+    assert article.titre == "Titre"

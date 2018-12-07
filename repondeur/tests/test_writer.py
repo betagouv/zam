@@ -1,5 +1,6 @@
 import transaction
 
+import ujson as json
 from pyramid.testing import DummyRequest
 from selectolax.parser import HTMLParser
 
@@ -20,15 +21,17 @@ def _cartouche_to_list(response_node):
     ]
 
 
-def test_write_csv(
+def test_write_json(
     lecture_senat, article1_senat, article1av_senat, article7bis_senat, tmpdir
 ):
-    from zam_repondeur.writer import write_csv
+    from zam_repondeur.writer import write_json
     from zam_repondeur.models import Amendement
 
-    filename = str(tmpdir.join("test.csv"))
+    filename = str(tmpdir.join("test.json"))
 
     with transaction.manager:
+        article1_senat.titre = "Titre art. 1 Sénat"
+        article1_senat.contenu = "Contenu art. 1 Sénat"
         amendement = Amendement.create(
             lecture=lecture_senat,
             article=article1_senat,
@@ -89,61 +92,68 @@ def test_write_csv(
             objet="corge",
             dispositif="grault",
         )
-        nb_rows = write_csv(lecture_senat, filename, request={})
+        nb_rows = write_json(lecture_senat, filename, request={})
 
-    with open(filename, "r", encoding="utf-8-sig", newline="\n") as f_:
-        lines = [line.rstrip("\n") for line in f_]
+    with open(filename, "r", encoding="utf-8-sig") as f_:
+        backup = json.loads(f_.read())
+        amendements = backup["amendements"]
+        articles = backup["articles"]
 
-    assert not any(line.endswith("\r") for line in lines)
+    assert nb_rows == len(amendements) + len(articles) == 5 + 3
 
-    headers, *rows = lines
-
-    assert len(rows) == nb_rows == 5
-
-    assert _csv_row_to_dict(headers, rows[0]) == {
-        "Alinéa": "",
-        "Auteur(s)": "M. DUPONT",
-        "Avis du Gouvernement": "",
-        "Chambre": "senat",
-        "Commentaires": "",
-        "Corps amdt": "L'article 1 est supprimé.",
-        "Date de dépôt": "",
-        "Identifiant discussion commune": "",
-        "Exposé amdt": "Cet article va à l'encontre du principe d'égalité.",
-        "Groupe": "RDSE",
-        "Identifiant identique": "",
-        "Matricule": "000000",
-        "Num_texte": "63",
-        "Num article": "Article 1",
-        "Titre article": "",
-        "Parent": "",
-        "Num amdt": "42",
-        "Objet amdt": "",
-        "Organe": "PO78718",
-        "Position": "1",
-        "Rectif": "1",
-        "Réponse": "",
-        "Affectation": "",
-        "Resume": "Suppression de l'article",
-        "Session": "2017-2018",
-        "Sort": "",
-        "Gouvernemental": "False",
-        "Ordre article": "6|001|01|__________|1",
+    assert amendements[0] == {
+        "alinea": "",
+        "auteur": "M. DUPONT",
+        "avis": "",
+        "chambre": "senat",
+        "comments": "",
+        "dispositif": "<p>L'article 1 est supprimé.</p>",
+        "date_depot": "",
+        "id_discussion_commune": "",
+        "objet": "<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        "groupe": "RDSE",
+        "id_identique": "",
+        "matricule": "000000",
+        "num_texte": 63,
+        "article": "Article 1",
+        "article_titre": "Titre art. 1 Sénat",
+        "parent": "",
+        "num": 42,
+        "observations": "",
+        "organe": "PO78718",
+        "position": 1,
+        "rectif": 1,
+        "reponse": "",
+        "affectation": "",
+        "resume": "Suppression de l'article",
+        "session": "2017-2018",
+        "sort": "",
+        "gouvernemental": False,
+        "article_order": "6|001|01|__________|1",
     }
-    assert [_csv_row_to_dict(headers, row)["Ordre article"] for row in rows] == [
+    assert [amendement["article_order"] for amendement in amendements] == [
         "6|001|01|__________|1",
         "6|007|02|__________|1",
         "6|001|01|__________|1",
         "6|001|01|__________|0",
         "6|001|01|__________|1",
     ]
+    assert articles == [
+        {"contenu": "", "sort_key_as_str": "6|001|01|__________|0", "titre": ""},
+        {
+            "contenu": "Contenu art. 1 Sénat",
+            "sort_key_as_str": "6|001|01|__________|1",
+            "titre": "Titre art. 1 Sénat",
+        },
+        {"contenu": "", "sort_key_as_str": "6|007|02|__________|1", "titre": ""},
+    ]
 
 
-def test_write_csv_full(lecture_senat, article1_senat, tmpdir):
-    from zam_repondeur.writer import write_csv
+def test_write_json_full(lecture_senat, article1_senat, tmpdir):
+    from zam_repondeur.writer import write_json
     from zam_repondeur.models import Amendement
 
-    filename = str(tmpdir.join("test.csv"))
+    filename = str(tmpdir.join("test.json"))
 
     with transaction.manager:
         Amendement.create(
@@ -165,56 +175,54 @@ def test_write_csv_full(lecture_senat, article1_senat, tmpdir):
             affectation="4C",
             comments="<strong>Lisez-moi</strong>",
         )
-        nb_rows = write_csv(lecture_senat, filename, request={})
+        nb_rows = write_json(lecture_senat, filename, request={})
 
-    with open(filename, "r", encoding="utf-8-sig", newline="\n") as f_:
-        lines = [line.rstrip("\n") for line in f_]
+    with open(filename, "r", encoding="utf-8-sig") as f_:
+        backup = json.loads(f_.read())
+        amendements = backup["amendements"]
+        articles = backup["articles"]
 
-    assert not any(line.endswith("\r") for line in lines)
+    assert nb_rows == len(amendements) + len(articles) == 1 + 1
 
-    headers, *rows = lines
-
-    assert len(rows) == nb_rows == 1
-
-    assert _csv_row_to_dict(headers, rows[0]) == {
-        "Alinéa": "",
-        "Auteur(s)": "M. DUPONT",
-        "Avis du Gouvernement": "Défavorable",
-        "Chambre": "senat",
-        "Commentaires": "Lisez-moi",
-        "Corps amdt": "L'article 1 est supprimé.",
-        "Date de dépôt": "",
-        "Identifiant discussion commune": "",
-        "Exposé amdt": "Cet article va à l'encontre du principe d'égalité.",
-        "Groupe": "RDSE",
-        "Identifiant identique": "",
-        "Matricule": "000000",
-        "Num_texte": "63",
-        "Num article": "Article 1",
-        "Titre article": "",
-        "Parent": "",
-        "Num amdt": "42",
-        "Objet amdt": "Un objet",
-        "Organe": "PO78718",
-        "Position": "1",
-        "Rectif": "1",
-        "Réponse": "La réponse",
-        "Affectation": "4C",
-        "Resume": "Suppression de l'article",
-        "Session": "2017-2018",
-        "Sort": "",
-        "Gouvernemental": "False",
-        "Ordre article": "6|001|01|__________|1",
+    assert amendements[0] == {
+        "alinea": "",
+        "auteur": "M. DUPONT",
+        "avis": "Défavorable",
+        "chambre": "senat",
+        "comments": "<strong>Lisez-moi</strong>",
+        "dispositif": "<p>L'article 1 est supprimé.</p>",
+        "date_depot": "",
+        "id_discussion_commune": "",
+        "objet": "<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        "groupe": "RDSE",
+        "id_identique": "",
+        "matricule": "000000",
+        "num_texte": 63,
+        "article": "Article 1",
+        "article_titre": "",
+        "parent": "",
+        "num": 42,
+        "observations": "Un objet",
+        "organe": "PO78718",
+        "position": 1,
+        "rectif": 1,
+        "reponse": "<p>La réponse</p>",
+        "affectation": "4C",
+        "resume": "Suppression de l'article",
+        "session": "2017-2018",
+        "sort": "",
+        "gouvernemental": False,
+        "article_order": "6|001|01|__________|1",
     }
 
 
-def test_write_csv_sous_amendement(
+def test_write_json_sous_amendement(
     lecture_senat, article1_senat, article1av_senat, article7bis_senat, tmpdir
 ):
-    from zam_repondeur.writer import write_csv
+    from zam_repondeur.writer import write_json
     from zam_repondeur.models import Amendement
 
-    filename = str(tmpdir.join("test.csv"))
+    filename = str(tmpdir.join("test.json"))
 
     with transaction.manager:
         amendement = Amendement.create(
@@ -276,46 +284,44 @@ def test_write_csv_sous_amendement(
             objet="corge",
             dispositif="grault",
         )
-        nb_rows = write_csv(lecture_senat, filename, request={})
+        nb_rows = write_json(lecture_senat, filename, request={})
 
-    with open(filename, "r", encoding="utf-8-sig", newline="\n") as f_:
-        lines = [line.rstrip("\n") for line in f_]
+    with open(filename, "r", encoding="utf-8-sig") as f_:
+        backup = json.loads(f_.read())
+        amendements = backup["amendements"]
+        articles = backup["articles"]
 
-    assert not any(line.endswith("\r") for line in lines)
+    assert nb_rows == len(amendements) + len(articles) == 5 + 3
 
-    headers, *rows = lines
-
-    assert len(rows) == nb_rows == 5
-
-    assert _csv_row_to_dict(headers, rows[-1]) == {
-        "Chambre": "senat",
-        "Session": "2017-2018",
-        "Num_texte": "63",
-        "Organe": "PO78718",
-        "Num article": "Article 1",
-        "Titre article": "",
-        "Alinéa": "",
-        "Num amdt": "596",
-        "Rectif": "1",
-        "Auteur(s)": "M. JEAN",
-        "Matricule": "000003",
-        "Groupe": "Les Indépendants",
-        "Date de dépôt": "",
-        "Sort": "",
-        "Position": "",
-        "Identifiant discussion commune": "",
-        "Identifiant identique": "",
-        "Parent": "42 rect.",
-        "Corps amdt": "grault",
-        "Exposé amdt": "corge",
-        "Avis du Gouvernement": "",
-        "Objet amdt": "",
-        "Réponse": "",
-        "Affectation": "",
-        "Gouvernemental": "False",
-        "Commentaires": "",
-        "Resume": "",
-        "Ordre article": "6|001|01|__________|1",
+    assert amendements[-1] == {
+        "alinea": "",
+        "auteur": "M. JEAN",
+        "avis": "",
+        "article_order": "6|001|01|__________|1",
+        "chambre": "senat",
+        "comments": "",
+        "dispositif": "grault",
+        "date_depot": "",
+        "id_discussion_commune": "",
+        "objet": "corge",
+        "groupe": "Les Indépendants",
+        "id_identique": "",
+        "matricule": "000003",
+        "num_texte": 63,
+        "article": "Article 1",
+        "article_titre": "",
+        "parent": "42 rect.",
+        "num": 596,
+        "observations": "",
+        "organe": "PO78718",
+        "position": "",
+        "rectif": 1,
+        "reponse": "",
+        "affectation": "",
+        "resume": "",
+        "session": "2017-2018",
+        "sort": "",
+        "gouvernemental": False,
     }
 
 

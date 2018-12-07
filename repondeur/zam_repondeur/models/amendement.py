@@ -71,6 +71,7 @@ class Amendement(Base):
     __table_args__ = (
         Index("ix_amendements__lecture_pk", "lecture_pk"),
         UniqueConstraint("num", "lecture_pk"),
+        UniqueConstraint("position", "lecture_pk"),
     )
 
     pk: int = Column(Integer, primary_key=True)

@@ -5,6 +5,8 @@ from pathlib import Path
 import pytest
 import responses
 
+from zam_repondeur.models import DBSession
+
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data" / "senat"
@@ -44,6 +46,8 @@ def test_aspire_senat(app, lecture_senat):
         json=json_data,
         status=200,
     )
+
+    DBSession.add(lecture_senat)
 
     amendements, created = aspire_senat(lecture_senat)
 
@@ -109,6 +113,8 @@ def test_aspire_senat_plf2019_1re_partie(app):
         status=200,
     )
 
+    DBSession.add(lecture)
+
     amendements, created = aspire_senat(lecture)
 
     # All amendements from part 1 are fetched
@@ -173,6 +179,8 @@ def test_aspire_senat_plf2019_2e_partie(app):
             f"https://www.senat.fr/enseance/2018-2019/146/liste_discussion_{i}.json",
             status=404,
         )
+
+    DBSession.add(lecture)
 
     amendements, created = aspire_senat(lecture)
 

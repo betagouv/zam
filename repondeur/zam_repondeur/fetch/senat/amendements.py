@@ -28,6 +28,13 @@ def aspire_senat(lecture: Lecture) -> Tuple[List[Amendement], int]:
     logger.info("Récupération des amendements déposés sur %r", lecture)
     created = 0
     amendements: List[Amendement] = []
+
+    # Remember previous positions and reset them
+    old_positions = {}
+    for amendement in lecture.amendements:
+        old_positions[amendement.num] = amendement.position
+        amendement.position = None
+
     try:
         amendements_created = _fetch_and_parse_all(lecture=lecture)
     except NotFound:
@@ -40,6 +47,11 @@ def aspire_senat(lecture: Lecture) -> Tuple[List[Amendement], int]:
     processed_amendements = list(
         _process_amendements(amendements=amendements, lecture=lecture)
     )
+
+    # Log amendements no longer discussed
+    for amdt in lecture.amendements:
+        if amdt.position is None and old_positions.get(amdt.num) is not None:
+            logger.info("Amendement %s retiré de la discussion", amdt.num)
 
     return processed_amendements, created
 
@@ -185,12 +197,6 @@ def _enrich_discussion_details(
     discussion_details_by_num = {details.num: details for details in discussion_details}
     for amend in amendements:
         _enrich_one(amend, discussion_details_by_num.get(amend.num))
-
-    discussed = {details.num for details in discussion_details}
-    for amendement in lecture.amendements:
-        if amendement.position is not None and amendement.num not in discussed:
-            logger.info("Amendement %s retiré de la discussion", amendement.num)
-            amendement.position = None
 
 
 def _enrich_one(

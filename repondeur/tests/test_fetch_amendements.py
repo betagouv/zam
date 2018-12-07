@@ -156,6 +156,8 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
             )
         }
 
+        DBSession.add(lecture_senat)
+
         amendements, created, errored = get_amendements(lecture_senat)
 
     assert [amendement.num for amendement in amendements] == [6666, 7777, 9999]

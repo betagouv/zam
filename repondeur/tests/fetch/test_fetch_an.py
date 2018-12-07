@@ -6,6 +6,7 @@ import responses
 import transaction
 
 from zam_repondeur.fetch.an.amendements import build_url
+from zam_repondeur.models import DBSession
 
 from fetch.mock_an import setup_mock_responses
 
@@ -22,6 +23,8 @@ class TestFetchAndParseAll:
     @responses.activate
     def test_simple_amendements(self, lecture_an, app):
         from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
+
+        DBSession.add(lecture_an)
 
         with setup_mock_responses(
             lecture=lecture_an,
@@ -70,6 +73,8 @@ class TestFetchAndParseAll:
     def test_amendements_not_in_discussion_list_are_fetched(self, lecture_an, app):
         from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
 
+        DBSession.add(lecture_an)
+
         with setup_mock_responses(
             lecture=lecture_an,
             liste=dedent(
@@ -117,6 +122,8 @@ class TestFetchAndParseAll:
     def test_commission(self, lecture_an, app):
         from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
 
+        DBSession.add(lecture_an)
+
         with setup_mock_responses(
             lecture=lecture_an,
             liste=read_sample_data("an/1408-CION-SOC/liste.xml"),
@@ -152,6 +159,8 @@ class TestFetchAndParseAll:
                 organe="PO717460",
                 dossier_legislatif="Titre dossier legislatif",
             )
+
+        DBSession.add(lecture)
 
         with setup_mock_responses(
             lecture=lecture,
@@ -191,6 +200,8 @@ class TestFetchAndParseAll:
     @responses.activate
     def test_with_404(self, lecture_an, app):
         from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
+
+        DBSession.add(lecture_an)
 
         with setup_mock_responses(
             lecture=lecture_an,
@@ -417,7 +428,7 @@ class TestFetchAmendement:
         )
         assert created
         amendement2, created = fetch_amendement(
-            lecture=lecture_an, numero_prefixe="941", position=1
+            lecture=lecture_an, numero_prefixe="941", position=2
         )
         assert created
 
@@ -524,7 +535,7 @@ class TestFetchAmendementAgain:
         amendement1.article = None  # let's change the article
 
         amendement2, created = fetch_amendement(
-            lecture=lecture_an, numero_prefixe="177", position=1
+            lecture=lecture_an, numero_prefixe="177", position=2
         )
         assert not created
         assert amendement2 is amendement1
@@ -554,7 +565,7 @@ class TestFetchAmendementAgain:
         assert created
 
         child1, created = fetch_amendement(
-            lecture=lecture_an, numero_prefixe="941", position=1
+            lecture=lecture_an, numero_prefixe="941", position=2
         )
         assert created
 
@@ -571,7 +582,7 @@ class TestFetchAmendementAgain:
         assert parent2 is parent1
 
         child2, created = fetch_amendement(
-            lecture=lecture_an, numero_prefixe="941", position=1
+            lecture=lecture_an, numero_prefixe="941", position=2
         )
         assert not created
         assert child2 is child1

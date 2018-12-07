@@ -40,14 +40,14 @@
 body {
   margin: 40pt;
   padding: 0;
-  font-size: 18pt;
+  font-size: 100%;
   line-height: 1.4;
   font-family: 'source_sans_pro';
 }
 table {
   border-collapse: collapse;
   text-align: center;
-  font-size: 21pt;
+  font-size: 1.2rem;
   width: 100%;
 }
   table td {
@@ -70,24 +70,24 @@ table {
 .first-page {
   padding-top: 20rem;
   text-align: center;
-  font-size: 27pt;
+  font-size: 1.5rem;
 }
 .page.reponse {
   line-height: 1.5;
-  font-size: 20pt;
+  font-size: 1.2rem;
 }
 .page.amendement,
 .page.article,
 .page.article table {
   line-height: 1.3;
-  font-size: 15pt;
+  font-size: 1rem;
 }
 .page.article h2,
 .page.article h3 {
   text-align: center;
 }
 .page h2 {
-  font-size: 24pt;
+  font-size: 1.4rem;
   margin: 5rem auto;
 }
   .page.jaune h2,
@@ -99,10 +99,10 @@ table {
     padding: 12pt 0;
   }
 .page h3 {
-  font-size: 21pt;
+  font-size: 1.3rem;
 }
   .page.reponse h3 {
-    font-size: 24pt;
+    font-size: 1.4rem;
   }
 .article div dt {
   display: inline;
@@ -110,7 +110,7 @@ table {
   padding: .6rem;
   border: 1px solid black;
   border-radius: 20rem;
-  font-size: 9pt;
+  font-size: .5rem;
   clear: both;
 }
 .article div dd {

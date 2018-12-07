@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Generator, Iterable
 
 import pdfkit
+import ujson as json
 from inscriptis import get_text
 from openpyxl import Workbook
 from openpyxl.styles import Color, Font, PatternFill
@@ -105,6 +106,23 @@ def write_csv(lecture: Lecture, filename: str, request: Request) -> int:
     return nb_rows
 
 
+def write_json(lecture: Lecture, filename: str, request: Request) -> int:
+    nb_rows = 0
+    with open(filename, "w", encoding="utf-8-sig") as file_:
+        amendements = []
+        for amendement in sorted(lecture.amendements):
+            amendements.append(export_amendement(amendement, strip_html=False))
+            nb_rows += 1
+        articles = []
+        for article in sorted(lecture.articles):
+            articles.append(article.asdict())
+            nb_rows += 1
+        file_.write(
+            json.dumps({"amendements": amendements, "articles": articles}, indent=4)
+        )
+    return nb_rows
+
+
 @contextmanager
 def xvfb_if_supported() -> Generator:
     try:
@@ -174,10 +192,10 @@ def _write_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> int:
 HTML_FIELDS = ["objet", "dispositif", "observations", "reponse", "comments"]
 
 
-def export_amendement(amendement: Amendement) -> dict:
+def export_amendement(amendement: Amendement, strip_html: bool = True) -> dict:
     data: dict = amendement.asdict(full=True)
     for field_name in HTML_FIELDS:
-        if data[field_name] is not None:
+        if data[field_name] is not None and strip_html:
             data[field_name] = html_to_text(data[field_name])
     for excluded_field in EXCLUDED_FIELDS:
         if excluded_field in data.keys():

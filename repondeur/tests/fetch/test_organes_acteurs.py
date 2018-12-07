@@ -27,7 +27,7 @@ def test_get_organes_acteurs(sample_data):
         "zam_repondeur.fetch.an.organes_acteurs.fetch_organes_acteurs",
         return_value=sample_data,
     ):
-        organes, acteurs = get_organes_acteurs(legislature=15)
+        organes, acteurs = get_organes_acteurs()
 
     assert len(organes) == 5
     assert organes["PO717460"]["libelleAbrege"] == "Assemblée"

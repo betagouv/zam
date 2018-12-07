@@ -32,13 +32,13 @@ def dossiers():
         "zam_repondeur.fetch.an.dossiers.dossiers_legislatifs.extract_from_remote_zip"
     ) as m_open:
         m_open.return_value = DOSSIERS.open()
-        dossiers_by_uid = get_dossiers_legislatifs(legislature=15)
+        dossiers_by_uid = get_dossiers_legislatifs(15)
 
     return dossiers_by_uid
 
 
 def test_number_of_dossiers(dossiers):
-    assert len(dossiers) == 605
+    assert len(dossiers) == 839
 
 
 @pytest.fixture

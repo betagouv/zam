@@ -112,6 +112,7 @@ def get_possible_texte_urls(lecture: Lecture) -> List[str]:
     if lecture.chambre == "an":
         return [
             f"{AN_URL}{lecture.session}/projets/pl{lecture.num_texte:04}.asp",
+            f"{AN_URL}{lecture.session}/propositions/pion{lecture.num_texte:04}.asp",
             f"{AN_URL}{lecture.session}/ta-commission/r{lecture.num_texte:04}-a0.asp",
         ]
     else:

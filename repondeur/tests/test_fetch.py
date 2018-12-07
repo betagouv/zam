@@ -19,6 +19,7 @@ class TestGetPossibleUrls:
         )
         assert get_possible_texte_urls(lecture) == [
             "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+            "http://www.assemblee-nationale.fr/15/propositions/pion0269.asp",
             "http://www.assemblee-nationale.fr/15/ta-commission/r0269-a0.asp",
         ]
 
@@ -144,6 +145,11 @@ class TestGetArticlesAN:
         )
         responses.add(
             responses.GET,
+            "http://www.assemblee-nationale.fr/15/propositions/pion1056.asp",
+            status=404,
+        )
+        responses.add(
+            responses.GET,
             "http://www.assemblee-nationale.fr/15/ta-commission/r1056-a0.asp",
             body=(Path(__file__).parent / "sample_data" / "r1056-a0.html")
             .read_text("latin-1")
@@ -246,10 +252,15 @@ class TestGetArticlesAN:
             DBSession.add(lecture_an)
             DBSession.add_all(amendements_an)
 
-        # This URL pattern will fail
+        # These URL patterns will fail
         responses.add(
             responses.GET,
             "http://www.assemblee-nationale.fr/15/projets/pl0575.asp",
+            status=404,
+        )
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/propositions/pion0575.asp",
             status=404,
         )
 
@@ -280,6 +291,11 @@ class TestGetArticlesAN:
         responses.add(
             responses.GET,
             "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+            status=404,
+        )
+        responses.add(
+            responses.GET,
+            "http://www.assemblee-nationale.fr/15/propositions/pion0269.asp",
             status=404,
         )
         responses.add(

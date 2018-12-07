@@ -15,7 +15,14 @@ from xvfbwrapper import Xvfb
 
 from .models import Amendement, Lecture
 
-PDFKIT_OPTIONS = {"quiet": ""}
+# Command-line options for wkhtmltopdf
+# See https://wkhtmltopdf.org/usage/wkhtmltopdf.txt
+PDFKIT_OPTIONS = {
+    "quiet": "",
+    "disable-smart-shrinking": "",  # font size consistency between one amdt / all amdts
+    "zoom": "0.75",
+}
+
 STATIC_PATH = Path(__file__).parent / "static"
 PDF_CSS = str(STATIC_PATH / "css" / "print.css")
 

@@ -270,7 +270,6 @@ def _get_article(lecture: Lecture, division: dict) -> Article:
     created: bool
     article, created = get_one_or_create(
         Article,
-        create_method="create",
         lecture=lecture,
         type=subdiv.type_,
         num=subdiv.num,
@@ -288,8 +287,7 @@ def _get_parent(
     if parent_num:
         parent, created = get_one_or_create(
             Amendement,
-            create_method="create",
-            create_method_kwargs={"article": article, "rectif": parent_rectif},
+            create_kwargs={"article": article, "rectif": parent_rectif},
             lecture=lecture,
             num=parent_num,
         )
@@ -309,8 +307,7 @@ def _create_or_update_amendement(
 ) -> Tuple[Amendement, bool]:
     amendement, created = get_one_or_create(
         Amendement,
-        create_method="create",
-        create_method_kwargs={"article": article, "parent": parent},
+        create_kwargs={"article": article, "parent": parent},
         lecture=lecture,
         num=int(amend["numero"]),
     )

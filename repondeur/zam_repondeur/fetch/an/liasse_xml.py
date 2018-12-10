@@ -155,8 +155,8 @@ def _make_amendement(
     amendement.sort = get_sort(
         sort=extract("sort", "sortEnSeance"), etat=extract("etat")
     )
-    amendement.dispositif = clean_html(extract("corps", "dispositif") or "")
-    amendement.objet = clean_html(extract("corps", "exposeSommaire") or "")
+    amendement.corps = clean_html(extract("corps", "dispositif") or "")
+    amendement.expose = clean_html(extract("corps", "exposeSommaire") or "")
     return cast(Amendement, amendement)
 
 

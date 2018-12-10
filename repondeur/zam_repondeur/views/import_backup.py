@@ -81,7 +81,7 @@ def _import_backup_from_json_file(
         try:
             numero = item["num"]
             avis = item["avis"] or ""
-            objet = item["observations"] or ""
+            objet = item["objet"] or ""
             reponse = item["reponse"] or ""
         except KeyError:
             counter["reponses_errors"] += 1
@@ -100,14 +100,14 @@ def _import_backup_from_json_file(
             counter["reponses_errors"] += 1
             continue
 
-        amendement.avis = normalize_avis(avis)
-        amendement.observations = objet
+        amendement.user_content.avis = normalize_avis(avis)
+        amendement.user_content.objet = objet
         reponse = normalize_reponse(reponse, previous_reponse)
-        amendement.reponse = reponse
+        amendement.user_content.reponse = reponse
         if "affectation" in item:
-            amendement.affectation = item["affectation"]
+            amendement.user_content.affectation = item["affectation"]
         if "comments" in item:
-            amendement.comments = item["comments"]
+            amendement.user_content.comments = item["comments"]
         previous_reponse = reponse
         counter["reponses"] += 1
 

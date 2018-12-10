@@ -36,9 +36,9 @@ FIELDS_NAMES = {
     "id_discussion_commune": "Identifiant discussion commune",
     "id_identique": "Identifiant identique",
     "parent": "Parent",
-    "dispositif": "Corps amdt",
-    "objet": "Exposé amdt",
-    "observations": "Objet amdt",
+    "corps": "Corps amdt",
+    "expose": "Exposé amdt",
+    "objet": "Objet amdt",
     "reponse": "Réponse",
     "comments": "Commentaires",
     "avis": "Avis du Gouvernement",
@@ -70,6 +70,11 @@ FIELDS = [
     for field in Amendement.__table__.columns.keys()
     if field not in EXCLUDED_FIELDS
 ] + [
+    "avis",
+    "objet",
+    "reponse",
+    "affectation",
+    "comments",
     "article",
     "article_titre",
     "article_order",
@@ -189,7 +194,7 @@ def _write_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> int:
     return nb_rows
 
 
-HTML_FIELDS = ["objet", "dispositif", "observations", "reponse", "comments"]
+HTML_FIELDS = ["corps", "expose", "objet", "reponse", "comments"]
 
 
 def export_amendement(amendement: Amendement, strip_html: bool = True) -> dict:

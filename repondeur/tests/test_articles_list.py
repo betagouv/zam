@@ -7,7 +7,7 @@ class TestListArticles:
 
         with transaction.manager:
             amendements_an[0].article = article1av_an
-            amendements_an[0].avis = "Favorable"
+            amendements_an[0].user_content.avis = "Favorable"
             DBSession.add_all(amendements_an)
 
         resp = app.get("http://localhost/lectures/an.15.269.PO717460/articles/")

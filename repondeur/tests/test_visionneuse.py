@@ -27,9 +27,9 @@ def test_reponses_full(app, lecture_an, amendements_an):
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = f"Objet pour {amendement.num}"
+            amendement.user_content.reponse = f"Réponse pour {amendement.num}"
         DBSession.add_all(amendements_an)
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
@@ -57,9 +57,9 @@ def test_reponses_grouping(app, lecture_an, amendements_an):
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = "Observations"
-            amendement.reponse = "Réponse"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = "Objet"
+            amendement.user_content.reponse = "Réponse"
         DBSession.add_all(amendements_an)
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
@@ -86,9 +86,9 @@ def test_reponses_authors_not_grouping(app, lecture_an, amendements_an):
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = "Observations"
-            amendement.reponse = "Réponse"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = "Objet"
+            amendement.user_content.reponse = "Réponse"
             amendement.auteur = "M. JEAN"
             amendement.groupe = "Les Indépendants"
         amendement.auteur = "M. CLAUDE"
@@ -115,9 +115,9 @@ def test_reponses_authors_grouping(app, lecture_an, amendements_an):
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = "Observations"
-            amendement.reponse = "Réponse"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = "Objet"
+            amendement.user_content.reponse = "Réponse"
             amendement.auteur = "M. JEAN"
             amendement.groupe = "Les Indépendants"
         DBSession.add_all(amendements_an)
@@ -142,9 +142,9 @@ def test_reponses_groupe_grouping(app, lecture_an, amendements_an):
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = "Observations"
-            amendement.reponse = "Réponse"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = "Objet"
+            amendement.user_content.reponse = "Réponse"
             amendement.auteur = "M. JEAN"
             amendement.groupe = "Les Indépendants"
         amendement.auteur = "M. CLAUDE"  # Only the last one.
@@ -170,9 +170,9 @@ def test_reponses_many_grouping(app, lecture_an, article1_an, amendements_an):
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Défavorable"
-            amendement.observations = "Observations"
-            amendement.reponse = "Réponse"
+            amendement.user_content.avis = "Défavorable"
+            amendement.user_content.objet = "Objet"
+            amendement.user_content.reponse = "Réponse"
             amendement.auteur = "M. JEAN"
             amendement.groupe = "Les Indépendants"
         amendement.auteur = "M. CLAUDE"  # Only the last one.
@@ -185,7 +185,7 @@ def test_reponses_many_grouping(app, lecture_an, article1_an, amendements_an):
             auteur="M. DUPONT",
             groupe="RDSE",
             avis="Défavorable",
-            observations="Observations",
+            objet="Objet",
             reponse="Réponse",
         )
         Amendement.create(
@@ -196,7 +196,7 @@ def test_reponses_many_grouping(app, lecture_an, article1_an, amendements_an):
             auteur="M. DURAND",
             groupe="Les Républicains",
             avis="Défavorable",
-            observations="Observations",
+            objet="Objet",
             reponse="Réponse",
         )
         Amendement.create(
@@ -207,7 +207,7 @@ def test_reponses_many_grouping(app, lecture_an, article1_an, amendements_an):
             auteur="M. MARTIN",
             groupe="Les Républicains",
             avis="Défavorable",
-            observations="Observations",
+            objet="Objet",
             reponse="Réponse",
         )
         Amendement.create(
@@ -218,7 +218,7 @@ def test_reponses_many_grouping(app, lecture_an, article1_an, amendements_an):
             auteur="M. MARTIN",
             groupe="Les Républicains",
             avis="Défavorable",
-            observations="Observations",
+            objet="Objet",
             reponse="Réponse",
         )
 
@@ -247,9 +247,9 @@ def test_reponses_not_grouping_on_same_reponse_only(app, lecture_an, amendements
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = "Réponse"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = f"Objet pour {amendement.num}"
+            amendement.user_content.reponse = "Réponse"
         DBSession.add_all(amendements_an)
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
@@ -297,9 +297,9 @@ def test_reponses_abandoned_not_displayed(app, lecture_an, amendements_an, sort)
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = f"Objet pour {amendement.num}"
+            amendement.user_content.reponse = f"Réponse pour {amendement.num}"
         # Only the last one.
         amendement.sort = sort
         DBSession.add_all(amendements_an)
@@ -325,9 +325,9 @@ def test_reponses_abandoned_and_gouvernemental_not_displayed(
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = f"Objet pour {amendement.num}"
+            amendement.user_content.reponse = f"Réponse pour {amendement.num}"
             amendement.auteur = "LE GOUVERNEMENT"
         # Only the last one.
         amendement.sort = sort
@@ -348,9 +348,9 @@ def test_reponses_with_textes(app, lecture_an, amendements_an):
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = f"Objet pour {amendement.num}"
+            amendement.user_content.reponse = f"Réponse pour {amendement.num}"
             amendement.article.user_content.title = "Titre article"
             amendement.article.content = {"001": "Premier paragraphe"}
         DBSession.add_all(amendements_an)
@@ -370,9 +370,9 @@ def test_reponses_with_presentations(app, lecture_an, amendements_an):
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = f"Objet pour {amendement.num}"
+            amendement.user_content.reponse = f"Réponse pour {amendement.num}"
             amendement.article.user_content.presentation = (
                 "<p>Contenu de la présentation</p>"
             )
@@ -391,9 +391,9 @@ def test_reponses_without_textes_or_presentations(app, lecture_an, amendements_a
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = f"Objet pour {amendement.num}"
+            amendement.user_content.reponse = f"Réponse pour {amendement.num}"
         DBSession.add_all(amendements_an)
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
@@ -410,9 +410,9 @@ def test_reponses_with_different_articles(
 
     with transaction.manager:
         for index, amendement in enumerate(amendements_an, 1):
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = f"Objet pour {amendement.num}"
+            amendement.user_content.reponse = f"Réponse pour {amendement.num}"
             amendement.article.user_content.title = f"Titre article {index}"
         # Only the last one.
         amendement.article = article7bis_an
@@ -448,9 +448,9 @@ def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe_an):
 
     with transaction.manager:
         for index, amendement in enumerate(amendements_an, 1):
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = f"Objet pour {amendement.num}"
+            amendement.user_content.reponse = f"Réponse pour {amendement.num}"
             amendement.article.user_content.title = f"Titre article {index}"
         # Only the last one.
         amendement.article = annexe_an
@@ -468,9 +468,9 @@ def test_reponses_article_additionnel_avant(
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = f"Objet pour {amendement.num}"
+            amendement.user_content.reponse = f"Réponse pour {amendement.num}"
         amendements_an[0].article = article1av_an
         DBSession.add_all(amendements_an)
 
@@ -491,9 +491,9 @@ def test_reponses_amendement_rect(app, lecture_an, amendements_an):
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
-            amendement.observations = f"Observations pour {amendement.num}"
-            amendement.reponse = f"Réponse pour {amendement.num}"
+            amendement.user_content.avis = "Favorable"
+            amendement.user_content.objet = f"Objet pour {amendement.num}"
+            amendement.user_content.reponse = f"Réponse pour {amendement.num}"
         # Only the last one.
         amendement.rectif = 1
         DBSession.add_all(amendements_an)
@@ -511,7 +511,7 @@ def test_links_to_previous_and_next_articles(
 
     with transaction.manager:
         amendements_an[0].article = article1av_an
-        amendements_an[0].avis = "Favorable"
+        amendements_an[0].user_content.avis = "Favorable"
         DBSession.add_all(amendements_an)
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")

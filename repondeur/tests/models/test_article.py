@@ -222,7 +222,7 @@ class TestOrdering:
         )
         article_7 = Article.create(lecture=lecture_an, type="article", num=7)
         amendements_an[0].article = avant_article_7
-        amendements_an[0].avis = "Favorable"
+        amendements_an[0].user_content.avis = "Favorable"
         DBSession.add_all(amendements_an)
 
         assert article1_an.previous_displayable_article is None

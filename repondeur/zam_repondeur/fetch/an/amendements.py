@@ -331,8 +331,8 @@ def _create_or_update_amendement(
         "matricule": matricule,
         "groupe": groupe,
         "auteur": auteur,
-        "dispositif": unjustify(get_str_or_none(amend, "dispositif") or ""),
-        "objet": unjustify(get_str_or_none(amend, "exposeSommaire") or ""),
+        "corps": unjustify(get_str_or_none(amend, "dispositif") or ""),
+        "expose": unjustify(get_str_or_none(amend, "exposeSommaire") or ""),
     }
 
     modified = False

@@ -46,17 +46,17 @@ def test_import_same_liasse_xml_again_preserve_response(lecture_essoc):
     amendements, _ = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
 
     # Now let's add a response
-    amendements[1].avis = "Favorable"
-    amendements[1].observations = "Observations"
-    amendements[1].reponse = "Réponse"
+    amendements[1].user_content.avis = "Favorable"
+    amendements[1].user_content.objet = "Objet"
+    amendements[1].user_content.reponse = "Réponse"
 
     # And import the same amendements again
     amendements2, errors = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
 
     assert amendements == amendements2
-    assert amendements2[1].avis == "Favorable"
-    assert amendements2[1].observations == "Observations"
-    assert amendements2[1].reponse == "Réponse"
+    assert amendements2[1].user_content.avis == "Favorable"
+    assert amendements2[1].user_content.objet == "Objet"
+    assert amendements2[1].user_content.reponse == "Réponse"
 
     assert errors == []
 
@@ -69,14 +69,14 @@ def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
     amendements, _ = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
 
     # Now let's add a response
-    amendements[1].avis = "Favorable"
-    amendements[1].observations = "Observations"
-    amendements[1].reponse = "Réponse"
+    amendements[1].user_content.avis = "Favorable"
+    amendements[1].user_content.objet = "Objet"
+    amendements[1].user_content.reponse = "Réponse"
 
     # Even for the one not being reimported
-    amendements[2].avis = "Défavorable"
-    amendements[2].observations = "Observations"
-    amendements[2].reponse = "Réponse"
+    amendements[2].user_content.avis = "Défavorable"
+    amendements[2].user_content.objet = "Objet"
+    amendements[2].user_content.reponse = "Réponse"
 
     # And import a smaller liasse
     amendements2, errors = import_liasse_xml(
@@ -86,11 +86,11 @@ def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
     assert amendements[0] == amendements2[0]
     assert amendements[1] == amendements2[1]
     assert len(amendements2) == 2
-    assert amendements2[1].avis == "Favorable"
-    assert amendements2[1].observations == "Observations"
-    assert amendements2[1].reponse == "Réponse"
+    assert amendements2[1].user_content.avis == "Favorable"
+    assert amendements2[1].user_content.objet == "Objet"
+    assert amendements2[1].user_content.reponse == "Réponse"
     assert DBSession.query(Amendement).count() == 3
-    assert amendements[2].avis == "Défavorable"
+    assert amendements[2].user_content.avis == "Défavorable"
 
     assert errors == []
 
@@ -219,16 +219,16 @@ def _check_amendement_0(amendement):
     assert amendement.parent is None
 
     assert (
-        amendement.dispositif
+        amendement.corps
         == "<div>Cet amendement est en cours de traitement par les services de l'Assemblée.</div>"  # noqa
     )
-    assert amendement.objet == ""
+    assert amendement.expose == ""
 
     assert amendement.resume is None
 
-    assert amendement.avis is None
-    assert amendement.observations is None
-    assert amendement.reponse is None
+    assert amendement.user_content.avis is None
+    assert amendement.user_content.objet is None
+    assert amendement.user_content.reponse is None
 
 
 def _check_amendement_1(amendement):
@@ -266,7 +266,7 @@ def _check_amendement_1(amendement):
     assert amendement.parent.num == 28
     assert amendement.parent.rectif == 0
 
-    assert amendement.dispositif == (
+    assert amendement.corps == (
         "<p>L’alinéa 12 est complété par l’alinéa suivant :</p>\n"
         "<p>« L’article préliminaire du projet de loi pour un état "
         "au service d’une société de confiance définit les objectifs "
@@ -274,7 +274,7 @@ def _check_amendement_1(amendement):
         "de l’affirmation de principes généraux d’organisation et d’action, "
         "lesquels nécessitent des compléments. »</p>"
     )
-    assert amendement.objet == (
+    assert amendement.expose == (
         "<p>L’article préliminaire du projet de loi pour un état au service "
         "d’une société de confiance définit les objectifs de l’action publique "
         "à horizon 2022. Elle s’articule autour de l’affirmation de principes "
@@ -288,9 +288,9 @@ def _check_amendement_1(amendement):
 
     assert amendement.resume is None
 
-    assert amendement.avis is None
-    assert amendement.observations is None
-    assert amendement.reponse is None
+    assert amendement.user_content.avis is None
+    assert amendement.user_content.objet is None
+    assert amendement.user_content.reponse is None
 
 
 def _check_amendement_gouvernemental(amendement):

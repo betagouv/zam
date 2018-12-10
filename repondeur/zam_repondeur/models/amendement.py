@@ -52,17 +52,73 @@ AVIS = [
 
 class Reponse(NamedTuple):
     avis: str
-    observations: str
+    objet: str
     content: str
 
     def __eq__(self, other: Any) -> bool:
         return bool(
             self.avis == other.avis
-            and do_striptags(self.observations)  # type: ignore
-            == do_striptags(other.observations)  # type: ignore
+            and do_striptags(self.objet)  # type: ignore
+            == do_striptags(other.objet)  # type: ignore
             and do_striptags(self.content)  # type: ignore
             == do_striptags(other.content)  # type: ignore
         )
+
+
+class AmendementUserContent(Base):
+    __tablename__ = "amendement_user_contents"
+
+    pk: int = Column(Integer, primary_key=True)
+    avis: Optional[str] = Column(Text, nullable=True)
+    objet: Optional[str] = Column(Text, nullable=True)
+    reponse: Optional[str] = Column(Text, nullable=True)
+    affectation: Optional[str] = Column(Text, nullable=True)
+    comments: Optional[str] = Column(Text, nullable=True)
+
+    amendement_pk: int = Column(Integer, ForeignKey("amendements.pk"))
+    amendement: "Amendement" = relationship("Amendement", back_populates="user_content")
+
+    @property
+    def is_redactionnel(self) -> bool:
+        return (
+            self.avis == "Favorable"
+            and self.objet is not None
+            and "rédactionnel" in self.objet.lower()
+            and not self.has_reponse
+        )
+
+    @property
+    def has_objet(self) -> bool:
+        return (
+            self.objet is not None
+            and self.objet.strip() != ""
+            and self.objet != "<p></p>"
+        )
+
+    @property
+    def has_reponse(self) -> bool:
+        return (
+            self.reponse is not None
+            and self.reponse.strip() != ""
+            and self.reponse != "<p></p>"
+        )
+
+    @property
+    def favorable(self) -> bool:
+        if self.avis is None:
+            return False
+        return self.avis.startswith("Favorable")
+
+    @property
+    def sagesse(self) -> bool:
+        if self.avis is None:
+            return False
+        return self.avis == "Sagesse" or self.avis == "Satisfait donc rejet"
+
+    def full_reponse(self) -> Reponse:
+        if self.amendement.gouvernemental:
+            return Reponse(self.amendement.num_str, "", "")
+        return Reponse(self.avis or "", self.objet or "", self.reponse or "")
 
 
 class Amendement(Base):
@@ -77,6 +133,7 @@ class Amendement(Base):
     pk: int = Column(Integer, primary_key=True)
     created_at: datetime = Column(DateTime, nullable=False)
     modified_at: datetime = Column(DateTime, nullable=False)
+    bookmarked_at: Optional[datetime] = Column(DateTime, nullable=True)
 
     # Meta informations.
     num: int = Column(Integer, nullable=False)
@@ -93,9 +150,9 @@ class Amendement(Base):
     id_identique: Optional[int] = Column(Integer, nullable=True)
 
     # Contenu.
-    dispositif: Optional[str] = Column(Text, nullable=True)  # texte de l'amendement
-    objet: Optional[str] = Column(Text, nullable=True)  # motivation
-    resume: Optional[str] = Column(Text, nullable=True)  # résumé de l'objet
+    expose: Optional[str] = Column(Text, nullable=True)  # exposé sommaire
+    corps: Optional[str] = Column(Text, nullable=True)  # alias dispositif (légistique)
+    resume: Optional[str] = Column(Text, nullable=True)  # résumé du corps
     alinea: Optional[str] = Column(Text, nullable=True)  # libellé de l'alinéa ciblé
 
     # Relations.
@@ -114,14 +171,9 @@ class Amendement(Base):
     lecture: "Lecture" = relationship("Lecture", back_populates="amendements")
     article_pk: int = Column(Integer, ForeignKey("articles.pk"))
     article: "Article" = relationship("Article", back_populates="amendements")
-
-    # Extras. (TODO: move to dedicated table?)
-    avis: Optional[str] = Column(Text, nullable=True)
-    observations: Optional[str] = Column(Text, nullable=True)
-    reponse: Optional[str] = Column(Text, nullable=True)
-    affectation: Optional[str] = Column(Text, nullable=True)
-    comments: Optional[str] = Column(Text, nullable=True)
-    bookmarked_at: Optional[datetime] = Column(DateTime, nullable=True)
+    user_content = relationship(
+        AmendementUserContent, back_populates="amendement", uselist=False, lazy="joined"
+    )
 
     __repr_keys__ = ("pk", "num", "rectif", "lecture_pk", "article_pk", "parent_pk")
 
@@ -147,13 +199,13 @@ class Amendement(Base):
         position: Optional[int] = None,
         id_discussion_commune: Optional[int] = None,
         id_identique: Optional[int] = None,
-        dispositif: Optional[str] = None,
-        objet: Optional[str] = None,
+        expose: Optional[str] = None,
+        corps: Optional[str] = None,
         resume: Optional[str] = None,
         alinea: Optional[str] = None,
         parent: Optional["Amendement"] = None,
         avis: Optional[str] = None,
-        observations: Optional[str] = None,
+        objet: Optional[str] = None,
         reponse: Optional[str] = None,
         affectation: Optional[str] = None,
         comments: Optional[str] = None,
@@ -172,26 +224,34 @@ class Amendement(Base):
             position=position,
             id_discussion_commune=id_discussion_commune,
             id_identique=id_identique,
-            dispositif=dispositif,
-            objet=objet,
+            expose=expose,
+            corps=corps,
             resume=resume,
             alinea=alinea,
             parent=parent,
-            avis=avis,
-            observations=observations,
-            reponse=reponse,
-            affectation=affectation,
-            comments=comments,
             created_at=now,
             modified_at=now,
         )
-        DBSession.add(amendement)
+        user_content = AmendementUserContent(
+            amendement=amendement,
+            avis=avis,
+            objet=objet,
+            reponse=reponse,
+            affectation=affectation,
+            comments=comments,
+        )
+        DBSession.add(user_content)
         return amendement
 
     def __lt__(self, other: object) -> bool:
         if not isinstance(other, Amendement):
             return NotImplemented
         return self.sort_key < other.sort_key
+
+    def full_reponse(self) -> Reponse:
+        # Useful proxy to be able to use it as a sort key in `group_amendements`.
+        reponse: Reponse = self.user_content.full_reponse()
+        return reponse
 
     @property
     def modified_at_timestamp(self) -> float:
@@ -308,7 +368,9 @@ class Amendement(Base):
 
     @property
     def is_displayable(self) -> bool:
-        return (bool(self.avis) or self.gouvernemental) and not self.is_abandoned
+        return (
+            bool(self.user_content.avis) or self.gouvernemental
+        ) and not self.is_abandoned
 
     @property
     def is_sous_amendement(self) -> bool:
@@ -345,7 +407,8 @@ class Amendement(Base):
             amendement
             for amendement in self.article.amendements
             if (
-                amendement.full_reponse() == self.full_reponse()
+                amendement.user_content.full_reponse()
+                == self.user_content.full_reponse()
                 and amendement.num != self.num
                 and amendement.is_displayable
             )
@@ -362,48 +425,6 @@ class Amendement(Base):
             amdt for amdt in self.children if amdt.is_displayable
         )
 
-    @property
-    def is_redactionnel(self) -> bool:
-        return (
-            self.avis == "Favorable"
-            and self.objet is not None
-            and "rédactionnel" in self.objet.lower()
-            and not self.has_reponse
-        )
-
-    @property
-    def has_observations(self) -> bool:
-        return (
-            self.observations is not None
-            and self.observations.strip() != ""
-            and self.observations != "<p></p>"
-        )
-
-    @property
-    def has_reponse(self) -> bool:
-        return (
-            self.reponse is not None
-            and self.reponse.strip() != ""
-            and self.reponse != "<p></p>"
-        )
-
-    @property
-    def favorable(self) -> bool:
-        if self.avis is None:
-            return False
-        return self.avis.startswith("Favorable")
-
-    @property
-    def sagesse(self) -> bool:
-        if self.avis is None:
-            return False
-        return self.avis == "Sagesse" or self.avis == "Satisfait donc rejet"
-
-    def full_reponse(self) -> Reponse:
-        if self.gouvernemental:
-            return Reponse(self.num_str, "", "")
-        return Reponse(self.avis or "", self.observations or "", self.reponse or "")
-
     def asdict(self, full: bool = False) -> dict:
         result: Dict[str, Union[str, int, date]] = {
             "num": self.num,
@@ -414,14 +435,14 @@ class Amendement(Base):
             "gouvernemental": self.gouvernemental,
             "auteur": self.auteur or "",
             "groupe": self.groupe or "",
-            "dispositif": self.dispositif or "",
-            "objet": self.objet or "",
+            "expose": self.expose or "",
+            "corps": self.corps or "",
             "resume": self.resume or "",
-            "observations": self.observations or "",
-            "avis": self.avis or "",
-            "reponse": self.reponse or "",
-            "affectation": self.affectation or "",
-            "comments": self.comments or "",
+            "objet": self.user_content.objet or "",
+            "avis": self.user_content.avis or "",
+            "reponse": self.user_content.reponse or "",
+            "affectation": self.user_content.affectation or "",
+            "comments": self.user_content.comments or "",
             "parent": self.parent and self.parent.num_disp or "",
         }
         if full:

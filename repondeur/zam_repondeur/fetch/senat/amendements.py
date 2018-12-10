@@ -127,8 +127,8 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
     amendement.matricule = extract_matricule(row["Fiche Sénateur"])
     amendement.date_depot = parse_date(row["Date de dépôt "])
     amendement.sort = row["Sort "]
-    amendement.dispositif = clean_html(row["Dispositif "])
-    amendement.objet = clean_html(row["Objet "])
+    amendement.corps = clean_html(row["Dispositif "])
+    amendement.expose = clean_html(row["Objet "])
     return amendement, created
 
 

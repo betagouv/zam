@@ -410,16 +410,12 @@ nav.secondary {
     a.button.arrow-down {
       background-image: url("../img/arrow_down.svg");
     }
-  div.jaune,
   div.article {
     border: 1px solid #e9e5e5;
     border-left: 8px solid black;
     padding: 1rem;
     margin: 1rem 0;
     background: white;
-  }
-  div.jaune {
-    border-left-color: #f1c40f;
   }
   div.article {
     border-left-color: #6c7a89;

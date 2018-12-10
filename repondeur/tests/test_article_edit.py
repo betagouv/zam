@@ -164,7 +164,7 @@ def test_post_article_edit_form_title_redirect_next_with_apres_and_avant(
     assert amendement.article.user_content.title == "Titre article"
 
 
-def test_post_article_edit_form_jaune(app, lecture_an, amendements_an):
+def test_post_article_edit_form_presentation(app, lecture_an, amendements_an):
 
     from zam_repondeur.models import Amendement, DBSession
 
@@ -183,7 +183,7 @@ def test_post_article_edit_form_jaune(app, lecture_an, amendements_an):
     assert amendement.article.user_content.presentation == "<p>Content</p>"
 
 
-def test_post_article_edit_form_jaune_cleaned(app, lecture_an, amendements_an):
+def test_post_article_edit_form_presentation_cleaned(app, lecture_an, amendements_an):
 
     from zam_repondeur.models import Amendement, DBSession
 

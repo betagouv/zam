@@ -131,7 +131,6 @@ def _make_amendement(
 
     article, created = get_one_or_create(
         Article,
-        create_method="create",
         lecture=lecture,
         type=subdiv.type_,
         num=subdiv.num,
@@ -141,8 +140,7 @@ def _make_amendement(
     parent = get_parent(extract("amendementParent"), uid_map, lecture)
     amendement, created = get_one_or_create(
         Amendement,
-        create_method="create",
-        create_method_kwargs={"article": article, "parent": parent},
+        create_kwargs={"article": article, "parent": parent},
         lecture=lecture,
         num=to_int(extract("identifiant", "numero")),
     )

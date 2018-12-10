@@ -136,7 +136,6 @@ def update_lecture_articles(lecture: Lecture, all_article_data: List[dict]) -> b
             articles = [
                 get_one_or_create(
                     Article,
-                    create_method="create",
                     lecture=lecture,
                     type=article_data["type"],
                     num=str(index),  # To avoid override in case of many annexes.
@@ -157,7 +156,6 @@ def find_or_create_articles(lecture: Lecture, article_data: dict) -> List[Articl
     return [
         get_one_or_create(
             Article,
-            create_method="create",
             lecture=lecture,
             type=article_data["type"],
             num=num,

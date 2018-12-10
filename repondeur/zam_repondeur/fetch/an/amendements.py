@@ -287,9 +287,15 @@ def _create_or_update_amendement(
         amendement.parent = parent
 
     sort = get_sort(amend)
-    matricule = amend["auteur"]["tribunId"]
-    groupe = get_groupe(amend)
-    auteur = get_auteur(amend)
+    raw_auteur = amend.get("auteur")
+    if not raw_auteur:
+        logger.warning("Unknown auteur for amendement %s", amend["numero"])
+        matricule, groupe, auteur = "", "", ""
+    else:
+        matricule = raw_auteur["tribunId"]
+        groupe = get_groupe(raw_auteur, amendement.num)
+        auteur = get_auteur(raw_auteur)
+
     dispositif = unjustify(get_str_or_none(amend, "dispositif") or "")
     objet = unjustify(get_str_or_none(amend, "exposeSommaire") or "")
 
@@ -374,28 +380,25 @@ def parse_num_in_liste(num_long: str) -> Tuple[str, int]:
 _RE_NUM = re.compile(r"(?P<acronyme>[A-Z]*)(?P<num>\d+)")
 
 
-def get_auteur(amendement: OrderedDict) -> str:
-    if int(amendement["auteur"]["estGouvernement"]):
+def get_auteur(raw_auteur: OrderedDict) -> str:
+    if int(raw_auteur["estGouvernement"]):
         return "LE GOUVERNEMENT"
-    return f"{amendement['auteur']['nom']} {amendement['auteur']['prenom']}"
+    return f"{raw_auteur['nom']} {raw_auteur['prenom']}"
 
 
-def get_groupe(amendement: OrderedDict) -> str:
+def get_groupe(raw_auteur: OrderedDict, amendement_num: int) -> str:
     from zam_repondeur.data import get_data
 
-    auteur = amendement["auteur"]
-    gouvernemental = bool(int(auteur["estGouvernement"]))
-    groupe_tribun_id = get_str_or_none(auteur, "groupeTribunId")
+    gouvernemental = bool(int(raw_auteur["estGouvernement"]))
+    groupe_tribun_id = get_str_or_none(raw_auteur, "groupeTribunId")
     if gouvernemental or (groupe_tribun_id is None):
         return ""
     groupes = get_data("organes")
     try:
-        groupe_tribun_id = f"PO{auteur['groupeTribunId']}"
+        groupe_tribun_id = f"PO{raw_auteur['groupeTribunId']}"
     except KeyError:
         logger.error(
-            "Unknown groupe %r for amendement %s",
-            groupe_tribun_id,
-            amendement["numero"],
+            "Unknown groupe %r for amendement %s", groupe_tribun_id, amendement_num
         )
         return ""
     try:
@@ -404,7 +407,7 @@ def get_groupe(amendement: OrderedDict) -> str:
         logger.error(
             "Unknown groupe tribun %r in groupes for amendement %s",
             groupe_tribun_id,
-            amendement["numero"],
+            amendement_num,
         )
         return ""
     return groupe["libelle"]

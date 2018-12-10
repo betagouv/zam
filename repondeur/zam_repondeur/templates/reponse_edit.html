@@ -268,7 +268,8 @@
                 const editReponseForm = document.querySelector('form#edit-reponse')
                 const initialAvis = editReponseForm.querySelector('option:checked')
                     .value
-                const objetWindow = document.querySelector('iframe#objet_ifr').contentWindow
+                const objetWindow = document.querySelector('iframe#objet_ifr')
+                    .contentWindow
                 const objetBody = objetWindow.document.body
                 const initialObjet = objetBody.innerHTML
                 const reponseWindow = document.querySelector('iframe#reponse_ifr')

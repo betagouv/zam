@@ -1,10 +1,11 @@
 import json
 import transaction
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 import responses
+
+from zam_repondeur.models import DBSession
 
 
 HERE = Path(__file__)
@@ -45,6 +46,8 @@ def test_aspire_senat(app, lecture_senat):
         json=json_data,
         status=200,
     )
+
+    DBSession.add(lecture_senat)
 
     amendements, created = aspire_senat(lecture_senat)
 
@@ -109,6 +112,8 @@ def test_aspire_senat_plf2019_1re_partie(app):
         json=json_data,
         status=200,
     )
+
+    DBSession.add(lecture)
 
     amendements, created = aspire_senat(lecture)
 
@@ -175,10 +180,16 @@ def test_aspire_senat_plf2019_2e_partie(app):
             status=404,
         )
 
+    DBSession.add(lecture)
+
     amendements, created = aspire_senat(lecture)
 
     # All amendements from part 2 are fetched
     assert len(amendements) == 35
+
+    # Positions are unique
+    positions = [amdt.position for amdt in amendements if amdt.position is not None]
+    assert len(set(positions)) == len(positions) == 12
 
 
 @responses.activate
@@ -407,8 +418,8 @@ def test_fetch_discussion_details(lecture_senat):
 
 
 @responses.activate
-def test_fetch_discussion_details_not_found(lecture_senat):
-    from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details, NotFound
+def test_fetch_discussion_details_empty_when_url_not_found(lecture_senat):
+    from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details
 
     responses.add(
         responses.GET,
@@ -416,26 +427,25 @@ def test_fetch_discussion_details_not_found(lecture_senat):
         status=404,
     )
 
-    with pytest.raises(NotFound):
-        list(_fetch_discussion_details(lecture_senat, "commission"))
+    assert list(_fetch_discussion_details(lecture_senat, "commission")) == []
 
 
-def test_fetch_and_parse_discussion_details_not_found(lecture_senat):
-    from zam_repondeur.fetch.senat.derouleur import (
-        fetch_and_parse_discussion_details,
-        NotFound,
+@responses.activate
+def test_fetch_and_parse_discussion_details_empty_and_logs_when_url_not_found(
+    lecture_senat, caplog
+):
+    from zam_repondeur.fetch.senat.derouleur import fetch_and_parse_discussion_details
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json",
+        status=404,
     )
 
-    with patch(
-        "zam_repondeur.fetch.senat.derouleur._fetch_discussion_details"
-    ) as m_fetch:
-        m_fetch.side_effect = NotFound
+    assert fetch_and_parse_discussion_details(lecture_senat, phase="commission") == []
 
-        amendements = fetch_and_parse_discussion_details(
-            lecture_senat, phase="commission"
-        )
-
-    assert amendements == []
+    url = "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json"
+    assert f"Could not fetch {url}" in [rec.message for rec in caplog.records]
 
 
 def test_derouleur_urls(lecture_senat):
@@ -483,11 +493,11 @@ def test_derouleur_urls_plf2019_2e_partie():
     assert len(urls) > 1
     assert (
         urls[0]
-        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103394.json"
+        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103427.json"
     )
     assert (
         urls[-1]
-        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103445.json"
+        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103394.json"
     )
 
 

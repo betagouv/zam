@@ -8,7 +8,6 @@ from urllib.parse import urljoin
 
 import xmltodict
 
-from zam_repondeur.fetch.amendements import clear_position_if_removed
 from zam_repondeur.fetch.division import _parse_subdiv
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.fetch.http import cached_session
@@ -52,6 +51,12 @@ def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[s
     created = 0
     errored: List[str] = []
 
+    # Remember previous positions and reset them
+    old_positions = {}
+    for amendement in lecture.amendements:
+        old_positions[amendement.num] = amendement.position
+        amendement.position = None
+
     discussion_items = fetch_discussion_list(lecture)
     if not discussion_items:
         logger.warning("Could not find amendements from %r", lecture)
@@ -72,7 +77,10 @@ def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[s
     created = created_disc + created_other
     errored = errored_disc + errored_other
 
-    clear_position_if_removed(lecture, amendements)
+    # Log amendements no longer discussed
+    for amdt in lecture.amendements:
+        if amdt.position is None and old_positions.get(amdt.num) is not None:
+            logger.info("Amendement %s retiré de la discussion", amdt.num)
 
     return amendements, created, errored
 

@@ -195,8 +195,9 @@ def _check_amendement_0(amendement):
     assert amendement.article.num == "2"
     assert amendement.article.mult == ""
     assert amendement.article.pos == ""
-    assert amendement.article.titre is None
-    assert amendement.article.contenu is None
+    assert amendement.article.content == {}
+    assert amendement.article.user_content.title == ""
+    assert amendement.article.user_content.presentation == ""
 
     assert amendement.alinea == 24
 
@@ -241,8 +242,9 @@ def _check_amendement_1(amendement):
     assert amendement.article.num == ""
     assert amendement.article.mult == ""
     assert amendement.article.pos == ""
-    assert amendement.article.titre is None
-    assert amendement.article.contenu is None
+    assert amendement.article.content == {}
+    assert amendement.article.user_content.title == ""
+    assert amendement.article.user_content.presentation == ""
 
     assert amendement.alinea == 12
 

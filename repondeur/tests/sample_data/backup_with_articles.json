@@ -62,8 +62,8 @@
     "articles": [
         {
             "sort_key_as_str": "6|001|01|__________|1",
-            "titre": "Titre",
-            "contenu": "Contenu"
+            "title": "Titre",
+            "presentation": "Présentation"
         }
     ]
 }

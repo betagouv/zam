@@ -124,10 +124,10 @@ def _import_backup_from_json_file(
             counter["articles_errors"] += 1
             continue
 
-        if "titre" in item:
-            article.titre = item["titre"]
-        if "contenu" in item:
-            article.contenu = item["contenu"]
+        if "title" in item:
+            article.user_content.title = item["title"]
+        if "presentation" in item:
+            article.user_content.presentation = item["presentation"]
         counter["articles"] += 1
 
     return counter

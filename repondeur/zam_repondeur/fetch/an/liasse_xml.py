@@ -131,6 +131,7 @@ def _make_amendement(
 
     article, created = get_one_or_create(
         Article,
+        create_method="create",
         lecture=lecture,
         type=subdiv.type_,
         num=subdiv.num,

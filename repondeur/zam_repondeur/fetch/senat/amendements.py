@@ -109,6 +109,7 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
     subdiv = _parse_subdiv(row["Subdivision "])
     article, created = get_one_or_create(
         Article,
+        create_method="create",
         lecture=lecture,
         type=subdiv.type_,
         num=subdiv.num,

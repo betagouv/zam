@@ -351,8 +351,8 @@ def test_reponses_with_textes(app, lecture_an, amendements_an):
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-            amendement.article.titre = "Titre article"
-            amendement.article.contenu = {"001": "Premier paragraphe"}
+            amendement.article.user_content.title = "Titre article"
+            amendement.article.content = {"001": "Premier paragraphe"}
         DBSession.add_all(amendements_an)
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
@@ -365,7 +365,7 @@ def test_reponses_with_textes(app, lecture_an, amendements_an):
     assert article_content.css_first("dd").text().strip() == "Premier paragraphe"
 
 
-def test_reponses_with_jaunes(app, lecture_an, amendements_an):
+def test_reponses_with_presentations(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -373,7 +373,9 @@ def test_reponses_with_jaunes(app, lecture_an, amendements_an):
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-            amendement.article.jaune = "<p>Contenu du jaune</p>"
+            amendement.article.user_content.presentation = (
+                "<p>Contenu de la présentation</p>"
+            )
         DBSession.add_all(amendements_an)
 
     resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
@@ -381,10 +383,10 @@ def test_reponses_with_jaunes(app, lecture_an, amendements_an):
     fake_anchor = resp.parser.css_first("#content-article-1")
     article_content = fake_anchor.parent.css_first(".article")
     assert article_content.css_first("h3").text() == "Présentation de l’article"
-    assert article_content.css_first("p").text().strip() == "Contenu du jaune"
+    assert article_content.css_first("p").text().strip() == "Contenu de la présentation"
 
 
-def test_reponses_without_textes_or_jaunes(app, lecture_an, amendements_an):
+def test_reponses_without_textes_or_presentations(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -411,7 +413,7 @@ def test_reponses_with_different_articles(
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-            amendement.article.titre = f"Titre article {index}"
+            amendement.article.user_content.title = f"Titre article {index}"
         # Only the last one.
         amendement.article = article7bis_an
         DBSession.add_all(amendements_an)
@@ -449,7 +451,7 @@ def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe_an):
             amendement.avis = "Favorable"
             amendement.observations = f"Observations pour {amendement.num}"
             amendement.reponse = f"Réponse pour {amendement.num}"
-            amendement.article.titre = f"Titre article {index}"
+            amendement.article.user_content.title = f"Titre article {index}"
         # Only the last one.
         amendement.article = annexe_an
         DBSession.add_all(amendements_an)

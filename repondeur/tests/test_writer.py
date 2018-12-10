@@ -30,8 +30,8 @@ def test_write_json(
     filename = str(tmpdir.join("test.json"))
 
     with transaction.manager:
-        article1_senat.titre = "Titre art. 1 Sénat"
-        article1_senat.contenu = "Contenu art. 1 Sénat"
+        article1_senat.user_content.title = "Titre art. 1 Sénat"
+        article1_senat.user_content.presentation = "Présentation art. 1 Sénat"
         amendement = Amendement.create(
             lecture=lecture_senat,
             article=article1_senat,
@@ -139,13 +139,13 @@ def test_write_json(
         "6|001|01|__________|1",
     ]
     assert articles == [
-        {"contenu": "", "sort_key_as_str": "6|001|01|__________|0", "titre": ""},
+        {"presentation": "", "sort_key_as_str": "6|001|01|__________|0", "title": ""},
         {
-            "contenu": "Contenu art. 1 Sénat",
+            "presentation": "Présentation art. 1 Sénat",
             "sort_key_as_str": "6|001|01|__________|1",
-            "titre": "Titre art. 1 Sénat",
+            "title": "Titre art. 1 Sénat",
         },
-        {"contenu": "", "sort_key_as_str": "6|007|02|__________|1", "titre": ""},
+        {"presentation": "", "sort_key_as_str": "6|007|02|__________|1", "title": ""},
     ]
 
 

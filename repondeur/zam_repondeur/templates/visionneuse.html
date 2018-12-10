@@ -12,7 +12,7 @@
         <div class="titles">
           <h2>{{ article.format(short=False) }}</h2>
         </div>
-        {% if article.contenu or article.jaune %}
+        {% if article.content or article.user_content.presentation %}
           <a href="#content-{{ article.slug }}"
              class="button"
              data-toggle-target="content-{{ article.slug }}"
@@ -37,14 +37,14 @@
   <div class="is-none">
     <span class="fake-anchor" id="content-{{ article.slug }}"></span>
     <div class="article">
-      <h2 class="article-title">{{ article.titre or "" }}</h2>
-      {% if article.jaune %}
+      <h2 class="article-title">{{ article.user_content.title or "" }}</h2>
+      {% if article.user_content.presentation %}
         <h3>Présentation de l’article</h3>
-        {{ article.jaune | safe }}
+        {{ article.user_content.presentation | safe }}
       {% endif %}
-      {% if article.contenu %}
+      {% if article.content %}
         <h3>Texte de l’article</h3>
-        {% for number, content in article.contenu.items() %}
+        {% for number, content in article.content.items() %}
           <dl>
             <dt>{{ number }}</dt>
             <dd>

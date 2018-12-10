@@ -430,7 +430,7 @@ class Amendement(Base):
             result["organe"] = self.lecture.organe
             result["session"] = self.lecture.session
             result["article"] = self.article.format()
-            result["article_titre"] = self.article.titre or ""
+            result["article_titre"] = self.article.user_content.title or ""
             result["article_order"] = self.article.sort_key_as_str
             result["position"] = self.position or ""
             result["id_discussion_commune"] = self.id_discussion_commune or ""

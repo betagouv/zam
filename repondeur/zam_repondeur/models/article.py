@@ -49,6 +49,17 @@ ALLOWED_TYPE = (
 ALLOWED_POS = ("avant", "", "après")
 
 
+class ArticleUserContent(Base):
+    __tablename__ = "article_user_contents"
+
+    pk: int = Column(Integer, primary_key=True)
+    title: Optional[str] = Column(Text, nullable=True)
+    presentation: Optional[str] = Column(Text, nullable=True)
+
+    article_pk: int = Column(Integer, ForeignKey("articles.pk"))
+    article: "Article" = relationship("Article", back_populates="user_content")
+
+
 class Article(Base):
     __tablename__ = "articles"
     __table_args__ = (
@@ -63,14 +74,15 @@ class Article(Base):
     num: str = Column(Text, nullable=False, default="")
     mult: str = Column(Text, nullable=False, default="")
     pos: str = Column(Text, nullable=False, default="")
-    titre: Optional[str] = Column(Text, nullable=True)
-    contenu: Optional[dict] = Column(PickleType, nullable=True)
-    jaune: Optional[str] = Column(Text, nullable=True)  # Présentation de l’article.
+    content: Optional[dict] = Column(PickleType, nullable=True)
 
     amendements = relationship(
         Amendement,
         order_by=(Amendement.position, Amendement.num),
         back_populates="article",
+    )
+    user_content = relationship(
+        ArticleUserContent, back_populates="article", uselist=False, lazy="joined"
     )
 
     @validates("type")
@@ -220,21 +232,13 @@ class Article(Base):
         num: str = "",
         mult: str = "",
         pos: str = "",
-        titre: str = "",
-        contenu: dict = {},
-        jaune: str = "",
+        content: dict = {},
     ) -> "Article":
         article = cls(
-            lecture=lecture,
-            type=type,
-            num=num,
-            mult=mult,
-            pos=pos,
-            titre=titre,
-            contenu=contenu,
-            jaune=jaune,
+            lecture=lecture, type=type, num=num, mult=mult, pos=pos, content=content
         )
-        DBSession.add(article)
+        user_content = ArticleUserContent(article=article, title="", presentation="")
+        DBSession.add(user_content)
         return article
 
     @property
@@ -322,8 +326,8 @@ class Article(Base):
     def asdict(self) -> dict:
         return {
             "sort_key_as_str": self.sort_key_as_str,
-            "titre": self.titre or "",
-            "contenu": self.contenu or "",
+            "title": self.user_content.title or "",
+            "presentation": self.user_content.presentation or "",
         }
 
 

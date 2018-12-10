@@ -114,8 +114,8 @@ class TestGetArticlesAN:
         DBSession.add(lecture_an)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.article.titre == ""
-        assert amendement.article.contenu == {}
+        assert amendement.article.user_content.title == ""
+        assert amendement.article.content == {}
 
         changed = get_articles(lecture_an)
 
@@ -123,8 +123,11 @@ class TestGetArticlesAN:
 
         # We can get the article contents from an amendement
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.article.titre == "Dispositions relatives l'exercice 2016"
-        assert amendement.article.contenu["001"].startswith(
+        assert (
+            amendement.article.user_content.title
+            == "Dispositions relatives l'exercice 2016"
+        )
+        assert amendement.article.content["001"].startswith(
             "Au titre de l'exercice 2016"
         )
 
@@ -161,11 +164,14 @@ class TestGetArticlesAN:
 
         annexe = DBSession.query(Article).filter(Article.type == "annexe").first()
         assert annexe.num == "93"
-        assert annexe.titre == "Stratégie nationale d'orientation de l'action publique"
-        assert annexe.contenu["001"].startswith(
+        assert (
+            annexe.user_content.title
+            == "Stratégie nationale d'orientation de l'action publique"
+        )
+        assert annexe.content["001"].startswith(
             "ANNEXE Stratégie nationale d'orientation de l'action publique"
         )
-        assert annexe.contenu["002"].startswith(
+        assert annexe.content["002"].startswith(
             (
                 "La présente stratégie nationale énonce les orientations et les "
                 "objectifs de l'action publique vers une société de confiance, "
@@ -190,11 +196,11 @@ class TestGetArticlesAN:
         DBSession.add(lecture_an)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.article.titre == ""
-        assert amendement.article.contenu == {}
+        assert amendement.article.user_content.title == ""
+        assert amendement.article.content == {}
 
         # Let's set a custom article title
-        amendement.article.titre = "My custom title"
+        amendement.article.user_content.title = "My custom title"
 
         changed = get_articles(lecture_an)
 
@@ -202,8 +208,8 @@ class TestGetArticlesAN:
 
         # We can get the article contents from an amendement
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.article.titre == "My custom title"
-        assert amendement.article.contenu["001"].startswith(
+        assert amendement.article.user_content.title == "My custom title"
+        assert amendement.article.content["001"].startswith(
             "Au titre de l'exercice 2016"
         )
 
@@ -231,8 +237,8 @@ class TestGetArticlesAN:
         assert changed
 
         article = DBSession.query(Article).filter(Article.pos == "avant").first()
-        assert article.titre == ""
-        assert article.contenu == {}
+        assert article.user_content.title == ""
+        assert article.content == {}
 
     @responses.activate
     def test_fallback_to_alternative_url_pattern(self, app, lecture_an, amendements_an):
@@ -279,7 +285,7 @@ class TestGetArticlesAN:
         assert changed
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.article.contenu["001"].startswith(
+        assert amendement.article.content["001"].startswith(
             "Le code des relations entre"
         )
 
@@ -309,7 +315,7 @@ class TestGetArticlesAN:
         assert not changed
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.article.contenu == {}
+        assert amendement.article.content == {}
 
 
 class TestGetArticlesSenat:
@@ -334,14 +340,14 @@ class TestGetArticlesSenat:
         assert changed
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
-        assert amendement.article.contenu["001"].startswith(
+        assert amendement.article.content["001"].startswith(
             "Au titre de l'exercice 2016"
         )
 
         # We should not modify articles from unrelated lectures
         article = DBSession.query(Article).filter_by(pk=article1_an.pk).one()
         assert article is not amendement.article
-        assert article.contenu == {}
+        assert article.content == {}
 
     @responses.activate
     def test_get_articles_senat_with_mult(self, app, lecture_senat, amendements_senat):
@@ -372,7 +378,7 @@ class TestGetArticlesSenat:
         assert changed
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
-        assert amendement.article.contenu["001"].startswith("Ne donnent pas lieu à")
+        assert amendement.article.content["001"].startswith("Ne donnent pas lieu à")
 
 
 def test_get_section_title():

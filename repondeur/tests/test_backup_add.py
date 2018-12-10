@@ -150,8 +150,8 @@ def test_post_form_with_articles(app, lecture_an, article1_an, amendements_an):
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.article.titre == "Titre"
-    assert amendement.article.contenu == "Contenu"
+    assert amendement.article.user_content.title == "Titre"
+    assert amendement.article.user_content.presentation == "Présentation"
 
 
 def test_post_form_wrong_number(app, lecture_an, amendements_an):
@@ -194,7 +194,8 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
     filename = str(tmpdir.join("test.json"))
 
     with transaction.manager:
-        article1_an.titre = "Titre"
+        article1_an.user_content.title = "Titre"
+        article1_an.user_content.presentation = "Présentation"
         [
             Amendement.create(
                 lecture=lecture_an,
@@ -213,7 +214,8 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
     assert nb_rows == 2 + 1  # amendements + article
 
     with transaction.manager:
-        article1_an.titre = ""
+        article1_an.user_content.title = ""
+        article1_an.user_content.presentation = ""
 
     form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["backup-form"]
     form["backup"] = Upload("file.json", Path(filename).read_bytes())
@@ -232,4 +234,5 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
     )
 
     article = DBSession.query(Article).filter(Article.num == "1").first()
-    assert article.titre == "Titre"
+    assert article.user_content.title == "Titre"
+    assert article.user_content.presentation == "Présentation"

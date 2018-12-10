@@ -170,8 +170,8 @@
                 "
                 data-order="{{ loop.index }}"
                 data-amendement="{{ amendement.num }}"
-                data-affectation="{{ amendement.affectation }}"
-                data-avis="{{ 1 if amendement.gouvernemental or amendement.avis else 0 }}"
+                data-affectation="{{ amendement.user_content.affectation }}"
+                data-avis="{{ 1 if amendement.gouvernemental or amendement.user_content.avis else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 data-abandoned-before-seance="{{ 1 if amendement.is_abandoned_before_seance else 0 }}"
                 id="{{ amendement.slug }}"
@@ -222,8 +222,8 @@
                         {% endif %}
                 </td>
                 <td>
-                    {% if amendement.observations %}
-                        {{ amendement.observations | striptags | truncate(length=100, killwords=False, end='…') }}
+                    {% if amendement.user_content.objet %}
+                        {{ amendement.user_content.objet | striptags | truncate(length=100, killwords=False, end='…') }}
                     {% endif %}
                 </td>
                 <td data-sortkey="
@@ -240,7 +240,7 @@
                         {{ amendement.auteur }}
                     {% endif %}
                 <td
-                    {% if not amendement.gouvernemental and not amendement.avis %}
+                    {% if not amendement.gouvernemental and not amendement.user_content.avis %}
                         class="input-required"
                     {% endif %}
                     data-sortkey="
@@ -248,8 +248,8 @@
                         ZZZ {# Keep at the end. #}
                     {%- elif amendement.gouvernemental -%}
                         Présentation
-                    {%- elif amendement.avis -%}
-                        {{ amendement.avis }}
+                    {%- elif amendement.user_content.avis -%}
+                        {{ amendement.user_content.avis }}
                     {%- else -%}
                         Aucun
                     {%- endif -%}"
@@ -259,10 +259,10 @@
                             <span class="avis abandoned_before_seance"></span>
                         {% elif amendement.gouvernemental %}
                             <span class="avis gouvernement"></span>
-                        {% elif amendement.avis %}
-                            {% if amendement.sagesse %}
+                        {% elif amendement.user_content.avis %}
+                            {% if amendement.user_content.sagesse %}
                                 <span class="avis sagesse"></span>
-                            {% elif amendement.favorable %}
+                            {% elif amendement.user_content.favorable %}
                                 <span class="avis positive"></span>
                             {% else %}
                                 <span class="avis negative"></span>
@@ -279,8 +279,8 @@
                             {% endif %}
                         {% elif amendement.gouvernemental %}
                             Présentation
-                        {% elif amendement.avis %}
-                            {{ amendement.avis }}
+                        {% elif amendement.user_content.avis %}
+                            {{ amendement.user_content.avis }}
                         {% else %}
                             Aucun
                         {% endif %}
@@ -291,9 +291,9 @@
                     {%- if amendement.is_abandoned_before_seance -%}
                         ZZZ {# Keep at the end. #}
                     {%- else -%}
-                        {{ amendement.affectation }}
+                        {{ amendement.user_content.affectation }}
                     {%- endif -%}">
-                    {{ amendement.affectation or "" }}
+                    {{ amendement.user_content.affectation or "" }}
                 </td>
                 <td>
                     <a class="download-pdf" href="{{ request.resource_url(context[amendement.num_str], 'download_amendement') }}">

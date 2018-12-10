@@ -53,7 +53,7 @@ def test_visionneuse_amendements_search(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
-        amendements_an[0].avis = "Favorable"
+        amendements_an[0].user_content.avis = "Favorable"
         DBSession.add_all(amendements_an)
 
     url = f"{LECTURE_URL}/articles/"

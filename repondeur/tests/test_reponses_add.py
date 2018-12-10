@@ -42,16 +42,16 @@ def test_post_form(app, lecture_an, amendements_an):
     assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.avis == "Défavorable"
+    assert amendement.user_content.avis == "Défavorable"
     assert amendement.position == 1
-    assert "<strong>ipsum</strong>" in amendement.observations
-    assert "<blink>amet</blink>" not in amendement.observations
+    assert "<strong>ipsum</strong>" in amendement.user_content.objet
+    assert "<blink>amet</blink>" not in amendement.user_content.objet
 
-    assert "<i>tempor</i>" in amendement.reponse
-    assert "<u>aliqua</u>" not in amendement.reponse
+    assert "<i>tempor</i>" in amendement.user_content.reponse
+    assert "<u>aliqua</u>" not in amendement.user_content.reponse
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-    assert amendement.observations.startswith("Lorem")
+    assert amendement.user_content.objet.startswith("Lorem")
     assert amendement.position == 2
 
 
@@ -95,16 +95,16 @@ def test_post_form_semicolumns(app, lecture_an, amendements_an):
     assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.avis == "Défavorable"
+    assert amendement.user_content.avis == "Défavorable"
     assert amendement.position == 1
-    assert "<strong>ipsum</strong>" in amendement.observations
-    assert "<blink>amet</blink>" not in amendement.observations
+    assert "<strong>ipsum</strong>" in amendement.user_content.objet
+    assert "<blink>amet</blink>" not in amendement.user_content.objet
 
-    assert "<i>tempor</i>" in amendement.reponse
-    assert "<u>aliqua</u>" not in amendement.reponse
+    assert "<i>tempor</i>" in amendement.user_content.reponse
+    assert "<u>aliqua</u>" not in amendement.user_content.reponse
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-    assert amendement.observations.startswith("Lorem")
+    assert amendement.user_content.objet.startswith("Lorem")
     assert amendement.position == 2
 
 
@@ -127,11 +127,11 @@ def test_post_form_with_comments(app, lecture_an, amendements_an):
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.position == 1
-    assert amendement.comments == "A comment"
+    assert amendement.user_content.comments == "A comment"
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
     assert amendement.position == 2
-    assert amendement.comments == ""
+    assert amendement.user_content.comments == ""
 
 
 def test_post_form_with_affectations(app, lecture_an, amendements_an):
@@ -153,11 +153,11 @@ def test_post_form_with_affectations(app, lecture_an, amendements_an):
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
     assert amendement.position == 1
-    assert amendement.affectation == "Bureau"
+    assert amendement.user_content.affectation == "Bureau"
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
     assert amendement.position == 2
-    assert amendement.affectation == ""
+    assert amendement.user_content.affectation == ""
 
 
 def test_post_form_with_bom(app, lecture_an, amendements_an):
@@ -224,7 +224,7 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
                 num=num,
                 position=position,
                 avis="Favorable",
-                observations="Des observations très pertinentes",
+                objet="Un objet très pertinent",
                 reponse="Une réponse très appropriée",
                 comments="Avec des commentaires",
             )
@@ -235,8 +235,8 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
     assert nb_rows == 2
 
     with transaction.manager:
-        amendements[0].avis = None
-        amendements[1].avis = None
+        amendements[0].user_content.avis = None
+        amendements[1].user_content.avis = None
 
     form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
     form["reponses"] = Upload("file.csv", Path(filename).read_bytes())
@@ -252,6 +252,6 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
     assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 333).first()
-    assert amendement.avis == "Favorable"
+    assert amendement.user_content.avis == "Favorable"
     amendement = DBSession.query(Amendement).filter(Amendement.num == 777).first()
-    assert amendement.avis == "Favorable"
+    assert amendement.user_content.avis == "Favorable"

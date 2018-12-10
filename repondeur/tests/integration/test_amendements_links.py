@@ -18,7 +18,7 @@ def test_repondeur_contains_link_to_visionneuse_if_avis(
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        amendements_an[0].avis = "Favorable"
+        amendements_an[0].user_content.avis = "Favorable"
         DBSession.add_all(amendements_an)
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"

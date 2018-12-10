@@ -12,7 +12,7 @@ def test_get_amendements_with_avis(app, lecture_an, amendements_an):
 
     with transaction.manager:
         amendement = amendements_an[0]
-        amendement.avis = "Favorable"
+        amendement.user_content.avis = "Favorable"
         DBSession.add(amendement)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/amendements")
@@ -38,7 +38,7 @@ def test_get_amendements_order_default(app, lecture_an, amendements_an):
 
     with transaction.manager:
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
+            amendement.user_content.avis = "Favorable"
         DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/amendements")
@@ -56,7 +56,7 @@ def test_get_amendements_order_abandoned_last(app, lecture_an, amendements_an):
     with transaction.manager:
         amendements_an[0].sort = "Irrecevable"
         for amendement in amendements_an:
-            amendement.avis = "Favorable"
+            amendement.user_content.avis = "Favorable"
         DBSession.add_all(amendements_an)
 
     resp = app.get("http://localhost/lectures/an.15.269.PO717460/amendements")

@@ -84,10 +84,10 @@ def test_upload_liasse_with_table(app, lecture_essoc):
             partie=None,
             organe=lecture_essoc.organe,
         )
-        dispositif = lecture.amendements[1].dispositif
-        assert "<table>\n<tbody>\n<tr>\n<td>Durée minimale de services" in dispositif
-        objet = lecture.amendements[0].objet
-        assert "<table>\n<tbody>\n<tr>\n<td>Durée minimale de services" in objet
+        expose = lecture.amendements[1].expose
+        assert "<table>\n<tbody>\n<tr>\n<td>Durée minimale de services" in expose
+        corps = lecture.amendements[0].corps
+        assert "<table>\n<tbody>\n<tr>\n<td>Durée minimale de services" in corps
 
 
 def test_upload_liasse_success_with_a_deposer(app, lecture_essoc):

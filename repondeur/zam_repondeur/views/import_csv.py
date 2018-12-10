@@ -105,14 +105,14 @@ def _import_reponses_from_csv_file(
             errors_count += 1
             continue
 
-        amendement.avis = normalize_avis(avis)
-        amendement.observations = clean_html(objet)
+        amendement.user_content.avis = normalize_avis(avis)
+        amendement.user_content.objet = clean_html(objet)
         reponse = normalize_reponse(reponse, previous_reponse)
-        amendement.reponse = clean_html(reponse)
+        amendement.user_content.reponse = clean_html(reponse)
         if "Affectation" in line:
-            amendement.affectation = clean_html(line["Affectation"])
+            amendement.user_content.affectation = clean_html(line["Affectation"])
         if "Commentaires" in line:
-            amendement.comments = clean_html(line["Commentaires"])
+            amendement.user_content.comments = clean_html(line["Commentaires"])
         previous_reponse = reponse
         reponses_count += 1
 

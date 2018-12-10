@@ -6,7 +6,7 @@ def test_visionneuse_detail_amendement(wsgi_server, driver, lecture_an, amendeme
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
-        amendements_an[0].avis = "Favorable"
+        amendements_an[0].user_content.avis = "Favorable"
         amendements_an[0].auteur = "M. Content"
         amendements_an[0].groupe = "Les Heureux"
         DBSession.add_all(amendements_an)
@@ -32,8 +32,8 @@ def test_visionneuse_detail_amendement_reponse(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
-        amendements_an[0].avis = "Favorable"
-        amendements_an[0].reponse = "La réponse"
+        amendements_an[0].user_content.avis = "Favorable"
+        amendements_an[0].user_content.reponse = "La réponse"
         DBSession.add_all(amendements_an)
 
     driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
@@ -57,8 +57,8 @@ def test_visionneuse_detail_amendement_texte(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
-        amendements_an[0].avis = "Favorable"
-        amendements_an[0].objet = "L’objet"
+        amendements_an[0].user_content.avis = "Favorable"
+        amendements_an[0].corps = "Le corps"
         DBSession.add_all(amendements_an)
 
     driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
@@ -68,7 +68,7 @@ def test_visionneuse_detail_amendement_texte(
     header.find_element_by_link_text("Texte").click()
     assert not article.find_element_by_css_selector(".reponse-detail").is_displayed()
     assert article.find_element_by_css_selector(".amendement-detail").is_displayed()
-    assert "L’objet" in article.find_element_by_css_selector(".amendement-detail").text
+    assert "Le corps" in article.find_element_by_css_selector(".amendement-detail").text
     article.find_element_by_css_selector(
         ".amendement-detail"
     ).find_element_by_link_text("Replier").click()
@@ -82,9 +82,9 @@ def test_visionneuse_detail_amendement_reponse_then_texte(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
-        amendements_an[0].avis = "Favorable"
-        amendements_an[0].reponse = "La réponse"
-        amendements_an[0].objet = "L’objet"
+        amendements_an[0].user_content.avis = "Favorable"
+        amendements_an[0].user_content.reponse = "La réponse"
+        amendements_an[0].user_content.objet = "L’objet"
         DBSession.add_all(amendements_an)
 
     driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")

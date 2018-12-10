@@ -294,8 +294,8 @@ def _create_or_update_amendement(
         groupe = get_groupe(raw_auteur, amendement.num)
         auteur = get_auteur(raw_auteur)
 
-    dispositif = unjustify(get_str_or_none(amend, "dispositif") or "")
-    objet = unjustify(get_str_or_none(amend, "exposeSommaire") or "")
+    expose = unjustify(get_str_or_none(amend, "dispositif") or "")
+    corps = unjustify(get_str_or_none(amend, "exposeSommaire") or "")
 
     if not created and (
         article != amendement.article
@@ -307,8 +307,8 @@ def _create_or_update_amendement(
         or matricule != amendement.matricule
         or groupe != amendement.groupe
         or auteur != amendement.auteur
-        or dispositif != amendement.dispositif
-        or objet != amendement.objet
+        or expose != amendement.expose
+        or corps != amendement.corps
     ):
         amendement.modified_at = datetime.utcnow()
 
@@ -319,8 +319,8 @@ def _create_or_update_amendement(
     amendement.matricule = matricule
     amendement.groupe = groupe
     amendement.auteur = auteur
-    amendement.dispositif = dispositif
-    amendement.objet = objet
+    amendement.expose = expose
+    amendement.corps = corps
     DBSession.flush()  # make sure foreign keys are updated
     return amendement, created
 

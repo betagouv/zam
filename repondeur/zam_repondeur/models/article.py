@@ -16,7 +16,7 @@ from sqlalchemy.orm import relationship, validates
 from zam_repondeur.decorator import reify
 
 from .base import Base, DBSession
-from .amendement import Amendement, Reponse
+from .amendement import Amendement
 from .lecture import Lecture
 
 
@@ -280,14 +280,14 @@ class Article(Base):
 
     def grouped_displayable_amendements(
         self
-    ) -> Iterable[Tuple[Reponse, List[Amendement]]]:
+    ) -> Iterable[Tuple[Tuple[str, str, str], List[Amendement]]]:
         return self.group_amendements(
             amdt for amdt in self.amendements if amdt.is_displayable
         )
 
     def grouped_displayable_top_level_amendements(
         self
-    ) -> Iterable[Tuple[Reponse, List[Amendement]]]:
+    ) -> Iterable[Tuple[Tuple[str, str, str], List[Amendement]]]:
         return self.group_amendements(
             amdt
             for amdt in self.amendements
@@ -296,10 +296,12 @@ class Article(Base):
 
     def group_amendements(
         self, amendements: Iterable[Amendement]
-    ) -> Iterable[Tuple[Reponse, List[Amendement]]]:
+    ) -> Iterable[Tuple[Tuple[str, str, str], List[Amendement]]]:
         return (
             (reponse, list(group))
-            for reponse, group in groupby(amendements, key=Amendement.full_reponse)
+            for reponse, group in groupby(
+                amendements, key=Amendement.similar_reponse_key
+            )
         )
 
     def asdict(self) -> dict:

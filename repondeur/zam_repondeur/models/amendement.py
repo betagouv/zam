@@ -1,16 +1,6 @@
 import re
 from datetime import date, datetime
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    NamedTuple,
-    Optional,
-    Tuple,
-    Union,
-    TYPE_CHECKING,
-)  # noqa
+from typing import Dict, Iterable, List, Optional, Tuple, Union, TYPE_CHECKING  # noqa
 
 from jinja2.filters import do_striptags
 from sqlalchemy import (
@@ -48,21 +38,6 @@ AVIS = [
     "Sagesse",
     "Satisfait donc rejet",
 ]
-
-
-class Reponse(NamedTuple):
-    avis: str
-    objet: str
-    content: str
-
-    def __eq__(self, other: Any) -> bool:
-        return bool(
-            self.avis == other.avis
-            and do_striptags(self.objet)  # type: ignore
-            == do_striptags(other.objet)  # type: ignore
-            and do_striptags(self.content)  # type: ignore
-            == do_striptags(other.content)  # type: ignore
-        )
 
 
 class AmendementUserContent(Base):
@@ -115,10 +90,14 @@ class AmendementUserContent(Base):
             return False
         return self.avis == "Sagesse" or self.avis == "Satisfait donc rejet"
 
-    def full_reponse(self) -> Reponse:
+    def grouping_key(self) -> Tuple[str, str, str]:
         if self.amendement.gouvernemental:
-            return Reponse(self.amendement.num_str, "", "")
-        return Reponse(self.avis or "", self.objet or "", self.reponse or "")
+            return (self.amendement.num_str, "", "")
+        return (
+            self.avis or "",
+            do_striptags(self.objet) or "",  # type: ignore
+            do_striptags(self.reponse) or "",  # type: ignore
+        )
 
 
 class Amendement(Base):
@@ -248,10 +227,13 @@ class Amendement(Base):
             return NotImplemented
         return self.sort_key < other.sort_key
 
-    def full_reponse(self) -> Reponse:
-        # Useful proxy to be able to use it as a sort key in `group_amendements`.
-        reponse: Reponse = self.user_content.full_reponse()
-        return reponse
+    def is_similar_to(self, other: "Amendement") -> bool:
+        """Check both the avis, reponse and objet from user content."""
+        return self.similar_reponse_key() == other.similar_reponse_key()
+
+    def similar_reponse_key(self) -> Tuple[str, str, str]:
+        grouping_key: Tuple[str, str, str] = self.user_content.grouping_key()
+        return grouping_key
 
     @property
     def modified_at_timestamp(self) -> float:
@@ -407,8 +389,7 @@ class Amendement(Base):
             amendement
             for amendement in self.article.amendements
             if (
-                amendement.user_content.full_reponse()
-                == self.user_content.full_reponse()
+                self.is_similar_to(amendement)
                 and amendement.num != self.num
                 and amendement.is_displayable
             )
@@ -420,7 +401,7 @@ class Amendement(Base):
 
     def grouped_displayable_children(
         self
-    ) -> Iterable[Tuple[Reponse, List["Amendement"]]]:
+    ) -> Iterable[Tuple[tuple, List["Amendement"]]]:
         return self.article.group_amendements(
             amdt for amdt in self.children if amdt.is_displayable
         )

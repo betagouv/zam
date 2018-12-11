@@ -117,7 +117,7 @@
                     Identique au{% if identiques_length > 1 %}x{% endif %} nº
                     {% for identique in identiques -%}
                         <a href="{{ request.resource_url(context.parent[identique.num_str], 'reponse') }}">{{ identique }}</a>
-                        {% if identique.user_content.full_reponse() != amendement.user_content.full_reponse() %}
+                        {% if not identique.is_similar_to(amendement) %}
                             <span title="Cet amendement identique n’a pas une réponse similaire">⚠️</span>
                         {% endif %}
                         {% if loop.revindex == 2 and identiques_length > 1 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
@@ -179,12 +179,12 @@
                 <label for="autofill">Remplir à partir de…</label>
                 <select name="autofill" class="form-control">
                     <option value="">Choisir dans la liste…</option>
-                    {% for reponse, amendements in reponses %}
+                    {% for (avis, objet, reponse), amendements in reponses %}
                         {% if amendement not in amendements %}
                             <option value="{{ loop.index }}"
-                                    data-reponse-avis="{{ reponse.avis }}"
-                                    data-reponse-objet="{{ reponse.objet }}"
-                                    data-reponse-content="{{ reponse.content }}">
+                                    data-avis="{{ avis }}"
+                                    data-objet="{{ objet }}"
+                                    data-reponse="{{ reponse }}">
                                 {{ macros.multiple_amendements_title(amendements) }}
                                 {% if amendements[0].user_content.is_redactionnel %}
                                     (rédactionnel)
@@ -284,10 +284,10 @@
                         `select[name="autofill"] option[value="${index}"]`
                     )
                     editReponseForm.querySelector(
-                        `option[value="${option.dataset.reponseAvis}"]`
+                        `option[value="${option.dataset.avis}"]`
                     ).selected = true
-                    objetBody.innerHTML = option.dataset.reponseObjet
-                    reponseBody.innerHTML = option.dataset.reponseContent
+                    objetBody.innerHTML = option.dataset.objet
+                    reponseBody.innerHTML = option.dataset.reponse
                 })
                 document.querySelector('#cancel').addEventListener('click', e => {
                     e.preventDefault()

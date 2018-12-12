@@ -7,6 +7,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
 from zope.sqlalchemy import ZopeTransactionExtension
 
+from .history_meta import versioned_session
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
@@ -31,6 +32,7 @@ DBSession = scoped_session(
         extension=ZopeTransactionExtension(),  # attach to the transaction manager
     )
 )
+versioned_session(DBSession)
 metadata = MetaData()
 Base = declarative_base(cls=_Base, metadata=metadata)
 

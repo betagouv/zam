@@ -18,7 +18,7 @@ from zam_repondeur.decorator import reify
 from .base import Base, DBSession
 from .amendement import Amendement
 from .lecture import Lecture
-
+from .history_meta import Versioned
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ class ArticleUserContent(Base):
     article: "Article" = relationship("Article", back_populates="user_content")
 
 
-class Article(Base):
+class Article(Versioned, Base):
     __tablename__ = "articles"
     __table_args__ = (
         Index("ix_articles__lecture_pk", "lecture_pk"),

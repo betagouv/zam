@@ -1,9 +1,11 @@
 import logging
+from datetime import datetime
 from itertools import groupby
 from typing import Iterable, List, Optional, Tuple
 
 from sqlalchemy import (
     Column,
+    DateTime,
     ForeignKey,
     Index,
     Integer,
@@ -64,15 +66,18 @@ class ArticleRevision(Base):
     __tablename__ = "articles_revisions"
 
     pk: int = Column(Integer, primary_key=True)
-    lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
-    lecture: Lecture = relationship(Lecture)
-    article_pk: int = Column(Integer, ForeignKey("articles.pk"), nullable=False)
-    article: "Article" = relationship("Article", back_populates="revisions")
+    created_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
+
     type: str = Column(Text, nullable=False, default="")
     num: str = Column(Text, nullable=False, default="")
     mult: str = Column(Text, nullable=False, default="")
     pos: str = Column(Text, nullable=False, default="")
     content: Optional[dict] = Column(PickleType, nullable=True)
+
+    lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
+    lecture: Lecture = relationship(Lecture)
+    article_pk: int = Column(Integer, ForeignKey("articles.pk"), nullable=False)
+    article: "Article" = relationship("Article", back_populates="revisions")
 
 
 class Article(Base):

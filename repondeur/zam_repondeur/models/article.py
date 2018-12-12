@@ -60,6 +60,21 @@ class ArticleUserContent(Base):
     article: "Article" = relationship("Article", back_populates="user_content")
 
 
+class ArticleRevision(Base):
+    __tablename__ = "articles_revisions"
+
+    pk: int = Column(Integer, primary_key=True)
+    lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
+    lecture: Lecture = relationship(Lecture)
+    article_pk: int = Column(Integer, ForeignKey("articles.pk"), nullable=False)
+    article: "Article" = relationship("Article", back_populates="revisions")
+    type: str = Column(Text, nullable=False, default="")
+    num: str = Column(Text, nullable=False, default="")
+    mult: str = Column(Text, nullable=False, default="")
+    pos: str = Column(Text, nullable=False, default="")
+    content: Optional[dict] = Column(PickleType, nullable=True)
+
+
 class Article(Base):
     __tablename__ = "articles"
     __table_args__ = (
@@ -84,6 +99,7 @@ class Article(Base):
     user_content = relationship(
         ArticleUserContent, back_populates="article", uselist=False, lazy="joined"
     )
+    revisions = relationship(ArticleRevision, back_populates="article")
 
     @validates("type")
     def validate_type(self, key: str, type: str) -> str:

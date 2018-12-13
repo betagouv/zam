@@ -1,6 +1,6 @@
 ### Prochains évènements
 
-#### Date prévisionnelle de prochaine démonstration : à déterminer (pas de démo le 5 décembre).
+#### Date prévisionnelle de prochaine démonstration : mercredi 19 décembre à 14h30.
 
 <h2 class="center">[Accès au répondeur](/repondeur/) • [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
 

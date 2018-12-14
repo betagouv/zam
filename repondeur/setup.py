@@ -9,6 +9,7 @@ requires = [
     "lockfile",
     "openpyxl",
     "pdfkit",
+    "psycopg2",
     "pyramid",
     "pyramid-jinja2",
     "pyramid_retry",

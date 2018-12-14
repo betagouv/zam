@@ -42,7 +42,7 @@ plaster==1.0
 psycopg2==2.7.5
 pyramid-default-cors==0.2.1
 pyramid-jinja2==2.7
-pyramid-retry==0.5
+pyramid-retry==1.0
 pyramid-tm==2.2
 pyramid==1.10.1
 python-dateutil==2.7.3

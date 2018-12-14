@@ -53,7 +53,7 @@ redis==2.10.6
 regex==2018.8.29
 requests==2.20.1
 rollbar==0.14.4
-selectolax==0.1.7
+selectolax==0.1.8
 six==1.11.0
 slugify==0.0.1
 sqlalchemy==1.2.15

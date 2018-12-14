@@ -44,14 +44,13 @@ pyramid-default-cors==0.2.1
 pyramid-jinja2==2.7
 pyramid-retry==0.5
 pyramid-tm==2.2
-pyramid==1.9.2
+pyramid==1.10.1
 python-dateutil==2.7.3
 python-editor==1.0.3
 python-gitlab==1.5.1
 pytz==2018.5
 redis==2.10.6
 regex==2018.8.29
-repoze.lru==0.7
 requests==2.20.0
 rollbar==0.14.4
 selectolax==0.1.7
@@ -65,7 +64,7 @@ ujson==1.35
 urllib3==1.22
 venusian==1.1.0
 webencodings==0.5.1
-webob==1.8.2
+webob==1.8.4
 xmltodict==0.11.0
 xvfbwrapper==0.2.9
 zope.deprecation==4.3.0

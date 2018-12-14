@@ -5,7 +5,7 @@ from paste.deploy.converters import asbool
 from pyramid.config import Configurator
 from pyramid.request import Request
 from pyramid.router import Router
-from pyramid.session import SignedCookieSessionFactory
+from pyramid.session import JSONSerializer, SignedCookieSessionFactory
 from pyramid.view import view_config
 from sqlalchemy import engine_from_config, event
 
@@ -33,7 +33,9 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
 
     settings = {**BASE_SETTINGS, **settings}
 
-    session_factory = SignedCookieSessionFactory(settings["zam.secret"])
+    session_factory = SignedCookieSessionFactory(
+        secret=settings["zam.secret"], serializer=JSONSerializer()
+    )
 
     with Configurator(
         settings=settings, root_factory=Root, session_factory=session_factory

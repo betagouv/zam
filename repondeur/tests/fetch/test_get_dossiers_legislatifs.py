@@ -559,21 +559,6 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
                 titre_court="PLF pour 2018",
                 date_depot=datetime.date(2017, 12, 12),
             ),
-            partie=1,
-            organe="PO59048",
-        ),
-        Lecture(
-            chambre=Chambre.AN,
-            titre="Nouvelle lecture – Commission saisie au fond",
-            texte=Texte(
-                uid="PRJLANR5L15B0485",
-                type_=TypeTexte.PROJET,
-                numero=485,
-                titre_long="projet de loi de finances pour 2018",
-                titre_court="PLF pour 2018",
-                date_depot=datetime.date(2017, 12, 12),
-            ),
-            partie=2,
             organe="PO59048",
         ),
         Lecture(
@@ -587,21 +572,6 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
                 titre_court="PLF pour 2018",
                 date_depot=datetime.date(2017, 12, 12),
             ),
-            partie=1,
-            organe="PO717460",
-        ),
-        Lecture(
-            chambre=Chambre.AN,
-            titre="Nouvelle lecture – Séance publique",
-            texte=Texte(
-                uid="PRJLANR5L15B0485",
-                type_=TypeTexte.PROJET,
-                numero=485,
-                titre_long="projet de loi de finances pour 2018",
-                titre_court="PLF pour 2018",
-                date_depot=datetime.date(2017, 12, 12),
-            ),
-            partie=2,
             organe="PO717460",
         ),
         Lecture(
@@ -615,21 +585,6 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
                 titre_court="PLF pour 2018",
                 date_depot=datetime.date(2017, 12, 18),
             ),
-            partie=1,
-            organe="PO211494",
-        ),
-        Lecture(
-            chambre=Chambre.SENAT,
-            titre="Nouvelle lecture – Commission saisie au fond",
-            texte=Texte(
-                uid="PRJLSNR5S299B0172",
-                type_=TypeTexte.PROJET,
-                numero=172,
-                titre_long="projet de loi de finances pour 2018",
-                titre_court="PLF pour 2018",
-                date_depot=datetime.date(2017, 12, 18),
-            ),
-            partie=2,
             organe="PO211494",
         ),
         Lecture(
@@ -643,21 +598,6 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
                 titre_court="PLF pour 2018",
                 date_depot=datetime.date(2017, 12, 18),
             ),
-            partie=1,
-            organe="PO78718",
-        ),
-        Lecture(
-            chambre=Chambre.SENAT,
-            titre="Nouvelle lecture – Séance publique",
-            texte=Texte(
-                uid="PRJLSNR5S299B0172",
-                type_=TypeTexte.PROJET,
-                numero=172,
-                titre_long="projet de loi de finances pour 2018",
-                titre_court="PLF pour 2018",
-                date_depot=datetime.date(2017, 12, 18),
-            ),
-            partie=2,
             organe="PO78718",
         ),
         Lecture(
@@ -671,21 +611,6 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
                 titre_court="PLF pour 2018",
                 date_depot=datetime.date(2017, 12, 19),
             ),
-            partie=1,
-            organe="PO59048",
-        ),
-        Lecture(
-            chambre=Chambre.AN,
-            titre="Lecture définitive – Commission saisie au fond",
-            texte=Texte(
-                uid="PRJLANR5L15B0506",
-                type_=TypeTexte.PROJET,
-                numero=506,
-                titre_long="projet de loi de finances pour 2018",
-                titre_court="PLF pour 2018",
-                date_depot=datetime.date(2017, 12, 19),
-            ),
-            partie=2,
             organe="PO59048",
         ),
         Lecture(
@@ -699,21 +624,6 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
                 titre_court="PLF pour 2018",
                 date_depot=datetime.date(2017, 12, 19),
             ),
-            partie=1,
-            organe="PO717460",
-        ),
-        Lecture(
-            chambre=Chambre.AN,
-            titre="Lecture définitive – Séance publique",
-            texte=Texte(
-                uid="PRJLANR5L15B0506",
-                type_=TypeTexte.PROJET,
-                numero=506,
-                titre_long="projet de loi de finances pour 2018",
-                titre_court="PLF pour 2018",
-                date_depot=datetime.date(2017, 12, 19),
-            ),
-            partie=2,
             organe="PO717460",
         ),
     ]
@@ -877,6 +787,16 @@ def test_walk_actes(dossier_essoc, textes):
 
     acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
     assert list(walk_actes(acte)) == [
-        WalkResult(phase="COM-FOND", organe="PO744107", texte="PRJLANR5L15B0424"),
-        WalkResult(phase="DEBATS", organe="PO717460", texte="PRJLANR5L15BTC0575"),
+        WalkResult(
+            phase="COM-FOND",
+            organe="PO744107",
+            texte="PRJLANR5L15B0424",
+            premiere_lecture=True,
+        ),
+        WalkResult(
+            phase="DEBATS",
+            organe="PO717460",
+            texte="PRJLANR5L15BTC0575",
+            premiere_lecture=True,
+        ),
     ]

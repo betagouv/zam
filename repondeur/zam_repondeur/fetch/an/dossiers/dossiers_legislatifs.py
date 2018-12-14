@@ -135,7 +135,11 @@ def gen_lectures(
         assert result.texte is not None
         texte = textes[result.texte]
 
-        parties: List[Optional[int]] = [1, 2] if is_plf else [None]
+        # The 1st "lecture" of the "projet de loi de finances" (PLF) has two parts
+        parties: List[Optional[int]] = [
+            1,
+            2,
+        ] if is_plf and result.premiere_lecture else [None]
 
         for partie in parties:
             yield Lecture(  # type: ignore
@@ -151,6 +155,7 @@ class WalkResult(NamedTuple):
     phase: str
     organe: str
     texte: Optional[str]
+    premiere_lecture: bool
 
 
 def walk_actes(acte: dict) -> Iterator[WalkResult]:
@@ -160,12 +165,16 @@ def walk_actes(acte: dict) -> Iterator[WalkResult]:
         nonlocal current_texte
 
         code = acte["codeActe"]
+        premiere_lecture = code.startswith("AN1") or code.startswith("SN1")
         phase = code.split("-", 1)[1] if "-" in code else ""
 
         if phase in {"COM-FOND", "COM-AVIS", "DEBATS"}:
             if current_texte is not None:
                 yield WalkResult(
-                    phase=phase, organe=acte["organeRef"], texte=current_texte
+                    phase=phase,
+                    organe=acte["organeRef"],
+                    texte=current_texte,
+                    premiere_lecture=premiere_lecture,
                 )
             else:
                 logger.warning(f"Could not match a text for {acte['uid']}")

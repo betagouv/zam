@@ -7,7 +7,7 @@ from .models import Senateur
 def parse_senateurs(iterable: Iterable[str]) -> Dict[str, Senateur]:
     lines = (line for line in iterable if not line.startswith("%"))
     senateurs = (
-        Senateur(  # type: ignore
+        Senateur(
             matricule=row["Matricule"],
             qualite=row["Qualité"],
             nom=row["Nom usuel"],

@@ -42,7 +42,7 @@ def fetch_dossiers_legislatifs(legislature: int) -> dict:
 
 def parse_textes(export: dict) -> Dict[str, Texte]:
     return {
-        item["uid"]: Texte(  # type: ignore
+        item["uid"]: Texte(
             uid=item["uid"],
             type_=type_texte(item),
             numero=int(item["notice"]["numNotice"]),
@@ -109,7 +109,7 @@ def parse_dossier(dossier: dict, textes: Dict[str, Texte]) -> Dossier:
         for acte in top_level_actes(dossier)
         for lecture in gen_lectures(acte, textes, is_plf)
     ]
-    return Dossier(uid=uid, titre=titre, lectures=lectures)  # type: ignore
+    return Dossier(uid=uid, titre=titre, lectures=lectures)
 
 
 def top_level_actes(dossier: dict) -> Iterator[dict]:
@@ -142,7 +142,7 @@ def gen_lectures(
         ] if is_plf and result.premiere_lecture else [None]
 
         for partie in parties:
-            yield Lecture(  # type: ignore
+            yield Lecture(
                 chambre=chambre,
                 titre=titre,
                 texte=texte,

@@ -332,7 +332,7 @@ def build_url(lecture: Lecture, numero_prefixe: str = "") -> str:
     legislature = int(lecture.session)
     texte = f"{lecture.num_texte:04}"
 
-    # Projet de loi de finances (PLF) has two parts
+    # The 1st "lecture" of the "projet de loi de finances" (PLF) has two parts
     if lecture.partie == 1:
         suffixe = "A"
     elif lecture.partie == 2:

@@ -1,5 +1,9 @@
+import logging
 import re
 from typing import NamedTuple
+
+
+logger = logging.getLogger(__name__)
 
 
 class SubDiv(NamedTuple):
@@ -22,7 +26,7 @@ SUBDIV_RE = re.compile(
             \s
         )?  # position
         \s?
-        (?:(?:l')?article\s)+
+        (?:(?:l')?article(?:s)?\s)+
         (?P<num>liminaire|1er|premier|\d+)
         (?:\s(?P<mult>\w+(\s[A-Z]$)?))?  # bis, ter, bis C, etc.
         (?:\s?\(?.*\)?)?  # junk
@@ -64,6 +68,10 @@ def _parse_subdiv(libelle: str) -> SubDiv:
     if libelle.startswith("Soussection "):
         start = len("Soussection ")
         return SubDiv("sous-section", libelle[start:], "", "")
+
+    if " à " in libelle:
+        libelle = libelle.split(" à ")[0]
+        logger.warning("Amendement targets a range of subdivs, keeping only first")
 
     mo = SUBDIV_RE.match(libelle)
     if mo is not None:

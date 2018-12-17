@@ -138,6 +138,11 @@ def _fetch_amendements_discussed(
             logger.warning("Could not find amendement %r", num)
             errored.append(str(num))
             continue
+        except Exception:
+            prefix, num = parse_num_in_liste(numero_prefixe)
+            logger.exception("Error while fetching amendement %r", num)
+            errored.append(str(num))
+            continue
         amendements.append(amendement)
         created += int(created_)
     return amendements, created, errored
@@ -167,6 +172,10 @@ def _fetch_amendements_other(
                 id_identique=None,
             )
         except NotFound:
+            continue
+        except Exception:
+            logger.exception("Error while fetching amendement %r", numero)
+            errored.append(str(numero))
             continue
         amendements.append(amendement)
         created += int(created_)

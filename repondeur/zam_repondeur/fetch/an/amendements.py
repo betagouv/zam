@@ -297,11 +297,7 @@ def _create_or_update_amendement(
         lecture=lecture,
         num=int(amend["numero"]),
     )
-    if not created:
-        amendement.article = article
-        amendement.parent = parent
 
-    sort = get_sort(amend)
     raw_auteur = amend.get("auteur")
     if not raw_auteur:
         logger.warning("Unknown auteur for amendement %s", amend["numero"])
@@ -311,34 +307,31 @@ def _create_or_update_amendement(
         groupe = get_groupe(raw_auteur, amendement.num)
         auteur = get_auteur(raw_auteur)
 
-    dispositif = unjustify(get_str_or_none(amend, "dispositif") or "")
-    objet = unjustify(get_str_or_none(amend, "exposeSommaire") or "")
+    attributes = {
+        "article": article,
+        "parent": parent,
+        "sort": get_sort(amend),
+        "position": position,
+        "id_discussion_commune": id_discussion_commune,
+        "id_identique": id_identique,
+        "matricule": matricule,
+        "groupe": groupe,
+        "auteur": auteur,
+        "dispositif": unjustify(get_str_or_none(amend, "dispositif") or ""),
+        "objet": unjustify(get_str_or_none(amend, "exposeSommaire") or ""),
+    }
 
-    if not created and (
-        article != amendement.article
-        or parent != amendement.parent
-        or sort != amendement.sort
-        or position != amendement.position
-        or id_discussion_commune != amendement.id_discussion_commune
-        or id_identique != amendement.id_identique
-        or matricule != amendement.matricule
-        or groupe != amendement.groupe
-        or auteur != amendement.auteur
-        or dispositif != amendement.dispositif
-        or objet != amendement.objet
-    ):
+    modified = False
+    for name, value in attributes.items():
+        if getattr(amendement, name) != value:
+            setattr(amendement, name, value)
+            modified = True
+
+    if not created and modified:
         amendement.modified_at = datetime.utcnow()
 
-    amendement.sort = sort
-    amendement.position = position
-    amendement.id_discussion_commune = id_discussion_commune
-    amendement.id_identique = id_identique
-    amendement.matricule = matricule
-    amendement.groupe = groupe
-    amendement.auteur = auteur
-    amendement.dispositif = dispositif
-    amendement.objet = objet
     DBSession.flush()  # make sure foreign keys are updated
+
     return amendement, created
 
 

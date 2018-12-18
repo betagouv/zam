@@ -36,6 +36,12 @@ PATTERN_AMENDEMENT = (
 )
 
 
+class OrganeNotFound(Exception):
+    def __init__(self, organe: str) -> None:
+        super().__init__(f"Organe {organe} not found in data")
+        self.organe = organe
+
+
 def aspire_an(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
     logger.info("Récupération des amendements sur %r", lecture)
     try:
@@ -138,6 +144,11 @@ def _fetch_amendements_discussed(
             logger.warning("Could not find amendement %r", num)
             errored.append(str(num))
             continue
+        except Exception:
+            prefix, num = parse_num_in_liste(numero_prefixe)
+            logger.exception("Error while fetching amendement %r", num)
+            errored.append(str(num))
+            continue
         amendements.append(amendement)
         created += int(created_)
     return amendements, created, errored
@@ -167,6 +178,10 @@ def _fetch_amendements_other(
                 id_identique=None,
             )
         except NotFound:
+            continue
+        except Exception:
+            logger.exception("Error while fetching amendement %r", numero)
+            errored.append(str(numero))
             continue
         amendements.append(amendement)
         created += int(created_)
@@ -365,9 +380,12 @@ def build_url(lecture: Lecture, numero_prefixe: str = "") -> str:
 def get_organe_abrev(organe: str) -> str:
     from zam_repondeur.data import get_data
 
-    data = get_data("organes")[organe]
-    abrev: str = data["libelleAbrev"]
-    return abrev
+    try:
+        data = get_data("organes")[organe]
+        abrev: str = data["libelleAbrev"]
+        return abrev
+    except KeyError:
+        raise OrganeNotFound(organe)
 
 
 def parse_num_in_liste(num_long: str) -> Tuple[str, int]:

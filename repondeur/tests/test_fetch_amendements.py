@@ -337,9 +337,12 @@ def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, c
     assert created == 1
     assert errored == []
 
-    for num, record in zip([6, 7, 9], caplog.records):
-        assert record.levelname == "WARNING"
-        assert record.message.startswith(f"Unknown auteur for amendement {num}")
+    for num in [6, 7, 9]:
+        assert any(
+            record.levelname == "WARNING"
+            and record.message.startswith(f"Unknown auteur for amendement {num}")
+            for record in caplog.records
+        )
 
     amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
     # Check that the missing auteur key leads to empty strings

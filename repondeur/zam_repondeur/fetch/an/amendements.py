@@ -57,38 +57,54 @@ def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[s
     created = 0
     errored: List[str] = []
 
-    # Remember previous positions and reset them
-    old_positions = {}
-    for amendement in lecture.amendements:
-        old_positions[amendement.num] = amendement.position
-        amendement.position = None
-
     discussion_items = fetch_discussion_list(lecture)
     if not discussion_items:
         logger.warning("Could not find amendements from %r", lecture)
 
-    discussion_nums = {
-        parse_num_in_liste(item["@numero"])[1] for item in discussion_items
-    }
-    prefix = find_prefix(discussion_items, lecture)
+    reset_amendements_positions(lecture, discussion_items)
 
     amendements_disc, created_disc, errored_disc = _fetch_amendements_discussed(
         lecture, discussion_items
     )
+
     amendements_other, created_other, errored_other = _fetch_amendements_other(
-        lecture, discussion_nums, prefix
+        lecture=lecture,
+        discussion_nums={parse_num_in_liste(d["@numero"])[1] for d in discussion_items},
+        prefix=find_prefix(discussion_items, lecture),
     )
 
     amendements = amendements_disc + amendements_other
     created = created_disc + created_other
     errored = errored_disc + errored_other
 
-    # Log amendements no longer discussed
-    for amdt in lecture.amendements:
-        if amdt.position is None and old_positions.get(amdt.num) is not None:
-            logger.info("Amendement %s retiré de la discussion", amdt.num)
-
     return amendements, created, errored
+
+
+def reset_amendements_positions(
+    lecture: Lecture, discussion_items: List[OrderedDict]
+) -> None:
+
+    current_order = {
+        amdt.num: amdt.position
+        for amdt in lecture.amendements
+        if amdt.position is not None
+    }
+
+    new_order = {
+        parse_num_in_liste(item["@numero"])[1]: index
+        for index, item in enumerate(discussion_items, start=1)
+    }
+
+    # Reset position for all amendements that moved,
+    # so that we don't break the UNIQUE INDEX constraint later
+    for amdt in lecture.amendements:
+        if amdt.num not in current_order:
+            continue
+        if new_order.get(amdt.num) != current_order[amdt.num]:
+            amdt.position = None
+        if amdt.num not in new_order:  # removed
+            logger.info("Amendement %s retiré de la discussion", amdt.num)
+    DBSession.flush()
 
 
 def find_prefix(discussion_items: List[OrderedDict], lecture: Lecture) -> str:

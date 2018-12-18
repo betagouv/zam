@@ -1,5 +1,6 @@
 import logging
 from contextlib import contextmanager
+from http import HTTPStatus
 from io import BytesIO, TextIOWrapper
 from typing import Generator, IO
 from zipfile import ZipFile
@@ -22,7 +23,7 @@ def roman(n: int) -> str:
 def extract_from_remote_zip(url: str, filename: str) -> Generator[IO[str], None, None]:
     response = cached_session.get(url)
 
-    if response.status_code != 200:
+    if response.status_code not in (HTTPStatus.OK, HTTPStatus.NOT_MODIFIED):
         message = f"Unexpected status code {response.status_code} while fetching {url}"
         logger.error(message)
         raise RuntimeError(message)

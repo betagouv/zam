@@ -25,13 +25,17 @@ def upgrade():
         sa.Column("reponse", sa.Text(), nullable=True),
         sa.Column("affectation", sa.Text(), nullable=True),
         sa.Column("comments", sa.Text(), nullable=True),
+        sa.Column("bookmarked_at", sa.DateTime(), nullable=True),
         sa.Column("amendement_pk", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(["amendement_pk"], ["amendements.pk"]),
         sa.PrimaryKeyConstraint("pk"),
     )
     connection = op.get_bind()
     results = connection.execute(
-        "SELECT pk, avis, observations, reponse, affectation, comments FROM amendements"
+        """
+        SELECT pk, avis, observations, reponse, affectation, comments, bookmarked_at
+        FROM amendements
+        """
     )
     op.bulk_insert(
         amendement_user_contents,
@@ -39,12 +43,13 @@ def upgrade():
             {
                 "amendement_pk": pk,
                 "avis": avis,
-                "objet": observations,
+                "objet": obs,
                 "reponse": reponse,
                 "affectation": affectation,
                 "comments": comments,
+                "bookmarked_at": bookmarked_at,
             }
-            for pk, avis, observations, reponse, affectation, comments in results
+            for pk, avis, obs, reponse, affectation, comments, bookmarked_at in results
         ],
     )
     op.drop_column("amendements", "observations")

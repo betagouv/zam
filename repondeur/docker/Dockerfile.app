@@ -21,6 +21,7 @@ RUN curl -L -O https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12
         python3 \
         python3-setuptools \
         python3-pip \
+        python3-wheel \
         ./wkhtmltox_0.12.5-1.bionic_amd64.deb \
         xvfb \
     && rm wkhtmltox_0.12.5-1.bionic_amd64.deb \

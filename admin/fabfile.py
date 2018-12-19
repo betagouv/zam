@@ -42,6 +42,7 @@ def system(ctx):
         "python3",
         "python3-pip",
         "python3-venv",
+        "python3-wheel",
         "redis-server",
         "./wkhtmltox_0.12.5-1.bionic_amd64.deb",
         "xvfb",

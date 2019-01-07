@@ -19,7 +19,7 @@ et-xmlfile==1.0.1
 future==0.16.0
 html2text==2018.1.9
 html5lib==1.0.1
-huey==1.10.2
+huey==1.10.5
 hupper==1.4.2
 idna==2.7
 inscriptis==0.0.3.2
@@ -49,7 +49,7 @@ python-dateutil==2.7.3
 python-editor==1.0.3
 python-gitlab==1.5.1
 pytz==2018.5
-redis==2.10.6
+redis==3.0.1
 regex==2018.8.29
 requests==2.20.1
 rollbar==0.14.6

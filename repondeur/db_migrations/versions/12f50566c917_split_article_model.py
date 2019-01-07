@@ -39,4 +39,4 @@ def upgrade():
 
 
 def downgrade():
-    pass
+    raise NotImplementedError

@@ -167,9 +167,9 @@ def find_or_create_articles(lecture: Lecture, article_data: dict) -> List[Articl
 
 
 def update_article_contents(article: Article, article_data: dict) -> bool:
-    contenu = article_data.get("alineas")
-    if contenu is not None and contenu != article.contenu:
-        article.contenu = contenu
+    content = article_data.get("alineas")
+    if content is not None and content != article.content:
+        article.content = content
         return True
     return False
 
@@ -180,12 +180,12 @@ def set_default_article_title(
     """
     If the article does not have a title, we set it to the parent section title
     """
-    if not article.titre:
+    if not article.user_content.title:
         if article.type == "annexe":
             default_title = article_data["titre"]
         else:
             default_title = get_default_title(article_data)
         if default_title:
-            article.titre = default_title
+            article.user_content.title = default_title
             return True
     return False

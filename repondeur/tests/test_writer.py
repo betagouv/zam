@@ -30,8 +30,8 @@ def test_write_json(
     filename = str(tmpdir.join("test.json"))
 
     with transaction.manager:
-        article1_senat.titre = "Titre art. 1 Sénat"
-        article1_senat.contenu = "Contenu art. 1 Sénat"
+        article1_senat.user_content.title = "Titre art. 1 Sénat"
+        article1_senat.user_content.presentation = "Présentation art. 1 Sénat"
         amendement = Amendement.create(
             lecture=lecture_senat,
             article=article1_senat,
@@ -41,8 +41,8 @@ def test_write_json(
             auteur="M. DUPONT",
             groupe="RDSE",
             matricule="000000",
-            dispositif="<p>L'article 1 est supprimé.</p>",
-            objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+            corps="<p>L'article 1 est supprimé.</p>",
+            expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
             resume="Suppression de l'article",
             position=1,
         )
@@ -54,8 +54,8 @@ def test_write_json(
             auteur="M. DURAND",
             groupe="Les Républicains",
             matricule="000001",
-            objet="baz",
-            dispositif="qux",
+            corps="baz",
+            expose="qux",
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -65,8 +65,8 @@ def test_write_json(
             auteur="M. MARTIN",
             groupe=None,
             matricule="000002",
-            objet="quux",
-            dispositif="quuz",
+            corps="quux",
+            expose="quuz",
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -76,8 +76,8 @@ def test_write_json(
             auteur="M. JEAN",
             groupe="Les Indépendants",
             matricule="000003",
-            objet="corge",
-            dispositif="grault",
+            corps="corge",
+            expose="grault",
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -89,8 +89,8 @@ def test_write_json(
             auteur="M. JEAN",
             groupe="Les Indépendants",
             matricule="000003",
-            objet="corge",
-            dispositif="grault",
+            corps="corge",
+            expose="grault",
         )
         nb_rows = write_json(lecture_senat, filename, request={})
 
@@ -107,10 +107,10 @@ def test_write_json(
         "avis": "",
         "chambre": "senat",
         "comments": "",
-        "dispositif": "<p>L'article 1 est supprimé.</p>",
+        "corps": "<p>L'article 1 est supprimé.</p>",
         "date_depot": "",
         "id_discussion_commune": "",
-        "objet": "<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        "expose": "<p>Cet article va à l'encontre du principe d'égalité.</p>",
         "groupe": "RDSE",
         "id_identique": "",
         "matricule": "000000",
@@ -119,7 +119,7 @@ def test_write_json(
         "article_titre": "Titre art. 1 Sénat",
         "parent": "",
         "num": 42,
-        "observations": "",
+        "objet": "",
         "organe": "PO78718",
         "position": 1,
         "rectif": 1,
@@ -139,13 +139,13 @@ def test_write_json(
         "6|001|01|__________|1",
     ]
     assert articles == [
-        {"contenu": "", "sort_key_as_str": "6|001|01|__________|0", "titre": ""},
+        {"presentation": "", "sort_key_as_str": "6|001|01|__________|0", "title": ""},
         {
-            "contenu": "Contenu art. 1 Sénat",
+            "presentation": "Présentation art. 1 Sénat",
             "sort_key_as_str": "6|001|01|__________|1",
-            "titre": "Titre art. 1 Sénat",
+            "title": "Titre art. 1 Sénat",
         },
-        {"contenu": "", "sort_key_as_str": "6|007|02|__________|1", "titre": ""},
+        {"presentation": "", "sort_key_as_str": "6|007|02|__________|1", "title": ""},
     ]
 
 
@@ -165,12 +165,12 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
             auteur="M. DUPONT",
             groupe="RDSE",
             matricule="000000",
-            dispositif="<p>L'article 1 est supprimé.</p>",
-            objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+            corps="<p>L'article 1 est supprimé.</p>",
+            expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
             resume="Suppression de l'article",
             position=1,
             avis="Défavorable",
-            observations="Un objet",
+            objet="Un objet",
             reponse="<p>La réponse</p>",
             affectation="4C",
             comments="<strong>Lisez-moi</strong>",
@@ -190,10 +190,10 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
         "avis": "Défavorable",
         "chambre": "senat",
         "comments": "<strong>Lisez-moi</strong>",
-        "dispositif": "<p>L'article 1 est supprimé.</p>",
+        "corps": "<p>L'article 1 est supprimé.</p>",
         "date_depot": "",
         "id_discussion_commune": "",
-        "objet": "<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        "expose": "<p>Cet article va à l'encontre du principe d'égalité.</p>",
         "groupe": "RDSE",
         "id_identique": "",
         "matricule": "000000",
@@ -202,7 +202,7 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
         "article_titre": "",
         "parent": "",
         "num": 42,
-        "observations": "Un objet",
+        "objet": "Un objet",
         "organe": "PO78718",
         "position": 1,
         "rectif": 1,
@@ -234,8 +234,8 @@ def test_write_json_sous_amendement(
             auteur="M. DUPONT",
             groupe="RDSE",
             matricule="000000",
-            dispositif="<p>L'article 1 est supprimé.</p>",
-            objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+            corps="<p>L'article 1 est supprimé.</p>",
+            expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
             resume="Suppression de l'article",
         )
         Amendement.create(
@@ -246,8 +246,8 @@ def test_write_json_sous_amendement(
             auteur="M. DURAND",
             groupe="Les Républicains",
             matricule="000001",
-            objet="baz",
-            dispositif="qux",
+            corps="baz",
+            expose="qux",
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -257,8 +257,8 @@ def test_write_json_sous_amendement(
             auteur="M. MARTIN",
             groupe=None,
             matricule="000002",
-            objet="quux",
-            dispositif="quuz",
+            corps="quux",
+            expose="quuz",
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -268,8 +268,8 @@ def test_write_json_sous_amendement(
             auteur="M. JEAN",
             groupe="Les Indépendants",
             matricule="000003",
-            objet="corge",
-            dispositif="grault",
+            corps="corge",
+            expose="grault",
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -281,8 +281,8 @@ def test_write_json_sous_amendement(
             auteur="M. JEAN",
             groupe="Les Indépendants",
             matricule="000003",
-            objet="corge",
-            dispositif="grault",
+            corps="corge",
+            expose="grault",
         )
         nb_rows = write_json(lecture_senat, filename, request={})
 
@@ -300,10 +300,10 @@ def test_write_json_sous_amendement(
         "article_order": "6|001|01|__________|1",
         "chambre": "senat",
         "comments": "",
-        "dispositif": "grault",
+        "expose": "grault",
         "date_depot": "",
         "id_discussion_commune": "",
-        "objet": "corge",
+        "corps": "corge",
         "groupe": "Les Indépendants",
         "id_identique": "",
         "matricule": "000003",
@@ -312,7 +312,7 @@ def test_write_json_sous_amendement(
         "article_titre": "",
         "parent": "42 rect.",
         "num": 596,
-        "observations": "",
+        "objet": "",
         "organe": "PO78718",
         "position": "",
         "rectif": 1,
@@ -340,8 +340,8 @@ def test_generate_pdf_without_responses(
         auteur="M. DUPONT",
         groupe="RDSE",
         matricule="000000",
-        dispositif="<p>L'article 1 est supprimé.</p>",
-        objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        corps="<p>L'article 1 est supprimé.</p>",
+        expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
         resume="Suppression de l'article",
         position=1,
     )
@@ -353,8 +353,8 @@ def test_generate_pdf_without_responses(
         auteur="M. DURAND",
         groupe="Les Républicains",
         matricule="000001",
-        objet="baz",
-        dispositif="qux",
+        corps="baz",
+        expose="qux",
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -364,8 +364,8 @@ def test_generate_pdf_without_responses(
         auteur="M. MARTIN",
         groupe=None,
         matricule="000002",
-        objet="quux",
-        dispositif="quuz",
+        corps="quux",
+        expose="quuz",
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -375,8 +375,8 @@ def test_generate_pdf_without_responses(
         auteur="M. JEAN",
         groupe="Les Indépendants",
         matricule="000003",
-        objet="corge",
-        dispositif="grault",
+        corps="corge",
+        expose="grault",
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -388,8 +388,8 @@ def test_generate_pdf_without_responses(
         auteur="M. JEAN",
         groupe="Les Indépendants",
         matricule="000003",
-        objet="corge",
-        dispositif="grault",
+        corps="corge",
+        expose="grault",
     )
     parser = HTMLParser(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
@@ -417,8 +417,8 @@ def test_generate_pdf_with_amendement_responses(
         auteur="M. DUPONT",
         groupe="RDSE",
         matricule="000000",
-        dispositif="<p>L'article 1 est supprimé.</p>",
-        objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        corps="<p>L'article 1 est supprimé.</p>",
+        expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
         resume="Suppression de l'article",
         position=1,
         avis="Favorable",
@@ -431,8 +431,8 @@ def test_generate_pdf_with_amendement_responses(
         auteur="M. DURAND",
         groupe="Les Républicains",
         matricule="000001",
-        objet="baz",
-        dispositif="qux",
+        corps="baz",
+        expose="qux",
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -442,8 +442,8 @@ def test_generate_pdf_with_amendement_responses(
         auteur="M. MARTIN",
         groupe=None,
         matricule="000002",
-        objet="quux",
-        dispositif="quuz",
+        corps="quux",
+        expose="quuz",
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -453,8 +453,8 @@ def test_generate_pdf_with_amendement_responses(
         auteur="M. JEAN",
         groupe="Les Indépendants",
         matricule="000003",
-        objet="corge",
-        dispositif="grault",
+        corps="corge",
+        expose="grault",
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -466,8 +466,8 @@ def test_generate_pdf_with_amendement_responses(
         auteur="M. JEAN",
         groupe="Les Indépendants",
         matricule="000003",
-        objet="corge",
-        dispositif="grault",
+        corps="corge",
+        expose="grault",
     )
     parser = HTMLParser(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
@@ -490,9 +490,9 @@ def test_generate_pdf_with_amendement_content(
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
     amendement_6666.groupe = "Les Indépendants"
-    amendement_6666.avis = "Favorable"
-    amendement_6666.observations = "Les observations"
-    amendement_6666.reponse = "La réponse"
+    amendement_6666.user_content.avis = "Favorable"
+    amendement_6666.user_content.objet = "L’objet"
+    amendement_6666.user_content.reponse = "La réponse"
     DBSession.add(amendement_6666)
     lecture_senat = (
         DBSession.query(Lecture)
@@ -522,7 +522,7 @@ def test_generate_pdf_with_amendement_content(
         "Favorable",
     ]
     assert response_node.css_first("div h3").text() == "Objet"
-    assert "Les observations" in response_node.css_first("div p").text()
+    assert "L’objet" in response_node.css_first("div p").text()
     assert response_node.css("div h3")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
@@ -536,16 +536,16 @@ def test_generate_pdf_with_amendement_content_factor_authors_groups(
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
     amendement_6666.groupe = "Les Indépendants"
-    amendement_6666.avis = "Favorable"
-    amendement_6666.observations = "Les observations"
-    amendement_6666.reponse = "La réponse"
+    amendement_6666.user_content.avis = "Favorable"
+    amendement_6666.user_content.objet = "L’objet"
+    amendement_6666.user_content.reponse = "La réponse"
     DBSession.add(amendement_6666)
     amendement_9999 = amendements_senat[1]
     amendement_9999.auteur = "M. JEAN"
     amendement_9999.groupe = "Les Indépendants"
-    amendement_9999.avis = "Favorable"
-    amendement_9999.observations = "Les observations"
-    amendement_9999.reponse = "La réponse"
+    amendement_9999.user_content.avis = "Favorable"
+    amendement_9999.user_content.objet = "L’objet"
+    amendement_9999.user_content.reponse = "La réponse"
     DBSession.add(amendement_9999)
     lecture_senat = (
         DBSession.query(Lecture)
@@ -576,7 +576,7 @@ def test_generate_pdf_with_amendement_content_factor_authors_groups(
         "Favorable",
     ]
     assert response_node.css_first("div h3").text() == "Objet"
-    assert "Les observations" in response_node.css_first("div p").text()
+    assert "L’objet" in response_node.css_first("div p").text()
     assert response_node.css("div h3")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
@@ -590,16 +590,16 @@ def test_generate_pdf_with_amendement_content_factor_only_groups(
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
     amendement_6666.groupe = "Les Indépendants"
-    amendement_6666.avis = "Favorable"
-    amendement_6666.observations = "Les observations"
-    amendement_6666.reponse = "La réponse"
+    amendement_6666.user_content.avis = "Favorable"
+    amendement_6666.user_content.objet = "L’objet"
+    amendement_6666.user_content.reponse = "La réponse"
     DBSession.add(amendement_6666)
     amendement_9999 = amendements_senat[1]
     amendement_9999.auteur = "M. CLAUDE"
     amendement_9999.groupe = "Les Indépendants"
-    amendement_9999.avis = "Favorable"
-    amendement_9999.observations = "Les observations"
-    amendement_9999.reponse = "La réponse"
+    amendement_9999.user_content.avis = "Favorable"
+    amendement_9999.user_content.objet = "L’objet"
+    amendement_9999.user_content.reponse = "La réponse"
     DBSession.add(amendement_9999)
     lecture_senat = (
         DBSession.query(Lecture)
@@ -630,7 +630,7 @@ def test_generate_pdf_with_amendement_content_factor_only_groups(
         "Favorable",
     ]
     assert response_node.css_first("div h3").text() == "Objet"
-    assert "Les observations" in response_node.css_first("div p").text()
+    assert "L’objet" in response_node.css_first("div p").text()
     assert response_node.css("div h3")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
@@ -644,16 +644,16 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
     amendement_6666.groupe = "Les Indépendants"
-    amendement_6666.avis = "Défavorable"
-    amendement_6666.observations = "Les observations"
-    amendement_6666.reponse = "La réponse"
+    amendement_6666.user_content.avis = "Défavorable"
+    amendement_6666.user_content.objet = "L’objet"
+    amendement_6666.user_content.reponse = "La réponse"
     DBSession.add(amendement_6666)
     amendement_9999 = amendements_senat[1]
     amendement_9999.auteur = "M. JEAN"
     amendement_9999.groupe = "Les Indépendants"
-    amendement_9999.avis = "Défavorable"
-    amendement_9999.observations = "Les observations"
-    amendement_9999.reponse = "La réponse"
+    amendement_9999.user_content.avis = "Défavorable"
+    amendement_9999.user_content.objet = "L’objet"
+    amendement_9999.user_content.reponse = "La réponse"
     DBSession.add(amendement_9999)
     Amendement.create(
         lecture=lecture_senat,
@@ -663,7 +663,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         auteur="M. DUPONT",
         groupe="RDSE",
         avis="Défavorable",
-        observations="Les observations",
+        objet="L’objet",
         reponse="La réponse",
     )
     Amendement.create(
@@ -674,7 +674,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         auteur="M. DURAND",
         groupe="Les Républicains",
         avis="Défavorable",
-        observations="Les observations",
+        objet="L’objet",
         reponse="La réponse",
     )
     Amendement.create(
@@ -685,7 +685,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         auteur="M. MARTIN",
         groupe="Les Républicains",
         avis="Défavorable",
-        observations="Les observations",
+        objet="L’objet",
         reponse="La réponse",
     )
     Amendement.create(
@@ -696,7 +696,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         auteur="M. MARTIN",
         groupe="Les Républicains",
         avis="Défavorable",
-        observations="Les observations",
+        objet="L’objet",
         reponse="La réponse",
     )
     lecture_senat = (
@@ -732,7 +732,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         "Défavorable",
     ]
     assert response_node.css_first("div h3").text() == "Objet"
-    assert "Les observations" in response_node.css_first("div p").text()
+    assert "L’objet" in response_node.css_first("div p").text()
     assert response_node.css("div h3")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
@@ -745,7 +745,7 @@ def test_generate_pdf_with_amendement_content_gouvernemental(
 
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "LE GOUVERNEMENT"
-    amendement_6666.reponse = "La présentation"
+    amendement_6666.user_content.reponse = "La présentation"
     DBSession.add(amendement_6666)
     lecture_senat = (
         DBSession.query(Lecture)
@@ -789,8 +789,8 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         auteur="M. DUPONT",
         groupe="RDSE",
         matricule="000000",
-        dispositif="<p>L'article 1 est supprimé.</p>",
-        objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        corps="<p>L'article 1 est supprimé.</p>",
+        expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
         resume="Suppression de l'article",
         position=1,
         avis="Favorable",
@@ -803,8 +803,8 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         auteur="M. DURAND",
         groupe="Les Républicains",
         matricule="000001",
-        objet="baz",
-        dispositif="qux",
+        corps="baz",
+        expose="qux",
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -814,8 +814,8 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         auteur="M. MARTIN",
         groupe=None,
         matricule="000002",
-        objet="quux",
-        dispositif="quuz",
+        corps="quux",
+        expose="quuz",
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -825,8 +825,8 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         auteur="M. JEAN",
         groupe="Les Indépendants",
         matricule="000003",
-        objet="corge",
-        dispositif="grault",
+        corps="corge",
+        expose="grault",
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -838,8 +838,8 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         auteur="M. JEAN",
         groupe="Les Indépendants",
         matricule="000003",
-        objet="corge",
-        dispositif="grault",
+        corps="corge",
+        expose="grault",
         avis="Défavorable",
     )
     parser = HTMLParser(
@@ -871,8 +871,8 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         auteur="M. DUPONT",
         groupe="RDSE",
         matricule="000000",
-        dispositif="<p>L'article 1 est supprimé.</p>",
-        objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        corps="<p>L'article 1 est supprimé.</p>",
+        expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
         resume="Suppression de l'article",
         position=1,
         avis="Favorable",
@@ -885,8 +885,8 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         auteur="M. DURAND",
         groupe="Les Républicains",
         matricule="000001",
-        objet="baz",
-        dispositif="qux",
+        corps="baz",
+        expose="qux",
         avis="Favorable",
     )
     Amendement.create(
@@ -897,8 +897,8 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         auteur="M. MARTIN",
         groupe=None,
         matricule="000002",
-        objet="quux",
-        dispositif="quuz",
+        corps="quux",
+        expose="quuz",
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -908,8 +908,8 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         auteur="M. JEAN",
         groupe="Les Indépendants",
         matricule="000003",
-        objet="corge",
-        dispositif="grault",
+        corps="corge",
+        expose="grault",
     )
     Amendement.create(
         lecture=lecture_senat,
@@ -921,8 +921,8 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         auteur="M. JEAN",
         groupe="Les Indépendants",
         matricule="000003",
-        objet="corge",
-        dispositif="grault",
+        corps="corge",
+        expose="grault",
     )
     parser = HTMLParser(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
@@ -951,8 +951,8 @@ def test_generate_pdf_unitary_without_responses(app, lecture_senat, article1_sen
         auteur="M. DUPONT",
         groupe="RDSE",
         matricule="000000",
-        dispositif="<p>L'article 1 est supprimé.</p>",
-        objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        corps="<p>L'article 1 est supprimé.</p>",
+        expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
         resume="Suppression de l'article",
         position=1,
     )
@@ -979,8 +979,8 @@ def test_generate_pdf_unitary_with_amendement_responses(
         auteur="M. DUPONT",
         groupe="RDSE",
         matricule="000000",
-        dispositif="<p>L'article 1 est supprimé.</p>",
-        objet="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        corps="<p>L'article 1 est supprimé.</p>",
+        expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
         resume="Suppression de l'article",
         position=1,
         avis="Favorable",
@@ -1002,9 +1002,9 @@ def test_generate_pdf_unitary_with_amendement_content(
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
     amendement_6666.groupe = "Les Indépendants"
-    amendement_6666.avis = "Favorable"
-    amendement_6666.observations = "Les observations"
-    amendement_6666.reponse = "La réponse"
+    amendement_6666.user_content.avis = "Favorable"
+    amendement_6666.user_content.objet = "L’objet"
+    amendement_6666.user_content.reponse = "La réponse"
     DBSession.add(amendement_6666)
     parser = HTMLParser(
         generate_html_for_pdf(
@@ -1028,7 +1028,7 @@ def test_generate_pdf_unitary_with_amendement_content(
         "Favorable",
     ]
     assert response_node.css_first("div h3").text() == "Objet"
-    assert "Les observations" in response_node.css_first("div p").text()
+    assert "L’objet" in response_node.css_first("div p").text()
     assert response_node.css("div h3")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
@@ -1042,14 +1042,14 @@ def test_generate_pdf_unitary_with_amendement_similaire(
     amendement_6666, amendement_9999 = amendements_senat
     amendement_6666.auteur = "M. JEAN"
     amendement_6666.groupe = "Les Indépendants"
-    amendement_6666.avis = "Favorable"
-    amendement_6666.observations = "Les observations"
-    amendement_6666.reponse = "La réponse"
+    amendement_6666.user_content.avis = "Favorable"
+    amendement_6666.user_content.objet = "L’objet"
+    amendement_6666.user_content.reponse = "La réponse"
     amendement_9999.auteur = "M. CLAUDE"
     amendement_9999.groupe = "Les Mécontents"
-    amendement_9999.avis = "Favorable"
-    amendement_9999.observations = "Les observations"
-    amendement_9999.reponse = "La réponse"
+    amendement_9999.user_content.avis = "Favorable"
+    amendement_9999.user_content.objet = "L’objet"
+    amendement_9999.user_content.reponse = "La réponse"
     DBSession.add_all(amendements_senat)
     parser = HTMLParser(
         generate_html_for_pdf(
@@ -1073,6 +1073,6 @@ def test_generate_pdf_unitary_with_amendement_similaire(
         "Favorable",
     ]
     assert response_node.css_first("div h3").text() == "Objet"
-    assert "Les observations" in response_node.css_first("div p").text()
+    assert "L’objet" in response_node.css_first("div p").text()
     assert response_node.css("div h3")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()

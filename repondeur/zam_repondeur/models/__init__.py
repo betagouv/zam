@@ -12,15 +12,15 @@ from .lecture import Lecture, CHAMBRES, SESSIONS  # noqa
 
 
 def get_one_or_create(
-    model: Any, create_method: str = "", create_method_kwargs: Any = None, **kwargs: Any
+    model: Any, create_kwargs: Any = None, **kwargs: Any
 ) -> Tuple[Any, bool]:
     try:
         return DBSession.query(model).filter_by(**kwargs).one(), False
     except NoResultFound:
-        kwargs.update(create_method_kwargs or {})
+        kwargs.update(create_kwargs or {})
         try:
             with DBSession.begin_nested():
-                created = getattr(model, create_method, model)(**kwargs)
+                created = model.create(**kwargs)
                 DBSession.add(created)
             return created, True
         except IntegrityError:  # Race condition.
@@ -28,6 +28,6 @@ def get_one_or_create(
                 return DBSession.query(model).filter_by(**kwargs).one(), False
             except NoResultFound:  # Retry to raise the appropriated IntegrityError.
                 with DBSession.begin_nested():
-                    created = getattr(model, create_method, model)(**kwargs)
+                    created = model.create(**kwargs)
                     DBSession.add(created)
                 return created, True

@@ -12,7 +12,7 @@
         <div class="titles">
           <h2>{{ article.format(short=False) }}</h2>
         </div>
-        {% if article.contenu or article.jaune %}
+        {% if article.content or article.user_content.presentation %}
           <a href="#content-{{ article.slug }}"
              class="button"
              data-toggle-target="content-{{ article.slug }}"
@@ -37,14 +37,14 @@
   <div class="is-none">
     <span class="fake-anchor" id="content-{{ article.slug }}"></span>
     <div class="article">
-      <h2 class="article-title">{{ article.titre or "" }}</h2>
-      {% if article.jaune %}
+      <h2 class="article-title">{{ article.user_content.title or "" }}</h2>
+      {% if article.user_content.presentation %}
         <h3>Présentation de l’article</h3>
-        {{ article.jaune | safe }}
+        {{ article.user_content.presentation | safe }}
       {% endif %}
-      {% if article.contenu %}
+      {% if article.content %}
         <h3>Texte de l’article</h3>
-        {% for number, content in article.contenu.items() %}
+        {% for number, content in article.content.items() %}
           <dl>
             <dt>{{ number }}</dt>
             <dd>
@@ -70,9 +70,9 @@
         {% for amdt in amendements %}
           <span class="fake-anchor" id="{{ amdt.slug }}"></span>
         {% endfor %}
-        {% if amendement.favorable %}
+        {% if amendement.user_content.favorable %}
           {% set avis_class = 'positive' %}
-        {% elif amendement.sagesse %}
+        {% elif amendement.user_content.sagesse %}
           {% set avis_class = 'sagesse' %}
         {% elif is_gouvernemental %}
           {% set avis_class = 'gouvernemental' %}
@@ -95,9 +95,9 @@
             <h2>
               {{ macros.multiple_amendements_title(amendements) }}
             </h2>
-            {% if amendement.observations and (amendement.observations|length < 200) %}
+            {% if amendement.user_content.objet and (amendement.user_content.objet|length < 200) %}
               <div class="presentation">
-                {{ amendement.observations | paragriphy }}
+                {{ amendement.user_content.objet | paragriphy }}
               </div>
             {% endif %}
             {% if is_gouvernemental %}
@@ -136,26 +136,26 @@
                  data-toggle-target="reponse-detail-{{ amendement.num }}">
                 Réponse
               </a>
-              <p>Avis : <span class="avis {{ avis_class }}">{{ amendement.avis }}</span></p>
+              <p>Avis : <span class="avis {{ avis_class }}">{{ amendement.user_content.avis }}</span></p>
             </div>
           {% endif %}
         </header>
         <div class="is-none">
           <div id="reponse-detail-{{ amendement.num }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
-            {% if amendement.has_observations %}
+            {% if amendement.user_content.has_objet %}
               <h4>Objet</h4>
               <div>
-                {{ amendement.observations | paragriphy }}
+                {{ amendement.user_content.objet | paragriphy }}
               </div>
             {% endif %}
-            {% if amendement.has_reponse %}
+            {% if amendement.user_content.has_reponse %}
               {% if is_gouvernemental %}
                 <h4>Présentation</h4>
               {% else %}
                 <h4>Réponse</h4>
               {% endif %}
               <div>
-                {{ amendement.reponse | paragriphy }}
+                {{ amendement.user_content.reponse | paragriphy }}
               </div>
             {% endif %}
             <p class="bottom">
@@ -181,9 +181,9 @@
               {% endif %}
               <div>
                 <h4>Exposé</h4>
-                {{ amendement.objet|safe }}
+                {{ amendement.expose|safe }}
                 <h4>Corps de l’amendement</h4>
-                {{ amendement.dispositif|safe }}
+                {{ amendement.corps|safe }}
               </div>
             {% endfor %}
             <p class="bottom">

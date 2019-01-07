@@ -47,8 +47,10 @@ class ArticleEdit:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        self.article.titre = self.request.POST["titre"]
-        self.article.jaune = clean_html(self.request.POST["jaune"])
+        self.article.user_content.title = self.request.POST["title"]
+        self.article.user_content.presentation = clean_html(
+            self.request.POST["presentation"]
+        )
         self.request.session.flash(
             Message(cls="success", text="Article mis à jour avec succès.")
         )

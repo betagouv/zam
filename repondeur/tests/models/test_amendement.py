@@ -65,7 +65,7 @@ def test_amendement_unicity(amendements_an, article1av_an):
             rectif=existing.rectif + 1,
             article=article1av_an,
             parent=None,
-            observations="don't worry, this is an expected error",
+            objet="don't worry, this is an expected error",
         )
         DBSession.flush()
     assert "constraint" in error_info.value._message()
@@ -83,8 +83,8 @@ def test_amendement_displayable_identiques(amendements_an):
     amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
-    amendement_666.avis = "Sagesse"
-    amendement_999.avis = "Sagesse"
+    amendement_666.user_content.avis = "Sagesse"
+    amendement_999.user_content.avis = "Sagesse"
 
     assert amendement_666.displayable_identiques == [amendement_999]
     assert amendement_999.displayable_identiques == [amendement_666]
@@ -102,8 +102,8 @@ def test_amendement_displayable_identiques_are_similaires(amendements_an):
     amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
-    amendement_666.avis = "Favorable"
-    amendement_999.avis = "Favorable"
+    amendement_666.user_content.avis = "Favorable"
+    amendement_999.user_content.avis = "Favorable"
 
     assert amendement_666.displayable_identiques == [amendement_999]
     assert amendement_999.displayable_identiques == [amendement_666]
@@ -123,10 +123,10 @@ def test_amendement_displayable_identiques_are_similaires_reponses(amendements_a
     amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
-    amendement_666.avis = "Favorable"
-    amendement_999.avis = "Favorable"
-    amendement_666.reponse = "Une réponse"
-    amendement_999.reponse = "Une réponse"
+    amendement_666.user_content.avis = "Favorable"
+    amendement_999.user_content.avis = "Favorable"
+    amendement_666.user_content.reponse = "Une réponse"
+    amendement_999.user_content.reponse = "Une réponse"
 
     assert amendement_666.displayable_identiques == [amendement_999]
     assert amendement_999.displayable_identiques == [amendement_666]
@@ -148,10 +148,10 @@ def test_amendement_displayable_identiques_are_similaires_reponses_with_spaces(
     amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
-    amendement_666.avis = "Favorable"
-    amendement_999.avis = "Favorable"
-    amendement_666.reponse = "Une réponse"
-    amendement_999.reponse = """
+    amendement_666.user_content.avis = "Favorable"
+    amendement_999.user_content.avis = "Favorable"
+    amendement_666.user_content.reponse = "Une réponse"
+    amendement_999.user_content.reponse = """
     Une
  réponse"""
 
@@ -175,10 +175,10 @@ def test_amendement_displayable_identiques_are_similaires_reponses_with_tags(
     amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
-    amendement_666.avis = "Favorable"
-    amendement_999.avis = "Favorable"
-    amendement_666.reponse = "Une réponse"
-    amendement_999.reponse = """
+    amendement_666.user_content.avis = "Favorable"
+    amendement_999.user_content.avis = "Favorable"
+    amendement_666.user_content.reponse = "Une réponse"
+    amendement_999.user_content.reponse = """
     <p>Une
  réponse</p>"""
 
@@ -200,8 +200,8 @@ def test_amendement_displayable_identiques_are_not_similaires(amendements_an):
     amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
-    amendement_666.avis = "Favorable"
-    amendement_999.avis = "Défavorable"
+    amendement_666.user_content.avis = "Favorable"
+    amendement_999.user_content.avis = "Défavorable"
 
     assert amendement_666.displayable_identiques == [amendement_999]
     assert amendement_999.displayable_identiques == [amendement_666]
@@ -221,10 +221,10 @@ def test_amendement_displayable_identiques_are_not_similaires_reponses(amendemen
     amendement_999.id_identique = 41
     amendement_666.id_discussion_commune = 42
     amendement_999.id_discussion_commune = 42
-    amendement_666.avis = "Favorable"
-    amendement_999.avis = "Favorable"
-    amendement_666.reponse = "Une réponse"
-    amendement_999.reponse = "Une autre réponse"
+    amendement_666.user_content.avis = "Favorable"
+    amendement_999.user_content.avis = "Favorable"
+    amendement_666.user_content.reponse = "Une réponse"
+    amendement_999.user_content.reponse = "Une autre réponse"
 
     assert amendement_666.displayable_identiques == [amendement_999]
     assert amendement_999.displayable_identiques == [amendement_666]

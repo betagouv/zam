@@ -117,11 +117,7 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
     )
     num, rectif = Amendement.parse_num(row["Numéro "])
     amendement, created = get_one_or_create(
-        Amendement,
-        create_method="create",
-        create_method_kwargs={"article": article},
-        lecture=lecture,
-        num=num,
+        Amendement, create_kwargs={"article": article}, lecture=lecture, num=num
     )
     if not created:
         amendement.article = article
@@ -131,8 +127,8 @@ def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
     amendement.matricule = extract_matricule(row["Fiche Sénateur"])
     amendement.date_depot = parse_date(row["Date de dépôt "])
     amendement.sort = row["Sort "]
-    amendement.dispositif = clean_html(row["Dispositif "])
-    amendement.objet = clean_html(row["Objet "])
+    amendement.corps = clean_html(row["Dispositif "])
+    amendement.expose = clean_html(row["Objet "])
     return amendement, created
 
 

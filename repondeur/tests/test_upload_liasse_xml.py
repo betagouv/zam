@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import transaction
 from webtest import Upload
 
 
@@ -29,8 +28,7 @@ def test_get_form(app, lecture_essoc):
 def test_upload_liasse_success(app, lecture_essoc):
     from zam_repondeur.models import DBSession, Journal, Lecture
 
-    with transaction.manager:
-        initial_modified_at = lecture_essoc.modified_at
+    initial_modified_at = lecture_essoc.modified_at
 
     resp = app.get("/lectures/an.15.806.PO744107/amendements")
     form = resp.forms["import-liasse-xml"]
@@ -44,15 +42,14 @@ def test_upload_liasse_success(app, lecture_essoc):
     assert "3 nouveaux amendements récupérés (import liasse XML)." in resp.text
 
     # Check the update timestamp has been updated.
-    with transaction.manager:
-        lecture = Lecture.get(
-            chambre=lecture_essoc.chambre,
-            session=lecture_essoc.session,
-            num_texte=lecture_essoc.num_texte,
-            partie=None,
-            organe=lecture_essoc.organe,
-        )
-        assert lecture.modified_at != initial_modified_at
+    lecture = Lecture.get(
+        chambre=lecture_essoc.chambre,
+        session=lecture_essoc.session,
+        num_texte=lecture_essoc.num_texte,
+        partie=None,
+        organe=lecture_essoc.organe,
+    )
+    assert lecture.modified_at != initial_modified_at
 
     assert (
         DBSession.query(Journal).first().message
@@ -76,18 +73,21 @@ def test_upload_liasse_with_table(app, lecture_essoc):
     resp = resp.follow()
     assert "3 nouveaux amendements récupérés (import liasse XML)." in resp.text
 
-    with transaction.manager:
-        lecture = Lecture.get(
-            chambre=lecture_essoc.chambre,
-            session=lecture_essoc.session,
-            num_texte=lecture_essoc.num_texte,
-            partie=None,
-            organe=lecture_essoc.organe,
-        )
-        dispositif = lecture.amendements[1].dispositif
-        assert "<table>\n<tbody>\n<tr>\n<td>Durée minimale de services" in dispositif
-        objet = lecture.amendements[0].objet
-        assert "<table>\n<tbody>\n<tr>\n<td>Durée minimale de services" in objet
+    lecture = Lecture.get(
+        chambre=lecture_essoc.chambre,
+        session=lecture_essoc.session,
+        num_texte=lecture_essoc.num_texte,
+        partie=None,
+        organe=lecture_essoc.organe,
+    )
+    assert (
+        "<table>\n<tbody>\n<tr>\n<td>Durée minimale de services"
+        in lecture.amendements[1].corps
+    )
+    assert (
+        "<table>\n<tbody>\n<tr>\n<td>Durée minimale de services"
+        in lecture.amendements[0].expose
+    )
 
 
 def test_upload_liasse_success_with_a_deposer(app, lecture_essoc):
@@ -105,8 +105,7 @@ def test_upload_liasse_success_with_a_deposer(app, lecture_essoc):
 def test_upload_liasse_missing_file(app, lecture_essoc):
     from zam_repondeur.models import DBSession, Journal, Lecture
 
-    with transaction.manager:
-        initial_modified_at = lecture_essoc.modified_at
+    initial_modified_at = lecture_essoc.modified_at
 
     resp = app.get("/lectures/an.15.806.PO744107/amendements")
     form = resp.forms["import-liasse-xml"]
@@ -119,14 +118,13 @@ def test_upload_liasse_missing_file(app, lecture_essoc):
     assert "Veuillez d’abord sélectionner un fichier" in resp.text
 
     # Check the update timestamp has NOT been updated.
-    with transaction.manager:
-        lecture = Lecture.get(
-            chambre=lecture_essoc.chambre,
-            session=lecture_essoc.session,
-            num_texte=lecture_essoc.num_texte,
-            partie=None,
-            organe=lecture_essoc.organe,
-        )
-        assert lecture.modified_at == initial_modified_at
+    lecture = Lecture.get(
+        chambre=lecture_essoc.chambre,
+        session=lecture_essoc.session,
+        num_texte=lecture_essoc.num_texte,
+        partie=None,
+        organe=lecture_essoc.organe,
+    )
+    assert lecture.modified_at == initial_modified_at
 
     assert DBSession.query(Journal).first() is None

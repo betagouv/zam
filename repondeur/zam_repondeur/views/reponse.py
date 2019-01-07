@@ -35,26 +35,26 @@ class ReponseEdit:
     def post(self) -> Response:
         now = datetime.utcnow()
         avis = self.request.POST.get("avis", "")
-        observations = clean_html(self.request.POST.get("observations", ""))
+        objet = clean_html(self.request.POST.get("objet", ""))
         reponse = clean_html(self.request.POST.get("reponse", ""))
         affectation = clean_html(self.request.POST.get("affectation", ""))
         comments = clean_html(self.request.POST.get("comments", ""))
 
         if (
-            avis != (self.amendement.avis or "")
-            or observations != (self.amendement.observations or "")
-            or reponse != (self.amendement.reponse or "")
-            or affectation != (self.amendement.affectation or "")
-            or comments != (self.amendement.comments or "")
+            avis != (self.amendement.user_content.avis or "")
+            or objet != (self.amendement.user_content.objet or "")
+            or reponse != (self.amendement.user_content.reponse or "")
+            or affectation != (self.amendement.user_content.affectation or "")
+            or comments != (self.amendement.user_content.comments or "")
         ):
             self.amendement.modified_at = now
             self.lecture.modified_at = now
 
-        self.amendement.avis = avis
-        self.amendement.observations = observations
-        self.amendement.reponse = reponse
-        self.amendement.affectation = affectation
-        self.amendement.comments = comments
+        self.amendement.user_content.avis = avis
+        self.amendement.user_content.objet = objet
+        self.amendement.user_content.reponse = reponse
+        self.amendement.user_content.affectation = affectation
+        self.amendement.user_content.comments = comments
         self.request.session.flash(
             Message(cls="success", text="Les modifications ont bien été enregistrées.")
         )

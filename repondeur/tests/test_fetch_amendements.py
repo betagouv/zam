@@ -14,9 +14,9 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
     # Add a response to one of the amendements
     with transaction.manager:
         amendement = amendements_senat[1]
-        amendement.avis = "Favorable"
-        amendement.observations = "Observations"
-        amendement.reponse = "Réponse"
+        amendement.user_content.avis = "Favorable"
+        amendement.user_content.objet = "Objet"
+        amendement.user_content.reponse = "Réponse"
 
         # The object is no longer bound to a session here, as it was created in a
         # previous transaction, so we add it to the current session to make sure that
@@ -166,9 +166,9 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
 
     # Check that the response was preserved on the updated amendement
     amendement = DBSession.query(Amendement).filter(Amendement.num == 9999).one()
-    assert amendement.avis == "Favorable"
-    assert amendement.observations == "Observations"
-    assert amendement.reponse == "Réponse"
+    assert amendement.user_content.avis == "Favorable"
+    assert amendement.user_content.objet == "Objet"
+    assert amendement.user_content.reponse == "Réponse"
 
     # Check that the position was changed on the updated amendement
     assert amendement.position == 3
@@ -193,7 +193,7 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
         num=9,
         position=2,
         avis="Favorable",
-        observations="Observations",
+        objet="Objet",
         reponse="Réponse",
     )
     DBSession.add(amendement_9)
@@ -250,9 +250,9 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
 
     amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
     # Check that the response was preserved on the updated amendement
-    assert amendement_9.avis == "Favorable"
-    assert amendement_9.observations == "Observations"
-    assert amendement_9.reponse == "Réponse"
+    assert amendement_9.user_content.avis == "Favorable"
+    assert amendement_9.user_content.objet == "Objet"
+    assert amendement_9.user_content.reponse == "Réponse"
 
     # Check that the auteur key leads to matricule, groupe and auteur filling
     assert amendement_9.matricule == "642788"
@@ -290,7 +290,7 @@ def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, c
         num=9,
         position=2,
         avis="Favorable",
-        observations="Observations",
+        objet="Objet",
         reponse="Réponse",
     )
     DBSession.add(amendement_9)

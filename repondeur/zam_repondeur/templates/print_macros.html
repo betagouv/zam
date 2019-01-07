@@ -3,12 +3,12 @@
     <h2>
       {{ article.format(short=False) }}
     </h2>
-    {% if article.titre %}
-      <h3>{{ article.titre }}</h3>
+    {% if article.user_content.title %}
+      <h3>{{ article.user_content.title }}</h3>
     {% endif %}
-    {% if article.contenu %}
+    {% if article.content %}
       <div>
-        {% for number, content in article.contenu.items() %}
+        {% for number, content in article.content.items() %}
           <dl>
             <dt>{{ number }}</dt>
             <dd>
@@ -19,13 +19,13 @@
       </div>
     {% endif %}
   </section>
-  {% if article.jaune %}
-    <section class="page jaune">
+  {% if article.user_content.presentation %}
+    <section class="page presentation">
       <h2>Présentation de l’article</h2>
       <h3>{{ article.format(short=True) }}</h3>
-      <h3>{{ article.titre }}</h3>
+      <h3>{{ article.user_content.title }}</h3>
       <div>
-        {{ article.jaune | safe }}
+        {{ article.user_content.presentation | safe }}
       </div>
     </section>
   {% endif %}
@@ -35,7 +35,7 @@
 {%- macro response_page(amendements) -%}
   {% set multiple = amendements|length > 1 %}
   {% set amendement = amendements[0] %}
-  {% if amendement.avis or amendement.observations or amendement.has_reponse %}
+  {% if amendement.user_content.avis or amendement.user_content.objet or amendement.user_content.has_reponse %}
     <section class="page reponse">
       <h2>Réponse</h2>
       <table class="cartouche">
@@ -103,18 +103,18 @@
           </tr>
           <tr>
             <td>Avis</td>
-            <td>{{ amendement.avis }}</td>
+            <td>{{ amendement.user_content.avis }}</td>
           </tr>
         {% endif %}
       </table>
       <div>
-        {% if amendement.has_observations %}
+        {% if amendement.user_content.has_objet %}
           <h3>Objet</h3>
-          {{ amendement.observations | paragriphy }}
+          {{ amendement.user_content.objet | paragriphy }}
         {% endif %}
-        {% if amendement.has_reponse %}
+        {% if amendement.user_content.has_reponse %}
           <h3>Réponse</h3>
-          {{ amendement.reponse | paragriphy }}
+          {{ amendement.user_content.reponse | paragriphy }}
         {% endif %}
       </div>
     </section>
@@ -172,9 +172,9 @@
     </table>
     <div>
       <h3>Exposé</h3>
-      {{ amendement.objet|safe }}
+      {{ amendement.expose|safe }}
       <h3>Corps de l’amendement</h3>
-      {{ amendement.dispositif|safe }}
+      {{ amendement.corps|safe }}
     </div>
   </section>
 {%- endmacro %}

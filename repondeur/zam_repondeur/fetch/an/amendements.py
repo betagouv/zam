@@ -287,8 +287,7 @@ def _get_parent(
     if parent_num:
         parent, created = get_one_or_create(
             Amendement,
-            create_method="create",
-            create_method_kwargs={"article": article, "rectif": parent_rectif},
+            create_kwargs={"article": article, "rectif": parent_rectif},
             lecture=lecture,
             num=parent_num,
         )
@@ -308,8 +307,7 @@ def _create_or_update_amendement(
 ) -> Tuple[Amendement, bool]:
     amendement, created = get_one_or_create(
         Amendement,
-        create_method="create",
-        create_method_kwargs={"article": article, "parent": parent},
+        create_kwargs={"article": article, "parent": parent},
         lecture=lecture,
         num=int(amend["numero"]),
     )
@@ -333,8 +331,8 @@ def _create_or_update_amendement(
         "matricule": matricule,
         "groupe": groupe,
         "auteur": auteur,
-        "dispositif": unjustify(get_str_or_none(amend, "dispositif") or ""),
-        "objet": unjustify(get_str_or_none(amend, "exposeSommaire") or ""),
+        "corps": unjustify(get_str_or_none(amend, "dispositif") or ""),
+        "expose": unjustify(get_str_or_none(amend, "exposeSommaire") or ""),
     }
 
     modified = False

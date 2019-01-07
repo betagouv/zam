@@ -98,11 +98,11 @@ def test_column_sorting_by(
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
         amendements_an[0].groupe = "Foo"
-        amendements_an[0].avis = "Favorable"
-        amendements_an[0].affectation = "5C"
+        amendements_an[0].user_content.avis = "Favorable"
+        amendements_an[0].user_content.affectation = "5C"
         amendements_an[1].groupe = "Bar"
-        amendements_an[1].avis = "Défavorable"
-        amendements_an[1].affectation = "6B"
+        amendements_an[1].user_content.avis = "Défavorable"
+        amendements_an[1].user_content.affectation = "6B"
         Amendement.create(
             lecture=lecture_an,
             article=article1av_an,

@@ -349,8 +349,8 @@ class TestFetchAmendement:
         assert amendement.id_discussion_commune is None
         assert amendement.id_identique is None
         assert amendement.parent is None
-        assert amendement.dispositif == "<p>Supprimer cet article.</p>"
-        assert amendement.objet == (
+        assert amendement.corps == "<p>Supprimer cet article.</p>"
+        assert amendement.expose == (
             "<p>Amendement d&#8217;appel.</p>\n<p>Pour couvrir les d&#233;passements "
             "attendus de l&#8217;ONDAM pour 2016, cet article pr&#233;voit un "
             "pr&#233;l&#232;vement de 200 millions d&#8217;&#8364; sur les fonds de "
@@ -364,9 +364,9 @@ class TestFetchAmendement:
             "dernier.</p>"
         )
         assert amendement.resume is None
-        assert amendement.avis is None
-        assert amendement.observations is None
-        assert amendement.reponse is None
+        assert amendement.user_content.avis is None
+        assert amendement.user_content.objet is None
+        assert amendement.user_content.reponse is None
 
     @responses.activate
     def test_fetch_amendement_gouvernement(self, lecture_an):
@@ -500,9 +500,9 @@ class TestFetchAmendementAgain:
         assert created
 
         # Now let's add a response
-        amendement1.avis = "Favorable"
-        amendement1.observations = "Observations"
-        amendement1.reponse = "Réponse"
+        amendement1.user_content.avis = "Favorable"
+        amendement1.user_content.objet = "Objet"
+        amendement1.user_content.reponse = "Réponse"
 
         # And fetch the same amendement again
         amendement2, created = fetch_amendement(
@@ -512,9 +512,9 @@ class TestFetchAmendementAgain:
         assert amendement2 is amendement1
 
         # The response has been preserved
-        assert amendement2.avis == "Favorable"
-        assert amendement2.observations == "Observations"
-        assert amendement2.reponse == "Réponse"
+        assert amendement2.user_content.avis == "Favorable"
+        assert amendement2.user_content.objet == "Objet"
+        assert amendement2.user_content.reponse == "Réponse"
 
     @responses.activate
     def test_article_has_changed(self, lecture_an, app):

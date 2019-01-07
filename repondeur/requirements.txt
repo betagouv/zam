@@ -52,7 +52,7 @@ pytz==2018.5
 redis==2.10.6
 regex==2018.8.29
 requests==2.20.1
-rollbar==0.14.4
+rollbar==0.14.6
 selectolax==0.1.8
 six==1.11.0
 slugify==0.0.1

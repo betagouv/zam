@@ -15,6 +15,7 @@ requires = [
     "pyramid_retry",
     "pyramid_tm",
     "requests",
+    "rollbar",
     "selectolax",
     "SQLAlchemy",
     "transaction",

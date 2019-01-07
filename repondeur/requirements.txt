@@ -21,7 +21,7 @@ html5lib==1.0.1             # anpy, legipy, senapy: < 1.1, >= 1.0
 huey==1.10.5
 hupper==1.4.2
 idna==2.7
-inscriptis==0.0.3.2
+inscriptis==0.0.3.7
 jdcal==1.4
 jinja2==2.10
 lawfactory_utils==0.1.7     # anpy, senapy, the-law-factory-parser

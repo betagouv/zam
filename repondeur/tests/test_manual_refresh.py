@@ -15,7 +15,7 @@ def read_sample_data(basename):
 
 
 def test_get_form(app, lecture_an, amendements_an):
-    resp = app.get("/lectures/an.15.269.PO717460/journal/")
+    resp = app.get("/lectures/an.15.269.PO717460/journal/", user="user@example.com")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -23,7 +23,7 @@ def test_get_form(app, lecture_an, amendements_an):
     assert resp.forms["manual-refresh"].method == "post"
     assert (
         resp.forms["manual-refresh"].action
-        == "http://localhost/lectures/an.15.269.PO717460/manual_refresh"
+        == "https://zam.test/lectures/an.15.269.PO717460/manual_refresh"
     )
 
     assert list(resp.forms["manual-refresh"].fields.keys()) == ["refresh"]
@@ -64,11 +64,13 @@ def test_post_form(app, lecture_an, article1_an):
         )
 
         # Then we ask for a refresh
-        form = app.get("/lectures/an.15.269.PO717460/journal/").forms["manual-refresh"]
+        form = app.get(
+            "/lectures/an.15.269.PO717460/journal/", user="user@example.com"
+        ).forms["manual-refresh"]
         resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements"
 
     resp = resp.follow()
 

@@ -6,7 +6,9 @@ pytestmark = pytest.mark.usefixtures("article1_senat")
 
 
 def test_get_article_edit_form(app, lecture_an, amendements_an):
-    resp = app.get("http://localhost/lectures/an.15.269.PO717460/articles/article.1..")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+    )
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -15,7 +17,9 @@ def test_get_article_edit_form(app, lecture_an, amendements_an):
 
 def test_get_article_edit_form_not_found_bad_format(app, lecture_an):
     resp = app.get(
-        "http://localhost/lectures/an.15.269.PO717460/articles/foo", expect_errors=True
+        "/lectures/an.15.269.PO717460/articles/foo",
+        user="user@example.com",
+        expect_errors=True,
     )
     assert resp.status_code == 404
 
@@ -27,13 +31,15 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an):
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.title == ""
 
-    resp = app.get("http://localhost/lectures/an.15.269.PO717460/articles/article.1..")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+    )
     form = resp.forms["edit-article"]
     form["title"] = "Titre article"
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.title == "Titre article"
@@ -51,7 +57,9 @@ def test_post_article_edit_form_title_redirect_next(app, lecture_an, amendements
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.title == ""
 
-    resp = app.get("http://localhost/lectures/an.15.269.PO717460/articles/article.1..")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+    )
     form = resp.forms["edit-article"]
     form["title"] = "Titre article"
     resp = form.submit()
@@ -59,7 +67,7 @@ def test_post_article_edit_form_title_redirect_next(app, lecture_an, amendements
     assert resp.status_code == 302
     assert (
         resp.location
-        == "http://localhost/lectures/an.15.269.PO717460/articles/article.2.."
+        == "https://zam.test/lectures/an.15.269.PO717460/articles/article.2.."
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -82,13 +90,15 @@ def test_post_article_edit_form_title_redirect_amendements_if_intersticial_is_la
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.title == ""
 
-    resp = app.get("http://localhost/lectures/an.15.269.PO717460/articles/article.1..")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+    )
     form = resp.forms["edit-article"]
     form["title"] = "Titre article"
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.title == "Titre article"
@@ -112,7 +122,9 @@ def test_post_article_edit_form_title_redirect_next_with_apres(
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.title == ""
 
-    resp = app.get("http://localhost/lectures/an.15.269.PO717460/articles/article.1..")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+    )
     form = resp.forms["edit-article"]
     form["title"] = "Titre article"
     resp = form.submit()
@@ -120,7 +132,7 @@ def test_post_article_edit_form_title_redirect_next_with_apres(
     assert resp.status_code == 302
     assert (
         resp.location
-        == "http://localhost/lectures/an.15.269.PO717460/articles/article.2.."
+        == "https://zam.test/lectures/an.15.269.PO717460/articles/article.2.."
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -149,7 +161,9 @@ def test_post_article_edit_form_title_redirect_next_with_apres_and_avant(
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.title == ""
 
-    resp = app.get("http://localhost/lectures/an.15.269.PO717460/articles/article.1..")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+    )
     form = resp.forms["edit-article"]
     form["title"] = "Titre article"
     resp = form.submit()
@@ -157,7 +171,7 @@ def test_post_article_edit_form_title_redirect_next_with_apres_and_avant(
     assert resp.status_code == 302
     assert (
         resp.location
-        == "http://localhost/lectures/an.15.269.PO717460/articles/article.2.."
+        == "https://zam.test/lectures/an.15.269.PO717460/articles/article.2.."
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -171,13 +185,15 @@ def test_post_article_edit_form_presentation(app, lecture_an, amendements_an):
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.presentation == ""
 
-    resp = app.get("http://localhost/lectures/an.15.269.PO717460/articles/article.1..")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+    )
     form = resp.forms["edit-article"]
     form["presentation"] = "<p>Content</p>"
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.presentation == "<p>Content</p>"
@@ -190,13 +206,15 @@ def test_post_article_edit_form_presentation_cleaned(app, lecture_an, amendement
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.presentation == ""
 
-    resp = app.get("http://localhost/lectures/an.15.269.PO717460/articles/article.1..")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+    )
     form = resp.forms["edit-article"]
     form["presentation"] = "<h1>Content</h1>"
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.presentation == "Content"

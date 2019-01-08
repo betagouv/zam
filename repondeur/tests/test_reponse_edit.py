@@ -11,7 +11,8 @@ def test_get_reponse_edit_form(app, lecture_an, amendements_an):
         DBSession.add(amdt)
 
     resp = app.get(
-        f"http://localhost/lectures/an.15.269.PO717460/amendements/{amdt.num}/reponse"
+        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/reponse",
+        user="user@example.com",
     )
 
     assert resp.status_code == 200
@@ -47,7 +48,7 @@ def test_get_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
         DBSession.add(amendement)
 
     resp = app.get(
-        "http://localhost/lectures/an.15.269.PO717460/amendements/999/reponse"
+        "/lectures/an.15.269.PO717460/amendements/999/reponse", user="user@example.com"
     )
 
     assert resp.status_code == 200
@@ -65,7 +66,8 @@ def test_get_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
 
 def test_get_reponse_edit_form_not_found(app, lecture_an, amendements_an):
     resp = app.get(
-        "http://localhost/lectures/an.15.269.PO717460/amendements/998/reponse",
+        "/lectures/an.15.269.PO717460/amendements/998/reponse",
+        user="user@example.com",
         expect_errors=True,
     )
     assert resp.status_code == 404
@@ -81,7 +83,7 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
     initial_amendement_modified_at = amendement.modified_at
 
     resp = app.get(
-        "http://localhost/lectures/an.15.269.PO717460/amendements/999/reponse"
+        "/lectures/an.15.269.PO717460/amendements/999/reponse", user="user@example.com"
     )
     form = resp.forms["edit-reponse"]
     form["avis"] = "Favorable"
@@ -94,7 +96,7 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
     assert resp.status_code == 302
     assert (
         resp.location
-        == "http://localhost/lectures/an.15.269.PO717460/amendements/#amdt-999"
+        == "https://zam.test/lectures/an.15.269.PO717460/amendements/#amdt-999"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -128,7 +130,7 @@ def test_post_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
     initial_amendement_modified_at = amendement.modified_at
 
     resp = app.get(
-        "http://localhost/lectures/an.15.269.PO717460/amendements/999/reponse"
+        "/lectures/an.15.269.PO717460/amendements/999/reponse", user="user@example.com"
     )
     form = resp.forms["edit-reponse"]
     form["reponse"] = "Une réponse <strong>très</strong> appropriée"
@@ -138,7 +140,7 @@ def test_post_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
     assert resp.status_code == 302
     assert (
         resp.location
-        == "http://localhost/lectures/an.15.269.PO717460/amendements/#amdt-999"
+        == "https://zam.test/lectures/an.15.269.PO717460/amendements/#amdt-999"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -175,7 +177,7 @@ def test_post_reponse_edit_form_updates_modification_dates_only_if_modified(
 
     # Let's post the response edit form, but with unchanged values
     resp = app.get(
-        "http://localhost/lectures/an.15.269.PO717460/amendements/666/reponse"
+        "/lectures/an.15.269.PO717460/amendements/666/reponse", user="user@example.com"
     )
     form = resp.forms["edit-reponse"]
     form["avis"] = "Favorable"

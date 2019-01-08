@@ -4,8 +4,9 @@ from datetime import datetime
 
 def test_lecture_check(app, lecture_an, amendements_an):
     resp = app.get(
-        "http://localhost/lectures/an.15.269.PO717460/check",
+        "/lectures/an.15.269.PO717460/check",
         {"since": lecture_an.modified_at_timestamp},
+        user="user@example.com",
     )
     assert resp.status_code == 200
     assert resp.json == {
@@ -24,8 +25,9 @@ def test_lecture_check_updates(app, lecture_an, amendements_an):
         DBSession.add(lecture_an)
 
     resp2 = app.get(
-        "http://localhost/lectures/an.15.269.PO717460/check",
+        "/lectures/an.15.269.PO717460/check",
         {"since": initial_modified_at_timestamp},
+        user="user@example.com",
     )
     assert resp2.status_code == 200
     assert resp2.json == {
@@ -36,8 +38,9 @@ def test_lecture_check_updates(app, lecture_an, amendements_an):
 
 def test_lecture_check_not_found(app, lecture_an, amendements_an):
     resp = app.get(
-        "http://localhost/lectures/an.16.269.PO717460/check",
+        "/lectures/an.16.269.PO717460/check",
         {"since": amendements_an[1].modified_at_timestamp},
+        user="user@example.com",
         expect_errors=True,
     )
     assert resp.status_code == 404

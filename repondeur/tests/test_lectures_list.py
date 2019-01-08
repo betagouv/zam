@@ -4,10 +4,10 @@ import transaction
 
 def test_get_list_empty(app):
 
-    resp = app.get("/lectures/")
+    resp = app.get("/lectures/", user="user@example.com")
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/add"
+    assert resp.location == "https://zam.test/lectures/add"
 
     resp = resp.follow()
 
@@ -36,7 +36,7 @@ def lecture_commission(app):
 @pytest.mark.xfail
 def test_get_list_not_empty(app, lecture_an, lecture_commission):
 
-    resp = app.get("/lectures/")
+    resp = app.get("/lectures/", user="user@example.com")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -61,7 +61,7 @@ def test_get_list_reverse_datetime_order(app, lecture_an):
         title2 = str(lecture2)
         DBSession.add(lecture2)
 
-    resp = app.get("/lectures/")
+    resp = app.get("/lectures/", user="user@example.com")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"

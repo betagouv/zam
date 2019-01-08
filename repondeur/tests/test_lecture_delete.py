@@ -14,17 +14,17 @@ def test_lecture_delete(app, lecture_an, amendements_an):
     )
     assert DBSession.query(Amendement).count() == 2
 
-    form = app.get("http://localhost/lectures/").forms["delete-lecture"]
+    form = app.get("/lectures/", user="user@example.com").forms["delete-lecture"]
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/"
+    assert resp.location == "https://zam.test/lectures/"
 
     resp = resp.follow()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/add"
+    assert resp.location == "https://zam.test/lectures/add"
 
     resp = resp.follow()
 

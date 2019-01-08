@@ -1,0 +1,47 @@
+{% extends "_base.html" %}
+
+
+{% block header %}
+<style type="text/css">
+form {
+    margin: 4rem auto;
+    width: 30rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+h1 {
+    font-weight: 600;
+    margin: 1rem 0 2rem 0;
+}
+fieldset {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 20rem;
+}
+label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+input[type=email] {
+    padding: 4px;
+}
+input[type=submit] {
+    font-size: 1.25rem !important;
+    margin: 2.5rem 0 1rem 0;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<form class="box" method="POST">
+    <h1>Entrer dans Zam</h1>
+    <fieldset>
+        <label for="email">Votre courriel</label>
+        <input type="email" name="email" required placeholder="prenom.nom@ministere.gouv.fr">
+    </fieldset>
+    <input class="button primary enabled allow-multiple-submit" type="submit" name="form.submitted" value="Entrer dans Zam">
+</form>
+{% endblock %}

@@ -22,7 +22,7 @@ SUBDIV_RE = re.compile(
                 Article(?:\(s\))?\sadditionnel(?:\(s\))?
             )?
             \s?
-            (?P<pos>((?i)avant|après|apres))
+            (?P<pos>(avant|après|apres))
             \s
         )?  # position
         \s?

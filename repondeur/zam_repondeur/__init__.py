@@ -2,6 +2,8 @@ from multiprocessing import cpu_count
 from typing import Any
 
 from paste.deploy.converters import asbool
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.request import Request
 from pyramid.router import Router
@@ -24,6 +26,8 @@ BASE_SETTINGS = {
         "filter_out_empty_additionals": f"{FILTERS_PATH}:filter_out_empty_additionals",
     },
     "jinja2.undefined": "strict",
+    "zam.auth_cookie_duration": 7 * 24 * 3600,  # a user stays identified for 7 days
+    "zam.auth_cookie_secure": True,  # disable for local HTTP access in development
     "zam.legislatures": "14,15",
     "huey.workers": (cpu_count() * 2) + 1,
 }
@@ -34,7 +38,7 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
     settings = {**BASE_SETTINGS, **settings}
 
     session_factory = SignedCookieSessionFactory(
-        secret=settings["zam.secret"], serializer=JSONSerializer()
+        secret=settings["zam.session_secret"], serializer=JSONSerializer()
     )
 
     with Configurator(
@@ -46,6 +50,8 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
             setup_rollbar_log_handler(rollbar_settings)
 
         setup_database(config, settings)
+
+        setup_auth(config, settings)
 
         config.include("pyramid_default_cors")
 
@@ -86,3 +92,27 @@ def setup_database(config: Configurator, settings: dict) -> None:
 
     if asbool(settings.get("zam.log_sql_queries_with_origin")):
         event.listen(engine, "before_cursor_execute", log_query_with_origin)
+
+
+def setup_auth(config: Configurator, settings: dict) -> None:
+
+    # We identify a user using a signed cookie
+    authn_policy = AuthTktAuthenticationPolicy(
+        settings["zam.auth_secret"],
+        hashalg="sha512",
+        max_age=int(settings["zam.auth_cookie_duration"]),
+        secure=asbool(settings["zam.auth_cookie_secure"]),
+    )
+    config.set_authentication_policy(authn_policy)
+
+    # We protect access to certain views based on permissions,
+    # that are granted to users based on ACLs added to resources
+    authz_policy = ACLAuthorizationPolicy()
+    config.set_authorization_policy(authz_policy)
+
+    # Make all views "secure by default"
+    config.set_default_permission("view")
+
+    # Add routes for login and logout
+    config.add_route("login", "/identification")
+    config.add_route("logout", "/deconnexion")

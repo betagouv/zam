@@ -5,7 +5,25 @@ import transaction
 
 from fixtures.dossiers import mock_dossiers  # noqa: F401
 from fixtures.organes_acteurs import mock_organes_acteurs  # noqa: F401
-from testapp import TestApp
+from testapp import TestApp as BaseTestApp
+
+
+class TestApp(BaseTestApp):
+    def login(self, email):
+        resp = self.post("/identification", {"email": email})
+        assert resp.status_code == 302
+
+    def get(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        if user is not None:
+            self.login(user)
+        return super().get(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        if user is not None:
+            self.login(user)
+        return super().post(*args, **kwargs)
 
 
 @pytest.fixture(scope="session")
@@ -21,7 +39,8 @@ def settings():
         "zam.data.redis_url": os.environ.get(
             "ZAM_TEST_DATA_REDIS_URL", "redis://localhost:6379/11"
         ),
-        "zam.secret": "dummy",
+        "zam.session_secret": "dummy",
+        "zam.auth_secret": "dummier",
     }
 
 
@@ -51,7 +70,9 @@ def app(wsgi_app):
     _repository.clear_data()
     _repository.load_data()
 
-    yield TestApp(wsgi_app)
+    yield TestApp(
+        wsgi_app, extra_environ={"HTTP_HOST": "zam.test", "wsgi.url_scheme": "https"}
+    )
 
     DBSession.close()
     Base.metadata.drop_all()

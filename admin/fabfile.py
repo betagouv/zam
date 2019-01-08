@@ -128,7 +128,8 @@ def deploy_changelog(ctx, source="../CHANGELOG.md"):
 @task
 def deploy_repondeur(
     ctx,
-    secret="",
+    session_secret="",
+    auth_secret="",
     rollbar_token=ROLLBAR_TOKEN,
     branch="master",
     wipe=False,
@@ -136,17 +137,11 @@ def deploy_repondeur(
     dbuser="zam",
     dbpassword="iloveamendements",
 ):
-    if not secret:
-        secret = ctx.run(
-            'grep "zam.secret" /srv/repondeur/src/repondeur/production.ini | cut -d" " -f3',  # noqa
-            hide=True,
-        ).stdout.strip()
-    if not secret:
-        print(
-            "Please provide a value for --secret on the first install",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+    if not session_secret:
+        session_secret = retrieve_secret_from_config(ctx, "session_secret")
+
+    if not auth_secret:
+        auth_secret = retrieve_secret_from_config(ctx, "auth_secret")
 
     environment = ctx.host.split(".", 1)[0]
     user = "repondeur"
@@ -176,7 +171,8 @@ def deploy_repondeur(
             "db_url": f"postgres://{dbuser}:{dbpassword}@localhost:5432/{dbname}",
             "environment": environment,
             "branch": branch,
-            "secret": secret,
+            "session_secret": session_secret,
+            "auth_secret": auth_secret,
             "rollbar_token": rollbar_token,
             "gunicorn_workers": gunicorn_workers,
             "gunicorn_timeout": REQUEST_TIMEOUT,
@@ -189,6 +185,23 @@ def deploy_repondeur(
     setup_webapp_service(ctx)
     setup_worker_service(ctx)
     notify_rollbar(ctx, rollbar_token, branch, environment)
+
+
+def retrieve_secret_from_config(ctx, name):
+    secret = ctx.run(
+        f'grep "zam.{name}" /srv/repondeur/src/repondeur/production.ini | cut -d" " -f3',  # noqa
+        hide=True,
+    ).stdout.strip()
+    if not secret:
+        flag = name.replace('_', '-')
+        print(
+            f"Please provide a value for --{flag} on the first install",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    return secret
+
+
 
 
 def create_virtualenv(ctx, venv_dir, user):

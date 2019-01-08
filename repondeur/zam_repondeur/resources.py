@@ -1,5 +1,6 @@
 from typing import Any, Iterator, List, Optional, cast
 
+from pyramid.security import Allow, Authenticated
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
 from sqlalchemy.orm import joinedload
@@ -47,7 +48,9 @@ class Resource(dict):
 
 
 class Root(Resource):
-    def __init__(self, request: Request) -> None:
+    __acl__ = [(Allow, Authenticated, "view")]
+
+    def __init__(self, _request: Request) -> None:
         self.add_child(LectureCollection(name="lectures", parent=self))
 
 

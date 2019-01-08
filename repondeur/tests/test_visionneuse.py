@@ -3,9 +3,6 @@ import transaction
 import pytest
 
 
-LECTURE_AN_URL = "http://localhost/lectures/an.15.269.PO717460"
-
-
 def _text_from_node(node, selector):
     return " ".join(
         part.strip() for part in node.css_first(selector).text().strip().split("\n")
@@ -14,7 +11,10 @@ def _text_from_node(node, selector):
 
 def test_reponses_empty(app, lecture_an, amendements_an):
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     assert resp.status_code == 200
     assert resp.first_element(".titles h2") == "Article 1"
@@ -32,7 +32,10 @@ def test_reponses_full(app, lecture_an, amendements_an):
             amendement.user_content.reponse = f"Réponse pour {amendement.num}"
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     assert resp.status_code == 200
     test_amendement_666 = resp.find_amendement(amendements_an[0])
@@ -62,7 +65,10 @@ def test_reponses_grouping(app, lecture_an, amendements_an):
             amendement.user_content.reponse = "Réponse"
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     assert resp.status_code == 200
     test_amendement_666 = resp.find_amendement(amendements_an[0])
@@ -95,7 +101,10 @@ def test_reponses_authors_not_grouping(app, lecture_an, amendements_an):
         amendement.groupe = "Les Mécontents"
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     assert resp.status_code == 200
     test_amendement_666 = resp.find_amendement(amendements_an[0])
@@ -122,7 +131,10 @@ def test_reponses_authors_grouping(app, lecture_an, amendements_an):
             amendement.groupe = "Les Indépendants"
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     assert resp.status_code == 200
     test_amendement_666 = resp.find_amendement(amendements_an[0])
@@ -150,7 +162,10 @@ def test_reponses_groupe_grouping(app, lecture_an, amendements_an):
         amendement.auteur = "M. CLAUDE"  # Only the last one.
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     assert resp.status_code == 200
     test_amendement_666 = resp.find_amendement(amendements_an[0])
@@ -222,7 +237,10 @@ def test_reponses_many_grouping(app, lecture_an, article1_an, amendements_an):
             reponse="Réponse",
         )
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     assert resp.status_code == 200
     test_amendement_666 = resp.find_amendement(amendements_an[0])
@@ -252,7 +270,10 @@ def test_reponses_not_grouping_on_same_reponse_only(app, lecture_an, amendements
             amendement.user_content.reponse = "Réponse"
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     assert resp.status_code == 200
     test_amendement_666 = resp.find_amendement(amendements_an[0])
@@ -275,7 +296,10 @@ def test_reponses_gouvernemental(app, lecture_an, amendements_an):
             amendement.auteur = "LE GOUVERNEMENT"
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     test_amendement = resp.find_amendement(amendements_an[0])
     assert test_amendement is not None
@@ -304,7 +328,10 @@ def test_reponses_abandoned_not_displayed(app, lecture_an, amendements_an, sort)
         amendement.sort = sort
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     test_amendement = resp.find_amendement(amendements_an[0])
     assert test_amendement is not None
@@ -333,7 +360,10 @@ def test_reponses_abandoned_and_gouvernemental_not_displayed(
         amendement.sort = sort
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     test_amendement = resp.find_amendement(amendements_an[0])
     assert test_amendement is not None
@@ -355,7 +385,10 @@ def test_reponses_with_textes(app, lecture_an, amendements_an):
             amendement.article.content = {"001": "Premier paragraphe"}
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     fake_anchor = resp.parser.css_first("#content-article-1")
     article_content = fake_anchor.parent.css_first(".article")
@@ -378,7 +411,10 @@ def test_reponses_with_presentations(app, lecture_an, amendements_an):
             )
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     fake_anchor = resp.parser.css_first("#content-article-1")
     article_content = fake_anchor.parent.css_first(".article")
@@ -396,7 +432,10 @@ def test_reponses_without_textes_or_presentations(app, lecture_an, amendements_a
             amendement.user_content.reponse = f"Réponse pour {amendement.num}"
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     fake_anchor = resp.parser.css_first("#content-article-1")
     article_content = fake_anchor.parent.css_first(".article")
@@ -418,7 +457,10 @@ def test_reponses_with_different_articles(
         amendement.article = article7bis_an
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     assert resp.parser.css(".titles h2")[0].text() == "Article 1"
     assert len(resp.parser.css("nav.secondary")) == 2
@@ -431,7 +473,7 @@ def test_reponses_with_different_articles(
         == "Article 7 bis"
     )
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.7.bis./reponses")
+    resp = app.get("/lectures/an.15.269.PO717460/articles/article.7.bis./reponses")
 
     assert resp.parser.css(".titles h2")[0].text() == "Article 7 bis"
     assert (
@@ -456,7 +498,10 @@ def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe_an):
         amendement.article = annexe_an
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/annexe.../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/annexe.../reponses",
+        user="user@example.com",
+    )
 
     assert resp.parser.css(".titles h2")[0].text() == "Annexes"
 
@@ -474,7 +519,10 @@ def test_reponses_article_additionnel_avant(
         amendements_an[0].article = article1av_an
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1..avant/reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1..avant/reponses",
+        user="user@example.com",
+    )
 
     section_ids = [
         section.attributes.get("id")
@@ -498,7 +546,10 @@ def test_reponses_amendement_rect(app, lecture_an, amendements_an):
         amendement.rectif = 1
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     assert "666" in resp
     assert "999 rect." in resp
@@ -514,7 +565,10 @@ def test_links_to_previous_and_next_articles(
         amendements_an[0].user_content.avis = "Favorable"
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     assert resp.status_code == 200
     nav_links = [node.text() for node in resp.parser.css(".secondary a")]
@@ -524,7 +578,10 @@ def test_links_to_previous_and_next_articles(
 def test_links_to_previous_and_next_articles_when_empty_additional(
     app, lecture_an, amendements_an, article1av_an, article7bis_an
 ):
-    resp = app.get(f"{LECTURE_AN_URL}/articles/article.1../reponses")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user="user@example.com",
+    )
 
     assert resp.status_code == 200
     nav_links = [node.text() for node in resp.parser.css(".secondary a")]

@@ -14,7 +14,7 @@ def read_sample_data(basename):
 
 
 def test_get_form(app):
-    resp = app.get("/lectures/add")
+    resp = app.get("/lectures/add", user="user@example.com")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -108,10 +108,11 @@ def test_post_form(app):
     resp = app.post(
         "/lectures/add",
         {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460-"},
+        user="user@example.com",
     )
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements"
 
     resp = resp.follow()
 
@@ -160,12 +161,13 @@ def test_post_form_senat_2019(app):
     resp = app.post(
         "/lectures/add",
         {"dossier": "DLR5L15N36892", "lecture": "PRJLSNR5S319B0106-PO78718-"},
+        user="user@example.com",
     )
 
     assert resp.status_code == 302
     assert (
         resp.location
-        == "http://localhost/lectures/senat.2018-2019.106.PO78718/amendements"
+        == "https://zam.test/lectures/senat.2018-2019.106.PO78718/amendements"
     )
 
     resp = resp.follow()
@@ -199,10 +201,11 @@ def test_post_form_already_exists(app, lecture_an):
     resp = app.post(
         "/lectures/add",
         {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460-"},
+        user="user@example.com",
     )
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/"
+    assert resp.location == "https://zam.test/lectures/"
 
     resp = resp.follow()
 
@@ -212,7 +215,7 @@ def test_post_form_already_exists(app, lecture_an):
 
 def test_choices_lectures(app):
 
-    resp = app.get("/choices/dossiers/DLR5L15N36030/")
+    resp = app.get("/choices/dossiers/DLR5L15N36030/", user="user@example.com")
 
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "application/json"

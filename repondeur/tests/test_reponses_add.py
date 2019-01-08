@@ -6,7 +6,7 @@ from webtest.forms import File
 
 
 def test_get_form(app, lecture_an):
-    resp = app.get("/lectures/an.15.269.PO717460/amendements/")
+    resp = app.get("/lectures/an.15.269.PO717460/amendements/", user="user@example.com")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -15,7 +15,7 @@ def test_get_form(app, lecture_an):
     assert resp.forms["import-form"].method == "post"
     assert (
         resp.forms["import-form"].action
-        == "http://localhost/lectures/an.15.269.PO717460/import_csv"
+        == "https://zam.test/lectures/an.15.269.PO717460/import_csv"
     )
 
     assert list(resp.forms["import-form"].fields.keys()) == ["reponses", "upload"]
@@ -27,14 +27,16 @@ def test_get_form(app, lecture_an):
 def test_post_form(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    form = app.get(
+        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+    ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
 
     resp = resp.follow()
 
@@ -61,7 +63,9 @@ def test_post_form_updates_modification_date(app, lecture_an, amendements_an):
     with transaction.manager:
         initial_modified_at = lecture_an.modified_at
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    form = app.get(
+        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+    ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
     form.submit()
@@ -80,14 +84,16 @@ def test_post_form_updates_modification_date(app, lecture_an, amendements_an):
 def test_post_form_semicolumns(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    form = app.get(
+        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+    ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_semicolumns.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
 
     resp = resp.follow()
 
@@ -111,14 +117,16 @@ def test_post_form_semicolumns(app, lecture_an, amendements_an):
 def test_post_form_with_comments(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    form = app.get(
+        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+    ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_with_comments.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
 
     resp = resp.follow()
 
@@ -137,14 +145,16 @@ def test_post_form_with_comments(app, lecture_an, amendements_an):
 def test_post_form_with_affectations(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    form = app.get(
+        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+    ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_with_affectations.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
 
     resp = resp.follow()
 
@@ -161,14 +171,16 @@ def test_post_form_with_affectations(app, lecture_an, amendements_an):
 
 
 def test_post_form_with_bom(app, lecture_an, amendements_an):
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    form = app.get(
+        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+    ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_with_bom.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
 
     resp = resp.follow()
 
@@ -177,14 +189,16 @@ def test_post_form_with_bom(app, lecture_an, amendements_an):
 
 
 def test_post_form_wrong_columns_names(app, lecture_an, amendements_an):
-    form = app.get("/lectures/an.15.269.PO717460/amendements").forms["import-form"]
+    form = app.get(
+        "/lectures/an.15.269.PO717460/amendements", user="user@example.com"
+    ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_wrong_columns_names.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
 
     resp = resp.follow()
 
@@ -198,11 +212,13 @@ def test_post_form_wrong_columns_names(app, lecture_an, amendements_an):
 
 def test_post_form_reponse_no_file(app, lecture_an, amendements_an):
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    form = app.get(
+        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+    ).forms["import-form"]
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
 
     resp = resp.follow()
 
@@ -238,13 +254,15 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
         amendements[0].user_content.avis = None
         amendements[1].user_content.avis = None
 
-    form = app.get("/lectures/an.15.269.PO717460/amendements/").forms["import-form"]
+    form = app.get(
+        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+    ).forms["import-form"]
     form["reponses"] = Upload("file.csv", Path(filename).read_bytes())
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "http://localhost/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
 
     resp = resp.follow()
 

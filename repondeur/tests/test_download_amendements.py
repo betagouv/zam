@@ -16,7 +16,9 @@ def test_download(app, lecture_an, format_, content_type):
     with patch("zam_repondeur.fetch.get_amendements") as mock:
         mock.return_value = [], []
         resp = app.get(
-            "/lectures/an.15.269.PO717460/download_amendements", {"format": format_}
+            "/lectures/an.15.269.PO717460/download_amendements",
+            {"format": format_},
+            user="user@example.com",
         )
 
     assert resp.status_code == 200
@@ -31,6 +33,7 @@ def test_download_bad_format(app, lecture_an):
     resp = app.get(
         "/lectures/an.15.269.PO717460/download_amendements",
         {"format": "docx"},
+        user="user@example.com",
         expect_errors=True,
     )
 

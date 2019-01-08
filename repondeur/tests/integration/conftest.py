@@ -3,11 +3,14 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from webtest.http import StopableWSGIServer
 
+from .helpers import login
+
 
 @pytest.fixture(scope="session")
-def driver():
+def driver(wsgi_server):
     try:
         driver = HeadlessFirefox()
+        login(driver, wsgi_server.application_url, "user@example.com")
         yield driver
         driver.quit()
     except WebDriverException:
@@ -15,7 +18,11 @@ def driver():
 
 
 @pytest.fixture(scope="session")
-def wsgi_server(wsgi_app):
+def wsgi_server(settings, mock_dossiers, mock_organes_acteurs):
+    from zam_repondeur import make_app
+
+    settings = {**settings, "zam.auth_cookie_secure": False}
+    wsgi_app = make_app(None, **settings)
     server = StopableWSGIServer.create(wsgi_app, port="8080")
     yield server
     server.shutdown()

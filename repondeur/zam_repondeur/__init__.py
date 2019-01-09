@@ -1,5 +1,5 @@
 from multiprocessing import cpu_count
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from paste.deploy.converters import asbool
 from pyramid.authentication import AuthTktAuthenticationPolicy
@@ -7,6 +7,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.request import Request
 from pyramid.router import Router
+from pyramid.security import Authenticated, Everyone
 from pyramid.session import JSONSerializer, SignedCookieSessionFactory
 from pyramid.view import view_config
 from sqlalchemy import engine_from_config, event
@@ -147,3 +148,18 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
             user_id: int = user.pk
             return user_id
         return None
+
+    def effective_principals(self, request: Request) -> List[str]:
+        """
+        Return a sequence representing the effective principals typically
+        including the userid and any groups belonged to by the current user,
+        always including 'system' groups such as pyramid.security.Everyone
+        and pyramid.security.Authenticated.
+        """
+        principals = [Everyone]
+        if request.user is not None:
+            principals.append(Authenticated)
+            principals.append(f"user:{request.user.pk}")
+            for team in request.user.teams:
+                principals.append(f"team:{team.pk}")
+        return principals

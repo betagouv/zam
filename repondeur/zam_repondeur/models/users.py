@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, Text, func
 from sqlalchemy.orm import relationship
@@ -45,7 +46,7 @@ class User(Base):
     last_login_at = Column(DateTime)
 
     @classmethod
-    def create(cls, name: str, email: str) -> "User":
-        user = cls(name=name, email=email)
+    def create(cls, email: str, name: Optional[str] = None) -> "User":
+        user = cls(email=email, name=name)
         DBSession.add(user)
         return user

@@ -1,9 +1,12 @@
+from datetime import datetime
 from typing import Any
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.security import NO_PERMISSION_REQUIRED, remember, forget
 from pyramid.view import forbidden_view_config, view_config, view_defaults
+
+from zam_repondeur.models import DBSession, User, get_one_or_create
 
 
 @view_defaults(route_name="login", permission=NO_PERMISSION_REQUIRED)
@@ -21,7 +24,11 @@ class Login:
     @view_config(request_method="POST")
     def post(self) -> Any:
         email = self.request.params["email"].strip().lower()
-        headers = remember(self.request, email)
+        user, created = get_one_or_create(User, email=email)
+        user.last_login_at = datetime.utcnow()
+        if created:
+            DBSession.flush()
+        headers = remember(self.request, user.pk)
         return HTTPFound(location=self.next_url, headers=headers)
 
     @property

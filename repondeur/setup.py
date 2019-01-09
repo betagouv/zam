@@ -20,6 +20,7 @@ requires = [
     "rollbar",
     "selectolax",
     "SQLAlchemy",
+    "SQLAlchemy-Utils",
     "tlfp",
     "transaction",
     "xmltodict",

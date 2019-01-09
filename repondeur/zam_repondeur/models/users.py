@@ -1,8 +1,9 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, Text, func
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, Text, func
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy_utils import EmailType
 
 from .base import Base, DBSession
 
@@ -40,7 +41,7 @@ class User(Base):
     __repr_keys__ = ("name", "email", "teams")
 
     pk = Column(Integer, primary_key=True)
-    email = Column(String(254), nullable=False)
+    email = Column(EmailType, nullable=False)
     name = Column(Text)
     created_at = Column(
         DateTime, nullable=False, default=datetime.utcnow, server_default=func.now()

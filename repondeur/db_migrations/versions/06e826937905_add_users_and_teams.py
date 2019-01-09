@@ -28,7 +28,7 @@ def upgrade():
     op.create_table(
         "users",
         sa.Column("pk", sa.Integer(), nullable=False),
-        sa.Column("email", sa.String(length=254), nullable=False),
+        sa.Column("email", sa.String(length=255), nullable=False),
         sa.Column("name", sa.Text(), nullable=True),
         sa.Column(
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False

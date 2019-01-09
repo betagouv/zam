@@ -92,7 +92,7 @@ def team_zam(app):
 def user_david(app, team_zam):
     from zam_repondeur.models import User
 
-    return User.create(name="David", email="user@example.com")
+    return User.create(name="David", email="david@example.com")
 
 
 @pytest.fixture

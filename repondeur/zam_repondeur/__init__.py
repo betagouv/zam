@@ -117,9 +117,10 @@ def setup_auth(config: Configurator, settings: dict) -> None:
     # Make all views "secure by default"
     config.set_default_permission("view")
 
-    # Add routes for login and logout
+    # Add routes for login, logout and welcome
     config.add_route("login", "/identification")
     config.add_route("logout", "/deconnexion")
+    config.add_route("welcome", "/bienvenue")
 
 
 def get_user(request: Request) -> Optional[User]:

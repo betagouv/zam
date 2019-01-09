@@ -1,5 +1,7 @@
 import time
 
+import transaction
+
 
 def test_unauthentified_user_can_view_login_page(app):
     resp = app.get("/identification")
@@ -12,7 +14,7 @@ def test_user_gets_an_auth_cookie_after_identifying_herself(app):
     resp = app.post("/identification", {"email": "jane.doe@example.com"})
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/"
+    assert resp.location == "https://zam.test/bienvenue?source=%2F"
 
     assert "auth_tkt" in app.cookies  # and now we have the auth cookie
 
@@ -52,3 +54,39 @@ def test_unauthentified_user_is_redirected_to_login_page(app):
 def test_authentified_user_is_not_redirected_to_login_page(app):
     resp = app.get("/lectures/add", user="jane.doe@example.com")
     assert resp.status_code == 200
+
+
+def test_new_user_can_enter_their_name_on_the_welcome_page(app):
+    from zam_repondeur.models import DBSession, User
+
+    user = DBSession.query(User).filter_by(email="jane.doe@example.com").first()
+    assert user is None
+
+    resp = app.post("/identification", {"email": "jane.doe@example.com"})
+    assert resp.status_code == 302
+    assert resp.location == "https://zam.test/bienvenue?source=%2F"
+
+    user = DBSession.query(User).filter_by(email="jane.doe@example.com").first()
+    assert user.name is None
+
+    resp = resp.follow()
+    assert resp.form["name"].value == "Jane Doe"  # prefilled based on email
+
+    resp.form["name"] = " Something Else  "
+    resp.form.submit()
+
+    user = DBSession.query(User).filter_by(email="jane.doe@example.com").first()
+    assert user.name == "Something Else"
+
+
+def test_user_with_a_name_skips_the_welcome_page(app, user_david):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(user_david)
+
+    assert user_david.name == "David"
+
+    resp = app.post("/identification", {"email": "david@example.com"})
+    assert resp.status_code == 302
+    assert resp.location == "https://zam.test/"

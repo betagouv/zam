@@ -29,3 +29,18 @@ class TestRepr:
             " parent_pk=None>"
         )
         assert repr(amendements_an[0]) == expected_repr
+
+    def test_team(self, team_zam):
+        expected_repr = "<Team name='Zam'>"
+        assert repr(team_zam) == expected_repr
+
+    def test_user(self, user_david):
+        expected_repr = "<User name='David' email='david@example.com' teams=[]>"
+        assert repr(user_david) == expected_repr
+
+    def test_user_with_team(self, team_zam, user_david):
+        user_david.teams.append(team_zam)
+        expected_repr = (
+            "<User name='David' email='david@example.com' teams=[<Team name='Zam'>]>"
+        )
+        assert repr(user_david) == expected_repr

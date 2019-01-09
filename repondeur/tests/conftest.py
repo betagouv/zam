@@ -82,6 +82,20 @@ def app(wsgi_app):
 
 
 @pytest.fixture
+def team_zam(app):
+    from zam_repondeur.models import Team
+
+    return Team.create(name="Zam")
+
+
+@pytest.fixture
+def user_david(app, team_zam):
+    from zam_repondeur.models import User
+
+    return User.create(name="David", email="david@example.com")
+
+
+@pytest.fixture
 def lecture_an(app):
     from zam_repondeur.models import Lecture
 

@@ -224,6 +224,38 @@ nav .button:last-child {
     font-weight: 600;
 }
 
+form.box {
+    margin: 4rem auto;
+    width: 30rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+form.box h1 {
+    font-weight: 600;
+    font-size: 2rem;
+    text-align: center;
+    margin: 1rem 0 2rem 0;
+}
+form.box fieldset {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 20rem;
+}
+form.box label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+form.box input[type=email] {
+    padding: 4px;
+}
+form.box input[type=submit] {
+    font-size: 1.25rem !important;
+    margin: 2.5rem 0 1rem 0;
+}
+
 /* Overwrite Bootstrap styles on upload inputs. */
 .custom-file-label {
     white-space: nowrap;

@@ -1,9 +1,12 @@
+from datetime import datetime
 from typing import Any
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.security import NO_PERMISSION_REQUIRED, remember, forget
 from pyramid.view import forbidden_view_config, view_config, view_defaults
+
+from zam_repondeur.models import DBSession, User, get_one_or_create
 
 
 @view_defaults(route_name="login", permission=NO_PERMISSION_REQUIRED)
@@ -20,9 +23,21 @@ class Login:
 
     @view_config(request_method="POST")
     def post(self) -> Any:
-        email = self.request.params["email"].strip().lower()
-        headers = remember(self.request, email)
-        return HTTPFound(location=self.next_url, headers=headers)
+        email = User.normalize_email(self.request.params["email"])
+
+        user, created = get_one_or_create(User, email=email)
+        if created:
+            DBSession.flush()  # so that the DB assigns a value to user.pk
+
+        user.last_login_at = datetime.utcnow()
+
+        next_url = self.next_url
+        if not user.name:
+            next_url = self.request.route_url("welcome", _query={"source": next_url})
+
+        headers = remember(self.request, user.pk)
+
+        return HTTPFound(location=next_url, headers=headers)
 
     @property
     def next_url(self) -> Any:
@@ -30,6 +45,22 @@ class Login:
         if url is None or url == self.request.route_url("login"):
             url = "/"
         return url
+
+
+@view_defaults(route_name="welcome")
+class Welcome:
+    def __init__(self, request: Request) -> None:
+        self.request = request
+
+    @view_config(request_method="GET", renderer="welcome.html")
+    def get(self) -> Any:
+        return {"name": self.request.user.name or self.request.user.default_name()}
+
+    @view_config(request_method="POST")
+    def post(self) -> Any:
+        self.request.user.name = User.normalize_name(self.request.params["name"])
+        next_url = self.request.params.get("source") or "/"
+        return HTTPFound(location=next_url)
 
 
 @view_config(route_name="logout", permission=NO_PERMISSION_REQUIRED)

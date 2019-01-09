@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, Text
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, Text, func
 from sqlalchemy.orm import relationship
 
 from .base import Base, DBSession
@@ -21,7 +21,9 @@ class Team(Base):
     pk = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
     users = relationship("User", secondary="teams2users", backref="teams")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(
+        DateTime, nullable=False, default=datetime.utcnow, server_default=func.now()
+    )
 
     @classmethod
     def create(cls, name: str) -> "Team":
@@ -37,7 +39,9 @@ class User(Base):
     pk = Column(Integer, primary_key=True)
     email = Column(String(254), nullable=False)
     name = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(
+        DateTime, nullable=False, default=datetime.utcnow, server_default=func.now()
+    )
     last_login_at = Column(DateTime, default=datetime.utcnow)
 
     @classmethod

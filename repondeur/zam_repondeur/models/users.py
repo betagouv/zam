@@ -9,8 +9,8 @@ from .base import Base, DBSession
 association_table = Table(
     "teams2users",
     Base.metadata,
-    Column("team_pk", Integer, ForeignKey("teams.pk")),
-    Column("user_pk", Integer, ForeignKey("users.pk")),
+    Column("team_pk", Integer, ForeignKey("teams.pk"), primary_key=True),
+    Column("user_pk", Integer, ForeignKey("users.pk"), primary_key=True),
 )
 
 

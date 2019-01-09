@@ -23,7 +23,7 @@ class Login:
 
     @view_config(request_method="POST")
     def post(self) -> Any:
-        email = self.request.params["email"].strip().lower()
+        email = User.normalize_email(self.request.params["email"])
 
         user, created = get_one_or_create(User, email=email)
         if created:
@@ -54,12 +54,11 @@ class Welcome:
 
     @view_config(request_method="GET", renderer="welcome.html")
     def get(self) -> Any:
-        default = self.request.user.email.split("@")[0].replace(".", " ").title()
-        return {"name": self.request.user.name or default}
+        return {"name": self.request.user.name or self.request.user.default_name()}
 
     @view_config(request_method="POST")
     def post(self) -> Any:
-        self.request.user.name = self.request.params["name"].strip()
+        self.request.user.name = User.normalize_name(self.request.params["name"])
         next_url = self.request.params.get("source") or "/"
         return HTTPFound(location=next_url)
 

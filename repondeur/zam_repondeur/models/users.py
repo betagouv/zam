@@ -20,12 +20,12 @@ class Team(Base):
     __tablename__ = "teams"
     __repr_keys__ = ("name",)
 
-    pk = Column(Integer, primary_key=True)
-    name = Column(Text, nullable=False)
+    pk: int = Column(Integer, primary_key=True)
+    name: str = Column(Text, nullable=False)
     users = relationship(
         "User", secondary="teams2users", backref=backref("teams", lazy="joined")
     )
-    created_at = Column(
+    created_at: datetime = Column(
         DateTime, nullable=False, default=datetime.utcnow, server_default=func.now()
     )
 
@@ -40,16 +40,27 @@ class User(Base):
     __tablename__ = "users"
     __repr_keys__ = ("name", "email", "teams")
 
-    pk = Column(Integer, primary_key=True)
-    email = Column(EmailType, nullable=False)
-    name = Column(Text)
-    created_at = Column(
+    pk: int = Column(Integer, primary_key=True)
+    email: str = Column(EmailType, nullable=False)
+    name: Optional[str] = Column(Text)
+    created_at: datetime = Column(
         DateTime, nullable=False, default=datetime.utcnow, server_default=func.now()
     )
-    last_login_at = Column(DateTime)
+    last_login_at: Optional[datetime] = Column(DateTime)
 
     @classmethod
     def create(cls, email: str, name: Optional[str] = None) -> "User":
         user = cls(email=email, name=name)
         DBSession.add(user)
         return user
+
+    @staticmethod
+    def normalize_email(email: str) -> str:
+        return email.strip().lower()
+
+    @staticmethod
+    def normalize_name(name: str) -> str:
+        return name.strip()
+
+    def default_name(self) -> str:
+        return self.email.split("@")[0].replace(".", " ").title()

@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, Text, func
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from .base import Base, DBSession
 
@@ -21,7 +21,9 @@ class Team(Base):
 
     pk = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
-    users = relationship("User", secondary="teams2users", backref="teams")
+    users = relationship(
+        "User", secondary="teams2users", backref=backref("teams", lazy="joined")
+    )
     created_at = Column(
         DateTime, nullable=False, default=datetime.utcnow, server_default=func.now()
     )

@@ -34,6 +34,8 @@ class Login:
         next_url = self.next_url
         if not user.name:
             next_url = self.request.route_url("welcome", _query={"source": next_url})
+        elif not user.teams:
+            next_url = self.request.route_url("join_team", _query={"source": next_url})
 
         headers = remember(self.request, user.pk)
 
@@ -60,6 +62,8 @@ class Welcome:
     def post(self) -> Any:
         self.request.user.name = User.normalize_name(self.request.params["name"])
         next_url = self.request.params.get("source") or "/"
+        if not self.request.user.teams:
+            next_url = self.request.route_url("join_team", _query={"source": next_url})
         return HTTPFound(location=next_url)
 
 

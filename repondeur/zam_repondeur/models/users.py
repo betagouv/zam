@@ -42,7 +42,7 @@ class User(Base):
     created_at = Column(
         DateTime, nullable=False, default=datetime.utcnow, server_default=func.now()
     )
-    last_login_at = Column(DateTime, default=datetime.utcnow)
+    last_login_at = Column(DateTime)
 
     @classmethod
     def create(cls, name: str, email: str) -> "User":

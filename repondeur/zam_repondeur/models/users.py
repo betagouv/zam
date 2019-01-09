@@ -19,7 +19,7 @@ class Team(Base):
     __repr_keys__ = ("name",)
 
     pk = Column(Integer, primary_key=True)
-    name = Column(Text)
+    name = Column(Text, nullable=False)
     users = relationship("User", secondary="teams2users", backref="teams")
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -35,7 +35,7 @@ class User(Base):
     __repr_keys__ = ("name", "email", "teams")
 
     pk = Column(Integer, primary_key=True)
-    email = Column(String(254))
+    email = Column(String(254), nullable=False)
     name = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
     last_login_at = Column(DateTime, default=datetime.utcnow)

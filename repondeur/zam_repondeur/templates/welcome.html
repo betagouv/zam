@@ -1,13 +1,13 @@
-{% extends "_base.html" %}
+{% extends "_base2.html" %}
 
 
-{% block body %}
-<form class="box" method="POST">
-    <h1>C’est votre première connexion...</h1>
+{% block main %}
+<h1>C’est votre première connexion...</h1>
+<form method="POST" class="intro">
     <fieldset>
         <label for="name">Quel est votre nom ?</label>
         <input type="text" name="name" placeholder="Prénom Nom" value="{{ name }}">
     </fieldset>
-    <input class="button primary enabled allow-multiple-submit" type="submit" name="form.submitted" value="Entrer">
+    <input type="submit" value="Entrer">
 </form>
 {% endblock %}

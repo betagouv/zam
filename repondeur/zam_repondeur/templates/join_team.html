@@ -1,29 +1,29 @@
-{% extends "_base.html" %}
+{% extends "_base2.html" %}
 
 
-{% block body %}
-<div class="box">
-    <h1>Configurer mon espace</h1>
-    <p>Lorsqu’un amendement vous est transféré, il est <strong>affiché dans votre espace.</strong></p>
-    <p>Il vous est également possible de <strong>rejoindre une équipe</strong> pour pouvoir retrouver dans votre espace les amendements qui y sont transférés (ex : bureau, groupe de coordinateurs, …)</p>
-    <form method="POST" id="join-team">
-        <fieldset>
-            <label for="name">Rejoindre une équipe existante</label>
-            <select name="name">
-                {% for team in teams %}
-                    <option value="{{ team.name }}" {% if team in request.user.teams %}disabled{% endif %}>{{ team.name }}{% if team in request.user.teams %} (déjà membre){% endif %}</option>
-                {% endfor %}
-            </select>
-        </fieldset>
-        <input class="button primary enabled allow-multiple-submit" type="submit" value="Rejoindre">
-    </form>
-    <form method="POST" action="{{ request.route_url('add_team') }}" id="add-team">
-        <fieldset>
-            <label for="name">Créer une nouvelle équipe</label>
-            <input name="name" required>
-        </fieldset>
-        <input class="button primary enabled allow-multiple-submit" type="submit" value="Créer et rejoindre">
-    </form>
-    <a href="{{ next_url }}">Passer cette étape</a>
+{% block main %}
+<h1>Configurer mon espace</h1>
+<p>Lorsqu’un amendement vous est transféré, il est <strong>affiché dans votre espace.</strong></p>
+<p>Il vous est également possible de <strong>rejoindre une équipe</strong> pour pouvoir retrouver dans votre espace les amendements qui y sont transférés (ex : bureau, groupe de coordinateurs, …)</p>
+<form method="POST" id="join-team" class="intro intro-inline">
+    <fieldset>
+        <label for="name">Rejoindre une équipe existante</label>
+        <select name="name">
+            {% for team in teams %}
+                <option value="{{ team.name }}" {% if team in request.user.teams %}disabled{% endif %}>{{ team.name }}{% if team in request.user.teams %} (déjà membre){% endif %}</option>
+            {% endfor %}
+        </select>
+    </fieldset>
+    <input type="submit" value="Rejoindre">
+</form>
+<form method="POST" action="{{ request.route_url('add_team') }}" id="add-team" class="intro intro-inline">
+    <fieldset>
+        <label for="name">Créer une nouvelle équipe</label>
+        <input name="name" required>
+    </fieldset>
+    <input class="inverted" type="submit" value="Créer et rejoindre">
+</form>
+<div class="skip">
+    <a href="{{ next_url }}" class="arrow-right">Passer cette étape</a>
 </div>
 {% endblock %}

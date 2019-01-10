@@ -1,13 +1,13 @@
-{% extends "_base.html" %}
+{% extends "_base2.html" %}
 
 
-{% block body %}
-<form class="box" method="POST">
-    <h1>Entrer dans Zam</h1>
+{% block main %}
+<h1>Entrer dans Zam</h1>
+<form method="POST" class="intro">
     <fieldset>
         <label for="email">Votre courriel</label>
         <input type="email" name="email" required placeholder="prenom.nom@ministere.gouv.fr">
     </fieldset>
-    <input class="button primary enabled allow-multiple-submit" type="submit" name="form.submitted" value="Entrer dans Zam">
+    <input type="submit" value="Entrer dans Zam">
 </form>
 {% endblock %}

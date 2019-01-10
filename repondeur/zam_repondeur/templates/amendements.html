@@ -3,7 +3,6 @@
 
 
 {% block header %}
-<link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/notifications.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/amendements.css') }}">
 {% endblock %}
 
@@ -324,9 +323,6 @@
             {% endfor %}
         </ul>
     </section>
-
-    {# See https://inclusive-components.design/notifications/ #}
-    <div role="status" aria-live="polite"></div>
 
 </div>
 {% endblock %}

@@ -35,6 +35,10 @@ class Team(Base):
         DBSession.add(team)
         return team
 
+    @staticmethod
+    def normalize_name(name: str) -> str:
+        return name.strip()
+
 
 class User(Base):
     __tablename__ = "users"

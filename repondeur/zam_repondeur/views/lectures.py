@@ -150,25 +150,16 @@ class LectureView:
         return HTTPFound(location=self.request.resource_url(self.context.parent))
 
 
-@view_defaults(context=AmendementCollection)
-class ListAmendements:
-    def __init__(self, context: AmendementCollection, request: Request) -> None:
-        self.context = context
-        self.request = request
-        self.lecture = context.parent.model(joinedload("articles"))
-        self.amendements = self.lecture.amendements
-        self.articles = self.lecture.articles
-
-    @view_config(request_method="GET", renderer="amendements.html")
-    def get(self) -> dict:
-        check_url = self.request.resource_path(self.context.parent, "check")
-        return {
-            "lecture": self.lecture,
-            "amendements": self.amendements,
-            "articles": self.articles,
-            "check_url": check_url,
-            "timestamp": self.lecture.modified_at_timestamp,
-        }
+@view_config(context=AmendementCollection, renderer="amendements.html")
+def list_amendements(context: AmendementCollection, request: Request) -> dict:
+    lecture = context.parent.model(joinedload("articles"))
+    return {
+        "lecture": lecture,
+        "amendements": lecture.amendements,
+        "articles": lecture.articles,
+        "check_url": request.resource_path(context.parent, "check"),
+        "timestamp": lecture.modified_at_timestamp,
+    }
 
 
 @view_config(context=LectureResource, name="manual_refresh")

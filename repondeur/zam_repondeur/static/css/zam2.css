@@ -84,10 +84,14 @@ nav {
         list-style-type: none;
     }
         nav ul li {
-            padding: .7rem;
+            padding: .7rem 1rem;
         }
             nav ul li a {
                 color: white;
+            }
+            nav ul li.selected a {
+                color: white;
+                text-decoration: underline;
             }
 
 main {
@@ -105,6 +109,7 @@ main {
     box-shadow: 2px 2px 5px 2px #ccc;
     padding: 1.5rem 2rem;
     border: solid 1px #ccc;
+    margin-bottom: 2rem;
 }
 
 .arrow-left,
@@ -162,4 +167,23 @@ main {
         padding: .4rem 1rem;
         font-size: 1rem;
         margin: 0 1rem;
+    }
+
+/* Spaces. */
+.amendement-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+    .amendement-card p {
+        margin: .4rem 0;
+    }
+    .amendement-card-infos {
+        max-width: 40rem;
+    }
+    .amendement-card-avis {
+        min-width: 10rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
     }

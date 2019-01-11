@@ -1,0 +1,42 @@
+{% extends "_base2.html" %}
+
+{% block nav %}
+    <ul>
+        <li><a href="{{ request.resource_url(context.lecture_resource.parent) }}">Lectures</a></li>
+        <li>|</li>
+        <li class="selected"><a href="{{ request.resource_url(context.lecture_resource, 'espaces', 'moi') }}">Mon espace ({% for team in request.user.teams %}{{ team.name }}{% if not loop.last %} + {% endif %}{% endfor %})</a></li>
+        <li><a href="{{ request.resource_url(context.lecture_resource, 'amendements') }}">Vue globale</a></li>
+        <li>Options avancées</li>
+    </ul>
+    <ul>
+        <li>Mon compte ({{ request.user.name }})</li>
+        <li><a href="{{ request.route_url('logout') }}">Déconnexion</a></li>
+    </ul>
+{% endblock %}
+
+{% block main %}
+    <h1>Mon espace</h1>
+    {% for amendement in amendements %}
+        <div class="box amendement-card">
+            <div class="amendement-card-infos">
+                <p>{{ amendement.article.format() }} - Nº&nbsp;<strong>{{ amendement }}</strong></p>
+                <p>{{ amendement.user_content.objet }}</p>
+                <p><em>{{ amendement.groupe }} ({{ amendement.auteur }})</em></p>
+            </div>
+            <div class="amendement-card-avis">
+                <p><a href="{{ request.resource_url(context.parent.parent['amendements'][amendement.num_str], 'reponse') }}">{{ amendement.user_content.avis }}</a></p>
+                <p>📥 {{ amendement.user_content.affectation }}</p>
+            </div>
+        </div>
+    {% else %}
+        <p>
+            Vous n’avez pour l’instant aucun amendement attribué à
+            {% if request.user.teams|length == 1 %}
+                votre équipe.
+            {% else %}
+                vos équipes.
+            {% endif %}
+        </p>
+        <p>Veuillez vous rendre dans la <a href="{{ request.resource_url(context.lecture_resource, 'amendements') }}">vue globale</a> pour en attribuer.</p>
+    {% endfor %}
+{% endblock %}

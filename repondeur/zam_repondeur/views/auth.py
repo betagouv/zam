@@ -7,12 +7,14 @@ from pyramid.security import NO_PERMISSION_REQUIRED, remember, forget
 from pyramid.view import forbidden_view_config, view_config, view_defaults
 
 from zam_repondeur.models import DBSession, User, get_one_or_create
+from zam_repondeur.resources import Root
 
 
-@view_defaults(route_name="login", permission=NO_PERMISSION_REQUIRED)
+@view_defaults(route_name="login", permission=NO_PERMISSION_REQUIRED, context=Root)
 class Login:
-    def __init__(self, request: Request) -> None:
+    def __init__(self, context: Root, request: Request) -> None:
         self.request = request
+        self.context = context
 
     @view_config(request_method="GET", renderer="login.html")
     def get(self) -> Any:
@@ -45,14 +47,15 @@ class Login:
     def next_url(self) -> Any:
         url = self.request.params.get("source")
         if url is None or url == self.request.route_url("login"):
-            url = "/"
+            url = self.request.resource_url(self.context["lectures"])
         return url
 
 
-@view_defaults(route_name="welcome")
+@view_defaults(route_name="welcome", context=Root)
 class Welcome:
-    def __init__(self, request: Request) -> None:
+    def __init__(self, context: Root, request: Request) -> None:
         self.request = request
+        self.context = context
 
     @view_config(request_method="GET", renderer="welcome.html")
     def get(self) -> Any:
@@ -61,7 +64,9 @@ class Welcome:
     @view_config(request_method="POST")
     def post(self) -> Any:
         self.request.user.name = User.normalize_name(self.request.params["name"])
-        next_url = self.request.params.get("source") or "/"
+        next_url = self.request.params.get("source") or self.request.resource_url(
+            self.context["lectures"]
+        )
         if not self.request.user.teams:
             next_url = self.request.route_url("join_team", _query={"source": next_url})
         return HTTPFound(location=next_url)

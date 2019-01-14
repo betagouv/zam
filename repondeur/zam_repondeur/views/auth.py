@@ -65,8 +65,6 @@ class Welcome:
         next_url = self.request.params.get("source") or self.request.resource_url(
             self.context["lectures"]
         )
-        if not self.request.user.teams:
-            next_url = self.request.route_url("join_team", _query={"source": next_url})
         return HTTPFound(location=next_url)
 
 

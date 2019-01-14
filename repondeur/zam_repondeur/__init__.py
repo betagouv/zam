@@ -121,8 +121,6 @@ def setup_auth(config: Configurator, settings: dict) -> None:
     config.add_route("login", "/identification")
     config.add_route("logout", "/deconnexion")
     config.add_route("welcome", "/bienvenue")
-    config.add_route("add_team", "/equipe/ajouter")
-    config.add_route("join_team", "/equipe/rejoindre")
 
 
 def get_user(request: Request) -> Optional[User]:

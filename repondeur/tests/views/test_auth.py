@@ -95,19 +95,4 @@ def test_user_with_a_name_skips_the_welcome_page(app, user_david):
 
     resp = app.post("/identification", {"email": "david@example.com"})
     assert resp.status_code == 302
-    next_url = "https%3A%2F%2Fzam.test%2Flectures%2F"
-    assert resp.location == f"https://zam.test/equipe/rejoindre?source={next_url}"
-
-
-def test_user_with_a_team_skips_the_join_page(app, team_zam, user_david):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        user_david.teams.append(team_zam)
-        DBSession.add(user_david)
-
-    assert user_david.name == "David"
-
-    resp = app.post("/identification", {"email": "david@example.com"})
-    assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/"
+    assert resp.location == f"https://zam.test/lectures/"

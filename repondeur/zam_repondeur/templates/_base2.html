@@ -15,7 +15,12 @@
                     <li><a href="{{ request.resource_url(context['lectures']) }}">Lectures</a></li>
                 </ul>
                 <ul>
-                    <li>Mon compte ({{ request.user.name }})</li>
+                    <li>
+                        Mon compte
+                        {% if request.user.name %}
+                             ({{ request.user.name }})
+                        {% endif %}
+                    </li>
                     <li><a href="{{ request.route_url('logout') }}">Déconnexion</a></li>
                 </ul>
             {% endif %}

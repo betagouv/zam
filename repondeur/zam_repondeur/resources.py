@@ -6,7 +6,7 @@ from pyramid.request import Request
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
-from zam_repondeur.models import Amendement, Article, DBSession, Lecture, User
+from zam_repondeur.models import Amendement, Article, DBSession, Lecture
 
 
 class ResourceNotFound(HTTPNotFound):
@@ -99,7 +99,6 @@ class LectureResource(Resource):
         self.organe = organe
         self.add_child(AmendementCollection(name="amendements", parent=self))
         self.add_child(ArticleCollection(name="articles", parent=self))
-        self.add_child(SpaceCollection(name="espaces", parent=self))
 
     def model(self, *options: Any) -> Lecture:
         lecture = Lecture.get(
@@ -148,45 +147,6 @@ class AmendementResource(Resource):
         except NoResultFound:
             raise ResourceNotFound(self)
         return amendement
-
-
-class SpaceCollection(Resource):
-    def __getitem__(self, key: str) -> Resource:
-        return SpaceResource(name=key, parent=self)
-
-    @property
-    def parent(self) -> LectureResource:
-        return cast(LectureResource, self.__parent__)
-
-
-class SpaceResource(Resource):
-    def __init__(self, name: str, parent: Resource) -> None:
-        super().__init__(name=name, parent=parent)
-        self.name = name
-
-    @property
-    def parent(self) -> SpaceCollection:
-        return cast(SpaceCollection, self.__parent__)
-
-    @property
-    def lecture_resource(self) -> LectureResource:
-        return self.parent.parent
-
-    def amendements(self, user: User) -> List[Amendement]:
-        try:
-            amendements: List[Amendement] = (
-                DBSession.query(Amendement)
-                .filter_by(lecture=self.lecture_resource.model())
-                .options(joinedload("lecture"))
-            )
-        except NoResultFound:
-            raise ResourceNotFound(self)
-        return [
-            amendement
-            for amendement in amendements
-            for team in user.teams
-            if amendement.user_content.affectation == team.name
-        ]
 
 
 class ArticleCollection(Resource):

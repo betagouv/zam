@@ -8,7 +8,19 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <nav>{% block nav %}{% endblock %}</nav>
+    <nav>
+        {% block nav %}
+            {% if "lectures" in context and request.user %}
+                <ul>
+                    <li><a href="{{ request.resource_url(context['lectures']) }}">Lectures</a></li>
+                </ul>
+                <ul>
+                    <li>Mon compte ({{ request.user.name }})</li>
+                    <li><a href="{{ request.route_url('logout') }}">Déconnexion</a></li>
+                </ul>
+            {% endif %}
+        {% endblock %}
+    </nav>
     <main class="box">{% block main %}{% endblock %}</main>
     {% block extra_body %}{% endblock %}
 </body>

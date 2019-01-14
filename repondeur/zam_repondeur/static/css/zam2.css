@@ -168,22 +168,3 @@ main {
         font-size: 1rem;
         margin: 0 1rem;
     }
-
-/* Spaces. */
-.amendement-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-    .amendement-card p {
-        margin: .4rem 0;
-    }
-    .amendement-card-infos {
-        max-width: 40rem;
-    }
-    .amendement-card-avis {
-        min-width: 10rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-    }

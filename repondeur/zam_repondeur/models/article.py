@@ -1,9 +1,11 @@
 import logging
+from datetime import datetime
 from itertools import groupby
 from typing import Iterable, List, Optional, Tuple
 
 from sqlalchemy import (
     Column,
+    DateTime,
     ForeignKey,
     Index,
     Integer,
@@ -49,6 +51,29 @@ ALLOWED_TYPE = (
 ALLOWED_POS = ("avant", "", "après")
 
 
+class ArticleUserContentRevision(Base):
+    __tablename__ = "article_user_contents_revisions"
+
+    pk: int = Column(Integer, primary_key=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    title: Optional[str] = Column(Text, nullable=True)
+    presentation: Optional[str] = Column(Text, nullable=True)
+
+    user_pk: int = Column(Integer, ForeignKey("users.pk"))
+    user: "User" = relationship(  # type: ignore  # noqa
+        "User", back_populates="article_revisions"
+    )
+    article_pk: int = Column(Integer, ForeignKey("articles.pk"))
+    article: "Article" = relationship("Article", back_populates="revisions")
+    user_content_pk: int = Column(
+        Integer, ForeignKey("article_user_contents.pk"), nullable=False
+    )
+    user_content: "ArticleUserContent" = relationship(
+        "ArticleUserContent", back_populates="revisions"
+    )
+
+
 class ArticleUserContent(Base):
     __tablename__ = "article_user_contents"
 
@@ -58,6 +83,9 @@ class ArticleUserContent(Base):
 
     article_pk: int = Column(Integer, ForeignKey("articles.pk"))
     article: "Article" = relationship("Article", back_populates="user_content")
+    revisions: "ArticleUserContentRevision" = relationship(
+        ArticleUserContentRevision, back_populates="user_content"
+    )
 
 
 class Article(Base):
@@ -84,6 +112,7 @@ class Article(Base):
     user_content = relationship(
         ArticleUserContent, back_populates="article", uselist=False, lazy="joined"
     )
+    revisions = relationship(ArticleUserContentRevision, back_populates="article")
 
     @validates("type")
     def validate_type(self, key: str, type: str) -> str:

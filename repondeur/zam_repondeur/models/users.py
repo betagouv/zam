@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy_utils import EmailType
 
 from .base import Base, DBSession
+from . import ArticleUserContentRevision
 
 
 association_table = Table(
@@ -51,6 +52,10 @@ class User(Base):
         DateTime, nullable=False, default=datetime.utcnow, server_default=func.now()
     )
     last_login_at: Optional[datetime] = Column(DateTime)
+
+    article_revisions: "ArticleUserContentRevision" = relationship(
+        ArticleUserContentRevision, back_populates="user"
+    )
 
     @classmethod
     def create(cls, email: str, name: Optional[str] = None) -> "User":

@@ -43,6 +43,11 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an):
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.title == "Titre article"
+    assert len(amendement.article.revisions) == 1
+    assert amendement.article.revisions[0].title == ""
+    assert amendement.article.revisions[0].user.email == "user@example.com"
+    assert len(amendement.article.user_content.revisions) == 1
+    assert amendement.article.user_content.revisions[0].title == ""
 
 
 def test_post_article_edit_form_title_redirect_next(app, lecture_an, amendements_an):
@@ -197,6 +202,9 @@ def test_post_article_edit_form_presentation(app, lecture_an, amendements_an):
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.presentation == "<p>Content</p>"
+    assert len(amendement.article.revisions) == 1
+    assert amendement.article.revisions[0].presentation == ""
+    assert amendement.article.revisions[0].user.email == "user@example.com"
 
 
 def test_post_article_edit_form_presentation_cleaned(app, lecture_an, amendements_an):

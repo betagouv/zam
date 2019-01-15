@@ -128,10 +128,11 @@ def deploy_changelog(ctx, source="../CHANGELOG.md"):
 @task
 def deploy_repondeur(
     ctx,
+    branch="master",
+    message="",
     session_secret="",
     auth_secret="",
     rollbar_token=ROLLBAR_TOKEN,
-    branch="master",
     wipe=False,
     dbname="zam",
     dbuser="zam",
@@ -144,47 +145,57 @@ def deploy_repondeur(
         auth_secret = retrieve_secret_from_config(ctx, "auth_secret")
 
     environment = ctx.host.split(".", 1)[0]
-    user = "repondeur"
-    install_locale(ctx, "fr_FR.utf8")
-    create_user(ctx, name=user, home_dir="/srv/repondeur")
-    clone_repo(
-        ctx,
-        repo="https://github.com/betagouv/zam.git",
-        branch=branch,
-        path="/srv/repondeur/src",
-        user=user,
-    )
-    app_dir = "/srv/repondeur/src/repondeur"
-    venv_dir = "/srv/repondeur/venv"
 
-    # Stop workers to free up some system resources during deployment
-    ctx.sudo("systemctl stop zam_worker", warn=True)
-
-    create_virtualenv(ctx, venv_dir=venv_dir, user=user)
-    install_requirements(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
-    gunicorn_workers = (cpu_count(ctx) * 2) + 1
-    setup_config(
-        ctx,
-        app_dir=app_dir,
-        user=user,
-        context={
-            "db_url": f"postgres://{dbuser}:{dbpassword}@localhost:5432/{dbname}",
-            "environment": environment,
-            "branch": branch,
-            "session_secret": session_secret,
-            "auth_secret": auth_secret,
-            "rollbar_token": rollbar_token,
-            "gunicorn_workers": gunicorn_workers,
-            "gunicorn_timeout": REQUEST_TIMEOUT,
-        },
+    deploy_id = rollbar_deploy_start(
+        ctx, rollbar_token, branch, environment, comment=f"[{branch}] {message}"
     )
-    if wipe:
-        wipe_db(ctx, dbname=dbname)
-    setup_db(ctx, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
-    migrate_db(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
-    setup_webapp_service(ctx)
-    setup_worker_service(ctx)
-    notify_rollbar(ctx, rollbar_token, branch, environment)
+
+    try:
+
+        user = "repondeur"
+        install_locale(ctx, "fr_FR.utf8")
+        create_user(ctx, name=user, home_dir="/srv/repondeur")
+        clone_repo(
+            ctx,
+            repo="https://github.com/betagouv/zam.git",
+            branch=branch,
+            path="/srv/repondeur/src",
+            user=user,
+        )
+        app_dir = "/srv/repondeur/src/repondeur"
+        venv_dir = "/srv/repondeur/venv"
+
+        # Stop workers to free up some system resources during deployment
+        ctx.sudo("systemctl stop zam_worker", warn=True)
+
+        create_virtualenv(ctx, venv_dir=venv_dir, user=user)
+        install_requirements(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
+        gunicorn_workers = (cpu_count(ctx) * 2) + 1
+        setup_config(
+            ctx,
+            app_dir=app_dir,
+            user=user,
+            context={
+                "db_url": f"postgres://{dbuser}:{dbpassword}@localhost:5432/{dbname}",
+                "environment": environment,
+                "branch": branch,
+                "session_secret": session_secret,
+                "auth_secret": auth_secret,
+                "rollbar_token": rollbar_token,
+                "gunicorn_workers": gunicorn_workers,
+                "gunicorn_timeout": REQUEST_TIMEOUT,
+            },
+        )
+        if wipe:
+            wipe_db(ctx, dbname=dbname)
+        setup_db(ctx, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
+        migrate_db(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
+        setup_webapp_service(ctx)
+        setup_worker_service(ctx)
+    except Exception as exc:
+        rollbar_deploy_update(rollbar_token, deploy_id, status="failed")
+    else:
+        rollbar_deploy_update(rollbar_token, deploy_id, status="succeeded")
 
 
 def retrieve_secret_from_config(ctx, name):
@@ -290,7 +301,7 @@ def setup_worker_service(ctx):
     ctx.sudo("systemctl restart zam_worker")
 
 
-def notify_rollbar(ctx, rollbar_token, branch, environment):
+def rollbar_deploy_start(ctx, rollbar_token, branch, environment, comment):
     local_username = ctx.local("whoami").stdout
     revision = ctx.local(f'git log -n 1 --pretty=format:"%H" origin/{branch}').stdout
     resp = requests.post(
@@ -300,13 +311,26 @@ def notify_rollbar(ctx, rollbar_token, branch, environment):
             "environment": environment,
             "local_username": local_username,
             "revision": revision,
+            "status": "started",
+            "comment": comment,
         },
         timeout=3,
     )
     if resp.status_code == 200:
-        print("Deploy recorded successfully.")
+        return resp.json()["data"]["deploy_id"]
     else:
-        print(f"Error recording deploy: {resp.text}")
+        print(f"Error notifying deploy start: {resp.text}")
+
+
+def rollbar_deploy_update(rollbar_token, deploy_id, status):
+    resp = requests.patch(
+        f"https://api.rollbar.com/api/1/deploy/{deploy_id}",
+        params={"access_token": rollbar_token},
+        data={"status": status},
+        timeout=3,
+    )
+    if resp.status_code != 200:
+        print(f"Error updating deploy status: {resp.text}")
 
 
 @task

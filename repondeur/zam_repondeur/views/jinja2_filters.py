@@ -1,9 +1,11 @@
-from typing import List, Optional
+from difflib import Differ
+from typing import List, Optional, Dict, Callable, Any
 
 from jinja2 import Markup, contextfilter
+from jinja2.filters import do_striptags
 from jinja2.runtime import Context
 
-from zam_repondeur.models import Article, Lecture
+from zam_repondeur.models import Article, ArticleUserContentRevision, Lecture
 
 
 def paragriphy(content: Optional[str]) -> Markup:
@@ -43,3 +45,22 @@ def filter_out_empty_additionals(all_articles: List[Article]) -> List[Article]:
         else:
             articles.append(article)
     return articles
+
+
+def render_diff(revision: ArticleUserContentRevision, key: str) -> str:
+    content = ""
+    differ = Differ()
+    old = getattr(revision, key) or ""
+    new = getattr(revision.next, key) or ""
+    results = differ.compare([old], [new])
+    # https://docs.python.org/3/library/difflib.html#difflib.Differ
+    mapper: Dict[str, Callable[[Any], Any]] = {
+        "-": lambda x: f"<del>« {do_striptags(x)} »</del> à ",  # type: ignore
+        "+": lambda x: f"<ins>« {do_striptags(x)} »</ins>",  # type: ignore
+        "": lambda x: x,
+        "?": lambda x: x,  # Not sure what to display in that case.
+    }
+    for result in results:
+        code, text = result.split(" ", 1)
+        content += mapper[code](text)
+    return Markup(content)

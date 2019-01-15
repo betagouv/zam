@@ -10,9 +10,7 @@ from zam_repondeur.message import Message
 from zam_repondeur.resources import ArticleCollection, ArticleResource
 
 
-@view_config(
-    context=ArticleCollection, request_method="GET", renderer="articles_list.html"
-)
+@view_config(context=ArticleCollection, renderer="articles_list.html")
 def list_articles(context: ArticleCollection, request: Request) -> Dict[str, Any]:
     return {"lecture": context.lecture_resource.model(), "articles": context.models()}
 
@@ -67,3 +65,8 @@ class ArticleEdit:
         resource = self.context.lecture_resource["articles"]
         location = self.request.resource_url(resource, next_article.url_key)
         return HTTPFound(location=location)
+
+
+@view_config(context=ArticleResource, name="journal", renderer="article_journal.html")
+def article_journal(context: ArticleResource, request: Request) -> Dict[str, Any]:
+    return {"lecture": context.lecture_resource.model(), "article": context.model()}

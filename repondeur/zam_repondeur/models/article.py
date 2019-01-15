@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from itertools import groupby
-from typing import Iterable, List, Optional, Tuple
+from typing import Iterable, List, Optional, Tuple, Union
 
 from sqlalchemy import (
     Column,
@@ -72,6 +72,19 @@ class ArticleUserContentRevision(Base):
     user_content: "ArticleUserContent" = relationship(
         "ArticleUserContent", back_populates="revisions"
     )
+    __repr_keys__ = ("pk", "user_pk", "article_pk", "title", "presentation")
+
+    @property
+    def created_at_timestamp(self) -> float:
+        timestamp: float = (self.created_at - datetime(1970, 1, 1)).total_seconds()
+        return timestamp
+
+    @property
+    def next(self) -> Union["ArticleUserContentRevision", "ArticleUserContent"]:
+        return (
+            DBSession.query(ArticleUserContentRevision).get(self.pk + 1)
+            or self.user_content
+        )
 
 
 class ArticleUserContent(Base):
@@ -112,7 +125,11 @@ class Article(Base):
     user_content = relationship(
         ArticleUserContent, back_populates="article", uselist=False, lazy="joined"
     )
-    revisions = relationship(ArticleUserContentRevision, back_populates="article")
+    revisions = relationship(
+        ArticleUserContentRevision,
+        back_populates="article",
+        order_by=(ArticleUserContentRevision.created_at.desc()),
+    )
 
     @validates("type")
     def validate_type(self, key: str, type: str) -> str:

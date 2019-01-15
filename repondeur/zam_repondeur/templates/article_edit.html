@@ -11,7 +11,7 @@
 {% block secondary_header %}
     <nav class="nav secondary justify-content-between">
         <span class="nav-item">
-            <a class="arrow-left" href="{{ request.resource_url(context.parent.parent, 'amendements') }}">Retourner aux amendements</a>
+            <a class="arrow-left" href="{{ request.resource_url(context.lecture_resource, 'amendements') }}">Retourner aux amendements</a>
         </span>
         <div>
             <h2>{{ article }}</h2>
@@ -20,6 +20,7 @@
             {% endif %}
         </div>
         <span class="nav-item">
+            <a class="arrow-right" href="{{ request.resource_url(context, 'journal') }}">Journal</a>
         </span>
     </nav>
 {% endblock %}
@@ -62,7 +63,7 @@
         </div>
 
         <div class="form-group save-buttons">
-            <a href="{{ request.resource_url(context.parent.parent, 'amendements') }}" class="arrow-left">Retourner aux amendements</a>
+            <a href="{{ request.resource_url(context.lecture_resource, 'amendements') }}" class="arrow-left">Retourner aux amendements</a>
             <input type="submit" name="submit" value="Enregistrer et passer à l’article suivant" class="button enabled primary">
         </div>
 

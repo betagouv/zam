@@ -1,5 +1,6 @@
 from typing import Any
 
+from pyramid.threadlocal import get_current_request
 from sqlalchemy import event
 from sqlalchemy.util import symbol
 
@@ -11,8 +12,8 @@ from ..models import ArticleUserContent, ArticleUserContentRevision, DBSession
 def article_user_content_updated(
     target: ArticleUserContent, value: str, old_value: str, initiator: Any
 ) -> None:
-    current_request = DBSession.registry.scopefunc()
-    user = current_request and current_request.user or None
+    request = get_current_request()
+    user = request.user if request else None
     if value != old_value and old_value != symbol("NEVER_SET"):
         revision = ArticleUserContentRevision(
             user=user,

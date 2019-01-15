@@ -2,7 +2,6 @@ import inspect
 import os
 from typing import Any, Sequence
 
-from pyramid.threadlocal import get_current_request
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
@@ -30,8 +29,7 @@ DBSession = scoped_session(
     sessionmaker(
         expire_on_commit=False,  # allow access to object attributes after commit
         extension=ZopeTransactionExtension(),  # attach to the transaction manager
-    ),
-    scopefunc=get_current_request,
+    )
 )
 metadata = MetaData()
 Base = declarative_base(cls=_Base, metadata=metadata)

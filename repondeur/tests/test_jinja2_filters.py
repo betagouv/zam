@@ -13,28 +13,24 @@ def test_paragriphy(input, output):
 
 
 def test_render_diff(article1_an):
-    from zam_repondeur.models import DBSession, ArticleUserContentRevision
+    from zam_repondeur.models import DBSession
+    from zam_repondeur.events.base import Event
+    from zam_repondeur.events.article import UpdateArticleTitle
 
     with transaction.manager:
-        article1_an.user_content.title = "Foo"
-        DBSession.add(article1_an)
+        UpdateArticleTitle.create(article=article1_an, title="Foo")
 
-    revision = (
-        DBSession.query(ArticleUserContentRevision)
-        .order_by(ArticleUserContentRevision.created_at.desc())
-        .first()
+    event = DBSession.query(Event).order_by(Event.timestamp.desc()).first()
+    assert (
+        render_diff(event.data["old_value"], event.data["new_value"])
+        == "<del>«  »</del> à <ins>« Foo »</ins>"
     )
-    assert render_diff(revision, "title") == "<del>«  »</del> à <ins>« Foo »</ins>"
 
     with transaction.manager:
-        article1_an.user_content.title = "Bar"
-        DBSession.add(article1_an)
+        UpdateArticleTitle.create(article=article1_an, title="Bar")
 
-    revision = (
-        DBSession.query(ArticleUserContentRevision)
-        .order_by(ArticleUserContentRevision.created_at.desc())
-        .first()
+    event = DBSession.query(Event).order_by(Event.timestamp.desc()).first()
+    assert (
+        render_diff(event.data["old_value"], event.data["new_value"])
+        == "<del>« Foo »</del> à <ins>« Bar »</ins>"
     )
-    assert render_diff(revision, "title") == "<del>« Foo »</del> à <ins>« Bar »</ins>"
-
-    assert render_diff(revision, "presentation") == " "

@@ -144,7 +144,7 @@ class Amendement(Base):
     matricule: Optional[str] = Column(Text, nullable=True)
     groupe: Optional[str] = Column(Text, nullable=True)
     date_depot: Optional[date] = Column(Date, nullable=True)
-    sort: Optional[str] = Column(Text, nullable=True)
+    _sort: Optional[str] = Column("sort", Text, nullable=True)
 
     # Ordre et regroupement lors de la discussion.
     position: Optional[int] = Column(Integer, nullable=True)
@@ -339,6 +339,16 @@ class Amendement(Base):
     @reify
     def gouvernemental(self) -> bool:
         return self.auteur == "LE GOUVERNEMENT"
+
+    # @property
+    # def sort(self):
+    #     return self._sort
+
+    # @sort.setter
+    # def sort(self, value):
+    #     if value != self._sort and "irrecevable" in value.lower():
+    #         AmendementIrrecevable.create(amendement=self)
+    #     self._sort = value
 
     @property
     def is_withdrawn(self) -> bool:

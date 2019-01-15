@@ -25,31 +25,19 @@
 {% block body %}
     <div class="container">
         <ul>
-            {% for revision in article.revisions %}
-                {% if revision.title != revision.next.title and revision.next.title %}
-                    <li>
-                        {{ revision.user.name }} a modifié le titre de {{ revision|render_diff("title") }}
-                        <em>
-                            <time xsi:type="xsd:dateTime"
-                                datetime="{{ revision.created_at.isoformat() }}"
-                                data-timestamp="{{ revision.created_at_timestamp }}">
-                                    {{ revision.created_at.strftime("%A %d %B à %I:%M%p") }}
-                            </time>
-                        </em>
-                    </li>
-                {% endif %}
-                {% if revision.presentation != revision.next.presentation and revision.next.presentation %}
-                    <li>
-                        {{ revision.user.name }} a modifié la présentation de {{ revision|render_diff("presentation") }}
-                        <em>
-                            <time xsi:type="xsd:dateTime"
-                                datetime="{{ revision.created_at.isoformat() }}"
-                                data-timestamp="{{ revision.created_at_timestamp }}">
-                                    {{ revision.created_at.strftime("%A %d %B à %I:%M%p") }}
-                            </time>
-                        </em>
-                    </li>
-                {% endif %}
+            {% for event in article.events %}
+                <li>
+                    <abbr title="{{ event.user.email }}">{{ event.user.display_name }}</abbr>
+                    {{ event.action }}
+                    {{ event.data["old_value"]|render_diff(event.data["new_value"]) }}
+                    <em>
+                        <time xsi:type="xsd:dateTime"
+                            datetime="{{ event.created_at.isoformat() }}"
+                            data-timestamp="{{ event.created_at_timestamp }}">
+                                {{ event.created_at.strftime("%A %d %B à %I:%M%p") }}
+                        </time>
+                    </em>
+                </li>
             {% endfor %}
         </ul>
     </div>

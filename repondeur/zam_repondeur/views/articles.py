@@ -6,6 +6,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.clean import clean_html
+from zam_repondeur.events.article import UpdateArticleTitle, UpdateArticlePresentation
 from zam_repondeur.message import Message
 from zam_repondeur.resources import ArticleCollection, ArticleResource
 
@@ -45,26 +46,41 @@ class ArticleEdit:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        self.article.user_content.title = self.request.POST["title"]
-        self.article.user_content.presentation = clean_html(
-            self.request.POST["presentation"]
-        )
-        self.request.session.flash(
-            Message(cls="success", text="Article mis à jour avec succès.")
-        )
-        resource = self.context.lecture_resource["amendements"]
-        location = self.request.resource_url(resource)
+        changed = False
+
+        new_title = self.request.POST["title"]
+        if new_title != self.article.user_content.title:
+            UpdateArticleTitle.create(self.article, new_title)
+            changed = True
+
+        new_presentation = clean_html(self.request.POST["presentation"])
+        if new_presentation != self.article.user_content.presentation:
+            UpdateArticlePresentation.create(self.article, new_presentation)
+            changed = True
+
+        if changed:
+            self.request.session.flash(
+                Message(cls="success", text="Article mis à jour avec succès.")
+            )
+
+        return HTTPFound(location=self.next_url())
+
+    def next_url(self) -> str:
+        amendements = self.context.lecture_resource["amendements"]
+        url_amendements: str = self.request.resource_url(amendements)
+
         next_article = self.article.next_article
         if next_article is None:
-            return HTTPFound(location=location)
+            return url_amendements
         # Skip intersticial articles.
         while next_article.pos:
             next_article = next_article.next_article
             if next_article is None:
-                return HTTPFound(location=location)
-        resource = self.context.lecture_resource["articles"]
-        location = self.request.resource_url(resource, next_article.url_key)
-        return HTTPFound(location=location)
+                return url_amendements
+
+        resource = self.context.lecture_resource["articles"][next_article.url_key]
+        url_next_article: str = self.request.resource_url(resource)
+        return url_next_article
 
 
 @view_config(context=ArticleResource, name="journal", renderer="article_journal.html")

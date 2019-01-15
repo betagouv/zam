@@ -11,6 +11,9 @@ from .journal import Journal  # noqa
 from .lecture import Lecture, CHAMBRES, SESSIONS  # noqa
 from .users import Team, User  # noqa
 
+from ..events.base import Event
+from ..events.article import *  # noqa
+
 
 def get_one_or_create(
     model: Any, create_kwargs: Any = None, **kwargs: Any

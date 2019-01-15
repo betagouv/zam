@@ -7,7 +7,7 @@ pytestmark = pytest.mark.usefixtures("article1_senat")
 
 def test_get_article_edit_form(app, lecture_an, amendements_an):
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+        "/lectures/an.15.269.PO717460/articles/article.1../", user="user@example.com"
     )
 
     assert resp.status_code == 200
@@ -26,13 +26,14 @@ def test_get_article_edit_form_not_found_bad_format(app, lecture_an):
 
 def test_post_article_edit_form_title(app, lecture_an, amendements_an):
 
+    from zam_repondeur.events.article import UpdateArticleTitle
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.title == ""
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+        "/lectures/an.15.269.PO717460/articles/article.1../", user="user@example.com"
     )
     form = resp.forms["edit-article"]
     form["title"] = "Titre article"
@@ -43,11 +44,14 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an):
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.title == "Titre article"
-    assert len(amendement.article.revisions) == 1
-    assert amendement.article.revisions[0].title == ""
-    assert amendement.article.revisions[0].user.email == "user@example.com"
-    assert len(amendement.article.user_content.revisions) == 1
-    assert amendement.article.user_content.revisions[0].title == ""
+
+    assert len(amendement.article.events) == 1
+    event = amendement.article.events[0]
+    assert isinstance(event, UpdateArticleTitle)
+    assert event.timestamp is not None
+    assert event.user.email == "user@example.com"
+    assert event.data["old_value"] == ""
+    assert event.data["new_value"] == "Titre article"
 
 
 def test_post_article_edit_form_title_redirect_next(app, lecture_an, amendements_an):
@@ -63,7 +67,7 @@ def test_post_article_edit_form_title_redirect_next(app, lecture_an, amendements
     assert amendement.article.user_content.title == ""
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+        "/lectures/an.15.269.PO717460/articles/article.1../", user="user@example.com"
     )
     form = resp.forms["edit-article"]
     form["title"] = "Titre article"
@@ -72,7 +76,7 @@ def test_post_article_edit_form_title_redirect_next(app, lecture_an, amendements
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/articles/article.2.."
+        == "https://zam.test/lectures/an.15.269.PO717460/articles/article.2../"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -96,7 +100,7 @@ def test_post_article_edit_form_title_redirect_amendements_if_intersticial_is_la
     assert amendement.article.user_content.title == ""
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+        "/lectures/an.15.269.PO717460/articles/article.1../", user="user@example.com"
     )
     form = resp.forms["edit-article"]
     form["title"] = "Titre article"
@@ -128,7 +132,7 @@ def test_post_article_edit_form_title_redirect_next_with_apres(
     assert amendement.article.user_content.title == ""
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+        "/lectures/an.15.269.PO717460/articles/article.1../", user="user@example.com"
     )
     form = resp.forms["edit-article"]
     form["title"] = "Titre article"
@@ -137,7 +141,7 @@ def test_post_article_edit_form_title_redirect_next_with_apres(
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/articles/article.2.."
+        == "https://zam.test/lectures/an.15.269.PO717460/articles/article.2../"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -167,7 +171,7 @@ def test_post_article_edit_form_title_redirect_next_with_apres_and_avant(
     assert amendement.article.user_content.title == ""
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+        "/lectures/an.15.269.PO717460/articles/article.1../", user="user@example.com"
     )
     form = resp.forms["edit-article"]
     form["title"] = "Titre article"
@@ -176,7 +180,7 @@ def test_post_article_edit_form_title_redirect_next_with_apres_and_avant(
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/articles/article.2.."
+        == "https://zam.test/lectures/an.15.269.PO717460/articles/article.2../"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -185,13 +189,14 @@ def test_post_article_edit_form_title_redirect_next_with_apres_and_avant(
 
 def test_post_article_edit_form_presentation(app, lecture_an, amendements_an):
 
+    from zam_repondeur.events.article import UpdateArticlePresentation
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.presentation == ""
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+        "/lectures/an.15.269.PO717460/articles/article.1../", user="user@example.com"
     )
     form = resp.forms["edit-article"]
     form["presentation"] = "<p>Content</p>"
@@ -202,9 +207,14 @@ def test_post_article_edit_form_presentation(app, lecture_an, amendements_an):
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.presentation == "<p>Content</p>"
-    assert len(amendement.article.revisions) == 1
-    assert amendement.article.revisions[0].presentation == ""
-    assert amendement.article.revisions[0].user.email == "user@example.com"
+
+    assert len(amendement.article.events) == 1
+    event = amendement.article.events[0]
+    assert isinstance(event, UpdateArticlePresentation)
+    assert event.timestamp is not None
+    assert event.user.email == "user@example.com"
+    assert event.data["old_value"] == ""
+    assert event.data["new_value"] == "<p>Content</p>"
 
 
 def test_post_article_edit_form_presentation_cleaned(app, lecture_an, amendements_an):
@@ -215,7 +225,7 @@ def test_post_article_edit_form_presentation_cleaned(app, lecture_an, amendement
     assert amendement.article.user_content.presentation == ""
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1..", user="user@example.com"
+        "/lectures/an.15.269.PO717460/articles/article.1../", user="user@example.com"
     )
     form = resp.forms["edit-article"]
     form["presentation"] = "<h1>Content</h1>"

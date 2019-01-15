@@ -6,7 +6,30 @@
 
 ### Changements récents
 
-#### En cours
+#### 20 décembre 2018
+
+- Amélioration des performances.
+
+#### 18 décembre 2018
+
+- Support de la 2e lecture pour le PLF.
+- Correction de bugs et amélioration de la robustesse.
+
+#### 10 décembre 2018
+
+- Ajout des dossiers législatifs initiés pendant la 14e législature.
+- Ajout de l'export / import d'un fichier de sauvegarde pour une lecture.
+- Amélioration de l'export PDF.
+- Correction de bugs et amélioration de la robustesse.
+
+#### 4 décembre 2018
+
+- Récupération des amendements déposés à l'Assemblée nationale mais non encore soumis à discussion.
+- Récupération de l'ordre de discussion pour le PLF au Sénat.
+- Import du champ « Affectation » depuis le fichier CSV.
+- Correction de bugs et amélioration de la robustesse.
+
+#### 22 novembre 2018
 
 <figure>
     <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2018-11-21-regroupement-identiques.png">

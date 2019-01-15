@@ -14,7 +14,10 @@ def test_user_gets_an_auth_cookie_after_identifying_herself(app):
     resp = app.post("/identification", {"email": "jane.doe@example.com"})
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/bienvenue?source=%2F"
+    assert (
+        resp.location
+        == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
+    )
 
     assert "auth_tkt" in app.cookies  # and now we have the auth cookie
 
@@ -64,7 +67,10 @@ def test_new_user_can_enter_their_name_on_the_welcome_page(app):
 
     resp = app.post("/identification", {"email": "jane.doe@example.com"})
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/bienvenue?source=%2F"
+    assert (
+        resp.location
+        == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
+    )
 
     user = DBSession.query(User).filter_by(email="jane.doe@example.com").first()
     assert user.name is None
@@ -89,18 +95,4 @@ def test_user_with_a_name_skips_the_welcome_page(app, user_david):
 
     resp = app.post("/identification", {"email": "david@example.com"})
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/equipe/rejoindre?source=%2F"
-
-
-def test_user_with_a_team_skips_the_join_page(app, team_zam, user_david):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        user_david.teams.append(team_zam)
-        DBSession.add(user_david)
-
-    assert user_david.name == "David"
-
-    resp = app.post("/identification", {"email": "david@example.com"})
-    assert resp.status_code == 302
-    assert resp.location == "https://zam.test/"
+    assert resp.location == f"https://zam.test/lectures/"

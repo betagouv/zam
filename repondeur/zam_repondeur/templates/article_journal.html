@@ -1,5 +1,36 @@
-{% extends "_base_edit.html" %}
+{% extends "_base.html" %}
 
+{% block header %}
+    <style>
+        .timeline {
+            list-style-type: none;
+        }
+            .timeline li {
+                display: flex;
+            }
+        .icon {
+            border-left: 3px solid #3167a6;
+            margin: 0 1rem;
+        }
+            .icon i.fa {
+                color: #3167a6;
+                border: 2px solid #3167a6;
+                padding: .3rem;
+                border-radius: .3rem;
+                margin: 1.2rem 0 0 -1rem;
+                background: white;
+            }
+        em {
+            padding: 1.5rem 1rem;
+        }
+        details {
+            padding: 1rem .5rem;
+        }
+            details summary {
+                padding: .5rem 0;
+            }
+    </style>
+{% endblock %}
 
 {% block top %}
     <div class="title">
@@ -24,12 +55,9 @@
 
 {% block body %}
     <div class="container">
-        <ul>
+        <ul class="timeline">
             {% for event in article.events %}
                 <li>
-                    <abbr title="{{ event.user.email }}">{{ event.user.display_name }}</abbr>
-                    {{ event.action }}
-                    {{ event.data["old_value"]|render_diff(event.data["new_value"]) }}
                     <em>
                         <time xsi:type="xsd:dateTime"
                             datetime="{{ event.created_at.isoformat() }}"
@@ -37,6 +65,15 @@
                                 {{ event.created_at.strftime("%A %d %B à %I:%M%p") }}
                         </time>
                     </em>
+                    <span class="icon">
+                        {% if event.type.startswith("update") %}
+                            <i class="fa fa-pencil-alt"></i>
+                        {% endif %}
+                    </span>
+                    <details {% if loop.first %}open{% endif %}>
+                        <summary>{{ event.render_summary() }}</summary>
+                        {{ event.render_details() }}
+                    </details>
                 </li>
             {% endfor %}
         </ul>

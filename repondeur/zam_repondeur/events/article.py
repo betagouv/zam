@@ -1,48 +1,43 @@
 from typing import Any
+from string import Template
 
-# from pyramid.threadlocal import get_current_request
+from jinja2 import Markup
+from jinja2.filters import do_striptags
 from sqlalchemy import Column, ForeignKey, Integer
-
-# from sqlalchemy import event
 from sqlalchemy.orm import backref, relationship
-
-# from sqlalchemy.util import symbol
 
 from .base import Event
 from ..models.article import Article
 
-# from ..models import (
-#     # ArticleUserContent,
-#     # ArticleUserContentRevision,
-#     # DBSession
-# )
-
-
-# @event.listens_for(ArticleUserContent.title, "set", active_history=True)
-# @event.listens_for(ArticleUserContent.presentation, "set", active_history=True)
-# def article_user_content_updated(
-#     target: ArticleUserContent, value: str, old_value: str, initiator: Any
-# ) -> None:
-#     request = get_current_request()
-#     user = request.user if request else None
-#     if value != old_value and old_value != symbol("NEVER_SET"):
-#         revision = ArticleUserContentRevision(
-#             user=user,
-#             user_content=target,
-#             article=target.article,
-#             title=target.title,
-#             presentation=target.presentation,
-#         )
-#         DBSession.add(revision)
-
 
 class ArticleEvent(Event):
     article_pk = Column(Integer, ForeignKey("articles.pk"))
-    article = relationship(Article, backref=backref("events", order_by=Event.created_at.desc()))
+    article = relationship(
+        Article, backref=backref("events", order_by=Event.created_at.desc())
+    )
+
+    details_template = Template(
+        "De <del>« $old_value »</del> à <ins>« $new_value »</ins>"
+    )
 
     def __init__(self, article: Article, **kwargs: Any):
         super().__init__(**kwargs)
         self.article = article
+
+    def render_summary(self) -> str:
+        return Markup(
+            self.summary_template.safe_substitute(
+                user=self.user.display_name, email=self.user.email
+            )
+        )
+
+    def render_details(self) -> str:
+        return Markup(
+            self.details_template.safe_substitute(
+                old_value=do_striptags(self.data["old_value"]),
+                new_value=do_striptags(self.data["new_value"]),
+            )
+        )
 
 
 class UpdateArticlePresentation(ArticleEvent):
@@ -52,7 +47,9 @@ class UpdateArticlePresentation(ArticleEvent):
 
     __mapper_args__ = {"polymorphic_identity": "update_article_presentation"}
 
-    action = "a modifié la présentation de"
+    summary_template = Template(
+        "<abbr title='$email'>$user</abbr> a modifié la présentation"
+    )
 
     def __init__(self, article: Article, presentation: str) -> None:
         super().__init__(
@@ -70,7 +67,7 @@ class UpdateArticleTitle(ArticleEvent):
 
     __mapper_args__ = {"polymorphic_identity": "update_article_title"}
 
-    action = "a modifié le titre de"
+    summary_template = Template("<abbr title='$email'>$user</abbr> a modifié le titre")
 
     def __init__(self, article: Article, title: str) -> None:
         super().__init__(article, old_value=article.user_content.title, new_value=title)

@@ -8,9 +8,10 @@ from pyramid.view import view_config, view_defaults
 from sqlalchemy.orm import joinedload
 
 from zam_repondeur.data import get_data
+from zam_repondeur.fetch import get_articles
 from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
 from zam_repondeur.message import Message
-from zam_repondeur.models import DBSession, Lecture as LectureModel
+from zam_repondeur.models import DBSession, Journal, Lecture as LectureModel
 from zam_repondeur.resources import (
     AmendementCollection,
     LectureCollection,
@@ -76,19 +77,23 @@ class LecturesAdd:
             organe=organe,
             dossier_legislatif=dossier.titre,
         )
+        get_articles(lecture_model)
+        Journal.create(
+            lecture=lecture_model,
+            kind="info",
+            message="Récupération des articles effectuée.",
+        )
         # Call to fetch_* tasks below being asynchronous, we need to make
         # sure the lecture_model already exists once and for all in the database
         # for future access. Otherwise, it may create many instances and
         # thus many objects within the database.
         transaction.commit()
         fetch_amendements(lecture_model.pk)
-        fetch_articles(lecture_model.pk)
         self.request.session.flash(
             Message(
                 cls="success",
                 text=(
-                    "Lecture créée avec succès, amendements et articles "
-                    "en cours de récupération."
+                    "Lecture créée avec succès, amendements en cours de récupération."
                 ),
             )
         )

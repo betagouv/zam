@@ -3,6 +3,7 @@ from string import Template
 
 from jinja2 import Markup
 from jinja2.filters import do_striptags
+from pyramid.request import Request
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import backref, relationship
 
@@ -51,9 +52,12 @@ class UpdateArticlePresentation(ArticleEvent):
         "<abbr title='$email'>$user</abbr> a modifié la présentation"
     )
 
-    def __init__(self, article: Article, presentation: str) -> None:
+    def __init__(self, request: Request, article: Article, presentation: str) -> None:
         super().__init__(
-            article, old_value=article.user_content.presentation, new_value=presentation
+            request=request,
+            article=article,
+            old_value=article.user_content.presentation,
+            new_value=presentation,
         )
 
     def apply(self) -> None:
@@ -69,8 +73,13 @@ class UpdateArticleTitle(ArticleEvent):
 
     summary_template = Template("<abbr title='$email'>$user</abbr> a modifié le titre")
 
-    def __init__(self, article: Article, title: str) -> None:
-        super().__init__(article, old_value=article.user_content.title, new_value=title)
+    def __init__(self, request: Request, article: Article, title: str) -> None:
+        super().__init__(
+            request=request,
+            article=article,
+            old_value=article.user_content.title,
+            new_value=title,
+        )
 
     def apply(self) -> None:
         self.article.user_content.title = self.data["new_value"]

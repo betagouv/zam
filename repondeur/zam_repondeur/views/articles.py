@@ -50,12 +50,18 @@ class ArticleEdit:
 
         new_title = self.request.POST["title"]
         if new_title != self.article.user_content.title:
-            UpdateArticleTitle.create(self.article, new_title)
+            UpdateArticleTitle.create(
+                request=self.request, article=self.article, title=new_title
+            )
             changed = True
 
         new_presentation = clean_html(self.request.POST["presentation"])
         if new_presentation != self.article.user_content.presentation:
-            UpdateArticlePresentation.create(self.article, new_presentation)
+            UpdateArticlePresentation.create(
+                request=self.request,
+                article=self.article,
+                presentation=new_presentation,
+            )
             changed = True
 
         if changed:

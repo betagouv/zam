@@ -144,7 +144,7 @@ class Amendement(Base):
     matricule: Optional[str] = Column(Text, nullable=True)
     groupe: Optional[str] = Column(Text, nullable=True)
     date_depot: Optional[date] = Column(Date, nullable=True)
-    _sort: Optional[str] = Column("sort", Text, nullable=True)
+    sort: Optional[str] = Column(Text, nullable=True)
 
     # Ordre et regroupement lors de la discussion.
     position: Optional[int] = Column(Integer, nullable=True)

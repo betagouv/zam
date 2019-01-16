@@ -1,13 +1,12 @@
 from datetime import datetime
+from uuid import uuid4
 from typing import Any
 
 from pyramid.request import Request
 from pyramid.threadlocal import get_current_request
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import relationship
-from sqlalchemy_utils import JSONType
-
-# from sqlalchemy_utils import UUIDType
+from sqlalchemy_utils import JSONType, UUIDType
 
 from ..models.base import Base, DBSession
 from ..models.users import User
@@ -21,25 +20,26 @@ class Event(Base):
     type = Column(String(64), nullable=False)
     __mapper_args__ = {"polymorphic_identity": "event", "polymorphic_on": type}
 
-    pk = Column(Integer, primary_key=True)
-    # pk = Column(UUIDType, primary_key=True)
-
-    created_at = Column(
-        DateTime, nullable=False, default=func.now(), server_default=func.now()
-    )
+    pk = Column(UUIDType, primary_key=True, default=uuid4)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 
     user_pk = Column(Integer, ForeignKey("users.pk"), nullable=True)
     user = relationship(User)
 
     data = Column(JSONType, nullable=True)
+    meta = Column(JSONType, nullable=True)
 
-    def __init__(self, request: Request = None, **kwargs: Any) -> None:
-        request = request or get_current_request()
+    def __init__(self, request: Request, meta: dict = None, **kwargs: Any) -> None:
+        if self.meta is None:
+            self.meta = {}
         if request is not None:
             self.user = request.user
+            self.meta["ip"] = request.remote_addr
         if self.data is None:
             self.data = {}
         self.data.update(kwargs)
+        if meta is not None:
+            self.meta.update(meta)
 
     @property
     def created_at_timestamp(self) -> float:

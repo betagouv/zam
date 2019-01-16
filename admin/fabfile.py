@@ -61,8 +61,8 @@ def http(ctx):
     sudo_put(ctx, "letsencrypt.conf", "/etc/nginx/snippets/letsencrypt.conf")
     sudo_put(ctx, "ssl.conf", "/etc/nginx/snippets/ssl.conf")
     certif = f"/etc/letsencrypt/live/{ctx.host}/fullchain.pem"
-    exists = ctx.run('if [ -f "{}" ]; then echo 1; fi'.format(certif))
-    if exists.stdout:
+    exists = ctx.sudo(f'[ -f "{certif}" ]')
+    if exists.ok:
         with template_local_file(
             "nginx-https.conf.template",
             "nginx-https.conf",

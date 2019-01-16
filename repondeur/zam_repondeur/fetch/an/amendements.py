@@ -469,7 +469,10 @@ def get_parent_raw_num(amendement: OrderedDict) -> str:
 
 
 def get_rectif(amendement: OrderedDict) -> int:
-    return parse_numero_long_with_rect(amendement["numeroLong"])
+    numero_long = get_str_or_none(amendement, "numeroLong")
+    if numero_long is None:
+        return 0
+    return parse_numero_long_with_rect(numero_long)
 
 
 RE_NUM_LONG = re.compile(

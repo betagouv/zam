@@ -583,3 +583,98 @@ def test_rectif(lecture_an):
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 2
+
+
+@responses.activate
+def test_rectif_with_nil(lecture_an):
+    DBSession.add(lecture_an)
+
+    # Initial fetch
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
+            """\
+            <?xml version="1.0" encoding="UTF-8"?>
+            <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
+              legislature="14"  titre="PLFSS 2017"
+               type="projet de loi de financement de la sécurité sociale">
+              <amendements>
+                <amendement  place="Article 3"  numero="177"  sort="Rejeté"
+                    parentNumero=""  auteurLabel="M. DOOR"
+                    auteurLabelFull="M. DOOR Jean-Pierre"
+                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
+                    discussionCommune=""  discussionCommuneAmdtPositon=""
+                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
+                    discussionIdentiqueAmdtPositon="debut"
+                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                <amendement  place="Article 3"  numero="270"  sort="Rejeté"
+                    parentNumero=""  auteurLabel="M. ACCOYER"
+                    auteurLabelFull="M. ACCOYER Bernard"
+                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
+                    discussionCommune=""  discussionCommuneAmdtPositon=""
+                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
+                    discussionIdentiqueAmdtPositon="milieu"
+                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+              </amendements>
+            </amdtsParOrdreDeDiscussion>
+            """
+        ),
+        amendements=(
+            ("177", read_sample_data("an/269/177.xml")),
+            ("270", read_sample_data("an/269/270.xml")),
+        ),
+    ):
+        fetch_and_parse_all(lecture=lecture_an)
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
+    assert amendement.rectif == 0
+
+    # Fetch updates
+    with setup_mock_responses(
+        lecture=lecture_an,
+        liste=dedent(
+            """\
+            <?xml version="1.0" encoding="UTF-8"?>
+            <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
+              legislature="14"  titre="PLFSS 2017"
+               type="projet de loi de financement de la sécurité sociale">
+              <amendements>
+                <amendement  place="Article 4"  numero="177"  sort="Rejeté"
+                    parentNumero=""  auteurLabel="M. DOOR"
+                    auteurLabelFull="M. DOOR Jean-Pierre"
+                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
+                    discussionCommune=""  discussionCommuneAmdtPositon=""
+                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
+                    discussionIdentiqueAmdtPositon="debut"
+                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                <amendement  place="Article 3"  numero="270"  sort="Rejeté"
+                    parentNumero=""  auteurLabel="M. ACCOYER"
+                    auteurLabelFull="M. ACCOYER Bernard"
+                    auteurGroupe="Les Républicains"  alineaLabel="S"  missionLabel=""
+                    discussionCommune=""  discussionCommuneAmdtPositon=""
+                    discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
+                    discussionIdentiqueAmdtPositon="milieu"
+                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+              </amendements>
+            </amdtsParOrdreDeDiscussion>
+            """
+        ),
+        amendements=(
+            (
+                "177",
+                read_sample_data("an/269/177.xml").replace(
+                    "<numeroLong>177</numeroLong>",
+                    (
+                        '<numeroLong xsi:nil="true" '
+                        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>'
+                    ),
+                ),
+            ),
+            ("270", read_sample_data("an/269/270.xml")),
+        ),
+    ):
+        amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+
+    assert errored == []
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
+    assert amendement.rectif == 0

@@ -126,6 +126,8 @@ def _import_backup_from_json_file(
 
         if "title" in item:
             article.user_content.title = item["title"]
+        elif "titre" in item:  # To handle old backups.
+            article.user_content.title = item["titre"]
         if "presentation" in item:
             article.user_content.presentation = item["presentation"]
         counter["articles"] += 1

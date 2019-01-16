@@ -164,6 +164,33 @@ def test_post_form_with_articles(app, lecture_an, article1_an, amendements_an):
     assert amendement.article.user_content.presentation == "Présentation"
 
 
+def test_post_form_with_articles_old(app, lecture_an, article1_an, amendements_an):
+    from zam_repondeur.models import DBSession, Amendement
+
+    form = app.get(
+        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+    ).forms["backup-form"]
+    path = Path(__file__).parent / "sample_data" / "backup_with_articles_old.json"
+    form["backup"] = Upload("file.json", path.read_bytes())
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert (
+        "2 réponse(s) chargée(s) avec succès, 1 article(s) chargé(s) avec succès"
+        in resp.text
+    )
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+    assert amendement.article.user_content.title == "Titre"
+    assert amendement.article.user_content.presentation == "Présentation"
+
+
 def test_post_form_wrong_number(app, lecture_an, amendements_an):
     form = app.get(
         "/lectures/an.15.269.PO717460/amendements", user="user@example.com"

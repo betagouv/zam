@@ -225,6 +225,7 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
                     "divisionRattache": "ARTICLE 1",
                 },
                 "numero": numero_prefixe,
+                "numeroLong": numero_prefixe,
                 "auteur": {
                     "tribunId": "642788",
                     "groupeTribunId": "730964",
@@ -320,6 +321,7 @@ def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, c
                     "divisionRattache": "ARTICLE 1",
                 },
                 "numero": numero_prefixe,
+                "numeroLong": numero_prefixe,
                 # No auteur key.
                 "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
                 "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",

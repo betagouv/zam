@@ -322,6 +322,7 @@ def _create_or_update_amendement(
         auteur = get_auteur(raw_auteur)
 
     attributes = {
+        "rectif": get_rectif(amend),
         "article": article,
         "parent": parent,
         "sort": get_sort(amend),
@@ -465,6 +466,27 @@ def get_sort(amendement: OrderedDict) -> str:
 
 def get_parent_raw_num(amendement: OrderedDict) -> str:
     return get_str_or_none(amendement, "numeroParent") or ""
+
+
+def get_rectif(amendement: OrderedDict) -> int:
+    return parse_numero_long_with_rect(amendement["numeroLong"])
+
+
+RE_NUM_LONG = re.compile(
+    r"""
+    (?P<prefix>[A-Z]*)
+    (?P<num>\d+)
+    (?P<rect>\s\((?:(?P<rect_mult>\d+)\w+\s)?Rect\))?
+    """,
+    re.VERBOSE,
+)
+
+
+def parse_numero_long_with_rect(text: str) -> int:
+    mo = RE_NUM_LONG.match(text)
+    if mo is not None and mo.group("rect"):
+        return int(mo.group("rect_mult") or 1)
+    return 0
 
 
 def get_str_or_none(amendement: OrderedDict, key: str) -> Optional[str]:

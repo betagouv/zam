@@ -622,3 +622,13 @@ def test_parse_division(division, type_, num, mult, pos):
     from zam_repondeur.fetch.an.amendements import parse_division
 
     assert parse_division(division) == (type_, num, mult, pos)
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [("208", 0), ("CD208", 0), ("CD208 (Rect)", 1), ("CD208 (2ème Rect)", 2)],
+)
+def test_parse_numero_long_with_rect(text, expected):
+    from zam_repondeur.fetch.an.amendements import parse_numero_long_with_rect
+
+    assert parse_numero_long_with_rect(text) == expected

@@ -133,10 +133,10 @@ def test_post_form(app):
 
     # We should have a journal entry for articles, and one for amendements
     assert len(lecture.journal) == 2
-    assert lecture.journal[0].kind == "info"
-    assert lecture.journal[0].message == "Récupération des articles effectuée."
-    assert lecture.journal[1].kind == "success"
-    assert lecture.journal[1].message == f"5 nouveaux amendements récupérés."
+    assert lecture.journal[0].kind == "success"
+    assert lecture.journal[0].message == f"5 nouveaux amendements récupérés."
+    assert lecture.journal[1].kind == "info"
+    assert lecture.journal[1].message == "Récupération des articles effectuée."
 
     # We should have articles from the page (1, 2) and from the amendements (3, 8, 9)
     assert {article.num for article in lecture.articles} == {"1", "2", "3", "8", "9"}
@@ -145,6 +145,7 @@ def test_post_form(app):
     assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 135, 192]
 
 
+@responses.activate
 def test_post_form_senat_2019(app):
     from zam_repondeur.models import Lecture
 
@@ -154,6 +155,46 @@ def test_post_form_senat_2019(app):
         num_texte=106,
         partie=None,
         organe="PO78718",
+    )
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/amendements/2018-2019/106/jeu_complet_2018-2019_106.csv",
+        body=(
+            HERE.parent
+            / "fetch"
+            / "sample_data"
+            / "senat"
+            / "jeu_complet_2018-2019_106.csv"
+        ).read_bytes(),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/enseance/2018-2019/106/liste_discussion.json",
+        body=(
+            HERE.parent
+            / "fetch"
+            / "sample_data"
+            / "senat"
+            / "liste_discussion_106.json"
+        ).read_bytes(),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/leg/pjl18-106.html",
+        body=(HERE.parent / "sample_data" / "pjl18-106.html").read_text(
+            "utf-8", "ignore"
+        ),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
+        body=(
+            HERE.parent / "fetch" / "sample_data" / "senat" / "ODSEN_GENERAL.csv"
+        ).read_bytes(),
+        status=200,
     )
 
     # We cannot use form.submit() given the form is dynamic and does not

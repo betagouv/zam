@@ -11,9 +11,9 @@
     .icon i.fa {
         color: #3167a6;
         border: 2px solid #3167a6;
-        padding: .3rem;
-        border-radius: .3rem;
-        margin: 1.2rem 0 0 -1rem;
+        padding: .5rem;
+        border-radius: 2rem;
+        margin: 1.2rem 0 0 -1.25rem;
         background: white;
     }
 em {

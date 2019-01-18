@@ -38,7 +38,11 @@
                         </time>
                     </em>
                     <span class="icon">
-                        {% if event.type.startswith("update") %}
+                        {% if event.type == "update_amendement_avis" %}
+                            <i class="fa fa-certificate"></i>
+                        {% elif event.type == "update_amendement_affectation" %}
+                            <i class="fa fa-users"></i>
+                        {% elif event.type.startswith("update") %}
                             <i class="fa fa-pencil-alt"></i>
                         {% endif %}
                     </span>

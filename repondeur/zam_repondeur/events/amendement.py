@@ -124,19 +124,31 @@ class UpdateAmendementReponse(AmendementEvent):
 class UpdateAmendementAffectation(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "update_amendement_affectation"}
 
-    summary_template = Template(
-        "<abbr title='$email'>$user</abbr> a affecté l’amendement "
-        "de $old_value à $new_value"
-    )
     details_template = Template("")
 
-    def __init__(self, request: Request, amendement: Amendement, avis: str) -> None:
+    @property
+    def summary_template(self) -> str:
+        if self.template_vars["old_value"]:
+            template = (
+                "<abbr title='$email'>$user</abbr> a affecté l’amendement "
+                "de « $old_value » à « $new_value »"
+            )
+        else:
+            template = (
+                "<abbr title='$email'>$user</abbr> a affecté l’amendement "
+                "à « $new_value »"
+            )
+        return Template(template)
+
+    def __init__(
+        self, request: Request, amendement: Amendement, affectation: str
+    ) -> None:
         super().__init__(
             request,
             amendement,
-            old_value=amendement.user_content.avis or "",
-            new_value=avis,
+            old_value=amendement.user_content.affectation or "",
+            new_value=affectation,
         )
 
     def apply(self) -> None:
-        self.amendement.user_content.avis = self.data["new_value"]
+        self.amendement.user_content.affectation = self.data["new_value"]

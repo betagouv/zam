@@ -20,7 +20,7 @@
             <a class="arrow-left" href="{{ request.resource_url(context.parent.parent) }}">Retourner aux lectures</a>
         </span>
         <div>
-            {{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}
+            {{ macros.update_informations(lecture, request.resource_url(context.parent, 'lecture_journal')) }}
         </div>
         <span class="nav-item">
             {% if lecture.displayable %}

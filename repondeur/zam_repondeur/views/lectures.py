@@ -211,3 +211,11 @@ def choices_lectures(request: Request) -> dict:
             {"key": lecture.key, "label": lecture.label} for lecture in dossier.lectures
         ]
     }
+
+
+@view_config(
+    context=LectureResource, name="lecture_journal", renderer="lecture_journal.html"
+)
+def lecture_journal(context: LectureResource, request: Request) -> Response:
+    lecture = context.model()
+    return {"lecture": lecture, "journal": lecture.journal}

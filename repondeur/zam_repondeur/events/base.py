@@ -1,10 +1,9 @@
 from datetime import datetime
 from uuid import uuid4
-from typing import Any
+from typing import Any, Union
 
 from pyramid.request import Request
-from pyramid.threadlocal import get_current_request
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import JSONType, UUIDType
 
@@ -29,7 +28,9 @@ class Event(Base):
     data = Column(JSONType, nullable=True)
     meta = Column(JSONType, nullable=True)
 
-    def __init__(self, request: Request, meta: dict = None, **kwargs: Any) -> None:
+    def __init__(
+        self, request: Request, meta: Union[dict, None] = None, **kwargs: Any
+    ) -> None:
         if self.meta is None:
             self.meta = {}
         if request is not None:

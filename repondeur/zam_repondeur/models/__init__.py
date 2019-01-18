@@ -11,7 +11,7 @@ from .journal import Journal  # noqa
 from .lecture import Lecture, CHAMBRES, SESSIONS  # noqa
 from .users import Team, User  # noqa
 
-from ..events.base import Event
+from ..events.base import Event  # noqa
 from ..events.article import *  # noqa
 
 

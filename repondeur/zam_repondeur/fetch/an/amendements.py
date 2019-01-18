@@ -321,7 +321,7 @@ def _create_or_update_amendement(
         groupe = get_groupe(raw_auteur, amendement.num)
         auteur = get_auteur(raw_auteur)
 
-    # sort = get_sort(amend)
+    sort = get_sort(amend)
     # if sort != amendement.sort and "irrecevable" in sort.lower():
     #     AmendementIrrecevable.create(amendement)
 

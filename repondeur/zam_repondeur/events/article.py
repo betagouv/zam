@@ -35,8 +35,8 @@ class ArticleEvent(Event):
     def render_details(self) -> str:
         return Markup(
             self.details_template.safe_substitute(
-                old_value=do_striptags(self.data["old_value"]),
-                new_value=do_striptags(self.data["new_value"]),
+                old_value=do_striptags(self.data["old_value"]),  # type: ignore
+                new_value=do_striptags(self.data["new_value"]),  # type: ignore
             )
         )
 

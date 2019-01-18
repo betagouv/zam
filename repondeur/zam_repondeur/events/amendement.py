@@ -33,8 +33,8 @@ class AmendementEvent(Event):
         return {
             "user": self.user.display_name,
             "email": self.user.email,
-            "new_value": do_striptags(self.data["new_value"]),
-            "old_value": do_striptags(self.data["old_value"]),
+            "new_value": do_striptags(self.data["new_value"]),  # type: ignore
+            "old_value": do_striptags(self.data["old_value"]),  # type: ignore
         }
 
     def render_summary(self) -> str:
@@ -48,7 +48,7 @@ class AmendementIrrecevable(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "amendement_irrecevable"}
 
     @property
-    def action(self):
+    def summary_template(self) -> str:  # type: ignore
         if self.amendement.lecture.chambre == "an":
             de_qui = "de l’Asssemblée nationale"
         else:
@@ -76,7 +76,7 @@ class UpdateAmendementAvis(AmendementEvent):
         self.amendement.user_content.avis = self.data["new_value"]
 
     @property
-    def summary_template(self) -> str:
+    def summary_template(self) -> Template:  # type: ignore
         if self.template_vars["old_value"]:
             template = (
                 "<abbr title='$email'>$user</abbr> a changé l’avis "
@@ -127,7 +127,7 @@ class UpdateAmendementAffectation(AmendementEvent):
     details_template = Template("")
 
     @property
-    def summary_template(self) -> str:
+    def summary_template(self) -> Template:  # type: ignore
         if self.template_vars["old_value"]:
             template = (
                 "<abbr title='$email'>$user</abbr> a affecté l’amendement "

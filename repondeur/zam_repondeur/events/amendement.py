@@ -60,7 +60,7 @@ class UpdateAmendementAvis(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "update_amendement_avis"}
 
     summary_template = Template(
-        "<abbr title='$email'>$user</abbr> a changé l’avis de $old_value à $new_value"
+        "<abbr title='$email'>$user</abbr> a modifié l’avis de $old_value à $new_value"
     )
     details_template = Template("")
 
@@ -79,7 +79,7 @@ class UpdateAmendementAvis(AmendementEvent):
     def summary_template(self) -> Template:  # type: ignore
         if self.template_vars["old_value"]:
             template = (
-                "<abbr title='$email'>$user</abbr> a changé l’avis "
+                "<abbr title='$email'>$user</abbr> a modifié l’avis "
                 "de « $old_value » à « $new_value »"
             )
         else:
@@ -90,7 +90,7 @@ class UpdateAmendementAvis(AmendementEvent):
 class UpdateAmendementObjet(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "update_amendement_objet"}
 
-    summary_template = Template("<abbr title='$email'>$user</abbr> a changé l’objet")
+    summary_template = Template("<abbr title='$email'>$user</abbr> a modifié l’objet")
 
     def __init__(self, request: Request, amendement: Amendement, objet: str) -> None:
         super().__init__(
@@ -107,7 +107,9 @@ class UpdateAmendementObjet(AmendementEvent):
 class UpdateAmendementReponse(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "update_amendement_reponse"}
 
-    summary_template = Template("<abbr title='$email'>$user</abbr> a changé la réponse")
+    summary_template = Template(
+        "<abbr title='$email'>$user</abbr> a modifié la réponse"
+    )
 
     def __init__(self, request: Request, amendement: Amendement, reponse: str) -> None:
         super().__init__(
@@ -130,12 +132,12 @@ class UpdateAmendementAffectation(AmendementEvent):
     def summary_template(self) -> Template:  # type: ignore
         if self.template_vars["old_value"]:
             template = (
-                "<abbr title='$email'>$user</abbr> a affecté l’amendement "
+                "<abbr title='$email'>$user</abbr> a transféré l’amendement "
                 "de « $old_value » à « $new_value »"
             )
         else:
             template = (
-                "<abbr title='$email'>$user</abbr> a affecté l’amendement "
+                "<abbr title='$email'>$user</abbr> a transféré l’amendement "
                 "à « $new_value »"
             )
         return Template(template)

@@ -70,9 +70,11 @@
                             <i class="fa fa-pencil-alt"></i>
                         {% endif %}
                     </span>
-                    <details {% if loop.first %}open{% endif %}>
+                    <details {% if loop.first or not event.details_template %}open{% endif %}>
                         <summary>{{ event.render_summary() }}</summary>
-                        {{ event.render_details() }}
+                        {% if event.details_template %}
+                            {{ event.render_details() }}
+                        {% endif %}
                     </details>
                 </li>
             {% endfor %}

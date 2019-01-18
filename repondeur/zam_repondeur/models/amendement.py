@@ -79,7 +79,7 @@ class AmendementUserContent(Base):
     amendement_pk: int = Column(Integer, ForeignKey("amendements.pk"))
     amendement: "Amendement" = relationship("Amendement", back_populates="user_content")
 
-    __repr_keys__ = ("pk", "amendement_pk", "avis", "modified_at")
+    __repr_keys__ = ("pk", "amendement_pk", "avis")
 
     @property
     def is_redactionnel(self) -> bool:

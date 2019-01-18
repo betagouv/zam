@@ -18,18 +18,18 @@ def test_render_diff(article1_an):
     from zam_repondeur.events.article import UpdateArticleTitle
 
     with transaction.manager:
-        UpdateArticleTitle.create(article=article1_an, title="Foo")
+        UpdateArticleTitle.create(request=None, article=article1_an, title="Foo")
 
-    event = DBSession.query(Event).order_by(Event.timestamp.desc()).first()
+    event = DBSession.query(Event).order_by(Event.created_at.desc()).first()
     assert (
         render_diff(event.data["old_value"], event.data["new_value"])
         == "<del>«  »</del> à <ins>« Foo »</ins>"
     )
 
     with transaction.manager:
-        UpdateArticleTitle.create(article=article1_an, title="Bar")
+        UpdateArticleTitle.create(request=None, article=article1_an, title="Bar")
 
-    event = DBSession.query(Event).order_by(Event.timestamp.desc()).first()
+    event = DBSession.query(Event).order_by(Event.created_at.desc()).first()
     assert (
         render_diff(event.data["old_value"], event.data["new_value"])
         == "<del>« Foo »</del> à <ins>« Bar »</ins>"

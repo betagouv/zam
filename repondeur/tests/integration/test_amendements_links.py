@@ -49,9 +49,12 @@ def test_column_sorting_changes_edit_url_on_the_fly(
     assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1asc"
     avis_td = driver.find_element_by_css_selector("td:nth-child(5)")
     avis_link = avis_td.find_element_by_css_selector("a")
-    assert avis_link.get_attribute("href") == f"{LECTURE_URL}/amendements/666/reponse"
+    assert (
+        avis_link.get_attribute("href")
+        == f"{LECTURE_URL}/amendements/666/amendement_edit"
+    )
     avis_link.click()
     assert driver.current_url == (
-        f"{LECTURE_URL}/amendements/666/reponse?"
+        f"{LECTURE_URL}/amendements/666/amendement_edit?"
         f"back=%2Flectures%2F{lecture_an.url_key}%2Famendements%3Fsort%3D1asc"
     )

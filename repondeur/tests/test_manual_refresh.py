@@ -15,7 +15,9 @@ def read_sample_data(basename):
 
 
 def test_get_form(app, lecture_an, amendements_an):
-    resp = app.get("/lectures/an.15.269.PO717460/journal/", user="user@example.com")
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/lecture_journal/", user="user@example.com"
+    )
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -65,7 +67,7 @@ def test_post_form(app, lecture_an, article1_an):
 
         # Then we ask for a refresh
         form = app.get(
-            "/lectures/an.15.269.PO717460/journal/", user="user@example.com"
+            "/lectures/an.15.269.PO717460/lecture_journal/", user="user@example.com"
         ).forms["manual-refresh"]
         resp = form.submit()
 

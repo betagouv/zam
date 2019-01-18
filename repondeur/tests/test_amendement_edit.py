@@ -11,7 +11,7 @@ def test_get_reponse_edit_form(app, lecture_an, amendements_an):
         DBSession.add(amdt)
 
     resp = app.get(
-        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/reponse",
+        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
         user="user@example.com",
     )
 
@@ -48,7 +48,8 @@ def test_get_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
         DBSession.add(amendement)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/reponse", user="user@example.com"
+        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
+        user="user@example.com",
     )
 
     assert resp.status_code == 200
@@ -66,7 +67,7 @@ def test_get_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
 
 def test_get_reponse_edit_form_not_found(app, lecture_an, amendements_an):
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/998/reponse",
+        "/lectures/an.15.269.PO717460/amendements/998/amendement_edit",
         user="user@example.com",
         expect_errors=True,
     )
@@ -83,7 +84,8 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
     initial_amendement_modified_at = amendement.modified_at
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/reponse", user="user@example.com"
+        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
+        user="user@example.com",
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
@@ -130,7 +132,8 @@ def test_post_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
     initial_amendement_modified_at = amendement.modified_at
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/reponse", user="user@example.com"
+        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
+        user="user@example.com",
     )
     form = resp.forms["edit-amendement"]
     form["reponse"] = "Une réponse <strong>très</strong> appropriée"
@@ -177,7 +180,8 @@ def test_post_reponse_edit_form_updates_modification_dates_only_if_modified(
 
     # Let's post the response edit form, but with unchanged values
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/reponse", user="user@example.com"
+        "/lectures/an.15.269.PO717460/amendements/666/amendement_edit",
+        user="user@example.com",
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"

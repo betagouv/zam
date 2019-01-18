@@ -48,7 +48,7 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an):
     assert len(amendement.article.events) == 1
     event = amendement.article.events[0]
     assert isinstance(event, UpdateArticleTitle)
-    assert event.timestamp is not None
+    assert event.created_at is not None
     assert event.user.email == "user@example.com"
     assert event.data["old_value"] == ""
     assert event.data["new_value"] == "Titre article"
@@ -211,7 +211,7 @@ def test_post_article_edit_form_presentation(app, lecture_an, amendements_an):
     assert len(amendement.article.events) == 1
     event = amendement.article.events[0]
     assert isinstance(event, UpdateArticlePresentation)
-    assert event.timestamp is not None
+    assert event.created_at is not None
     assert event.user.email == "user@example.com"
     assert event.data["old_value"] == ""
     assert event.data["new_value"] == "<p>Content</p>"

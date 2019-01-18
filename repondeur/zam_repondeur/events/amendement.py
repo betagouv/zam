@@ -3,6 +3,7 @@ from typing import Any
 
 from jinja2 import Markup
 from jinja2.filters import do_striptags
+from pyramid.request import Request
 from sqlalchemy import Column, ForeignKey, Integer
 
 from sqlalchemy.orm import backref, relationship
@@ -22,10 +23,14 @@ class AmendementEvent(Event):
         "De <del>« $old_value »</del> à <ins>« $new_value »</ins>"
     )
 
-    def __init__(self, amendement: Amendement, **kwargs: Any):
-        super().__init__(**kwargs)
+    def __init__(self, request: Request, amendement: Amendement, **kwargs: Any):
+        super().__init__(request, **kwargs)
         self.amendement = amendement
-        self.template_vars = {
+        self.apply()
+
+    @property
+    def template_vars(self) -> dict:
+        return {
             "user": self.user.display_name,
             "email": self.user.email,
             "new_value": do_striptags(self.data["new_value"]),
@@ -59,13 +64,27 @@ class UpdateAmendementAvis(AmendementEvent):
     )
     details_template = Template("")
 
-    def __init__(self, amendement: Amendement, avis: str) -> None:
+    def __init__(self, request: Request, amendement: Amendement, avis: str) -> None:
         super().__init__(
-            amendement, old_value=amendement.user_content.avis, new_value=avis
+            request,
+            amendement,
+            old_value=amendement.user_content.avis or "",
+            new_value=avis,
         )
 
     def apply(self) -> None:
         self.amendement.user_content.avis = self.data["new_value"]
+
+    @property
+    def summary_template(self) -> str:
+        if self.template_vars["old_value"]:
+            template = (
+                "<abbr title='$email'>$user</abbr> a changé l’avis "
+                "de « $old_value » à « $new_value »"
+            )
+        else:
+            template = "<abbr title='$email'>$user</abbr> a mis l’avis à « $new_value »"
+        return Template(template)
 
 
 class UpdateAmendementObjet(AmendementEvent):
@@ -73,9 +92,12 @@ class UpdateAmendementObjet(AmendementEvent):
 
     summary_template = Template("<abbr title='$email'>$user</abbr> a changé l’objet")
 
-    def __init__(self, amendement: Amendement, objet: str) -> None:
+    def __init__(self, request: Request, amendement: Amendement, objet: str) -> None:
         super().__init__(
-            amendement, old_value=amendement.user_content.objet, new_value=objet
+            request,
+            amendement,
+            old_value=amendement.user_content.objet or "",
+            new_value=objet,
         )
 
     def apply(self) -> None:
@@ -87,9 +109,12 @@ class UpdateAmendementReponse(AmendementEvent):
 
     summary_template = Template("<abbr title='$email'>$user</abbr> a changé la réponse")
 
-    def __init__(self, amendement: Amendement, reponse: str) -> None:
+    def __init__(self, request: Request, amendement: Amendement, reponse: str) -> None:
         super().__init__(
-            amendement, old_value=amendement.user_content.reponse, new_value=reponse
+            request,
+            amendement,
+            old_value=amendement.user_content.reponse or "",
+            new_value=reponse,
         )
 
     def apply(self) -> None:
@@ -105,9 +130,12 @@ class UpdateAmendementAffectation(AmendementEvent):
     )
     details_template = Template("")
 
-    def __init__(self, amendement: Amendement, avis: str) -> None:
+    def __init__(self, request: Request, amendement: Amendement, avis: str) -> None:
         super().__init__(
-            amendement, old_value=amendement.user_content.avis, new_value=avis
+            request,
+            amendement,
+            old_value=amendement.user_content.avis or "",
+            new_value=avis,
         )
 
     def apply(self) -> None:

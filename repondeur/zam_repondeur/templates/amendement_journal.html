@@ -14,11 +14,11 @@
 {% block secondary_header %}
     <nav class="nav secondary justify-content-between">
         <span class="nav-item">
-            <a class="arrow-left" href="{{ request.resource_url(context) }}">Retourner à l’article</a>
+            <a class="arrow-left" href="{{ request.resource_url(context, 'amendement_edit') }}">Retourner à l’amendement</a>
         </span>
         <div>
             <h2>Journal des modifications</h2>
-            <div>{{ article }}</div>
+            <div>Amendement {{ amendement }}</div>
         </div>
         <span class="nav-item">
         </span>
@@ -28,7 +28,7 @@
 {% block body %}
     <div class="container">
         <ul class="timeline">
-            {% for event in article.events %}
+            {% for event in amendement.events %}
                 <li>
                     <em>
                         <time xsi:type="xsd:dateTime"
@@ -42,10 +42,11 @@
                             <i class="fa fa-pencil-alt"></i>
                         {% endif %}
                     </span>
-                    <details {% if loop.first or not event.details_template %}open{% endif %}>
+                    {% set event_details = event.render_details() %}
+                    <details {% if loop.first or not event_details %}open{% endif %}>
                         <summary>{{ event.render_summary() }}</summary>
-                        {% if event.details_template %}
-                            {{ event.render_details() }}
+                        {% if event_details %}
+                            {{ event_details }}
                         {% endif %}
                     </details>
                 </li>

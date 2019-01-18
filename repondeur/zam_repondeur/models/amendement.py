@@ -340,16 +340,6 @@ class Amendement(Base):
     def gouvernemental(self) -> bool:
         return self.auteur == "LE GOUVERNEMENT"
 
-    # @property
-    # def sort(self):
-    #     return self._sort
-
-    # @sort.setter
-    # def sort(self, value):
-    #     if value != self._sort and "irrecevable" in value.lower():
-    #         AmendementIrrecevable.create(amendement=self)
-    #     self._sort = value
-
     @property
     def is_withdrawn(self) -> bool:
         if not self.sort:

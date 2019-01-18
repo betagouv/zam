@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any, Dict
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
@@ -67,20 +68,20 @@ class AmendementEdit:
             self.lecture.modified_at = now
 
         if avis_changed:
+            UpdateAmendementAvis(self.request, self.amendement, avis)
             self.amendement.user_content.avis = avis
-            UpdateAmendementAvis.create(self.amendement, avis)
 
         if objet_changed:
+            UpdateAmendementObjet(self.request, self.amendement, objet)
             self.amendement.user_content.objet = objet
-            UpdateAmendementObjet.create(self.amendement, objet)
 
         if reponse_changed:
+            UpdateAmendementReponse(self.request, self.amendement, reponse)
             self.amendement.user_content.reponse = reponse
-            UpdateAmendementReponse.create(self.amendement, reponse)
 
         if affectation_changed:
+            UpdateAmendementAffectation(self.request, self.amendement, affectation)
             self.amendement.user_content.affectation = affectation
-            UpdateAmendementAffectation.create(self.amendement, affectation)
 
         if comments_changed:
             self.amendement.user_content.comments = comments
@@ -102,3 +103,12 @@ class AmendementEdit:
     @property
     def submit_url(self) -> str:
         return add_url_params(self.request.path, back=self.back_url)
+
+
+@view_config(
+    context=AmendementResource,
+    name="amendement_journal",
+    renderer="amendement_journal.html",
+)
+def article_journal(context: AmendementResource, request: Request) -> Dict[str, Any]:
+    return {"lecture": context.lecture_resource.model(), "amendement": context.model()}

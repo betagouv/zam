@@ -94,7 +94,7 @@ nav.secondary {
 .secondary div h2 {
     font-weight: bold;
 }
-.secondary div div {
+.secondary div {
     font-weight: normal;
 }
 .secondary .nav-item:last-child {

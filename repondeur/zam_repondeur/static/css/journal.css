@@ -1,0 +1,28 @@
+.timeline {
+    list-style-type: none;
+}
+    .timeline li {
+        display: flex;
+    }
+.icon {
+    border-left: 3px solid #3167a6;
+    margin: 0 1rem;
+}
+    .icon i.fa {
+        color: #3167a6;
+        border: 2px solid #3167a6;
+        padding: .3rem;
+        border-radius: .3rem;
+        margin: 1.2rem 0 0 -1rem;
+        background: white;
+    }
+em {
+    padding: 1.5rem 1rem;
+    min-width: 10rem;
+}
+details {
+    padding: 1rem .5rem;
+}
+    details summary {
+        padding: .5rem 0;
+    }

@@ -26,7 +26,9 @@ def upgrade():
         sa.Column("data", JSONType(), nullable=True),
         sa.Column("meta", JSONType(), nullable=True),
         sa.Column("article_pk", sa.Integer(), nullable=True),
+        sa.Column("amendement_pk", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(["article_pk"], ["articles.pk"]),
+        sa.ForeignKeyConstraint(["amendement_pk"], ["amendements.pk"]),
         sa.ForeignKeyConstraint(["user_pk"], ["users.pk"]),
         sa.PrimaryKeyConstraint("pk"),
     )

@@ -77,7 +77,7 @@
                 margin-right: 1.5rem;
             }
 
-        #edit-reponse .save-buttons {
+        #edit-amendement .save-buttons {
             position: -webkit-sticky;
             position: sticky;
             bottom: 0;
@@ -116,7 +116,7 @@
                 <em>
                     Identique au{% if identiques_length > 1 %}x{% endif %} nº
                     {% for identique in identiques -%}
-                        <a href="{{ request.resource_url(context.parent[identique.num_str], 'reponse') }}">{{ identique }}</a>
+                        <a href="{{ request.resource_url(context.parent[identique.num_str], 'amendement_edit') }}">{{ identique }}</a>
                         {% if identique.user_content.full_reponse() != amendement.user_content.full_reponse() %}
                             <span title="Cet amendement identique n’a pas une réponse similaire">⚠️</span>
                         {% endif %}
@@ -210,7 +210,7 @@
         {% endif %}
     </h4>
 
-    <form id="edit-reponse" action="{{ submit_url }}" method="POST" class="mt-3">
+    <form id="edit-amendement" action="{{ submit_url }}" method="POST" class="mt-3">
 
         {% if not amendement.gouvernemental %}
         <div class="form-group">
@@ -265,7 +265,7 @@
             // Wait for iframes to be loaded.
             setTimeout(() => {
                 const prefillForm = document.querySelector('form#prefill-reponse')
-                const editReponseForm = document.querySelector('form#edit-reponse')
+                const editReponseForm = document.querySelector('form#edit-amendement')
                 const initialAvis = editReponseForm.querySelector('option:checked')
                     .value
                 const objetWindow = document.querySelector('iframe#objet_ifr')

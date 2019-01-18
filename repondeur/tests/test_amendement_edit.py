@@ -19,8 +19,8 @@ def test_get_reponse_edit_form(app, lecture_an, amendements_an):
     assert resp.content_type == "text/html"
 
     # Check the form
-    assert resp.forms["edit-reponse"].method == "POST"
-    assert list(resp.forms["edit-reponse"].fields.keys()) == [
+    assert resp.forms["edit-amendement"].method == "POST"
+    assert list(resp.forms["edit-amendement"].fields.keys()) == [
         "avis",
         "objet",
         "reponse",
@@ -53,8 +53,8 @@ def test_get_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
-    assert resp.forms["edit-reponse"].method == "POST"
-    assert list(resp.forms["edit-reponse"].fields.keys()) == [
+    assert resp.forms["edit-amendement"].method == "POST"
+    assert list(resp.forms["edit-amendement"].fields.keys()) == [
         "objet",
         "reponse",
         "affectation",
@@ -85,7 +85,7 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/999/reponse", user="user@example.com"
     )
-    form = resp.forms["edit-reponse"]
+    form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
     form["reponse"] = "Une réponse <strong>très</strong> appropriée"
@@ -132,7 +132,7 @@ def test_post_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/999/reponse", user="user@example.com"
     )
-    form = resp.forms["edit-reponse"]
+    form = resp.forms["edit-amendement"]
     form["reponse"] = "Une réponse <strong>très</strong> appropriée"
     form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
     resp = form.submit()
@@ -179,7 +179,7 @@ def test_post_reponse_edit_form_updates_modification_dates_only_if_modified(
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/666/reponse", user="user@example.com"
     )
-    form = resp.forms["edit-reponse"]
+    form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
     form["reponse"] = "Une réponse très appropriée"

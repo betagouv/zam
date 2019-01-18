@@ -19,8 +19,10 @@ from zam_repondeur.events.amendement import (
 )
 
 
-@view_defaults(context=AmendementResource, name="reponse", renderer="reponse_edit.html")
-class ReponseEdit:
+@view_defaults(
+    context=AmendementResource, name="amendement_edit", renderer="amendement_edit.html"
+)
+class AmendementEdit:
     def __init__(self, context: AmendementResource, request: Request) -> None:
         self.context = context
         self.request = request

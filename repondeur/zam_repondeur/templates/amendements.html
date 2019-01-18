@@ -269,7 +269,7 @@
                         {% else %}
                             <span class="avis"></span>
                         {% endif %}
-                        <a class="edit-reponse" href="{{ request.resource_url(context[amendement.num_str], 'reponse') }}">
+                        <a class="edit-amendement" href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}">
                         {% if amendement.is_abandoned_before_seance %}
                             {% if amendement.is_withdrawn %}
                                 Retiré

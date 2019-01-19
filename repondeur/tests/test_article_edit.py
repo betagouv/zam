@@ -25,8 +25,6 @@ def test_get_article_edit_form_not_found_bad_format(app, lecture_an):
 
 
 def test_post_article_edit_form_title(app, lecture_an, amendements_an):
-
-    from zam_repondeur.events.article import UpdateArticleTitle
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -46,16 +44,9 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an):
     assert amendement.article.user_content.title == "Titre article"
 
     assert len(amendement.article.events) == 1
-    event = amendement.article.events[0]
-    assert isinstance(event, UpdateArticleTitle)
-    assert event.created_at is not None
-    assert event.user.email == "user@example.com"
-    assert event.data["old_value"] == ""
-    assert event.data["new_value"] == "Titre article"
 
 
 def test_post_article_edit_form_title_redirect_next(app, lecture_an, amendements_an):
-
     from zam_repondeur.models import Amendement, Article, DBSession
 
     with transaction.manager:
@@ -86,7 +77,6 @@ def test_post_article_edit_form_title_redirect_next(app, lecture_an, amendements
 def test_post_article_edit_form_title_redirect_amendements_if_intersticial_is_last(
     app, lecture_an, amendements_an
 ):
-
     from zam_repondeur.models import Amendement, Article, DBSession
 
     with transaction.manager:
@@ -116,7 +106,6 @@ def test_post_article_edit_form_title_redirect_amendements_if_intersticial_is_la
 def test_post_article_edit_form_title_redirect_next_with_apres(
     app, lecture_an, amendements_an
 ):
-
     from zam_repondeur.models import Amendement, Article, DBSession
 
     with transaction.manager:
@@ -151,7 +140,6 @@ def test_post_article_edit_form_title_redirect_next_with_apres(
 def test_post_article_edit_form_title_redirect_next_with_apres_and_avant(
     app, lecture_an, amendements_an
 ):
-
     from zam_repondeur.models import Amendement, Article, DBSession
 
     with transaction.manager:
@@ -188,8 +176,6 @@ def test_post_article_edit_form_title_redirect_next_with_apres_and_avant(
 
 
 def test_post_article_edit_form_presentation(app, lecture_an, amendements_an):
-
-    from zam_repondeur.events.article import UpdateArticlePresentation
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -209,16 +195,9 @@ def test_post_article_edit_form_presentation(app, lecture_an, amendements_an):
     assert amendement.article.user_content.presentation == "<p>Content</p>"
 
     assert len(amendement.article.events) == 1
-    event = amendement.article.events[0]
-    assert isinstance(event, UpdateArticlePresentation)
-    assert event.created_at is not None
-    assert event.user.email == "user@example.com"
-    assert event.data["old_value"] == ""
-    assert event.data["new_value"] == "<p>Content</p>"
 
 
 def test_post_article_edit_form_presentation_cleaned(app, lecture_an, amendements_an):
-
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()

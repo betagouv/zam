@@ -1,7 +1,7 @@
 import transaction
 
 
-def test_get_reponse_edit_form(app, lecture_an, amendements_an):
+def test_get_amendement_edit_form(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -39,7 +39,7 @@ def test_get_reponse_edit_form(app, lecture_an, amendements_an):
     assert resp.parser.css_first(".corps h5 + *").text() == "Supprimer cet article."
 
 
-def test_get_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
+def test_get_amendement_edit_form_gouvernemental(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
     amendement = amendements_an[1]
@@ -65,7 +65,7 @@ def test_get_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
     assert resp.forms.get("prefill-reponse") is None
 
 
-def test_get_reponse_edit_form_not_found(app, lecture_an, amendements_an):
+def test_get_amendement_edit_form_not_found(app, lecture_an, amendements_an):
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/998/amendement_edit",
         user="user@example.com",
@@ -74,7 +74,7 @@ def test_get_reponse_edit_form_not_found(app, lecture_an, amendements_an):
     assert resp.status_code == 404
 
 
-def test_post_reponse_edit_form(app, lecture_an, amendements_an):
+def test_post_amendement_edit_form(app, lecture_an, amendements_an):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -115,8 +115,11 @@ def test_post_reponse_edit_form(app, lecture_an, amendements_an):
     )
     assert initial_amendement_modified_at < amendement.modified_at
 
+    # Should create events.
+    assert len(amendement.events) == 4
 
-def test_post_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
+
+def test_post_amendement_edit_form_gouvernemental(app, lecture_an, amendements_an):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = amendements_an[1]
@@ -160,7 +163,7 @@ def test_post_reponse_edit_form_gouvernemental(app, lecture_an, amendements_an):
     assert initial_amendement_modified_at < amendement.modified_at
 
 
-def test_post_reponse_edit_form_updates_modification_dates_only_if_modified(
+def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
     app, lecture_an, amendements_an
 ):
     from zam_repondeur.models import Amendement, DBSession, Lecture
@@ -206,3 +209,6 @@ def test_post_reponse_edit_form_updates_modification_dates_only_if_modified(
         .first()
     )
     assert initial_amendement_modified_at == amendement.modified_at
+
+    # And no event should be created.
+    assert len(amendement.events) == 0

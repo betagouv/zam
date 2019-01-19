@@ -25,7 +25,6 @@ BASE_SETTINGS = {
         "paragriphy": f"{FILTERS_PATH}:paragriphy",
         "amendement_matches": f"{FILTERS_PATH}:amendement_matches",
         "filter_out_empty_additionals": f"{FILTERS_PATH}:filter_out_empty_additionals",
-        "render_diff": f"{FILTERS_PATH}:render_diff",
     },
     "jinja2.undefined": "strict",
     "zam.auth_cookie_duration": 7 * 24 * 3600,  # a user stays identified for 7 days

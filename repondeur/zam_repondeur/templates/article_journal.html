@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% import "macros.html" as macros %}
 
 {% block header %}
     <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/journal.css') }}">
@@ -29,26 +30,7 @@
     <div class="container">
         <ul class="timeline">
             {% for event in article.events %}
-                <li>
-                    <em>
-                        <time xsi:type="xsd:dateTime"
-                            datetime="{{ event.created_at.isoformat() }}"
-                            data-timestamp="{{ event.created_at_timestamp }}">
-                                {{ event.created_at.strftime("%A %d %B à %I:%M%p") }}
-                        </time>
-                    </em>
-                    <span class="icon">
-                        {% if event.type.startswith("update") %}
-                            <i class="fa fa-pencil-alt"></i>
-                        {% endif %}
-                    </span>
-                    <details {% if loop.first or not event.details_template %}open{% endif %}>
-                        <summary>{{ event.render_summary() }}</summary>
-                        {% if event.details_template %}
-                            {{ event.render_details() }}
-                        {% endif %}
-                    </details>
-                </li>
+                {{ macros.journal_line(loop.first, event) }}
             {% endfor %}
         </ul>
     </div>

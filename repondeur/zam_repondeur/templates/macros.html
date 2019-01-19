@@ -9,6 +9,29 @@
     </a>
 {% endmacro %}
 
+{% macro journal_line(is_first, event) %}
+    <li>
+        <em>
+            <time xsi:type="xsd:dateTime"
+                datetime="{{ event.created_at.isoformat() }}"
+                data-timestamp="{{ event.created_at_timestamp }}">
+                    {{ event.created_at.strftime("%A %d %B à %I:%M%p") }}
+            </time>
+        </em>
+        <span class="icon">
+            {% if event.type.startswith("update") %}
+                <i class="fa fa-pencil-alt"></i>
+            {% endif %}
+        </span>
+        <details {% if is_first or not event.details_template %}open{% endif %}>
+            <summary>{{ event.render_summary() }}</summary>
+            {% if event.details_template %}
+                {{ event.render_details() }}
+            {% endif %}
+        </details>
+    </li>
+{% endmacro %}
+
 {% macro multiple_amendements_title(amendements) %}
     {% set amendement = amendements[0] %}
     {% set parent = amendement.parent %}

@@ -135,14 +135,7 @@
             <a class="arrow-left" href="{{ back_url }}">Retourner aux amendements</a>
         </span>
         <div>
-            Dernière mise à jour :
-            <a class="underlined" href="{{ request.resource_url(context, 'amendement_journal') }}">
-                <time xsi:type="xsd:dateTime"
-                    datetime="{{ amendement.modified_at.isoformat() }}"
-                    data-timestamp="{{ amendement.modified_at_timestamp }}">
-                        {{ amendement.modified_at.strftime("%A %d %B à %I:%M%p") }}
-                </time>
-            </a>
+            {{ macros.update_informations(amendement, request.resource_url(context, 'amendement_journal')) }}
         </div>
         <span class="nav-item">
             {% if amendement.is_displayable %}

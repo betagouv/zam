@@ -5,7 +5,6 @@ from jinja2 import Markup
 from jinja2.filters import do_striptags
 from pyramid.request import Request
 from sqlalchemy import Column, ForeignKey, Integer
-
 from sqlalchemy.orm import backref, relationship
 
 from .base import Event
@@ -26,7 +25,6 @@ class AmendementEvent(Event):
     def __init__(self, request: Request, amendement: Amendement, **kwargs: Any):
         super().__init__(request, **kwargs)
         self.amendement = amendement
-        self.apply()
 
     @property
     def template_vars(self) -> dict:
@@ -59,17 +57,17 @@ class AmendementIrrecevable(AmendementEvent):
 class UpdateAmendementAvis(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "update_amendement_avis"}
 
-    summary_template = Template(
-        "<abbr title='$email'>$user</abbr> a modifié l’avis de $old_value à $new_value"
-    )
     details_template = Template("")
 
-    def __init__(self, request: Request, amendement: Amendement, avis: str) -> None:
+    def __init__(
+        self, request: Request, amendement: Amendement, avis: str, **kwargs: Any
+    ) -> None:
         super().__init__(
             request,
             amendement,
             old_value=amendement.user_content.avis or "",
             new_value=avis,
+            **kwargs,
         )
 
     def apply(self) -> None:
@@ -92,12 +90,15 @@ class UpdateAmendementObjet(AmendementEvent):
 
     summary_template = Template("<abbr title='$email'>$user</abbr> a modifié l’objet")
 
-    def __init__(self, request: Request, amendement: Amendement, objet: str) -> None:
+    def __init__(
+        self, request: Request, amendement: Amendement, objet: str, **kwargs: Any
+    ) -> None:
         super().__init__(
             request,
             amendement,
             old_value=amendement.user_content.objet or "",
             new_value=objet,
+            **kwargs,
         )
 
     def apply(self) -> None:
@@ -111,12 +112,15 @@ class UpdateAmendementReponse(AmendementEvent):
         "<abbr title='$email'>$user</abbr> a modifié la réponse"
     )
 
-    def __init__(self, request: Request, amendement: Amendement, reponse: str) -> None:
+    def __init__(
+        self, request: Request, amendement: Amendement, reponse: str, **kwargs: Any
+    ) -> None:
         super().__init__(
             request,
             amendement,
             old_value=amendement.user_content.reponse or "",
             new_value=reponse,
+            **kwargs,
         )
 
     def apply(self) -> None:
@@ -143,13 +147,14 @@ class UpdateAmendementAffectation(AmendementEvent):
         return Template(template)
 
     def __init__(
-        self, request: Request, amendement: Amendement, affectation: str
+        self, request: Request, amendement: Amendement, affectation: str, **kwargs: Any
     ) -> None:
         super().__init__(
             request,
             amendement,
             old_value=amendement.user_content.affectation or "",
             new_value=affectation,
+            **kwargs,
         )
 
     def apply(self) -> None:

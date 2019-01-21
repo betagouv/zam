@@ -36,6 +36,8 @@ class Event(Base):
         if request is not None:
             self.user = request.user
             self.meta["ip"] = request.remote_addr
+        elif "user" in kwargs:
+            self.user = kwargs.pop("user")
         if self.data is None:
             self.data = {}
         self.data.update(kwargs)

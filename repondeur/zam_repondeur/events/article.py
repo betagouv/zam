@@ -41,45 +41,43 @@ class ArticleEvent(Event):
         )
 
 
-class UpdateArticlePresentation(ArticleEvent):
-    """
-    A user updated an article's presentation
-    """
+class UpdateArticleTitle(ArticleEvent):
+    __mapper_args__ = {"polymorphic_identity": "update_article_title"}
 
+    summary_template = Template("<abbr title='$email'>$user</abbr> a modifié le titre")
+
+    def __init__(
+        self, request: Request, article: Article, title: str, **kwargs: Any
+    ) -> None:
+        super().__init__(
+            request=request,
+            article=article,
+            old_value=article.user_content.title,
+            new_value=title,
+            **kwargs
+        )
+
+    def apply(self) -> None:
+        self.article.user_content.title = self.data["new_value"]
+
+
+class UpdateArticlePresentation(ArticleEvent):
     __mapper_args__ = {"polymorphic_identity": "update_article_presentation"}
 
     summary_template = Template(
         "<abbr title='$email'>$user</abbr> a modifié la présentation"
     )
 
-    def __init__(self, request: Request, article: Article, presentation: str) -> None:
+    def __init__(
+        self, request: Request, article: Article, presentation: str, **kwargs: Any
+    ) -> None:
         super().__init__(
             request=request,
             article=article,
             old_value=article.user_content.presentation,
             new_value=presentation,
+            **kwargs
         )
 
     def apply(self) -> None:
         self.article.user_content.presentation = self.data["new_value"]
-
-
-class UpdateArticleTitle(ArticleEvent):
-    """
-    A user updated an article's title
-    """
-
-    __mapper_args__ = {"polymorphic_identity": "update_article_title"}
-
-    summary_template = Template("<abbr title='$email'>$user</abbr> a modifié le titre")
-
-    def __init__(self, request: Request, article: Article, title: str) -> None:
-        super().__init__(
-            request=request,
-            article=article,
-            old_value=article.user_content.title,
-            new_value=title,
-        )
-
-    def apply(self) -> None:
-        self.article.user_content.title = self.data["new_value"]

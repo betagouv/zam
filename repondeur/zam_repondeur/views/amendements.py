@@ -68,19 +68,21 @@ class AmendementEdit:
             self.lecture.modified_at = now
 
         if avis_changed:
-            UpdateAmendementAvis(self.request, self.amendement, avis)
+            UpdateAmendementAvis.create(self.request, self.amendement, avis)
             self.amendement.user_content.avis = avis
 
         if objet_changed:
-            UpdateAmendementObjet(self.request, self.amendement, objet)
+            UpdateAmendementObjet.create(self.request, self.amendement, objet)
             self.amendement.user_content.objet = objet
 
         if reponse_changed:
-            UpdateAmendementReponse(self.request, self.amendement, reponse)
+            UpdateAmendementReponse.create(self.request, self.amendement, reponse)
             self.amendement.user_content.reponse = reponse
 
         if affectation_changed:
-            UpdateAmendementAffectation(self.request, self.amendement, affectation)
+            UpdateAmendementAffectation.create(
+                self.request, self.amendement, affectation
+            )
             self.amendement.user_content.affectation = affectation
 
         if comments_changed:

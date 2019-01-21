@@ -44,6 +44,10 @@ class TestGetArticlesAN:
     def test_new_articles_are_created(self, app, lecture_an, amendements_an):
         from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession
+        from zam_repondeur.models.events.article import (
+            ContenuArticleModifie,
+            TitreArticleModifie,
+        )
 
         responses.add(
             responses.GET,
@@ -65,6 +69,25 @@ class TestGetArticlesAN:
 
         # We now also have article 2 after scraping the web page
         assert {article.num for article in lecture_an.articles} == {"1", "2"}
+
+        # Events should be created
+        assert len(lecture_an.articles[0].events) == 2
+        assert isinstance(lecture_an.articles[0].events[0], TitreArticleModifie)
+        assert lecture_an.articles[0].events[0].created_at is not None
+        assert lecture_an.articles[0].events[0].user is None
+        assert lecture_an.articles[0].events[0].data["old_value"] == ""
+        assert (
+            lecture_an.articles[0].events[0].data["new_value"]
+            == "Dispositions relatives l'exercice 2016"
+        )
+        assert isinstance(lecture_an.articles[0].events[1], ContenuArticleModifie)
+        assert lecture_an.articles[0].events[1].created_at is not None
+        assert lecture_an.articles[0].events[1].user is None
+        assert lecture_an.articles[0].events[1].data["old_value"] == {}
+        assert (
+            lecture_an.articles[0].events[1].data["new_value"]["001"]
+            == "Au titre de l'exercice 2016, sont approuvs :"
+        )
 
     @responses.activate
     def test_article_ranges(self, app, lecture_an):
@@ -325,6 +348,10 @@ class TestGetArticlesSenat:
     ):
         from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession, Amendement, Article
+        from zam_repondeur.models.events.article import (
+            ContenuArticleModifie,
+            TitreArticleModifie,
+        )
 
         responses.add(
             responses.GET,
@@ -348,6 +375,25 @@ class TestGetArticlesSenat:
         article = DBSession.query(Article).filter_by(pk=article1_an.pk).one()
         assert article is not amendement.article
         assert article.content == {}
+
+        # Events should be created
+        assert len(amendement.article.events) == 2
+        assert isinstance(amendement.article.events[0], TitreArticleModifie)
+        assert amendement.article.events[0].created_at is not None
+        assert amendement.article.events[0].user is None
+        assert amendement.article.events[0].data["old_value"] == ""
+        assert (
+            amendement.article.events[0].data["new_value"]
+            == "Dispositions relatives à l'exercice 2016"
+        )
+        assert isinstance(amendement.article.events[1], ContenuArticleModifie)
+        assert amendement.article.events[1].created_at is not None
+        assert amendement.article.events[1].user is None
+        assert amendement.article.events[1].data["old_value"] == {}
+        assert (
+            amendement.article.events[1].data["new_value"]["001"]
+            == "Au titre de l'exercice 2016, sont approuvés :"
+        )
 
     @responses.activate
     def test_get_articles_senat_with_mult(self, app, lecture_senat, amendements_senat):

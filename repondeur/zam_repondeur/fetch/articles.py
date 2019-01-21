@@ -8,6 +8,10 @@ from tlfp.tools.parse_texte import parse
 
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.models import Article, Lecture, get_one_or_create
+from zam_repondeur.models.events.article import (
+    ContenuArticleModifie,
+    TitreArticleModifie,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -148,7 +152,7 @@ def iterate_over_mults(start: str, end: str) -> List[str]:
 def update_article_contents(article: Article, article_data: dict) -> bool:
     content = article_data.get("alineas")
     if content is not None and content != article.content:
-        article.content = content
+        ContenuArticleModifie.create(request=None, article=article, content=content)
         return True
     return False
 
@@ -165,7 +169,9 @@ def set_default_article_title(
         else:
             default_title = get_default_title(article_data)
         if default_title:
-            article.user_content.title = default_title
+            TitreArticleModifie.create(
+                request=None, article=article, title=default_title
+            )
             return True
     return False
 

@@ -1,10 +1,16 @@
-from typing import List, NamedTuple
+from typing import Any, List, NamedTuple
 
 from zam_repondeur.models import Amendement, Lecture
 
 
 class Source:
-    pass
+    def update_attributes(self, amendement: Amendement, **values: Any) -> bool:
+        modified = False
+        for name, value in values.items():
+            if getattr(amendement, name) != value:
+                setattr(amendement, name, value)
+                modified = True
+        return modified
 
 
 class FetchResult(NamedTuple):

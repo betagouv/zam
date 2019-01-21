@@ -66,7 +66,7 @@ class Senat(RemoteSource):
 
     def parse_from_csv(self, row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
         subdiv = _parse_subdiv(row["Subdivision "])
-        article, created = get_one_or_create(
+        article, _ = get_one_or_create(
             Article,
             lecture=lecture,
             type=subdiv.type_,
@@ -78,16 +78,20 @@ class Senat(RemoteSource):
         amendement, created = get_one_or_create(
             Amendement, create_kwargs={"article": article}, lecture=lecture, num=num
         )
-        if not created:
-            amendement.article = article
-        amendement.rectif = rectif
-        amendement.alinea = row["Alinéa"].strip()
-        amendement.auteur = row["Auteur "]
-        amendement.matricule = extract_matricule(row["Fiche Sénateur"])
-        amendement.date_depot = parse_date(row["Date de dépôt "])
-        amendement.sort = row["Sort "]
-        amendement.corps = clean_html(row["Dispositif "])
-        amendement.expose = clean_html(row["Objet "])
+
+        self.update_attributes(
+            amendement,
+            article=article,
+            rectif=rectif,
+            alinea=row["Alinéa"].strip(),
+            auteur=row["Auteur "],
+            matricule=extract_matricule(row["Fiche Sénateur"]),
+            date_depot=parse_date(row["Date de dépôt "]),
+            sort=row["Sort "],
+            corps=clean_html(row["Dispositif "]),
+            expose=clean_html(row["Objet "]),
+        )
+
         return amendement, created
 
     def _process_amendements(
@@ -127,23 +131,28 @@ class Senat(RemoteSource):
         discussion_details_by_num = {
             details.num: details for details in discussion_details
         }
-        for amend in amendements:
-            self._enrich_one(amend, discussion_details_by_num.get(amend.num))
+        for amendement in amendements:
+            self._enrich_one(amendement, discussion_details_by_num.get(amendement.num))
 
     def _enrich_one(
-        self, amend: Amendement, discussion_details: Optional[DiscussionDetails]
+        self, amendement: Amendement, discussion_details: Optional[DiscussionDetails]
     ) -> None:
         if discussion_details is None:
             return
-        amend.position = discussion_details.position
-        amend.id_discussion_commune = discussion_details.id_discussion_commune
-        amend.id_identique = discussion_details.id_identique
+        parent: Optional[Amendement]
         if discussion_details.parent_num is not None:
-            amend.parent = Amendement.get(
-                lecture=amend.lecture, num=discussion_details.parent_num
+            parent = Amendement.get(
+                lecture=amendement.lecture, num=discussion_details.parent_num
             )
         else:
-            amend.parent = None
+            parent = None
+        self.update_attributes(
+            amendement,
+            position=discussion_details.position,
+            id_discussion_commune=discussion_details.id_discussion_commune,
+            id_identique=discussion_details.id_identique,
+            parent=parent,
+        )
 
     def _enrich_groupe_parlementaire(
         self,

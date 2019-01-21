@@ -197,26 +197,21 @@ class AssembleeNationale(RemoteSource):
             groupe = get_groupe(raw_auteur, amendement.num)
             auteur = get_auteur(raw_auteur)
 
-        attributes = {
-            "rectif": get_rectif(amend),
-            "article": article,
-            "parent": parent,
-            "sort": get_sort(amend),
-            "position": position,
-            "id_discussion_commune": id_discussion_commune,
-            "id_identique": id_identique,
-            "matricule": matricule,
-            "groupe": groupe,
-            "auteur": auteur,
-            "corps": unjustify(get_str_or_none(amend, "dispositif") or ""),
-            "expose": unjustify(get_str_or_none(amend, "exposeSommaire") or ""),
-        }
-
-        modified = False
-        for name, value in attributes.items():
-            if getattr(amendement, name) != value:
-                setattr(amendement, name, value)
-                modified = True
+        modified = self.update_attributes(
+            amendement,
+            rectif=get_rectif(amend),
+            article=article,
+            parent=parent,
+            sort=get_sort(amend),
+            position=position,
+            id_discussion_commune=id_discussion_commune,
+            id_identique=id_identique,
+            matricule=matricule,
+            groupe=groupe,
+            auteur=auteur,
+            corps=unjustify(get_str_or_none(amend, "dispositif") or ""),
+            expose=unjustify(get_str_or_none(amend, "exposeSommaire") or ""),
+        )
 
         if not created and modified:
             amendement.modified_at = datetime.utcnow()

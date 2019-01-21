@@ -336,7 +336,6 @@ def test_fetch_all_buggy_csv(lecture_senat):
 
 @responses.activate
 def test_fetch_all_commission(lecture_senat):
-    from zam_repondeur.models import DBSession
     from zam_repondeur.fetch.senat.amendements import _fetch_all
 
     with transaction.manager:
@@ -401,7 +400,6 @@ def test_fetch_all_not_found(lecture_senat):
 @responses.activate
 def test_fetch_discussion_details(lecture_senat):
     from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details
-    from zam_repondeur.models import DBSession
 
     with transaction.manager:
         lecture_senat.session = "2016-2017"

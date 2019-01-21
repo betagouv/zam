@@ -16,10 +16,10 @@ def first_summary_text(resp):
 
 
 def test_amendement_journal_avis(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.events.amendement import UpdateAmendementAvis
+    from zam_repondeur.events.amendement import AvisModifie
 
     with transaction.manager:
-        UpdateAmendementAvis.create(
+        AvisModifie.create(
             request=None,
             amendement=amendements_an[0],
             avis="Favorable",
@@ -39,16 +39,16 @@ def test_amendement_journal_avis(app, lecture_an, amendements_an, user_david):
 def test_amendement_journal_avis_with_existing_avis(
     app, lecture_an, amendements_an, user_david
 ):
-    from zam_repondeur.events.amendement import UpdateAmendementAvis
+    from zam_repondeur.events.amendement import AvisModifie
 
     with transaction.manager:
-        UpdateAmendementAvis.create(
+        AvisModifie.create(
             request=None,
             amendement=amendements_an[0],
             avis="Favorable",
             user=user_david,
         )
-        UpdateAmendementAvis.create(
+        AvisModifie.create(
             request=None,
             amendement=amendements_an[0],
             avis="Défavorable",
@@ -69,10 +69,10 @@ def test_amendement_journal_avis_with_existing_avis(
 
 
 def test_amendement_journal_objet(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.events.amendement import UpdateAmendementObjet
+    from zam_repondeur.events.amendement import ObjetAmendementModifie
 
     with transaction.manager:
-        UpdateAmendementObjet.create(
+        ObjetAmendementModifie.create(
             request=None, amendement=amendements_an[0], objet="Objet", user=user_david
         )
         assert len(amendements_an[0].events) == 1
@@ -88,10 +88,10 @@ def test_amendement_journal_objet(app, lecture_an, amendements_an, user_david):
 
 
 def test_amendement_journal_reponse(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.events.amendement import UpdateAmendementReponse
+    from zam_repondeur.events.amendement import ReponseModifiee
 
     with transaction.manager:
-        UpdateAmendementReponse.create(
+        ReponseModifiee.create(
             request=None,
             amendement=amendements_an[0],
             reponse="Réponse",
@@ -110,10 +110,10 @@ def test_amendement_journal_reponse(app, lecture_an, amendements_an, user_david)
 
 
 def test_amendement_journal_affectation(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.events.amendement import UpdateAmendementAffectation
+    from zam_repondeur.events.amendement import AmendementTransfere
 
     with transaction.manager:
-        UpdateAmendementAffectation.create(
+        AmendementTransfere.create(
             request=None,
             amendement=amendements_an[0],
             affectation="5C",
@@ -133,16 +133,16 @@ def test_amendement_journal_affectation(app, lecture_an, amendements_an, user_da
 def test_amendement_journal_affectation_with_existing_affectation(
     app, lecture_an, amendements_an, user_david
 ):
-    from zam_repondeur.events.amendement import UpdateAmendementAffectation
+    from zam_repondeur.events.amendement import AmendementTransfere
 
     with transaction.manager:
-        UpdateAmendementAffectation.create(
+        AmendementTransfere.create(
             request=None,
             amendement=amendements_an[0],
             affectation="5C",
             user=user_david,
         )
-        UpdateAmendementAffectation.create(
+        AmendementTransfere.create(
             request=None,
             amendement=amendements_an[0],
             affectation="5C SD",

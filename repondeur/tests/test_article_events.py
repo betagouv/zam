@@ -1,5 +1,5 @@
 def test_post_article_edit_form_title(app, lecture_an, amendements_an):
-    from zam_repondeur.events.article import UpdateArticleTitle
+    from zam_repondeur.events.article import TitreArticleModifie
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -15,7 +15,7 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an):
 
     assert len(amendement.article.events) == 1
     event = amendement.article.events[0]
-    assert isinstance(event, UpdateArticleTitle)
+    assert isinstance(event, TitreArticleModifie)
     assert event.created_at is not None
     assert event.user.email == "user@example.com"
     assert event.data["old_value"] == ""
@@ -28,7 +28,7 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an):
 
 
 def test_post_article_edit_form_presentation(app, lecture_an, amendements_an):
-    from zam_repondeur.events.article import UpdateArticlePresentation
+    from zam_repondeur.events.article import PresentationArticleModifiee
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -44,7 +44,7 @@ def test_post_article_edit_form_presentation(app, lecture_an, amendements_an):
 
     assert len(amendement.article.events) == 1
     event = amendement.article.events[0]
-    assert isinstance(event, UpdateArticlePresentation)
+    assert isinstance(event, PresentationArticleModifiee)
     assert event.created_at is not None
     assert event.user.email == "user@example.com"
     assert event.data["old_value"] == ""

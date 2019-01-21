@@ -6,7 +6,10 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.clean import clean_html
-from zam_repondeur.events.article import UpdateArticleTitle, UpdateArticlePresentation
+from zam_repondeur.events.article import (
+    TitreArticleModifie,
+    PresentationArticleModifiee,
+)
 from zam_repondeur.message import Message
 from zam_repondeur.resources import ArticleCollection, ArticleResource
 
@@ -50,14 +53,14 @@ class ArticleEdit:
 
         new_title = self.request.POST["title"]
         if new_title != self.article.user_content.title:
-            UpdateArticleTitle.create(
+            TitreArticleModifie.create(
                 request=self.request, article=self.article, title=new_title
             )
             changed = True
 
         new_presentation = clean_html(self.request.POST["presentation"])
         if new_presentation != self.article.user_content.presentation:
-            UpdateArticlePresentation.create(
+            PresentationArticleModifiee.create(
                 request=self.request,
                 article=self.article,
                 presentation=new_presentation,

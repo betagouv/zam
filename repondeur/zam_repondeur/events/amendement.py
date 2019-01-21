@@ -54,8 +54,8 @@ class AmendementIrrecevable(AmendementEvent):
         return f"L’amendement a été déclaré irrecevable par les services {de_qui}"
 
 
-class UpdateAmendementAvis(AmendementEvent):
-    __mapper_args__ = {"polymorphic_identity": "update_amendement_avis"}
+class AvisModifie(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "avis_modifie"}
 
     details_template = Template("")
 
@@ -85,8 +85,8 @@ class UpdateAmendementAvis(AmendementEvent):
         return Template(template)
 
 
-class UpdateAmendementObjet(AmendementEvent):
-    __mapper_args__ = {"polymorphic_identity": "update_amendement_objet"}
+class ObjetAmendementModifie(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "objet_modifie"}
 
     summary_template = Template("<abbr title='$email'>$user</abbr> a modifié l’objet")
 
@@ -105,8 +105,8 @@ class UpdateAmendementObjet(AmendementEvent):
         self.amendement.user_content.objet = self.data["new_value"]
 
 
-class UpdateAmendementReponse(AmendementEvent):
-    __mapper_args__ = {"polymorphic_identity": "update_amendement_reponse"}
+class ReponseModifiee(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "reponse_modifiee"}
 
     summary_template = Template(
         "<abbr title='$email'>$user</abbr> a modifié la réponse"
@@ -127,8 +127,8 @@ class UpdateAmendementReponse(AmendementEvent):
         self.amendement.user_content.reponse = self.data["new_value"]
 
 
-class UpdateAmendementAffectation(AmendementEvent):
-    __mapper_args__ = {"polymorphic_identity": "update_amendement_affectation"}
+class AmendementTransfere(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "amendement_transfere"}
 
     details_template = Template("")
 

@@ -13,10 +13,10 @@ from zam_repondeur.models import AVIS
 from zam_repondeur.resources import AmendementResource
 from zam_repondeur.utils import add_url_fragment, add_url_params
 from zam_repondeur.events.amendement import (
-    UpdateAmendementAvis,
-    UpdateAmendementObjet,
-    UpdateAmendementReponse,
-    UpdateAmendementAffectation,
+    AmendementTransfere,
+    AvisModifie,
+    ObjetAmendementModifie,
+    ReponseModifiee,
 )
 
 
@@ -68,21 +68,19 @@ class AmendementEdit:
             self.lecture.modified_at = now
 
         if avis_changed:
-            UpdateAmendementAvis.create(self.request, self.amendement, avis)
+            AvisModifie.create(self.request, self.amendement, avis)
             self.amendement.user_content.avis = avis
 
         if objet_changed:
-            UpdateAmendementObjet.create(self.request, self.amendement, objet)
+            ObjetAmendementModifie.create(self.request, self.amendement, objet)
             self.amendement.user_content.objet = objet
 
         if reponse_changed:
-            UpdateAmendementReponse.create(self.request, self.amendement, reponse)
+            ReponseModifiee.create(self.request, self.amendement, reponse)
             self.amendement.user_content.reponse = reponse
 
         if affectation_changed:
-            UpdateAmendementAffectation.create(
-                self.request, self.amendement, affectation
-            )
+            AmendementTransfere.create(self.request, self.amendement, affectation)
             self.amendement.user_content.affectation = affectation
 
         if comments_changed:

@@ -41,8 +41,8 @@ class ArticleEvent(Event):
         )
 
 
-class UpdateArticleTitle(ArticleEvent):
-    __mapper_args__ = {"polymorphic_identity": "update_article_title"}
+class TitreArticleModifie(ArticleEvent):
+    __mapper_args__ = {"polymorphic_identity": "titre_article_modifie"}
 
     summary_template = Template("<abbr title='$email'>$user</abbr> a modifié le titre")
 
@@ -61,8 +61,8 @@ class UpdateArticleTitle(ArticleEvent):
         self.article.user_content.title = self.data["new_value"]
 
 
-class UpdateArticlePresentation(ArticleEvent):
-    __mapper_args__ = {"polymorphic_identity": "update_article_presentation"}
+class PresentationArticleModifiee(ArticleEvent):
+    __mapper_args__ = {"polymorphic_identity": "presentation_article_modifiee"}
 
     summary_template = Template(
         "<abbr title='$email'>$user</abbr> a modifié la présentation"

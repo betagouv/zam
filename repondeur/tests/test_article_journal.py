@@ -16,10 +16,10 @@ def first_summary_text(resp):
 
 
 def test_article_journal_title(app, lecture_an, article1_an, user_david):
-    from zam_repondeur.events.article import UpdateArticleTitle
+    from zam_repondeur.events.article import TitreArticleModifie
 
     with transaction.manager:
-        UpdateArticleTitle.create(
+        TitreArticleModifie.create(
             request=None, article=article1_an, title="Title", user=user_david
         )
         assert len(article1_an.events) == 1
@@ -35,10 +35,10 @@ def test_article_journal_title(app, lecture_an, article1_an, user_david):
 
 
 def test_article_journal_presentation(app, lecture_an, article1_an, user_david):
-    from zam_repondeur.events.article import UpdateArticlePresentation
+    from zam_repondeur.events.article import PresentationArticleModifiee
 
     with transaction.manager:
-        UpdateArticlePresentation.create(
+        PresentationArticleModifiee.create(
             request=None,
             article=article1_an,
             presentation="Présentation",

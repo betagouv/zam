@@ -18,7 +18,7 @@ def read_sample_data(basename):
 
 @responses.activate
 def test_aspire_senat(app, lecture_senat):
-    from zam_repondeur.fetch.senat.amendements import aspire_senat
+    from zam_repondeur.fetch.senat.amendements import Senat
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
 
@@ -49,7 +49,9 @@ def test_aspire_senat(app, lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    amendements, created = aspire_senat(lecture_senat)
+    source = Senat()
+
+    amendements, created, errored = source.fetch(lecture_senat)
 
     # All amendements are fetched
     assert len(amendements) == 595
@@ -72,7 +74,7 @@ def test_aspire_senat(app, lecture_senat):
 
 @responses.activate
 def test_aspire_senat_plf2019_1re_partie(app):
-    from zam_repondeur.fetch.senat.amendements import aspire_senat
+    from zam_repondeur.fetch.senat.amendements import Senat
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
@@ -115,7 +117,9 @@ def test_aspire_senat_plf2019_1re_partie(app):
 
     DBSession.add(lecture)
 
-    amendements, created = aspire_senat(lecture)
+    source = Senat()
+
+    amendements, created, errored = source.fetch(lecture)
 
     # All amendements from part 1 are fetched
     assert len(amendements) == 1005
@@ -123,7 +127,7 @@ def test_aspire_senat_plf2019_1re_partie(app):
 
 @responses.activate
 def test_aspire_senat_plf2019_2e_partie(app):
-    from zam_repondeur.fetch.senat.amendements import aspire_senat
+    from zam_repondeur.fetch.senat.amendements import Senat
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
@@ -182,7 +186,9 @@ def test_aspire_senat_plf2019_2e_partie(app):
 
     DBSession.add(lecture)
 
-    amendements, created = aspire_senat(lecture)
+    source = Senat()
+
+    amendements, created, errored = source.fetch(lecture)
 
     # All amendements from part 2 are fetched
     assert len(amendements) == 35

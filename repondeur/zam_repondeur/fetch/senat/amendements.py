@@ -9,6 +9,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 import requests
 
 from zam_repondeur.clean import clean_html
+from zam_repondeur.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import _parse_subdiv
 from zam_repondeur.fetch.exceptions import NotFound
@@ -24,36 +25,42 @@ logger = logging.getLogger(__name__)
 BASE_URL = "https://www.senat.fr"
 
 
-def aspire_senat(lecture: Lecture) -> Tuple[List[Amendement], int]:
-    logger.info("Récupération des amendements déposés sur %r", lecture)
-    created = 0
-    amendements: List[Amendement] = []
+class Senat(RemoteSource):
+    def fetch(self, lecture: Lecture) -> FetchResult:
+        logger.info("Récupération des amendements déposés sur %r", lecture)
+        created = 0
+        amendements: List[Amendement] = []
 
-    # Remember previous positions and reset them
-    old_positions = {}
-    for amendement in lecture.amendements:
-        old_positions[amendement.num] = amendement.position
-        amendement.position = None
+        # Remember previous positions and reset them
+        old_positions = {}
+        for amendement in lecture.amendements:
+            old_positions[amendement.num] = amendement.position
+            amendement.position = None
 
-    try:
-        amendements_created = _fetch_and_parse_all(lecture=lecture)
-    except NotFound:
-        return amendements, created
+        try:
+            amendements_created = _fetch_and_parse_all(lecture=lecture)
+        except NotFound:
+            return FetchResult(amendements, created, [])
 
-    for amendement, created_ in amendements_created:
-        created += int(created_)
-        amendements.append(amendement)
+        for amendement, created_ in amendements_created:
+            created += int(created_)
+            amendements.append(amendement)
 
-    processed_amendements = list(
-        _process_amendements(amendements=amendements, lecture=lecture)
-    )
+        processed_amendements = list(
+            _process_amendements(amendements=amendements, lecture=lecture)
+        )
 
-    # Log amendements no longer discussed
-    for amdt in lecture.amendements:
-        if amdt.position is None and old_positions.get(amdt.num) is not None:
-            logger.info("Amendement %s retiré de la discussion", amdt.num)
+        # Log amendements no longer discussed
+        for amdt in lecture.amendements:
+            if amdt.position is None and old_positions.get(amdt.num) is not None:
+                logger.info("Amendement %s retiré de la discussion", amdt.num)
 
-    return processed_amendements, created
+        return FetchResult(processed_amendements, created, [])
+
+
+def aspire_senat(lecture: Lecture) -> FetchResult:
+    source = Senat()
+    return source.fetch(lecture)
 
 
 def _fetch_and_parse_all(lecture: Lecture) -> List[Tuple[Amendement, bool]]:

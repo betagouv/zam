@@ -8,6 +8,7 @@ from urllib.parse import urljoin
 
 import xmltodict
 
+from zam_repondeur.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.fetch.division import _parse_subdiv
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.fetch.http import cached_session
@@ -42,42 +43,33 @@ class OrganeNotFound(Exception):
         self.organe = organe
 
 
-def aspire_an(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
-    logger.info("Récupération des amendements sur %r", lecture)
-    try:
-        amendements, created, errored = fetch_and_parse_all(lecture=lecture)
-    except NotFound:
-        return [], 0, []
+class AssembleeNationale(RemoteSource):
+    def fetch(self, lecture: Lecture) -> FetchResult:
+        result = FetchResult([], 0, [])
 
-    return amendements, created, errored
+        logger.info("Récupération des amendements sur %r", lecture)
 
+        try:
+            discussion_items = fetch_discussion_list(lecture)
+            if not discussion_items:
+                logger.warning("Could not find amendements from %r", lecture)
 
-def fetch_and_parse_all(lecture: Lecture) -> Tuple[List[Amendement], int, List[str]]:
-    amendements: List[Amendement] = []
-    created = 0
-    errored: List[str] = []
+            reset_amendements_positions(lecture, discussion_items)
 
-    discussion_items = fetch_discussion_list(lecture)
-    if not discussion_items:
-        logger.warning("Could not find amendements from %r", lecture)
+            result += _fetch_amendements_discussed(lecture, discussion_items)
 
-    reset_amendements_positions(lecture, discussion_items)
+            result += _fetch_amendements_other(
+                lecture=lecture,
+                discussion_nums={
+                    parse_num_in_liste(d["@numero"])[1] for d in discussion_items
+                },
+                prefix=find_prefix(discussion_items, lecture),
+            )
 
-    amendements_disc, created_disc, errored_disc = _fetch_amendements_discussed(
-        lecture, discussion_items
-    )
+            return result
 
-    amendements_other, created_other, errored_other = _fetch_amendements_other(
-        lecture=lecture,
-        discussion_nums={parse_num_in_liste(d["@numero"])[1] for d in discussion_items},
-        prefix=find_prefix(discussion_items, lecture),
-    )
-
-    amendements = amendements_disc + amendements_other
-    created = created_disc + created_other
-    errored = errored_disc + errored_other
-
-    return amendements, created, errored
+        except NotFound:
+            return FetchResult([], 0, [])
 
 
 def reset_amendements_positions(
@@ -134,7 +126,7 @@ _ORGANE_PREFIX = {
 
 def _fetch_amendements_discussed(
     lecture: Lecture, discussion_items: List[OrderedDict]
-) -> Tuple[List[Amendement], int, List[str]]:
+) -> FetchResult:
     amendements: List[Amendement] = []
     created = 0
     errored: List[str] = []
@@ -167,12 +159,12 @@ def _fetch_amendements_discussed(
             continue
         amendements.append(amendement)
         created += int(created_)
-    return amendements, created, errored
+    return FetchResult(amendements, created, errored)
 
 
 def _fetch_amendements_other(
     lecture: Lecture, discussion_nums: Set[int], prefix: str
-) -> Tuple[List[Amendement], int, List[str]]:
+) -> FetchResult:
     amendements: List[Amendement] = []
     created = 0
     errored: List[str] = []
@@ -203,7 +195,7 @@ def _fetch_amendements_other(
         created += int(created_)
         if numero > max_num_seen:
             max_num_seen = numero
-    return amendements, created, errored
+    return FetchResult(amendements, created, errored)
 
 
 def _retrieve_content(url: str) -> Dict[str, OrderedDict]:

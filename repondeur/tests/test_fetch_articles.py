@@ -7,7 +7,7 @@ import responses
 
 class TestGetPossibleUrls:
     def test_assemblee_nationale(self):
-        from zam_repondeur.fetch import get_possible_texte_urls
+        from zam_repondeur.fetch.articles import get_possible_texte_urls
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
@@ -24,7 +24,7 @@ class TestGetPossibleUrls:
         ]
 
     def test_senat(self):
-        from zam_repondeur.fetch import get_possible_texte_urls
+        from zam_repondeur.fetch.articles import get_possible_texte_urls
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
@@ -42,7 +42,7 @@ class TestGetPossibleUrls:
 class TestGetArticlesAN:
     @responses.activate
     def test_new_articles_are_created(self, app, lecture_an, amendements_an):
-        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession
 
         responses.add(
@@ -68,7 +68,7 @@ class TestGetArticlesAN:
 
     @responses.activate
     def test_article_ranges(self, app, lecture_an):
-        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession
 
         responses.add(
@@ -99,7 +99,7 @@ class TestGetArticlesAN:
 
     @responses.activate
     def test_existing_articles_are_updated(self, app, lecture_an, amendements_an):
-        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession, Amendement
 
         responses.add(
@@ -133,7 +133,7 @@ class TestGetArticlesAN:
 
     @responses.activate
     def test_annexes_are_retrieved(self, app, lecture_an, amendements_an):
-        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession, Article
 
         lecture_an.num_texte = 1056
@@ -181,7 +181,7 @@ class TestGetArticlesAN:
 
     @responses.activate
     def test_custom_article_titles_are_preserved(self, app, lecture_an, amendements_an):
-        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession, Amendement
 
         responses.add(
@@ -215,7 +215,7 @@ class TestGetArticlesAN:
 
     @responses.activate
     def test_intersticial_articles_are_not_updated(self, app, lecture_an):
-        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession, Article
 
         article_avant_2 = Article.create(
@@ -242,7 +242,7 @@ class TestGetArticlesAN:
 
     @responses.activate
     def test_fallback_to_alternative_url_pattern(self, app, lecture_an, amendements_an):
-        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession, Amendement
 
         with transaction.manager:
@@ -291,7 +291,7 @@ class TestGetArticlesAN:
 
     @responses.activate
     def test_not_found(self, app, lecture_an, amendements_an):
-        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession, Amendement
 
         responses.add(
@@ -323,7 +323,7 @@ class TestGetArticlesSenat:
     def test_get_articles_senat(
         self, app, lecture_senat, amendements_senat, article1_an
     ):
-        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession, Amendement, Article
 
         responses.add(
@@ -351,7 +351,7 @@ class TestGetArticlesSenat:
 
     @responses.activate
     def test_get_articles_senat_with_mult(self, app, lecture_senat, amendements_senat):
-        from zam_repondeur.fetch import get_articles
+        from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession, Amendement
 
         responses.add(
@@ -382,7 +382,7 @@ class TestGetArticlesSenat:
 
 
 def test_get_section_title():
-    from zam_repondeur.fetch import get_section_title
+    from zam_repondeur.fetch.articles import get_section_title
 
     items = [
         {
@@ -413,7 +413,7 @@ def test_get_section_title():
 
 
 def test_get_section_title_unknown_reference():
-    from zam_repondeur.fetch import get_section_title
+    from zam_repondeur.fetch.articles import get_section_title
 
     items = [
         {
@@ -453,7 +453,7 @@ def test_get_section_title_unknown_reference():
     ],
 )
 def test_get_article_num_mult(input, num, mult):
-    from zam_repondeur.fetch import get_article_num_mult
+    from zam_repondeur.fetch.articles import get_article_num_mult
 
     assert get_article_num_mult(input) == (num, mult)
 
@@ -474,6 +474,6 @@ def test_get_article_num_mult(input, num, mult):
     ],
 )
 def test_get_article_nums_mults(input, output):
-    from zam_repondeur.fetch import get_article_nums_mults
+    from zam_repondeur.fetch.articles import get_article_nums_mults
 
     assert get_article_nums_mults({"titre": input}) == output

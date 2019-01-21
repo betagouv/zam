@@ -63,7 +63,6 @@ EXCLUDED_FIELDS = [
     "subdiv_pos",
     "created_at",
     "modified_at",
-    "bookmarked_at",
 ]
 FIELDS = [
     field

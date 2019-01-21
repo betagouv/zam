@@ -74,7 +74,6 @@ class AmendementUserContent(Base):
     reponse: Optional[str] = Column(Text, nullable=True)
     affectation: Optional[str] = Column(Text, nullable=True)
     comments: Optional[str] = Column(Text, nullable=True)
-    bookmarked_at: Optional[datetime] = Column(DateTime, nullable=True)
 
     amendement_pk: int = Column(Integer, ForeignKey("amendements.pk"))
     amendement: "Amendement" = relationship("Amendement", back_populates="user_content")

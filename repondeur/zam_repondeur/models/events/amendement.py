@@ -48,6 +48,7 @@ class AmendementEvent(Event):
 
 class AmendementRectifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "amendement_rectifie"}
+    icon = "edit"
 
     @property
     def summary_template(self) -> Template:  # type: ignore
@@ -88,6 +89,7 @@ class AmendementIrrecevable(AmendementEvent):
 
 class CorpsModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "corps_modifie"}
+    icon = "pencil-alt"
 
     @property
     def summary_template(self) -> Template:  # type: ignore
@@ -116,6 +118,7 @@ class CorpsModifie(AmendementEvent):
 
 class ExposeModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "expose_modifie"}
+    icon = "pencil-alt"
 
     @property
     def summary_template(self) -> Template:  # type: ignore
@@ -178,7 +181,7 @@ class ObjetAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "objet_modifie"}
 
     summary_template = Template("<abbr title='$email'>$user</abbr> a modifié l’objet")
-    icon = "pencil-alt"
+    icon = "user-edit"
 
     def __init__(
         self, request: Request, amendement: Amendement, objet: str, **kwargs: Any
@@ -201,7 +204,7 @@ class ReponseModifiee(AmendementEvent):
     summary_template = Template(
         "<abbr title='$email'>$user</abbr> a modifié la réponse"
     )
-    icon = "pencil-alt"
+    icon = "user-edit"
 
     def __init__(
         self, request: Request, amendement: Amendement, reponse: str, **kwargs: Any

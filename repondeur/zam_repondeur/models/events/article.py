@@ -46,7 +46,7 @@ class TitreArticleModifie(ArticleEvent):
     __mapper_args__ = {"polymorphic_identity": "titre_article_modifie"}
 
     summary_template = Template("<abbr title='$email'>$user</abbr> a modifié le titre")
-    icon = "pencil-alt"
+    icon = "user-edit"
 
     def __init__(
         self, request: Request, article: Article, title: str, **kwargs: Any
@@ -69,7 +69,7 @@ class PresentationArticleModifiee(ArticleEvent):
     summary_template = Template(
         "<abbr title='$email'>$user</abbr> a modifié la présentation"
     )
-    icon = "pencil-alt"
+    icon = "user-edit"
 
     def __init__(
         self, request: Request, article: Article, presentation: str, **kwargs: Any

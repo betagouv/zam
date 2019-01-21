@@ -56,9 +56,9 @@ class AssembleeNationale(RemoteSource):
 
             reset_amendements_positions(lecture, discussion_items)
 
-            result += _fetch_amendements_discussed(lecture, discussion_items)
+            result += self._fetch_amendements_discussed(lecture, discussion_items)
 
-            result += _fetch_amendements_other(
+            result += self._fetch_amendements_other(
                 lecture=lecture,
                 discussion_nums={
                     parse_num_in_liste(d["@numero"])[1] for d in discussion_items
@@ -70,6 +70,160 @@ class AssembleeNationale(RemoteSource):
 
         except NotFound:
             return FetchResult([], 0, [])
+
+    def _fetch_amendements_discussed(
+        self, lecture: Lecture, discussion_items: List[OrderedDict]
+    ) -> FetchResult:
+        amendements: List[Amendement] = []
+        created = 0
+        errored: List[str] = []
+
+        for position, item in enumerate(discussion_items, start=1):
+            numero_prefixe = item["@numero"]
+            id_discussion_commune = (
+                int(item["@discussionCommune"]) if item["@discussionCommune"] else None
+            )
+            id_identique = (
+                int(item["@discussionIdentique"])
+                if item["@discussionIdentique"]
+                else None
+            )
+            try:
+                amendement, created_ = self.fetch_amendement(
+                    lecture=lecture,
+                    numero_prefixe=numero_prefixe,
+                    position=position,
+                    id_discussion_commune=id_discussion_commune,
+                    id_identique=id_identique,
+                )
+            except NotFound:
+                prefix, num = parse_num_in_liste(numero_prefixe)
+                logger.warning("Could not find amendement %r", num)
+                errored.append(str(num))
+                continue
+            except Exception:
+                prefix, num = parse_num_in_liste(numero_prefixe)
+                logger.exception("Error while fetching amendement %r", num)
+                errored.append(str(num))
+                continue
+            amendements.append(amendement)
+            created += int(created_)
+        return FetchResult(amendements, created, errored)
+
+    def _fetch_amendements_other(
+        self, lecture: Lecture, discussion_nums: Set[int], prefix: str
+    ) -> FetchResult:
+        amendements: List[Amendement] = []
+        created = 0
+        errored: List[str] = []
+
+        max_num_seen = max(discussion_nums) if discussion_nums else 0
+        numero = 0
+
+        # We can't try all possible numbers, so we'll stop after a string of 404s
+        while numero < (max_num_seen + 20):
+            numero += 1
+            if numero in discussion_nums:
+                continue
+            try:
+                amendement, created_ = self.fetch_amendement(
+                    lecture=lecture,
+                    numero_prefixe=f"{prefix}{numero}",
+                    position=None,
+                    id_discussion_commune=None,
+                    id_identique=None,
+                )
+            except NotFound:
+                continue
+            except Exception:
+                logger.exception("Error while fetching amendement %r", numero)
+                errored.append(str(numero))
+                continue
+            amendements.append(amendement)
+            created += int(created_)
+            if numero > max_num_seen:
+                max_num_seen = numero
+        return FetchResult(amendements, created, errored)
+
+    def fetch_amendement(
+        self,
+        lecture: Lecture,
+        numero_prefixe: str,
+        position: Optional[int],
+        id_discussion_commune: Optional[int] = None,
+        id_identique: Optional[int] = None,
+    ) -> Tuple[Amendement, bool]:
+        """
+        Récupère un amendement depuis son numéro.
+        """
+        logger.info("Récupération de l'amendement %r", numero_prefixe)
+        amend = _retrieve_amendement(lecture, numero_prefixe)
+        article = _get_article(lecture, amend["division"])
+        parent = _get_parent(lecture, article, amend)
+        amendement, created = self._create_or_update_amendement(
+            lecture,
+            article,
+            parent,
+            amend,
+            position,
+            id_discussion_commune,
+            id_identique,
+        )
+        return amendement, created
+
+    def _create_or_update_amendement(
+        self,
+        lecture: Lecture,
+        article: Optional[Article],
+        parent: Optional[Amendement],
+        amend: OrderedDict,
+        position: Optional[int],
+        id_discussion_commune: Optional[int],
+        id_identique: Optional[int],
+    ) -> Tuple[Amendement, bool]:
+        amendement, created = get_one_or_create(
+            Amendement,
+            create_kwargs={"article": article, "parent": parent},
+            lecture=lecture,
+            num=int(amend["numero"]),
+        )
+
+        raw_auteur = amend.get("auteur")
+        if not raw_auteur:
+            logger.warning("Unknown auteur for amendement %s", amend["numero"])
+            matricule, groupe, auteur = "", "", ""
+        else:
+            matricule = raw_auteur["tribunId"]
+            groupe = get_groupe(raw_auteur, amendement.num)
+            auteur = get_auteur(raw_auteur)
+
+        attributes = {
+            "rectif": get_rectif(amend),
+            "article": article,
+            "parent": parent,
+            "sort": get_sort(amend),
+            "position": position,
+            "id_discussion_commune": id_discussion_commune,
+            "id_identique": id_identique,
+            "matricule": matricule,
+            "groupe": groupe,
+            "auteur": auteur,
+            "corps": unjustify(get_str_or_none(amend, "dispositif") or ""),
+            "expose": unjustify(get_str_or_none(amend, "exposeSommaire") or ""),
+        }
+
+        modified = False
+        for name, value in attributes.items():
+            if getattr(amendement, name) != value:
+                setattr(amendement, name, value)
+                modified = True
+
+        if not created and modified:
+            amendement.modified_at = datetime.utcnow()
+
+        DBSession.flush()  # make sure foreign keys are updated
+
+        return amendement, created
 
 
 def reset_amendements_positions(
@@ -124,80 +278,6 @@ _ORGANE_PREFIX = {
 }
 
 
-def _fetch_amendements_discussed(
-    lecture: Lecture, discussion_items: List[OrderedDict]
-) -> FetchResult:
-    amendements: List[Amendement] = []
-    created = 0
-    errored: List[str] = []
-
-    for position, item in enumerate(discussion_items, start=1):
-        numero_prefixe = item["@numero"]
-        id_discussion_commune = (
-            int(item["@discussionCommune"]) if item["@discussionCommune"] else None
-        )
-        id_identique = (
-            int(item["@discussionIdentique"]) if item["@discussionIdentique"] else None
-        )
-        try:
-            amendement, created_ = fetch_amendement(
-                lecture=lecture,
-                numero_prefixe=numero_prefixe,
-                position=position,
-                id_discussion_commune=id_discussion_commune,
-                id_identique=id_identique,
-            )
-        except NotFound:
-            prefix, num = parse_num_in_liste(numero_prefixe)
-            logger.warning("Could not find amendement %r", num)
-            errored.append(str(num))
-            continue
-        except Exception:
-            prefix, num = parse_num_in_liste(numero_prefixe)
-            logger.exception("Error while fetching amendement %r", num)
-            errored.append(str(num))
-            continue
-        amendements.append(amendement)
-        created += int(created_)
-    return FetchResult(amendements, created, errored)
-
-
-def _fetch_amendements_other(
-    lecture: Lecture, discussion_nums: Set[int], prefix: str
-) -> FetchResult:
-    amendements: List[Amendement] = []
-    created = 0
-    errored: List[str] = []
-
-    max_num_seen = max(discussion_nums) if discussion_nums else 0
-    numero = 0
-
-    # We can't try all possible numbers, so we'll stop after a string of 404s
-    while numero < (max_num_seen + 20):
-        numero += 1
-        if numero in discussion_nums:
-            continue
-        try:
-            amendement, created_ = fetch_amendement(
-                lecture=lecture,
-                numero_prefixe=f"{prefix}{numero}",
-                position=None,
-                id_discussion_commune=None,
-                id_identique=None,
-            )
-        except NotFound:
-            continue
-        except Exception:
-            logger.exception("Error while fetching amendement %r", numero)
-            errored.append(str(numero))
-            continue
-        amendements.append(amendement)
-        created += int(created_)
-        if numero > max_num_seen:
-            max_num_seen = numero
-    return FetchResult(amendements, created, errored)
-
-
 def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
     logger.info("Récupération de %r", url)
     resp = cached_session.get(url)
@@ -236,26 +316,6 @@ def _retrieve_amendement(lecture: Lecture, numero_prefixe: str) -> OrderedDict:
     return content["amendement"]
 
 
-def fetch_amendement(
-    lecture: Lecture,
-    numero_prefixe: str,
-    position: Optional[int],
-    id_discussion_commune: Optional[int] = None,
-    id_identique: Optional[int] = None,
-) -> Tuple[Amendement, bool]:
-    """
-    Récupère un amendement depuis son numéro.
-    """
-    logger.info("Récupération de l'amendement %r", numero_prefixe)
-    amend = _retrieve_amendement(lecture, numero_prefixe)
-    article = _get_article(lecture, amend["division"])
-    parent = _get_parent(lecture, article, amend)
-    amendement, created = _create_or_update_amendement(
-        lecture, article, parent, amend, position, id_discussion_commune, id_identique
-    )
-    return amendement, created
-
-
 def _get_article(lecture: Lecture, division: dict) -> Article:
     subdiv = parse_division(division)
     article: Article
@@ -286,60 +346,6 @@ def _get_parent(
     else:
         parent = None
     return parent
-
-
-def _create_or_update_amendement(
-    lecture: Lecture,
-    article: Optional[Article],
-    parent: Optional[Amendement],
-    amend: OrderedDict,
-    position: Optional[int],
-    id_discussion_commune: Optional[int],
-    id_identique: Optional[int],
-) -> Tuple[Amendement, bool]:
-    amendement, created = get_one_or_create(
-        Amendement,
-        create_kwargs={"article": article, "parent": parent},
-        lecture=lecture,
-        num=int(amend["numero"]),
-    )
-
-    raw_auteur = amend.get("auteur")
-    if not raw_auteur:
-        logger.warning("Unknown auteur for amendement %s", amend["numero"])
-        matricule, groupe, auteur = "", "", ""
-    else:
-        matricule = raw_auteur["tribunId"]
-        groupe = get_groupe(raw_auteur, amendement.num)
-        auteur = get_auteur(raw_auteur)
-
-    attributes = {
-        "rectif": get_rectif(amend),
-        "article": article,
-        "parent": parent,
-        "sort": get_sort(amend),
-        "position": position,
-        "id_discussion_commune": id_discussion_commune,
-        "id_identique": id_identique,
-        "matricule": matricule,
-        "groupe": groupe,
-        "auteur": auteur,
-        "corps": unjustify(get_str_or_none(amend, "dispositif") or ""),
-        "expose": unjustify(get_str_or_none(amend, "exposeSommaire") or ""),
-    }
-
-    modified = False
-    for name, value in attributes.items():
-        if getattr(amendement, name) != value:
-            setattr(amendement, name, value)
-            modified = True
-
-    if not created and modified:
-        amendement.modified_at = datetime.utcnow()
-
-    DBSession.flush()  # make sure foreign keys are updated
-
-    return amendement, created
 
 
 def build_url(lecture: Lecture, numero_prefixe: str = "") -> str:

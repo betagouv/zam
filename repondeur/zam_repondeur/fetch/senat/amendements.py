@@ -38,7 +38,7 @@ class Senat(RemoteSource):
             amendement.position = None
 
         try:
-            amendements_created = _fetch_and_parse_all(lecture=lecture)
+            amendements_created = self._fetch_and_parse_all(lecture=lecture)
         except NotFound:
             return FetchResult(amendements, created, [])
 
@@ -47,7 +47,7 @@ class Senat(RemoteSource):
             amendements.append(amendement)
 
         processed_amendements = list(
-            _process_amendements(amendements=amendements, lecture=lecture)
+            self._process_amendements(amendements=amendements, lecture=lecture)
         )
 
         # Log amendements no longer discussed
@@ -57,18 +57,113 @@ class Senat(RemoteSource):
 
         return FetchResult(processed_amendements, created, [])
 
+    def _fetch_and_parse_all(self, lecture: Lecture) -> List[Tuple[Amendement, bool]]:
+        return [
+            self.parse_from_csv(row, lecture)
+            for row in _fetch_all(lecture)
+            if lecture.partie == parse_partie(row["Numéro "])
+        ]
+
+    def parse_from_csv(self, row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
+        subdiv = _parse_subdiv(row["Subdivision "])
+        article, created = get_one_or_create(
+            Article,
+            lecture=lecture,
+            type=subdiv.type_,
+            num=subdiv.num,
+            mult=subdiv.mult,
+            pos=subdiv.pos,
+        )
+        num, rectif = Amendement.parse_num(row["Numéro "])
+        amendement, created = get_one_or_create(
+            Amendement, create_kwargs={"article": article}, lecture=lecture, num=num
+        )
+        if not created:
+            amendement.article = article
+        amendement.rectif = rectif
+        amendement.alinea = row["Alinéa"].strip()
+        amendement.auteur = row["Auteur "]
+        amendement.matricule = extract_matricule(row["Fiche Sénateur"])
+        amendement.date_depot = parse_date(row["Date de dépôt "])
+        amendement.sort = row["Sort "]
+        amendement.corps = clean_html(row["Dispositif "])
+        amendement.expose = clean_html(row["Objet "])
+        return amendement, created
+
+    def _process_amendements(
+        self, amendements: Iterable[Amendement], lecture: Lecture
+    ) -> Iterable[Amendement]:
+
+        # Les amendements discutés en séance, par ordre de passage
+        logger.info(
+            "Récupération des amendements soumis à la discussion sur %r", lecture
+        )
+
+        discussion_details = fetch_and_parse_discussion_details(
+            lecture=lecture, phase="seance"
+        )
+        if len(discussion_details) == 0:
+            logger.info("Aucun amendement soumis à la discussion pour l'instant!")
+        self._enrich_discussion_details(amendements, discussion_details, lecture)
+
+        logger.info("Récupération de la liste des sénateurs...")
+        senateurs_by_matricule = fetch_and_parse_senateurs()
+        self._enrich_groupe_parlementaire(amendements, senateurs_by_matricule)
+
+        return _sort(amendements)
+
+    def _enrich_discussion_details(
+        self,
+        amendements: Iterable[Amendement],
+        discussion_details: Iterable[DiscussionDetails],
+        lecture: Lecture,
+    ) -> None:
+        """
+        Enrichir les amendements avec les informations du dérouleur
+
+        - discussion commune ?
+        - amendement identique ?
+        """
+        discussion_details_by_num = {
+            details.num: details for details in discussion_details
+        }
+        for amend in amendements:
+            self._enrich_one(amend, discussion_details_by_num.get(amend.num))
+
+    def _enrich_one(
+        self, amend: Amendement, discussion_details: Optional[DiscussionDetails]
+    ) -> None:
+        if discussion_details is None:
+            return
+        amend.position = discussion_details.position
+        amend.id_discussion_commune = discussion_details.id_discussion_commune
+        amend.id_identique = discussion_details.id_identique
+        if discussion_details.parent_num is not None:
+            amend.parent = Amendement.get(
+                lecture=amend.lecture, num=discussion_details.parent_num
+            )
+        else:
+            amend.parent = None
+
+    def _enrich_groupe_parlementaire(
+        self,
+        amendements: Iterable[Amendement],
+        senateurs_by_matricule: Dict[str, Senateur],
+    ) -> None:
+        """
+        Enrichir les amendements avec le groupe parlementaire de l'auteur
+        """
+        for amendement in amendements:
+            amendement.groupe = (
+                senateurs_by_matricule[amendement.matricule].groupe
+                if amendement.matricule is not None
+                else ""
+            )
+
 
 def aspire_senat(lecture: Lecture) -> FetchResult:
     source = Senat()
     return source.fetch(lecture)
-
-
-def _fetch_and_parse_all(lecture: Lecture) -> List[Tuple[Amendement, bool]]:
-    return [
-        parse_from_csv(row, lecture)
-        for row in _fetch_all(lecture)
-        if lecture.partie == parse_partie(row["Numéro "])
-    ]
 
 
 def parse_partie(numero: str) -> Optional[int]:
@@ -112,33 +207,6 @@ def _filter_line(line: str) -> str:
     return filtered_line
 
 
-def parse_from_csv(row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
-    subdiv = _parse_subdiv(row["Subdivision "])
-    article, created = get_one_or_create(
-        Article,
-        lecture=lecture,
-        type=subdiv.type_,
-        num=subdiv.num,
-        mult=subdiv.mult,
-        pos=subdiv.pos,
-    )
-    num, rectif = Amendement.parse_num(row["Numéro "])
-    amendement, created = get_one_or_create(
-        Amendement, create_kwargs={"article": article}, lecture=lecture, num=num
-    )
-    if not created:
-        amendement.article = article
-    amendement.rectif = rectif
-    amendement.alinea = row["Alinéa"].strip()
-    amendement.auteur = row["Auteur "]
-    amendement.matricule = extract_matricule(row["Fiche Sénateur"])
-    amendement.date_depot = parse_date(row["Date de dépôt "])
-    amendement.sort = row["Sort "]
-    amendement.corps = clean_html(row["Dispositif "])
-    amendement.expose = clean_html(row["Objet "])
-    return amendement, created
-
-
 FICHE_RE = re.compile(r"^[\w\/_]+(\d{5}[\da-z])\.html$")
 
 
@@ -149,73 +217,6 @@ def extract_matricule(url: str) -> Optional[str]:
     if mo is not None:
         return mo.group(1).upper()
     raise ValueError(f"Could not extract matricule from '{url}'")
-
-
-def _process_amendements(
-    amendements: Iterable[Amendement], lecture: Lecture
-) -> Iterable[Amendement]:
-
-    # Les amendements discutés en séance, par ordre de passage
-    logger.info("Récupération des amendements soumis à la discussion sur %r", lecture)
-
-    discussion_details = fetch_and_parse_discussion_details(
-        lecture=lecture, phase="seance"
-    )
-    if len(discussion_details) == 0:
-        logger.info("Aucun amendement soumis à la discussion pour l'instant!")
-    _enrich_discussion_details(amendements, discussion_details, lecture)
-
-    logger.info("Récupération de la liste des sénateurs...")
-    senateurs_by_matricule = fetch_and_parse_senateurs()
-    _enrich_groupe_parlementaire(amendements, senateurs_by_matricule)
-
-    return _sort(amendements)
-
-
-def _enrich_groupe_parlementaire(
-    amendements: Iterable[Amendement], senateurs_by_matricule: Dict[str, Senateur]
-) -> None:
-    """
-    Enrichir les amendements avec le groupe parlementaire de l'auteur
-    """
-    for amendement in amendements:
-        amendement.groupe = (
-            senateurs_by_matricule[amendement.matricule].groupe
-            if amendement.matricule is not None
-            else ""
-        )
-
-
-def _enrich_discussion_details(
-    amendements: Iterable[Amendement],
-    discussion_details: Iterable[DiscussionDetails],
-    lecture: Lecture,
-) -> None:
-    """
-    Enrichir les amendements avec les informations du dérouleur
-
-    - discussion commune ?
-    - amendement identique ?
-    """
-    discussion_details_by_num = {details.num: details for details in discussion_details}
-    for amend in amendements:
-        _enrich_one(amend, discussion_details_by_num.get(amend.num))
-
-
-def _enrich_one(
-    amend: Amendement, discussion_details: Optional[DiscussionDetails]
-) -> None:
-    if discussion_details is None:
-        return
-    amend.position = discussion_details.position
-    amend.id_discussion_commune = discussion_details.id_discussion_commune
-    amend.id_identique = discussion_details.id_identique
-    if discussion_details.parent_num is not None:
-        amend.parent = Amendement.get(
-            lecture=amend.lecture, num=discussion_details.parent_num
-        )
-    else:
-        amend.parent = None
 
 
 def _sort(amendements: Iterable[Amendement]) -> List[Amendement]:

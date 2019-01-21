@@ -4,9 +4,9 @@ Test that we take account different kind of changes when fetching updates from A
 from pathlib import Path
 from textwrap import dedent
 
+import pytest
 import responses
 
-from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
 from zam_repondeur.models import Amendement, DBSession
 
 from fetch.mock_an import setup_mock_responses
@@ -20,8 +20,15 @@ def read_sample_data(basename):
     return (SAMPLE_DATA_DIR / basename).read_text()
 
 
+@pytest.fixture
+def source():
+    from zam_repondeur.fetch.an.amendements import AssembleeNationale
+
+    return AssembleeNationale()
+
+
 @responses.activate
-def test_position_changed(lecture_an):
+def test_position_changed(lecture_an, source):
     """
     The discussion order of amendements may change
     """
@@ -62,7 +69,7 @@ def test_position_changed(lecture_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
     assert [amdt.position for amdt in lecture_an.amendements] == [1, 2]
@@ -101,14 +108,14 @@ def test_position_changed(lecture_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
     assert [amdt.position for amdt in lecture_an.amendements] == [2, 1]
 
 
 @responses.activate
-def test_abandoned_before_seance(lecture_an):
+def test_abandoned_before_seance(lecture_an, source):
     """
     An amendement that is either withdrawn by its author or declared invalid
     will be removed from the list
@@ -150,7 +157,7 @@ def test_abandoned_before_seance(lecture_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
     assert [amdt.position for amdt in lecture_an.amendements] == [1, 2]
@@ -181,14 +188,14 @@ def test_abandoned_before_seance(lecture_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
     assert [amdt.position for amdt in lecture_an.amendements] == [None, 1]
 
 
 @responses.activate
-def test_article_changed(lecture_an):
+def test_article_changed(lecture_an, source):
     """
     The targeted article may change
     """
@@ -230,7 +237,7 @@ def test_article_changed(lecture_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert str(amendement.article) == "Art. 3"
@@ -296,14 +303,14 @@ def test_article_changed(lecture_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert str(amendement.article) == "Art. 4"
 
 
 @responses.activate
-def test_add_parent_amendement(lecture_an):
+def test_add_parent_amendement(lecture_an, source):
     """
     A standalone amendement can become a « sous-amendement »
     """
@@ -345,7 +352,7 @@ def test_add_parent_amendement(lecture_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
     assert amendement.parent is None
@@ -391,7 +398,7 @@ def test_add_parent_amendement(lecture_an):
             ),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
     assert amendement.parent is not None
@@ -399,7 +406,7 @@ def test_add_parent_amendement(lecture_an):
 
 
 @responses.activate
-def test_remove_parent_amendement(lecture_an):
+def test_remove_parent_amendement(lecture_an, source):
     """
     A « sous-amendement » can become a standalone one
     """
@@ -447,7 +454,7 @@ def test_remove_parent_amendement(lecture_an):
             ),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
     assert amendement.parent is not None
@@ -488,14 +495,14 @@ def test_remove_parent_amendement(lecture_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
     assert amendement.parent is None
 
 
 @responses.activate
-def test_rectif(lecture_an):
+def test_rectif(lecture_an, source):
     DBSession.add(lecture_an)
 
     # Initial fetch
@@ -533,7 +540,7 @@ def test_rectif(lecture_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 0
@@ -579,14 +586,14 @@ def test_rectif(lecture_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 2
 
 
 @responses.activate
-def test_rectif_with_nil(lecture_an):
+def test_rectif_with_nil(lecture_an, source):
     DBSession.add(lecture_an)
 
     # Initial fetch
@@ -624,7 +631,7 @@ def test_rectif_with_nil(lecture_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        fetch_and_parse_all(lecture=lecture_an)
+        source.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 0
@@ -673,7 +680,7 @@ def test_rectif_with_nil(lecture_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+        amendements, created, errored = source.fetch(lecture=lecture_an)
 
     assert errored == []
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()

@@ -19,11 +19,16 @@ def read_sample_data(basename):
     return (SAMPLE_DATA_DIR / basename).read_text()
 
 
+@pytest.fixture
+def source():
+    from zam_repondeur.fetch.an.amendements import AssembleeNationale
+
+    return AssembleeNationale()
+
+
 class TestFetchAndParseAll:
     @responses.activate
-    def test_simple_amendements(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
-
+    def test_simple_amendements(self, lecture_an, app, source):
         DBSession.add(lecture_an)
 
         with setup_mock_responses(
@@ -37,7 +42,7 @@ class TestFetchAndParseAll:
                 ("192", read_sample_data("an/269/192.xml")),
             ),
         ):
-            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+            amendements, created, errored = source.fetch(lecture=lecture_an)
 
         assert len(amendements) == 5
 
@@ -70,9 +75,7 @@ class TestFetchAndParseAll:
         assert errored == []
 
     @responses.activate
-    def test_amendements_not_in_discussion_list_are_fetched(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
-
+    def test_fetch_amendements_not_in_discussion_list(self, lecture_an, app, source):
         DBSession.add(lecture_an)
 
         with setup_mock_responses(
@@ -101,7 +104,7 @@ class TestFetchAndParseAll:
                 ("192", read_sample_data("an/269/192.xml")),
             ),
         ):
-            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+            amendements, created, errored = source.fetch(lecture=lecture_an)
 
         assert len(amendements) == 2
 
@@ -119,9 +122,7 @@ class TestFetchAndParseAll:
         assert errored == []
 
     @responses.activate
-    def test_commission(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
-
+    def test_commission(self, lecture_an, app, source):
         DBSession.add(lecture_an)
 
         with setup_mock_responses(
@@ -132,7 +133,7 @@ class TestFetchAndParseAll:
                 ("AS2", read_sample_data("an/1408-CION-SOC/AS2.xml")),
             ),
         ):
-            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+            amendements, created, errored = source.fetch(lecture=lecture_an)
 
         assert len(amendements) == 2
 
@@ -146,8 +147,7 @@ class TestFetchAndParseAll:
         assert errored == []
 
     @responses.activate
-    def test_sous_amendements(self, app):
-        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
+    def test_sous_amendements(self, app, source):
         from zam_repondeur.models import Lecture
 
         with transaction.manager:
@@ -171,7 +171,7 @@ class TestFetchAndParseAll:
                 ("3", read_sample_data("an/911/3.xml")),
             ),
         ):
-            amendements, created, errored = fetch_and_parse_all(lecture=lecture)
+            amendements, created, errored = source.fetch(lecture=lecture)
 
         assert len(amendements) == 3
 
@@ -198,9 +198,7 @@ class TestFetchAndParseAll:
         assert errored == []
 
     @responses.activate
-    def test_with_404(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
-
+    def test_with_404(self, lecture_an, app, source):
         DBSession.add(lecture_an)
 
         with setup_mock_responses(
@@ -214,7 +212,7 @@ class TestFetchAndParseAll:
                 ("192", read_sample_data("an/269/192.xml")),
             ),
         ):
-            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+            amendements, created, errored = source.fetch(lecture=lecture_an)
 
         assert len(amendements) == 4
         assert amendements[0].num == 177

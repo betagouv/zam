@@ -5,7 +5,7 @@ import pytest
 
 def test_parse_from_csv(lecture_senat):
 
-    from zam_repondeur.fetch.senat.amendements import parse_from_csv
+    from zam_repondeur.fetch.senat.amendements import Senat
 
     amend = {
         "Alinéa": " ",
@@ -22,7 +22,8 @@ def test_parse_from_csv(lecture_senat):
         "Url amendement ": "//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",  # noqa
     }
 
-    amendement, created = parse_from_csv(amend, lecture_senat)
+    source = Senat()
+    amendement, created = source.parse_from_csv(amend, lecture_senat)
 
     assert created
     assert amendement.num == 1

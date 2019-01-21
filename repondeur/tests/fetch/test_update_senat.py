@@ -5,7 +5,7 @@ from pathlib import Path
 
 import responses
 
-from zam_repondeur.fetch.senat.amendements import aspire_senat
+from zam_repondeur.fetch.senat.amendements import Senat
 from zam_repondeur.models import DBSession
 
 
@@ -50,14 +50,16 @@ def test_position_changed(lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    aspire_senat(lecture_senat)
+    source = Senat()
+
+    source.fetch(lecture_senat)
 
     assert {amdt.num: amdt.position for amdt in lecture_senat.amendements} == {
         31: 1,
         443: 2,
     }
 
-    aspire_senat(lecture_senat)
+    source.fetch(lecture_senat)
 
     assert {amdt.num: amdt.position for amdt in lecture_senat.amendements} == {
         31: 2,
@@ -99,14 +101,16 @@ def test_abandoned_before_seance(lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    aspire_senat(lecture_senat)
+    source = Senat()
+
+    source.fetch(lecture_senat)
 
     assert {amdt.num: amdt.position for amdt in lecture_senat.amendements} == {
         31: 1,
         443: 2,
     }
 
-    aspire_senat(lecture_senat)
+    source.fetch(lecture_senat)
 
     assert {amdt.num: amdt.position for amdt in lecture_senat.amendements} == {
         31: 1,
@@ -153,14 +157,16 @@ def test_article_changed(lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    aspire_senat(lecture_senat)
+    source = Senat()
+
+    source.fetch(lecture_senat)
 
     assert {amdt.num: str(amdt.article) for amdt in lecture_senat.amendements} == {
         31: "Art. 3",
         443: "Art. 4",
     }
 
-    aspire_senat(lecture_senat)
+    source.fetch(lecture_senat)
 
     assert {amdt.num: str(amdt.article) for amdt in lecture_senat.amendements} == {
         31: "Art. 3",
@@ -201,14 +207,16 @@ def test_add_parent_amendement(lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    aspire_senat(lecture_senat)
+    source = Senat()
+
+    source.fetch(lecture_senat)
 
     assert {
         amdt.num: amdt.parent.num if amdt.parent else None
         for amdt in lecture_senat.amendements
     } == {31: None, 443: None}
 
-    aspire_senat(lecture_senat)
+    source.fetch(lecture_senat)
 
     assert {
         amdt.num: amdt.parent.num if amdt.parent else None
@@ -249,14 +257,16 @@ def test_remove_parent_amendement(lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    aspire_senat(lecture_senat)
+    source = Senat()
+
+    source.fetch(lecture_senat)
 
     assert {
         amdt.num: amdt.parent.num if amdt.parent else None
         for amdt in lecture_senat.amendements
     } == {31: None, 443: 31}
 
-    aspire_senat(lecture_senat)
+    source.fetch(lecture_senat)
 
     assert {
         amdt.num: amdt.parent.num if amdt.parent else None

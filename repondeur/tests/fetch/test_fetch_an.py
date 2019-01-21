@@ -19,11 +19,16 @@ def read_sample_data(basename):
     return (SAMPLE_DATA_DIR / basename).read_text()
 
 
+@pytest.fixture
+def source():
+    from zam_repondeur.fetch.an.amendements import AssembleeNationale
+
+    return AssembleeNationale()
+
+
 class TestFetchAndParseAll:
     @responses.activate
-    def test_simple_amendements(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
-
+    def test_simple_amendements(self, lecture_an, app, source):
         DBSession.add(lecture_an)
 
         with setup_mock_responses(
@@ -37,7 +42,7 @@ class TestFetchAndParseAll:
                 ("192", read_sample_data("an/269/192.xml")),
             ),
         ):
-            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+            amendements, created, errored = source.fetch(lecture=lecture_an)
 
         assert len(amendements) == 5
 
@@ -70,9 +75,7 @@ class TestFetchAndParseAll:
         assert errored == []
 
     @responses.activate
-    def test_amendements_not_in_discussion_list_are_fetched(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
-
+    def test_fetch_amendements_not_in_discussion_list(self, lecture_an, app, source):
         DBSession.add(lecture_an)
 
         with setup_mock_responses(
@@ -101,7 +104,7 @@ class TestFetchAndParseAll:
                 ("192", read_sample_data("an/269/192.xml")),
             ),
         ):
-            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+            amendements, created, errored = source.fetch(lecture=lecture_an)
 
         assert len(amendements) == 2
 
@@ -119,9 +122,7 @@ class TestFetchAndParseAll:
         assert errored == []
 
     @responses.activate
-    def test_commission(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
-
+    def test_commission(self, lecture_an, app, source):
         DBSession.add(lecture_an)
 
         with setup_mock_responses(
@@ -132,7 +133,7 @@ class TestFetchAndParseAll:
                 ("AS2", read_sample_data("an/1408-CION-SOC/AS2.xml")),
             ),
         ):
-            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+            amendements, created, errored = source.fetch(lecture=lecture_an)
 
         assert len(amendements) == 2
 
@@ -146,8 +147,7 @@ class TestFetchAndParseAll:
         assert errored == []
 
     @responses.activate
-    def test_sous_amendements(self, app):
-        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
+    def test_sous_amendements(self, app, source):
         from zam_repondeur.models import Lecture
 
         with transaction.manager:
@@ -171,7 +171,7 @@ class TestFetchAndParseAll:
                 ("3", read_sample_data("an/911/3.xml")),
             ),
         ):
-            amendements, created, errored = fetch_and_parse_all(lecture=lecture)
+            amendements, created, errored = source.fetch(lecture=lecture)
 
         assert len(amendements) == 3
 
@@ -198,9 +198,7 @@ class TestFetchAndParseAll:
         assert errored == []
 
     @responses.activate
-    def test_with_404(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_and_parse_all
-
+    def test_with_404(self, lecture_an, app, source):
         DBSession.add(lecture_an)
 
         with setup_mock_responses(
@@ -214,7 +212,7 @@ class TestFetchAndParseAll:
                 ("192", read_sample_data("an/269/192.xml")),
             ),
         ):
-            amendements, created, errored = fetch_and_parse_all(lecture=lecture_an)
+            amendements, created, errored = source.fetch(lecture=lecture_an)
 
         assert len(amendements) == 4
         assert amendements[0].num == 177
@@ -324,9 +322,7 @@ class TestFetchDiscussionList:
 
 class TestFetchAmendement:
     @responses.activate
-    def test_simple_amendement(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendement
-
+    def test_simple_amendement(self, lecture_an, app, source):
         responses.add(
             responses.GET,
             build_url(lecture_an, 177),
@@ -334,7 +330,7 @@ class TestFetchAmendement:
             status=200,
         )
 
-        amendement, created = fetch_amendement(
+        amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="177", position=1
         )
 
@@ -369,9 +365,7 @@ class TestFetchAmendement:
         assert amendement.user_content.reponse is None
 
     @responses.activate
-    def test_fetch_amendement_gouvernement(self, lecture_an):
-        from zam_repondeur.fetch.an.amendements import fetch_amendement
-
+    def test_fetch_amendement_gouvernement(self, lecture_an, source):
         responses.add(
             responses.GET,
             build_url(lecture_an, 723),
@@ -379,7 +373,7 @@ class TestFetchAmendement:
             status=200,
         )
 
-        amendement, created = fetch_amendement(
+        amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="723", position=1
         )
 
@@ -387,9 +381,7 @@ class TestFetchAmendement:
         assert amendement.groupe == ""
 
     @responses.activate
-    def test_fetch_amendement_commission(self, lecture_an):
-        from zam_repondeur.fetch.an.amendements import fetch_amendement
-
+    def test_fetch_amendement_commission(self, lecture_an, source):
         responses.add(
             responses.GET,
             build_url(lecture_an, 135),
@@ -397,7 +389,7 @@ class TestFetchAmendement:
             status=200,
         )
 
-        amendement, created = fetch_amendement(
+        amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="135", position=1
         )
 
@@ -406,9 +398,7 @@ class TestFetchAmendement:
         assert amendement.groupe == ""
 
     @responses.activate
-    def test_fetch_sous_amendement(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendement
-
+    def test_fetch_sous_amendement(self, lecture_an, app, source):
         responses.add(
             responses.GET,
             build_url(lecture_an, 155),
@@ -423,11 +413,11 @@ class TestFetchAmendement:
             status=200,
         )
 
-        amendement1, created = fetch_amendement(
+        amendement1, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="155", position=1
         )
         assert created
-        amendement2, created = fetch_amendement(
+        amendement2, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="941", position=2
         )
         assert created
@@ -435,9 +425,7 @@ class TestFetchAmendement:
         assert amendement2.parent is amendement1
 
     @responses.activate
-    def test_fetch_amendement_sort_nil(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendement
-
+    def test_fetch_amendement_sort_nil(self, lecture_an, app, source):
         responses.add(
             responses.GET,
             build_url(lecture_an, 38),
@@ -445,16 +433,14 @@ class TestFetchAmendement:
             status=200,
         )
 
-        amendement, created = fetch_amendement(
+        amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="38", position=1
         )
 
         assert amendement.sort == ""
 
     @responses.activate
-    def test_fetch_amendement_apres(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendement
-
+    def test_fetch_amendement_apres(self, lecture_an, app, source):
         responses.add(
             responses.GET,
             build_url(lecture_an, 192),
@@ -462,7 +448,7 @@ class TestFetchAmendement:
             status=200,
         )
 
-        amendement, created = fetch_amendement(
+        amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="192", position=1
         )
 
@@ -472,20 +458,20 @@ class TestFetchAmendement:
         assert amendement.article.pos == "après"
 
     @responses.activate
-    def test_fetch_amendement_not_found(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendement, NotFound
+    def test_fetch_amendement_not_found(self, lecture_an, app, source):
+        from zam_repondeur.fetch.an.amendements import NotFound
 
         responses.add(responses.GET, build_url(lecture_an, 177), status=404)
 
         with pytest.raises(NotFound):
-            fetch_amendement(lecture=lecture_an, numero_prefixe="177", position=1)
+            source.fetch_amendement(
+                lecture=lecture_an, numero_prefixe="177", position=1
+            )
 
 
 class TestFetchAmendementAgain:
     @responses.activate
-    def test_response_is_preserved(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendement
-
+    def test_response_is_preserved(self, lecture_an, app, source):
         responses.add(
             responses.GET,
             build_url(lecture_an, 177),
@@ -494,7 +480,7 @@ class TestFetchAmendementAgain:
         )
 
         # Let's fetch a new amendement
-        amendement1, created = fetch_amendement(
+        amendement1, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="177", position=1
         )
         assert created
@@ -505,7 +491,7 @@ class TestFetchAmendementAgain:
         amendement1.user_content.reponse = "Réponse"
 
         # And fetch the same amendement again
-        amendement2, created = fetch_amendement(
+        amendement2, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="177", position=1
         )
         assert not created
@@ -517,9 +503,7 @@ class TestFetchAmendementAgain:
         assert amendement2.user_content.reponse == "Réponse"
 
     @responses.activate
-    def test_article_has_changed(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendement
-
+    def test_article_has_changed(self, lecture_an, app, source):
         responses.add(
             responses.GET,
             build_url(lecture_an, 177),
@@ -527,24 +511,21 @@ class TestFetchAmendementAgain:
             status=200,
         )
 
-        amendement1, created = fetch_amendement(
+        amendement1, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="177", position=1
         )
         assert created
 
         amendement1.article = None  # let's change the article
 
-        amendement2, created = fetch_amendement(
+        amendement2, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="177", position=2
         )
         assert not created
         assert amendement2 is amendement1
 
     @responses.activate
-    def test_parent_has_changed(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_amendement
-        from zam_repondeur.models import DBSession
-
+    def test_parent_has_changed(self, lecture_an, app, source):
         responses.add(
             responses.GET,
             build_url(lecture_an, 155),
@@ -559,12 +540,12 @@ class TestFetchAmendementAgain:
             status=200,
         )
 
-        parent1, created = fetch_amendement(
+        parent1, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="155", position=1
         )
         assert created
 
-        child1, created = fetch_amendement(
+        child1, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="941", position=2
         )
         assert created
@@ -575,13 +556,13 @@ class TestFetchAmendementAgain:
         child1.parent = None  # let's change the parent amendement
         DBSession.flush()
 
-        parent2, created = fetch_amendement(
+        parent2, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="155", position=1
         )
         assert not created
         assert parent2 is parent1
 
-        child2, created = fetch_amendement(
+        child2, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="941", position=2
         )
         assert not created

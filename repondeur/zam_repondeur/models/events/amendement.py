@@ -46,12 +46,16 @@ class AmendementIrrecevable(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "amendement_irrecevable"}
 
     @property
-    def summary_template(self) -> str:  # type: ignore
+    def summary_template(self) -> Template:  # type: ignore
         if self.amendement.lecture.chambre == "an":
             de_qui = "de l’Asssemblée nationale"
         else:
             de_qui = "du Sénat"
-        return f"L’amendement a été déclaré irrecevable par les services {de_qui}"
+        return Template(
+            f"L’amendement a été déclaré irrecevable par les services {de_qui}"
+        )
+
+    details_template = Template("")
 
 
 class AvisModifie(AmendementEvent):

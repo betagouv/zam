@@ -86,6 +86,62 @@ class AmendementIrrecevable(AmendementEvent):
     details_template = Template("")
 
 
+class CorpsModifie(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "corps_modifie"}
+
+    @property
+    def summary_template(self) -> Template:  # type: ignore
+        if self.amendement.lecture.chambre == "an":
+            de_qui = "de l’Asssemblée nationale"
+        else:
+            de_qui = "du Sénat"
+        return Template(
+            f"Le corps de l’amendement a été modifié par les services {de_qui}"
+        )
+
+    def __init__(
+        self, request: Request, amendement: Amendement, corps: str, **kwargs: Any
+    ) -> None:
+        super().__init__(
+            request,
+            amendement,
+            old_value=amendement.corps or "",
+            new_value=corps,
+            **kwargs,
+        )
+
+    def apply(self) -> None:
+        self.amendement.corps = self.data["new_value"]
+
+
+class ExposeModifie(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "expose_modifie"}
+
+    @property
+    def summary_template(self) -> Template:  # type: ignore
+        if self.amendement.lecture.chambre == "an":
+            de_qui = "de l’Asssemblée nationale"
+        else:
+            de_qui = "du Sénat"
+        return Template(
+            f"L’exposé de l’amendement a été modifié par les services {de_qui}"
+        )
+
+    def __init__(
+        self, request: Request, amendement: Amendement, expose: str, **kwargs: Any
+    ) -> None:
+        super().__init__(
+            request,
+            amendement,
+            old_value=amendement.expose or "",
+            new_value=expose,
+            **kwargs,
+        )
+
+    def apply(self) -> None:
+        self.amendement.expose = self.data["new_value"]
+
+
 class AvisModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "avis_modifie"}
 

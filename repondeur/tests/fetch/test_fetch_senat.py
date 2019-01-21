@@ -19,7 +19,11 @@ def read_sample_data(basename):
 @responses.activate
 def test_aspire_senat(app, lecture_senat):
     from zam_repondeur.fetch.senat.amendements import Senat
-    from zam_repondeur.models.events.amendement import AmendementRectifie
+    from zam_repondeur.models.events.amendement import (
+        AmendementRectifie,
+        CorpsModifie,
+        ExposeModifie,
+    )
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
 
@@ -64,14 +68,35 @@ def test_aspire_senat(app, lecture_senat):
     assert amendement.article.num == "7"
     assert amendement.article.pos == "après"
     assert amendement.parent is None
-    assert len(amendement.events) == 1
-    assert isinstance(amendement.events[0], AmendementRectifie)
+
+    assert len(amendement.events) == 3
+    assert isinstance(amendement.events[0], ExposeModifie)
     assert amendement.events[0].created_at is not None
     assert amendement.events[0].user is None
-    assert amendement.events[0].data["old_value"] == 0
-    assert amendement.events[0].data["new_value"] == 1
+    assert amendement.events[0].data["old_value"] == ""
+    assert amendement.events[0].data["new_value"].startswith("<p>Cet amendement vise")
     assert (
         amendement.events[0].render_summary()
+        == "L’exposé de l’amendement a été modifié par les services du Sénat"
+    )
+
+    assert isinstance(amendement.events[1], CorpsModifie)
+    assert amendement.events[1].created_at is not None
+    assert amendement.events[1].user is None
+    assert amendement.events[1].data["old_value"] == ""
+    assert amendement.events[1].data["new_value"].startswith("<p>Après l’article")
+    assert (
+        amendement.events[1].render_summary()
+        == "Le corps de l’amendement a été modifié par les services du Sénat"
+    )
+
+    assert isinstance(amendement.events[2], AmendementRectifie)
+    assert amendement.events[2].created_at is not None
+    assert amendement.events[2].user is None
+    assert amendement.events[2].data["old_value"] == 0
+    assert amendement.events[2].data["new_value"] == 1
+    assert (
+        amendement.events[2].render_summary()
         == "L’amendement a été rectifié par les services du Sénat"
     )
 

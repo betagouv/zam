@@ -1,7 +1,11 @@
 from typing import Any, List, NamedTuple
 
 from zam_repondeur.models import Amendement, Lecture
-from zam_repondeur.models.events.amendement import AmendementRectifie
+from zam_repondeur.models.events.amendement import (
+    AmendementRectifie,
+    CorpsModifie,
+    ExposeModifie,
+)
 
 
 class Source:
@@ -25,14 +29,14 @@ class Source:
     def update_corps(self, amendement: Amendement, corps: str) -> bool:
         modified = False
         if corps != amendement.corps:
-            amendement.corps = corps  # TODO: create CorpsAmendementModifie event
+            CorpsModifie.create(request=None, amendement=amendement, corps=corps)
             modified = True
         return modified
 
     def update_expose(self, amendement: Amendement, expose: str) -> bool:
         modified = False
         if expose != amendement.expose:
-            amendement.expose = expose  # TODO: create ExposeAmendementModifie event
+            ExposeModifie.create(request=None, amendement=amendement, expose=expose)
             modified = True
         return modified
 

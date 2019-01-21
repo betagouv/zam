@@ -205,11 +205,11 @@ class AssembleeNationale(RemoteSource):
         modified |= self.update_expose(
             amendement, unjustify(get_str_or_none(amend, "exposeSommaire") or "")
         )
+        modified |= self.update_sort(amendement, get_sort(amend))
         modified |= self.update_attributes(
             amendement,
             article=article,
             parent=parent,
-            sort=get_sort(amend),
             position=position,
             id_discussion_commune=id_discussion_commune,
             id_identique=id_identique,

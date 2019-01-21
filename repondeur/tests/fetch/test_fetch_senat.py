@@ -109,6 +109,73 @@ def test_aspire_senat(app, lecture_senat):
 
 
 @responses.activate
+def test_aspire_senat_again_with_irrecevable(app, lecture_senat):
+    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.models.events.amendement import AmendementIrrecevable
+
+    sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv",
+        body=sample_data,
+        status=200,
+    )
+    # On second call we want an irrecevable.
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv",
+        body=sample_data.decode("latin-1")
+        .replace(
+            "Adopté\t//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",
+            "Irrecevable\t//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",
+        )
+        .encode("latin-1"),
+        status=200,
+    )
+
+    odsen_data = read_sample_data("ODSEN_GENERAL.csv")
+
+    responses.add(
+        responses.GET,
+        "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
+        body=odsen_data,
+        status=200,
+    )
+
+    json_data = json.loads(read_sample_data("liste_discussion_63.json"))
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json",
+        json=json_data,
+        status=200,
+    )
+
+    DBSession.add(lecture_senat)
+
+    source = Senat()
+
+    amendements, created, errored = source.fetch(lecture_senat)
+    amendement = [amendement for amendement in amendements if amendement.num == 1][0]
+    assert len(amendement.events) == 3
+
+    amendements, created, errored = source.fetch(lecture_senat)
+    amendement = [amendement for amendement in amendements if amendement.num == 1][0]
+    assert len(amendement.events) == 4
+
+    assert isinstance(amendement.events[3], AmendementIrrecevable)
+    assert amendement.events[3].created_at is not None
+    assert amendement.events[3].user is None
+    assert amendement.events[3].data["old_value"] == "Adopté"
+    assert amendement.events[3].data["new_value"] == "Irrecevable"
+    assert (
+        amendement.events[3].render_summary()
+        == "L’amendement a été déclaré irrecevable par les services du Sénat"
+    )
+
+
+@responses.activate
 def test_aspire_senat_plf2019_1re_partie(app):
     from zam_repondeur.fetch.senat.amendements import Senat
     from zam_repondeur.models import Lecture

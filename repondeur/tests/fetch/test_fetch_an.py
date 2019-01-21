@@ -526,6 +526,46 @@ class TestFetchAmendementAgain:
         assert amendement2.user_content.reponse == "Réponse"
 
     @responses.activate
+    def test_sort_turn_irrecevable(self, lecture_an, app, source):
+        from zam_repondeur.models.events.amendement import AmendementIrrecevable
+
+        sample_data = read_sample_data("an/269/177.xml")
+        responses.add(
+            responses.GET, build_url(lecture_an, 177), body=sample_data, status=200
+        )
+        # On second call we want an irrecevable.
+        responses.add(
+            responses.GET,
+            build_url(lecture_an, 177),
+            body=sample_data.replace(
+                "<sortEnSeance>Rejeté</sortEnSeance>",
+                "<sortEnSeance>Irrecevable</sortEnSeance>",
+            ),
+            status=200,
+        )
+
+        # Let's fetch a new amendement
+        amendement1, created = source.fetch_amendement(
+            lecture=lecture_an, numero_prefixe="177", position=1
+        )
+        # And fetch the same amendement again
+        amendement2, created = source.fetch_amendement(
+            lecture=lecture_an, numero_prefixe="177", position=1
+        )
+
+        # An irrecevable event has been created
+        assert len(amendement1.events) == 3
+        assert isinstance(amendement1.events[0], AmendementIrrecevable)
+        assert amendement1.events[0].created_at is not None
+        assert amendement1.events[0].user is None
+        assert amendement1.events[0].data["old_value"] == "rejeté"
+        assert amendement1.events[0].data["new_value"] == "irrecevable"
+        assert amendement1.events[0].render_summary() == (
+            "L’amendement a été déclaré irrecevable par les services "
+            "de l’Asssemblée nationale"
+        )
+
+    @responses.activate
     def test_article_has_changed(self, lecture_an, app, source):
         responses.add(
             responses.GET,

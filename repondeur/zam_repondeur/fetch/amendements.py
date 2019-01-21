@@ -2,6 +2,7 @@ from typing import Any, List, NamedTuple
 
 from zam_repondeur.models import Amendement, Lecture
 from zam_repondeur.models.events.amendement import (
+    AmendementIrrecevable,
     AmendementRectifie,
     CorpsModifie,
     ExposeModifie,
@@ -23,6 +24,18 @@ class Source:
             AmendementRectifie.create(
                 request=None, amendement=amendement, rectif=rectif
             )
+            modified = True
+        return modified
+
+    def update_sort(self, amendement: Amendement, sort: str) -> bool:
+        modified = False
+        if sort != amendement.sort:
+            if "irrecevable" in sort.lower():
+                AmendementIrrecevable.create(
+                    request=None, amendement=amendement, sort=sort
+                )
+            else:
+                amendement.sort = sort
             modified = True
         return modified
 

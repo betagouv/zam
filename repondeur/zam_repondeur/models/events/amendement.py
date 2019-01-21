@@ -73,6 +73,7 @@ class AmendementRectifie(AmendementEvent):
 
 class AmendementIrrecevable(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "amendement_irrecevable"}
+    icon = "times"
 
     @property
     def summary_template(self) -> Template:  # type: ignore
@@ -85,6 +86,16 @@ class AmendementIrrecevable(AmendementEvent):
         )
 
     details_template = Template("")
+
+    def __init__(
+        self, request: Request, amendement: Amendement, sort: str, **kwargs: Any
+    ) -> None:
+        super().__init__(
+            request, amendement, old_value=amendement.sort, new_value=sort, **kwargs
+        )
+
+    def apply(self) -> None:
+        self.amendement.sort = self.data["new_value"]
 
 
 class CorpsModifie(AmendementEvent):

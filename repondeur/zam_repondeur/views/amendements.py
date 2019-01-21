@@ -50,7 +50,7 @@ class AmendementEdit:
         comments = clean_html(self.request.POST.get("comments", ""))
 
         avis_changed = avis != self.amendement.user_content.avis
-        objet_changed = objet != self.amendement.user_content.objet
+        objet_changed = objet != (self.amendement.user_content.objet or "")
         reponse_changed = reponse != (self.amendement.user_content.reponse or "")
         affectation_changed = affectation != (
             self.amendement.user_content.affectation or ""

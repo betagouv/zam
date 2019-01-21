@@ -19,7 +19,7 @@ depends_on = None
 def upgrade():
     op.drop_column("amendement_user_contents", "bookmarked_at")
 
-    # Tthis one should have been dropped in 181f05f634f4
+    # This one should have been dropped in 181f05f634f4
     op.drop_column("amendements", "bookmarked_at")
 
 

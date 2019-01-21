@@ -2,6 +2,8 @@ import csv
 import logging
 import re
 from collections import OrderedDict
+
+from datetime import datetime
 from http import HTTPStatus
 from urllib.parse import urlparse
 from typing import Dict, Iterable, List, Optional, Tuple
@@ -79,7 +81,7 @@ class Senat(RemoteSource):
             Amendement, create_kwargs={"article": article}, lecture=lecture, num=num
         )
 
-        self.update_attributes(
+        modified = self.update_attributes(
             amendement,
             article=article,
             rectif=rectif,
@@ -91,6 +93,9 @@ class Senat(RemoteSource):
             corps=clean_html(row["Dispositif "]),
             expose=clean_html(row["Objet "]),
         )
+
+        if not created and modified:
+            amendement.modified_at = datetime.utcnow()
 
         return amendement, created
 

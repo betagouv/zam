@@ -23,6 +23,8 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
         # our changes will be committed with the current transaction
         DBSession.add(amendement)
 
+    initial_modified_at = amendement.modified_at
+
     # Update amendements
     with patch(
         "zam_repondeur.fetch.senat.amendements._fetch_all"
@@ -169,6 +171,10 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
     assert amendement.user_content.avis == "Favorable"
     assert amendement.user_content.objet == "Objet"
     assert amendement.user_content.reponse == "Réponse"
+
+    # Check that the modified date was updated
+    assert amendement.modified_at > amendement.created_at
+    assert amendement.modified_at > initial_modified_at
 
     # Check that the position was changed on the updated amendement
     assert amendement.position == 3

@@ -19,6 +19,7 @@ def read_sample_data(basename):
 @responses.activate
 def test_aspire_senat(app, lecture_senat):
     from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.models.events.amendement import AmendementRectifie
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
 
@@ -63,6 +64,16 @@ def test_aspire_senat(app, lecture_senat):
     assert amendement.article.num == "7"
     assert amendement.article.pos == "après"
     assert amendement.parent is None
+    assert len(amendement.events) == 1
+    assert isinstance(amendement.events[0], AmendementRectifie)
+    assert amendement.events[0].created_at is not None
+    assert amendement.events[0].user is None
+    assert amendement.events[0].data["old_value"] == 0
+    assert amendement.events[0].data["new_value"] == 1
+    assert (
+        amendement.events[0].render_summary()
+        == "L’amendement a été rectifié par les services du Sénat"
+    )
 
     # Check that #596 has a parent
     sous_amendement = [

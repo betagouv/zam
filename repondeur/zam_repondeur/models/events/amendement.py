@@ -29,18 +29,45 @@ class AmendementEvent(Event):
 
     @property
     def template_vars(self) -> dict:
-        return {
-            "user": self.user.display_name,
-            "email": self.user.email,
+        template_vars = {
             "new_value": do_striptags(self.data["new_value"]),  # type: ignore
             "old_value": do_striptags(self.data["old_value"]),  # type: ignore
         }
+        if self.user:
+            template_vars.update(
+                {"user": self.user.display_name, "email": self.user.email}
+            )
+        return template_vars
 
     def render_summary(self) -> str:
         return Markup(self.summary_template.safe_substitute(**self.template_vars))
 
     def render_details(self) -> str:
         return Markup(self.details_template.safe_substitute(**self.template_vars))
+
+
+class AmendementRectifie(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "amendement_rectifie"}
+
+    @property
+    def summary_template(self) -> Template:  # type: ignore
+        if self.amendement.lecture.chambre == "an":
+            de_qui = "de l’Asssemblée nationale"
+        else:
+            de_qui = "du Sénat"
+        return Template(f"L’amendement a été rectifié par les services {de_qui}")
+
+    details_template = Template("")
+
+    def __init__(
+        self, request: Request, amendement: Amendement, rectif: str, **kwargs: Any
+    ) -> None:
+        super().__init__(
+            request, amendement, old_value=amendement.rectif, new_value=rectif, **kwargs
+        )
+
+    def apply(self) -> None:
+        self.amendement.rectif = self.data["new_value"]
 
 
 class AmendementIrrecevable(AmendementEvent):

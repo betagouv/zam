@@ -1,6 +1,7 @@
 from typing import Any, List, NamedTuple
 
 from zam_repondeur.models import Amendement, Lecture
+from zam_repondeur.models.events.amendement import AmendementRectifie
 
 
 class Source:
@@ -15,7 +16,9 @@ class Source:
     def update_rectif(self, amendement: Amendement, rectif: int) -> bool:
         modified = False
         if rectif != amendement.rectif:
-            amendement.rectif = rectif  # TODO: create AmendementRectifie event
+            AmendementRectifie.create(
+                request=None, amendement=amendement, rectif=rectif
+            )
             modified = True
         return modified
 

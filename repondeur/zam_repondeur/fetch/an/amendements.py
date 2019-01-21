@@ -197,9 +197,16 @@ class AssembleeNationale(RemoteSource):
             groupe = get_groupe(raw_auteur, amendement.num)
             auteur = get_auteur(raw_auteur)
 
-        modified = self.update_attributes(
+        modified = False
+        modified |= self.update_rectif(amendement, get_rectif(amend))
+        modified |= self.update_corps(
+            amendement, unjustify(get_str_or_none(amend, "dispositif") or "")
+        )
+        modified |= self.update_expose(
+            amendement, unjustify(get_str_or_none(amend, "exposeSommaire") or "")
+        )
+        modified |= self.update_attributes(
             amendement,
-            rectif=get_rectif(amend),
             article=article,
             parent=parent,
             sort=get_sort(amend),
@@ -209,8 +216,6 @@ class AssembleeNationale(RemoteSource):
             matricule=matricule,
             groupe=groupe,
             auteur=auteur,
-            corps=unjustify(get_str_or_none(amend, "dispositif") or ""),
-            expose=unjustify(get_str_or_none(amend, "exposeSommaire") or ""),
         )
 
         if not created and modified:

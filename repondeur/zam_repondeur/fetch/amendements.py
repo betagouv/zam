@@ -12,6 +12,27 @@ class Source:
                 modified = True
         return modified
 
+    def update_rectif(self, amendement: Amendement, rectif: int) -> bool:
+        modified = False
+        if rectif != amendement.rectif:
+            amendement.rectif = rectif  # TODO: create AmendementRectifie event
+            modified = True
+        return modified
+
+    def update_corps(self, amendement: Amendement, corps: str) -> bool:
+        modified = False
+        if corps != amendement.corps:
+            amendement.corps = corps  # TODO: create CorpsAmendementModifie event
+            modified = True
+        return modified
+
+    def update_expose(self, amendement: Amendement, expose: str) -> bool:
+        modified = False
+        if expose != amendement.expose:
+            amendement.expose = expose  # TODO: create ExposeAmendementModifie event
+            modified = True
+        return modified
+
 
 class FetchResult(NamedTuple):
     amendements: List[Amendement]

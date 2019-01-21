@@ -81,17 +81,18 @@ class Senat(RemoteSource):
             Amendement, create_kwargs={"article": article}, lecture=lecture, num=num
         )
 
-        modified = self.update_attributes(
+        modified = False
+        modified |= self.update_rectif(amendement, rectif)
+        modified |= self.update_corps(amendement, clean_html(row["Dispositif "]))
+        modified |= self.update_expose(amendement, clean_html(row["Objet "]))
+        modified |= self.update_attributes(
             amendement,
             article=article,
-            rectif=rectif,
             alinea=row["Alinéa"].strip(),
             auteur=row["Auteur "],
             matricule=extract_matricule(row["Fiche Sénateur"]),
             date_depot=parse_date(row["Date de dépôt "]),
             sort=row["Sort "],
-            corps=clean_html(row["Dispositif "]),
-            expose=clean_html(row["Objet "]),
         )
 
         if not created and modified:

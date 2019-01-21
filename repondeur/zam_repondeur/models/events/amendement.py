@@ -21,6 +21,7 @@ class AmendementEvent(Event):
     details_template = Template(
         "De <del>« $old_value »</del> à <ins>« $new_value »</ins>"
     )
+    icon = ""
 
     def __init__(self, request: Request, amendement: Amendement, **kwargs: Any):
         super().__init__(request, **kwargs)
@@ -62,6 +63,7 @@ class AvisModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "avis_modifie"}
 
     details_template = Template("")
+    icon = "certificate"
 
     def __init__(
         self, request: Request, amendement: Amendement, avis: str, **kwargs: Any
@@ -93,6 +95,7 @@ class ObjetAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "objet_modifie"}
 
     summary_template = Template("<abbr title='$email'>$user</abbr> a modifié l’objet")
+    icon = "pencil-alt"
 
     def __init__(
         self, request: Request, amendement: Amendement, objet: str, **kwargs: Any
@@ -115,6 +118,7 @@ class ReponseModifiee(AmendementEvent):
     summary_template = Template(
         "<abbr title='$email'>$user</abbr> a modifié la réponse"
     )
+    icon = "pencil-alt"
 
     def __init__(
         self, request: Request, amendement: Amendement, reponse: str, **kwargs: Any
@@ -135,6 +139,7 @@ class AmendementTransfere(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "amendement_transfere"}
 
     details_template = Template("")
+    icon = "arrow-right"
 
     @property
     def summary_template(self) -> Template:  # type: ignore

@@ -20,6 +20,7 @@ class ArticleEvent(Event):
     details_template = Template(
         "De <del>« $old_value »</del> à <ins>« $new_value »</ins>"
     )
+    icon = ""
 
     def __init__(self, article: Article, **kwargs: Any):
         super().__init__(**kwargs)
@@ -45,6 +46,7 @@ class TitreArticleModifie(ArticleEvent):
     __mapper_args__ = {"polymorphic_identity": "titre_article_modifie"}
 
     summary_template = Template("<abbr title='$email'>$user</abbr> a modifié le titre")
+    icon = "pencil-alt"
 
     def __init__(
         self, request: Request, article: Article, title: str, **kwargs: Any
@@ -67,6 +69,7 @@ class PresentationArticleModifiee(ArticleEvent):
     summary_template = Template(
         "<abbr title='$email'>$user</abbr> a modifié la présentation"
     )
+    icon = "pencil-alt"
 
     def __init__(
         self, request: Request, article: Article, presentation: str, **kwargs: Any

@@ -16,7 +16,7 @@ def first_summary_text(resp):
 
 
 def test_amendement_journal_avis(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.events.amendement import AvisModifie
+    from zam_repondeur.models.events.amendement import AvisModifie
 
     with transaction.manager:
         AvisModifie.create(
@@ -39,7 +39,7 @@ def test_amendement_journal_avis(app, lecture_an, amendements_an, user_david):
 def test_amendement_journal_avis_with_existing_avis(
     app, lecture_an, amendements_an, user_david
 ):
-    from zam_repondeur.events.amendement import AvisModifie
+    from zam_repondeur.models.events.amendement import AvisModifie
 
     with transaction.manager:
         AvisModifie.create(
@@ -69,7 +69,7 @@ def test_amendement_journal_avis_with_existing_avis(
 
 
 def test_amendement_journal_objet(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.events.amendement import ObjetAmendementModifie
+    from zam_repondeur.models.events.amendement import ObjetAmendementModifie
 
     with transaction.manager:
         ObjetAmendementModifie.create(
@@ -88,7 +88,7 @@ def test_amendement_journal_objet(app, lecture_an, amendements_an, user_david):
 
 
 def test_amendement_journal_reponse(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.events.amendement import ReponseModifiee
+    from zam_repondeur.models.events.amendement import ReponseModifiee
 
     with transaction.manager:
         ReponseModifiee.create(
@@ -110,7 +110,7 @@ def test_amendement_journal_reponse(app, lecture_an, amendements_an, user_david)
 
 
 def test_amendement_journal_affectation(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.events.amendement import AmendementTransfere
+    from zam_repondeur.models.events.amendement import AmendementTransfere
 
     with transaction.manager:
         AmendementTransfere.create(
@@ -133,7 +133,7 @@ def test_amendement_journal_affectation(app, lecture_an, amendements_an, user_da
 def test_amendement_journal_affectation_with_existing_affectation(
     app, lecture_an, amendements_an, user_david
 ):
-    from zam_repondeur.events.amendement import AmendementTransfere
+    from zam_repondeur.models.events.amendement import AmendementTransfere
 
     with transaction.manager:
         AmendementTransfere.create(

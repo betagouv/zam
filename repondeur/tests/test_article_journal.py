@@ -16,7 +16,7 @@ def first_summary_text(resp):
 
 
 def test_article_journal_title(app, lecture_an, article1_an, user_david):
-    from zam_repondeur.events.article import TitreArticleModifie
+    from zam_repondeur.models.events.article import TitreArticleModifie
 
     with transaction.manager:
         TitreArticleModifie.create(
@@ -35,7 +35,7 @@ def test_article_journal_title(app, lecture_an, article1_an, user_david):
 
 
 def test_article_journal_presentation(app, lecture_an, article1_an, user_david):
-    from zam_repondeur.events.article import PresentationArticleModifiee
+    from zam_repondeur.models.events.article import PresentationArticleModifiee
 
     with transaction.manager:
         PresentationArticleModifiee.create(

@@ -6,7 +6,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.clean import clean_html
-from zam_repondeur.events.article import (
+from zam_repondeur.models.events.article import (
     TitreArticleModifie,
     PresentationArticleModifiee,
 )

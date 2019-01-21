@@ -8,7 +8,7 @@ from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import backref, relationship
 
 from .base import Event
-from ..models.article import Article
+from ..article import Article
 
 
 class ArticleEvent(Event):

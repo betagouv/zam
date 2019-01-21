@@ -1,6 +1,6 @@
 def test_post_amendement_edit_form_events(app, lecture_an, amendements_an):
     from zam_repondeur.models import Amendement, DBSession
-    from zam_repondeur.events.amendement import (
+    from zam_repondeur.models.events.amendement import (
         AmendementTransfere,
         AvisModifie,
         ObjetAmendementModifie,

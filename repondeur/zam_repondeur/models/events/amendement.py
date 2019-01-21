@@ -8,7 +8,7 @@ from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import backref, relationship
 
 from .base import Event
-from ..models.amendement import Amendement
+from ..amendement import Amendement
 
 
 class AmendementEvent(Event):

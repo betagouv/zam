@@ -7,8 +7,8 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import JSONType, UUIDType
 
-from ..models.base import Base, DBSession
-from ..models.users import User
+from ..base import Base, DBSession
+from ..users import User
 
 
 class Event(Base):

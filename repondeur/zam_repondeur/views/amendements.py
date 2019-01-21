@@ -12,7 +12,7 @@ from zam_repondeur.message import Message
 from zam_repondeur.models import AVIS
 from zam_repondeur.resources import AmendementResource
 from zam_repondeur.utils import add_url_fragment, add_url_params
-from zam_repondeur.events.amendement import (
+from zam_repondeur.models.events.amendement import (
     AmendementTransfere,
     AvisModifie,
     ObjetAmendementModifie,

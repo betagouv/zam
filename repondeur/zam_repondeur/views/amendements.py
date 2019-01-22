@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from typing import Any, Dict
 
 from pyramid.httpexceptions import HTTPFound
@@ -111,4 +111,8 @@ class AmendementEdit:
     renderer="amendement_journal.html",
 )
 def article_journal(context: AmendementResource, request: Request) -> Dict[str, Any]:
-    return {"lecture": context.lecture_resource.model(), "amendement": context.model()}
+    return {
+        "lecture": context.lecture_resource.model(),
+        "amendement": context.model(),
+        "today": date.today(),
+    }

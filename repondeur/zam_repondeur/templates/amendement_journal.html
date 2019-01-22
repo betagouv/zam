@@ -27,11 +27,21 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <ul class="timeline">
-            {% for event in amendement.events %}
-                {{ macros.journal_line(loop.first, event) }}
+    <div class="container timeline">
+        {% for key, events in amendement.events|group_by_day %}
+            <h3>
+                {% if key == today %}
+                    Aujourd’hui
+                {% else %}
+                    {{ key.strftime("%d %B") }}
+                {% endif %}
+            </h3>
+            <ul>
+            {% set outer_loop = loop %}
+            {% for event in events %}
+                {{ macros.journal_line(outer_loop.first, event) }}
             {% endfor %}
-        </ul>
+            </ul>
+        {% endfor %}
     </div>
 {% endblock %}

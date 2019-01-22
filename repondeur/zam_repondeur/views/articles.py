@@ -1,4 +1,5 @@
 from typing import Any, Dict
+from datetime import date
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
@@ -96,4 +97,8 @@ class ArticleEdit:
     context=ArticleResource, name="article_journal", renderer="article_journal.html"
 )
 def article_journal(context: ArticleResource, request: Request) -> Dict[str, Any]:
-    return {"lecture": context.lecture_resource.model(), "article": context.model()}
+    return {
+        "lecture": context.lecture_resource.model(),
+        "article": context.model(),
+        "today": date.today(),
+    }

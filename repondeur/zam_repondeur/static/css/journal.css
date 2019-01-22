@@ -1,9 +1,13 @@
-.timeline {
+.timeline ul {
     list-style-type: none;
 }
-    .timeline li {
+    .timeline ul li {
         display: flex;
     }
+.timeline h3 {
+    margin-left: 10rem;
+    margin-top: 4rem;
+}
 .icon {
     border-left: 3px solid #3167a6;
     margin: 0 1rem;

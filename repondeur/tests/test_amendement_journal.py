@@ -16,10 +16,10 @@ def first_summary_text(resp):
 
 
 def test_amendement_journal_avis(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.models.events.amendement import AvisModifie
+    from zam_repondeur.models.events.amendement import AvisAmendementModifie
 
     with transaction.manager:
-        AvisModifie.create(
+        AvisAmendementModifie.create(
             request=None,
             amendement=amendements_an[0],
             avis="Favorable",
@@ -39,16 +39,16 @@ def test_amendement_journal_avis(app, lecture_an, amendements_an, user_david):
 def test_amendement_journal_avis_with_existing_avis(
     app, lecture_an, amendements_an, user_david
 ):
-    from zam_repondeur.models.events.amendement import AvisModifie
+    from zam_repondeur.models.events.amendement import AvisAmendementModifie
 
     with transaction.manager:
-        AvisModifie.create(
+        AvisAmendementModifie.create(
             request=None,
             amendement=amendements_an[0],
             avis="Favorable",
             user=user_david,
         )
-        AvisModifie.create(
+        AvisAmendementModifie.create(
             request=None,
             amendement=amendements_an[0],
             avis="Défavorable",
@@ -88,10 +88,10 @@ def test_amendement_journal_objet(app, lecture_an, amendements_an, user_david):
 
 
 def test_amendement_journal_reponse(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.models.events.amendement import ReponseModifiee
+    from zam_repondeur.models.events.amendement import ReponseAmendementModifiee
 
     with transaction.manager:
-        ReponseModifiee.create(
+        ReponseAmendementModifiee.create(
             request=None,
             amendement=amendements_an[0],
             reponse="Réponse",

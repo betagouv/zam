@@ -98,8 +98,43 @@ class AmendementIrrecevable(AmendementEvent):
         self.amendement.sort = self.data["new_value"]
 
 
-class CorpsModifie(AmendementEvent):
-    __mapper_args__ = {"polymorphic_identity": "corps_modifie"}
+class AmendementTransfere(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "amendement_transfere"}
+
+    details_template = Template("")
+    icon = "arrow-right"
+
+    @property
+    def summary_template(self) -> Template:  # type: ignore
+        if self.template_vars["old_value"]:
+            template = (
+                "<abbr title='$email'>$user</abbr> a transféré l’amendement "
+                "de « $old_value » à « $new_value »"
+            )
+        else:
+            template = (
+                "<abbr title='$email'>$user</abbr> a transféré l’amendement "
+                "à « $new_value »"
+            )
+        return Template(template)
+
+    def __init__(
+        self, request: Request, amendement: Amendement, affectation: str, **kwargs: Any
+    ) -> None:
+        super().__init__(
+            request,
+            amendement,
+            old_value=amendement.user_content.affectation or "",
+            new_value=affectation,
+            **kwargs,
+        )
+
+    def apply(self) -> None:
+        self.amendement.user_content.affectation = self.data["new_value"]
+
+
+class CorpsAmendementModifie(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "corps_amendement_modifie"}
     icon = "pencil-alt"
 
     @property
@@ -127,8 +162,8 @@ class CorpsModifie(AmendementEvent):
         self.amendement.corps = self.data["new_value"]
 
 
-class ExposeModifie(AmendementEvent):
-    __mapper_args__ = {"polymorphic_identity": "expose_modifie"}
+class ExposeAmendementModifie(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "expose_amendement_modifie"}
     icon = "pencil-alt"
 
     @property
@@ -156,8 +191,8 @@ class ExposeModifie(AmendementEvent):
         self.amendement.expose = self.data["new_value"]
 
 
-class AvisModifie(AmendementEvent):
-    __mapper_args__ = {"polymorphic_identity": "avis_modifie"}
+class AvisAmendementModifie(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "avis_amendement_modifie"}
 
     details_template = Template("")
     icon = "certificate"
@@ -209,8 +244,8 @@ class ObjetAmendementModifie(AmendementEvent):
         self.amendement.user_content.objet = self.data["new_value"]
 
 
-class ReponseModifiee(AmendementEvent):
-    __mapper_args__ = {"polymorphic_identity": "reponse_modifiee"}
+class ReponseAmendementModifiee(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "reponse_amendement_modifiee"}
 
     summary_template = Template(
         "<abbr title='$email'>$user</abbr> a modifié la réponse"
@@ -230,38 +265,3 @@ class ReponseModifiee(AmendementEvent):
 
     def apply(self) -> None:
         self.amendement.user_content.reponse = self.data["new_value"]
-
-
-class AmendementTransfere(AmendementEvent):
-    __mapper_args__ = {"polymorphic_identity": "amendement_transfere"}
-
-    details_template = Template("")
-    icon = "arrow-right"
-
-    @property
-    def summary_template(self) -> Template:  # type: ignore
-        if self.template_vars["old_value"]:
-            template = (
-                "<abbr title='$email'>$user</abbr> a transféré l’amendement "
-                "de « $old_value » à « $new_value »"
-            )
-        else:
-            template = (
-                "<abbr title='$email'>$user</abbr> a transféré l’amendement "
-                "à « $new_value »"
-            )
-        return Template(template)
-
-    def __init__(
-        self, request: Request, amendement: Amendement, affectation: str, **kwargs: Any
-    ) -> None:
-        super().__init__(
-            request,
-            amendement,
-            old_value=amendement.user_content.affectation or "",
-            new_value=affectation,
-            **kwargs,
-        )
-
-    def apply(self) -> None:
-        self.amendement.user_content.affectation = self.data["new_value"]

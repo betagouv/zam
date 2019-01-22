@@ -4,8 +4,8 @@ from zam_repondeur.models import Amendement, Lecture
 from zam_repondeur.models.events.amendement import (
     AmendementIrrecevable,
     AmendementRectifie,
-    CorpsModifie,
-    ExposeModifie,
+    CorpsAmendementModifie,
+    ExposeAmendementModifie,
 )
 
 
@@ -42,14 +42,18 @@ class Source:
     def update_corps(self, amendement: Amendement, corps: str) -> bool:
         modified = False
         if corps != amendement.corps:
-            CorpsModifie.create(request=None, amendement=amendement, corps=corps)
+            CorpsAmendementModifie.create(
+                request=None, amendement=amendement, corps=corps
+            )
             modified = True
         return modified
 
     def update_expose(self, amendement: Amendement, expose: str) -> bool:
         modified = False
         if expose != amendement.expose:
-            ExposeModifie.create(request=None, amendement=amendement, expose=expose)
+            ExposeAmendementModifie.create(
+                request=None, amendement=amendement, expose=expose
+            )
             modified = True
         return modified
 

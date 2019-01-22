@@ -2,9 +2,9 @@ def test_post_amendement_edit_form_events(app, lecture_an, amendements_an):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import (
         AmendementTransfere,
-        AvisModifie,
+        AvisAmendementModifie,
         ObjetAmendementModifie,
-        ReponseModifiee,
+        ReponseAmendementModifiee,
     )
 
     resp = app.get(
@@ -34,7 +34,7 @@ def test_post_amendement_edit_form_events(app, lecture_an, amendements_an):
     assert amendement.events[0].user.email == "user@example.com"
     assert amendement.events[0].data["old_value"] == ""
     assert amendement.events[0].data["new_value"] == "6B"
-    assert isinstance(amendement.events[1], ReponseModifiee)
+    assert isinstance(amendement.events[1], ReponseAmendementModifiee)
     assert amendement.events[1].created_at is not None
     assert amendement.events[1].user.email == "user@example.com"
     assert amendement.events[1].data["old_value"] == ""
@@ -47,7 +47,7 @@ def test_post_amendement_edit_form_events(app, lecture_an, amendements_an):
     assert amendement.events[2].user.email == "user@example.com"
     assert amendement.events[2].data["old_value"] == ""
     assert amendement.events[2].data["new_value"] == "Un objet très pertinent"
-    assert isinstance(amendement.events[3], AvisModifie)
+    assert isinstance(amendement.events[3], AvisAmendementModifie)
     assert amendement.events[3].created_at is not None
     assert amendement.events[3].user.email == "user@example.com"
     assert amendement.events[3].data["old_value"] == ""

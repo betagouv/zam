@@ -21,8 +21,8 @@ def test_aspire_senat(app, lecture_senat):
     from zam_repondeur.fetch.senat.amendements import Senat
     from zam_repondeur.models.events.amendement import (
         AmendementRectifie,
-        CorpsModifie,
-        ExposeModifie,
+        CorpsAmendementModifie,
+        ExposeAmendementModifie,
     )
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
@@ -70,7 +70,7 @@ def test_aspire_senat(app, lecture_senat):
     assert amendement.parent is None
 
     assert len(amendement.events) == 3
-    assert isinstance(amendement.events[0], ExposeModifie)
+    assert isinstance(amendement.events[0], ExposeAmendementModifie)
     assert amendement.events[0].created_at is not None
     assert amendement.events[0].user is None
     assert amendement.events[0].data["old_value"] == ""
@@ -80,7 +80,7 @@ def test_aspire_senat(app, lecture_senat):
         == "L’exposé de l’amendement a été modifié par les services du Sénat"
     )
 
-    assert isinstance(amendement.events[1], CorpsModifie)
+    assert isinstance(amendement.events[1], CorpsAmendementModifie)
     assert amendement.events[1].created_at is not None
     assert amendement.events[1].user is None
     assert amendement.events[1].data["old_value"] == ""

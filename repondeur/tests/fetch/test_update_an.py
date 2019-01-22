@@ -598,7 +598,7 @@ def test_rectif(lecture_an, source):
 
 @responses.activate
 def test_rectif_with_nil(lecture_an, source):
-    from zam_repondeur.models.events.amendement import ExposeModifie
+    from zam_repondeur.models.events.amendement import ExposeAmendementModifie
 
     DBSession.add(lecture_an)
 
@@ -693,4 +693,4 @@ def test_rectif_with_nil(lecture_an, source):
     assert amendement.rectif == 0
     # No dedicated AmendementRectifie event created.
     assert len(amendement.events) == 2
-    assert isinstance(amendement.events[0], ExposeModifie)
+    assert isinstance(amendement.events[0], ExposeAmendementModifie)

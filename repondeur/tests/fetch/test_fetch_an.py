@@ -323,7 +323,10 @@ class TestFetchDiscussionList:
 class TestFetchAmendement:
     @responses.activate
     def test_simple_amendement(self, lecture_an, app, source):
-        from zam_repondeur.models.events.amendement import CorpsModifie, ExposeModifie
+        from zam_repondeur.models.events.amendement import (
+            CorpsAmendementModifie,
+            ExposeAmendementModifie,
+        )
 
         responses.add(
             responses.GET,
@@ -367,7 +370,7 @@ class TestFetchAmendement:
         assert amendement.user_content.reponse is None
 
         assert len(amendement.events) == 2
-        assert isinstance(amendement.events[0], ExposeModifie)
+        assert isinstance(amendement.events[0], ExposeAmendementModifie)
         assert amendement.events[0].created_at is not None
         assert amendement.events[0].user is None
         assert amendement.events[0].data["old_value"] == ""
@@ -377,7 +380,7 @@ class TestFetchAmendement:
             "de l’Asssemblée nationale"
         )
 
-        assert isinstance(amendement.events[1], CorpsModifie)
+        assert isinstance(amendement.events[1], CorpsAmendementModifie)
         assert amendement.events[1].created_at is not None
         assert amendement.events[1].user is None
         assert amendement.events[1].data["old_value"] == ""

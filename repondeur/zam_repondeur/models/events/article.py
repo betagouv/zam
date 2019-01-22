@@ -46,7 +46,7 @@ class ArticleEvent(Event):
 
 class ContenuArticleModifie(ArticleEvent):
     __mapper_args__ = {"polymorphic_identity": "contenu_article_modifie"}
-    icon = "pencil-alt"
+    icon = "document"
 
     @property
     def summary_template(self) -> Template:
@@ -92,7 +92,7 @@ class TitreArticleModifie(ArticleEvent):
 
     @property
     def icon(self) -> str:
-        return "user-edit" if self.user else "pencil-alt"
+        return "edit" if self.user else "document"
 
     def __init__(
         self, request: Request, article: Article, title: str, **kwargs: Any
@@ -115,7 +115,7 @@ class PresentationArticleModifiee(ArticleEvent):
     summary_template = Template(
         "<abbr title='$email'>$user</abbr> a modifié la présentation"
     )
-    icon = "user-edit"
+    icon = "edit"
 
     def __init__(
         self, request: Request, article: Article, presentation: str, **kwargs: Any

@@ -39,7 +39,7 @@
             <ul>
             {% set outer_loop = loop %}
             {% for event in events %}
-                {{ macros.journal_line(outer_loop.first, event) }}
+                {{ macros.journal_line(outer_loop.first and loop.first, event) }}
             {% endfor %}
             </ul>
         {% endfor %}    </div>

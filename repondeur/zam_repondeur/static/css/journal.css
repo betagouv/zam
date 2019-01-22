@@ -12,13 +12,21 @@
     border-left: 3px solid #3167a6;
     margin: 0 1rem;
 }
-    .icon i.fa {
-        color: #3167a6;
-        border: 2px solid #3167a6;
-        padding: .5rem;
-        border-radius: 2rem;
-        margin: 1.2rem 0 0 -1.25rem;
-        background: white;
+    .icon i {
+        display: inline-block;
+        width: 2.8rem;
+        height: 2.8rem;
+        margin: .6rem 0 0 -1.5rem;
+        background: transparent no-repeat center center;
+    }
+    .icon .icon-edit {
+        background-image: url("../img/journal/edit.svg");
+    }
+    .icon .icon-boite {
+        background-image: url("../img/journal/boite.svg");
+    }
+    .icon .icon-document {
+        background-image: url("../img/journal/document.svg");
     }
 em {
     padding: 1.5rem 1rem;

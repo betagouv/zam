@@ -73,7 +73,7 @@ class AmendementRectifie(AmendementEvent):
 
 class AmendementIrrecevable(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "amendement_irrecevable"}
-    icon = "times"
+    icon = "document"
 
     @property
     def summary_template(self) -> Template:  # type: ignore
@@ -102,7 +102,7 @@ class AmendementTransfere(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "amendement_transfere"}
 
     details_template = Template("")
-    icon = "arrow-right"
+    icon = "boite"
 
     @property
     def summary_template(self) -> Template:  # type: ignore
@@ -135,7 +135,7 @@ class AmendementTransfere(AmendementEvent):
 
 class CorpsAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "corps_amendement_modifie"}
-    icon = "pencil-alt"
+    icon = "edit"
 
     @property
     def summary_template(self) -> Template:  # type: ignore
@@ -164,7 +164,7 @@ class CorpsAmendementModifie(AmendementEvent):
 
 class ExposeAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "expose_amendement_modifie"}
-    icon = "pencil-alt"
+    icon = "edit"
 
     @property
     def summary_template(self) -> Template:  # type: ignore
@@ -195,7 +195,7 @@ class AvisAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "avis_amendement_modifie"}
 
     details_template = Template("")
-    icon = "certificate"
+    icon = "edit"
 
     def __init__(
         self, request: Request, amendement: Amendement, avis: str, **kwargs: Any
@@ -227,7 +227,7 @@ class ObjetAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "objet_modifie"}
 
     summary_template = Template("<abbr title='$email'>$user</abbr> a modifié l’objet")
-    icon = "user-edit"
+    icon = "edit"
 
     def __init__(
         self, request: Request, amendement: Amendement, objet: str, **kwargs: Any
@@ -250,7 +250,7 @@ class ReponseAmendementModifiee(AmendementEvent):
     summary_template = Template(
         "<abbr title='$email'>$user</abbr> a modifié la réponse"
     )
-    icon = "user-edit"
+    icon = "edit"
 
     def __init__(
         self, request: Request, amendement: Amendement, reponse: str, **kwargs: Any

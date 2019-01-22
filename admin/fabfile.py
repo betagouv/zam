@@ -90,10 +90,10 @@ def bootstrap(ctx):
 
 
 @task
-def basicauth(ctx):
+def basicauth(ctx, user="demozam"):
     install_packages(ctx, "apache2-utils")
     # Will prompt for password.
-    ctx.sudo("htpasswd -c /etc/nginx/.htpasswd demozam")
+    ctx.sudo(f"htpasswd -c /etc/nginx/.htpasswd {user}")
 
 
 @task

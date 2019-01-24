@@ -8,6 +8,44 @@ body {
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
+nav.main {
+    background: #3167a6;
+    color: white;
+    padding: .5rem 2rem;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    border-bottom: 3px solid white;
+}
+    nav.main ul {
+        display: flex;
+        list-style-type: none;
+        margin: 0;
+    }
+        nav.main ul li {
+            padding: .7rem 1rem;
+        }
+            nav.main ul li a {
+                color: white;
+            }
+            nav.main ul li.selected a {
+                color: white;
+                text-decoration: underline;
+            }
+    nav.main ul:first-child li a {
+        background: no-repeat left 20%/20% url("../img/home.svg");
+        padding-left: 1.5rem;
+    }
+    nav.main ul:last-child li:first-child a {
+        background: no-repeat right 20%/18% url("../img/compte.svg");
+        padding-right: 1.7rem;
+    }
+    nav.main ul:last-child li:last-child a {
+        background: no-repeat right 20%/16% url("../img/exit.svg");
+        padding-right: 1.7rem;
+    }
+
 header.main {
     background-color: #3167a6;
     padding: .5rem;

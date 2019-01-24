@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="icone/compte" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon/account_circle" fill="#FFFFFF">
+            <g id="account_circle">
+                <path d="M10,0 C4.48,0 0,4.48 0,10 C0,15.52 4.48,20 10,20 C15.52,20 20,15.52 20,10 C20,4.48 15.52,0 10,0 Z M10,3 C11.66,3 13,4.34 13,6 C13,7.66 11.66,9 10,9 C8.34,9 7,7.66 7,6 C7,4.34 8.34,3 10,3 Z M10,17.2 C7.58675511,17.2000112 5.33398815,15.9910262 4,13.98 C4.03,11.99 8,10.9 10,10.9 C11.99,10.9 15.97,11.99 16,13.98 C14.6660119,15.9910262 12.4132449,17.2000112 10,17.2 Z" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

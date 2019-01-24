@@ -12,6 +12,32 @@
     {% endblock %}
 </head>
 <body>
+    <nav class="main">
+        {% block nav %}
+            <ul>
+                {% if lectures is defined %}
+                    {% set lectures_link = request.resource_url(context) %}
+                {% elif "lectures" in context %}
+                    {% set lectures_link = request.resource_url(context['lectures']) %}
+                {% elif "lecture" is defined %}
+                    {% set lectures_link = request.resource_url(context.parent) %}
+                {% else %}
+                    {% set lectures_link = request.resource_url(context.lecture_resource) %}
+                {% endif %}
+                <li><a href="{{ lectures_link }}" title="Aller à la liste des lectures">Lectures</a></li>
+            </ul>
+            <ul>
+                {% if request.user %}
+                    <li>
+                        <a href="{{ request.route_url('welcome') }}" title="{{ request.user.name }} : changer de nom ?">
+                            Mon compte
+                        </a>
+                    </li>
+                    <li><a href="{{ request.route_url('logout') }}" title="Se déconnecter de Zam">Déconnexion</a></li>
+                {% endif %}
+            </ul>
+        {% endblock %}
+    </nav>
     <header class="main">
     {% block top %}
     {% endblock %}

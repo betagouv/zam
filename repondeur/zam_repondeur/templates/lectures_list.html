@@ -39,19 +39,28 @@
         background-position: right 40%;
         background-size: 7%;
     }
+    header.main .add-lecture {
+        text-align: right;
+        margin-right: .8rem;
+    }
+        header.main .add-lecture a.button {
+            color: #3167a6;
+            border: 1px solid #3167a6;
+        }
+        header.main .add-lecture a.button:hover {
+            background-color: #3167a6;
+            color: white;
+        }
 </style>
 {% endblock %}
 
-
 {% block top %}
-    <nav class="float-right">
-        <a class="button" href="{{ request.resource_url(context, 'add') }}">
+    <div class="add-lecture">
+        <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
             Ajouter une nouvelle lecture
         </a>
-    </nav>
-    <h2>Lectures</h2>
+    </div>
 {% endblock %}
-
 
 {% block body %}
 {% for lecture in lectures %}

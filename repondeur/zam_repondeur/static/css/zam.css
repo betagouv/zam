@@ -16,7 +16,6 @@ nav.main {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    border-bottom: 3px solid white;
 }
     nav.main ul {
         display: flex;
@@ -47,9 +46,8 @@ nav.main {
     }
 
 header.main {
-    background-color: #3167a6;
+    background: #f6f7fa;
     padding: .5rem;
-    color: white;
     text-align: center;
 }
 

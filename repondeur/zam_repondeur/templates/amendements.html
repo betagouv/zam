@@ -17,7 +17,6 @@
 {% block secondary_header %}
     <nav class="nav secondary justify-content-between">
         <span class="nav-item">
-            <a class="arrow-left" href="{{ request.resource_url(context.parent.parent) }}">Retourner aux lectures</a>
         </span>
         <div>
             {{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}

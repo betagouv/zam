@@ -19,10 +19,10 @@
                     {% set lectures_link = request.resource_url(context) %}
                 {% elif "lectures" in context %}
                     {% set lectures_link = request.resource_url(context['lectures']) %}
-                {% elif "lecture" is defined %}
+                {% elif "lecture" is defined and not "amendements" is defined %}
                     {% set lectures_link = request.resource_url(context.parent) %}
                 {% else %}
-                    {% set lectures_link = request.resource_url(context.lecture_resource) %}
+                    {% set lectures_link = request.resource_url(context.parent.parent) %}
                 {% endif %}
                 <li><a href="{{ lectures_link }}" title="Aller à la liste des lectures">Lectures</a></li>
             </ul>

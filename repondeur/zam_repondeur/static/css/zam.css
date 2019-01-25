@@ -275,3 +275,14 @@ dd td {
     border: 1px solid black;
     padding: .2rem 1rem;
 }
+
+/* Icons */
+.icon {
+    width: 1rem;
+    height: 1rem;
+    margin-bottom: -.1rem;
+    margin-right: .2rem;
+}
+path {
+    fill: currentColor;
+}

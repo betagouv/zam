@@ -1,40 +1,22 @@
 {% extends "_base_edit.html" %}
 
-
-{% block top %}
-    <div class="title">
-        <h2>{{ lecture.dossier_legislatif }}</h2>
-        <h3>{{ lecture }}</h3>
-    </div>
+{% block extra_nav %}
+    <li><a href="{{ request.resource_url(context.parent.parent, 'amendements') }}">Amendements</a></li>
 {% endblock %}
 
-{% block secondary_header %}
-    <nav class="nav secondary justify-content-between">
-        <span class="nav-item">
-            <a class="arrow-left" href="{{ request.resource_url(context.parent.parent, 'amendements') }}">Retourner aux amendements</a>
-        </span>
-        <div>
+{% block body %}
+    <section class="content">
+        <div class="title">
             <h2>{{ article }}</h2>
             {% if article.user_content.title %}
                 <div>{{ article.user_content.title }}</div>
             {% endif %}
         </div>
-        <span class="nav-item">
-        </span>
-    </nav>
-{% endblock %}
-
-{% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm pl-0 mr-4">
-                {{ content(article) }}
-            </div>
-            <div class="col-sm px-0">
-                {{ form(article) }}
-            </div>
-        </div>
-    </div>
+        {{ content(article) }}
+    </section>
+    <section class="edit">
+        {{ form(article) }}
+    </section>
 {% endblock %}
 
 

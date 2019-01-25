@@ -60,6 +60,9 @@
 }
 
 /* Table formatting */
+.table {
+    background: white;
+}
 .table th, .table td {
     vertical-align: middle;
     padding: .25rem .75rem;

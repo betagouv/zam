@@ -3,6 +3,28 @@
 
 {% block header %}
     <style type="text/css">
+        /* Two-columns layout */
+        main {
+            display: flex;
+            flex-direction: row;
+        }
+        main > section {
+            flex-basis: 50%;
+            margin: 0 5rem;
+            max-width: calc(50% - 8rem);
+        }
+        main > section.content {
+            margin-right: 3rem;
+        }
+        main > section.edit {
+            margin-left: 3rem;
+            background: white;
+            padding: 2rem 1rem;
+        }
+        main > section > div {
+            margin-bottom: 2rem;
+        }
+
         h4 {
             margin-bottom: 0.75rem;
         }
@@ -18,6 +40,14 @@
         div.mce-fullscreen {
             z-index: 1030;
         }
+        .title {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+        .title h2 {
+            font-weight: 600;
+        }
+
     </style>
 {% endblock %}
 

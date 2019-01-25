@@ -25,6 +25,7 @@
                     {% set lectures_link = request.resource_url(context.parent.parent) %}
                 {% endif %}
                 <li><a href="{{ lectures_link }}" title="Aller à la liste des lectures">Lectures</a></li>
+                {% block extra_nav %}{% endblock %}
             </ul>
             <ul>
                 {% if request.user %}
@@ -38,10 +39,6 @@
             </ul>
         {% endblock %}
     </nav>
-    <header class="main">
-    {% block top %}
-    {% endblock %}
-    </header>
 
     {% block secondary_header %}
     {% endblock %}

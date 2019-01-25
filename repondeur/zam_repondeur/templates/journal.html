@@ -1,20 +1,44 @@
 {% extends "_base.html" %}
 
+{% block header %}
+<style type="text/css">
+    .extra-button {
+        display: block;
+        text-align: right;
+        margin-right: .8rem;
+        margin-top: 1rem;
+        font-weight: 600;
+    }
+        .extra-button form .button {
+            color: #3167a6;
+            border: 1px solid #3167a6;
+            background-color: white;
+        }
+        .extra-button form .button:hover {
+            background-color: #3167a6;
+            color: white;
+        }
+    h2 {
+        text-align: center;
+        font-weight: 600;
+        margin: 2.5rem 0 1.5rem 0;
+    }
+</style>
+{% endblock %}
 
-{% block top %}
-    <h2>Journal</h2>
-    <nav class="justify-content-around">
-        <a class="button" href="{{ request.resource_url(context, 'amendements') }}">←&nbsp;&nbsp;Retourner aux amendements</a>
-        <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh" class="float-right">
+{% block extra_nav %}
+    <li><a href="{{ request.resource_url(context, 'amendements') }}">Amendements</a></li>
+{% endblock %}
+
+{% block body %}
+    <div class="extra-button">
+        <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh">
             <button type="submit" name="refresh" class="button">
                 <i class="fa fa-sync"></i>&nbsp;&nbsp;Rafraichir manuellement
             </button>
         </form>
-    </nav>
-{% endblock %}
-
-
-{% block body %}
+    </div>
+    <h2>Journal</h2>
     {% for item in journal %}
         <div class="alert alert-{{ item.kind }}" role="alert">
             {{ item.message }}

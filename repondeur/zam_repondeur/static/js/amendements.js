@@ -47,7 +47,7 @@ function setupToggle(toggleSelector, targetSelector, scroll) {
 
 function makeHeadersSortable(tableHead) {
     tableHead.addEventListener('click', e => {
-        const tableHeader = e.target
+        let tableHeader = e.target
         if (
             tableHeader.classList.contains('nosort') ||
             tableHeader.nodeName === 'INPUT' ||
@@ -55,6 +55,10 @@ function makeHeadersSortable(tableHead) {
             tableHeader.nodeName === 'SELECT'
         )
             return
+        if (tableHeader.nodeName === 'use')
+            tableHeader = tableHeader.parentNode
+        if (tableHeader.nodeName === 'svg')
+            tableHeader = tableHeader.parentNode
         const isAscending = tableHeader.getAttribute('data-order') === 'asc'
         const order = isAscending ? 'desc' : 'asc'
 
@@ -85,6 +89,7 @@ function sortColumns(sortSpec) {
 function sortColumn(tableHeader, colIndex, order) {
     tableHeader.setAttribute('data-order', order)
     const selector = 'td:nth-child(' + colIndex + ')'
+    tableHeader.querySelector('svg use').setAttribute('xlink:href', '#sort-' + order)
     const options = {
         sortFunction: (a, b) => {
             return compareArrays(

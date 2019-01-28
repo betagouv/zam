@@ -47,6 +47,7 @@ class LecturesAdd:
                 for uid, dossier in self.dossiers_by_uid.items()
             ],
             "lectures": lectures,
+            "hide_lectures_link": len(lectures) == 0,
         }
 
     @view_config(request_method="POST")

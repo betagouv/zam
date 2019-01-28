@@ -1,38 +1,34 @@
 {% extends "_base.html" %}
 {% import "macros.html" as macros %}
 
-
 {% block header %}
 <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/amendements.css') }}">
 {% endblock %}
 
-
-{% block top %}
-    <div class="title">
-        <h2>{{ lecture.dossier_legislatif }}</h2>
-        <h3>{{ lecture }}</h3>
-    </div>
+{% block extra_nav %}
+    {% if lecture.displayable %}
+        <li>
+            <a href="{{ request.resource_url(context.parent['articles']) }}" target="_blank">
+                Dossier de banc
+            </a>
+        </li>
+    {% endif %}
 {% endblock %}
 
 {% block secondary_header %}
     <nav class="nav secondary justify-content-between">
         <span class="nav-item">
-            <a class="arrow-left" href="{{ request.resource_url(context.parent.parent) }}">Retourner aux lectures</a>
         </span>
         <div>
             {{ macros.update_informations(lecture, request.resource_url(context.parent, 'lecture_journal')) }}
         </div>
         <span class="nav-item">
-            {% if lecture.displayable %}
-                <a class="arrow-right" href="{{ request.resource_url(context.parent['articles']) }}" target="_blank">
-                    Voir le dossier de banc
-                </a>
-            {% endif %}
         </span>
     </nav>
 {% endblock %}
 
 {% block body %}
+{% include "svg-file-icons.html" %}
 <div class="content">
     <nav class="options">
         <a href="#" id="unsort">Annuler le tri</a>
@@ -65,11 +61,11 @@
             <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
             <div role="group" aria-label="Format de téléchargement">
                 <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
-                    <i class="fa fa-file-excel"></i>
+                    {{ macros.svg_icon("file-excel") }}
                     Format Excel
                 </a>
                 <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
-                    <i class="fa fa-file-pdf"></i>
+                    {{ macros.svg_icon("file-pdf") }}
                     Format PDF
                 </a>
             </div>
@@ -115,7 +111,7 @@
             <p>Télécharger et conserver une sauvegarde pour un futur import.</p>
             <div role="group" aria-label="Format de téléchargement">
                 <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'json'}) }}">
-                    <i class="fa fa-file-archive"></i>
+                    {{ macros.svg_icon("file-archive") }}
                     Fichier de sauvegarde
                 </a>
             </div>
@@ -125,12 +121,27 @@
     <table class="table" style="width:100%">
         <thead class="box">
             <tr class="headers sticky">
-                <th width="150px">Article</th>
-                <th width="180px">Nº</th>
+                <th width="150px">
+                    {{ macros.svg_icon("sort") }}
+                    Article
+                </th>
+                <th width="180px">
+                    {{ macros.svg_icon("sort") }}
+                    Nº
+                </th>
                 <th class="nosort">Objet</th>
-                <th>Groupe (Auteur)</th>
-                <th class="avis">Avis</th>
-                <th class="affectation">Affectation</th>
+                <th>
+                    {{ macros.svg_icon("sort") }}
+                    Groupe (Auteur)
+                </th>
+                <th class="avis">
+                    {{ macros.svg_icon("sort") }}
+                    Avis
+                </th>
+                <th class="affectation">
+                    {{ macros.svg_icon("sort") }}
+                    Affectation
+                </th>
                 <th class="nosort">⋯</th>
             </tr>
             <tr class="filters sticky d-none">
@@ -295,8 +306,8 @@
                     {{ amendement.user_content.affectation or "" }}
                 </td>
                 <td>
-                    <a class="download-pdf" href="{{ request.resource_url(context[amendement.num_str], 'download_amendement') }}">
-                        <i class="far fa-file-pdf" title="Exporter en PDF"></i>
+                    <a class="download-pdf" href="{{ request.resource_url(context[amendement.num_str], 'download_amendement') }}" title="Exporter en PDF">
+                        {{ macros.svg_icon("file-pdf") }}
                     </a>
                 </td>
             </tr>

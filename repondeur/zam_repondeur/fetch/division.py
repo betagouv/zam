@@ -65,6 +65,14 @@ def _parse_subdiv(libelle: str) -> SubDiv:
         start = len("Section ")
         return SubDiv("section", libelle[start:], "", "")
 
+    if libelle.startswith("Sous-section "):
+        start = len("Sous-section ")
+        if " : " in libelle[start:]:
+            num, _ = libelle[start:].split(" : ", 1)
+            return SubDiv("sous-section", num, "", "")
+        else:
+            return SubDiv("sous-section", libelle[start:], "", "")
+
     if libelle.startswith("Soussection "):
         start = len("Soussection ")
         return SubDiv("sous-section", libelle[start:], "", "")

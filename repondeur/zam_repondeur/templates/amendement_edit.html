@@ -4,26 +4,6 @@
 {% block header %}
     {{ super() }}
     <style type="text/css">
-        /* Two-column layout */
-        main {
-            display: flex;
-            flex-direction: row;
-        }
-        main > section {
-            flex-basis: 50%;
-            margin: 0 5rem;
-            max-width: calc(50% - 8rem);
-        }
-        main > section:first-child {
-            margin-right: 3rem;
-        }
-        main > section:last-child {
-            margin-left: 3rem;
-        }
-        main > section > div {
-            margin-bottom: 2rem;
-        }
-
         /* Headers with line-through */
         h4 {
           overflow: hidden;
@@ -87,70 +67,62 @@
     </style>
 {% endblock %}
 
-
-{% block top %}
-    <div class="title">
-        <h2>Amendement nº&nbsp;{{ amendement }}</h2>
-        {% if amendement.parent %}
-            <h3>Sous-amendement au {{ amendement.parent }}</h3>
-        {% endif %}
-        - {{ amendement.article.format() }} -
-        <div class="auteur">
-            {% if amendement.auteur %}
-                Présenté par {{ amendement.auteur }}
-                {%- if not amendement.gouvernemental %}
-                    ({{ amendement.groupe }})
-                {% endif %}
-            {% elif amendement.is_abandoned_before_seance %}
-                {% if amendement.is_withdrawn %}
-                    <h3>Cet amendement a été retiré</h3>
-                {% else %}
-                    <h3>Cet amendement est irrecevable</h3>
-                {% endif %}
-            {% endif %}
-        </div>
-        {% if amendement.identique %}
-            {% set identiques = amendement.all_identiques %}
-            {% set identiques_length = identiques|length %}
-            <p>
-                <em>
-                    Identique au{% if identiques_length > 1 %}x{% endif %} nº
-                    {% for identique in identiques -%}
-                        <a href="{{ request.resource_url(context.parent[identique.num_str], 'amendement_edit') }}">{{ identique }}</a>
-                        {% if identique.user_content.full_reponse() != amendement.user_content.full_reponse() %}
-                            <span title="Cet amendement identique n’a pas une réponse similaire">⚠️</span>
-                        {% endif %}
-                        {% if loop.revindex == 2 and identiques_length > 1 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                    {%- endfor %}
-                </em>
-            </p>
-        {% endif %}
-    </div>
+{% block extra_nav %}
+    <li><a href="{{ back_url }}">Amendements</a></li>
+    {% if amendement.is_displayable %}
+        <li>
+            <a href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key], 'reponses', anchor=amendement.slug) }}" target="_blank">
+                Dossier de banc
+            </a>
+        </li>
+    {% endif %}
 {% endblock %}
-
-
-{% block secondary_header %}
-    <nav class="nav secondary justify-content-between">
-        <span class="nav-item">
-            <a class="arrow-left" href="{{ back_url }}">Retourner aux amendements</a>
-        </span>
-        <div>
-            {{ macros.update_informations(amendement, request.resource_url(context, 'amendement_journal')) }}
-        </div>
-        <span class="nav-item">
-            {% if amendement.is_displayable %}
-                <a class="arrow-right" href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key], 'reponses', anchor=amendement.slug) }}" target="_blank">Visualiser dans le dossier</a>
-            {% endif %}
-        </span>
-    </nav>
-{% endblock %}
-
 
 {% block body %}
-    <section class="amendement">
+    <section class="content">
+        <div class="title">
+            <h2>Amendement nº&nbsp;{{ amendement }}</h2>
+            {% if amendement.parent %}
+                <h3>Sous-amendement au {{ amendement.parent }}</h3>
+            {% endif %}
+            - {{ amendement.article.format() }} -
+            <div class="auteur">
+                {% if amendement.auteur %}
+                    Présenté par {{ amendement.auteur }}
+                    {%- if not amendement.gouvernemental %}
+                        ({{ amendement.groupe }})
+                    {% endif %}
+                {% elif amendement.is_abandoned_before_seance %}
+                    {% if amendement.is_withdrawn %}
+                        <h3>Cet amendement a été retiré</h3>
+                    {% else %}
+                        <h3>Cet amendement est irrecevable</h3>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        {{ macros.update_informations(amendement, request.resource_url(context, 'amendement_journal')) }}
         {{ content(amendement) }}
     </section>
-    <section class="reponse">
+    <section class="edit">
+        <div>
+            {% if amendement.identique %}
+                {% set identiques = amendement.all_identiques %}
+                {% set identiques_length = identiques|length %}
+                <p>
+                    <em>
+                        Identique au{% if identiques_length > 1 %}x{% endif %} nº
+                        {% for identique in identiques -%}
+                            <a href="{{ request.resource_url(context.parent[identique.num_str], 'reponse') }}">{{ identique }}</a>
+                            {% if identique.user_content.full_reponse() != amendement.user_content.full_reponse() %}
+                                <span title="Cet amendement identique n’a pas une réponse similaire">⚠️</span>
+                            {% endif %}
+                            {% if loop.revindex == 2 and identiques_length > 1 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                        {%- endfor %}
+                    </em>
+                </p>
+            {% endif %}
+        </div>
         {{ form(amendement) }}
     </section>
 {% endblock %}

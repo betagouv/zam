@@ -33,6 +33,8 @@ import pytest
         ("ANNEXE B", "annexe", "B", "", ""),
         ("Section 2", "section", "2", "", ""),
         ("Soussection 2", "sous-section", "2", "", ""),
+        ("Sous-section 2", "sous-section", "2", "", ""),
+        ("Sous-section 2 : extras", "sous-section", "2", "", ""),
         ("Chapitre III", "chapitre", "III", "", ""),
         ("Article Article 3 bis AAA", "article", "3", "bis", ""),
         ("Article additionnel après l'article 13", "article", "13", "", "après"),

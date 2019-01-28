@@ -1,35 +1,27 @@
-
 {% extends "_base.html" %}
-
 
 {% block header %}
     <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.css') }}">
     <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.bootstrap3.css') }}">
     <style type="text/css">
+        h2 {
+            text-align: center;
+            margin: 2.5rem 0 1.5rem 0;
+            font-weight: 600;
+        }
         form {
             max-width: 50rem;
-            margin: 0 auto;
+            margin: 2rem auto;
+            background-color: white;
+            padding: 2rem;
+            box-shadow: 2px 2px 5px 2px #CCC;
         }
     </style>
 {% endblock %}
 
-
-{% block top %}
-    <h2>Ajouter une lecture...</h2>
-{% endblock %}
-
-{% block secondary_header %}
-    {% if lectures %}
-    <nav class="nav secondary justify-content-start">
-        <span class="nav-item">
-            <a class="arrow-left" href="{{ request.resource_url(context.parent.parent) }}">Retourner aux lectures</a>
-        </span>
-    </nav>
-    {% endif %}
-{% endblock %}
-
 {% block body %}
     <form id="add-lecture" action="{{ request.path }}" method="POST">
+        <h2>Ajouter une lecture...</h2>
         <div class="form-group">
             <label for="dossier">Dossier législatif</label>
             <select id="select-dossier" name="dossier" class="form-control" placeholder="Choisir un dossier législatif..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
@@ -51,9 +43,7 @@
         </div>
 
     </form>
-
 {% endblock %}
-
 
 {% block scripts %}
 <script src="{{ request.static_url('zam_repondeur:static/jquery/jquery-1.12.4.min.js') }}"></script>

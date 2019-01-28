@@ -6,86 +6,54 @@ body {
     font-family: "source_sans_pro", -apple-system, BlinkMacSystemFont,
         "Segoe UI", Helvetica, Arial, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background: #f2f2f2;
 }
 
-header.main {
-    background-color: #3167a6;
-    padding: .5rem;
+nav.main {
+    background: #3167a6;
     color: white;
-    text-align: center;
-}
-
-header.main > h2,
-header.main > .title {
-    padding: 0.5rem 0;
-    margin: 0;
-}
-
-header.main h2 {
-    font-size: 2.5rem;
-    font-weight: 600;
-}
-
-header.main h3 {
-    font-size: 1.5rem;
-    line-height: 1.33;
-}
-
-header.main h2,
-header.main h3 {
-    max-width: 70%;
-    margin: auto;
-}
-
-header.main nav {
+    padding: .5rem 2rem;
+    font-size: 1.1rem;
     display: flex;
-    justify-content: center;
-    margin: 0.5rem 0 1rem 0;
+    justify-content: space-between;
+    width: 100%;
 }
-
-header.main a {
-    color: white;
-    text-decoration: underline;
-}
-header.main a.button,
-header.main button {
-    color: white;
-    border: thin solid white;
-    text-decoration: none;
-}
-header.main a:hover,
-header.main button:hover {
-    background-color: white;
-    color: #3167a6;
-}
-
-@media(min-width:768px) {
-    header.main > h2,
-    header.main > .title {
-        padding: 1rem 0;
+    nav.main ul {
+        display: flex;
+        list-style-type: none;
         margin: 0;
     }
-}
-
-/* Back button */
-header.main nav.top-left {
-    margin-bottom: 1rem;
-}
-@media(min-width:768px) {
-    header.main nav.top-left {
-        float: left;
-        margin-bottom: 0.5rem;
+        nav.main ul li {
+            padding: .7rem 1rem;
+        }
+            nav.main ul li a {
+                color: white;
+            }
+            nav.main ul li.selected a {
+                color: white;
+                text-decoration: underline;
+            }
+    nav.main ul:first-child li a {
+        padding: 0 0 0 1.5rem;
     }
-    header.main nav.top-left ~ * {
-        clear: both;
+    nav.main ul:first-child li:first-child a {
+        background: no-repeat left 20%/18% url("../img/home.svg");
     }
-}
+    nav.main ul:first-child li:nth-child(2) a {
+        border-left: 2px solid white;
+    }
+    nav.main ul:last-child li:first-child a {
+        background: no-repeat right 20%/18% url("../img/compte.svg");
+        padding-right: 1.7rem;
+    }
+    nav.main ul:last-child li:last-child a {
+        background: no-repeat right 20%/16% url("../img/exit.svg");
+        padding-right: 1.7rem;
+    }
 
 nav.secondary {
     padding: 1.2rem 2rem 1rem 2rem;
     text-align: center;
-    box-shadow: 0 10px 5px -5px #CCC;
-    background: #f6f7fa;
     font-weight: 600;
 }
 .secondary .nav-item {
@@ -122,10 +90,6 @@ nav.secondary {
 }
 .journal {
     font-weight: normal;
-}
-
-main {
-    margin-top: 2rem;
 }
 
 /* Liens */
@@ -205,6 +169,7 @@ a.underlined:hover {
 }
 nav .button {
     margin: auto 0.5rem;
+    background-color: white;
 }
 nav .button:first-child {
     margin-left: 0;
@@ -282,4 +247,15 @@ ins {
 }
 del {
     background-color: pink;
+}
+
+/* Icons */
+.icon {
+    width: 1rem;
+    height: 1rem;
+    margin-bottom: -.1rem;
+    margin-right: .2rem;
+}
+path {
+    fill: currentColor;
 }

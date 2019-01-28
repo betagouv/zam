@@ -107,20 +107,6 @@ tr.sticky th {
 .headers th.nosort {
     cursor: default;
 }
-.headers th::before {
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    content: "\f0dc  ";  /* fa-sort */
-}
-.headers th[data-order="asc"]::before {
-    content: "\f0dd  ";  /* fa-sort-down */
-}
-.headers th[data-order="desc"]::before {
-    content: "\f0de  ";  /* fa-sort-up */
-}
-.headers th.nosort::before {
-    content: "";
-}
 
 /* Filtering */
 th input.form-control {

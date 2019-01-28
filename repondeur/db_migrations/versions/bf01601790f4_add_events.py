@@ -1,7 +1,7 @@
 """Add events
 
-Revision ID: 67d0e6748a64
-Revises: a79e7aa5121e
+Revision ID: bf01601790f4
+Revises: d80c1fac4582
 Create Date: 2019-01-15 14:57:08.162415
 
 """
@@ -10,8 +10,8 @@ from sqlalchemy_utils import JSONType, UUIDType
 import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
-revision = "67d0e6748a64"
-down_revision = "a79e7aa5121e"
+revision = "bf01601790f4"
+down_revision = "d80c1fac4582"
 branch_labels = None
 depends_on = None
 

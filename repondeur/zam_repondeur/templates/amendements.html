@@ -1,7 +1,6 @@
 {% extends "_base.html" %}
 {% import "macros.html" as macros %}
 
-{% include "svg-file-icons.html" %}
 
 {% block header %}
 <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/amendements.css') }}">
@@ -34,6 +33,7 @@
 {% endblock %}
 
 {% block body %}
+{% include "svg-file-icons.html" %}
 <div class="content">
     <nav class="options">
         <a href="#" id="unsort">Annuler le tri</a>
@@ -66,15 +66,11 @@
             <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
             <div role="group" aria-label="Format de téléchargement">
                 <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
-                    <svg class="icon" aria-hidden="true" viewBox="0 0 384 512">
-                        <use xlink:href="#file-excel"></use>
-                    </svg>
+                    {{ macros.svg_icon("file-excel") }}
                     Format Excel
                 </a>
                 <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
-                    <svg class="icon" aria-hidden="true" viewBox="0 0 384 512">
-                        <use xlink:href="#file-pdf"></use>
-                    </svg>
+                    {{ macros.svg_icon("file-pdf") }}
                     Format PDF
                 </a>
             </div>
@@ -120,9 +116,7 @@
             <p>Télécharger et conserver une sauvegarde pour un futur import.</p>
             <div role="group" aria-label="Format de téléchargement">
                 <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'json'}) }}">
-                    <svg class="icon" aria-hidden="true" viewBox="0 0 384 512">
-                        <use xlink:href="#file-archive"></use>
-                    </svg>
+                    {{ macros.svg_icon("file-archive") }}
                     Fichier de sauvegarde
                 </a>
             </div>
@@ -133,34 +127,24 @@
         <thead class="box">
             <tr class="headers sticky">
                 <th width="150px">
-                    <svg class="icon" aria-hidden="true" viewBox="0 -1 7 16">
-                        <use xlink:href="#sort"></use>
-                    </svg>
+                    {{ macros.svg_icon("sort") }}
                     Article
                 </th>
                 <th width="180px">
-                    <svg class="icon" aria-hidden="true" viewBox="0 -1 7 16">
-                        <use xlink:href="#sort"></use>
-                    </svg>
+                    {{ macros.svg_icon("sort") }}
                     Nº
                 </th>
                 <th class="nosort">Objet</th>
                 <th>
-                    <svg class="icon" aria-hidden="true" viewBox="0 -1 7 16">
-                        <use xlink:href="#sort"></use>
-                    </svg>
+                    {{ macros.svg_icon("sort") }}
                     Groupe (Auteur)
                 </th>
                 <th class="avis">
-                    <svg class="icon" aria-hidden="true" viewBox="0 -1 7 16">
-                        <use xlink:href="#sort"></use>
-                    </svg>
+                    {{ macros.svg_icon("sort") }}
                     Avis
                 </th>
                 <th class="affectation">
-                    <svg class="icon" aria-hidden="true" viewBox="0 -1 7 16">
-                        <use xlink:href="#sort"></use>
-                    </svg>
+                    {{ macros.svg_icon("sort") }}
                     Affectation
                 </th>
                 <th class="nosort">⋯</th>
@@ -328,9 +312,7 @@
                 </td>
                 <td>
                     <a class="download-pdf" href="{{ request.resource_url(context[amendement.num_str], 'download_amendement') }}" title="Exporter en PDF">
-                        <svg class="icon" aria-hidden="true" viewBox="0 0 384 512">
-                            <use xlink:href="#file-pdf"></use>
-                        </svg>
+                        {{ macros.svg_icon("file-pdf") }}
                     </a>
                 </td>
             </tr>

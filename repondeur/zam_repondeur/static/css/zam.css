@@ -259,3 +259,7 @@ del {
 path {
     fill: currentColor;
 }
+
+.last-update {
+    text-align: center;
+}

@@ -1,9 +1,11 @@
 import logging
+from datetime import datetime
 from itertools import groupby
 from typing import Iterable, List, Optional, Tuple
 
 from sqlalchemy import (
     Column,
+    DateTime,
     ForeignKey,
     Index,
     Integer,
@@ -68,6 +70,9 @@ class Article(Base):
     )
 
     pk: int = Column(Integer, primary_key=True)
+    created_at: datetime = Column(DateTime, nullable=False)
+    modified_at: datetime = Column(DateTime, nullable=False)
+
     lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
     lecture: Lecture = relationship(Lecture, back_populates="articles")
     type: str = Column(Text, nullable=False, default="")
@@ -95,6 +100,11 @@ class Article(Base):
 
     @property
     def modified_at_timestamp(self) -> float:
+        timestamp: float = (self.modified_at - datetime(1970, 1, 1)).total_seconds()
+        return timestamp
+
+    @property
+    def modified_amendements_at_timestamp(self) -> float:
         if not self.amendements:
             return 0
         max_modified_at: float = max(
@@ -234,8 +244,16 @@ class Article(Base):
         pos: str = "",
         content: dict = {},
     ) -> "Article":
+        now = datetime.utcnow()
         article = cls(
-            lecture=lecture, type=type, num=num, mult=mult, pos=pos, content=content
+            lecture=lecture,
+            type=type,
+            num=num,
+            mult=mult,
+            pos=pos,
+            content=content,
+            created_at=now,
+            modified_at=now,
         )
         user_content = ArticleUserContent(article=article, title="", presentation="")
         DBSession.add(user_content)

@@ -1,4 +1,5 @@
 {% extends "_base_edit.html" %}
+{% import "macros.html" as macros %}
 
 {% block extra_nav %}
     <li><a href="{{ request.resource_url(context.parent.parent, 'amendements') }}">Amendements</a></li>
@@ -12,7 +13,7 @@
                 <div>{{ article.user_content.title }}</div>
             {% endif %}
         </div>
-        <a href="{{ request.resource_url(context, 'article_journal') }}">Journal</a>
+        {{ macros.update_informations(article, request.resource_url(context, 'article_journal')) }}
         {{ content(article) }}
     </section>
     <section class="edit">

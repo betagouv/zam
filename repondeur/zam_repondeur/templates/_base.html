@@ -11,10 +11,26 @@
     {% endblock %}
 </head>
 <body>
-    <header class="main">
-    {% block top %}
-    {% endblock %}
-    </header>
+    <nav class="main">
+        {% block nav %}
+            <ul>
+                {% if request.user and not (hide_lectures_link is defined and hide_lectures_link) %}
+                    <li><a href="{{ request.resource_url(request.root['lectures']) }}" title="Aller à la liste des lectures">Lectures</a></li>
+                    {% block extra_nav %}{% endblock %}
+                {% endif %}
+            </ul>
+            <ul>
+                {% if request.user %}
+                    <li>
+                        <a href="{{ request.route_url('welcome') }}" title="{{ request.user.name }} : changer de nom ?">
+                            Mon compte
+                        </a>
+                    </li>
+                    <li><a href="{{ request.route_url('logout') }}" title="Se déconnecter de Zam">Déconnexion</a></li>
+                {% endif %}
+            </ul>
+        {% endblock %}
+    </nav>
 
     {% block secondary_header %}
     {% endblock %}

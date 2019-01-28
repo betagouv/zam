@@ -13,6 +13,16 @@ def read_sample_data(basename):
     return (SAMPLE_DATA_DIR / basename).read_text()
 
 
+def test_lecture_link_in_navbar_if_at_least_one_lecture(app, lecture_an):
+    resp = app.get("/lectures/add", user="user@example.com")
+    assert 'title="Aller à la liste des lectures">Lectures</a></li>' in resp.text
+
+
+def test_lecture_link_not_in_navbar_if_no_lecture(app):
+    resp = app.get("/lectures/add", user="user@example.com")
+    assert 'title="Aller à la liste des lectures">Lectures</a></li>' not in resp.text
+
+
 def test_get_form(app):
     resp = app.get("/lectures/add", user="user@example.com")
 

@@ -1,33 +1,28 @@
 {% extends "_base.html" %}
 {% import "macros.html" as macros %}
 
-
 {% block header %}
 <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/amendements.css') }}">
 {% endblock %}
 
-
-{% block top %}
-    <div class="title">
-        <h2>{{ lecture.dossier_legislatif }}</h2>
-        <h3>{{ lecture }}</h3>
-    </div>
+{% block extra_nav %}
+    {% if lecture.displayable %}
+        <li>
+            <a href="{{ request.resource_url(context.parent['articles']) }}" target="_blank">
+                Dossier de banc
+            </a>
+        </li>
+    {% endif %}
 {% endblock %}
 
 {% block secondary_header %}
     <nav class="nav secondary justify-content-between">
         <span class="nav-item">
-            <a class="arrow-left" href="{{ request.resource_url(context.parent.parent) }}">Retourner aux lectures</a>
         </span>
         <div>
             {{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}
         </div>
         <span class="nav-item">
-            {% if lecture.displayable %}
-                <a class="arrow-right" href="{{ request.resource_url(context.parent['articles']) }}" target="_blank">
-                    Voir le dossier de banc
-                </a>
-            {% endif %}
         </span>
     </nav>
 {% endblock %}

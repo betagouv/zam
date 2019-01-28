@@ -1,12 +1,8 @@
 {% extends "_base.html" %}
 {% import "macros.html" as macros %}
 
-
 {% block header %}
 <style type="text/css">
-    nav.float-right {
-        padding: .8rem 1.5rem 0 0;
-    }
     .lecture {
         margin: 2rem 0.5rem;
         display: flex;
@@ -39,40 +35,48 @@
         background-position: right 40%;
         background-size: 7%;
     }
+    .extra-button {
+        text-align: right;
+        margin-right: .8rem;
+        margin-top: 1rem;
+        font-weight: 600;
+    }
+        .extra-button a.button {
+            color: #3167a6;
+            border: 1px solid #3167a6;
+        }
+        .extra-button a.button:hover {
+            background-color: #3167a6;
+            color: white;
+        }
 </style>
 {% endblock %}
 
-
-{% block top %}
-    <nav class="float-right">
-        <a class="button" href="{{ request.resource_url(context, 'add') }}">
+{% block body %}
+    <div class="extra-button">
+        <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
             Ajouter une nouvelle lecture
         </a>
-    </nav>
-    <h2>Lectures</h2>
-{% endblock %}
-
-
-{% block body %}
-{% for lecture in lectures %}
-    <div class="lecture box">
-        <div>
-            <h3>{{ lecture.dossier_legislatif }}</h3>
-            <div>{{ lecture }}</div>
-            {% if lecture.amendements %}
-                <div>{{ lecture.amendements|length }} amendements</div>
-            {% endif %}
-        </div>
-        <nav>
-            <a href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">
-                Consulter la liste
-            </a>
-            {% if lecture.displayable %}
-            <a href="{{ request.resource_url(context[lecture.url_key]['articles']) }}" role="button" target="_blank">
-                Voir le dossier de banc
-            </a>
-            {% endif %}
-        </nav>
     </div>
-{% endfor %}
+    {% for lecture in lectures %}
+        <div class="lecture box">
+            <div>
+                <h3>{{ lecture.dossier_legislatif }}</h3>
+                <div>{{ lecture }}</div>
+                {% if lecture.amendements %}
+                    <div>{{ lecture.amendements|length }} amendements</div>
+                {% endif %}
+            </div>
+            <nav>
+                <a href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">
+                    Consulter la liste
+                </a>
+                {% if lecture.displayable %}
+                <a href="{{ request.resource_url(context[lecture.url_key]['articles']) }}" role="button" target="_blank">
+                    Voir le dossier de banc
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+    {% endfor %}
 {% endblock %}

@@ -12,7 +12,8 @@ from pyramid.view import view_config
 
 from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml, LectureDoesNotMatch
 from zam_repondeur.message import Message
-from zam_repondeur.models import DBSession, Journal
+from zam_repondeur.models import DBSession
+from zam_repondeur.models.events.lecture import AmendementsRecuperesLiasse
 from zam_repondeur.resources import LectureResource
 
 
@@ -90,7 +91,9 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
             f"{len(amendements)} nouveaux amendements récupérés (import liasse XML)."
         )
     request.session.flash(Message(cls="success", text=message))
-    Journal.create(lecture=lecture, kind="success", message=message)
+    AmendementsRecuperesLiasse.create(
+        request=None, lecture=lecture, count=len(amendements)
+    )
     lecture.modified_at = datetime.utcnow()
     DBSession.add(lecture)
 

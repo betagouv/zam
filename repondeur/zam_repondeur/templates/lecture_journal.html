@@ -2,6 +2,7 @@
 {% import "macros.html" as macros %}
 
 {% block header %}
+<link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/journal.css') }}">
 <style type="text/css">
     .extra-button {
         display: block;
@@ -24,10 +25,12 @@
         font-weight: 600;
         margin: 2.5rem 0 1.5rem 0;
     }
-    .icon {
+    .button .icon {
+        border-left: none;
         width: 1.8rem;
-        margin-bottom: -.2rem;
+        margin: 0 0 -.2rem 0;
     }
+
 </style>
 {% endblock %}
 
@@ -52,14 +55,5 @@
         </form>
     </div>
     <h2>Journal</h2>
-    {% for item in journal %}
-        <div class="alert alert-{{ item.kind }}" role="alert">
-            {{ item.message }}
-            <time class="float-right font-italic" xsi:type="xsd:dateTime"
-                datetime="{{ item.created_at.isoformat() }}"
-                data-timestamp="{{ item.created_at_timestamp }}">
-                {{ item.created_at.strftime("%A %d %B à %I:%M%p") }}
-            </time>
-        </div>
-    {% endfor %}
+    {{ macros.timeline(lecture.events, today) }}
 {% endblock %}

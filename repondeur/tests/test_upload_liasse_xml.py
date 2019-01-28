@@ -26,7 +26,7 @@ def test_get_form(app, lecture_essoc):
 
 
 def test_upload_liasse_success(app, lecture_essoc):
-    from zam_repondeur.models import DBSession, Journal, Lecture
+    from zam_repondeur.models import Lecture
 
     initial_modified_at = lecture_essoc.modified_at
 
@@ -52,7 +52,7 @@ def test_upload_liasse_success(app, lecture_essoc):
     assert lecture.modified_at != initial_modified_at
 
     assert (
-        DBSession.query(Journal).first().message
+        lecture.events[0].render_summary()
         == "3 nouveaux amendements récupérés (import liasse XML)."
     )
 
@@ -103,7 +103,7 @@ def test_upload_liasse_success_with_a_deposer(app, lecture_essoc):
 
 
 def test_upload_liasse_missing_file(app, lecture_essoc):
-    from zam_repondeur.models import DBSession, Journal, Lecture
+    from zam_repondeur.models import Lecture
 
     initial_modified_at = lecture_essoc.modified_at
 
@@ -126,5 +126,4 @@ def test_upload_liasse_missing_file(app, lecture_essoc):
         organe=lecture_essoc.organe,
     )
     assert lecture.modified_at == initial_modified_at
-
-    assert DBSession.query(Journal).first() is None
+    assert lecture.events == []

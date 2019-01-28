@@ -35,14 +35,14 @@ def test_get_form(app, lecture_an, amendements_an):
 
 @responses.activate
 def test_post_form(app, lecture_an, article1_an):
-    from zam_repondeur.models import DBSession, Amendement, Journal, Lecture
+    from zam_repondeur.models import Amendement, Lecture
 
     initial_modified_at = lecture_an.modified_at
 
     # Initially, we only have one amendement (#135), with a response
     with transaction.manager:
         Amendement.create(lecture=lecture_an, article=article1_an, num=135, position=1)
-    assert DBSession.query(Journal).count() == 0
+        assert lecture_an.events == []
 
     with setup_mock_responses(
         lecture=lecture_an,
@@ -77,9 +77,19 @@ def test_post_form(app, lecture_an, article1_an):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    journals = DBSession.query(Journal).all()
-    assert journals[0].message == "4 nouveaux amendements récupérés."
-    assert journals[1].message == "Récupération des articles effectuée."
+    lecture_an = Lecture.get(
+        chambre=lecture_an.chambre,
+        session=lecture_an.session,
+        num_texte=lecture_an.num_texte,
+        partie=None,
+        organe=lecture_an.organe,
+    )
+    assert len(lecture_an.events) == 2
+    assert (
+        lecture_an.events[0].render_summary()
+        == "Le contenu des articles a été récupéré."
+    )
+    assert lecture_an.events[1].render_summary() == "4 nouveaux amendements récupérés."
     assert "Rafraichissement des amendements et des articles en cours." in resp.text
 
     # Check that the update timestamp has been updated

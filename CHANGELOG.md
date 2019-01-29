@@ -6,6 +6,30 @@
 
 ### Changements récents
 
+#### 14 janvier 2019
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-01-25-topbar.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-01-25-topbar.png">
+    </a>
+    <figcaption>
+        Nouvelle itération sur le design avec une barre de navigation toujours visible.
+    </figcaption>
+</figure>
+
+
+#### 14 janvier 2019
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-01-14-identification.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-01-14-identification.png">
+    </a>
+    <figcaption>
+        Ajout de l’identification des personnes utilisant l’outil.
+    </figcaption>
+</figure>
+
+
 #### 20 décembre 2018
 
 - Amélioration des performances.

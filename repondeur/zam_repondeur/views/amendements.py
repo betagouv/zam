@@ -69,19 +69,15 @@ class AmendementEdit:
 
         if avis_changed:
             AvisAmendementModifie.create(self.request, self.amendement, avis)
-            self.amendement.user_content.avis = avis
 
         if objet_changed:
             ObjetAmendementModifie.create(self.request, self.amendement, objet)
-            self.amendement.user_content.objet = objet
 
         if reponse_changed:
             ReponseAmendementModifiee.create(self.request, self.amendement, reponse)
-            self.amendement.user_content.reponse = reponse
 
         if affectation_changed:
             AmendementTransfere.create(self.request, self.amendement, affectation)
-            self.amendement.user_content.affectation = affectation
 
         if comments_changed:
             self.amendement.user_content.comments = comments

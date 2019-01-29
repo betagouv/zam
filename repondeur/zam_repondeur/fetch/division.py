@@ -16,11 +16,11 @@ class SubDiv(NamedTuple):
 SUBDIV_RE = re.compile(
     r"""^
         (?:
-            (
-                (art|div)\.\sadd\.
-                |
-                Article(?:\(s\))?\sadditionnel(?:\(s\))?
-            )?
+            ((art|div)\.\sadd\.)?
+            \s?
+            (avant|après|apres)?
+            \s?
+            (Article(?:\(s\))?\sadditionnel(?:\(s\))?)?
             \s?
             (?P<pos>(avant|après|apres))
             \s

@@ -188,8 +188,9 @@ def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
-    form["objet"] = "Un objet très pertinent"
-    form["reponse"] = "Une réponse très appropriée"
+    # Even with extra spaces.
+    form["objet"] = "Un objet très pertinent  "
+    form["reponse"] = "  Une réponse très appropriée"
     form.submit()
 
     # The lecture modification date should not be updated

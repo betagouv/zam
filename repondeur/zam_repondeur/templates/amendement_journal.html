@@ -15,11 +15,12 @@
 {% block secondary_header %}
     <nav class="nav secondary justify-content-between">
         <span class="nav-item">
-            <a class="arrow-left" href="{{ request.resource_url(context, 'amendement_edit') }}">Retourner à l’amendement</a>
         </span>
         <div>
             <h2>Journal des modifications</h2>
-            <div>Amendement {{ amendement }}</div>
+            <div>
+                <a class="arrow-left" href="{{ request.resource_url(context, 'amendement_edit') }}">Amendement {{ amendement }}</a>
+            </div>
         </div>
         <span class="nav-item">
         </span>

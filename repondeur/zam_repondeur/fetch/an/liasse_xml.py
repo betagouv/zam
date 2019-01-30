@@ -14,7 +14,7 @@ from zam_repondeur.fetch.an.dossiers.models import (
     Lecture as LectureRef,
 )
 from zam_repondeur.fetch.dates import parse_date
-from zam_repondeur.fetch.division import _parse_subdiv, SubDiv
+from zam_repondeur.fetch.division import _parse_subdiv
 from zam_repondeur.models import (
     DBSession,
     Article,
@@ -22,6 +22,7 @@ from zam_repondeur.models import (
     Lecture,
     get_one_or_create,
 )
+from zam_repondeur.models.division import SubDiv
 
 from .division import parse_avant_apres
 

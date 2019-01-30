@@ -12,7 +12,6 @@ from zam_repondeur.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.fetch.division import _parse_subdiv
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.fetch.http import cached_session
-from zam_repondeur.fetch.division import SubDiv
 from zam_repondeur.models import (
     DBSession,
     Article,
@@ -20,6 +19,8 @@ from zam_repondeur.models import (
     Lecture,
     get_one_or_create,
 )
+from zam_repondeur.models.division import SubDiv
+
 from .division import parse_avant_apres
 
 

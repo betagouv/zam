@@ -1,6 +1,6 @@
 import logging
 from itertools import groupby
-from typing import Iterable, List, Optional, Tuple
+from typing import Iterable, List, Optional, Tuple, TYPE_CHECKING
 
 from sqlalchemy import (
     Column,
@@ -17,7 +17,11 @@ from zam_repondeur.decorator import reify
 
 from .base import Base, DBSession
 from .amendement import Amendement, Reponse
-from .lecture import Lecture
+from .division import SubDiv
+
+# Make this type available to mypy, but avoid circular imports
+if TYPE_CHECKING:
+    from .lecture import Lecture  # noqa
 
 
 logger = logging.getLogger(__name__)
@@ -69,7 +73,7 @@ class Article(Base):
 
     pk: int = Column(Integer, primary_key=True)
     lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
-    lecture: Lecture = relationship(Lecture, back_populates="articles")
+    lecture: "Lecture" = relationship("Lecture", back_populates="articles")
     type: str = Column(Text, nullable=False, default="")
     num: str = Column(Text, nullable=False, default="")
     mult: str = Column(Text, nullable=False, default="")
@@ -92,6 +96,14 @@ class Article(Base):
     @validates("pos")
     def validate_pos(self, key: str, pos: str) -> str:
         return validate(key, pos, ALLOWED_POS)
+
+    def matches(self, subdiv: SubDiv) -> bool:
+        return (
+            self.type == subdiv.type_
+            and self.num == subdiv.num
+            and self.mult == subdiv.mult
+            and self.pos == subdiv.pos
+        )
 
     @property
     def modified_at_timestamp(self) -> float:
@@ -227,7 +239,7 @@ class Article(Base):
     @classmethod
     def create(
         cls,
-        lecture: Lecture,
+        lecture: "Lecture",
         type: str,
         num: str = "",
         mult: str = "",

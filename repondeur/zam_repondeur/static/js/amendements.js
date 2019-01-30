@@ -162,16 +162,16 @@ function filterByAmendement(value) {
     })
     document.querySelector('table').classList.toggle('filtered-amendement', value)
 }
-function filterByAffectation(value) {
-    filterColumn('hidden-affectation', line => {
+function filterByStatus(value) {
+    filterColumn('hidden-status', line => {
         if (!value) {
             return true
         }
-        return line.dataset.affectation
+        return line.dataset.status
             .toLowerCase()
             .includes(value.toLowerCase())
     })
-    document.querySelector('table').classList.toggle('filtered-affectation', value)
+    document.querySelector('table').classList.toggle('filtered-status', value)
 }
 function filterByAvis(value) {
     filterColumn('hidden-avis', line => {
@@ -214,10 +214,10 @@ function filterColumns(table) {
         filterByAvis(value)
         setURLParam('avis', value)
     })
-    table.querySelector('#affectation-filter').addEventListener('keyup', e => {
+    table.querySelector('#status-filter').addEventListener('keyup', e => {
         const value = e.target.value.trim()
-        filterByAffectation(value)
-        setURLParam('affectation', value)
+        filterByStatus(value)
+        setURLParam('status', value)
     })
 
     const articleFilter = getURLParam('article')
@@ -232,11 +232,11 @@ function filterColumns(table) {
         document.querySelector('#amendement-filter').value = amendementFilter
         filterByAmendement(amendementFilter)
     }
-    const affectationFilter = getURLParam('affectation')
-    if (affectationFilter !== '') {
+    const statusFilter = getURLParam('status')
+    if (statusFilter !== '') {
         showFilters()
-        document.querySelector('#affectation-filter').value = affectationFilter
-        filterByAffectation(affectationFilter)
+        document.querySelector('#status-filter').value = statusFilter
+        filterByStatus(statusFilter)
     }
     const avisFilter = getURLParam('avis')
     if (avisFilter !== '') {

@@ -6,10 +6,20 @@
 {% endblock %}
 
 {% block extra_nav %}
+    <li>
+        <a href="{{ request.resource_url(context.parent['spaces'], request.user.email) }}">
+            Ma table
+        </a>
+    </li>
+    <li class="selected">
+        <a href="{{ request.resource_url(context) }}">
+            Le radar
+        </a>
+    </li>
     {% if lecture.displayable %}
         <li>
             <a href="{{ request.resource_url(context.parent['articles']) }}" target="_blank">
-                Dossier de banc
+                Le dossier de banc
             </a>
         </li>
     {% endif %}
@@ -138,9 +148,9 @@
                     {{ macros.svg_icon("sort") }}
                     Avis
                 </th>
-                <th class="affectation">
+                <th class="status">
                     {{ macros.svg_icon("sort") }}
-                    Affectation
+                    Statut
                 </th>
                 <th class="nosort">⋯</th>
             </tr>
@@ -161,7 +171,7 @@
                     </select>
                 </th>
                 <th>
-                    <input id="affectation-filter" class="form-control form-control-sm" type="text" autocomplete="off" autocorrect="off">
+                    <input id="status-filter" class="form-control form-control-sm" type="text" autocomplete="off" autocorrect="off">
                 </th>
                 <th></th>
             </tr>
@@ -180,7 +190,7 @@
                 "
                 data-order="{{ loop.index }}"
                 data-amendement="{{ amendement.num }}"
-                data-affectation="{{ amendement.user_content.affectation }}"
+                data-status="{{ amendement.user_space and amendement.user_space.user.name or 'Flottant' }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.user_content.avis else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 data-abandoned-before-seance="{{ 1 if amendement.is_abandoned_before_seance else 0 }}"
@@ -300,10 +310,21 @@
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         ZZZ {# Keep at the end. #}
+                    {%- elif amendement.user_space -%}
+                        {{ amendement.user_space.user.name }}
                     {%- else -%}
-                        {{ amendement.user_content.affectation }}
+                        AAA {# Keep at the top. #}
                     {%- endif -%}">
-                    {{ amendement.user_content.affectation or "" }}
+                    {% if amendement.user_space %}
+                        <abbr title="{{ amendement.user_space.user.email }}">{{ amendement.user_space.user.name }}</abbr>
+                    {% else %}
+                        Flottant
+                        <form action="{{ request.resource_url(context.parent['spaces'], request.user.email) }}" method="POST">
+                            <input type="hidden" name="num" value="{{ amendement.num }}">
+                            <input type="submit" class="button" value="Prendre ?">
+                        </form>
+                    {% endif %}
+
                 </td>
                 <td>
                     <a class="download-pdf" href="{{ request.resource_url(context[amendement.num_str], 'download_amendement') }}" title="Exporter en PDF">

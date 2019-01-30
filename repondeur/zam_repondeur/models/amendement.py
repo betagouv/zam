@@ -35,6 +35,7 @@ from .base import Base, DBSession
 if TYPE_CHECKING:
     from .article import Article  # noqa
     from .lecture import Lecture  # noqa
+    from .users import UserSpace  # noqa
 
 
 AVIS = [

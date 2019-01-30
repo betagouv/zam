@@ -21,13 +21,14 @@ class User(Base):
     )
     last_login_at: Optional[datetime] = Column(DateTime)
 
-    user_space = relationship(
+    space = relationship(
         "UserSpace", back_populates="user", uselist=False, lazy="joined"
     )
 
     @classmethod
     def create(cls, email: str, name: Optional[str] = None) -> "User":
         user = cls(email=email, name=name)
+        user.space = UserSpace()
         DBSession.add(user)
         return user
 
@@ -53,7 +54,7 @@ class UserSpace(Base):
     pk: int = Column(Integer, primary_key=True)
 
     user_pk: int = Column(Integer, ForeignKey("users.pk"))
-    user: User = relationship(User, back_populates="user_space")
+    user: User = relationship(User, back_populates="space")
 
     amendements = relationship(
         Amendement,

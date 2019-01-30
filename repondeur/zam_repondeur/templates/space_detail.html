@@ -1,0 +1,56 @@
+{% extends "_base.html" %}
+
+{% block header %}
+<style type="text/css">
+    h2 {
+        text-align: center;
+        margin: 2rem;
+    }
+    .amendement-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+        .amendement-card p {
+            margin: .4rem 0;
+        }
+        .amendement-card-infos {
+            max-width: 40rem;
+        }
+        .amendement-card-avis {
+            min-width: 10rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+</style>
+{% endblock %}
+
+{% block extra_nav %}
+    <li class="selected">
+        <a href="{{ request.resource_url(context.parent, request.user.email) }}">
+            Ma table
+        </a>
+    </li>
+    <li>
+        <a href="{{ request.resource_url(context.lecture_resource, 'amendements') }}">
+            Le radar
+        </a>
+    </li>
+{% endblock %}
+
+{% block body %}
+    <h2>Table de {{ request.user.name }} ({{ request.user.email }})</h2>
+    {% for amendement in amendements %}
+        <div class="box amendement-card">
+            <div class="amendement-card-infos">
+                <p>{{ amendement.article.format() }} - Nº&nbsp;<strong>{{ amendement }}</strong></p>
+                <p>{{ amendement.user_content.objet or "" }}</p>
+                <p><em>{{ amendement.groupe }} ({{ amendement.auteur }})</em></p>
+            </div>
+            <div class="amendement-card-avis">
+                <p><a href="{{ request.resource_url(context.parent.parent['amendements'][amendement.num_str], 'reponse') }}">{{ amendement.user_content.avis or "" }}</a></p>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,7 +1,6 @@
 from html import unescape
-from typing import Iterable, Optional
 
-import bleach
+from bleach import Cleaner
 
 
 ALLOWED_TAGS = [
@@ -26,9 +25,10 @@ ALLOWED_TAGS = [
 ]
 
 
-def clean_html(html: str, allowed_tags: Optional[Iterable[str]] = None) -> str:
-    if allowed_tags is None:
-        allowed_tags = ALLOWED_TAGS
+CLEANER = Cleaner(tags=ALLOWED_TAGS, strip=True)
+
+
+def clean_html(html: str) -> str:
     text = unescape(html)  # decode HTML entities
-    sanitized: str = bleach.clean(text, tags=allowed_tags, strip=True)
+    sanitized: str = CLEANER.clean(text)
     return sanitized.strip()

@@ -168,11 +168,6 @@ class Senat(RemoteSource):
             )
 
 
-def aspire_senat(lecture: Lecture) -> FetchResult:
-    source = Senat()
-    return source.fetch(lecture)
-
-
 def parse_partie(numero: str) -> Optional[int]:
     if numero.startswith("I-"):
         return 1

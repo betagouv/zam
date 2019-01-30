@@ -12,7 +12,7 @@ class User(Base):
     __repr_keys__ = ("name", "email")
 
     pk: int = Column(Integer, primary_key=True)
-    email: str = Column(EmailType, nullable=False)
+    email: str = Column(EmailType, nullable=False, unique=True)
     name: Optional[str] = Column(Text)
     created_at: datetime = Column(
         DateTime, nullable=False, default=datetime.utcnow, server_default=func.now()

@@ -16,7 +16,7 @@ from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import _parse_subdiv
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.fetch.senat.senateurs import fetch_and_parse_senateurs, Senateur
-from zam_repondeur.models import Article, Amendement, Lecture, get_one_or_create
+from zam_repondeur.models import Amendement, Lecture
 
 from .derouleur import DiscussionDetails, fetch_and_parse_discussion_details
 
@@ -68,18 +68,10 @@ class Senat(RemoteSource):
 
     def parse_from_csv(self, row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
         subdiv = _parse_subdiv(row["Subdivision "])
-        article, _ = get_one_or_create(
-            Article,
-            lecture=lecture,
-            type=subdiv.type_,
-            num=subdiv.num,
-            mult=subdiv.mult,
-            pos=subdiv.pos,
-        )
+        article, _ = lecture.find_or_create_article(subdiv)
+
         num, rectif = Amendement.parse_num(row["Numéro "])
-        amendement, created = get_one_or_create(
-            Amendement, create_kwargs={"article": article}, lecture=lecture, num=num
-        )
+        amendement, created = lecture.find_or_create_amendement(num, article)
 
         modified = False
         modified |= self.update_rectif(amendement, rectif)

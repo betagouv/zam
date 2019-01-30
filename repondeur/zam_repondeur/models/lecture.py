@@ -1,12 +1,16 @@
 from datetime import datetime
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Tuple
 
 from sqlalchemy import Column, DateTime, Index, Integer, Text, desc
 from sqlalchemy.orm import joinedload, relationship
 
+
 from .amendement import Amendement
+from .article import Article
 from .base import Base, DBSession
+from .division import SubDiv
 from .journal import Journal
+
 
 CHAMBRES = {"an": "Assemblée nationale", "senat": "Sénat"}
 
@@ -47,7 +51,7 @@ class Lecture(Base):
         cascade="all, delete-orphan",
     )
     articles = relationship(
-        "Article", back_populates="lecture", cascade="all, delete-orphan"
+        Article, back_populates="lecture", cascade="all, delete-orphan"
     )
     journal = relationship(
         Journal,
@@ -236,3 +240,41 @@ class Lecture(Base):
         else:
             partie = ""
         return f"{self.chambre}.{self.session}.{self.num_texte}{partie}.{self.organe}"
+
+    def find_article(self, subdiv: SubDiv) -> Optional[Article]:
+        article: Article
+        for article in self.articles:
+            if article.matches(subdiv):
+                return article
+        return None
+
+    def find_or_create_article(self, subdiv: SubDiv) -> Tuple[Article, bool]:
+        article = self.find_article(subdiv)
+        created = False
+        if article is None:
+            article = Article.create(
+                lecture=self,
+                type=subdiv.type_,
+                num=subdiv.num,
+                mult=subdiv.mult,
+                pos=subdiv.pos,
+            )
+            created = True
+        return article, created
+
+    def find_amendement(self, num: int) -> Optional[Amendement]:
+        amendement: Amendement
+        for amendement in self.amendements:
+            if amendement.num == num:
+                return amendement
+        return None
+
+    def find_or_create_amendement(
+        self, num: int, article: Article
+    ) -> Tuple[Amendement, bool]:
+        amendement = self.find_amendement(num)
+        created = False
+        if amendement is None:
+            amendement = Amendement.create(lecture=self, article=article, num=num)
+            created = True
+        return amendement, created

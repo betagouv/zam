@@ -51,10 +51,15 @@ def test_spaces_grab_amendement(app, amendements_an, user_david):
     assert len(user_david.space.amendements) == 1
     assert user_david.space.amendements[0].num == amendements_an[0].num
     assert user_david.space.amendements[0].lecture == amendements_an[0].lecture
+    assert len(user_david.space.amendements[0].events) == 1
+    assert user_david.space.amendements[0].events[0].render_summary() == (
+        "<abbr title='david@example.com'>David</abbr> "
+        "a mis l’amendement sur sa table"
+    )
 
 
 def test_spaces_release_amendement(app, amendements_an, user_david):
-    from zam_repondeur.models import DBSession, User
+    from zam_repondeur.models import DBSession, Amendement, User
 
     with transaction.manager:
         DBSession.add(user_david)
@@ -73,6 +78,16 @@ def test_spaces_release_amendement(app, amendements_an, user_david):
     )
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
     assert len(user_david.space.amendements) == 0
+    amendement = (
+        DBSession.query(Amendement)
+        .filter(Amendement.num == amendements_an[0].num)
+        .first()
+    )
+    assert len(amendement.events) == 1
+    assert amendement.events[0].render_summary() == (
+        "<abbr title='david@example.com'>David</abbr> "
+        "a remis l’amendement dans le radar"
+    )
 
 
 def test_spaces_transfer_amendement(app, amendements_an, user_david, user_ronan):
@@ -100,6 +115,11 @@ def test_spaces_transfer_amendement(app, amendements_an, user_david, user_ronan)
     assert len(user_ronan.space.amendements) == 1
     assert user_ronan.space.amendements[0].num == amendements_an[0].num
     assert user_ronan.space.amendements[0].lecture == amendements_an[0].lecture
+    assert len(user_ronan.space.amendements[0].events) == 1
+    assert user_ronan.space.amendements[0].events[0].render_summary() == (
+        "<abbr title='david@example.com'>David</abbr> "
+        "a transféré l’amendement à « Ronan (ronan@example.com) »"
+    )
 
 
 def test_spaces_steal_amendement(app, amendements_an, user_david, user_ronan):
@@ -127,3 +147,8 @@ def test_spaces_steal_amendement(app, amendements_an, user_david, user_ronan):
     assert len(user_ronan.space.amendements) == 1
     assert user_ronan.space.amendements[0].num == amendements_an[0].num
     assert user_ronan.space.amendements[0].lecture == amendements_an[0].lecture
+    assert len(user_ronan.space.amendements[0].events) == 1
+    assert user_ronan.space.amendements[0].events[0].render_summary() == (
+        "<abbr title='ronan@example.com'>Ronan</abbr> "
+        "a transféré l’amendement de « David (david@example.com) » à lui/elle-même"
+    )

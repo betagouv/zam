@@ -24,7 +24,6 @@ def test_get_amendement_edit_form(app, lecture_an, amendements_an):
         "avis",
         "objet",
         "reponse",
-        "affectation",
         "comments",
         "submit",
     ]
@@ -58,7 +57,6 @@ def test_get_amendement_edit_form_gouvernemental(app, lecture_an, amendements_an
     assert list(resp.forms["edit-amendement"].fields.keys()) == [
         "objet",
         "reponse",
-        "affectation",
         "comments",
         "submit",
     ]
@@ -91,7 +89,6 @@ def test_post_amendement_edit_form(app, lecture_an, amendements_an):
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
     form["reponse"] = "Une réponse <strong>très</strong> appropriée"
-    form["affectation"] = "6B"
     form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
     resp = form.submit()
 
@@ -108,7 +105,6 @@ def test_post_amendement_edit_form(app, lecture_an, amendements_an):
         amendement.user_content.reponse
         == "Une réponse <strong>très</strong> appropriée"
     )
-    assert amendement.user_content.affectation == "6B"
     assert (
         amendement.user_content.comments
         == "Avec des <table><tbody><tr><td>commentaires</td></tr></tbody></table>"
@@ -116,7 +112,7 @@ def test_post_amendement_edit_form(app, lecture_an, amendements_an):
     assert initial_amendement_modified_at < amendement.modified_at
 
     # Should create events.
-    assert len(amendement.events) == 4
+    assert len(amendement.events) == 3
 
 
 def test_post_amendement_edit_form_gouvernemental(app, lecture_an, amendements_an):

@@ -107,6 +107,13 @@ def user_ronan(db):
 
 
 @pytest.fixture
+def user_daniel(db):
+    from zam_repondeur.models import User
+
+    return User.create(name="Daniel", email="daniel@example.com")
+
+
+@pytest.fixture
 def lecture_an(db):
     from zam_repondeur.models import Lecture
 

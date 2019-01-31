@@ -4,6 +4,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.models import DBSession, Amendement, User
+from zam_repondeur.models.events.amendement import AmendementTransfere
 from zam_repondeur.resources import SpaceResource
 
 
@@ -33,6 +34,8 @@ class SpaceView:
     def post(self) -> Response:
         num = self.request.POST.get("num")
         target = self.request.POST.get("target")
+        old = ""
+        new = ""
         if target is None or target == self.owner.email:
             target = self.owner
         else:
@@ -44,8 +47,13 @@ class SpaceView:
         )
         if amendement in target.space.amendements:
             amendement.user_space = None
+            old = str(target)
         else:
+            if amendement.user_space:
+                old = str(amendement.user_space.user)
+            new = str(target)
             target.space.amendements.append(amendement)
+        AmendementTransfere.create(self.request, amendement, old, new)
         return HTTPFound(
             location=self.request.resource_url(self.context.parent, self.owner.email)
         )

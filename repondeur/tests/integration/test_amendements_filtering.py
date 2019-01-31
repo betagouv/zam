@@ -26,7 +26,7 @@ def test_filters_are_opened_by_click(wsgi_server, driver, lecture_an):
     [
         ("1", "1", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], ["Art. 1", "Art. 1"]),
         ("2", "777", "amendement", ["666", "999", "777"], ["777"]),
-        ("6", "6", "affectation", ["5C", "6B", "4A"], ["6B"]),
+        ("5", "Da", "status", ["Ronan", "David", "Daniel"], ["David", "Daniel"]),
     ],
 )
 def test_column_filtering_by(
@@ -35,6 +35,9 @@ def test_column_filtering_by(
     lecture_an,
     article7bis_an,
     amendements_an,
+    user_david,
+    user_ronan,
+    user_daniel,
     column_index,
     input_text,
     kind,
@@ -45,11 +48,12 @@ def test_column_filtering_by(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
-        amendements_an[0].user_content.affectation = "5C"
-        amendements_an[1].user_content.affectation = "6B"
-        Amendement.create(
-            lecture=lecture_an, article=article7bis_an, num=777, affectation="4A"
+        amendements_an[0].user_space.user = user_ronan
+        amendements_an[1].user_space.user = user_david
+        amendement = Amendement.create(
+            lecture=lecture_an, article=article7bis_an, num=777
         )
+        amendement.user_space.user = user_daniel
         DBSession.add_all(amendements_an)
 
     driver.get(f"{LECTURE_URL}/amendements")

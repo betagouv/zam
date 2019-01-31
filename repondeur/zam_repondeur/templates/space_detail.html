@@ -40,7 +40,7 @@
 {% endblock %}
 
 {% block body %}
-    <h2>Table de {{ owner.name }} ({{ owner.email }})</h2>
+    <h2>Table de {{ owner }}</h2>
     {% for amendement in amendements %}
         <div class="box amendement-card">
             <div class="amendement-card-infos">
@@ -67,7 +67,7 @@
                             <option value="{{ request.user.email }}">Au radar</option>
                         {% endif %}
                         {% for user in users %}
-                            <option value="{{ user.email }}">{{ user.name }} ({{ user.email }})</option>
+                            <option value="{{ user.email }}">{{ user }}</option>
                         {% endfor %}
                     </select>
                     <input type="submit" class="button" value="Transférer">

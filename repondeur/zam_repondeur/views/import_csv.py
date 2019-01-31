@@ -109,8 +109,6 @@ def _import_reponses_from_csv_file(
         amendement.user_content.objet = clean_html(objet)
         reponse = normalize_reponse(reponse, previous_reponse)
         amendement.user_content.reponse = clean_html(reponse)
-        if "Affectation" in line:
-            amendement.user_content.affectation = clean_html(line["Affectation"])
         if "Commentaires" in line:
             amendement.user_content.comments = clean_html(line["Commentaires"])
         previous_reponse = reponse

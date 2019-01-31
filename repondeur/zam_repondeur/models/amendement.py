@@ -73,7 +73,6 @@ class AmendementUserContent(Base):
     avis: Optional[str] = Column(Text, nullable=True)
     objet: Optional[str] = Column(Text, nullable=True)
     reponse: Optional[str] = Column(Text, nullable=True)
-    affectation: Optional[str] = Column(Text, nullable=True)
     comments: Optional[str] = Column(Text, nullable=True)
 
     amendement_pk: int = Column(Integer, ForeignKey("amendements.pk"))
@@ -211,7 +210,6 @@ class Amendement(Base):
         avis: Optional[str] = None,
         objet: Optional[str] = None,
         reponse: Optional[str] = None,
-        affectation: Optional[str] = None,
         comments: Optional[str] = None,
     ) -> "Amendement":
         now = datetime.utcnow()
@@ -241,7 +239,6 @@ class Amendement(Base):
             avis=avis,
             objet=objet,
             reponse=reponse,
-            affectation=affectation,
             comments=comments,
         )
         DBSession.add(user_content)
@@ -445,7 +442,6 @@ class Amendement(Base):
             "objet": self.user_content.objet or "",
             "avis": self.user_content.avis or "",
             "reponse": self.user_content.reponse or "",
-            "affectation": self.user_content.affectation or "",
             "comments": self.user_content.comments or "",
             "parent": self.parent and self.parent.num_disp or "",
         }

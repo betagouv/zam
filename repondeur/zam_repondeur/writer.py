@@ -72,7 +72,6 @@ FIELDS = [
     "avis",
     "objet",
     "reponse",
-    "affectation",
     "comments",
     "article",
     "article_titre",

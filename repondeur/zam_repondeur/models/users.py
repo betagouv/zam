@@ -25,6 +25,9 @@ class User(Base):
         "UserSpace", back_populates="user", uselist=False, lazy="joined"
     )
 
+    def __str__(self) -> str:
+        return f"{self.name} ({self.email})"
+
     @classmethod
     def create(cls, email: str, name: Optional[str] = None) -> "User":
         user = cls(email=email, name=name)

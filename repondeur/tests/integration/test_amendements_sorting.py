@@ -72,14 +72,14 @@ def test_column_sorting_multiple_changes_url(wsgi_server, driver, lecture_an):
             ["Avant art. 1", "Art. 1", "Art. 1"],
         ),
         ("2", "amendement", ["666", "999", "777"], ["666", "777", "999"]),
-        ("4", "groupe", ["Foo ()", "Bar ()", "Baz ()"], ["Bar ()", "Baz ()", "Foo ()"]),
+        ("3", "groupe", ["Foo ()", "Bar ()", "Baz ()"], ["Bar ()", "Baz ()", "Foo ()"]),
         (
-            "5",
+            "4",
             "avis",
             ["Favorable", "Défavorable", "Aucun"],
             ["Aucun", "Défavorable", "Favorable"],
         ),
-        ("6", "affectation", ["5C", "6B", "4A"], ["4A", "5C", "6B"]),
+        ("5", "status", ["Ronan", "David", "Daniel"], ["Daniel", "David", "Ronan"]),
     ],
 )
 def test_column_sorting_by(
@@ -88,6 +88,9 @@ def test_column_sorting_by(
     lecture_an,
     article1av_an,
     amendements_an,
+    user_david,
+    user_ronan,
+    user_daniel,
     column_index,
     kind,
     initial_order,
@@ -99,18 +102,18 @@ def test_column_sorting_by(
     with transaction.manager:
         amendements_an[0].groupe = "Foo"
         amendements_an[0].user_content.avis = "Favorable"
-        amendements_an[0].user_content.affectation = "5C"
+        amendements_an[0].user_space.user = user_ronan
         amendements_an[1].groupe = "Bar"
         amendements_an[1].user_content.avis = "Défavorable"
-        amendements_an[1].user_content.affectation = "6B"
-        Amendement.create(
+        amendements_an[1].user_space.user = user_david
+        amendement = Amendement.create(
             lecture=lecture_an,
             article=article1av_an,
             num=777,
             groupe="Baz",
             avis="Aucun",
-            affectation="4A",
         )
+        amendement.user_space.user = user_daniel
         DBSession.add_all(amendements_an)
 
     driver.get(f"{LECTURE_URL}/amendements")

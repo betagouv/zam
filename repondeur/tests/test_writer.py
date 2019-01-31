@@ -124,7 +124,6 @@ def test_write_json(
         "position": 1,
         "rectif": 1,
         "reponse": "",
-        "affectation": "",
         "resume": "Suppression de l'article",
         "session": "2017-2018",
         "sort": "",
@@ -172,7 +171,6 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
             avis="Défavorable",
             objet="Un objet",
             reponse="<p>La réponse</p>",
-            affectation="4C",
             comments="<strong>Lisez-moi</strong>",
         )
         nb_rows = write_json(lecture_senat, filename, request={})
@@ -207,7 +205,6 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
         "position": 1,
         "rectif": 1,
         "reponse": "<p>La réponse</p>",
-        "affectation": "4C",
         "resume": "Suppression de l'article",
         "session": "2017-2018",
         "sort": "",
@@ -317,7 +314,6 @@ def test_write_json_sous_amendement(
         "position": "",
         "rectif": 1,
         "reponse": "",
-        "affectation": "",
         "resume": "",
         "session": "2017-2018",
         "sort": "",

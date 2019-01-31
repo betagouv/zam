@@ -139,7 +139,6 @@
                     {{ macros.svg_icon("sort") }}
                     Nº
                 </th>
-                <th class="nosort">Objet</th>
                 <th>
                     {{ macros.svg_icon("sort") }}
                     Groupe (Auteur)
@@ -161,7 +160,6 @@
                 <th>
                     <input id="amendement-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
-                <th></th>
                 <th></th>
                 <th>
                     <select id="avis-filter">
@@ -241,11 +239,6 @@
                             {% endif %}
                         {% endif %}
                 </td>
-                <td>
-                    {% if amendement.user_content.objet %}
-                        {{ amendement.user_content.objet | striptags | truncate(length=100, killwords=False, end='…') }}
-                    {% endif %}
-                </td>
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         ZZZ {# Keep at the end. #}
@@ -290,7 +283,6 @@
                         {% else %}
                             <span class="avis"></span>
                         {% endif %}
-                        <a class="edit-amendement" href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}">
                         {% if amendement.is_abandoned_before_seance %}
                             {% if amendement.is_withdrawn %}
                                 Retiré
@@ -304,7 +296,6 @@
                         {% else %}
                             Aucun
                         {% endif %}
-                        </a>
                     </nobr>
                 </td>
                 <td data-sortkey="
@@ -316,7 +307,9 @@
                         AAA {# Keep at the top. #}
                     {%- endif -%}">
                     {% if amendement.user_space %}
-                        <abbr title="{{ amendement.user_space.user.email }}">{{ amendement.user_space.user.name }}</abbr>
+                        <a href="{{ request.resource_url(context.parent['spaces'], amendement.user_space.user.email) }}" title="{{ amendement.user_space.user.email }}">
+                            {{ amendement.user_space.user.name }}
+                        </a>
                     {% else %}
                         Flottant
                         <form action="{{ request.resource_url(context.parent['spaces'], request.user.email) }}" method="POST">

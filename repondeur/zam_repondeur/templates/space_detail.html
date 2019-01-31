@@ -40,7 +40,7 @@
 {% endblock %}
 
 {% block body %}
-    <h2>Table de {{ request.user.name }} ({{ request.user.email }})</h2>
+    <h2>Table de {{ owner.name }} ({{ owner.email }})</h2>
     {% for amendement in amendements %}
         <div class="box amendement-card">
             <div class="amendement-card-infos">
@@ -49,7 +49,29 @@
                 <p><em>{{ amendement.groupe }} ({{ amendement.auteur }})</em></p>
             </div>
             <div class="amendement-card-avis">
-                <p><a href="{{ request.resource_url(context.parent.parent['amendements'][amendement.num_str], 'reponse') }}">{{ amendement.user_content.avis or "" }}</a></p>
+                <p>
+                    Avis :
+                    {% if is_owner %}
+                        <a href="{{ request.resource_url(context.parent.parent['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement.user_content.avis or "Aucun" }}</a>
+                    {% else %}
+                        {{ amendement.user_content.avis or "Aucun" }}
+                    {% endif %}
+                </p>
+                <form action="{{ request.resource_url(context.parent, request.user.email) }}" method="POST">
+                    <input type="hidden" name="num" value="{{ amendement.num }}">
+                    <select name="target">
+                        {% if is_owner %}
+                            <option selected value="{{ request.user.email }}">Au radar</option>
+                        {% else %}
+                            <option selected value="{{ request.user.email }}">À moi ({{ request.user.name }})</option>
+                            <option value="{{ request.user.email }}">Au radar</option>
+                        {% endif %}
+                        {% for user in users %}
+                            <option value="{{ user.email }}">{{ user.name }} ({{ user.email }})</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" class="button" value="Transférer">
+                </form>
             </div>
         </div>
     {% endfor %}

@@ -34,12 +34,12 @@
 
 {% block extra_nav %}
     <li {% if owner == request.user %}class="selected"{% endif %}>
-        <a href="{{ request.resource_url(context.parent, request.user.email) }}">
+        <a href="{{ table_url }}">
             Ma table
         </a>
     </li>
     <li>
-        <a href="{{ request.resource_url(context.lecture_resource, 'amendements') }}">
+        <a href="{{ radar_url }}">
             Le radar
         </a>
     </li>

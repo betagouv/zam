@@ -28,7 +28,7 @@ RUN curl -L -O https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12
     && rm -rf /var/lib/apt/lists/*
 
 # Install Geckodriver to run browser tests in Firefox
-RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz | tar xz -C /usr/local/bin
+RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.24.0/geckodriver-v0.24.0-linux64.tar.gz | tar xz -C /usr/local/bin
 
 # Setup french locale
 RUN echo 'fr_FR.UTF-8 UTF-8' >> /etc/locale.gen && \

@@ -33,7 +33,7 @@
 {% endblock %}
 
 {% block extra_nav %}
-    <li class="selected">
+    <li {% if owner == request.user %}class="selected"{% endif %}>
         <a href="{{ request.resource_url(context.parent, request.user.email) }}">
             Ma table
         </a>

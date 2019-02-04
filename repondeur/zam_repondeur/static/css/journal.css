@@ -8,24 +8,28 @@
     margin-left: 10rem;
     margin-top: 4rem;
 }
-.icon {
+.timeline .icon {
+    width: inherit;
+    height: inherit;
     border-left: 3px solid #3167a6;
     margin: 0 1rem;
 }
-    .icon i {
+    .timeline .icon i {
         display: inline-block;
         width: 2.8rem;
         height: 2.8rem;
         margin: .6rem 0 0 -1.5rem;
-        background: transparent no-repeat center center;
+        background: white no-repeat center center;
+        border: 2px solid #3167a6;
+        border-radius: 50%;
     }
-    .icon .icon-edit {
+    .timeline .icon .icon-edit {
         background-image: url("../img/journal/edit.svg");
     }
-    .icon .icon-boite {
+    .timeline .icon .icon-boite {
         background-image: url("../img/journal/boite.svg");
     }
-    .icon .icon-document {
+    .timeline .icon .icon-document {
         background-image: url("../img/journal/document.svg");
     }
 .when, .what {

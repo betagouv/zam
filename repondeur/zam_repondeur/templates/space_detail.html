@@ -73,7 +73,7 @@
                             <option value="{{ request.user.email }}">Au radar</option>
                         {% endif %}
                         {% for user in users %}
-                            <option value="{{ user.email }}">{{ user }}</option>
+                            <option value="{{ user.email }}">À {{ user }}</option>
                         {% endfor %}
                     </select>
                     <input type="submit" class="button" value="Transférer">

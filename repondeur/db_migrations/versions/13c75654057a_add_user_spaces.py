@@ -32,10 +32,18 @@ def upgrade():
     op.add_column(
         "amendements", sa.Column("user_space_pk", sa.Integer(), nullable=True)
     )
-    op.create_foreign_key(None, "amendements", "user_spaces", ["user_space_pk"], ["pk"])
+    op.create_foreign_key(
+        "amendements_user_space_pk_fkey",
+        "amendements",
+        "user_spaces",
+        ["user_space_pk"],
+        ["pk"],
+    )
 
 
 def downgrade():
-    op.drop_constraint(None, "amendements", type_="foreignkey")
+    op.drop_constraint(
+        "amendements_user_space_pk_fkey", "amendements", type_="foreignkey"
+    )
     op.drop_column("amendements", "user_space_pk")
     op.drop_table("user_spaces")

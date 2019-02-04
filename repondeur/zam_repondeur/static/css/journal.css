@@ -28,13 +28,12 @@
     .icon .icon-document {
         background-image: url("../img/journal/document.svg");
     }
-em {
+.when, .what {
     padding: 1.5rem 1rem;
     min-width: 10rem;
 }
 details {
-    padding: 1rem .5rem;
 }
-    details summary {
-        padding: .5rem 0;
+    details[open] summary {
+        padding-bottom: .5rem;
     }

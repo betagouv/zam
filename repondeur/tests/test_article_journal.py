@@ -1,6 +1,10 @@
 import transaction
 
 
+def first_description_text(resp):
+    return resp.parser.css_first(".timeline li .what").text().strip()
+
+
 def first_details_text(resp):
     return (
         resp.parser.css_first(".timeline li details")
@@ -91,7 +95,7 @@ def test_article_journal_content(app, lecture_an, article1_an, user_david):
         "/lectures/an.15.269.PO717460/articles/article.1../article_journal",
         user=user_david.email,
     )
-    assert first_summary_text(resp) == (
+    assert first_description_text(resp) == (
         "Le contenu de l’article a été modifié par les services "
         "de l’Asssemblée nationale"
     )

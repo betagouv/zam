@@ -1,6 +1,10 @@
 import transaction
 
 
+def first_description_text(resp):
+    return resp.parser.css_first(".timeline li .what").text().strip()
+
+
 def first_details_text(resp):
     return (
         resp.parser.css_first(".timeline li details")
@@ -33,7 +37,7 @@ def test_amendement_journal_avis(app, lecture_an, amendements_an, user_david):
         "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
         user=user_david.email,
     )
-    assert first_summary_text(resp) == "David a mis l’avis à « Favorable »"
+    assert first_description_text(resp) == "David a mis l’avis à « Favorable »"
 
 
 def test_amendement_journal_avis_with_existing_avis(
@@ -63,7 +67,7 @@ def test_amendement_journal_avis_with_existing_avis(
         user=user_david.email,
     )
     assert (
-        first_summary_text(resp)
+        first_description_text(resp)
         == "David a modifié l’avis de « Favorable » à « Défavorable »"
     )
 
@@ -135,7 +139,7 @@ def test_amendement_journal_affectation(
         user=user_david.email,
     )
     assert (
-        first_summary_text(resp)
+        first_description_text(resp)
         == "David a transféré l’amendement à « Ronan (ronan@example.com) »"
     )
 
@@ -166,7 +170,7 @@ def test_amendement_journal_affectation_by_other(
         "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
         user=user_david.email,
     )
-    assert first_summary_text(resp) == (
+    assert first_description_text(resp) == (
         "David a transféré l’amendement de "
         "« Ronan (ronan@example.com) » à « Daniel (daniel@example.com) »"
     )
@@ -195,7 +199,7 @@ def test_amendement_journal_affectation_taken(
         "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
         user=user_david.email,
     )
-    assert first_summary_text(resp) == "David a mis l’amendement sur sa table"
+    assert first_description_text(resp) == "David a mis l’amendement sur sa table"
 
 
 def test_amendement_journal_affectation_taken_by_other(
@@ -222,7 +226,7 @@ def test_amendement_journal_affectation_taken_by_other(
         user=user_david.email,
     )
     assert (
-        first_summary_text(resp)
+        first_description_text(resp)
         == "Ronan a mis l’amendement sur la table de « David (david@example.com) »"
     )
 
@@ -250,7 +254,7 @@ def test_amendement_journal_affectation_released(
         "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
         user=user_david.email,
     )
-    assert first_summary_text(resp) == "David a remis l’amendement dans le radar"
+    assert first_description_text(resp) == "David a remis l’amendement dans le radar"
 
 
 def test_amendement_journal_affectation_released_by_other(
@@ -277,6 +281,6 @@ def test_amendement_journal_affectation_released_by_other(
         user=user_david.email,
     )
     assert (
-        first_summary_text(resp)
+        first_description_text(resp)
         == "Ronan a remis l’amendement de « David (david@example.com) » dans le radar"
     )

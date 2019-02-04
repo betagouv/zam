@@ -14,9 +14,7 @@ class SpaceView:
         self.context = context
         self.request = request
         self.lecture = context.lecture_resource.model()
-        self.owner = (
-            DBSession.query(User).filter(User.email == self.context.email).first()
-        )
+        self.owner = context.owner
 
     @view_config(request_method="GET", renderer="space_detail.html")
     def get(self) -> dict:

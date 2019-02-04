@@ -212,8 +212,7 @@ class ArticleResource(Resource):
 
 class SpaceCollection(Resource):
     def __getitem__(self, key: str) -> Resource:
-        name: str = self.__name__ or ""
-        return SpaceResource(name=name, parent=self, email=key)
+        return SpaceResource(name=key, parent=self)
 
     @property
     def parent(self) -> LectureResource:
@@ -221,9 +220,8 @@ class SpaceCollection(Resource):
 
 
 class SpaceResource(Resource):
-    def __init__(self, name: str, parent: Resource, email: str) -> None:
+    def __init__(self, name: str, parent: Resource) -> None:
         super().__init__(name=name, parent=parent)
-        self.email = email
 
     @property
     def parent(self) -> SpaceCollection:
@@ -233,6 +231,13 @@ class SpaceResource(Resource):
     def lecture_resource(self) -> LectureResource:
         return self.parent.parent
 
-    def amendements(self) -> List[Optional[Amendement]]:
-        user = DBSession.query(User).filter(User.email == self.email).first()
-        return user.space.amendements or []
+    @property
+    def owner(self) -> User:
+        try:
+            user: User = DBSession.query(User).filter(User.email == self.__name__).one()
+            return user
+        except NoResultFound:
+            raise ResourceNotFound
+
+    def amendements(self) -> List[Amendement]:
+        return self.owner.space.amendements or []

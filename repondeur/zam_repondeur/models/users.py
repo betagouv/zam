@@ -1,12 +1,11 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, Text, func
+from sqlalchemy import Column, DateTime, Integer, Text, func
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import EmailType
 
 from .base import Base, DBSession
-from .amendement import Amendement
 
 
 class User(Base):
@@ -33,6 +32,8 @@ class User(Base):
 
     @classmethod
     def create(cls, email: str, name: Optional[str] = None) -> "User":
+        from .table import UserTable
+
         user = cls(email=email, name=name)
         user.table = UserTable()
         DBSession.add(user)
@@ -52,20 +53,3 @@ class User(Base):
     @property
     def display_name(self) -> str:
         return self.name or self.email
-
-
-class UserTable(Base):
-    __tablename__ = "user_tables"
-
-    pk: int = Column(Integer, primary_key=True)
-
-    user_pk: int = Column(Integer, ForeignKey("users.pk"))
-    user: User = relationship(User, back_populates="table")
-
-    amendements = relationship(
-        Amendement,
-        order_by=(Amendement.position, Amendement.num),
-        back_populates="user_table",
-    )
-
-    __repr_keys__ = ("pk", "user_pk")

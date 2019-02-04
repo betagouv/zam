@@ -25,6 +25,7 @@ nav.main {
     }
         nav.main ul li {
             padding: .7rem 1rem;
+            white-space: nowrap;
         }
             nav.main ul li a {
                 color: white;

@@ -13,8 +13,11 @@ def driver(wsgi_server):
         login(driver, wsgi_server.application_url, "user@example.com")
         yield driver
         driver.quit()
-    except WebDriverException:
-        pytest.skip("You need Firefox and geckodriver to run browser tests")
+    except WebDriverException as exc:
+        if str(exc) == "Message: 'geckodriver' executable needs to be in PATH. \n":
+            pytest.skip("You need Firefox and geckodriver to run browser tests")
+        else:
+            raise
 
 
 @pytest.fixture

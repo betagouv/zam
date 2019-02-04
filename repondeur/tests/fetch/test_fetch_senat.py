@@ -78,30 +78,21 @@ def test_aspire_senat(app, lecture_senat):
     assert events[0].user is None
     assert events[0].data["old_value"] == ""
     assert events[0].data["new_value"].startswith("<p>Cet amendement vise")
-    assert (
-        events[0].render_summary()
-        == "L’exposé de l’amendement a été modifié par les services du Sénat"
-    )
+    assert events[0].render_summary() == "L’exposé de l’amendement a été modifié"
 
     assert isinstance(events[1], CorpsAmendementModifie)
     assert events[1].created_at is not None
     assert events[1].user is None
     assert events[1].data["old_value"] == ""
     assert events[1].data["new_value"].startswith("<p>Après l’article")
-    assert (
-        events[1].render_summary()
-        == "Le corps de l’amendement a été modifié par les services du Sénat"
-    )
+    assert events[1].render_summary() == "Le corps de l’amendement a été modifié"
 
     assert isinstance(events[2], AmendementRectifie)
     assert events[2].created_at is not None
     assert events[2].user is None
     assert events[2].data["old_value"] == 0
     assert events[2].data["new_value"] == 1
-    assert (
-        events[2].render_summary()
-        == "L’amendement a été rectifié par les services du Sénat"
-    )
+    assert events[2].render_summary() == "L’amendement a été rectifié"
 
     # Check that #596 has a parent
     sous_amendement = [

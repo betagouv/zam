@@ -50,13 +50,7 @@ class AmendementRectifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "amendement_rectifie"}
     icon = "edit"
 
-    @property
-    def summary_template(self) -> Template:  # type: ignore
-        if self.amendement.lecture.chambre == "an":
-            de_qui = "de l’Asssemblée nationale"
-        else:
-            de_qui = "du Sénat"
-        return Template(f"L’amendement a été rectifié par les services {de_qui}")
+    summary_template = Template("L’amendement a été rectifié")
 
     details_template = Template("")
 
@@ -166,15 +160,7 @@ class CorpsAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "corps_amendement_modifie"}
     icon = "edit"
 
-    @property
-    def summary_template(self) -> Template:  # type: ignore
-        if self.amendement.lecture.chambre == "an":
-            de_qui = "de l’Asssemblée nationale"
-        else:
-            de_qui = "du Sénat"
-        return Template(
-            f"Le corps de l’amendement a été modifié par les services {de_qui}"
-        )
+    summary_template = Template("Le corps de l’amendement a été modifié")
 
     def __init__(
         self, request: Request, amendement: Amendement, corps: str, **kwargs: Any
@@ -195,15 +181,7 @@ class ExposeAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "expose_amendement_modifie"}
     icon = "edit"
 
-    @property
-    def summary_template(self) -> Template:  # type: ignore
-        if self.amendement.lecture.chambre == "an":
-            de_qui = "de l’Asssemblée nationale"
-        else:
-            de_qui = "du Sénat"
-        return Template(
-            f"L’exposé de l’amendement a été modifié par les services {de_qui}"
-        )
+    summary_template = Template("L’exposé de l’amendement a été modifié")
 
     def __init__(
         self, request: Request, amendement: Amendement, expose: str, **kwargs: Any

@@ -380,8 +380,7 @@ class TestFetchAmendement:
         assert amendement.events[0].data["old_value"] == ""
         assert amendement.events[0].data["new_value"].startswith("<p>Amendement")
         assert amendement.events[0].render_summary() == (
-            "L’exposé de l’amendement a été modifié par les services "
-            "de l’Asssemblée nationale"
+            "L’exposé de l’amendement a été modifié"
         )
 
         assert isinstance(amendement.events[1], CorpsAmendementModifie)
@@ -390,8 +389,7 @@ class TestFetchAmendement:
         assert amendement.events[1].data["old_value"] == ""
         assert amendement.events[1].data["new_value"].startswith("<p>Supprimer")
         assert amendement.events[1].render_summary() == (
-            "Le corps de l’amendement a été modifié par les services "
-            "de l’Asssemblée nationale"
+            "Le corps de l’amendement a été modifié"
         )
 
     @responses.activate

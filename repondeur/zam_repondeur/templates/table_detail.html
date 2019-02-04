@@ -51,7 +51,7 @@
         <div class="box amendement-card">
             <div class="amendement-card-infos">
                 <p>{{ amendement.article.format() }} - Nº&nbsp;<strong>{{ amendement }}</strong></p>
-                <p>{{ amendement.user_content.objet or "" }}</p>
+                <p>{{ amendement.user_content.objet | paragriphy }}</p>
                 <p><em>{{ amendement.groupe }} ({{ amendement.auteur }})</em></p>
             </div>
             <div class="amendement-card-avis">

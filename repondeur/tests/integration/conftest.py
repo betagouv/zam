@@ -6,7 +6,7 @@ from webtest.http import StopableWSGIServer
 from .helpers import login
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def driver(wsgi_server):
     try:
         driver = HeadlessFirefox()
@@ -17,8 +17,8 @@ def driver(wsgi_server):
         pytest.skip("You need Firefox and geckodriver to run browser tests")
 
 
-@pytest.fixture(scope="session")
-def wsgi_server(settings, mock_dossiers, mock_organes_acteurs):
+@pytest.fixture
+def wsgi_server(settings, db, mock_dossiers, mock_organes_acteurs):
     from zam_repondeur import make_app
 
     settings = {**settings, "zam.auth_cookie_secure": False}

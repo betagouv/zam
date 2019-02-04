@@ -19,11 +19,13 @@ depends_on = None
 def upgrade():
     op.drop_table("journal")
     op.add_column("events", sa.Column("lecture_pk", sa.Integer(), nullable=True))
-    op.create_foreign_key(None, "events", "lectures", ["lecture_pk"], ["pk"])
+    op.create_foreign_key(
+        "events_lecture_pk_fkey", "events", "lectures", ["lecture_pk"], ["pk"]
+    )
 
 
 def downgrade():
-    op.drop_constraint(None, "events", type_="foreignkey")
+    op.drop_constraint("events_lecture_pk_fkey", "events", type_="foreignkey")
     op.drop_column("events", "lecture_pk")
     op.create_table(
         "journal",

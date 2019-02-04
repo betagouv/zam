@@ -6,6 +6,7 @@ import pytest
 def test_parse_from_csv(lecture_senat):
 
     from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.models import DBSession
 
     amend = {
         "Alinéa": " ",
@@ -21,6 +22,8 @@ def test_parse_from_csv(lecture_senat):
         "Subdivision ": "art. add. après Article 7",
         "Url amendement ": "//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",  # noqa
     }
+
+    DBSession.add(lecture_senat)
 
     source = Senat()
     amendement, created = source.parse_from_csv(amend, lecture_senat)

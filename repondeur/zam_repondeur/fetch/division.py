@@ -1,16 +1,10 @@
 import logging
 import re
-from typing import NamedTuple
+
+from zam_repondeur.models.division import SubDiv
 
 
 logger = logging.getLogger(__name__)
-
-
-class SubDiv(NamedTuple):
-    type_: str
-    num: str
-    mult: str
-    pos: str
 
 
 SUBDIV_RE = re.compile(

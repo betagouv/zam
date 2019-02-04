@@ -26,7 +26,10 @@ class User(Base):
     )
 
     def __str__(self) -> str:
-        return f"{self.name} ({self.email})"
+        if self.name:
+            return f"{self.name} ({self.email})"
+        else:
+            return self.email
 
     @classmethod
     def create(cls, email: str, name: Optional[str] = None) -> "User":

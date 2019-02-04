@@ -28,6 +28,9 @@ class SpaceView:
             "users": DBSession.query(User).filter(
                 User.email != self.request.user.email, User.email != self.owner.email
             ),
+            "radar_url": self.request.resource_url(
+                self.context.lecture_resource["amendements"]
+            ),
         }
 
     @view_config(request_method="POST")

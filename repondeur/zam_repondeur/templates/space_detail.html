@@ -6,6 +6,12 @@
         text-align: center;
         margin: 2rem;
     }
+    .box {
+        text-align: center;
+    }
+    .box p:last-child {
+        margin-bottom: 0;
+    }
     .amendement-card {
         display: flex;
         justify-content: space-between;
@@ -73,6 +79,15 @@
                     <input type="submit" class="button" value="Transférer">
                 </form>
             </div>
+        </div>
+    {% else %}
+        <div class="box">
+            {% if owner == request.user %}
+                <p>Il n’y a aucun amendement sur votre table pour l’instant.</p>
+                <p>Vous pouvez aller sur <a href="{{ radar_url }}">le radar</a> pour prendre des amendements flottants et les placer sur votre table.</p>
+            {% else %}
+                <p>Il n’y a aucun amendement sur cette table pour l’instant.</p>
+            {% endif %}
         </div>
     {% endfor %}
 {% endblock %}

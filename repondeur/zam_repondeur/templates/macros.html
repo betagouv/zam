@@ -49,10 +49,10 @@
             {% if event.details_template and event.details_template.template %}
                 <details {% if is_first  %}open{% endif %}>
                     <summary>{{ event.render_summary() }}</summary>
-                    {{ event.render_details() }}
+                    <p>{{ event.render_details() }}</p>
                 </details>
             {% else %}
-                {{ event.render_summary() }}
+                <p>{{ event.render_summary() }}</p>
             {% endif %}
         </div>
     </li>

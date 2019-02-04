@@ -8,6 +8,9 @@
     margin-left: 10rem;
     margin-top: 4rem;
 }
+.timeline p {
+    margin-bottom: 0;
+}
 .timeline .icon {
     width: inherit;
     height: inherit;

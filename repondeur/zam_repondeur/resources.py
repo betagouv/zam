@@ -99,7 +99,7 @@ class LectureResource(Resource):
         self.organe = organe
         self.add_child(AmendementCollection(name="amendements", parent=self))
         self.add_child(ArticleCollection(name="articles", parent=self))
-        self.add_child(SpaceCollection(name="spaces", parent=self))
+        self.add_child(TableCollection(name="tables", parent=self))
 
     def model(self, *options: Any) -> Lecture:
         lecture = Lecture.get(
@@ -210,22 +210,22 @@ class ArticleResource(Resource):
         return article
 
 
-class SpaceCollection(Resource):
+class TableCollection(Resource):
     def __getitem__(self, key: str) -> Resource:
-        return SpaceResource(name=key, parent=self)
+        return TableResource(name=key, parent=self)
 
     @property
     def parent(self) -> LectureResource:
         return cast(LectureResource, self.__parent__)
 
 
-class SpaceResource(Resource):
+class TableResource(Resource):
     def __init__(self, name: str, parent: Resource) -> None:
         super().__init__(name=name, parent=parent)
 
     @property
-    def parent(self) -> SpaceCollection:
-        return cast(SpaceCollection, self.__parent__)
+    def parent(self) -> TableCollection:
+        return cast(TableCollection, self.__parent__)
 
     @property
     def lecture_resource(self) -> LectureResource:
@@ -240,4 +240,4 @@ class SpaceResource(Resource):
             raise ResourceNotFound
 
     def amendements(self) -> List[Amendement]:
-        return self.owner.space.amendements or []
+        return self.owner.table.amendements or []

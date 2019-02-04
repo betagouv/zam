@@ -95,7 +95,7 @@ def test_post_amendement_edit_form(app, lecture_an, amendements_an):
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/spaces/user@example.com/#amdt-999"  # noqa
+        == "https://zam.test/lectures/an.15.269.PO717460/tables/user@example.com/#amdt-999"  # noqa
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -142,7 +142,7 @@ def test_post_amendement_edit_form_gouvernemental(app, lecture_an, amendements_a
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/spaces/user@example.com/#amdt-999"  # noqa
+        == "https://zam.test/lectures/an.15.269.PO717460/tables/user@example.com/#amdt-999"  # noqa
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()

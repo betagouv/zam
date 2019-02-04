@@ -102,10 +102,10 @@ def test_column_sorting_by(
     with transaction.manager:
         amendements_an[0].groupe = "Foo"
         amendements_an[0].user_content.avis = "Favorable"
-        amendements_an[0].user_space.user = user_ronan
+        amendements_an[0].user_table.user = user_ronan
         amendements_an[1].groupe = "Bar"
         amendements_an[1].user_content.avis = "Défavorable"
-        amendements_an[1].user_space.user = user_david
+        amendements_an[1].user_table.user = user_david
         amendement = Amendement.create(
             lecture=lecture_an,
             article=article1av_an,
@@ -113,7 +113,7 @@ def test_column_sorting_by(
             groupe="Baz",
             avis="Aucun",
         )
-        amendement.user_space.user = user_daniel
+        amendement.user_table.user = user_daniel
         DBSession.add_all(amendements_an)
 
     driver.get(f"{LECTURE_URL}/amendements")

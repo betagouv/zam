@@ -7,7 +7,7 @@
 
 {% block extra_nav %}
     <li>
-        <a href="{{ request.resource_url(context.parent['spaces'], request.user.email) }}">
+        <a href="{{ request.resource_url(context.parent['tables'], request.user.email) }}">
             Ma table
         </a>
     </li>
@@ -188,7 +188,7 @@
                 "
                 data-order="{{ loop.index }}"
                 data-amendement="{{ amendement.num }}"
-                data-status="{{ amendement.user_space and amendement.user_space.user.name or 'Flottant' }}"
+                data-status="{{ amendement.user_table and amendement.user_table.user.name or 'Flottant' }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.user_content.avis else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 data-abandoned-before-seance="{{ 1 if amendement.is_abandoned_before_seance else 0 }}"
@@ -301,18 +301,18 @@
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         ZZZ {# Keep at the end. #}
-                    {%- elif amendement.user_space -%}
-                        {{ amendement.user_space.user.name }}
+                    {%- elif amendement.user_table -%}
+                        {{ amendement.user_table.user.name }}
                     {%- else -%}
                         AAA {# Keep at the top. #}
                     {%- endif -%}">
-                    {% if amendement.user_space %}
-                        <a href="{{ request.resource_url(context.parent['spaces'], amendement.user_space.user.email) }}" title="{{ amendement.user_space.user.email }}">
-                            {{ amendement.user_space.user.name }}
+                    {% if amendement.user_table %}
+                        <a href="{{ request.resource_url(context.parent['tables'], amendement.user_table.user.email) }}" title="{{ amendement.user_table.user.email }}">
+                            {{ amendement.user_table.user.name }}
                         </a>
                     {% else %}
                         Flottant
-                        <form action="{{ request.resource_url(context.parent['spaces'], request.user.email) }}" method="POST">
+                        <form action="{{ request.resource_url(context.parent['tables'], request.user.email) }}" method="POST">
                             <input type="hidden" name="num" value="{{ amendement.num }}">
                             <input type="submit" class="button" value="Prendre ?">
                         </form>

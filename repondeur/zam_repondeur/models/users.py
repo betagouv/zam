@@ -21,8 +21,8 @@ class User(Base):
     )
     last_login_at: Optional[datetime] = Column(DateTime)
 
-    space = relationship(
-        "UserSpace", back_populates="user", uselist=False, lazy="joined"
+    table = relationship(
+        "UserTable", back_populates="user", uselist=False, lazy="joined"
     )
 
     def __str__(self) -> str:
@@ -34,7 +34,7 @@ class User(Base):
     @classmethod
     def create(cls, email: str, name: Optional[str] = None) -> "User":
         user = cls(email=email, name=name)
-        user.space = UserSpace()
+        user.table = UserTable()
         DBSession.add(user)
         return user
 
@@ -54,18 +54,18 @@ class User(Base):
         return self.name or self.email
 
 
-class UserSpace(Base):
-    __tablename__ = "user_spaces"
+class UserTable(Base):
+    __tablename__ = "user_tables"
 
     pk: int = Column(Integer, primary_key=True)
 
     user_pk: int = Column(Integer, ForeignKey("users.pk"))
-    user: User = relationship(User, back_populates="space")
+    user: User = relationship(User, back_populates="table")
 
     amendements = relationship(
         Amendement,
         order_by=(Amendement.position, Amendement.num),
-        back_populates="user_space",
+        back_populates="user_table",
     )
 
     __repr_keys__ = ("pk", "user_pk")

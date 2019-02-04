@@ -5,18 +5,18 @@ from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.models import DBSession, Amendement, User
 from zam_repondeur.models.events.amendement import AmendementTransfere
-from zam_repondeur.resources import SpaceResource
+from zam_repondeur.resources import TableResource
 
 
-@view_defaults(context=SpaceResource)
-class SpaceView:
-    def __init__(self, context: SpaceResource, request: Request) -> None:
+@view_defaults(context=TableResource)
+class TableView:
+    def __init__(self, context: TableResource, request: Request) -> None:
         self.context = context
         self.request = request
         self.lecture = context.lecture_resource.model()
         self.owner = context.owner
 
-    @view_config(request_method="GET", renderer="space_detail.html")
+    @view_config(request_method="GET", renderer="table_detail.html")
     def get(self) -> dict:
         return {
             "lecture": self.lecture,
@@ -46,14 +46,14 @@ class SpaceView:
             .filter(Amendement.lecture == self.lecture, Amendement.num == num)
             .first()
         )
-        if amendement in target.space.amendements:
-            amendement.user_space = None
+        if amendement in target.table.amendements:
+            amendement.user_table = None
             old = str(target)
         else:
-            if amendement.user_space:
-                old = str(amendement.user_space.user)
+            if amendement.user_table:
+                old = str(amendement.user_table.user)
             new = str(target)
-            target.space.amendements.append(amendement)
+            target.table.amendements.append(amendement)
         AmendementTransfere.create(self.request, amendement, old, new)
         return HTTPFound(
             location=self.request.resource_url(self.context.parent, self.owner.email)

@@ -35,6 +35,7 @@
     border-bottom: thin solid #979797;
 }
 #advanced > div h3 {
+    font-size: 1.5rem;
     font-weight: 600;
 }
 #advanced div[role="group"] {

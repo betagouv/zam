@@ -7,6 +7,21 @@ body {
         "Segoe UI", Helvetica, Arial, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     background: #f2f2f2;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+a {
+    text-decoration: none;
+}
+
+.d-none {
+    display: none !important;
 }
 
 nav.main {
@@ -187,6 +202,7 @@ nav .button:last-child {
 }
 
 .box h3 {
+    font-size: 1.75rem;
     font-weight: 600;
 }
 

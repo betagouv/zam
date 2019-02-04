@@ -17,13 +17,18 @@ depends_on = None
 
 
 def upgrade():
-    op.create_table(
+    user_spaces = op.create_table(
         "user_spaces",
         sa.Column("pk", sa.Integer(), nullable=False),
         sa.Column("user_pk", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(["user_pk"], ["users.pk"]),
         sa.PrimaryKeyConstraint("pk"),
     )
+
+    connection = op.get_bind()
+    users = connection.execute("SELECT pk FROM users;")
+    op.bulk_insert(user_spaces, [{"user_pk": pk} for (pk,) in users])
+
     op.add_column(
         "amendements", sa.Column("user_space_pk", sa.Integer(), nullable=True)
     )

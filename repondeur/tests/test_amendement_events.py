@@ -20,7 +20,7 @@ def test_post_amendement_edit_form_events(app, lecture_an, amendements_an):
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/amendements/#amdt-999"
+        == "https://zam.test/lectures/an.15.269.PO717460/spaces/user@example.com/#amdt-999"  # noqa
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()

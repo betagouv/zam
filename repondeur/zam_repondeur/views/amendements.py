@@ -79,7 +79,8 @@ class AmendementEdit:
     def back_url(self) -> str:
         url: str = self.request.GET.get("back")
         if url is None or not url.startswith("/"):
-            url = self.request.resource_url(self.context.parent)
+            my_table = self.context.lecture_resource["spaces"][self.request.user.email]
+            url = self.request.resource_url(my_table)
         return add_url_fragment(url, self.amendement.slug)
 
     @property

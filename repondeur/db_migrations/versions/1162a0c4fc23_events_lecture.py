@@ -1,4 +1,4 @@
-"""Events lecture
+"""Refactor the lecture journal to use events (like articles and amendements)
 
 Revision ID: 1162a0c4fc23
 Revises: a90e77416ebe

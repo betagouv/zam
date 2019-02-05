@@ -13,7 +13,7 @@
     </li>
     <li class="selected">
         <a href="{{ request.resource_url(context) }}">
-            Le radar
+            Index
         </a>
     </li>
     {% if lecture.displayable %}
@@ -26,15 +26,8 @@
 {% endblock %}
 
 {% block secondary_header %}
-    <nav class="nav secondary justify-content-between">
-        <span class="nav-item">
-        </span>
-        <div>
-            {{ macros.update_informations(lecture, request.resource_url(context.parent, 'lecture_journal')) }}
-        </div>
-        <span class="nav-item">
-        </span>
-    </nav>
+    <h1>Index des amendements</h1>
+    {{ macros.update_informations(lecture, request.resource_url(context.parent, 'lecture_journal')) }}
 {% endblock %}
 
 {% block body %}

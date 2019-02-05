@@ -2,9 +2,8 @@
 
 {% block header %}
 <style type="text/css">
-    h2 {
-        text-align: center;
-        margin: 2rem;
+    h1 {
+        margin-bottom: 2rem;
     }
     .box {
         text-align: center;
@@ -40,13 +39,13 @@
     </li>
     <li>
         <a href="{{ radar_url }}">
-            Le radar
+            Index
         </a>
     </li>
 {% endblock %}
 
 {% block body %}
-    <h2>Table de {{ owner }}</h2>
+    <h1>Ma table</h1>
     {% for amendement in amendements %}
         <div class="box amendement-card">
             <div class="amendement-card-infos">

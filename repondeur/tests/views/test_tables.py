@@ -11,7 +11,7 @@ def test_tables_empty(app, lecture_an, user_david):
     resp = app.get(f"/lectures/an.15.269.PO717460/tables/{email}", user=email)
 
     assert resp.status_code == 200
-    assert f"Table de David ({email})" in resp.text
+    assert "Ma table" in resp.text
 
 
 def test_tables_with_amendement(app, lecture_an, amendements_an, user_david):
@@ -25,7 +25,7 @@ def test_tables_with_amendement(app, lecture_an, amendements_an, user_david):
     resp = app.get(f"/lectures/an.15.269.PO717460/tables/{email}", user=email)
 
     assert resp.status_code == 200
-    assert f"Table de David ({email})" in resp.text
+    assert "Ma table" in resp.text
     assert f"Nº&nbsp;<strong>{amendements_an[0]}</strong>" in resp.text
     assert f"Nº&nbsp;<strong>{amendements_an[1]}</strong>" not in resp.text
 

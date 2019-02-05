@@ -15,6 +15,10 @@ HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data"
 
 
+# We need data about dossiers, texts and groups
+pytestmark = pytest.mark.usefixtures("data_repository")
+
+
 def read_sample_data(basename):
     return (SAMPLE_DATA_DIR / basename).read_text()
 

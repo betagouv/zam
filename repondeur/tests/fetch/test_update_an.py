@@ -12,6 +12,10 @@ from zam_repondeur.models import Amendement, DBSession
 from fetch.mock_an import setup_mock_responses
 
 
+# We need data about dossiers, texts and groups
+pytestmark = pytest.mark.usefixtures("data_repository")
+
+
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data"
 

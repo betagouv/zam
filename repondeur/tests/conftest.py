@@ -59,44 +59,55 @@ def use_app_registry(wsgi_app):
         yield
 
 
-@pytest.yield_fixture
-def app(wsgi_app):
+@pytest.fixture
+def db():
     from zam_repondeur.models import Base, DBSession
-    from zam_repondeur.data import _repository
 
     Base.metadata.drop_all()
     Base.metadata.create_all()
 
-    _repository.clear_data()
-    _repository.load_data()
-
-    yield TestApp(
-        wsgi_app, extra_environ={"HTTP_HOST": "zam.test", "wsgi.url_scheme": "https"}
-    )
+    yield DBSession
 
     DBSession.close()
     Base.metadata.drop_all()
     DBSession.remove()
 
+
+@pytest.fixture
+def data_repository():
+    from zam_repondeur.data import _repository
+
+    _repository.clear_data()
+    _repository.load_data()
+
+    yield
+
     _repository.clear_data()
 
 
 @pytest.fixture
-def team_zam(app):
+def app(wsgi_app, db, data_repository):
+    yield TestApp(
+        wsgi_app, extra_environ={"HTTP_HOST": "zam.test", "wsgi.url_scheme": "https"}
+    )
+
+
+@pytest.fixture
+def team_zam(db):
     from zam_repondeur.models import Team
 
     return Team.create(name="Zam")
 
 
 @pytest.fixture
-def user_david(app, team_zam):
+def user_david(db, team_zam):
     from zam_repondeur.models import User
 
     return User.create(name="David", email="david@example.com")
 
 
 @pytest.fixture
-def lecture_an(app):
+def lecture_an(db):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
@@ -113,7 +124,7 @@ def lecture_an(app):
 
 
 @pytest.fixture
-def lecture_senat(app):
+def lecture_senat(db):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
@@ -130,7 +141,7 @@ def lecture_senat(app):
 
 
 @pytest.fixture
-def chapitre_1er_an(app, lecture_an):
+def chapitre_1er_an(db, lecture_an):
     from zam_repondeur.models import Article
 
     with transaction.manager:
@@ -140,7 +151,7 @@ def chapitre_1er_an(app, lecture_an):
 
 
 @pytest.fixture
-def article1_an(app, lecture_an):
+def article1_an(db, lecture_an):
     from zam_repondeur.models import Article
 
     with transaction.manager:
@@ -150,7 +161,7 @@ def article1_an(app, lecture_an):
 
 
 @pytest.fixture
-def article1av_an(app, lecture_an):
+def article1av_an(db, lecture_an):
     from zam_repondeur.models import Article
 
     with transaction.manager:
@@ -162,7 +173,7 @@ def article1av_an(app, lecture_an):
 
 
 @pytest.fixture
-def article7bis_an(app, lecture_an):
+def article7bis_an(db, lecture_an):
     from zam_repondeur.models import Article
 
     with transaction.manager:
@@ -174,7 +185,7 @@ def article7bis_an(app, lecture_an):
 
 
 @pytest.fixture
-def annexe_an(app, lecture_an):
+def annexe_an(db, lecture_an):
     from zam_repondeur.models import Article
 
     with transaction.manager:
@@ -184,7 +195,7 @@ def annexe_an(app, lecture_an):
 
 
 @pytest.fixture
-def article1_senat(app, lecture_senat):
+def article1_senat(db, lecture_senat):
     from zam_repondeur.models import Article
 
     with transaction.manager:
@@ -194,7 +205,7 @@ def article1_senat(app, lecture_senat):
 
 
 @pytest.fixture
-def article1av_senat(app, lecture_senat):
+def article1av_senat(db, lecture_senat):
     from zam_repondeur.models import Article
 
     with transaction.manager:
@@ -206,7 +217,7 @@ def article1av_senat(app, lecture_senat):
 
 
 @pytest.fixture
-def article7bis_senat(app, lecture_senat):
+def article7bis_senat(db, lecture_senat):
     from zam_repondeur.models import Article
 
     with transaction.manager:
@@ -218,7 +229,7 @@ def article7bis_senat(app, lecture_senat):
 
 
 @pytest.fixture
-def amendements_an(app, lecture_an, article1_an):
+def amendements_an(db, lecture_an, article1_an):
     from zam_repondeur.models import Amendement
 
     with transaction.manager:
@@ -233,7 +244,7 @@ def amendements_an(app, lecture_an, article1_an):
 
 
 @pytest.fixture
-def amendements_senat(app, lecture_senat, article1_senat):
+def amendements_senat(db, lecture_senat, article1_senat):
     from zam_repondeur.models import Amendement
 
     with transaction.manager:
@@ -251,7 +262,7 @@ def amendements_senat(app, lecture_senat, article1_senat):
 
 
 @pytest.fixture
-def lecture_essoc(app):
+def lecture_essoc(db):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:

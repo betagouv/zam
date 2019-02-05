@@ -5,6 +5,10 @@ import pytest
 import transaction
 
 
+# We need data about dossiers, texts and groups
+pytestmark = pytest.mark.usefixtures("data_repository")
+
+
 def open_liasse(filename):
     return (Path(__file__).parent.parent / "sample_data" / filename).open(mode="rb")
 

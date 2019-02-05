@@ -48,13 +48,13 @@ def test_column_filtering_by(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
-        amendements_an[0].user_table.user = user_ronan
-        amendements_an[1].user_table.user = user_david
+        DBSession.add_all(amendements_an)
+        user_ronan.table.amendements.append(amendements_an[0])
+        user_david.table.amendements.append(amendements_an[1])
         amendement = Amendement.create(
             lecture=lecture_an, article=article7bis_an, num=777
         )
-        amendement.user_table.user = user_daniel
-        DBSession.add_all(amendements_an)
+        user_daniel.table.amendements.append(amendement)
 
     driver.get(f"{LECTURE_URL}/amendements")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")

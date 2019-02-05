@@ -100,12 +100,16 @@ def test_column_sorting_by(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
+        DBSession.add_all(amendements_an)
+
         amendements_an[0].groupe = "Foo"
         amendements_an[0].user_content.avis = "Favorable"
-        amendements_an[0].user_table.user = user_ronan
+        user_ronan.table.amendements.append(amendements_an[0])
+
         amendements_an[1].groupe = "Bar"
         amendements_an[1].user_content.avis = "Défavorable"
-        amendements_an[1].user_table.user = user_david
+        user_david.table.amendements.append(amendements_an[1])
+
         amendement = Amendement.create(
             lecture=lecture_an,
             article=article1av_an,
@@ -113,8 +117,7 @@ def test_column_sorting_by(
             groupe="Baz",
             avis="Aucun",
         )
-        amendement.user_table.user = user_daniel
-        DBSession.add_all(amendements_an)
+        user_daniel.table.amendements.append(amendement)
 
     driver.get(f"{LECTURE_URL}/amendements")
     trs = driver.find_elements_by_css_selector("tbody tr")

@@ -1,3 +1,4 @@
+import pytest
 import transaction
 
 from .helpers import find_header_by_index
@@ -8,8 +9,10 @@ def test_repondeur_does_not_contains_link_to_visionneuse_if_no_avis(
 ):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    second_nav = driver.find_element_by_css_selector("nav.main li:nth-child(2)")
-    assert not second_nav.text.endswith("Dossier de banc")
+    menu_items = [
+        item.text for item in driver.find_elements_by_css_selector("nav.main li")
+    ]
+    assert "Le dossier de banc" not in menu_items
 
 
 def test_repondeur_contains_link_to_visionneuse_if_avis(
@@ -23,8 +26,10 @@ def test_repondeur_contains_link_to_visionneuse_if_avis(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    second_nav = driver.find_element_by_css_selector("nav.main li:nth-child(2)")
-    assert second_nav.text.endswith("Dossier de banc")
+    menu_items = [
+        item.text for item in driver.find_elements_by_css_selector("nav.main li")
+    ]
+    assert "Le dossier de banc" in menu_items
 
 
 def test_amendement_line_has_unitary_pdf_link(
@@ -32,7 +37,7 @@ def test_amendement_line_has_unitary_pdf_link(
 ):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    download_td = driver.find_element_by_css_selector("td:nth-child(7)")
+    download_td = driver.find_element_by_css_selector("td:last-child")
     download_link = download_td.find_element_by_css_selector("a")
     assert (
         download_link.get_attribute("href")
@@ -40,6 +45,7 @@ def test_amendement_line_has_unitary_pdf_link(
     )
 
 
+@pytest.mark.skip("I will be back in the next design update!")
 def test_column_sorting_changes_edit_url_on_the_fly(
     wsgi_server, driver, lecture_an, amendements_an
 ):
@@ -47,7 +53,7 @@ def test_column_sorting_changes_edit_url_on_the_fly(
     driver.get(f"{LECTURE_URL}/amendements")
     find_header_by_index(1, driver.find_element_by_css_selector("thead")).click()
     assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1asc"
-    avis_td = driver.find_element_by_css_selector("td:nth-child(5)")
+    avis_td = driver.find_element_by_css_selector("td:nth-child(4)")
     avis_link = avis_td.find_element_by_css_selector("a")
     assert (
         avis_link.get_attribute("href")

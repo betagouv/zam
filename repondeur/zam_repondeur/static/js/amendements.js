@@ -254,7 +254,7 @@ function filterColumns(table) {
 
 function hijackEditLinks() {
     /* To inject the current page URL as a "back" query param */
-    const editLinks = document.querySelectorAll('a.edit-reponse')
+    const editLinks = document.querySelectorAll('a.edit-amendement')
     Array.from(editLinks).forEach(editLink => {
         editLink.addEventListener('click', e => {
             e.preventDefault()

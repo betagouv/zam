@@ -141,12 +141,12 @@ def test_post_form(app):
     )
     assert str(lecture) == result
 
-    # We should have a journal entry for articles, and one for amendements
-    assert len(lecture.journal) == 2
-    assert lecture.journal[0].kind == "success"
-    assert lecture.journal[0].message == f"5 nouveaux amendements récupérés."
-    assert lecture.journal[1].kind == "info"
-    assert lecture.journal[1].message == "Récupération des articles effectuée."
+    # We should have an event entry for articles, and one for amendements
+    assert len(lecture.events) == 2
+    assert lecture.events[0].render_summary() == "5 nouveaux amendements récupérés."
+    assert (
+        lecture.events[1].render_summary() == "Le contenu des articles a été récupéré."
+    )
 
     # We should have articles from the page (1, 2) and from the amendements (3, 8, 9)
     assert {article.num for article in lecture.articles} == {"1", "2", "3", "8", "9"}

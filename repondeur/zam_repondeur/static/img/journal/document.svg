@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="icone/timeline/document" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M5.875,0 L13.808232,0 L20,6.60455252 L20,19 C20,20.6383744 18.723476,22 17.125,22 L5.865625,22 C4.26726909,22 3,20.6388591 3.00000017,18.9994141 L3.009375,3 C3.009375,1.36114087 4.27664409,0 5.875,0 Z" id="Combined-Shape" stroke="#FFFFFF" stroke-width="2" fill="#3167A6"></path>
+        <polygon id="Path" fill="#FFFFFF" points="12.4375 8 12.4375 2.5 17.59375 8"></polygon>
+    </g>
+</svg>

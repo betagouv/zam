@@ -8,7 +8,14 @@ import transaction
 
 from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.tasks.huey import huey
-from zam_repondeur.models import DBSession, Journal, Lecture
+from zam_repondeur.models import DBSession, Lecture
+from zam_repondeur.models.events.lecture import (
+    ArticlesRecuperes,
+    AmendementsNonTrouves,
+    AmendementsAJour,
+    AmendementsRecuperes,
+    AmendementsNonRecuperes,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -20,17 +27,14 @@ RETRY_DELAY = 5 * 60  # 5 minutes
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
 def fetch_articles(lecture_pk: int) -> None:
     with transaction.manager, huey.lock_task(f"fetch-{lecture_pk}"):
-
         lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
         if lecture is None:
             logger.error(f"Lecture {lecture_pk} introuvable")
             return
 
         changed: bool = get_articles(lecture)
-
         if changed:
-            message = "Récupération des articles effectuée."
-            Journal.create(lecture=lecture, kind="info", message=message)
+            ArticlesRecuperes.create(request=None, lecture=lecture)
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
@@ -44,21 +48,16 @@ def fetch_amendements(lecture_pk: int) -> None:
         amendements, created, errored = get_amendements(lecture)
 
         if not amendements:
-            message = "Aucun amendement n’a pu être trouvé."
-            Journal.create(lecture=lecture, kind="danger", message=message)
+            AmendementsNonTrouves.create(request=None, lecture=lecture)
 
         if created:
-            if created == 1:
-                message = "1 nouvel amendement récupéré."
-            else:
-                message = f"{created} nouveaux amendements récupérés."
-            Journal.create(lecture=lecture, kind="success", message=message)
+            AmendementsRecuperes.create(request=None, lecture=lecture, count=created)
 
         if errored:
-            message = f"Les amendements {', '.join(errored)} n’ont pu être récupérés."
-            Journal.create(lecture=lecture, kind="warning", message=message)
+            AmendementsNonRecuperes.create(
+                request=None, lecture=lecture, missings=errored
+            )
 
         if amendements and not (created or errored):
-            message = "Les amendements étaient à jour."
-            Journal.create(lecture=lecture, kind="info", message=message)
+            AmendementsAJour.create(request=None, lecture=lecture)
         lecture.modified_at = datetime.utcnow()

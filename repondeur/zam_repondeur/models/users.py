@@ -68,3 +68,7 @@ class User(Base):
 
     def default_name(self) -> str:
         return self.email.split("@")[0].replace(".", " ").title()
+
+    @property
+    def display_name(self) -> str:
+        return self.name or self.email

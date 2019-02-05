@@ -1,6 +1,12 @@
 from typing import Any, List, NamedTuple
 
 from zam_repondeur.models import Amendement, Lecture
+from zam_repondeur.models.events.amendement import (
+    AmendementIrrecevable,
+    AmendementRectifie,
+    CorpsAmendementModifie,
+    ExposeAmendementModifie,
+)
 
 
 class Source:
@@ -15,21 +21,39 @@ class Source:
     def update_rectif(self, amendement: Amendement, rectif: int) -> bool:
         modified = False
         if rectif != amendement.rectif:
-            amendement.rectif = rectif  # TODO: create AmendementRectifie event
+            AmendementRectifie.create(
+                request=None, amendement=amendement, rectif=rectif
+            )
+            modified = True
+        return modified
+
+    def update_sort(self, amendement: Amendement, sort: str) -> bool:
+        modified = False
+        if sort != amendement.sort:
+            if "irrecevable" in sort.lower():
+                AmendementIrrecevable.create(
+                    request=None, amendement=amendement, sort=sort
+                )
+            else:
+                amendement.sort = sort
             modified = True
         return modified
 
     def update_corps(self, amendement: Amendement, corps: str) -> bool:
         modified = False
         if corps != amendement.corps:
-            amendement.corps = corps  # TODO: create CorpsAmendementModifie event
+            CorpsAmendementModifie.create(
+                request=None, amendement=amendement, corps=corps
+            )
             modified = True
         return modified
 
     def update_expose(self, amendement: Amendement, expose: str) -> bool:
         modified = False
         if expose != amendement.expose:
-            amendement.expose = expose  # TODO: create ExposeAmendementModifie event
+            ExposeAmendementModifie.create(
+                request=None, amendement=amendement, expose=expose
+            )
             modified = True
         return modified
 

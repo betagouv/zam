@@ -1,4 +1,5 @@
 import transaction
+from datetime import date
 from typing import Dict, Optional, Union
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
@@ -11,7 +12,8 @@ from zam_repondeur.data import get_data
 from zam_repondeur.fetch import get_articles
 from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
 from zam_repondeur.message import Message
-from zam_repondeur.models import DBSession, Journal, Lecture as LectureModel
+from zam_repondeur.models import DBSession, Lecture as LectureModel
+from zam_repondeur.models.events.lecture import ArticlesRecuperes
 from zam_repondeur.resources import (
     AmendementCollection,
     LectureCollection,
@@ -79,11 +81,7 @@ class LecturesAdd:
             dossier_legislatif=dossier.titre,
         )
         get_articles(lecture_model)
-        Journal.create(
-            lecture=lecture_model,
-            kind="info",
-            message="Récupération des articles effectuée.",
-        )
+        ArticlesRecuperes.create(request=None, lecture=lecture_model)
         # Call to fetch_* tasks below being asynchronous, we need to make
         # sure the lecture_model already exists once and for all in the database
         # for future access. Otherwise, it may create many instances and
@@ -212,3 +210,11 @@ def choices_lectures(request: Request) -> dict:
             {"key": lecture.key, "label": lecture.label} for lecture in dossier.lectures
         ]
     }
+
+
+@view_config(
+    context=LectureResource, name="lecture_journal", renderer="lecture_journal.html"
+)
+def lecture_journal(context: LectureResource, request: Request) -> Response:
+    lecture = context.model()
+    return {"lecture": lecture, "today": date.today()}

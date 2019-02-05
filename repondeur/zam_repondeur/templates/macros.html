@@ -1,12 +1,57 @@
-{% macro update_informations(lecture, journal_link) %}
-    Dernière mise à jour :
-    <a class="underlined" href="{{ journal_link }}">
-        <time xsi:type="xsd:dateTime"
-            datetime="{{ lecture.modified_at.isoformat() }}"
-            data-timestamp="{{ lecture.modified_at_timestamp }}">
-                {{ lecture.modified_at.strftime("%A %d %B à %I:%M%p") }}
-        </time>
-    </a>
+{% macro update_informations(item, journal_link) %}
+    <div class="last-update">
+        Dernière mise à jour :
+        <a class="underlined" href="{{ journal_link }}">
+            <time xsi:type="xsd:dateTime"
+                datetime="{{ item.modified_at.isoformat() }}"
+                data-timestamp="{{ item.modified_at_timestamp }}">
+                    {{ item.modified_at.strftime("%A %d %B à %I:%M%p") }}
+            </time>
+        </a>
+    </div>
+{% endmacro %}
+
+{% macro timeline(events, today) %}
+    <div class="container timeline">
+        {% for key, events in events|group_by_day %}
+            <h3>
+                {% if key == today %}
+                    Aujourd’hui
+                {% else %}
+                    {{ key.strftime("%d %B") }}
+                {% endif %}
+            </h3>
+            <ul>
+            {% set outer_loop = loop %}
+            {% for event in events %}
+                {{ journal_line(outer_loop.first and loop.first, event) }}
+            {% endfor %}
+            </ul>
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+{% macro journal_line(is_first, event) %}
+    <li>
+        <em>
+            <time xsi:type="xsd:dateTime"
+                datetime="{{ event.created_at.isoformat() }}"
+                data-timestamp="{{ event.created_at_timestamp }}">
+                    {{ event.created_at.strftime("%A %d %B à %I:%M%p") }}
+            </time>
+        </em>
+        <span class="icon">
+            {% if event.icon %}
+                <i class="icon-{{ event.icon }}"></i>
+            {% endif %}
+        </span>
+        <details {% if is_first or not event.details_template %}open{% endif %}>
+            <summary>{{ event.render_summary() }}</summary>
+            {% if event.details_template %}
+                {{ event.render_details() }}
+            {% endif %}
+        </details>
+    </li>
 {% endmacro %}
 
 {% macro svg_icon(name) %}

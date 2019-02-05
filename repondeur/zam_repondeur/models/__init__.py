@@ -6,10 +6,14 @@ from sqlalchemy.orm.exc import NoResultFound
 from .base import Base, DBSession, log_query_with_origin  # noqa
 
 from .amendement import Amendement, AVIS  # noqa
-from .article import Article  # noqa
-from .journal import Journal  # noqa
+from .article import Article, ArticleUserContent  # noqa
 from .lecture import Lecture, CHAMBRES, SESSIONS  # noqa
 from .users import Team, User  # noqa
+
+from .events.base import Event  # noqa
+from .events.amendement import *  # noqa
+from .events.article import *  # noqa
+from .events.lecture import *  # noqa
 
 
 def get_one_or_create(

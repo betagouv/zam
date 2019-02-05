@@ -9,7 +9,6 @@ from .amendement import Amendement
 from .article import Article
 from .base import Base, DBSession
 from .division import SubDiv
-from .journal import Journal
 
 
 CHAMBRES = {"an": "Assemblée nationale", "senat": "Sénat"}
@@ -52,12 +51,6 @@ class Lecture(Base):
     )
     articles = relationship(
         Article, back_populates="lecture", cascade="all, delete-orphan"
-    )
-    journal = relationship(
-        Journal,
-        order_by=(Journal.created_at.desc()),
-        back_populates="lecture",
-        cascade="all, delete-orphan",
     )
 
     __repr_keys__ = ("pk", "chambre", "session", "organe", "num_texte", "partie")

@@ -62,7 +62,7 @@ nav.secondary {
 .secondary div h2 {
     font-weight: bold;
 }
-.secondary div div {
+.secondary div {
     font-weight: normal;
 }
 .secondary .nav-item:last-child {
@@ -241,6 +241,14 @@ dd td {
     padding: .2rem 1rem;
 }
 
+/* Diffs. */
+ins {
+    background: yellowgreen;
+}
+del {
+    background-color: pink;
+}
+
 /* Icons */
 .icon {
     width: 1rem;
@@ -250,4 +258,8 @@ dd td {
 }
 path {
     fill: currentColor;
+}
+
+.last-update {
+    text-align: center;
 }

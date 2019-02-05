@@ -77,6 +77,7 @@ class Senat(RemoteSource):
         modified |= self.update_rectif(amendement, rectif)
         modified |= self.update_corps(amendement, clean_html(row["Dispositif "]))
         modified |= self.update_expose(amendement, clean_html(row["Objet "]))
+        modified |= self.update_sort(amendement, row["Sort "])
         modified |= self.update_attributes(
             amendement,
             article=article,
@@ -84,7 +85,6 @@ class Senat(RemoteSource):
             auteur=row["Auteur "],
             matricule=extract_matricule(row["Fiche Sénateur"]),
             date_depot=parse_date(row["Date de dépôt "]),
-            sort=row["Sort "],
         )
 
         if not created and modified:

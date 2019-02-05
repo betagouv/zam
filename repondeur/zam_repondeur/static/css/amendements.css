@@ -213,9 +213,6 @@ td .button {
     font-size: 60%;
     line-height: 0;
 }
-nav.secondary div {
-    font-weight: normal;
-}
 nav.options {
     display: flex;
     justify-content: space-between;

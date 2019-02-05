@@ -51,7 +51,7 @@
 
             const epochs = [
                 ['année', 31536000],
-                ['moi', 2592000],
+                ['mois', 2592000],
                 ['jour', 86400],
                 ['heure', 3600],
                 ['minute', 60],
@@ -81,7 +81,7 @@
                     return `à lʼinstant`
                 }
                 else {
-                    const suffix = interval === 1 ? '' : 's'
+                    const suffix = (interval === 1 || epoch === 'mois') ? '' : 's'
                     return `il y a ${interval} ${epoch}${suffix}`
                 }
             }

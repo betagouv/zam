@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, date
+from typing import Any, Dict
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
@@ -11,10 +12,18 @@ from zam_repondeur.message import Message
 from zam_repondeur.models import AVIS
 from zam_repondeur.resources import AmendementResource
 from zam_repondeur.utils import add_url_fragment, add_url_params
+from zam_repondeur.models.events.amendement import (
+    AmendementTransfere,
+    AvisAmendementModifie,
+    ObjetAmendementModifie,
+    ReponseAmendementModifiee,
+)
 
 
-@view_defaults(context=AmendementResource, name="reponse", renderer="reponse_edit.html")
-class ReponseEdit:
+@view_defaults(
+    context=AmendementResource, name="amendement_edit", renderer="amendement_edit.html"
+)
+class AmendementEdit:
     def __init__(self, context: AmendementResource, request: Request) -> None:
         self.context = context
         self.request = request
@@ -40,21 +49,40 @@ class ReponseEdit:
         affectation = clean_html(self.request.POST.get("affectation", ""))
         comments = clean_html(self.request.POST.get("comments", ""))
 
+        avis_changed = avis != self.amendement.user_content.avis
+        objet_changed = objet != (self.amendement.user_content.objet or "")
+        reponse_changed = reponse != (self.amendement.user_content.reponse or "")
+        affectation_changed = affectation != (
+            self.amendement.user_content.affectation or ""
+        )
+        comments_changed = comments != (self.amendement.user_content.comments or "")
+
         if (
-            avis != (self.amendement.user_content.avis or "")
-            or objet != (self.amendement.user_content.objet or "")
-            or reponse != (self.amendement.user_content.reponse or "")
-            or affectation != (self.amendement.user_content.affectation or "")
-            or comments != (self.amendement.user_content.comments or "")
+            avis_changed
+            or objet_changed
+            or reponse_changed
+            or affectation_changed
+            or comments_changed
         ):
             self.amendement.modified_at = now
             self.lecture.modified_at = now
 
-        self.amendement.user_content.avis = avis
-        self.amendement.user_content.objet = objet
-        self.amendement.user_content.reponse = reponse
-        self.amendement.user_content.affectation = affectation
-        self.amendement.user_content.comments = comments
+        if avis_changed:
+            AvisAmendementModifie.create(self.request, self.amendement, avis)
+
+        if objet_changed:
+            ObjetAmendementModifie.create(self.request, self.amendement, objet)
+
+        if reponse_changed:
+            ReponseAmendementModifiee.create(self.request, self.amendement, reponse)
+
+        if affectation_changed:
+            AmendementTransfere.create(self.request, self.amendement, affectation)
+
+        if comments_changed:
+            self.amendement.user_content.comments = comments
+            # No event for comments change.
+
         self.request.session.flash(
             Message(cls="success", text="Les modifications ont bien été enregistrées.")
         )
@@ -71,3 +99,16 @@ class ReponseEdit:
     @property
     def submit_url(self) -> str:
         return add_url_params(self.request.path, back=self.back_url)
+
+
+@view_config(
+    context=AmendementResource,
+    name="amendement_journal",
+    renderer="amendement_journal.html",
+)
+def article_journal(context: AmendementResource, request: Request) -> Dict[str, Any]:
+    return {
+        "lecture": context.lecture_resource.model(),
+        "amendement": context.model(),
+        "today": date.today(),
+    }

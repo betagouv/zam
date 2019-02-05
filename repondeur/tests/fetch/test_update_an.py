@@ -503,6 +503,8 @@ def test_remove_parent_amendement(lecture_an, source):
 
 @responses.activate
 def test_rectif(lecture_an, source):
+    from zam_repondeur.models.events.amendement import AmendementRectifie
+
     DBSession.add(lecture_an)
 
     # Initial fetch
@@ -590,10 +592,14 @@ def test_rectif(lecture_an, source):
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 2
+    assert len(amendement.events) == 3
+    assert isinstance(amendement.events[0], AmendementRectifie)
 
 
 @responses.activate
 def test_rectif_with_nil(lecture_an, source):
+    from zam_repondeur.models.events.amendement import ExposeAmendementModifie
+
     DBSession.add(lecture_an)
 
     # Initial fetch
@@ -685,3 +691,6 @@ def test_rectif_with_nil(lecture_an, source):
     assert errored == []
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 0
+    # No dedicated AmendementRectifie event created.
+    assert len(amendement.events) == 2
+    assert isinstance(amendement.events[0], ExposeAmendementModifie)

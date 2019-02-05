@@ -1,9 +1,12 @@
-from typing import List, Optional
+from datetime import date
+from itertools import groupby
+from typing import List, Optional, Tuple
 
 from jinja2 import Markup, contextfilter
 from jinja2.runtime import Context
 
 from zam_repondeur.models import Article, Lecture
+from zam_repondeur.models.events.base import Event
 
 
 def paragriphy(content: Optional[str]) -> Markup:
@@ -43,3 +46,12 @@ def filter_out_empty_additionals(all_articles: List[Article]) -> List[Article]:
         else:
             articles.append(article)
     return articles
+
+
+def group_by_day(events: List[Event]) -> List[Tuple[date, List[Event]]]:
+    def by_day(event: Event) -> date:
+        event_date: date = event.created_at.date()
+        return event_date
+
+    # We need to explicitly turn it into a list otherwise jinja2 is lost.
+    return [(key, list(group)) for key, group in groupby(events, key=by_day)]

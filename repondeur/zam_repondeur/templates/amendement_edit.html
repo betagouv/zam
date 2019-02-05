@@ -57,7 +57,7 @@
                 margin-right: 1.5rem;
             }
 
-        #edit-reponse .save-buttons {
+        #edit-amendement .save-buttons {
             position: -webkit-sticky;
             position: sticky;
             bottom: 0;
@@ -101,6 +101,7 @@
                 {% endif %}
             </div>
         </div>
+        {{ macros.update_informations(amendement, request.resource_url(context, 'amendement_journal')) }}
         {{ content(amendement) }}
     </section>
     <section class="edit">
@@ -184,7 +185,7 @@
         {% endif %}
     </h4>
 
-    <form id="edit-reponse" action="{{ submit_url }}" method="POST" class="mt-3">
+    <form id="edit-amendement" action="{{ submit_url }}" method="POST" class="mt-3">
 
         {% if not amendement.gouvernemental %}
         <div class="form-group">
@@ -239,7 +240,7 @@
             // Wait for iframes to be loaded.
             setTimeout(() => {
                 const prefillForm = document.querySelector('form#prefill-reponse')
-                const editReponseForm = document.querySelector('form#edit-reponse')
+                const editReponseForm = document.querySelector('form#edit-amendement')
                 const initialAvis = editReponseForm.querySelector('option:checked')
                     .value
                 const objetWindow = document.querySelector('iframe#objet_ifr')

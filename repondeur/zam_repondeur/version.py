@@ -1,4 +1,4 @@
-from subprocess import check_output, CalledProcessError
+from subprocess import check_output, CalledProcessError, STDOUT
 from typing import List
 
 from pyramid.config import Configurator
@@ -14,7 +14,7 @@ def load_version(config: Configurator) -> None:
 
 def run(command: List[str]) -> str:
     try:
-        res: bytes = check_output(command)
+        res: bytes = check_output(command, stderr=STDOUT)
         return res.decode("utf-8").strip()
     except CalledProcessError:
         return "unknown"

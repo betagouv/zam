@@ -8,8 +8,8 @@ def test_repondeur_does_not_contains_link_to_visionneuse_if_no_avis(
 ):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    secondary_nav = driver.find_element_by_css_selector(".nav.secondary")
-    assert not secondary_nav.text.endswith("Voir le dossier de banc")
+    second_nav = driver.find_element_by_css_selector("nav.main li:nth-child(2)")
+    assert not second_nav.text.endswith("Dossier de banc")
 
 
 def test_repondeur_contains_link_to_visionneuse_if_avis(
@@ -23,8 +23,8 @@ def test_repondeur_contains_link_to_visionneuse_if_avis(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    secondary_nav = driver.find_element_by_css_selector(".nav.secondary")
-    assert secondary_nav.text.endswith("Voir le dossier de banc")
+    second_nav = driver.find_element_by_css_selector("nav.main li:nth-child(2)")
+    assert second_nav.text.endswith("Dossier de banc")
 
 
 def test_amendement_line_has_unitary_pdf_link(

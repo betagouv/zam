@@ -32,10 +32,9 @@
         {% endblock %}
     </nav>
 
-    {% block secondary_header %}
-    {% endblock %}
-
-    <main role="main" class="container-fluid">
+    <main role="main" class="box">
+        {% block secondary_header %}
+        {% endblock %}
         {% block body %}
         {% endblock %}
         {# See https://inclusive-components.design/notifications/ #}

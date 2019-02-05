@@ -113,6 +113,10 @@ nav.secondary {
     font-weight: normal;
 }
 
+main.box {
+    margin: 2rem;
+}
+
 /* Liens */
 a {
     color: #3167a6;

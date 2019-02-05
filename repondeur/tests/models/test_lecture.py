@@ -1,7 +1,10 @@
 import pytest
 
 
-@pytest.mark.usefixtures("app")
+# We need data about dossiers, texts and groups
+pytestmark = pytest.mark.usefixtures("data_repository")
+
+
 class TestLectureToStr:
     def test_an_seance_publique(self):
         from zam_repondeur.models import Lecture

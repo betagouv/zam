@@ -3,7 +3,13 @@ Test that we take account different kind of changes when importing a "liasse XML
 """
 from pathlib import Path
 
+import pytest
+
 from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+
+
+# We need data about dossiers, texts and groups
+pytestmark = pytest.mark.usefixtures("data_repository")
 
 
 def open_liasse(filename):

@@ -26,7 +26,7 @@ def test_filters_are_opened_by_click(wsgi_server, driver, lecture_an):
     [
         ("1", "1", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], ["Art. 1", "Art. 1"]),
         ("2", "777", "amendement", ["666", "999", "777"], ["777"]),
-        ("5", "Da", "status", ["Ronan", "David", "Daniel"], ["David", "Daniel"]),
+        ("3", "Da", "table", ["Ronan", "David", "Daniel"], ["David", "Daniel"]),
     ],
 )
 def test_column_filtering_by(

@@ -132,19 +132,19 @@
                     {{ macros.svg_icon("sort") }}
                     Nº
                 </th>
-                <th>
+                <th class="table">
                     {{ macros.svg_icon("sort") }}
-                    Groupe (Auteur)
+                    Table
                 </th>
                 <th class="avis">
                     {{ macros.svg_icon("sort") }}
                     Avis
                 </th>
-                <th class="status">
+                <th class="reponse">
                     {{ macros.svg_icon("sort") }}
-                    Statut
+                    Réponse
                 </th>
-                <th class="nosort">⋯</th>
+                <th class="nosort"></th>
             </tr>
             <tr class="filters sticky d-none">
                 <th>
@@ -153,7 +153,9 @@
                 <th>
                     <input id="amendement-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
-                <th></th>
+                <th>
+                    <input id="table-filter" class="form-control form-control-sm" type="text" autocomplete="off" autocorrect="off">
+                </th>
                 <th>
                     <select id="avis-filter">
                         <option value="">Tous</option>
@@ -162,7 +164,11 @@
                     </select>
                 </th>
                 <th>
-                    <input id="status-filter" class="form-control form-control-sm" type="text" autocomplete="off" autocorrect="off">
+                    <select id="reponse-filter">
+                        <option value="">Toutes</option>
+                        <option value="1">Avec</option>
+                        <option value="0">Sans</option>
+                    </select>
                 </th>
                 <th></th>
             </tr>
@@ -181,8 +187,9 @@
                 "
                 data-order="{{ loop.index }}"
                 data-amendement="{{ amendement.num }}"
-                data-status="{{ amendement.user_table and amendement.user_table.user.name or 'Flottant' }}"
+                data-table="{{ amendement.user_table and amendement.user_table.user.name or '' }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.user_content.avis else 0 }}"
+                data-reponse="{{ 1 if amendement.user_content.reponse else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 data-abandoned-before-seance="{{ 1 if amendement.is_abandoned_before_seance else 0 }}"
                 id="{{ amendement.slug }}"
@@ -235,16 +242,15 @@
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         ZZZ {# Keep at the end. #}
-                    {%- elif amendement.groupe -%}
-                        {{ amendement.groupe }} {{ amendement.auteur }}
+                    {%- elif amendement.user_table -%}
+                        {{ amendement.user_table.user.name }}
                     {%- else -%}
-                        {{ amendement.auteur }}
+                        YYY {# Keep almost at the end. #}
                     {%- endif -%}">
-                    {% if amendement.groupe %}
-                        {{ amendement.groupe }} ({{ amendement.auteur }})</td>
-                    {% else %}
-                        {{ amendement.auteur }}
+                    {% if amendement.user_table %}
+                        {{ amendement.user_table.user.name }}
                     {% endif %}
+                </td>
                 <td
                     {% if not amendement.gouvernemental and not amendement.user_content.avis %}
                         class="input-required"
@@ -261,6 +267,7 @@
                     {%- endif -%}"
                 >
                     <nobr>
+                        {#
                         {% if amendement.is_abandoned_before_seance %}
                             <span class="avis abandoned_before_seance"></span>
                         {% elif amendement.gouvernemental %}
@@ -276,45 +283,35 @@
                         {% else %}
                             <span class="avis"></span>
                         {% endif %}
+                        #}
                         {% if amendement.is_abandoned_before_seance %}
                             {% if amendement.is_withdrawn %}
-                                Retiré
+                                <abbr title="Retiré">✔️</abbr>
                             {% else %}
-                                Irrecevable
+                                <abbr title="Irrecevable">✔️</abbr>
                             {% endif %}
                         {% elif amendement.gouvernemental %}
-                            Présentation
+                            <abbr title="Présentation">✔️</abbr>
                         {% elif amendement.user_content.avis %}
-                            {{ amendement.user_content.avis }}
-                        {% else %}
-                            Aucun
+                            <abbr title="{{ amendement.user_content.avis }}">✔️</abbr>
                         {% endif %}
                     </nobr>
                 </td>
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         ZZZ {# Keep at the end. #}
-                    {%- elif amendement.user_table -%}
-                        {{ amendement.user_table.user.name }}
+                    {%- elif amendement.user_content.reponse -%}
+                        AAA
                     {%- else -%}
-                        AAA {# Keep at the top. #}
+                        YYY {# Keep almost at the end. #}
                     {%- endif -%}">
-                    {% if amendement.user_table %}
-                        <a href="{{ request.resource_url(context.parent['tables'], amendement.user_table.user.email) }}" title="{{ amendement.user_table.user.email }}">
-                            {{ amendement.user_table.user.name }}
-                        </a>
-                    {% else %}
-                        Flottant
-                        <form action="{{ request.resource_url(context.parent['tables'], request.user.email) }}" method="POST">
-                            <input type="hidden" name="num" value="{{ amendement.num }}">
-                            <input type="submit" class="button" value="Prendre ?">
-                        </form>
+                    {% if amendement.user_content.reponse %}
+                        ✔️
                     {% endif %}
-
                 </td>
                 <td>
-                    <a class="download-pdf" href="{{ request.resource_url(context[amendement.num_str], 'download_amendement') }}" title="Exporter en PDF">
-                        {{ macros.svg_icon("file-pdf") }}
+                    <a class="edit-amendement button primary" href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}">
+                        Voir
                     </a>
                 </td>
             </tr>

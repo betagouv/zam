@@ -72,14 +72,9 @@ def test_column_sorting_multiple_changes_url(wsgi_server, driver, lecture_an):
             ["Avant art. 1", "Art. 1", "Art. 1"],
         ),
         ("2", "amendement", ["666", "999", "777"], ["666", "777", "999"]),
-        ("3", "groupe", ["Foo ()", "Bar ()", "Baz ()"], ["Bar ()", "Baz ()", "Foo ()"]),
-        (
-            "4",
-            "avis",
-            ["Favorable", "Défavorable", "Aucun"],
-            ["Aucun", "Défavorable", "Favorable"],
-        ),
-        ("5", "status", ["Ronan", "David", "Daniel"], ["Daniel", "David", "Ronan"]),
+        ("3", "table", ["Ronan", "David", "Daniel"], ["Daniel", "David", "Ronan"]),
+        ("4", "avis", ["✔️", "", "✔️"], ["", "✔️", "✔️"]),
+        ("5", "reponse", ["✔️", "", "✔️"], ["✔️", "✔️", ""]),
     ],
 )
 def test_column_sorting_by(
@@ -102,20 +97,18 @@ def test_column_sorting_by(
     with transaction.manager:
         DBSession.add_all(amendements_an)
 
-        amendements_an[0].groupe = "Foo"
-        amendements_an[0].user_content.avis = "Favorable"
+        amendements_an[0].user_content.avis = "Défavorable"
+        amendements_an[0].user_content.reponse = "Foo"
         user_ronan.table.amendements.append(amendements_an[0])
 
-        amendements_an[1].groupe = "Bar"
-        amendements_an[1].user_content.avis = "Défavorable"
         user_david.table.amendements.append(amendements_an[1])
 
         amendement = Amendement.create(
             lecture=lecture_an,
             article=article1av_an,
             num=777,
-            groupe="Baz",
-            avis="Aucun",
+            avis="Favorable",
+            reponse="Baz",
         )
         user_daniel.table.amendements.append(amendement)
 

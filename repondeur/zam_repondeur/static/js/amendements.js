@@ -73,7 +73,7 @@ function makeHeadersSortable(tableHead) {
 function sortColumns(sortSpec) {
     for (colSpec of sortSpec.split('-')) {
         const colIndex = parseInt(colSpec.charAt(0), 10)
-        if (colIndex == 4 || colIndex > 7) {
+        if (colIndex > 7) {
             continue
         }
         const order = colSpec.slice(1)
@@ -162,16 +162,16 @@ function filterByAmendement(value) {
     })
     document.querySelector('table').classList.toggle('filtered-amendement', value)
 }
-function filterByStatus(value) {
-    filterColumn('hidden-status', line => {
+function filterByTable(value) {
+    filterColumn('hidden-table', line => {
         if (!value) {
             return true
         }
-        return line.dataset.status
+        return line.dataset.table
             .toLowerCase()
             .includes(value.toLowerCase())
     })
-    document.querySelector('table').classList.toggle('filtered-status', value)
+    document.querySelector('table').classList.toggle('filtered-table', value)
 }
 function filterByAvis(value) {
     filterColumn('hidden-avis', line => {
@@ -187,6 +187,15 @@ function filterByAvis(value) {
         return line.dataset.avis === value
     })
     document.querySelector('table').classList.toggle('filtered-avis', value)
+}
+function filterByReponse(value) {
+    filterColumn('hidden-reponse', line => {
+        if (value === '') {
+            return true
+        }
+        return line.dataset.reponse === value
+    })
+    document.querySelector('table').classList.toggle('filtered-reponse', value)
 }
 function filterColumn(className, shouldShow) {
     Array.from(document.querySelectorAll('tbody tr')).forEach(line => {
@@ -209,15 +218,20 @@ function filterColumns(table) {
         filterByAmendement(value)
         setURLParam('amendement', value)
     })
+    table.querySelector('#table-filter').addEventListener('keyup', e => {
+        const value = e.target.value.trim()
+        filterByTable(value)
+        setURLParam('table', value)
+    })
     table.querySelector('#avis-filter').addEventListener('change', e => {
         const value = e.target.value.trim()
         filterByAvis(value)
         setURLParam('avis', value)
     })
-    table.querySelector('#status-filter').addEventListener('keyup', e => {
+    table.querySelector('#reponse-filter').addEventListener('change', e => {
         const value = e.target.value.trim()
-        filterByStatus(value)
-        setURLParam('status', value)
+        filterByReponse(value)
+        setURLParam('reponse', value)
     })
 
     const articleFilter = getURLParam('article')
@@ -232,17 +246,23 @@ function filterColumns(table) {
         document.querySelector('#amendement-filter').value = amendementFilter
         filterByAmendement(amendementFilter)
     }
-    const statusFilter = getURLParam('status')
-    if (statusFilter !== '') {
+    const tableFilter = getURLParam('table')
+    if (tableFilter !== '') {
         showFilters()
-        document.querySelector('#status-filter').value = statusFilter
-        filterByStatus(statusFilter)
+        document.querySelector('#table-filter').value = tableFilter
+        filterByTable(tableFilter)
     }
     const avisFilter = getURLParam('avis')
     if (avisFilter !== '') {
         showFilters()
         document.querySelector('#avis-filter').value = avisFilter
         filterByAvis(avisFilter)
+    }
+    const reponseFilter = getURLParam('reponse')
+    if (reponseFilter !== '') {
+        showFilters()
+        document.querySelector('#reponse-filter').value = reponseFilter
+        filterByReponse(reponseFilter)
     }
 }
 

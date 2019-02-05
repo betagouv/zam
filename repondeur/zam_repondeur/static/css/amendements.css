@@ -117,8 +117,9 @@ th input.form-control {
 }
 tr.hidden-article,
 tr.hidden-amendement,
-tr.hidden-status,
-tr.hidden-avis {
+tr.hidden-table,
+tr.hidden-avis,
+tr.hidden-reponse {
     display: none;
 }
 tr[data-retire-avant-seance="1"] {
@@ -159,7 +160,9 @@ table.filtered-amendement td.identique.first.last:after,
 table.filtered-avis td.identique:after,
 table.filtered-avis td.identique.first.last:after,
 table.filtered-status td.identique:after,
-table.filtered-status td.identique.first.last:after {
+table.filtered-status td.identique.first.last:after,
+table.filtered-reponse td.identique:after,
+table.filtered-reponse td.identique.first.last:after {
     top: calc(50% - 3px);
     height: 6px;
     border-radius: 6px;

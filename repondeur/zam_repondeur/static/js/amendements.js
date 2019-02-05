@@ -140,13 +140,7 @@ function allowUnsort(tableHead) {
             th.removeAttribute('data-order')
         })
         setURLParam('sort', '')
-        const options = {
-            sortFunction: (a, b) => {
-                return Number(a.elm.dataset.order) > Number(b.elm.dataset.order)
-            },
-            order: 'asc'
-        }
-        tinysort(document.querySelectorAll('tbody tr'), options)
+        tinysort(document.querySelectorAll('tbody tr'), {data: 'order'})
         document.querySelector('table').classList.remove('sorted')
     })
 }

@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+
 import pytest
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
@@ -6,24 +8,53 @@ from webtest.http import StopableWSGIServer
 from .helpers import login
 
 
-@pytest.fixture(scope="session")
-def driver(wsgi_server):
+@pytest.fixture(params=["firefox", "chrome"])
+def driver(request, wsgi_server):
+    factory = driver_factory(request.param)
+    with factory() as _driver:
+        try:
+            login(_driver, wsgi_server.application_url, "user@example.com")
+            yield _driver
+        finally:
+            _driver.quit()
+
+
+def driver_factory(name):
+    if name == "firefox":
+        return firefox_driver
+    elif name == "chrome":
+        return chrome_driver
+
+
+@contextmanager
+def firefox_driver():
     try:
-        driver = HeadlessFirefox()
-        login(driver, wsgi_server.application_url, "user@example.com")
-        yield driver
-        driver.quit()
-    except WebDriverException:
-        pytest.skip("You need Firefox and geckodriver to run browser tests")
+        yield HeadlessFirefox()
+    except WebDriverException as e:
+        if str(e).startswith("Message: 'geckodriver' executable needs to be in PATH."):
+            pytest.skip("You need geckodriver to run browser tests in Firefox")
+        else:
+            raise
 
 
-@pytest.fixture(scope="session")
-def wsgi_server(settings, mock_dossiers, mock_organes_acteurs):
+@contextmanager
+def chrome_driver():
+    try:
+        yield HeadlessChrome()
+    except WebDriverException as e:
+        if str(e).startswith("Message: 'chromedriver' executable needs to be in PATH."):
+            pytest.skip("You need chromedriver to run browser tests in Chrome")
+        else:
+            raise
+
+
+@pytest.fixture
+def wsgi_server(settings, db, mock_dossiers, mock_organes_acteurs):
     from zam_repondeur import make_app
 
     settings = {**settings, "zam.auth_cookie_secure": False}
     wsgi_app = make_app(None, **settings)
-    server = StopableWSGIServer.create(wsgi_app, port="8080")
+    server = StopableWSGIServer.create(wsgi_app)
     yield server
     server.shutdown()
 
@@ -51,3 +82,15 @@ class HeadlessFirefox(webdriver.Firefox):
             self.refresh()
         else:
             super().get(url)
+
+
+class HeadlessChrome(webdriver.Chrome):
+    def __init__(self):
+        super().__init__(options=self.options())
+
+    @staticmethod
+    def options():
+        chrome_options = webdriver.chrome.options.Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        return chrome_options

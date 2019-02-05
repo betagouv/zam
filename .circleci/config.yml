@@ -15,6 +15,15 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Check versions
+          command: |
+            python --version
+            pip --version
+            geckodriver --version
+            firefox --version
+            chromedriver --version
+            google-chrome --version
+      - run:
           name: Install system deps
           command: sudo apt-get install -y wkhtmltopdf xvfb
       - run:

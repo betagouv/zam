@@ -74,7 +74,7 @@
         </a>
     </li>
     <li>
-        <a href="{{ back_url }}">
+        <a href="{{ request.resource_url(context.parent.parent, 'amendements') }}">
             Index
         </a>
     </li>
@@ -173,7 +173,7 @@
 {% macro reponse(amendement) %}
     <div class="reponse">
         <h4>Position du gouvernement</h4>
-        <p>{{ amendement.user_content.avis }}</p>
+        <p>{{ amendement.user_content.avis or '' }}</p>
         <h4>Objet de l’amendement</h4>
         {{ amendement.user_content.objet | paragriphy }}
         <h4>

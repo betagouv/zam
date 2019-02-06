@@ -79,9 +79,6 @@
     white-space: nowrap;
     padding: .75rem;
 }
-.table th.avis {
-    min-width: 100px;
-}
 .table tbody tr:first-child td {
     padding-top: 1rem;
 }

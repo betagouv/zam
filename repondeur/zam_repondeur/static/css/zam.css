@@ -299,3 +299,6 @@ path {
 nobr.user {
     font-weight: 600;
 }
+.centered {
+    text-align: center;
+}

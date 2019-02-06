@@ -73,8 +73,8 @@ def test_column_sorting_multiple_changes_url(wsgi_server, driver, lecture_an):
         ),
         ("2", "amendement", ["666", "999", "777"], ["666", "777", "999"]),
         ("3", "table", ["Ronan", "David", "Daniel"], ["Daniel", "David", "Ronan"]),
-        ("4", "avis", ["✔️", "", "✔️"], ["", "✔️", "✔️"]),
-        ("5", "reponse", ["✔️", "", "✔️"], ["✔️", "✔️", ""]),
+        ("4", "avis", ["#check", "", "#check"], ["", "#check", "#check"]),
+        ("5", "reponse", ["#check", "", "#check"], ["#check", "#check", ""]),
     ],
 )
 def test_column_sorting_by(

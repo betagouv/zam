@@ -265,6 +265,7 @@
                     {%- else -%}
                         Aucun
                     {%- endif -%}"
+                    class="centered"
                 >
                     <nobr>
                         {#
@@ -286,14 +287,14 @@
                         #}
                         {% if amendement.is_abandoned_before_seance %}
                             {% if amendement.is_withdrawn %}
-                                <abbr title="Retiré">✔️</abbr>
+                                <abbr title="Retiré">{{ macros.svg_icon("check") }}</abbr>
                             {% else %}
-                                <abbr title="Irrecevable">✔️</abbr>
+                                <abbr title="Irrecevable">{{ macros.svg_icon("check") }}</abbr>
                             {% endif %}
                         {% elif amendement.gouvernemental %}
-                            <abbr title="Présentation">✔️</abbr>
+                            <abbr title="Présentation">{{ macros.svg_icon("check") }}</abbr>
                         {% elif amendement.user_content.avis %}
-                            <abbr title="{{ amendement.user_content.avis }}">✔️</abbr>
+                            <abbr title="{{ amendement.user_content.avis }}">{{ macros.svg_icon("check") }}</abbr>
                         {% endif %}
                     </nobr>
                 </td>
@@ -304,9 +305,10 @@
                         AAA
                     {%- else -%}
                         YYY {# Keep almost at the end. #}
-                    {%- endif -%}">
+                    {%- endif -%}"
+                    class="centered">
                     {% if amendement.user_content.reponse %}
-                        ✔️
+                        {{ macros.svg_icon("check") }}
                     {% endif %}
                 </td>
                 <td>

@@ -1,4 +1,5 @@
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
 
 
 def find_header_by_index(index, headers):
@@ -6,9 +7,18 @@ def find_header_by_index(index, headers):
 
 
 def extract_column_text(index, trs):
-    return [
-        tr.find_element_by_css_selector(f"td:nth-child({index})").text for tr in trs
-    ]
+    texts = []
+    for tr in trs:
+        td = tr.find_element_by_css_selector(f"td:nth-child({index})")
+        text = td.text
+        if not text:
+            # Fallback on SVG reference name.
+            try:
+                text = td.find_element_by_tag_name("use").get_attribute("xlink:href")
+            except NoSuchElementException:
+                pass
+        texts.append(text)
+    return texts
 
 
 def login(driver, base_url, email):

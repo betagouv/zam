@@ -1,6 +1,6 @@
 ### Prochains évènements
 
-#### Date prévisionnelle de prochaine démonstration : à déterminer.
+#### Date de prochaine démonstration : 13 février à 15h.
 
 <h2 class="center">[Accès au répondeur](/repondeur/) • [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
 

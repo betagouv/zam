@@ -253,7 +253,9 @@
                 </td>
                 <td
                     {% if not amendement.gouvernemental and not amendement.user_content.avis %}
-                        class="input-required"
+                        class="centered input-required"
+                    {% else %}
+                        class="centered"
                     {% endif %}
                     data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
@@ -265,7 +267,6 @@
                     {%- else -%}
                         Aucun
                     {%- endif -%}"
-                    class="centered"
                 >
                     <nobr>
                         {#

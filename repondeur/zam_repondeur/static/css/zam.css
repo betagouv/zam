@@ -114,7 +114,8 @@ nav.secondary {
 }
 
 main.box {
-    margin: 2rem;
+    max-width: 60rem;
+    margin: 2rem auto;
 }
 
 /* Liens */

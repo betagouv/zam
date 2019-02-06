@@ -9,7 +9,8 @@ def test_get_amendement_edit_form(app, lecture_an, amendements_an, user_david):
         amendement.expose = "<p>Bla bla bla</p>"
         amendement.corps = "<p>Supprimer cet article.</p>"
         DBSession.add(amendement)
-        user_david.table.amendements.append(amendement)
+        table = user_david.table_for(lecture_an)
+        table.amendements.append(amendement)
 
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",
@@ -77,7 +78,8 @@ def test_get_amendement_edit_form_gouvernemental(
     with transaction.manager:
         amendement.auteur = "LE GOUVERNEMENT"
         DBSession.add(amendement)
-        user_david.table.amendements.append(amendement)
+        table = user_david.table_for(lecture_an)
+        table.amendements.append(amendement)
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
@@ -111,7 +113,8 @@ def test_post_amendement_edit_form(app, lecture_an, amendements_an, user_david):
     amendement = amendements_an[1]
     with transaction.manager:
         DBSession.add(amendement)
-        user_david.table.amendements.append(amendement)
+        table = user_david.table_for(lecture_an)
+        table.amendements.append(amendement)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.user_content.avis is None
@@ -162,7 +165,8 @@ def test_post_amendement_edit_form_gouvernemental(
     with transaction.manager:
         amendement.auteur = "LE GOUVERNEMENT"
         DBSession.add(amendement)
-        user_david.table.amendements.append(amendement)
+        table = user_david.table_for(lecture_an)
+        table.amendements.append(amendement)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.user_content.avis is None
@@ -217,7 +221,8 @@ def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
         amendement.user_content.objet = "Un objet très pertinent"
         amendement.user_content.reponse = "Une réponse très appropriée"
         DBSession.add(amendement)
-        user_david.table.amendements.append(amendement)
+        table = user_david.table_for(lecture_an)
+        table.amendements.append(amendement)
 
     # Let's post the response edit form, but with unchanged values
     resp = app.get(

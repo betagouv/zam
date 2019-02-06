@@ -49,14 +49,15 @@ class TableView:
             .filter(Amendement.lecture == self.lecture, Amendement.num == num)
             .first()
         )
-        if amendement in target.table.amendements:
+        if amendement in target.table_for(self.lecture).amendements:
             amendement.user_table = None
             old = str(target)
         else:
             if amendement.user_table:
                 old = str(amendement.user_table.user)
             new = str(target)
-            target.table.amendements.append(amendement)
+            table = target.table_for(self.lecture)
+            table.amendements.append(amendement)
         AmendementTransfere.create(self.request, amendement, old, new)
         return HTTPFound(
             location=self.request.resource_url(self.context.parent, self.owner.email)

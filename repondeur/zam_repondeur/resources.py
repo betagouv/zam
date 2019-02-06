@@ -6,7 +6,14 @@ from pyramid.request import Request
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
-from zam_repondeur.models import Amendement, Article, DBSession, Lecture, User
+from zam_repondeur.models import (
+    Amendement,
+    Article,
+    DBSession,
+    Lecture,
+    User,
+    UserTable,
+)
 
 
 class ResourceNotFound(HTTPNotFound):
@@ -240,4 +247,6 @@ class TableResource(Resource):
             raise ResourceNotFound
 
     def amendements(self) -> List[Amendement]:
-        return self.owner.table.amendements or []
+        table: UserTable = self.owner.table_for(lecture=self.lecture_resource.model())
+        amendements: List[Amendement] = table.amendements
+        return amendements

@@ -1,11 +1,16 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 from sqlalchemy import Column, DateTime, Integer, Text, func
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import EmailType
 
 from .base import Base, DBSession
+
+# Make these types available to mypy, but avoid circular imports
+if TYPE_CHECKING:
+    from .lecture import Lecture  # noqa
+    from .table import UserTable  # noqa
 
 
 class User(Base):
@@ -20,9 +25,7 @@ class User(Base):
     )
     last_login_at: Optional[datetime] = Column(DateTime)
 
-    table = relationship(
-        "UserTable", back_populates="user", uselist=False, lazy="joined"
-    )
+    tables = relationship("UserTable", back_populates="user")
 
     def __str__(self) -> str:
         if self.name:
@@ -32,10 +35,7 @@ class User(Base):
 
     @classmethod
     def create(cls, email: str, name: Optional[str] = None) -> "User":
-        from .table import UserTable
-
         user = cls(email=email, name=name)
-        user.table = UserTable()
         DBSession.add(user)
         return user
 
@@ -53,3 +53,11 @@ class User(Base):
     @property
     def display_name(self) -> str:
         return self.name or self.email
+
+    def table_for(self, lecture: "Lecture") -> "UserTable":
+        from . import get_one_or_create
+        from .table import UserTable
+
+        table: UserTable
+        table, _ = get_one_or_create(UserTable, user=self, lecture=lecture)
+        return table

@@ -289,3 +289,13 @@ path {
 .last-update {
     text-align: center;
 }
+.highlight {
+    border: 6px solid #c2e0ff;
+    padding: 1rem;
+}
+    .highlight form {
+        text-align: right;
+    }
+nobr.user {
+    font-weight: 600;
+}

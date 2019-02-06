@@ -1,18 +1,19 @@
 import transaction
 
 
-def test_get_amendement_edit_form(app, lecture_an, amendements_an):
+def test_get_amendement_edit_form(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
+    amendement = amendements_an[1]
     with transaction.manager:
-        amdt = amendements_an[1]
-        amdt.expose = "<p>Bla bla bla</p>"
-        amdt.corps = "<p>Supprimer cet article.</p>"
-        DBSession.add(amdt)
+        amendement.expose = "<p>Bla bla bla</p>"
+        amendement.corps = "<p>Supprimer cet article.</p>"
+        DBSession.add(amendement)
+        user_david.table.amendements.append(amendement)
 
     resp = app.get(
-        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
-        user="user@example.com",
+        f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",
+        user=user_david.email,
     )
 
     assert resp.status_code == 200
@@ -38,17 +39,49 @@ def test_get_amendement_edit_form(app, lecture_an, amendements_an):
     assert resp.parser.css_first(".corps h5 + *").text() == "Supprimer cet article."
 
 
-def test_get_amendement_edit_form_gouvernemental(app, lecture_an, amendements_an):
+def test_get_amendement_edit_form_only_if_owner(app, lecture_an, amendements_an):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        amdt = amendements_an[1]
+        amdt.expose = "<p>Bla bla bla</p>"
+        amdt.corps = "<p>Supprimer cet article.</p>"
+        amdt.user_content.avis = "Favorable"
+        DBSession.add(amdt)
+
+    resp = app.get(
+        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
+        user="user@example.com",
+    )
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    # Check no prefill form
+    assert "prefill-reponse" not in resp.forms
+
+    # Check has transfer form
+    assert resp.forms["transfer"].method == "POST"
+
+    # Check the displayed reponse
+    assert resp.parser.css_first(".reponse h4").text() == "Position du gouvernement"
+    assert resp.parser.css_first(".reponse h4 + *").text() == "Favorable"
+
+
+def test_get_amendement_edit_form_gouvernemental(
+    app, lecture_an, amendements_an, user_david
+):
     from zam_repondeur.models import DBSession
 
     amendement = amendements_an[1]
     with transaction.manager:
         amendement.auteur = "LE GOUVERNEMENT"
         DBSession.add(amendement)
+        user_david.table.amendements.append(amendement)
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
-        user="user@example.com",
+        user=user_david.email,
     )
 
     assert resp.status_code == 200
@@ -72,8 +105,13 @@ def test_get_amendement_edit_form_not_found(app, lecture_an, amendements_an):
     assert resp.status_code == 404
 
 
-def test_post_amendement_edit_form(app, lecture_an, amendements_an):
+def test_post_amendement_edit_form(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import Amendement, DBSession
+
+    amendement = amendements_an[1]
+    with transaction.manager:
+        DBSession.add(amendement)
+        user_david.table.amendements.append(amendement)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.user_content.avis is None
@@ -83,7 +121,7 @@ def test_post_amendement_edit_form(app, lecture_an, amendements_an):
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
-        user="user@example.com",
+        user=user_david.email,
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
@@ -95,7 +133,7 @@ def test_post_amendement_edit_form(app, lecture_an, amendements_an):
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/tables/user@example.com/#amdt-999"  # noqa
+        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com/#amdt-999"  # noqa
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -115,13 +153,16 @@ def test_post_amendement_edit_form(app, lecture_an, amendements_an):
     assert len(amendement.events) == 3
 
 
-def test_post_amendement_edit_form_gouvernemental(app, lecture_an, amendements_an):
+def test_post_amendement_edit_form_gouvernemental(
+    app, lecture_an, amendements_an, user_david
+):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = amendements_an[1]
     with transaction.manager:
         amendement.auteur = "LE GOUVERNEMENT"
         DBSession.add(amendement)
+        user_david.table.amendements.append(amendement)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.user_content.avis is None
@@ -132,7 +173,7 @@ def test_post_amendement_edit_form_gouvernemental(app, lecture_an, amendements_a
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
-        user="user@example.com",
+        user=user_david.email,
     )
     form = resp.forms["edit-amendement"]
     form["reponse"] = "Une réponse <strong>très</strong> appropriée"
@@ -142,7 +183,7 @@ def test_post_amendement_edit_form_gouvernemental(app, lecture_an, amendements_a
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/tables/user@example.com/#amdt-999"  # noqa
+        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com/#amdt-999"  # noqa
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -160,7 +201,7 @@ def test_post_amendement_edit_form_gouvernemental(app, lecture_an, amendements_a
 
 
 def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
-    app, lecture_an, amendements_an
+    app, lecture_an, amendements_an, user_david
 ):
     from zam_repondeur.models import Amendement, DBSession, Lecture
 
@@ -176,11 +217,12 @@ def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
         amendement.user_content.objet = "Un objet très pertinent"
         amendement.user_content.reponse = "Une réponse très appropriée"
         DBSession.add(amendement)
+        user_david.table.amendements.append(amendement)
 
     # Let's post the response edit form, but with unchanged values
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/666/amendement_edit",
-        user="user@example.com",
+        user=user_david.email,
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"

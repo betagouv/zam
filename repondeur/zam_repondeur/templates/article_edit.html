@@ -2,7 +2,16 @@
 {% import "macros.html" as macros %}
 
 {% block extra_nav %}
-    <li><a href="{{ request.resource_url(context.parent.parent, 'amendements') }}">Amendements</a></li>
+    <li>
+        <a href="{{ request.resource_url(context.parent.parent['tables'], request.user.email) }}">
+            Ma table
+        </a>
+    </li>
+    <li>
+        <a href="{{ request.resource_url(context.parent.parent, 'amendements') }}">
+            Index
+        </a>
+    </li>
 {% endblock %}
 
 {% block body %}

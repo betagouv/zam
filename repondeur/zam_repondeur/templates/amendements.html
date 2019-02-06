@@ -44,6 +44,11 @@
             </a>
         </span>
     </nav>
+    <nav class="groupActions">
+        <p>Actions groupées</p>
+        <a href="" class="button primary">Ajouter à ma table</a>
+        <a href="" class="button primary">Exporter en PDF</a>
+    </nav>
 
     <section id="advanced" class="d-none">
         <div>
@@ -124,6 +129,7 @@
     <table class="table">
         <thead class="box">
             <tr class="headers sticky">
+                <th class="nosort"></th>
                 <th>
                     {{ macros.svg_icon("sort") }}
                     Article
@@ -147,6 +153,7 @@
                 <th class="nosort"></th>
             </tr>
             <tr class="filters sticky d-none">
+                <th></th>
                 <th>
                     <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
@@ -197,6 +204,9 @@
                 class="highlighted"
                 {% endif %}
             >
+                <td>
+                    <input type="checkbox" name="amendement-selected" value="{{ amendement.num }}">
+                </td>
                 <td class="article" data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }}
@@ -360,5 +370,6 @@
     filterColumns(document.querySelector('table'))
     hijackEditLinks()
     takeControlOverNativeJump()
+    selectMultiple(document.querySelectorAll('input[type="checkbox"]'))
 </script>
 {% endblock %}

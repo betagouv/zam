@@ -48,7 +48,7 @@ def test_get_amendements_order_default(app, lecture_an, amendements_an):
 
     assert resp.status_code == 200
     assert "Le dossier de banc" in resp.text
-    assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(2)")] == [
+    assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(3)")] == [
         "666",
         "999",
     ]
@@ -67,7 +67,7 @@ def test_get_amendements_order_abandoned_last(app, lecture_an, amendements_an):
 
     assert resp.status_code == 200
     assert "Le dossier de banc" in resp.text
-    assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(2)")] == [
+    assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(3)")] == [
         "999",
         "666",
     ]

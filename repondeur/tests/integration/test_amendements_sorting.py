@@ -9,43 +9,43 @@ def test_column_sorting_once_changes_url(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     article_header = find_header_by_index(
-        1, driver.find_element_by_css_selector("thead")
+        2, driver.find_element_by_css_selector("thead")
     )
     article_header.click()
-    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1asc"
+    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc"
 
 
 def test_column_sorting_twice_changes_url_direction(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     article_header = find_header_by_index(
-        1, driver.find_element_by_css_selector("thead")
+        2, driver.find_element_by_css_selector("thead")
     )
     article_header.click()
     article_header.click()
-    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1desc"
+    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2desc"
 
 
 def test_column_sorting_thrice_changes_url_again(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     article_header = find_header_by_index(
-        1, driver.find_element_by_css_selector("thead")
+        2, driver.find_element_by_css_selector("thead")
     )
     article_header.click()
     article_header.click()
     article_header.click()
-    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1asc"
+    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc"
 
 
 def test_column_sorting_is_cancelable(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     article_header = find_header_by_index(
-        1, driver.find_element_by_css_selector("thead")
+        2, driver.find_element_by_css_selector("thead")
     )
     article_header.click()
-    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1asc"
+    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc"
     cancel = driver.find_element_by_css_selector("#unsort")
     cancel.click()
     assert driver.current_url == f"{LECTURE_URL}/amendements"
@@ -54,9 +54,9 @@ def test_column_sorting_is_cancelable(wsgi_server, driver, lecture_an):
 def test_column_sorting_multiple_changes_url(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    find_header_by_index(1, driver.find_element_by_css_selector("thead")).click()
     find_header_by_index(2, driver.find_element_by_css_selector("thead")).click()
-    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1asc-2asc"
+    find_header_by_index(3, driver.find_element_by_css_selector("thead")).click()
+    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc-3asc"
     # Still cancelable
     driver.find_element_by_css_selector("#unsort").click()
     assert driver.current_url == f"{LECTURE_URL}/amendements"
@@ -66,15 +66,15 @@ def test_column_sorting_multiple_changes_url(wsgi_server, driver, lecture_an):
     "column_index,kind,initial_order,asc_order",
     [
         (
-            "1",
+            "2",
             "article",
             ["Art. 1", "Art. 1", "Avant art. 1"],
             ["Avant art. 1", "Art. 1", "Art. 1"],
         ),
-        ("2", "amendement", ["666", "999", "777"], ["666", "777", "999"]),
-        ("3", "table", ["Ronan", "David", "Daniel"], ["Daniel", "David", "Ronan"]),
-        ("4", "avis", ["#check", "", "#check"], ["", "#check", "#check"]),
-        ("5", "reponse", ["#check", "", "#check"], ["#check", "#check", ""]),
+        ("3", "amendement", ["666", "999", "777"], ["666", "777", "999"]),
+        ("4", "table", ["Ronan", "David", "Daniel"], ["Daniel", "David", "Ronan"]),
+        ("5", "avis", ["#check", "", "#check"], ["", "#check", "#check"]),
+        ("6", "reponse", ["#check", "", "#check"], ["#check", "#check", ""]),
     ],
 )
 def test_column_sorting_by(

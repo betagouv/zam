@@ -73,7 +73,7 @@ function makeHeadersSortable(tableHead) {
 function sortColumns(sortSpec) {
     for (colSpec of sortSpec.split('-')) {
         const colIndex = parseInt(colSpec.charAt(0), 10)
-        if (colIndex > 7) {
+        if (colIndex < 2 || colIndex > 6) {
             continue
         }
         const order = colSpec.slice(1)
@@ -305,4 +305,15 @@ function takeControlOverNativeJump() {
             })
         }, 1)
     }
+}
+
+function selectMultiple(checkboxes) {
+    const options = document.querySelector('.groupActions')
+    const checkboxesArray = Array.from(checkboxes)
+    checkboxesArray.forEach(checkbox => {
+        checkbox.addEventListener('click', e => {
+            const checkeds = checkboxesArray.filter((box) => box.checked)
+            options.style.display = (checkeds.length < 1) ? 'none' : 'flex'
+        })
+    })
 }

@@ -23,7 +23,7 @@
     .lecture nav a {
         background: no-repeat right center url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}");
     }
-    .lecture nav a:last-child {
+    .lecture nav a {
         font-size: 1.1rem;
         padding-right: 1.8rem;
         background-position: 99% 42%;
@@ -68,13 +68,16 @@
                 {% endif %}
             </div>
             <nav>
+                <a href="{{ request.resource_url(context[lecture.url_key], 'tables', request.user.email) }}">
+                    Consulter ma table
+                </a>
                 <a href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">
-                    Consulter la liste
+                    Consulter l’index
                 </a>
                 {% if lecture.displayable %}
-                <a href="{{ request.resource_url(context[lecture.url_key]['articles']) }}" role="button" target="_blank">
-                    Voir le dossier de banc
-                </a>
+                    <a href="{{ request.resource_url(context[lecture.url_key]['articles']) }}" role="button" target="_blank">
+                        Voir le dossier de banc
+                    </a>
                 {% endif %}
             </nav>
         </div>

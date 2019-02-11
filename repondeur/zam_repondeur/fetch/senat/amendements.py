@@ -108,7 +108,7 @@ class Senat(RemoteSource):
             logger.info("Aucun amendement soumis à la discussion pour l'instant!")
         self._enrich_discussion_details(amendements, discussion_details, lecture)
 
-        logger.info("Récupération de la liste des sénateurs...")
+        logger.info("Récupération de la liste des sénateurs…")
         senateurs_by_matricule = fetch_and_parse_senateurs()
         self._enrich_groupe_parlementaire(amendements, senateurs_by_matricule)
 

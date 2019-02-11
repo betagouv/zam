@@ -210,7 +210,7 @@ class TestFetchAndParseAll:
             liste=read_sample_data("an/269/liste.xml"),
             amendements=(
                 ("177", read_sample_data("an/269/177.xml")),
-                # removed 270...
+                # removed 270…
                 ("723", read_sample_data("an/269/723.xml")),
                 ("135", read_sample_data("an/269/135.xml")),
                 ("192", read_sample_data("an/269/192.xml")),

@@ -67,7 +67,7 @@ class LecturesAdd:
 
         if LectureModel.exists(chambre, session, num_texte, partie, organe):
             self.request.session.flash(
-                Message(cls="warning", text="Cette lecture existe déjà...")
+                Message(cls="warning", text="Cette lecture existe déjà…")
             )
             return HTTPFound(location=self.request.resource_url(self.context))
 

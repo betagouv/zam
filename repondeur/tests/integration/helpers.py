@@ -40,7 +40,7 @@ def login(driver, base_url, email):
         return  # name already known
     assert (
         driver.find_element_by_css_selector("h1").text
-        == "C’est votre première connexion..."
+        == "C’est votre première connexion…"
     )
     driver.find_element_by_css_selector("input[type='submit']").click()
     wait.until(lambda driver: not driver.current_url.startswith(welcome_url))

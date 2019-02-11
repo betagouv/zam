@@ -11,6 +11,25 @@
     .box p:last-child {
         margin-bottom: 0;
     }
+    .highlight {
+        margin: 3rem;
+    }
+        .highlight h3 {
+            margin: 1rem 0 2rem 0;
+        }
+        .highlight nav {
+            padding: 0 1rem;
+            text-align: right;
+        }
+            .highlight nav a {
+                font-size: 1.4rem;
+                padding-right: 2rem;
+                background-image: url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}");
+                background-position: center;
+                background-repeat: no-repeat;
+                background-position: right 33%;
+                background-size: 0.9rem;
+            }
     .amendement-card {
         display: flex;
         justify-content: space-between;
@@ -80,10 +99,12 @@
             </div>
         </div>
     {% else %}
-        <div class="box">
+        <div class="highlight">
             {% if owner == request.user %}
-                <p>Il n’y a aucun amendement sur votre table pour l’instant.</p>
-                <p>Vous pouvez aller sur <a href="{{ index_url }}">l’index</a> pour prendre des amendements flottants et les placer sur votre table.</p>
+                <h3>Votre table est vide...</h3>
+                <nav>
+                    <a href="{{ index_url }}">Récupérer des amendements sur l'index</a>
+                </nav>
             {% else %}
                 <p>Il n’y a aucun amendement sur cette table pour l’instant.</p>
             {% endif %}

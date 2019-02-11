@@ -36,7 +36,7 @@ class TableView:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        num = self.request.POST.get("num")
+        nums = self.request.POST.getall("nums")
         target = self.request.POST.get("target")
         old = ""
         new = ""
@@ -44,21 +44,20 @@ class TableView:
             target = self.owner
         else:
             target = DBSession.query(User).filter(User.email == target).first()
-        amendement = (
-            DBSession.query(Amendement)
-            .filter(Amendement.lecture == self.lecture, Amendement.num == num)
-            .first()
+        amendements = DBSession.query(Amendement).filter(
+            Amendement.lecture == self.lecture, Amendement.num.in_(nums)  # type: ignore
         )
-        if amendement in target.table_for(self.lecture).amendements:
-            amendement.user_table = None
-            old = str(target)
-        else:
-            if amendement.user_table:
-                old = str(amendement.user_table.user)
-            new = str(target)
-            table = target.table_for(self.lecture)
-            table.amendements.append(amendement)
-        AmendementTransfere.create(self.request, amendement, old, new)
+        for amendement in amendements:
+            if amendement in target.table_for(self.lecture).amendements:
+                amendement.user_table = None
+                old = str(target)
+            else:
+                if amendement.user_table:
+                    old = str(amendement.user_table.user)
+                new = str(target)
+                table = target.table_for(self.lecture)
+                table.amendements.append(amendement)
+            AmendementTransfere.create(self.request, amendement, old, new)
         return HTTPFound(
             location=self.request.resource_url(self.context.parent, self.owner.email)
         )

@@ -307,13 +307,51 @@ function takeControlOverNativeJump() {
     }
 }
 
+function changeURLGivenChecks(target, checkeds) {
+    const url = new URL(target.getAttribute('href'))
+    url.searchParams.delete('nums')
+    checkeds.forEach(checked => {
+        url.searchParams.append('nums', checked.value)
+    })
+    target.setAttribute('href', url.toString())
+}
+
+function toggleGroupActions(target, checkboxes) {
+    const checkeds = checkboxes.filter(box => box.checked)
+    target.style.display = checkeds.length < 1 ? 'none' : 'flex'
+    changeURLGivenChecks(
+        target.querySelector('#transfer-amendements'),
+        checkeds
+    )
+    changeURLGivenChecks(target.querySelector('#custom-pdf'), checkeds)
+}
+
 function selectMultiple(checkboxes) {
-    const options = document.querySelector('.groupActions')
-    const checkboxesArray = Array.from(checkboxes)
-    checkboxesArray.forEach(checkbox => {
-        checkbox.addEventListener('click', e => {
-            const checkeds = checkboxesArray.filter((box) => box.checked)
-            options.style.display = (checkeds.length < 1) ? 'none' : 'flex'
+    const target = document.querySelector('.groupActions')
+    // Useful in case of (soft) refresh with already checked boxes.
+    toggleGroupActions(target, checkboxes)
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', e => {
+            toggleGroupActions(target, checkboxes)
+        })
+    })
+}
+
+function selectAll(checkbox, checkboxes) {
+    // Useful in case of (soft) refresh with already checked boxes.
+    checkbox.checked = false
+    checkbox.addEventListener('click', e => {
+        checkboxes.forEach(checkbox => {
+            const display = getComputedStyle(
+                checkbox.parentElement.parentElement,
+                null
+            ).display
+            if (display != 'none') {
+                checkbox.checked = e.target.checked
+                // Required because the change event is not propagated by default.
+                const event = new Event('change')
+                checkbox.dispatchEvent(event)
+            }
         })
     })
 }

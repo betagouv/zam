@@ -1,9 +1,12 @@
-import pytest
+import transaction
 
 
-@pytest.mark.xfail
-def test_lecture_delete(app, lecture_an, amendements_an):
+def test_lecture_delete(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import Amendement, DBSession, Lecture
+
+    # Make sure we have a user table for this lecture
+    with transaction.manager:
+        DBSession.add(user_david.table_for(lecture_an))
 
     assert Lecture.exists(
         chambre=lecture_an.chambre,
@@ -14,7 +17,8 @@ def test_lecture_delete(app, lecture_an, amendements_an):
     )
     assert DBSession.query(Amendement).count() == 2
 
-    form = app.get("/lectures/", user="user@example.com").forms["delete-lecture"]
+    resp = app.get("/lectures/an.15.269.PO717460/amendements", user="user@example.com")
+    form = resp.forms["delete-lecture"]
 
     resp = form.submit()
 

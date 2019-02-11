@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, Index, UniqueConstraint
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from .amendement import Amendement
 from .base import Base, DBSession
@@ -21,7 +21,9 @@ class UserTable(Base):
     user: User = relationship(User, back_populates="tables")
 
     lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
-    lecture: Lecture = relationship(Lecture)
+    lecture: Lecture = relationship(
+        Lecture, backref=backref("user_tables", cascade="all, delete-orphan")
+    )
 
     amendements = relationship(
         Amendement,

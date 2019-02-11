@@ -254,7 +254,7 @@ def test_amendement_journal_affectation_released(
         "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
         user=user_david.email,
     )
-    assert first_description_text(resp) == "David a remis l’amendement dans le radar"
+    assert first_description_text(resp) == "David a remis l’amendement dans l’index"
 
 
 def test_amendement_journal_affectation_released_by_other(
@@ -282,5 +282,5 @@ def test_amendement_journal_affectation_released_by_other(
     )
     assert (
         first_description_text(resp)
-        == "Ronan a remis l’amendement de « David (david@example.com) » dans le radar"
+        == "Ronan a remis l’amendement de « David (david@example.com) » dans l’index"
     )

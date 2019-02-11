@@ -38,7 +38,7 @@
         </a>
     </li>
     <li>
-        <a href="{{ radar_url }}">
+        <a href="{{ index_url }}">
             Index
         </a>
     </li>
@@ -66,10 +66,10 @@
                     <input type="hidden" name="num" value="{{ amendement.num }}">
                     <select name="target">
                         {% if is_owner %}
-                            <option selected value="{{ request.user.email }}">Au radar</option>
+                            <option selected value="{{ request.user.email }}">À l’index</option>
                         {% else %}
                             <option selected value="{{ request.user.email }}">À moi ({{ request.user.name }})</option>
-                            <option value="{{ request.user.email }}">Au radar</option>
+                            <option value="{{ request.user.email }}">À l’index</option>
                         {% endif %}
                         {% for user in users %}
                             <option value="{{ user.email }}">À {{ user }}</option>
@@ -83,7 +83,7 @@
         <div class="box">
             {% if owner == request.user %}
                 <p>Il n’y a aucun amendement sur votre table pour l’instant.</p>
-                <p>Vous pouvez aller sur <a href="{{ radar_url }}">le radar</a> pour prendre des amendements flottants et les placer sur votre table.</p>
+                <p>Vous pouvez aller sur <a href="{{ index_url }}">l’index</a> pour prendre des amendements flottants et les placer sur votre table.</p>
             {% else %}
                 <p>Il n’y a aucun amendement sur cette table pour l’instant.</p>
             {% endif %}

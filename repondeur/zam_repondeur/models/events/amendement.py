@@ -120,12 +120,12 @@ class AmendementTransfere(AmendementEvent):
             if str(self.user) == self.template_vars["old_value"]:
                 template = (
                     "<abbr title='$email'>$user</abbr> a remis l’amendement "
-                    "dans le radar"
+                    "dans l’index"
                 )
             else:
                 template = (
                     "<abbr title='$email'>$user</abbr> a remis l’amendement "
-                    "de « $old_value » dans le radar"
+                    "de « $old_value » dans l’index"
                 )
         else:
             if str(self.user) == self.template_vars["new_value"]:

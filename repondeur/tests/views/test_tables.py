@@ -92,7 +92,7 @@ def test_tables_release_amendement(app, lecture_an, amendements_an, user_david):
     assert len(amendement.events) == 1
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a remis l’amendement dans le radar"
+        "a remis l’amendement dans l’index"
     )
 
 

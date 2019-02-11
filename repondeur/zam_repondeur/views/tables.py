@@ -29,7 +29,7 @@ class TableView:
             "table_url": self.request.resource_url(
                 self.context.parent[self.request.user.email]
             ),
-            "radar_url": self.request.resource_url(
+            "index_url": self.request.resource_url(
                 self.context.lecture_resource["amendements"]
             ),
         }

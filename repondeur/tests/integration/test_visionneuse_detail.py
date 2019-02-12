@@ -1,4 +1,6 @@
 import transaction
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 def test_visionneuse_detail_amendement(wsgi_server, driver, lecture_an, amendements_an):
@@ -65,14 +67,26 @@ def test_visionneuse_detail_amendement_texte(
 
     article = driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")
+
+    # Unfold
     header.find_element_by_link_text("Texte").click()
-    assert not article.find_element_by_css_selector(".reponse-detail").is_displayed()
-    assert article.find_element_by_css_selector(".amendement-detail").is_displayed()
+    WebDriverWait(driver, 10).until(
+        EC.visibility_of(article.find_element_by_css_selector(".amendement-detail"))
+    )
     assert "Le corps" in article.find_element_by_css_selector(".amendement-detail").text
-    article.find_element_by_css_selector(
+    assert not article.find_element_by_css_selector(".reponse-detail").is_displayed()
+
+    # Fold again
+    button = article.find_element_by_css_selector(
         ".amendement-detail"
-    ).find_element_by_link_text("Replier").click()
-    assert not article.find_element_by_css_selector(".amendement-detail").is_displayed()
+    ).find_element_by_link_text("Replier")
+    assert button.is_displayed()
+    button.click()
+    WebDriverWait(driver, 10).until(
+        EC.invisibility_of_element(
+            article.find_element_by_css_selector(".amendement-detail")
+        )
+    )
 
 
 def test_visionneuse_detail_amendement_reponse_then_texte(

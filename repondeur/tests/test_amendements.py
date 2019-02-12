@@ -5,7 +5,7 @@ def test_get_amendements(app, lecture_an, amendements_an):
     resp = app.get("/lectures/an.15.269.PO717460/amendements", user="user@example.com")
 
     assert resp.status_code == 200
-    assert "Dossier de banc" not in resp.text
+    assert "Le dossier de banc" not in resp.text
 
 
 def test_get_amendements_with_avis(app, lecture_an, amendements_an):
@@ -19,7 +19,7 @@ def test_get_amendements_with_avis(app, lecture_an, amendements_an):
     resp = app.get("/lectures/an.15.269.PO717460/amendements", user="user@example.com")
 
     assert resp.status_code == 200
-    assert "Dossier de banc" in resp.text
+    assert "Le dossier de banc" in resp.text
 
 
 def test_get_amendements_with_gouvernemental(app, lecture_an, amendements_an):
@@ -33,7 +33,7 @@ def test_get_amendements_with_gouvernemental(app, lecture_an, amendements_an):
     resp = app.get("/lectures/an.15.269.PO717460/amendements", user="user@example.com")
 
     assert resp.status_code == 200
-    assert "Dossier de banc" in resp.text
+    assert "Le dossier de banc" in resp.text
 
 
 def test_get_amendements_order_default(app, lecture_an, amendements_an):
@@ -47,8 +47,8 @@ def test_get_amendements_order_default(app, lecture_an, amendements_an):
     resp = app.get("/lectures/an.15.269.PO717460/amendements", user="user@example.com")
 
     assert resp.status_code == 200
-    assert "Dossier de banc" in resp.text
-    assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(2)")] == [
+    assert "Le dossier de banc" in resp.text
+    assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(3)")] == [
         "666",
         "999",
     ]
@@ -66,8 +66,8 @@ def test_get_amendements_order_abandoned_last(app, lecture_an, amendements_an):
     resp = app.get("/lectures/an.15.269.PO717460/amendements", user="user@example.com")
 
     assert resp.status_code == 200
-    assert "Dossier de banc" in resp.text
-    assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(2)")] == [
+    assert "Le dossier de banc" in resp.text
+    assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(3)")] == [
         "999",
         "666",
     ]

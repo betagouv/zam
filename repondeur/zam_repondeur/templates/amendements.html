@@ -6,25 +6,28 @@
 {% endblock %}
 
 {% block extra_nav %}
+    <li>
+        <a href="{{ request.resource_url(context.parent['tables'], request.user.email) }}">
+            Ma table
+        </a>
+    </li>
+    <li class="selected">
+        <a href="{{ request.resource_url(context) }}">
+            Index
+        </a>
+    </li>
     {% if lecture.displayable %}
         <li>
             <a href="{{ request.resource_url(context.parent['articles']) }}" target="_blank">
-                Dossier de banc
+                Le dossier de banc
             </a>
         </li>
     {% endif %}
 {% endblock %}
 
 {% block secondary_header %}
-    <nav class="nav secondary justify-content-between">
-        <span class="nav-item">
-        </span>
-        <div>
-            {{ macros.update_informations(lecture, request.resource_url(context.parent, 'lecture_journal')) }}
-        </div>
-        <span class="nav-item">
-        </span>
-    </nav>
+    <h1>Index des amendements</h1>
+    {{ macros.update_informations(lecture, request.resource_url(context.parent, 'lecture_journal')) }}
 {% endblock %}
 
 {% block body %}
@@ -40,6 +43,11 @@
                 Filtrer
             </a>
         </span>
+    </nav>
+    <nav class="groupActions">
+        <p>Actions groupées</p>
+        <a id="transfer-amendements" href="{{ request.resource_url(context.parent, 'transfer_amendements') }}" class="button primary">Transférer</a>
+        <a id="export-pdf" href="{{ request.resource_url(context.parent, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
     </nav>
 
     <section id="advanced" class="d-none">
@@ -87,7 +95,7 @@
         <div>
             <h3>Supprimer</h3>
             <p>Supprimer la lecture ainsi que tous les amendements et réponses associés.</p>
-            <form method="post" action="{{ request.resource_url(context.parent) }}">
+            <form method="post" action="{{ request.resource_url(context.parent) }}" id="delete-lecture">
                 <div role="group">
                     <input type="submit" name="delete" class="danger allow-multiple-submit button" value="Supprimer">
                 </div>
@@ -118,41 +126,45 @@
         </div>
     </section>
 
-    <table class="table" style="width:100%">
+    <table class="table">
         <thead class="box">
             <tr class="headers sticky">
-                <th width="150px">
+                <th class="nosort"></th>
+                <th>
                     {{ macros.svg_icon("sort") }}
                     Article
                 </th>
-                <th width="180px">
+                <th>
                     {{ macros.svg_icon("sort") }}
                     Nº
                 </th>
-                <th class="nosort">Objet</th>
                 <th>
                     {{ macros.svg_icon("sort") }}
-                    Groupe (Auteur)
+                    Table
                 </th>
-                <th class="avis">
+                <th>
                     {{ macros.svg_icon("sort") }}
                     Avis
                 </th>
-                <th class="affectation">
+                <th>
                     {{ macros.svg_icon("sort") }}
-                    Affectation
+                    Réponse
                 </th>
-                <th class="nosort">⋯</th>
+                <th class="nosort"></th>
             </tr>
             <tr class="filters sticky d-none">
+                <th>
+                    <input type="checkbox" name="select-all">
+                </th>
                 <th>
                     <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
                 <th>
                     <input id="amendement-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
-                <th></th>
-                <th></th>
+                <th>
+                    <input id="table-filter" class="form-control form-control-sm" type="text" autocomplete="off" autocorrect="off">
+                </th>
                 <th>
                     <select id="avis-filter">
                         <option value="">Tous</option>
@@ -161,7 +173,11 @@
                     </select>
                 </th>
                 <th>
-                    <input id="affectation-filter" class="form-control form-control-sm" type="text" autocomplete="off" autocorrect="off">
+                    <select id="reponse-filter">
+                        <option value="">Toutes</option>
+                        <option value="1">Avec</option>
+                        <option value="0">Sans</option>
+                    </select>
                 </th>
                 <th></th>
             </tr>
@@ -180,8 +196,9 @@
                 "
                 data-order="{{ loop.index }}"
                 data-amendement="{{ amendement.num }}"
-                data-affectation="{{ amendement.user_content.affectation }}"
+                data-table="{{ amendement.user_table and amendement.user_table.user.name or '' }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.user_content.avis else 0 }}"
+                data-reponse="{{ 1 if amendement.user_content.reponse else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 data-abandoned-before-seance="{{ 1 if amendement.is_abandoned_before_seance else 0 }}"
                 id="{{ amendement.slug }}"
@@ -189,6 +206,9 @@
                 class="highlighted"
                 {% endif %}
             >
+                <td>
+                    <input type="checkbox" name="amendement-selected" value="{{ amendement.num }}">
+                </td>
                 <td class="article" data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }}
@@ -231,27 +251,23 @@
                             {% endif %}
                         {% endif %}
                 </td>
-                <td>
-                    {% if amendement.user_content.objet %}
-                        {{ amendement.user_content.objet | striptags | truncate(length=100, killwords=False, end='…') }}
-                    {% endif %}
-                </td>
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         ZZZ {# Keep at the end. #}
-                    {%- elif amendement.groupe -%}
-                        {{ amendement.groupe }} {{ amendement.auteur }}
+                    {%- elif amendement.user_table -%}
+                        {{ amendement.user_table.user.name }}
                     {%- else -%}
-                        {{ amendement.auteur }}
+                        YYY {# Keep almost at the end. #}
                     {%- endif -%}">
-                    {% if amendement.groupe %}
-                        {{ amendement.groupe }} ({{ amendement.auteur }})</td>
-                    {% else %}
-                        {{ amendement.auteur }}
+                    {% if amendement.user_table %}
+                        {{ amendement.user_table.user.name }}
                     {% endif %}
+                </td>
                 <td
                     {% if not amendement.gouvernemental and not amendement.user_content.avis %}
-                        class="input-required"
+                        class="centered input-required"
+                    {% else %}
+                        class="centered"
                     {% endif %}
                     data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
@@ -265,6 +281,7 @@
                     {%- endif -%}"
                 >
                     <nobr>
+                        {#
                         {% if amendement.is_abandoned_before_seance %}
                             <span class="avis abandoned_before_seance"></span>
                         {% elif amendement.gouvernemental %}
@@ -280,34 +297,36 @@
                         {% else %}
                             <span class="avis"></span>
                         {% endif %}
-                        <a class="edit-amendement" href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}">
+                        #}
                         {% if amendement.is_abandoned_before_seance %}
                             {% if amendement.is_withdrawn %}
-                                Retiré
+                                <abbr title="Retiré">{{ macros.svg_icon("check") }}</abbr>
                             {% else %}
-                                Irrecevable
+                                <abbr title="Irrecevable">{{ macros.svg_icon("check") }}</abbr>
                             {% endif %}
                         {% elif amendement.gouvernemental %}
-                            Présentation
+                            <abbr title="Présentation">{{ macros.svg_icon("check") }}</abbr>
                         {% elif amendement.user_content.avis %}
-                            {{ amendement.user_content.avis }}
-                        {% else %}
-                            Aucun
+                            <abbr title="{{ amendement.user_content.avis }}">{{ macros.svg_icon("check") }}</abbr>
                         {% endif %}
-                        </a>
                     </nobr>
                 </td>
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         ZZZ {# Keep at the end. #}
+                    {%- elif amendement.user_content.reponse -%}
+                        AAA
                     {%- else -%}
-                        {{ amendement.user_content.affectation }}
-                    {%- endif -%}">
-                    {{ amendement.user_content.affectation or "" }}
+                        YYY {# Keep almost at the end. #}
+                    {%- endif -%}"
+                    class="centered">
+                    {% if amendement.user_content.reponse %}
+                        {{ macros.svg_icon("check") }}
+                    {% endif %}
                 </td>
                 <td>
-                    <a class="download-pdf" href="{{ request.resource_url(context[amendement.num_str], 'download_amendement') }}" title="Exporter en PDF">
-                        {{ macros.svg_icon("file-pdf") }}
+                    <a class="edit-amendement button primary" href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}">
+                        Voir
                     </a>
                 </td>
             </tr>
@@ -353,5 +372,8 @@
     filterColumns(document.querySelector('table'))
     hijackEditLinks()
     takeControlOverNativeJump()
+    const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]:not([name="select-all"])'))
+    selectMultiple(checkboxes)
+    selectAll(document.querySelector('input[type="checkbox"][name="select-all"]'), checkboxes)
 </script>
 {% endblock %}

@@ -124,7 +124,6 @@ def test_write_json(
         "position": 1,
         "rectif": 1,
         "reponse": "",
-        "affectation": "",
         "resume": "Suppression de l'article",
         "session": "2017-2018",
         "sort": "",
@@ -172,7 +171,6 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
             avis="Défavorable",
             objet="Un objet",
             reponse="<p>La réponse</p>",
-            affectation="4C",
             comments="<strong>Lisez-moi</strong>",
         )
         nb_rows = write_json(lecture_senat, filename, request={})
@@ -207,7 +205,6 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
         "position": 1,
         "rectif": 1,
         "reponse": "<p>La réponse</p>",
-        "affectation": "4C",
         "resume": "Suppression de l'article",
         "session": "2017-2018",
         "sort": "",
@@ -317,7 +314,6 @@ def test_write_json_sous_amendement(
         "position": "",
         "rectif": 1,
         "reponse": "",
-        "affectation": "",
         "resume": "",
         "session": "2017-2018",
         "sort": "",
@@ -938,7 +934,7 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
     ]
 
 
-def test_generate_pdf_unitary_without_responses(app, lecture_senat, article1_senat):
+def test_generate_pdf_amendement_without_responses(app, lecture_senat, article1_senat):
     from zam_repondeur.writer import generate_html_for_pdf
     from zam_repondeur.models import Amendement
 
@@ -958,15 +954,13 @@ def test_generate_pdf_unitary_without_responses(app, lecture_senat, article1_sen
     )
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print1.html", {"amendement": amendement, "similaires": []}
+            DummyRequest(), "print_multiple.html", {"amendements": [amendement]}
         )
     )
     assert _html_titles_list(parser) == ["Amendement nº 42 rect."]
 
 
-def test_generate_pdf_unitary_with_amendement_responses(
-    app, lecture_senat, article1_senat
-):
+def test_generate_pdf_amendement_with_responses(app, lecture_senat, article1_senat):
     from zam_repondeur.writer import generate_html_for_pdf
     from zam_repondeur.models import Amendement
 
@@ -987,13 +981,13 @@ def test_generate_pdf_unitary_with_amendement_responses(
     )
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print1.html", {"amendement": amendement, "similaires": []}
+            DummyRequest(), "print_multiple.html", {"amendements": [amendement]}
         )
     )
     assert _html_titles_list(parser) == ["Réponse", "Amendement nº 42 rect."]
 
 
-def test_generate_pdf_unitary_with_amendement_content(
+def test_generate_pdf_amendement_with_content(
     app, lecture_senat, article1_senat, amendements_senat
 ):
     from zam_repondeur.writer import generate_html_for_pdf
@@ -1008,9 +1002,7 @@ def test_generate_pdf_unitary_with_amendement_content(
     DBSession.add(amendement_6666)
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(),
-            "print1.html",
-            {"amendement": amendement_6666, "similaires": []},
+            DummyRequest(), "print_multiple.html", {"amendements": [amendement_6666]}
         )
     )
     assert _html_titles_list(parser) == ["Réponse", "Amendement nº 6666"]
@@ -1033,7 +1025,7 @@ def test_generate_pdf_unitary_with_amendement_content(
     assert "La réponse" in response_node.css("div p")[-1].text()
 
 
-def test_generate_pdf_unitary_with_amendement_similaire(
+def test_generate_pdf_amendement_with_similaire(
     app, lecture_senat, article1_senat, amendements_senat
 ):
     from zam_repondeur.writer import generate_html_for_pdf
@@ -1051,11 +1043,12 @@ def test_generate_pdf_unitary_with_amendement_similaire(
     amendement_9999.user_content.objet = "L’objet"
     amendement_9999.user_content.reponse = "La réponse"
     DBSession.add_all(amendements_senat)
+
+    assert amendement_6666.similaires == [amendement_9999]
+
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(),
-            "print1.html",
-            {"amendement": amendement_6666, "similaires": [amendement_9999]},
+            DummyRequest(), "print_multiple.html", {"amendements": [amendement_6666]}
         )
     )
     assert _html_titles_list(parser) == ["Réponse", "Amendement nº 6666"]

@@ -104,8 +104,6 @@ def _import_backup_from_json_file(
         amendement.user_content.objet = objet
         reponse = normalize_reponse(reponse, previous_reponse)
         amendement.user_content.reponse = reponse
-        if "affectation" in item:
-            amendement.user_content.affectation = item["affectation"]
         if "comments" in item:
             amendement.user_content.comments = item["comments"]
         previous_reponse = reponse

@@ -72,7 +72,6 @@ FIELDS = [
     "avis",
     "objet",
     "reponse",
-    "affectation",
     "comments",
     "article",
     "article_titre",
@@ -150,13 +149,11 @@ def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:
         pdfkit.from_string(content, filename, options=PDFKIT_OPTIONS, css=PDF_CSS)
 
 
-def write_pdf1(
-    lecture: Lecture, amendement: Amendement, filename: str, request: Request
+def write_pdf_multiple(
+    lecture: Lecture, amendements: Iterable[Amendement], filename: str, request: Request
 ) -> None:
     content = generate_html_for_pdf(
-        request,
-        "print1.html",
-        {"amendement": amendement, "similaires": amendement.similaires},
+        request, "print_multiple.html", {"amendements": amendements}
     )
     with xvfb_if_supported():
         pdfkit.from_string(content, filename, options=PDFKIT_OPTIONS, css=PDF_CSS)

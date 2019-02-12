@@ -1,0 +1,14 @@
+{% import 'print_macros.html' as macros %}
+<!doctype html>
+<html lang=fr>
+<head>
+  <meta charset=utf-8>
+</head>
+<body>
+  <main>
+    {% for amendement in amendements %}
+        {{ macros.response_page([amendement] + amendement.similaires) }}
+        {{ macros.amendement_page(amendement) }}
+    {% endfor %}
+  </main>
+</body>

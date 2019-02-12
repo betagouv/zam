@@ -24,9 +24,9 @@ def test_filters_are_opened_by_click(wsgi_server, driver, lecture_an):
 @pytest.mark.parametrize(
     "column_index,input_text,kind,initial,filtered",
     [
-        ("1", "1", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], ["Art. 1", "Art. 1"]),
-        ("2", "777", "amendement", ["666", "999", "777"], ["777"]),
-        ("6", "6", "affectation", ["5C", "6B", "4A"], ["6B"]),
+        ("2", "1", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], ["Art. 1", "Art. 1"]),
+        ("3", "777", "amendement", ["666", "999", "777"], ["777"]),
+        ("4", "Da", "table", ["Ronan", "David", "Daniel"], ["David", "Daniel"]),
     ],
 )
 def test_column_filtering_by(
@@ -35,6 +35,9 @@ def test_column_filtering_by(
     lecture_an,
     article7bis_an,
     amendements_an,
+    user_david,
+    user_ronan,
+    user_daniel,
     column_index,
     input_text,
     kind,
@@ -45,12 +48,16 @@ def test_column_filtering_by(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
-        amendements_an[0].user_content.affectation = "5C"
-        amendements_an[1].user_content.affectation = "6B"
-        Amendement.create(
-            lecture=lecture_an, article=article7bis_an, num=777, affectation="4A"
-        )
         DBSession.add_all(amendements_an)
+        table_ronan = user_ronan.table_for(lecture_an)
+        table_ronan.amendements.append(amendements_an[0])
+        table_david = user_david.table_for(lecture_an)
+        table_david.amendements.append(amendements_an[1])
+        amendement = Amendement.create(
+            lecture=lecture_an, article=article7bis_an, num=777
+        )
+        table_daniel = user_daniel.table_for(lecture_an)
+        table_daniel.amendements.append(amendement)
 
     driver.get(f"{LECTURE_URL}/amendements")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")

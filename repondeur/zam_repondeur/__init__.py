@@ -162,6 +162,4 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
         if request.user is not None:
             principals.append(Authenticated)
             principals.append(f"user:{request.user.pk}")
-            for team in request.user.teams:
-                principals.append(f"team:{team.pk}")
         return principals

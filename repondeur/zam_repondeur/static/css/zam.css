@@ -7,6 +7,26 @@ body {
         "Segoe UI", Helvetica, Arial, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     background: #f2f2f2;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+h1 {
+    text-align: center;
+    margin: 2rem 2rem .5rem 2rem;
+    font-weight: 600;
+}
+
+a {
+    text-decoration: none;
+}
+
+.d-none {
+    display: none !important;
 }
 
 nav.main {
@@ -25,6 +45,7 @@ nav.main {
     }
         nav.main ul li {
             padding: .7rem 1rem;
+            white-space: nowrap;
         }
             nav.main ul li a {
                 color: white;
@@ -90,6 +111,11 @@ nav.secondary {
 }
 .journal {
     font-weight: normal;
+}
+
+main.box {
+    max-width: 60rem;
+    margin: 2rem auto;
 }
 
 /* Liens */
@@ -186,6 +212,7 @@ nav .button:last-child {
 }
 
 .box h3 {
+    font-size: 1.75rem;
     font-weight: 600;
 }
 
@@ -261,5 +288,18 @@ path {
 }
 
 .last-update {
+    text-align: center;
+}
+.notice {
+    border: 6px solid #c2e0ff;
+    padding: 1rem;
+}
+    .notice form {
+        text-align: right;
+    }
+nobr.user {
+    font-weight: 600;
+}
+.centered {
     text-align: center;
 }

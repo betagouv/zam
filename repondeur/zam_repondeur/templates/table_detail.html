@@ -1,0 +1,104 @@
+{% extends "_base.html" %}
+
+{% block header %}
+<style type="text/css">
+    h1 {
+        margin-bottom: 2rem;
+    }
+    .box {
+        text-align: center;
+    }
+    .box p:last-child {
+        margin-bottom: 0;
+    }
+    .notice {
+        margin: 3rem;
+    }
+        .notice h3 {
+            margin: 1rem 0 2rem 0;
+        }
+        .notice nav {
+            padding: 0 1rem;
+            text-align: right;
+        }
+            .notice nav a {
+                font-size: 1.4rem;
+                padding-right: 2rem;
+                background-image: url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}");
+                background-position: center;
+                background-repeat: no-repeat;
+                background-position: right 33%;
+                background-size: 0.9rem;
+            }
+    .amendement-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+        .amendement-card p {
+            margin: .4rem 0;
+        }
+        .amendement-card-infos {
+            max-width: 40rem;
+        }
+        .amendement-card-avis {
+            min-width: 10rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+</style>
+{% endblock %}
+
+{% block extra_nav %}
+    <li {% if owner == request.user %}class="selected"{% endif %}>
+        <a href="{{ table_url }}">
+            Ma table
+        </a>
+    </li>
+    <li>
+        <a href="{{ index_url }}">
+            Index
+        </a>
+    </li>
+{% endblock %}
+
+{% block body %}
+    <h1>Ma table</h1>
+    {% for amendement in amendements %}
+        <div class="box amendement-card">
+            <div class="amendement-card-infos">
+                <p>{{ amendement.article.format() }} - Nº&nbsp;<strong>{{ amendement }}</strong></p>
+                <p>{{ amendement.user_content.objet | paragriphy }}</p>
+                <p><em>{{ amendement.groupe }} ({{ amendement.auteur }})</em></p>
+            </div>
+            <div class="amendement-card-avis">
+                <p>
+                    Avis :
+                    {% if is_owner %}
+                        <a href="{{ request.resource_url(context.parent.parent['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement.user_content.avis or "Aucun" }}</a>
+                    {% else %}
+                        {{ amendement.user_content.avis or "Aucun" }}
+                    {% endif %}
+                </p>
+                <form action="{{ request.resource_url(context.parent, request.user.email) }}" method="POST" id="release-amendement">
+                    <input type="hidden" name="nums" value="{{ amendement.num }}">
+                    <input type="hidden" name="target" value="{{ request.user.email }}">
+                    <input type="submit" name="submit" class="button" value="Libérer">
+                    <a href="{{ request.resource_url(context.parent.parent, 'transfer_amendements') }}?nums={{ amendement.num }}" class="button primary">Transférer</a>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div class="highlight">
+            {% if owner == request.user %}
+                <h3>Votre table est vide…</h3>
+                <nav>
+                    <a href="{{ index_url }}">Récupérer des amendements sur l'index</a>
+                </nav>
+            {% else %}
+                <p>Il n’y a aucun amendement sur cette table pour l’instant.</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endblock %}

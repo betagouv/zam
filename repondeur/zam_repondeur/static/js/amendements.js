@@ -73,7 +73,7 @@ function makeHeadersSortable(tableHead) {
 function sortColumns(sortSpec) {
     for (colSpec of sortSpec.split('-')) {
         const colIndex = parseInt(colSpec.charAt(0), 10)
-        if (colIndex == 4 || colIndex > 7) {
+        if (colIndex < 2 || colIndex > 6) {
             continue
         }
         const order = colSpec.slice(1)
@@ -162,16 +162,16 @@ function filterByAmendement(value) {
     })
     document.querySelector('table').classList.toggle('filtered-amendement', value)
 }
-function filterByAffectation(value) {
-    filterColumn('hidden-affectation', line => {
+function filterByTable(value) {
+    filterColumn('hidden-table', line => {
         if (!value) {
             return true
         }
-        return line.dataset.affectation
+        return line.dataset.table
             .toLowerCase()
             .includes(value.toLowerCase())
     })
-    document.querySelector('table').classList.toggle('filtered-affectation', value)
+    document.querySelector('table').classList.toggle('filtered-table', value)
 }
 function filterByAvis(value) {
     filterColumn('hidden-avis', line => {
@@ -187,6 +187,15 @@ function filterByAvis(value) {
         return line.dataset.avis === value
     })
     document.querySelector('table').classList.toggle('filtered-avis', value)
+}
+function filterByReponse(value) {
+    filterColumn('hidden-reponse', line => {
+        if (value === '') {
+            return true
+        }
+        return line.dataset.reponse === value
+    })
+    document.querySelector('table').classList.toggle('filtered-reponse', value)
 }
 function filterColumn(className, shouldShow) {
     Array.from(document.querySelectorAll('tbody tr')).forEach(line => {
@@ -209,15 +218,20 @@ function filterColumns(table) {
         filterByAmendement(value)
         setURLParam('amendement', value)
     })
+    table.querySelector('#table-filter').addEventListener('keyup', e => {
+        const value = e.target.value.trim()
+        filterByTable(value)
+        setURLParam('table', value)
+    })
     table.querySelector('#avis-filter').addEventListener('change', e => {
         const value = e.target.value.trim()
         filterByAvis(value)
         setURLParam('avis', value)
     })
-    table.querySelector('#affectation-filter').addEventListener('keyup', e => {
+    table.querySelector('#reponse-filter').addEventListener('change', e => {
         const value = e.target.value.trim()
-        filterByAffectation(value)
-        setURLParam('affectation', value)
+        filterByReponse(value)
+        setURLParam('reponse', value)
     })
 
     const articleFilter = getURLParam('article')
@@ -232,17 +246,23 @@ function filterColumns(table) {
         document.querySelector('#amendement-filter').value = amendementFilter
         filterByAmendement(amendementFilter)
     }
-    const affectationFilter = getURLParam('affectation')
-    if (affectationFilter !== '') {
+    const tableFilter = getURLParam('table')
+    if (tableFilter !== '') {
         showFilters()
-        document.querySelector('#affectation-filter').value = affectationFilter
-        filterByAffectation(affectationFilter)
+        document.querySelector('#table-filter').value = tableFilter
+        filterByTable(tableFilter)
     }
     const avisFilter = getURLParam('avis')
     if (avisFilter !== '') {
         showFilters()
         document.querySelector('#avis-filter').value = avisFilter
         filterByAvis(avisFilter)
+    }
+    const reponseFilter = getURLParam('reponse')
+    if (reponseFilter !== '') {
+        showFilters()
+        document.querySelector('#reponse-filter').value = reponseFilter
+        filterByReponse(reponseFilter)
     }
 }
 
@@ -285,4 +305,53 @@ function takeControlOverNativeJump() {
             })
         }, 1)
     }
+}
+
+function changeURLGivenChecks(target, checkeds) {
+    const url = new URL(target.getAttribute('href'))
+    url.searchParams.delete('nums')
+    checkeds.forEach(checked => {
+        url.searchParams.append('nums', checked.value)
+    })
+    target.setAttribute('href', url.toString())
+}
+
+function toggleGroupActions(target, checkboxes) {
+    const checkeds = checkboxes.filter(box => box.checked)
+    target.style.display = checkeds.length < 1 ? 'none' : 'flex'
+    changeURLGivenChecks(
+        target.querySelector('#transfer-amendements'),
+        checkeds
+    )
+    changeURLGivenChecks(target.querySelector('#export-pdf'), checkeds)
+}
+
+function selectMultiple(checkboxes) {
+    const target = document.querySelector('.groupActions')
+    // Useful in case of (soft) refresh with already checked boxes.
+    toggleGroupActions(target, checkboxes)
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', e => {
+            toggleGroupActions(target, checkboxes)
+        })
+    })
+}
+
+function selectAll(checkbox, checkboxes) {
+    // Useful in case of (soft) refresh with already checked boxes.
+    checkbox.checked = false
+    checkbox.addEventListener('click', e => {
+        checkboxes.forEach(checkbox => {
+            const display = getComputedStyle(
+                checkbox.parentElement.parentElement,
+                null
+            ).display
+            if (display != 'none') {
+                checkbox.checked = e.target.checked
+                // Required because the change event is not propagated by default.
+                const event = new Event('change')
+                checkbox.dispatchEvent(event)
+            }
+        })
+    })
 }

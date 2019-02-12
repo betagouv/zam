@@ -50,13 +50,7 @@ class AmendementRectifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "amendement_rectifie"}
     icon = "edit"
 
-    @property
-    def summary_template(self) -> Template:  # type: ignore
-        if self.amendement.lecture.chambre == "an":
-            de_qui = "de l’Asssemblée nationale"
-        else:
-            de_qui = "du Sénat"
-        return Template(f"L’amendement a été rectifié par les services {de_qui}")
+    summary_template = Template("L’amendement a été rectifié")
 
     details_template = Template("")
 
@@ -106,46 +100,67 @@ class AmendementTransfere(AmendementEvent):
 
     @property
     def summary_template(self) -> Template:  # type: ignore
-        if self.template_vars["old_value"]:
-            template = (
-                "<abbr title='$email'>$user</abbr> a transféré l’amendement "
-                "de « $old_value » à « $new_value »"
-            )
+        if self.template_vars["old_value"] and self.template_vars["new_value"]:
+            if str(self.user) == self.template_vars["old_value"]:
+                template = (
+                    "<abbr title='$email'>$user</abbr> a transféré l’amendement "
+                    "à « $new_value »"
+                )
+            elif str(self.user) == self.template_vars["new_value"]:
+                template = (
+                    "<abbr title='$email'>$user</abbr> a transféré l’amendement "
+                    "de « $old_value » à lui/elle-même"
+                )
+            else:
+                template = (
+                    "<abbr title='$email'>$user</abbr> a transféré l’amendement "
+                    "de « $old_value » à « $new_value »"
+                )
+        elif self.template_vars["old_value"] and not self.template_vars["new_value"]:
+            if str(self.user) == self.template_vars["old_value"]:
+                template = (
+                    "<abbr title='$email'>$user</abbr> a remis l’amendement "
+                    "dans l’index"
+                )
+            else:
+                template = (
+                    "<abbr title='$email'>$user</abbr> a remis l’amendement "
+                    "de « $old_value » dans l’index"
+                )
         else:
-            template = (
-                "<abbr title='$email'>$user</abbr> a transféré l’amendement "
-                "à « $new_value »"
-            )
+            if str(self.user) == self.template_vars["new_value"]:
+                template = (
+                    "<abbr title='$email'>$user</abbr> a mis l’amendement "
+                    "sur sa table"
+                )
+            else:
+                template = (
+                    "<abbr title='$email'>$user</abbr> a mis l’amendement "
+                    "sur la table de « $new_value »"
+                )
         return Template(template)
 
     def __init__(
-        self, request: Request, amendement: Amendement, affectation: str, **kwargs: Any
+        self,
+        request: Request,
+        amendement: Amendement,
+        old_value: str,
+        new_value: str,
+        **kwargs: Any,
     ) -> None:
         super().__init__(
-            request,
-            amendement,
-            old_value=amendement.user_content.affectation or "",
-            new_value=affectation,
-            **kwargs,
+            request, amendement, old_value=old_value, new_value=new_value, **kwargs
         )
 
     def apply(self) -> None:
-        self.amendement.user_content.affectation = self.data["new_value"]
+        pass
 
 
 class CorpsAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "corps_amendement_modifie"}
     icon = "edit"
 
-    @property
-    def summary_template(self) -> Template:  # type: ignore
-        if self.amendement.lecture.chambre == "an":
-            de_qui = "de l’Asssemblée nationale"
-        else:
-            de_qui = "du Sénat"
-        return Template(
-            f"Le corps de l’amendement a été modifié par les services {de_qui}"
-        )
+    summary_template = Template("Le corps de l’amendement a été modifié")
 
     def __init__(
         self, request: Request, amendement: Amendement, corps: str, **kwargs: Any
@@ -166,15 +181,7 @@ class ExposeAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "expose_amendement_modifie"}
     icon = "edit"
 
-    @property
-    def summary_template(self) -> Template:  # type: ignore
-        if self.amendement.lecture.chambre == "an":
-            de_qui = "de l’Asssemblée nationale"
-        else:
-            de_qui = "du Sénat"
-        return Template(
-            f"L’exposé de l’amendement a été modifié par les services {de_qui}"
-        )
+    summary_template = Template("L’exposé de l’amendement a été modifié")
 
     def __init__(
         self, request: Request, amendement: Amendement, expose: str, **kwargs: Any

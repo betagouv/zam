@@ -9,43 +9,43 @@ def test_column_sorting_once_changes_url(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     article_header = find_header_by_index(
-        1, driver.find_element_by_css_selector("thead")
+        2, driver.find_element_by_css_selector("thead")
     )
     article_header.click()
-    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1asc"
+    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc"
 
 
 def test_column_sorting_twice_changes_url_direction(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     article_header = find_header_by_index(
-        1, driver.find_element_by_css_selector("thead")
+        2, driver.find_element_by_css_selector("thead")
     )
     article_header.click()
     article_header.click()
-    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1desc"
+    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2desc"
 
 
 def test_column_sorting_thrice_changes_url_again(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     article_header = find_header_by_index(
-        1, driver.find_element_by_css_selector("thead")
+        2, driver.find_element_by_css_selector("thead")
     )
     article_header.click()
     article_header.click()
     article_header.click()
-    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1asc"
+    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc"
 
 
 def test_column_sorting_is_cancelable(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     article_header = find_header_by_index(
-        1, driver.find_element_by_css_selector("thead")
+        2, driver.find_element_by_css_selector("thead")
     )
     article_header.click()
-    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1asc"
+    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc"
     cancel = driver.find_element_by_css_selector("#unsort")
     cancel.click()
     assert driver.current_url == f"{LECTURE_URL}/amendements"
@@ -54,9 +54,9 @@ def test_column_sorting_is_cancelable(wsgi_server, driver, lecture_an):
 def test_column_sorting_multiple_changes_url(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    find_header_by_index(1, driver.find_element_by_css_selector("thead")).click()
     find_header_by_index(2, driver.find_element_by_css_selector("thead")).click()
-    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1asc-2asc"
+    find_header_by_index(3, driver.find_element_by_css_selector("thead")).click()
+    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc-3asc"
     # Still cancelable
     driver.find_element_by_css_selector("#unsort").click()
     assert driver.current_url == f"{LECTURE_URL}/amendements"
@@ -66,20 +66,15 @@ def test_column_sorting_multiple_changes_url(wsgi_server, driver, lecture_an):
     "column_index,kind,initial_order,asc_order",
     [
         (
-            "1",
+            "2",
             "article",
             ["Art. 1", "Art. 1", "Avant art. 1"],
             ["Avant art. 1", "Art. 1", "Art. 1"],
         ),
-        ("2", "amendement", ["666", "999", "777"], ["666", "777", "999"]),
-        ("4", "groupe", ["Foo ()", "Bar ()", "Baz ()"], ["Bar ()", "Baz ()", "Foo ()"]),
-        (
-            "5",
-            "avis",
-            ["Favorable", "Défavorable", "Aucun"],
-            ["Aucun", "Défavorable", "Favorable"],
-        ),
-        ("6", "affectation", ["5C", "6B", "4A"], ["4A", "5C", "6B"]),
+        ("3", "amendement", ["666", "999", "777"], ["666", "777", "999"]),
+        ("4", "table", ["Ronan", "David", "Daniel"], ["Daniel", "David", "Ronan"]),
+        ("5", "avis", ["#check", "", "#check"], ["", "#check", "#check"]),
+        ("6", "reponse", ["#check", "", "#check"], ["#check", "#check", ""]),
     ],
 )
 def test_column_sorting_by(
@@ -88,6 +83,9 @@ def test_column_sorting_by(
     lecture_an,
     article1av_an,
     amendements_an,
+    user_david,
+    user_ronan,
+    user_daniel,
     column_index,
     kind,
     initial_order,
@@ -97,21 +95,24 @@ def test_column_sorting_by(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
-        amendements_an[0].groupe = "Foo"
-        amendements_an[0].user_content.avis = "Favorable"
-        amendements_an[0].user_content.affectation = "5C"
-        amendements_an[1].groupe = "Bar"
-        amendements_an[1].user_content.avis = "Défavorable"
-        amendements_an[1].user_content.affectation = "6B"
-        Amendement.create(
+        DBSession.add_all(amendements_an)
+
+        amendements_an[0].user_content.avis = "Défavorable"
+        amendements_an[0].user_content.reponse = "Foo"
+        table_ronan = user_ronan.table_for(lecture_an)
+        table_ronan.amendements.append(amendements_an[0])
+        table_david = user_david.table_for(lecture_an)
+        table_david.amendements.append(amendements_an[1])
+
+        amendement = Amendement.create(
             lecture=lecture_an,
             article=article1av_an,
             num=777,
-            groupe="Baz",
-            avis="Aucun",
-            affectation="4A",
+            avis="Favorable",
+            reponse="Baz",
         )
-        DBSession.add_all(amendements_an)
+        table_daniel = user_daniel.table_for(lecture_an)
+        table_daniel.amendements.append(amendement)
 
     driver.get(f"{LECTURE_URL}/amendements")
     trs = driver.find_elements_by_css_selector("tbody tr")

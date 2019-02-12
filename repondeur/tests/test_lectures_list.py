@@ -24,7 +24,7 @@ def lecture_commission(app):
             chambre="an",
             session="15",
             num_texte=269,
-            titre="Titre lecture",
+            titre="Numéro lecture – Titre lecture",
             organe="PO420120",
             dossier_legislatif="Titre dossier legislatif",
         )
@@ -33,7 +33,6 @@ def lecture_commission(app):
     return lecture
 
 
-@pytest.mark.xfail
 def test_get_list_not_empty(app, lecture_an, lecture_commission):
 
     resp = app.get("/lectures/", user="user@example.com")
@@ -41,10 +40,9 @@ def test_get_list_not_empty(app, lecture_an, lecture_commission):
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
-    assert len(resp.parser.css(".card")) == 2
+    assert len(resp.parser.css(".lecture")) == 2
 
 
-@pytest.mark.xfail
 def test_get_list_reverse_datetime_order(app, lecture_an):
     from zam_repondeur.models import DBSession, Lecture
 
@@ -54,7 +52,7 @@ def test_get_list_reverse_datetime_order(app, lecture_an):
             chambre=lecture_an.chambre,
             session=lecture_an.session,
             num_texte=lecture_an.num_texte + 1,
-            titre="Titre lecture 2",
+            titre="Numéro lecture – Titre lecture 2",
             organe=lecture_an.organe,
             dossier_legislatif=lecture_an.dossier_legislatif,
         )
@@ -65,5 +63,5 @@ def test_get_list_reverse_datetime_order(app, lecture_an):
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
-    assert title2 in resp.parser.css(".card")[0].text()
-    assert title in resp.parser.css(".card")[1].text()
+    assert title2 in resp.parser.css(".lecture")[0].text()
+    assert title in resp.parser.css(".lecture")[1].text()

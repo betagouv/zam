@@ -261,7 +261,7 @@ def test_post_form_already_exists(app, lecture_an):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "Cette lecture existe déjà..." in resp.text
+    assert "Cette lecture existe déjà…" in resp.text
 
 
 def test_choices_lectures(app):

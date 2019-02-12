@@ -8,8 +8,10 @@ def test_repondeur_does_not_contains_link_to_visionneuse_if_no_avis(
 ):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    second_nav = driver.find_element_by_css_selector("nav.main li:nth-child(2)")
-    assert not second_nav.text.endswith("Dossier de banc")
+    menu_items = [
+        item.text for item in driver.find_elements_by_css_selector("nav.main li")
+    ]
+    assert "Le dossier de banc" not in menu_items
 
 
 def test_repondeur_contains_link_to_visionneuse_if_avis(
@@ -23,21 +25,10 @@ def test_repondeur_contains_link_to_visionneuse_if_avis(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    second_nav = driver.find_element_by_css_selector("nav.main li:nth-child(2)")
-    assert second_nav.text.endswith("Dossier de banc")
-
-
-def test_amendement_line_has_unitary_pdf_link(
-    wsgi_server, driver, lecture_an, amendements_an
-):
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/amendements")
-    download_td = driver.find_element_by_css_selector("td:nth-child(7)")
-    download_link = download_td.find_element_by_css_selector("a")
-    assert (
-        download_link.get_attribute("href")
-        == f"{LECTURE_URL}/amendements/666/download_amendement"
-    )
+    menu_items = [
+        item.text for item in driver.find_elements_by_css_selector("nav.main li")
+    ]
+    assert "Le dossier de banc" in menu_items
 
 
 def test_column_sorting_changes_edit_url_on_the_fly(
@@ -45,16 +36,16 @@ def test_column_sorting_changes_edit_url_on_the_fly(
 ):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    find_header_by_index(1, driver.find_element_by_css_selector("thead")).click()
-    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=1asc"
-    avis_td = driver.find_element_by_css_selector("td:nth-child(5)")
-    avis_link = avis_td.find_element_by_css_selector("a")
+    find_header_by_index(2, driver.find_element_by_css_selector("thead")).click()
+    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc"
+    see_td = driver.find_element_by_css_selector("td:nth-child(7)")
+    see_link = see_td.find_element_by_css_selector("a")
     assert (
-        avis_link.get_attribute("href")
+        see_link.get_attribute("href")
         == f"{LECTURE_URL}/amendements/666/amendement_edit"
     )
-    avis_link.click()
+    see_link.click()
     assert driver.current_url == (
         f"{LECTURE_URL}/amendements/666/amendement_edit?"
-        f"back=%2Flectures%2F{lecture_an.url_key}%2Famendements%3Fsort%3D1asc"
+        f"back=%2Flectures%2F{lecture_an.url_key}%2Famendements%3Fsort%3D2asc"
     )

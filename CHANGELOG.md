@@ -2,14 +2,61 @@
 
 #### Date de prochaine démonstration : 13 février à 15h.
 
-#### Rappel des objectifs prioritaires des développements 2019 
-- guider les utilisateurs en mettant en avant les amendements qui leur sont affectés et en permettant le transfert d'un amendement d'une personne à une autre
-- conserver la trace des éditions successives sur l'amendement (chemin de validation)
-- fiabiliser l'outil au regard des volumes d'utilisateurs/amendements et des flux du Parlement
+#### Rappel des objectifs prioritaires des développements 2019
+
+- guider les utilisateurs en mettant en avant les amendements qui leur sont affectés et en permettant le transfert d'un amendement d’une personne à une autre
+- conserver la trace des éditions successives sur l’amendement (chemin de validation)
+- fiabiliser l’outil au regard des volumes d’utilisateurs/amendements et des flux du Parlement
 
 <h2 class="center">[Accès au répondeur](/repondeur/) • [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
 
 ### Changements récents
+
+#### 12 février 2019
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-02-12-nouveau-design.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-02-12-nouveau-design.png">
+    </a>
+    <figcaption>
+        Nouvelle itération sur le design sur l’ensemble de l’application.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-02-12-index-amendements.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-02-12-index-amendements.png">
+    </a>
+    <figcaption>
+        L’index des amendements permet d’avoir une vision d’ensemble de l’avancée du travail.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-02-12-table-personnelle.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-02-12-table-personnelle.png">
+    </a>
+    <figcaption>
+        Nouveau concept de table personnelle permettant de traiter des amendements attribués.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-02-12-amendement-journal.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-02-12-amendement-journal.png">
+    </a>
+    <figcaption>
+        Un journal détaillé par amendement et article rend compte des actions réalisées.
+    </figcaption>
+</figure>
+
+
 
 #### 14 janvier 2019
 

@@ -12,7 +12,7 @@ from zam_repondeur.data import get_data
 from zam_repondeur.fetch import get_articles
 from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
 from zam_repondeur.message import Message
-from zam_repondeur.models import DBSession, Lecture as LectureModel
+from zam_repondeur.models import DBSession, Amendement, Lecture as LectureModel, User
 from zam_repondeur.models.events.lecture import ArticlesRecuperes
 from zam_repondeur.resources import (
     AmendementCollection,
@@ -67,7 +67,7 @@ class LecturesAdd:
 
         if LectureModel.exists(chambre, session, num_texte, partie, organe):
             self.request.session.flash(
-                Message(cls="warning", text="Cette lecture existe déjà...")
+                Message(cls="warning", text="Cette lecture existe déjà…")
             )
             return HTTPFound(location=self.request.resource_url(self.context))
 
@@ -164,6 +164,22 @@ def list_amendements(context: AmendementCollection, request: Request) -> dict:
         "check_url": request.resource_path(context.parent, "check"),
         "timestamp": lecture.modified_at_timestamp,
     }
+
+
+@view_config(
+    context=LectureResource,
+    renderer="transfer_amendements.html",
+    name="transfer_amendements",
+)
+def transfer_amendements(context: LectureResource, request: Request) -> dict:
+    lecture = context.model()
+    amendements_nums: list = request.GET.getall("nums")
+    amendements = DBSession.query(Amendement).filter(
+        Amendement.lecture_pk == lecture.pk,
+        Amendement.num.in_(amendements_nums),  # type: ignore
+    )
+    users = DBSession.query(User).filter(User.email != request.user.email)
+    return {"lecture": lecture, "amendements": list(amendements), "users": users}
 
 
 @view_config(context=LectureResource, name="manual_refresh")

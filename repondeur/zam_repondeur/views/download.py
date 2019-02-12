@@ -1,5 +1,6 @@
 import os
 from tempfile import NamedTemporaryFile
+from typing import List
 
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.request import Request
@@ -7,8 +8,8 @@ from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload
 
-from zam_repondeur.resources import AmendementResource, LectureResource
-from zam_repondeur.writer import write_json, write_pdf, write_pdf1, write_xlsx
+from zam_repondeur.resources import LectureResource
+from zam_repondeur.writer import write_json, write_pdf, write_pdf_multiple, write_xlsx
 
 
 DOWNLOAD_FORMATS = {
@@ -55,17 +56,39 @@ def download_amendements(context: LectureResource, request: Request) -> Response
         return response
 
 
-@view_config(context=AmendementResource, name="download_amendement")
-def download_amendement(context: AmendementResource, request: Request) -> Response:
-    amendement = context.model()
-    lecture = amendement.lecture
+@view_config(context=LectureResource, name="export_pdf")
+def export_pdf(context: LectureResource, request: Request) -> Response:
+
+    lecture = context.model(
+        joinedload("articles").joinedload("amendements").joinedload("children")
+    )
+
+    try:
+        nums: List[int] = [int(num) for num in request.params.getall("nums")]
+    except ValueError:
+        raise HTTPBadRequest()
+
+    amendements = [
+        amendement
+        for amendement in (lecture.find_amendement(num) for num in nums)
+        if amendement is not None
+    ]
 
     with NamedTemporaryFile() as file_:
+
         tmp_file_path = os.path.abspath(file_.name)
-        write_pdf1(lecture, amendement, tmp_file_path, request)
+
+        write_pdf_multiple(
+            lecture=lecture,
+            amendements=amendements,
+            filename=tmp_file_path,
+            request=request,
+        )
+
         response = FileResponse(tmp_file_path)
         attach_name = (
-            f"amendement-{amendement.num}-"
+            f"amendement{'s' if len(nums) > 1 else ''}-"
+            f"{','.join(str(num) for num in nums)}-"
             f"{lecture.chambre}-{lecture.session}-{lecture.num_texte}-"
             f"{lecture.organe}.pdf"
         )

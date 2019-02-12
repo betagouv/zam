@@ -93,17 +93,24 @@ def app(wsgi_app, db, data_repository):
 
 
 @pytest.fixture
-def team_zam(db):
-    from zam_repondeur.models import Team
-
-    return Team.create(name="Zam")
-
-
-@pytest.fixture
-def user_david(db, team_zam):
+def user_david(db):
     from zam_repondeur.models import User
 
     return User.create(name="David", email="david@example.com")
+
+
+@pytest.fixture
+def user_ronan(db):
+    from zam_repondeur.models import User
+
+    return User.create(name="Ronan", email="ronan@example.com")
+
+
+@pytest.fixture
+def user_daniel(db):
+    from zam_repondeur.models import User
+
+    return User.create(name="Daniel", email="daniel@example.com")
 
 
 @pytest.fixture

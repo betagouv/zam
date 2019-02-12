@@ -6,7 +6,14 @@ from pyramid.request import Request
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
-from zam_repondeur.models import Amendement, Article, DBSession, Lecture
+from zam_repondeur.models import (
+    Amendement,
+    Article,
+    DBSession,
+    Lecture,
+    User,
+    UserTable,
+)
 
 
 class ResourceNotFound(HTTPNotFound):
@@ -99,6 +106,7 @@ class LectureResource(Resource):
         self.organe = organe
         self.add_child(AmendementCollection(name="amendements", parent=self))
         self.add_child(ArticleCollection(name="articles", parent=self))
+        self.add_child(TableCollection(name="tables", parent=self))
 
     def model(self, *options: Any) -> Lecture:
         lecture = Lecture.get(
@@ -207,3 +215,38 @@ class ArticleResource(Resource):
         except NoResultFound:
             raise ResourceNotFound(self)
         return article
+
+
+class TableCollection(Resource):
+    def __getitem__(self, key: str) -> Resource:
+        return TableResource(name=key, parent=self)
+
+    @property
+    def parent(self) -> LectureResource:
+        return cast(LectureResource, self.__parent__)
+
+
+class TableResource(Resource):
+    def __init__(self, name: str, parent: Resource) -> None:
+        super().__init__(name=name, parent=parent)
+
+    @property
+    def parent(self) -> TableCollection:
+        return cast(TableCollection, self.__parent__)
+
+    @property
+    def lecture_resource(self) -> LectureResource:
+        return self.parent.parent
+
+    @property
+    def owner(self) -> User:
+        try:
+            user: User = DBSession.query(User).filter(User.email == self.__name__).one()
+            return user
+        except NoResultFound:
+            raise ResourceNotFound
+
+    def amendements(self) -> List[Amendement]:
+        table: UserTable = self.owner.table_for(lecture=self.lecture_resource.model())
+        amendements: List[Amendement] = table.amendements
+        return amendements

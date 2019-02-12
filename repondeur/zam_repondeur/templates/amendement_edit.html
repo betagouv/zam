@@ -68,7 +68,16 @@
 {% endblock %}
 
 {% block extra_nav %}
-    <li><a href="{{ back_url }}">Amendements</a></li>
+    <li>
+        <a href="{{ request.resource_url(context.parent.parent['tables'], request.user.email) }}">
+            Ma table
+        </a>
+    </li>
+    <li>
+        <a href="{{ request.resource_url(context.parent.parent, 'amendements') }}">
+            Index
+        </a>
+    </li>
     {% if amendement.is_displayable %}
         <li>
             <a href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key], 'reponses', anchor=amendement.slug) }}" target="_blank">
@@ -105,25 +114,41 @@
         {{ content(amendement) }}
     </section>
     <section class="edit">
-        <div>
-            {% if amendement.identique %}
-                {% set identiques = amendement.all_identiques %}
-                {% set identiques_length = identiques|length %}
+        {% if amendement.user_table and request.user == amendement.user_table.user %}
+            <div>
+                {% if amendement.identique %}
+                    {% set identiques = amendement.all_identiques %}
+                    {% set identiques_length = identiques|length %}
+                    <p>
+                        <em>
+                            Identique au{% if identiques_length > 1 %}x{% endif %} nº
+                            {% for identique in identiques -%}
+                                <a href="{{ request.resource_url(context.parent[identique.num_str], 'reponse') }}">{{ identique }}</a>
+                                {% if identique.user_content.full_reponse() != amendement.user_content.full_reponse() %}
+                                    <span title="Cet amendement identique n’a pas une réponse similaire">⚠️</span>
+                                {% endif %}
+                                {% if loop.revindex == 2 and identiques_length > 1 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                            {%- endfor %}
+                        </em>
+                    </p>
+                {% endif %}
+            </div>
+            {{ form(amendement) }}
+        {% else %}
+            <div class="notice">
+                {% if amendement.user_table %}
+                    <p>Cet amendement est actuellement sur la table de <nobr class="user">{{ amendement.user_table.user }}</nobr>.</p>
+                {% endif %}
                 <p>
-                    <em>
-                        Identique au{% if identiques_length > 1 %}x{% endif %} nº
-                        {% for identique in identiques -%}
-                            <a href="{{ request.resource_url(context.parent[identique.num_str], 'reponse') }}">{{ identique }}</a>
-                            {% if identique.user_content.full_reponse() != amendement.user_content.full_reponse() %}
-                                <span title="Cet amendement identique n’a pas une réponse similaire">⚠️</span>
-                            {% endif %}
-                            {% if loop.revindex == 2 and identiques_length > 1 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                        {%- endfor %}
-                    </em>
+                    Pour pouvoir éditer cet amendement, il doit se trouver sur votre table.
                 </p>
-            {% endif %}
-        </div>
-        {{ form(amendement) }}
+                <form id="transfer" action="{{ request.resource_url(context.parent.parent['tables'], request.user.email) }}" method="POST">
+                    <input type="hidden" name="nums" value="{{ amendement.num }}">
+                    <input type="submit" class="button primary" value="Transférer sur ma table">
+                </form>
+            </div>
+            {{ reponse(amendement) }}
+        {% endif %}
     </section>
 {% endblock %}
 
@@ -141,6 +166,24 @@
         <h4>Corps de l’amendement</h4>
         <h5><a href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a></h5>
         {{ amendement.corps | safe }}
+    </div>
+{% endmacro %}
+
+
+{% macro reponse(amendement) %}
+    <div class="reponse">
+        <h4>Position du gouvernement</h4>
+        <p>{{ amendement.user_content.avis or '' }}</p>
+        <h4>Objet de l’amendement</h4>
+        {{ amendement.user_content.objet | paragriphy }}
+        <h4>
+            {% if not amendement.gouvernemental %}
+                Réponse à l’amendement
+            {% else %}
+                Présentation de l’amendement
+            {% endif %}
+        </h4>
+        {{ amendement.user_content.reponse | paragriphy }}
     </div>
 {% endmacro %}
 
@@ -216,18 +259,13 @@
         </div>
 
         <div class="form-group">
-            <label for="affectation">Affectation</label>
-            <input name="affectation" class="form-control" value="{{ amendement.user_content.affectation or '' }}">
-        </div>
-
-        <div class="form-group">
             <label for="comments">Commentaires</label>
             <textarea name="comments" class="form-control">{{ amendement.user_content.comments or "" | safe }}</textarea>
         </div>
 
         <div class="form-group save-buttons">
-            <a href="{{ back_url }}" class="arrow-left">Retourner aux amendements</a>
-            <input type="submit" name="submit" value="Enregistrer et retourner aux amendements" class="button enabled primary">
+            <a href="{{ back_url }}" class="arrow-left">Retour</a>
+            <input type="submit" name="submit" value="Enregistrer et retourner à ma table" class="button enabled primary">
         </div>
 
     </form>

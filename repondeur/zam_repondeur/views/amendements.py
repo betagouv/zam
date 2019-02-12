@@ -13,7 +13,6 @@ from zam_repondeur.models import AVIS
 from zam_repondeur.resources import AmendementResource
 from zam_repondeur.utils import add_url_fragment, add_url_params
 from zam_repondeur.models.events.amendement import (
-    AmendementTransfere,
     AvisAmendementModifie,
     ObjetAmendementModifie,
     ReponseAmendementModifiee,
@@ -46,24 +45,14 @@ class AmendementEdit:
         avis = self.request.POST.get("avis", "")
         objet = clean_html(self.request.POST.get("objet", ""))
         reponse = clean_html(self.request.POST.get("reponse", ""))
-        affectation = clean_html(self.request.POST.get("affectation", ""))
         comments = clean_html(self.request.POST.get("comments", ""))
 
         avis_changed = avis != self.amendement.user_content.avis
         objet_changed = objet != (self.amendement.user_content.objet or "")
         reponse_changed = reponse != (self.amendement.user_content.reponse or "")
-        affectation_changed = affectation != (
-            self.amendement.user_content.affectation or ""
-        )
         comments_changed = comments != (self.amendement.user_content.comments or "")
 
-        if (
-            avis_changed
-            or objet_changed
-            or reponse_changed
-            or affectation_changed
-            or comments_changed
-        ):
+        if avis_changed or objet_changed or reponse_changed or comments_changed:
             self.amendement.modified_at = now
             self.lecture.modified_at = now
 
@@ -75,9 +64,6 @@ class AmendementEdit:
 
         if reponse_changed:
             ReponseAmendementModifiee.create(self.request, self.amendement, reponse)
-
-        if affectation_changed:
-            AmendementTransfere.create(self.request, self.amendement, affectation)
 
         if comments_changed:
             self.amendement.user_content.comments = comments
@@ -93,7 +79,8 @@ class AmendementEdit:
     def back_url(self) -> str:
         url: str = self.request.GET.get("back")
         if url is None or not url.startswith("/"):
-            url = self.request.resource_url(self.context.parent)
+            my_table = self.context.lecture_resource["tables"][self.request.user.email]
+            url = self.request.resource_url(my_table)
         return add_url_fragment(url, self.amendement.slug)
 
     @property

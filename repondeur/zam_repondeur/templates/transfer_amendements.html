@@ -1,0 +1,76 @@
+{% extends "_base.html" %}
+
+{% block header %}
+    <style type="text/css">
+        form {
+            text-align: center;
+            width: 40rem;
+            margin: 0 auto;
+        }
+            form * {
+                width: 100%;
+            }
+            form h2 {
+                margin: 2.5rem 0;
+                font-weight: 600;
+            }
+            form label {
+                display: block;
+                text-align: left;
+                font-weight: 600;
+            }
+            form input[type="submit"] {
+                margin-top: 3rem;
+            }
+    </style>
+{% endblock %}
+
+{% block extra_nav %}
+    <li>
+        <a href="{{ request.resource_url(context['tables'], request.user.email) }}">
+            Ma table
+        </a>
+    </li>
+    <li>
+        <a href="{{ request.resource_url(context['amendements']) }}">
+            Index
+        </a>
+    </li>
+    {% if lecture.displayable %}
+        <li>
+            <a href="{{ request.resource_url(context['articles']) }}" target="_blank">
+                Le dossier de banc
+            </a>
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <form id="transfer-amendements" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
+        <h2>
+            Transférer
+            {% if amendements|length > 1 %}
+                les amendements
+            {% else %}
+                l’amendement
+            {% endif %}
+            {% for amendement in amendements %}
+                <a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>
+                <input type="hidden" name="nums" value="{{ amendement.num }}">
+                {% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+            {% endfor %}
+        </h2>
+        <div>
+            <label for="target">Destinataire :</label>
+            <select name="target">
+                <option selected value="{{ request.user.email }}">À moi ({{ request.user.name }})</option>
+                {% for user in users %}
+                    <option value="{{ user.email }}">À {{ user }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <input type="submit" name="submit" value="Transférer" class="button primary">
+        </div>
+    </form>
+{% endblock %}

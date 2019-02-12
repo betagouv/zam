@@ -11,7 +11,7 @@ import pytest
         ("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
     ],
 )
-def test_download(app, lecture_an, format_, content_type):
+def test_download(app, lecture_an, amendements_an, format_, content_type):
 
     with patch("zam_repondeur.fetch.get_amendements") as mock:
         mock.return_value = [], []

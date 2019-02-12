@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 import pytest
 
 
@@ -13,13 +11,11 @@ import pytest
 )
 def test_download(app, lecture_an, amendements_an, format_, content_type):
 
-    with patch("zam_repondeur.fetch.get_amendements") as mock:
-        mock.return_value = [], []
-        resp = app.get(
-            "/lectures/an.15.269.PO717460/download_amendements",
-            {"format": format_},
-            user="user@example.com",
-        )
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/download_amendements",
+        {"format": format_},
+        user="user@example.com",
+    )
 
     assert resp.status_code == 200
     assert resp.content_type == content_type

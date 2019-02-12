@@ -323,7 +323,7 @@ function toggleGroupActions(target, checkboxes) {
         target.querySelector('#transfer-amendements'),
         checkeds
     )
-    changeURLGivenChecks(target.querySelector('#custom-pdf'), checkeds)
+    changeURLGivenChecks(target.querySelector('#export-pdf'), checkeds)
 }
 
 function selectMultiple(checkboxes) {

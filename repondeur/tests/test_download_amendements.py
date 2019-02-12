@@ -42,19 +42,6 @@ def test_download_bad_format(app, lecture_an):
     assert 'Invalid value "docx" for "format" param' in resp.text
 
 
-def test_download_one_amendement(app, lecture_an, amendements_an):
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/download_amendement",
-        user="user@example.com",
-    )
-    assert resp.status_code == 200
-    assert resp.content_type == "application/pdf"
-    assert (
-        resp.headers["Content-Disposition"]
-        == f"attachment; filename=amendement-999-an-15-269-PO717460.pdf"
-    )
-
-
 def test_download_multiple_amendements(app, lecture_an, amendements_an):
     resp = app.get(
         "/lectures/an.15.269.PO717460/export_pdf?nums=666&nums=999",

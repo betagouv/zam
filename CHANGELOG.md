@@ -1,6 +1,11 @@
-### Prochains évènements
+### Perspectives
 
 #### Date de prochaine démonstration : 13 février à 15h.
+
+#### Rappel des objectifs prioritaires des développements 2019 
+- guider les utilisateurs en mettant en avant les amendements qui leur sont affectés et en permettant le transfert d'un amendement d'une personne à une autre
+- conserver la trace des éditions successives sur l'amendement (chemin de validation)
+- fiabiliser l'outil au regard des volumes d'utilisateurs/amendements et des flux du Parlement
 
 <h2 class="center">[Accès au répondeur](/repondeur/) • [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
 

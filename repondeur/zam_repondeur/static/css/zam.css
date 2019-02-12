@@ -290,11 +290,11 @@ path {
 .last-update {
     text-align: center;
 }
-.highlight {
+.notice {
     border: 6px solid #c2e0ff;
     padding: 1rem;
 }
-    .highlight form {
+    .notice form {
         text-align: right;
     }
 nobr.user {

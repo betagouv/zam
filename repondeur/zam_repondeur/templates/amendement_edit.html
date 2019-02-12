@@ -135,7 +135,7 @@
             </div>
             {{ form(amendement) }}
         {% else %}
-            <div class="highlight">
+            <div class="notice">
                 {% if amendement.user_table %}
                     <p>Cet amendement est actuellement sur la table de <nobr class="user">{{ amendement.user_table.user }}</nobr>.</p>
                 {% endif %}

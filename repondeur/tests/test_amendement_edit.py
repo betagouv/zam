@@ -27,7 +27,8 @@ def test_get_amendement_edit_form(app, lecture_an, amendements_an, user_david):
         "objet",
         "reponse",
         "comments",
-        "submit",
+        "save-and-transfer",
+        "save",
     ]
     assert resp.forms["prefill-reponse"].method == "POST"
 
@@ -130,7 +131,8 @@ def test_get_amendement_edit_form_gouvernemental(
         "objet",
         "reponse",
         "comments",
-        "submit",
+        "save-and-transfer",
+        "save",
     ]
     assert resp.forms.get("prefill-reponse") is None
 
@@ -168,12 +170,63 @@ def test_post_amendement_edit_form(app, lecture_an, amendements_an, user_david):
     form["objet"] = "Un objet très pertinent"
     form["reponse"] = "Une réponse <strong>très</strong> appropriée"
     form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
-    resp = form.submit()
+    resp = form.submit("save")
 
     assert resp.status_code == 302
     assert (
         resp.location
         == "https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com/#amdt-999"  # noqa
+    )
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    assert amendement.user_content.avis == "Favorable"
+    assert amendement.user_content.objet == "Un objet très pertinent"
+    assert (
+        amendement.user_content.reponse
+        == "Une réponse <strong>très</strong> appropriée"
+    )
+    assert (
+        amendement.user_content.comments
+        == "Avec des <table><tbody><tr><td>commentaires</td></tr></tbody></table>"
+    )
+    assert initial_amendement_modified_at < amendement.modified_at
+
+    # Should create events.
+    assert len(amendement.events) == 3
+
+
+def test_post_amendement_edit_form_and_transfer(
+    app, lecture_an, amendements_an, user_david
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    amendement = amendements_an[1]
+    with transaction.manager:
+        DBSession.add(amendement)
+        table = user_david.table_for(lecture_an)
+        table.amendements.append(amendement)
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    assert amendement.user_content.avis is None
+    assert amendement.user_content.objet is None
+    assert amendement.user_content.reponse is None
+    initial_amendement_modified_at = amendement.modified_at
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
+        user=user_david.email,
+    )
+    form = resp.forms["edit-amendement"]
+    form["avis"] = "Favorable"
+    form["objet"] = "Un objet très pertinent"
+    form["reponse"] = "Une réponse <strong>très</strong> appropriée"
+    form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
+    resp = form.submit("save-and-transfer")
+
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == "https://zam.test/lectures/an.15.269.PO717460/transfer_amendements?nums=999"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -219,7 +272,7 @@ def test_post_amendement_edit_form_gouvernemental(
     form = resp.forms["edit-amendement"]
     form["reponse"] = "Une réponse <strong>très</strong> appropriée"
     form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
-    resp = form.submit()
+    resp = form.submit("save")
 
     assert resp.status_code == 302
     assert (
@@ -271,7 +324,7 @@ def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
     # Even with extra spaces.
     form["objet"] = "Un objet très pertinent  "
     form["reponse"] = "  Une réponse très appropriée"
-    form.submit()
+    form.submit("save")
 
     # The lecture modification date should not be updated
     lecture = Lecture.get(

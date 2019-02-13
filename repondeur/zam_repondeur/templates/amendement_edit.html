@@ -63,7 +63,12 @@
             bottom: 0;
             background: white;
             padding: 1rem;
+            flex-wrap: wrap;
         }
+            #edit-amendement .save-buttons input[name="save-and-transfer"] {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
     </style>
 {% endblock %}
 
@@ -265,8 +270,9 @@
         </div>
 
         <div class="form-group save-buttons">
+            <input type="submit" name="save-and-transfer" value="Enregistrer et transférer" class="button enabled primary">
             <a href="{{ back_url }}" class="arrow-left">Retour</a>
-            <input type="submit" name="submit" value="Enregistrer et retourner à ma table" class="button enabled primary">
+            <input type="submit" name="save" value="Enregistrer" class="button primary">
         </div>
 
     </form>

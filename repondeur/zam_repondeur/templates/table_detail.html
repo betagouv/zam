@@ -171,8 +171,8 @@
                 </div>
             </div>
             <div class="amendement-card-avis">
-                <div class="menu">
-                    <a class="options"></a>
+                <div class="menu" data-controller="menu">
+                    <a class="options" data-action="menu#toggle" href="#"></a>
                     <div class="details">
                         <nav>
                             <a href="{{ request.resource_url(context.parent.parent, 'transfer_amendements', query={'nums': amendement.num}) }}">Transférer</a>
@@ -220,13 +220,15 @@
 
 
 {% block scripts %}
-    <script type="text/javascript">
-        ;(_ => {
-            const menuButtons = document.querySelectorAll('.menu .options')
-            menuButtons.forEach(menuButton => {
-                menuButton.addEventListener('click', e => {
-                    menuButton.parentNode.classList.toggle('open')
-                })
+    <script src="{{ request.static_url('zam_repondeur:static/js/stimulus.js') }}"></script>
+    <script>
+        ;(() => {
+            const application = Stimulus.Application.start()
+            application.register('menu', class extends Stimulus.Controller {
+                toggle(event) {
+                    event.preventDefault()
+                    this.element.classList.toggle('open')
+                }
             })
         })()
     </script>

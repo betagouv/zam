@@ -86,7 +86,7 @@ def test_tables_grab_amendement(app, lecture_an, amendements_an, user_david):
     email = user_david.email
     resp = app.post(
         f"/lectures/an.15.269.PO717460/tables/{email}",
-        {"nums": [amendements_an[0].num]},
+        {"nums": [amendements_an[0].num], "target": email},
         user=email,
     )
     assert resp.status_code == 302
@@ -116,7 +116,7 @@ def test_tables_grab_amendements(app, lecture_an, amendements_an, user_david):
     email = user_david.email
     resp = app.post(
         f"/lectures/an.15.269.PO717460/tables/{email}",
-        {"nums": [amendements_an[0].num, amendements_an[1].num]},
+        {"nums": [amendements_an[0].num, amendements_an[1].num], "target": email},
         user=email,
     )
     assert resp.status_code == 302
@@ -221,89 +221,130 @@ def test_tables_release_amendements(app, lecture_an, amendements_an, user_david)
     )
 
 
-def test_tables_transfer_amendement(
-    app, lecture_an, amendements_an, user_david, user_ronan
-):
-    from zam_repondeur.models import DBSession, User
+class TestTransfer:
+    def test_transfer_one_amendement_to_someone_else(
+        self, app, lecture_an, amendements_an, user_david, user_ronan
+    ):
+        from zam_repondeur.models import DBSession, User
 
-    with transaction.manager:
-        DBSession.add_all([user_david, user_ronan])
+        with transaction.manager:
+            DBSession.add_all([user_david, user_ronan])
+            table_david = user_david.table_for(lecture_an)
+            table_david.amendements.append(amendements_an[0])
+            assert len(user_david.table_for(lecture_an).amendements) == 1
+            assert len(user_ronan.table_for(lecture_an).amendements) == 0
+
+        email = user_david.email
+        resp = app.post(
+            f"/lectures/an.15.269.PO717460/tables/{email}",
+            {"nums": [amendements_an[0].num], "target": user_ronan.email},
+            user=email,
+        )
+        assert resp.status_code == 302
+        assert (
+            resp.location
+            == f"https://zam.test/lectures/an.15.269.PO717460/tables/{email}"
+        )
+        user_david = (
+            DBSession.query(User).filter(User.email == user_david.email).first()
+        )
         table_david = user_david.table_for(lecture_an)
-        table_david.amendements.append(amendements_an[0])
-        assert len(user_david.table_for(lecture_an).amendements) == 1
-        assert len(user_ronan.table_for(lecture_an).amendements) == 0
+        user_ronan = (
+            DBSession.query(User).filter(User.email == user_ronan.email).first()
+        )
+        table_ronan = user_ronan.table_for(lecture_an)
+        assert len(table_david.amendements) == 0
+        assert len(table_ronan.amendements) == 1
+        assert table_ronan.amendements[0].num == amendements_an[0].num
+        assert table_ronan.amendements[0].lecture == amendements_an[0].lecture
+        assert len(table_ronan.amendements[0].events) == 1
+        assert table_ronan.amendements[0].events[0].render_summary() == (
+            "<abbr title='david@example.com'>David</abbr> "
+            "a transféré l’amendement à « Ronan (ronan@example.com) »"
+        )
 
-    email = user_david.email
-    resp = app.post(
-        f"/lectures/an.15.269.PO717460/tables/{email}",
-        {"nums": [amendements_an[0].num], "target": user_ronan.email},
-        user=email,
-    )
-    assert resp.status_code == 302
-    assert (
-        resp.location == f"https://zam.test/lectures/an.15.269.PO717460/tables/{email}"
-    )
-    user_david = DBSession.query(User).filter(User.email == user_david.email).first()
-    table_david = user_david.table_for(lecture_an)
-    user_ronan = DBSession.query(User).filter(User.email == user_ronan.email).first()
-    table_ronan = user_ronan.table_for(lecture_an)
-    assert len(table_david.amendements) == 0
-    assert len(table_ronan.amendements) == 1
-    assert table_ronan.amendements[0].num == amendements_an[0].num
-    assert table_ronan.amendements[0].lecture == amendements_an[0].lecture
-    assert len(table_ronan.amendements[0].events) == 1
-    assert table_ronan.amendements[0].events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
-        "a transféré l’amendement à « Ronan (ronan@example.com) »"
-    )
+    def test_transfer_one_amendement_to_myself_is_a_no_op(
+        self, app, lecture_an, amendements_an, user_david
+    ):
+        from zam_repondeur.models import DBSession, User
 
+        with transaction.manager:
+            DBSession.add(user_david)
+            table_david = user_david.table_for(lecture_an)
+            table_david.amendements.append(amendements_an[0])
+            assert len(user_david.table_for(lecture_an).amendements) == 1
 
-def test_tables_transfer_amendements(
-    app, lecture_an, amendements_an, user_david, user_ronan
-):
-    from zam_repondeur.models import DBSession, User
-
-    with transaction.manager:
-        DBSession.add_all([user_david, user_ronan])
+        email = user_david.email
+        resp = app.post(
+            f"/lectures/an.15.269.PO717460/tables/{email}",
+            {"nums": [amendements_an[0].num], "target": email},
+            user=email,
+        )
+        assert resp.status_code == 302
+        assert (
+            resp.location
+            == f"https://zam.test/lectures/an.15.269.PO717460/tables/{email}"
+        )
+        user_david = (
+            DBSession.query(User).filter(User.email == user_david.email).first()
+        )
         table_david = user_david.table_for(lecture_an)
-        table_david.amendements.append(amendements_an[0])
-        table_david.amendements.append(amendements_an[1])
-        assert len(user_david.table_for(lecture_an).amendements) == 2
-        assert len(user_ronan.table_for(lecture_an).amendements) == 0
+        assert len(table_david.amendements) == 1
+        assert table_david.amendements[0].num == amendements_an[0].num
+        assert table_david.amendements[0].lecture == amendements_an[0].lecture
+        assert len(table_david.amendements[0].events) == 0
 
-    email = user_david.email
-    resp = app.post(
-        f"/lectures/an.15.269.PO717460/tables/{email}",
-        {
-            "nums": [amendements_an[0].num, amendements_an[1].num],
-            "target": user_ronan.email,
-        },
-        user=email,
-    )
-    assert resp.status_code == 302
-    assert (
-        resp.location == f"https://zam.test/lectures/an.15.269.PO717460/tables/{email}"
-    )
-    user_david = DBSession.query(User).filter(User.email == user_david.email).first()
-    table_david = user_david.table_for(lecture_an)
-    user_ronan = DBSession.query(User).filter(User.email == user_ronan.email).first()
-    table_ronan = user_ronan.table_for(lecture_an)
-    assert len(table_david.amendements) == 0
-    assert len(table_ronan.amendements) == 2
-    assert table_ronan.amendements[0].num == amendements_an[0].num
-    assert table_ronan.amendements[0].lecture == amendements_an[0].lecture
-    assert len(table_ronan.amendements[0].events) == 1
-    assert table_ronan.amendements[0].events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
-        "a transféré l’amendement à « Ronan (ronan@example.com) »"
-    )
-    assert table_ronan.amendements[1].num == amendements_an[1].num
-    assert table_ronan.amendements[1].lecture == amendements_an[1].lecture
-    assert len(table_ronan.amendements[1].events) == 1
-    assert table_ronan.amendements[1].events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
-        "a transféré l’amendement à « Ronan (ronan@example.com) »"
-    )
+    def test_transfer_multiple_amendements_to_someone_else(
+        self, app, lecture_an, amendements_an, user_david, user_ronan
+    ):
+        from zam_repondeur.models import DBSession, User
+
+        with transaction.manager:
+            DBSession.add_all([user_david, user_ronan])
+            table_david = user_david.table_for(lecture_an)
+            table_david.amendements.append(amendements_an[0])
+            table_david.amendements.append(amendements_an[1])
+            assert len(user_david.table_for(lecture_an).amendements) == 2
+            assert len(user_ronan.table_for(lecture_an).amendements) == 0
+
+        email = user_david.email
+        resp = app.post(
+            f"/lectures/an.15.269.PO717460/tables/{email}",
+            {
+                "nums": [amendements_an[0].num, amendements_an[1].num],
+                "target": user_ronan.email,
+            },
+            user=email,
+        )
+        assert resp.status_code == 302
+        assert (
+            resp.location
+            == f"https://zam.test/lectures/an.15.269.PO717460/tables/{email}"
+        )
+        user_david = (
+            DBSession.query(User).filter(User.email == user_david.email).first()
+        )
+        table_david = user_david.table_for(lecture_an)
+        user_ronan = (
+            DBSession.query(User).filter(User.email == user_ronan.email).first()
+        )
+        table_ronan = user_ronan.table_for(lecture_an)
+        assert len(table_david.amendements) == 0
+        assert len(table_ronan.amendements) == 2
+        assert table_ronan.amendements[0].num == amendements_an[0].num
+        assert table_ronan.amendements[0].lecture == amendements_an[0].lecture
+        assert len(table_ronan.amendements[0].events) == 1
+        assert table_ronan.amendements[0].events[0].render_summary() == (
+            "<abbr title='david@example.com'>David</abbr> "
+            "a transféré l’amendement à « Ronan (ronan@example.com) »"
+        )
+        assert table_ronan.amendements[1].num == amendements_an[1].num
+        assert table_ronan.amendements[1].lecture == amendements_an[1].lecture
+        assert len(table_ronan.amendements[1].events) == 1
+        assert table_ronan.amendements[1].events[0].render_summary() == (
+            "<abbr title='david@example.com'>David</abbr> "
+            "a transféré l’amendement à « Ronan (ronan@example.com) »"
+        )
 
 
 def test_tables_steal_amendement(

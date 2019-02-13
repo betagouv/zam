@@ -1,9 +1,11 @@
+from typing import List, Optional
+
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
-from zam_repondeur.models import DBSession, Amendement, User
+from zam_repondeur.models import DBSession, Amendement, User, UserTable
 from zam_repondeur.models.events.amendement import AmendementTransfere
 from zam_repondeur.resources import TableResource
 
@@ -36,27 +38,27 @@ class TableView:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        nums = self.request.POST.getall("nums")
-        target = self.request.POST.get("target")
-        old = ""
-        new = ""
-        if target is None or target == self.owner.email:
-            target = self.owner
-        else:
-            target = DBSession.query(User).filter(User.email == target).first()
+        """
+        Transfer amendement(s) from this table to another one, or back to the index
+        """
+        nums: List[int] = self.request.POST.getall("nums")
+        target: str = self.request.POST.get("target")
+
+        target_table: Optional[UserTable] = None
+        if target:
+            target_user: User = DBSession.query(User).filter(User.email == target).one()
+            target_table = target_user.table_for(self.lecture)
+
         amendements = DBSession.query(Amendement).filter(
             Amendement.lecture == self.lecture, Amendement.num.in_(nums)  # type: ignore
         )
+
         for amendement in amendements:
-            if amendement in target.table_for(self.lecture).amendements:
-                amendement.user_table = None
-                old = str(target)
-            else:
-                if amendement.user_table:
-                    old = str(amendement.user_table.user)
-                new = str(target)
-                table = target.table_for(self.lecture)
-                table.amendements.append(amendement)
+            old = str(amendement.user_table.user) if amendement.user_table else ""
+            new = str(target_table.user) if target_table else ""
+            if amendement.user_table is target_table:
+                continue
+            amendement.user_table = target_table
             AmendementTransfere.create(self.request, amendement, old, new)
         return HTTPFound(
             location=self.request.resource_url(self.context.parent, self.owner.email)

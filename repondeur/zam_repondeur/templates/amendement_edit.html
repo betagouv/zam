@@ -144,6 +144,7 @@
                 </p>
                 <form id="transfer" action="{{ request.resource_url(context.parent.parent['tables'], request.user.email) }}" method="POST">
                     <input type="hidden" name="nums" value="{{ amendement.num }}">
+                    <input type="hidden" name="target" value="{{ request.user.email }}">
                     <input type="submit" class="button primary" value="Transférer sur ma table">
                 </form>
             </div>

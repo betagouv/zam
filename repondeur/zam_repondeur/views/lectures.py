@@ -173,13 +173,24 @@ def list_amendements(context: AmendementCollection, request: Request) -> dict:
 )
 def transfer_amendements(context: LectureResource, request: Request) -> dict:
     lecture = context.model()
+    my_table = request.user.table_for(lecture)
     amendements_nums: list = request.GET.getall("nums")
     amendements = DBSession.query(Amendement).filter(
         Amendement.lecture_pk == lecture.pk,
         Amendement.num.in_(amendements_nums),  # type: ignore
     )
     users = DBSession.query(User).filter(User.email != request.user.email)
-    return {"lecture": lecture, "amendements": list(amendements), "users": users}
+    return {
+        "lecture": lecture,
+        "amendements": list(amendements),
+        "users": users,
+        "show_transfer_to_index": any(
+            amendement.user_table is not None for amendement in amendements
+        ),
+        "show_transfer_to_myself": any(
+            amendement.user_table is not my_table for amendement in amendements
+        ),
+    }
 
 
 @view_config(context=LectureResource, name="manual_refresh")

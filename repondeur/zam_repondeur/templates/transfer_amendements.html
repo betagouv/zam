@@ -63,7 +63,12 @@
         <div>
             <label for="target">Destinataire :</label>
             <select name="target">
-                <option selected value="{{ request.user.email }}">À moi ({{ request.user.name }})</option>
+                {% if show_transfer_to_index %}
+                    <option {% if not show_transfer_to_index %}selected {% endif %} value="">À l’index</option>
+                {% endif %}
+                {% if show_transfer_to_myself %}
+                    <option selected value="{{ request.user.email }}">À moi ({{ request.user.email }})</option>
+                {% endif %}
                 {% for user in users %}
                     <option value="{{ user.email }}">À {{ user }}</option>
                 {% endfor %}

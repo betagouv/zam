@@ -146,7 +146,7 @@
                 </div>
                 <form action="{{ request.resource_url(context.parent, request.user.email) }}" method="POST" id="release-amendement">
                     <input type="hidden" name="nums" value="{{ amendement.num }}">
-                    <input type="hidden" name="target" value="{{ request.user.email }}">
+                    <input type="hidden" name="target" value="">
                     <input type="submit" name="submit" class="button" value="Libérer">
                     <a href="{{ request.resource_url(context.parent.parent, 'transfer_amendements') }}?nums={{ amendement.num }}" class="button primary">Transférer</a>
                 </form>

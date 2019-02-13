@@ -9,7 +9,48 @@
     .box {
         margin: 0 3rem 2rem 3rem;
         padding: 1rem;
+        position: relative;
     }
+    .menu {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+    }
+        .menu .options {
+            display: block;
+            width: 1.5rem;
+            height: 1.5rem;
+            background-image: url("{{ request.static_url('zam_repondeur:static/img/options.svg') }}");
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .menu .options:hover,
+        .menu.open .options {
+            background-color: white;
+            border: 1px solid #CCC;
+            border-radius: 4px;
+        }
+        .menu .details {
+            display: none;
+            position: absolute;
+            top: 25px;
+            right: 0;
+            background-color: white;
+            padding: 0.5rem 1rem;
+            border: 1px solid #CCC;
+            border-radius: 4px;
+            box-shadow: 4px 4px 2px #EEE;
+        }
+        .menu.open .details {
+            display: block;
+        }
+        .menu .details nav {
+            display: flex;
+            flex-direction: column;
+        }
+        .menu .details nav input.text {
+            -webkit-appearance: ;
+        }
     .notice {
         margin: 3rem;
     }
@@ -130,6 +171,15 @@
                 </div>
             </div>
             <div class="amendement-card-avis">
+                <div class="menu">
+                    <a class="options"></a>
+                    <div class="details">
+                        <nav>
+                            <a href="{{ request.resource_url(context.parent.parent, 'transfer_amendements', query={'nums': amendement.num}) }}">Transférer</a>
+                            <a href="{{ request.resource_url(context.parent.parent, 'export_pdf', query={'nums': amendement.num}) }}">Exporter en PDF</a>
+                        </nav>
+                    </div>
+                </div>
                 <div>
                     {% if is_owner %}
                         {% set edit_url = request.resource_url(context.parent.parent['amendements'][amendement.num_str], 'amendement_edit') %}
@@ -152,12 +202,6 @@
                         {{ amendement.user_content.avis or "Aucun" }}
                     {% endif %}
                 </div>
-                <form action="{{ request.resource_url(context.parent, request.user.email) }}" method="POST" id="release-amendement">
-                    <input type="hidden" name="nums" value="{{ amendement.num }}">
-                    <input type="hidden" name="target" value="">
-                    <input type="submit" name="submit" class="button" value="Libérer">
-                    <a href="{{ request.resource_url(context.parent.parent, 'transfer_amendements') }}?nums={{ amendement.num }}" class="button primary">Transférer</a>
-                </form>
             </div>
         </div>
     {% else %}
@@ -172,4 +216,18 @@
             {% endif %}
         </div>
     {% endfor %}
+{% endblock %}
+
+
+{% block scripts %}
+    <script type="text/javascript">
+        (_ => {
+            const menuButtons = document.querySelectorAll('.menu .options')
+            menuButtons.forEach(element => {
+                element.addEventListener('click', e => {
+                    element.parentNode.classList.toggle('open')
+                })
+            })
+        })();
+    </script>
 {% endblock %}

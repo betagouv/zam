@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% import "macros.html" as macros %}
 
 {% block header %}
 <style type="text/css">
@@ -6,10 +7,8 @@
         margin-bottom: 2rem;
     }
     .box {
-        text-align: center;
-    }
-    .box p:last-child {
-        margin-bottom: 0;
+        margin: 0 3rem 2rem 3rem;
+        padding: 1rem;
     }
     .notice {
         margin: 3rem;
@@ -33,20 +32,51 @@
     .amendement-card {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: stretch;
     }
         .amendement-card p {
-            margin: .4rem 0;
+            margin: 1rem 0;
         }
         .amendement-card-infos {
-            max-width: 40rem;
+            flex-basis: 40rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
         }
+            .amendement-card-infos .article {
+                font-style: italic;
+                text-decoration: underline;
+            }
+            .amendement-card-infos .numero {
+                font-weight: 600;
+            }
+            .amendement-card-infos .auteur {
+                font-style: italic;
+            }
         .amendement-card-avis {
-            min-width: 10rem;
+            flex-basis: 13rem;
             display: flex;
             flex-direction: column;
             justify-content: space-around;
+            white-space: nowrap;
         }
+            .amendement-card-avis .button {
+                margin: 0.5rem;
+            }
+            .amendement-card-avis .icon.favorable {
+                color: #83d524;
+            }
+            .amendement-card-avis .icon.sagesse {
+                color: #6db4ff;
+            }
+            .amendement-card-avis .icon.defavorable {
+                color: #d0021b;
+            }
+            .amendement-card-avis a.avis {
+                color: inherit;
+                text-decoration: underline;
+            }
 </style>
 {% endblock %}
 
@@ -64,23 +94,56 @@
 {% endblock %}
 
 {% block body %}
+    <svg aria-hidden="true" style="position: absolute; width: 0; height: 0;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <defs>
+            <symbol id="person" viewBox="0 0 13 14">
+                <path fill="#4A4A4A" fill-rule="evenodd" d="M6.5 6.588c1.796 0 3.25-1.474 3.25-3.294S8.296 0 6.5 0 3.25 1.474 3.25 3.294 4.704 6.588 6.5 6.588zm0 1.647c-2.17 0-6.5 1.288-6.5 3.843V14h13v-1.922c0-2.555-4.33-3.843-6.5-3.843z"/>
+            </symbol>
+            <symbol id="edit" viewBox="0 0 22 22">
+                <path fill="#000" fill-rule="evenodd" d="M2.67 18.045l.644 3.658 3.658-.645 8.884-12.689-4.302-3.012L2.67 18.045zM18.637 4.87a1.088 1.088 0 0 0-.268-1.518l-2.962-2.074a1.088 1.088 0 0 0-1.517.268L12.27 3.862l4.747 3.324 1.622-2.316z"/>
+            </symbol>
+        </defs>
+    </svg>
     <h1>Ma table</h1>
     {% for amendement in amendements %}
         <div class="box amendement-card">
             <div class="amendement-card-infos">
-                <p>{{ amendement.article.format() }} - Nº&nbsp;<strong>{{ amendement }}</strong></p>
-                <p>{{ amendement.user_content.objet | paragriphy }}</p>
-                <p><em>{{ amendement.groupe }} ({{ amendement.auteur }})</em></p>
+                <div class="entete">
+                    <span class="article">{{ amendement.article.format() }}</span>
+                    -
+                    Nº&nbsp;<span class="numero">{{ amendement }}</span>
+                </div>
+                <div class="objet">
+                    {{ amendement.user_content.objet | paragriphy }}
+                </div>
+                <div class="auteur">
+                    {{ macros.svg_icon("person") }}
+                    {{ amendement.groupe }} ({{ amendement.auteur }})
+                </div>
             </div>
             <div class="amendement-card-avis">
-                <p>
-                    Avis :
+                <div>
                     {% if is_owner %}
-                        <a href="{{ request.resource_url(context.parent.parent['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement.user_content.avis or "Aucun" }}</a>
+                        {% set edit_url = request.resource_url(context.parent.parent['amendements'][amendement.num_str], 'amendement_edit') %}
+                        {% if amendement.user_content.avis %}
+                            {% if amendement.user_content.favorable %}
+                                {% set icon_class = "favorable" %}
+                            {% elif amendement.user_content.sagesse %}
+                                {% set icon_class = "sagesse" %}
+                            {% else %}
+                                {% set icon_class = "defavorable" %}
+                            {% endif %}
+                            {{ macros.svg_icon("edit", icon_class) }}
+                            <a class="avis" href="{{ edit_url }}">
+                                {{ amendement.user_content.avis }}
+                            </a>
+                        {% else %}
+                            <a class="primary button enabled" href="{{ edit_url }}">Donner un avis</a>
+                        {% endif %}
                     {% else %}
                         {{ amendement.user_content.avis or "Aucun" }}
                     {% endif %}
-                </p>
+                </div>
                 <form action="{{ request.resource_url(context.parent, request.user.email) }}" method="POST" id="release-amendement">
                     <input type="hidden" name="nums" value="{{ amendement.num }}">
                     <input type="hidden" name="target" value="{{ request.user.email }}">

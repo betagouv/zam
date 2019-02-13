@@ -28,8 +28,8 @@ def test_tables_with_amendement(app, lecture_an, amendements_an, user_david):
 
     assert resp.status_code == 200
     assert "Ma table" in resp.text
-    assert f"Nº&nbsp;<strong>{amendements_an[0]}</strong>" in resp.text
-    assert f"Nº&nbsp;<strong>{amendements_an[1]}</strong>" not in resp.text
+    assert f'Nº&nbsp;<span class="numero">{amendements_an[0]}</span>' in resp.text
+    assert f'Nº&nbsp;<span class="numero">{amendements_an[1]}</span>' not in resp.text
 
 
 def test_tables_can_release_amendement(app, lecture_an, amendements_an, user_david):
@@ -43,7 +43,7 @@ def test_tables_can_release_amendement(app, lecture_an, amendements_an, user_dav
 
     email = user_david.email
     resp = app.get(f"/lectures/an.15.269.PO717460/tables/{email}", user=email)
-    assert f"Nº&nbsp;<strong>{amendements_an[0]}</strong>" in resp.text
+    assert f'Nº&nbsp;<span class="numero">{amendements_an[0]}</span>' in resp.text
 
     form = resp.forms["release-amendement"]
     assert list(form.fields.keys()) == ["nums", "target", "submit"]
@@ -55,7 +55,7 @@ def test_tables_can_release_amendement(app, lecture_an, amendements_an, user_dav
     )
 
     resp = app.get(resp.location, user=email)
-    assert f"Nº&nbsp;<strong>{amendements_an[0]}</strong>" not in resp.text
+    assert f'Nº&nbsp;<span class="numero">{amendements_an[0]}</span>' not in resp.text
 
 
 def test_tables_can_transfer_amendement(app, lecture_an, amendements_an, user_david):

@@ -8,8 +8,6 @@
 - conserver la trace des éditions successives sur l’amendement (chemin de validation)
 - fiabiliser l’outil au regard des volumes d’utilisateurs/amendements et des flux du Parlement
 
-<h2 class="center">[Accès au répondeur](/repondeur/) • [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>
-
 ### Changements récents
 
 #### 12 février 2019
@@ -285,5 +283,3 @@
 #### 10 juillet 2018
 
 *   Édition des titres des articles depuis la liste des amendements
-
-<h2 class="center">[Accès au répondeur](/repondeur/) • [Effectuer des retours](mailto:contact@zam.beta.gouv.fr)</h2>

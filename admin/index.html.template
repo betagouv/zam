@@ -7,13 +7,10 @@
         font-size: 20px;
         margin: 0;
     }
-    header h2,
-    main * {
-        max-width: 55rem;
-        margin: 0 auto;
-    }
-    header.main > h2 {
-        margin: auto;
+    h2 {
+        margin: 2rem auto;
+        text-align: center;
+        font-weight: 600;
     }
     h3,
     h4 {
@@ -46,11 +43,17 @@
         display: none; /* Useful for marp/pdf generation */
     }
 </style>
-<header class="main">
+<nav class="main">
+    <ul></ul>
+    <ul>
+        <li><a href="/repondeur/">Accéder au répondeur</a></li>
+        <li><a href="mailto:contact@zam.beta.gouv.fr">Effectuer des retours</a></li>
+    </ul>
+    <ul></ul>
+</nav>
+<main role="main" class="box">
     <h2>
         Zam : alléger la charge de préparation par le gouvernement du débat parlementaire.
     </h2>
-</header>
-<main role="main" class="container-fluid">
 $$content
 </main

@@ -72,8 +72,17 @@ class AmendementEdit:
         self.request.session.flash(
             Message(cls="success", text="Les modifications ont bien été enregistrées.")
         )
-        self.request.session["highlighted_amdt"] = self.amendement.slug
-        return HTTPFound(location=self.back_url)
+        if "save-and-transfer" in self.request.POST:
+            return HTTPFound(
+                location=self.request.resource_url(
+                    self.context.parent.parent,
+                    "transfer_amendements",
+                    query={"nums": self.amendement.num},
+                )
+            )
+        else:
+            self.request.session["highlighted_amdt"] = self.amendement.slug
+            return HTTPFound(location=self.back_url)
 
     @reify
     def back_url(self) -> str:

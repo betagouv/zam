@@ -221,13 +221,13 @@
 
 {% block scripts %}
     <script type="text/javascript">
-        (_ => {
+        ;(_ => {
             const menuButtons = document.querySelectorAll('.menu .options')
-            menuButtons.forEach(element => {
-                element.addEventListener('click', e => {
-                    element.parentNode.classList.toggle('open')
+            menuButtons.forEach(menuButton => {
+                menuButton.addEventListener('click', e => {
+                    menuButton.parentNode.classList.toggle('open')
                 })
             })
-        })();
+        })()
     </script>
 {% endblock %}

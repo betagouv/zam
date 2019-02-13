@@ -357,12 +357,14 @@
 </div>
 {% endblock %}
 
+{% block check_url %}{{ check_url }}{% endblock %}
+{% block check_timestamp %}{{ timestamp }}{% endblock %}
+{% block check_interval %}60 {# seconds #}{% endblock %}
 
 {% block scripts %}
 <script src="{{ request.static_url('zam_repondeur:static/tinysort/tinysort.min.js') }}"></script>
 <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
 <script type="text/javascript">
-    notifyOnUpdates(60 /* seconds */, '{{ timestamp }}', '{{ check_url }}')
     setupToggle('#toggle-advanced', '#advanced', false)
     setupToggle('#toggle-filter', 'tr.filters', false)
     setupToggle('#toggle-articles', '#articles', true)

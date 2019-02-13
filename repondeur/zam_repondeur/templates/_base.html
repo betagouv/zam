@@ -38,11 +38,25 @@
         {% block body %}
         {% endblock %}
         {# See https://inclusive-components.design/notifications/ #}
-        <div role="status" aria-live="polite"></div>
+        <div role="status" aria-live="polite" class="d-none"
+            data-controller="notifications"
+            data-notifications-check-url="{% block check_url %}{% endblock %}"
+            data-notifications-check-timestamp="{% block check_timestamp %}{% endblock %}"
+            data-notifications-check-interval="{% block check_interval %}{% endblock %}"
+            {% for kind, message in request.session.pop_flash() %}
+                data-notifications-message="{{ message }}"
+                data-notifications-kind="{{ kind }}"
+            {% endfor %}
+            >
+            <a class="close-notification" data-action="notifications#close" href=>×</a>
+            <div></div>
+        </div>
     </main>
 
+    <script src="{{ request.static_url('zam_repondeur:static/js/stimulus.js') }}"></script>
+    <script>;(() => window.application = Stimulus.Application.start())()</script>
     <script src="{{ request.static_url('zam_repondeur:static/js/notifications.js') }}"></script>
-    <script type="text/javascript">
+    <script>
         ;(function readableLastUpdate () {
             const timestampToDate = (timestamp) => {
                 return new Date(timestamp * 1000)
@@ -147,9 +161,6 @@
                 })
             })
         })()
-        {% for kind, message in request.session.pop_flash() %}
-            displayNotificationUpdate("{{ message }}", "{{ kind }}")
-        {% endfor %}
     </script>
     {% block scripts %}
     {% endblock %}

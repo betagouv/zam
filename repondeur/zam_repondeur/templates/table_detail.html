@@ -118,7 +118,15 @@
                 </div>
                 <div class="auteur">
                     {{ macros.svg_icon("person") }}
-                    {{ amendement.groupe }} ({{ amendement.auteur }})
+                    {% if amendement.gouvernemental %}
+                        Le gouvernement
+                    {% else %}
+                        {% if amendement.groupe %}
+                            {{ amendement.groupe }} ({{ amendement.auteur }})
+                        {% else %}
+                            {{ amendement.auteur }}
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
             <div class="amendement-card-avis">

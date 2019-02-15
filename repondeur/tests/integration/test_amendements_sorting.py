@@ -9,7 +9,7 @@ def test_column_sorting_once_changes_url(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     article_header = find_header_by_index(
-        2, driver.find_element_by_css_selector("thead")
+        2, driver.find_element_by_css_selector("thead .headers")
     )
     article_header.click()
     assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc"
@@ -19,7 +19,7 @@ def test_column_sorting_twice_changes_url_direction(wsgi_server, driver, lecture
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     article_header = find_header_by_index(
-        2, driver.find_element_by_css_selector("thead")
+        2, driver.find_element_by_css_selector("thead .headers")
     )
     article_header.click()
     article_header.click()
@@ -30,7 +30,7 @@ def test_column_sorting_thrice_changes_url_again(wsgi_server, driver, lecture_an
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     article_header = find_header_by_index(
-        2, driver.find_element_by_css_selector("thead")
+        2, driver.find_element_by_css_selector("thead .headers")
     )
     article_header.click()
     article_header.click()
@@ -42,7 +42,7 @@ def test_column_sorting_is_cancelable(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     article_header = find_header_by_index(
-        2, driver.find_element_by_css_selector("thead")
+        2, driver.find_element_by_css_selector("thead .headers")
     )
     article_header.click()
     assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc"
@@ -54,8 +54,12 @@ def test_column_sorting_is_cancelable(wsgi_server, driver, lecture_an):
 def test_column_sorting_multiple_changes_url(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    find_header_by_index(2, driver.find_element_by_css_selector("thead")).click()
-    find_header_by_index(3, driver.find_element_by_css_selector("thead")).click()
+    find_header_by_index(
+        2, driver.find_element_by_css_selector("thead .headers")
+    ).click()
+    find_header_by_index(
+        3, driver.find_element_by_css_selector("thead .headers")
+    ).click()
     assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc-3asc"
     # Still cancelable
     driver.find_element_by_css_selector("#unsort").click()
@@ -118,13 +122,13 @@ def test_column_sorting_by(
     trs = driver.find_elements_by_css_selector("tbody tr")
     assert extract_column_text(column_index, trs) == initial_order
     find_header_by_index(
-        column_index, driver.find_element_by_css_selector("thead")
+        column_index, driver.find_element_by_css_selector("thead .headers")
     ).click()
     trs = driver.find_elements_by_css_selector("tbody tr")
     assert extract_column_text(column_index, trs) == asc_order
     assert driver.current_url == f"{LECTURE_URL}/amendements?sort={column_index}asc"
     find_header_by_index(
-        column_index, driver.find_element_by_css_selector("thead")
+        column_index, driver.find_element_by_css_selector("thead .headers")
     ).click()
     trs = driver.find_elements_by_css_selector("tbody tr")
     assert extract_column_text(column_index, trs) == list(reversed(asc_order))

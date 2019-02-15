@@ -93,6 +93,14 @@ tr.sticky th {
     z-index: 10;
     box-shadow: 0px 3px 3px 0px #CCC;
 }
+    tr.groupActions th {
+        top: 0;
+        padding: .5rem 0 .75rem 0;
+        text-align: center;
+    }
+        tr.groupActions th:first-child {
+            vertical-align: middle;
+        }
     tr.headers th {
         top: 0;
     }
@@ -227,19 +235,4 @@ nav.options {
     nav.options #unsort {
         text-decoration: underline;
         margin-left: 1rem;
-    }
-nav.groupActions {
-    display: none;
-    justify-content: space-between;
-    max-width: 40rem;
-    padding: .5rem 1rem;
-    margin-bottom: 1rem;
-    justify-content: space-around;
-    align-items: baseline;
-    border: 6px solid #c2e0ff;
-}
-    nav.groupActions p {
-        font-weight: 600;
-        margin-bottom: 0;
-        margin-top: .5rem;
     }

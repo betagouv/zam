@@ -85,6 +85,19 @@ def test_new_user_can_enter_their_name_on_the_welcome_page(app):
     assert user.name == "Something Else"
 
 
+def test_user_with_name_can_edit_it(app, user_david):
+    from zam_repondeur.models import DBSession, User
+
+    resp = app.get("/bienvenue", user=user_david.email)
+    assert resp.status_code == 200
+    assert resp.form["name"].value == "David"
+    resp.form["name"] = " Something Else  "
+    resp.form.submit()
+
+    user = DBSession.query(User).filter_by(email=user_david.email).first()
+    assert user.name == "Something Else"
+
+
 def test_user_with_a_name_skips_the_welcome_page(app, user_david):
     from zam_repondeur.models import DBSession
 

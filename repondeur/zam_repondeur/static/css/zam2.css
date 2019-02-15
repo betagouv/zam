@@ -159,6 +159,14 @@ main {
         .intro fieldset input {
             font-size: 1.2rem;
         }
+    .intro .controls {
+        display: flex;
+        justify-content: space-around;
+        align-items: baseline;
+        width: 100%;
+        text-align: center;
+        margin: 0 auto;
+    }
 .intro-inline {
     flex-direction: row;
     align-items: flex-end;

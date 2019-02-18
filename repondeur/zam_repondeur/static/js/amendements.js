@@ -55,10 +55,8 @@ function makeHeadersSortable(tableHead) {
             tableHeader.nodeName === 'SELECT'
         )
             return
-        if (tableHeader.nodeName === 'use')
-            tableHeader = tableHeader.parentNode
-        if (tableHeader.nodeName === 'svg')
-            tableHeader = tableHeader.parentNode
+        if (tableHeader.nodeName === 'use') tableHeader = tableHeader.parentNode
+        if (tableHeader.nodeName === 'svg') tableHeader = tableHeader.parentNode
         const isAscending = tableHeader.getAttribute('data-order') === 'asc'
         const order = isAscending ? 'desc' : 'asc'
 
@@ -89,7 +87,9 @@ function sortColumns(sortSpec) {
 function sortColumn(tableHeader, colIndex, order) {
     tableHeader.setAttribute('data-order', order)
     const selector = 'td:nth-child(' + colIndex + ')'
-    tableHeader.querySelector('svg use').setAttribute('xlink:href', '#sort-' + order)
+    tableHeader
+        .querySelector('svg use')
+        .setAttribute('xlink:href', '#sort-' + order)
     const options = {
         sortFunction: (a, b) => {
             return compareArrays(
@@ -140,7 +140,7 @@ function allowUnsort(tableHead) {
             th.removeAttribute('data-order')
         })
         setURLParam('sort', '')
-        tinysort(document.querySelectorAll('tbody tr'), {data: 'order'})
+        tinysort(document.querySelectorAll('tbody tr'), { data: 'order' })
         document.querySelector('table').classList.remove('sorted')
     })
 }
@@ -160,16 +160,16 @@ function filterByAmendement(value) {
         }
         return line.dataset.amendement.trim() === value
     })
-    document.querySelector('table').classList.toggle('filtered-amendement', value)
+    document
+        .querySelector('table')
+        .classList.toggle('filtered-amendement', value)
 }
 function filterByTable(value) {
     filterColumn('hidden-table', line => {
         if (!value) {
             return true
         }
-        return line.dataset.table
-            .toLowerCase()
-            .includes(value.toLowerCase())
+        return line.dataset.table.toLowerCase().includes(value.toLowerCase())
     })
     document.querySelector('table').classList.toggle('filtered-table', value)
 }
@@ -318,7 +318,23 @@ function changeURLGivenChecks(target, checkeds) {
 
 function toggleGroupActions(target, checkboxes) {
     const checkeds = checkboxes.filter(box => box.checked)
-    target.style.display = checkeds.length < 1 ? 'none' : 'flex'
+    if (checkeds.length < 1) {
+        target.classList.add('d-none')
+        document
+            .querySelectorAll('tr.headers th')
+            .forEach(th => (th.style.top = '0'))
+        document
+            .querySelectorAll('tr.filters th')
+            .forEach(th => (th.style.top = '2rem'))
+    } else {
+        target.classList.remove('d-none')
+        document
+            .querySelectorAll('tr.headers th')
+            .forEach(th => (th.style.top = '3rem'))
+        document
+            .querySelectorAll('tr.filters th')
+            .forEach(th => (th.style.top = '5rem'))
+    }
     changeURLGivenChecks(
         target.querySelector('#transfer-amendements'),
         checkeds

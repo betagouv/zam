@@ -2,7 +2,12 @@
 
 
 {% block main %}
-<h1>C’est votre première connexion…</h1>
+{% set has_name = request.user.name %}
+{% if has_name %}
+    <h1>Modifier votre nom</h1>
+{% else %}
+    <h1>C’est votre première connexion…</h1>
+{% endif %}
 <form method="POST" class="intro">
     <fieldset>
         {% if request.session.pop('missing_name', None) %}
@@ -11,6 +16,13 @@
         <label for="name">Quel est votre nom ?</label>
         <input type="text" name="name" value="{{ name }}" required autocomplete="name">
     </fieldset>
-    <input type="submit" value="Entrer">
+    <div class="controls">
+        {% if has_name %}
+            <a href="{{ request.resource_url(context['lectures']) }}">Revenir</a>
+            <input type="submit" value="Sauvegarder">
+        {% else %}
+            <input type="submit" value="Entrer">
+        {% endif %}
+    </div>
 </form>
 {% endblock %}

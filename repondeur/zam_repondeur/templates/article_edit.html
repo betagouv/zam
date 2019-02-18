@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block body %}
-    <section class="content">
+    <section class="content box">
         <div class="title">
             <h2>{{ article }}</h2>
             {% if article.user_content.title %}
@@ -25,7 +25,7 @@
         {{ macros.update_informations(article, request.resource_url(context, 'article_journal')) }}
         {{ content(article) }}
     </section>
-    <section class="edit">
+    <section class="edit box">
         {{ form(article) }}
     </section>
 {% endblock %}

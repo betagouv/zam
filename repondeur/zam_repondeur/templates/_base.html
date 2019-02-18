@@ -32,7 +32,7 @@
         {% endblock %}
     </nav>
 
-    <main role="main" class="box">
+    <main role="main" class="{% block main_class %}box{% endblock %}">
         {% block secondary_header %}
         {% endblock %}
         {% block body %}

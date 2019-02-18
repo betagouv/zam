@@ -48,6 +48,9 @@ function setupToggle(toggleSelector, targetSelector, scroll) {
 function makeHeadersSortable(tableHead) {
     tableHead.addEventListener('click', e => {
         let tableHeader = e.target
+        if (tableHeader.nodeName === 'use') tableHeader = tableHeader.parentNode
+        if (tableHeader.nodeName === 'svg') tableHeader = tableHeader.parentNode
+        if (tableHeader.nodeName === 'A') tableHeader = tableHeader.parentNode
         if (
             tableHeader.classList.contains('nosort') ||
             tableHeader.nodeName === 'INPUT' ||
@@ -55,8 +58,6 @@ function makeHeadersSortable(tableHead) {
             tableHeader.nodeName === 'SELECT'
         )
             return
-        if (tableHeader.nodeName === 'use') tableHeader = tableHeader.parentNode
-        if (tableHeader.nodeName === 'svg') tableHeader = tableHeader.parentNode
         const isAscending = tableHeader.getAttribute('data-order') === 'asc'
         const order = isAscending ? 'desc' : 'asc'
 

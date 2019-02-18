@@ -291,22 +291,6 @@ function hijackEditLinks() {
     })
 }
 
-function takeControlOverNativeJump() {
-    /* To avoid position under sticky headers. */
-    if (location.hash) {
-        /* Waiting for the next tick to supplement previous browser behavior. */
-        setTimeout(() => {
-            const element = document.querySelector(window.location.hash)
-            const target = element.getBoundingClientRect()
-            window.scrollTo({
-                /* Position the highlighted element in the middle of the page. */
-                top: window.scrollY + target.top - window.innerHeight / 2,
-                behavior: 'smooth'
-            })
-        }, 1)
-    }
-}
-
 function changeURLGivenChecks(target, checkeds) {
     const url = new URL(target.getAttribute('href'))
     url.searchParams.delete('nums')

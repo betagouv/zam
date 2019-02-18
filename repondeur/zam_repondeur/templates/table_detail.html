@@ -152,7 +152,7 @@
     <h1>Ma table</h1>
     {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
     {% for amendement in amendements %}
-        <div class="box amendement-card
+        <div id="{{ amendement.slug }}" class="box amendement-card
             {% if amendement.slug == highlighted_amdt %}
                 highlighted
             {% endif %}">

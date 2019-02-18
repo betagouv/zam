@@ -5,8 +5,11 @@
 <h1>Entrer dans Zam</h1>
 <form method="POST" class="intro">
     <fieldset>
+        {% if request.session.pop('missing_email', None) %}
+            <p class="error">La saisie d’une adresse de courriel est requise.</p>
+        {% endif %}
         <label for="email">Votre courriel</label>
-        <input type="email" name="email" required autocomplete="email" autocorrect="off" spellcheck="false">
+        <input type="email" name="email" autocomplete="email" required autocorrect="off" spellcheck="false">
     </fieldset>
     <input type="submit" value="Entrer dans Zam">
 </form>

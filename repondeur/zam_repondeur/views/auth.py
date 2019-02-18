@@ -25,9 +25,12 @@ class Login:
 
     @view_config(request_method="POST")
     def post(self) -> Any:
-        email = User.normalize_email(self.request.params["email"])
+        email = self.request.params.get("email")
+        if not email:
+            self.request.session["missing_email"] = True
+            return HTTPFound(location=self.request.route_url("login"))
 
-        user, created = get_one_or_create(User, email=email)
+        user, created = get_one_or_create(User, email=User.normalize_email(email))
         if created:
             DBSession.flush()  # so that the DB assigns a value to user.pk
 
@@ -61,7 +64,12 @@ class Welcome:
 
     @view_config(request_method="POST")
     def post(self) -> Any:
-        self.request.user.name = User.normalize_name(self.request.params["name"])
+        name = self.request.params.get("name")
+        if not name:
+            self.request.session["missing_name"] = True
+            return HTTPFound(location=self.request.route_url("welcome"))
+
+        self.request.user.name = User.normalize_name(name)
         next_url = self.request.params.get("source") or self.request.resource_url(
             self.context["lectures"]
         )

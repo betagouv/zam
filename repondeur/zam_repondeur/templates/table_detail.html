@@ -119,6 +119,9 @@
                 color: inherit;
                 text-decoration: underline;
             }
+    .highlighted {
+        background: #d4edda66;
+    }
 </style>
 {% endblock %}
 
@@ -147,8 +150,12 @@
         </defs>
     </svg>
     <h1>Ma table</h1>
+    {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
     {% for amendement in amendements %}
-        <div class="box amendement-card">
+        <div class="box amendement-card
+            {% if amendement.slug == highlighted_amdt %}
+                highlighted
+            {% endif %}">
             <div class="amendement-card-infos">
                 <div class="entete">
                     <span class="article">{{ amendement.article.format() }}</span>

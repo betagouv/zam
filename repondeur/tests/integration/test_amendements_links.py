@@ -36,7 +36,9 @@ def test_column_sorting_changes_edit_url_on_the_fly(
 ):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    find_header_by_index(2, driver.find_element_by_css_selector("thead")).click()
+    find_header_by_index(
+        2, driver.find_element_by_css_selector("thead .headers")
+    ).click()
     assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc"
     see_td = driver.find_element_by_css_selector("td:nth-child(7)")
     see_link = see_td.find_element_by_css_selector("a")

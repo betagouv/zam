@@ -44,11 +44,6 @@
             </a>
         </span>
     </nav>
-    <nav class="groupActions">
-        <p>Actions groupées</p>
-        <a id="transfer-amendements" href="{{ request.resource_url(context.parent, 'transfer_amendements') }}" class="button primary">Transférer</a>
-        <a id="export-pdf" href="{{ request.resource_url(context.parent, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
-    </nav>
 
     <section id="advanced" class="d-none">
         <div>
@@ -128,6 +123,18 @@
 
     <table class="table">
         <thead class="box">
+            <tr class="groupActions sticky d-none">
+                <th colspan="2">
+                    Actions groupées :
+                </th>
+                <th colspan="2">
+                    <a id="transfer-amendements" href="{{ request.resource_url(context.parent, 'transfer_amendements') }}" class="button primary">Transférer</a>
+                </th>
+                <th colspan="2">
+                    <a id="export-pdf" href="{{ request.resource_url(context.parent, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
+                </th>
+                <th></th>
+            </tr>
             <tr class="headers sticky">
                 <th class="nosort"></th>
                 <th>

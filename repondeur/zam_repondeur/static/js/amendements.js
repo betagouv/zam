@@ -30,6 +30,9 @@ function updateSortSpec(sortSpec, colSpec) {
 function makeHeadersSortable(tableHead) {
     tableHead.addEventListener('click', e => {
         let tableHeader = e.target
+        if (tableHeader.nodeName === 'use') tableHeader = tableHeader.parentNode
+        if (tableHeader.nodeName === 'svg') tableHeader = tableHeader.parentNode
+        if (tableHeader.nodeName === 'A') tableHeader = tableHeader.parentNode
         if (
             tableHeader.classList.contains('nosort') ||
             tableHeader.nodeName === 'INPUT' ||
@@ -37,8 +40,6 @@ function makeHeadersSortable(tableHead) {
             tableHeader.nodeName === 'SELECT'
         )
             return
-        if (tableHeader.nodeName === 'use') tableHeader = tableHeader.parentNode
-        if (tableHeader.nodeName === 'svg') tableHeader = tableHeader.parentNode
         const isAscending = tableHeader.getAttribute('data-order') === 'asc'
         const order = isAscending ? 'desc' : 'asc'
 
@@ -271,22 +272,6 @@ function hijackEditLinks() {
             }
         })
     })
-}
-
-function takeControlOverNativeJump() {
-    /* To avoid position under sticky headers. */
-    if (location.hash) {
-        /* Waiting for the next tick to supplement previous browser behavior. */
-        setTimeout(() => {
-            const element = document.querySelector(window.location.hash)
-            const target = element.getBoundingClientRect()
-            window.scrollTo({
-                /* Position the highlighted element in the middle of the page. */
-                top: window.scrollY + target.top - window.innerHeight / 2,
-                behavior: 'smooth'
-            })
-        }, 1)
-    }
 }
 
 application.register(

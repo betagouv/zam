@@ -32,7 +32,7 @@
         {% endblock %}
     </nav>
 
-    <main role="main" class="box">
+    <main role="main" class="{% block main_class %}box{% endblock %}">
         {% block secondary_header %}
         {% endblock %}
         {% block body %}
@@ -142,6 +142,22 @@
                     }, 1000 * 10) // Seconds.
                 }
             })
+        })()
+
+        ;(function takeControlOverNativeJump() {
+            /* To avoid position under sticky headers. */
+            if (location.hash) {
+                /* Waiting for the next tick to supplement previous browser behavior. */
+                setTimeout(() => {
+                    const element = document.querySelector(window.location.hash)
+                    const target = element.getBoundingClientRect()
+                    window.scrollTo({
+                        /* Position the highlighted element in the middle of the page. */
+                        top: window.scrollY + target.top - window.innerHeight / 2 + target.height / 2,
+                        behavior: 'smooth'
+                    })
+                }, 1)
+            }
         })()
 
         ;(function confirmDeletes() {

@@ -126,16 +126,16 @@
     <table class="table" data-controller="amendements-selection">
         <thead class="box">
             <tr class="groupActions sticky d-none">
-                <th colspan="2">
+                <th colspan="2" class="nosort">
                     Actions groupées :
                 </th>
-                <th colspan="2">
+                <th colspan="2" class="nosort">
                     <a id="transfer-amendements" href="{{ request.resource_url(context.parent, 'transfer_amendements') }}" class="button primary">Transférer</a>
                 </th>
-                <th colspan="2">
+                <th colspan="2" class="nosort">
                     <a id="export-pdf" href="{{ request.resource_url(context.parent, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
                 </th>
-                <th></th>
+                <th class="nosort"></th>
             </tr>
             <tr class="headers sticky">
                 <th class="nosort"></th>
@@ -162,33 +162,33 @@
                 <th class="nosort"></th>
             </tr>
             <tr class="filters sticky d-none" data-target="amendements-filters.row">
-                <th>
+                <th class="nosort">
                     <input type="checkbox" name="select-all" data-action="amendements-selection#selectAll">
                 </th>
-                <th>
+                <th class="nosort">
                     <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
-                <th>
+                <th class="nosort">
                     <input id="amendement-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
-                <th>
+                <th class="nosort">
                     <input id="table-filter" class="form-control form-control-sm" type="text" autocomplete="off" autocorrect="off">
                 </th>
-                <th>
+                <th class="nosort">
                     <select id="avis-filter">
                         <option value="">Tous</option>
                         <option value="1">Avec</option>
                         <option value="0">Sans</option>
                     </select>
                 </th>
-                <th>
+                <th class="nosort">
                     <select id="reponse-filter">
                         <option value="">Toutes</option>
                         <option value="1">Avec</option>
                         <option value="0">Sans</option>
                     </select>
                 </th>
-                <th></th>
+                <th class="nosort"></th>
             </tr>
         </thead>
         <tbody>
@@ -379,6 +379,5 @@
     allowUnsort(document.querySelector('thead'))
     filterColumns(document.querySelector('table'))
     hijackEditLinks()
-    takeControlOverNativeJump()
 </script>
 {% endblock %}

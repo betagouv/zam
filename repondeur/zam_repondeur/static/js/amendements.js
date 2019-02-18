@@ -307,67 +307,81 @@ function takeControlOverNativeJump() {
     }
 }
 
-function changeURLGivenChecks(target, checkeds) {
-    const url = new URL(target.getAttribute('href'))
-    url.searchParams.delete('nums')
-    checkeds.forEach(checked => {
-        url.searchParams.append('nums', checked.value)
-    })
-    target.setAttribute('href', url.toString())
-}
+application.register(
+    'amendements-selection',
+    class extends Stimulus.Controller {
+        initialize() {
+            this.groupActions = this.element.querySelector('.groupActions')
+            this.selectAllCheckbox = this.element.querySelector(
+                'input[type="checkbox"][name="select-all"]'
+            )
+            // Useful in case of (soft) refresh with already checked box.
+            this.selectAllCheckbox.checked = false
+            this.checkboxes = this.element.querySelectorAll(
+                'input[type="checkbox"]:not([name="select-all"])'
+            )
+            // Useful in case of (soft) refresh with already checked boxes.
+            this.toggleGroupActions()
+            this.checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', e => {
+                    this.toggleGroupActions()
+                })
+            })
+        }
 
-function toggleGroupActions(target, checkboxes) {
-    const checkeds = checkboxes.filter(box => box.checked)
-    if (checkeds.length < 1) {
-        target.classList.add('d-none')
-        document
-            .querySelectorAll('tr.headers th')
-            .forEach(th => (th.style.top = '0'))
-        document
-            .querySelectorAll('tr.filters th')
-            .forEach(th => (th.style.top = '2rem'))
-    } else {
-        target.classList.remove('d-none')
-        document
-            .querySelectorAll('tr.headers th')
-            .forEach(th => (th.style.top = '3rem'))
-        document
-            .querySelectorAll('tr.filters th')
-            .forEach(th => (th.style.top = '5rem'))
-    }
-    changeURLGivenChecks(
-        target.querySelector('#transfer-amendements'),
-        checkeds
-    )
-    changeURLGivenChecks(target.querySelector('#export-pdf'), checkeds)
-}
-
-function selectMultiple(checkboxes) {
-    const target = document.querySelector('.groupActions')
-    // Useful in case of (soft) refresh with already checked boxes.
-    toggleGroupActions(target, checkboxes)
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', e => {
-            toggleGroupActions(target, checkboxes)
-        })
-    })
-}
-
-function selectAll(checkbox, checkboxes) {
-    // Useful in case of (soft) refresh with already checked boxes.
-    checkbox.checked = false
-    checkbox.addEventListener('click', e => {
-        checkboxes.forEach(checkbox => {
-            const display = getComputedStyle(
-                checkbox.parentElement.parentElement,
-                null
-            ).display
-            if (display != 'none') {
-                checkbox.checked = e.target.checked
-                // Required because the change event is not propagated by default.
-                const event = new Event('change')
-                checkbox.dispatchEvent(event)
+        toggleGroupActions() {
+            const checkeds = Array.from(this.checkboxes).filter(
+                box => box.checked
+            )
+            if (checkeds.length < 1) {
+                this.groupActions.classList.add('d-none')
+                document
+                    .querySelectorAll('tr.headers th')
+                    .forEach(th => (th.style.top = '0'))
+                document
+                    .querySelectorAll('tr.filters th')
+                    .forEach(th => (th.style.top = '2rem'))
+            } else {
+                this.groupActions.classList.remove('d-none')
+                document
+                    .querySelectorAll('tr.headers th')
+                    .forEach(th => (th.style.top = '3rem'))
+                document
+                    .querySelectorAll('tr.filters th')
+                    .forEach(th => (th.style.top = '5rem'))
             }
-        })
-    })
-}
+            this.changeURLGivenChecks(
+                this.groupActions.querySelector('#transfer-amendements'),
+                checkeds
+            )
+            this.changeURLGivenChecks(
+                this.groupActions.querySelector('#export-pdf'),
+                checkeds
+            )
+        }
+
+        changeURLGivenChecks(target, checkeds) {
+            const url = new URL(target.getAttribute('href'))
+            url.searchParams.delete('nums')
+            checkeds.forEach(checked => {
+                url.searchParams.append('nums', checked.value)
+            })
+            target.setAttribute('href', url.toString())
+        }
+
+        selectAll() {
+            this.checkboxes.forEach(checkbox => {
+                const display = getComputedStyle(
+                    checkbox.parentElement.parentElement,
+                    null
+                ).display
+                if (display != 'none') {
+                    checkbox.checked = this.selectAllCheckbox.checked
+                    // Required because the change event is not propagated by default.
+                    const event = new Event('change')
+                    checkbox.dispatchEvent(event)
+                }
+            })
+        }
+    }
+)

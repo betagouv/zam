@@ -27,24 +27,6 @@ function updateSortSpec(sortSpec, colSpec) {
     return updatedSpec.join('-')
 }
 
-function setupToggle(toggleSelector, targetSelector, scroll) {
-    const toggle = document.querySelector(toggleSelector)
-    toggle.addEventListener('click', e => {
-        const target = document.querySelector(targetSelector)
-        if (target.classList.contains('d-none')) {
-            toggle.classList.add('enabled')
-            target.classList.remove('d-none')
-            if (scroll) {
-                target.scrollIntoView()
-            }
-        } else {
-            toggle.classList.remove('enabled')
-            target.classList.add('d-none')
-        }
-        e.preventDefault()
-    })
-}
-
 function makeHeadersSortable(tableHead) {
     tableHead.addEventListener('click', e => {
         let tableHeader = e.target
@@ -382,6 +364,47 @@ application.register(
                     checkbox.dispatchEvent(event)
                 }
             })
+        }
+    }
+)
+
+application.register(
+    'amendements-articles',
+    class extends Stimulus.Controller {
+        static get targets() {
+            return ['list']
+        }
+        toggle(event) {
+            this.listTarget.classList.toggle('d-none')
+            this.element.scrollIntoView()
+            event.preventDefault()
+        }
+    }
+)
+
+application.register(
+    'amendements-options',
+    class extends Stimulus.Controller {
+        static get targets() {
+            return ['details']
+        }
+        toggle(event) {
+            this.detailsTarget.classList.toggle('d-none')
+            event.target.classList.toggle('enabled')
+            event.preventDefault()
+        }
+    }
+)
+
+application.register(
+    'amendements-filters',
+    class extends Stimulus.Controller {
+        static get targets() {
+            return ['row']
+        }
+        toggle(event) {
+            this.rowTarget.classList.toggle('d-none')
+            event.preventDefault()
         }
     }
 )

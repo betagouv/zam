@@ -180,3 +180,8 @@ main {
         font-size: 1rem;
         margin: 0 1rem;
     }
+.error {
+    padding: 1rem;
+    margin: 1rem;
+    border: 6px solid red;
+}

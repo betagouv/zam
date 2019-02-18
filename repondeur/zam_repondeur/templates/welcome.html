@@ -10,6 +10,9 @@
 {% endif %}
 <form method="POST" class="intro">
     <fieldset>
+        {% if request.session.pop('missing_name', None) %}
+            <p class="error">La saisie d’un nom est requise.</p>
+        {% endif %}
         <label for="name">Quel est votre nom ?</label>
         <input type="text" name="name" value="{{ name }}" required autocomplete="name">
     </fieldset>

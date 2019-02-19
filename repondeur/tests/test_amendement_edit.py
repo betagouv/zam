@@ -87,7 +87,7 @@ def test_transfer_amendement_from_edit_form(
     )
 
     form = resp.forms["transfer"]
-    resp = form.submit()
+    resp = form.submit("submit-table")
 
     assert resp.status_code == 302
     assert (

@@ -4,32 +4,6 @@
 {% block header %}
     {{ super() }}
     <style type="text/css">
-        /* Headers with line-through */
-        h4 {
-          overflow: hidden;
-          text-align: center;
-          font-weight: 600;
-          margin-bottom: 1.25rem;
-        }
-            h4:before,
-            h4:after {
-              background-color: #9b9b9b;
-              content: "";
-              display: inline-block;
-              height: 1px;
-              position: relative;
-              vertical-align: middle;
-              width: 50%;
-            }
-            h4:before {
-              right: 0.5em;
-              margin-left: -50%;
-            }
-            h4:after {
-              left: 0.5em;
-              margin-right: -50%;
-            }
-
         /* Link to article */
         h5 a {
             text-decoration: underline;
@@ -149,8 +123,7 @@
                 </p>
                 <form id="transfer" action="{{ request.resource_url(context.parent.parent['tables'], request.user.email) }}" method="POST">
                     <input type="hidden" name="nums" value="{{ amendement.num }}">
-                    <input type="hidden" name="target" value="{{ request.user.email }}">
-                    <input type="submit" class="button primary" value="Transférer sur ma table">
+                    <input type="submit" name="submit-table" class="button primary" value="Transférer sur ma table">
                 </form>
             </div>
             {{ reponse(amendement) }}
@@ -161,7 +134,7 @@
 
 {% macro content(amendement) %}
     <div class="expose">
-        <h4>Exposé</h4>
+        <h4 class="line-through">Exposé</h4>
         {% if amendement.expose %}
             {{ amendement.expose | safe }}
         {% else %}
@@ -169,7 +142,7 @@
         {% endif %}
     </div>
     <div class="corps">
-        <h4>Corps de l’amendement</h4>
+        <h4 class="line-through">Corps de l’amendement</h4>
         <h5><a href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a></h5>
         {{ amendement.corps | safe }}
     </div>
@@ -178,11 +151,11 @@
 
 {% macro reponse(amendement) %}
     <div class="reponse">
-        <h4>Position du gouvernement</h4>
+        <h4 class="line-through">Position du gouvernement</h4>
         <p>{{ amendement.user_content.avis or '' }}</p>
-        <h4>Objet de l’amendement</h4>
+        <h4 class="line-through">Objet de l’amendement</h4>
         {{ amendement.user_content.objet | paragriphy }}
-        <h4>
+        <h4 class="line-through">
             {% if not amendement.gouvernemental %}
                 Réponse à l’amendement
             {% else %}
@@ -197,7 +170,7 @@
 {% macro form(amendement) %}
 
     {% if not amendement.gouvernemental %}
-        <h4>Réutiliser</h4>
+        <h4 class="line-through">Réutiliser</h4>
         <form id="prefill-reponse" action="" method="POST" class="mt-3">
             <div class="form-group" style="margin-bottom: 1.5rem">
                 <label for="autofill">Remplir à partir de…</label>
@@ -226,7 +199,7 @@
         </form>
     {% endif %}
 
-    <h4>
+    <h4 class="line-through">
         {% if not amendement.gouvernemental %}
             Répondre
         {% else %}

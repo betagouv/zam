@@ -14,6 +14,10 @@
                 margin: 2.5rem 0;
                 font-weight: 600;
             }
+            form h3 {
+                margin: 3rem 0;
+                font-weight: 600;
+            }
             form label {
                 display: block;
                 text-align: left;
@@ -61,14 +65,18 @@
             {% endfor %}
         </h2>
         <div>
+            {% if show_transfer_to_index %}
+                <input type="submit" name="submit-index" value="Transférer à l’index" class="button primary enabled">
+            {% endif %}
+            {% if show_transfer_to_myself %}
+                <input type="submit" name="submit-table" value="Transférer sur ma table" class="button primary enabled">
+            {% endif %}
+        </div>
+        <h3 class="line-through">Ou</h3>
+        <div>
             <label for="target">Destinataire :</label>
-            <select name="target">
-                {% if show_transfer_to_index %}
-                    <option {% if not show_transfer_to_index %}selected {% endif %} value="">À l’index</option>
-                {% endif %}
-                {% if show_transfer_to_myself %}
-                    <option selected value="{{ request.user.email }}">À moi ({{ request.user.email }})</option>
-                {% endif %}
+            <select name="target" required>
+                <option selected></option>
                 {% for user in users %}
                     <option value="{{ user.email }}">À {{ user }}</option>
                 {% endfor %}

@@ -303,3 +303,27 @@ nobr.user {
 .centered {
     text-align: center;
 }
+.line-through {
+  overflow: hidden;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+    .line-through:before,
+    .line-through:after {
+      background-color: #9b9b9b;
+      content: "";
+      display: inline-block;
+      height: 1px;
+      position: relative;
+      vertical-align: middle;
+      width: 50%;
+    }
+    .line-through:before {
+      right: 0.5em;
+      margin-left: -50%;
+    }
+    .line-through:after {
+      left: 0.5em;
+      margin-right: -50%;
+    }

@@ -151,18 +151,28 @@
 
 {% macro reponse(amendement) %}
     <div class="reponse">
-        <h4 class="line-through">Position du gouvernement</h4>
-        <p>{{ amendement.user_content.avis or '' }}</p>
-        <h4 class="line-through">Objet de l’amendement</h4>
-        {{ amendement.user_content.objet | paragriphy }}
-        <h4 class="line-through">
-            {% if not amendement.gouvernemental %}
-                Réponse à l’amendement
-            {% else %}
-                Présentation de l’amendement
-            {% endif %}
-        </h4>
-        {{ amendement.user_content.reponse | paragriphy }}
+        {% if amendement.user_content.avis %}
+            <h4 class="line-through">Position du gouvernement</h4>
+            <p>{{ amendement.user_content.avis or '' }}</p>
+        {% endif %}
+        {% if amendement.user_content.objet %}
+            <h4 class="line-through">Objet de l’amendement</h4>
+            {{ amendement.user_content.objet | paragriphy }}
+        {% endif %}
+        {% if amendement.user_content.reponse %}
+            <h4 class="line-through">
+                {% if not amendement.gouvernemental %}
+                    Réponse à l’amendement
+                {% else %}
+                    Présentation de l’amendement
+                {% endif %}
+            </h4>
+            {{ amendement.user_content.reponse | paragriphy }}
+        {% endif %}
+        {% if amendement.user_content.comments %}
+            <h4 class="line-through">Commentaires</h4>
+            {{ amendement.user_content.comments | paragriphy }}
+        {% endif %}
     </div>
 {% endmacro %}
 

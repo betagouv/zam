@@ -58,18 +58,6 @@
     <script src="{{ request.static_url('zam_repondeur:static/js/zam.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/js/notifications.js') }}"></script>
     <script>
-        ;(function displaySelectedFilename () {
-            const fileInputs = document.querySelectorAll('[type="file"]')
-            fileInputs.forEach(fileInput => {
-                fileInput.addEventListener('change', (e) => {
-                    const input = e.target
-                    const filename = input.files[0].name
-                    const label = document.querySelector('label[for="' + input.id + '"]')
-                    label.innerHTML = filename
-                })
-            })
-        })()
-
         ;(function disableOnSubmit () {
             const submitInputs = document.querySelectorAll('[type="submit"]:not(.allow-multiple-submit)')
             submitInputs.forEach(submitInput => {

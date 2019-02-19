@@ -426,3 +426,15 @@ application.register(
         }
     }
 )
+
+application.register(
+    'filename',
+    class extends Stimulus.Controller {
+        display(event) {
+            const input = event.target
+            const filename = input.files[0].name
+            const label = this.element.querySelector('label[for="' + input.id + '"]')
+            label.innerHTML = filename
+        }
+    }
+)

@@ -28,9 +28,8 @@ def test_post_amendement_edit_form_events(app, lecture_an, amendements_an, user_
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com/#amdt-999"  # noqa
+    assert resp.location.endswith(
+        f"/an.15.269.PO717460/tables/david@example.com/#amdt-{amendement.num}"
     )
 
     amendement = (
@@ -77,3 +76,39 @@ def test_post_amendement_edit_form_events(app, lecture_an, amendements_an, user_
         "<abbr title='david@example.com'>David</abbr> a mis l’avis " "à « Favorable »"
     )
     assert amendement.events[2].render_details() == ""
+
+
+def test_post_amendement_edit_form_events_empty(
+    app, lecture_an, amendements_an, user_david
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    amendement = amendements_an[1]
+
+    with transaction.manager:
+        DBSession.add(amendement)
+        table = user_david.table_for(lecture_an)
+        table.amendements.append(amendement)
+
+    resp = app.get(
+        f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",
+        user=user_david.email,
+    )
+    form = resp.forms["edit-amendement"]
+    form["avis"] = ""
+    form["objet"] = ""
+    form["reponse"] = ""
+    form["comments"] = ""
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location.endswith(
+        f"/an.15.269.PO717460/tables/david@example.com/#amdt-{amendement.num}"
+    )
+
+    amendement = (
+        DBSession.query(Amendement).filter(Amendement.num == amendement.num).one()
+    )
+
+    # Events not created.
+    assert len(amendement.events) == 0

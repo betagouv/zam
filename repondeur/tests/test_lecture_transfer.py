@@ -25,7 +25,7 @@ def test_lecture_get_transfer_amendements(
     assert resp.forms["transfer-amendements"].fields["nums"][0].value == "666"
     assert resp.forms["transfer-amendements"].fields["target"][0].options == [
         ("", True, ""),
-        ("ronan@example.com", False, "À Ronan (ronan@example.com)"),
+        ("ronan@example.com", False, "Ronan (ronan@example.com)"),
     ]
 
 
@@ -57,7 +57,7 @@ def test_lecture_get_transfer_amendements_from_me(
     assert resp.forms["transfer-amendements"].fields["nums"][0].value == "666"
     assert resp.forms["transfer-amendements"].fields["target"][0].options == [
         ("", True, ""),
-        ("ronan@example.com", False, "À Ronan (ronan@example.com)"),
+        ("ronan@example.com", False, "Ronan (ronan@example.com)"),
     ]
 
 
@@ -89,7 +89,7 @@ def test_lecture_get_transfer_amendements_from_other(
     assert resp.forms["transfer-amendements"].fields["nums"][0].value == "666"
     assert resp.forms["transfer-amendements"].fields["target"][0].options == [
         ("", True, ""),
-        ("ronan@example.com", False, "À Ronan (ronan@example.com)"),
+        ("ronan@example.com", False, "Ronan (ronan@example.com)"),
     ]
 
 

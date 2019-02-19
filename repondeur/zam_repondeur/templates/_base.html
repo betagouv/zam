@@ -55,58 +55,9 @@
 
     <script src="{{ request.static_url('zam_repondeur:static/js/stimulus.js') }}"></script>
     <script>;(() => window.application = Stimulus.Application.start())()</script>
+    <script src="{{ request.static_url('zam_repondeur:static/js/zam.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/js/notifications.js') }}"></script>
     <script>
-        ;(function readableLastUpdate () {
-            const timestampToDate = (timestamp) => {
-                return new Date(timestamp * 1000)
-            }
-
-            const epochs = [
-                ['année', 31536000],
-                ['mois', 2592000],
-                ['jour', 86400],
-                ['heure', 3600],
-                ['minute', 60],
-                ['seconde', 1]
-            ]
-
-            const timeAgo = (date) => {
-                const getDuration = (timeAgoInSeconds) => {
-                    for (let [name, seconds] of epochs) {
-                        const interval = Math.floor(timeAgoInSeconds / seconds);
-
-                        if (interval >= 1) {
-                            return {
-                                interval: interval,
-                                epoch: name
-                            }
-                        }
-                    }
-                    return {
-                        interval: 0,
-                        epoch: 'now'
-                    }
-                }
-                const timeAgoInSeconds = Math.floor((new Date() - date) / 1000)
-                const {interval, epoch} = getDuration(timeAgoInSeconds)
-                if (epoch === 'now') {
-                    return `à lʼinstant`
-                }
-                else {
-                    const suffix = (interval === 1 || epoch === 'mois') ? '' : 's'
-                    return `il y a ${interval} ${epoch}${suffix}`
-                }
-            }
-
-            const timestampElements = Array.from(document.querySelectorAll('[data-timestamp]'))
-            timestampElements.forEach(timestampElement => {
-                const timestamp = timestampElement.dataset.timestamp
-                const date = timestampToDate(timestamp)
-                timestampElement.textContent = timeAgo(date)
-            })
-        })()
-
         ;(function displaySelectedFilename () {
             const fileInputs = document.querySelectorAll('[type="file"]')
             fileInputs.forEach(fileInput => {

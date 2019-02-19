@@ -4,7 +4,8 @@
         <a class="underlined" href="{{ journal_link }}">
             <time xsi:type="xsd:dateTime"
                 datetime="{{ item.modified_at.isoformat() }}"
-                data-timestamp="{{ item.modified_at_timestamp }}">
+                data-controller="timestamp"
+                data-timestamp-modified-at="{{ item.modified_at_timestamp }}">
                     {{ item.modified_at.strftime("%A %d %B à %I:%M%p") }}
             </time>
         </a>
@@ -36,7 +37,8 @@
         <em class="when">
             <time xsi:type="xsd:dateTime"
                 datetime="{{ event.created_at.isoformat() }}"
-                data-timestamp="{{ event.created_at_timestamp }}">
+                data-controller="timestamp"
+                data-timestamp-modified-at="{{ event.created_at_timestamp }}">
                     {{ event.created_at.strftime("%A %d %B à %I:%M%p") }}
             </time>
         </em>

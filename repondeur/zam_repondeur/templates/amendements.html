@@ -46,7 +46,7 @@
             </span>
         </nav>
 
-        <section id="advanced" data-target="amendements-options.details" class="d-none">
+        <section id="advanced" data-target="amendements-options.details" data-controller="multiple-clicks" class="d-none">
             <div>
                 <h3>Importer des réponses</h3>
                 <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a class="underlined" href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses" target="_blank">suivant la spécification dédiée</a>.</p>
@@ -64,11 +64,11 @@
                 <h3>Télécharger ce tableau</h3>
                 <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
                 <div role="group" aria-label="Format de téléchargement">
-                    <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
+                    <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
                         {{ macros.svg_icon("file-excel") }}
                         Format Excel
                     </a>
-                    <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
+                    <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
                         {{ macros.svg_icon("file-pdf") }}
                         Format PDF
                     </a>
@@ -114,7 +114,7 @@
                 <h3>Exporter une sauvegarde</h3>
                 <p>Télécharger et conserver une sauvegarde pour un futur import.</p>
                 <div role="group" aria-label="Format de téléchargement">
-                    <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'json'}) }}">
+                    <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'json'}) }}">
                         {{ macros.svg_icon("file-archive") }}
                         Fichier de sauvegarde
                     </a>

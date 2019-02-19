@@ -411,3 +411,18 @@ application.register(
         }
     }
 )
+
+application.register(
+    'multiple-clicks',
+    class extends Stimulus.Controller {
+        prevent(event) {
+            event.target.classList.add('disabled')
+            const initialInnerHTML = event.target.innerHTML
+            event.target.innerHTML = 'En cours de traitement…'
+            window.setTimeout(_ => {
+                event.target.innerHTML = initialInnerHTML
+                event.target.classList.remove('disabled')
+            }, 1000 * 10) // Seconds.
+        }
+    }
+)

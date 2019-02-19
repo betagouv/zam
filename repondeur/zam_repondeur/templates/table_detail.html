@@ -149,7 +149,7 @@
             </symbol>
         </defs>
     </svg>
-    <h1>Ma table</h1>
+    <h1 data-controller="table-anchor">Ma table</h1>
     {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
     {% for amendement in amendements %}
         <div id="{{ amendement.slug }}" class="box amendement-card
@@ -179,8 +179,8 @@
                 </div>
             </div>
             <div class="amendement-card-avis">
-                <div class="menu" data-controller="menu">
-                    <a class="options" data-action="menu#toggle" href="#"></a>
+                <div class="menu" data-controller="table-menu">
+                    <a class="options" data-action="table-menu#toggle" href="#"></a>
                     <nav>
                         <a href="{{ request.resource_url(context.parent.parent, 'transfer_amendements', query={'nums': amendement.num}) }}">Transférer</a>
                         <a href="{{ request.resource_url(context.parent.parent, 'export_pdf', query={'nums': amendement.num}) }}">Exporter en PDF</a>
@@ -225,14 +225,5 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        ;(() => {
-            application.register('menu', class extends Stimulus.Controller {
-                toggle(event) {
-                    event.preventDefault()
-                    this.element.classList.toggle('open')
-                }
-            })
-        })()
-    </script>
+    <script src="{{ request.static_url('zam_repondeur:static/js/table.js') }}"></script>
 {% endblock %}

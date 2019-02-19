@@ -318,6 +318,7 @@ nobr.user {
       position: relative;
       vertical-align: middle;
       width: 50%;
+      margin-top: -.5rem;
     }
     .line-through:before {
       right: 0.5em;

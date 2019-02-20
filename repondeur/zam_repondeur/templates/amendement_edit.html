@@ -43,6 +43,12 @@
                 width: 100%;
                 margin-bottom: 1rem;
             }
+        .notice {
+            margin-top: 2rem;
+        }
+        .expose .line-through {
+            margin-top: 3rem;
+        }
     </style>
 {% endblock %}
 
@@ -88,12 +94,6 @@
                     {% endif %}
                 {% endif %}
             </div>
-        </div>
-        {{ macros.update_informations(amendement, request.resource_url(context, 'amendement_journal')) }}
-        {{ content(amendement) }}
-    </section>
-    <section class="edit box">
-        {% if amendement.user_table and request.user == amendement.user_table.user %}
             <div>
                 {% if amendement.identique %}
                     {% set identiques = amendement.all_identiques %}
@@ -112,6 +112,12 @@
                     </p>
                 {% endif %}
             </div>
+        </div>
+        {{ macros.update_informations(amendement, request.resource_url(context, 'amendement_journal')) }}
+        {{ content(amendement) }}
+    </section>
+    <section class="edit box">
+        {% if amendement.user_table and request.user == amendement.user_table.user %}
             {{ form(amendement) }}
         {% else %}
             <div class="notice">
@@ -180,7 +186,7 @@
 {% macro form(amendement) %}
 
     {% if not amendement.gouvernemental %}
-        <h4 class="line-through">Réutiliser</h4>
+        <h3>Réutiliser</h3>
         <form id="prefill-reponse" action="" method="POST" class="mt-3">
             <div class="form-group" style="margin-bottom: 1.5rem">
                 <label for="autofill">Remplir à partir de…</label>
@@ -209,13 +215,13 @@
         </form>
     {% endif %}
 
-    <h4 class="line-through">
+    <h3>
         {% if not amendement.gouvernemental %}
             Répondre
         {% else %}
             Présentation
         {% endif %}
-    </h4>
+    </h3>
 
     <form id="edit-amendement" action="{{ submit_url }}" method="POST" class="mt-3">
 

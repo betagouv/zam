@@ -68,7 +68,7 @@
 }
 .table th, .table td {
     vertical-align: middle;
-    padding: .4rem .75rem .25rem;
+    padding: .45rem .75rem .4rem;
 }
 .table td > span,
 .table td a {
@@ -179,10 +179,10 @@ table.filtered-reponse td.identique.first.last:after {
 td a, td a:hover {
     white-space: nowrap;
     text-decoration: none;
-    border-bottom: thin solid #3167a6;
 }
-td a.download-pdf {
-    border-bottom: none;
+td a.arrow-right {
+    padding-right: .8rem;
+    background: no-repeat right 35%/18% url("../img/big_right.svg");
 }
 
 :target {
@@ -218,10 +218,6 @@ span.avis.abandoned_before_seance {
     background-color: #979797;
 }
 
-td .button {
-    padding: 0.2rem 1rem 0 1rem;
-    margin-left: 1rem;
-}
 td form {
     display: inline-block;
 }

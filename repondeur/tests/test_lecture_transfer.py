@@ -81,8 +81,8 @@ def test_lecture_get_transfer_amendements_from_other(
     assert resp.forms["transfer-amendements"].method == "POST"
     assert list(resp.forms["transfer-amendements"].fields.keys()) == [
         "nums",
-        "submit-index",
         "submit-table",
+        "submit-index",
         "target",
         "submit",
     ]

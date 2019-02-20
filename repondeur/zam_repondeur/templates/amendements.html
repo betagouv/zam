@@ -19,7 +19,7 @@
     {% if lecture.displayable %}
         <li>
             <a href="{{ request.resource_url(context.parent['articles']) }}" target="_blank">
-                Le dossier de banc
+                Dossier de banc
             </a>
         </li>
     {% endif %}
@@ -245,18 +245,6 @@
                         {% if amendement.parent %}
                             (ss-amdt au {{ amendement.parent.num_disp }})
                         {% endif %}
-                        {% if amendement.identique %}
-                            {% set identiques = amendement.displayable_identiques %}
-                            {% if not amendement.displayable_identiques_are_similaires and identiques %}
-                                <span title="{% if identiques|length > 1 -%}
-                                    Les amendements identiques {% for amdt in identiques -%}
-                                    {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                                    {%- endfor %} n’ont pas des réponses similaires
-                                {%- else -%}
-                                    L’amendement identique {{ identiques[0] }} n’a pas une réponse similaire
-                                {%- endif %}">⚠️</span>
-                            {% endif %}
-                        {% endif %}
                 </td>
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
@@ -330,9 +318,21 @@
                     {% if amendement.user_content.reponse %}
                         {{ macros.svg_icon("check") }}
                     {% endif %}
+                    {% if amendement.identique %}
+                        {% set identiques = amendement.displayable_identiques %}
+                        {% if not amendement.displayable_identiques_are_similaires and identiques %}
+                            <span title="{% if identiques|length > 1 -%}
+                                Les amendements identiques {% for amdt in identiques -%}
+                                {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                                {%- endfor %} n’ont pas des réponses similaires
+                            {%- else -%}
+                                L’amendement identique {{ identiques[0] }} n’a pas une réponse similaire
+                            {%- endif %}">⚠️</span>
+                        {% endif %}
+                    {% endif %}
                 </td>
                 <td>
-                    <a class="edit-amendement button primary" href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}">
+                    <a class="edit-amendement arrow-right" href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}">
                         Voir
                     </a>
                 </td>

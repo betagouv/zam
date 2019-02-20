@@ -11,7 +11,7 @@ def test_repondeur_does_not_contains_link_to_visionneuse_if_no_avis(
     menu_items = [
         item.text for item in driver.find_elements_by_css_selector("nav.main li")
     ]
-    assert "Le dossier de banc" not in menu_items
+    assert "Dossier de banc" not in menu_items
 
 
 def test_repondeur_contains_link_to_visionneuse_if_avis(
@@ -28,7 +28,7 @@ def test_repondeur_contains_link_to_visionneuse_if_avis(
     menu_items = [
         item.text for item in driver.find_elements_by_css_selector("nav.main li")
     ]
-    assert "Le dossier de banc" in menu_items
+    assert "Dossier de banc" in menu_items
 
 
 def test_column_sorting_changes_edit_url_on_the_fly(

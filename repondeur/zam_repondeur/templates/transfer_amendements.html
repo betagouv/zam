@@ -46,7 +46,7 @@
     {% if lecture.displayable %}
         <li>
             <a href="{{ request.resource_url(context['articles']) }}" target="_blank">
-                Le dossier de banc
+                Dossier de banc
             </a>
         </li>
     {% endif %}
@@ -62,17 +62,16 @@
                 l’amendement
             {% endif %}
             {% for amendement in amendements %}
-                <a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>
+                <a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
                 <input type="hidden" name="nums" value="{{ amendement.num }}">
-                {% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
             {% endfor %}
         </h2>
         <div>
-            {% if show_transfer_to_index %}
-                <input type="submit" name="submit-index" value="Transférer à l’index" class="button primary enabled">
-            {% endif %}
             {% if show_transfer_to_myself %}
                 <input type="submit" name="submit-table" value="Transférer sur ma table" class="button primary enabled">
+            {% endif %}
+            {% if show_transfer_to_index %}
+                <input type="submit" name="submit-index" value="Transférer à l’index" class="button primary">
             {% endif %}
         </div>
         <h3 class="line-through">ou</h3>

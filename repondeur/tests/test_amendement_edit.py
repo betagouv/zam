@@ -281,7 +281,7 @@ def test_post_amendement_edit_form_gouvernemental(
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
-    assert amendement.user_content.avis == ""
+    assert amendement.user_content.avis is None
     assert amendement.user_content.objet is None
     assert (
         amendement.user_content.reponse

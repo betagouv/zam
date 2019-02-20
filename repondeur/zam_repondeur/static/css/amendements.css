@@ -82,27 +82,21 @@
 }
 
 /* Sticky table header */
-tr.sticky th {
+.sticky {
     position: sticky;
     position: -webkit-sticky;
     background: white;
     z-index: 10;
-    box-shadow: 0px 3px 3px 0px #CCC;
+    box-shadow: 0 3px 3px 3px #CCC;
+    top: 0;
 }
     tr.groupActions th {
-        top: 0;
-        padding: .5rem 0 .75rem 0;
+        padding: .5rem 0 1.5rem 0;
         text-align: center;
     }
         tr.groupActions th:first-child {
             vertical-align: middle;
         }
-    tr.headers th {
-        top: 0;
-    }
-    tr.filters th {
-        top: 2rem;
-    }
 
 /* Sorting */
 .headers th {

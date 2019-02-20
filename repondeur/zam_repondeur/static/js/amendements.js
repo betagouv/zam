@@ -303,23 +303,7 @@ function changeURLGivenChecks(target, checkeds) {
 
 function toggleGroupActions(target, checkboxes) {
     const checkeds = checkboxes.filter(box => box.checked)
-    if (checkeds.length < 1) {
-        target.classList.add('d-none')
-        document
-            .querySelectorAll('tr.headers th')
-            .forEach(th => (th.style.top = '0'))
-        document
-            .querySelectorAll('tr.filters th')
-            .forEach(th => (th.style.top = '2rem'))
-    } else {
-        target.classList.remove('d-none')
-        document
-            .querySelectorAll('tr.headers th')
-            .forEach(th => (th.style.top = '3rem'))
-        document
-            .querySelectorAll('tr.filters th')
-            .forEach(th => (th.style.top = '5rem'))
-    }
+    target.classList.toggle('d-none', checkeds.length < 1)
     changeURLGivenChecks(
         target.querySelector('#transfer-amendements'),
         checkeds

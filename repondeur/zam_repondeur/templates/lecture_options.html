@@ -52,8 +52,8 @@
             </form>
         </div>
         <div>
-            <h3>Télécharger ce tableau</h3>
-            <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
+            <h3>Télécharger le tableau</h3>
+            <p>Télécharger le tableau de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
             <div role="group" aria-label="Format de téléchargement">
                 <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'xlsx'}) }}">
                     {{ macros.svg_icon("file-excel") }}

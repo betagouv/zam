@@ -49,6 +49,18 @@
         .expose .line-through {
             margin-top: 3rem;
         }
+        .article a {
+            font-style: italic;
+            text-decoration: underline;
+        }
+        .auteur {
+            background: no-repeat left 20%/2.4% url("{{ request.static_url('zam_repondeur:static/img/personne.svg') }}");
+            padding-left: 1.4rem;
+        }
+        .identiques {
+            background: no-repeat left 20%/2.4% url("{{ request.static_url('zam_repondeur:static/img/identique.svg') }}");
+            padding-left: 1.4rem;
+        }
     </style>
 {% endblock %}
 
@@ -79,22 +91,24 @@
             {% if amendement.parent %}
                 <h3>Sous-amendement au {{ amendement.parent }}</h3>
             {% endif %}
-            - {{ amendement.article.format() }} -
+            <p class="article"><a href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a></p>
             <div class="auteur">
-                {% if amendement.auteur %}
-                    Présenté par {{ amendement.auteur }}
-                    {%- if not amendement.gouvernemental %}
-                        ({{ amendement.groupe }})
+                <p>
+                    {% if amendement.auteur %}
+                        Présenté par {{ amendement.auteur }}
+                        {%- if not amendement.gouvernemental %}
+                            ({{ amendement.groupe }})
+                        {% endif %}
+                    {% elif amendement.is_abandoned_before_seance %}
+                        {% if amendement.is_withdrawn %}
+                            <h3>Cet amendement a été retiré</h3>
+                        {% else %}
+                            <h3>Cet amendement est irrecevable</h3>
+                        {% endif %}
                     {% endif %}
-                {% elif amendement.is_abandoned_before_seance %}
-                    {% if amendement.is_withdrawn %}
-                        <h3>Cet amendement a été retiré</h3>
-                    {% else %}
-                        <h3>Cet amendement est irrecevable</h3>
-                    {% endif %}
-                {% endif %}
+                </p>
             </div>
-            <div>
+            <div class="identiques">
                 {% if amendement.identique %}
                     {% set identiques = amendement.all_identiques %}
                     {% set identiques_length = identiques|length %}
@@ -102,7 +116,7 @@
                         <em>
                             Identique au{% if identiques_length > 1 %}x{% endif %} nº
                             {% for identique in identiques -%}
-                                <a href="{{ request.resource_url(context.parent[identique.num_str], 'reponse') }}">{{ identique }}</a>
+                                <a href="{{ request.resource_url(context.parent[identique.num_str], 'amendement_edit') }}">{{ identique }}</a>
                                 {% if identique.user_content.full_reponse() != amendement.user_content.full_reponse() %}
                                     <span title="Cet amendement identique n’a pas une réponse similaire">⚠️</span>
                                 {% endif %}
@@ -149,7 +163,6 @@
     </div>
     <div class="corps">
         <h4 class="line-through">Corps de l’amendement</h4>
-        <h5><a href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a></h5>
         {{ amendement.corps | safe }}
     </div>
 {% endmacro %}

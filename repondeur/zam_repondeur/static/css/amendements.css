@@ -15,13 +15,6 @@
     margin-bottom: 0.75rem;
 }
 
-/* Options avancées */
-.toggle.with-arrow:before {
-    content: "↓";
-}
-.toggle.with-arrow.enabled:before {
-    content: "↑";
-}
 #advanced {
     display: flex;
     flex-wrap: wrap;
@@ -33,6 +26,9 @@
     flex-basis: 26rem;
     padding: 2rem;
     border-bottom: thin solid #979797;
+}
+#advanced > div.no-border {
+    border-bottom: none;
 }
 #advanced > div h3 {
     font-size: 1.5rem;

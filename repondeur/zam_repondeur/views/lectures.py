@@ -245,3 +245,9 @@ def choices_lectures(request: Request) -> dict:
 def lecture_journal(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
     return {"lecture": lecture, "today": date.today()}
+
+
+@view_config(context=LectureResource, name="options", renderer="lecture_options.html")
+def lecture_options(context: LectureResource, request: Request) -> Response:
+    lecture = context.model()
+    return {"lecture": lecture}

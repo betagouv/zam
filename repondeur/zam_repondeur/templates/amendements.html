@@ -23,6 +23,11 @@
             </a>
         </li>
     {% endif %}
+    <li>
+        <a href="{{ request.resource_url(context.parent, 'options') }}">
+            Options avancées
+        </a>
+    </li>
 {% endblock %}
 
 {% block secondary_header %}
@@ -36,90 +41,11 @@
     <nav class="options">
         <a href="#" id="unsort">Annuler le tri</a>
         <span>
-            <a id="toggle-advanced" class="toggle with-arrow button" href="#">
-                Options avancées
-            </a>
             <a id="toggle-filter" class="toggle button" href="#">
                 Filtrer
             </a>
         </span>
     </nav>
-
-    <section id="advanced" class="d-none">
-        <div>
-            <h3>Importer des réponses</h3>
-            <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a class="underlined" href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses" target="_blank">suivant la spécification dédiée</a>.</p>
-            <form action="{{ request.resource_url(context.parent, 'import_csv') }}" enctype="multipart/form-data" method="post" id="import-form" class="">
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="reponses" name="reponses" required>
-                    <label class="custom-file-label" for="reponses">Fichier CSV</label>
-                </div>
-                <div role="group">
-                    <input type="submit" name="upload" class="button primary enabled centered" value="Importer les réponses">
-                </div>
-            </form>
-        </div>
-        <div>
-            <h3>Télécharger ce tableau</h3>
-            <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
-            <div role="group" aria-label="Format de téléchargement">
-                <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
-                    {{ macros.svg_icon("file-excel") }}
-                    Format Excel
-                </a>
-                <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
-                    {{ macros.svg_icon("file-pdf") }}
-                    Format PDF
-                </a>
-            </div>
-        </div>
-        <div>
-            <h3>Importer une liasse XML</h3>
-            <p>Importer des amendements à partir d'un fichier XML provenant
-            de l’Assemblée nationale.</p>
-            <form action="{{ request.resource_url(context.parent, 'import_liasse_xml') }}" enctype="multipart/form-data" method="post" id="import-liasse-xml" class="align-items-center">
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="liasse" name="liasse">
-                    <label class="custom-file-label" for="liasse">Fichier XML</label>
-                </div>
-                <div role="group">
-                    <input type="submit" name="upload" class="button primary enabled" value="Importer la liasse">
-                </div>
-            </form>
-        </div>
-        <div>
-            <h3>Supprimer</h3>
-            <p>Supprimer la lecture ainsi que tous les amendements et réponses associés.</p>
-            <form method="post" action="{{ request.resource_url(context.parent) }}" id="delete-lecture">
-                <div role="group">
-                    <input type="submit" name="delete" class="danger allow-multiple-submit button" value="Supprimer">
-                </div>
-            </form>
-        </div>
-        <div>
-            <h3>Importer une sauvegarde</h3>
-            <p>À partir d’un fichier précédemment sauvegardé.</p>
-            <form action="{{ request.resource_url(context.parent, 'import_backup') }}" enctype="multipart/form-data" method="post" id="backup-form" class="">
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="backup" name="backup" required>
-                    <label class="custom-file-label" for="backup">Fichier JSON</label>
-                </div>
-                <div role="group">
-                    <input type="submit" name="upload" class="button primary enabled centered" value="Importer la sauvegarde">
-                </div>
-            </form>
-        </div>
-        <div>
-            <h3>Exporter une sauvegarde</h3>
-            <p>Télécharger et conserver une sauvegarde pour un futur import.</p>
-            <div role="group" aria-label="Format de téléchargement">
-                <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'json'}) }}">
-                    {{ macros.svg_icon("file-archive") }}
-                    Fichier de sauvegarde
-                </a>
-            </div>
-        </div>
-    </section>
 
     <table class="table">
         <thead class="box">
@@ -370,7 +296,6 @@
 <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
 <script type="text/javascript">
     notifyOnUpdates(60 /* seconds */, '{{ timestamp }}', '{{ check_url }}')
-    setupToggle('#toggle-advanced', '#advanced', false)
     setupToggle('#toggle-filter', 'tr.filters', false)
     setupToggle('#toggle-articles', '#articles', true)
     makeHeadersSortable(document.querySelector('thead'))

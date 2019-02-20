@@ -29,7 +29,7 @@ def import_backup(context: LectureResource, request: Request) -> Response:
         request.session.flash(
             Message(cls="warning", text="Veuillez d’abord sélectionner un fichier")
         )
-        return HTTPFound(location=next_url)
+        return HTTPFound(location=request.resource_url(context, "options"))
 
     try:
         counter = _import_backup_from_json_file(

@@ -1,7 +1,5 @@
 import transaction
 
-from .helpers import find_header_by_index
-
 
 def test_repondeur_does_not_contains_link_to_visionneuse_if_no_avis(
     wsgi_server, driver, lecture_an, amendements_an
@@ -31,15 +29,17 @@ def test_repondeur_contains_link_to_visionneuse_if_avis(
     assert "Dossier de banc" in menu_items
 
 
-def test_column_sorting_changes_edit_url_on_the_fly(
+def test_column_filtering_changes_edit_url_on_the_fly(
     wsgi_server, driver, lecture_an, amendements_an
 ):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    find_header_by_index(
-        2, driver.find_element_by_css_selector("thead .headers")
-    ).click()
-    assert driver.current_url == f"{LECTURE_URL}/amendements?sort=2asc"
+    driver.find_element_by_link_text("Filtrer").click()
+    input_field = driver.find_element_by_css_selector(
+        "thead tr.filters th:nth-child(3) input"
+    )
+    input_field.send_keys("666")
+    assert driver.current_url == f"{LECTURE_URL}/amendements?amendement=666"
     see_td = driver.find_element_by_css_selector("td:nth-child(7)")
     see_link = see_td.find_element_by_css_selector("a")
     assert (
@@ -49,5 +49,5 @@ def test_column_sorting_changes_edit_url_on_the_fly(
     see_link.click()
     assert driver.current_url == (
         f"{LECTURE_URL}/amendements/666/amendement_edit?"
-        f"back=%2Flectures%2F{lecture_an.url_key}%2Famendements%3Fsort%3D2asc"
+        f"back=%2Flectures%2F{lecture_an.url_key}%2Famendements%3Famendement%3D666"
     )

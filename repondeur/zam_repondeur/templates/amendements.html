@@ -39,7 +39,6 @@
 {% include "svg-file-icons.html" %}
 <div class="content">
     <nav class="options">
-        <a href="#" id="unsort">Annuler le tri</a>
         <span>
             <a id="toggle-filter" class="toggle button" href="#">
                 Filtrer
@@ -50,69 +49,54 @@
     <table class="table">
         <thead class="box sticky">
             <tr class="groupActions d-none">
-                <th colspan="2" class="nosort">
+                <th colspan="2">
                     Actions groupées :
                 </th>
-                <th colspan="2" class="nosort">
+                <th colspan="2">
                     <a id="transfer-amendements" href="{{ request.resource_url(context.parent, 'transfer_amendements') }}" class="button primary">Transférer</a>
                 </th>
-                <th colspan="2" class="nosort">
+                <th colspan="2">
                     <a id="export-pdf" href="{{ request.resource_url(context.parent, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
                 </th>
-                <th class="nosort"></th>
+                <th></th>
             </tr>
             <tr class="headers">
-                <th class="nosort"></th>
-                <th>
-                    {{ macros.svg_icon("sort") }}
-                    Article
-                </th>
-                <th>
-                    {{ macros.svg_icon("sort") }}
-                    Nº
-                </th>
-                <th>
-                    {{ macros.svg_icon("sort") }}
-                    Table
-                </th>
-                <th>
-                    {{ macros.svg_icon("sort") }}
-                    Avis
-                </th>
-                <th>
-                    {{ macros.svg_icon("sort") }}
-                    Réponse
-                </th>
-                <th class="nosort"></th>
+                <th></th>
+                <th>Article</th>
+                <th>Nº</th>
+                <th>Table</th>
+                <th>Avis</th>
+                <th>Réponse</th>
+                <th></th>
             </tr>
             <tr class="filters d-none">
-                <th class="nosort">
+                <th>
                     <input type="checkbox" name="select-all">
                 </th>
-                <th class="nosort">
+                <th>
                     <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
-                <th class="nosort">
+                <th>
                     <input id="amendement-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
-                <th class="nosort">
+                <th>
                     <input id="table-filter" class="form-control form-control-sm" type="text" autocomplete="off" autocorrect="off">
                 </th>
-                <th class="nosort">
+                <th>
                     <select id="avis-filter">
                         <option value="">Tous</option>
                         <option value="1">Avec</option>
                         <option value="0">Sans</option>
                     </select>
                 </th>
-                <th class="nosort">
+                <th>
                     <select id="reponse-filter">
                         <option value="">Toutes</option>
                         <option value="1">Avec</option>
                         <option value="0">Sans</option>
                     </select>
                 </th>
-                <th class="nosort"></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -298,9 +282,6 @@
     notifyOnUpdates(60 /* seconds */, '{{ timestamp }}', '{{ check_url }}')
     setupToggle('#toggle-filter', 'tr.filters', false)
     setupToggle('#toggle-articles', '#articles', true)
-    makeHeadersSortable(document.querySelector('thead'))
-    sortColumnsFromQueryString()
-    allowUnsort(document.querySelector('thead'))
     filterColumns(document.querySelector('table'))
     hijackEditLinks()
     const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]:not([name="select-all"])'))

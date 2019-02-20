@@ -98,14 +98,6 @@
             vertical-align: middle;
         }
 
-/* Sorting */
-.headers th {
-    cursor: pointer;
-}
-.headers th.nosort {
-    cursor: default;
-}
-
 /* Filtering */
 th input.form-control {
     display: inline;
@@ -150,8 +142,6 @@ td.identique.first.last:after {
     height: calc(100% - 10px);
     border-radius: 6px;
 }
-table.sorted td.identique:after,
-table.sorted td.identique.first.last:after,
 table.filtered-amendement td.identique:after,
 table.filtered-amendement td.identique.first.last:after,
 table.filtered-avis td.identique:after,
@@ -212,13 +202,5 @@ td form {
     display: inline-block;
 }
 nav.options {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-    max-width: 55rem;
     margin: 1rem auto;
 }
-    nav.options #unsort {
-        text-decoration: underline;
-        margin-left: 1rem;
-    }

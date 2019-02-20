@@ -1,6 +1,6 @@
 ### Perspectives
 
-#### Date de prochaine démonstration : 27 février à 11h. Pour cause de congés, interruption des démos jusqu'à fin mars.
+<p class="notice">Date de prochaine démonstration : 27 février à 11h.<br><br><em>Pour cause de congés, interruption des démos jusqu'à fin mars.</em></p>
 
 #### Rappel des objectifs prioritaires des développements 2019
 
@@ -10,12 +10,14 @@
 
 #### Ils zamment en 2019 !
 
-Semestre 1
+##### Semestre 1
+
 - projet de loi pour une école de la confiance (SG - ministère de l'éducation nationale)
 - projet de loi relatif à l'organisation et la transformation du système de santé (DGOS - ministère des solidarités et de la santé)
 - projet de loi réformant la fonction publique (DGAFP - ministère de l'action et des comptes publics)
 
-Semestre 2
+##### Semestre 2
+
 - PLF pour 2020 (DLF - ministère de l'action et des comptes publics)
 - PLFSS pour 2020 (DSS - ministère des solidarités et de la santé / ministère de l'action et des comptes publics)
 

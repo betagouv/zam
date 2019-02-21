@@ -24,10 +24,6 @@ class TableView:
             "lecture": self.lecture,
             "amendements": self.context.amendements(),
             "is_owner": self.owner.email == self.request.user.email,
-            "owner": self.owner,
-            "users": DBSession.query(User).filter(
-                User.email != self.request.user.email, User.email != self.owner.email
-            ),
             "table_url": self.request.resource_url(
                 self.context.parent[self.request.user.email]
             ),
@@ -42,7 +38,20 @@ class TableView:
         Transfer amendement(s) from this table to another one, or back to the index
         """
         nums: List[int] = self.request.POST.getall("nums")
-        target: str = self.request.POST.get("target")
+        if "submit-index" in self.request.POST:
+            target = ""
+        elif "submit-table" in self.request.POST:
+            target = self.request.user.email
+        else:
+            target = self.request.POST.get("target")
+            if target in ("", None, self.request.user.email):
+                return HTTPFound(
+                    location=self.request.resource_url(
+                        self.context.lecture_resource,
+                        "transfer_amendements",
+                        query={"nums": nums},
+                    )
+                )
 
         target_table: Optional[UserTable] = None
         if target:

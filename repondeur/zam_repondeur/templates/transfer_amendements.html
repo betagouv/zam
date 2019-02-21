@@ -1,26 +1,27 @@
 {% extends "_base.html" %}
 
 {% block header %}
+    <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.css') }}">
+    <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.bootstrap3.css') }}">
     <style type="text/css">
+        h3.line-through {
+            margin: 3rem auto;
+            width: 40rem;
+        }
         form {
-            text-align: center;
             width: 40rem;
             margin: 0 auto;
         }
             form * {
                 width: 100%;
             }
-            form h2 {
-                margin: 2.5rem 0;
-                font-weight: 600;
-            }
             form label {
                 display: block;
-                text-align: left;
                 font-weight: 600;
             }
             form input[type="submit"] {
                 margin-top: 3rem;
+                text-align: center;
             }
     </style>
 {% endblock %}
@@ -39,38 +40,48 @@
     {% if lecture.displayable %}
         <li>
             <a href="{{ request.resource_url(context['articles']) }}" target="_blank">
-                Le dossier de banc
+                Dossier de banc
             </a>
         </li>
     {% endif %}
 {% endblock %}
 
 {% block body %}
-    <form id="transfer-amendements" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
-        <h2>
-            Transférer
-            {% if amendements|length > 1 %}
-                les amendements
-            {% else %}
-                l’amendement
+    <h1>
+        Transférer
+        {% if amendements|length > 1 %}
+            les amendements
+        {% else %}
+            l’amendement
+        {% endif %}
+        {% for amendement in amendements %}
+            <a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+        {% endfor %}
+    </h1>
+    <form id="transfer-amendements-custom" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
+        {% for amendement in amendements %}
+            <input type="hidden" name="nums" value="{{ amendement.num }}">
+        {% endfor %}
+        <div>
+            {% if show_transfer_to_myself %}
+                <input type="submit" name="submit-table" value="Transférer sur ma table" class="button primary enabled">
             {% endif %}
-            {% for amendement in amendements %}
-                <a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>
-                <input type="hidden" name="nums" value="{{ amendement.num }}">
-                {% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-            {% endfor %}
-        </h2>
+            {% if show_transfer_to_index %}
+                <input type="submit" name="submit-index" value="Transférer à l’index" class="button primary {% if not show_transfer_to_myself %}enabled{% endif %}">
+            {% endif %}
+        </div>
+    </form>
+    <h3 class="line-through">ou</h3>
+    <form id="transfer-amendements" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
+        {% for amendement in amendements %}
+            <input type="hidden" name="nums" value="{{ amendement.num }}">
+        {% endfor %}
         <div>
             <label for="target">Destinataire :</label>
-            <select name="target">
-                {% if show_transfer_to_index %}
-                    <option {% if not show_transfer_to_index %}selected {% endif %} value="">À l’index</option>
-                {% endif %}
-                {% if show_transfer_to_myself %}
-                    <option selected value="{{ request.user.email }}">À moi ({{ request.user.email }})</option>
-                {% endif %}
+            <select id="target" name="target" required>
+                <option selected></option>
                 {% for user in users %}
-                    <option value="{{ user.email }}">À {{ user }}</option>
+                    <option value="{{ user.email }}">{{ user }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -78,4 +89,12 @@
             <input type="submit" name="submit" value="Transférer" class="button primary">
         </div>
     </form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ request.static_url('zam_repondeur:static/jquery/jquery-1.12.4.min.js') }}"></script>
+<script src="{{ request.static_url('zam_repondeur:static/selectize/js/standalone/selectize.min.js') }}"></script>
+<script type="text/javascript">
+    ;(_ => $("#target").selectize())()
+</script>
 {% endblock %}

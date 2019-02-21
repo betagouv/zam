@@ -9,7 +9,6 @@
         text-align: right;
         margin-right: .8rem;
         margin-top: 1rem;
-        font-weight: 600;
     }
         .extra-button form .button {
             color: #3167a6;
@@ -35,7 +34,23 @@
 {% endblock %}
 
 {% block extra_nav %}
-    <li><a href="{{ request.resource_url(context, 'amendements') }}">Amendements</a></li>
+    <li>
+        <a href="{{ request.resource_url(context['tables'], request.user.email) }}">
+            Ma table
+        </a>
+    </li>
+    <li>
+        <a href="{{ request.resource_url(context, 'amendements') }}">
+            Index
+        </a>
+    </li>
+    {% if lecture.displayable %}
+        <li>
+            <a href="{{ request.resource_url(context['articles']) }}" target="_blank">
+                Dossier de banc
+            </a>
+        </li>
+    {% endif %}
 {% endblock %}
 
 {% block body %}

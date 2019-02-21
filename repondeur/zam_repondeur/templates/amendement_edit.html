@@ -4,32 +4,6 @@
 {% block header %}
     {{ super() }}
     <style type="text/css">
-        /* Headers with line-through */
-        h4 {
-          overflow: hidden;
-          text-align: center;
-          font-weight: 600;
-          margin-bottom: 1.25rem;
-        }
-            h4:before,
-            h4:after {
-              background-color: #9b9b9b;
-              content: "";
-              display: inline-block;
-              height: 1px;
-              position: relative;
-              vertical-align: middle;
-              width: 50%;
-            }
-            h4:before {
-              right: 0.5em;
-              margin-left: -50%;
-            }
-            h4:after {
-              left: 0.5em;
-              margin-right: -50%;
-            }
-
         /* Link to article */
         h5 a {
             text-decoration: underline;
@@ -58,9 +32,6 @@
             }
 
         #edit-amendement .save-buttons {
-            position: -webkit-sticky;
-            position: sticky;
-            bottom: 0;
             background: white;
             padding: 1rem;
             flex-wrap: wrap;
@@ -69,6 +40,24 @@
                 width: 100%;
                 margin-bottom: 1rem;
             }
+        .notice {
+            margin-top: 2rem;
+        }
+        .expose .line-through {
+            margin-top: 3rem;
+        }
+        .article a {
+            font-style: italic;
+            text-decoration: underline;
+        }
+        .auteur {
+            background: no-repeat left 20%/2.4% url("{{ request.static_url('zam_repondeur:static/img/personne.svg') }}");
+            padding-left: 1.4rem;
+        }
+        .identiques {
+            background: no-repeat left 20%/2.4% url("{{ request.static_url('zam_repondeur:static/img/identique.svg') }}");
+            padding-left: 1.4rem;
+        }
     </style>
 {% endblock %}
 
@@ -99,28 +88,24 @@
             {% if amendement.parent %}
                 <h3>Sous-amendement au {{ amendement.parent }}</h3>
             {% endif %}
-            - {{ amendement.article.format() }} -
+            <p class="article"><a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a></p>
             <div class="auteur">
-                {% if amendement.auteur %}
-                    Présenté par {{ amendement.auteur }}
-                    {%- if not amendement.gouvernemental %}
-                        ({{ amendement.groupe }})
+                <p>
+                    {% if amendement.auteur %}
+                        Présenté par {{ amendement.auteur }}
+                        {%- if not amendement.gouvernemental %}
+                            ({{ amendement.groupe }})
+                        {% endif %}
+                    {% elif amendement.is_abandoned_before_seance %}
+                        {% if amendement.is_withdrawn %}
+                            <h3>Cet amendement a été retiré</h3>
+                        {% else %}
+                            <h3>Cet amendement est irrecevable</h3>
+                        {% endif %}
                     {% endif %}
-                {% elif amendement.is_abandoned_before_seance %}
-                    {% if amendement.is_withdrawn %}
-                        <h3>Cet amendement a été retiré</h3>
-                    {% else %}
-                        <h3>Cet amendement est irrecevable</h3>
-                    {% endif %}
-                {% endif %}
+                </p>
             </div>
-        </div>
-        {{ macros.update_informations(amendement, request.resource_url(context, 'amendement_journal')) }}
-        {{ content(amendement) }}
-    </section>
-    <section class="edit box">
-        {% if amendement.user_table and request.user == amendement.user_table.user %}
-            <div>
+            <div class="identiques">
                 {% if amendement.identique %}
                     {% set identiques = amendement.all_identiques %}
                     {% set identiques_length = identiques|length %}
@@ -128,7 +113,7 @@
                         <em>
                             Identique au{% if identiques_length > 1 %}x{% endif %} nº
                             {% for identique in identiques -%}
-                                <a href="{{ request.resource_url(context.parent[identique.num_str], 'reponse') }}">{{ identique }}</a>
+                                <a href="{{ request.resource_url(context.parent[identique.num_str], 'amendement_edit') }}">{{ identique }}</a>
                                 {% if identique.user_content.full_reponse() != amendement.user_content.full_reponse() %}
                                     <span title="Cet amendement identique n’a pas une réponse similaire">⚠️</span>
                                 {% endif %}
@@ -138,6 +123,14 @@
                     </p>
                 {% endif %}
             </div>
+        </div>
+        <p class="journal">
+            <a href="{{ request.resource_url(context, 'journal') }}" class="arrow-right">Journal</a>
+        </p>
+        {{ content(amendement) }}
+    </section>
+    <section class="edit box">
+        {% if amendement.user_table and request.user == amendement.user_table.user %}
             {{ form(amendement) }}
         {% else %}
             <div class="notice">
@@ -149,8 +142,7 @@
                 </p>
                 <form id="transfer" action="{{ request.resource_url(context.parent.parent['tables'], request.user.email) }}" method="POST">
                     <input type="hidden" name="nums" value="{{ amendement.num }}">
-                    <input type="hidden" name="target" value="{{ request.user.email }}">
-                    <input type="submit" class="button primary" value="Transférer sur ma table">
+                    <input type="submit" name="submit-table" class="button primary" value="Transférer sur ma table">
                 </form>
             </div>
             {{ reponse(amendement) }}
@@ -161,7 +153,7 @@
 
 {% macro content(amendement) %}
     <div class="expose">
-        <h4>Exposé</h4>
+        <h4 class="line-through">Exposé</h4>
         {% if amendement.expose %}
             {{ amendement.expose | safe }}
         {% else %}
@@ -169,8 +161,7 @@
         {% endif %}
     </div>
     <div class="corps">
-        <h4>Corps de l’amendement</h4>
-        <h5><a href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a></h5>
+        <h4 class="line-through">Corps de l’amendement</h4>
         {{ amendement.corps | safe }}
     </div>
 {% endmacro %}
@@ -178,18 +169,28 @@
 
 {% macro reponse(amendement) %}
     <div class="reponse">
-        <h4>Position du gouvernement</h4>
-        <p>{{ amendement.user_content.avis or '' }}</p>
-        <h4>Objet de l’amendement</h4>
-        {{ amendement.user_content.objet | paragriphy }}
-        <h4>
-            {% if not amendement.gouvernemental %}
-                Réponse à l’amendement
-            {% else %}
-                Présentation de l’amendement
-            {% endif %}
-        </h4>
-        {{ amendement.user_content.reponse | paragriphy }}
+        {% if amendement.user_content.avis %}
+            <h4 class="line-through">Position du gouvernement</h4>
+            <p>{{ amendement.user_content.avis or '' }}</p>
+        {% endif %}
+        {% if amendement.user_content.objet %}
+            <h4 class="line-through">Objet de l’amendement</h4>
+            {{ amendement.user_content.objet | paragriphy }}
+        {% endif %}
+        {% if amendement.user_content.reponse %}
+            <h4 class="line-through">
+                {% if not amendement.gouvernemental %}
+                    Réponse à l’amendement
+                {% else %}
+                    Présentation de l’amendement
+                {% endif %}
+            </h4>
+            {{ amendement.user_content.reponse | paragriphy }}
+        {% endif %}
+        {% if amendement.user_content.comments %}
+            <h4 class="line-through">Commentaires</h4>
+            {{ amendement.user_content.comments | paragriphy }}
+        {% endif %}
     </div>
 {% endmacro %}
 
@@ -197,7 +198,7 @@
 {% macro form(amendement) %}
 
     {% if not amendement.gouvernemental %}
-        <h4>Réutiliser</h4>
+        <h3>Réutiliser</h3>
         <form id="prefill-reponse" action="" method="POST" class="mt-3">
             <div class="form-group" style="margin-bottom: 1.5rem">
                 <label for="autofill">Remplir à partir de…</label>
@@ -226,13 +227,13 @@
         </form>
     {% endif %}
 
-    <h4>
+    <h3>
         {% if not amendement.gouvernemental %}
             Répondre
         {% else %}
             Présentation
         {% endif %}
-    </h4>
+    </h3>
 
     <form id="edit-amendement" action="{{ submit_url }}" method="POST" class="mt-3">
 

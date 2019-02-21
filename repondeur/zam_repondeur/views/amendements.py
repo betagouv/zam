@@ -47,7 +47,7 @@ class AmendementEdit:
         reponse = clean_html(self.request.POST.get("reponse", ""))
         comments = clean_html(self.request.POST.get("comments", ""))
 
-        avis_changed = avis != self.amendement.user_content.avis
+        avis_changed = avis != (self.amendement.user_content.avis or "")
         objet_changed = objet != (self.amendement.user_content.objet or "")
         reponse_changed = reponse != (self.amendement.user_content.reponse or "")
         comments_changed = comments != (self.amendement.user_content.comments or "")
@@ -98,11 +98,9 @@ class AmendementEdit:
 
 
 @view_config(
-    context=AmendementResource,
-    name="amendement_journal",
-    renderer="amendement_journal.html",
+    context=AmendementResource, name="journal", renderer="amendement_journal.html"
 )
-def article_journal(context: AmendementResource, request: Request) -> Dict[str, Any]:
+def amendement_journal(context: AmendementResource, request: Request) -> Dict[str, Any]:
     return {
         "lecture": context.lecture_resource.model(),
         "amendement": context.model(),

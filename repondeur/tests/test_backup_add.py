@@ -6,7 +6,7 @@ from webtest.forms import File
 
 
 def test_get_form(app, lecture_an):
-    resp = app.get("/lectures/an.15.269.PO717460/amendements/", user="user@example.com")
+    resp = app.get("/lectures/an.15.269.PO717460/options/", user="user@example.com")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -28,7 +28,7 @@ def test_post_form(app, lecture_an, amendements_an, tmpdir):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["backup-form"]
     path = Path(__file__).parent / "sample_data" / "backup.json"
     form["backup"] = Upload("file.json", path.read_bytes())
@@ -64,7 +64,7 @@ def test_post_form_updates_modification_date(app, lecture_an, amendements_an):
         initial_modified_at = lecture_an.modified_at
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["backup-form"]
     path = Path(__file__).parent / "sample_data" / "backup.json"
     form["backup"] = Upload("file.json", path.read_bytes())
@@ -85,7 +85,7 @@ def test_post_form_with_comments(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["backup-form"]
     path = Path(__file__).parent / "sample_data" / "backup_with_comments.json"
     form["backup"] = Upload("file.json", path.read_bytes())
@@ -113,7 +113,7 @@ def test_post_form_with_articles(app, lecture_an, article1_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["backup-form"]
     path = Path(__file__).parent / "sample_data" / "backup_with_articles.json"
     form["backup"] = Upload("file.json", path.read_bytes())
@@ -140,7 +140,7 @@ def test_post_form_with_articles_old(app, lecture_an, article1_an, amendements_a
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["backup-form"]
     path = Path(__file__).parent / "sample_data" / "backup_with_articles_old.json"
     form["backup"] = Upload("file.json", path.read_bytes())
@@ -165,7 +165,7 @@ def test_post_form_with_articles_old(app, lecture_an, article1_an, amendements_a
 
 def test_post_form_wrong_number(app, lecture_an, amendements_an):
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options", user="user@example.com"
     ).forms["backup-form"]
     path = Path(__file__).parent / "sample_data" / "backup_wrong_number.json"
     form["backup"] = Upload("file.json", path.read_bytes())
@@ -187,12 +187,12 @@ def test_post_form_wrong_number(app, lecture_an, amendements_an):
 def test_post_form_reponse_no_file(app, lecture_an, amendements_an):
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["backup-form"]
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/options"
 
     resp = resp.follow()
 
@@ -231,7 +231,7 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
         article1_an.user_content.presentation = ""
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["backup-form"]
     form["backup"] = Upload("file.json", Path(filename).read_bytes())
 

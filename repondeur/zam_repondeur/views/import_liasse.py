@@ -22,24 +22,19 @@ logger = logging.getLogger(__name__)
 
 @view_config(context=LectureResource, name="import_liasse_xml")
 def upload_liasse_xml(context: LectureResource, request: Request) -> Response:
-    _do_upload_liasse_xml(context, request)
-    return HTTPFound(location=request.resource_url(context, "amendements"))
-
-
-def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Response:
     try:
         liasse_field = request.POST["liasse"]
     except KeyError:
         request.session.flash(
             Message(cls="warning", text="Veuillez d’abord sélectionner un fichier")
         )
-        return
+        return HTTPFound(location=request.resource_url(context, "options"))
 
     if liasse_field == b"":
         request.session.flash(
             Message(cls="warning", text="Veuillez d’abord sélectionner un fichier")
         )
-        return
+        return HTTPFound(location=request.resource_url(context, "options"))
 
     # Backup uploaded file to make troubleshooting easier
     backup_path = get_backup_path(request)
@@ -55,7 +50,7 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
         request.session.flash(
             Message(cls="danger", text="Le format du fichier n’est pas valide.")
         )
-        return
+        return HTTPFound(location=request.resource_url(context, "options"))
     except LectureDoesNotMatch as exc:
         request.session.flash(
             Message(
@@ -63,7 +58,7 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
                 text=f"La liasse correspond à une autre lecture ({exc.lecture}).",
             )
         )
-        return
+        return HTTPFound(location=request.resource_url(context, "options"))
 
     if errors:
         if len(errors) == 1:
@@ -82,7 +77,7 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
                 text="Aucun amendement valide n’a été trouvé dans ce fichier.",
             )
         )
-        return
+        return HTTPFound(location=request.resource_url(context, "options"))
 
     if len(amendements) == 1:
         message = "1 nouvel amendement récupéré (import liasse XML)."
@@ -96,6 +91,7 @@ def _do_upload_liasse_xml(context: LectureResource, request: Request) -> Respons
     )
     lecture.modified_at = datetime.utcnow()
     DBSession.add(lecture)
+    return HTTPFound(location=request.resource_url(context, "amendements"))
 
 
 def get_backup_path(request: Request) -> Optional[Path]:

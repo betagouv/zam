@@ -34,8 +34,7 @@ def test_amendement_journal_avis(app, lecture_an, amendements_an, user_david):
         assert amendements_an[0].events[0].data["new_value"] == "Favorable"
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
     assert first_description_text(resp) == "David a mis l’avis à « Favorable »"
 
@@ -63,8 +62,7 @@ def test_amendement_journal_avis_with_existing_avis(
         assert amendements_an[0].events[0].data["new_value"] == "Défavorable"
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
     assert (
         first_description_text(resp)
@@ -84,8 +82,7 @@ def test_amendement_journal_objet(app, lecture_an, amendements_an, user_david):
         assert amendements_an[0].events[0].data["new_value"] == "Objet"
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
     assert first_summary_text(resp) == "David a modifié l’objet"
     assert first_details_text(resp) == "De «  » à « Objet »"
@@ -106,8 +103,7 @@ def test_amendement_journal_reponse(app, lecture_an, amendements_an, user_david)
         assert amendements_an[0].events[0].data["new_value"] == "Réponse"
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
     assert first_summary_text(resp) == "David a modifié la réponse"
     assert first_details_text(resp) == "De «  » à « Réponse »"
@@ -135,8 +131,7 @@ def test_amendement_journal_affectation(
         )
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
     assert (
         first_description_text(resp)
@@ -167,8 +162,7 @@ def test_amendement_journal_affectation_by_other(
         )
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
     assert first_description_text(resp) == (
         "David a transféré l’amendement de "
@@ -196,8 +190,7 @@ def test_amendement_journal_affectation_taken(
         )
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
     assert first_description_text(resp) == "David a mis l’amendement sur sa table"
 
@@ -222,8 +215,7 @@ def test_amendement_journal_affectation_taken_by_other(
         )
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
     assert (
         first_description_text(resp)
@@ -251,8 +243,7 @@ def test_amendement_journal_affectation_released(
         assert amendements_an[0].events[0].data["new_value"] == ""
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
     assert first_description_text(resp) == "David a remis l’amendement dans l’index"
 
@@ -277,8 +268,7 @@ def test_amendement_journal_affectation_released_by_other(
         assert amendements_an[0].events[0].data["new_value"] == ""
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/amendement_journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
     assert (
         first_description_text(resp)

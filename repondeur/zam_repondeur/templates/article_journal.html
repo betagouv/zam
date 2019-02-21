@@ -18,28 +18,10 @@
     </li>
 {% endblock %}
 
-{% block top %}
-    <div class="title">
-        <h2>{{ lecture.dossier_legislatif }}</h2>
-        <h3>{{ lecture }}</h3>
-    </div>
-{% endblock %}
-
-{% block secondary_header %}
-    <nav class="nav secondary justify-content-between">
-        <span class="nav-item">
-        </span>
-        <div>
-            <h2>Journal des modifications</h2>
-            <div>
-                <a href="{{ request.resource_url(context) }}">{{ article }}</a>
-            </div>
-        </div>
-        <span class="nav-item">
-        </span>
-    </nav>
-{% endblock %}
-
 {% block body %}
+    <h1>Journal des modifications</h1>
+    <div class="title-extras">
+        <a href="{{ request.resource_url(context) }}">{{ article }}</a>
+    </div>
     {{ macros.timeline(article.events, today) }}
 {% endblock %}

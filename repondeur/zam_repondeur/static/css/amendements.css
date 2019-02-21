@@ -15,13 +15,6 @@
     margin-bottom: 0.75rem;
 }
 
-/* Options avancées */
-.toggle.with-arrow:before {
-    content: "↓";
-}
-.toggle.with-arrow.enabled:before {
-    content: "↑";
-}
 #advanced {
     display: flex;
     flex-wrap: wrap;
@@ -33,6 +26,9 @@
     flex-basis: 26rem;
     padding: 2rem;
     border-bottom: thin solid #979797;
+}
+#advanced > div.no-border {
+    border-bottom: none;
 }
 #advanced > div h3 {
     font-size: 1.5rem;
@@ -68,7 +64,7 @@
 }
 .table th, .table td {
     vertical-align: middle;
-    padding: .4rem .75rem .25rem;
+    padding: .45rem .75rem .4rem;
 }
 .table td > span,
 .table td a {
@@ -86,35 +82,21 @@
 }
 
 /* Sticky table header */
-tr.sticky th {
+.sticky {
     position: sticky;
     position: -webkit-sticky;
     background: white;
     z-index: 10;
-    box-shadow: 0px 3px 3px 0px #CCC;
+    box-shadow: 0 3px 3px 3px #CCC;
+    top: 0;
 }
     tr.groupActions th {
-        top: 0;
-        padding: .5rem 0 .75rem 0;
+        padding: .5rem 0 1.5rem 0;
         text-align: center;
     }
         tr.groupActions th:first-child {
             vertical-align: middle;
         }
-    tr.headers th {
-        top: 0;
-    }
-    tr.filters th {
-        top: 2rem;
-    }
-
-/* Sorting */
-.headers th {
-    cursor: pointer;
-}
-.headers th.nosort {
-    cursor: default;
-}
 
 /* Filtering */
 th input.form-control {
@@ -160,8 +142,6 @@ td.identique.first.last:after {
     height: calc(100% - 10px);
     border-radius: 6px;
 }
-table.sorted td.identique:after,
-table.sorted td.identique.first.last:after,
 table.filtered-amendement td.identique:after,
 table.filtered-amendement td.identique.first.last:after,
 table.filtered-avis td.identique:after,
@@ -179,10 +159,10 @@ table.filtered-reponse td.identique.first.last:after {
 td a, td a:hover {
     white-space: nowrap;
     text-decoration: none;
-    border-bottom: thin solid #3167a6;
 }
-td a.download-pdf {
-    border-bottom: none;
+td a.arrow-right {
+    padding-right: .8rem;
+    background: no-repeat right 35%/18% url("../img/big_right.svg");
 }
 
 :target {
@@ -218,21 +198,9 @@ span.avis.abandoned_before_seance {
     background-color: #979797;
 }
 
-td .button {
-    padding: 0.2rem 1rem 0 1rem;
-    margin-left: 1rem;
-}
 td form {
     display: inline-block;
 }
 nav.options {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-    max-width: 55rem;
     margin: 1rem auto;
 }
-    nav.options #unsort {
-        text-decoration: underline;
-        margin-left: 1rem;
-    }

@@ -77,7 +77,7 @@
         align-items: stretch;
     }
         .amendement-card p {
-            margin: 1rem 0;
+            margin: 1rem 2rem 1rem 0;
         }
         .amendement-card-infos {
             flex-basis: 40rem;
@@ -88,7 +88,6 @@
         }
             .amendement-card-infos .article {
                 font-style: italic;
-                text-decoration: underline;
             }
             .amendement-card-infos .numero {
                 font-weight: 600;
@@ -97,14 +96,19 @@
                 font-style: italic;
             }
         .amendement-card-avis {
-            flex-basis: 13rem;
+            flex-basis: 18rem;
             display: flex;
             flex-direction: column;
-            justify-content: space-around;
+            justify-content: center;
             white-space: nowrap;
         }
+            .amendement-card-avis p {
+                margin: 1rem 1rem 0 0;
+                text-align: center;
+            }
+
             .amendement-card-avis .button {
-                margin: 0.5rem;
+                margin: 0.5rem auto;
             }
             .amendement-card-avis .icon.favorable {
                 color: #83d524;
@@ -115,18 +119,29 @@
             .amendement-card-avis .icon.defavorable {
                 color: #d0021b;
             }
-            .amendement-card-avis a.avis {
+            .amendement-card-avis .avis {
+                text-align: center;
+            }
+            .amendement-card-avis .avis p {
                 color: inherit;
-                text-decoration: underline;
+                font-weight: 600;
             }
     .highlighted {
         background: #d4edda66;
+    }
+    .button {
+        min-width: 10rem;
+        text-align: center;
+    }
+    .warning {
+        cursor: pointer;
+        margin-left: -.7rem;
     }
 </style>
 {% endblock %}
 
 {% block extra_nav %}
-    <li {% if owner == request.user %}class="selected"{% endif %}>
+    <li {% if is_owner %}class="selected"{% endif %}>
         <a href="{{ table_url }}">
             Ma table
         </a>
@@ -136,6 +151,13 @@
             Index
         </a>
     </li>
+    {% if lecture.displayable %}
+        <li>
+            <a href="{{ request.resource_url(context.parent.parent['articles']) }}" target="_blank">
+                Dossier de banc
+            </a>
+        </li>
+    {% endif %}
 {% endblock %}
 
 {% block body %}
@@ -143,6 +165,9 @@
         <defs>
             <symbol id="person" viewBox="0 0 13 14">
                 <path d="M6.5 6.588c1.796 0 3.25-1.474 3.25-3.294S8.296 0 6.5 0 3.25 1.474 3.25 3.294 4.704 6.588 6.5 6.588zm0 1.647c-2.17 0-6.5 1.288-6.5 3.843V14h13v-1.922c0-2.555-4.33-3.843-6.5-3.843z"/>
+            </symbol>
+            <symbol id="identique" viewBox="0 0 19 22">
+                <path d="M14,0 L2,0 C0.9,0 0,0.9 0,2 L0,16 L2,16 L2,2 L14,2 L14,0 Z M17,4 L6,4 C4.9,4 4,4.9 4,6 L4,20 C4,21.1 4.9,22 6,22 L17,22 C18.1,22 19,21.1 19,20 L19,6 C19,4.9 18.1,4 17,4 Z M17,20 L6,20 L6,6 L17,6 L17,20 Z" id="Shape" fill="#000000"></path>
             </symbol>
             <symbol id="edit" viewBox="0 0 22 22">
                 <path d="M2.67 18.045l.644 3.658 3.658-.645 8.884-12.689-4.302-3.012L2.67 18.045zM18.637 4.87a1.088 1.088 0 0 0-.268-1.518l-2.962-2.074a1.088 1.088 0 0 0-1.517.268L12.27 3.862l4.747 3.324 1.622-2.316z"/>
@@ -158,9 +183,23 @@
             {% endif %}">
             <div class="amendement-card-infos">
                 <div class="entete">
-                    <span class="article">{{ amendement.article.format() }}</span>
+                    <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article">{{ amendement.article.format() }}</a>
                     -
                     Nº&nbsp;<span class="numero">{{ amendement }}</span>
+                    {% if amendement.identique %}
+                        {{ macros.svg_icon("identique") }}
+                        {% set identiques = amendement.displayable_identiques %}
+                        {% if not amendement.displayable_identiques_are_similaires and identiques %}
+                            <span class="warning" title="{% if identiques|length > 1 -%}
+                                Les amendements identiques {% for amdt in identiques -%}
+                                {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                                {%- endfor %} n’ont pas des réponses similaires
+                            {%- else -%}
+                                L’amendement identique {{ identiques[0] }} n’a pas une réponse similaire
+                            {%- endif %}">⚠️</span>
+                        {% endif %}
+                    {% endif %}
+
                 </div>
                 <div class="objet">
                     {{ amendement.user_content.objet | paragriphy }}
@@ -186,7 +225,7 @@
                         <a href="{{ request.resource_url(context.parent.parent, 'export_pdf', query={'nums': amendement.num}) }}">Exporter en PDF</a>
                     </nav>
                 </div>
-                <div>
+                <div class="avis">
                     {% if is_owner %}
                         {% set edit_url = request.resource_url(context.parent.parent['amendements'][amendement.num_str], 'amendement_edit') %}
                         {% if amendement.user_content.avis %}
@@ -197,10 +236,11 @@
                             {% else %}
                                 {% set icon_class = "defavorable" %}
                             {% endif %}
-                            {{ macros.svg_icon("edit", icon_class) }}
-                            <a class="avis" href="{{ edit_url }}">
+                            <p>
+                                {{ macros.svg_icon("edit", icon_class) }}
                                 {{ amendement.user_content.avis }}
-                            </a>
+                            </p>
+                            <a class="button primary" href="{{ edit_url }}">Voir</a>
                         {% else %}
                             <a class="primary button enabled" href="{{ edit_url }}">Donner un avis</a>
                         {% endif %}
@@ -212,10 +252,10 @@
         </div>
     {% else %}
         <div class="notice">
-            {% if owner == request.user %}
+            {% if is_owner %}
                 <h3>Votre table est vide…</h3>
                 <nav>
-                    <a href="{{ index_url }}">Récupérer des amendements sur l'index</a>
+                    <a href="{{ index_url }}">Récupérer des amendements sur l’index</a>
                 </nav>
             {% else %}
                 <p>Il n’y a aucun amendement sur cette table pour l’instant.</p>

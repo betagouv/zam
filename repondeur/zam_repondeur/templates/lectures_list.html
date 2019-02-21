@@ -3,6 +3,11 @@
 
 {% block header %}
 <style type="text/css">
+    main {
+        max-width: 60rem;
+        margin: 2rem auto;
+    }
+
     .lecture {
         margin: 2rem 0.5rem;
         display: flex;
@@ -35,11 +40,12 @@
         background-position: right 40%;
         background-size: 7%;
     }
+    .lecture .details {
+        line-height: 1.2;
+    }
     .extra-button {
-        text-align: right;
-        margin-right: .8rem;
+        justify-content: flex-end;
         margin-top: 1rem;
-        font-weight: 600;
     }
         .extra-button a.button {
             color: #3167a6;
@@ -52,8 +58,10 @@
 </style>
 {% endblock %}
 
+{% block main_class %}{% endblock %}
+
 {% block body %}
-    <div class="extra-button">
+    <div class="extra-button lecture box">
         <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
             Ajouter une nouvelle lecture
         </a>
@@ -62,9 +70,9 @@
         <div class="lecture box">
             <div>
                 <h3>{{ lecture.dossier_legislatif }}</h3>
-                <div>{{ lecture }}</div>
+                <div class="details">{{ lecture }}</div>
                 {% if lecture.amendements %}
-                    <div>{{ lecture.amendements|length }} amendements</div>
+                    <em>{{ lecture.amendements|length }} amendements</em>
                 {% endif %}
             </div>
             <nav>
@@ -74,11 +82,6 @@
                 <a href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">
                     Consulter l’index
                 </a>
-                {% if lecture.displayable %}
-                    <a href="{{ request.resource_url(context[lecture.url_key]['articles']) }}" role="button" target="_blank">
-                        Voir le dossier de banc
-                    </a>
-                {% endif %}
             </nav>
         </div>
     {% endfor %}

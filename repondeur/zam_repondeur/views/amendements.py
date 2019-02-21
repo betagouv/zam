@@ -98,11 +98,9 @@ class AmendementEdit:
 
 
 @view_config(
-    context=AmendementResource,
-    name="amendement_journal",
-    renderer="amendement_journal.html",
+    context=AmendementResource, name="journal", renderer="amendement_journal.html"
 )
-def article_journal(context: AmendementResource, request: Request) -> Dict[str, Any]:
+def amendement_journal(context: AmendementResource, request: Request) -> Dict[str, Any]:
     return {
         "lecture": context.lecture_resource.model(),
         "amendement": context.model(),

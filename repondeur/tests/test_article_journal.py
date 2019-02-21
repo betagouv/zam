@@ -31,7 +31,7 @@ def test_article_journal_title(app, lecture_an, article1_an, user_david):
         assert article1_an.events[0].data["new_value"] == "Title"
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../article_journal",
+        "/lectures/an.15.269.PO717460/articles/article.1../journal",
         user=user_david.email,
     )
     assert first_summary_text(resp) == "David a modifié le titre"
@@ -48,7 +48,7 @@ def test_article_journal_title_from_services(app, lecture_an, article1_an):
         assert article1_an.events[0].data["new_value"] == "Title"
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../article_journal",
+        "/lectures/an.15.269.PO717460/articles/article.1../journal",
         user="user@example.com",
     )
     assert first_summary_text(resp) == (
@@ -73,7 +73,7 @@ def test_article_journal_presentation(app, lecture_an, article1_an, user_david):
         assert article1_an.events[0].data["new_value"] == "Présentation"
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../article_journal",
+        "/lectures/an.15.269.PO717460/articles/article.1../journal",
         user=user_david.email,
     )
     assert first_summary_text(resp) == "David a modifié la présentation"
@@ -92,7 +92,7 @@ def test_article_journal_content(app, lecture_an, article1_an, user_david):
         assert article1_an.events[0].data["new_value"] == {"Foo": "Bar"}
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../article_journal",
+        "/lectures/an.15.269.PO717460/articles/article.1../journal",
         user=user_david.email,
     )
     assert first_description_text(resp) == (

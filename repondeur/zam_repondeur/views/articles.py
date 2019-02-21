@@ -93,9 +93,7 @@ class ArticleEdit:
         return url_next_article
 
 
-@view_config(
-    context=ArticleResource, name="article_journal", renderer="article_journal.html"
-)
+@view_config(context=ArticleResource, name="journal", renderer="article_journal.html")
 def article_journal(context: ArticleResource, request: Request) -> Dict[str, Any]:
     return {
         "lecture": context.lecture_resource.model(),

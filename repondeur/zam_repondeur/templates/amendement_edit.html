@@ -91,7 +91,7 @@
             {% if amendement.parent %}
                 <h3>Sous-amendement au {{ amendement.parent }}</h3>
             {% endif %}
-            <p class="article"><a href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a></p>
+            <p class="article"><a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a></p>
             <div class="auteur">
                 <p>
                     {% if amendement.auteur %}

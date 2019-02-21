@@ -46,22 +46,30 @@ nav.main {
         nav.main ul li {
             padding: .7rem 1rem;
             white-space: nowrap;
+            margin-left: 1rem;
         }
             nav.main ul li a {
                 color: white;
+                padding: .3rem .8rem .1rem .8rem;
+            }
+            nav.main ul li a:hover {
+                text-decoration: none;
+                border-bottom: 2px solid white;
             }
             nav.main ul li.selected a {
                 color: white;
-                text-decoration: underline;
+                border-bottom: 2px solid white;
             }
-    nav.main ul:first-child li a {
-        padding: 0 0 0 1.5rem;
+            nav.main ul li.selected a:hover {
+                text-decoration: none;
+            }
+    nav.main ul:first-child li:first-child {
+        border-right: 2px solid white;
+        padding-right: 2rem;
     }
     nav.main ul:first-child li:first-child a {
+        padding: 0 0 0 1.5rem;
         background: no-repeat left 20%/18% url("../img/home.svg");
-    }
-    nav.main ul:first-child li:nth-child(2) a {
-        border-left: 2px solid white;
     }
     nav.main ul:last-child li:first-child a {
         background: no-repeat right 20%/18% url("../img/compte.svg");
@@ -308,6 +316,7 @@ nobr.user {
   text-align: center;
   font-weight: 600;
   margin-bottom: 1.25rem;
+  margin-top: 5rem;
 }
     .line-through:before,
     .line-through:after {

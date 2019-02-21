@@ -7,7 +7,7 @@ SAMPLE_DATA = Path(__file__).parent / "sample_data"
 
 
 def test_get_form(app, lecture_essoc):
-    resp = app.get("/lectures/an.15.806.PO744107/amendements", user="user@example.com")
+    resp = app.get("/lectures/an.15.806.PO744107/options", user="user@example.com")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -30,7 +30,7 @@ def test_upload_liasse_success(app, lecture_essoc):
 
     initial_modified_at = lecture_essoc.modified_at
 
-    resp = app.get("/lectures/an.15.806.PO744107/amendements", user="user@example.com")
+    resp = app.get("/lectures/an.15.806.PO744107/options", user="user@example.com")
     form = resp.forms["import-liasse-xml"]
     form["liasse"] = Upload("liasse.xml", (SAMPLE_DATA / "liasse.xml").read_bytes())
     resp = form.submit()
@@ -60,7 +60,7 @@ def test_upload_liasse_success(app, lecture_essoc):
 def test_upload_liasse_with_table(app, lecture_essoc):
     from zam_repondeur.models import Lecture
 
-    resp = app.get("/lectures/an.15.806.PO744107/amendements", user="user@example.com")
+    resp = app.get("/lectures/an.15.806.PO744107/options", user="user@example.com")
     form = resp.forms["import-liasse-xml"]
     form["liasse"] = Upload(
         "liasse.xml", (SAMPLE_DATA / "liasse_with_table.xml").read_bytes()
@@ -91,7 +91,7 @@ def test_upload_liasse_with_table(app, lecture_essoc):
 
 
 def test_upload_liasse_success_with_a_deposer(app, lecture_essoc):
-    resp = app.get("/lectures/an.15.806.PO744107/amendements", user="user@example.com")
+    resp = app.get("/lectures/an.15.806.PO744107/options", user="user@example.com")
     form = resp.forms["import-liasse-xml"]
     # The second amendement has `etat == "A déposer"` and thus is ignored.
     form["liasse"] = Upload(
@@ -107,12 +107,12 @@ def test_upload_liasse_missing_file(app, lecture_essoc):
 
     initial_modified_at = lecture_essoc.modified_at
 
-    resp = app.get("/lectures/an.15.806.PO744107/amendements", user="user@example.com")
+    resp = app.get("/lectures/an.15.806.PO744107/options", user="user@example.com")
     form = resp.forms["import-liasse-xml"]
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.806.PO744107/amendements"
+    assert resp.location == "https://zam.test/lectures/an.15.806.PO744107/options"
 
     resp = resp.follow()
     assert "Veuillez d’abord sélectionner un fichier" in resp.text

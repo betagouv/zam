@@ -33,12 +33,13 @@ def test_get_amendement_edit_form(app, lecture_an, amendements_an, user_david):
     assert resp.forms["prefill-reponse"].method == "POST"
 
     # Check the displayed amendement
+    assert resp.parser.css_first(".title .article").text() == "Article 1"
+
     assert resp.parser.css_first(".expose h4").text() == "Exposé"
     assert resp.parser.css_first(".expose h4 + *").text() == "Bla bla bla"
 
     assert resp.parser.css_first(".corps h4").text() == "Corps de l’amendement"
-    assert resp.parser.css_first(".corps h5").text() == "Article 1"
-    assert resp.parser.css_first(".corps h5 + *").text() == "Supprimer cet article."
+    assert resp.parser.css_first(".corps h4 + *").text() == "Supprimer cet article."
 
 
 def test_get_amendement_edit_form_only_if_owner(app, lecture_an, amendements_an):

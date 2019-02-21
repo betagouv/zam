@@ -6,7 +6,7 @@ from webtest.forms import File
 
 
 def test_get_form(app, lecture_an):
-    resp = app.get("/lectures/an.15.269.PO717460/amendements/", user="user@example.com")
+    resp = app.get("/lectures/an.15.269.PO717460/options/", user="user@example.com")
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -28,7 +28,7 @@ def test_post_form(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
@@ -64,7 +64,7 @@ def test_post_form_updates_modification_date(app, lecture_an, amendements_an):
         initial_modified_at = lecture_an.modified_at
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
@@ -85,7 +85,7 @@ def test_post_form_semicolumns(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_semicolumns.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
@@ -118,7 +118,7 @@ def test_post_form_with_comments(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_with_comments.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
@@ -144,7 +144,7 @@ def test_post_form_with_comments(app, lecture_an, amendements_an):
 
 def test_post_form_with_bom(app, lecture_an, amendements_an):
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_with_bom.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
@@ -162,7 +162,7 @@ def test_post_form_with_bom(app, lecture_an, amendements_an):
 
 def test_post_form_wrong_columns_names(app, lecture_an, amendements_an):
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options", user="user@example.com"
     ).forms["import-form"]
     path = Path(__file__).parent / "sample_data" / "reponses_wrong_columns_names.csv"
     form["reponses"] = Upload("file.csv", path.read_bytes())
@@ -185,12 +185,12 @@ def test_post_form_wrong_columns_names(app, lecture_an, amendements_an):
 def test_post_form_reponse_no_file(app, lecture_an, amendements_an):
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["import-form"]
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/options"
 
     resp = resp.follow()
 
@@ -227,7 +227,7 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
         amendements[1].user_content.avis = None
 
     form = app.get(
-        "/lectures/an.15.269.PO717460/amendements/", user="user@example.com"
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["import-form"]
     form["reponses"] = Upload("file.csv", Path(filename).read_bytes())
 

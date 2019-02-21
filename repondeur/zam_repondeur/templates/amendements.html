@@ -19,174 +19,88 @@
     {% if lecture.displayable %}
         <li>
             <a href="{{ request.resource_url(context.parent['articles']) }}" target="_blank">
-                Le dossier de banc
+                Dossier de banc
             </a>
         </li>
     {% endif %}
-{% endblock %}
-
-{% block secondary_header %}
-    <h1>Index des amendements</h1>
-    {{ macros.update_informations(lecture, request.resource_url(context.parent, 'lecture_journal')) }}
+    <li>
+        <a href="{{ request.resource_url(context.parent, 'options') }}">
+            Options avancées
+        </a>
+    </li>
 {% endblock %}
 
 {% block body %}
-{% include "svg-file-icons.html" %}
+<svg aria-hidden="true" style="position: absolute; width: 0; height: 0;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+    <symbol id="check" viewBox="0 0 18 14" fill="#000000">
+        <polygon id="Shape" points="6 11.17 1.83 7 0.41 8.41 6 14 18 2 16.59 0.59"></polygon>
+    </symbol>
+ </defs>
+</svg>
+
+<h1>Index des amendements</h1>
+{{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}
 <div class="content">
     <nav class="options">
-        <a href="#" id="unsort">Annuler le tri</a>
         <span>
-            <a id="toggle-advanced" class="toggle with-arrow button" href="#">
-                Options avancées
-            </a>
             <a id="toggle-filter" class="toggle button" href="#">
                 Filtrer
             </a>
         </span>
     </nav>
 
-    <section id="advanced" class="d-none">
-        <div>
-            <h3>Importer des réponses</h3>
-            <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a class="underlined" href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses" target="_blank">suivant la spécification dédiée</a>.</p>
-            <form action="{{ request.resource_url(context.parent, 'import_csv') }}" enctype="multipart/form-data" method="post" id="import-form" class="">
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="reponses" name="reponses" required>
-                    <label class="custom-file-label" for="reponses">Fichier CSV</label>
-                </div>
-                <div role="group">
-                    <input type="submit" name="upload" class="button primary enabled centered" value="Importer les réponses">
-                </div>
-            </form>
-        </div>
-        <div>
-            <h3>Télécharger ce tableau</h3>
-            <p>Télécharger le tableau affiché ci-dessous de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
-            <div role="group" aria-label="Format de téléchargement">
-                <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'xlsx'}) }}">
-                    {{ macros.svg_icon("file-excel") }}
-                    Format Excel
-                </a>
-                <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'pdf'}) }}">
-                    {{ macros.svg_icon("file-pdf") }}
-                    Format PDF
-                </a>
-            </div>
-        </div>
-        <div>
-            <h3>Importer une liasse XML</h3>
-            <p>Importer des amendements à partir d'un fichier XML provenant
-            de l’Assemblée nationale.</p>
-            <form action="{{ request.resource_url(context.parent, 'import_liasse_xml') }}" enctype="multipart/form-data" method="post" id="import-liasse-xml" class="align-items-center">
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="liasse" name="liasse">
-                    <label class="custom-file-label" for="liasse">Fichier XML</label>
-                </div>
-                <div role="group">
-                    <input type="submit" name="upload" class="button primary enabled" value="Importer la liasse">
-                </div>
-            </form>
-        </div>
-        <div>
-            <h3>Supprimer</h3>
-            <p>Supprimer la lecture ainsi que tous les amendements et réponses associés.</p>
-            <form method="post" action="{{ request.resource_url(context.parent) }}" id="delete-lecture">
-                <div role="group">
-                    <input type="submit" name="delete" class="danger allow-multiple-submit button" value="Supprimer">
-                </div>
-            </form>
-        </div>
-        <div>
-            <h3>Importer une sauvegarde</h3>
-            <p>À partir d’un fichier précédemment sauvegardé.</p>
-            <form action="{{ request.resource_url(context.parent, 'import_backup') }}" enctype="multipart/form-data" method="post" id="backup-form" class="">
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="backup" name="backup" required>
-                    <label class="custom-file-label" for="backup">Fichier JSON</label>
-                </div>
-                <div role="group">
-                    <input type="submit" name="upload" class="button primary enabled centered" value="Importer la sauvegarde">
-                </div>
-            </form>
-        </div>
-        <div>
-            <h3>Exporter une sauvegarde</h3>
-            <p>Télécharger et conserver une sauvegarde pour un futur import.</p>
-            <div role="group" aria-label="Format de téléchargement">
-                <a class="button primary prevent-multiple-clicks" href="{{ request.resource_url(context.parent, 'download_amendements', query={'format': 'json'}) }}">
-                    {{ macros.svg_icon("file-archive") }}
-                    Fichier de sauvegarde
-                </a>
-            </div>
-        </div>
-    </section>
-
     <table class="table">
-        <thead class="box">
-            <tr class="groupActions sticky d-none">
-                <th colspan="2" class="nosort">
+        <thead class="box sticky">
+            <tr class="groupActions d-none">
+                <th colspan="2">
                     Actions groupées :
                 </th>
-                <th colspan="2" class="nosort">
+                <th colspan="2">
                     <a id="transfer-amendements" href="{{ request.resource_url(context.parent, 'transfer_amendements') }}" class="button primary">Transférer</a>
                 </th>
-                <th colspan="2" class="nosort">
+                <th colspan="2">
                     <a id="export-pdf" href="{{ request.resource_url(context.parent, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
                 </th>
-                <th class="nosort"></th>
+                <th></th>
             </tr>
-            <tr class="headers sticky">
-                <th class="nosort"></th>
-                <th>
-                    {{ macros.svg_icon("sort") }}
-                    Article
-                </th>
-                <th>
-                    {{ macros.svg_icon("sort") }}
-                    Nº
-                </th>
-                <th>
-                    {{ macros.svg_icon("sort") }}
-                    Table
-                </th>
-                <th>
-                    {{ macros.svg_icon("sort") }}
-                    Avis
-                </th>
-                <th>
-                    {{ macros.svg_icon("sort") }}
-                    Réponse
-                </th>
-                <th class="nosort"></th>
+            <tr class="headers">
+                <th></th>
+                <th>Article</th>
+                <th>Nº</th>
+                <th>Table</th>
+                <th>Avis</th>
+                <th>Réponse</th>
+                <th></th>
             </tr>
-            <tr class="filters sticky d-none">
-                <th class="nosort">
+            <tr class="filters d-none">
+                <th>
                     <input type="checkbox" name="select-all">
                 </th>
-                <th class="nosort">
+                <th>
                     <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
-                <th class="nosort">
+                <th>
                     <input id="amendement-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
                 </th>
-                <th class="nosort">
+                <th>
                     <input id="table-filter" class="form-control form-control-sm" type="text" autocomplete="off" autocorrect="off">
                 </th>
-                <th class="nosort">
+                <th>
                     <select id="avis-filter">
                         <option value="">Tous</option>
                         <option value="1">Avec</option>
                         <option value="0">Sans</option>
                     </select>
                 </th>
-                <th class="nosort">
+                <th>
                     <select id="reponse-filter">
                         <option value="">Toutes</option>
                         <option value="1">Avec</option>
                         <option value="0">Sans</option>
                     </select>
                 </th>
-                <th class="nosort"></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -244,18 +158,6 @@
                         {{ amendement.num_disp }}
                         {% if amendement.parent %}
                             (ss-amdt au {{ amendement.parent.num_disp }})
-                        {% endif %}
-                        {% if amendement.identique %}
-                            {% set identiques = amendement.displayable_identiques %}
-                            {% if not amendement.displayable_identiques_are_similaires and identiques %}
-                                <span title="{% if identiques|length > 1 -%}
-                                    Les amendements identiques {% for amdt in identiques -%}
-                                    {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                                    {%- endfor %} n’ont pas des réponses similaires
-                                {%- else -%}
-                                    L’amendement identique {{ identiques[0] }} n’a pas une réponse similaire
-                                {%- endif %}">⚠️</span>
-                            {% endif %}
                         {% endif %}
                 </td>
                 <td data-sortkey="
@@ -330,9 +232,21 @@
                     {% if amendement.user_content.reponse %}
                         {{ macros.svg_icon("check") }}
                     {% endif %}
+                    {% if amendement.identique %}
+                        {% set identiques = amendement.displayable_identiques %}
+                        {% if not amendement.displayable_identiques_are_similaires and identiques %}
+                            <span title="{% if identiques|length > 1 -%}
+                                Les amendements identiques {% for amdt in identiques -%}
+                                {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                                {%- endfor %} n’ont pas des réponses similaires
+                            {%- else -%}
+                                L’amendement identique {{ identiques[0] }} n’a pas une réponse similaire
+                            {%- endif %}">⚠️</span>
+                        {% endif %}
+                    {% endif %}
                 </td>
                 <td>
-                    <a class="edit-amendement button primary" href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}">
+                    <a class="edit-amendement arrow-right" href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}">
                         Voir
                     </a>
                 </td>
@@ -370,12 +284,8 @@
 <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
 <script type="text/javascript">
     notifyOnUpdates(60 /* seconds */, '{{ timestamp }}', '{{ check_url }}')
-    setupToggle('#toggle-advanced', '#advanced', false)
     setupToggle('#toggle-filter', 'tr.filters', false)
     setupToggle('#toggle-articles', '#articles', true)
-    makeHeadersSortable(document.querySelector('thead'))
-    sortColumnsFromQueryString()
-    allowUnsort(document.querySelector('thead'))
     filterColumns(document.querySelector('table'))
     hijackEditLinks()
     const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]:not([name="select-all"])'))

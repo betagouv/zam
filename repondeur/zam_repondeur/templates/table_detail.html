@@ -183,7 +183,7 @@
             {% endif %}">
             <div class="amendement-card-infos">
                 <div class="entete">
-                    <span class="article">{{ amendement.article.format() }}</span>
+                    <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article">{{ amendement.article.format() }}</a>
                     -
                     Nº&nbsp;<span class="numero">{{ amendement }}</span>
                     {% if amendement.identique %}

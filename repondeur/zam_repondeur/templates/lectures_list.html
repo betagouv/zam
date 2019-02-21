@@ -82,11 +82,6 @@
                 <a href="{{ request.resource_url(context[lecture.url_key], 'amendements') }}">
                     Consulter l’index
                 </a>
-                {% if lecture.displayable %}
-                    <a href="{{ request.resource_url(context[lecture.url_key]['articles']) }}" role="button" target="_blank">
-                        Voir le dossier de banc
-                    </a>
-                {% endif %}
             </nav>
         </div>
     {% endfor %}

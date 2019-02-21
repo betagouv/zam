@@ -124,7 +124,9 @@
                 {% endif %}
             </div>
         </div>
-        {{ macros.update_informations(amendement, request.resource_url(context, 'amendement_journal')) }}
+        <p class="journal">
+            <a href="{{ request.resource_url(context, 'amendement_journal') }}" class="arrow-right">Journal</a>
+        </p>
         {{ content(amendement) }}
     </section>
     <section class="edit box">

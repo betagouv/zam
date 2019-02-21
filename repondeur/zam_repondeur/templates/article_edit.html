@@ -22,7 +22,9 @@
                 <div>{{ article.user_content.title }}</div>
             {% endif %}
         </div>
-        {{ macros.update_informations(article, request.resource_url(context, 'article_journal')) }}
+        <p class="journal">
+            <a href="{{ request.resource_url(context, 'article_journal') }}" class="arrow-right">Journal</a>
+        </p>
         {{ content(article) }}
     </section>
     <section class="edit box">

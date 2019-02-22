@@ -72,7 +72,7 @@ function filterColumn(className, shouldShow) {
     })
 }
 function showFilters() {
-    document.querySelector('#toggle-filter').classList.add('enabled')
+    document.querySelector('.options a').classList.add('enabled')
     document.querySelector('tr.filters').classList.remove('d-none')
 }
 
@@ -135,30 +135,30 @@ function filterColumns(table) {
     }
 }
 
-function hijackEditLinks() {
-    /* To inject the current page URL as a "back" query param */
-    const editLinks = document.querySelectorAll('a.edit-amendement')
-    Array.from(editLinks).forEach(editLink => {
-        editLink.addEventListener('click', e => {
-            e.preventDefault()
+application.register(
+    'amendements-backlinks',
+    class extends Stimulus.Controller {
+        update(event) {
+            event.preventDefault()
             const thisURL = new URL(window.location.href)
-            const linkURL = new URL(e.target.href)
+            const linkURL = new URL(event.target.href)
             thisURL.hash = ''
             linkURL.searchParams.set('back', thisURL.pathname + thisURL.search)
             const href = linkURL.toString()
             if (
-                e.ctrlKey ||
-                e.shiftKey ||
-                e.metaKey || // apple
-                (e.button && e.button == 1) // middle click, >IE9 + everyone else
+                event.ctrlKey ||
+                event.shiftKey ||
+                event.metaKey || // apple
+                (event.button && event.button == 1) // middle click, >IE9 + everyone else
             ) {
                 window.open(href).focus()
             } else {
                 window.location.href = href
             }
-        })
-    })
-}
+
+        }
+    }
+)
 
 application.register(
     'amendements-selection',
@@ -244,6 +244,7 @@ application.register(
             return ['row']
         }
         toggle(event) {
+            event.target.classList.toggle('enabled')
             this.rowTarget.classList.toggle('d-none')
             event.preventDefault()
         }

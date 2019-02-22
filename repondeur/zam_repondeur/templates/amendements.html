@@ -101,7 +101,7 @@
                 <th></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody data-controller="amendements-backlinks">
         {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
         {% for amendement in amendements | sort %}
             <tr data-article="
@@ -244,7 +244,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a class="edit-amendement arrow-right" href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}">
+                    <a class="arrow-right" data-action="amendements-backlinks#update" href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}">
                         Voir
                     </a>
                 </td>
@@ -285,6 +285,5 @@
 <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
 <script type="text/javascript">
     filterColumns(document.querySelector('table'))
-    hijackEditLinks()
 </script>
 {% endblock %}

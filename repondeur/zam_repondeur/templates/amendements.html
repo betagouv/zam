@@ -41,14 +41,18 @@
 
 <h1>Index des amendements</h1>
 {{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}
-<div class="content" data-controller="amendements-filters">
-    <nav class="options">
-        <a class="toggle button" href="#"
+{% set count = amendements| length %}
+<div class="content"
+    data-controller="amendements-filters"
+    data-amendements-filters-initial-count="{{ count }}">
+    <div class="options">
+        <a class="toggle" href="#"
             data-action="amendements-filters#toggle"
             data-target="amendements-filters.link">
             Filtrer
         </a>
-    </nav>
+        <span data-target="amendements-filters.count">{{ count }} amendements</span>
+    </div>
 
     <table class="table"
         data-controller="amendements-selection"

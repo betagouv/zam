@@ -106,6 +106,7 @@ application.register(
             return [
                 'row',
                 'link',
+                'count',
                 'table',
                 'tbody',
                 'articleInput',
@@ -147,6 +148,7 @@ application.register(
                 this.reponseSelectTarget.value = reponseFilter
                 this.filterByReponse(reponseFilter)
             }
+            this.updateCount()
         }
 
         getURLParam(name) {
@@ -176,34 +178,49 @@ application.register(
             if (event) event.preventDefault()
         }
 
+        updateCount() {
+            const initial = parseInt(this.data.get("initial-count"))
+            const current = this.tbodyTarget.querySelectorAll('tr:not([class^=hidden])').length
+            const plural = current > 1 ? 's' : ''
+            if (initial === current)
+                this.countTarget.innerHTML = `${current} amendement${plural}`
+            else
+                this.countTarget.innerHTML = `${current} amendement${plural} (${initial} au total)`
+        }
+
         filterArticle(event) {
             const value = event.target.value.trim()
             this.filterByArticle(value)
             this.setURLParam('article', value)
+            this.updateCount()
         }
 
         filterAmendement(event) {
             const value = event.target.value.trim()
             this.filterByAmendement(value)
             this.setURLParam('amendement', value)
+            this.updateCount()
         }
 
         filterTable(event) {
             const value = event.target.value.trim()
             this.filterByTable(value)
             this.setURLParam('table', value)
+            this.updateCount()
         }
 
         filterAvis(event) {
             const value = event.target.value.trim()
             this.filterByAvis(value)
             this.setURLParam('avis', value)
+            this.updateCount()
         }
 
         filterReponse(event) {
             const value = event.target.value.trim()
             this.filterByReponse(value)
             this.setURLParam('reponse', value)
+            this.updateCount()
         }
 
         filterByArticle(value) {

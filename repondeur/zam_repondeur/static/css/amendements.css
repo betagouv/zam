@@ -201,6 +201,19 @@ span.avis.abandoned_before_seance {
 td form {
     display: inline-block;
 }
-nav.options {
-    margin: 1rem auto;
+.options {
+    margin: 3rem 0 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
 }
+    .options .toggle {
+        background: no-repeat left 25%/40% url("../img/switch_off.svg");
+        padding-left: 2.5rem;
+    }
+        .options .toggle:hover {
+            text-decoration: none;
+        }
+        .options .toggle.enabled {
+            background: no-repeat left 25%/40% url("../img/switch_on.svg");
+        }

@@ -70,11 +70,7 @@ application.register(
 
         selectAll() {
             this.checkboxes.forEach(checkbox => {
-                const display = getComputedStyle(
-                    checkbox.parentElement.parentElement,
-                    null
-                ).display
-                if (display != 'none') {
+                if (checkbox.offsetParent !== null) {
                     checkbox.checked = this.selectAllCheckbox.checked
                     // Required because the change event is not propagated by default.
                     const event = new Event('change')
@@ -179,8 +175,10 @@ application.register(
         }
 
         updateCount() {
-            const initial = parseInt(this.data.get("initial-count"))
-            const current = this.tbodyTarget.querySelectorAll('tr:not([class^=hidden])').length
+            const initial = parseInt(this.data.get('initial-count'))
+            const current = this.tbodyTarget.querySelectorAll(
+                'tr:not([class^=hidden])'
+            ).length
             const plural = current > 1 ? 's' : ''
             if (initial === current)
                 this.countTarget.innerHTML = `${current} amendement${plural}`

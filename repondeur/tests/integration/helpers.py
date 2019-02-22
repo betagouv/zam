@@ -21,6 +21,10 @@ def extract_column_text(index, trs):
     return texts
 
 
+def extract_item_text(selector, trs):
+    return [item.find_element_by_css_selector(selector).text for item in trs]
+
+
 def login(driver, base_url, email):
     wait = WebDriverWait(driver, 1)
 

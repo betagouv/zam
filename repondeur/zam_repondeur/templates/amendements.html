@@ -43,12 +43,16 @@
 {{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}
 <div class="content" data-controller="amendements-filters">
     <nav class="options">
-        <a data-action="amendements-filters#toggle" class="toggle button" href="#">
+        <a class="toggle button" href="#"
+            data-action="amendements-filters#toggle"
+            data-target="amendements-filters.link">
             Filtrer
         </a>
     </nav>
 
-    <table class="table" data-controller="amendements-selection">
+    <table class="table"
+        data-controller="amendements-selection"
+        data-target="amendements-filters.table">
         <thead class="box sticky">
             <tr class="groupActions d-none">
                 <th colspan="2">
@@ -73,26 +77,40 @@
             </tr>
             <tr class="filters d-none" data-target="amendements-filters.row">
                 <th>
-                    <input type="checkbox" name="select-all" data-action="amendements-selection#selectAll">
+                    <input type="checkbox" name="select-all"
+                        data-action="amendements-selection#selectAll">
                 </th>
                 <th>
-                    <input id="article-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
+                    <input type="text" class="form-control form-control-sm" placeholder="Nº"
+                        autocomplete="off" autocorrect="off"
+                        data-action="keyup->amendements-filters#filterArticle"
+                        data-target="amendements-filters.articleInput">
                 </th>
                 <th>
-                    <input id="amendement-filter" class="form-control form-control-sm" type="text" placeholder="Nº" autocomplete="off" autocorrect="off">
+                    <input type="text" class="form-control form-control-sm" placeholder="Nº"
+                        autocomplete="off" autocorrect="off"
+                        data-action="keyup->amendements-filters#filterAmendement"
+                        data-target="amendements-filters.amendementInput">
                 </th>
                 <th>
-                    <input id="table-filter" class="form-control form-control-sm" type="text" autocomplete="off" autocorrect="off">
+                    <input type="text" class="form-control form-control-sm"
+                        autocomplete="off" autocorrect="off"
+                        data-action="keyup->amendements-filters#filterTable"
+                        data-target="amendements-filters.tableInput">
                 </th>
                 <th>
-                    <select id="avis-filter">
+                    <select
+                        data-action="amendements-filters#filterAvis"
+                        data-target="amendements-filters.avisSelect">
                         <option value="">Tous</option>
                         <option value="1">Avec</option>
                         <option value="0">Sans</option>
                     </select>
                 </th>
                 <th>
-                    <select id="reponse-filter">
+                    <select
+                        data-action="amendements-filters#filterReponse"
+                        data-target="amendements-filters.reponseSelect">
                         <option value="">Toutes</option>
                         <option value="1">Avec</option>
                         <option value="0">Sans</option>
@@ -101,7 +119,7 @@
                 <th></th>
             </tr>
         </thead>
-        <tbody data-controller="amendements-backlinks">
+        <tbody data-controller="amendements-backlinks" data-target="amendements-filters.tbody">
         {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
         {% for amendement in amendements | sort %}
             <tr data-article="
@@ -244,7 +262,9 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a class="arrow-right" data-action="amendements-backlinks#update" href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}">
+                    <a class="arrow-right"
+                        href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}"
+                        data-action="amendements-backlinks#update">
                         Voir
                     </a>
                 </td>
@@ -254,11 +274,13 @@
     </table>
     <div data-controller="amendements-articles">
         <nav id="bottom-nav">
-            <a data-action="amendements-articles#toggle" class="toggle primary button" href="#">
+            <a class="toggle primary button" href="#"
+                data-action="amendements-articles#toggle">
                 Liste des articles&nbsp;&nbsp;&nbsp;↓
             </a>
         </nav>
-        <section id="articles" data-target="amendements-articles.list" class="d-none">
+        <section id="articles" class="d-none"
+            data-target="amendements-articles.list">
             <ul>
                 {% for article in articles | sort %}
                     {# On ne liste pas les inconnus ni les intersticiels ici #}
@@ -283,7 +305,4 @@
 {% block scripts %}
 <script src="{{ request.static_url('zam_repondeur:static/tinysort/tinysort.min.js') }}"></script>
 <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
-<script type="text/javascript">
-    filterColumns(document.querySelector('table'))
-</script>
 {% endblock %}

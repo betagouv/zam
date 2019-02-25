@@ -281,11 +281,11 @@
                        data-order="{{ loop.index }}"
                        data-amendement="{{ amendement.num }}"
                        data-avis="{{ 1 if amendement.gouvernemental or amendement.user_content.avis else 0 }}"
-                       data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
-                       {% if amendement.slug == highlighted_amdt %}
-                       class="highlighted"
-                       {% endif %}>
-                        <td colspan="4" class="box amendement-card">
+                       data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}">
+                        <td colspan="4"
+                            class="box amendement-card
+                                {% if amendement.slug == highlighted_amdt %}highlighted{% endif %}
+                            ">
                             <div class="amendement-card-infos">
                                 <div class="entete">
                                     <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article">{{ amendement.article.format() }}</a>

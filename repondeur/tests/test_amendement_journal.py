@@ -109,6 +109,27 @@ def test_amendement_journal_reponse(app, lecture_an, amendements_an, user_david)
     assert first_details_text(resp) == "De «  » à « Réponse »"
 
 
+def test_amendement_journal_comments(app, lecture_an, amendements_an, user_david):
+    from zam_repondeur.models.events.amendement import CommentsAmendementModifie
+
+    with transaction.manager:
+        CommentsAmendementModifie.create(
+            request=None,
+            amendement=amendements_an[0],
+            comments="Un commentaire",
+            user=user_david,
+        )
+        assert len(amendements_an[0].events) == 1
+        assert amendements_an[0].events[0].data["old_value"] == ""
+        assert amendements_an[0].events[0].data["new_value"] == "Un commentaire"
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
+    )
+    assert first_summary_text(resp) == "David a modifié les commentaires"
+    assert first_details_text(resp) == "De «  » à « Un commentaire »"
+
+
 def test_amendement_journal_affectation(
     app, lecture_an, amendements_an, user_david, user_ronan
 ):

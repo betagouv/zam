@@ -30,16 +30,9 @@ def article_check(context: ArticleResource, request: Request) -> dict:
         modified_amendements_numbers = article.modified_amendements_numbers_since(
             timestamp
         )
-    modified_articles_at_timestamp = article.modified_at_timestamp
-    modified_articles_numbers: list = []
-    if timestamp < modified_articles_at_timestamp:
-        modified_articles_numbers = [article.format(short=True)]
     return {
         "modified_amendements_numbers": modified_amendements_numbers,
-        "modified_articles_numbers": modified_articles_numbers,
-        "modified_at": max(
-            modified_articles_at_timestamp, modified_amendements_at_timestamp
-        ),
+        "modified_at": modified_amendements_at_timestamp,
     }
 
 

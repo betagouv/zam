@@ -162,10 +162,7 @@ def list_amendements(context: AmendementCollection, request: Request) -> dict:
         "amendements": lecture.amendements,
         "articles": lecture.articles,
         "check_url": request.resource_path(context.parent, "check"),
-        "timestamp": max(
-            lecture.modified_amendements_at_timestamp,
-            lecture.modified_articles_at_timestamp,
-        ),
+        "timestamp": lecture.modified_amendements_at_timestamp,
     }
 
 
@@ -224,16 +221,9 @@ def lecture_check(context: LectureResource, request: Request) -> dict:
         modified_amendements_numbers = lecture.modified_amendements_numbers_since(
             timestamp
         )
-    modified_articles_at_timestamp = lecture.modified_articles_at_timestamp
-    modified_articles_numbers: list = []
-    if timestamp < modified_articles_at_timestamp:
-        modified_articles_numbers = lecture.modified_articles_numbers_since(timestamp)
     return {
         "modified_amendements_numbers": modified_amendements_numbers,
-        "modified_articles_numbers": modified_articles_numbers,
-        "modified_at": max(
-            modified_amendements_at_timestamp, modified_articles_at_timestamp
-        ),
+        "modified_at": modified_amendements_at_timestamp,
     }
 
 

@@ -66,9 +66,6 @@ application.register(
             this.message = `${this.numbersToMessage(
               json.modified_amendements_numbers,
               'amendement'
-            )} ${this.numbersToMessage(
-              json.modified_articles_numbers,
-              'article'
             )}`
             this.kind = 'refresh'
             this.load()

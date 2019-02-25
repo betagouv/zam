@@ -16,7 +16,6 @@ def test_lecture_check(app, lecture_an, amendements_an):
     )
     assert resp.status_code == 200
     assert resp.json == {
-        "modified_articles_numbers": [],
         "modified_amendements_numbers": [],
         "modified_at": lecture_an.modified_amendements_at_timestamp,
     }
@@ -38,7 +37,6 @@ def test_lecture_check_updates(app, lecture_an, amendements_an):
     )
     assert resp.status_code == 200
     assert resp.json == {
-        "modified_articles_numbers": [],
         "modified_amendements_numbers": [],
         "modified_at": initial_modified_at_timestamp,
     }
@@ -54,7 +52,6 @@ def test_lecture_check_updates(app, lecture_an, amendements_an):
     )
     assert resp2.status_code == 200
     assert resp2.json == {
-        "modified_articles_numbers": [],
         "modified_amendements_numbers": ["666"],
         "modified_at": amendements_an[0].modified_at_timestamp,
     }
@@ -62,18 +59,6 @@ def test_lecture_check_updates(app, lecture_an, amendements_an):
     with transaction.manager:
         amendements_an[0].article.modified_at = datetime.utcnow()
         DBSession.add_all(amendements_an)
-
-    resp3 = app.get(
-        "/lectures/an.15.269.PO717460/check",
-        {"since": initial_modified_at_timestamp},
-        user="user@example.com",
-    )
-    assert resp3.status_code == 200
-    assert resp3.json == {
-        "modified_articles_numbers": ["Art. 1"],
-        "modified_amendements_numbers": ["666"],
-        "modified_at": amendements_an[0].article.modified_at_timestamp,
-    }
 
 
 def test_lecture_check_not_found(app, lecture_an, amendements_an):

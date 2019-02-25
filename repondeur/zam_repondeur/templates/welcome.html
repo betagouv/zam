@@ -18,8 +18,8 @@
     </fieldset>
     <div class="controls">
         {% if has_name %}
-            <a href="{{ request.resource_url(context['lectures']) }}">Revenir</a>
-            <input type="submit" value="Sauvegarder">
+            <a href="{{ request.resource_url(context['lectures']) }}">Annuler</a>
+            <input type="submit" value="Enregistrer">
         {% else %}
             <input type="submit" value="Entrer">
         {% endif %}

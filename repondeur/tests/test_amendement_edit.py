@@ -33,7 +33,7 @@ def test_get_amendement_edit_form(app, lecture_an, amendements_an, user_david):
     assert resp.forms["prefill-reponse"].method == "POST"
 
     # Check the displayed amendement
-    assert resp.parser.css_first(".title .article").text() == "Article 1"
+    assert resp.parser.css_first(".title .article").text().strip() == "Article 1"
 
     assert resp.parser.css_first(".expose h4").text() == "Exposé"
     assert resp.parser.css_first(".expose h4 + *").text() == "Bla bla bla"

@@ -47,7 +47,7 @@ def test_select_all_change_transfer_url(
     transfer_amendements = driver.find_element_by_css_selector("#transfer-amendements")
     assert (
         transfer_amendements.get_attribute("href")
-        == f"{LECTURE_URL}/transfer_amendements?nums=666&nums=999"
+        == f"{LECTURE_URL}/transfer_amendements?from_index=1&nums=666&nums=999"
     )
 
 
@@ -98,5 +98,5 @@ def test_select_all_checks_only_visible_amendements(
     transfer_amendements = driver.find_element_by_css_selector("#transfer-amendements")
     assert (
         transfer_amendements.get_attribute("href")
-        == f"{LECTURE_URL}/transfer_amendements?{expected_nums}"
+        == f"{LECTURE_URL}/transfer_amendements?from_index=1&{expected_nums}"
     )

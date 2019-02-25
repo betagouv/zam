@@ -132,7 +132,9 @@ def test_tables_release_amendement(app, lecture_an, amendements_an, user_david):
         user=email,
     )
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test/lectures/an.15.269.PO717460/amendements"
+    assert (
+        resp.location == f"https://zam.test/lectures/an.15.269.PO717460/tables/{email}"
+    )
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
     table = user_david.table_for(lecture_an)
     assert len(table.amendements) == 0
@@ -165,7 +167,9 @@ def test_tables_release_amendements(app, lecture_an, amendements_an, user_david)
         user=email,
     )
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test/lectures/an.15.269.PO717460/amendements"
+    assert (
+        resp.location == f"https://zam.test/lectures/an.15.269.PO717460/tables/{email}"
+    )
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
     table = user_david.table_for(lecture_an)
     assert len(table.amendements) == 0
@@ -212,7 +216,8 @@ class TestTransfer:
         )
         assert resp.status_code == 302
         assert (
-            resp.location == f"https://zam.test/lectures/an.15.269.PO717460/amendements"
+            resp.location
+            == f"https://zam.test/lectures/an.15.269.PO717460/tables/{email}"
         )
         user_david = (
             DBSession.query(User).filter(User.email == user_david.email).first()
@@ -347,7 +352,8 @@ class TestTransfer:
         )
         assert resp.status_code == 302
         assert (
-            resp.location == f"https://zam.test/lectures/an.15.269.PO717460/amendements"
+            resp.location
+            == f"https://zam.test/lectures/an.15.269.PO717460/tables/{email}"
         )
         user_david = (
             DBSession.query(User).filter(User.email == user_david.email).first()

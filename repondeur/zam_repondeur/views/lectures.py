@@ -175,6 +175,7 @@ def transfer_amendements(context: LectureResource, request: Request) -> dict:
     lecture = context.model()
     my_table = request.user.table_for(lecture)
     amendements_nums: list = request.GET.getall("nums")
+    from_index = bool(request.GET.get("from_index"))
     amendements = DBSession.query(Amendement).filter(
         Amendement.lecture_pk == lecture.pk,
         Amendement.num.in_(amendements_nums),  # type: ignore
@@ -184,6 +185,7 @@ def transfer_amendements(context: LectureResource, request: Request) -> dict:
         "lecture": lecture,
         "amendements": list(amendements),
         "users": users,
+        "from_index": int(from_index),
         "show_transfer_to_index": any(
             amendement.user_table is not None for amendement in amendements
         ),

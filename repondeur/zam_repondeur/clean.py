@@ -1,3 +1,4 @@
+import threading
 from html import unescape
 
 from bleach import Cleaner
@@ -25,10 +26,16 @@ ALLOWED_TAGS = [
 ]
 
 
-CLEANER = Cleaner(tags=ALLOWED_TAGS, strip=True)
+# Bleach uses html5lib, which is not thread-safe, so we have to use a cleaner instance
+# per thread instead of a global one to avoid transient errors in our workers
+#
+# See: https://github.com/mozilla/bleach/issues/370
+#
+_THREAD_LOCALS = threading.local()
+_THREAD_LOCALS.cleaner = Cleaner(tags=ALLOWED_TAGS, strip=True)
 
 
 def clean_html(html: str) -> str:
     text = unescape(html)  # decode HTML entities
-    sanitized: str = CLEANER.clean(text)
+    sanitized: str = _THREAD_LOCALS.cleaner.clean(text)
     return sanitized.strip()

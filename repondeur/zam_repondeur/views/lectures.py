@@ -162,7 +162,10 @@ def list_amendements(context: AmendementCollection, request: Request) -> dict:
         "amendements": lecture.amendements,
         "articles": lecture.articles,
         "check_url": request.resource_path(context.parent, "check"),
-        "timestamp": lecture.modified_at_timestamp,
+        "timestamp": max(
+            lecture.modified_amendements_at_timestamp,
+            lecture.modified_articles_at_timestamp,
+        ),
     }
 
 
@@ -215,15 +218,22 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
 def lecture_check(context: LectureResource, request: Request) -> dict:
     lecture = context.model()
     timestamp = float(request.GET["since"])
-    modified_at = lecture.modified_at_timestamp
+    modified_amendements_at_timestamp = lecture.modified_amendements_at_timestamp
     modified_amendements_numbers: list = []
-    if timestamp < modified_at:
+    if timestamp < modified_amendements_at_timestamp:
         modified_amendements_numbers = lecture.modified_amendements_numbers_since(
             timestamp
         )
+    modified_articles_at_timestamp = lecture.modified_articles_at_timestamp
+    modified_articles_numbers: list = []
+    if timestamp < modified_articles_at_timestamp:
+        modified_articles_numbers = lecture.modified_articles_numbers_since(timestamp)
     return {
         "modified_amendements_numbers": modified_amendements_numbers,
-        "modified_at": modified_at,
+        "modified_articles_numbers": modified_articles_numbers,
+        "modified_at": max(
+            modified_amendements_at_timestamp, modified_articles_at_timestamp
+        ),
     }
 
 

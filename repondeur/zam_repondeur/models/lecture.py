@@ -131,6 +131,15 @@ class Lecture(Base):
         timestamp: float = (self.modified_at - datetime(1970, 1, 1)).total_seconds()
         return timestamp
 
+    @property
+    def modified_amendements_at_timestamp(self) -> float:
+        if not self.amendements:
+            return 0
+        max_modified_at: float = max(
+            amendement.modified_at_timestamp for amendement in self.amendements
+        )
+        return max_modified_at
+
     def modified_amendements_numbers_since(self, timestamp: float) -> List[str]:
         if not self.amendements:
             return []
@@ -138,6 +147,24 @@ class Lecture(Base):
             str(amendement)
             for amendement in self.amendements
             if amendement.modified_at_timestamp > timestamp
+        ]
+
+    @property
+    def modified_articles_at_timestamp(self) -> float:
+        if not self.articles:
+            return 0
+        max_modified_at: float = max(
+            article.modified_at_timestamp for article in self.articles
+        )
+        return max_modified_at
+
+    def modified_articles_numbers_since(self, timestamp: float) -> List[str]:
+        if not self.articles:
+            return []
+        return [
+            article.format(short=True)
+            for article in self.articles
+            if article.modified_at_timestamp > timestamp
         ]
 
     @property

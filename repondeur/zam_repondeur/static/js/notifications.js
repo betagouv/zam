@@ -61,15 +61,15 @@ application.register(
       fetch(`${this.url}?since=${this.timestamp}`, options)
         .then(reponse => reponse.json())
         .then(json => {
-          if (
-            json.modified_at &&
-            json.modified_at !== this.timestamp &&
-            json.modified_amendements_numbers.length
-          ) {
+          if (json.modified_at && json.modified_at !== this.timestamp) {
             this.timestamp = Number(json.modified_at)
-            this.message = this.amendementsNumbersToMessage(
-              json.modified_amendements_numbers
-            )
+            this.message = `${this.numbersToMessage(
+              json.modified_amendements_numbers,
+              'amendement'
+            )} ${this.numbersToMessage(
+              json.modified_articles_numbers,
+              'article'
+            )}`
             this.kind = 'refresh'
             this.load()
           }
@@ -93,18 +93,19 @@ application.register(
       return `${table.slice(0, -1).join(', ')} et ${table.slice(-1)}`
     }
 
-    amendementsNumbersToMessage(amendementsNumbers) {
-      const length = amendementsNumbers.length
+    numbersToMessage(numbers, type) {
+      const length = numbers.length
+      if (!length) return ''
       if (length === 1) {
-        return `L’amendement ${amendementsNumbers} a été mis à jour !`
+        return `L’${type} ${numbers} a été mis à jour !`
       } else if (length < 10) {
-        return `Les amendements ${this.fooCommaBarAndBaz(
-          amendementsNumbers
+        return `Les ${type}s ${this.fooCommaBarAndBaz(
+          numbers
         )} ont été mis à jour !`
       } else {
-        return `Les amendements ${amendementsNumbers
+        return `Les ${type}s ${numbers
           .slice(0, 4)
-          .join(', ')} … ${amendementsNumbers
+          .join(', ')} … ${numbers
           .slice(-4, length)
           .join(', ')} (${length} au total) ont été mis à jour !`
       }

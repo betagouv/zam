@@ -288,7 +288,11 @@
                             ">
                             <div class="amendement-card-infos">
                                 <div class="entete">
-                                    <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article" target="_blank">{{ amendement.article.format() }}</a>
+                                    {% if amendement.article.pos %}
+                                        <span class="article">{{ amendement.article.format() }}</span>
+                                    {% else %}
+                                        <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article" target="_blank">{{ amendement.article.format() }}</a>
+                                    {% endif %}
                                     -
                                     Nº&nbsp;<span class="numero">{{ amendement }}</span>
                                     {% if amendement.identique %}
@@ -304,7 +308,6 @@
                                             {%- endif %}">⚠️</span>
                                         {% endif %}
                                     {% endif %}
-
                                 </div>
                                 <div class="objet">
                                     {{ amendement.user_content.objet | paragriphy }}

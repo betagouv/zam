@@ -46,10 +46,12 @@
         .expose .line-through {
             margin-top: 3rem;
         }
-        .article a {
+        .article {
             font-style: italic;
-            text-decoration: underline;
         }
+            .article a {
+                text-decoration: underline;
+            }
         .auteur {
             background: no-repeat left 20%/2.4% url("{{ request.static_url('zam_repondeur:static/img/personne.svg') }}");
             padding-left: 1.4rem;
@@ -88,7 +90,13 @@
             {% if amendement.parent %}
                 <h3>Sous-amendement au {{ amendement.parent }}</h3>
             {% endif %}
-            <p class="article"><a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a></p>
+            <p class="article">
+                {% if amendement.article.pos %}
+                    {{ amendement.article.format() }}
+                {% else %}
+                    <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a>
+                {% endif %}
+            </p>
             <div class="auteur">
                 <p>
                     {% if amendement.auteur %}

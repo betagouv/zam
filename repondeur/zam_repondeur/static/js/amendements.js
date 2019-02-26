@@ -25,6 +25,9 @@ application.register(
 application.register(
     'amendements-selection',
     class extends Stimulus.Controller {
+        static get targets() {
+            return ['headers', 'filters']
+        }
         initialize() {
             this.groupActions = this.element.querySelector('.groupActions')
             this.selectAllCheckbox = this.element.querySelector(
@@ -49,6 +52,27 @@ application.register(
                 box => box.checked
             )
             this.groupActions.classList.toggle('d-none', checkeds.length < 1)
+            if (checkeds.length < 1) {
+                if (this.hasHeadersTarget) {
+                    this.headersTarget.querySelectorAll('th')
+                        .forEach(th => (th.style.top = '0'))
+                    this.filtersTarget.querySelectorAll('th')
+                        .forEach(th => (th.style.top = '2.5rem'))
+                } else {
+                    this.filtersTarget.querySelectorAll('th')
+                        .forEach(th => (th.style.top = '0'))
+                }
+            } else {
+                if (this.hasHeadersTarget) {
+                    this.headersTarget.querySelectorAll('th')
+                        .forEach(th => (th.style.top = '3.5rem'))
+                    this.filtersTarget.querySelectorAll('th')
+                        .forEach(th => (th.style.top = '6.5rem'))
+                } else {
+                    this.filtersTarget.querySelectorAll('th')
+                        .forEach(th => (th.style.top = '3rem'))
+                }
+            }
             this.changeURLGivenChecks(
                 this.groupActions.querySelector('#transfer-amendements'),
                 checkeds

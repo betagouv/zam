@@ -95,6 +95,9 @@ def check_all_equal(pos_list: List[str]) -> str:
     return pos_list[0]
 
 
+ARTICLE = case_insensitive_string("Article").result("article")
+ARTICLES = case_insensitive_string("Articles").result("article")
+
 AVANT_APRES = (
     (
         string_from(
@@ -119,9 +122,9 @@ STATUT_NAVETTE = seq(
 )
 
 
-ARTICLE = (
+ARTICLE_UNIQUE = (
     seq(
-        case_insensitive_string("article").result("article").tag("type_"),
+        ARTICLE.tag("type_"),
         (whitespace >> case_insensitive_string("article")).optional().tag(None),
         (whitespace >> NUMERO).tag("num"),
         (whitespace >> MULT_ADD << whitespace.optional()).optional().tag("mult"),
@@ -135,10 +138,7 @@ ARTICLE = (
 ARTICLE_ADDITIONNEL = (
     seq(
         AVANT_APRES.tag("pos"),
-        (
-            case_insensitive_string("article").result("article")
-            | case_insensitive_string("titre").result("section")
-        ).tag("type_"),
+        (ARTICLE | TITRE).tag("type_"),
         (whitespace >> NUMERO).tag("num"),
         (whitespace >> MULT_ADD).optional().tag("mult"),
     )
@@ -149,7 +149,7 @@ ARTICLE_ADDITIONNEL = (
 
 
 INTERVALLE = seq(
-    string("Articles").result("article").tag("type_"),
+    (ARTICLES | ARTICLE).tag("type_"),
     (whitespace >> NUMERO).tag("num"),
     (whitespace >> MULT_ADD).optional().tag("mult"),
     seq(
@@ -176,9 +176,9 @@ EMPTY = string("").result(SubDiv.create(type_=""))
 DIVISION = (
     DIVISION_UNIQUE
     | DIVISION_NUMEROTEE
-    | ARTICLE
+    | INTERVALLE  # must remain before ARTICLE_* parsing.
+    | ARTICLE_UNIQUE
     | ARTICLE_ADDITIONNEL
-    | INTERVALLE
     | ANNEXE
     | EMPTY
 )

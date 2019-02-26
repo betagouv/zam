@@ -67,9 +67,9 @@ def test_intervalle(text, subdiv):
     ],
 )
 def test_parse_article(text, type_, num, mult, pos):
-    from zam_repondeur.fetch.division import ARTICLE
+    from zam_repondeur.fetch.division import ARTICLE_UNIQUE
 
-    assert ARTICLE.parse(text) == SubDiv(type_, num, mult, pos)
+    assert ARTICLE_UNIQUE.parse(text) == SubDiv(type_, num, mult, pos)
 
 
 @pytest.mark.parametrize(
@@ -132,6 +132,7 @@ def test_parse_article_additionnel(text, type_, num, mult, pos):
         ("Chapitre III", "chapitre", "III", "", ""),
         ("Motions", "motion", "", "", ""),
         ("Articles 55 septdecies à 55 novodecies", "article", "55", "septdecies", ""),
+        ("Article 52 à 54", "article", "52", "", ""),
         (
             "art. add. après Article additionnel après l'article 61 quinquies",
             "article",

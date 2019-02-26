@@ -32,10 +32,13 @@ ALLOWED_TAGS = [
 # See: https://github.com/mozilla/bleach/issues/370
 #
 _THREAD_LOCALS = threading.local()
-_THREAD_LOCALS.cleaner = Cleaner(tags=ALLOWED_TAGS, strip=True)
 
 
 def clean_html(html: str) -> str:
     text = unescape(html)  # decode HTML entities
+
+    if not hasattr(_THREAD_LOCALS, "cleaner"):
+        _THREAD_LOCALS.cleaner = Cleaner(tags=ALLOWED_TAGS, strip=True)
+
     sanitized: str = _THREAD_LOCALS.cleaner.clean(text)
     return sanitized.strip()

@@ -1,7 +1,11 @@
+import pytest
 import transaction
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
+
+pytestmark = pytest.mark.flaky
 
 
 def test_group_actions_not_visible_by_default(

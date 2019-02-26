@@ -79,7 +79,7 @@ def test_group_actions_button_urls_change_with_selection(
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
     checkboxes[0].click()
 
-    WebDriverWait(driver, 10).until(EC.visibility_of(find(".groupActions")))
+    WebDriverWait(driver, 20).until(EC.visibility_of(find(".groupActions")))
 
     assert find(".groupActions").is_displayed()
 

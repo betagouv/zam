@@ -94,7 +94,14 @@ def app(wsgi_app, db, data_repository):
 
 
 @pytest.fixture
-def user_david(db):
+def team_zam(db):
+    from zam_repondeur.models import Team
+
+    return Team.create(name="Zam")
+
+
+@pytest.fixture
+def user_david(db, team_zam):
     from zam_repondeur.models import User
 
     return User.create(name="David", email="david@example.com")

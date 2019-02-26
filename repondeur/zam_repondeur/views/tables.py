@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPForbidden, HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
@@ -56,6 +56,8 @@ class TableView:
         target_table: Optional[UserTable] = None
         if target:
             target_user: User = DBSession.query(User).filter(User.email == target).one()
+            if self.request.team and target_user not in self.request.team.users:
+                raise HTTPForbidden("Transfert non autorisé")
             target_table = target_user.table_for(self.lecture)
 
         amendements = DBSession.query(Amendement).filter(

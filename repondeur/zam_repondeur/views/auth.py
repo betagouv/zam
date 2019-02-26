@@ -31,8 +31,18 @@ class Login:
             return HTTPFound(location=self.request.route_url("login"))
 
         user, created = get_one_or_create(User, email=User.normalize_email(email))
+
+        # Automatically add user without a team to the authenticated team
+        if not user.teams and self.request.team is not None:
+            user.teams.append(self.request.team)
+
         if created:
             DBSession.flush()  # so that the DB assigns a value to user.pk
+
+        # Prevent from impersonating an existing member of another team
+        if self.request.team and self.request.team not in user.teams:
+            self.request.session["already_in_use"] = True
+            return HTTPFound(location=self.request.route_url("login"))
 
         user.last_login_at = datetime.utcnow()
 

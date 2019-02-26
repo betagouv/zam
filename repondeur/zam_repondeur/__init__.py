@@ -13,7 +13,7 @@ from pyramid.view import view_config
 from sqlalchemy import engine_from_config, event
 
 from zam_repondeur.errors import extract_settings, setup_rollbar_log_handler
-from zam_repondeur.models import DBSession, Base, User, log_query_with_origin
+from zam_repondeur.models import DBSession, Base, Team, User, log_query_with_origin
 from zam_repondeur.resources import Root
 from zam_repondeur.tasks.huey import init_huey
 from zam_repondeur.version import load_version
@@ -110,6 +110,9 @@ def setup_auth(config: Configurator, settings: dict) -> None:
     # Add a "request.user" property
     config.add_request_method(get_user, "user", reify=True)
 
+    # Add a "request.team" property
+    config.add_request_method(get_team, "team", reify=True)
+
     # We protect access to certain views based on permissions,
     # that are granted to users based on ACLs added to resources
     authz_policy = ACLAuthorizationPolicy()
@@ -133,6 +136,17 @@ def get_user(request: Request) -> Optional[User]:
         user: Optional[User] = DBSession.query(User).get(user_id)
         return user
     return None
+
+
+def get_team(request: Request) -> Optional[Team]:
+    team_name = request.environ.get("HTTP_X_REMOTE_USER")
+    if team_name is None:
+        return None
+    team: Optional[Team] = DBSession.query(Team).filter_by(name=team_name).first()
+    if team is None:
+        team = Team.create(name=team_name)
+        DBSession.flush()
+    return team
 
 
 class AuthenticationPolicy(AuthTktAuthenticationPolicy):
@@ -162,4 +176,6 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
         if request.user is not None:
             principals.append(Authenticated)
             principals.append(f"user:{request.user.pk}")
+            for team in request.user.teams:
+                principals.append(f"team:{team.pk}")
         return principals

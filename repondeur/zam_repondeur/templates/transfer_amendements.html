@@ -62,6 +62,9 @@
         {% for amendement in amendements %}
             <input type="hidden" name="nums" value="{{ amendement.num }}">
         {% endfor %}
+        {% if from_index %}
+            <input type="hidden" name="from_index" value="{{ from_index }}">
+        {% endif %}
         <div>
             {% if show_transfer_to_myself %}
                 <input type="submit" name="submit-table" value="Transférer sur ma table" class="button primary enabled">
@@ -76,6 +79,9 @@
         {% for amendement in amendements %}
             <input type="hidden" name="nums" value="{{ amendement.num }}">
         {% endfor %}
+        {% if from_index %}
+            <input type="hidden" name="from_index" value="{{ from_index }}">
+        {% endif %}
         <div>
             <label for="target">Destinataire :</label>
             <select id="target" name="target" required>

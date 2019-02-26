@@ -1,6 +1,6 @@
 ### Perspectives
 
-<p class="notice">Date de prochaine démonstration : 27 février à 11h.<br><br><em>Pour cause de congés, interruption des démos jusqu'à fin mars.</em></p>
+<p class="notice">Date de prochaine démonstration : à determiner (annulation de la démo initialement prévue le 27 février à 11h).<br><br><em>Pour cause de congés, interruption des démos jusqu'à fin mars.</em></p>
 
 #### Rappel des objectifs prioritaires des développements 2019
 

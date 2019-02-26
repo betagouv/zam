@@ -33,7 +33,7 @@ def test_get_amendement_edit_form(app, lecture_an, amendements_an, user_david):
     assert resp.forms["prefill-reponse"].method == "POST"
 
     # Check the displayed amendement
-    assert resp.parser.css_first(".title .article").text() == "Article 1"
+    assert resp.parser.css_first(".title .article").text().strip() == "Article 1"
 
     assert resp.parser.css_first(".expose h4").text() == "Exposé"
     assert resp.parser.css_first(".expose h4 + *").text() == "Bla bla bla"
@@ -193,7 +193,7 @@ def test_post_amendement_edit_form(app, lecture_an, amendements_an, user_david):
     assert initial_amendement_modified_at < amendement.modified_at
 
     # Should create events.
-    assert len(amendement.events) == 3
+    assert len(amendement.events) == 4
 
 
 def test_post_amendement_edit_form_and_transfer(
@@ -244,7 +244,7 @@ def test_post_amendement_edit_form_and_transfer(
     assert initial_amendement_modified_at < amendement.modified_at
 
     # Should create events.
-    assert len(amendement.events) == 3
+    assert len(amendement.events) == 4
 
 
 def test_post_amendement_edit_form_gouvernemental(

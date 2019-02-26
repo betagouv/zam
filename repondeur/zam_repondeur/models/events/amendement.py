@@ -272,3 +272,26 @@ class ReponseAmendementModifiee(AmendementEvent):
 
     def apply(self) -> None:
         self.amendement.user_content.reponse = self.data["new_value"]
+
+
+class CommentsAmendementModifie(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "comments_amendement_modifie"}
+
+    summary_template = Template(
+        "<abbr title='$email'>$user</abbr> a modifié les commentaires"
+    )
+    icon = "edit"
+
+    def __init__(
+        self, request: Request, amendement: Amendement, comments: str, **kwargs: Any
+    ) -> None:
+        super().__init__(
+            request,
+            amendement,
+            old_value=amendement.user_content.comments or "",
+            new_value=comments,
+            **kwargs,
+        )
+
+    def apply(self) -> None:
+        self.amendement.user_content.comments = self.data["new_value"]

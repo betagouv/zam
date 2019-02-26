@@ -53,7 +53,7 @@ def parse_first_working_url(urls: List[str]) -> List[dict]:
 def update_lecture_articles(lecture: Lecture, all_article_data: List[dict]) -> bool:
     changed = False
     for index, article_data in enumerate(all_article_data):
-        if article_data["type"] in {"texte", "section"}:
+        if article_data["type"] in {"texte", "section", "dots"}:
             continue
         elif article_data["type"] == "annexe":
             articles = [

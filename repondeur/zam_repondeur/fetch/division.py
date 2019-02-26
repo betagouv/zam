@@ -121,10 +121,10 @@ STATUT_NAVETTE = seq(
 
 ARTICLE = (
     seq(
-        (case_insensitive_string("article").result("article").tag("type_")),
+        case_insensitive_string("article").result("article").tag("type_"),
         (whitespace >> case_insensitive_string("article")).optional().tag(None),
         (whitespace >> NUMERO).tag("num"),
-        (whitespace >> MULT_ADD).optional().tag("mult"),
+        (whitespace >> MULT_ADD << whitespace.optional()).optional().tag("mult"),
     )
     .combine_dict(SubDiv.create)
     .skip(STATUT_NAVETTE.optional())

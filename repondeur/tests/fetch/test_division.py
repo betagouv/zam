@@ -60,6 +60,7 @@ def test_intervalle(text, subdiv):
         ("Article 31 (précédemment examiné)", "article", "31", "", ""),
         ("Article 39 (État B (crédits de la mission))", "article", "39", "", ""),
         ("Article 54 bis B", "article", "54", "bis B", ""),
+        ("Article 42\xa0bis\xa0A\xa0", "article", "42", "bis A", ""),
         ("Article 55 septdecies", "article", "55", "septdecies", ""),
         ("Article 3 bis AAA", "article", "3", "bis AAA", ""),
         ("Article Article 3 bis AAA", "article", "3", "bis AAA", ""),

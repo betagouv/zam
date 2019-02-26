@@ -351,9 +351,9 @@
                                                 {{ macros.svg_icon("edit", icon_class) }}
                                                 {{ amendement.user_content.avis }}
                                             </p>
-                                            <a class="button primary" href="{{ edit_url }}">Voir</a>
+                                            <a class="button primary" href="{{ edit_url }}">Traiter</a>
                                         {% else %}
-                                            <a class="primary button enabled" href="{{ edit_url }}">Donner un avis</a>
+                                            <a class="primary button enabled" href="{{ edit_url }}">Traiter</a>
                                         {% endif %}
                                     {% else %}
                                         {{ amendement.user_content.avis or "Aucun" }}

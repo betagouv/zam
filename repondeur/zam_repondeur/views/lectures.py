@@ -189,7 +189,10 @@ def transfer_amendements(context: LectureResource, request: Request) -> dict:
         Amendement.lecture_pk == lecture.pk,
         Amendement.num.in_(amendements_nums),  # type: ignore
     )
-    users = DBSession.query(User).filter(User.email != request.user.email)
+    if request.team:
+        users = [user for user in request.team.users if user != request.user]
+    else:
+        users = DBSession.query(User).filter(User.email != request.user.email)
     return {
         "lecture": lecture,
         "amendements": list(amendements),

@@ -11,6 +11,10 @@
         padding: 1rem;
         position: relative;
     }
+    .options {
+        margin-left: 3rem;
+        margin-right: 3rem;
+    }
     .menu {
         position: absolute;
         top: 6px;
@@ -19,7 +23,7 @@
         flex-direction: column;
         align-items: flex-end;
     }
-        .menu .options {
+        .menu .mini-options {
             display: block;
             width: 1.5rem;
             height: 1.5rem;
@@ -27,7 +31,7 @@
             background-position: center;
             background-repeat: no-repeat;
         }
-        .menu .options:hover {
+        .menu .mini-options:hover {
             border: 1px solid #CCC;
             border-radius: 4px;
         }
@@ -52,6 +56,13 @@
         .menu.open nav {
             display: flex;
         }
+        .menu .menu-selector {
+            display: flex;
+        }
+            .menu .menu-selector input[type="checkbox"] {
+                margin: 0 .25rem;
+            }
+
     .notice {
         margin: 3rem;
     }
@@ -137,6 +148,23 @@
         cursor: pointer;
         margin-left: -.7rem;
     }
+    .filters,
+    .groupActions {
+        display: flex;
+        margin: 0 3rem 1rem 3rem;
+        justify-content: space-around;
+        align-items: baseline;
+    }
+    .sticky {
+        box-shadow: none;
+    }
+    .table thead th {
+        border: none;
+    }
+    label {
+        font-weight: 600;
+        margin-bottom: 0;
+    }
 </style>
 {% endblock %}
 
@@ -174,106 +202,184 @@
             </symbol>
         </defs>
     </svg>
-    <h1>Ma table</h1>
-    {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
-    {% for amendement in amendements %}
-        <div id="{{ amendement.slug }}" class="box amendement-card
-            {% if amendement.slug == highlighted_amdt %}
-                highlighted
-            {% endif %}">
-            <div class="amendement-card-infos">
-                <div class="entete">
-                    <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article">{{ amendement.article.format() }}</a>
-                    -
-                    Nº&nbsp;<span class="numero">{{ amendement }}</span>
-                    {% if amendement.identique %}
-                        {{ macros.svg_icon("identique") }}
-                        {% set identiques = amendement.displayable_identiques %}
-                        {% if not amendement.displayable_identiques_are_similaires and identiques %}
-                            <span class="warning" title="{% if identiques|length > 1 -%}
-                                Les amendements identiques {% for amdt in identiques -%}
-                                {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                                {%- endfor %} n’ont pas des réponses similaires
-                            {%- else -%}
-                                L’amendement identique {{ identiques[0] }} n’a pas une réponse similaire
-                            {%- endif %}">⚠️</span>
-                        {% endif %}
-                    {% endif %}
+    <h1 data-controller="table-anchor">Ma table</h1>
+    {% set count = amendements| length %}
+    <div class="content"
+        data-controller="amendements-filters"
+        data-amendements-filters-initial-count="{{ count }}">
+        {% if count %}
+            <div class="options">
+                <a class="toggle" href="#"
+                    data-action="amendements-filters#toggle"
+                    data-target="amendements-filters.link">
+                    Filtrer
+                </a>
+                <span data-target="amendements-filters.count">{{ count }} amendements</span>
+            </div>
+        {% endif %}
 
-                </div>
-                <div class="objet">
-                    {{ amendement.user_content.objet | paragriphy }}
-                </div>
-                <div class="auteur">
-                    {{ macros.svg_icon("person") }}
-                    {% if amendement.gouvernemental %}
-                        Le gouvernement
-                    {% else %}
-                        {% if amendement.groupe %}
-                            {{ amendement.groupe }} ({{ amendement.auteur }})
+        <table class="table"
+            data-controller="amendements-selection"
+            data-target="amendements-filters.table">
+            <thead class="sticky">
+                <tr class="groupActions box d-none">
+                    <th>
+                        Actions groupées :
+                    </th>
+                    <th>
+                        <a id="transfer-amendements" href="{{ request.resource_url(context.lecture_resource, 'transfer_amendements') }}" class="button primary">Transférer</a>
+                    </th>
+                    <th>
+                        <a id="export-pdf" href="{{ request.resource_url(context.lecture_resource, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
+                    </th>
+                </tr>
+                <tr class="filters box d-none" data-target="amendements-filters.row">
+                    <th>
+                        <label for="article">Article </label>
+                        <input id="article" type="text" class="form-control form-control-sm"
+                            autocomplete="off" autocorrect="off"
+                            data-action="keyup->amendements-filters#filterArticle"
+                            data-target="amendements-filters.articleInput">
+                    </th>
+                    <th>
+                        <label for="numero">Nº </label>
+                        <input id="numero" type="text" class="form-control form-control-sm"
+                            autocomplete="off" autocorrect="off"
+                            data-action="keyup->amendements-filters#filterAmendement"
+                            data-target="amendements-filters.amendementInput">
+                    </th>
+                    <th>
+                        <label for="avis">Avis </label>
+                        <select id="avis"
+                            data-action="amendements-filters#filterAvis"
+                            data-target="amendements-filters.avisSelect">
+                            <option value="">Tout</option>
+                            <option value="1">Avec</option>
+                            <option value="0">Sans</option>
+                        </select>
+                    </th>
+                    <th>
+                        <input id="select-all" type="checkbox" name="select-all"
+                            data-action="amendements-selection#selectAll">
+                        <label for="select-all">Tous</label>
+                    </th>
+                </tr>
+            </thead>
+            <tbody data-controller="amendements-backlinks" data-target="amendements-filters.tbody">
+                {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
+                {% for amendement in amendements %}
+                    <tr id="{{ amendement.slug }}"
+                        data-article="
+                           {%- if amendement.is_abandoned_before_seance -%}
+                               {{ amendement.VERY_BIG_NUMBER }}
+                           {%- elif amendement.article.type == 'article' -%}
+                               {{ amendement.article.num }} {{ amendement.article.mult }}
+                           {%- else -%}
+                               {{ amendement.article.type }}
+                           {%- endif -%}
+                       "
+                       data-order="{{ loop.index }}"
+                       data-amendement="{{ amendement.num }}"
+                       data-avis="{{ 1 if amendement.gouvernemental or amendement.user_content.avis else 0 }}"
+                       data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}">
+                        <td colspan="4"
+                            class="box amendement-card
+                                {% if amendement.slug == highlighted_amdt %}highlighted{% endif %}
+                            ">
+                            <div class="amendement-card-infos">
+                                <div class="entete">
+                                    {% if amendement.article.pos %}
+                                        <span class="article">{{ amendement.article.format() }}</span>
+                                    {% else %}
+                                        <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article" target="_blank">{{ amendement.article.format() }}</a>
+                                    {% endif %}
+                                    -
+                                    Nº&nbsp;<span class="numero">{{ amendement }}</span>
+                                    {% if amendement.identique %}
+                                        {{ macros.svg_icon("identique") }}
+                                        {% set identiques = amendement.displayable_identiques %}
+                                        {% if not amendement.displayable_identiques_are_similaires and identiques %}
+                                            <span class="warning" title="{% if identiques|length > 1 -%}
+                                                Les amendements identiques {% for amdt in identiques -%}
+                                                {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                                                {%- endfor %} n’ont pas des réponses similaires
+                                            {%- else -%}
+                                                L’amendement identique {{ identiques[0] }} n’a pas une réponse similaire
+                                            {%- endif %}">⚠️</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                <div class="objet">
+                                    {{ amendement.user_content.objet | paragriphy }}
+                                </div>
+                                <div class="auteur">
+                                    {{ macros.svg_icon("person") }}
+                                    {% if amendement.gouvernemental %}
+                                        Le gouvernement
+                                    {% else %}
+                                        {% if amendement.groupe %}
+                                            {{ amendement.groupe }} ({{ amendement.auteur }})
+                                        {% else %}
+                                            {{ amendement.auteur }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="amendement-card-avis">
+                                <div class="menu" data-controller="table-menu">
+                                    <div class="menu-selector">
+                                        <input type="checkbox" name="amendement-selected" value="{{ amendement.num }}">
+                                        <a class="mini-options" data-action="table-menu#toggle" href="#"></a>
+                                    </div>
+                                    <nav>
+                                        <a href="{{ request.resource_url(context.parent.parent, 'transfer_amendements', query={'nums': amendement.num}) }}">Transférer</a>
+                                        <a href="{{ request.resource_url(context.parent.parent, 'export_pdf', query={'nums': amendement.num}) }}">Exporter en PDF</a>
+                                    </nav>
+                                </div>
+                                <div class="avis">
+                                    {% if is_owner %}
+                                        {% set edit_url = request.resource_url(context.parent.parent['amendements'][amendement.num_str], 'amendement_edit') %}
+                                        {% if amendement.user_content.avis %}
+                                            {% if amendement.user_content.favorable %}
+                                                {% set icon_class = "favorable" %}
+                                            {% elif amendement.user_content.sagesse %}
+                                                {% set icon_class = "sagesse" %}
+                                            {% else %}
+                                                {% set icon_class = "defavorable" %}
+                                            {% endif %}
+                                            <p>
+                                                {{ macros.svg_icon("edit", icon_class) }}
+                                                {{ amendement.user_content.avis }}
+                                            </p>
+                                            <a class="button primary" href="{{ edit_url }}">Voir</a>
+                                        {% else %}
+                                            <a class="primary button enabled" href="{{ edit_url }}">Donner un avis</a>
+                                        {% endif %}
+                                    {% else %}
+                                        {{ amendement.user_content.avis or "Aucun" }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <div class="notice">
+                        {% if is_owner %}
+                            <h3>Votre table est vide…</h3>
+                            <nav>
+                                <a href="{{ index_url }}">Récupérer des amendements sur l’index</a>
+                            </nav>
                         {% else %}
-                            {{ amendement.auteur }}
+                            <p>Il n’y a aucun amendement sur cette table pour l’instant.</p>
                         {% endif %}
-                    {% endif %}
-                </div>
-            </div>
-            <div class="amendement-card-avis">
-                <div class="menu">
-                    <a class="options"></a>
-                    <nav>
-                        <a href="{{ request.resource_url(context.parent.parent, 'transfer_amendements', query={'nums': amendement.num}) }}">Transférer</a>
-                        <a href="{{ request.resource_url(context.parent.parent, 'export_pdf', query={'nums': amendement.num}) }}">Exporter en PDF</a>
-                    </nav>
-                </div>
-                <div class="avis">
-                    {% if is_owner %}
-                        {% set edit_url = request.resource_url(context.parent.parent['amendements'][amendement.num_str], 'amendement_edit') %}
-                        {% if amendement.user_content.avis %}
-                            {% if amendement.user_content.favorable %}
-                                {% set icon_class = "favorable" %}
-                            {% elif amendement.user_content.sagesse %}
-                                {% set icon_class = "sagesse" %}
-                            {% else %}
-                                {% set icon_class = "defavorable" %}
-                            {% endif %}
-                            <p>
-                                {{ macros.svg_icon("edit", icon_class) }}
-                                {{ amendement.user_content.avis }}
-                            </p>
-                            <a class="button primary" href="{{ edit_url }}">Voir</a>
-                        {% else %}
-                            <a class="primary button enabled" href="{{ edit_url }}">Donner un avis</a>
-                        {% endif %}
-                    {% else %}
-                        {{ amendement.user_content.avis or "Aucun" }}
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    {% else %}
-        <div class="notice">
-            {% if is_owner %}
-                <h3>Votre table est vide…</h3>
-                <nav>
-                    <a href="{{ index_url }}">Récupérer des amendements sur l’index</a>
-                </nav>
-            {% else %}
-                <p>Il n’y a aucun amendement sur cette table pour l’instant.</p>
-            {% endif %}
-        </div>
-    {% endfor %}
+                    </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 
-
 {% block scripts %}
-    <script type="text/javascript">
-        ;(_ => {
-            const menuButtons = document.querySelectorAll('.menu .options')
-            menuButtons.forEach(menuButton => {
-                menuButton.addEventListener('click', e => {
-                    menuButton.parentNode.classList.toggle('open')
-                })
-            })
-        })()
-    </script>
+    <script src="{{ request.static_url('zam_repondeur:static/js/table.js') }}"></script>
+    <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
 {% endblock %}

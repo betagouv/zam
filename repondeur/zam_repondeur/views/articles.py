@@ -24,15 +24,15 @@ def list_articles(context: ArticleCollection, request: Request) -> Dict[str, Any
 def article_check(context: ArticleResource, request: Request) -> dict:
     article = context.model()
     timestamp = float(request.GET["since"])
-    modified_at = article.modified_amendements_at_timestamp
+    modified_amendements_at_timestamp = article.modified_amendements_at_timestamp
     modified_amendements_numbers: list = []
-    if timestamp < modified_at:
+    if timestamp < modified_amendements_at_timestamp:
         modified_amendements_numbers = article.modified_amendements_numbers_since(
             timestamp
         )
     return {
         "modified_amendements_numbers": modified_amendements_numbers,
-        "modified_at": modified_at,
+        "modified_at": modified_amendements_at_timestamp,
     }
 
 

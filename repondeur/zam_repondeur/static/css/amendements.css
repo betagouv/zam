@@ -81,36 +81,7 @@
     padding-top: 1rem;
 }
 
-/* Sticky table header */
-.sticky {
-    position: sticky;
-    position: -webkit-sticky;
-    background: white;
-    z-index: 10;
-    box-shadow: 0 3px 3px 3px #CCC;
-    top: 0;
-}
-    tr.groupActions th {
-        padding: .5rem 0 1.5rem 0;
-        text-align: center;
-    }
-        tr.groupActions th:first-child {
-            vertical-align: middle;
-        }
-
 /* Filtering */
-th input.form-control {
-    display: inline;
-    width: 4rem;
-    padding: 0 .25rem;
-}
-tr.hidden-article,
-tr.hidden-amendement,
-tr.hidden-table,
-tr.hidden-avis,
-tr.hidden-reponse {
-    display: none;
-}
 tr[data-retire-avant-seance="1"] {
     background-color: #d9d9d9;
 }
@@ -200,7 +171,4 @@ span.avis.abandoned_before_seance {
 
 td form {
     display: inline-block;
-}
-nav.options {
-    margin: 1rem auto;
 }

@@ -16,6 +16,7 @@ from zam_repondeur.models.events.amendement import (
     AvisAmendementModifie,
     ObjetAmendementModifie,
     ReponseAmendementModifiee,
+    CommentsAmendementModifie,
 )
 
 
@@ -66,8 +67,7 @@ class AmendementEdit:
             ReponseAmendementModifiee.create(self.request, self.amendement, reponse)
 
         if comments_changed:
-            self.amendement.user_content.comments = comments
-            # No event for comments change.
+            CommentsAmendementModifie.create(self.request, self.amendement, comments)
 
         self.request.session.flash(
             Message(cls="success", text="Les modifications ont bien été enregistrées.")

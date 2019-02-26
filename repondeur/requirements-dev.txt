@@ -8,6 +8,7 @@ cookies==2.2.1
 coverage==5.0a2
 decorator==4.3.0
 flake8==3.6.0
+flaky==3.5.3
 ipdb==0.11
 ipython-genutils==0.2.0
 ipython==7.2.0

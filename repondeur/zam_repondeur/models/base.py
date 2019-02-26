@@ -31,7 +31,12 @@ DBSession = scoped_session(
         extension=ZopeTransactionExtension(),  # attach to the transaction manager
     )
 )
-metadata = MetaData()
+
+metadata = MetaData(
+    # Use an explicit naming convention to help Alembic autogenerate
+    naming_convention={"fk": "%(table_name)s_%(column_0_name)s_fkey"}
+)
+
 Base = declarative_base(cls=_Base, metadata=metadata)
 
 

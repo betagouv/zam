@@ -8,6 +8,39 @@ def test_get_amendements(app, lecture_an, amendements_an):
     assert "Dossier de banc" not in resp.text
 
 
+def test_team_member_can_access_owned_lecture(
+    app, lecture_an, team_zam, user_david, amendements_an
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        lecture_an.owned_by_team = team_zam
+        user_david.teams.append(team_zam)
+        DBSession.add(team_zam)
+
+    resp = app.get("/lectures/an.15.269.PO717460/amendements", user=user_david.email)
+
+    assert resp.status_code == 200
+    assert "Dossier de banc" not in resp.text
+
+
+def test_non_team_member_cannot_access_owned_lecture(
+    app, lecture_an, team_zam, user_david, amendements_an
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        lecture_an.owned_by_team = team_zam
+        DBSession.add(team_zam)
+
+    resp = app.get("/lectures/an.15.269.PO717460/amendements", user=user_david.email)
+
+    assert resp.status_code == 302
+    resp = resp.maybe_follow()
+
+    assert "L’accès à cette lecture est réservé aux personnes autorisées." in resp.text
+
+
 def test_get_amendements_with_avis(app, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 

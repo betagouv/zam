@@ -26,7 +26,15 @@ from zam_repondeur.tasks.fetch import fetch_articles, fetch_amendements
 def lectures_list(
     context: LectureCollection, request: Request
 ) -> Union[Response, dict]:
-    lectures = context.models()
+
+    all_lectures = context.models()
+
+    lectures = [
+        lecture
+        for lecture in all_lectures
+        if lecture.owned_by_team is None or lecture.owned_by_team in request.user.teams
+    ]
+
     if not lectures:
         return HTTPFound(request.resource_url(context, "add"))
 
@@ -72,6 +80,7 @@ class LecturesAdd:
             return HTTPFound(location=self.request.resource_url(self.context))
 
         lecture_model: LectureModel = LectureModel.create(
+            owned_by_team=self.request.team,
             chambre=chambre,
             session=session,
             num_texte=num_texte,

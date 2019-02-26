@@ -6,6 +6,7 @@ from pyramid.request import Request
 from pyramid.security import NO_PERMISSION_REQUIRED, remember, forget
 from pyramid.view import forbidden_view_config, view_config, view_defaults
 
+from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, User, get_one_or_create
 from zam_repondeur.resources import Root
 
@@ -98,8 +99,18 @@ def logout(request: Request) -> Any:
 
 @forbidden_view_config()
 def forbidden_view(request: Request) -> Any:
-    """
-    Redirect to login page when the user is not allowed to access the page
-    """
-    next_url = request.route_url("login", _query={"source": request.url})
-    return HTTPFound(location=next_url)
+
+    # Redirect unauthenticated users to the login page
+    if request.user is None:
+        return HTTPFound(
+            location=request.route_url("login", _query={"source": request.url})
+        )
+
+    # Redirect authenticated ones to the home page with an error message
+    request.session.flash(
+        Message(
+            cls="warning",
+            text="L’accès à cette lecture est réservé aux personnes autorisées.",
+        )
+    )
+    return HTTPFound(location=request.resource_url(request.root))

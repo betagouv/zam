@@ -1,5 +1,8 @@
 import transaction
 
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 def test_group_actions_not_visible_by_default(
     wsgi_server, driver, lecture_an, amendements_an
@@ -75,6 +78,8 @@ def test_group_actions_button_urls_change_with_selection(
 
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
     checkboxes[0].click()
+
+    WebDriverWait(driver, 10).until(EC.visibility_of(find(".groupActions")))
 
     assert find(".groupActions").is_displayed()
 

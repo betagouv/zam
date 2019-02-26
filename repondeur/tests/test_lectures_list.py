@@ -16,8 +16,8 @@ def test_get_list_empty(app):
 
 
 @pytest.fixture
-def lecture_commission(app):
-    from zam_repondeur.models import DBSession, Lecture
+def lecture_commission(db):
+    from zam_repondeur.models import Lecture
 
     with transaction.manager:
         lecture = Lecture.create(
@@ -28,7 +28,6 @@ def lecture_commission(app):
             organe="PO420120",
             dossier_legislatif="Titre dossier legislatif",
         )
-        DBSession.add(lecture)
 
     return lecture
 
@@ -66,3 +65,34 @@ def test_get_list_reverse_datetime_order(app, lecture_an):
     # First one is the top link.
     assert title2 in resp.parser.css(".lecture")[1].text()
     assert title in resp.parser.css(".lecture")[2].text()
+
+
+def test_team_member_can_see_owned_lecture(app, lecture_an, team_zam, user_david):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        lecture_an.owned_by_team = team_zam
+        user_david.teams.append(team_zam)
+        DBSession.add(team_zam)
+
+    resp = app.get("/lectures/", user=user_david.email)
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    assert len(resp.parser.css(".lecture")) == 2  # First one is the top link.
+
+
+def test_non_team_member_cannot_see_owned_lecture(
+    app, lecture_an, team_zam, user_david
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        lecture_an.owned_by_team = team_zam
+        DBSession.add(team_zam)
+
+    resp = app.get("/lectures/", user=user_david.email)
+
+    assert resp.status_code == 302
+    assert resp.location == "https://zam.test/lectures/add"

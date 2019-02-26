@@ -1,14 +1,14 @@
 from datetime import datetime
 from typing import Any, List, Optional, Tuple
 
-from sqlalchemy import Column, DateTime, Index, Integer, Text, desc
+from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, Text, desc
 from sqlalchemy.orm import joinedload, relationship
-
 
 from .amendement import Amendement
 from .article import Article
 from .base import Base, DBSession
 from .division import SubDiv
+from .users import Team
 
 
 CHAMBRES = {"an": "Assemblée nationale", "senat": "Sénat"}
@@ -53,7 +53,18 @@ class Lecture(Base):
         Article, back_populates="lecture", cascade="all, delete-orphan"
     )
 
-    __repr_keys__ = ("pk", "chambre", "session", "organe", "num_texte", "partie")
+    owned_by_team_pk = Column(Integer, ForeignKey("teams.pk"), nullable=True)
+    owned_by_team = relationship("Team", backref="lectures")
+
+    __repr_keys__ = (
+        "pk",
+        "chambre",
+        "session",
+        "organe",
+        "num_texte",
+        "partie",
+        "owned_by_team",
+    )
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Lecture):
@@ -219,16 +230,18 @@ class Lecture(Base):
         organe: str,
         dossier_legislatif: str,
         partie: Optional[int] = None,
+        owned_by_team: Optional[Team] = None,
     ) -> "Lecture":
         now = datetime.utcnow()
         lecture = cls(
             chambre=chambre,
             session=session,
             num_texte=num_texte,
-            partie=partie,
             titre=titre,
             organe=organe,
             dossier_legislatif=dossier_legislatif,
+            partie=partie,
+            owned_by_team=owned_by_team,
             created_at=now,
             modified_at=now,
         )

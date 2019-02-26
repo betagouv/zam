@@ -1,6 +1,6 @@
-from typing import Any, Iterator, List, Optional, cast
+from typing import Any, Iterator, List, Optional, Tuple, cast
 
-from pyramid.security import Allow, Authenticated
+from pyramid.security import Allow, Authenticated, Deny
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
 from sqlalchemy.orm import joinedload
@@ -14,6 +14,10 @@ from zam_repondeur.models import (
     User,
     UserTable,
 )
+
+
+# Access Control Entry (action, principal, permission)
+ACE = Tuple[str, str, str]
 
 
 class ResourceNotFound(HTTPNotFound):
@@ -88,6 +92,19 @@ class LectureCollection(Resource):
 
 
 class LectureResource(Resource):
+    def __acl__(self) -> List[ACE]:
+        lecture = self.model()
+
+        # If the lecture is owned by team, then team members can view it, but not others
+        if lecture.owned_by_team is not None:
+            return [
+                (Allow, f"team:{lecture.owned_by_team.pk}", "view"),
+                (Deny, Authenticated, "view"),
+            ]
+
+        # If the lecture is not owned by any team, anyone can view it
+        return [(Allow, Authenticated, "view")]
+
     def __init__(
         self,
         name: str,
@@ -115,7 +132,7 @@ class LectureResource(Resource):
             self.num_texte,
             self.partie,
             self.organe,
-            *options
+            *options,
         )
         if lecture is None:
             raise ResourceNotFound(self)

@@ -354,21 +354,24 @@ nobr.user {
             background: no-repeat left 25%/40% url("../img/switch_on.svg");
         }
 /* Sticky table header */
-.sticky {
+.sticky th {
     position: sticky;
     position: -webkit-sticky;
     background: white;
     z-index: 10;
-    box-shadow: 0 3px 3px 3px #CCC;
+    box-shadow: 0 3px 3px 0 #CCC;
     top: 0;
 }
-    tr.groupActions th {
-        padding: .5rem 0 1.5rem 0;
-        text-align: center;
+.sticky .filters th {
+    top: 2.5rem;
+}
+tr.groupActions th {
+    padding: .5rem 0 1.5rem 0;
+    text-align: center;
+}
+    tr.groupActions th:first-child {
+        vertical-align: middle;
     }
-        tr.groupActions th:first-child {
-            vertical-align: middle;
-        }
 /* Filtering */
 th input.form-control {
     display: inline;

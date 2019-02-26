@@ -36,73 +36,26 @@
         {% block body %}
         {% endblock %}
         {# See https://inclusive-components.design/notifications/ #}
-        <div role="status" aria-live="polite"></div>
+        <div role="status" aria-live="polite" class="d-none"
+            data-controller="notifications"
+            data-notifications-check-url="{% block check_url %}{% endblock %}"
+            data-notifications-check-timestamp="{% block check_timestamp %}{% endblock %}"
+            data-notifications-check-interval="{% block check_interval %}{% endblock %}"
+            {% for kind, message in request.session.pop_flash() %}
+                data-notifications-message="{{ message }}"
+                data-notifications-kind="{{ kind }}"
+            {% endfor %}
+            >
+            <a class="close-notification" data-action="notifications#close" href="">×</a>
+            <div></div>
+        </div>
     </main>
 
+    <script src="{{ request.static_url('zam_repondeur:static/js/stimulus.js') }}"></script>
+    <script>;(() => window.application = Stimulus.Application.start())()</script>
+    <script src="{{ request.static_url('zam_repondeur:static/js/zam.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/js/notifications.js') }}"></script>
-    <script type="text/javascript">
-        ;(function readableLastUpdate () {
-            const timestampToDate = (timestamp) => {
-                return new Date(timestamp * 1000)
-            }
-
-            const epochs = [
-                ['année', 31536000],
-                ['mois', 2592000],
-                ['jour', 86400],
-                ['heure', 3600],
-                ['minute', 60],
-                ['seconde', 1]
-            ]
-
-            const timeAgo = (date) => {
-                const getDuration = (timeAgoInSeconds) => {
-                    for (let [name, seconds] of epochs) {
-                        const interval = Math.floor(timeAgoInSeconds / seconds);
-
-                        if (interval >= 1) {
-                            return {
-                                interval: interval,
-                                epoch: name
-                            }
-                        }
-                    }
-                    return {
-                        interval: 0,
-                        epoch: 'now'
-                    }
-                }
-                const timeAgoInSeconds = Math.floor((new Date() - date) / 1000)
-                const {interval, epoch} = getDuration(timeAgoInSeconds)
-                if (epoch === 'now') {
-                    return `à lʼinstant`
-                }
-                else {
-                    const suffix = (interval === 1 || epoch === 'mois') ? '' : 's'
-                    return `il y a ${interval} ${epoch}${suffix}`
-                }
-            }
-
-            const timestampElements = Array.from(document.querySelectorAll('[data-timestamp]'))
-            timestampElements.forEach(timestampElement => {
-                const timestamp = timestampElement.dataset.timestamp
-                const date = timestampToDate(timestamp)
-                timestampElement.textContent = timeAgo(date)
-            })
-        })()
-
-        ;(function displaySelectedFilename () {
-            const fileInputs = document.querySelectorAll('[type="file"]')
-            fileInputs.forEach(fileInput => {
-                fileInput.addEventListener('change', (e) => {
-                    const input = e.target
-                    const filename = input.files[0].name
-                    const label = document.querySelector('label[for="' + input.id + '"]')
-                    label.innerHTML = filename
-                })
-            })
-        })()
-
+    <script>
         ;(function disableOnSubmit () {
             const submitInputs = document.querySelectorAll('[type="submit"]:not(.allow-multiple-submit)')
             submitInputs.forEach(submitInput => {
@@ -112,58 +65,6 @@
                 }
             })
         })()
-
-        ;(function preventMultipleClicks () {
-            const links = document.querySelectorAll('.prevent-multiple-clicks')
-            links.forEach(link => {
-                link.onclick = (e) => {
-                    link.classList.add('disabled')
-                    const initialInnerHTML = link.innerHTML
-                    link.innerHTML = 'En cours de traitement…'
-                    window.setTimeout(_ => {
-                        link.innerHTML = initialInnerHTML
-                        link.classList.remove('disabled')
-                    }, 1000 * 10) // Seconds.
-                }
-            })
-        })()
-
-        ;(function takeControlOverNativeJump() {
-            /* To avoid position under sticky headers. */
-            if (location.hash) {
-                /* Waiting for the next tick to supplement previous browser behavior. */
-                setTimeout(() => {
-                    const element = document.querySelector(window.location.hash)
-                    const target = element.getBoundingClientRect()
-                    window.scrollTo({
-                        /* Position the highlighted element in the middle of the page. */
-                        top: window.scrollY + target.top - window.innerHeight / 2 + target.height / 2,
-                        behavior: 'smooth'
-                    })
-                }, 1)
-            }
-        })()
-
-        ;(function confirmDeletes() {
-            const deleteButtons = document.querySelectorAll('[name="delete"]')
-            Array.from(deleteButtons).forEach(deleteButton => {
-                deleteButton.addEventListener('click', e => {
-                    if (
-                        window.confirm(
-                            'Êtes-vous sûr·e de vouloir supprimer toutes les données ' +
-                            'relatives à cette lecture incluant les avis et les réponses ?'
-                        )
-                    ) {
-                        return
-                    } else {
-                        e.preventDefault()
-                    }
-                })
-            })
-        })()
-        {% for kind, message in request.session.pop_flash() %}
-            displayNotificationUpdate("{{ message }}", "{{ kind }}")
-        {% endfor %}
     </script>
     {% block scripts %}
     {% endblock %}

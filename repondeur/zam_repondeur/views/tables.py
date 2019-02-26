@@ -70,9 +70,12 @@ class TableView:
             amendement.user_table = target_table
             AmendementTransfere.create(self.request, amendement, old, new)
 
-        next_location = self.request.resource_url(self.context.parent, self.owner.email)
-        if target != self.request.user.email:
+        if target != self.request.user.email and self.request.POST.get("from_index"):
             next_location = self.request.resource_url(
-                self.context.parent.parent, "amendements"
+                self.context.lecture_resource, "amendements"
+            )
+        else:
+            next_location = self.request.resource_url(
+                self.context.parent, self.owner.email
             )
         return HTTPFound(location=next_location)

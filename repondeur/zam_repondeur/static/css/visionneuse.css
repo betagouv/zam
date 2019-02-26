@@ -372,6 +372,7 @@ nav.secondary {
   .authors .author {
     white-space: nowrap;
   }
+  .d-none,
   .is-none {
     display: none;
   }

@@ -426,6 +426,27 @@ class TestGetArticlesSenat:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
         assert amendement.article.content["001"].startswith("Ne donnent pas lieu à")
 
+    @responses.activate
+    def test_get_articles_senat_with_dots(self, app, lecture_senat, amendements_senat):
+        from zam_repondeur.fetch.articles import get_articles
+        from zam_repondeur.models import DBSession, Amendement
+
+        responses.add(
+            responses.GET,
+            "https://www.senat.fr/leg/pjl17-063.html",
+            body=(Path(__file__).parent / "sample_data" / "pjl17-659.html").read_text(
+                "utf-8", "ignore"
+            ),
+            status=200,
+        )
+
+        changed = get_articles(lecture_senat)
+
+        assert changed
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
+        assert amendement.article.content["001"].startswith("La stratégie nationale")
+
 
 def test_get_section_title():
     from zam_repondeur.fetch.articles import get_section_title

@@ -162,7 +162,7 @@ def list_amendements(context: AmendementCollection, request: Request) -> dict:
         "amendements": lecture.amendements,
         "articles": lecture.articles,
         "check_url": request.resource_path(context.parent, "check"),
-        "timestamp": lecture.modified_at_timestamp,
+        "timestamp": lecture.modified_amendements_at_timestamp,
     }
 
 
@@ -175,6 +175,7 @@ def transfer_amendements(context: LectureResource, request: Request) -> dict:
     lecture = context.model()
     my_table = request.user.table_for(lecture)
     amendements_nums: list = request.GET.getall("nums")
+    from_index = bool(request.GET.get("from_index"))
     amendements = DBSession.query(Amendement).filter(
         Amendement.lecture_pk == lecture.pk,
         Amendement.num.in_(amendements_nums),  # type: ignore
@@ -184,6 +185,7 @@ def transfer_amendements(context: LectureResource, request: Request) -> dict:
         "lecture": lecture,
         "amendements": list(amendements),
         "users": users,
+        "from_index": int(from_index),
         "show_transfer_to_index": any(
             amendement.user_table is not None for amendement in amendements
         ),
@@ -215,15 +217,15 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
 def lecture_check(context: LectureResource, request: Request) -> dict:
     lecture = context.model()
     timestamp = float(request.GET["since"])
-    modified_at = lecture.modified_at_timestamp
+    modified_amendements_at_timestamp = lecture.modified_amendements_at_timestamp
     modified_amendements_numbers: list = []
-    if timestamp < modified_at:
+    if timestamp < modified_amendements_at_timestamp:
         modified_amendements_numbers = lecture.modified_amendements_numbers_since(
             timestamp
         )
     return {
         "modified_amendements_numbers": modified_amendements_numbers,
-        "modified_at": modified_at,
+        "modified_at": modified_amendements_at_timestamp,
     }
 
 

@@ -137,7 +137,16 @@
                 "
                 data-order="{{ loop.index }}"
                 data-amendement="{{ amendement.num }}"
-                data-table="{{ amendement.user_table and amendement.user_table.user.name or '' }}"
+                data-table="
+                    {% if amendement.is_abandoned_before_seance %}
+                        {% if amendement.is_withdrawn %}
+                            Retiré
+                        {% else %}
+                            Irrecevable
+                        {% endif %}
+                    {% elif amendement.user_table %}
+                        {{ amendement.user_table.user.name }}
+                    {% endif %}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.user_content.avis else 0 }}"
                 data-reponse="{{ 1 if amendement.user_content.reponse else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
@@ -188,8 +197,16 @@
                     {%- else -%}
                         YYY {# Keep almost at the end. #}
                     {%- endif -%}">
-                    {% if amendement.user_table %}
-                        {{ amendement.user_table.user.name }}
+                    {% if amendement.is_abandoned_before_seance %}
+                        {% if amendement.is_withdrawn %}
+                            Retiré
+                        {% else %}
+                            Irrecevable
+                        {% endif %}
+                    {% else %}
+                        {% if amendement.user_table %}
+                            {{ amendement.user_table.user.name }}
+                        {% endif %}
                     {% endif %}
                 </td>
                 <td
@@ -210,29 +227,8 @@
                     {%- endif -%}"
                 >
                     <nobr>
-                        {#
                         {% if amendement.is_abandoned_before_seance %}
-                            <span class="avis abandoned_before_seance"></span>
-                        {% elif amendement.gouvernemental %}
-                            <span class="avis gouvernement"></span>
-                        {% elif amendement.user_content.avis %}
-                            {% if amendement.user_content.sagesse %}
-                                <span class="avis sagesse"></span>
-                            {% elif amendement.user_content.favorable %}
-                                <span class="avis positive"></span>
-                            {% else %}
-                                <span class="avis negative"></span>
-                            {% endif %}
-                        {% else %}
-                            <span class="avis"></span>
-                        {% endif %}
-                        #}
-                        {% if amendement.is_abandoned_before_seance %}
-                            {% if amendement.is_withdrawn %}
-                                <abbr title="Retiré">{{ macros.svg_icon("check") }}</abbr>
-                            {% else %}
-                                <abbr title="Irrecevable">{{ macros.svg_icon("check") }}</abbr>
-                            {% endif %}
+                            {# No check #}
                         {% elif amendement.gouvernemental %}
                             <abbr title="Présentation">{{ macros.svg_icon("check") }}</abbr>
                         {% elif amendement.user_content.avis %}

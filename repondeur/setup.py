@@ -9,6 +9,7 @@ requires = [
     "inscriptis",
     "lockfile",
     "openpyxl",
+    "parsy",
     "pdfkit",
     "psycopg2",
     "pyramid",

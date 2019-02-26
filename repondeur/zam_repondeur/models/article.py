@@ -19,7 +19,7 @@ from zam_repondeur.decorator import reify
 
 from .base import Base, DBSession
 from .amendement import Amendement, Reponse
-from .division import SubDiv
+from .division import ADJECTIFS_MULTIPLICATIFS, SubDiv
 
 # Make this type available to mypy, but avoid circular imports
 if TYPE_CHECKING:
@@ -189,39 +189,7 @@ class Article(Base):
         "": 8,
     }
 
-    _ORDER_MULT = {
-        "": 1,
-        "bis": 2,
-        "ter": 3,
-        "quater": 4,
-        "quinquies": 5,
-        "sexies": 6,
-        "septies": 7,
-        "octies": 8,
-        "nonies": 9,
-        "novies": 9,
-        "decies": 10,
-        "undecies": 11,
-        "duodecies": 12,
-        "terdecies": 13,
-        "quaterdecies": 14,
-        "quindecies": 15,
-        "sexdecies": 16,
-        "septdecies": 17,
-        "octodecies": 18,
-        "novodecies": 19,
-        "vicies": 20,
-        "unvicies": 21,
-        "duovicies": 22,
-        "tervicies": 23,
-        "quatervicies": 24,
-        "quinvicies": 25,
-        "sexvicies": 26,
-        "septvicies": 27,
-        "duodetrecies": 28,
-        "undetricies": 29,
-        "tricies": 30,
-    }
+    _ORDER_MULT = {"": 1, **ADJECTIFS_MULTIPLICATIFS}
 
     _ORDER_POS = {"avant": 0, "": 1, "apres": 2, "après": 2}
 

@@ -107,22 +107,16 @@
                     <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a>
                 {% endif %}
             </p>
+            {% if amendement.auteur %}
             <div class="auteur">
                 <p>
-                    {% if amendement.auteur %}
-                        Présenté par {{ amendement.auteur }}
-                        {%- if not amendement.gouvernemental %}
-                            ({{ amendement.groupe }})
-                        {% endif %}
-                    {% elif amendement.is_abandoned_before_seance %}
-                        {% if amendement.is_withdrawn %}
-                            <h3>Cet amendement a été retiré</h3>
-                        {% else %}
-                            <h3>Cet amendement est irrecevable</h3>
-                        {% endif %}
+                    Présenté par {{ amendement.auteur }}
+                    {%- if not amendement.gouvernemental %}
+                        ({{ amendement.groupe }})
                     {% endif %}
                 </p>
             </div>
+            {% endif %}
             <div class="identiques">
                 {% if amendement.identique %}
                     {% set identiques = amendement.all_identiques %}

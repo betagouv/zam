@@ -86,10 +86,20 @@
 {% block body %}
     <section class="content box">
         <div class="title">
-            <h2>Amendement nº&nbsp;{{ amendement }}</h2>
-            {% if amendement.parent %}
-                <h3>Sous-amendement au {{ amendement.parent }}</h3>
-            {% endif %}
+            <header>
+                <h2>Amendement nº&nbsp;{{ amendement }}</h2>
+
+                {% if amendement.parent %}
+                    <h3>Sous-amendement au {{ amendement.parent }}</h3>
+                {% endif %}
+
+                {% if amendement.is_withdrawn %}
+                    <h4 class="highlighter">Retiré</h4>
+                {% elif amendement.is_irrecevable %}
+                    <h4 class="highlighter">Irrecevable</h4>
+                {% endif %}
+            </header>
+
             <p class="article">
                 {% if amendement.article.pos %}
                     {{ amendement.article.format() }}

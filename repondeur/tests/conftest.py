@@ -29,6 +29,7 @@ class TestApp(BaseTestApp):
 @pytest.fixture(scope="session")
 def settings():
     return {
+        "pyramid.debug_authorization": True,
         "sqlalchemy.url": os.environ.get(
             "ZAM_TEST_DB_URL", "postgresql://zam@localhost/zam-test"
         ),

@@ -303,7 +303,7 @@
                                         {% else %}
                                             <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article" target="_blank">{{ amendement.article.format() }}</a>
                                         {% endif %}
-                                        -
+                                        –
                                         Nº&nbsp;<span class="numero">{{ amendement }}</span>
                                         {% if amendement.identique %}
                                             {{ macros.svg_icon("identique") }}
@@ -317,6 +317,11 @@
                                                     L’amendement identique {{ identiques[0] }} n’a pas une réponse similaire
                                                 {%- endif %}">⚠️</span>
                                             {% endif %}
+                                        {% endif %}
+                                        {% if amendement.is_withdrawn %}
+                                            – <span class="highlighter">retiré</span>
+                                        {% elif amendement.is_irrecevable %}
+                                            – <span class="highlighter">irrecevable</span>
                                         {% endif %}
                                     </div>
                                     <div class="objet">

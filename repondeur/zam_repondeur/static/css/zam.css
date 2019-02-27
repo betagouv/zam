@@ -298,6 +298,8 @@ path {
 .last-update {
     text-align: center;
 }
+
+/* Highlight a block */
 .notice {
     border: 6px solid #c2e0ff;
     padding: 1rem;
@@ -305,6 +307,14 @@ path {
     .notice form {
         text-align: right;
     }
+
+/* Highlight inline text */
+.highlighter {
+    display: inline-block;
+    padding: 0.25rem 0.5rem 0 0.5rem;
+    background-color: yellow;
+}
+
 nobr.user {
     font-weight: 600;
 }

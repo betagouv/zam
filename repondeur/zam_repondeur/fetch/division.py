@@ -51,7 +51,9 @@ MULT_ADD = (
 
 # Divisions uniques
 
-INTITULE = string("Intitulé du projet de loi").result("titre")
+INTITULE = string_from(
+    "Intitulé du projet de loi", "Intitulé du projet de loi constitutionnelle"
+).result("titre")
 
 MOTION = string("Motions").result("motion")
 

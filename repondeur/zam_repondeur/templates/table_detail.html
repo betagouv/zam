@@ -395,7 +395,17 @@
     </div>
 {% endblock %}
 
+{% block notifications_extras %}
+    data-notifications-with-diff-check-url="{{ check_url }}"
+    data-notifications-with-diff-check-interval="60" {# seconds #}
+    data-notifications-with-diff-current="{{ table.amendements_as_string }}"
+{% endblock %}
+
 {% block scripts %}
     <script src="{{ request.static_url('zam_repondeur:static/js/table.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
+    {% if amendements %}
+        <script>;(() => application.register('amendements-filters', AmendementsFilters))()</script>
+    {% endif %}
+    <script>;(() => application.register('notifications-with-diff', NotificationsWithDiff))()</script>
 {% endblock %}

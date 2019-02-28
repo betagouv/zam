@@ -1,5 +1,7 @@
 import transaction
 
+import pytest
+
 
 def test_tables_empty(app, lecture_an, user_david):
     from zam_repondeur.models import DBSession
@@ -461,3 +463,45 @@ def test_tables_steal_amendements(
         "<abbr title='ronan@example.com'>Ronan</abbr> "
         "a transféré l’amendement de « David (david@example.com) » à lui/elle-même"
     )
+
+
+@pytest.mark.parametrize(
+    "current,updated",
+    [["", {"updated": "666_999"}], ["666", {"updated": "666_999"}], ["666_999", {}]],
+)
+def test_tables_check_with_amendements(
+    app, lecture_an, amendements_an, user_david, current, updated
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(user_david)
+        table_david = user_david.table_for(lecture_an)
+        table_david.amendements.append(amendements_an[0])
+        table_david.amendements.append(amendements_an[1])
+
+    email = user_david.email
+    resp = app.get(
+        f"/lectures/an.15.269.PO717460/tables/{email}/check",
+        {"current": current},
+        user=email,
+    )
+    assert resp.status_code == 200
+    assert resp.json == updated
+
+
+@pytest.mark.parametrize(
+    "current,updated",
+    [["", {}], ["666", {"updated": ""}], ["666_999", {"updated": ""}]],
+)
+def test_tables_check_without_amendements(
+    app, lecture_an, amendements_an, user_david, current, updated
+):
+    email = user_david.email
+    resp = app.get(
+        f"/lectures/an.15.269.PO717460/tables/{email}/check",
+        {"current": current},
+        user=email,
+    )
+    assert resp.status_code == 200
+    assert resp.json == updated

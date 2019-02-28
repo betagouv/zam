@@ -263,7 +263,5 @@ class TableResource(Resource):
         except NoResultFound:
             raise ResourceNotFound
 
-    def amendements(self) -> List[Amendement]:
-        table: UserTable = self.owner.table_for(lecture=self.lecture_resource.model())
-        amendements: List[Amendement] = table.amendements
-        return amendements
+    def model(self) -> UserTable:
+        return self.owner.table_for(lecture=self.lecture_resource.model())

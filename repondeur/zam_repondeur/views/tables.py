@@ -15,6 +15,7 @@ class TableView:
     def __init__(self, context: TableResource, request: Request) -> None:
         self.context = context
         self.request = request
+        self.table = context.model()
         self.lecture = context.lecture_resource.model()
         self.owner = context.owner
 
@@ -22,7 +23,8 @@ class TableView:
     def get(self) -> dict:
         return {
             "lecture": self.lecture,
-            "amendements": self.context.amendements(),
+            "table": self.table,
+            "amendements": self.table.amendements,
             "is_owner": self.owner.email == self.request.user.email,
             "table_url": self.request.resource_url(
                 self.context.parent[self.request.user.email]
@@ -30,6 +32,7 @@ class TableView:
             "index_url": self.request.resource_url(
                 self.context.lecture_resource["amendements"]
             ),
+            "check_url": self.request.resource_path(self.context, "check"),
         }
 
     @view_config(request_method="POST")
@@ -81,3 +84,14 @@ class TableView:
                 self.context.parent, self.owner.email
             )
         return HTTPFound(location=next_location)
+
+
+@view_config(context=TableResource, name="check", renderer="json")
+def table_check(context: TableResource, request: Request) -> dict:
+    table = context.model()
+    amendements_as_string = request.GET["current"]
+    updated = table.amendements_as_string
+    if amendements_as_string != updated:
+        return {"updated": updated}
+    else:
+        return {}

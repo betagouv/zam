@@ -13,7 +13,15 @@ def test_filters_are_hidden_by_default(wsgi_server, driver, lecture_an):
     assert not thead.find_element_by_css_selector("tr.filters").is_displayed()
 
 
-def test_filters_are_opened_by_click(wsgi_server, driver, lecture_an):
+def test_filters_are_ineffective_without_amendements(wsgi_server, driver, lecture_an):
+    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    driver.get(f"{LECTURE_URL}/amendements")
+    driver.find_element_by_link_text("Filtrer").click()
+    thead = driver.find_element_by_css_selector("thead")
+    assert not thead.find_element_by_css_selector("tr.filters").is_displayed()
+
+
+def test_filters_are_opened_by_click(wsgi_server, driver, lecture_an, amendements_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     driver.find_element_by_link_text("Filtrer").click()

@@ -1,111 +1,179 @@
-application.register(
-  'notifications',
-  class extends Stimulus.Controller {
-    get url() {
-      return this.data.get('checkUrl')
-    }
+class Notifications extends Stimulus.Controller {
+  get url() {
+    const url = new URL(this.data.get('checkUrl'), window.location)
+    const params = url.searchParams
+    params.set('since', this.timestamp)
+    return `${url.pathname}?${params.toString()}`
+  }
 
-    get message() {
-      return this.data.get('message')
-    }
+  get message() {
+    return this.data.get('message')
+  }
 
-    set message(value) {
-      return this.data.set('message', value)
-    }
+  set message(value) {
+    return this.data.set('message', value)
+  }
 
-    get kind() {
-      return this.data.get('kind')
-    }
+  get kind() {
+    return this.data.get('kind')
+  }
 
-    set kind(value) {
-      return this.data.set('kind', value)
-    }
+  set kind(value) {
+    return this.data.set('kind', value)
+  }
 
-    get timestamp() {
-      return Number(this.data.get('checkTimestamp'))
-    }
+  get timestamp() {
+    return Number(this.data.get('checkTimestamp'))
+  }
 
-    set timestamp(value) {
-      return this.data.set('checkTimestamp', value)
-    }
+  set timestamp(value) {
+    return this.data.set('checkTimestamp', value)
+  }
 
-    initialize() {
-      if (this.message) this.load()
-      if (this.url && this.timestamp) {
-        setInterval(() => {
-          this.check()
-        }, 1000 * this.data.get('checkInterval'))
-      }
-    }
-
-    load() {
-      if (!this.message) return
-      let result
-      if (this.kind === 'refresh') {
-        result = `${
-          this.message
-        } <a class="button primary refresh" href=>Rafraîchir</a>`
-      } else {
-        result = `<span class="${this.kind}-notification"></span> ${
-          this.message
-        }`
-      }
-      this.element.querySelector('div').innerHTML = `<p>${result}</p>`
-      this.element.classList.remove('d-none')
-    }
-
-    check() {
-      const options = {
-        credentials: 'include'
-      }
-      fetch(`${this.url}?since=${this.timestamp}`, options)
-        .then(reponse => reponse.json())
-        .then(json => {
-          if (json.modified_at && json.modified_at !== this.timestamp) {
-            this.timestamp = Number(json.modified_at)
-            this.message = `${this.numbersToMessage(
-              json.modified_amendements_numbers,
-              'amendement'
-            )}`
-            this.kind = 'refresh'
-            this.load()
-          }
-        })
-    }
-
-    reset() {
-      this.message = ''
-      this.kind = ''
-      this.element.querySelector('div').innerHTML = ''
-      this.element.classList.add('d-none')
-    }
-
-    close(event) {
-      event.preventDefault()
-      this.reset()
-    }
-
-    fooCommaBarAndBaz(table) {
-      // ['foo', 'bar', 'baz'] => 'foo, bar et baz'
-      return `${table.slice(0, -1).join(', ')} et ${table.slice(-1)}`
-    }
-
-    numbersToMessage(numbers, type) {
-      const length = numbers.length
-      if (!length) return ''
-      if (length === 1) {
-        return `L’${type} ${numbers} a été mis à jour !`
-      } else if (length < 10) {
-        return `Les ${type}s ${this.fooCommaBarAndBaz(
-          numbers
-        )} ont été mis à jour !`
-      } else {
-        return `Les ${type}s ${numbers
-          .slice(0, 4)
-          .join(', ')} … ${numbers
-          .slice(-4, length)
-          .join(', ')} (${length} au total) ont été mis à jour !`
-      }
+  initialize() {
+    if (this.message) this.load()
+    if (this.url && this.timestamp) {
+      setInterval(() => {
+        this.check()
+      }, 1000 * this.data.get('checkInterval'))
     }
   }
-)
+
+  load() {
+    if (!this.message) return
+    let result
+    if (this.kind === 'refresh') {
+      result = `${
+        this.message
+      } <a class="button primary refresh" href=>Rafraîchir</a>`
+    } else {
+      result = `<span class="${this.kind}-notification"></span> ${this.message}`
+    }
+    this.element.querySelector('div').innerHTML = `<p>${result}</p>`
+    this.element.classList.remove('d-none')
+  }
+
+  check() {
+    const options = {
+      credentials: 'include'
+    }
+    fetch(this.url, options)
+      .then(reponse => reponse.json())
+      .then(this.formatReponse.bind(this))
+      .catch(console.error.bind(console))
+  }
+
+  formatReponse(json) {
+    if (json.modified_at && json.modified_at !== this.timestamp) {
+      this.timestamp = Number(json.modified_at)
+      this.message = this.numbersToMessage(json.modified_amendements_numbers)
+      this.kind = 'refresh'
+      this.load()
+    }
+  }
+
+  reset() {
+    this.message = ''
+    this.kind = ''
+    this.element.querySelector('div').innerHTML = ''
+    this.element.classList.add('d-none')
+  }
+
+  close(event) {
+    event.preventDefault()
+    this.reset()
+  }
+
+  fooCommaBarAndBaz(table) {
+    // ['foo', 'bar', 'baz'] => 'foo, bar et baz'
+    return `${table.slice(0, -1).join(', ')} et ${table.slice(-1)}`
+  }
+
+  numbersToMessage(numbers) {
+    if (!numbers) return ''
+    const length = numbers.length
+    if (!length) return ''
+    if (length === 1) {
+      return `L’amendement ${numbers} a été mis à jour !`
+    } else if (length < 10) {
+      return `Les amendements ${this.fooCommaBarAndBaz(
+        numbers
+      )} ont été mis à jour !`
+    } else {
+      return `Les amendements ${numbers
+        .slice(0, 4)
+        .join(', ')} … ${numbers
+        .slice(-4, length)
+        .join(', ')} (${length} au total) ont été mis à jour !`
+    }
+  }
+}
+
+class NotificationsWithDiff extends Notifications {
+  get url() {
+    const url = new URL(this.data.get('checkUrl'), window.location)
+    const params = url.searchParams
+    params.set('current', this.current)
+    return `${url.pathname}?${params.toString()}`
+  }
+
+  get current() {
+    return this.data.get('current')
+  }
+
+  set current(value) {
+    return this.data.set('current', value)
+  }
+
+  initialize() {
+    if (this.url) {
+      setInterval(() => {
+        this.check()
+      }, 1000 * this.data.get('checkInterval'))
+    }
+  }
+
+  formatReponse(json) {
+    if ('updated' in json) {
+      this.message = this.numbersToMessage(json.updated.split('_'))
+      this.kind = 'refresh'
+      this.load()
+    }
+  }
+
+  numbersToMessage(numbers) {
+    const initial = this.current.split('_')
+    const [added, removed] = this.getAddedorRemovedItems(initial, numbers)
+    let message = ''
+    const addedLength = added.length
+    if (addedLength && added[0] !== '') {
+      if (addedLength === 1) {
+        message += `L’amendement ${added[0]} a été ajouté à votre table. `
+      } else {
+        message += `Les amendements ${this.fooCommaBarAndBaz(
+          added
+        )} ont été ajoutés à votre table. `
+      }
+    }
+    const removedLength = removed.length
+    if (removedLength && removed[0] !== '') {
+      if (removedLength === 1) {
+        message += `L’amendement ${removed[0]} a été retiré de votre table.`
+      } else {
+        message += `Les amendements ${this.fooCommaBarAndBaz(
+          removed
+        )} ont été retirés de votre table.`
+      }
+    }
+    return message
+  }
+
+  getAddedorRemovedItems(initial, compared) {
+    return [
+      compared.filter(item => initial.indexOf(item) === -1),
+      initial.filter(item => compared.indexOf(item) === -1)
+    ]
+  }
+}
+
+application.register('notifications', Notifications)

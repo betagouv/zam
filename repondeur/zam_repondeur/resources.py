@@ -93,12 +93,12 @@ class LectureCollection(Resource):
 
 class LectureResource(Resource):
     def __acl__(self) -> List[ACE]:
-        lecture = self.model()
+        self.lecture = self.model()
 
         # If the lecture is owned by team, then team members can view it, but not others
-        if lecture.owned_by_team is not None:
+        if self.lecture.owned_by_team is not None:
             return [
-                (Allow, f"team:{lecture.owned_by_team.pk}", "view"),
+                (Allow, f"team:{self.lecture.owned_by_team.pk}", "view"),
                 (Deny, Authenticated, "view"),
             ]
 
@@ -126,6 +126,8 @@ class LectureResource(Resource):
         self.add_child(TableCollection(name="tables", parent=self))
 
     def model(self, *options: Any) -> Lecture:
+        if hasattr(self, "lecture") and not options:
+            return self.lecture
         lecture = Lecture.get(
             self.chambre,
             self.session,

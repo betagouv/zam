@@ -193,9 +193,10 @@ def transfer_amendements(context: LectureResource, request: Request) -> dict:
         users = [user for user in request.team.users if user != request.user]
     else:
         users = DBSession.query(User).filter(User.email != request.user.email)
+    amendements = list(amendements)
     return {
         "lecture": lecture,
-        "amendements": list(amendements),
+        "amendements": amendements,
         "users": users,
         "from_index": int(from_index),
         "show_transfer_to_index": any(

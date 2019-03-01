@@ -119,196 +119,194 @@ application.register(
     }
 )
 
-application.register(
-    'amendements-filters',
-    class extends Stimulus.Controller {
-        static get targets() {
-            return [
-                'row',
-                'link',
-                'count',
-                'table',
-                'tbody',
-                'articleInput',
-                'amendementInput',
-                'tableInput',
-                'avisSelect',
-                'reponseSelect'
-            ]
-        }
+class AmendementsFilters extends Stimulus.Controller {
+    static get targets() {
+        return [
+            'row',
+            'link',
+            'count',
+            'table',
+            'tbody',
+            'articleInput',
+            'amendementInput',
+            'tableInput',
+            'avisSelect',
+            'reponseSelect'
+        ]
+    }
 
-        initialize() {
-            const articleFilter = this.getURLParam('article')
-            if (articleFilter !== '') {
-                this.toggle()
-                this.articleInputTarget.value = articleFilter
-                this.filterByArticle(articleFilter)
+    initialize() {
+        const articleFilter = this.getURLParam('article')
+        if (articleFilter !== '') {
+            this.toggle()
+            this.articleInputTarget.value = articleFilter
+            this.filterByArticle(articleFilter)
+        }
+        const amendementFilter = this.getURLParam('amendement')
+        if (amendementFilter !== '') {
+            this.toggle()
+            this.amendementInputTarget.value = amendementFilter
+            this.filterByAmendement(amendementFilter)
+        }
+        const tableFilter = this.getURLParam('table')
+        if (tableFilter !== '') {
+            this.toggle()
+            this.tableInputTarget.value = tableFilter
+            this.filterByTable(tableFilter)
+        }
+        const avisFilter = this.getURLParam('avis')
+        if (avisFilter !== '') {
+            this.toggle()
+            this.avisSelectTarget.value = avisFilter
+            this.filterByAvis(avisFilter)
+        }
+        const reponseFilter = this.getURLParam('reponse')
+        if (reponseFilter !== '') {
+            this.toggle()
+            this.reponseSelectTarget.value = reponseFilter
+            this.filterByReponse(reponseFilter)
+        }
+        this.updateCount()
+    }
+
+    getURLParam(name) {
+        const urlParams = new URLSearchParams(window.location.search)
+        return urlParams.get(name) || ''
+    }
+
+    setURLParam(name, value) {
+        if (history.replaceState) {
+            const newURL = new URL(window.location.href)
+            if (value !== '') {
+                newURL.searchParams.set(name, value)
+            } else {
+                newURL.searchParams.delete(name)
             }
-            const amendementFilter = this.getURLParam('amendement')
-            if (amendementFilter !== '') {
-                this.toggle()
-                this.amendementInputTarget.value = amendementFilter
-                this.filterByAmendement(amendementFilter)
-            }
-            const tableFilter = this.getURLParam('table')
-            if (tableFilter !== '') {
-                this.toggle()
-                this.tableInputTarget.value = tableFilter
-                this.filterByTable(tableFilter)
-            }
-            const avisFilter = this.getURLParam('avis')
-            if (avisFilter !== '') {
-                this.toggle()
-                this.avisSelectTarget.value = avisFilter
-                this.filterByAvis(avisFilter)
-            }
-            const reponseFilter = this.getURLParam('reponse')
-            if (reponseFilter !== '') {
-                this.toggle()
-                this.reponseSelectTarget.value = reponseFilter
-                this.filterByReponse(reponseFilter)
-            }
-            this.updateCount()
-        }
-
-        getURLParam(name) {
-            const urlParams = new URLSearchParams(window.location.search)
-            return urlParams.get(name) || ''
-        }
-
-        setURLParam(name, value) {
-            if (history.replaceState) {
-                const newURL = new URL(window.location.href)
-                if (value !== '') {
-                    newURL.searchParams.set(name, value)
-                } else {
-                    newURL.searchParams.delete(name)
-                }
-                window.history.replaceState(
-                    { path: newURL.href },
-                    '',
-                    newURL.href
-                )
-            }
-        }
-
-        toggle(event) {
-            this.linkTarget.classList.toggle('enabled')
-            this.rowTarget.classList.toggle('d-none')
-            if (event) event.preventDefault()
-        }
-
-        updateCount() {
-            const initial = parseInt(this.data.get('initial-count'))
-            const current = this.tbodyTarget.querySelectorAll(
-                'tr:not([class^=hidden])'
-            ).length
-            const plural = current > 1 ? 's' : ''
-            if (initial === current)
-                this.countTarget.innerHTML = `${current} amendement${plural}`
-            else
-                this.countTarget.innerHTML = `${current} amendement${plural} (${initial} au total)`
-        }
-
-        filterArticle(event) {
-            const value = event.target.value.trim()
-            this.filterByArticle(value)
-            this.setURLParam('article', value)
-            this.updateCount()
-        }
-
-        filterAmendement(event) {
-            const value = event.target.value.trim()
-            this.filterByAmendement(value)
-            this.setURLParam('amendement', value)
-            this.updateCount()
-        }
-
-        filterTable(event) {
-            const value = event.target.value.trim()
-            this.filterByTable(value)
-            this.setURLParam('table', value)
-            this.updateCount()
-        }
-
-        filterAvis(event) {
-            const value = event.target.value.trim()
-            this.filterByAvis(value)
-            this.setURLParam('avis', value)
-            this.updateCount()
-        }
-
-        filterReponse(event) {
-            const value = event.target.value.trim()
-            this.filterByReponse(value)
-            this.setURLParam('reponse', value)
-            this.updateCount()
-        }
-
-        filterByArticle(value) {
-            this.filterColumn('hidden-article', line => {
-                if (!value) {
-                    return true
-                }
-                return line.dataset.article.trim() === value
-            })
-        }
-
-        filterByAmendement(value) {
-            this.filterColumn('hidden-amendement', line => {
-                if (!value) {
-                    return true
-                }
-                return line.dataset.amendement.trim() === value
-            })
-            this.tableTarget.classList.toggle('filtered-amendement', value)
-        }
-
-        filterByTable(value) {
-            this.filterColumn('hidden-table', line => {
-                if (!value) {
-                    return true
-                }
-                return line.dataset.table
-                    .toLowerCase()
-                    .includes(value.toLowerCase())
-            })
-            this.tableTarget.classList.toggle('filtered-table', value)
-        }
-
-        filterByAvis(value) {
-            this.filterColumn('hidden-avis', line => {
-                if (value === '') {
-                    return true
-                }
-                if (
-                    line.dataset.gouvernemental === '1' ||
-                    line.dataset.abandonedBeforeSeance === '1'
-                ) {
-                    return false
-                }
-                return line.dataset.avis === value
-            })
-            this.tableTarget.classList.toggle('filtered-avis', value)
-        }
-
-        filterByReponse(value) {
-            this.filterColumn('hidden-reponse', line => {
-                if (value === '') {
-                    return true
-                }
-                return line.dataset.reponse === value
-            })
-            this.tableTarget.classList.toggle('filtered-reponse', value)
-        }
-
-        filterColumn(className, shouldShow) {
-            this.tbodyTarget.querySelectorAll('tr').forEach(line => {
-                line.classList.toggle(className, !shouldShow(line))
-            })
+            window.history.replaceState(
+                { path: newURL.href },
+                '',
+                newURL.href
+            )
         }
     }
-)
+
+    toggle(event) {
+        this.linkTarget.classList.toggle('enabled')
+        this.rowTarget.classList.toggle('d-none')
+        if (event) event.preventDefault()
+    }
+
+    updateCount() {
+        const initial = parseInt(this.data.get('initial-count'))
+        const current = this.tbodyTarget.querySelectorAll(
+            'tr:not([class^=hidden])'
+        ).length
+        const plural = current > 1 ? 's' : ''
+        if (initial === current)
+            this.countTarget.innerHTML = `${current} amendement${plural}`
+        else
+            this.countTarget.innerHTML = `${current} amendement${plural} (${initial} au total)`
+    }
+
+    filterArticle(event) {
+        const value = event.target.value.trim()
+        this.filterByArticle(value)
+        this.setURLParam('article', value)
+        this.updateCount()
+    }
+
+    filterAmendement(event) {
+        const value = event.target.value.trim()
+        this.filterByAmendement(value)
+        this.setURLParam('amendement', value)
+        this.updateCount()
+    }
+
+    filterTable(event) {
+        const value = event.target.value.trim()
+        this.filterByTable(value)
+        this.setURLParam('table', value)
+        this.updateCount()
+    }
+
+    filterAvis(event) {
+        const value = event.target.value.trim()
+        this.filterByAvis(value)
+        this.setURLParam('avis', value)
+        this.updateCount()
+    }
+
+    filterReponse(event) {
+        const value = event.target.value.trim()
+        this.filterByReponse(value)
+        this.setURLParam('reponse', value)
+        this.updateCount()
+    }
+
+    filterByArticle(value) {
+        this.filterColumn('hidden-article', line => {
+            if (!value) {
+                return true
+            }
+            return line.dataset.article.trim() === value
+        })
+    }
+
+    filterByAmendement(value) {
+        this.filterColumn('hidden-amendement', line => {
+            if (!value) {
+                return true
+            }
+            return line.dataset.amendement.trim() === value
+        })
+        this.tableTarget.classList.toggle('filtered-amendement', value)
+    }
+
+    filterByTable(value) {
+        this.filterColumn('hidden-table', line => {
+            if (!value) {
+                return true
+            }
+            return line.dataset.table
+                .toLowerCase()
+                .includes(value.toLowerCase())
+        })
+        this.tableTarget.classList.toggle('filtered-table', value)
+    }
+
+    filterByAvis(value) {
+        this.filterColumn('hidden-avis', line => {
+            if (value === '') {
+                return true
+            }
+            if (
+                line.dataset.gouvernemental === '1' ||
+                line.dataset.abandonedBeforeSeance === '1'
+            ) {
+                return false
+            }
+            return line.dataset.avis === value
+        })
+        this.tableTarget.classList.toggle('filtered-avis', value)
+    }
+
+    filterByReponse(value) {
+        this.filterColumn('hidden-reponse', line => {
+            if (value === '') {
+                return true
+            }
+            return line.dataset.reponse === value
+        })
+        this.tableTarget.classList.toggle('filtered-reponse', value)
+    }
+
+    filterColumn(className, shouldShow) {
+        this.tbodyTarget.querySelectorAll('tr').forEach(line => {
+            line.classList.toggle(className, !shouldShow(line))
+        })
+    }
+}
+
 
 application.register(
     'amendements-lecture',

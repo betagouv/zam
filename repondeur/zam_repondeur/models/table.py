@@ -38,3 +38,7 @@ class UserTable(Base):
         table = cls(user=user, lecture=lecture)
         DBSession.add(table)
         return table
+
+    @property
+    def amendements_as_string(self) -> str:
+        return "_".join(str(amendement.num) for amendement in self.amendements)

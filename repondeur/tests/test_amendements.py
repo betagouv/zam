@@ -8,6 +8,14 @@ def test_get_amendements(app, lecture_an, amendements_an):
     assert "Dossier de banc" not in resp.text
 
 
+def test_no_amendements(app, lecture_an):
+    resp = app.get("/lectures/an.15.269.PO717460/amendements", user="user@example.com")
+
+    assert resp.status_code == 200
+    assert "Dossier de banc" not in resp.text
+    assert "Aucun amendement disponible pour l’instant" in resp.text
+
+
 def test_team_member_can_access_owned_lecture(
     app, lecture_an, team_zam, user_david, amendements_an
 ):

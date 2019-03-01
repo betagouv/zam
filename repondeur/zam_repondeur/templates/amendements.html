@@ -273,6 +273,13 @@
         {% endfor %}
         </tbody>
     </table>
+    {% if not amendements %}
+        <div class="notice">
+            <h3>Aucun amendement disponible pour l’instant</h3>
+            <p>Il peut s’agir d’une lecture en attente de données ou d’une erreur de rappatriement de la part de l’application.</p>
+            <p>Si le problème perdure, vous pouvez <a href="mailto:contact@zam.beta.gouv.fr">contacter l’équipe de développement</a>.</p>
+        </div>
+    {% endif %}
     <div data-controller="amendements-articles">
         <nav id="bottom-nav">
             <a class="toggle primary button" href="#"
@@ -304,6 +311,9 @@
 {% block check_interval %}60 {# seconds #}{% endblock %}
 
 {% block scripts %}
-<script src="{{ request.static_url('zam_repondeur:static/tinysort/tinysort.min.js') }}"></script>
-<script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
+    <script src="{{ request.static_url('zam_repondeur:static/tinysort/tinysort.min.js') }}"></script>
+    <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
+    {% if amendements %}
+        <script>;(() => application.register('amendements-filters', AmendementsFilters))()</script>
+    {% endif %}
 {% endblock %}

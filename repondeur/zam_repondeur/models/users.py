@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, TYPE_CHECKING
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, Text, func
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, joinedload
 from sqlalchemy_utils import EmailType
 
 from .base import Base, DBSession
@@ -91,5 +91,10 @@ class User(Base):
         from .table import UserTable
 
         table: UserTable
-        table, _ = get_one_or_create(UserTable, user=self, lecture=lecture)
+        table, _ = get_one_or_create(
+            UserTable,
+            user=self,
+            lecture=lecture,
+            options=joinedload("amendements").joinedload("article"),
+        )
         return table

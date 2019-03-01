@@ -18,10 +18,13 @@ from .events.lecture import *  # noqa
 
 
 def get_one_or_create(
-    model: Any, create_kwargs: Any = None, **kwargs: Any
+    model: Any, create_kwargs: Any = None, options: Any = None, **kwargs: Any
 ) -> Tuple[Any, bool]:
     try:
-        return DBSession.query(model).filter_by(**kwargs).one(), False
+        query = DBSession.query(model).filter_by(**kwargs)
+        if options is not None:
+            query = query.options(options)
+        return query.one(), False
     except NoResultFound:
         kwargs.update(create_kwargs or {})
         try:

@@ -16,8 +16,8 @@ class TableView:
         self.context = context
         self.request = request
         self.table = context.model()
+        self.owner = self.table.user
         self.lecture = context.lecture_resource.model()
-        self.owner = context.owner
 
     @view_config(request_method="GET", renderer="table_detail.html")
     def get(self) -> dict:

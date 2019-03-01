@@ -165,7 +165,7 @@ class LectureView:
 
 @view_config(context=AmendementCollection, renderer="amendements.html")
 def list_amendements(context: AmendementCollection, request: Request) -> dict:
-    lecture = context.parent.model(joinedload("articles"))
+    lecture = context.parent.model(joinedload("articles"), joinedload("user_tables"))
     return {
         "lecture": lecture,
         "amendements": lecture.amendements,

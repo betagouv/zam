@@ -192,7 +192,7 @@
     </li>
     {% if lecture.displayable %}
         <li>
-            <a href="{{ request.resource_url(context.parent.parent['articles']) }}" target="_blank">
+            <a href="{{ request.resource_url(context.lecture_resource['articles']) }}" target="_blank">
                 Dossier de banc
             </a>
         </li>
@@ -347,13 +347,13 @@
                                             <a class="mini-options" data-action="table-menu#toggle" href="#"></a>
                                         </div>
                                         <nav>
-                                            <a href="{{ request.resource_url(context.parent.parent, 'transfer_amendements', query={'nums': amendement.num}) }}">Transférer</a>
-                                            <a href="{{ request.resource_url(context.parent.parent, 'export_pdf', query={'nums': amendement.num}) }}">Exporter en PDF</a>
+                                            <a href="{{ request.resource_url(context.lecture_resource, 'transfer_amendements', query={'nums': amendement.num}) }}">Transférer</a>
+                                            <a href="{{ request.resource_url(context.lecture_resource, 'export_pdf', query={'nums': amendement.num}) }}">Exporter en PDF</a>
                                         </nav>
                                     </div>
                                     <div class="avis">
                                         {% if is_owner %}
-                                            {% set edit_url = request.resource_url(context.parent.parent['amendements'][amendement.num_str], 'amendement_edit') %}
+                                            {% set edit_url = request.resource_url(context.lecture_resource['amendements'][amendement.num_str], 'amendement_edit') %}
                                             {% if amendement.user_content.avis %}
                                                 {% if amendement.user_content.favorable %}
                                                     {% set icon_class = "favorable" %}

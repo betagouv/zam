@@ -32,8 +32,8 @@ a {
 nav.main {
     background: #3167a6;
     color: white;
-    padding: .5rem 2rem;
-    font-size: 1.1rem;
+    padding: 0 2rem;
+    font-size: 1rem;
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -69,14 +69,14 @@ nav.main {
     }
     nav.main ul:first-child li:first-child a {
         padding: 0 0 0 1.5rem;
-        background: no-repeat left 20%/18% url("../img/home.svg");
+        background: no-repeat left 30%/.85rem url("../img/home.svg");
     }
     nav.main ul:last-child li:first-child a {
-        background: no-repeat right 20%/18% url("../img/compte.svg");
+        background: no-repeat right 35%/1.1rem url("../img/compte.svg");
         padding-right: 1.7rem;
     }
     nav.main ul:last-child li:last-child a {
-        background: no-repeat right 20%/16% url("../img/exit.svg");
+        background: no-repeat right 40%/1.1rem url("../img/exit.svg");
         padding-right: 1.7rem;
     }
 

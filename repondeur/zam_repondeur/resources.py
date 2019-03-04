@@ -1,8 +1,9 @@
 from typing import Any, Iterator, List, Optional, Tuple, cast
 
-from pyramid.security import Allow, Authenticated, Deny
+from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
+from pyramid.security import Allow, Authenticated, Deny
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -93,8 +94,6 @@ class LectureCollection(Resource):
 
 class LectureResource(Resource):
     def __acl__(self) -> List[ACE]:
-        self.lecture = self.model()
-
         # If the lecture is owned by team, then team members can view it, but not others
         if self.lecture.owned_by_team is not None:
             return [
@@ -125,9 +124,11 @@ class LectureResource(Resource):
         self.add_child(ArticleCollection(name="articles", parent=self))
         self.add_child(TableCollection(name="tables", parent=self))
 
+    @reify
+    def lecture(self) -> Lecture:
+        return self.model()
+
     def model(self, *options: Any) -> Lecture:
-        if hasattr(self, "lecture") and not options:
-            return self.lecture
         lecture = Lecture.get(
             self.chambre,
             self.session,

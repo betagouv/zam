@@ -270,36 +270,6 @@ class TestTransfer:
         assert table_david.amendements[0].lecture == amendements_an[0].lecture
         assert len(table_david.amendements[0].events) == 0
 
-    def test_transfer_one_amendement_to_myself_manually_is_forbidden(
-        self, app, lecture_an, amendements_an, user_david
-    ):
-        from zam_repondeur.models import DBSession, User
-
-        with transaction.manager:
-            DBSession.add(user_david)
-            table_david = user_david.table_for(lecture_an)
-            table_david.amendements.append(amendements_an[0])
-            assert len(user_david.table_for(lecture_an).amendements) == 1
-
-        email = user_david.email
-        resp = app.post(
-            f"/lectures/an.15.269.PO717460/tables/{email}",
-            {"nums": [amendements_an[0].num], "target": email},
-            user=email,
-        )
-        assert resp.status_code == 302
-        assert resp.location == (
-            "https://zam.test/lectures/an.15.269.PO717460/transfer_amendements?nums=666"
-        )
-        user_david = (
-            DBSession.query(User).filter(User.email == user_david.email).first()
-        )
-        table_david = user_david.table_for(lecture_an)
-        assert len(table_david.amendements) == 1
-        assert table_david.amendements[0].num == amendements_an[0].num
-        assert table_david.amendements[0].lecture == amendements_an[0].lecture
-        assert len(table_david.amendements[0].events) == 0
-
     def test_transfer_one_amendement_to_index_manually_is_forbidden(
         self, app, lecture_an, amendements_an, user_david
     ):

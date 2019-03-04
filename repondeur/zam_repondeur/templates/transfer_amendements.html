@@ -10,7 +10,7 @@
         }
         form {
             width: 40rem;
-            margin: 0 auto;
+            margin: 2rem auto;
         }
             form * {
                 width: 100%;
@@ -20,7 +20,22 @@
                 font-weight: 600;
             }
             form input[type="submit"] {
-                margin-top: 3rem;
+                text-align: center;
+                margin: 1rem 0;
+            }
+            form input[type="submit"].enabled {
+                width: 10rem;
+            }
+            form input[type="submit"]:not(.enabled) {
+                width: 80%;
+            }
+            form#transfer-amendements {
+                margin-top: 4rem;
+            }
+                form#transfer-amendements .buttons {
+                    text-align: right;
+                }
+            form#transfer-amendements-custom .buttons {
                 text-align: center;
             }
     </style>
@@ -58,23 +73,6 @@
             <a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
         {% endfor %}
     </h1>
-    <form id="transfer-amendements-custom" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
-        {% for amendement in amendements %}
-            <input type="hidden" name="nums" value="{{ amendement.num }}">
-        {% endfor %}
-        {% if from_index %}
-            <input type="hidden" name="from_index" value="{{ from_index }}">
-        {% endif %}
-        <div>
-            {% if show_transfer_to_myself %}
-                <input type="submit" name="submit-table" value="Transférer sur ma table" class="button primary enabled">
-            {% endif %}
-            {% if show_transfer_to_index %}
-                <input type="submit" name="submit-index" value="Transférer à l’index" class="button primary {% if not show_transfer_to_myself %}enabled{% endif %}">
-            {% endif %}
-        </div>
-    </form>
-    <h3 class="line-through">ou</h3>
     <form id="transfer-amendements" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
         {% for amendement in amendements %}
             <input type="hidden" name="nums" value="{{ amendement.num }}">
@@ -83,18 +81,35 @@
             <input type="hidden" name="from_index" value="{{ from_index }}">
         {% endif %}
         <div>
-            <label for="target">Destinataire :</label>
+            <label for="target">Destinataire</label>
             <select id="target" name="target" required>
                 <option selected></option>
+                {% if show_transfer_to_myself %}
+                    <option value="{{ request.user.email }}">Moi — {{ request.user }}</option>
+                {% endif %}
                 {% for user in users %}
                     <option value="{{ user.email }}">{{ user }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div>
-            <input type="submit" name="submit" value="Transférer" class="button primary">
+        <div class="buttons">
+            <input type="submit" name="submit" value="Transférer" class="button primary enabled">
         </div>
     </form>
+    {% if show_transfer_to_index %}
+        <h3 class="line-through">ou</h3>
+        <form id="transfer-amendements-custom" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
+            {% for amendement in amendements %}
+                <input type="hidden" name="nums" value="{{ amendement.num }}">
+            {% endfor %}
+            {% if from_index %}
+                <input type="hidden" name="from_index" value="{{ from_index }}">
+            {% endif %}
+            <div class="buttons">
+                <input type="submit" name="submit-index" value="Transférer à l’index" class="button primary">
+            </div>
+        </form>
+    {% endif %}
 {% endblock %}
 
 {% block scripts %}

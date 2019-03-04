@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-pytestmark = pytest.mark.flaky
+pytestmark = pytest.mark.flaky(max_runs=5)
 
 
 def test_visionneuse_detail_amendement(wsgi_server, driver, lecture_an, amendements_an):

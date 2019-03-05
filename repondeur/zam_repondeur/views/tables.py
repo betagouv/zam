@@ -24,6 +24,8 @@ class TableView:
     def get(self) -> dict:
         return {
             "lecture": self.lecture,
+            "lecture_resource": self.context.lecture_resource,
+            "current_tab": "table",
             "table": self.table,
             "amendements": self.table.amendements,
             "is_owner": self.owner.email == self.request.user.email,

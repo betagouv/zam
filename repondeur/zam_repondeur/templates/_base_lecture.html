@@ -1,0 +1,26 @@
+{% extends "_base.html" %}
+
+{% block extra_nav %}
+    <li{% if current_tab == 'table' %} class="selected"{% endif %}>
+        <a href="{{ request.resource_url(lecture_resource['tables'], request.user.email) }}">
+            Ma table
+        </a>
+    </li>
+    <li{% if current_tab == 'index' %} class="selected"{% endif %}>
+        <a href="{{ request.resource_url(lecture_resource['amendements']) }}">
+            Index
+        </a>
+    </li>
+    <li{% if current_tab == 'options' %} class="selected"{% endif %}>
+        <a href="{{ request.resource_url(lecture_resource, 'options') }}">
+            Options avancées
+        </a>
+    </li>
+    {% if lecture.displayable %}
+        <li>
+            <a href="{{ request.resource_url(lecture_resource['articles']) }}" target="_blank">
+                Dossier de banc
+            </a>
+        </li>
+    {% endif %}
+{% endblock %}

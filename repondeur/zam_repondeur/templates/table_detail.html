@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+{% extends "_base_lecture.html" %}
 {% import "macros.html" as macros %}
 
 {% block header %}
@@ -177,31 +177,6 @@
             vertical-align: baseline;
         }
 </style>
-{% endblock %}
-
-{% block extra_nav %}
-    <li {% if is_owner %}class="selected"{% endif %}>
-        <a href="{{ table_url }}">
-            Ma table
-        </a>
-    </li>
-    <li>
-        <a href="{{ index_url }}">
-            Index
-        </a>
-    </li>
-    <li>
-        <a href="{{ request.resource_url(context.lecture_resource, 'options') }}">
-            Options avancées
-        </a>
-    </li>
-    {% if lecture.displayable %}
-        <li>
-            <a href="{{ request.resource_url(context.lecture_resource['articles']) }}" target="_blank">
-                Dossier de banc
-            </a>
-        </li>
-    {% endif %}
 {% endblock %}
 
 {% block body %}

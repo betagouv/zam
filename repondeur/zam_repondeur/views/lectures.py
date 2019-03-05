@@ -166,9 +166,12 @@ class LectureView:
 
 @view_config(context=AmendementCollection, renderer="amendements.html")
 def list_amendements(context: AmendementCollection, request: Request) -> dict:
-    lecture = context.parent.model(joinedload("articles"), joinedload("user_tables"))
+    lecture_resource = context.parent
+    lecture = lecture_resource.model(joinedload("articles"), joinedload("user_tables"))
     return {
         "lecture": lecture,
+        "lecture_resource": lecture_resource,
+        "current_tab": "index",
         "amendements": lecture.amendements,
         "articles": lecture.articles,
         "check_url": request.resource_path(context.parent, "check"),
@@ -293,4 +296,4 @@ def lecture_journal(context: LectureResource, request: Request) -> Response:
 @view_config(context=LectureResource, name="options", renderer="lecture_options.html")
 def lecture_options(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
-    return {"lecture": lecture}
+    return {"lecture": lecture, "lecture_resource": context, "current_tab": "options"}

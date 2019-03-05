@@ -48,3 +48,18 @@ application.register(
         }
     }
 )
+
+application.register('account-menu', class extends Stimulus.Controller {
+    static get targets() {
+        return ['menu']
+    }
+    toggle(event) {
+        event.preventDefault()
+        this.menuTarget.classList.toggle('d-none')
+    }
+    dismiss(event) {
+        if (!this.element.contains(event.target)) {
+            this.menuTarget.classList.toggle('d-none', true)
+        }
+    }
+})

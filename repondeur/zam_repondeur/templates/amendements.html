@@ -16,6 +16,11 @@
             Index
         </a>
     </li>
+    <li>
+        <a href="{{ request.resource_url(context.parent, 'options') }}">
+            Options avancées
+        </a>
+    </li>
     {% if lecture.displayable %}
         <li>
             <a href="{{ request.resource_url(context.parent['articles']) }}" target="_blank">
@@ -23,11 +28,6 @@
             </a>
         </li>
     {% endif %}
-    <li>
-        <a href="{{ request.resource_url(context.parent, 'options') }}">
-            Options avancées
-        </a>
-    </li>
 {% endblock %}
 
 {% block body %}

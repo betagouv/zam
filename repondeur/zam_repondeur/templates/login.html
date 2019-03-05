@@ -1,7 +1,7 @@
-{% extends "_base2.html" %}
+{% extends "_base.html" %}
 
 
-{% block main %}
+{% block body %}
 <h1>Entrer dans Zam</h1>
 <form method="POST" class="intro">
     <fieldset>
@@ -14,6 +14,6 @@
         <label for="email">Votre courriel</label>
         <input type="email" name="email" autocomplete="email" required autocorrect="off" spellcheck="false">
     </fieldset>
-    <input type="submit" value="Entrer dans Zam">
+    <input type="submit" class="button primary enabled" value="Entrer dans Zam">
 </form>
 {% endblock %}

@@ -37,20 +37,23 @@ nav.main {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    min-height: calc(24px + 1.4rem);
 }
     nav.main ul {
         display: flex;
         list-style-type: none;
         margin: 0;
+        padding: 8px 0;
     }
         nav.main ul li {
-            padding: .7rem 1rem;
+            padding: .2rem;
             white-space: nowrap;
-            margin-left: 1rem;
+            margin-left: 1.5rem;
         }
             nav.main ul li a {
                 color: white;
-                padding: .3rem .8rem .1rem .8rem;
+                padding: .3rem .2rem .1rem .2rem;
+                border-bottom: 2px solid transparent;
             }
             nav.main ul li a:hover {
                 text-decoration: none;
@@ -66,19 +69,46 @@ nav.main {
     nav.main ul:first-child li:first-child {
         border-right: 2px solid white;
         padding-right: 2rem;
+        margin-right: 0.3rem;
+        margin-left: 0;
     }
-    nav.main ul:first-child li:first-child a {
+    nav.main a.home {
         padding: 0 0 0 1.5rem;
         background: no-repeat left 30%/.85rem url("../img/home.svg");
     }
-    nav.main ul:last-child li:first-child a {
+    nav.main a.account {
         background: no-repeat right 35%/1.1rem url("../img/compte.svg");
+        padding-left: 0;
         padding-right: 1.7rem;
     }
-    nav.main ul:last-child li:last-child a {
-        background: no-repeat right 40%/1.1rem url("../img/exit.svg");
-        padding-right: 1.7rem;
+    nav.main .account-menu-toggle {
+        position: relative;
     }
+        nav.main .account-menu-toggle:hover {
+            cursor: pointer;
+        }
+    nav.main .account-menu {
+        display: flex;
+        position: absolute;
+        top: calc(20px + 1.4rem);
+        right: 0;
+        min-width: 220px;
+        flex-direction: column;
+        border: solid 1px white;
+        padding: 8px 16px;
+        background-color: #3167a6;
+    }
+        nav.main .account-menu > * {
+            padding: 0;
+            margin: 0.5rem;
+        }
+        nav.main .account-menu a {
+            padding: 0;
+        }
+            nav.main .account-menu a.logout {
+                background: no-repeat right 40%/1.1rem url("../img/exit.svg");
+                padding-right: 1.7rem;
+            }
 
 nav.secondary {
     padding: 1.2rem 2rem 1rem 2rem;
@@ -395,3 +425,35 @@ tr.hidden-avis,
 tr.hidden-reponse {
     display: none;
 }
+
+.intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 35rem;
+    margin: 2rem auto;
+}
+    .intro fieldset {
+        display: flex;
+        flex-direction: column;
+        margin: 2rem 0 5rem;
+        width: 90%;
+        font-size: 1.2rem;
+    }
+        .intro fieldset label {
+            font-weight: 600;
+        }
+        .intro fieldset input {
+            font-size: 1.2rem;
+        }
+    .intro .controls {
+        display: flex;
+        justify-content: space-around;
+        align-items: baseline;
+        width: 100%;
+        text-align: center;
+        margin: 0 auto;
+    }
+        .intro .controls input[type="submit"] {
+            width: 12rem;
+        }

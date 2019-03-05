@@ -190,6 +190,11 @@
             Index
         </a>
     </li>
+    <li>
+        <a href="{{ request.resource_url(context.lecture_resource, 'options') }}">
+            Options avancées
+        </a>
+    </li>
     {% if lecture.displayable %}
         <li>
             <a href="{{ request.resource_url(context.lecture_resource['articles']) }}" target="_blank">

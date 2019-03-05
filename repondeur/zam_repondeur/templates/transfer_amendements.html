@@ -5,11 +5,12 @@
     <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.bootstrap3.css') }}">
     <style type="text/css">
         h3.line-through {
-            margin: 3rem auto;
+            margin: 2rem auto;
             width: 40rem;
+            font-size: 1.5rem;
         }
         form {
-            width: 40rem;
+            width: 35rem;
             margin: 2rem auto;
         }
             form * {
@@ -17,17 +18,19 @@
             }
             form label {
                 display: block;
+                margin: 0;
+                font-size: 1.1rem;
                 font-weight: 600;
             }
             form input[type="submit"] {
                 text-align: center;
-                margin: 1rem 0;
+                margin: 1.5rem 0;
             }
             form input[type="submit"].enabled {
-                width: 10rem;
+                width: 12rem;
             }
             form input[type="submit"]:not(.enabled) {
-                width: 80%;
+                width: 22rem;
             }
             form#transfer-amendements {
                 margin-top: 4rem;
@@ -38,6 +41,10 @@
             form#transfer-amendements-custom .buttons {
                 text-align: center;
             }
+        nav.back {
+            margin-top: 3rem;
+            font-weight: 600;
+        }
     </style>
 {% endblock %}
 
@@ -110,6 +117,15 @@
             </div>
         </form>
     {% endif %}
+    <nav class="back">
+        <a href="{{ back_url }}" class="arrow-left">
+            {% if from_index %}
+                Retourner à l'index
+            {% else %}
+                Retourner à ma table
+            {% endif %}
+        </a>
+    </nav>
 {% endblock %}
 
 {% block scripts %}

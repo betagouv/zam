@@ -1,6 +1,6 @@
 import transaction
 from datetime import date
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -14,6 +14,7 @@ from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, Amendement, Lecture as LectureModel, User
 from zam_repondeur.models.events.lecture import ArticlesRecuperes
+from zam_repondeur.models.users import Team
 from zam_repondeur.resources import (
     AmendementCollection,
     LectureCollection,
@@ -175,37 +176,66 @@ def list_amendements(context: AmendementCollection, request: Request) -> dict:
     }
 
 
-@view_config(
+@view_defaults(
     context=LectureResource,
     renderer="transfer_amendements.html",
     name="transfer_amendements",
 )
-def transfer_amendements(context: LectureResource, request: Request) -> dict:
-    lecture = context.model()
-    my_table = request.user.table_for(lecture)
-    amendements_nums: list = request.GET.getall("nums")
-    from_index = bool(request.GET.get("from_index"))
-    amendements = DBSession.query(Amendement).filter(
-        Amendement.lecture_pk == lecture.pk,
-        Amendement.num.in_(amendements_nums),  # type: ignore
-    )
-    if request.team:
-        users = [user for user in request.team.users if user != request.user]
-    else:
-        users = DBSession.query(User).filter(User.email != request.user.email)
-    amendements = list(amendements)
-    return {
-        "lecture": lecture,
-        "amendements": amendements,
-        "users": users,
-        "from_index": int(from_index),
-        "show_transfer_to_index": any(
-            amendement.user_table is not None for amendement in amendements
-        ),
-        "show_transfer_to_myself": any(
-            amendement.user_table is not my_table for amendement in amendements
-        ),
-    }
+class TransferAmendements:
+    def __init__(self, context: LectureResource, request: Request) -> None:
+        self.context = context
+        self.request = request
+        self.from_index = bool(request.GET.get("from_index"))
+        self.amendements_nums: list = self.request.GET.getall("nums")
+
+    @view_config(request_method="GET")
+    def get(self) -> dict:
+        lecture = self.context.model()
+        my_table = self.request.user.table_for(lecture)
+        amendements = (
+            DBSession.query(Amendement)
+            .filter(
+                Amendement.lecture_pk == lecture.pk,
+                Amendement.num.in_(self.amendements_nums),  # type: ignore
+            )
+            .all()
+        )
+        return {
+            "lecture": lecture,
+            "amendements": amendements,
+            "users": self.target_users,
+            "from_index": int(self.from_index),
+            "show_transfer_to_index": any(
+                amendement.user_table is not None for amendement in amendements
+            ),
+            "show_transfer_to_myself": any(
+                amendement.user_table is not my_table for amendement in amendements
+            ),
+            "back_url": self.back_url,
+        }
+
+    @property
+    def target_users(self) -> List[User]:
+        team: Optional[Team] = self.request.team
+        if team is not None:
+            return team.everyone_but_me(self.request.user)
+        return User.everyone_but_me(self.request.user)
+
+    @property
+    def back_url(self) -> str:
+        return self.index_url if self.from_index else self.table_url
+
+    @property
+    def index_url(self) -> str:
+        url: str = self.request.resource_url(self.context["amendements"])
+        return url
+
+    @property
+    def table_url(self) -> str:
+        url: str = self.request.resource_url(
+            self.context["tables"][self.request.user.email]
+        )
+        return url
 
 
 @view_config(context=LectureResource, name="manual_refresh")

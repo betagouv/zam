@@ -66,6 +66,7 @@ RUN apt-get update && \
         libpq-dev \
         python3-dev \
     && \
+    python3.6 -m pip install --upgrade pip setuptools && \
     python3.6 -m pip install --no-cache-dir --src=/src \
         -r requirements.txt \
         -r requirements-dev.txt && \

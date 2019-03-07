@@ -196,6 +196,53 @@ def test_post_amendement_edit_form(app, lecture_an, amendements_an, user_david):
     assert len(amendement.events) == 4
 
 
+def test_post_amendement_edit_form_switch_table(
+    app, lecture_an, amendements_an, user_david, user_ronan
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    amendement = amendements_an[1]
+    with transaction.manager:
+        DBSession.add(amendement)
+        table = user_david.table_for(lecture_an)
+        table.amendements.append(amendement)
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
+        user=user_david.email,
+    )
+    form = resp.forms["edit-amendement"]
+    form["avis"] = "Favorable"
+    form["objet"] = "Un objet très pertinent"
+    form["reponse"] = "Une réponse <strong>très</strong> appropriée"
+    form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
+
+    # Table switch just before submitting the form.
+    with transaction.manager:
+        table = user_ronan.table_for(lecture_an)
+        table.amendements.append(amendement)
+
+    resp = form.submit("save")
+
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com/"
+    )
+    resp = resp.maybe_follow()
+    assert "Les modifications n’ont PAS été enregistrées" in resp.text
+    assert "Il est actuellement sur la table de Ronan" in resp.text
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    assert amendement.user_content.avis is None
+    assert amendement.user_content.objet is None
+    assert amendement.user_content.reponse is None
+    assert amendement.user_content.comments is None
+
+    # Should NOT create events.
+    assert len(amendement.events) == 0
+
+
 def test_post_amendement_edit_form_and_transfer(
     app, lecture_an, amendements_an, user_david
 ):

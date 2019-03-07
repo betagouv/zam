@@ -36,22 +36,22 @@
     <main role="main" class="{% block main_class %}box{% endblock %}">
         {% block body %}
         {% endblock %}
-        {# See https://inclusive-components.design/notifications/ #}
-        <div role="status" aria-live="polite" class="d-none"
-            data-controller="notifications notifications-with-diff"
-            data-notifications-check-url="{% block check_url %}{% endblock %}"
-            data-notifications-check-timestamp="{% block check_timestamp %}{% endblock %}"
-            data-notifications-check-interval="{% block check_interval %}{% endblock %}"
-            {% for kind, message in request.session.pop_flash() %}
-                data-notifications-message="{{ message }}"
-                data-notifications-kind="{{ kind }}"
-            {% endfor %}
-            {% block notifications_extras %}{% endblock %}
-            >
-            <a class="close-notification" data-action="notifications#close" href="">×</a>
-            <div></div>
-        </div>
     </main>
+    {# See https://inclusive-components.design/notifications/ #}
+    <div role="status" aria-live="polite" class="d-none"
+        data-controller="notifications notifications-with-diff notifications-with-diff-unique"
+        data-notifications-check-url="{% block check_url %}{% endblock %}"
+        data-notifications-check-timestamp="{% block check_timestamp %}{% endblock %}"
+        data-notifications-check-interval="{% block check_interval %}{% endblock %}"
+        {% for kind, message in request.session.pop_flash() %}
+            data-notifications-message="{{ message }}"
+            data-notifications-kind="{{ kind }}"
+        {% endfor %}
+        {% block notifications_extras %}{% endblock %}
+        >
+        <a class="close-notification" data-action="notifications#close" href="">×</a>
+        <div></div>
+    </div>
 
     <script src="{{ request.static_url('zam_repondeur:static/js/stimulus.js') }}"></script>
     <script>;(() => window.application = Stimulus.Application.start())()</script>

@@ -65,18 +65,18 @@
 
 {% block extra_nav %}
     <li>
-        <a href="{{ request.resource_url(context.parent.parent['tables'], request.user.email) }}">
+        <a href="{{ my_table_url }}">
             Ma table
         </a>
     </li>
     <li>
-        <a href="{{ request.resource_url(context.parent.parent, 'amendements') }}">
+        <a href="{{ request.resource_url(context.lecture_resource, 'amendements') }}">
             Index
         </a>
     </li>
     {% if amendement.is_displayable %}
         <li>
-            <a href="{{ request.resource_url(context.parent.parent['articles'][amendement.article.url_key], 'reponses', anchor=amendement.slug) }}" target="_blank">
+            <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key], 'reponses', anchor=amendement.slug) }}" target="_blank">
                 Dossier de banc
             </a>
         </li>
@@ -142,7 +142,7 @@
         {{ content(amendement) }}
     </section>
     <section class="edit box">
-        {% if amendement.user_table and request.user == amendement.user_table.user %}
+        {% if is_on_my_table %}
             {{ form(amendement) }}
         {% else %}
             <div class="notice">
@@ -152,7 +152,7 @@
                 <p>
                     Pour pouvoir éditer cet amendement, il doit se trouver sur votre table.
                 </p>
-                <form id="transfer" action="{{ request.resource_url(context.parent.parent['tables'], request.user.email) }}" method="POST">
+                <form id="transfer" action="{{ my_table_url }}" method="POST">
                     <input type="hidden" name="nums" value="{{ amendement.num }}">
                     <input type="submit" name="submit-table" class="button primary" value="Transférer sur ma table">
                 </form>
@@ -291,47 +291,60 @@
     </form>
 {% endmacro %}
 
+{% block notifications_extras %}
+    {% if is_on_my_table %}
+        data-notifications-with-diff-unique-table-url="{{ my_table_url }}"
+        data-notifications-with-diff-unique-check-url="{{ check_url }}"
+        data-notifications-with-diff-unique-check-interval="30" {# seconds #}
+        data-notifications-with-diff-unique-amendement-num="{{ amendement.num }}"
+        data-notifications-with-diff-unique-current="{{ table.amendements_as_string }}"
+    {% endif %}
+{% endblock %}
+
 {% block extra_scripts %}
-{% if not amendement.gouvernemental %}
-    <script type="text/javascript">
-        window.onload = () => {
-            // Wait for iframes to be loaded.
-            setTimeout(() => {
-                const prefillForm = document.querySelector('form#prefill-reponse')
-                const editReponseForm = document.querySelector('form#edit-amendement')
-                const initialAvis = editReponseForm.querySelector('option:checked')
-                    .value
-                const objetWindow = document.querySelector('iframe#objet_ifr')
-                    .contentWindow
-                const objetBody = objetWindow.document.body
-                const initialObjet = objetBody.innerHTML
-                const reponseWindow = document.querySelector('iframe#reponse_ifr')
-                    .contentWindow
-                const reponseBody = reponseWindow.document.body
-                const initialReponse = reponseBody.innerHTML
-                prefillForm.addEventListener('submit', e => {
-                    e.preventDefault()
-                    const data = new FormData(e.target)
-                    const index = data.get('autofill')
-                    const option = e.target.querySelector(
-                        `select[name="autofill"] option[value="${index}"]`
-                    )
-                    editReponseForm.querySelector(
-                        `option[value="${option.dataset.reponseAvis}"]`
-                    ).selected = true
-                    objetBody.innerHTML = option.dataset.reponseObjet
-                    reponseBody.innerHTML = option.dataset.reponseContent
-                })
-                document.querySelector('#cancel').addEventListener('click', e => {
-                    e.preventDefault()
-                    editReponseForm.querySelector(
-                        `option[value="${initialAvis}"]`
-                    ).selected = true
-                    objetBody.innerHTML = initialObjet
-                    reponseBody.innerHTML = initialReponse
-                })
-            }, 1)
-        }
-    </script>
-{% endif %}
+    {% if is_on_my_table %}
+        <script>;(() => application.register('notifications-with-diff-unique', NotificationsWithDiffUnique))()</script>
+        {% if not amendement.gouvernemental %}
+            <script type="text/javascript">
+                window.onload = () => {
+                    // Wait for iframes to be loaded.
+                    setTimeout(() => {
+                        const prefillForm = document.querySelector('form#prefill-reponse')
+                        const editReponseForm = document.querySelector('form#edit-amendement')
+                        const initialAvis = editReponseForm.querySelector('option:checked')
+                            .value
+                        const objetWindow = document.querySelector('iframe#objet_ifr')
+                            .contentWindow
+                        const objetBody = objetWindow.document.body
+                        const initialObjet = objetBody.innerHTML
+                        const reponseWindow = document.querySelector('iframe#reponse_ifr')
+                            .contentWindow
+                        const reponseBody = reponseWindow.document.body
+                        const initialReponse = reponseBody.innerHTML
+                        prefillForm.addEventListener('submit', e => {
+                            e.preventDefault()
+                            const data = new FormData(e.target)
+                            const index = data.get('autofill')
+                            const option = e.target.querySelector(
+                                `select[name="autofill"] option[value="${index}"]`
+                            )
+                            editReponseForm.querySelector(
+                                `option[value="${option.dataset.reponseAvis}"]`
+                            ).selected = true
+                            objetBody.innerHTML = option.dataset.reponseObjet
+                            reponseBody.innerHTML = option.dataset.reponseContent
+                        })
+                        document.querySelector('#cancel').addEventListener('click', e => {
+                            e.preventDefault()
+                            editReponseForm.querySelector(
+                                `option[value="${initialAvis}"]`
+                            ).selected = true
+                            objetBody.innerHTML = initialObjet
+                            reponseBody.innerHTML = initialReponse
+                        })
+                    }, 1)
+                }
+            </script>
+        {% endif %}
+    {% endif %}
 {% endblock %}

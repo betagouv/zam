@@ -21,8 +21,12 @@
     margin-left: 2rem;
     color: #3167a6;
     background-color: white;
+    padding: .5rem 1rem .2rem 1rem;
+  }
+  [role="status"] .button.refresh,
+  [role="status"] .button.refresh:hover {
     background: no-repeat .3rem url("../img/actualiser.svg");
-    padding: .5rem 1rem .2rem 2.9rem;
+    padding-left: 2.9rem;
   }
   [role="status"] .success-notification {
     background: no-repeat top left url("../img/validation.svg");

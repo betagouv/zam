@@ -110,6 +110,10 @@ class Notifications extends Stimulus.Controller {
 }
 
 class NotificationsWithDiff extends Notifications {
+  get kind() {
+    return 'refresh'
+  }
+
   get url() {
     const url = new URL(this.data.get('checkUrl'), window.location)
     const params = url.searchParams
@@ -136,7 +140,6 @@ class NotificationsWithDiff extends Notifications {
   formatReponse(json) {
     if ('updated' in json) {
       this.message = this.numbersToMessage(json.updated.split('_'))
-      this.kind = 'refresh'
       this.load()
     }
   }
@@ -173,6 +176,27 @@ class NotificationsWithDiff extends Notifications {
       compared.filter(item => initial.indexOf(item) === -1),
       initial.filter(item => compared.indexOf(item) === -1)
     ]
+  }
+}
+
+class NotificationsWithDiffUnique extends NotificationsWithDiff {
+  get kind() {
+    return 'danger'
+  }
+
+  numbersToMessage(numbers) {
+    const initial = this.current.split('_')
+    const [added, removed] = this.getAddedorRemovedItems(initial, numbers)
+    const num = this.data.get('amendementNum')
+    if (!removed.includes(num)) return ''
+    document
+      .querySelectorAll('.save-buttons input[type="submit"]')
+      .forEach(input => input.classList.add('disabled'))
+    return `L’amendement en cours d’édition n’est plus sur votre table.
+      Votre saisie ne va pas être sauvegardée.
+      <a class="button primary enabled" href="${this.data.get(
+        'tableUrl'
+      )}">Revenir à votre table</a>`
   }
 }
 

@@ -29,14 +29,26 @@ class AmendementEdit:
         self.request = request
         self.amendement = context.model()
         self.lecture = self.amendement.lecture
+        self.my_table_resource = self.context.lecture_resource["tables"][
+            self.request.user.email
+        ]
+        self.is_on_my_table = (
+            self.amendement.user_table
+            and self.amendement.user_table.user == self.request.user
+        )
 
     @view_config(request_method="GET")
     def get(self) -> dict:
+        check_url = self.request.resource_path(self.my_table_resource, "check")
         return {
             "amendement": self.amendement,
             "avis": AVIS,
+            "table": self.amendement.user_table,
+            "is_on_my_table": self.is_on_my_table,
             "back_url": self.back_url,
             "submit_url": self.submit_url,
+            "check_url": check_url,
+            "my_table_url": self.my_table_url,
             "reponses": self.amendement.article.grouped_displayable_amendements(),
         }
 
@@ -52,6 +64,19 @@ class AmendementEdit:
         objet_changed = objet != (self.amendement.user_content.objet or "")
         reponse_changed = reponse != (self.amendement.user_content.reponse or "")
         comments_changed = comments != (self.amendement.user_content.comments or "")
+
+        if not self.is_on_my_table:
+            message = (
+                "Les modifications n’ont PAS été enregistrées "
+                "car l’amendement n’est plus sur votre table."
+            )
+            if self.amendement.user_table:
+                message += (
+                    f" Il est actuellement sur la table de "
+                    f"{self.amendement.user_table.user}."
+                )
+            self.request.session.flash(Message(cls="danger", text=message))
+            return HTTPFound(location=self.my_table_url)
 
         if avis_changed or objet_changed or reponse_changed or comments_changed:
             self.amendement.modified_at = now
@@ -88,13 +113,17 @@ class AmendementEdit:
     def back_url(self) -> str:
         url: str = self.request.GET.get("back")
         if url is None or not url.startswith("/"):
-            my_table = self.context.lecture_resource["tables"][self.request.user.email]
-            url = self.request.resource_url(my_table)
+            url = self.my_table_url
         return add_url_fragment(url, self.amendement.slug)
 
     @property
     def submit_url(self) -> str:
         return add_url_params(self.request.path, back=self.back_url)
+
+    @property
+    def my_table_url(self) -> str:
+        my_table_url: str = self.request.resource_url(self.my_table_resource)
+        return my_table_url
 
 
 @view_config(

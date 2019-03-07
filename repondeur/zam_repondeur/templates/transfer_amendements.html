@@ -5,24 +5,46 @@
     <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.bootstrap3.css') }}">
     <style type="text/css">
         h3.line-through {
-            margin: 3rem auto;
+            margin: 2rem auto;
             width: 40rem;
+            font-size: 1.5rem;
         }
         form {
-            width: 40rem;
-            margin: 0 auto;
+            width: 35rem;
+            margin: 2rem auto;
         }
             form * {
                 width: 100%;
             }
             form label {
                 display: block;
+                margin: 0;
+                font-size: 1.1rem;
                 font-weight: 600;
             }
             form input[type="submit"] {
-                margin-top: 3rem;
+                text-align: center;
+                margin: 1.5rem 0;
+            }
+            form input[type="submit"].enabled {
+                width: 12rem;
+            }
+            form input[type="submit"]:not(.enabled) {
+                width: 22rem;
+            }
+            form#transfer-amendements {
+                margin-top: 4rem;
+            }
+                form#transfer-amendements .buttons {
+                    text-align: right;
+                }
+            form#transfer-amendements-custom .buttons {
                 text-align: center;
             }
+        nav.back {
+            margin-top: 3rem;
+            font-weight: 600;
+        }
     </style>
 {% endblock %}
 
@@ -58,23 +80,6 @@
             <a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
         {% endfor %}
     </h1>
-    <form id="transfer-amendements-custom" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
-        {% for amendement in amendements %}
-            <input type="hidden" name="nums" value="{{ amendement.num }}">
-        {% endfor %}
-        {% if from_index %}
-            <input type="hidden" name="from_index" value="{{ from_index }}">
-        {% endif %}
-        <div>
-            {% if show_transfer_to_myself %}
-                <input type="submit" name="submit-table" value="Transférer sur ma table" class="button primary enabled">
-            {% endif %}
-            {% if show_transfer_to_index %}
-                <input type="submit" name="submit-index" value="Transférer à l’index" class="button primary {% if not show_transfer_to_myself %}enabled{% endif %}">
-            {% endif %}
-        </div>
-    </form>
-    <h3 class="line-through">ou</h3>
     <form id="transfer-amendements" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
         {% for amendement in amendements %}
             <input type="hidden" name="nums" value="{{ amendement.num }}">
@@ -83,18 +88,44 @@
             <input type="hidden" name="from_index" value="{{ from_index }}">
         {% endif %}
         <div>
-            <label for="target">Destinataire :</label>
+            <label for="target">Destinataire</label>
             <select id="target" name="target" required>
                 <option selected></option>
+                {% if show_transfer_to_myself %}
+                    <option value="{{ request.user.email }}">Moi — {{ request.user }}</option>
+                {% endif %}
                 {% for user in users %}
                     <option value="{{ user.email }}">{{ user }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div>
-            <input type="submit" name="submit" value="Transférer" class="button primary">
+        <div class="buttons">
+            <input type="submit" name="submit" value="Transférer" class="button primary enabled">
         </div>
     </form>
+    {% if show_transfer_to_index %}
+        <h3 class="line-through">ou</h3>
+        <form id="transfer-amendements-custom" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
+            {% for amendement in amendements %}
+                <input type="hidden" name="nums" value="{{ amendement.num }}">
+            {% endfor %}
+            {% if from_index %}
+                <input type="hidden" name="from_index" value="{{ from_index }}">
+            {% endif %}
+            <div class="buttons">
+                <input type="submit" name="submit-index" value="Transférer à l’index" class="button primary">
+            </div>
+        </form>
+    {% endif %}
+    <nav class="back">
+        <a href="{{ back_url }}" class="arrow-left">
+            {% if from_index %}
+                Retourner à l'index
+            {% else %}
+                Retourner à ma table
+            {% endif %}
+        </a>
+    </nav>
 {% endblock %}
 
 {% block scripts %}

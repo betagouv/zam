@@ -1,7 +1,7 @@
-{% extends "_base2.html" %}
+{% extends "_base.html" %}
 
 
-{% block main %}
+{% block body %}
 {% set has_name = request.user.name %}
 {% if has_name %}
     <h1>Modifier votre nom</h1>
@@ -19,9 +19,9 @@
     <div class="controls">
         {% if has_name %}
             <a href="{{ request.resource_url(context['lectures']) }}">Annuler</a>
-            <input type="submit" value="Enregistrer">
+            <input type="submit" class="button primary enabled" value="Enregistrer">
         {% else %}
-            <input type="submit" value="Entrer">
+            <input type="submit" class="button primary enabled" value="Entrer">
         {% endif %}
     </div>
 </form>

@@ -5,6 +5,7 @@ from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
+from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, Amendement, User, UserTable
 from zam_repondeur.models.events.amendement import AmendementTransfere
 from zam_repondeur.resources import TableResource
@@ -23,6 +24,8 @@ class TableView:
     def get(self) -> dict:
         return {
             "lecture": self.lecture,
+            "lecture_resource": self.context.lecture_resource,
+            "current_tab": "table",
             "table": self.table,
             "amendements": self.table.amendements,
             "is_owner": self.owner.email == self.request.user.email,
@@ -47,7 +50,12 @@ class TableView:
             target = self.request.user.email
         else:
             target = self.request.POST.get("target")
-            if target in ("", None, self.request.user.email):
+            if not target:
+                self.request.session.flash(
+                    Message(
+                        cls="warning", text="Veuillez sélectionner un·e destinataire."
+                    )
+                )
                 return HTTPFound(
                     location=self.request.resource_url(
                         self.context.lecture_resource,
@@ -58,7 +66,10 @@ class TableView:
 
         target_table: Optional[UserTable] = None
         if target:
-            target_user: User = DBSession.query(User).filter(User.email == target).one()
+            if target == self.request.user.email:
+                target_user = self.request.user
+            else:
+                target_user = DBSession.query(User).filter(User.email == target).one()
             if self.request.team and target_user not in self.request.team.users:
                 raise HTTPForbidden("Transfert non autorisé")
             target_table = target_user.table_for(self.lecture)

@@ -15,18 +15,19 @@
         {% block nav %}
             <ul>
                 {% if request.user and not (hide_lectures_link is defined and hide_lectures_link) %}
-                    <li><a href="{{ request.resource_url(request.root['lectures']) }}" title="Aller à la liste des lectures">Lectures</a></li>
+                    <li><a class="home" href="{{ request.resource_url(request.root['lectures']) }}" title="Aller à la liste des lectures">Lectures</a></li>
                     {% block extra_nav %}{% endblock %}
                 {% endif %}
             </ul>
-            <ul>
+            <ul data-controller="account-menu">
                 {% if request.user %}
-                    <li>
-                        <a href="{{ request.route_url('welcome') }}" title="{{ request.user.name }} : changer de nom ?">
-                            Mon compte
-                        </a>
+                    <li class="account-menu-toggle">
+                        <a class="account" data-action="account-menu#toggle click@window->account-menu#dismiss">{{ request.user.name }}</a>
+                        <ul class="account-menu d-none" data-target="account-menu.menu">
+                            <li><a href="{{ request.route_url('welcome') }}">Modifier mon nom</a></li>
+                            <li><a class="logout" href="{{ request.route_url('logout') }}" title="Se déconnecter de Zam">Déconnexion</a></li>
+                        </nav>
                     </li>
-                    <li><a href="{{ request.route_url('logout') }}" title="Se déconnecter de Zam">Déconnexion</a></li>
                 {% endif %}
             </ul>
         {% endblock %}

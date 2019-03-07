@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, TYPE_CHECKING
+from typing import List, Optional, TYPE_CHECKING
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, Text, func
 from sqlalchemy.orm import relationship, backref, joinedload
@@ -43,6 +43,9 @@ class Team(Base):
     @staticmethod
     def normalize_name(name: str) -> str:
         return name.strip()
+
+    def everyone_but_me(self, me: "User") -> List["User"]:
+        return [user for user in self.users if user is not me]
 
 
 class User(Base):
@@ -98,3 +101,8 @@ class User(Base):
             options=joinedload("amendements").joinedload("article"),
         )
         return table
+
+    @classmethod
+    def everyone_but_me(self, me: "User") -> List["User"]:
+        users: List["User"] = DBSession.query(User).filter(User.email != me.email).all()
+        return users

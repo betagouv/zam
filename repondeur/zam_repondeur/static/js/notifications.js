@@ -193,10 +193,10 @@ class NotificationsWithDiffUnique extends NotificationsWithDiff {
       .querySelectorAll('.save-buttons input[type="submit"]')
       .forEach(input => input.classList.add('disabled'))
     return `L’amendement en cours d’édition n’est plus sur votre table.
-      Votre saisie ne va pas être sauvegardée.
+      Votre saisie ne va PAS être sauvegardée.
       <a class="button primary enabled" href="${this.data.get(
         'tableUrl'
-      )}">Revenir à votre table</a>`
+      )}">Retourner à ma table</a>`
   }
 }
 

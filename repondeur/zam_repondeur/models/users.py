@@ -5,6 +5,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, Text, func
 from sqlalchemy.orm import relationship, backref, joinedload
 from sqlalchemy_utils import EmailType
 
+from zam_repondeur.users import get_last_activity_time, set_last_activity_time
 from .base import Base, DBSession
 
 # Make these types available to mypy, but avoid circular imports
@@ -52,6 +53,8 @@ class User(Base):
     __tablename__ = "users"
     __repr_keys__ = ("name", "email", "teams")
 
+    INACTIVE_AFTER = 30  # minutes.
+
     pk: int = Column(Integer, primary_key=True)
     email: str = Column(EmailType, nullable=False, unique=True)
     name: Optional[str] = Column(Text)
@@ -88,6 +91,20 @@ class User(Base):
     @property
     def display_name(self) -> str:
         return self.name or self.email
+
+    @property
+    def last_activity(self) -> Optional[datetime]:
+        return get_last_activity_time(self.email)
+
+    def record_activity(self) -> None:
+        set_last_activity_time(self.email)
+
+    @property
+    def is_active(self) -> bool:
+        if self.last_activity is None:
+            return False
+        elapsed = (datetime.utcnow() - self.last_activity).total_seconds()
+        return elapsed < self.INACTIVE_AFTER * 60
 
     def table_for(self, lecture: "Lecture") -> "UserTable":
         from . import get_one_or_create

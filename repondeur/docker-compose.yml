@@ -21,6 +21,7 @@ services:
       ZAM_TEST_DB_URL: postgresql://zam-test:zam-test@postgres-test/zam-test
       ZAM_TEST_TASKS_REDIS_URL: redis://redis:6379/10
       ZAM_TEST_DATA_REDIS_URL: redis://redis:6379/11
+      ZAM_TEST_USERS_REDIS_URL: redis://redis:6379/12
 
   worker:
     build:

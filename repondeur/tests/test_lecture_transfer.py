@@ -15,6 +15,12 @@ def test_lecture_get_transfer_amendements(
         user=user_david.email,
     )
     assert resp.status_code == 200
+    assert (
+        "Cet amendement est sur l’index"
+        in resp.parser.css_first(".amendements li").text()
+    )
+    assert "checked" in resp.parser.css_first(".amendements li input").attributes
+
     assert resp.forms["transfer-amendements"].method == "POST"
     assert list(resp.forms["transfer-amendements"].fields.keys()) == [
         "nums",
@@ -79,6 +85,12 @@ def test_lecture_get_transfer_amendements_from_me(
         user=user_david.email,
     )
     assert resp.status_code == 200
+    assert (
+        "Cet amendement est sur votre table"
+        in resp.parser.css_first(".amendements li").text()
+    )
+    assert "checked" in resp.parser.css_first(".amendements li input").attributes
+
     assert resp.forms["transfer-amendements"].method == "POST"
     assert list(resp.forms["transfer-amendements"].fields.keys()) == [
         "nums",
@@ -115,6 +127,15 @@ def test_lecture_get_transfer_amendements_from_other(
         user=user_david.email,
     )
     assert resp.status_code == 200
+    assert (
+        "Ronan (ronan@example.com)" in resp.parser.css_first(".amendements li").text()
+    )
+    assert "checked" in resp.parser.css_first(".amendements li input").attributes
+    assert (
+        resp.parser.css_first(".amendements li nobr").attributes.get("class")
+        == "user inactive"
+    )
+
     assert resp.forms["transfer-amendements"].method == "POST"
     assert list(resp.forms["transfer-amendements"].fields.keys()) == [
         "nums",
@@ -133,6 +154,34 @@ def test_lecture_get_transfer_amendements_from_other(
         "submit-index",
     ]
     assert resp.forms["transfer-amendements-custom"].fields["nums"][0].value == "666"
+
+
+def test_lecture_get_transfer_amendements_from_other_active(
+    app, lecture_an, amendements_an, user_david, user_ronan
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(user_ronan)
+        DBSession.add(amendements_an[0])
+        table_ronan = user_ronan.table_for(lecture_an)
+        table_ronan.amendements.append(amendements_an[0])
+        user_ronan.record_activity()
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/transfer_amendements",
+        {"nums": [amendements_an[0]]},
+        user=user_david.email,
+    )
+    assert resp.status_code == 200
+    assert (
+        "Ronan (ronan@example.com)" in resp.parser.css_first(".amendements li").text()
+    )
+    assert "checked" not in resp.parser.css_first(".amendements li input").attributes
+    assert (
+        resp.parser.css_first(".amendements li nobr").attributes.get("class")
+        == "user active"
+    )
 
 
 def test_lecture_post_transfer_amendements_to_me(

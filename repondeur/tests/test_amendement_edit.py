@@ -108,6 +108,49 @@ def test_transfer_amendement_from_edit_form(
     )
 
 
+def test_transfer_amendement_from_edit_form_given_activity(
+    app, lecture_an, amendements_an, user_david, user_ronan
+):
+    from zam_repondeur.models import DBSession
+
+    amdt = amendements_an[0]
+
+    # With amendement from index.
+    resp = app.get(
+        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
+        user=user_david.email,
+    )
+
+    submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
+    assert submit_button.attributes.get("value") == "Transférer sur ma table"
+    assert submit_button.attributes.get("class") == "button primary"
+
+    # With amendement from inactive user.
+    with transaction.manager:
+        DBSession.add(user_ronan)
+        table_ronan = user_ronan.table_for(lecture_an)
+        table_ronan.amendements.append(amdt)
+    resp = app.get(
+        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
+        user=user_david.email,
+    )
+
+    submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
+    assert submit_button.attributes.get("value") == "Transférer sur ma table"
+    assert submit_button.attributes.get("class") == "button warning"
+
+    # With amendement from active user.
+    user_ronan.record_activity()
+    resp = app.get(
+        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
+        user=user_david.email,
+    )
+
+    submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
+    assert submit_button.attributes.get("value") == "Forcer le transfert sur ma table"
+    assert submit_button.attributes.get("class") == "button danger"
+
+
 def test_get_amendement_edit_form_gouvernemental(
     app, lecture_an, amendements_an, user_david
 ):

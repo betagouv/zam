@@ -146,16 +146,36 @@
             {{ form(amendement) }}
         {% else %}
             <div class="notice">
-                {% if amendement.user_table %}
-                    <p>Cet amendement est actuellement sur la table de <nobr class="user">{{ amendement.user_table.user }}</nobr>.</p>
-                {% endif %}
                 <p>
                     Pour pouvoir éditer cet amendement, il doit se trouver sur votre table.
                 </p>
-                <form id="transfer" action="{{ my_table_url }}" method="POST">
-                    <input type="hidden" name="nums" value="{{ amendement.num }}">
-                    <input type="submit" name="submit-table" class="button primary" value="Transférer sur ma table">
-                </form>
+                {% if amendement.user_table %}
+                    {% set amendement_user = amendement.user_table.user %}
+                    {% if amendement_user.is_active %}
+                        <p>
+                            Cet amendement est actuellement sur la table de
+                            <nobr class="user active" title="Activité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>.
+                        </p>
+                        <form id="transfer" action="{{ my_table_url }}" method="POST">
+                            <input type="hidden" name="nums" value="{{ amendement.num }}">
+                            <input type="submit" name="submit-table" class="button danger" value="Forcer le transfert sur ma table">
+                        </form>
+                    {% else %}
+                        <p>
+                            Cet amendement est actuellement sur la table de
+                            <nobr class="user inactive" title="Inactivité au cours des {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>.
+                        </p>
+                        <form id="transfer" action="{{ my_table_url }}" method="POST">
+                            <input type="hidden" name="nums" value="{{ amendement.num }}">
+                            <input type="submit" name="submit-table" class="button warning" value="Transférer sur ma table">
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <form id="transfer" action="{{ my_table_url }}" method="POST">
+                        <input type="hidden" name="nums" value="{{ amendement.num }}">
+                        <input type="submit" name="submit-table" class="button primary" value="Transférer sur ma table">
+                    </form>
+                {% endif %}
             </div>
             {{ reponse(amendement) }}
         {% endif %}

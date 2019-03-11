@@ -13,9 +13,22 @@
             width: 35rem;
             margin: 2rem auto;
         }
-            form * {
+            form *:not(.amendements *) {
                 width: 100%;
             }
+            form .amendements {
+                margin-bottom: 2rem;
+            }
+                form .amendements li {
+                    display: flex;
+                    align-items: baseline;
+                }
+                    form .amendements input[type="checkbox"] {
+                        margin: .5rem 1rem .5rem 1rem;
+                    }
+                    form .amendements label {
+                        margin: .5rem 1rem .5rem 0;
+                    }
             form label {
                 display: block;
                 margin: 0;
@@ -76,14 +89,30 @@
         {% else %}
             l’amendement
         {% endif %}
-        {% for amendement in amendements %}
-            <a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-        {% endfor %}
     </h1>
     <form id="transfer-amendements" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
-        {% for amendement in amendements %}
-            <input type="hidden" name="nums" value="{{ amendement.num }}">
-        {% endfor %}
+        <ul class="amendements">
+            {% for amendement in amendements %}
+                <li>
+                    <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" {% if not amendement.user_table or (amendement.user_table.user == request.user) or (amendement.user_table and not amendement.user_table.user.is_active) %}checked{% endif %}>
+                    <label for="amendement-{{ amendement.num }}">
+                        Nº&nbsp;<a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a> —
+                        {% if amendement.user_table %}
+                            {% set amendement_user = amendement.user_table.user %}
+                            {% if amendement_user == request.user %}
+                                Cet amendement est sur votre table
+                            {% elif amendement_user.is_active %}
+                                <nobr class="user active" title="Activité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
+                            {% else %}
+                                <nobr class="user inactive" title="Inactivité au cours des {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
+                            {% endif %}
+                        {% else %}
+                            Cet amendement est sur l’index
+                        {% endif %}
+                    </label>
+                </li>
+            {% endfor %}
+        </ul>
         {% if from_index %}
             <input type="hidden" name="from_index" value="{{ from_index }}">
         {% endif %}

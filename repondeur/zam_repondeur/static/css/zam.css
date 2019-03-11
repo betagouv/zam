@@ -226,6 +226,12 @@ a.underlined:hover {
     border-color: #3167a6;
     color: #3167a6;
 }
+/* Bouton orange */
+.warning.button {
+    color: #212529;
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
 
 .save-buttons {
     display: flex;
@@ -456,4 +462,21 @@ tr.hidden-reponse {
     }
         .intro .controls input[type="submit"] {
             width: 12rem;
+        }
+
+/* User activity statuses */
+.user {
+    cursor: pointer;
+}
+    .user span {
+        display: inline-block;
+        width: .7rem;
+        height: .7rem;
+        border-radius: 50%;
+    }
+        .user.active span {
+            background: green;
+        }
+        .user.inactive span {
+            background: red;
         }

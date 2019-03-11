@@ -77,7 +77,7 @@ class ArticleEdit:
 
     def next_url(self) -> str:
         amendements = self.context.lecture_resource["amendements"]
-        url_amendements: str = self.request.resource_url(amendements)
+        url_amendements = self.request.resource_url(amendements)
 
         next_article = self.article.next_article
         if next_article is None:
@@ -89,8 +89,7 @@ class ArticleEdit:
                 return url_amendements
 
         resource = self.context.lecture_resource["articles"][next_article.url_key]
-        url_next_article: str = self.request.resource_url(resource)
-        return url_next_article
+        return self.request.resource_url(resource)
 
 
 @view_config(context=ArticleResource, name="journal", renderer="article_journal.html")

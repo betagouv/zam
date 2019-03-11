@@ -122,8 +122,7 @@ class AmendementEdit:
 
     @property
     def my_table_url(self) -> str:
-        my_table_url: str = self.request.resource_url(self.my_table_resource)
-        return my_table_url
+        return self.request.resource_url(self.my_table_resource)
 
 
 @view_config(

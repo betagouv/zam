@@ -230,15 +230,13 @@ class TransferAmendements:
 
     @property
     def index_url(self) -> str:
-        url: str = self.request.resource_url(self.context["amendements"])
-        return url
+        return self.request.resource_url(self.context["amendements"])
 
     @property
     def table_url(self) -> str:
-        url: str = self.request.resource_url(
+        return self.request.resource_url(
             self.context["tables"][self.request.user.email]
         )
-        return url
 
 
 @view_config(context=LectureResource, name="manual_refresh")

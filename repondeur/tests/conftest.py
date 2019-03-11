@@ -40,6 +40,9 @@ def settings():
         "zam.data.redis_url": os.environ.get(
             "ZAM_TEST_DATA_REDIS_URL", "redis://localhost:6379/11"
         ),
+        "zam.users.redis_url": os.environ.get(
+            "ZAM_TEST_USERS_REDIS_URL", "redis://localhost:6379/12"
+        ),
         "zam.session_secret": "dummy",
         "zam.auth_secret": "dummier",
     }
@@ -87,7 +90,18 @@ def data_repository():
 
 
 @pytest.fixture
-def app(wsgi_app, db, data_repository):
+def users_repository():
+    from zam_repondeur.users import _repository
+
+    _repository.clear_data()
+
+    yield
+
+    _repository.clear_data()
+
+
+@pytest.fixture
+def app(wsgi_app, db, data_repository, users_repository):
     yield TestApp(
         wsgi_app, extra_environ={"HTTP_HOST": "zam.test", "wsgi.url_scheme": "https"}
     )

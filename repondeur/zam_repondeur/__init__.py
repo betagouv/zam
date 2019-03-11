@@ -68,6 +68,7 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
 
         init_huey(settings)
         config.include("zam_repondeur.data")
+        config.include("zam_repondeur.users")
         load_version(config)
 
         config.scan()
@@ -134,6 +135,8 @@ def get_user(request: Request) -> Optional[User]:
     user_id = request.unauthenticated_userid
     if user_id is not None:
         user: Optional[User] = DBSession.query(User).get(user_id)
+        if user:
+            user.record_activity()
         return user
     return None
 

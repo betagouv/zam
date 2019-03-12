@@ -98,10 +98,10 @@ class Lecture(Base):
             return f"session {self.session}"
 
     def format_organe(self) -> str:
-        from zam_repondeur.data import get_data  # avoid circular imports
+        from zam_repondeur.data import repository  # avoid circular imports
 
         result: str = self.organe
-        organes = get_data("organes")
+        organes = repository.get_data("organes")
         if self.organe in organes:
             organe_data = organes[self.organe]
             result = organe_data["libelleAbrege"]

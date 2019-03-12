@@ -5,7 +5,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, Text, func
 from sqlalchemy.orm import relationship, backref, joinedload
 from sqlalchemy_utils import EmailType
 
-from zam_repondeur.users import get_last_activity_time, set_last_activity_time
+from zam_repondeur.users import repository as users_repository
 from .base import Base, DBSession
 
 # Make these types available to mypy, but avoid circular imports
@@ -94,10 +94,10 @@ class User(Base):
 
     @property
     def last_activity(self) -> Optional[datetime]:
-        return get_last_activity_time(self.email)
+        return users_repository.get_last_activity_time(self.email)
 
     def record_activity(self) -> None:
-        set_last_activity_time(self.email)
+        users_repository.set_last_activity_time(self.email)
 
     @property
     def is_active(self) -> bool:

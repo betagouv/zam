@@ -385,10 +385,10 @@ def build_url(lecture: Lecture, numero_prefixe: str = "") -> str:
 
 
 def get_organe_abrev(organe: str) -> str:
-    from zam_repondeur.data import get_data
+    from zam_repondeur.data import repository
 
     try:
-        data = get_data("organes")[organe]
+        data = repository.get_data("organes")[organe]
         abrev: str = data["libelleAbrev"]
         return abrev
     except KeyError:
@@ -412,13 +412,13 @@ def get_auteur(raw_auteur: OrderedDict) -> str:
 
 
 def get_groupe(raw_auteur: OrderedDict, amendement_num: int) -> str:
-    from zam_repondeur.data import get_data
+    from zam_repondeur.data import repository
 
     gouvernemental = bool(int(raw_auteur["estGouvernement"]))
     groupe_tribun_id = get_str_or_none(raw_auteur, "groupeTribunId")
     if gouvernemental or (groupe_tribun_id is None):
         return ""
-    groupes = get_data("organes")
+    groupes = repository.get_data("organes")
     try:
         groupe_tribun_id = f"PO{raw_auteur['groupeTribunId']}"
     except KeyError:

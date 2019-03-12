@@ -1,5 +1,5 @@
 import pickle
-from typing import Any, Dict, List
+from typing import Dict, List
 
 from pyramid.config import Configurator
 from redis import Redis
@@ -9,17 +9,23 @@ from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
 )
 from zam_repondeur.fetch.an.organes_acteurs import get_organes_acteurs
 
+from .initialize import needs_init
+
 
 def includeme(config: Configurator) -> None:
     """
     Called automatically via config.include("zam_repondeur.data")
     """
-    repository = init_repository(config.registry.settings)
+    init_repository(config.registry.settings)
     repository.clear_data()
     repository.load_data()
 
 
-_repository = None
+def init_repository(settings: Dict[str, str]) -> None:
+    repository.initialize(
+        redis_url=settings["zam.data.redis_url"],
+        legislatures=[int(legi) for legi in settings["zam.legislatures"].split(",")],
+    )
 
 
 class DataRepository:
@@ -27,13 +33,19 @@ class DataRepository:
     Store and access global data in Redis
     """
 
-    def __init__(self, redis_url: str, legislatures: List[int]) -> None:
+    def __init__(self) -> None:
+        self.initialized = True
+
+    def initialize(self, redis_url: str, legislatures: List[int]) -> None:
         self.connection = Redis.from_url(redis_url)
         self.legislatures = legislatures
+        self.initialized = True
 
+    @needs_init
     def clear_data(self) -> None:
         self.connection.flushdb()
 
+    @needs_init
     def load_data(self) -> None:
         dossiers = get_dossiers_legislatifs(*self.legislatures)
         organes, acteurs = get_organes_acteurs()
@@ -41,6 +53,7 @@ class DataRepository:
         self.connection.set("organes", pickle.dumps(organes))
         self.connection.set("acteurs", pickle.dumps(acteurs))
 
+    @needs_init
     def get_data(self, key: str) -> dict:
         raw_bytes = self.connection.get(key)
         if raw_bytes is None:
@@ -50,22 +63,4 @@ class DataRepository:
         return data
 
 
-def init_repository(settings: Dict[str, Any]) -> DataRepository:
-    global _repository
-    _repository = DataRepository(
-        redis_url=settings["zam.data.redis_url"],
-        legislatures=[int(legi) for legi in settings["zam.legislatures"].split(",")],
-    )
-    return _repository
-
-
-def load_data() -> None:
-    if _repository is None:
-        raise RuntimeError("You need to call init_repository() first")
-    _repository.load_data()
-
-
-def get_data(key: str) -> dict:
-    if _repository is None:
-        raise RuntimeError("You need to call init_repository() first")
-    return _repository.get_data(key)
+repository = DataRepository()

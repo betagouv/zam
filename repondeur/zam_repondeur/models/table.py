@@ -33,6 +33,9 @@ class UserTable(Base):
 
     __repr_keys__ = ("pk", "user_pk", "lecture_pk")
 
+    def __lt__(self, other: "UserTable") -> bool:
+        return self.user.email < other.user.email
+
     @classmethod
     def create(cls, user: User, lecture: Lecture) -> "UserTable":
         table = cls(user=user, lecture=lecture)

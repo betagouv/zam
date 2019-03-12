@@ -12,7 +12,7 @@ from zam_repondeur.data import repository
 from zam_repondeur.fetch import get_articles
 from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
 from zam_repondeur.message import Message
-from zam_repondeur.models import DBSession, Amendement, Lecture as LectureModel, User
+from zam_repondeur.models import DBSession, Lecture as LectureModel, User
 from zam_repondeur.models.events.lecture import ArticlesRecuperes
 from zam_repondeur.models.users import Team
 from zam_repondeur.resources import (
@@ -193,27 +193,32 @@ class TransferAmendements:
 
     @view_config(request_method="GET")
     def get(self) -> dict:
-        lecture = self.context.model()
+        lecture = self.context.model(joinedload("amendements"))
         my_table = self.request.user.table_for(lecture)
-        amendements = (
-            DBSession.query(Amendement)
-            .filter(
-                Amendement.lecture_pk == lecture.pk,
-                Amendement.num.in_(self.amendements_nums),  # type: ignore
-            )
-            .all()
-        )
+        amendements = [
+            amendement
+            for amendement in lecture.amendements
+            if str(amendement.num) in self.amendements_nums
+        ]
+        amendements_with_table, amendements_without_table = [], []
+        for amendement in amendements:
+            if amendement.user_table:
+                amendements_with_table.append(amendement)
+            else:
+                amendements_without_table.append(amendement)
         return {
             "lecture": lecture,
             "amendements": amendements,
+            "amendements_with_table": amendements_with_table,
+            "amendements_without_table": amendements_without_table,
             "users": self.target_users,
             "from_index": int(self.from_index),
-            "show_transfer_to_index": any(
-                amendement.user_table is not None for amendement in amendements
-            ),
+            "show_transfer_to_index": bool(amendements_with_table),
             "show_transfer_to_myself": any(
-                amendement.user_table is not my_table for amendement in amendements
-            ),
+                amendement.user_table is not my_table
+                for amendement in amendements_with_table
+            )
+            or not amendements_with_table,
             "back_url": self.back_url,
         }
 

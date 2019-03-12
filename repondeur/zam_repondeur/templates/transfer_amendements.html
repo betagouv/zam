@@ -107,7 +107,11 @@
         {% if amendements_with_table %}
             <details open>
                 <summary>
-                    {{ amendements_with_table|length }} amendement{% if amendements_with_table|length > 1 %}s{% endif %} sont déjà sur des tables
+                    {% trans count=amendements_with_table|length %}
+                        Cet amendement est déjà sur une table
+                    {% pluralize %}
+                        Ces {{ count }} amendements sont déjà sur des tables
+                    {% endtrans %}
                 </summary>
                 <ul class="amendements">
                     {% for amendement in amendements_with_table|sort(attribute="user_table") %}
@@ -132,7 +136,11 @@
         {% if amendements_without_table %}
             <details>
                 <summary>
-                    {{ amendements_without_table|length }} amendement{% if amendements_without_table|length > 1 %}s{% endif %} sont sur l’index
+                    {% trans count=amendements_without_table|length %}
+                        Cet amendement est sur l’index
+                    {% pluralize %}
+                        Ces {{ count }} amendements sont sur l’index
+                    {% endtrans %}
                 </summary>
                 <ul class="amendements">
                     {% for amendement in amendements_without_table %}

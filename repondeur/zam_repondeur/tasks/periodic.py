@@ -13,9 +13,9 @@ from zam_repondeur.tasks.fetch import fetch_amendements
 # TODISCUSS: hourly? daily?
 @huey.periodic_task(crontab(minute="1", hour="*"))
 def update_data() -> None:
-    from zam_repondeur.data import load_data
+    from zam_repondeur.data import repository
 
-    load_data()
+    repository.load_data()
 
 
 # Keep it last as it takes time and will add up with the growing number of lectures.

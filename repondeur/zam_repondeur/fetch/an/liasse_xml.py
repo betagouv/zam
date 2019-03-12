@@ -7,7 +7,7 @@ from typing import Dict, IO, List, Optional, Tuple, cast
 from lxml import etree
 
 from zam_repondeur.clean import clean_html
-from zam_repondeur.data import get_data
+from zam_repondeur.data import repository
 from zam_repondeur.fetch.an.dossiers.models import (
     Chambre,
     Dossier,
@@ -243,7 +243,7 @@ def to_date(text: Optional[str]) -> Optional[date]:
 
 def _find_dossier_lecture(texte_uid: str) -> Tuple[Dossier, LectureRef]:
     # FIXME: this is not efficient
-    dossiers: Dict[str, Dossier] = get_data("dossiers")
+    dossiers: Dict[str, Dossier] = repository.get_data("dossiers")
     for dossier in dossiers.values():
         for lecture in dossier.lectures:
             if lecture.texte.uid == texte_uid:
@@ -267,7 +267,7 @@ def get_sort(sort: Optional[str], etat: Optional[str]) -> str:
 
 
 def get_auteur_name(uid: str) -> str:
-    acteurs = get_data("acteurs")
+    acteurs = repository.get_data("acteurs")
     if uid not in acteurs:
         raise ValueError(f"Unknown auteur {uid}")
     acteur = acteurs[uid]
@@ -276,7 +276,7 @@ def get_auteur_name(uid: str) -> str:
 
 
 def get_groupe_name(uid: str) -> str:
-    organes = get_data("organes")
+    organes = repository.get_data("organes")
     if uid not in organes:
         raise ValueError(f"Unknown groupe {uid}")
     libelle: str = organes[uid]["libelle"]

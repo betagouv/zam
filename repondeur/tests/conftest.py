@@ -79,25 +79,25 @@ def db():
 
 @pytest.fixture
 def data_repository():
-    from zam_repondeur.data import _repository
+    from zam_repondeur.data import repository
 
-    _repository.clear_data()
-    _repository.load_data()
+    repository.clear_data()
+    repository.load_data()
 
     yield
 
-    _repository.clear_data()
+    repository.clear_data()
 
 
 @pytest.fixture
 def users_repository():
-    from zam_repondeur.users import _repository
+    from zam_repondeur.users import repository
 
-    _repository.clear_data()
+    repository.clear_data()
 
     yield
 
-    _repository.clear_data()
+    repository.clear_data()
 
 
 @pytest.fixture

@@ -8,7 +8,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.orm import joinedload
 
-from zam_repondeur.data import get_data
+from zam_repondeur.data import repository
 from zam_repondeur.fetch import get_articles
 from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
 from zam_repondeur.message import Message
@@ -47,7 +47,7 @@ class LecturesAdd:
     def __init__(self, context: LectureCollection, request: Request) -> None:
         self.context = context
         self.request = request
-        self.dossiers_by_uid: Dict[str, Dossier] = get_data("dossiers")
+        self.dossiers_by_uid: Dict[str, Dossier] = repository.get_data("dossiers")
 
     @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:
@@ -276,7 +276,7 @@ def lecture_check(context: LectureResource, request: Request) -> dict:
 @view_config(route_name="choices_lectures", renderer="json")
 def choices_lectures(request: Request) -> dict:
     uid = request.matchdict["uid"]
-    dossiers_by_uid = get_data("dossiers")
+    dossiers_by_uid = repository.get_data("dossiers")
     dossier = dossiers_by_uid[uid]
     return {
         "lectures": [

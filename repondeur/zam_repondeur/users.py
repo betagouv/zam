@@ -1,18 +1,17 @@
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from pyramid.config import Configurator
 from redis import Redis
+
+from .initialize import needs_init
 
 
 def includeme(config: Configurator) -> None:
     """
     Called automatically via config.include("zam_repondeur.users")
     """
-    init_repository(config.registry.settings)
-
-
-_repository = None
+    repository.initialize(redis_url=config.registry.settings["zam.users.redis_url"])
 
 
 class UsersRepository:
@@ -20,12 +19,18 @@ class UsersRepository:
     Store and access global users in Redis
     """
 
-    def __init__(self, redis_url: str) -> None:
-        self.connection = Redis.from_url(redis_url)
+    def __init__(self) -> None:
+        self.initialized = True
 
+    def initialize(self, redis_url: str) -> None:
+        self.connection = Redis.from_url(redis_url)
+        self.initialized = True
+
+    @needs_init
     def clear_data(self) -> None:
         self.connection.flushdb()
 
+    @needs_init
     def get_last_activity_time(self, email: str) -> Optional[datetime]:
         timestamp_bytes = self.connection.get(email)
         if timestamp_bytes:
@@ -33,24 +38,10 @@ class UsersRepository:
         else:
             return None
 
+    @needs_init
     def set_last_activity_time(self, email: str) -> None:
         timestamp = datetime.utcnow().isoformat(timespec="seconds")
         self.connection.set(email, timestamp)
 
 
-def init_repository(settings: Dict[str, Any]) -> UsersRepository:
-    global _repository
-    _repository = UsersRepository(redis_url=settings["zam.users.redis_url"])
-    return _repository
-
-
-def get_last_activity_time(email: str) -> Optional[datetime]:
-    if _repository is None:
-        raise RuntimeError("You need to call init_repository() first")
-    return _repository.get_last_activity_time(email)
-
-
-def set_last_activity_time(email: str) -> None:
-    if _repository is None:
-        raise RuntimeError("You need to call init_repository() first")
-    _repository.set_last_activity_time(email)
+repository = UsersRepository()

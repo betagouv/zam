@@ -54,8 +54,12 @@ class Notifications extends Stimulus.Controller {
   }
 
   check() {
+    const headers = new Headers({
+      'X-HR': 'true'
+    })
     const options = {
-      credentials: 'include'
+      credentials: 'include',
+      headers: headers
     }
     fetch(this.url, options)
       .then(reponse => reponse.json())

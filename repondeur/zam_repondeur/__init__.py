@@ -135,7 +135,7 @@ def get_user(request: Request) -> Optional[User]:
     user_id = request.unauthenticated_userid
     if user_id is not None:
         user: Optional[User] = DBSession.query(User).get(user_id)
-        if user:
+        if user and not request.environ.get("HTTP_X_HR") == "true":
             user.record_activity()
         return user
     return None

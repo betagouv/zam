@@ -478,5 +478,6 @@ tr.hidden-reponse {
             background: green;
         }
         .user.inactive span {
-            background: red;
+            background: aliceblue;
+            border: 2px solid darkgray;
         }

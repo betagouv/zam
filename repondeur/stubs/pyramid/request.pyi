@@ -9,6 +9,7 @@ class Request:
     def resource_path(self, resource: Any, *elements: Any, **kw: Any) -> str: ...
     environ: Dict[str, Any]
     remote_addr: Optional[str]
+    is_xhr: bool
     registry: Any
     root: Any
     url: str

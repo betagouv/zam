@@ -55,7 +55,7 @@ class Notifications extends Stimulus.Controller {
 
   check() {
     const headers = new Headers({
-      'X-HR': 'true'
+      'X-Requested-With': 'XMLHttpRequest'
     })
     const options = {
       credentials: 'include',

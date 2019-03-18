@@ -15,13 +15,12 @@ def html_diff(old: str, new: str) -> str:
     old_words = old.split()
     new_words = new.split()
     deltas = ((delta[0], delta[2:]) for delta in differ.compare(old_words, new_words))
-    grouped_deltas = (
-        (key, [item[1] for item in items])
+    html_fragments = (
+        wrap_with_tag(key, list(zip(*items))[1])
         for key, items in groupby(deltas, key=itemgetter(0))
         if key != "?"
     )
-    html = " ".join(wrap_with_tag(key, words) for key, words in grouped_deltas if words)
-    return html.strip()
+    return " ".join(html_fragments).strip()
 
 
 def wrap_with_tag(key: str, words: List[str]) -> str:

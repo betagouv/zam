@@ -1,6 +1,22 @@
 from zam_repondeur.models.events.helpers import html_diff
 
 
+def test_empty():
+    assert html_diff("", "") == ""
+
+
+def test_no_change():
+    assert html_diff("foo", "foo") == "foo"
+
+
+def test_addition_only():
+    assert html_diff("", "foo") == "<ins>foo</ins>"
+
+
+def test_deletion_only():
+    assert html_diff("foo", "") == "<del>foo</del>"
+
+
 def test_one_changed_word():
     assert html_diff("foo", "bar") == "<del>foo</del> <ins>bar</ins>"
 

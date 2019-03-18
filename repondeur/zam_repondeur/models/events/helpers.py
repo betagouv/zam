@@ -1,4 +1,5 @@
 from difflib import Differ
+from html import escape
 from itertools import groupby
 from operator import itemgetter
 from typing import List
@@ -25,7 +26,7 @@ def html_diff(old: str, new: str) -> str:
 
 def wrap_with_tag(key: str, words: List[str]) -> str:
     tag = TAGS[key]
-    text = " ".join(words)
+    text = escape(" ".join(words))
     if tag:
         return f"<{tag}>{text}</{tag}>"
     return text

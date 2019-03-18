@@ -21,3 +21,10 @@ def test_two_words_between_two_unchanged():
         html_diff("foo bar bar foo", "foo baz baz foo")
         == "foo <del>bar bar</del> <ins>baz baz</ins> foo"
     )
+
+
+def test_html_escaping():
+    assert (
+        html_diff("foo", "<blink>bar</blink>")
+        == "<del>foo</del> <ins>&lt;blink&gt;bar&lt;/blink&gt;</ins>"
+    )

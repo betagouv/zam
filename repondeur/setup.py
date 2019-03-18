@@ -16,6 +16,7 @@ requires = [
     "pyramid-jinja2",
     "pyramid_retry",
     "pyramid_tm",
+    "python-redis-lock",
     "redis",
     "requests",
     "rollbar",

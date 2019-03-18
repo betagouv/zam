@@ -10,7 +10,7 @@ differ = Differ()
 TAGS = {"+": "ins", "-": "del", " ": None}
 
 
-def text_to_html(old: str, new: str) -> str:
+def html_diff(old: str, new: str) -> str:
     old_words = old.split()
     new_words = new.split()
     deltas = ((delta[0], delta[2:]) for delta in differ.compare(old_words, new_words))

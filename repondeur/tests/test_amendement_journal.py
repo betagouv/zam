@@ -84,8 +84,8 @@ def test_amendement_journal_objet(app, lecture_an, amendements_an, user_david):
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
-    assert first_summary_text(resp) == "David a modifié l’objet"
-    assert first_details_text(resp) == "De «  » à « Objet »"
+    assert first_summary_text(resp) == "David a ajouté l’objet"
+    assert first_details_text(resp) == "Objet"
 
 
 def test_amendement_journal_reponse(app, lecture_an, amendements_an, user_david):
@@ -105,8 +105,8 @@ def test_amendement_journal_reponse(app, lecture_an, amendements_an, user_david)
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
-    assert first_summary_text(resp) == "David a modifié la réponse"
-    assert first_details_text(resp) == "De «  » à « Réponse »"
+    assert first_summary_text(resp) == "David a ajouté la réponse"
+    assert first_details_text(resp) == "Réponse"
 
 
 def test_amendement_journal_comments(app, lecture_an, amendements_an, user_david):
@@ -126,8 +126,8 @@ def test_amendement_journal_comments(app, lecture_an, amendements_an, user_david
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david.email
     )
-    assert first_summary_text(resp) == "David a modifié les commentaires"
-    assert first_details_text(resp) == "De «  » à « Un commentaire »"
+    assert first_summary_text(resp) == "David a ajouté des commentaires"
+    assert first_details_text(resp) == "Un commentaire"
 
 
 def test_amendement_journal_affectation(

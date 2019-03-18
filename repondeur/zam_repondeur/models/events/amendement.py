@@ -8,6 +8,7 @@ from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import backref, relationship
 
 from .base import Event
+from .helpers import html_diff
 from ..amendement import Amendement
 
 
@@ -43,7 +44,9 @@ class AmendementEvent(Event):
         return Markup(self.summary_template.safe_substitute(**self.template_vars))
 
     def render_details(self) -> str:
-        return Markup(self.details_template.safe_substitute(**self.template_vars))
+        return Markup(
+            html_diff(self.template_vars["old_value"], self.template_vars["new_value"])
+        )
 
 
 class AmendementRectifie(AmendementEvent):
@@ -102,43 +105,43 @@ class AmendementTransfere(AmendementEvent):
     def summary_template(self) -> Template:  # type: ignore
         if self.template_vars["old_value"] and self.template_vars["new_value"]:
             if str(self.user) == self.template_vars["old_value"]:
-                template = (
+                summary = (
                     "<abbr title='$email'>$user</abbr> a transféré l’amendement "
                     "à « $new_value »"
                 )
             elif str(self.user) == self.template_vars["new_value"]:
-                template = (
+                summary = (
                     "<abbr title='$email'>$user</abbr> a transféré l’amendement "
                     "de « $old_value » à lui/elle-même"
                 )
             else:
-                template = (
+                summary = (
                     "<abbr title='$email'>$user</abbr> a transféré l’amendement "
                     "de « $old_value » à « $new_value »"
                 )
         elif self.template_vars["old_value"] and not self.template_vars["new_value"]:
             if str(self.user) == self.template_vars["old_value"]:
-                template = (
+                summary = (
                     "<abbr title='$email'>$user</abbr> a remis l’amendement "
                     "dans l’index"
                 )
             else:
-                template = (
+                summary = (
                     "<abbr title='$email'>$user</abbr> a remis l’amendement "
                     "de « $old_value » dans l’index"
                 )
         else:
             if str(self.user) == self.template_vars["new_value"]:
-                template = (
+                summary = (
                     "<abbr title='$email'>$user</abbr> a mis l’amendement "
                     "sur sa table"
                 )
             else:
-                template = (
+                summary = (
                     "<abbr title='$email'>$user</abbr> a mis l’amendement "
                     "sur la table de « $new_value »"
                 )
-        return Template(template)
+        return Template(summary)
 
     def __init__(
         self,
@@ -160,8 +163,6 @@ class CorpsAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "corps_amendement_modifie"}
     icon = "edit"
 
-    summary_template = Template("Le corps de l’amendement a été modifié")
-
     def __init__(
         self, request: Request, amendement: Amendement, corps: str, **kwargs: Any
     ) -> None:
@@ -173,6 +174,14 @@ class CorpsAmendementModifie(AmendementEvent):
             **kwargs,
         )
 
+    @property
+    def summary_template(self) -> Template:  # type: ignore
+        if self.template_vars["old_value"]:
+            summary = "Le corps de l’amendement a été modifié"
+        else:
+            summary = "Le corps de l’amendement a été initialisé"
+        return Template(summary)
+
     def apply(self) -> None:
         self.amendement.corps = self.data["new_value"]
 
@@ -180,8 +189,6 @@ class CorpsAmendementModifie(AmendementEvent):
 class ExposeAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "expose_amendement_modifie"}
     icon = "edit"
-
-    summary_template = Template("L’exposé de l’amendement a été modifié")
 
     def __init__(
         self, request: Request, amendement: Amendement, expose: str, **kwargs: Any
@@ -193,6 +200,14 @@ class ExposeAmendementModifie(AmendementEvent):
             new_value=expose,
             **kwargs,
         )
+
+    @property
+    def summary_template(self) -> Template:  # type: ignore
+        if self.template_vars["old_value"]:
+            summary = "L’exposé de l’amendement a été modifié"
+        else:
+            summary = "L’exposé de l’amendement a été initialisé"
+        return Template(summary)
 
     def apply(self) -> None:
         self.amendement.expose = self.data["new_value"]
@@ -218,22 +233,24 @@ class AvisAmendementModifie(AmendementEvent):
     def apply(self) -> None:
         self.amendement.user_content.avis = self.data["new_value"]
 
+    def render_details(self) -> str:
+        return Markup(self.details_template.safe_substitute(**self.template_vars))
+
     @property
     def summary_template(self) -> Template:  # type: ignore
         if self.template_vars["old_value"]:
-            template = (
+            summary = (
                 "<abbr title='$email'>$user</abbr> a modifié l’avis "
                 "de « $old_value » à « $new_value »"
             )
         else:
-            template = "<abbr title='$email'>$user</abbr> a mis l’avis à « $new_value »"
-        return Template(template)
+            summary = "<abbr title='$email'>$user</abbr> a mis l’avis à « $new_value »"
+        return Template(summary)
 
 
 class ObjetAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "objet_modifie"}
 
-    summary_template = Template("<abbr title='$email'>$user</abbr> a modifié l’objet")
     icon = "edit"
 
     def __init__(
@@ -247,6 +264,14 @@ class ObjetAmendementModifie(AmendementEvent):
             **kwargs,
         )
 
+    @property
+    def summary_template(self) -> Template:  # type: ignore
+        if self.template_vars["old_value"]:
+            summary = "<abbr title='$email'>$user</abbr> a modifié l’objet"
+        else:
+            summary = "<abbr title='$email'>$user</abbr> a ajouté l’objet"
+        return Template(summary)
+
     def apply(self) -> None:
         self.amendement.user_content.objet = self.data["new_value"]
 
@@ -254,9 +279,6 @@ class ObjetAmendementModifie(AmendementEvent):
 class ReponseAmendementModifiee(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "reponse_amendement_modifiee"}
 
-    summary_template = Template(
-        "<abbr title='$email'>$user</abbr> a modifié la réponse"
-    )
     icon = "edit"
 
     def __init__(
@@ -270,6 +292,14 @@ class ReponseAmendementModifiee(AmendementEvent):
             **kwargs,
         )
 
+    @property
+    def summary_template(self) -> Template:  # type: ignore
+        if self.template_vars["old_value"]:
+            summary = "<abbr title='$email'>$user</abbr> a modifié la réponse"
+        else:
+            summary = "<abbr title='$email'>$user</abbr> a ajouté la réponse"
+        return Template(summary)
+
     def apply(self) -> None:
         self.amendement.user_content.reponse = self.data["new_value"]
 
@@ -277,9 +307,6 @@ class ReponseAmendementModifiee(AmendementEvent):
 class CommentsAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "comments_amendement_modifie"}
 
-    summary_template = Template(
-        "<abbr title='$email'>$user</abbr> a modifié les commentaires"
-    )
     icon = "edit"
 
     def __init__(
@@ -292,6 +319,14 @@ class CommentsAmendementModifie(AmendementEvent):
             new_value=comments,
             **kwargs,
         )
+
+    @property
+    def summary_template(self) -> Template:  # type: ignore
+        if self.template_vars["old_value"]:
+            summary = "<abbr title='$email'>$user</abbr> a modifié les commentaires"
+        else:
+            summary = "<abbr title='$email'>$user</abbr> a ajouté des commentaires"
+        return Template(summary)
 
     def apply(self) -> None:
         self.amendement.user_content.comments = self.data["new_value"]

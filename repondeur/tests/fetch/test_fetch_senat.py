@@ -78,14 +78,14 @@ def test_aspire_senat(app, lecture_senat):
     assert events[0].user is None
     assert events[0].data["old_value"] == ""
     assert events[0].data["new_value"].startswith("<p>Cet amendement vise")
-    assert events[0].render_summary() == "L’exposé de l’amendement a été modifié"
+    assert events[0].render_summary() == "L’exposé de l’amendement a été initialisé"
 
     assert isinstance(events[1], CorpsAmendementModifie)
     assert events[1].created_at is not None
     assert events[1].user is None
     assert events[1].data["old_value"] == ""
     assert events[1].data["new_value"].startswith("<p>Après l’article")
-    assert events[1].render_summary() == "Le corps de l’amendement a été modifié"
+    assert events[1].render_summary() == "Le corps de l’amendement a été initialisé"
 
     assert isinstance(events[2], AmendementRectifie)
     assert events[2].created_at is not None

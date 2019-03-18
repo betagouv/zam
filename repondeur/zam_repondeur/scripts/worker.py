@@ -9,7 +9,7 @@ from redis.exceptions import ConnectionError
 from sqlalchemy import engine_from_config
 
 from zam_repondeur import BASE_SETTINGS
-from zam_repondeur.data import init_repository
+from zam_repondeur.data import init_repository, repository
 from zam_repondeur.errors import extract_settings, setup_rollbar_log_handler
 from zam_repondeur.models import DBSession
 from zam_repondeur.tasks.huey import init_huey
@@ -45,6 +45,7 @@ def main(argv: List[str] = sys.argv) -> None:
     DBSession.configure(bind=engine)
 
     init_repository(settings)
+    repository.load_data()
 
     huey = init_huey(settings)
 

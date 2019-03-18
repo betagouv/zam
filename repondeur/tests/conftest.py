@@ -81,12 +81,7 @@ def db():
 def data_repository():
     from zam_repondeur.data import repository
 
-    repository.clear_data()
     repository.load_data()
-
-    yield
-
-    repository.clear_data()
 
 
 @pytest.fixture

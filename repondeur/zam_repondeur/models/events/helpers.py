@@ -1,43 +1,31 @@
 from difflib import Differ
-from typing import Tuple
+from itertools import groupby
+from operator import itemgetter
+from typing import List
+
 
 differ = Differ()
 
 
-def html_diff(old: str, new: str) -> str:
-    result = ""
-    plus_accumulator: list = []
-    minus_accumulator: list = []
+TAGS = {"+": "ins", "-": "del", " ": None}
 
-    def flush_accumulator(
-        result: str, accumulator: list, tag_name: str = "ins"
-    ) -> Tuple[str, list]:
-        if accumulator:
-            result += f" <{tag_name}>{' '.join(accumulator)}</{tag_name}>"
-            accumulator = []
-        return result, accumulator
 
-    for item in differ.compare(old.split(), new.split()):
-        if item.startswith("+ "):
-            result, minus_accumulator = flush_accumulator(
-                result, minus_accumulator, tag_name="del"
-            )
-            plus_accumulator.append(item[2:].strip())
-        elif item.startswith("- "):
-            result, plus_accumulator = flush_accumulator(result, plus_accumulator)
-            minus_accumulator.append(item[2:].strip())
-        else:
-            if item.startswith("? "):
-                pass
-            else:
-                result, plus_accumulator = flush_accumulator(result, plus_accumulator)
-                result, minus_accumulator = flush_accumulator(
-                    result, minus_accumulator, tag_name="del"
-                )
-                result += f" {item[2:]}"
-
-    result, plus_accumulator = flush_accumulator(result, plus_accumulator)
-    result, minus_accumulator = flush_accumulator(
-        result, minus_accumulator, tag_name="del"
+def text_to_html(old: str, new: str) -> str:
+    old_words = old.split()
+    new_words = new.split()
+    deltas = ((delta[0], delta[2:]) for delta in differ.compare(old_words, new_words))
+    grouped_deltas = (
+        (key, [item[1] for item in items])
+        for key, items in groupby(deltas, key=itemgetter(0))
+        if key != "?"
     )
-    return result.strip()
+    html = " ".join(wrap_with_tag(key, words) for key, words in grouped_deltas if words)
+    return html.strip()
+
+
+def wrap_with_tag(key: str, words: List[str]) -> str:
+    tag = TAGS[key]
+    text = " ".join(words)
+    if tag:
+        return f"<{tag}>{text}</{tag}>"
+    return text

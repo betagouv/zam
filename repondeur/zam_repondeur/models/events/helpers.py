@@ -1,9 +1,8 @@
 from difflib import Differ
-from functools import reduce
 from html import escape
 from itertools import groupby
 from operator import attrgetter
-from typing import NamedTuple
+from typing import Iterable, NamedTuple
 
 
 differ = Differ()
@@ -20,12 +19,9 @@ class Delta(NamedTuple):
     def create(cls, delta_string: str) -> "Delta":
         return cls(code=delta_string[:2], text=delta_string[2:])
 
-    def merge(self: "Delta", other: "Delta") -> "Delta":
-        if not isinstance(other, Delta):
-            raise TypeError
-        if self.code != other.code:
-            raise ValueError
-        return Delta(self.code, self.text + " " + other.text)
+    @classmethod
+    def merge(cls, code: str, deltas: Iterable["Delta"]) -> "Delta":
+        return cls(code, " ".join(delta.text for delta in deltas))
 
     def to_html(self) -> str:
         tag = CODES_TO_TAGS[self.code]
@@ -40,7 +36,7 @@ def html_diff(old_text: str, new_text: str) -> str:
     new_words = new_text.split()
     word_deltas = (Delta.create(s) for s in differ.compare(old_words, new_words))
     merged_deltas = (
-        reduce(Delta.merge, word_deltas)
+        Delta.merge(code, word_deltas)
         for code, word_deltas in groupby(word_deltas, key=attrgetter("code"))
         if code != "? "
     )

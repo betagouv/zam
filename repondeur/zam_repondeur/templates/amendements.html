@@ -160,10 +160,19 @@
                     "
                     {% endif -%}
                 >
-                        {{ amendement.num_disp }}
-                        {% if amendement.parent %}
-                            (ss-amdt au {{ amendement.parent.num_disp }})
+                    {{ amendement.num_disp }}
+                    {% if amendement.parent %}
+                        (ss-amdt au {{ amendement.parent.num_disp }})
+                    {% endif %}
+                    {% if amendement.is_abandoned_before_seance %}
+                        {% if amendement.is_withdrawn %}
+                            <abbr class="status grey" title="Retiré">Ret.</abbr>
+                        {% elif amendement.is_irrecevable %}
+                            <abbr class="status grey" title="Irrecevable">Irr.</abbr>
                         {% endif %}
+                    {% elif amendement.gouvernemental %}
+                        <abbr class="status blue" title="Gouvernemental">Gouv.</abbr>
+                    {% endif %}
                 </td>
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
@@ -173,16 +182,8 @@
                     {%- else -%}
                         YYY {# Keep almost at the end. #}
                     {%- endif -%}">
-                    {% if amendement.is_abandoned_before_seance %}
-                        {% if amendement.is_withdrawn %}
-                            Retiré
-                        {% else %}
-                            Irrecevable
-                        {% endif %}
-                    {% else %}
-                        {% if amendement.user_table %}
-                            {{ amendement.user_table.user.name }}
-                        {% endif %}
+                    {% if amendement.user_table %}
+                        {{ amendement.user_table.user.name }}
                     {% endif %}
                 </td>
                 <td

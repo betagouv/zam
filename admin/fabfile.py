@@ -44,6 +44,7 @@ def system(ctx):
         "python3",
         "python3-pip",
         "python3-venv",
+        "python3-swiftclient",
         "python3-wheel",
         "redis-server",
         "./wkhtmltox_0.12.5-1.bionic_amd64.deb",
@@ -79,7 +80,7 @@ def http(ctx):
 
 
 @task
-def bootstrap(ctx):
+def bootstrap(ctx, os_storage_url="", os_auth_token=""):
     system(ctx)
     monitoring(ctx)
     http(ctx)
@@ -87,6 +88,7 @@ def bootstrap(ctx):
     basicauth(ctx)
     # Now put the https ready Nginx conf.
     http(ctx)
+    setup_backups(ctx, os_storage_url, os_auth_token)
 
 
 @task
@@ -243,9 +245,15 @@ def setup_db(ctx, dbname, dbuser, dbpassword, encoding="UTF8", locale="en_US.UTF
 
 
 @task
-def setup_backups(ctx):
+def setup_backups(ctx, os_storage_url="", os_auth_token=""):
     ctx.sudo("python3 -m pip install rotate-backups")
-    sudo_put(ctx, "cron-zam-backups.sh", "/etc/cron.hourly/zam-backups")
+    with template_local_file(
+        "cron-zam-backups.sh.template",
+        "cron-zam-backups.sh",
+        {"os_storage_url": os_storage_url, "os_auth_token": os_auth_token},
+    ):
+        sudo_put(ctx, "cron-zam-backups.sh", "/etc/cron.hourly/zam-backups")
+
     ctx.sudo("chmod 755 /etc/cron.hourly/zam-backups")
 
 

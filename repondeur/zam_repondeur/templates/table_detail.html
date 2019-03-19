@@ -298,10 +298,14 @@
                                                 {%- endif %}">⚠️</span>
                                             {% endif %}
                                         {% endif %}
-                                        {% if amendement.is_withdrawn %}
-                                            – <span class="highlighter">retiré</span>
-                                        {% elif amendement.is_irrecevable %}
-                                            – <span class="highlighter">irrecevable</span>
+                                        {% if amendement.is_abandoned_before_seance %}
+                                            {% if amendement.is_withdrawn %}
+                                                <abbr class="status grey" title="Retiré">Ret.</abbr>
+                                            {% elif amendement.is_irrecevable %}
+                                                <abbr class="status grey" title="Irrecevable">Irr.</abbr>
+                                            {% endif %}
+                                        {% elif amendement.gouvernemental %}
+                                            <abbr class="status blue" title="Gouvernemental">Gouv.</abbr>
                                         {% endif %}
                                     </div>
                                     <div class="objet">

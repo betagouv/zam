@@ -481,3 +481,19 @@ tr.hidden-reponse {
             background: aliceblue;
             border: 2px solid darkgray;
         }
+
+abbr.status {
+    padding: .15rem .45rem 0 .45rem;
+    margin: 0 0 0 .5rem;
+    text-decoration: unset;
+    border: 1px solid;
+    border-radius: 1rem;
+}
+    abbr.status.blue {
+        border-color: #3167a6;
+        color: #3167a6;
+    }
+    abbr.status.grey {
+        border-color: #797676;
+        color: #797676;
+    }

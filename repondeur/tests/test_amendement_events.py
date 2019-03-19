@@ -1,7 +1,7 @@
 import transaction
 
 
-def test_post_amendement_edit_form_events(app, lecture_an, amendements_an, user_david):
+def test_post_amendement_init_form_events(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import (
         AvisAmendementModifie,
@@ -68,28 +68,120 @@ def test_post_amendement_edit_form_events(app, lecture_an, amendements_an, user_
 
     # Events rendering.
     assert amendement.events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> a modifié les commentaires"
+        "<abbr title='david@example.com'>David</abbr> a ajouté des commentaires"
     )
-    assert (
-        amendement.events[0].render_details()
-        == "De <del>«  »</del> à <ins>« Avec des commentaires »</ins>"
-    )
+    assert amendement.events[0].render_details() == "<ins>Avec des commentaires</ins>"
     assert amendement.events[1].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> a modifié la réponse"
+        "<abbr title='david@example.com'>David</abbr> a ajouté la réponse"
     )
     assert (
         amendement.events[1].render_details()
-        == "De <del>«  »</del> à <ins>« Une réponse très appropriée »</ins>"
+        == "<ins>Une réponse très appropriée</ins>"
+    )
+    assert amendement.events[2].render_summary() == (
+        "<abbr title='david@example.com'>David</abbr> a ajouté l’objet"
+    )
+    assert amendement.events[2].render_details() == "<ins>Un objet très pertinent</ins>"
+    assert amendement.events[3].render_summary() == (
+        "<abbr title='david@example.com'>David</abbr> a mis l’avis à « Favorable »"
+    )
+    assert amendement.events[3].render_details() == ""
+
+
+def test_post_amendement_edit_form_events(app, lecture_an, amendements_an, user_david):
+    from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.models.events.amendement import (
+        AvisAmendementModifie,
+        ObjetAmendementModifie,
+        ReponseAmendementModifiee,
+        CommentsAmendementModifie,
+    )
+
+    amendement = amendements_an[1]
+
+    with transaction.manager:
+        amendement.user_content.avis = "Défavorable"
+        amendement.user_content.objet = "Un objet assez passable"
+        amendement.user_content.reponse = "Des réponses <strong>très</strong> bonnes"
+        amendement.user_content.comments = "Avec"
+        DBSession.add(amendement)
+        table = user_david.table_for(lecture_an)
+        table.amendements.append(amendement)
+
+    resp = app.get(
+        f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",
+        user=user_david.email,
+    )
+    form = resp.forms["edit-amendement"]
+    form["avis"] = "Favorable"
+    form["objet"] = "Un objet très pertinent"
+    form["reponse"] = "Une réponse <strong>très</strong> appropriée"
+    form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location.endswith(
+        f"/an.15.269.PO717460/tables/david@example.com/#amdt-{amendement.num}"
+    )
+
+    amendement = (
+        DBSession.query(Amendement).filter(Amendement.num == amendement.num).one()
+    )
+
+    # Events created.
+    assert len(amendement.events) == 4
+    assert isinstance(amendement.events[0], CommentsAmendementModifie)
+    assert amendement.events[0].created_at is not None
+    assert amendement.events[0].user.email == "david@example.com"
+    assert amendement.events[0].data["old_value"] == "Avec"
+    assert (
+        amendement.events[0].data["new_value"]
+        == "Avec des <table><tbody><tr><td>commentaires</td></tr></tbody></table>"
+    )
+    assert isinstance(amendement.events[1], ReponseAmendementModifiee)
+    assert amendement.events[1].created_at is not None
+    assert amendement.events[1].user.email == "david@example.com"
+    assert (
+        amendement.events[1].data["old_value"]
+        == "Des réponses <strong>très</strong> bonnes"
+    )
+    assert (
+        amendement.events[1].data["new_value"]
+        == "Une réponse <strong>très</strong> appropriée"
+    )
+    assert isinstance(amendement.events[2], ObjetAmendementModifie)
+    assert amendement.events[2].created_at is not None
+    assert amendement.events[2].user.email == "david@example.com"
+    assert amendement.events[2].data["old_value"] == "Un objet assez passable"
+    assert amendement.events[2].data["new_value"] == "Un objet très pertinent"
+    assert isinstance(amendement.events[3], AvisAmendementModifie)
+    assert amendement.events[3].created_at is not None
+    assert amendement.events[3].user.email == "david@example.com"
+    assert amendement.events[3].data["old_value"] == "Défavorable"
+    assert amendement.events[3].data["new_value"] == "Favorable"
+
+    # Events rendering.
+    assert amendement.events[0].render_summary() == (
+        "<abbr title='david@example.com'>David</abbr> a modifié les commentaires"
+    )
+    assert amendement.events[0].render_details() == "Avec <ins>des commentaires</ins>"
+    assert amendement.events[1].render_summary() == (
+        "<abbr title='david@example.com'>David</abbr> a modifié la réponse"
+    )
+    assert amendement.events[1].render_details() == (
+        "<del>Des</del> <ins>Une</ins> <del>réponses</del> <ins>réponse</ins>"
+        " très <del>bonnes</del> <ins>appropriée</ins>"
     )
     assert amendement.events[2].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> a modifié l’objet"
     )
     assert (
         amendement.events[2].render_details()
-        == "De <del>«  »</del> à <ins>« Un objet très pertinent »</ins>"
+        == "Un objet <del>assez passable</del> <ins>très pertinent</ins>"
     )
     assert amendement.events[3].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> a mis l’avis " "à « Favorable »"
+        "<abbr title='david@example.com'>David</abbr> a modifié l’avis de "
+        "« Défavorable » à « Favorable »"
     )
     assert amendement.events[3].render_details() == ""
 

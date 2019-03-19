@@ -42,6 +42,9 @@
     padding: 1.5rem 1rem;
     min-width: 10rem;
 }
+.when time {
+    text-decoration: underline dotted;
+}
 details {
 }
     details[open] summary {

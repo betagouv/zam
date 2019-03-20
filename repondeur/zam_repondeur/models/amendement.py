@@ -426,7 +426,7 @@ class Amendement(Base):
             amdt for amdt in self.children if amdt.is_displayable
         )
 
-    def asdict(self, full: bool = False) -> dict:
+    def asdict(self) -> dict:
         result: Dict[str, Union[str, int, date]] = {
             "num": self.num,
             "rectif": self.rectif or "",
@@ -444,18 +444,17 @@ class Amendement(Base):
             "reponse": self.user_content.reponse or "",
             "comments": self.user_content.comments or "",
             "parent": self.parent and self.parent.num_disp or "",
+            "chambre": self.lecture.chambre,
+            "num_texte": self.lecture.num_texte,
+            "organe": self.lecture.organe,
+            "session": self.lecture.session,
+            "article": self.article.format(),
+            "article_titre": self.article.user_content.title or "",
+            "article_order": self.article.sort_key_as_str,
+            "position": self.position or "",
+            "id_discussion_commune": self.id_discussion_commune or "",
+            "id_identique": self.id_identique or "",
+            "alinea": self.alinea or "",
+            "date_depot": self.date_depot or "",
         }
-        if full:
-            result["chambre"] = self.lecture.chambre
-            result["num_texte"] = self.lecture.num_texte
-            result["organe"] = self.lecture.organe
-            result["session"] = self.lecture.session
-            result["article"] = self.article.format()
-            result["article_titre"] = self.article.user_content.title or ""
-            result["article_order"] = self.article.sort_key_as_str
-            result["position"] = self.position or ""
-            result["id_discussion_commune"] = self.id_discussion_commune or ""
-            result["id_identique"] = self.id_identique or ""
-            result["alinea"] = self.alinea or ""
-            result["date_depot"] = self.date_depot or ""
         return result

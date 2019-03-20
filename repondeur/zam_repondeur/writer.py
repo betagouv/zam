@@ -195,7 +195,7 @@ HTML_FIELDS = ["corps", "expose", "objet", "reponse", "comments"]
 
 
 def export_amendement(amendement: Amendement, strip_html: bool = True) -> dict:
-    data: dict = amendement.asdict(full=True)
+    data: dict = amendement.asdict()
     for field_name in HTML_FIELDS:
         if data[field_name] is not None and strip_html:
             data[field_name] = html_to_text(data[field_name])

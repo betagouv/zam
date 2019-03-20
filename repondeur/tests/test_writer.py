@@ -5,10 +5,6 @@ from pyramid.testing import DummyRequest
 from selectolax.parser import HTMLParser
 
 
-def _csv_row_to_dict(headers, row):
-    return dict(zip(headers.split(";"), row.split(";")))
-
-
 def _html_titles_list(parser, selector="h2"):
     return [node.text().strip() for node in parser.css(selector)]
 

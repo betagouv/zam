@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+from uuid import uuid4
 
 from commonmark import commonmark
 import requests
@@ -144,9 +145,15 @@ def deploy_repondeur(
 ):
     if not session_secret:
         session_secret = retrieve_secret_from_config(ctx, "session_secret")
+    if not session_secret:
+        session_secret = uuid4()
+        print(f"Initializing session_secret to {session_secret}")
 
     if not auth_secret:
         auth_secret = retrieve_secret_from_config(ctx, "auth_secret")
+    if not auth_secret:
+        auth_secret = uuid4()
+        print(f"Initializing auth_secret to {auth_secret}")
 
     environment = ctx.host.split(".", 1)[0]
 
@@ -207,12 +214,6 @@ def retrieve_secret_from_config(ctx, name):
         f'grep "zam.{name}" /srv/repondeur/src/repondeur/production.ini | cut -d" " -f3',  # noqa
         hide=True,
     ).stdout.strip()
-    if not secret:
-        flag = name.replace("_", "-")
-        print(
-            f"Please provide a value for --{flag} on the first install", file=sys.stderr
-        )
-        sys.exit(1)
     return secret
 
 

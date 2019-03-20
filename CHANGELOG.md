@@ -23,6 +23,51 @@
 
 ### Changements récents
 
+#### 19 mars 2019
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-03-19-journal-diff.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-03-19-journal-diff.png">
+    </a>
+    <figcaption>
+        Les modifications affichées dans le journal sont plus lisibles.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-03-19-notifications-tables.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-03-19-notifications-tables.png">
+    </a>
+    <figcaption>
+        L’utilisateur·ice est notifié·e en cas de mouvement(s) sur sa table.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-03-19-indicateur-presence.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-03-19-indicateur-presence.png">
+    </a>
+    <figcaption>
+        L’utilisateur·ice est informé·e de la présence du détenteur ou de la détentrice de l’amendement lors d’un transfert depuis la page de détail.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-03-19-transferts-explicites.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-03-19-transferts-explicites.png">
+    </a>
+    <figcaption>
+        Les transferts des amendements sont explicites lorsqu’ils sont déjà sur des tables en donnant une information de présence de la personne détentrice.
+    </figcaption>
+</figure>
+
+
 #### 12 février 2019
 
 <figure>
@@ -68,8 +113,7 @@
 </figure>
 
 
-
-#### 14 janvier 2019
+#### 25 janvier 2019
 
 <figure>
     <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-01-25-topbar.png">

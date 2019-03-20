@@ -1,10 +1,10 @@
 ### Perspectives
 
-<p class="notice">Date de prochaine démonstration : à determiner (annulation de la démo initialement prévue le 27 février à 11h).<br><br><em>Pour cause de congés, interruption des démos jusqu'à fin mars.</em></p>
+<p class="notice">Date de prochaine démonstration : 27 mars 2018 à 15h à Ségur.</p>
 
 #### Rappel des objectifs prioritaires des développements 2019
 
-- guider les utilisateurs en mettant en avant les amendements qui leur sont affectés et en permettant le transfert d'un amendement d’une personne à une autre
+- guider les utilisateurs en mettant en avant les amendements qui leur sont affectés et en permettant le transfert d’un amendement d’une personne à une autre
 - conserver la trace des éditions successives sur l’amendement (chemin de validation)
 - fiabiliser l’outil au regard des volumes d’utilisateurs/amendements et des flux du Parlement
 
@@ -12,14 +12,15 @@
 
 ##### Semestre 1
 
-- projet de loi pour une école de la confiance (SG - ministère de l'éducation nationale)
-- projet de loi relatif à l'organisation et la transformation du système de santé (DGOS - ministère des solidarités et de la santé)
-- projet de loi réformant la fonction publique (DGAFP - ministère de l'action et des comptes publics)
+- projet de loi pour une école de la confiance (SG - ministère de l’éducation nationale)
+- projet de loi relatif à l’organisation et la transformation du système de santé (DGOS - ministère des solidarités et de la santé)
+- projet de loi portant sur la création d’une taxe sur les services numériques et modification de la trajectoire de baisse de l’impôt sur les sociétés (DLF - ministère de l’action et des comptes publics)
+- projet de loi réformant la fonction publique (DGAFP - ministère de l’action et des comptes publics)
 
 ##### Semestre 2
 
-- PLF pour 2020 (DLF - ministère de l'action et des comptes publics)
-- PLFSS pour 2020 (DSS - ministère des solidarités et de la santé / ministère de l'action et des comptes publics)
+- PLF pour 2020 (DLF - ministère de l’action et des comptes publics)
+- PLFSS pour 2020 (DSS - ministère des solidarités et de la santé / ministère de l’action et des comptes publics)
 
 ### Changements récents
 
@@ -30,7 +31,7 @@
         <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-03-19-journal-diff.png">
     </a>
     <figcaption>
-        Les modifications affichées dans le journal sont plus lisibles.
+        Le journal affiche le détail des modifications apportées sur l’amendement/les éléments de réponse.
     </figcaption>
 </figure>
 
@@ -52,7 +53,7 @@
         <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-03-19-indicateur-presence.png">
     </a>
     <figcaption>
-        L’utilisateur·ice est informé·e de la présence du détenteur ou de la détentrice de l’amendement lors d’un transfert depuis la page de détail.
+        Lors de la consultation de l’amendement, l’information relative à la table sur laquelle est posé l’amendement est plus explicite. De plus, un rond de couleur indique si la personne qui détient l’amendement est actuellement active.
     </figcaption>
 </figure>
 
@@ -63,7 +64,7 @@
         <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-03-19-transferts-explicites.png">
     </a>
     <figcaption>
-        Les transferts des amendements sont explicites lorsqu’ils sont déjà sur des tables en donnant une information de présence de la personne détentrice.
+        Lors d’un transfert d’amendement(s), l’information relative à la table sur laquelle est posé l’amendement est plus explicite. De plus, un rond de couleur indique si la personne qui détient l’amendement est actuellement active.
     </figcaption>
 </figure>
 

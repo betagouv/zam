@@ -109,7 +109,7 @@ def letsencrypt(ctx):
     sudo_put(ctx, "ssl-renew", "/etc/cron.weekly/ssl-renew")
     ctx.sudo("chmod +x /etc/cron.weekly/ssl-renew")
     ctx.sudo(
-        "certbot certonly -c /srv/zam/certbot.ini --non-interactive " "--agree-tos"
+        "certbot certonly -c /srv/zam/certbot.ini --non-interactive --agree-tos"
     )
 
 

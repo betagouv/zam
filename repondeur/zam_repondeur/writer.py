@@ -42,6 +42,8 @@ FIELDS_NAMES = {
     "reponse": "Réponse",
     "comments": "Commentaires",
     "avis": "Avis du Gouvernement",
+    "affectation_email": "Affectation (email)",
+    "affectation_name": "Affectation (nom)",
 }
 
 
@@ -83,6 +85,8 @@ FIELDS = [
     "num_texte",
     "organe",
     "session",
+    "affectation_email",
+    "affectation_name",
 ]
 
 

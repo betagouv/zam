@@ -456,5 +456,7 @@ class Amendement(Base):
             "id_identique": self.id_identique or "",
             "alinea": self.alinea or "",
             "date_depot": self.date_depot or "",
+            "affectation_email": self.user_table and self.user_table.user.email or "",
+            "affectation_name": self.user_table and self.user_table.user.name or "",
         }
         return result

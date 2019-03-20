@@ -129,6 +129,8 @@ def test_write_json(
         "sort": "",
         "gouvernemental": False,
         "article_order": "6|001|01|__________|1",
+        "affectation_email": "",
+        "affectation_name": "",
     }
     assert [amendement["article_order"] for amendement in amendements] == [
         "6|001|01|__________|1",
@@ -210,7 +212,41 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
         "sort": "",
         "gouvernemental": False,
         "article_order": "6|001|01|__________|1",
+        "affectation_email": "",
+        "affectation_name": "",
     }
+
+
+def test_write_with_affectation(lecture_senat, article1_senat, tmpdir, user_david):
+    from zam_repondeur.writer import write_json
+    from zam_repondeur.models import Amendement
+
+    filename = str(tmpdir.join("test.json"))
+
+    with transaction.manager:
+        amendement = Amendement.create(
+            lecture=lecture_senat,
+            article=article1_senat,
+            alinea="",
+            num=42,
+            rectif=1,
+            auteur="M. DUPONT",
+            groupe="RDSE",
+            matricule="000000",
+            corps="<p>L'article 1 est supprimé.</p>",
+            expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        )
+        user_david.table_for(lecture_senat).amendements.append(amendement)
+        nb_rows = write_json(lecture_senat, filename, request={})
+
+    with open(filename, "r", encoding="utf-8-sig") as f_:
+        backup = json.loads(f_.read())
+        amendements = backup["amendements"]
+        articles = backup["articles"]
+
+    assert nb_rows == len(amendements) + len(articles) == 1 + 1
+    assert amendements[0]["affectation_email"] == "david@example.com"
+    assert amendements[0]["affectation_name"] == "David"
 
 
 def test_write_json_sous_amendement(
@@ -318,6 +354,8 @@ def test_write_json_sous_amendement(
         "session": "2017-2018",
         "sort": "",
         "gouvernemental": False,
+        "affectation_email": "",
+        "affectation_name": "",
     }
 
 

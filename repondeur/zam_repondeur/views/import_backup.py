@@ -11,7 +11,14 @@ from pyramid.view import view_config
 from sqlalchemy.orm import joinedload
 
 from zam_repondeur.message import Message
-from zam_repondeur.models import Amendement, Article
+from zam_repondeur.models import (
+    DBSession,
+    Amendement,
+    Article,
+    Lecture,
+    User,
+    get_one_or_create,
+)
 from zam_repondeur.resources import LectureResource
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
@@ -34,6 +41,7 @@ def import_backup(context: LectureResource, request: Request) -> Response:
     try:
         counter = _import_backup_from_json_file(
             backup_file=request.POST["backup"].file,
+            lecture=lecture,
             amendements={
                 amendement.num: amendement for amendement in lecture.amendements
             },
@@ -68,6 +76,7 @@ def import_backup(context: LectureResource, request: Request) -> Response:
 
 def _import_backup_from_json_file(
     backup_file: BinaryIO,
+    lecture: Lecture,
     amendements: Dict[int, Amendement],
     articles: Dict[int, Article],
 ) -> Counter:
@@ -106,6 +115,14 @@ def _import_backup_from_json_file(
         amendement.user_content.reponse = reponse
         if "comments" in item:
             amendement.user_content.comments = item["comments"]
+        if "affectation_email" in item and item["affectation_email"]:
+            email = item["affectation_email"]
+            user, created = get_one_or_create(User, email=User.normalize_email(email))
+            if created and item.get("affectation_name"):
+                user.name = item["affectation_name"]
+            table = user.table_for(lecture)
+            DBSession.add(table)
+            table.amendements.append(amendement)
         previous_reponse = reponse
         counter["reponses"] += 1
 

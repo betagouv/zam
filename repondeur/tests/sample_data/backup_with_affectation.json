@@ -1,7 +1,7 @@
 {
     "amendements":[
         {
-            "num":777,
+            "num":666,
             "rectif":"",
             "sort":"",
             "matricule":"",
@@ -14,6 +14,8 @@
             "objet":"Lorem <strong>ipsum</strong>",
             "avis":"Défavorable",
             "reponse":"<i>tempor</i>",
+            "affectation_email":"david@example.com",
+            "affectation_name":"David2",
             "comments":"",
             "parent":"",
             "chambre":"an",
@@ -42,6 +44,7 @@
             "objet":"Lorem <strong>ipsum</strong>",
             "avis":"",
             "reponse":"",
+            "affectation":"",
             "comments":"",
             "parent":"",
             "chambre":"an",

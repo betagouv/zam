@@ -251,9 +251,10 @@
     </table>
     {% if not amendements %}
         <div class="notice">
-            <h3>Aucun amendement disponible pour l’instant</h3>
-            <p>Il peut s’agir d’une lecture en attente de données ou d’une erreur de rappatriement de la part de l’application.</p>
-            <p>Si le problème perdure, vous pouvez <a href="mailto:contact@zam.beta.gouv.fr">contacter l’équipe de développement</a>.</p>
+            <h3>Les amendements ne sont pas encore disponibles.</h3>
+            <p>Si vous venez de créer la lecture, merci de patienter quelques instants, les amendements sont en cours de récupération, cela peut prendre quelques minutes. Une notification vous proposera de rafraîchir la page lorsque l’opération sera terminée.</p>
+            <p>Attention : les amendements ne peuvent être récupérés qu’à l’expiration du délai de dépôt fixé pour les parlementaires.</p>
+            <p>Si vous rencontrez un problème, <a href="mailto:contact@zam.beta.gouv.fr">contactez l’équipe de développement pour obtenir de l’aide</a>.</p>
         </div>
     {% endif %}
     <div data-controller="amendements-articles">

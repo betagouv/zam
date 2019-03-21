@@ -13,7 +13,7 @@ def test_no_amendements(app, lecture_an):
 
     assert resp.status_code == 200
     assert "Dossier de banc" not in resp.text
-    assert "Aucun amendement disponible pour l’instant" in resp.text
+    assert "Les amendements ne sont pas encore disponibles." in resp.text
 
 
 def test_team_member_can_access_owned_lecture(

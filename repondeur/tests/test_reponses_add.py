@@ -142,6 +142,67 @@ def test_post_form_with_comments(app, lecture_an, amendements_an):
     assert amendement.user_content.comments == ""
 
 
+def test_post_form_with_affectation_unknown(app, lecture_an, amendements_an):
+    from zam_repondeur.models import DBSession, Amendement
+
+    form = app.get(
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+    ).forms["import-form"]
+    path = Path(__file__).parent / "sample_data" / "reponses_with_affectation.csv"
+    form["reponses"] = Upload("file.csv", path.read_bytes())
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "2 réponse(s) chargée(s) avec succès" in resp.text
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+    assert amendement.position == 1
+    assert amendement.user_table.user.email == "david@larlet.fr"
+    assert amendement.user_table.user.name == "David2"
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+    assert amendement.position == 2
+    assert amendement.user_table is None
+
+
+def test_post_form_with_affectation_known(app, lecture_an, amendements_an, user_david):
+    from zam_repondeur.models import DBSession, Amendement
+
+    with transaction.manager:
+        DBSession.add(user_david)
+
+    form = app.get(
+        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+    ).forms["import-form"]
+    path = Path(__file__).parent / "sample_data" / "reponses_with_affectation.csv"
+    form["reponses"] = Upload("file.csv", path.read_bytes())
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "2 réponse(s) chargée(s) avec succès" in resp.text
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+    assert amendement.position == 1
+    assert amendement.user_table.user.email == "david@larlet.fr"
+    assert amendement.user_table.user.name == "David2"
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+    assert amendement.position == 2
+    assert amendement.user_table is None
+
+
 def test_post_form_with_bom(app, lecture_an, amendements_an):
     form = app.get(
         "/lectures/an.15.269.PO717460/options/", user="user@example.com"

@@ -11,7 +11,7 @@ from pyramid.view import view_config
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.message import Message
-from zam_repondeur.models import Amendement
+from zam_repondeur.models import DBSession, Amendement, Lecture, User, get_one_or_create
 from zam_repondeur.resources import LectureResource
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
@@ -38,6 +38,7 @@ def import_csv(context: LectureResource, request: Request) -> Response:
     try:
         reponses_count, errors_count = _import_reponses_from_csv_file(
             reponses_file=request.POST["reponses"].file,
+            lecture=lecture,
             amendements={
                 amendement.num: amendement for amendement in lecture.amendements
             },
@@ -72,7 +73,7 @@ def import_csv(context: LectureResource, request: Request) -> Response:
 
 
 def _import_reponses_from_csv_file(
-    reponses_file: BinaryIO, amendements: Dict[int, Amendement]
+    reponses_file: BinaryIO, lecture: Lecture, amendements: Dict[int, Amendement]
 ) -> Tuple[int, int]:
     previous_reponse = ""
     reponses_count = 0
@@ -111,6 +112,14 @@ def _import_reponses_from_csv_file(
         amendement.user_content.reponse = clean_html(reponse)
         if "Commentaires" in line:
             amendement.user_content.comments = clean_html(line["Commentaires"])
+        if "Affectation (email)" in line and line["Affectation (email)"]:
+            email = line["Affectation (email)"]
+            user, created = get_one_or_create(User, email=User.normalize_email(email))
+            if created and line.get("Affectation (nom)"):
+                user.name = line["Affectation (nom)"]
+            table = user.table_for(lecture)
+            DBSession.add(table)
+            table.amendements.append(amendement)
         previous_reponse = reponse
         reponses_count += 1
 

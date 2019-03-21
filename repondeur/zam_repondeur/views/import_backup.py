@@ -118,8 +118,11 @@ def _import_backup_from_json_file(
         if "affectation_email" in item and item["affectation_email"]:
             email = item["affectation_email"]
             user, created = get_one_or_create(User, email=User.normalize_email(email))
-            if created and item.get("affectation_name"):
-                user.name = item["affectation_name"]
+            if created:
+                if item.get("affectation_name"):
+                    user.name = item["affectation_name"]
+                if lecture.owned_by_team:
+                    user.teams.append(lecture.owned_by_team)
             table = user.table_for(lecture)
             DBSession.add(table)
             table.amendements.append(amendement)

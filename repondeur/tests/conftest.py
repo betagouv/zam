@@ -9,20 +9,20 @@ from testapp import TestApp as BaseTestApp
 
 
 class TestApp(BaseTestApp):
-    def login(self, email):
-        resp = self.post("/identification", {"email": email})
+    def login(self, email, headers=None):
+        resp = self.post("/identification", {"email": email}, headers=headers)
         assert resp.status_code == 302
 
     def get(self, *args, **kwargs):
         user = kwargs.pop("user", None)
         if user is not None:
-            self.login(user)
+            self.login(user, headers=kwargs.get("headers"))
         return super().get(*args, **kwargs)
 
     def post(self, *args, **kwargs):
         user = kwargs.pop("user", None)
         if user is not None:
-            self.login(user)
+            self.login(user, headers=kwargs.get("headers"))
         return super().post(*args, **kwargs)
 
 

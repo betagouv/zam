@@ -124,15 +124,14 @@ class TestPostForm:
         form["reponses"] = Upload("file.csv", path.read_bytes())
         form.submit()
 
-        with transaction.manager:
-            lecture = Lecture.get(
-                chambre=lecture_an.chambre,
-                session=lecture_an.session,
-                num_texte=lecture_an.num_texte,
-                partie=None,
-                organe=lecture_an.organe,
-            )
-            assert lecture.modified_at != initial_modified_at
+        lecture = Lecture.get(
+            chambre=lecture_an.chambre,
+            session=lecture_an.session,
+            num_texte=lecture_an.num_texte,
+            partie=None,
+            organe=lecture_an.organe,
+        )
+        assert lecture.modified_at != initial_modified_at
 
     def test_upload_semicolumns(self, app):
         from zam_repondeur.models import DBSession, Amendement

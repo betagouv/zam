@@ -28,7 +28,7 @@ def test_get_form(app):
     assert resp.forms["backup-form"].fields["upload"][0].attrs["type"] == "submit"
 
 
-def test_post_form(app, amendements_an, tmpdir):
+def test_post_form(app, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(

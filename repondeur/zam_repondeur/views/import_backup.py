@@ -10,6 +10,7 @@ from pyramid.response import Response
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload
 
+from zam_repondeur.clean import clean_html
 from zam_repondeur.message import Message
 from zam_repondeur.models import (
     DBSession,
@@ -18,6 +19,13 @@ from zam_repondeur.models import (
     Lecture,
     User,
     get_one_or_create,
+)
+from zam_repondeur.models.events.amendement import (
+    AmendementTransfere,
+    AvisAmendementModifie,
+    ObjetAmendementModifie,
+    ReponseAmendementModifiee,
+    CommentsAmendementModifie,
 )
 from zam_repondeur.resources import LectureResource
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
@@ -40,6 +48,7 @@ def import_backup(context: LectureResource, request: Request) -> Response:
 
     try:
         counter = _import_backup_from_json_file(
+            request=request,
             backup_file=request.POST["backup"].file,
             lecture=lecture,
             amendements={
@@ -75,6 +84,7 @@ def import_backup(context: LectureResource, request: Request) -> Response:
 
 
 def _import_backup_from_json_file(
+    request: Request,
     backup_file: BinaryIO,
     lecture: Lecture,
     amendements: Dict[int, Amendement],
@@ -109,12 +119,23 @@ def _import_backup_from_json_file(
             counter["reponses_errors"] += 1
             continue
 
-        amendement.user_content.avis = normalize_avis(avis)
-        amendement.user_content.objet = objet
-        reponse = normalize_reponse(reponse, previous_reponse)
-        amendement.user_content.reponse = reponse
+        avis = normalize_avis(avis)
+        if avis != (amendement.user_content.avis or ""):
+            AvisAmendementModifie.create(request, amendement, avis)
+
+        objet = clean_html(objet)
+        if objet != (amendement.user_content.objet or ""):
+            ObjetAmendementModifie.create(request, amendement, objet)
+
+        reponse = clean_html(normalize_reponse(reponse, previous_reponse))
+        if reponse != (amendement.user_content.reponse or ""):
+            ReponseAmendementModifiee.create(request, amendement, reponse)
+
         if "comments" in item:
-            amendement.user_content.comments = item["comments"]
+            comments = clean_html(item["comments"])
+            if comments != (amendement.user_content.comments or ""):
+                CommentsAmendementModifie.create(request, amendement, comments)
+
         if "affectation_email" in item and item["affectation_email"]:
             email = item["affectation_email"]
             user, created = get_one_or_create(User, email=User.normalize_email(email))
@@ -123,9 +144,16 @@ def _import_backup_from_json_file(
                     user.name = item["affectation_name"]
                 if lecture.owned_by_team:
                     user.teams.append(lecture.owned_by_team)
-            table = user.table_for(lecture)
-            DBSession.add(table)
-            table.amendements.append(amendement)
+            target_table = user.table_for(lecture)
+            DBSession.add(target_table)
+
+            old = str(amendement.user_table.user) if amendement.user_table else ""
+            new = str(target_table.user) if target_table else ""
+            if amendement.user_table is target_table:
+                continue
+            amendement.user_table = target_table
+            AmendementTransfere.create(request, amendement, old, new)
+
         previous_reponse = reponse
         counter["reponses"] += 1
 

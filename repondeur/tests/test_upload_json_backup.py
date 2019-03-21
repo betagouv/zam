@@ -58,6 +58,11 @@ class TestPostForm:
 
     def test_upload_updates_user_content(self, app):
         from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models.events.amendement import (
+            AvisAmendementModifie,
+            ObjetAmendementModifie,
+            ReponseAmendementModifiee,
+        )
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_content.avis is None
@@ -79,8 +84,15 @@ class TestPostForm:
         assert "<i>tempor</i>" in amendement.user_content.reponse
         assert "<u>aliqua</u>" not in amendement.user_content.reponse
 
+        events = {type(event): event for event in amendement.events}
+        assert AvisAmendementModifie in events
+        assert ObjetAmendementModifie in events
+        assert ReponseAmendementModifiee in events
+
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_content.objet.startswith("Lorem")
+        events = {type(event): event for event in amendement.events}
+        assert ObjetAmendementModifie in events
 
     def test_upload_does_not_update_position(self, app):
         from zam_repondeur.models import DBSession, Amendement
@@ -118,17 +130,23 @@ class TestPostForm:
 
     def test_upload_backup_with_comments(self, app):
         from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models.events.amendement import CommentsAmendementModifie
 
         self._upload_backup(app, "backup_with_comments.json")
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_content.comments == "A comment"
+        events = {type(event): event for event in amendement.events}
+        assert CommentsAmendementModifie in events
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-        assert amendement.user_content.comments == ""
+        assert amendement.user_content.comments is None
+        events = {type(event): event for event in amendement.events}
+        assert CommentsAmendementModifie not in events
 
     def test_upload_backup_with_affectation_to_unknown_user_without_team(self, app):
         from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models.events.amendement import AmendementTransfere
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_table is None
@@ -142,14 +160,19 @@ class TestPostForm:
         assert amendement.user_table.user.email == "david@example.com"
         assert amendement.user_table.user.name == "David2"
         assert amendement.user_table.user.teams == []
+        events = {type(event): event for event in amendement.events}
+        assert AmendementTransfere in events
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_table is None
+        events = {type(event): event for event in amendement.events}
+        assert AmendementTransfere not in events
 
     def test_upload_backup_with_affectation_to_unknown_user_with_team(
         self, app, lecture_an, user_ronan, team_zam
     ):
         from zam_repondeur.models import DBSession, Amendement, User
+        from zam_repondeur.models.events.amendement import AmendementTransfere
 
         with transaction.manager:
             lecture_an.owned_by_team = team_zam
@@ -186,9 +209,13 @@ class TestPostForm:
         # Check the amendement is on the new user's table
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_table.user is user_david2
+        events = {type(event): event for event in amendement.events}
+        assert AmendementTransfere in events
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_table is None
+        events = {type(event): event for event in amendement.events}
+        assert AmendementTransfere not in events
 
     def test_upload_updates_affectation(self, app, lecture_an, user_david, user_ronan):
         from zam_repondeur.models import DBSession, Amendement

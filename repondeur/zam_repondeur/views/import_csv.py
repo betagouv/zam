@@ -12,6 +12,13 @@ from pyramid.view import view_config
 from zam_repondeur.clean import clean_html
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, Amendement, Lecture, User, get_one_or_create
+from zam_repondeur.models.events.amendement import (
+    AmendementTransfere,
+    AvisAmendementModifie,
+    ObjetAmendementModifie,
+    ReponseAmendementModifiee,
+    CommentsAmendementModifie,
+)
 from zam_repondeur.resources import LectureResource
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
@@ -37,6 +44,7 @@ def import_csv(context: LectureResource, request: Request) -> Response:
 
     try:
         reponses_count, errors_count = _import_reponses_from_csv_file(
+            request=request,
             reponses_file=request.POST["reponses"].file,
             lecture=lecture,
             amendements={
@@ -73,7 +81,10 @@ def import_csv(context: LectureResource, request: Request) -> Response:
 
 
 def _import_reponses_from_csv_file(
-    reponses_file: BinaryIO, lecture: Lecture, amendements: Dict[int, Amendement]
+    request: Request,
+    reponses_file: BinaryIO,
+    lecture: Lecture,
+    amendements: Dict[int, Amendement],
 ) -> Tuple[int, int]:
     previous_reponse = ""
     reponses_count = 0
@@ -106,12 +117,23 @@ def _import_reponses_from_csv_file(
             errors_count += 1
             continue
 
-        amendement.user_content.avis = normalize_avis(avis)
-        amendement.user_content.objet = clean_html(objet)
-        reponse = normalize_reponse(reponse, previous_reponse)
-        amendement.user_content.reponse = clean_html(reponse)
+        avis = normalize_avis(avis)
+        if avis != (amendement.user_content.avis or ""):
+            AvisAmendementModifie.create(request, amendement, avis)
+
+        objet = clean_html(objet)
+        if objet != (amendement.user_content.objet or ""):
+            ObjetAmendementModifie.create(request, amendement, objet)
+
+        reponse = clean_html(normalize_reponse(reponse, previous_reponse))
+        if reponse != (amendement.user_content.reponse or ""):
+            ReponseAmendementModifiee.create(request, amendement, reponse)
+
         if "Commentaires" in line:
-            amendement.user_content.comments = clean_html(line["Commentaires"])
+            comments = clean_html(line["Commentaires"])
+            if comments != (amendement.user_content.comments or ""):
+                CommentsAmendementModifie.create(request, amendement, comments)
+
         if "Affectation (email)" in line and line["Affectation (email)"]:
             email = line["Affectation (email)"]
             user, created = get_one_or_create(User, email=User.normalize_email(email))
@@ -120,9 +142,16 @@ def _import_reponses_from_csv_file(
                     user.name = line["Affectation (nom)"]
                 if lecture.owned_by_team:
                     user.teams.append(lecture.owned_by_team)
-            table = user.table_for(lecture)
-            DBSession.add(table)
-            table.amendements.append(amendement)
+            target_table = user.table_for(lecture)
+            DBSession.add(target_table)
+
+            old = str(amendement.user_table.user) if amendement.user_table else ""
+            new = str(target_table.user) if target_table else ""
+            if amendement.user_table is target_table:
+                continue
+            amendement.user_table = target_table
+            AmendementTransfere.create(request, amendement, old, new)
+
         previous_reponse = reponse
         reponses_count += 1
 

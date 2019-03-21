@@ -1,10 +1,3 @@
-application.register('table-menu', class extends Stimulus.Controller {
-    toggle(event) {
-        event.preventDefault()
-        this.element.classList.toggle('open')
-    }
-})
-
 application.register('table-anchor', class extends Stimulus.Controller {
     initialize() {
         if (location.hash) {

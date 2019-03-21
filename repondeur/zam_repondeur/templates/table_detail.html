@@ -22,51 +22,10 @@
     }
     .menu {
         position: absolute;
-        top: 6px;
-        right: 6px;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
+        top: 8px;
+        right: 12px;
+        transform: scale(1.5);
     }
-        .menu .mini-options {
-            display: block;
-            width: 1.5rem;
-            height: 1.5rem;
-            background-image: url("{{ request.static_url('zam_repondeur:static/img/options.svg') }}");
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        .menu .mini-options:hover {
-            border: 1px solid #CCC;
-            border-radius: 4px;
-        }
-        .menu nav {
-            display: none;
-            flex-direction: column;
-            background-color: white;
-            padding: 1px 2px;
-            border: 1px solid #CCC;
-            border-radius: 4px;
-            box-shadow: 4px 4px 2px #EEE;
-        }
-        .menu nav a {
-            padding: 5px 1.5rem 1px 0.5rem;
-            border: 1px solid white;
-        }
-            .menu nav a:hover {
-                color: white;
-                background-color: #3167a6;
-                text-decoration: none;
-            }
-        .menu.open nav {
-            display: flex;
-        }
-        .menu .menu-selector {
-            display: flex;
-        }
-            .menu .menu-selector input[type="checkbox"] {
-                margin: 0 .25rem;
-            }
 
     .notice {
         margin: 3rem;
@@ -325,15 +284,10 @@
                                     </div>
                                 </div>
                                 <div class="amendement-card-avis">
-                                    <div class="menu" data-controller="table-menu">
+                                    <div class="menu">
                                         <div class="menu-selector">
                                             <input type="checkbox" name="amendement-selected" value="{{ amendement.num }}">
-                                            <a class="mini-options" data-action="table-menu#toggle" href="#"></a>
                                         </div>
-                                        <nav>
-                                            <a href="{{ request.resource_url(context.lecture_resource, 'transfer_amendements', query={'nums': amendement.num}) }}">Transférer</a>
-                                            <a href="{{ request.resource_url(context.lecture_resource, 'export_pdf', query={'nums': amendement.num}) }}">Exporter en PDF</a>
-                                        </nav>
                                     </div>
                                     <div class="avis">
                                         {% if is_owner %}

@@ -143,24 +143,12 @@ class TestPostForm:
         path = Path(__file__).parent / "sample_data" / "backup_with_comments.json"
         form["backup"] = Upload("file.json", path.read_bytes())
 
-        resp = form.submit()
-
-        assert resp.status_code == 302
-        assert (
-            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
-        )
-
-        resp = resp.follow()
-
-        assert resp.status_code == 200
-        assert "2 réponse(s) chargée(s) avec succès" in resp.text
+        form.submit()
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.position == 1
         assert amendement.user_content.comments == "A comment"
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-        assert amendement.position == 2
         assert amendement.user_content.comments == ""
 
     def test_upload_backup_with_affectation_unknown(self, app):
@@ -172,25 +160,13 @@ class TestPostForm:
         path = Path(__file__).parent / "sample_data" / "backup_with_affectation.json"
         form["backup"] = Upload("file.json", path.read_bytes())
 
-        resp = form.submit()
-
-        assert resp.status_code == 302
-        assert (
-            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
-        )
-
-        resp = resp.follow()
-
-        assert resp.status_code == 200
-        assert "2 réponse(s) chargée(s) avec succès" in resp.text
+        form.submit()
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.position == 1
         assert amendement.user_table.user.email == "david@example.com"
         assert amendement.user_table.user.name == "David2"
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-        assert amendement.position == 2
         assert amendement.user_table is None
 
     def test_upload_backup_with_affectation_known(self, app, user_david):
@@ -205,27 +181,15 @@ class TestPostForm:
         path = Path(__file__).parent / "sample_data" / "backup_with_affectation.json"
         form["backup"] = Upload("file.json", path.read_bytes())
 
-        resp = form.submit()
-
-        assert resp.status_code == 302
-        assert (
-            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
-        )
-
-        resp = resp.follow()
-
-        assert resp.status_code == 200
-        assert "2 réponse(s) chargée(s) avec succès" in resp.text
+        form.submit()
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.position == 1
         assert amendement.user_table.user.email == "david@example.com"
         assert (
             amendement.user_table.user.name == "David"
         )  # Should not override existing.
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-        assert amendement.position == 2
         assert amendement.user_table is None
 
     def test_upload_backup_with_articles(self, app):
@@ -237,14 +201,7 @@ class TestPostForm:
         path = Path(__file__).parent / "sample_data" / "backup_with_articles.json"
         form["backup"] = Upload("file.json", path.read_bytes())
 
-        resp = form.submit()
-
-        assert resp.status_code == 302
-        assert (
-            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
-        )
-
-        resp = resp.follow()
+        resp = form.submit().follow()
 
         assert resp.status_code == 200
         assert (
@@ -265,14 +222,7 @@ class TestPostForm:
         path = Path(__file__).parent / "sample_data" / "backup_with_articles_old.json"
         form["backup"] = Upload("file.json", path.read_bytes())
 
-        resp = form.submit()
-
-        assert resp.status_code == 302
-        assert (
-            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
-        )
-
-        resp = resp.follow()
+        resp = form.submit().follow()
 
         assert resp.status_code == 200
         assert (
@@ -288,17 +238,10 @@ class TestPostForm:
         form = app.get(
             "/lectures/an.15.269.PO717460/options", user="user@example.com"
         ).forms["backup-form"]
+
         path = Path(__file__).parent / "sample_data" / "backup_wrong_number.json"
         form["backup"] = Upload("file.json", path.read_bytes())
-
-        resp = form.submit()
-
-        assert resp.status_code == 302
-        assert (
-            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
-        )
-
-        resp = resp.follow()
+        resp = form.submit().follow()
 
         assert resp.status_code == 200
         assert (
@@ -307,10 +250,10 @@ class TestPostForm:
         )
 
     def test_upload_missing_file(self, app):
-
         form = app.get(
             "/lectures/an.15.269.PO717460/options/", user="user@example.com"
         ).forms["backup-form"]
+
         resp = form.submit()
 
         assert resp.status_code == 302

@@ -1,11 +1,15 @@
 import transaction
 from pathlib import Path
 
+import pytest
 from webtest import Upload
 from webtest.forms import File
 
 
-def test_get_form(app, lecture_an):
+pytestmark = pytest.mark.usefixtures("lecture_an")
+
+
+def test_get_form(app):
     resp = app.get("/lectures/an.15.269.PO717460/options/", user="user@example.com")
 
     assert resp.status_code == 200
@@ -24,7 +28,7 @@ def test_get_form(app, lecture_an):
     assert resp.forms["import-form"].fields["upload"][0].attrs["type"] == "submit"
 
 
-def test_post_form(app, lecture_an, amendements_an):
+def test_post_form(app, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
@@ -81,7 +85,7 @@ def test_post_form_updates_modification_date(app, lecture_an, amendements_an):
         assert lecture.modified_at != initial_modified_at
 
 
-def test_post_form_semicolumns(app, lecture_an, amendements_an):
+def test_post_form_semicolumns(app, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
@@ -114,7 +118,7 @@ def test_post_form_semicolumns(app, lecture_an, amendements_an):
     assert amendement.position == 2
 
 
-def test_post_form_with_comments(app, lecture_an, amendements_an):
+def test_post_form_with_comments(app, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
@@ -142,7 +146,7 @@ def test_post_form_with_comments(app, lecture_an, amendements_an):
     assert amendement.user_content.comments == ""
 
 
-def test_post_form_with_affectation_unknown(app, lecture_an, amendements_an):
+def test_post_form_with_affectation_unknown(app, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
@@ -171,7 +175,7 @@ def test_post_form_with_affectation_unknown(app, lecture_an, amendements_an):
     assert amendement.user_table is None
 
 
-def test_post_form_with_affectation_known(app, lecture_an, amendements_an, user_david):
+def test_post_form_with_affectation_known(app, amendements_an, user_david):
     from zam_repondeur.models import DBSession, Amendement
 
     with transaction.manager:
@@ -203,7 +207,7 @@ def test_post_form_with_affectation_known(app, lecture_an, amendements_an, user_
     assert amendement.user_table is None
 
 
-def test_post_form_with_bom(app, lecture_an, amendements_an):
+def test_post_form_with_bom(app, amendements_an):
     form = app.get(
         "/lectures/an.15.269.PO717460/options/", user="user@example.com"
     ).forms["import-form"]
@@ -221,7 +225,7 @@ def test_post_form_with_bom(app, lecture_an, amendements_an):
     assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
 
-def test_post_form_wrong_columns_names(app, lecture_an, amendements_an):
+def test_post_form_wrong_columns_names(app, amendements_an):
     form = app.get(
         "/lectures/an.15.269.PO717460/options", user="user@example.com"
     ).forms["import-form"]
@@ -243,7 +247,7 @@ def test_post_form_wrong_columns_names(app, lecture_an, amendements_an):
     )
 
 
-def test_post_form_reponse_no_file(app, lecture_an, amendements_an):
+def test_post_form_reponse_no_file(app, amendements_an):
 
     form = app.get(
         "/lectures/an.15.269.PO717460/options/", user="user@example.com"

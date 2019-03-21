@@ -1,11 +1,15 @@
 import transaction
 from pathlib import Path
 
+import pytest
 from webtest import Upload
 from webtest.forms import File
 
 
-def test_get_form(app, lecture_an):
+pytestmark = pytest.mark.usefixtures("lecture_an")
+
+
+def test_get_form(app):
     resp = app.get("/lectures/an.15.269.PO717460/options/", user="user@example.com")
 
     assert resp.status_code == 200
@@ -24,7 +28,7 @@ def test_get_form(app, lecture_an):
     assert resp.forms["backup-form"].fields["upload"][0].attrs["type"] == "submit"
 
 
-def test_post_form(app, lecture_an, amendements_an, tmpdir):
+def test_post_form(app, amendements_an, tmpdir):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
@@ -81,7 +85,7 @@ def test_post_form_updates_modification_date(app, lecture_an, amendements_an):
         assert lecture.modified_at != initial_modified_at
 
 
-def test_post_form_with_comments(app, lecture_an, amendements_an):
+def test_post_form_with_comments(app, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
@@ -109,7 +113,7 @@ def test_post_form_with_comments(app, lecture_an, amendements_an):
     assert amendement.user_content.comments == ""
 
 
-def test_post_form_with_affectation_unknown(app, lecture_an, amendements_an):
+def test_post_form_with_affectation_unknown(app, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
@@ -138,7 +142,7 @@ def test_post_form_with_affectation_unknown(app, lecture_an, amendements_an):
     assert amendement.user_table is None
 
 
-def test_post_form_with_affectation_known(app, lecture_an, amendements_an, user_david):
+def test_post_form_with_affectation_known(app, amendements_an, user_david):
     from zam_repondeur.models import DBSession, Amendement
 
     with transaction.manager:
@@ -170,7 +174,7 @@ def test_post_form_with_affectation_known(app, lecture_an, amendements_an, user_
     assert amendement.user_table is None
 
 
-def test_post_form_with_articles(app, lecture_an, article1_an, amendements_an):
+def test_post_form_with_articles(app, article1_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
@@ -197,7 +201,7 @@ def test_post_form_with_articles(app, lecture_an, article1_an, amendements_an):
     assert amendement.article.user_content.presentation == "Présentation"
 
 
-def test_post_form_with_articles_old(app, lecture_an, article1_an, amendements_an):
+def test_post_form_with_articles_old(app, article1_an, amendements_an):
     from zam_repondeur.models import DBSession, Amendement
 
     form = app.get(
@@ -224,7 +228,7 @@ def test_post_form_with_articles_old(app, lecture_an, article1_an, amendements_a
     assert amendement.article.user_content.presentation == "Présentation"
 
 
-def test_post_form_wrong_number(app, lecture_an, amendements_an):
+def test_post_form_wrong_number(app, amendements_an):
     form = app.get(
         "/lectures/an.15.269.PO717460/options", user="user@example.com"
     ).forms["backup-form"]
@@ -245,7 +249,7 @@ def test_post_form_wrong_number(app, lecture_an, amendements_an):
     )
 
 
-def test_post_form_reponse_no_file(app, lecture_an, amendements_an):
+def test_post_form_reponse_no_file(app, amendements_an):
 
     form = app.get(
         "/lectures/an.15.269.PO717460/options/", user="user@example.com"

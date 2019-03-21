@@ -30,14 +30,20 @@ def test_get_form(app):
 
 @pytest.mark.usefixtures("amendements_an")
 class TestPostForm:
-    def test_upload_redirects_to_index(self, app):
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+    def _get_upload_form(self, app, user="user@example.com", headers=None):
+        return app.get(
+            "/lectures/an.15.269.PO717460/options/", user=user, headers=headers
         ).forms["import-form"]
-        path = Path(__file__).parent / "sample_data" / "reponses.csv"
-        form["reponses"] = Upload("file.csv", path.read_bytes())
 
-        resp = form.submit()
+    def _upload_csv(self, app, filename, user="user@example.com", team=None):
+        headers = {"X-Remote-User": team.name} if team is not None else None
+        form = self._get_upload_form(app, user=user, headers=headers)
+        path = Path(__file__).parent / "sample_data" / filename
+        form["reponses"] = Upload("file.csv", path.read_bytes())
+        return form.submit(user=user, headers=headers)
+
+    def test_upload_redirects_to_index(self, app):
+        resp = self._upload_csv(app, "reponses.csv")
 
         assert resp.status_code == 302
         assert (
@@ -45,13 +51,7 @@ class TestPostForm:
         )
 
     def test_upload_success_message(self, app):
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["import-form"]
-        path = Path(__file__).parent / "sample_data" / "reponses.csv"
-        form["reponses"] = Upload("file.csv", path.read_bytes())
-
-        resp = form.submit().follow()
+        resp = self._upload_csv(app, "reponses.csv").follow()
 
         assert resp.status_code == 200
         assert "2 réponse(s) chargée(s) avec succès" in resp.text
@@ -69,13 +69,7 @@ class TestPostForm:
         assert amendement.user_content.objet is None
         assert amendement.user_content.reponse is None
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["import-form"]
-        path = Path(__file__).parent / "sample_data" / "reponses.csv"
-        form["reponses"] = Upload("file.csv", path.read_bytes())
-
-        form.submit().follow()
+        self._upload_csv(app, "reponses.csv")
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_content.avis == "Défavorable"
@@ -97,13 +91,7 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.position == 2
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["import-form"]
-        path = Path(__file__).parent / "sample_data" / "reponses.csv"
-        form["reponses"] = Upload("file.csv", path.read_bytes())
-
-        form.submit().follow()
+        self._upload_csv(app, "reponses.csv")
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.position == 1
@@ -117,12 +105,7 @@ class TestPostForm:
         with transaction.manager:
             initial_modified_at = lecture_an.modified_at
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["import-form"]
-        path = Path(__file__).parent / "sample_data" / "reponses.csv"
-        form["reponses"] = Upload("file.csv", path.read_bytes())
-        form.submit()
+        self._upload_csv(app, "reponses.csv")
 
         lecture = Lecture.get(
             chambre=lecture_an.chambre,
@@ -136,13 +119,7 @@ class TestPostForm:
     def test_upload_semicolumns(self, app):
         from zam_repondeur.models import DBSession, Amendement
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["import-form"]
-        path = Path(__file__).parent / "sample_data" / "reponses_semicolumns.csv"
-        form["reponses"] = Upload("file.csv", path.read_bytes())
-
-        form.submit().follow()
+        self._upload_csv(app, "reponses_semicolumns.csv")
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_content.avis == "Défavorable"
@@ -158,13 +135,7 @@ class TestPostForm:
     def test_upload_with_comments(self, app):
         from zam_repondeur.models import DBSession, Amendement
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["import-form"]
-        path = Path(__file__).parent / "sample_data" / "reponses_with_comments.csv"
-        form["reponses"] = Upload("file.csv", path.read_bytes())
-
-        form.submit().follow()
+        self._upload_csv(app, "reponses_with_comments.csv")
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_content.comments == "A comment"
@@ -175,13 +146,7 @@ class TestPostForm:
     def test_upload_with_affectation_unknown(self, app):
         from zam_repondeur.models import DBSession, Amendement
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["import-form"]
-        path = Path(__file__).parent / "sample_data" / "reponses_with_affectation.csv"
-        form["reponses"] = Upload("file.csv", path.read_bytes())
-
-        form.submit().follow()
+        self._upload_csv(app, "reponses_with_affectation.csv")
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_table.user.email == "david@larlet.fr"
@@ -196,13 +161,7 @@ class TestPostForm:
         with transaction.manager:
             DBSession.add(user_david)
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["import-form"]
-        path = Path(__file__).parent / "sample_data" / "reponses_with_affectation.csv"
-        form["reponses"] = Upload("file.csv", path.read_bytes())
-
-        form.submit().follow()
+        self._upload_csv(app, "reponses_with_affectation.csv")
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_table.user.email == "david@larlet.fr"
@@ -212,27 +171,13 @@ class TestPostForm:
         assert amendement.user_table is None
 
     def test_upload_with_bom(self, app):
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["import-form"]
-        path = Path(__file__).parent / "sample_data" / "reponses_with_bom.csv"
-        form["reponses"] = Upload("file.csv", path.read_bytes())
-
-        resp = form.submit().follow()
+        resp = self._upload_csv(app, "reponses_with_bom.csv").follow()
 
         assert resp.status_code == 200
         assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     def test_upload_wrong_columns_names(self, app):
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options", user="user@example.com"
-        ).forms["import-form"]
-        path = (
-            Path(__file__).parent / "sample_data" / "reponses_wrong_columns_names.csv"
-        )
-        form["reponses"] = Upload("file.csv", path.read_bytes())
-
-        resp = form.submit().follow()
+        resp = self._upload_csv(app, "reponses_wrong_columns_names.csv").follow()
 
         assert resp.status_code == 200
         assert (
@@ -242,10 +187,7 @@ class TestPostForm:
         )
 
     def test_upload_missing_file(self, app):
-
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["import-form"]
+        form = self._get_upload_form(app)
         resp = form.submit()
 
         assert resp.status_code == 302

@@ -30,10 +30,13 @@ def test_get_form(app):
 
 @pytest.mark.usefixtures("amendements_an", "article1_an")
 class TestPostForm:
-    def _upload_backup(self, app, filename):
-        form = app.get(
+    def _get_upload_form(self, app):
+        return app.get(
             "/lectures/an.15.269.PO717460/options/", user="user@example.com"
         ).forms["backup-form"]
+
+    def _upload_backup(self, app, filename):
+        form = self._get_upload_form(app)
         path = Path(__file__).parent / "sample_data" / filename
         form["backup"] = Upload("file.json", path.read_bytes())
         return form.submit()
@@ -192,9 +195,7 @@ class TestPostForm:
         )
 
     def test_upload_missing_file(self, app):
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["backup-form"]
+        form = self._get_upload_form(app)
 
         resp = form.submit()
 

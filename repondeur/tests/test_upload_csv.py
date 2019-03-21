@@ -135,8 +135,14 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_content.comments == ""
 
-    def test_upload_with_affectation_unknown(self, app):
+    def test_upload_with_affectation_to_unknown_user_without_team(self, app):
         from zam_repondeur.models import DBSession, Amendement
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.user_table is None
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.user_table is None
 
         self._upload_csv(app, "reponses_with_affectation.csv")
 
@@ -147,7 +153,51 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_table is None
 
-    def test_upload_with_affectation_known(self, app, user_david):
+    def test_upload_with_affectation_to_unknown_user_with_team(
+        self, app, lecture_an, user_ronan, team_zam
+    ):
+        from zam_repondeur.models import DBSession, Amendement, User
+
+        with transaction.manager:
+            lecture_an.owned_by_team = team_zam
+            user_ronan.teams.append(team_zam)
+            DBSession.add(user_ronan)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.user_table is None
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.user_table is None
+
+        user_david2 = DBSession.query(User).filter_by(email="david@larlet.fr").first()
+        assert user_david2 is None
+        assert "david@larlet.fr" not in {user.email for user in team_zam.users}
+
+        self._upload_csv(
+            app, "reponses_with_affectation.csv", user=user_ronan, team=team_zam
+        )
+
+        DBSession.add(team_zam)
+        DBSession.refresh(team_zam)
+
+        # Check the new user was created
+        user_david2 = DBSession.query(User).filter_by(email="david@larlet.fr").first()
+        assert user_david2 is not None
+        assert user_david2.email == "david@larlet.fr"
+        assert user_david2.name == "David2"
+
+        # Check the new user was added to the team
+        assert "david@larlet.fr" in {user.email for user in team_zam.users}
+        assert user_david2.teams == [team_zam]
+
+        # Check the amendement is on the new user's table
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.user_table.user is user_david2
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.user_table is None
+
+    def test_upload_with_affectation_to_known_user(self, app, user_david):
         from zam_repondeur.models import DBSession, Amendement
 
         with transaction.manager:

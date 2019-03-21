@@ -115,8 +115,11 @@ def _import_reponses_from_csv_file(
         if "Affectation (email)" in line and line["Affectation (email)"]:
             email = line["Affectation (email)"]
             user, created = get_one_or_create(User, email=User.normalize_email(email))
-            if created and line.get("Affectation (nom)"):
-                user.name = line["Affectation (nom)"]
+            if created:
+                if line.get("Affectation (nom)"):
+                    user.name = line["Affectation (nom)"]
+                if lecture.owned_by_team:
+                    user.teams.append(lecture.owned_by_team)
             table = user.table_for(lecture)
             DBSession.add(table)
             table.amendements.append(amendement)

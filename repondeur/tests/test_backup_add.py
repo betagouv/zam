@@ -30,9 +30,7 @@ def test_get_form(app):
 
 @pytest.mark.usefixtures("amendements_an", "article1_an")
 class TestPostForm:
-    def test_upload(self, app):
-        from zam_repondeur.models import DBSession, Amendement
-
+    def test_upload_redirects_to_index(self, app):
         form = app.get(
             "/lectures/an.15.269.PO717460/options/", user="user@example.com"
         ).forms["backup-form"]
@@ -46,14 +44,41 @@ class TestPostForm:
             resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
         )
 
-        resp = resp.follow()
+    def test_upload_success_message(self, app):
+        form = app.get(
+            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+        ).forms["backup-form"]
+        path = Path(__file__).parent / "sample_data" / "backup.json"
+        form["backup"] = Upload("file.json", path.read_bytes())
+
+        resp = form.submit().follow()
 
         assert resp.status_code == 200
         assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
+    def test_upload_updates_user_content(self, app):
+        from zam_repondeur.models import DBSession, Amendement
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.user_content.avis is None
+        assert amendement.user_content.objet is None
+        assert amendement.user_content.reponse is None
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.user_content.avis is None
+        assert amendement.user_content.objet is None
+        assert amendement.user_content.reponse is None
+
+        form = app.get(
+            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+        ).forms["backup-form"]
+        path = Path(__file__).parent / "sample_data" / "backup.json"
+        form["backup"] = Upload("file.json", path.read_bytes())
+
+        form.submit()
+
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_content.avis == "Défavorable"
-        assert amendement.position == 1
         assert "<strong>ipsum</strong>" in amendement.user_content.objet
         assert "<blink>amet</blink>" not in amendement.user_content.objet
 
@@ -62,6 +87,28 @@ class TestPostForm:
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_content.objet.startswith("Lorem")
+
+    def test_upload_does_not_update_position(self, app):
+        from zam_repondeur.models import DBSession, Amendement
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.position == 1
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.position == 2
+
+        form = app.get(
+            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+        ).forms["backup-form"]
+        path = Path(__file__).parent / "sample_data" / "backup.json"
+        form["backup"] = Upload("file.json", path.read_bytes())
+
+        form.submit()
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.position == 1
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.position == 2
 
     def test_upload_updates_modification_date(self, app, lecture_an):

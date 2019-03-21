@@ -30,14 +30,16 @@ def test_get_form(app):
 
 @pytest.mark.usefixtures("amendements_an", "article1_an")
 class TestPostForm:
-    def test_upload_redirects_to_index(self, app):
+    def _upload_backup(self, app, filename):
         form = app.get(
             "/lectures/an.15.269.PO717460/options/", user="user@example.com"
         ).forms["backup-form"]
-        path = Path(__file__).parent / "sample_data" / "backup.json"
+        path = Path(__file__).parent / "sample_data" / filename
         form["backup"] = Upload("file.json", path.read_bytes())
+        return form.submit()
 
-        resp = form.submit()
+    def test_upload_redirects_to_index(self, app):
+        resp = self._upload_backup(app, "backup.json")
 
         assert resp.status_code == 302
         assert (
@@ -45,13 +47,7 @@ class TestPostForm:
         )
 
     def test_upload_success_message(self, app):
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["backup-form"]
-        path = Path(__file__).parent / "sample_data" / "backup.json"
-        form["backup"] = Upload("file.json", path.read_bytes())
-
-        resp = form.submit().follow()
+        resp = self._upload_backup(app, "backup.json").follow()
 
         assert resp.status_code == 200
         assert "2 réponse(s) chargée(s) avec succès" in resp.text
@@ -69,13 +65,7 @@ class TestPostForm:
         assert amendement.user_content.objet is None
         assert amendement.user_content.reponse is None
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["backup-form"]
-        path = Path(__file__).parent / "sample_data" / "backup.json"
-        form["backup"] = Upload("file.json", path.read_bytes())
-
-        form.submit()
+        self._upload_backup(app, "backup.json")
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_content.avis == "Défavorable"
@@ -97,13 +87,7 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.position == 2
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["backup-form"]
-        path = Path(__file__).parent / "sample_data" / "backup.json"
-        form["backup"] = Upload("file.json", path.read_bytes())
-
-        form.submit()
+        self._upload_backup(app, "backup.json")
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.position == 1
@@ -117,12 +101,7 @@ class TestPostForm:
         with transaction.manager:
             initial_modified_at = lecture_an.modified_at
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["backup-form"]
-        path = Path(__file__).parent / "sample_data" / "backup.json"
-        form["backup"] = Upload("file.json", path.read_bytes())
-        form.submit()
+        self._upload_backup(app, "backup.json")
 
         lecture = Lecture.get(
             chambre=lecture_an.chambre,
@@ -136,13 +115,7 @@ class TestPostForm:
     def test_upload_backup_with_comments(self, app):
         from zam_repondeur.models import DBSession, Amendement
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["backup-form"]
-        path = Path(__file__).parent / "sample_data" / "backup_with_comments.json"
-        form["backup"] = Upload("file.json", path.read_bytes())
-
-        form.submit()
+        self._upload_backup(app, "backup_with_comments.json")
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_content.comments == "A comment"
@@ -153,13 +126,7 @@ class TestPostForm:
     def test_upload_backup_with_affectation_unknown(self, app):
         from zam_repondeur.models import DBSession, Amendement
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["backup-form"]
-        path = Path(__file__).parent / "sample_data" / "backup_with_affectation.json"
-        form["backup"] = Upload("file.json", path.read_bytes())
-
-        form.submit()
+        self._upload_backup(app, "backup_with_affectation.json")
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_table.user.email == "david@example.com"
@@ -174,13 +141,7 @@ class TestPostForm:
         with transaction.manager:
             DBSession.add(user_david)
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["backup-form"]
-        path = Path(__file__).parent / "sample_data" / "backup_with_affectation.json"
-        form["backup"] = Upload("file.json", path.read_bytes())
-
-        form.submit()
+        self._upload_backup(app, "backup_with_affectation.json")
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_table.user.email == "david@example.com"
@@ -194,13 +155,7 @@ class TestPostForm:
     def test_upload_backup_with_articles(self, app):
         from zam_repondeur.models import DBSession, Amendement
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["backup-form"]
-        path = Path(__file__).parent / "sample_data" / "backup_with_articles.json"
-        form["backup"] = Upload("file.json", path.read_bytes())
-
-        resp = form.submit().follow()
+        resp = self._upload_backup(app, "backup_with_articles.json").follow()
 
         assert resp.status_code == 200
         assert (
@@ -215,13 +170,7 @@ class TestPostForm:
     def test_upload_backup_with_articles_old(self, app):
         from zam_repondeur.models import DBSession, Amendement
 
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-        ).forms["backup-form"]
-        path = Path(__file__).parent / "sample_data" / "backup_with_articles_old.json"
-        form["backup"] = Upload("file.json", path.read_bytes())
-
-        resp = form.submit().follow()
+        resp = self._upload_backup(app, "backup_with_articles_old.json").follow()
 
         assert resp.status_code == 200
         assert (
@@ -234,13 +183,7 @@ class TestPostForm:
         assert amendement.article.user_content.presentation == "Présentation"
 
     def test_upload_response_for_unknown_amendement(self, app):
-        form = app.get(
-            "/lectures/an.15.269.PO717460/options", user="user@example.com"
-        ).forms["backup-form"]
-
-        path = Path(__file__).parent / "sample_data" / "backup_wrong_number.json"
-        form["backup"] = Upload("file.json", path.read_bytes())
-        resp = form.submit().follow()
+        resp = self._upload_backup(app, "backup_wrong_number.json").follow()
 
         assert resp.status_code == 200
         assert (

@@ -1,8 +1,9 @@
 import csv
 import io
 import logging
+from collections import Counter
 from datetime import datetime
-from typing import BinaryIO, Dict, TextIO, Tuple
+from typing import BinaryIO, Dict, TextIO
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
@@ -43,7 +44,7 @@ def import_csv(context: LectureResource, request: Request) -> Response:
         return HTTPFound(location=request.resource_url(context, "options"))
 
     try:
-        reponses_count, errors_count = _import_reponses_from_csv_file(
+        counter = _import_reponses_from_csv_file(
             request=request,
             reponses_file=request.POST["reponses"].file,
             lecture=lecture,
@@ -55,21 +56,22 @@ def import_csv(context: LectureResource, request: Request) -> Response:
         request.session.flash(Message(cls="danger", text=str(exc)))
         return HTTPFound(location=next_url)
 
-    if reponses_count:
+    if counter["reponses"]:
         request.session.flash(
             Message(
                 cls="success",
-                text=f"{reponses_count} réponse(s) chargée(s) avec succès",
+                text=f"{counter['reponses']} réponse(s) chargée(s) avec succès",
             )
         )
         lecture.modified_at = datetime.utcnow()
 
-    if errors_count:
+    if counter["reponses_errors"]:
         request.session.flash(
             Message(
                 cls="warning",
                 text=(
-                    f"{errors_count} réponse(s) n’ont pas pu être chargée(s). "
+                    f"{counter['reponses_errors']} réponse(s) "
+                    "n’ont pas pu être chargée(s). "
                     "Pour rappel, il faut que le fichier CSV contienne au moins "
                     "les noms de colonnes suivants « Num amdt », "
                     "« Avis du Gouvernement », « Objet amdt » et « Réponse »."
@@ -85,10 +87,9 @@ def _import_reponses_from_csv_file(
     reponses_file: BinaryIO,
     lecture: Lecture,
     amendements: Dict[int, Amendement],
-) -> Tuple[int, int]:
+) -> Counter:
     previous_reponse = ""
-    reponses_count = 0
-    errors_count = 0
+    counter = Counter({"reponses": 0, "reponses_errors": 0})
 
     reponses_text_file = io.TextIOWrapper(reponses_file, encoding="utf-8-sig")
 
@@ -101,20 +102,20 @@ def _import_reponses_from_csv_file(
             objet = line["Objet amdt"] or ""
             reponse = line["Réponse"] or ""
         except KeyError:
-            errors_count += 1
+            counter["reponses_errors"] += 1
             continue
 
         try:
             num = normalize_num(numero)
         except ValueError:
             logging.warning("Invalid amendement number %r", numero)
-            errors_count += 1
+            counter["reponses_errors"] += 1
             continue
 
         amendement = amendements.get(num)
         if not amendement:
             logging.warning("Could not find amendement number %r", num)
-            errors_count += 1
+            counter["reponses_errors"] += 1
             continue
 
         avis = normalize_avis(avis)
@@ -153,9 +154,9 @@ def _import_reponses_from_csv_file(
             AmendementTransfere.create(request, amendement, old, new)
 
         previous_reponse = reponse
-        reponses_count += 1
+        counter["reponses"] += 1
 
-    return reponses_count, errors_count
+    return counter
 
 
 def _guess_csv_delimiter(text_file: TextIO) -> str:

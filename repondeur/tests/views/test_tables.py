@@ -34,23 +34,6 @@ def test_tables_with_amendement(app, lecture_an, amendements_an, user_david):
     assert f'Nº&nbsp;<span class="numero">{amendements_an[1]}</span>' not in resp.text
 
 
-def test_tables_can_transfer_amendement(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        DBSession.add(amendements_an[0])
-        DBSession.add(user_david)
-        table = user_david.table_for(lecture_an)
-        table.amendements.append(amendements_an[0])
-
-    email = user_david.email
-    resp = app.get(f"/lectures/an.15.269.PO717460/tables/{email}", user=email)
-    assert (
-        f'<a href="https://zam.test/lectures/an.15.269.PO717460/transfer_amendements'
-        f'?nums={amendements_an[0]}">Transférer</a>'
-    ) in resp.text
-
-
 def test_tables_grab_amendement(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession, User
 

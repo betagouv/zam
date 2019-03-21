@@ -193,6 +193,7 @@ class TransferAmendements:
 
     @view_config(request_method="GET")
     def get(self) -> dict:
+        from_save = bool(self.request.GET.get("from_save"))
         lecture = self.context.model(joinedload("amendements"))
         my_table = self.request.user.table_for(lecture)
         amendements = [
@@ -213,6 +214,7 @@ class TransferAmendements:
             "amendements_without_table": amendements_without_table,
             "users": self.target_users,
             "from_index": int(self.from_index),
+            "from_save": from_save,
             "show_transfer_to_index": bool(amendements_with_table),
             "show_transfer_to_myself": any(
                 amendement.user_table is not my_table

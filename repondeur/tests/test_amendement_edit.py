@@ -315,9 +315,9 @@ def test_post_amendement_edit_form_and_transfer(
     resp = form.submit("save-and-transfer")
 
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/transfer_amendements?nums=999"
+    assert resp.location == (
+        "https://zam.test/lectures/an.15.269.PO717460/transfer_amendements"
+        "?nums=999&from_save=1"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()

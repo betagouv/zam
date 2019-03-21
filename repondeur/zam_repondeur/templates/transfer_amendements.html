@@ -102,9 +102,16 @@
         {% else %}
             l’amendement
         {% endif %}
+        {% if from_save %}
+            {% set amendement = amendements_with_table[0] %}
+            Nº&nbsp;<a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>
+        {% endif %}
     </h1>
     <form id="transfer-amendements" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
-        {% if amendements_with_table %}
+        {% if from_save %}
+            {% set amendement = amendements_with_table[0] %}
+            <input type="hidden" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}">
+        {% elif amendements_with_table %}
             <details open>
                 <summary>
                     {% trans count=amendements_with_table|length %}

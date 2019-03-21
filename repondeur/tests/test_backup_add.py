@@ -190,11 +190,21 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_table is None
 
-    def test_upload_backup_with_affectation_to_known_user(self, app, user_david):
+    def test_upload_updates_affectation(self, app, lecture_an, user_david, user_ronan):
         from zam_repondeur.models import DBSession, Amendement
 
         with transaction.manager:
-            DBSession.add(user_david)
+            DBSession.add_all([user_david, user_ronan])
+            amendement = (
+                DBSession.query(Amendement).filter(Amendement.num == 666).first()
+            )
+            amendement.user_table = user_ronan.table_for(lecture_an)
+
+        assert amendement.user_table.user.email == "ronan@example.com"
+        assert amendement.user_table.user.name == "Ronan"
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.user_table is None
 
         self._upload_backup(app, "backup_with_affectation.json")
 
@@ -202,7 +212,7 @@ class TestPostForm:
         assert amendement.user_table.user.email == "david@example.com"
         assert (
             amendement.user_table.user.name == "David"
-        )  # Should not override existing.
+        )  # Should not override the name of an existing user.
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_table is None

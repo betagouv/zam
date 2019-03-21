@@ -28,239 +28,249 @@ def test_get_form(app):
     assert resp.forms["import-form"].fields["upload"][0].attrs["type"] == "submit"
 
 
-def test_post_form(app, amendements_an):
-    from zam_repondeur.models import DBSession, Amendement
+@pytest.mark.usefixtures("amendements_an")
+class TestPostForm:
+    def test_upload(self, app):
+        from zam_repondeur.models import DBSession, Amendement
 
-    form = app.get(
-        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-    ).forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+        form = app.get(
+            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+        ).forms["import-form"]
+        path = Path(__file__).parent / "sample_data" / "reponses.csv"
+        form["reponses"] = Upload("file.csv", path.read_bytes())
 
-    resp = form.submit()
+        resp = form.submit()
 
-    assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
-
-    resp = resp.follow()
-
-    assert resp.status_code == 200
-    assert "2 réponse(s) chargée(s) avec succès" in resp.text
-
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.user_content.avis == "Défavorable"
-    assert amendement.position == 1
-    assert "<strong>ipsum</strong>" in amendement.user_content.objet
-    assert "<blink>amet</blink>" not in amendement.user_content.objet
-
-    assert "<i>tempor</i>" in amendement.user_content.reponse
-    assert "<u>aliqua</u>" not in amendement.user_content.reponse
-
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-    assert amendement.user_content.objet.startswith("Lorem")
-    assert amendement.position == 2
-
-
-def test_post_form_updates_modification_date(app, lecture_an, amendements_an):
-    from zam_repondeur.models import Lecture
-
-    with transaction.manager:
-        initial_modified_at = lecture_an.modified_at
-
-    form = app.get(
-        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-    ).forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
-    form.submit()
-
-    with transaction.manager:
-        lecture = Lecture.get(
-            chambre=lecture_an.chambre,
-            session=lecture_an.session,
-            num_texte=lecture_an.num_texte,
-            partie=None,
-            organe=lecture_an.organe,
+        assert resp.status_code == 302
+        assert (
+            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
         )
-        assert lecture.modified_at != initial_modified_at
 
+        resp = resp.follow()
 
-def test_post_form_semicolumns(app, amendements_an):
-    from zam_repondeur.models import DBSession, Amendement
+        assert resp.status_code == 200
+        assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
-    form = app.get(
-        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-    ).forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses_semicolumns.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.user_content.avis == "Défavorable"
+        assert amendement.position == 1
+        assert "<strong>ipsum</strong>" in amendement.user_content.objet
+        assert "<blink>amet</blink>" not in amendement.user_content.objet
 
-    resp = form.submit()
+        assert "<i>tempor</i>" in amendement.user_content.reponse
+        assert "<u>aliqua</u>" not in amendement.user_content.reponse
 
-    assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.user_content.objet.startswith("Lorem")
+        assert amendement.position == 2
 
-    resp = resp.follow()
+    def test_upload_updates_modification_date(self, app, lecture_an):
+        from zam_repondeur.models import Lecture
 
-    assert resp.status_code == 200
-    assert "2 réponse(s) chargée(s) avec succès" in resp.text
+        with transaction.manager:
+            initial_modified_at = lecture_an.modified_at
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.user_content.avis == "Défavorable"
-    assert amendement.position == 1
-    assert "<strong>ipsum</strong>" in amendement.user_content.objet
-    assert "<blink>amet</blink>" not in amendement.user_content.objet
+        form = app.get(
+            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+        ).forms["import-form"]
+        path = Path(__file__).parent / "sample_data" / "reponses.csv"
+        form["reponses"] = Upload("file.csv", path.read_bytes())
+        form.submit()
 
-    assert "<i>tempor</i>" in amendement.user_content.reponse
-    assert "<u>aliqua</u>" not in amendement.user_content.reponse
+        with transaction.manager:
+            lecture = Lecture.get(
+                chambre=lecture_an.chambre,
+                session=lecture_an.session,
+                num_texte=lecture_an.num_texte,
+                partie=None,
+                organe=lecture_an.organe,
+            )
+            assert lecture.modified_at != initial_modified_at
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-    assert amendement.user_content.objet.startswith("Lorem")
-    assert amendement.position == 2
+    def test_upload_semicolumns(self, app):
+        from zam_repondeur.models import DBSession, Amendement
 
+        form = app.get(
+            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+        ).forms["import-form"]
+        path = Path(__file__).parent / "sample_data" / "reponses_semicolumns.csv"
+        form["reponses"] = Upload("file.csv", path.read_bytes())
 
-def test_post_form_with_comments(app, amendements_an):
-    from zam_repondeur.models import DBSession, Amendement
+        resp = form.submit()
 
-    form = app.get(
-        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-    ).forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses_with_comments.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+        assert resp.status_code == 302
+        assert (
+            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+        )
 
-    resp = form.submit()
+        resp = resp.follow()
 
-    assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+        assert resp.status_code == 200
+        assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
-    resp = resp.follow()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.user_content.avis == "Défavorable"
+        assert amendement.position == 1
+        assert "<strong>ipsum</strong>" in amendement.user_content.objet
+        assert "<blink>amet</blink>" not in amendement.user_content.objet
 
-    assert resp.status_code == 200
-    assert "2 réponse(s) chargée(s) avec succès" in resp.text
+        assert "<i>tempor</i>" in amendement.user_content.reponse
+        assert "<u>aliqua</u>" not in amendement.user_content.reponse
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.position == 1
-    assert amendement.user_content.comments == "A comment"
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.user_content.objet.startswith("Lorem")
+        assert amendement.position == 2
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-    assert amendement.position == 2
-    assert amendement.user_content.comments == ""
+    def test_upload_with_comments(self, app):
+        from zam_repondeur.models import DBSession, Amendement
 
+        form = app.get(
+            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+        ).forms["import-form"]
+        path = Path(__file__).parent / "sample_data" / "reponses_with_comments.csv"
+        form["reponses"] = Upload("file.csv", path.read_bytes())
 
-def test_post_form_with_affectation_unknown(app, amendements_an):
-    from zam_repondeur.models import DBSession, Amendement
+        resp = form.submit()
 
-    form = app.get(
-        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-    ).forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses_with_affectation.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+        assert resp.status_code == 302
+        assert (
+            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+        )
 
-    resp = form.submit()
+        resp = resp.follow()
 
-    assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+        assert resp.status_code == 200
+        assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
-    resp = resp.follow()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.position == 1
+        assert amendement.user_content.comments == "A comment"
 
-    assert resp.status_code == 200
-    assert "2 réponse(s) chargée(s) avec succès" in resp.text
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.position == 2
+        assert amendement.user_content.comments == ""
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.position == 1
-    assert amendement.user_table.user.email == "david@larlet.fr"
-    assert amendement.user_table.user.name == "David2"
+    def test_upload_with_affectation_unknown(self, app):
+        from zam_repondeur.models import DBSession, Amendement
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-    assert amendement.position == 2
-    assert amendement.user_table is None
+        form = app.get(
+            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+        ).forms["import-form"]
+        path = Path(__file__).parent / "sample_data" / "reponses_with_affectation.csv"
+        form["reponses"] = Upload("file.csv", path.read_bytes())
 
+        resp = form.submit()
 
-def test_post_form_with_affectation_known(app, amendements_an, user_david):
-    from zam_repondeur.models import DBSession, Amendement
+        assert resp.status_code == 302
+        assert (
+            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+        )
 
-    with transaction.manager:
-        DBSession.add(user_david)
+        resp = resp.follow()
 
-    form = app.get(
-        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-    ).forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses_with_affectation.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+        assert resp.status_code == 200
+        assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
-    resp = form.submit()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.position == 1
+        assert amendement.user_table.user.email == "david@larlet.fr"
+        assert amendement.user_table.user.name == "David2"
 
-    assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.position == 2
+        assert amendement.user_table is None
 
-    resp = resp.follow()
+    def test_upload_with_affectation_known(self, app, user_david):
+        from zam_repondeur.models import DBSession, Amendement
 
-    assert resp.status_code == 200
-    assert "2 réponse(s) chargée(s) avec succès" in resp.text
+        with transaction.manager:
+            DBSession.add(user_david)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-    assert amendement.position == 1
-    assert amendement.user_table.user.email == "david@larlet.fr"
-    assert amendement.user_table.user.name == "David2"
+        form = app.get(
+            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+        ).forms["import-form"]
+        path = Path(__file__).parent / "sample_data" / "reponses_with_affectation.csv"
+        form["reponses"] = Upload("file.csv", path.read_bytes())
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-    assert amendement.position == 2
-    assert amendement.user_table is None
+        resp = form.submit()
 
+        assert resp.status_code == 302
+        assert (
+            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+        )
 
-def test_post_form_with_bom(app, amendements_an):
-    form = app.get(
-        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-    ).forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses_with_bom.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+        resp = resp.follow()
 
-    resp = form.submit()
+        assert resp.status_code == 200
+        assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
-    assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.position == 1
+        assert amendement.user_table.user.email == "david@larlet.fr"
+        assert amendement.user_table.user.name == "David2"
 
-    resp = resp.follow()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.position == 2
+        assert amendement.user_table is None
 
-    assert resp.status_code == 200
-    assert "2 réponse(s) chargée(s) avec succès" in resp.text
+    def test_upload_with_bom(self, app):
+        form = app.get(
+            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+        ).forms["import-form"]
+        path = Path(__file__).parent / "sample_data" / "reponses_with_bom.csv"
+        form["reponses"] = Upload("file.csv", path.read_bytes())
 
+        resp = form.submit()
 
-def test_post_form_wrong_columns_names(app, amendements_an):
-    form = app.get(
-        "/lectures/an.15.269.PO717460/options", user="user@example.com"
-    ).forms["import-form"]
-    path = Path(__file__).parent / "sample_data" / "reponses_wrong_columns_names.csv"
-    form["reponses"] = Upload("file.csv", path.read_bytes())
+        assert resp.status_code == 302
+        assert (
+            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+        )
 
-    resp = form.submit()
+        resp = resp.follow()
 
-    assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+        assert resp.status_code == 200
+        assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
-    resp = resp.follow()
+    def test_upload_wrong_columns_names(self, app):
+        form = app.get(
+            "/lectures/an.15.269.PO717460/options", user="user@example.com"
+        ).forms["import-form"]
+        path = (
+            Path(__file__).parent / "sample_data" / "reponses_wrong_columns_names.csv"
+        )
+        form["reponses"] = Upload("file.csv", path.read_bytes())
 
-    assert resp.status_code == 200
-    assert (
-        "2 réponse(s) n’ont pas pu être chargée(s). Pour rappel, il faut que le "
-        "fichier CSV contienne au moins les noms de colonnes suivants « Num amdt », "
-        "« Avis du Gouvernement », « Objet amdt » et « Réponse »." in resp.text
-    )
+        resp = form.submit()
 
+        assert resp.status_code == 302
+        assert (
+            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+        )
 
-def test_post_form_reponse_no_file(app, amendements_an):
+        resp = resp.follow()
 
-    form = app.get(
-        "/lectures/an.15.269.PO717460/options/", user="user@example.com"
-    ).forms["import-form"]
-    resp = form.submit()
+        assert resp.status_code == 200
+        assert (
+            "2 réponse(s) n’ont pas pu être chargée(s). Pour rappel, il faut que le "
+            "fichier CSV contienne au moins les noms de colonnes suivants « Num amdt »"
+            ", « Avis du Gouvernement », « Objet amdt » et « Réponse »." in resp.text
+        )
 
-    assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/options"
+    def test_upload_reponse_no_file(self, app):
 
-    resp = resp.follow()
+        form = app.get(
+            "/lectures/an.15.269.PO717460/options/", user="user@example.com"
+        ).forms["import-form"]
+        resp = form.submit()
 
-    assert resp.status_code == 200
-    assert "Veuillez d’abord sélectionner un fichier" in resp.text
+        assert resp.status_code == 302
+        assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/options"
+
+        resp = resp.follow()
+
+        assert resp.status_code == 200
+        assert "Veuillez d’abord sélectionner un fichier" in resp.text
 
 
 def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):

@@ -28,6 +28,9 @@ def test_get_form(app):
     assert resp.forms["import-form"].fields["upload"][0].attrs["type"] == "submit"
 
 
+TEST_FILES = ["reponses.csv", "reponses_semicolumns.csv", "reponses_with_bom.csv"]
+
+
 @pytest.mark.usefixtures("amendements_an")
 class TestPostForm:
     def _get_upload_form(self, app, user="user@example.com", headers=None):
@@ -42,21 +45,24 @@ class TestPostForm:
         form["reponses"] = Upload("file.csv", path.read_bytes())
         return form.submit(user=user, headers=headers)
 
-    def test_upload_redirects_to_index(self, app):
-        resp = self._upload_csv(app, "reponses.csv")
+    @pytest.mark.parametrize("filename", TEST_FILES)
+    def test_upload_redirects_to_index(self, app, filename):
+        resp = self._upload_csv(app, filename)
 
         assert resp.status_code == 302
         assert (
             resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
         )
 
-    def test_upload_success_message(self, app):
-        resp = self._upload_csv(app, "reponses.csv").follow()
+    @pytest.mark.parametrize("filename", TEST_FILES)
+    def test_upload_success_message(self, app, filename):
+        resp = self._upload_csv(app, filename).follow()
 
         assert resp.status_code == 200
         assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
-    def test_upload_updates_user_content(self, app):
+    @pytest.mark.parametrize("filename", TEST_FILES)
+    def test_upload_updates_user_content(self, app, filename):
         from zam_repondeur.models import DBSession, Amendement
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
@@ -69,7 +75,7 @@ class TestPostForm:
         assert amendement.user_content.objet is None
         assert amendement.user_content.reponse is None
 
-        self._upload_csv(app, "reponses.csv")
+        self._upload_csv(app, filename)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_content.avis == "Défavorable"
@@ -82,7 +88,8 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_content.objet.startswith("Lorem")
 
-    def test_upload_does_not_update_position(self, app):
+    @pytest.mark.parametrize("filename", TEST_FILES)
+    def test_upload_does_not_update_position(self, app, filename):
         from zam_repondeur.models import DBSession, Amendement
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
@@ -91,7 +98,7 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.position == 2
 
-        self._upload_csv(app, "reponses.csv")
+        self._upload_csv(app, filename)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.position == 1
@@ -99,13 +106,14 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.position == 2
 
-    def test_upload_updates_modification_date(self, app, lecture_an):
+    @pytest.mark.parametrize("filename", TEST_FILES)
+    def test_upload_updates_modification_date(self, app, lecture_an, filename):
         from zam_repondeur.models import Lecture
 
         with transaction.manager:
             initial_modified_at = lecture_an.modified_at
 
-        self._upload_csv(app, "reponses.csv")
+        self._upload_csv(app, filename)
 
         lecture = Lecture.get(
             chambre=lecture_an.chambre,
@@ -115,22 +123,6 @@ class TestPostForm:
             organe=lecture_an.organe,
         )
         assert lecture.modified_at != initial_modified_at
-
-    def test_upload_semicolumns(self, app):
-        from zam_repondeur.models import DBSession, Amendement
-
-        self._upload_csv(app, "reponses_semicolumns.csv")
-
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.user_content.avis == "Défavorable"
-        assert "<strong>ipsum</strong>" in amendement.user_content.objet
-        assert "<blink>amet</blink>" not in amendement.user_content.objet
-
-        assert "<i>tempor</i>" in amendement.user_content.reponse
-        assert "<u>aliqua</u>" not in amendement.user_content.reponse
-
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-        assert amendement.user_content.objet.startswith("Lorem")
 
     def test_upload_with_comments(self, app):
         from zam_repondeur.models import DBSession, Amendement
@@ -169,12 +161,6 @@ class TestPostForm:
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_table is None
-
-    def test_upload_with_bom(self, app):
-        resp = self._upload_csv(app, "reponses_with_bom.csv").follow()
-
-        assert resp.status_code == 200
-        assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
     def test_upload_wrong_columns_names(self, app):
         resp = self._upload_csv(app, "reponses_wrong_columns_names.csv").follow()

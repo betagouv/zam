@@ -4,7 +4,7 @@ from pyramid.request import Request
 from zam_repondeur.models import Amendement, Lecture
 
 
-EXCLUDED_FIELDS = {"pk", "first_identique_num"}
+EXCLUDED_FIELDS = {"first_identique_num"}
 
 
 def write_json(lecture: Lecture, filename: str, request: Request) -> int:

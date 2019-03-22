@@ -441,7 +441,6 @@ class Amendement(Base):
         result: Dict[str, Union[str, int, date]] = {
             "num": self.num,
             "rectif": self.rectif or "",
-            "pk": f"{self.num:06}",
             "sort": self.sort or "",
             "matricule": self.matricule or "",
             "gouvernemental": self.gouvernemental,

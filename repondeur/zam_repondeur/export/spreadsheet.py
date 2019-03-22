@@ -12,10 +12,12 @@ from zam_repondeur.models import Amendement, Lecture
 from .common import EXCLUDED_FIELDS
 
 
+SPREADSHEET_EXCLUDED_FIELDS = EXCLUDED_FIELDS | {"id_identique"}
+
 FIELDS = [
     field
     for field in Amendement.__table__.columns.keys()
-    if field not in EXCLUDED_FIELDS
+    if field not in SPREADSHEET_EXCLUDED_FIELDS
 ] + [
     "avis",
     "objet",
@@ -32,6 +34,7 @@ FIELDS = [
     "session",
     "affectation_email",
     "affectation_name",
+    "first_identique_num",
 ]
 
 
@@ -44,7 +47,6 @@ FIELD_TO_COLUMN_NAME = {
     "auteur": "Auteur",
     "date_depot": "Date de dépôt",
     "id_discussion_commune": "Identifiant discussion commune",
-    "id_identique": "Identifiant identique",
     "parent": "Parent (sous-amdt)",
     "corps": "Corps amdt",
     "expose": "Exposé amdt",
@@ -54,6 +56,7 @@ FIELD_TO_COLUMN_NAME = {
     "avis": "Avis du Gouvernement",
     "affectation_email": "Affectation (email)",
     "affectation_name": "Affectation (nom)",
+    "first_identique_num": "Identique",
 }
 
 
@@ -134,7 +137,7 @@ def export_amendement_for_spreadsheet(amendement: Amendement) -> dict:
     for field_name in HTML_FIELDS:
         if data[field_name] is not None:
             data[field_name] = html_to_text(data[field_name])
-    for excluded_field in EXCLUDED_FIELDS:
+    for excluded_field in SPREADSHEET_EXCLUDED_FIELDS:
         if excluded_field in data.keys():
             del data[excluded_field]
     return {k: convert_boolean(v) for k, v in data.items()}

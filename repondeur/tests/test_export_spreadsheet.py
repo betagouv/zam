@@ -105,3 +105,41 @@ def test_export_csv_with_gouvernemental(lecture_an, article1_an, tmpdir):
         assert amendement1["Gouvernemental"] == "Oui"
         amendement2 = next(reader)
         assert amendement2["Gouvernemental"] == "Non"
+
+
+def test_export_csv_with_identique(lecture_an, article1_an, tmpdir):
+    from zam_repondeur.export.spreadsheet import write_csv
+    from zam_repondeur.models import DBSession, Amendement
+
+    filename = str(tmpdir.join("test.csv"))
+
+    amendements = [
+        Amendement.create(
+            lecture=lecture_an,
+            article=article1_an,
+            num=num,
+            position=position,
+            avis="Favorable",
+            objet="Un objet très pertinent",
+            reponse="Une réponse très appropriée",
+            comments="Avec des commentaires",
+        )
+        for position, num in enumerate((333, 444, 777), 1)
+    ]
+    amendements[0].id_identique = 42
+    amendements[1].id_identique = 42
+    DBSession.add_all(amendements)
+    DBSession.add(lecture_an)
+
+    nb_rows = write_csv(lecture_an, filename, request={})
+
+    assert nb_rows == 3
+
+    with Path(filename).open(encoding="utf-8-sig") as csv_file:
+        reader = csv.DictReader(csv_file, delimiter=";")
+        amendement1 = next(reader)
+        assert amendement1["Identique"] == "333"
+        amendement2 = next(reader)
+        assert amendement2["Identique"] == "333"
+        amendement3 = next(reader)
+        assert amendement3["Identique"] == ""

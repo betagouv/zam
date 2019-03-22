@@ -5,7 +5,6 @@ from typing import Dict
 from pyramid.request import Request
 
 from zam_repondeur.clean import clean_html
-from zam_repondeur.export.spreadsheet import FIELDS_NAMES as ATTR_TO_CSV_COLUMN
 from zam_repondeur.models import DBSession, Amendement, Lecture, User, get_one_or_create
 from zam_repondeur.models.events.amendement import (
     AmendementTransfere,
@@ -17,24 +16,14 @@ from zam_repondeur.models.events.amendement import (
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 
-CSV_COLUMN_TO_ATTR = {col: attr for attr, col in ATTR_TO_CSV_COLUMN.items()}
-
-
 def import_amendement(
     request: Request,
     lecture: Lecture,
     amendements: Dict[int, Amendement],
-    source: dict,
+    item: dict,
     counter: Counter,
     previous_reponse: str,
 ) -> None:
-    # Duplicates the values to only deal with one set of keys:
-    # they differ depending on the import (CSV => French, JSON => short_ids).
-    item = source.copy()
-    for name, value in source.items():
-        if name in CSV_COLUMN_TO_ATTR:
-            item[CSV_COLUMN_TO_ATTR[name]] = value
-
     try:
         numero = item["num"]
         avis = item["avis"] or ""

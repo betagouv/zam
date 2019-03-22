@@ -9,9 +9,11 @@ from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config
 
+from zam_repondeur.export.spreadsheet import column_name_to_field
 from zam_repondeur.message import Message
 from zam_repondeur.models import Amendement, Lecture
 from zam_repondeur.resources import LectureResource
+
 from .import_amendement import import_amendement
 
 
@@ -87,8 +89,13 @@ def _import_reponses_from_csv_file(
     delimiter = _guess_csv_delimiter(reponses_text_file)
 
     for line in csv.DictReader(reponses_text_file, delimiter=delimiter):
+        item = {
+            column_name_to_field(column_name): value
+            for column_name, value in line.items()
+            if column_name is not None
+        }
         import_amendement(
-            request, lecture, amendements, line, counter, previous_reponse
+            request, lecture, amendements, item, counter, previous_reponse
         )
 
     return counter

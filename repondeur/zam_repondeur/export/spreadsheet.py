@@ -1,5 +1,5 @@
 import csv
-from typing import Iterable
+from typing import Iterable, Optional
 
 from openpyxl import Workbook
 from openpyxl.styles import Color, Font, PatternFill
@@ -34,7 +34,7 @@ FIELDS = [
 ]
 
 
-FIELDS_NAMES = {
+FIELD_TO_COLUMN_NAME = {
     "article": "Num article",
     "article_titre": "Titre article",
     "article_order": "Ordre article",
@@ -56,11 +56,18 @@ FIELDS_NAMES = {
 }
 
 
-def rename_field(field_name: str) -> str:
-    return FIELDS_NAMES.get(field_name, field_name.capitalize())
+def field_to_column_name(field_name: str) -> str:
+    return FIELD_TO_COLUMN_NAME.get(field_name, field_name.capitalize())
 
 
-HEADERS = [rename_field(field_name) for field_name in FIELDS]
+COLUMN_NAME_TO_FIELD = {col: attr for attr, col in FIELD_TO_COLUMN_NAME.items()}
+
+
+def column_name_to_field(column_name: str) -> Optional[str]:
+    return COLUMN_NAME_TO_FIELD.get(column_name)
+
+
+HEADERS = [field_to_column_name(field_name) for field_name in FIELDS]
 
 
 DARK_BLUE = Color(rgb="00182848")
@@ -106,7 +113,9 @@ def _write_xslsx_header_row(ws: Worksheet) -> None:
 def _write_xlsx_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> int:
     nb_rows = 0
     for amend in amendements:
-        amend_dict = {rename_field(k): v for k, v in export_amendement(amend).items()}
+        amend_dict = {
+            field_to_column_name(k): v for k, v in export_amendement(amend).items()
+        }
         for column, value in enumerate(HEADERS, 1):
             cell = ws.cell(row=nb_rows + 2, column=column)
             cell.value = amend_dict[value]

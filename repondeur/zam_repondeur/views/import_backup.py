@@ -1,4 +1,3 @@
-import logging
 from collections import Counter
 from datetime import datetime
 from typing import BinaryIO, Dict
@@ -13,7 +12,7 @@ from sqlalchemy.orm import joinedload
 from zam_repondeur.message import Message
 from zam_repondeur.models import Amendement, Article, Lecture
 from zam_repondeur.resources import LectureResource
-from .import_amendement import import_amendement
+from .import_items import import_amendement, import_article
 
 
 @view_config(context=LectureResource, name="import_backup", request_method="POST")
@@ -87,24 +86,6 @@ def _import_backup_from_json_file(
         )
 
     for item in backup.get("articles", []):
-        try:
-            sort_key_as_str = item["sort_key_as_str"]
-        except KeyError:
-            counter["articles_errors"] += 1
-            continue
-
-        article = articles.get(sort_key_as_str)
-        if not article:
-            logging.warning("Could not find article %r", item)
-            counter["articles_errors"] += 1
-            continue
-
-        if "title" in item:
-            article.user_content.title = item["title"]
-        elif "titre" in item:  # To handle old backups.
-            article.user_content.title = item["titre"]
-        if "presentation" in item:
-            article.user_content.presentation = item["presentation"]
-        counter["articles"] += 1
+        import_article(request, lecture, articles, item, counter)
 
     return counter

@@ -5,6 +5,7 @@ from typing import Dict
 from pyramid.request import Request
 
 from zam_repondeur.clean import clean_html
+from zam_repondeur.export.spreadsheet import FIELDS_NAMES as ATTR_TO_CSV_COLUMN
 from zam_repondeur.models import DBSession, Amendement, Lecture, User, get_one_or_create
 from zam_repondeur.models.events.amendement import (
     AmendementTransfere,
@@ -14,7 +15,6 @@ from zam_repondeur.models.events.amendement import (
     CommentsAmendementModifie,
 )
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
-from zam_repondeur.writer import FIELDS_NAMES as ATTR_TO_CSV_COLUMN
 
 
 CSV_COLUMN_TO_ATTR = {col: attr for attr, col in ATTR_TO_CSV_COLUMN.items()}

@@ -298,8 +298,8 @@ class TestPostForm:
 
 
 def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
+    from zam_repondeur.export.json import write_json
     from zam_repondeur.models import DBSession, Amendement, Article
-    from zam_repondeur.writer import write_json
 
     filename = str(tmpdir.join("test.json"))
 

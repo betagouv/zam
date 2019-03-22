@@ -270,8 +270,8 @@ class TestPostForm:
 
 
 def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
+    from zam_repondeur.export.spreadsheet import write_csv
     from zam_repondeur.models import DBSession, Amendement
-    from zam_repondeur.writer import write_csv
 
     filename = str(tmpdir.join("test.csv"))
 

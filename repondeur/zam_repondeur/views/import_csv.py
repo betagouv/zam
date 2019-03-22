@@ -1,19 +1,20 @@
 import csv
 import io
-import logging
+from collections import Counter
 from datetime import datetime
-from typing import BinaryIO, Dict, TextIO, Tuple
+from typing import BinaryIO, Dict, TextIO
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config
 
-from zam_repondeur.clean import clean_html
+from zam_repondeur.export.spreadsheet import column_name_to_field
 from zam_repondeur.message import Message
-from zam_repondeur.models import Amendement
+from zam_repondeur.models import Amendement, Lecture
 from zam_repondeur.resources import LectureResource
-from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
+
+from .import_amendement import import_amendement
 
 
 class CSVError(Exception):
@@ -36,8 +37,10 @@ def import_csv(context: LectureResource, request: Request) -> Response:
         return HTTPFound(location=request.resource_url(context, "options"))
 
     try:
-        reponses_count, errors_count = _import_reponses_from_csv_file(
+        counter = _import_reponses_from_csv_file(
+            request=request,
             reponses_file=request.POST["reponses"].file,
+            lecture=lecture,
             amendements={
                 amendement.num: amendement for amendement in lecture.amendements
             },
@@ -46,21 +49,22 @@ def import_csv(context: LectureResource, request: Request) -> Response:
         request.session.flash(Message(cls="danger", text=str(exc)))
         return HTTPFound(location=next_url)
 
-    if reponses_count:
+    if counter["reponses"]:
         request.session.flash(
             Message(
                 cls="success",
-                text=f"{reponses_count} réponse(s) chargée(s) avec succès",
+                text=f"{counter['reponses']} réponse(s) chargée(s) avec succès",
             )
         )
         lecture.modified_at = datetime.utcnow()
 
-    if errors_count:
+    if counter["reponses_errors"]:
         request.session.flash(
             Message(
                 cls="warning",
                 text=(
-                    f"{errors_count} réponse(s) n’ont pas pu être chargée(s). "
+                    f"{counter['reponses_errors']} réponse(s) "
+                    "n’ont pas pu être chargée(s). "
                     "Pour rappel, il faut que le fichier CSV contienne au moins "
                     "les noms de colonnes suivants « Num amdt », "
                     "« Avis du Gouvernement », « Objet amdt » et « Réponse »."
@@ -72,49 +76,29 @@ def import_csv(context: LectureResource, request: Request) -> Response:
 
 
 def _import_reponses_from_csv_file(
-    reponses_file: BinaryIO, amendements: Dict[int, Amendement]
-) -> Tuple[int, int]:
+    request: Request,
+    reponses_file: BinaryIO,
+    lecture: Lecture,
+    amendements: Dict[int, Amendement],
+) -> Counter:
     previous_reponse = ""
-    reponses_count = 0
-    errors_count = 0
+    counter = Counter({"reponses": 0, "reponses_errors": 0})
 
     reponses_text_file = io.TextIOWrapper(reponses_file, encoding="utf-8-sig")
 
     delimiter = _guess_csv_delimiter(reponses_text_file)
 
     for line in csv.DictReader(reponses_text_file, delimiter=delimiter):
-        try:
-            numero = line["Num amdt"]
-            avis = line["Avis du Gouvernement"] or ""
-            objet = line["Objet amdt"] or ""
-            reponse = line["Réponse"] or ""
-        except KeyError:
-            errors_count += 1
-            continue
+        item = {
+            column_name_to_field(column_name): value
+            for column_name, value in line.items()
+            if column_name is not None
+        }
+        import_amendement(
+            request, lecture, amendements, item, counter, previous_reponse
+        )
 
-        try:
-            num = normalize_num(numero)
-        except ValueError:
-            logging.warning("Invalid amendement number %r", numero)
-            errors_count += 1
-            continue
-
-        amendement = amendements.get(num)
-        if not amendement:
-            logging.warning("Could not find amendement number %r", num)
-            errors_count += 1
-            continue
-
-        amendement.user_content.avis = normalize_avis(avis)
-        amendement.user_content.objet = clean_html(objet)
-        reponse = normalize_reponse(reponse, previous_reponse)
-        amendement.user_content.reponse = clean_html(reponse)
-        if "Commentaires" in line:
-            amendement.user_content.comments = clean_html(line["Commentaires"])
-        previous_reponse = reponse
-        reponses_count += 1
-
-    return reponses_count, errors_count
+    return counter
 
 
 def _guess_csv_delimiter(text_file: TextIO) -> str:

@@ -11,9 +11,9 @@ from pyramid.view import view_config
 from sqlalchemy.orm import joinedload
 
 from zam_repondeur.message import Message
-from zam_repondeur.models import Amendement, Article
+from zam_repondeur.models import Amendement, Article, Lecture
 from zam_repondeur.resources import LectureResource
-from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
+from .import_amendement import import_amendement
 
 
 @view_config(context=LectureResource, name="import_backup", request_method="POST")
@@ -33,7 +33,9 @@ def import_backup(context: LectureResource, request: Request) -> Response:
 
     try:
         counter = _import_backup_from_json_file(
+            request=request,
             backup_file=request.POST["backup"].file,
+            lecture=lecture,
             amendements={
                 amendement.num: amendement for amendement in lecture.amendements
             },
@@ -67,7 +69,9 @@ def import_backup(context: LectureResource, request: Request) -> Response:
 
 
 def _import_backup_from_json_file(
+    request: Request,
     backup_file: BinaryIO,
+    lecture: Lecture,
     amendements: Dict[int, Amendement],
     articles: Dict[int, Article],
 ) -> Counter:
@@ -78,36 +82,9 @@ def _import_backup_from_json_file(
     backup = json.loads(backup_file.read().decode("utf-8-sig"))
 
     for item in backup.get("amendements", []):
-        try:
-            numero = item["num"]
-            avis = item["avis"] or ""
-            objet = item["objet"] or ""
-            reponse = item["reponse"] or ""
-        except KeyError:
-            counter["reponses_errors"] += 1
-            continue
-
-        try:
-            num = normalize_num(numero)
-        except ValueError:
-            logging.warning("Invalid amendement number %r", numero)
-            counter["reponses_errors"] += 1
-            continue
-
-        amendement = amendements.get(num)
-        if not amendement:
-            logging.warning("Could not find amendement number %r", num)
-            counter["reponses_errors"] += 1
-            continue
-
-        amendement.user_content.avis = normalize_avis(avis)
-        amendement.user_content.objet = objet
-        reponse = normalize_reponse(reponse, previous_reponse)
-        amendement.user_content.reponse = reponse
-        if "comments" in item:
-            amendement.user_content.comments = item["comments"]
-        previous_reponse = reponse
-        counter["reponses"] += 1
+        import_amendement(
+            request, lecture, amendements, item, counter, previous_reponse
+        )
 
     for item in backup.get("articles", []):
         try:

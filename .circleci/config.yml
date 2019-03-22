@@ -3,7 +3,13 @@ workflows:
   version: 2
   all:
     jobs:
-      - repondeur
+      - repondeur:
+          filters:
+            branches:
+              ignore:
+                # ignore branches created by autorebase https://github.com/tibdex/autorebase
+                - /rebase-pull-request-.*/
+                - /cherry-pick-rebase-pull-request-.*/
 jobs:
   repondeur:
     docker:

@@ -395,6 +395,17 @@ class Amendement(Base):
         )
 
     @property
+    def first_identique_num(self) -> Optional[int]:
+        if self.id_identique is None:
+            return None
+        amdt: Amendement = sorted(
+            amendement
+            for amendement in self.article.amendements
+            if amendement.id_identique == self.id_identique
+        )[0]
+        return amdt.num
+
+    @property
     def displayable_identiques(self) -> List["Amendement"]:
         return [
             amendement
@@ -430,7 +441,6 @@ class Amendement(Base):
         result: Dict[str, Union[str, int, date]] = {
             "num": self.num,
             "rectif": self.rectif or "",
-            "pk": f"{self.num:06}",
             "sort": self.sort or "",
             "matricule": self.matricule or "",
             "gouvernemental": self.gouvernemental,
@@ -454,6 +464,7 @@ class Amendement(Base):
             "position": self.position or "",
             "id_discussion_commune": self.id_discussion_commune or "",
             "id_identique": self.id_identique or "",
+            "first_identique_num": self.first_identique_num or "",
             "alinea": self.alinea or "",
             "date_depot": self.date_depot or "",
             "affectation_email": self.user_table and self.user_table.user.email or "",

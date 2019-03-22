@@ -1,6 +1,7 @@
 import csv
-from typing import Iterable, Optional
+from typing import Any, Iterable, Optional
 
+from inscriptis import get_text
 from openpyxl import Workbook
 from openpyxl.styles import Color, Font, PatternFill
 from openpyxl.worksheet import Worksheet
@@ -8,70 +9,41 @@ from pyramid.request import Request
 
 from zam_repondeur.models import Amendement, Lecture
 
-from .common import EXCLUDED_FIELDS, export_amendement
 
-
-FIELDS = [
-    field
-    for field in Amendement.__table__.columns.keys()
-    if field not in EXCLUDED_FIELDS
-] + [
-    "avis",
-    "objet",
-    "reponse",
-    "comments",
-    "article",
-    "article_titre",
-    "article_order",
-    "parent",
-    "gouvernemental",
-    "chambre",
-    "num_texte",
-    "organe",
-    "session",
-    "affectation_email",
-    "affectation_name",
-]
-
-
-FIELD_TO_COLUMN_NAME = {
+# NB: dict key order is used for spreadsheet columns order (Python 3.6+)
+FIELDS = {
     "article": "Num article",
     "article_titre": "Titre article",
-    "article_order": "Ordre article",
-    "alinea": "Alinéa",
     "num": "Num amdt",
-    "auteur": "Auteur(s)",
-    "date_depot": "Date de dépôt",
-    "id_discussion_commune": "Identifiant discussion commune",
-    "id_identique": "Identifiant identique",
-    "parent": "Parent",
+    "rectif": "Rectif",
+    "parent": "Parent (sous-amdt)",
+    "auteur": "Auteur",
+    "groupe": "Groupe",
+    "gouvernemental": "Gouvernemental",
     "corps": "Corps amdt",
     "expose": "Exposé amdt",
+    "first_identique_num": "Identique",
+    "avis": "Avis du Gouvernement",
     "objet": "Objet amdt",
     "reponse": "Réponse",
     "comments": "Commentaires",
-    "avis": "Avis du Gouvernement",
     "affectation_email": "Affectation (email)",
     "affectation_name": "Affectation (nom)",
+    "sort": "Sort",
 }
 
 
-def field_to_column_name(field_name: str) -> str:
-    return FIELD_TO_COLUMN_NAME.get(field_name, field_name.capitalize())
-
-
-COLUMN_NAME_TO_FIELD = {col: attr for attr, col in FIELD_TO_COLUMN_NAME.items()}
+COLUMN_NAME_TO_FIELD = {col: attr for attr, col in FIELDS.items()}
 
 
 def column_name_to_field(column_name: str) -> Optional[str]:
     return COLUMN_NAME_TO_FIELD.get(column_name)
 
 
-HEADERS = [field_to_column_name(field_name) for field_name in FIELDS]
+HEADERS = FIELDS.values()
 
 
-DARK_BLUE = Color(rgb="00182848")
-WHITE = Color(rgb="00FFFFFF")
+HTML_FIELDS = ["corps", "expose", "objet", "reponse", "comments"]
 
 
 def write_csv(lecture: Lecture, filename: str, request: Request) -> int:
@@ -80,15 +52,19 @@ def write_csv(lecture: Lecture, filename: str, request: Request) -> int:
         file_.write(";".join(HEADERS) + "\n")
         writer = csv.DictWriter(
             file_,
-            fieldnames=FIELDS,
+            fieldnames=list(FIELDS.keys()),
             delimiter=";",
             quoting=csv.QUOTE_MINIMAL,
             lineterminator="\n",
         )
         for amendement in sorted(lecture.amendements):
-            writer.writerow(export_amendement(amendement))
+            writer.writerow(export_amendement_for_spreadsheet(amendement))
             nb_rows += 1
     return nb_rows
+
+
+DARK_BLUE = Color(rgb="00182848")
+WHITE = Color(rgb="00FFFFFF")
 
 
 def write_xlsx(lecture: Lecture, filename: str, request: Request) -> int:
@@ -114,7 +90,7 @@ def _write_xlsx_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> i
     nb_rows = 0
     for amend in amendements:
         amend_dict = {
-            field_to_column_name(k): v for k, v in export_amendement(amend).items()
+            FIELDS[k]: v for k, v in export_amendement_for_spreadsheet(amend).items()
         }
         for column, value in enumerate(HEADERS, 1):
             cell = ws.cell(row=nb_rows + 2, column=column)
@@ -122,3 +98,25 @@ def _write_xlsx_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> i
             cell.font = Font(sz=8)
         nb_rows += 1
     return nb_rows
+
+
+def export_amendement_for_spreadsheet(amendement: Amendement) -> dict:
+    data: dict = {k: v for k, v in amendement.asdict().items() if k in FIELDS}
+    for field_name in HTML_FIELDS:
+        if data[field_name] is not None:
+            data[field_name] = html_to_text(data[field_name])
+    return {k: convert_boolean(v) for k, v in data.items()}
+
+
+def convert_boolean(value: Any) -> Any:
+    if value is True:
+        return "Oui"
+    elif value is False:
+        return "Non"
+    else:
+        return value
+
+
+def html_to_text(html: str) -> str:
+    text: str = get_text(html).strip()
+    return text

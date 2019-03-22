@@ -59,6 +59,6 @@ jobs:
             sudo sed --in-place '/fr_FR.UTF-8/s/^#//' /etc/locale.gen
             sudo locale-gen fr_FR.UTF-8
             mkdir -p test-reports
-            pytest -p no:sugar -vv --junitxml=test-reports/junit.xml tests/
+            pytest -p no:sugar -vv --junitxml=test-reports/junit.xml --cov=zam_repondeur tests/
       - store_test_results:
           path: repondeur/test-reports

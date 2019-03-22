@@ -86,7 +86,7 @@ def write_csv(lecture: Lecture, filename: str, request: Request) -> int:
             lineterminator="\n",
         )
         for amendement in sorted(lecture.amendements):
-            writer.writerow(export_amendement(amendement))
+            writer.writerow(export_amendement(amendement, convert_booleans=True))
             nb_rows += 1
     return nb_rows
 
@@ -114,7 +114,8 @@ def _write_xlsx_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> i
     nb_rows = 0
     for amend in amendements:
         amend_dict = {
-            field_to_column_name(k): v for k, v in export_amendement(amend).items()
+            field_to_column_name(k): v
+            for k, v in export_amendement(amend, convert_booleans=True).items()
         }
         for column, value in enumerate(HEADERS, 1):
             cell = ws.cell(row=nb_rows + 2, column=column)

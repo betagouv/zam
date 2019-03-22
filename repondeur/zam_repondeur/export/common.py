@@ -1,3 +1,5 @@
+from typing import Any
+
 from inscriptis import get_text
 
 from zam_repondeur.models import Amendement
@@ -23,7 +25,9 @@ EXCLUDED_FIELDS = [
 HTML_FIELDS = ["corps", "expose", "objet", "reponse", "comments"]
 
 
-def export_amendement(amendement: Amendement, strip_html: bool = True) -> dict:
+def export_amendement(
+    amendement: Amendement, strip_html: bool = True, convert_booleans: bool = False
+) -> dict:
     data: dict = amendement.asdict()
     for field_name in HTML_FIELDS:
         if data[field_name] is not None and strip_html:
@@ -31,7 +35,18 @@ def export_amendement(amendement: Amendement, strip_html: bool = True) -> dict:
     for excluded_field in EXCLUDED_FIELDS:
         if excluded_field in data.keys():
             del data[excluded_field]
+    if convert_booleans:
+        data = {k: convert_boolean(v) for k, v in data.items()}
     return data
+
+
+def convert_boolean(value: Any) -> Any:
+    if value is True:
+        return "Oui"
+    elif value is False:
+        return "Non"
+    else:
+        return value
 
 
 def html_to_text(html: str) -> str:

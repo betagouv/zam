@@ -44,7 +44,7 @@ FIELD_TO_COLUMN_NAME = {
     "date_depot": "Date de dépôt",
     "id_discussion_commune": "Identifiant discussion commune",
     "id_identique": "Identifiant identique",
-    "parent": "Parent",
+    "parent": "Parent (sous-amdt)",
     "corps": "Corps amdt",
     "expose": "Exposé amdt",
     "objet": "Objet amdt",

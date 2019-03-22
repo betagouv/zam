@@ -1,4 +1,5 @@
 import csv
+from collections import Counter
 from typing import Any, Iterable, Optional
 
 from inscriptis import get_text
@@ -46,8 +47,8 @@ HEADERS = FIELDS.values()
 HTML_FIELDS = ["corps", "expose", "objet", "reponse", "comments"]
 
 
-def write_csv(lecture: Lecture, filename: str, request: Request) -> int:
-    nb_rows = 0
+def write_csv(lecture: Lecture, filename: str, request: Request) -> Counter:
+    counter = Counter({"amendements": 0})
     with open(filename, "w", encoding="utf-8-sig") as file_:
         file_.write(";".join(HEADERS) + "\n")
         writer = csv.DictWriter(
@@ -59,23 +60,23 @@ def write_csv(lecture: Lecture, filename: str, request: Request) -> int:
         )
         for amendement in sorted(lecture.amendements):
             writer.writerow(export_amendement_for_spreadsheet(amendement))
-            nb_rows += 1
-    return nb_rows
+            counter["amendements"] += 1
+    return counter
 
 
 DARK_BLUE = Color(rgb="00182848")
 WHITE = Color(rgb="00FFFFFF")
 
 
-def write_xlsx(lecture: Lecture, filename: str, request: Request) -> int:
+def write_xlsx(lecture: Lecture, filename: str, request: Request) -> Counter:
     wb = Workbook()
     ws = wb.active
     ws.title = "Amendements"
 
     _write_xslsx_header_row(ws)
-    nb_rows = _write_xlsx_data_rows(ws, sorted(lecture.amendements))
+    counter = _write_xlsx_data_rows(ws, sorted(lecture.amendements))
     wb.save(filename)
-    return nb_rows
+    return counter
 
 
 def _write_xslsx_header_row(ws: Worksheet) -> None:
@@ -86,18 +87,18 @@ def _write_xslsx_header_row(ws: Worksheet) -> None:
         cell.font = Font(color=WHITE, sz=8)
 
 
-def _write_xlsx_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> int:
-    nb_rows = 0
+def _write_xlsx_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> Counter:
+    counter = Counter({"amendements": 0})
     for amend in amendements:
         amend_dict = {
             FIELDS[k]: v for k, v in export_amendement_for_spreadsheet(amend).items()
         }
         for column, value in enumerate(HEADERS, 1):
-            cell = ws.cell(row=nb_rows + 2, column=column)
+            cell = ws.cell(row=counter["amendements"] + 2, column=column)
             cell.value = amend_dict[value]
             cell.font = Font(sz=8)
-        nb_rows += 1
-    return nb_rows
+        counter["amendements"] += 1
+    return counter
 
 
 def export_amendement_for_spreadsheet(amendement: Amendement) -> dict:

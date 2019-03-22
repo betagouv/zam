@@ -319,9 +319,10 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
             )
             for position, num in enumerate((333, 777), 1)
         ]
-        nb_rows = write_json(lecture_an, filename, request={})
+        counter = write_json(lecture_an, filename, request={})
 
-    assert nb_rows == 2 + 1  # amendements + article
+    assert counter["amendements"] == 2
+    assert counter["articles"] == 1
 
     with transaction.manager:
         article1_an.user_content.title = ""

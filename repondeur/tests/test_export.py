@@ -88,14 +88,15 @@ def test_write_json(
             corps="corge",
             expose="grault",
         )
-        nb_rows = write_json(lecture_senat, filename, request={})
+        counter = write_json(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig") as f_:
         backup = json.loads(f_.read())
         amendements = backup["amendements"]
         articles = backup["articles"]
 
-    assert nb_rows == len(amendements) + len(articles) == 5 + 3
+    assert counter["amendements"] == len(amendements) == 5
+    assert counter["articles"] == len(articles) == 3
 
     assert amendements[0] == {
         "alinea": "",
@@ -171,14 +172,15 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
             reponse="<p>La réponse</p>",
             comments="<strong>Lisez-moi</strong>",
         )
-        nb_rows = write_json(lecture_senat, filename, request={})
+        counter = write_json(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig") as f_:
         backup = json.loads(f_.read())
         amendements = backup["amendements"]
         articles = backup["articles"]
 
-    assert nb_rows == len(amendements) + len(articles) == 1 + 1
+    assert counter["amendements"] == len(amendements) == 1
+    assert counter["articles"] == len(articles) == 1
 
     assert amendements[0] == {
         "alinea": "",
@@ -236,15 +238,16 @@ def test_write_with_affectation(
             expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
         )
         user_david_table_senat.amendements.append(amendement)
-
-        nb_rows = write_json(lecture_senat, filename, request={})
+        counter = write_json(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig") as f_:
         backup = json.loads(f_.read())
         amendements = backup["amendements"]
         articles = backup["articles"]
 
-    assert nb_rows == len(amendements) + len(articles) == 1 + 1
+    assert counter["amendements"] == len(amendements) == 1
+    assert counter["articles"] == len(articles) == 1
+
     assert amendements[0]["affectation_email"] == "david@example.com"
     assert amendements[0]["affectation_name"] == "David"
 
@@ -317,14 +320,15 @@ def test_write_json_sous_amendement(
             corps="corge",
             expose="grault",
         )
-        nb_rows = write_json(lecture_senat, filename, request={})
+        counter = write_json(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig") as f_:
         backup = json.loads(f_.read())
         amendements = backup["amendements"]
         articles = backup["articles"]
 
-    assert nb_rows == len(amendements) + len(articles) == 5 + 3
+    assert counter["amendements"] == len(amendements) == 5
+    assert counter["articles"] == len(articles) == 3
 
     assert amendements[-1] == {
         "alinea": "",

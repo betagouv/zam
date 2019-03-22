@@ -3,10 +3,8 @@ from pyramid.request import Request
 
 from zam_repondeur.models import Amendement, Lecture
 
-from .common import EXCLUDED_FIELDS
 
-
-JSON_EXCLUDED_FIELDS = EXCLUDED_FIELDS | {"first_identique_num"}
+EXCLUDED_FIELDS = {"pk", "first_identique_num"}
 
 
 def write_json(lecture: Lecture, filename: str, request: Request) -> int:
@@ -27,8 +25,4 @@ def write_json(lecture: Lecture, filename: str, request: Request) -> int:
 
 
 def export_amendement_for_json(amendement: Amendement) -> dict:
-    data: dict = amendement.asdict()
-    for excluded_field in JSON_EXCLUDED_FIELDS:
-        if excluded_field in data.keys():
-            del data[excluded_field]
-    return data
+    return {k: v for k, v in amendement.asdict().items() if k not in EXCLUDED_FIELDS}

@@ -2,6 +2,106 @@ import csv
 from pathlib import Path
 
 
+def test_export_csv_columns(lecture_an, article1_an, tmpdir):
+    from zam_repondeur.export.spreadsheet import write_csv
+    from zam_repondeur.models import DBSession, Amendement
+
+    filename = str(tmpdir.join("test.csv"))
+
+    amendement = Amendement.create(
+        lecture=lecture_an,
+        article=article1_an,
+        num=333,
+        position=1,
+        avis="Favorable",
+        objet="Un objet très pertinent",
+        reponse="Une réponse très appropriée",
+        comments="Avec des commentaires",
+    )
+    DBSession.add(amendement)
+    DBSession.add(lecture_an)
+
+    nb_rows = write_csv(lecture_an, filename, request={})
+
+    assert nb_rows == 1
+
+    with Path(filename).open(encoding="utf-8-sig") as csv_file:
+        reader = csv.reader(csv_file, delimiter=";")
+        headers = next(reader)
+        assert headers == [
+            "Num article",
+            "Titre article",
+            "Num amdt",
+            "Rectif",
+            "Parent (sous-amdt)",
+            "Auteur",
+            "Groupe",
+            "Gouvernemental",
+            "Corps amdt",
+            "Exposé amdt",
+            "Identique",
+            "Avis du Gouvernement",
+            "Objet amdt",
+            "Réponse",
+            "Commentaires",
+            "Affectation (email)",
+            "Affectation (nom)",
+            "Sort",
+        ]
+
+
+def test_export_excel_columns(lecture_an, article1_an, tmpdir):
+    from openpyxl import load_workbook
+
+    from zam_repondeur.export.spreadsheet import write_xlsx
+    from zam_repondeur.models import DBSession, Amendement
+
+    filename = str(tmpdir.join("test.xlsx"))
+
+    amendement = Amendement.create(
+        lecture=lecture_an,
+        article=article1_an,
+        num=333,
+        position=1,
+        avis="Favorable",
+        objet="Un objet très pertinent",
+        reponse="Une réponse très appropriée",
+        comments="Avec des commentaires",
+    )
+    DBSession.add(amendement)
+    DBSession.add(lecture_an)
+
+    nb_rows = write_xlsx(lecture_an, filename, request={})
+
+    assert nb_rows == 1
+
+    wb = load_workbook(filename, read_only=True)
+    ws = wb.active
+    header_row = next(ws.rows)
+    headers = [cell.value for cell in header_row]
+
+    assert headers == [
+        "Num article",
+        "Titre article",
+        "Num amdt",
+        "Rectif",
+        "Parent (sous-amdt)",
+        "Auteur",
+        "Groupe",
+        "Gouvernemental",
+        "Corps amdt",
+        "Exposé amdt",
+        "Identique",
+        "Avis du Gouvernement",
+        "Objet amdt",
+        "Réponse",
+        "Commentaires",
+        "Affectation (email)",
+        "Affectation (nom)",
+        "Sort",
+    ]
+
+
 def test_export_csv_with_parent(lecture_an, article1_an, tmpdir):
     from zam_repondeur.export.spreadsheet import write_csv
     from zam_repondeur.models import DBSession, Amendement

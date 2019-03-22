@@ -14,10 +14,10 @@ from zam_repondeur.models.events.amendement import (
     CommentsAmendementModifie,
 )
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
-from zam_repondeur.writer import FIELDS_NAMES
+from zam_repondeur.writer import FIELDS_NAMES as ATTR_TO_CSV_COLUMN
 
 
-FIELDS_NAMES_INV = {v: k for k, v in FIELDS_NAMES.items()}
+CSV_COLUMN_TO_ATTR = {col: attr for attr, col in ATTR_TO_CSV_COLUMN.items()}
 
 
 def import_amendement(
@@ -32,8 +32,8 @@ def import_amendement(
     # they differ depending on the import (CSV => French, JSON => short_ids).
     item = source.copy()
     for name, value in source.items():
-        if name in FIELDS_NAMES_INV:
-            item[FIELDS_NAMES_INV[name]] = value
+        if name in CSV_COLUMN_TO_ATTR:
+            item[CSV_COLUMN_TO_ATTR[name]] = value
 
     try:
         numero = item["num"]

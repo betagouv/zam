@@ -1,7 +1,8 @@
 from collections import OrderedDict
 from textwrap import dedent
-import transaction
 from unittest.mock import patch
+
+import transaction
 
 from fetch.mock_an import setup_mock_responses
 

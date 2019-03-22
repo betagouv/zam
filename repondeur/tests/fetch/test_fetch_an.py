@@ -5,9 +5,6 @@ import pytest
 import responses
 import transaction
 
-from zam_repondeur.fetch.an.amendements import build_url
-from zam_repondeur.models import DBSession
-
 from fetch.mock_an import setup_mock_responses
 
 
@@ -33,6 +30,8 @@ def source():
 class TestFetchAndParseAll:
     @responses.activate
     def test_simple_amendements(self, lecture_an, app, source):
+        from zam_repondeur.models import DBSession
+
         DBSession.add(lecture_an)
 
         with setup_mock_responses(
@@ -80,6 +79,8 @@ class TestFetchAndParseAll:
 
     @responses.activate
     def test_fetch_amendements_not_in_discussion_list(self, lecture_an, app, source):
+        from zam_repondeur.models import DBSession
+
         DBSession.add(lecture_an)
 
         with setup_mock_responses(
@@ -127,6 +128,8 @@ class TestFetchAndParseAll:
 
     @responses.activate
     def test_commission(self, lecture_an, app, source):
+        from zam_repondeur.models import DBSession
+
         DBSession.add(lecture_an)
 
         with setup_mock_responses(
@@ -152,7 +155,7 @@ class TestFetchAndParseAll:
 
     @responses.activate
     def test_sous_amendements(self, app, source):
-        from zam_repondeur.models import Lecture
+        from zam_repondeur.models import DBSession, Lecture
 
         with transaction.manager:
             lecture = Lecture.create(
@@ -203,6 +206,8 @@ class TestFetchAndParseAll:
 
     @responses.activate
     def test_with_404(self, lecture_an, app, source):
+        from zam_repondeur.models import DBSession
+
         DBSession.add(lecture_an)
 
         with setup_mock_responses(
@@ -232,7 +237,7 @@ class TestFetchAndParseAll:
 class TestFetchDiscussionList:
     @responses.activate
     def test_simple_amendements(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_discussion_list
+        from zam_repondeur.fetch.an.amendements import build_url, fetch_discussion_list
 
         responses.add(
             responses.GET,
@@ -265,7 +270,7 @@ class TestFetchDiscussionList:
 
     @responses.activate
     def test_only_one_amendement(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_discussion_list
+        from zam_repondeur.fetch.an.amendements import build_url, fetch_discussion_list
 
         responses.add(
             responses.GET,
@@ -316,7 +321,11 @@ class TestFetchDiscussionList:
 
     @responses.activate
     def test_list_not_found(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import fetch_discussion_list, NotFound
+        from zam_repondeur.fetch.an.amendements import (
+            build_url,
+            fetch_discussion_list,
+            NotFound,
+        )
 
         responses.add(responses.GET, build_url(lecture_an), status=404)
 
@@ -327,6 +336,7 @@ class TestFetchDiscussionList:
 class TestFetchAmendement:
     @responses.activate
     def test_simple_amendement(self, lecture_an, app, source):
+        from zam_repondeur.fetch.an.amendements import build_url
         from zam_repondeur.models.events.amendement import (
             CorpsAmendementModifie,
             ExposeAmendementModifie,
@@ -394,6 +404,8 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_gouvernement(self, lecture_an, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+
         responses.add(
             responses.GET,
             build_url(lecture_an, 723),
@@ -410,6 +422,8 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_commission(self, lecture_an, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+
         responses.add(
             responses.GET,
             build_url(lecture_an, 135),
@@ -427,6 +441,8 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_sous_amendement(self, lecture_an, app, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+
         responses.add(
             responses.GET,
             build_url(lecture_an, 155),
@@ -454,6 +470,8 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_sort_nil(self, lecture_an, app, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+
         responses.add(
             responses.GET,
             build_url(lecture_an, 38),
@@ -469,6 +487,8 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_apres(self, lecture_an, app, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+
         responses.add(
             responses.GET,
             build_url(lecture_an, 192),
@@ -487,7 +507,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_not_found(self, lecture_an, app, source):
-        from zam_repondeur.fetch.an.amendements import NotFound
+        from zam_repondeur.fetch.an.amendements import NotFound, build_url
 
         responses.add(responses.GET, build_url(lecture_an, 177), status=404)
 
@@ -500,6 +520,8 @@ class TestFetchAmendement:
 class TestFetchAmendementAgain:
     @responses.activate
     def test_response_is_preserved(self, lecture_an, app, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+
         responses.add(
             responses.GET,
             build_url(lecture_an, 177),
@@ -532,6 +554,7 @@ class TestFetchAmendementAgain:
 
     @responses.activate
     def test_sort_turn_irrecevable(self, lecture_an, app, source):
+        from zam_repondeur.fetch.an.amendements import build_url
         from zam_repondeur.models.events.amendement import AmendementIrrecevable
 
         sample_data = read_sample_data("an/269/177.xml")
@@ -572,6 +595,8 @@ class TestFetchAmendementAgain:
 
     @responses.activate
     def test_article_has_changed(self, lecture_an, app, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+
         responses.add(
             responses.GET,
             build_url(lecture_an, 177),
@@ -594,6 +619,9 @@ class TestFetchAmendementAgain:
 
     @responses.activate
     def test_parent_has_changed(self, lecture_an, app, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.models import DBSession
+
         responses.add(
             responses.GET,
             build_url(lecture_an, 155),

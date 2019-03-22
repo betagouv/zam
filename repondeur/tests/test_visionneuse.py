@@ -1,6 +1,5 @@
-import transaction
-
 import pytest
+import transaction
 
 
 def _text_from_node(node, selector):

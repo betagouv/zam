@@ -1,6 +1,5 @@
-import transaction
-
 import pytest
+import transaction
 
 
 def test_tables_empty(app, lecture_an, user_david):

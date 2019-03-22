@@ -1,5 +1,6 @@
-import transaction
 from datetime import datetime
+
+import transaction
 
 
 def test_lecture_check(app, lecture_an, amendements_an):

@@ -5,8 +5,6 @@ from pathlib import Path
 
 import pytest
 
-from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
-
 
 # We need data about dossiers, texts and groups
 pytestmark = pytest.mark.usefixtures("data_repository")
@@ -17,6 +15,7 @@ def open_liasse(filename):
 
 
 def test_article_changed(lecture_essoc):
+    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     # Let's import amendements
     amendements, _ = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
@@ -31,6 +30,7 @@ def test_article_changed(lecture_essoc):
 
 
 def test_add_parent_amendement(lecture_essoc):
+    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     # Let's import amendements without a parent
     amendements, _ = import_liasse_xml(
@@ -45,6 +45,7 @@ def test_add_parent_amendement(lecture_essoc):
 
 
 def test_remove_parent_amendement(lecture_essoc):
+    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     # Let's import amendements with a parent
     amendements, _ = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)

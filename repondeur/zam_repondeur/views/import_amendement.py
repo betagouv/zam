@@ -17,19 +17,29 @@ from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 from zam_repondeur.writer import FIELDS_NAMES
 
 
+FIELDS_NAMES_INV = {v: k for k, v in FIELDS_NAMES.items()}
+
+
 def import_amendement(
     request: Request,
     lecture: Lecture,
     amendements: Dict[int, Amendement],
-    item: dict,
+    source: dict,
     counter: Counter,
     previous_reponse: str,
 ) -> None:
+    # Duplicates the values to only deal with one set of keys:
+    # they differ depending on the import (CSV => French, JSON => short_ids).
+    item = source.copy()
+    for name, value in source.items():
+        if name in FIELDS_NAMES_INV:
+            item[FIELDS_NAMES_INV[name]] = value
+
     try:
-        numero = item.get("num", item.get(FIELDS_NAMES["num"], ""))
-        avis = item.get("avis", item.get(FIELDS_NAMES["avis"], ""))
-        objet = item.get("objet", item.get(FIELDS_NAMES["objet"], ""))
-        reponse = item.get("reponse", item.get(FIELDS_NAMES["reponse"], ""))
+        numero = item["num"]
+        avis = item["avis"] or ""
+        objet = item["objet"] or ""
+        reponse = item["reponse"] or ""
     except KeyError:
         counter["reponses_errors"] += 1
         return
@@ -59,26 +69,17 @@ def import_amendement(
     if reponse != (amendement.user_content.reponse or ""):
         ReponseAmendementModifiee.create(request, amendement, reponse)
 
-    if "comments" in item or FIELDS_NAMES["comments"] in item:
-        comments = clean_html(item.get("comments", item.get(FIELDS_NAMES["comments"])))
+    if "comments" in item:
+        comments = clean_html(item["comments"])
         if comments != (amendement.user_content.comments or ""):
             CommentsAmendementModifie.create(request, amendement, comments)
 
-    if ("affectation_email" in item and item["affectation_email"]) or (
-        FIELDS_NAMES["affectation_email"] in item
-        and item[FIELDS_NAMES["affectation_email"]]
-    ):
-        email = item.get(
-            "affectation_email", item.get(FIELDS_NAMES["affectation_email"])
-        )
+    if "affectation_email" in item and item["affectation_email"]:
+        email = item["affectation_email"]
         user, created = get_one_or_create(User, email=User.normalize_email(email))
         if created:
-            if item.get("affectation_name") or item.get(
-                FIELDS_NAMES["affectation_name"]
-            ):
-                user.name = item.get(
-                    "affectation_name", item.get(FIELDS_NAMES["affectation_name"])
-                )
+            if item["affectation_name"]:
+                user.name = item["affectation_name"]
             if lecture.owned_by_team:
                 user.teams.append(lecture.owned_by_team)
         target_table = user.table_for(lecture)

@@ -96,7 +96,9 @@ def test_write_json(
         articles = backup["articles"]
 
     assert counter["amendements"] == len(amendements) == 5
+    assert counter["amendements_events"] == 0
     assert counter["articles"] == len(articles) == 3
+    assert counter["articles_evens"] == 0
 
     assert amendements[0] == {
         "alinea": "",
@@ -128,6 +130,7 @@ def test_write_json(
         "article_order": "6|001|01|__________|1",
         "affectation_email": "",
         "affectation_name": "",
+        "events": {},
     }
     assert [amendement["article_order"] for amendement in amendements] == [
         "6|001|01|__________|1",
@@ -137,14 +140,133 @@ def test_write_json(
         "6|001|01|__________|1",
     ]
     assert articles == [
-        {"presentation": "", "sort_key_as_str": "6|001|01|__________|0", "title": ""},
+        {
+            "presentation": "",
+            "sort_key_as_str": "6|001|01|__________|0",
+            "title": "",
+            "events": {},
+        },
         {
             "presentation": "Présentation art. 1 Sénat",
             "sort_key_as_str": "6|001|01|__________|1",
             "title": "Titre art. 1 Sénat",
+            "events": {},
         },
-        {"presentation": "", "sort_key_as_str": "6|007|02|__________|1", "title": ""},
+        {
+            "presentation": "",
+            "sort_key_as_str": "6|007|02|__________|1",
+            "title": "",
+            "events": {},
+        },
     ]
+
+
+def test_write_json_with_events(lecture_senat, article1_senat, tmpdir, user_david):
+    from zam_repondeur.export.json import write_json
+    from zam_repondeur.models import Amendement
+    from zam_repondeur.models.events.amendement import (
+        AvisAmendementModifie,
+        ObjetAmendementModifie,
+        ReponseAmendementModifiee,
+        CommentsAmendementModifie,
+    )
+    from zam_repondeur.models.events.article import (
+        TitreArticleModifie,
+        PresentationArticleModifiee,
+    )
+
+    filename = str(tmpdir.join("test.json"))
+
+    with transaction.manager:
+        TitreArticleModifie.create(
+            request=None,
+            article=article1_senat,
+            title="Titre art. 1 Sénat",
+            user=user_david,
+        )
+        PresentationArticleModifiee.create(
+            request=None,
+            article=article1_senat,
+            presentation="Présentation art. 1 Sénat",
+            user=user_david,
+        )
+        amendement = Amendement.create(
+            lecture=lecture_senat,
+            article=article1_senat,
+            alinea="",
+            num=42,
+            rectif=1,
+            auteur="M. DUPONT",
+            groupe="RDSE",
+            matricule="000000",
+            corps="<p>L'article 1 est supprimé.</p>",
+            expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+            resume="Suppression de l'article",
+            position=1,
+        )
+        AvisAmendementModifie.create(
+            request=None, amendement=amendement, avis="Favorable", user=user_david
+        )
+        ObjetAmendementModifie.create(
+            request=None, amendement=amendement, objet="Foo", user=user_david
+        )
+        ReponseAmendementModifiee.create(
+            request=None, amendement=amendement, reponse="Bar", user=user_david
+        )
+        CommentsAmendementModifie.create(
+            request=None, amendement=amendement, comments="Baz", user=user_david
+        )
+        counter = write_json(lecture_senat, filename, request={})
+
+    with open(filename, "r", encoding="utf-8-sig") as f_:
+        backup = json.loads(f_.read())
+        amendements = backup["amendements"]
+        articles = backup["articles"]
+
+    assert counter["amendements"] == len(amendements) == 1
+    assert counter["amendements_events"] == 4
+    assert counter["articles"] == len(articles) == 1
+    assert counter["articles_events"] == 2
+
+    amendement_events = list(amendements[0]["events"].values())
+
+    assert amendement_events[0]["type"] == "avis_amendement_modifie"
+    assert amendement_events[0]["user"] == "david@example.com"
+    assert amendement_events[0]["data"] == {"new_value": "Favorable", "old_value": ""}
+    assert amendement_events[0]["meta"] == {}
+
+    assert amendement_events[1]["type"] == "objet_modifie"
+    assert amendement_events[1]["user"] == "david@example.com"
+    assert amendement_events[1]["data"] == {"new_value": "Foo", "old_value": ""}
+    assert amendement_events[1]["meta"] == {}
+
+    assert amendement_events[2]["type"] == "reponse_amendement_modifiee"
+    assert amendement_events[2]["user"] == "david@example.com"
+    assert amendement_events[2]["data"] == {"new_value": "Bar", "old_value": ""}
+    assert amendement_events[2]["meta"] == {}
+
+    assert amendement_events[3]["type"] == "comments_amendement_modifie"
+    assert amendement_events[3]["user"] == "david@example.com"
+    assert amendement_events[3]["data"] == {"new_value": "Baz", "old_value": ""}
+    assert amendement_events[3]["meta"] == {}
+
+    article_events = list(articles[0]["events"].values())
+
+    assert article_events[0]["type"] == "presentation_article_modifiee"
+    assert article_events[0]["user"] == "david@example.com"
+    assert article_events[0]["data"] == {
+        "new_value": "Présentation art. 1 Sénat",
+        "old_value": "",
+    }
+    assert article_events[0]["meta"] == {}
+
+    assert article_events[1]["type"] == "titre_article_modifie"
+    assert article_events[1]["user"] == "david@example.com"
+    assert article_events[1]["data"] == {
+        "new_value": "Titre art. 1 Sénat",
+        "old_value": "",
+    }
+    assert article_events[1]["meta"] == {}
 
 
 def test_write_json_full(lecture_senat, article1_senat, tmpdir):
@@ -212,6 +334,7 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
         "article_order": "6|001|01|__________|1",
         "affectation_email": "",
         "affectation_name": "",
+        "events": {},
     }
 
 
@@ -360,6 +483,7 @@ def test_write_json_sous_amendement(
         "gouvernemental": False,
         "affectation_email": "",
         "affectation_name": "",
+        "events": {},
     }
 
 

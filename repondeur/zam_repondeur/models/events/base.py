@@ -58,3 +58,12 @@ class Event(Base):
         event.apply()
         DBSession.add(event)
         return event
+
+    def asdict(self) -> dict:
+        return {
+            "type": self.type,
+            "user": self.user.email,
+            "created_at": self.created_at_timestamp,
+            "data": self.data,
+            "meta": self.meta,
+        }

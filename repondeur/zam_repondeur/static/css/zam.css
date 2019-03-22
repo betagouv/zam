@@ -179,6 +179,7 @@ a.underlined:hover {
     display: inline-block;
     font-size: inherit;
     font-family: inherit;
+    font-weight: normal;
     background-color: transparent;
     color: #1a1a1a;
     line-height: 1.5;

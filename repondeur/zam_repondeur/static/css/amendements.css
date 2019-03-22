@@ -1,6 +1,9 @@
 .content {
     margin: 0 1rem;
 }
+    .content .notice {
+        margin-top: 2rem;
+    }
 
 /* Articles */
 #bottom-nav {

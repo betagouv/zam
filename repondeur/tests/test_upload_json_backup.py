@@ -246,6 +246,10 @@ class TestPostForm:
 
     def test_upload_backup_with_articles(self, app):
         from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models.events.article import (
+            TitreArticleModifie,
+            PresentationArticleModifiee,
+        )
 
         resp = self._upload_backup(app, "backup_with_articles.json").follow()
 
@@ -258,6 +262,9 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.article.user_content.title == "Titre"
         assert amendement.article.user_content.presentation == "Présentation"
+        events = {type(event): event for event in amendement.article.events}
+        assert TitreArticleModifie in events
+        assert PresentationArticleModifiee in events
 
     def test_upload_backup_with_articles_old(self, app):
         from zam_repondeur.models import DBSession, Amendement

@@ -20,6 +20,10 @@ from zam_repondeur.models.events.amendement import (
     ReponseAmendementModifiee,
     CommentsAmendementModifie,
 )
+from zam_repondeur.models.events.article import (
+    TitreArticleModifie,
+    PresentationArticleModifiee,
+)
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 
@@ -111,10 +115,12 @@ def import_article(
         counter["articles_errors"] += 1
         return
 
-    if "title" in item:
-        article.user_content.title = item["title"]
-    elif "titre" in item:  # To handle old backups.
-        article.user_content.title = item["titre"]
-    if "presentation" in item:
-        article.user_content.presentation = item["presentation"]
+    # Fallback on `titre` to handle old backups.
+    title = item.get("title", item.get("titre", ""))
+    if title != (article.user_content.title or ""):
+        TitreArticleModifie.create(request, article, title)
+    presentation = item.get("presentation", "")
+    if presentation != (article.user_content.presentation or ""):
+        PresentationArticleModifiee.create(request, article, presentation)
+
     counter["articles"] += 1

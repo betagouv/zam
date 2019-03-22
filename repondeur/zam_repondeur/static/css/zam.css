@@ -413,7 +413,7 @@ nobr.user {
     top: 2.5rem;
 }
 tr.groupActions th {
-    padding: .5rem 0 1.5rem 0;
+    padding: 1rem 0 1rem 0;
     text-align: center;
 }
     tr.groupActions th:first-child {

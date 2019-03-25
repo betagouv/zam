@@ -1,12 +1,10 @@
 import json
-import transaction
 from operator import attrgetter
 from pathlib import Path
 
 import pytest
 import responses
-
-from zam_repondeur.models import DBSession
+import transaction
 
 
 HERE = Path(__file__)
@@ -20,6 +18,7 @@ def read_sample_data(basename):
 @responses.activate
 def test_aspire_senat(app, lecture_senat):
     from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.models import DBSession
     from zam_repondeur.models.events.amendement import (
         AmendementRectifie,
         CorpsAmendementModifie,
@@ -105,6 +104,7 @@ def test_aspire_senat(app, lecture_senat):
 @responses.activate
 def test_aspire_senat_again_with_irrecevable(app, lecture_senat):
     from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.models import DBSession
     from zam_repondeur.models.events.amendement import AmendementIrrecevable
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
@@ -172,7 +172,7 @@ def test_aspire_senat_again_with_irrecevable(app, lecture_senat):
 @responses.activate
 def test_aspire_senat_plf2019_1re_partie(app):
     from zam_repondeur.fetch.senat.amendements import Senat
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import DBSession, Lecture
 
     with transaction.manager:
         lecture = Lecture.create(
@@ -225,7 +225,7 @@ def test_aspire_senat_plf2019_1re_partie(app):
 @responses.activate
 def test_aspire_senat_plf2019_2e_partie(app):
     from zam_repondeur.fetch.senat.amendements import Senat
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import DBSession, Lecture
 
     with transaction.manager:
         lecture = Lecture.create(
@@ -434,6 +434,7 @@ def test_fetch_all_buggy_csv(lecture_senat):
 @responses.activate
 def test_fetch_all_commission(lecture_senat):
     from zam_repondeur.fetch.senat.amendements import _fetch_all
+    from zam_repondeur.models import DBSession
 
     with transaction.manager:
         lecture_senat.num_texte = 583
@@ -497,6 +498,7 @@ def test_fetch_all_not_found(lecture_senat):
 @responses.activate
 def test_fetch_discussion_details(lecture_senat):
     from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details
+    from zam_repondeur.models import DBSession
 
     with transaction.manager:
         lecture_senat.session = "2016-2017"

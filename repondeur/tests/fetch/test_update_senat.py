@@ -5,9 +5,6 @@ from pathlib import Path
 
 import responses
 
-from zam_repondeur.fetch.senat.amendements import Senat
-from zam_repondeur.models import DBSession
-
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data" / "senat"
@@ -22,6 +19,9 @@ def test_position_changed(lecture_senat):
     """
     The discussion order of amendements may change
     """
+
+    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.models import DBSession
 
     responses.add(
         responses.GET,
@@ -74,6 +74,9 @@ def test_abandoned_before_seance(lecture_senat):
     will be removed from the "liste_discussion"
     """
 
+    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.models import DBSession
+
     responses.add(
         responses.GET,
         "https://www.senat.fr/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv",
@@ -123,6 +126,9 @@ def test_article_changed(lecture_senat):
     """
     The targeted article may change
     """
+
+    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.models import DBSession
 
     responses.add(
         responses.GET,
@@ -180,6 +186,9 @@ def test_add_parent_amendement(lecture_senat):
     The targeted article may change
     """
 
+    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.models import DBSession
+
     responses.add(
         responses.GET,
         "https://www.senat.fr/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv",
@@ -229,6 +238,9 @@ def test_remove_parent_amendement(lecture_senat):
     """
     The targeted article may change
     """
+
+    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.models import DBSession
 
     responses.add(
         responses.GET,

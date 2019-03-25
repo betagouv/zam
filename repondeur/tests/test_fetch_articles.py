@@ -1,8 +1,8 @@
 from pathlib import Path
-import transaction
 
 import pytest
 import responses
+import transaction
 
 
 class TestGetPossibleUrls:

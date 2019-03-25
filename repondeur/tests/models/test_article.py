@@ -2,8 +2,6 @@ from itertools import tee
 
 import pytest
 
-from zam_repondeur.models import Article
-
 
 def pairwise(iterable):
     """
@@ -29,6 +27,8 @@ def pairwise(iterable):
     ],
 )
 def test_stringify(lecture_an, type_, pos, num, mult, output):
+    from zam_repondeur.models import Article
+
     article = Article.create(
         lecture=lecture_an, type=type_, num=num, mult=mult, pos=pos
     )
@@ -50,6 +50,8 @@ def test_stringify(lecture_an, type_, pos, num, mult, output):
     ],
 )
 def test_slug(lecture_an, type_, pos, num, mult, output):
+    from zam_repondeur.models import Article
+
     article = Article.create(
         lecture=lecture_an, type=type_, num=num, mult=mult, pos=pos
     )
@@ -66,6 +68,8 @@ def test_slug(lecture_an, type_, pos, num, mult, output):
     ],
 )
 def test_url_key(lecture_an, type_, pos, num, mult, output):
+    from zam_repondeur.models import Article
+
     article = Article.create(
         lecture=lecture_an, type=type_, num=num, mult=mult, pos=pos
     )
@@ -87,6 +91,8 @@ def test_url_key(lecture_an, type_, pos, num, mult, output):
     ],
 )
 def test_format(lecture_an, type_, pos, num, mult, output):
+    from zam_repondeur.models import Article
+
     article = Article.create(
         lecture=lecture_an, type=type_, num=num, mult=mult, pos=pos
     )
@@ -95,6 +101,8 @@ def test_format(lecture_an, type_, pos, num, mult, output):
 
 class TestOrdering:
     def test_types(self, lecture_an):
+        from zam_repondeur.models import Article
+
         titre = Article.create(lecture=lecture_an, type="titre")
         motion = Article.create(lecture=lecture_an, type="motion")
         chapitre = Article.create(lecture=lecture_an, type="chapitre")
@@ -166,6 +174,7 @@ class TestOrdering:
         """
         Examples from https://www.senat.fr/dossier-legislatif/tc/tc_pjl03-328.html
         """
+        from zam_repondeur.models import Article
 
         def make_article(type_, s):
             if " " in s:
@@ -180,6 +189,8 @@ class TestOrdering:
         assert article_before.sort_key_as_str < article_after.sort_key_as_str
 
     def test_avant_apres(self, lecture_an):
+        from zam_repondeur.models import Article
+
         article_6 = Article.create(lecture=lecture_an, type="article", num=6)
         apres_article_6 = Article.create(
             lecture=lecture_an, type="article", num=6, pos="après"
@@ -192,6 +203,8 @@ class TestOrdering:
         assert article_6 < apres_article_6 < avant_article_7 < article_7
 
     def test_previous_next(self, lecture_an):
+        from zam_repondeur.models import Article
+
         article_6 = Article.create(lecture=lecture_an, type="article", num=6)
         apres_article_6 = Article.create(
             lecture=lecture_an, type="article", num=6, pos="après"
@@ -211,7 +224,7 @@ class TestOrdering:
         assert article_7.next_article is None
 
     def test_previous_next_displayable(self, article1_an, lecture_an, amendements_an):
-        from zam_repondeur.models import DBSession
+        from zam_repondeur.models import DBSession, Article
 
         article_6 = Article.create(lecture=lecture_an, type="article", num=6)
         apres_article_6 = Article.create(

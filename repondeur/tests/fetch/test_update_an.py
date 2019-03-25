@@ -7,8 +7,6 @@ from textwrap import dedent
 import pytest
 import responses
 
-from zam_repondeur.models import Amendement, DBSession
-
 from fetch.mock_an import setup_mock_responses
 
 
@@ -36,6 +34,7 @@ def test_position_changed(lecture_an, source):
     """
     The discussion order of amendements may change
     """
+    from zam_repondeur.models import DBSession
 
     DBSession.add(lecture_an)
 
@@ -124,6 +123,7 @@ def test_abandoned_before_seance(lecture_an, source):
     An amendement that is either withdrawn by its author or declared invalid
     will be removed from the list
     """
+    from zam_repondeur.models import DBSession
 
     DBSession.add(lecture_an)
 
@@ -203,6 +203,7 @@ def test_article_changed(lecture_an, source):
     """
     The targeted article may change
     """
+    from zam_repondeur.models import DBSession, Amendement
 
     DBSession.add(lecture_an)
 
@@ -318,6 +319,7 @@ def test_add_parent_amendement(lecture_an, source):
     """
     A standalone amendement can become a « sous-amendement »
     """
+    from zam_repondeur.models import DBSession, Amendement
 
     DBSession.add(lecture_an)
 
@@ -414,6 +416,7 @@ def test_remove_parent_amendement(lecture_an, source):
     """
     A « sous-amendement » can become a standalone one
     """
+    from zam_repondeur.models import DBSession, Amendement
 
     DBSession.add(lecture_an)
 
@@ -507,6 +510,7 @@ def test_remove_parent_amendement(lecture_an, source):
 
 @responses.activate
 def test_rectif(lecture_an, source):
+    from zam_repondeur.models import DBSession, Amendement
     from zam_repondeur.models.events.amendement import AmendementRectifie
 
     DBSession.add(lecture_an)
@@ -602,6 +606,7 @@ def test_rectif(lecture_an, source):
 
 @responses.activate
 def test_rectif_with_nil(lecture_an, source):
+    from zam_repondeur.models import DBSession, Amendement
     from zam_repondeur.models.events.amendement import ExposeAmendementModifie
 
     DBSession.add(lecture_an)

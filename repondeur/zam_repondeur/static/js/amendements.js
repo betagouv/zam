@@ -54,22 +54,28 @@ application.register(
             this.groupActions.classList.toggle('d-none', checkeds.length < 1)
             if (checkeds.length < 1) {
                 if (this.hasHeadersTarget) {
-                    this.headersTarget.querySelectorAll('th')
+                    this.headersTarget
+                        .querySelectorAll('th')
                         .forEach(th => (th.style.top = '0'))
-                    this.filtersTarget.querySelectorAll('th')
+                    this.filtersTarget
+                        .querySelectorAll('th')
                         .forEach(th => (th.style.top = '2.5rem'))
                 } else {
-                    this.filtersTarget.querySelectorAll('th')
+                    this.filtersTarget
+                        .querySelectorAll('th')
                         .forEach(th => (th.style.top = '0'))
                 }
             } else {
                 if (this.hasHeadersTarget) {
-                    this.headersTarget.querySelectorAll('th')
+                    this.headersTarget
+                        .querySelectorAll('th')
                         .forEach(th => (th.style.top = '3.5rem'))
-                    this.filtersTarget.querySelectorAll('th')
+                    this.filtersTarget
+                        .querySelectorAll('th')
                         .forEach(th => (th.style.top = '6.5rem'))
                 } else {
-                    this.filtersTarget.querySelectorAll('th')
+                    this.filtersTarget
+                        .querySelectorAll('th')
                         .forEach(th => (th.style.top = '3rem'))
                 }
             }
@@ -182,11 +188,7 @@ class AmendementsFilters extends Stimulus.Controller {
             } else {
                 newURL.searchParams.delete(name)
             }
-            window.history.replaceState(
-                { path: newURL.href },
-                '',
-                newURL.href
-            )
+            window.history.replaceState({ path: newURL.href }, '', newURL.href)
         }
     }
 
@@ -306,7 +308,6 @@ class AmendementsFilters extends Stimulus.Controller {
         })
     }
 }
-
 
 application.register(
     'amendements-lecture',

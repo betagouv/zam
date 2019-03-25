@@ -31,12 +31,12 @@ application.register(
         initialize() {
             this.groupActions = this.element.querySelector('.groupActions')
             this.selectAllCheckbox = this.element.querySelector(
-                'input[type="checkbox"][name="select-all"]'
+                'thead input[type="checkbox"][name="select-all"]'
             )
             // Useful in case of (soft) refresh with already checked box.
             this.selectAllCheckbox.checked = false
             this.checkboxes = this.element.querySelectorAll(
-                'input[type="checkbox"]:not([name="select-all"])'
+                'tbody input[type="checkbox"]:not([name="select-all"])'
             )
             // Useful in case of (soft) refresh with already checked boxes.
             this.toggleGroupActions()
@@ -135,6 +135,8 @@ class AmendementsFilters extends Stimulus.Controller {
             'tbody',
             'articleInput',
             'amendementInput',
+            'gouvernementalCheckbox',
+            'gouvernementalLabel',
             'tableInput',
             'avisSelect',
             'reponseSelect'
@@ -153,6 +155,15 @@ class AmendementsFilters extends Stimulus.Controller {
             this.toggle()
             this.amendementInputTarget.value = amendementFilter
             this.filterByAmendement(amendementFilter)
+        }
+        const gouvernementalFilter = this.getURLParam('gouvernemental')
+        if (gouvernementalFilter !== '') {
+            this.toggle()
+            this.gouvernementalCheckboxTarget.value = gouvernementalFilter
+            this.gouvernementalLabelTarget
+                .querySelector('abbr')
+                .classList.add('selected')
+            this.filterByGouvernemental(gouvernementalFilter)
         }
         const tableFilter = this.getURLParam('table')
         if (tableFilter !== '') {
@@ -224,6 +235,17 @@ class AmendementsFilters extends Stimulus.Controller {
         this.updateCount()
     }
 
+    filterGouvernemental(event) {
+        const checked = event.target.checked
+        const value = checked ? '1' : ''
+        this.gouvernementalLabelTarget
+            .querySelector('abbr')
+            .classList.toggle('selected', checked)
+        this.filterByGouvernemental(value)
+        this.setURLParam('gouvernemental', value)
+        this.updateCount()
+    }
+
     filterTable(event) {
         const value = event.target.value.trim()
         this.filterByTable(value)
@@ -262,6 +284,16 @@ class AmendementsFilters extends Stimulus.Controller {
             return line.dataset.amendement.trim() === value
         })
         this.tableTarget.classList.toggle('filtered-amendement', value)
+    }
+
+    filterByGouvernemental(value) {
+        this.filterColumn('hidden-gouvernemental', line => {
+            if (!value) {
+                return true
+            }
+            return line.dataset.gouvernemental.trim() === value
+        })
+        this.tableTarget.classList.toggle('filtered-gouvernemental', value)
     }
 
     filterByTable(value) {

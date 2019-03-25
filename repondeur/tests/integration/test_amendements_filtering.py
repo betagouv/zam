@@ -82,3 +82,40 @@ def test_column_filtering_by(
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
+    assert driver.current_url == f"{LECTURE_URL}/amendements"
+
+
+def test_column_filtering_by_gouvernemental(
+    wsgi_server, driver, lecture_an, article7bis_an, amendements_an
+):
+    from zam_repondeur.models import Amendement
+
+    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    with transaction.manager:
+        Amendement.create(
+            lecture=lecture_an,
+            article=article7bis_an,
+            num=777,
+            auteur="LE GOUVERNEMENT",
+        )
+    column_index = 3
+    kind = "gouvernemental"
+    initial = ["666", "999", "777 Gouv."]
+    filtered = ["777 Gouv."]
+
+    driver.get(f"{LECTURE_URL}/amendements")
+    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    assert extract_column_text(column_index, trs) == initial
+    driver.find_element_by_link_text("Filtrer").click()
+    label = driver.find_element_by_css_selector(
+        f"thead tr.filters th:nth-child({column_index}) label[for='gouvernemental']"
+    )
+    label.click()
+    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    assert extract_column_text(column_index, trs) == filtered
+    assert driver.current_url == f"{LECTURE_URL}/amendements?{kind}=1"
+    # Restore initial state.
+    label.click()
+    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    assert extract_column_text(column_index, trs) == initial
+    assert driver.current_url == f"{LECTURE_URL}/amendements"

@@ -83,6 +83,9 @@
 .table tbody tr:first-child td {
     padding-top: 1rem;
 }
+.table tr:hover {
+    background: #d4edda66;
+}
 
 /* Filtering */
 tr[data-retire-avant-seance="1"] {

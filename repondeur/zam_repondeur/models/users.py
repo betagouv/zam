@@ -27,7 +27,7 @@ class Team(Base):
     __repr_keys__ = ("name",)
 
     pk: int = Column(Integer, primary_key=True)
-    name: str = Column(Text, nullable=False)
+    name: str = Column(Text, nullable=False, unique=True)
     users = relationship(
         "User", secondary="teams2users", backref=backref("teams", lazy="joined")
     )

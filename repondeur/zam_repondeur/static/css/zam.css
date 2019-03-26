@@ -436,6 +436,9 @@ tr.hidden-reponse {
 input[type="checkbox"]#gouvernemental {
     display: none;
 }
+label[for="gouvernemental"] abbr {
+    cursor: pointer;
+}
 
 .intro {
     display: flex;

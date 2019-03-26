@@ -1,12 +1,5 @@
-import transaction
-
-
-def test_lecture_delete(app, lecture_an, amendements_an, user_david):
+def test_lecture_delete(app, lecture_an, amendements_an, user_david_table_an):
     from zam_repondeur.models import Amendement, DBSession, Lecture
-
-    # Make sure we have a user table for this lecture
-    with transaction.manager:
-        DBSession.add(user_david.table_for(lecture_an))
 
     assert Lecture.exists(
         chambre=lecture_an.chambre,

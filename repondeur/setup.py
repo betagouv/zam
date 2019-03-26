@@ -21,7 +21,7 @@ requires = [
     "requests",
     "rollbar",
     "selectolax",
-    "SQLAlchemy",
+    "SQLAlchemy>=1.3",
     "SQLAlchemy-Utils",
     "tlfp",
     "transaction",

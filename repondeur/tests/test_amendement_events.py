@@ -1,7 +1,9 @@
 import transaction
 
 
-def test_post_amendement_init_form_events(app, lecture_an, amendements_an, user_david):
+def test_post_amendement_init_form_events(
+    app, lecture_an, amendements_an, user_david, user_david_table_an
+):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import (
         AvisAmendementModifie,
@@ -13,9 +15,8 @@ def test_post_amendement_init_form_events(app, lecture_an, amendements_an, user_
     amendement = amendements_an[1]
 
     with transaction.manager:
-        DBSession.add(amendement)
-        table = user_david.table_for(lecture_an)
-        table.amendements.append(amendement)
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",
@@ -88,7 +89,9 @@ def test_post_amendement_init_form_events(app, lecture_an, amendements_an, user_
     assert amendement.events[3].render_details() == ""
 
 
-def test_post_amendement_edit_form_events(app, lecture_an, amendements_an, user_david):
+def test_post_amendement_edit_form_events(
+    app, lecture_an, amendements_an, user_david, user_david_table_an
+):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import (
         AvisAmendementModifie,
@@ -100,13 +103,12 @@ def test_post_amendement_edit_form_events(app, lecture_an, amendements_an, user_
     amendement = amendements_an[1]
 
     with transaction.manager:
+        DBSession.add(user_david_table_an)
         amendement.user_content.avis = "Défavorable"
         amendement.user_content.objet = "Un objet assez passable"
         amendement.user_content.reponse = "Des réponses <strong>très</strong> bonnes"
         amendement.user_content.comments = "Avec"
-        DBSession.add(amendement)
-        table = user_david.table_for(lecture_an)
-        table.amendements.append(amendement)
+        user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",
@@ -187,16 +189,15 @@ def test_post_amendement_edit_form_events(app, lecture_an, amendements_an, user_
 
 
 def test_post_amendement_edit_form_events_empty(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an, amendements_an, user_david, user_david_table_an
 ):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = amendements_an[1]
 
     with transaction.manager:
-        DBSession.add(amendement)
-        table = user_david.table_for(lecture_an)
-        table.amendements.append(amendement)
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",

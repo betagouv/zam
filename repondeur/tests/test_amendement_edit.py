@@ -1,16 +1,17 @@
 import transaction
 
 
-def test_get_amendement_edit_form(app, lecture_an, amendements_an, user_david):
+def test_get_amendement_edit_form(
+    app, lecture_an, amendements_an, user_david, user_david_table_an
+):
     from zam_repondeur.models import DBSession
 
     amendement = amendements_an[1]
     with transaction.manager:
+        DBSession.add(user_david_table_an)
         amendement.expose = "<p>Bla bla bla</p>"
         amendement.corps = "<p>Supprimer cet article.</p>"
-        DBSession.add(amendement)
-        table = user_david.table_for(lecture_an)
-        table.amendements.append(amendement)
+        user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",
@@ -152,16 +153,15 @@ def test_transfer_amendement_from_edit_form_given_activity(
 
 
 def test_get_amendement_edit_form_gouvernemental(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an, amendements_an, user_david, user_david_table_an
 ):
     from zam_repondeur.models import DBSession
 
     amendement = amendements_an[1]
     with transaction.manager:
+        DBSession.add(user_david_table_an)
         amendement.auteur = "LE GOUVERNEMENT"
-        DBSession.add(amendement)
-        table = user_david.table_for(lecture_an)
-        table.amendements.append(amendement)
+        user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
@@ -190,14 +190,15 @@ def test_get_amendement_edit_form_not_found(app, lecture_an, amendements_an):
     assert resp.status_code == 404
 
 
-def test_post_amendement_edit_form(app, lecture_an, amendements_an, user_david):
+def test_post_amendement_edit_form(
+    app, lecture_an, amendements_an, user_david, user_david_table_an
+):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = amendements_an[1]
     with transaction.manager:
-        DBSession.add(amendement)
-        table = user_david.table_for(lecture_an)
-        table.amendements.append(amendement)
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendement)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.user_content.avis is None
@@ -240,15 +241,20 @@ def test_post_amendement_edit_form(app, lecture_an, amendements_an, user_david):
 
 
 def test_post_amendement_edit_form_switch_table(
-    app, lecture_an, amendements_an, user_david, user_ronan
+    app,
+    lecture_an,
+    amendements_an,
+    user_david,
+    user_david_table_an,
+    user_ronan,
+    user_ronan_table_an,
 ):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = amendements_an[1]
     with transaction.manager:
-        DBSession.add(amendement)
-        table = user_david.table_for(lecture_an)
-        table.amendements.append(amendement)
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
@@ -262,8 +268,8 @@ def test_post_amendement_edit_form_switch_table(
 
     # Table switch just before submitting the form.
     with transaction.manager:
-        table = user_ronan.table_for(lecture_an)
-        table.amendements.append(amendement)
+        DBSession.add(user_ronan_table_an)
+        user_ronan_table_an.amendements.append(amendement)
 
     resp = form.submit("save")
 
@@ -287,15 +293,14 @@ def test_post_amendement_edit_form_switch_table(
 
 
 def test_post_amendement_edit_form_and_transfer(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an, amendements_an, user_david, user_david_table_an
 ):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = amendements_an[1]
     with transaction.manager:
-        DBSession.add(amendement)
-        table = user_david.table_for(lecture_an)
-        table.amendements.append(amendement)
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendement)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.user_content.avis is None
@@ -338,16 +343,15 @@ def test_post_amendement_edit_form_and_transfer(
 
 
 def test_post_amendement_edit_form_gouvernemental(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an, amendements_an, user_david, user_david_table_an
 ):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = amendements_an[1]
     with transaction.manager:
+        DBSession.add(user_david_table_an)
         amendement.auteur = "LE GOUVERNEMENT"
-        DBSession.add(amendement)
-        table = user_david.table_for(lecture_an)
-        table.amendements.append(amendement)
+        user_david_table_an.amendements.append(amendement)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.user_content.avis is None
@@ -386,7 +390,7 @@ def test_post_amendement_edit_form_gouvernemental(
 
 
 def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an, amendements_an, user_david, user_david_table_an
 ):
     from zam_repondeur.models import Amendement, DBSession, Lecture
 
@@ -398,12 +402,11 @@ def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
 
     # Let's set a response on the amendement
     with transaction.manager:
+        DBSession.add(user_david_table_an)
         amendement.user_content.avis = "Favorable"
         amendement.user_content.objet = "Un objet très pertinent"
         amendement.user_content.reponse = "Une réponse très appropriée"
-        DBSession.add(amendement)
-        table = user_david.table_for(lecture_an)
-        table.amendements.append(amendement)
+        user_david_table_an.amendements.append(amendement)
 
     # Let's post the response edit form, but with unchanged values
     resp = app.get(

@@ -37,7 +37,7 @@
                 </a>
             </div>
         </div>
-        <div data-controller="filename">
+        <div class="no-border" data-controller="filename">
             <h3>Importer une liasse XML</h3>
             <p>Importer des amendements à partir d'un fichier XML provenant
             de l’Assemblée nationale.</p>
@@ -51,7 +51,7 @@
                 </div>
             </form>
         </div>
-        <div>
+        <div class="no-border">
             <h3>Supprimer</h3>
             <p>Supprimer la lecture ainsi que tous les amendements et réponses associés.</p>
             <form method="post" action="{{ request.resource_url(context) }}" id="delete-lecture" data-controller="amendements-lecture">
@@ -59,29 +59,6 @@
                     <input type="submit" data-action="amendements-lecture#delete" class="danger allow-multiple-submit button" value="Supprimer">
                 </div>
             </form>
-        </div>
-        <div class="no-border" data-controller="filename">
-            <h3>Importer une sauvegarde</h3>
-            <p>À partir d’un fichier précédemment sauvegardé.</p>
-            <form action="{{ request.resource_url(context, 'import_backup') }}" enctype="multipart/form-data" method="post" id="backup-form">
-                <div class="custom-file">
-                    <input type="file" data-action="filename#display" class="custom-file-input" id="backup" name="backup" required>
-                    <label class="custom-file-label" for="backup">Fichier JSON</label>
-                </div>
-                <div role="group">
-                    <input type="submit" name="upload" class="button primary enabled centered" value="Importer la sauvegarde">
-                </div>
-            </form>
-        </div>
-        <div class="no-border" data-controller="multiple-clicks">
-            <h3>Exporter une sauvegarde</h3>
-            <p>Télécharger et conserver une sauvegarde pour un futur import.</p>
-            <div role="group" aria-label="Format de téléchargement">
-                <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'json'}) }}">
-                    {{ macros.svg_icon("file-archive") }}
-                    Fichier de sauvegarde
-                </a>
-            </div>
         </div>
     </section>
 </div>

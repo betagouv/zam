@@ -69,7 +69,7 @@ class Welcome:
         self.request = request
         self.context = context
 
-    @view_config(request_method="GET", renderer="welcome.html")
+    @view_config(request_method="GET", renderer="auth/welcome.html")
     def get(self) -> Any:
         return {"name": self.request.user.name or self.request.user.default_name()}
 

@@ -5,24 +5,13 @@ from typing import Dict
 from pyramid.request import Request
 
 from zam_repondeur.clean import clean_html
-from zam_repondeur.models import (
-    DBSession,
-    Amendement,
-    Article,
-    Lecture,
-    User,
-    get_one_or_create,
-)
+from zam_repondeur.models import DBSession, Amendement, Lecture, User, get_one_or_create
 from zam_repondeur.models.events.amendement import (
     AmendementTransfere,
     AvisAmendementModifie,
     ObjetAmendementModifie,
     ReponseAmendementModifiee,
     CommentsAmendementModifie,
-)
-from zam_repondeur.models.events.article import (
-    TitreArticleModifie,
-    PresentationArticleModifiee,
 )
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
@@ -94,33 +83,3 @@ def import_amendement(
 
     previous_reponse = reponse
     counter["reponses"] += 1
-
-
-def import_article(
-    request: Request,
-    lecture: Lecture,
-    articles: Dict[int, Article],
-    item: dict,
-    counter: Counter,
-) -> None:
-    try:
-        sort_key_as_str = item["sort_key_as_str"]
-    except KeyError:
-        counter["articles_errors"] += 1
-        return
-
-    article = articles.get(sort_key_as_str)
-    if not article:
-        logging.warning("Could not find article %r", item)
-        counter["articles_errors"] += 1
-        return
-
-    # Fallback on `titre` to handle old backups.
-    title = item.get("title", item.get("titre", ""))
-    if title != (article.user_content.title or ""):
-        TitreArticleModifie.create(request, article, title)
-    presentation = item.get("presentation", "")
-    if presentation != (article.user_content.presentation or ""):
-        PresentationArticleModifiee.create(request, article, presentation)
-
-    counter["articles"] += 1

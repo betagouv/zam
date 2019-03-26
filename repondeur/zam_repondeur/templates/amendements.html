@@ -71,6 +71,12 @@
                         autocomplete="off" autocorrect="off"
                         data-action="keyup->amendements-filters#filterAmendement"
                         data-target="amendements-filters.amendementInput">
+                    <input type="checkbox" id="gouvernemental"
+                        data-action="amendements-filters#filterGouvernemental"
+                        data-target="amendements-filters.gouvernementalCheckbox">
+                    <label for="gouvernemental"
+                        data-target="amendements-filters.gouvernementalLabel">
+                        <abbr class="status blue" title="Afficher seulement les amendements gouvernementaux">Gouv.</abbr>
                 </th>
                 <th>
                     <input type="text" class="form-control form-control-sm"

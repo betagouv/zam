@@ -427,10 +427,17 @@ th input.form-control {
 }
 tr.hidden-article,
 tr.hidden-amendement,
+tr.hidden-gouvernemental,
 tr.hidden-table,
 tr.hidden-avis,
 tr.hidden-reponse {
     display: none;
+}
+input[type="checkbox"]#gouvernemental {
+    display: none;
+}
+label[for="gouvernemental"] abbr {
+    cursor: pointer;
 }
 
 .intro {
@@ -489,10 +496,15 @@ abbr.status {
     text-decoration: unset;
     border: 1px solid;
     border-radius: 1rem;
+    font-weight: normal;
 }
     abbr.status.blue {
         border-color: #3167a6;
         color: #3167a6;
+    }
+    abbr.status.blue.selected {
+        color: white;
+        background-color: #3167a6;
     }
     abbr.status.grey {
         border-color: #797676;

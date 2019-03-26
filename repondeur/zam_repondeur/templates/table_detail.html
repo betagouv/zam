@@ -198,6 +198,13 @@
                             autocomplete="off" autocorrect="off"
                             data-action="keyup->amendements-filters#filterAmendement"
                             data-target="amendements-filters.amendementInput">
+                        <input type="checkbox" id="gouvernemental"
+                            data-action="amendements-filters#filterGouvernemental"
+                            data-target="amendements-filters.gouvernementalCheckbox">
+                        <label for="gouvernemental"
+                            data-target="amendements-filters.gouvernementalLabel">
+                            <abbr class="status blue" title="Afficher seulement les amendements gouvernementaux">Gouv.</abbr>
+                        </label>
                     </th>
                     <th>
                         <label for="avis">Avis </label>
@@ -231,6 +238,7 @@
                        "
                        data-order="{{ loop.index }}"
                        data-amendement="{{ amendement.num }}"
+                       data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                        data-avis="{{ 1 if amendement.gouvernemental or amendement.user_content.avis else 0 }}"
                        data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}">
                         <td colspan="4">

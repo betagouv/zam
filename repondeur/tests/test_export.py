@@ -213,13 +213,16 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
     }
 
 
-def test_write_with_affectation(lecture_senat, article1_senat, tmpdir, user_david):
+def test_write_with_affectation(
+    lecture_senat, article1_senat, tmpdir, user_david_table_senat
+):
     from zam_repondeur.export.json import write_json
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     filename = str(tmpdir.join("test.json"))
 
     with transaction.manager:
+        DBSession.add(user_david_table_senat)
         amendement = Amendement.create(
             lecture=lecture_senat,
             article=article1_senat,
@@ -232,7 +235,8 @@ def test_write_with_affectation(lecture_senat, article1_senat, tmpdir, user_davi
             corps="<p>L'article 1 est supprimé.</p>",
             expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
         )
-        user_david.table_for(lecture_senat).amendements.append(amendement)
+        user_david_table_senat.amendements.append(amendement)
+
         nb_rows = write_json(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig") as f_:

@@ -34,7 +34,10 @@ DBSession = scoped_session(
 
 metadata = MetaData(
     # Use an explicit naming convention to help Alembic autogenerate
-    naming_convention={"fk": "%(table_name)s_%(column_0_name)s_fkey"}
+    naming_convention={
+        "fk": "%(table_name)s_%(column_0_name)s_fkey",
+        "uq": "%(table_name)s_%(column_0_N_name)s_key",
+    }
 )
 
 Base = declarative_base(cls=_Base, metadata=metadata)

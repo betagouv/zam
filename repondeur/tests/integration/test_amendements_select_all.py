@@ -65,9 +65,9 @@ def test_select_all_checks_only_visible_amendements(
     lecture_an,
     article7bis_an,
     amendements_an,
-    user_david,
-    user_ronan,
-    user_daniel,
+    user_david_table_an,
+    user_ronan_table_an,
+    user_daniel_table_an,
     column_index,
     input_text,
     expected_nums,
@@ -76,16 +76,16 @@ def test_select_all_checks_only_visible_amendements(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
-        DBSession.add_all(amendements_an)
-        table_ronan = user_ronan.table_for(lecture_an)
-        table_ronan.amendements.append(amendements_an[0])
-        table_david = user_david.table_for(lecture_an)
-        table_david.amendements.append(amendements_an[1])
+        DBSession.add(user_ronan_table_an)
+        DBSession.add(user_david_table_an)
+        DBSession.add(user_daniel_table_an)
+
+        user_ronan_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.amendements.append(amendements_an[1])
         amendement = Amendement.create(
             lecture=lecture_an, article=article7bis_an, num=777
         )
-        table_daniel = user_daniel.table_for(lecture_an)
-        table_daniel.amendements.append(amendement)
+        user_daniel_table_an.amendements.append(amendement)
 
     driver.get(f"{LECTURE_URL}/amendements")
     driver.find_element_by_link_text("Filtrer").click()

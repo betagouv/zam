@@ -71,18 +71,25 @@ def test_post_amendement_init_form_events(
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> a ajouté des commentaires"
     )
-    assert amendement.events[0].render_details() == "<ins>Avec des commentaires</ins>"
+    assert amendement.events[0].render_details() == (
+        "<ins>Avec des </ins>"
+        "<table><tbody><tr><td><ins>commentaires</ins></td></tr></tbody></table> "
+        "<del></del>"
+    )
     assert amendement.events[1].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> a ajouté la réponse"
     )
     assert (
         amendement.events[1].render_details()
-        == "<ins>Une réponse très appropriée</ins>"
+        == "<ins>Une réponse <strong>très</strong> appropriée</ins> <del></del>"
     )
     assert amendement.events[2].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> a ajouté l’objet"
     )
-    assert amendement.events[2].render_details() == "<ins>Un objet très pertinent</ins>"
+    assert (
+        amendement.events[2].render_details()
+        == "<ins>Un objet très pertinent</ins> <del></del>"
+    )
     assert amendement.events[3].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> a mis l’avis à « Favorable »"
     )
@@ -166,20 +173,23 @@ def test_post_amendement_edit_form_events(
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> a modifié les commentaires"
     )
-    assert amendement.events[0].render_details() == "Avec <ins>des commentaires</ins>"
+    assert amendement.events[0].render_details() == (
+        "Avec <ins>des </ins>"
+        "<table><tbody><tr><td><ins>commentaires</ins></td></tr></tbody></table>"
+    )
     assert amendement.events[1].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> a modifié la réponse"
     )
     assert amendement.events[1].render_details() == (
-        "<del>Des</del> <ins>Une</ins> <del>réponses</del> <ins>réponse</ins>"
-        " très <del>bonnes</del> <ins>appropriée</ins>"
+        "<ins>Une réponse <strong>très</strong> appropriée</ins> "
+        "<del>Des réponses <strong>très</strong> bonnes</del>"
     )
     assert amendement.events[2].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> a modifié l’objet"
     )
     assert (
         amendement.events[2].render_details()
-        == "Un objet <del>assez passable</del> <ins>très pertinent</ins>"
+        == "Un objet <ins>très pertinent</ins> <del>assez passable</del>"
     )
     assert amendement.events[3].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> a modifié l’avis de "

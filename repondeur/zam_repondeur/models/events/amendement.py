@@ -2,13 +2,12 @@ from string import Template
 from typing import Any
 
 from jinja2 import Markup
-from jinja2.filters import do_striptags
+from lxml.html.diff import htmldiff
 from pyramid.request import Request
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import backref, relationship
 
 from .base import Event
-from .helpers import html_diff
 from ..amendement import Amendement
 
 
@@ -31,8 +30,8 @@ class AmendementEvent(Event):
     @property
     def template_vars(self) -> dict:
         template_vars = {
-            "new_value": do_striptags(self.data["new_value"]),  # type: ignore
-            "old_value": do_striptags(self.data["old_value"]),  # type: ignore
+            "new_value": self.data["new_value"],
+            "old_value": self.data["old_value"],
         }
         if self.user:
             template_vars.update(
@@ -45,7 +44,7 @@ class AmendementEvent(Event):
 
     def render_details(self) -> str:
         return Markup(
-            html_diff(self.template_vars["old_value"], self.template_vars["new_value"])
+            htmldiff(self.template_vars["old_value"], self.template_vars["new_value"])
         )
 
 

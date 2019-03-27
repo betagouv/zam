@@ -10,7 +10,7 @@ import xmltodict
 
 from zam_repondeur.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.fetch.division import _parse_subdiv
-from zam_repondeur.fetch.exceptions import NotFound
+from zam_repondeur.fetch.exceptions import FetchError, NotFound
 from zam_repondeur.fetch.http import cached_session
 from zam_repondeur.models import (
     DBSession,
@@ -282,8 +282,18 @@ _ORGANE_PREFIX = {
 def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
     logger.info("Récupération de %r", url)
     resp = cached_session.get(url)
+
     if resp.status_code == HTTPStatus.NOT_FOUND:
         raise NotFound(url)
+
+    # Due to a configuration change on the AN web server, we now get a 500 error
+    # for abandoned or non-existing amendements, so we'll consider this a 404 too :(
+    if resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
+        raise NotFound(url)
+
+    # Other errors
+    if resp.status_code >= 400:
+        raise FetchError(url, resp)
 
     result: OrderedDict = xmltodict.parse(resp.content)
     return result

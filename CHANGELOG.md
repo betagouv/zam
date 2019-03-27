@@ -14,13 +14,14 @@
 
 - projet de loi pour une école de la confiance (SG - ministère de l’éducation nationale)
 - projet de loi relatif à l’organisation et la transformation du système de santé (DGOS - ministère des solidarités et de la santé)
+- proposition de loi relative au droit de résiliation sans frais de contrats de complémentaire santé (DSS - ministère des solidarités et de la santé)
 - projet de loi portant sur la création d’une taxe sur les services numériques et modification de la trajectoire de baisse de l’impôt sur les sociétés (DLF - ministère de l’action et des comptes publics)
 - projet de loi réformant la fonction publique (DGAFP - ministère de l’action et des comptes publics)
 
 ##### Semestre 2
 
 - PLF pour 2020 (DLF - ministère de l’action et des comptes publics)
-- PLFSS pour 2020 (DSS - ministère des solidarités et de la santé / ministère de l’action et des comptes publics)
+- PLFSS pour 2020 (DSS - ministère des solidarités et de la santé)
 
 ### Changements récents
 

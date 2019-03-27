@@ -10,7 +10,7 @@ import xmltodict
 
 from zam_repondeur.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.fetch.division import _parse_subdiv
-from zam_repondeur.fetch.exceptions import NotFound
+from zam_repondeur.fetch.exceptions import FetchError, NotFound
 from zam_repondeur.fetch.http import cached_session
 from zam_repondeur.models import (
     DBSession,
@@ -290,6 +290,10 @@ def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
     # for abandoned or non-existing amendements, so we'll consider this a 404 too :(
     if resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
         raise NotFound(url)
+
+    # Other errors
+    if resp.status_code >= 400:
+        raise FetchError(url, resp)
 
     result: OrderedDict = xmltodict.parse(resp.content)
     return result

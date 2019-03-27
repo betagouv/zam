@@ -4,7 +4,6 @@ import pytest
 @pytest.mark.parametrize(
     "format_,content_type",
     [
-        ("json", "application/json"),
         ("pdf", "application/pdf"),
         ("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
     ],

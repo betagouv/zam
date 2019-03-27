@@ -14,7 +14,7 @@ from zam_repondeur.message import Message
 from zam_repondeur.models import Amendement, Lecture
 from zam_repondeur.resources import LectureResource
 
-from .import_amendement import import_amendement
+from .import_items import import_amendement
 
 
 class CSVError(Exception):

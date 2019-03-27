@@ -21,9 +21,9 @@ def test_export_csv_columns(lecture_an, article1_an, tmpdir):
     DBSession.add(amendement)
     DBSession.add(lecture_an)
 
-    nb_rows = write_csv(lecture_an, filename, request={})
+    counter = write_csv(lecture_an, filename, request={})
 
-    assert nb_rows == 1
+    assert counter["amendements"] == 1
 
     with Path(filename).open(encoding="utf-8-sig") as csv_file:
         reader = csv.reader(csv_file, delimiter=";")
@@ -71,9 +71,9 @@ def test_export_excel_columns(lecture_an, article1_an, tmpdir):
     DBSession.add(amendement)
     DBSession.add(lecture_an)
 
-    nb_rows = write_xlsx(lecture_an, filename, request={})
+    counter = write_xlsx(lecture_an, filename, request={})
 
-    assert nb_rows == 1
+    assert counter["amendements"] == 1
 
     wb = load_workbook(filename, read_only=True)
     ws = wb.active
@@ -125,9 +125,9 @@ def test_export_csv_with_parent(lecture_an, article1_an, tmpdir):
     DBSession.add_all(amendements)
     DBSession.add(lecture_an)
 
-    nb_rows = write_csv(lecture_an, filename, request={})
+    counter = write_csv(lecture_an, filename, request={})
 
-    assert nb_rows == 2
+    assert counter["amendements"] == 2
 
     with Path(filename).open(encoding="utf-8-sig") as csv_file:
         reader = csv.DictReader(csv_file, delimiter=";")
@@ -160,9 +160,9 @@ def test_export_csv_with_auteur(lecture_an, article1_an, tmpdir):
     DBSession.add_all(amendements)
     DBSession.add(lecture_an)
 
-    nb_rows = write_csv(lecture_an, filename, request={})
+    counter = write_csv(lecture_an, filename, request={})
 
-    assert nb_rows == 2
+    assert counter["amendements"] == 2
 
     with Path(filename).open(encoding="utf-8-sig") as csv_file:
         reader = csv.DictReader(csv_file, delimiter=";")
@@ -195,9 +195,9 @@ def test_export_csv_with_gouvernemental(lecture_an, article1_an, tmpdir):
     DBSession.add_all(amendements)
     DBSession.add(lecture_an)
 
-    nb_rows = write_csv(lecture_an, filename, request={})
+    counter = write_csv(lecture_an, filename, request={})
 
-    assert nb_rows == 2
+    assert counter["amendements"] == 2
 
     with Path(filename).open(encoding="utf-8-sig") as csv_file:
         reader = csv.DictReader(csv_file, delimiter=";")
@@ -231,9 +231,9 @@ def test_export_csv_with_identique(lecture_an, article1_an, tmpdir):
     DBSession.add_all(amendements)
     DBSession.add(lecture_an)
 
-    nb_rows = write_csv(lecture_an, filename, request={})
+    counter = write_csv(lecture_an, filename, request={})
 
-    assert nb_rows == 3
+    assert counter["amendements"] == 3
 
     with Path(filename).open(encoding="utf-8-sig") as csv_file:
         reader = csv.DictReader(csv_file, delimiter=";")

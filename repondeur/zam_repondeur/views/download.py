@@ -9,13 +9,11 @@ from pyramid.view import view_config
 from sqlalchemy.orm import joinedload
 
 from zam_repondeur.resources import LectureResource
-from zam_repondeur.export.json import write_json
 from zam_repondeur.export.pdf import write_pdf, write_pdf_multiple
 from zam_repondeur.export.spreadsheet import write_xlsx
 
 
 DOWNLOAD_FORMATS = {
-    "json": (write_json, "application/json"),
     "pdf": (write_pdf, "application/pdf"),
     "xlsx": (
         write_xlsx,

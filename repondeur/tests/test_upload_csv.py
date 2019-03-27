@@ -289,9 +289,9 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir):
             )
             for position, num in enumerate((333, 777), 1)
         ]
-        nb_rows = write_csv(lecture_an, filename, request={})
+        counter = write_csv(lecture_an, filename, request={})
 
-    assert nb_rows == 2
+    assert counter["amendements"] == 2
 
     with transaction.manager:
         amendements[0].user_content.avis = None

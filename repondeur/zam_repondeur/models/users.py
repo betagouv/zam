@@ -123,3 +123,7 @@ class User(Base):
     def everyone_but_me(self, me: "User") -> List["User"]:
         users: List["User"] = DBSession.query(User).filter(User.email != me.email).all()
         return users
+
+    @property
+    def can_delete_lecture(self) -> bool:
+        return self.email.endswith("@zam.beta.gouv.fr")

@@ -391,6 +391,7 @@ class Amendement(Base):
             if (
                 amendement.id_identique == self.id_identique
                 and amendement.num != self.num
+                and not amendement.is_abandoned
             )
         )
 

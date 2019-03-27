@@ -24,3 +24,20 @@ def test_amendements_identiques(wsgi_server, driver, lecture_an, amendements_an)
     assert "last" not in identiques[0].get_attribute("class")
     assert "first" not in identiques[1].get_attribute("class")
     assert "last" in identiques[1].get_attribute("class")
+
+
+def test_amendements_identiques_with_abandoned(
+    wsgi_server, driver, lecture_an, amendements_an, article1_an
+):
+    from zam_repondeur.models import DBSession
+
+    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    with transaction.manager:
+        amendements_an[0].id_identique = 42
+        amendements_an[1].id_identique = 42
+        amendements_an[1].sort = "retiré"
+        DBSession.add_all(amendements_an)
+        driver.get(f"{LECTURE_URL}/amendements")
+
+    identiques = driver.find_elements_by_css_selector("tbody tr td.identique")
+    assert len(identiques) == 0

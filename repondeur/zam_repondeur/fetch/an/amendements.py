@@ -282,7 +282,13 @@ _ORGANE_PREFIX = {
 def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
     logger.info("Récupération de %r", url)
     resp = cached_session.get(url)
+
     if resp.status_code == HTTPStatus.NOT_FOUND:
+        raise NotFound(url)
+
+    # Due to a configuration change on the AN web server, we now get a 500 error
+    # for abandoned or non-existing amendements, so we'll consider this a 404 too :(
+    if resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
         raise NotFound(url)
 
     result: OrderedDict = xmltodict.parse(resp.content)

@@ -15,6 +15,8 @@
 </svg>
 
 <h1>Index des amendements</h1>
+<h2 class="subtitle">{{ lecture.dossier_legislatif }}</h2>
+<h3 class="subtitle">{{ lecture }}</h3>
 {{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}
 {% set count = amendements| length %}
 <div class="content"

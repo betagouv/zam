@@ -1,10 +1,10 @@
 .title-extras {
     text-align: center;
 }
-.timeline ul {
+.timeline > ul {
     list-style-type: none;
 }
-    .timeline ul li {
+    .timeline > ul > li {
         display: flex;
     }
 .timeline h3 {

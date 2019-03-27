@@ -157,12 +157,16 @@
                     {%- else -%}
                         {{ amendement.num }}
                     {%- endif -%}"
-                    {%- if amendement.identique %}
+                    {% set all_identiques = amendement.all_identiques %}
+                    {# Given that all_identiques excludes itself,
+                        we can use it directly as a boolean to avoid
+                        a lonely identique: #}
+                    {%- if amendement.identique and not amendement.is_abandoned and all_identiques %}
                     class="identique
-                        {% if loop.previtem is not defined or loop.previtem not in amendement.all_identiques %}
+                        {% if loop.previtem is not defined or loop.previtem not in all_identiques %}
                             first
                         {% endif %}
-                        {% if loop.nextitem is not defined or loop.nextitem not in amendement.all_identiques %}
+                        {% if loop.nextitem is not defined or loop.nextitem not in all_identiques %}
                             last
                         {% endif %}
                     "

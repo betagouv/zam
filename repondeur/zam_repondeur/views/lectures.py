@@ -215,6 +215,9 @@ class TransferAmendements:
                 amendements_with_table.append(amendement)
             else:
                 amendements_without_table.append(amendement)
+        show_transfer_to_myself = amendements_without_table or not all(
+            amendement.user_table is my_table for amendement in amendements_with_table
+        )
         return {
             "lecture": lecture,
             "amendements": amendements,
@@ -224,11 +227,7 @@ class TransferAmendements:
             "from_index": int(self.from_index),
             "from_save": from_save,
             "show_transfer_to_index": bool(amendements_with_table),
-            "show_transfer_to_myself": any(
-                amendement.user_table is not my_table
-                for amendement in amendements_with_table
-            )
-            or not amendements_with_table,
+            "show_transfer_to_myself": show_transfer_to_myself,
             "back_url": self.back_url,
         }
 

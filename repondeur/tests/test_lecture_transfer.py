@@ -110,6 +110,48 @@ def test_lecture_get_transfer_amendements_from_me(
     assert resp.forms["transfer-amendements-custom"].fields["nums"][0].value == "666"
 
 
+def test_lecture_get_transfer_amendements_including_me(
+    app, lecture_an, amendements_an, user_david, user_ronan, user_david_table_an
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(user_ronan)
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendements_an[0])
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/transfer_amendements",
+        {"nums": amendements_an},
+        user=user_david.email,
+    )
+    assert resp.status_code == 200
+    assert (
+        "Cet amendement est sur votre table"
+        in resp.parser.css_first(".amendements li").text()
+    )
+    assert "checked" in resp.parser.css_first(".amendements li input").attributes
+
+    assert resp.forms["transfer-amendements"].method == "POST"
+    assert list(resp.forms["transfer-amendements"].fields.keys()) == [
+        "nums",
+        "target",
+        "submit",
+    ]
+    assert resp.forms["transfer-amendements"].fields["nums"][0].value == "666"
+    assert resp.forms["transfer-amendements"].fields["target"][0].options == [
+        ("", True, ""),
+        ("david@example.com", False, "Moi — David (david@example.com)"),
+        ("ronan@example.com", False, "Ronan (ronan@example.com)"),
+    ]
+    assert resp.forms["transfer-amendements-custom"].method == "POST"
+    assert list(resp.forms["transfer-amendements-custom"].fields.keys()) == [
+        "nums",
+        "submit-index",
+    ]
+    assert resp.forms["transfer-amendements-custom"].fields["nums"][0].value == "666"
+
+
 def test_lecture_get_transfer_amendements_from_me_from_save(
     app, lecture_an, amendements_an, user_david, user_ronan
 ):

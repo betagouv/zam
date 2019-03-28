@@ -138,6 +138,8 @@ class AmendementsFilters extends Stimulus.Controller {
             'gouvernementalCheckbox',
             'gouvernementalLabel',
             'tableInput',
+            'emptytableCheckbox',
+            'emptytableLabel',
             'avisSelect',
             'reponseSelect'
         ]
@@ -159,7 +161,7 @@ class AmendementsFilters extends Stimulus.Controller {
         const gouvernementalFilter = this.getURLParam('gouvernemental')
         if (gouvernementalFilter !== '') {
             this.toggle()
-            this.gouvernementalCheckboxTarget.value = gouvernementalFilter
+            this.gouvernementalCheckboxTarget.checked = true
             this.gouvernementalLabelTarget
                 .querySelector('abbr')
                 .classList.add('selected')
@@ -170,6 +172,15 @@ class AmendementsFilters extends Stimulus.Controller {
             this.toggle()
             this.tableInputTarget.value = tableFilter
             this.filterByTable(tableFilter)
+        }
+        const emptytableFilter = this.getURLParam('emptytable')
+        if (emptytableFilter !== '') {
+            this.toggle()
+            this.emptytableCheckboxTarget.checked = true
+            this.emptytableLabelTarget
+                .querySelector('abbr')
+                .classList.add('selected')
+            this.filterByEmptytable(emptytableFilter)
         }
         const avisFilter = this.getURLParam('avis')
         if (avisFilter !== '') {
@@ -253,6 +264,17 @@ class AmendementsFilters extends Stimulus.Controller {
         this.updateCount()
     }
 
+    filterEmptytable(event) {
+        const checked = event.target.checked
+        const value = checked ? '1' : ''
+        this.emptytableLabelTarget
+            .querySelector('abbr')
+            .classList.toggle('selected', checked)
+        this.filterByEmptytable(value)
+        this.setURLParam('emptytable', value)
+        this.updateCount()
+    }
+
     filterAvis(event) {
         const value = event.target.value.trim()
         this.filterByAvis(value)
@@ -306,6 +328,16 @@ class AmendementsFilters extends Stimulus.Controller {
                 .includes(value.toLowerCase())
         })
         this.tableTarget.classList.toggle('filtered-table', value)
+    }
+
+    filterByEmptytable(value) {
+        this.filterColumn('hidden-emptytable', line => {
+            if (!value) {
+                return true
+            }
+            return line.dataset.emptytable.trim() === value
+        })
+        this.tableTarget.classList.toggle('filtered-emptytable', value)
     }
 
     filterByAvis(value) {

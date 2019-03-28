@@ -86,6 +86,13 @@
                         autocomplete="off" autocorrect="off"
                         data-action="keyup->amendements-filters#filterTable"
                         data-target="amendements-filters.tableInput">
+                    <input type="checkbox" id="emptytable"
+                        data-action="amendements-filters#filterEmptytable"
+                        data-target="amendements-filters.emptytableCheckbox">
+                    <label for="emptytable"
+                        data-target="amendements-filters.emptytableLabel">
+                        <abbr class="status blue" title="Filtrer les amendements sans table">Vide</abbr>
+                    </label>
                 </th>
                 <th>
                     <select
@@ -132,6 +139,7 @@
                     {% elif amendement.user_table %}
                         {{ amendement.user_table.user.name }}
                     {% endif %}"
+                data-emptytable="{{ 1 if not amendement.user_table and not amendement.is_abandoned else 0 }}"
                 data-avis="{{ 1 if amendement.gouvernemental or amendement.user_content.avis else 0 }}"
                 data-reponse="{{ 1 if amendement.user_content.reponse else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"

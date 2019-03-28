@@ -135,6 +135,8 @@ td.identique.first.last:after {
 }
 table.filtered-amendement td.identique:after,
 table.filtered-amendement td.identique.first.last:after,
+table.filtered-emptytable td.identique:after,
+table.filtered-emptytable td.identique.first.last:after,
 table.filtered-avis td.identique:after,
 table.filtered-avis td.identique.first.last:after,
 table.filtered-status td.identique:after,

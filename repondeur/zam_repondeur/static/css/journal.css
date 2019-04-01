@@ -47,6 +47,9 @@
 }
 details {
 }
+    details summary abbr[title] {
+        cursor: pointer;
+    }
     details[open] summary {
         margin-bottom: .5rem;
     }

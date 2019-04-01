@@ -132,7 +132,7 @@ class TestPostForm:
         lecture = Lecture.get(
             chambre=lecture_an.chambre,
             session=lecture_an.session,
-            num_texte=lecture_an.num_texte,
+            texte=lecture_an.texte,
             partie=None,
             organe=lecture_an.organe,
         )

@@ -185,7 +185,7 @@ def test_generate_pdf_with_amendement_content(
     DBSession.add(amendement_6666)
     lecture_senat = (
         DBSession.query(Lecture)
-        .filter(Lecture.num_texte == lecture_senat.num_texte)
+        .filter(Lecture.texte.numero == lecture_senat.texte.numero)
         .first()
     )
     parser = HTMLParser(
@@ -238,7 +238,7 @@ def test_generate_pdf_with_amendement_content_factor_authors_groups(
     DBSession.add(amendement_9999)
     lecture_senat = (
         DBSession.query(Lecture)
-        .filter(Lecture.num_texte == lecture_senat.num_texte)
+        .filter(Lecture.texte.numero == lecture_senat.texte.numero)
         .first()
     )
     parser = HTMLParser(
@@ -292,7 +292,7 @@ def test_generate_pdf_with_amendement_content_factor_only_groups(
     DBSession.add(amendement_9999)
     lecture_senat = (
         DBSession.query(Lecture)
-        .filter(Lecture.num_texte == lecture_senat.num_texte)
+        .filter(Lecture.texte.numero == lecture_senat.texte.numero)
         .first()
     )
     parser = HTMLParser(
@@ -390,7 +390,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
     )
     lecture_senat = (
         DBSession.query(Lecture)
-        .filter(Lecture.num_texte == lecture_senat.num_texte)
+        .filter(Lecture.texte.numero == lecture_senat.texte.numero)
         .first()
     )
     parser = HTMLParser(
@@ -438,7 +438,7 @@ def test_generate_pdf_with_amendement_content_gouvernemental(
     DBSession.add(amendement_6666)
     lecture_senat = (
         DBSession.query(Lecture)
-        .filter(Lecture.num_texte == lecture_senat.num_texte)
+        .filter(Lecture.texte.numero == lecture_senat.texte.numero)
         .first()
     )
     parser = HTMLParser(

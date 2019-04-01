@@ -1,36 +1,109 @@
+from datetime import datetime
+
 import pytest
 import transaction
 
 
 @pytest.fixture
-def lecture_an(db):
+def texte_an(db):
+    from zam_repondeur.models import Texte
+
+    with transaction.manager:
+        texte = Texte.create(
+            uid="PRJLANR5L15B0269",
+            type_="Projet de loi",
+            numero=269,
+            titre_long="projet de loi de financement de la sécurité sociale pour 2018",
+            titre_court="PLFSS pour 2018",
+            date_depot=datetime(2017, 10, 11),
+        )
+
+    return texte
+
+
+@pytest.fixture
+def texte_commission_speciale(db):
+    from zam_repondeur.models import Texte
+
+    with transaction.manager:
+        texte = Texte.create(
+            uid="quux",
+            type_="Projet de loi",
+            numero=806,
+            titre_long="long",
+            titre_court="court",
+            date_depot=datetime(2017, 10, 11),
+        )
+
+    return texte
+
+
+@pytest.fixture
+def dossier_an(db):
+    from zam_repondeur.models import Dossier
+
+    with transaction.manager:
+        texte = Dossier.create(uid="foo", titre="Titre dossier legislatif AN")
+
+    return texte
+
+
+@pytest.fixture
+def lecture_an(db, texte_an, dossier_an):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
         lecture = Lecture.create(
             chambre="an",
             session="15",
-            num_texte=269,
+            texte=texte_an,
             titre="Numéro lecture – Titre lecture",
             organe="PO717460",
-            dossier_legislatif="Titre dossier legislatif",
+            dossier=dossier_an,
         )
 
     return lecture
 
 
 @pytest.fixture
-def lecture_senat(db):
+def texte_senat(db):
+    from zam_repondeur.models import Texte
+
+    with transaction.manager:
+        texte = Texte.create(
+            uid="baz",
+            type_="Projet de loi",
+            numero=63,
+            titre_long="long",
+            titre_court="court",
+            date_depot=datetime(2017, 10, 11),
+        )
+
+    return texte
+
+
+@pytest.fixture
+def dossier_senat(db):
+    from zam_repondeur.models import Dossier
+
+    with transaction.manager:
+        texte = Dossier.create(uid="bar", titre="Titre dossier legislatif sénat")
+
+    return texte
+
+
+@pytest.fixture
+def lecture_senat(db, texte_senat, dossier_senat):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
         lecture = Lecture.create(
             chambre="senat",
             session="2017-2018",
-            num_texte=63,
+            texte=texte_senat,
             titre="Numéro lecture – Titre lecture sénat",
             organe="PO78718",
-            dossier_legislatif="Titre dossier legislatif sénat",
+            dossier=dossier_senat,
         )
 
     return lecture
@@ -158,17 +231,47 @@ def amendements_senat(db, lecture_senat, article1_senat):
 
 
 @pytest.fixture
-def lecture_essoc(db):
+def texte_essoc(db):
+    from zam_repondeur.models import Texte
+
+    with transaction.manager:
+        texte = Texte.create(
+            uid="foo",
+            type_="Projet de loi",
+            numero=806,
+            titre_long="long",
+            titre_court="court",
+            date_depot=datetime(2017, 10, 11),
+        )
+
+    return texte
+
+
+@pytest.fixture
+def dossier_essoc(db):
+    from zam_repondeur.models import Dossier
+
+    with transaction.manager:
+        texte = Dossier.create(
+            uid="bar",
+            titre="Fonction publique : un Etat au service d'une société de confiance",
+        )
+
+    return texte
+
+
+@pytest.fixture
+def lecture_essoc(db, texte_essoc, dossier_essoc):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
         lecture = Lecture.create(
             chambre="an",
             session="15",
-            num_texte=806,
+            texte=texte_essoc,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO744107",
-            dossier_legislatif="Fonction publique : un Etat au service d'une société de confiance",  # noqa
+            dossier=dossier_essoc,
         )
 
     return lecture

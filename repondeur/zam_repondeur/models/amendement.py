@@ -456,7 +456,7 @@ class Amendement(Base):
             "comments": self.user_content.comments or "",
             "parent": self.parent and self.parent.num_disp or "",
             "chambre": self.lecture.chambre,
-            "num_texte": self.lecture.num_texte,
+            "num_texte": self.lecture.texte.numero,
             "organe": self.lecture.organe,
             "session": self.lecture.session,
             "article": self.article.format(),

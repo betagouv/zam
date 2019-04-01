@@ -69,7 +69,7 @@
     {% for lecture in lectures %}
         <div class="lecture box">
             <div>
-                <h3>{{ lecture.dossier_legislatif }}</h3>
+                <h3>{{ lecture.dossier.titre }}</h3>
                 <div class="details">{{ lecture }}</div>
                 {% if lecture.amendements %}
                     <em>{{ lecture.amendements|length }} amendements</em>

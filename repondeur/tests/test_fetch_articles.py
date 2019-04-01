@@ -6,14 +6,14 @@ import transaction
 
 
 class TestGetPossibleUrls:
-    def test_assemblee_nationale(self):
+    def test_assemblee_nationale(self, texte_an):
         from zam_repondeur.fetch.articles import get_possible_texte_urls
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
             chambre="an",
             session="15",
-            num_texte=269,
+            texte=texte_an,
             titre="Titre lecture",
             organe="PO420120",
         )
@@ -23,14 +23,14 @@ class TestGetPossibleUrls:
             "http://www.assemblee-nationale.fr/15/ta-commission/r0269-a0.asp",
         ]
 
-    def test_senat(self):
+    def test_senat(self, texte_senat):
         from zam_repondeur.fetch.articles import get_possible_texte_urls
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
             chambre="senat",
             session="2017-2018",
-            num_texte=63,
+            texte=texte_senat,
             titre="Titre lecture",
             organe="PO78718",
         )
@@ -159,7 +159,7 @@ class TestGetArticlesAN:
         from zam_repondeur.fetch.articles import get_articles
         from zam_repondeur.models import DBSession, Article
 
-        lecture_an.num_texte = 1056
+        lecture_an.texte.numero = 1056
         lecture_an.organe = "PO717460"
         lecture_an.titre = "Première lecture – Séance publique"
         DBSession.add(lecture_an)
@@ -269,7 +269,7 @@ class TestGetArticlesAN:
         from zam_repondeur.models import DBSession, Amendement
 
         with transaction.manager:
-            lecture_an.num_texte = 575
+            lecture_an.texte.numero = 575
             lecture_an.organe = "PO717460"
             lecture_an.titre = "Première lecture – Séance publique"
 

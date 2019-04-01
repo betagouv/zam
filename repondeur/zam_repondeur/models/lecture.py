@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, TYPE_CHECKING
 
 from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, Text, desc
 from sqlalchemy.orm import joinedload, relationship
@@ -9,6 +9,11 @@ from .article import Article
 from .base import Base, DBSession
 from .division import SubDiv
 from .users import Team
+
+# Make these types available to mypy, but avoid circular imports
+if TYPE_CHECKING:
+    from .dossier import Dossier  # noqa
+    from .texte import Texte  # noqa
 
 
 CHAMBRES = {"an": "Assemblée nationale", "senat": "Sénat"}
@@ -23,10 +28,9 @@ class Lecture(Base):
     __tablename__ = "lectures"
     __table_args__ = (
         Index(
-            "ix_lectures__chambre__session__num_texte__partie__organe",
+            "ix_lectures__chambre__session__partie__organe",
             "chambre",
             "session",
-            "num_texte",
             "partie",
             "organe",
             unique=True,
@@ -36,11 +40,9 @@ class Lecture(Base):
     pk = Column(Integer, primary_key=True)
     chambre = Column(Text)
     session = Column(Text)
-    num_texte = Column(Integer)
     partie = Column(Integer, nullable=True)  # only for PLF
     organe = Column(Text)
     titre = Column(Text)
-    dossier_legislatif = Column(Text)
     created_at = Column(DateTime)
     modified_at = Column(DateTime)
     amendements = relationship(
@@ -55,16 +57,12 @@ class Lecture(Base):
 
     owned_by_team_pk = Column(Integer, ForeignKey("teams.pk"), nullable=True)
     owned_by_team = relationship("Team", backref="lectures")
+    dossier_pk = Column(Integer, ForeignKey("dossiers.pk"))
+    dossier = relationship("Dossier", back_populates="lectures")
+    texte_pk = Column(Integer, ForeignKey("textes.pk"))
+    texte = relationship("Texte", back_populates="lectures")
 
-    __repr_keys__ = (
-        "pk",
-        "chambre",
-        "session",
-        "organe",
-        "num_texte",
-        "partie",
-        "owned_by_team",
-    )
+    __repr_keys__ = ("pk", "chambre", "session", "organe", "partie", "owned_by_team")
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Lecture):
@@ -72,7 +70,7 @@ class Lecture(Base):
         return bool(
             self.chambre == other.chambre
             and self.session == other.session
-            and self.num_texte == other.num_texte
+            and self.texte == other.texte
             and self.partie == other.partie
             and self.organe == other.organe
         )
@@ -125,15 +123,15 @@ class Lecture(Base):
             partie = " (2nde partie)"
         else:
             partie = ""
-        return f"texte nº\u00a0{self.num_texte}{partie}"
+        return f"texte nº\u00a0{self.texte.numero}{partie}"
 
     def __lt__(self, other: Any) -> bool:
         if type(self) != type(other):
             return NotImplemented
-        return (self.chambre, self.session, self.num_texte, self.organe) < (
+        return (self.chambre, self.session, self.texte.numero, self.organe) < (
             other.chambre,
             other.session,
-            other.num_texte,
+            other.texte.numero,
             other.organe,
         )
 
@@ -179,7 +177,7 @@ class Lecture(Base):
         cls,
         chambre: str,
         session: str,
-        num_texte: int,
+        texte: "Texte",
         partie: Optional[int],
         organe: str,
         *options: Any,
@@ -189,7 +187,7 @@ class Lecture(Base):
             .filter(
                 cls.chambre == chambre,
                 cls.session == session,
-                cls.num_texte == num_texte,
+                cls.texte == texte,
                 cls.partie == partie,
                 cls.organe == organe,
             )
@@ -203,7 +201,7 @@ class Lecture(Base):
         cls,
         chambre: str,
         session: str,
-        num_texte: int,
+        texte: "Texte",
         partie: Optional[int],
         organe: str,
     ) -> bool:
@@ -212,7 +210,7 @@ class Lecture(Base):
             .filter(
                 cls.chambre == chambre,
                 cls.session == session,
-                cls.num_texte == num_texte,
+                cls.texte == texte,
                 cls.partie == partie,
                 cls.organe == organe,
             )
@@ -225,10 +223,10 @@ class Lecture(Base):
         cls,
         chambre: str,
         session: str,
-        num_texte: int,
+        texte: "Texte",
         titre: str,
         organe: str,
-        dossier_legislatif: str,
+        dossier: "Dossier",
         partie: Optional[int] = None,
         owned_by_team: Optional[Team] = None,
     ) -> "Lecture":
@@ -236,10 +234,10 @@ class Lecture(Base):
         lecture = cls(
             chambre=chambre,
             session=session,
-            num_texte=num_texte,
+            texte=texte,
             titre=titre,
             organe=organe,
-            dossier_legislatif=dossier_legislatif,
+            dossier=dossier,
             partie=partie,
             owned_by_team=owned_by_team,
             created_at=now,
@@ -254,7 +252,9 @@ class Lecture(Base):
             partie = f"-{self.partie}"
         else:
             partie = ""
-        return f"{self.chambre}.{self.session}.{self.num_texte}{partie}.{self.organe}"
+        return (
+            f"{self.chambre}.{self.session}.{self.texte.numero}{partie}.{self.organe}"
+        )
 
     def find_article(self, subdiv: SubDiv) -> Optional[Article]:
         article: Article

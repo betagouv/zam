@@ -75,19 +75,22 @@ def test_post_form(app, lecture_an, article1_an):
     resp = resp.follow()
 
     assert resp.status_code == 200
-    lecture_an = Lecture.get(
-        chambre=lecture_an.chambre,
-        session=lecture_an.session,
-        num_texte=lecture_an.num_texte,
-        partie=None,
-        organe=lecture_an.organe,
-    )
-    assert len(lecture_an.events) == 2
-    assert (
-        lecture_an.events[0].render_summary()
-        == "Le contenu des articles a été récupéré."
-    )
-    assert lecture_an.events[1].render_summary() == "4 nouveaux amendements récupérés."
+
+    with transaction.manager:
+        lecture_an = Lecture.get(
+            chambre=lecture_an.chambre,
+            session=lecture_an.session,
+            texte=lecture_an.texte,
+            partie=None,
+            organe=lecture_an.organe,
+        )
+        events = lecture_an.events
+        texte = lecture_an.texte
+        organe = lecture_an.organe
+
+    assert len(events) == 2
+    assert events[0].render_summary() == "Le contenu des articles a été récupéré."
+    assert events[1].render_summary() == "4 nouveaux amendements récupérés."
     assert "Rafraichissement des amendements et des articles en cours." in resp.text
 
     # Check that the update timestamp has been updated
@@ -95,8 +98,8 @@ def test_post_form(app, lecture_an, article1_an):
         lecture = Lecture.get(
             chambre=lecture_an.chambre,
             session=lecture_an.session,
-            num_texte=lecture_an.num_texte,
+            texte=texte,
             partie=None,
-            organe=lecture_an.organe,
+            organe=organe,
         )
         assert lecture.modified_at != initial_modified_at

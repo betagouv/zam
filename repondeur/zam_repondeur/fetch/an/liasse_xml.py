@@ -176,16 +176,18 @@ def check_same_lecture(
 
     dossier_ref, lecture_ref = _find_dossier_lecture(texte_uid)
 
+    # TODO: perform real queries.
+
     # This Lecture is only created for the sake of comparison and error message
     # formatting, and is not persisted so we don't add it to the database session
     liasse_lecture = Lecture(
         chambre=Chambre.AN.value,
         session=session,
-        num_texte=lecture_ref.texte.numero,
+        texte=lecture_ref.texte,
         partie=partie,
         organe=organe,
         titre=lecture_ref.titre,
-        dossier_legislatif=dossier_ref.titre,
+        dossier=dossier_ref,
     )
     if liasse_lecture != lecture:
         raise LectureDoesNotMatch(liasse_lecture)

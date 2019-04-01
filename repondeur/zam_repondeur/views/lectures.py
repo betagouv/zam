@@ -12,7 +12,14 @@ from zam_repondeur.data import repository
 from zam_repondeur.fetch import get_articles
 from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
 from zam_repondeur.message import Message
-from zam_repondeur.models import DBSession, Lecture as LectureModel, User
+from zam_repondeur.models import (
+    DBSession,
+    Dossier as DossierModel,
+    Lecture as LectureModel,
+    Texte as TexteModel,
+    User,
+    get_one_or_create,
+)
 from zam_repondeur.models.events.lecture import ArticlesRecuperes
 from zam_repondeur.models.users import Team
 from zam_repondeur.resources import (
@@ -67,14 +74,26 @@ class LecturesAdd:
         lecture = self._get_lecture(dossier)
 
         chambre = lecture.chambre.value
-        num_texte = lecture.texte.numero
         titre = lecture.titre
         organe = lecture.organe
         partie = lecture.partie
 
         session = lecture.get_session()
+        texte = lecture.texte
+        texte_model = get_one_or_create(
+            TexteModel,
+            uid=texte.uid,
+            type_=texte.type_.value,  # TODO: do we really want to store the value?
+            numero=texte.numero,
+            titre_long=texte.titre_long,
+            titre_court=texte.titre_court,
+            date_depot=texte.date_depot,
+        )[0]
+        dossier_model = get_one_or_create(
+            DossierModel, uid=dossier.uid, titre=dossier.titre
+        )[0]
 
-        if LectureModel.exists(chambre, session, num_texte, partie, organe):
+        if LectureModel.exists(chambre, session, texte_model, partie, organe):
             self.request.session.flash(
                 Message(cls="warning", text="Cette lecture existe déjà…")
             )
@@ -84,11 +103,11 @@ class LecturesAdd:
             owned_by_team=self.request.team,
             chambre=chambre,
             session=session,
-            num_texte=num_texte,
+            texte=texte_model,
             partie=partie,
             titre=titre,
             organe=organe,
-            dossier_legislatif=dossier.titre,
+            dossier=dossier_model,
         )
         get_articles(lecture_model)
         ArticlesRecuperes.create(request=None, lecture=lecture_model)

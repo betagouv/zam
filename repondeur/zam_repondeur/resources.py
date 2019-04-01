@@ -12,6 +12,7 @@ from zam_repondeur.models import (
     Article,
     DBSession,
     Lecture,
+    Texte,
     User,
     UserTable,
 )
@@ -129,13 +130,11 @@ class LectureResource(Resource):
         return self.model()
 
     def model(self, *options: Any) -> Lecture:
+        texte = Texte.get_by_numero(numero=self.num_texte)
+        if texte is None:
+            raise ResourceNotFound(self)
         lecture = Lecture.get(
-            self.chambre,
-            self.session,
-            self.num_texte,
-            self.partie,
-            self.organe,
-            *options,
+            self.chambre, self.session, texte, self.partie, self.organe, *options
         )
         if lecture is None:
             raise ResourceNotFound(self)

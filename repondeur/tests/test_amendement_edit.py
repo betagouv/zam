@@ -433,7 +433,7 @@ def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
     lecture = Lecture.get(
         chambre=lecture_an.chambre,
         session=lecture_an.session,
-        num_texte=lecture_an.num_texte,
+        texte=lecture_an.texte,
         partie=None,
         organe=lecture_an.organe,
     )

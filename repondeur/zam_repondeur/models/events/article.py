@@ -83,7 +83,8 @@ class TitreArticleModifie(ArticleEvent):
     @property
     def summary_template(self) -> Template:
         if self.user:
-            return Template("<abbr title='$email'>$user</abbr> a modifié le titre")
+            action = "modifié" if self.template_vars["old_value"] else "ajouté"
+            return Template(f"<abbr title='$email'>$user</abbr> a {action} le titre")
         if self.article.lecture.chambre == "an":
             de_qui = "de l’Asssemblée nationale"
         else:
@@ -115,9 +116,6 @@ class TitreArticleModifie(ArticleEvent):
 class PresentationArticleModifiee(ArticleEvent):
     __mapper_args__ = {"polymorphic_identity": "presentation_article_modifiee"}
 
-    summary_template = Template(
-        "<abbr title='$email'>$user</abbr> a modifié la présentation"
-    )
     icon = "edit"
 
     def __init__(
@@ -130,6 +128,11 @@ class PresentationArticleModifiee(ArticleEvent):
             new_value=presentation,
             **kwargs,
         )
+
+    @property
+    def summary_template(self) -> Template:
+        action = "modifié" if self.template_vars["old_value"] else "ajouté"
+        return Template(f"<abbr title='$email'>$user</abbr> a {action} la présentation")
 
     def apply(self) -> None:
         self.article.user_content.presentation = self.data["new_value"]

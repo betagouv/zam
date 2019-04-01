@@ -34,7 +34,7 @@ def test_article_journal_title(app, lecture_an, article1_an, user_david):
         "/lectures/an.15.269.PO717460/articles/article.1../journal",
         user=user_david.email,
     )
-    assert first_summary_text(resp) == "David a modifié le titre"
+    assert first_summary_text(resp) == "David a ajouté le titre"
     assert first_details_text(resp) == "De «  » à « Title »"
 
 
@@ -76,7 +76,7 @@ def test_article_journal_presentation(app, lecture_an, article1_an, user_david):
         "/lectures/an.15.269.PO717460/articles/article.1../journal",
         user=user_david.email,
     )
-    assert first_summary_text(resp) == "David a modifié la présentation"
+    assert first_summary_text(resp) == "David a ajouté la présentation"
     assert first_details_text(resp) == "De «  » à « Présentation »"
 
 

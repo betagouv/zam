@@ -14,6 +14,18 @@
 .timeline p {
     margin-bottom: 0;
 }
+.timeline table {
+  width: 100%;
+  border-collapse: collapse;
+}
+  .timeline table td {
+    padding: .4rem .6rem;
+    border: 1px solid #565656;
+  }
+    .timeline table td p {
+      margin: 0;
+    }
+
 .timeline .icon {
     width: inherit;
     height: inherit;

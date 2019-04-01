@@ -24,7 +24,7 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an):
         event.render_summary()
         == "<abbr title='user@example.com'>user@example.com</abbr> a ajouté le titre"
     )
-    assert event.render_details() == "De <del>«  »</del> à <ins>« Titre article »</ins>"
+    assert event.render_details() == "<ins>Titre article</ins> <del></del>"
 
 
 def test_post_article_edit_form_presentation(app, lecture_an, amendements_an):
@@ -53,4 +53,4 @@ def test_post_article_edit_form_presentation(app, lecture_an, amendements_an):
         "<abbr title='user@example.com'>user@example.com</abbr> a ajouté "
         "la présentation"
     )
-    assert event.render_details() == "De <del>«  »</del> à <ins>« Content »</ins>"
+    assert event.render_details() == "<p><ins>Content</ins></p> <del></del>"

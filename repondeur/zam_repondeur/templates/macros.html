@@ -50,10 +50,11 @@
             {% endif %}
         </span>
         <div class="what">
-            {% if event.details_template and event.details_template.template %}
-                <details {% if is_first  %}open{% endif %}>
+            {% set details = event.render_details() %}
+            {% if details %}
+                <details {% if is_first %}open{% endif %}>
                     <summary>{{ event.render_summary() }}</summary>
-                    <p>{{ event.render_details() }}</p>
+                    <p>{{ details }}</p>
                 </details>
             {% else %}
                 <p>{{ event.render_summary() }}</p>

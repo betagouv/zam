@@ -18,10 +18,6 @@ class ArticleEvent(Event):
         Article, backref=backref("events", order_by=Event.created_at.desc())
     )
 
-    details_template = Template(
-        "De <del>« $old_value »</del> à <ins>« $new_value »</ins>"
-    )
-
     def __init__(self, request: Request, article: Article, **kwargs: Any):
         super().__init__(request, **kwargs)
         self.article = article
@@ -49,6 +45,7 @@ class ArticleEvent(Event):
 
 class ContenuArticleModifie(ArticleEvent):
     __mapper_args__ = {"polymorphic_identity": "contenu_article_modifie"}
+
     icon = "document"
 
     @property
@@ -60,8 +57,6 @@ class ContenuArticleModifie(ArticleEvent):
         return Template(
             f"Le contenu de l’article a été modifié par les services {de_qui}"
         )
-
-    details_template = Template("")
 
     def __init__(
         self, request: Request, article: Article, content: dict, **kwargs: Any
@@ -78,9 +73,16 @@ class ContenuArticleModifie(ArticleEvent):
         self.article.content = self.data["new_value"]
         self.article.modified_at = datetime.utcnow()
 
+    def render_details(self) -> str:
+        return ""
+
 
 class TitreArticleModifie(ArticleEvent):
     __mapper_args__ = {"polymorphic_identity": "titre_article_modifie"}
+
+    @property
+    def icon(self) -> str:
+        return "edit" if self.user else "document"
 
     @property
     def summary_template(self) -> Template:
@@ -94,10 +96,6 @@ class TitreArticleModifie(ArticleEvent):
         return Template(
             f"Le titre de l’article a été modifié par les services {de_qui}"
         )
-
-    @property
-    def icon(self) -> str:
-        return "edit" if self.user else "document"
 
     def __init__(
         self, request: Request, article: Article, title: str, **kwargs: Any
@@ -120,6 +118,11 @@ class PresentationArticleModifiee(ArticleEvent):
 
     icon = "edit"
 
+    @property
+    def summary_template(self) -> Template:
+        action = "modifié" if self.template_vars["old_value"] else "ajouté"
+        return Template(f"<abbr title='$email'>$user</abbr> a {action} la présentation")
+
     def __init__(
         self, request: Request, article: Article, presentation: str, **kwargs: Any
     ) -> None:
@@ -130,11 +133,6 @@ class PresentationArticleModifiee(ArticleEvent):
             new_value=presentation,
             **kwargs,
         )
-
-    @property
-    def summary_template(self) -> Template:
-        action = "modifié" if self.template_vars["old_value"] else "ajouté"
-        return Template(f"<abbr title='$email'>$user</abbr> a {action} la présentation")
 
     def apply(self) -> None:
         self.article.user_content.presentation = self.data["new_value"]

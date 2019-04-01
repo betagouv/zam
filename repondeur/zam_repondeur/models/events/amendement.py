@@ -17,11 +17,9 @@ class AmendementEvent(Event):
         Amendement, backref=backref("events", order_by=Event.created_at.desc())
     )
 
-    summary_template = Template("<abbr title='$email'>$user</abbr>")
-    details_template = Template(
-        "De <del>« $old_value »</del> à <ins>« $new_value »</ins>"
-    )
     icon = ""
+
+    summary_template = Template("<abbr title='$email'>$user</abbr>")
 
     def __init__(self, request: Request, amendement: Amendement, **kwargs: Any):
         super().__init__(request, **kwargs)
@@ -50,11 +48,10 @@ class AmendementEvent(Event):
 
 class AmendementRectifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "amendement_rectifie"}
+
     icon = "edit"
 
     summary_template = Template("L’amendement a été rectifié")
-
-    details_template = Template("")
 
     def __init__(
         self, request: Request, amendement: Amendement, rectif: str, **kwargs: Any
@@ -65,6 +62,9 @@ class AmendementRectifie(AmendementEvent):
 
     def apply(self) -> None:
         self.amendement.rectif = self.data["new_value"]
+
+    def render_details(self) -> str:
+        return ""
 
 
 class AmendementIrrecevable(AmendementEvent):
@@ -82,8 +82,6 @@ class AmendementIrrecevable(AmendementEvent):
             f"L’amendement a été déclaré irrecevable par les services {de_qui}"
         )
 
-    details_template = Template("")
-
     def __init__(
         self, request: Request, amendement: Amendement, sort: str, **kwargs: Any
     ) -> None:
@@ -94,11 +92,13 @@ class AmendementIrrecevable(AmendementEvent):
     def apply(self) -> None:
         self.amendement.sort = self.data["new_value"]
 
+    def render_details(self) -> str:
+        return ""
+
 
 class AmendementTransfere(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "amendement_transfere"}
 
-    details_template = Template("")
     icon = "boite"
 
     @property
@@ -158,6 +158,9 @@ class AmendementTransfere(AmendementEvent):
     def apply(self) -> None:
         pass
 
+    def render_details(self) -> str:
+        return ""
+
 
 class CorpsAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "corps_amendement_modifie"}
@@ -211,7 +214,6 @@ class ExposeAmendementModifie(AmendementEvent):
 class AvisAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "avis_amendement_modifie"}
 
-    details_template = Template("")
     icon = "edit"
 
     def __init__(
@@ -228,9 +230,6 @@ class AvisAmendementModifie(AmendementEvent):
     def apply(self) -> None:
         self.amendement.user_content.avis = self.data["new_value"]
 
-    def render_details(self) -> str:
-        return Markup(self.details_template.safe_substitute(**self.template_vars))
-
     @property
     def summary_template(self) -> Template:  # type: ignore
         if self.template_vars["old_value"]:
@@ -241,6 +240,9 @@ class AvisAmendementModifie(AmendementEvent):
         else:
             summary = "<abbr title='$email'>$user</abbr> a mis l’avis à « $new_value »"
         return Template(summary)
+
+    def render_details(self) -> str:
+        return ""
 
 
 class ObjetAmendementModifie(AmendementEvent):

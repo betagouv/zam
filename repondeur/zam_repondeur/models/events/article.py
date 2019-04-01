@@ -3,7 +3,7 @@ from typing import Any
 from string import Template
 
 from jinja2 import Markup
-from jinja2.filters import do_striptags
+from lxml.html.diff import htmldiff
 from pyramid.request import Request
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import backref, relationship
@@ -29,8 +29,8 @@ class ArticleEvent(Event):
     @property
     def template_vars(self) -> dict:
         template_vars = {
-            "new_value": do_striptags(self.data["new_value"]),  # type: ignore
-            "old_value": do_striptags(self.data["old_value"]),  # type: ignore
+            "new_value": self.data["new_value"],
+            "old_value": self.data["old_value"],
         }
         if self.user:
             template_vars.update(
@@ -42,7 +42,9 @@ class ArticleEvent(Event):
         return Markup(self.summary_template.safe_substitute(**self.template_vars))
 
     def render_details(self) -> str:
-        return Markup(self.details_template.safe_substitute(**self.template_vars))
+        return Markup(
+            htmldiff(self.template_vars["old_value"], self.template_vars["new_value"])
+        )
 
 
 class ContenuArticleModifie(ArticleEvent):

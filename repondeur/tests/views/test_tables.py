@@ -39,8 +39,8 @@ def test_tables_grab_amendement(app, lecture_an, amendements_an, user_david):
 
     with transaction.manager:
         DBSession.add(user_david)
-        table = user_david.table_for(lecture_an)
-        assert len(table.amendements) == 0
+
+    assert len(user_david.table_for(lecture_an).amendements) == 0
 
     email = user_david.email
     resp = app.post(
@@ -69,8 +69,8 @@ def test_tables_grab_amendements(app, lecture_an, amendements_an, user_david):
 
     with transaction.manager:
         DBSession.add(user_david)
-        table = user_david.table_for(lecture_an)
-        assert len(table.amendements) == 0
+
+    assert len(user_david.table_for(lecture_an).amendements) == 0
 
     email = user_david.email
     resp = app.post(
@@ -111,7 +111,7 @@ def test_tables_release_amendement(
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendements_an[0])
 
-        assert len(user_david.table_for(lecture_an).amendements) == 1
+    assert len(user_david.table_for(lecture_an).amendements) == 1
 
     email = user_david.email
     resp = app.post(
@@ -149,7 +149,7 @@ def test_tables_release_amendements(
         user_david_table_an.amendements.append(amendements_an[0])
         user_david_table_an.amendements.append(amendements_an[1])
 
-        assert len(user_david.table_for(lecture_an).amendements) == 2
+    assert len(user_david.table_for(lecture_an).amendements) == 2
 
     email = user_david.email
     resp = app.post(
@@ -204,8 +204,8 @@ class TestTransfer:
             DBSession.add_all([user_david_table_an, user_ronan_table_an])
             user_david_table_an.amendements.append(amendements_an[0])
 
-            assert len(user_david.table_for(lecture_an).amendements) == 1
-            assert len(user_ronan.table_for(lecture_an).amendements) == 0
+        assert len(user_david.table_for(lecture_an).amendements) == 1
+        assert len(user_ronan.table_for(lecture_an).amendements) == 0
 
         email = user_david.email
         resp = app.post(
@@ -246,7 +246,7 @@ class TestTransfer:
             DBSession.add(user_david_table_an)
             user_david_table_an.amendements.append(amendements_an[0])
 
-            assert len(user_david.table_for(lecture_an).amendements) == 1
+        assert len(user_david.table_for(lecture_an).amendements) == 1
 
         email = user_david.email
         resp = app.post(
@@ -278,7 +278,7 @@ class TestTransfer:
             DBSession.add(user_david_table_an)
             user_david_table_an.amendements.append(amendements_an[0])
 
-            assert len(user_david.table_for(lecture_an).amendements) == 1
+        assert len(user_david.table_for(lecture_an).amendements) == 1
 
         email = user_david.email
         resp = app.post(
@@ -316,8 +316,8 @@ class TestTransfer:
             user_david_table_an.amendements.append(amendements_an[0])
             user_david_table_an.amendements.append(amendements_an[1])
 
-            assert len(user_david.table_for(lecture_an).amendements) == 2
-            assert len(user_ronan.table_for(lecture_an).amendements) == 0
+        assert len(user_david.table_for(lecture_an).amendements) == 2
+        assert len(user_ronan.table_for(lecture_an).amendements) == 0
 
         email = user_david.email
         resp = app.post(
@@ -369,8 +369,8 @@ def test_tables_steal_amendement(
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendements_an[0])
 
-        assert len(user_david.table_for(lecture_an).amendements) == 1
-        assert len(user_ronan.table_for(lecture_an).amendements) == 0
+    assert len(user_david.table_for(lecture_an).amendements) == 1
+    assert len(user_ronan.table_for(lecture_an).amendements) == 0
 
     email = user_ronan.email
     resp = app.post(
@@ -408,8 +408,8 @@ def test_tables_steal_amendements(
         user_david_table_an.amendements.append(amendements_an[0])
         user_david_table_an.amendements.append(amendements_an[1])
 
-        assert len(user_david.table_for(lecture_an).amendements) == 2
-        assert len(user_ronan.table_for(lecture_an).amendements) == 0
+    assert len(user_david.table_for(lecture_an).amendements) == 2
+    assert len(user_ronan.table_for(lecture_an).amendements) == 0
 
     email = user_ronan.email
     resp = app.post(

@@ -2,11 +2,33 @@ import pytest
 import transaction
 
 
-def test_tables_empty(app, lecture_an, user_david):
+@pytest.fixture
+def user_david(user_david):
+    """
+    Override fixture so that we commit the user to the database
+    """
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
         DBSession.add(user_david)
+
+    return user_david
+
+
+@pytest.fixture
+def user_ronan(user_ronan):
+    """
+    Override fixture so that we commit the user to the database
+    """
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(user_ronan)
+
+    return user_ronan
+
+
+def test_tables_empty(app, lecture_an, user_david):
 
     email = user_david.email
     resp = app.get(f"/lectures/an.15.269.PO717460/tables/{email}", user=email)
@@ -21,7 +43,6 @@ def test_tables_with_amendement(
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        DBSession.add(user_david)
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendements_an[0])
 
@@ -36,9 +57,6 @@ def test_tables_with_amendement(
 
 def test_tables_grab_amendement(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession, User
-
-    with transaction.manager:
-        DBSession.add(user_david)
 
     assert len(user_david.table_for(lecture_an).amendements) == 0
 
@@ -66,9 +84,6 @@ def test_tables_grab_amendement(app, lecture_an, amendements_an, user_david):
 
 def test_tables_grab_amendements(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession, User
-
-    with transaction.manager:
-        DBSession.add(user_david)
 
     assert len(user_david.table_for(lecture_an).amendements) == 0
 
@@ -107,7 +122,6 @@ def test_tables_release_amendement(
     from zam_repondeur.models import DBSession, Amendement, User
 
     with transaction.manager:
-        DBSession.add(user_david)
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendements_an[0])
 
@@ -144,7 +158,6 @@ def test_tables_release_amendements(
     from zam_repondeur.models import DBSession, Amendement, User
 
     with transaction.manager:
-        DBSession.add(user_david)
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendements_an[0])
         user_david_table_an.amendements.append(amendements_an[1])
@@ -200,7 +213,6 @@ class TestTransfer:
         from zam_repondeur.models import DBSession, User
 
         with transaction.manager:
-            DBSession.add_all([user_david, user_ronan])
             DBSession.add_all([user_david_table_an, user_ronan_table_an])
             user_david_table_an.amendements.append(amendements_an[0])
 
@@ -242,7 +254,6 @@ class TestTransfer:
         from zam_repondeur.models import DBSession, User
 
         with transaction.manager:
-            DBSession.add(user_david)
             DBSession.add(user_david_table_an)
             user_david_table_an.amendements.append(amendements_an[0])
 
@@ -274,7 +285,6 @@ class TestTransfer:
         from zam_repondeur.models import DBSession, User
 
         with transaction.manager:
-            DBSession.add(user_david)
             DBSession.add(user_david_table_an)
             user_david_table_an.amendements.append(amendements_an[0])
 
@@ -311,7 +321,6 @@ class TestTransfer:
         from zam_repondeur.models import DBSession, User
 
         with transaction.manager:
-            DBSession.add_all([user_david, user_ronan])
             DBSession.add(user_david_table_an)
             user_david_table_an.amendements.append(amendements_an[0])
             user_david_table_an.amendements.append(amendements_an[1])
@@ -365,7 +374,6 @@ def test_tables_steal_amendement(
     from zam_repondeur.models import DBSession, User
 
     with transaction.manager:
-        DBSession.add_all([user_david, user_ronan])
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendements_an[0])
 
@@ -403,7 +411,6 @@ def test_tables_steal_amendements(
     from zam_repondeur.models import DBSession, User
 
     with transaction.manager:
-        DBSession.add_all([user_david, user_ronan])
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendements_an[0])
         user_david_table_an.amendements.append(amendements_an[1])
@@ -453,7 +460,6 @@ def test_tables_check_with_amendements(
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        DBSession.add(user_david)
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendements_an[0])
         user_david_table_an.amendements.append(amendements_an[1])

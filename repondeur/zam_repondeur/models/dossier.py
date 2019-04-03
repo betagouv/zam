@@ -12,7 +12,7 @@ class Dossier(Base):
 
     pk = Column(Integer, primary_key=True)
 
-    uid = Column(Text)
+    uid = Column(Text)  # the Assemblée Nationale UID
     titre = Column(Text)
 
     lectures = relationship("Lecture", back_populates="dossier")

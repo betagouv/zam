@@ -6,11 +6,11 @@
     <style type="text/css">
         h3.line-through {
             margin: 2rem auto;
-            width: 40rem;
+            width: 45rem;
             font-size: 1.5rem;
         }
         form {
-            width: 35rem;
+            width: 40rem;
             margin: 2rem auto;
         }
             form *:not(.amendements *):not(summary) {
@@ -99,6 +99,7 @@
             {% endif %}
         </a>
     </nav>
+<div data-controller="transfers">
     <h1>
         Transférer
         {% if amendements|length > 1 %}
@@ -116,19 +117,21 @@
             {% set amendement = amendements_with_table[0] %}
             <input type="hidden" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}">
         {% elif amendements_with_table %}
-            <details open>
+            <details class="notice warning" open>
                 <summary>
                     {% trans count=amendements_with_table|length %}
-                        Cet amendement est déjà sur une table
+                        Cet amendement <strong>est déjà sur la table de quelqu’un</strong>.
                     {% pluralize %}
-                        Ces {{ count }} amendements sont déjà sur des tables
+                        Ces amendements <strong>sont déjà sur la table de quelqu’un</strong>.
                     {% endtrans %}
+                    Si cette personne est en train de traiter cet amendement lors du transfert,
+                    <strong>ses modifications ne seront pas enregistrées</strong>.
                 </summary>
-                <ul class="amendements">
+                <ul class="amendements" data-target="transfers.amendementsWithTable">
                     {% for amendement in amendements_with_table|sort(attribute="user_table") %}
                         {% set amendement_user = amendement.user_table.user %}
                         <li>
-                            <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" {% if amendement_user == request.user or not amendement_user.is_active %}checked{% endif %}>
+                            <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" {% if amendement_user == request.user or not amendement_user.is_active %}checked{% endif %} data-action="transfers#check">
                             <label for="amendement-{{ amendement.num }}">
                                 Nº&nbsp;<a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a> —
                                 {% if amendement_user == request.user %}
@@ -145,7 +148,7 @@
             </details>
         {% endif %}
         {% if amendements_without_table %}
-            <details>
+            <details class="notice" {% if not amendements_with_table %}open{% endif %}>
                 <summary>
                     {% trans count=amendements_without_table|length %}
                         Cet amendement est sur l’index
@@ -182,7 +185,7 @@
             </select>
         </div>
         <div class="buttons">
-            <input type="submit" name="submit" value="Transférer" class="button primary enabled">
+            <input type="submit" name="submit" value="Transférer" class="button primary enabled" data-target="transfers.submit">
         </div>
     </form>
     {% if show_transfer_to_index %}
@@ -195,13 +198,18 @@
                 <input type="hidden" name="from_index" value="{{ from_index }}">
             {% endif %}
             <div class="buttons">
-                <input type="submit" name="submit-index" value="Transférer à l’index" class="button primary">
+                <input type="submit" name="submit-index" value="Transférer à l’index" class="button primary" data-target="transfers.submitIndex">
             </div>
         </form>
     {% endif %}
+</div>
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ request.static_url('zam_repondeur:static/js/transfers.js') }}"></script>
+{% if amendements_with_table and not from_save %}
+    <script>;(() => application.register('transfers', Transfers))()</script>
+{% endif %}
 <script src="{{ request.static_url('zam_repondeur:static/jquery/jquery-1.12.4.min.js') }}"></script>
 <script src="{{ request.static_url('zam_repondeur:static/selectize/js/standalone/selectize.min.js') }}"></script>
 <script type="text/javascript">

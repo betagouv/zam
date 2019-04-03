@@ -138,7 +138,7 @@ def test_transfer_amendement_from_edit_form_given_activity(
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Transférer sur ma table"
-    assert submit_button.attributes.get("class") == "button warning"
+    assert submit_button.attributes.get("class") == "button enabled warning"
 
     # With amendement from active user.
     user_ronan.record_activity()
@@ -149,7 +149,7 @@ def test_transfer_amendement_from_edit_form_given_activity(
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Forcer le transfert sur ma table"
-    assert submit_button.attributes.get("class") == "button danger"
+    assert submit_button.attributes.get("class") == "button enabled danger"
 
 
 def test_get_amendement_edit_form_gouvernemental(

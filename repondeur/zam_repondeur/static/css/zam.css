@@ -227,12 +227,21 @@ a.underlined:hover {
     border-color: #3167a6;
     color: #3167a6;
 }
+
 /* Bouton orange */
-.warning.button {
-    color: #212529;
+.warning.button:hover,
+.warning.button.enabled {
     background-color: #ffc107;
     border-color: #ffc107;
+    color: #212529;
 }
+.warning.button,
+.warning.button.enabled:hover {
+    background-color: white; /* Useful for contrasts. */
+    border-color: #ffc107;
+    color: #212529;
+}
+
 
 .save-buttons {
     display: flex;
@@ -344,6 +353,9 @@ path {
     .notice form {
         text-align: right;
     }
+.notice.warning {
+    border-color: #ffc107;
+}
 
 /* Highlight inline text */
 .highlighter {

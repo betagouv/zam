@@ -159,7 +159,7 @@
                         </p>
                         <form id="transfer" action="{{ my_table_url }}" method="POST">
                             <input type="hidden" name="nums" value="{{ amendement.num }}">
-                            <input type="submit" name="submit-table" class="button danger" value="Forcer le transfert sur ma table">
+                            <input type="submit" name="submit-table" class="button enabled danger" value="Forcer le transfert sur ma table">
                         </form>
                     {% else %}
                         <p>
@@ -168,7 +168,7 @@
                         </p>
                         <form id="transfer" action="{{ my_table_url }}" method="POST">
                             <input type="hidden" name="nums" value="{{ amendement.num }}">
-                            <input type="submit" name="submit-table" class="button warning" value="Transférer sur ma table">
+                            <input type="submit" name="submit-table" class="button enabled warning" value="Transférer sur ma table">
                         </form>
                     {% endif %}
                 {% else %}

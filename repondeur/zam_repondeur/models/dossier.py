@@ -12,13 +12,15 @@ class Dossier(Base):
 
     pk = Column(Integer, primary_key=True)
 
-    uid = Column(Text)  # the Assemblée Nationale UID
-    titre = Column(Text)
+    uid = Column(Text, nullable=False)  # the Assemblée Nationale UID
+    titre = Column(Text, nullable=False)
+
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    modified_at = Column(
+        DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
 
     lectures = relationship("Lecture", back_populates="dossier")
-
-    created_at = Column(DateTime)
-    modified_at = Column(DateTime)
 
     __repr_keys__ = ("pk", "uid", "titre")
 

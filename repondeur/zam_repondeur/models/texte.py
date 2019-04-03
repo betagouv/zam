@@ -1,10 +1,28 @@
 from datetime import datetime
 from typing import Optional
+import enum
 
-from sqlalchemy import Column, DateTime, Integer, Text
+from sqlalchemy import Column, Date, DateTime, Enum, Integer, Text
 from sqlalchemy.orm import relationship
 
 from .base import Base, DBSession
+
+
+class TypeTexte(enum.Enum):
+    PROJET = "Projet de loi"
+    PROPOSITION = "Proposition de loi"
+
+    @staticmethod
+    def from_dict(texte: dict) -> "TypeTexte":
+        code = texte["classification"]["type"]["code"]
+        if code == "PRJL":
+            return TypeTexte.PROJET
+        if code == "PION":
+            return TypeTexte.PROPOSITION
+        raise ValueError(f"Unknown texte type {code}")
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}.{self.name}"
 
 
 class Texte(Base):
@@ -12,17 +30,19 @@ class Texte(Base):
 
     pk = Column(Integer, primary_key=True)
 
-    uid = Column(Text)
-    type_ = Column(Text)
-    numero = Column(Integer)
-    titre_long = Column(Text)
-    titre_court = Column(Text)
-    date_depot = Column(DateTime)
+    uid = Column(Text, nullable=False)
+    type_ = Column(Enum(TypeTexte), nullable=False)
+    numero = Column(Integer, nullable=False)
+    titre_long = Column(Text, nullable=False)
+    titre_court = Column(Text, nullable=False)
+    date_depot = Column(Date, nullable=False)
+
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    modified_at = Column(
+        DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
 
     lectures = relationship("Lecture", back_populates="texte")
-
-    created_at = Column(DateTime)
-    modified_at = Column(DateTime)
 
     __repr_keys__ = (
         "pk",

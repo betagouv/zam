@@ -1,6 +1,6 @@
 ### Perspectives
 
-<p class="notice">Date de prochaine démonstration : 27 mars 2018 à 15h à Ségur.</p>
+<p class="notice">Date de prochaine démonstration : 10 avril 2019, 15h, à Babylone.</p>
 
 #### Rappel des objectifs prioritaires des développements 2019
 

@@ -55,7 +55,7 @@ def upload_liasse_xml(context: LectureResource, request: Request) -> Response:
         request.session.flash(
             Message(
                 cls="danger",
-                text=f"La liasse correspond à une autre lecture ({exc.lecture}).",
+                text=f"La liasse correspond à une autre lecture ({exc.lecture_fmt}).",
             )
         )
         return HTTPFound(location=request.resource_url(context, "options"))

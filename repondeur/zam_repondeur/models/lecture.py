@@ -64,17 +64,6 @@ class Lecture(Base):
 
     __repr_keys__ = ("pk", "chambre", "session", "organe", "partie", "owned_by_team")
 
-    def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, Lecture):
-            return False
-        return bool(
-            self.chambre == other.chambre
-            and self.session == other.session
-            and self.texte == other.texte
-            and self.partie == other.partie
-            and self.organe == other.organe
-        )
-
     def __str__(self) -> str:
         return ", ".join(
             [

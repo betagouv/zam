@@ -27,7 +27,7 @@ def texte_commission_speciale(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="quux",
+            uid="PRJLANR5L15B0806",
             type_="Projet de loi",
             numero=806,
             titre_long="long",
@@ -236,7 +236,7 @@ def texte_essoc(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="foo",
+            uid="PRJLANR5L15B0806",
             type_="Projet de loi",
             numero=806,
             titre_long="long",

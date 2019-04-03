@@ -10,7 +10,7 @@ from zam_repondeur.clean import clean_html
 from zam_repondeur.data import repository
 from zam_repondeur.fetch.an.dossiers.models import (
     Chambre,
-    Dossier,
+    Dossier as DossierRef,
     Lecture as LectureRef,
 )
 from zam_repondeur.fetch.dates import parse_date
@@ -44,8 +44,8 @@ class LectureDoesNotMatch(Exception):
     The liasse contains amendements for another lecture
     """
 
-    def __init__(self, lecture: Lecture) -> None:
-        self.lecture = lecture
+    def __init__(self, lecture_fmt: str) -> None:
+        self.lecture_fmt = lecture_fmt
 
 
 def import_liasse_xml(
@@ -174,23 +174,15 @@ def check_same_lecture(
     if organe is None:
         raise ValueError("Missing organeExamen")
 
-    dossier_ref, lecture_ref = _find_dossier_lecture(texte_uid)
-
-    # TODO: perform real queries.
-
-    # This Lecture is only created for the sake of comparison and error message
-    # formatting, and is not persisted so we don't add it to the database session
-    liasse_lecture = Lecture(
-        chambre=Chambre.AN.value,
-        session=session,
-        texte=lecture_ref.texte,
-        partie=partie,
-        organe=organe,
-        titre=lecture_ref.titre,
-        dossier=dossier_ref,
-    )
-    if liasse_lecture != lecture:
-        raise LectureDoesNotMatch(liasse_lecture)
+    if (
+        session != lecture.session
+        or partie != lecture.partie
+        or organe != lecture.organe
+        or texte_uid != lecture.texte.uid
+    ):
+        dossier_ref, lecture_ref = _find_dossier_lecture(texte_uid)
+        lecture_fmt = f"{lecture_ref.label} ({dossier_ref.titre})"
+        raise LectureDoesNotMatch(lecture_fmt)
 
 
 def _parse_division(node: etree.Element) -> SubDiv:
@@ -243,9 +235,9 @@ def to_date(text: Optional[str]) -> Optional[date]:
     return parse_date(text)
 
 
-def _find_dossier_lecture(texte_uid: str) -> Tuple[Dossier, LectureRef]:
+def _find_dossier_lecture(texte_uid: str) -> Tuple[DossierRef, LectureRef]:
     # FIXME: this is not efficient
-    dossiers: Dict[str, Dossier] = repository.get_data("dossiers")
+    dossiers: Dict[str, DossierRef] = repository.get_data("dossiers")
     for dossier in dossiers.values():
         for lecture in dossier.lectures:
             if lecture.texte.uid == texte_uid:

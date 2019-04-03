@@ -26,7 +26,7 @@ def lecture_commission(db, texte_an, dossier_an):
             texte=texte_an,
             titre="Numéro lecture – Titre lecture",
             organe="PO420120",
-            dossier_an=dossier_an,
+            dossier=dossier_an,
         )
 
     return lecture

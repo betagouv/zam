@@ -77,12 +77,16 @@ def test_transfer_amendement_from_edit_form(
 ):
     from zam_repondeur.models import DBSession, User
 
+    # Commit our user to the database
     with transaction.manager:
         DBSession.add(user_david)
-        table = user_david.table_for(lecture_an)
-        assert len(table.amendements) == 0
+
+    # Our table is empty
+    table = user_david.table_for(lecture_an)
+    assert len(table.amendements) == 0
 
     amdt = amendements_an[0]
+
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
         user=user_david.email,
@@ -91,19 +95,23 @@ def test_transfer_amendement_from_edit_form(
     form = resp.forms["transfer"]
     resp = form.submit("submit-table")
 
+    # We're redirected to our table
     assert resp.status_code == 302
     assert (
         resp.location
         == f"https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com"
     )
 
+    # The amendement is now on our table
+    DBSession.add(amdt)
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
     table = user_david.table_for(lecture_an)
     assert len(table.amendements) == 1
-    assert table.amendements[0].num == amendements_an[0].num
-    assert table.amendements[0].lecture == amendements_an[0].lecture
-    assert len(table.amendements[0].events) == 1
-    assert table.amendements[0].events[0].render_summary() == (
+    assert table.amendements[0] is amdt
+
+    # An event was added to the amendement
+    assert len(amdt.events) == 1
+    assert amdt.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
         "a mis l’amendement sur sa table"
     )

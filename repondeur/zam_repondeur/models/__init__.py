@@ -11,7 +11,7 @@ from .dossier import Dossier  # noqa
 from .lecture import Lecture, CHAMBRES, SESSIONS  # noqa
 from .users import Team, User  # noqa
 from .table import UserTable  # noqa
-from .texte import Texte  # noqa
+from .texte import Texte, TypeTexte  # noqa
 
 from .events.base import Event  # noqa
 from .events.amendement import *  # noqa

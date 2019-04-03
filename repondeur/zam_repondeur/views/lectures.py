@@ -83,7 +83,7 @@ class LecturesAdd:
         texte_model = get_one_or_create(
             TexteModel,
             uid=texte.uid,
-            type_=texte.type_.value,  # TODO: do we really want to store the value?
+            type_=texte.type_.name,
             numero=texte.numero,
             titre_long=texte.titre_long,
             titre_court=texte.titre_court,

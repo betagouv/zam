@@ -132,11 +132,11 @@ nav.secondary {
 }
 .arrow-left {
     padding-left: 1.33rem;
-    background: no-repeat left 40%/6% url("../img/big_left.svg");
+    background: no-repeat left 40%/.7rem url("../img/big_left.svg");
 }
 .arrow-right {
     padding-right: 1.33rem;
-    background: no-repeat right 40%/6% url("../img/big_right.svg");
+    background: no-repeat right 40%/.7rem url("../img/big_right.svg");
 }
 .save-buttons .arrow-left {
     padding-top: .4rem;

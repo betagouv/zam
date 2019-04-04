@@ -16,11 +16,14 @@
 
 {% block body %}
     <section class="content box">
+        <a href="{{ back_url }}" class="arrow-left">Retour</a>
         <div class="title">
-            <h2>{{ article }}</h2>
-            {% if article.user_content.title %}
-                <div>{{ article.user_content.title }}</div>
-            {% endif %}
+            <header>
+                <h2>{{ article.format() }}</h2>
+                {% if article.user_content.title %}
+                    <div>{{ article.user_content.title }}</div>
+                {% endif %}
+            </header>
         </div>
         <p class="journal">
             <a href="{{ request.resource_url(context, 'journal') }}" class="arrow-right">Journal des modifications</a>

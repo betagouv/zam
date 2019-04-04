@@ -360,13 +360,6 @@ path {
     border-color: #d0021b;
 }
 
-/* Highlight inline text */
-.highlighter {
-    display: inline-block;
-    padding: 0.25rem 0.5rem 0 0.5rem;
-    background-color: yellow;
-}
-
 nobr.user {
     font-weight: 600;
 }
@@ -508,7 +501,8 @@ label[for="emptytable"] abbr {
             border: 2px solid darkgray;
         }
 
-abbr.status {
+abbr.status,
+.status {
     padding: .15rem .45rem 0 .45rem;
     margin: 0 0 0 .5rem;
     text-decoration: unset;
@@ -516,7 +510,8 @@ abbr.status {
     border-radius: 1rem;
     font-weight: normal;
 }
-    abbr.status.blue {
+    abbr.status.blue,
+    .status.blue {
         border-color: #3167a6;
         color: #3167a6;
     }
@@ -524,7 +519,8 @@ abbr.status {
         color: white;
         background-color: #3167a6;
     }
-    abbr.status.grey {
+    abbr.status.grey,
+    .status.grey {
         border-color: #797676;
         color: #797676;
     }

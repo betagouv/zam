@@ -203,15 +203,15 @@ a.underlined:hover {
 /* Bouton rouge */
 .danger.button,
 .danger.button.enabled:hover {
-    background-color: #d0021b;
-    border-color: #d0021b;
-    color: white;
-}
-.danger.button:hover,
-.danger.button.enabled {
     background-color: white;
     border-color: #d0021b;
     color: #d0021b;
+}
+.danger.button:hover,
+.danger.button.enabled {
+    background-color: #d0021b;
+    border-color: #d0021b;
+    color: white;
 }
 
 /* Bouton bleu */
@@ -355,6 +355,9 @@ path {
     }
 .notice.warning {
     border-color: #ffc107;
+}
+.notice.danger {
+    border-color: #d0021b;
 }
 
 /* Highlight inline text */

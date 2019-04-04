@@ -60,6 +60,9 @@
             background: no-repeat left 20%/2.4% url("{{ request.static_url('zam_repondeur:static/img/identique.svg') }}");
             padding-left: 1.4rem;
         }
+        form#transfer a {
+            margin-right: 3rem;
+        }
     </style>
 {% endblock %}
 
@@ -146,7 +149,7 @@
         {% if is_on_my_table %}
             {{ form(amendement) }}
         {% else %}
-            <div class="notice">
+            <div class="notice {% if amendement.user_table %}{% if amendement.user_table.user.is_active %}danger{% else %}warning{% endif %}{% endif %}">
                 <p>
                     Pour pouvoir éditer cet amendement, il doit se trouver sur votre table.
                 </p>
@@ -159,6 +162,7 @@
                         </p>
                         <form id="transfer" action="{{ my_table_url }}" method="POST">
                             <input type="hidden" name="nums" value="{{ amendement.num }}">
+                            <a href="{{ transfer_url }}" class="button danger">Transférer à…</a>
                             <input type="submit" name="submit-table" class="button enabled danger" value="Forcer le transfert sur ma table">
                         </form>
                     {% else %}
@@ -168,13 +172,15 @@
                         </p>
                         <form id="transfer" action="{{ my_table_url }}" method="POST">
                             <input type="hidden" name="nums" value="{{ amendement.num }}">
+                            <a href="{{ transfer_url }}" class="button warning">Transférer à…</a>
                             <input type="submit" name="submit-table" class="button enabled warning" value="Transférer sur ma table">
                         </form>
                     {% endif %}
                 {% else %}
                     <form id="transfer" action="{{ my_table_url }}" method="POST">
                         <input type="hidden" name="nums" value="{{ amendement.num }}">
-                        <input type="submit" name="submit-table" class="button primary" value="Transférer sur ma table">
+                        <a href="{{ transfer_url }}" class="button primary">Transférer à…</a>
+                        <input type="submit" name="submit-table" class="button primary enabled" value="Transférer sur ma table">
                     </form>
                 {% endif %}
             </div>

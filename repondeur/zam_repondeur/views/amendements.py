@@ -49,6 +49,11 @@ class AmendementEdit:
             "submit_url": self.submit_url,
             "check_url": check_url,
             "my_table_url": self.my_table_url,
+            "transfer_url": self.request.resource_url(
+                self.context.parent.parent,
+                "transfer_amendements",
+                query={"nums": self.amendement.num},
+            ),
             "reponses": self.amendement.article.grouped_displayable_amendements(),
         }
 

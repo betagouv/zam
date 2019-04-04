@@ -66,10 +66,6 @@
                 margin: 0 3rem 1rem 3rem;
                 font-size: 1.3rem;
             }
-        nav.back {
-            margin-top: 3rem;
-            font-weight: 600;
-        }
     </style>
 {% endblock %}
 
@@ -94,6 +90,15 @@
 {% endblock %}
 
 {% block body %}
+    <nav class="back">
+        <a href="{{ back_url }}" class="arrow-left">
+            {% if from_index %}
+                Retourner à l’index
+            {% else %}
+                Retourner à ma table
+            {% endif %}
+        </a>
+    </nav>
     <h1>
         Transférer
         {% if amendements|length > 1 %}
@@ -194,15 +199,6 @@
             </div>
         </form>
     {% endif %}
-    <nav class="back">
-        <a href="{{ back_url }}" class="arrow-left">
-            {% if from_index %}
-                Retourner à l'index
-            {% else %}
-                Retourner à ma table
-            {% endif %}
-        </a>
-    </nav>
 {% endblock %}
 
 {% block scripts %}

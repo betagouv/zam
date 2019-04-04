@@ -133,4 +133,5 @@ def amendement_journal(context: AmendementResource, request: Request) -> Dict[st
         "lecture": context.lecture_resource.model(),
         "amendement": context.model(),
         "today": date.today(),
+        "back_url": request.resource_url(context, "amendement_edit"),
     }

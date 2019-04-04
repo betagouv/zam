@@ -46,7 +46,13 @@ class ArticleEdit:
     @view_config(request_method="GET", renderer="article_edit.html")
     def get(self) -> dict:
         lecture = self.article.lecture
-        return {"article": self.article, "lecture": lecture}
+        return {
+            "article": self.article,
+            "lecture": lecture,
+            "back_url": self.request.resource_url(
+                self.context.lecture_resource, "amendements"
+            ),
+        }
 
     @view_config(request_method="POST")
     def post(self) -> Response:
@@ -98,4 +104,5 @@ def article_journal(context: ArticleResource, request: Request) -> Dict[str, Any
         "lecture": context.lecture_resource.model(),
         "article": context.model(),
         "today": date.today(),
+        "back_url": request.resource_url(context),
     }

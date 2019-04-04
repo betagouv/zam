@@ -19,9 +19,10 @@
 {% endblock %}
 
 {% block body %}
+    <a href="{{ request.resource_url(context) }}" class="arrow-left">Retour</a>
     <h1>Journal des modifications</h1>
     <div class="title-extras">
-        <a href="{{ request.resource_url(context) }}">{{ article }}</a>
+        {{ article.format() }}
     </div>
     {{ macros.timeline(article.events, today) }}
 {% endblock %}

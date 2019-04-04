@@ -1,6 +1,11 @@
 class Transfers extends Stimulus.Controller {
     static get targets() {
-        return ['submit', 'submitIndex', 'amendementsWithTable']
+        return [
+            'submit',
+            'submitIndex',
+            'amendementsWithTableActive',
+            'amendementsWithTableInactive'
+        ]
     }
 
     initialize() {
@@ -12,24 +17,58 @@ class Transfers extends Stimulus.Controller {
     }
 
     verify() {
-        const checkboxes = Array.from(
-            this.amendementsWithTableTarget.querySelectorAll(
-                'input[type="checkbox"]'
-            )
+        const hasActiveCheckedElements = this.hasCheckedElements(
+            this.hasAmendementsWithTableActiveTarget
+                ? this.amendementsWithTableActiveTarget
+                : null
         )
-        const hasCheckedElements = checkboxes.some(
-            amendementWithTable => amendementWithTable.checked
+        const hasInactiveCheckedElements = this.hasCheckedElements(
+            this.hasAmendementsWithTableInactiveTarget
+                ? this.amendementsWithTableInactiveTarget
+                : null
         )
-        if (hasCheckedElements) {
-            this.submitTarget.classList.add('warning')
-            this.submitTarget.classList.remove('primary')
-            this.submitIndexTarget.classList.add('warning')
-            this.submitIndexTarget.classList.remove('primary')
+        if (hasActiveCheckedElements) {
+            this.dangerClasses()
+        } else if (hasInactiveCheckedElements) {
+            this.warningClasses()
         } else {
-            this.submitTarget.classList.remove('warning')
-            this.submitTarget.classList.add('primary')
-            this.submitIndexTarget.classList.remove('warning')
-            this.submitIndexTarget.classList.add('primary')
+            this.primaryClasses()
         }
+    }
+
+    hasCheckedElements(target) {
+        if (!target) return false
+        const checkboxes = Array.from(
+            target.querySelectorAll('input[type="checkbox"]')
+        )
+        return checkboxes.some(amendement => amendement.checked)
+    }
+
+    // Sadly, Safari does not support classList.replace()
+    dangerClasses() {
+        this.submitTarget.classList.add('danger')
+        this.submitTarget.classList.remove('primary')
+        this.submitTarget.classList.remove('warning')
+        this.submitIndexTarget.classList.add('danger')
+        this.submitIndexTarget.classList.remove('primary')
+        this.submitIndexTarget.classList.remove('warning')
+    }
+
+    warningClasses() {
+        this.submitTarget.classList.add('warning')
+        this.submitTarget.classList.remove('primary')
+        this.submitTarget.classList.remove('primary')
+        this.submitIndexTarget.classList.add('warning')
+        this.submitIndexTarget.classList.remove('primary')
+        this.submitIndexTarget.classList.remove('primary')
+    }
+
+    primaryClasses() {
+        this.submitTarget.classList.remove('warning')
+        this.submitTarget.classList.remove('danger')
+        this.submitTarget.classList.add('primary')
+        this.submitIndexTarget.classList.remove('warning')
+        this.submitIndexTarget.classList.remove('danger')
+        this.submitIndexTarget.classList.add('primary')
     }
 }

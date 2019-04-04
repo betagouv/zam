@@ -124,7 +124,10 @@ def test_transfer_amendement_from_edit_form_given_activity(
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Transférer sur ma table"
-    assert submit_button.attributes.get("class") == "button primary"
+    assert submit_button.attributes.get("class") == "button primary enabled"
+    link_to_transfer = resp.parser.css_first("form#transfer a")
+    assert link_to_transfer.text() == "Transférer à…"
+    assert link_to_transfer.attributes.get("class") == "button primary"
 
     # With amendement from inactive user.
     with transaction.manager:
@@ -139,6 +142,9 @@ def test_transfer_amendement_from_edit_form_given_activity(
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Transférer sur ma table"
     assert submit_button.attributes.get("class") == "button enabled warning"
+    link_to_transfer = resp.parser.css_first("form#transfer a")
+    assert link_to_transfer.text() == "Transférer à…"
+    assert link_to_transfer.attributes.get("class") == "button warning"
 
     # With amendement from active user.
     user_ronan.record_activity()
@@ -150,6 +156,9 @@ def test_transfer_amendement_from_edit_form_given_activity(
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Forcer le transfert sur ma table"
     assert submit_button.attributes.get("class") == "button enabled danger"
+    link_to_transfer = resp.parser.css_first("form#transfer a")
+    assert link_to_transfer.text() == "Transférer à…"
+    assert link_to_transfer.attributes.get("class") == "button danger"
 
 
 def test_get_amendement_edit_form_gouvernemental(

@@ -6,12 +6,12 @@
     <style type="text/css">
         h3.line-through {
             margin: 2rem auto;
-            width: 45rem;
+            width: 40rem;
             font-size: 1.5rem;
         }
         form {
             width: 40rem;
-            margin: 2rem auto;
+            margin: 3rem auto;
         }
             form *:not(.amendements *):not(summary) {
                 width: 100%;
@@ -50,19 +50,19 @@
             form input[type="submit"]:not(.enabled) {
                 width: 22rem;
             }
-            form#transfer-amendements {
-                margin-top: 4rem;
+            form .buttons {
+                text-align: right;
             }
-                form#transfer-amendements .buttons {
-                    text-align: right;
+                form .buttons.transfer-amendements-custom {
+                    text-align: center;
                 }
-            form#transfer-amendements-custom .buttons {
-                text-align: center;
-            }
             form details,
-            form div {
+            form > div {
                 margin-bottom: 2rem;
             }
+                form div.targets {
+                    margin-bottom: 0;
+                }
             form summary,
             form div p {
                 margin: 0 2rem 1rem 2rem;
@@ -114,7 +114,7 @@
             Nº&nbsp;<a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>
         {% endif %}
     </h1>
-    <form id="transfer-amendements" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
+    <form id="transfer-amendements" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST" data-controller="transfers">
         {% if from_save %}
             {% set amendement = amendements_with_table[0] %}
             <input type="hidden" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}">
@@ -203,7 +203,7 @@
         {% if from_index %}
             <input type="hidden" name="from_index" value="{{ from_index }}">
         {% endif %}
-        <div>
+        <div class="targets">
             <label for="target">Destinataire</label>
             <select id="target" name="target" required>
                 <option selected></option>
@@ -218,22 +218,13 @@
         <div class="buttons">
             <input type="submit" name="submit" value="Transférer" class="button primary enabled" data-target="transfers.submit">
         </div>
-    </form>
-    {% if show_transfer_to_index %}
-        <h3 class="line-through">ou</h3>
-        <form id="transfer-amendements-custom" action="{{ request.resource_url(context['tables'], request.user.email) }}" method="POST">
-            {% for amendement in amendements %}
-                <input type="hidden" name="nums" value="{{ amendement.num }}">
-            {% endfor %}
-            {% if from_index %}
-                <input type="hidden" name="from_index" value="{{ from_index }}">
-            {% endif %}
-            <div class="buttons">
+        {% if show_transfer_to_index %}
+            <h3 class="line-through">ou</h3>
+            <div class="buttons transfer-amendements-custom">
                 <input type="submit" name="submit-index" value="Transférer à l’index" class="button primary" data-target="transfers.submitIndex">
             </div>
-        </form>
-    {% endif %}
-</div>
+        {% endif %}
+    </form>
 {% endblock %}
 
 {% block scripts %}

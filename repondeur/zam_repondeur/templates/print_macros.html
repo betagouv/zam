@@ -25,7 +25,7 @@
       <h5>{{ article.format(short=True) }}</h5>
       <h5>{{ article.user_content.title }}</h5>
       <div>
-        {{ article.user_content.presentation | safe }}
+        {{ article.user_content.presentation | h3_to_h5 | safe }}
       </div>
     </section>
   {% endif %}
@@ -38,7 +38,7 @@
   {% if amendement.user_content.avis or amendement.user_content.objet or amendement.user_content.has_reponse %}
     <section class="page reponse">
       <header>
-        <h4>Réponse</h4>
+        <h3>Réponse</h3>
       </header>
       <table class="cartouche">
         <tr>
@@ -112,11 +112,11 @@
       <div>
         {% if amendement.user_content.has_objet %}
           <h5>Objet</h5>
-          {{ amendement.user_content.objet | paragriphy }}
+          {{ amendement.user_content.objet | h3_to_h5 | paragriphy }}
         {% endif %}
         {% if amendement.user_content.has_reponse %}
           <h5>Réponse</h5>
-          {{ amendement.user_content.reponse | paragriphy }}
+          {{ amendement.user_content.reponse | h3_to_h5 | paragriphy }}
         {% endif %}
       </div>
     </section>
@@ -176,10 +176,10 @@
     </table>
     <div>
       <h4>Exposé</h4>
-      {{ amendement.expose|safe }}
+      {{ amendement.expose|h3_to_h5|safe }}
 
       <h4>Corps de l’amendement</h4>
-      {{ amendement.corps|safe }}
+      {{ amendement.corps|h3_to_h5|safe }}
     </div>
   </section>
 {%- endmacro %}

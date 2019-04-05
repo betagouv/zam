@@ -127,9 +127,7 @@ def test_post_form(app):
     assert resp.status_code == 200
     assert "Lecture créée avec succès," in resp.text
 
-    texte = Texte.get_by_numero(
-        chambre=Chambre.AN, session_or_legislature="15", numero=269
-    )
+    texte = Texte.get(chambre=Chambre.AN, session_or_legislature="15", numero=269)
     lecture = Lecture.get(
         chambre="an", session="15", texte=texte, partie=None, organe="PO717460"
     )
@@ -221,7 +219,7 @@ def test_post_form_senat_2019(app):
     assert resp.status_code == 200
     assert "Lecture créée avec succès," in resp.text
 
-    texte = Texte.get_by_numero(
+    texte = Texte.get(
         chambre=Chambre.SENAT, session_or_legislature="2018-2019", numero=106
     )
 

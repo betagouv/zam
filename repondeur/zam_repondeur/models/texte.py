@@ -86,12 +86,7 @@ class Texte(Base):
     )
 
     @classmethod
-    def get(cls, uid: str) -> Optional["Texte"]:
-        res: Optional["Texte"] = DBSession.query(cls).filter(cls.uid == uid).first()
-        return res
-
-    @classmethod
-    def get_by_numero(
+    def get(
         cls, chambre: Chambre, session_or_legislature: str, numero: int
     ) -> Optional["Texte"]:
         query = DBSession.query(cls).filter(
@@ -102,13 +97,6 @@ class Texte(Base):
         else:
             query = query.filter_by(session=int(session_or_legislature.split("-")[0]))
         res: Optional["Texte"] = query.first()
-        return res
-
-    @classmethod
-    def exists(cls, uid: str) -> bool:
-        res: bool = DBSession.query(
-            DBSession.query(cls).filter(cls.uid == uid).exists()
-        ).scalar()
         return res
 
     @classmethod

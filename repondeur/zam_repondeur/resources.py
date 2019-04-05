@@ -131,7 +131,7 @@ class LectureResource(Resource):
         return self.model()
 
     def model(self, *options: Any) -> Lecture:
-        texte = Texte.get_by_numero(
+        texte = Texte.get(
             chambre=Chambre.from_string(self.chambre),
             session_or_legislature=self.session,
             numero=self.num_texte,

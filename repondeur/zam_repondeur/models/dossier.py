@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from sqlalchemy import Column, DateTime, Integer, Text
 from sqlalchemy.orm import relationship
@@ -23,18 +22,6 @@ class Dossier(Base):
     lectures = relationship("Lecture", back_populates="dossier")
 
     __repr_keys__ = ("pk", "uid", "titre")
-
-    @classmethod
-    def get(cls, uid: str) -> Optional["Dossier"]:
-        res: Optional["Dossier"] = DBSession.query(cls).filter(cls.uid == uid).first()
-        return res
-
-    @classmethod
-    def exists(cls, uid: str) -> bool:
-        res: bool = DBSession.query(
-            DBSession.query(cls).filter(cls.uid == uid).exists()
-        ).scalar()
-        return res
 
     @classmethod
     def create(cls, uid: str, titre: str) -> "Dossier":

@@ -10,6 +10,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from zam_repondeur.models import (
     Amendement,
     Article,
+    Chambre,
     DBSession,
     Lecture,
     Texte,
@@ -130,7 +131,11 @@ class LectureResource(Resource):
         return self.model()
 
     def model(self, *options: Any) -> Lecture:
-        texte = Texte.get_by_numero(numero=self.num_texte)
+        texte = Texte.get_by_numero(
+            chambre=Chambre.from_string(self.chambre),
+            session_or_legislature=self.session,
+            numero=self.num_texte,
+        )
         if texte is None:
             raise ResourceNotFound(self)
         lecture = Lecture.get(

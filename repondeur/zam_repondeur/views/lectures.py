@@ -13,6 +13,7 @@ from zam_repondeur.fetch import get_articles
 from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
 from zam_repondeur.message import Message
 from zam_repondeur.models import (
+    Chambre,
     DBSession,
     Dossier as DossierModel,
     Lecture as LectureModel,
@@ -70,27 +71,32 @@ class LecturesAdd:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        dossier = self._get_dossier()
-        lecture = self._get_lecture(dossier)
+        dossier_ref = self._get_dossier_ref()
+        lecture_ref = self._get_lecture_ref(dossier_ref)
 
-        chambre = lecture.chambre.value
-        titre = lecture.titre
-        organe = lecture.organe
-        partie = lecture.partie
+        chambre = lecture_ref.chambre.value
+        titre = lecture_ref.titre
+        organe = lecture_ref.organe
+        partie = lecture_ref.partie
 
-        session = lecture.get_session()
-        texte = lecture.texte
+        session = lecture_ref.get_session()
+        texte = lecture_ref.texte
+
         texte_model = get_one_or_create(
             TexteModel,
             uid=texte.uid,
             type_=texte.type_.name,
+            chambre=Chambre.AN if lecture_ref.chambre.value == "an" else Chambre.SENAT,
+            legislature=int(session) if chambre == "an" else None,
+            session=int(session.split("-")[0]) if chambre == "senat" else None,
             numero=texte.numero,
             titre_long=texte.titre_long,
             titre_court=texte.titre_court,
             date_depot=texte.date_depot,
         )[0]
+
         dossier_model = get_one_or_create(
-            DossierModel, uid=dossier.uid, titre=dossier.titre
+            DossierModel, uid=dossier_ref.uid, titre=dossier_ref.titre
         )[0]
 
         if LectureModel.exists(chambre, session, texte_model, partie, organe):
@@ -131,20 +137,20 @@ class LecturesAdd:
             )
         )
 
-    def _get_dossier(self) -> Dossier:
+    def _get_dossier_ref(self) -> Dossier:
         try:
             dossier_uid = self.request.POST["dossier"]
         except KeyError:
             raise HTTPBadRequest
         try:
-            dossier = self.dossiers_by_uid[dossier_uid]
+            dossier_ref = self.dossiers_by_uid[dossier_uid]
         except KeyError:
             raise HTTPNotFound
-        return dossier
+        return dossier_ref
 
-    def _get_lecture(self, dossier: Dossier) -> Lecture:
+    def _get_lecture_ref(self, dossier: Dossier) -> Lecture:
         try:
-            texte, organe, partie_str = self.request.POST["lecture"].split("-", 2)
+            texte_uid, organe, partie_str = self.request.POST["lecture"].split("-", 2)
         except (KeyError, ValueError):
             raise HTTPBadRequest
         partie: Optional[int]
@@ -156,7 +162,7 @@ class LecturesAdd:
             lecture
             for lecture in dossier.lectures
             if (
-                lecture.texte.uid == texte
+                lecture.texte.uid == texte_uid
                 and lecture.organe == organe
                 and lecture.partie == partie
             )

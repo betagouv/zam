@@ -67,6 +67,8 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0269",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=269,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                 titre_court="PLFSS pour 2018",
@@ -80,6 +82,8 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0269",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=269,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                 titre_court="PLFSS pour 2018",
@@ -93,6 +97,8 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0269",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=269,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                 titre_court="PLFSS pour 2018",
@@ -106,6 +112,8 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
             texte=Texte(
                 uid="PRJLSNR5S299B0063",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
                 numero=63,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                 titre_court="PLFSS pour 2018",
@@ -119,6 +127,8 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
             texte=Texte(
                 uid="PRJLSNR5S299B0063",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
                 numero=63,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                 titre_court="PLFSS pour 2018",
@@ -132,6 +142,8 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
             texte=Texte(
                 uid="PRJLSNR5S299B0063",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
                 numero=63,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                 titre_court="PLFSS pour 2018",
@@ -145,6 +157,8 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0387",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=387,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                 titre_court="PLFSS pour 2018",
@@ -158,6 +172,8 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0387",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=387,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                 titre_court="PLFSS pour 2018",
@@ -171,6 +187,8 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
             texte=Texte(
                 uid="PRJLSNR5S299B0121",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
                 numero=121,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                 titre_court="PLFSS pour 2018",
@@ -184,6 +202,8 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
             texte=Texte(
                 uid="PRJLSNR5S299B0121",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
                 numero=121,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                 titre_court="PLFSS pour 2018",
@@ -197,6 +217,8 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0434",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=434,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                 titre_court="PLFSS pour 2018",
@@ -210,6 +232,8 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0434",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=434,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                 titre_court="PLFSS pour 2018",
@@ -246,6 +270,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -260,6 +286,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -274,6 +302,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -288,6 +318,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -302,6 +334,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -316,6 +350,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -330,6 +366,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -344,6 +382,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -358,6 +398,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -372,6 +414,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -386,6 +430,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -400,6 +446,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -414,6 +462,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -428,6 +478,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -442,6 +494,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -456,6 +510,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -470,6 +526,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -484,6 +542,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0235",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=235,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -498,6 +558,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLSNR5S299B0107",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
                 numero=107,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -512,6 +574,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLSNR5S299B0107",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
                 numero=107,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -526,6 +590,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLSNR5S299B0107",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
                 numero=107,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -540,6 +606,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLSNR5S299B0107",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
                 numero=107,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -554,6 +622,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0485",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=485,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -567,6 +637,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0485",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=485,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -580,6 +652,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLSNR5S299B0172",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
                 numero=172,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -593,6 +667,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLSNR5S299B0172",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
                 numero=172,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -606,6 +682,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0506",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=506,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -619,6 +697,8 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             texte=Texte(
                 uid="PRJLANR5L15B0506",
                 type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
                 numero=506,
                 titre_long="projet de loi de finances pour 2018",
                 titre_court="PLF pour 2018",
@@ -657,6 +737,8 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                 texte=Texte(
                     uid="PRJLANR5L15B0424",
                     type_=TypeTexte.PROJET,
+                    chambre=Chambre.AN,
+                    legislature=15,
                     numero=424,
                     titre_long="projet de loi pour un Etat au service d’une société de confiance",  # noqa
                     titre_court="Etat service société de confiance",
@@ -670,6 +752,8 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                 texte=Texte(
                     uid="PRJLANR5L15BTC0575",
                     type_=TypeTexte.PROJET,
+                    chambre=Chambre.AN,
+                    legislature=15,
                     numero=575,
                     titre_long="projet de loi sur le projet de loi, après engagement de la procédure accélérée, pour un Etat au service d’une société de confiance (n°424).",  # noqa
                     titre_court="Etat service société de confiance",
@@ -683,6 +767,8 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                 texte=Texte(
                     uid="PRJLSNR5S299B0259",
                     type_=TypeTexte.PROJET,
+                    chambre=Chambre.SENAT,
+                    legislature=None,
                     numero=259,
                     titre_long="projet de loi pour un Etat au service d'une société de confiance",  # noqa
                     titre_court="État au service d'une société de confiance",
@@ -696,6 +782,8 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                 texte=Texte(
                     uid="PRJLSNR5S299BTC0330",
                     type_=TypeTexte.PROJET,
+                    chambre=Chambre.SENAT,
+                    legislature=None,
                     numero=330,
                     titre_long="projet de loi  sur le projet de loi, adopté, par l'Assemblée nationale après engagement de la procédure accélérée, pour un Etat au service d'une société de confiance (n°259).",  # noqa
                     titre_court="État au service d'une société de confiance",
@@ -709,6 +797,8 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                 texte=Texte(
                     uid="PRJLANR5L15B0806",
                     type_=TypeTexte.PROJET,
+                    chambre=Chambre.AN,
+                    legislature=15,
                     numero=806,
                     titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
                     titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
@@ -722,6 +812,8 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                 texte=Texte(
                     uid="PRJLANR5L15BTC1056",
                     type_=TypeTexte.PROJET,
+                    chambre=Chambre.AN,
+                    legislature=15,
                     numero=1056,
                     titre_long="projet de loi , en nouvelle lecture, sur le projet de loi, modifié par le Sénat, renforçant l'efficacité de l'administration pour une relation de confiance avec le public (n°806).",  # noqa
                     titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa

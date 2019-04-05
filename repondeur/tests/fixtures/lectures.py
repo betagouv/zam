@@ -6,12 +6,14 @@ import transaction
 
 @pytest.fixture
 def texte_an(db):
-    from zam_repondeur.models import Texte, TypeTexte
+    from zam_repondeur.models import Chambre, Texte, TypeTexte
 
     with transaction.manager:
         texte = Texte.create(
             uid="PRJLANR5L15B0269",
             type_=TypeTexte.PROJET,
+            chambre=Chambre.AN,
+            legislature=15,
             numero=269,
             titre_long="projet de loi de financement de la sécurité sociale pour 2018",
             titre_court="PLFSS pour 2018",
@@ -23,12 +25,14 @@ def texte_an(db):
 
 @pytest.fixture
 def texte_commission_speciale(db):
-    from zam_repondeur.models import Texte, TypeTexte
+    from zam_repondeur.models import Chambre, Texte, TypeTexte
 
     with transaction.manager:
         texte = Texte.create(
             uid="PRJLANR5L15B0806",
             type_=TypeTexte.PROJET,
+            chambre=Chambre.AN,
+            legislature=15,
             numero=806,
             titre_long="long",
             titre_court="court",
@@ -67,12 +71,14 @@ def lecture_an(db, texte_an, dossier_an):
 
 @pytest.fixture
 def texte_senat(db):
-    from zam_repondeur.models import Texte, TypeTexte
+    from zam_repondeur.models import Chambre, Texte, TypeTexte
 
     with transaction.manager:
         texte = Texte.create(
             uid="baz",
             type_=TypeTexte.PROJET,
+            chambre=Chambre.SENAT,
+            session=2017,
             numero=63,
             titre_long="long",
             titre_court="court",
@@ -232,12 +238,14 @@ def amendements_senat(db, lecture_senat, article1_senat):
 
 @pytest.fixture
 def texte_essoc(db):
-    from zam_repondeur.models import Texte, TypeTexte
+    from zam_repondeur.models import Chambre, Texte, TypeTexte
 
     with transaction.manager:
         texte = Texte.create(
             uid="PRJLANR5L15B0806",
             type_=TypeTexte.PROJET,
+            chambre=Chambre.AN,
+            legislature=15,
             numero=806,
             titre_long="long",
             titre_court="court",

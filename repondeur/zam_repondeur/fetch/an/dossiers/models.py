@@ -25,10 +25,24 @@ class Chambre(Enum):
 class Texte:
     uid: str
     type_: TypeTexte
+    chambre: Chambre
+    legislature: Optional[int]
     numero: int
     titre_long: str
     titre_court: str
     date_depot: Optional[date]
+
+    @property
+    def session(self) -> Optional[int]:
+        if self.chambre == Chambre.AN:
+            return None
+        if not self.date_depot:
+            raise NotImplementedError
+        # The session changes the first working day of October.
+        if self.date_depot.month >= 10:
+            return self.date_depot.year
+        else:
+            return self.date_depot.year - 1
 
 
 @dataclass

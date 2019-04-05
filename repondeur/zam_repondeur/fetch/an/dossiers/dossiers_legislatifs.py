@@ -45,6 +45,8 @@ def parse_textes(export: dict) -> Dict[str, Texte]:
         item["uid"]: Texte(
             uid=item["uid"],
             type_=type_texte(item),
+            chambre=chambre_texte(item),
+            legislature=legislature_texte(item),
             numero=int(item["notice"]["numNotice"]),
             titre_long=item["titres"]["titrePrincipal"],
             titre_court=item["titres"]["titrePrincipalCourt"],
@@ -63,6 +65,21 @@ def type_texte(item: dict) -> TypeTexte:
     if code == "PRJL":
         return TypeTexte.PROJET
     raise NotImplementedError
+
+
+def chambre_texte(item: dict) -> Chambre:
+    if item["uid"][4:6] == "AN":
+        return Chambre.AN
+    if item["uid"][4:6] == "SN":
+        return Chambre.SENAT
+    raise NotImplementedError
+
+
+def legislature_texte(item: dict) -> Optional[int]:
+    legislature = item["legislature"]
+    if not legislature:
+        return None
+    return int(legislature)
 
 
 def parse_dossiers(export: dict, textes: Dict[str, Texte]) -> Dict[str, Dossier]:

@@ -16,7 +16,7 @@ jobs:
       - image: circleci/python:3.6-stretch-browsers
         environment:
           ZAM_TEST_DB_URL: postgresql://postgres@localhost/circle_test
-      - image: circleci/postgres:10.5-alpine-ram
+      - image: circleci/postgres:10.6-alpine-ram
       - image: redis
     steps:
       - checkout

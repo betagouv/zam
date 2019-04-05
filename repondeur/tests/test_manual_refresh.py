@@ -79,8 +79,8 @@ def test_post_form(app, lecture_an, article1_an):
     with transaction.manager:
         lecture_an = Lecture.get(
             chambre=lecture_an.chambre,
-            session=lecture_an.session,
-            texte=lecture_an.texte,
+            session_or_legislature=lecture_an.session,
+            num_texte=lecture_an.texte.numero,
             partie=None,
             organe=lecture_an.organe,
         )
@@ -97,8 +97,8 @@ def test_post_form(app, lecture_an, article1_an):
     with transaction.manager:
         lecture = Lecture.get(
             chambre=lecture_an.chambre,
-            session=lecture_an.session,
-            texte=texte,
+            session_or_legislature=lecture_an.session,
+            num_texte=texte.numero,
             partie=None,
             organe=organe,
         )

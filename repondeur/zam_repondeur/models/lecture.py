@@ -8,12 +8,12 @@ from .amendement import Amendement
 from .article import Article
 from .base import Base, DBSession
 from .division import SubDiv
+from .texte import Chambre, Texte
 from .users import Team
 
 # Make these types available to mypy, but avoid circular imports
 if TYPE_CHECKING:
     from .dossier import Dossier  # noqa
-    from .texte import Texte  # noqa
 
 
 CHAMBRES = {"an": "Assemblée nationale", "senat": "Sénat"}
@@ -60,7 +60,7 @@ class Lecture(Base):
     dossier_pk = Column(Integer, ForeignKey("dossiers.pk"))
     dossier = relationship("Dossier", back_populates="lectures")
     texte_pk = Column(Integer, ForeignKey("textes.pk"))
-    texte = relationship("Texte", back_populates="lectures")
+    texte = relationship(Texte, back_populates="lectures")
 
     __repr_keys__ = ("pk", "chambre", "session", "organe", "partie", "owned_by_team")
 
@@ -165,24 +165,34 @@ class Lecture(Base):
     def get(
         cls,
         chambre: str,
-        session: str,
-        texte: "Texte",
+        session_or_legislature: str,
+        num_texte: int,
         partie: Optional[int],
         organe: str,
         *options: Any,
     ) -> Optional["Lecture"]:
-        res: Optional["Lecture"] = (
+        query = (
             DBSession.query(cls)
+            .join(Texte)
             .filter(
                 cls.chambre == chambre,
-                cls.session == session,
-                cls.texte == texte,
+                cls.session == session_or_legislature,
                 cls.partie == partie,
                 cls.organe == organe,
+                Texte.chambre == Chambre.from_string(chambre),
+                Texte.numero == num_texte,
             )
             .options(*options)
-            .first()
         )
+        if chambre == "an":
+            query = query.filter(Texte.legislature == int(session_or_legislature))
+        elif chambre == "senat":
+            query = query.filter(
+                Texte.session == int(session_or_legislature.split("-")[0])
+            )
+        else:
+            raise ValueError("Invalid value for chambre")
+        res: Optional["Lecture"] = query.first()
         return res
 
     @classmethod

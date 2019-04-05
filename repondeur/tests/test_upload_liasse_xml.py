@@ -44,8 +44,8 @@ def test_upload_liasse_success(app, lecture_essoc):
     # Check the update timestamp has been updated.
     lecture = Lecture.get(
         chambre=lecture_essoc.chambre,
-        session=lecture_essoc.session,
-        texte=lecture_essoc.texte,
+        session_or_legislature=lecture_essoc.session,
+        num_texte=lecture_essoc.texte.numero,
         partie=None,
         organe=lecture_essoc.organe,
     )
@@ -75,8 +75,8 @@ def test_upload_liasse_with_table(app, lecture_essoc):
 
     lecture = Lecture.get(
         chambre=lecture_essoc.chambre,
-        session=lecture_essoc.session,
-        texte=lecture_essoc.texte,
+        session_or_legislature=lecture_essoc.session,
+        num_texte=lecture_essoc.texte.numero,
         partie=None,
         organe=lecture_essoc.organe,
     )
@@ -120,8 +120,8 @@ def test_upload_liasse_missing_file(app, lecture_essoc):
     # Check the update timestamp has NOT been updated.
     lecture = Lecture.get(
         chambre=lecture_essoc.chambre,
-        session=lecture_essoc.session,
-        texte=lecture_essoc.texte,
+        session_or_legislature=lecture_essoc.session,
+        num_texte=lecture_essoc.texte.numero,
         partie=None,
         organe=lecture_essoc.organe,
     )

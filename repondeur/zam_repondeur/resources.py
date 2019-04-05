@@ -10,10 +10,8 @@ from sqlalchemy.orm.exc import NoResultFound
 from zam_repondeur.models import (
     Amendement,
     Article,
-    Chambre,
     DBSession,
     Lecture,
-    Texte,
     User,
     UserTable,
 )
@@ -74,7 +72,7 @@ class LectureCollection(Resource):
 
     def __getitem__(self, key: str) -> Resource:
         try:
-            chambre, session, num_texte, organe = key.split(".")
+            chambre, session_or_legislature, num_texte, organe = key.split(".")
             partie: Optional[int]
             if "-" in num_texte:
                 num_texte, partie_str = num_texte.split("-", 1)
@@ -87,7 +85,7 @@ class LectureCollection(Resource):
             name=key,
             parent=self,
             chambre=chambre,
-            session=session,
+            session_or_legislature=session_or_legislature,
             num_texte=int(num_texte),
             partie=partie,
             organe=organe,
@@ -111,14 +109,14 @@ class LectureResource(Resource):
         name: str,
         parent: Resource,
         chambre: str,
-        session: str,
+        session_or_legislature: str,
         num_texte: int,
         partie: Optional[int],
         organe: str,
     ) -> None:
         super().__init__(name=name, parent=parent)
         self.chambre = chambre
-        self.session = session
+        self.session_or_legislature = session_or_legislature
         self.num_texte = num_texte
         self.partie = partie
         self.organe = organe
@@ -131,15 +129,13 @@ class LectureResource(Resource):
         return self.model()
 
     def model(self, *options: Any) -> Lecture:
-        texte = Texte.get(
-            chambre=Chambre.from_string(self.chambre),
-            session_or_legislature=self.session,
-            numero=self.num_texte,
-        )
-        if texte is None:
-            raise ResourceNotFound(self)
         lecture = Lecture.get(
-            self.chambre, self.session, texte, self.partie, self.organe, *options
+            self.chambre,
+            self.session_or_legislature,
+            self.num_texte,
+            self.partie,
+            self.organe,
+            *options,
         )
         if lecture is None:
             raise ResourceNotFound(self)

@@ -440,8 +440,8 @@ def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
     # The lecture modification date should not be updated
     lecture = Lecture.get(
         chambre=lecture_an.chambre,
-        session=lecture_an.session,
-        texte=lecture_an.texte,
+        session_or_legislature=lecture_an.session,
+        num_texte=lecture_an.texte.numero,
         partie=None,
         organe=lecture_an.organe,
     )

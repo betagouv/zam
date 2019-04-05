@@ -56,7 +56,7 @@ def test_get_form(app):
 
 @responses.activate
 def test_post_form(app):
-    from zam_repondeur.models import Chambre, DBSession, Lecture, Texte
+    from zam_repondeur.models import DBSession, Lecture
 
     assert not DBSession.query(Lecture).all()
 
@@ -127,9 +127,12 @@ def test_post_form(app):
     assert resp.status_code == 200
     assert "Lecture créée avec succès," in resp.text
 
-    texte = Texte.get(chambre=Chambre.AN, session_or_legislature="15", numero=269)
     lecture = Lecture.get(
-        chambre="an", session="15", texte=texte, partie=None, organe="PO717460"
+        chambre="an",
+        session_or_legislature="15",
+        num_texte=269,
+        partie=None,
+        organe="PO717460",
     )
     assert lecture.chambre == "an"
     assert lecture.titre == "Première lecture – Titre lecture"
@@ -156,7 +159,7 @@ def test_post_form(app):
 
 @responses.activate
 def test_post_form_senat_2019(app):
-    from zam_repondeur.models import Chambre, DBSession, Lecture, Texte
+    from zam_repondeur.models import DBSession, Lecture
 
     assert not DBSession.query(Lecture).all()
     responses.add(
@@ -219,12 +222,12 @@ def test_post_form_senat_2019(app):
     assert resp.status_code == 200
     assert "Lecture créée avec succès," in resp.text
 
-    texte = Texte.get(
-        chambre=Chambre.SENAT, session_or_legislature="2018-2019", numero=106
-    )
-
     lecture = Lecture.get(
-        chambre="senat", session="2018-2019", texte=texte, partie=None, organe="PO78718"
+        chambre="senat",
+        session_or_legislature="2018-2019",
+        num_texte=106,
+        partie=None,
+        organe="PO78718",
     )
     assert lecture.chambre == "senat"
     assert lecture.titre == "Première lecture – Titre lecture"

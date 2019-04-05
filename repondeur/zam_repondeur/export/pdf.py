@@ -15,6 +15,7 @@ from zam_repondeur.models import Amendement, Lecture
 PDFKIT_OPTIONS = {
     "quiet": "",
     "disable-smart-shrinking": "",  # font size consistency between one amdt / all amdts
+    "outline-depth": 3,
 }
 
 

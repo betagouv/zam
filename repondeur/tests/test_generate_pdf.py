@@ -2,7 +2,7 @@ from pyramid.testing import DummyRequest
 from selectolax.parser import HTMLParser
 
 
-def _html_titles_list(parser, selector="h2"):
+def _html_page_titles(parser, selector=".page header"):
     return [node.text().strip() for node in parser.css(selector)]
 
 
@@ -86,11 +86,11 @@ def test_generate_pdf_without_responses(
     )
 
     assert parser.css_first("h1").text() == "Titre dossier legislatif sénat"
-    assert _html_titles_list(parser) == [
-        "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
-        "Article 1",
-        "Article 7 bis",
-    ]
+    assert (
+        parser.css_first(".first-page .lecture").text()
+        == "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063"
+    )
+    assert _html_page_titles(parser) == ["Article 1", "Article 7 bis"]
 
 
 def test_generate_pdf_with_amendement_responses(
@@ -165,8 +165,11 @@ def test_generate_pdf_with_amendement_responses(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )
 
-    assert _html_titles_list(parser) == [
-        "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
+    assert (
+        parser.css_first(".first-page .lecture").text()
+        == "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063"
+    )
+    assert _html_page_titles(parser) == [
         "Article 1",
         "Réponse",
         "Amendement nº 42 rect.",
@@ -192,12 +195,11 @@ def test_generate_pdf_with_amendement_content(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )
 
-    assert _html_titles_list(parser) == [
-        "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
-        "Article 1",
-        "Réponse",
-        "Amendement nº 6666",
-    ]
+    assert (
+        parser.css_first(".first-page .lecture").text()
+        == "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063"
+    )
+    assert _html_page_titles(parser) == ["Article 1", "Réponse", "Amendement nº 6666"]
     response_node = parser.css_first(".reponse")
     assert _cartouche_to_list(response_node) == [
         "Article",
@@ -211,9 +213,9 @@ def test_generate_pdf_with_amendement_content(
         "Avis",
         "Favorable",
     ]
-    assert response_node.css_first("div h3").text() == "Objet"
+    assert response_node.css_first("div h5").text() == "Objet"
     assert "L’objet" in response_node.css_first("div p").text()
-    assert response_node.css("div h3")[-1].text() == "Réponse"
+    assert response_node.css("div h5")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
 
@@ -243,8 +245,11 @@ def test_generate_pdf_with_amendement_content_factor_authors_groups(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )
 
-    assert _html_titles_list(parser) == [
-        "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
+    assert (
+        parser.css_first(".first-page .lecture").text()
+        == "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063"
+    )
+    assert _html_page_titles(parser) == [
         "Article 1",
         "Réponse",
         "Amendement nº 6666",
@@ -263,9 +268,9 @@ def test_generate_pdf_with_amendement_content_factor_authors_groups(
         "Avis",
         "Favorable",
     ]
-    assert response_node.css_first("div h3").text() == "Objet"
+    assert response_node.css_first("div h5").text() == "Objet"
     assert "L’objet" in response_node.css_first("div p").text()
-    assert response_node.css("div h3")[-1].text() == "Réponse"
+    assert response_node.css("div h5")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
 
@@ -295,8 +300,11 @@ def test_generate_pdf_with_amendement_content_factor_only_groups(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )
 
-    assert _html_titles_list(parser) == [
-        "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
+    assert (
+        parser.css_first(".first-page .lecture").text()
+        == "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063"
+    )
+    assert _html_page_titles(parser) == [
         "Article 1",
         "Réponse",
         "Amendement nº 6666",
@@ -315,9 +323,9 @@ def test_generate_pdf_with_amendement_content_factor_only_groups(
         "Avis",
         "Favorable",
     ]
-    assert response_node.css_first("div h3").text() == "Objet"
+    assert response_node.css_first("div h5").text() == "Objet"
     assert "L’objet" in response_node.css_first("div p").text()
-    assert response_node.css("div h3")[-1].text() == "Réponse"
+    assert response_node.css("div h5")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
 
@@ -395,8 +403,11 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )
 
-    assert _html_titles_list(parser) == [
-        "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
+    assert (
+        parser.css_first(".first-page .lecture").text()
+        == "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063"
+    )
+    assert _html_page_titles(parser) == [
         "Article 1",
         "Réponse",
         "Amendement nº 6666",
@@ -419,9 +430,9 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         "Avis",
         "Défavorable",
     ]
-    assert response_node.css_first("div h3").text() == "Objet"
+    assert response_node.css_first("div h5").text() == "Objet"
     assert "L’objet" in response_node.css_first("div p").text()
-    assert response_node.css("div h3")[-1].text() == "Réponse"
+    assert response_node.css("div h5")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
 
@@ -440,12 +451,11 @@ def test_generate_pdf_with_amendement_content_gouvernemental(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )
 
-    assert _html_titles_list(parser) == [
-        "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
-        "Article 1",
-        "Réponse",
-        "Amendement nº 6666",
-    ]
+    assert (
+        parser.css_first(".first-page .lecture").text()
+        == "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063"
+    )
+    assert _html_page_titles(parser) == ["Article 1", "Réponse", "Amendement nº 6666"]
     response_node = parser.css_first(".reponse")
     assert _cartouche_to_list(response_node) == [
         "Article",
@@ -455,7 +465,7 @@ def test_generate_pdf_with_amendement_content_gouvernemental(
         "Auteur",
         "Gouvernement",
     ]
-    assert response_node.css_first("div h3").text() == "Réponse"
+    assert response_node.css_first("div h5").text() == "Réponse"
     assert "La présentation" in response_node.css_first("div p").text()
 
 
@@ -532,8 +542,11 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )
 
-    assert _html_titles_list(parser) == [
-        "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
+    assert (
+        parser.css_first(".first-page .lecture").text()
+        == "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063"
+    )
+    assert _html_page_titles(parser) == [
         "Article 1",
         "Réponse",
         "Amendement nº 42 rect.",
@@ -616,8 +629,11 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )
 
-    assert _html_titles_list(parser) == [
-        "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063",
+    assert (
+        parser.css_first(".first-page .lecture").text()
+        == "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063"
+    )
+    assert _html_page_titles(parser) == [
         "Réponse",
         "Amendement nº 57",
         "Article 1",
@@ -652,7 +668,7 @@ def test_generate_pdf_amendement_without_responses(app, lecture_senat, article1_
         )
     )
 
-    assert _html_titles_list(parser) == ["Amendement nº 42 rect."]
+    assert _html_page_titles(parser) == ["Amendement nº 42 rect."]
 
 
 def test_generate_pdf_amendement_with_responses(app, lecture_senat, article1_senat):
@@ -681,7 +697,7 @@ def test_generate_pdf_amendement_with_responses(app, lecture_senat, article1_sen
         )
     )
 
-    assert _html_titles_list(parser) == ["Réponse", "Amendement nº 42 rect."]
+    assert _html_page_titles(parser) == ["Réponse", "Amendement nº 42 rect."]
 
 
 def test_generate_pdf_amendement_with_content(
@@ -704,7 +720,7 @@ def test_generate_pdf_amendement_with_content(
         )
     )
 
-    assert _html_titles_list(parser) == ["Réponse", "Amendement nº 6666"]
+    assert _html_page_titles(parser) == ["Réponse", "Amendement nº 6666"]
     response_node = parser.css_first(".reponse")
     assert _cartouche_to_list(response_node) == [
         "Article",
@@ -718,9 +734,9 @@ def test_generate_pdf_amendement_with_content(
         "Avis",
         "Favorable",
     ]
-    assert response_node.css_first("div h3").text() == "Objet"
+    assert response_node.css_first("div h5").text() == "Objet"
     assert "L’objet" in response_node.css_first("div p").text()
-    assert response_node.css("div h3")[-1].text() == "Réponse"
+    assert response_node.css("div h5")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()
 
 
@@ -753,7 +769,7 @@ def test_generate_pdf_amendement_with_similaire(
         )
     )
 
-    assert _html_titles_list(parser) == ["Réponse", "Amendement nº 6666"]
+    assert _html_page_titles(parser) == ["Réponse", "Amendement nº 6666"]
     response_node = parser.css_first(".reponse")
     assert _cartouche_to_list(response_node) == [
         "Article",
@@ -767,7 +783,7 @@ def test_generate_pdf_amendement_with_similaire(
         "Avis",
         "Favorable",
     ]
-    assert response_node.css_first("div h3").text() == "Objet"
+    assert response_node.css_first("div h5").text() == "Objet"
     assert "L’objet" in response_node.css_first("div p").text()
-    assert response_node.css("div h3")[-1].text() == "Réponse"
+    assert response_node.css("div h5")[-1].text() == "Réponse"
     assert "La réponse" in response_node.css("div p")[-1].text()

@@ -12,6 +12,18 @@
     </div>
 {% endmacro %}
 
+{% macro status(amendement) %}
+    {% if amendement.is_abandoned_before_seance %}
+        {% if amendement.is_withdrawn %}
+            <span class="status grey">Retiré</span>
+        {% elif amendement.is_irrecevable %}
+            <span class="status grey">Irrecevable</span>
+        {% endif %}
+    {% elif amendement.gouvernemental %}
+        <span class="status blue">Gouvernemental</span>
+    {% endif %}
+{% endmacro %}
+
 {% macro timeline(events, today) %}
     <div class="container timeline">
         {% for key, events in events|group_by_day %}

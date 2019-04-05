@@ -1,11 +1,11 @@
 {%- macro article_page(article) -%}
   <section class="page article">
-    <h2>
-      {{ article.format(short=False) }}
-    </h2>
-    {% if article.user_content.title %}
-      <h3>{{ article.user_content.title }}</h3>
-    {% endif %}
+    <header>
+      <h2>{{ article.format(short=False) }}</h2>
+      {% if article.user_content.title %}
+        <div class="title">{{ article.user_content.title }}</div>
+      {% endif %}
+    </header>
     {% if article.content %}
       <div>
         {% for number, content in article.content.items() %}
@@ -21,11 +21,11 @@
   </section>
   {% if article.user_content.presentation %}
     <section class="page presentation">
-      <h2>Présentation de l’article</h2>
-      <h3>{{ article.format(short=True) }}</h3>
-      <h3>{{ article.user_content.title }}</h3>
+      <h4>Présentation de l’article</h4>
+      <h5>{{ article.format(short=True) }}</h5>
+      <h5>{{ article.user_content.title }}</h5>
       <div>
-        {{ article.user_content.presentation | safe }}
+        {{ article.user_content.presentation | h3_to_h5 | safe }}
       </div>
     </section>
   {% endif %}
@@ -37,7 +37,9 @@
   {% set amendement = amendements[0] %}
   {% if amendement.user_content.avis or amendement.user_content.objet or amendement.user_content.has_reponse %}
     <section class="page reponse">
-      <h2>Réponse</h2>
+      <header>
+        <h3>Réponse</h3>
+      </header>
       <table class="cartouche">
         <tr>
           <td>Article</td>
@@ -109,12 +111,12 @@
       </table>
       <div>
         {% if amendement.user_content.has_objet %}
-          <h3>Objet</h3>
-          {{ amendement.user_content.objet | paragriphy }}
+          <h5>Objet</h5>
+          {{ amendement.user_content.objet | h3_to_h5 | paragriphy }}
         {% endif %}
         {% if amendement.user_content.has_reponse %}
-          <h3>Réponse</h3>
-          {{ amendement.user_content.reponse | paragriphy }}
+          <h5>Réponse</h5>
+          {{ amendement.user_content.reponse | h3_to_h5 | paragriphy }}
         {% endif %}
       </div>
     </section>
@@ -123,11 +125,13 @@
 
 {%- macro amendement_page(amendement) -%}
   <section class="page amendement">
-    {% if amendement.parent %}
-      <h2>Sous-amendement nº {{ amendement.num_disp }}</h2>
-    {% else %}
-      <h2>Amendement nº {{ amendement.num_disp }}</h2>
-    {% endif %}
+    <header>
+      {% if amendement.parent %}
+        <h3>Sous-amendement nº {{ amendement.num_disp }}</h3>
+      {% else %}
+        <h3>Amendement nº {{ amendement.num_disp }}</h3>
+      {% endif %}
+    </header>
     <table class="cartouche">
       <tr>
         <td>Article</td>
@@ -171,10 +175,11 @@
       {% endif %}
     </table>
     <div>
-      <h3>Exposé</h3>
-      {{ amendement.expose|safe }}
-      <h3>Corps de l’amendement</h3>
-      {{ amendement.corps|safe }}
+      <h4>Exposé</h4>
+      {{ amendement.expose|h3_to_h5|safe }}
+
+      <h4>Corps de l’amendement</h4>
+      {{ amendement.corps|h3_to_h5|safe }}
     </div>
   </section>
 {%- endmacro %}

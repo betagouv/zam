@@ -55,3 +55,9 @@ def group_by_day(events: List[Event]) -> List[Tuple[date, List[Event]]]:
 
     # We need to explicitly turn it into a list otherwise jinja2 is lost.
     return [(key, list(group)) for key, group in groupby(events, key=by_day)]
+
+
+def h3_to_h5(content: Optional[str]) -> str:
+    if content is None:
+        return ""
+    return content.replace("<h3>", "<h5>").replace("</h3>", "</h5>")

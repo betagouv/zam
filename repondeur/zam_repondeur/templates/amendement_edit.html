@@ -97,11 +97,8 @@
                     <h3>Sous-amendement au {{ amendement.parent }}</h3>
                 {% endif %}
 
-                {% if amendement.is_withdrawn %}
-                    <h4 class="highlighter">Retiré</h4>
-                {% elif amendement.is_irrecevable %}
-                    <h4 class="highlighter">Irrecevable</h4>
-                {% endif %}
+                {{ macros.status(amendement) }}
+
             </header>
 
             <p class="article">

@@ -215,8 +215,10 @@ class AmendementsFilters extends Stimulus.Controller {
     }
 
     toggle(event) {
-        this.linkTarget.classList.toggle('enabled')
-        this.rowTarget.classList.toggle('d-none')
+        if (this.hasLinkTarget && this.hasRowTarget) {
+            this.linkTarget.classList.toggle('enabled')
+            this.rowTarget.classList.toggle('d-none')
+        }
         if (event) event.preventDefault()
     }
 

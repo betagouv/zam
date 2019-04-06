@@ -34,7 +34,6 @@ def test_column_filtering_changes_edit_url_on_the_fly(
 ):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    driver.find_element_by_link_text("Filtrer").click()
     input_field = driver.find_element_by_css_selector(
         "thead tr.filters th:nth-child(3) input"
     )

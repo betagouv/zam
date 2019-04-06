@@ -2,21 +2,11 @@ import pytest
 import transaction
 
 
-def test_select_all_not_visible_by_default(
+def test_select_all_is_visible_by_default(
     wsgi_server, driver, lecture_an, amendements_an
 ):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    all_selected = driver.find_element_by_css_selector('[name="select-all"]')
-    assert not all_selected.is_displayed()
-
-
-def test_select_all_is_visible_with_filters(
-    wsgi_server, driver, lecture_an, amendements_an
-):
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/amendements")
-    driver.find_element_by_link_text("Filtrer").click()
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     assert all_selected.is_displayed()
 
@@ -26,7 +16,6 @@ def test_select_all_toggle_group_actions(
 ):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    driver.find_element_by_link_text("Filtrer").click()
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     all_selected.click()
     group_actions = driver.find_element_by_css_selector(".groupActions")
@@ -41,7 +30,6 @@ def test_select_all_change_transfer_url(
 ):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    driver.find_element_by_link_text("Filtrer").click()
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     all_selected.click()
     transfer_amendements = driver.find_element_by_css_selector("#transfer-amendements")
@@ -88,7 +76,6 @@ def test_select_all_checks_only_visible_amendements(
         user_daniel_table_an.amendements.append(amendement)
 
     driver.get(f"{LECTURE_URL}/amendements")
-    driver.find_element_by_link_text("Filtrer").click()
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )

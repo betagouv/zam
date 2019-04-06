@@ -72,7 +72,7 @@ class LectureCollection(Resource):
 
     def __getitem__(self, key: str) -> Resource:
         try:
-            chambre, session, num_texte, organe = key.split(".")
+            chambre, session_or_legislature, num_texte, organe = key.split(".")
             partie: Optional[int]
             if "-" in num_texte:
                 num_texte, partie_str = num_texte.split("-", 1)
@@ -85,7 +85,7 @@ class LectureCollection(Resource):
             name=key,
             parent=self,
             chambre=chambre,
-            session=session,
+            session_or_legislature=session_or_legislature,
             num_texte=int(num_texte),
             partie=partie,
             organe=organe,
@@ -109,14 +109,14 @@ class LectureResource(Resource):
         name: str,
         parent: Resource,
         chambre: str,
-        session: str,
+        session_or_legislature: str,
         num_texte: int,
         partie: Optional[int],
         organe: str,
     ) -> None:
         super().__init__(name=name, parent=parent)
         self.chambre = chambre
-        self.session = session
+        self.session_or_legislature = session_or_legislature
         self.num_texte = num_texte
         self.partie = partie
         self.organe = organe
@@ -131,7 +131,7 @@ class LectureResource(Resource):
     def model(self, *options: Any) -> Lecture:
         lecture = Lecture.get(
             self.chambre,
-            self.session,
+            self.session_or_legislature,
             self.num_texte,
             self.partie,
             self.organe,

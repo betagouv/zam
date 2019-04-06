@@ -16,17 +16,17 @@ def test_get_list_empty(app):
 
 
 @pytest.fixture
-def lecture_commission(db):
+def lecture_commission(db, texte_an, dossier_an):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
         lecture = Lecture.create(
             chambre="an",
             session="15",
-            num_texte=269,
+            texte=texte_an,
             titre="Numéro lecture – Titre lecture",
             organe="PO420120",
-            dossier_legislatif="Titre dossier legislatif",
+            dossier=dossier_an,
         )
 
     return lecture
@@ -50,10 +50,10 @@ def test_get_list_reverse_datetime_order(app, lecture_an):
         lecture2 = Lecture.create(
             chambre=lecture_an.chambre,
             session=lecture_an.session,
-            num_texte=lecture_an.num_texte + 1,
+            texte=lecture_an.texte,
             titre="Numéro lecture – Titre lecture 2",
             organe=lecture_an.organe,
-            dossier_legislatif=lecture_an.dossier_legislatif,
+            dossier=lecture_an.dossier,
         )
         title2 = str(lecture2)
         DBSession.add(lecture2)

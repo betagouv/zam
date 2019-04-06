@@ -131,8 +131,8 @@ class TestPostForm:
 
         lecture = Lecture.get(
             chambre=lecture_an.chambre,
-            session=lecture_an.session,
-            num_texte=lecture_an.num_texte,
+            session_or_legislature=lecture_an.session,
+            num_texte=lecture_an.texte.numero,
             partie=None,
             organe=lecture_an.organe,
         )

@@ -136,7 +136,7 @@ def test_import_liasse_xml_with_known_but_missing_parent(lecture_essoc):
     assert errors == []
 
 
-def test_import_liasse_second_part(app):
+def test_import_liasse_second_part(app, texte_commission_speciale, dossier_an):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml, LectureDoesNotMatch
     from zam_repondeur.models import DBSession, Lecture
 
@@ -144,20 +144,20 @@ def test_import_liasse_second_part(app):
         part1 = Lecture.create(
             chambre="an",
             session="15",
-            num_texte=806,
+            texte=texte_commission_speciale,
             partie=1,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO744107",
-            dossier_legislatif="Fonction publique : un Etat au service d'une société de confiance",  # noqa
+            dossier=dossier_an,
         )
         part2 = Lecture.create(
             chambre="an",
             session="15",
-            num_texte=806,
+            texte=texte_commission_speciale,
             partie=2,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO744107",
-            dossier_legislatif="Fonction publique : un Etat au service d'une société de confiance",  # noqa
+            dossier=dossier_an,
         )
 
     DBSession.add(part2)
@@ -192,7 +192,7 @@ def _check_amendement_0(amendement):
 
     assert amendement.lecture.chambre == "an"
     assert amendement.lecture.session == "15"
-    assert amendement.lecture.num_texte == 806
+    assert amendement.lecture.texte.numero == 806
     assert amendement.lecture.organe == "PO744107"
 
     assert amendement.article.type == "article"
@@ -239,7 +239,7 @@ def _check_amendement_1(amendement):
 
     assert amendement.lecture.chambre == "an"
     assert amendement.lecture.session == "15"
-    assert amendement.lecture.num_texte == 806
+    assert amendement.lecture.texte.numero == 806
     assert amendement.lecture.organe == "PO744107"
 
     assert amendement.article.type == "annexe"

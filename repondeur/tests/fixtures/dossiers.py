@@ -26,6 +26,8 @@ def mock_dossiers():
                         texte=Texte(
                             uid="PRJLANR5L15B0269",
                             type_=TypeTexte.PROJET,
+                            chambre=Chambre.AN,
+                            legislature=15,
                             numero=269,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                             titre_court="PLFSS pour 2018",
@@ -45,6 +47,8 @@ def mock_dossiers():
                         texte=Texte(
                             uid="PRJLANR5L15B0806",
                             type_=TypeTexte.PROJET,
+                            chambre=Chambre.AN,
+                            legislature=15,
                             numero=806,
                             titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
                             titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
@@ -64,6 +68,8 @@ def mock_dossiers():
                         texte=Texte(
                             uid="PRJLSNR5S319B0106",
                             type_=TypeTexte.PROJET,
+                            chambre=Chambre.SENAT,
+                            legislature=None,
                             numero=106,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2019",  # noqa
                             titre_court="PLFSS pour 2019",

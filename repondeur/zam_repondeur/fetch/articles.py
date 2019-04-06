@@ -34,12 +34,14 @@ SENAT_URL = "https://www.senat.fr/"
 def get_possible_texte_urls(lecture: Lecture) -> List[str]:
     if lecture.chambre == "an":
         return [
-            f"{AN_URL}{lecture.session}/projets/pl{lecture.num_texte:04}.asp",
-            f"{AN_URL}{lecture.session}/propositions/pion{lecture.num_texte:04}.asp",
-            f"{AN_URL}{lecture.session}/ta-commission/r{lecture.num_texte:04}-a0.asp",
+            f"{AN_URL}{lecture.session}/projets/pl{lecture.texte.numero:04}.asp",
+            f"{AN_URL}{lecture.session}/propositions/pion{lecture.texte.numero:04}.asp",
+            f"{AN_URL}{lecture.session}/ta-commission/r{lecture.texte.numero:04}-a0.asp",  # noqa
         ]
     else:
-        return [f"{SENAT_URL}leg/pjl{lecture.session[2:4]}-{lecture.num_texte:03}.html"]
+        return [
+            f"{SENAT_URL}leg/pjl{lecture.session[2:4]}-{lecture.texte.numero:03}.html"
+        ]
 
 
 def parse_first_working_url(urls: List[str]) -> List[dict]:

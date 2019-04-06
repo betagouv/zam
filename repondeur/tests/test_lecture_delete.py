@@ -4,7 +4,7 @@ def test_lecture_delete(app, lecture_an, amendements_an, user_david_table_an):
     assert Lecture.exists(
         chambre=lecture_an.chambre,
         session=lecture_an.session,
-        num_texte=lecture_an.num_texte,
+        texte=lecture_an.texte,
         partie=None,
         organe=lecture_an.organe,
     )
@@ -31,7 +31,7 @@ def test_lecture_delete(app, lecture_an, amendements_an, user_david_table_an):
     assert not Lecture.exists(
         chambre=lecture_an.chambre,
         session=lecture_an.session,
-        num_texte=lecture_an.num_texte,
+        texte=lecture_an.texte,
         partie=None,
         organe=lecture_an.organe,
     )
@@ -46,7 +46,7 @@ def test_lecture_delete_alien_user(
     assert Lecture.exists(
         chambre=lecture_an.chambre,
         session=lecture_an.session,
-        num_texte=lecture_an.num_texte,
+        texte=lecture_an.texte,
         partie=None,
         organe=lecture_an.organe,
     )
@@ -69,7 +69,7 @@ def test_lecture_delete_alien_user(
     assert Lecture.exists(
         chambre=lecture_an.chambre,
         session=lecture_an.session,
-        num_texte=lecture_an.num_texte,
+        texte=lecture_an.texte,
         partie=None,
         organe=lecture_an.organe,
     )

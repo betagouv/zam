@@ -36,6 +36,15 @@ def test_filters_are_opened_by_click(wsgi_server, driver, lecture_an, amendement
     assert thead.find_element_by_css_selector("tr.filters").is_displayed()
 
 
+def test_filters_are_absent_without_amendements(
+    wsgi_server, driver, lecture_an, user_david
+):
+    email = "user@example.com"
+    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    driver.get(f"{LECTURE_URL}/tables/{email}")
+    assert not driver.find_element_by_css_selector("thead tr.filters").is_displayed()
+
+
 @pytest.mark.parametrize(
     "column_index,selector,input_text,kind,initial,filtered",
     [

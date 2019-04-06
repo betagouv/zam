@@ -3,6 +3,8 @@ from datetime import date
 from enum import Enum
 from typing import List, Optional
 
+from zam_repondeur.models.texte import TypeTexte
+
 
 class Chambre(Enum):
     AN = "an"
@@ -19,31 +21,28 @@ class Chambre(Enum):
         raise NotImplementedError
 
 
-class TypeTexte(Enum):
-    PROJET = "Projet de loi"
-    PROPOSITION = "Proposition de loi"
-
-    @staticmethod
-    def from_dict(texte: dict) -> "TypeTexte":
-        code = texte["classification"]["type"]["code"]
-        if code == "PRJL":
-            return TypeTexte.PROJET
-        if code == "PION":
-            return TypeTexte.PROPOSITION
-        raise ValueError(f"Unknown texte type {code}")
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}.{self.name}"
-
-
-@dataclass
+@dataclass(eq=True, frozen=True)
 class Texte:
     uid: str
     type_: TypeTexte
+    chambre: Chambre
+    legislature: Optional[int]
     numero: int
     titre_long: str
     titre_court: str
     date_depot: Optional[date]
+
+    @property
+    def session(self) -> Optional[int]:
+        if self.chambre == Chambre.AN:
+            return None
+        if not self.date_depot:
+            raise NotImplementedError
+        # The session changes the first working day of October.
+        if self.date_depot.month >= 10:
+            return self.date_depot.year
+        else:
+            return self.date_depot.year - 1
 
 
 @dataclass

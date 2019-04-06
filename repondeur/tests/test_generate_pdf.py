@@ -181,7 +181,7 @@ def test_generate_pdf_with_amendement_content(
     app, lecture_senat, article1_senat, amendements_senat
 ):
     from zam_repondeur.export.pdf import generate_html_for_pdf
-    from zam_repondeur.models import DBSession, Lecture
+    from zam_repondeur.models import DBSession
 
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
@@ -190,11 +190,6 @@ def test_generate_pdf_with_amendement_content(
     amendement_6666.user_content.objet = "L’objet"
     amendement_6666.user_content.reponse = "La réponse"
     DBSession.add(amendement_6666)
-    lecture_senat = (
-        DBSession.query(Lecture)
-        .filter(Lecture.num_texte == lecture_senat.num_texte)
-        .first()
-    )
 
     parser = HTMLParser(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
@@ -228,7 +223,7 @@ def test_generate_pdf_with_amendement_content_factor_authors_groups(
     app, lecture_senat, article1_senat, amendements_senat
 ):
     from zam_repondeur.export.pdf import generate_html_for_pdf
-    from zam_repondeur.models import DBSession, Lecture
+    from zam_repondeur.models import DBSession
 
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
@@ -237,6 +232,7 @@ def test_generate_pdf_with_amendement_content_factor_authors_groups(
     amendement_6666.user_content.objet = "L’objet"
     amendement_6666.user_content.reponse = "La réponse"
     DBSession.add(amendement_6666)
+
     amendement_9999 = amendements_senat[1]
     amendement_9999.auteur = "M. JEAN"
     amendement_9999.groupe = "Les Indépendants"
@@ -244,11 +240,6 @@ def test_generate_pdf_with_amendement_content_factor_authors_groups(
     amendement_9999.user_content.objet = "L’objet"
     amendement_9999.user_content.reponse = "La réponse"
     DBSession.add(amendement_9999)
-    lecture_senat = (
-        DBSession.query(Lecture)
-        .filter(Lecture.num_texte == lecture_senat.num_texte)
-        .first()
-    )
 
     parser = HTMLParser(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
@@ -287,7 +278,7 @@ def test_generate_pdf_with_amendement_content_factor_only_groups(
     app, lecture_senat, article1_senat, amendements_senat
 ):
     from zam_repondeur.export.pdf import generate_html_for_pdf
-    from zam_repondeur.models import DBSession, Lecture
+    from zam_repondeur.models import DBSession
 
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
@@ -296,6 +287,7 @@ def test_generate_pdf_with_amendement_content_factor_only_groups(
     amendement_6666.user_content.objet = "L’objet"
     amendement_6666.user_content.reponse = "La réponse"
     DBSession.add(amendement_6666)
+
     amendement_9999 = amendements_senat[1]
     amendement_9999.auteur = "M. CLAUDE"
     amendement_9999.groupe = "Les Indépendants"
@@ -303,11 +295,6 @@ def test_generate_pdf_with_amendement_content_factor_only_groups(
     amendement_9999.user_content.objet = "L’objet"
     amendement_9999.user_content.reponse = "La réponse"
     DBSession.add(amendement_9999)
-    lecture_senat = (
-        DBSession.query(Lecture)
-        .filter(Lecture.num_texte == lecture_senat.num_texte)
-        .first()
-    )
 
     parser = HTMLParser(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
@@ -346,7 +333,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
     app, lecture_senat, article1_senat, amendements_senat
 ):
     from zam_repondeur.export.pdf import generate_html_for_pdf
-    from zam_repondeur.models import Amendement, DBSession, Lecture
+    from zam_repondeur.models import Amendement, DBSession
 
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
@@ -355,6 +342,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
     amendement_6666.user_content.objet = "L’objet"
     amendement_6666.user_content.reponse = "La réponse"
     DBSession.add(amendement_6666)
+
     amendement_9999 = amendements_senat[1]
     amendement_9999.auteur = "M. JEAN"
     amendement_9999.groupe = "Les Indépendants"
@@ -362,6 +350,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
     amendement_9999.user_content.objet = "L’objet"
     amendement_9999.user_content.reponse = "La réponse"
     DBSession.add(amendement_9999)
+
     Amendement.create(
         lecture=lecture_senat,
         article=article1_senat,
@@ -373,6 +362,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         objet="L’objet",
         reponse="La réponse",
     )
+
     Amendement.create(
         lecture=lecture_senat,
         article=article1_senat,
@@ -384,6 +374,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         objet="L’objet",
         reponse="La réponse",
     )
+
     Amendement.create(
         lecture=lecture_senat,
         article=article1_senat,
@@ -395,6 +386,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         objet="L’objet",
         reponse="La réponse",
     )
+
     Amendement.create(
         lecture=lecture_senat,
         article=article1_senat,
@@ -405,11 +397,6 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         avis="Défavorable",
         objet="L’objet",
         reponse="La réponse",
-    )
-    lecture_senat = (
-        DBSession.query(Lecture)
-        .filter(Lecture.num_texte == lecture_senat.num_texte)
-        .first()
     )
 
     parser = HTMLParser(
@@ -453,17 +440,12 @@ def test_generate_pdf_with_amendement_content_gouvernemental(
     app, lecture_senat, article1_senat, amendements_senat
 ):
     from zam_repondeur.export.pdf import generate_html_for_pdf
-    from zam_repondeur.models import DBSession, Lecture
+    from zam_repondeur.models import DBSession
 
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "LE GOUVERNEMENT"
     amendement_6666.user_content.reponse = "La présentation"
     DBSession.add(amendement_6666)
-    lecture_senat = (
-        DBSession.query(Lecture)
-        .filter(Lecture.num_texte == lecture_senat.num_texte)
-        .first()
-    )
 
     parser = HTMLParser(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
@@ -770,11 +752,13 @@ def test_generate_pdf_amendement_with_similaire(
     amendement_6666.user_content.avis = "Favorable"
     amendement_6666.user_content.objet = "L’objet"
     amendement_6666.user_content.reponse = "La réponse"
+
     amendement_9999.auteur = "M. CLAUDE"
     amendement_9999.groupe = "Les Mécontents"
     amendement_9999.user_content.avis = "Favorable"
     amendement_9999.user_content.objet = "L’objet"
     amendement_9999.user_content.reponse = "La réponse"
+
     DBSession.add_all(amendements_senat)
 
     assert amendement_6666.similaires == [amendement_9999]

@@ -6,27 +6,20 @@ from selenium.webdriver.common.keys import Keys
 from .helpers import extract_column_text
 
 
-def test_filters_are_hidden_by_default(wsgi_server, driver, lecture_an):
+def test_filters_are_visible_by_default(
+    wsgi_server, driver, lecture_an, amendements_an
+):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
     thead = driver.find_element_by_css_selector("thead")
-    assert not thead.find_element_by_css_selector("tr.filters").is_displayed()
+    assert thead.find_element_by_css_selector("tr.filters").is_displayed()
 
 
 def test_filters_are_ineffective_without_amendements(wsgi_server, driver, lecture_an):
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/amendements")
-    driver.find_element_by_link_text("Filtrer").click()
     thead = driver.find_element_by_css_selector("thead")
     assert not thead.find_element_by_css_selector("tr.filters").is_displayed()
-
-
-def test_filters_are_opened_by_click(wsgi_server, driver, lecture_an, amendements_an):
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/amendements")
-    driver.find_element_by_link_text("Filtrer").click()
-    thead = driver.find_element_by_css_selector("thead")
-    assert thead.find_element_by_css_selector("tr.filters").is_displayed()
 
 
 @pytest.mark.parametrize(
@@ -70,7 +63,6 @@ def test_column_filtering_by_value(
     driver.get(f"{LECTURE_URL}/amendements")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
-    driver.find_element_by_link_text("Filtrer").click()
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )
@@ -133,7 +125,6 @@ def test_column_filtering_by_checkbox(
     driver.get(f"{LECTURE_URL}/amendements")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
-    driver.find_element_by_link_text("Filtrer").click()
     label = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) label[for='{kind}']"
     )

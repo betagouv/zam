@@ -6,13 +6,13 @@ pytestmark = pytest.mark.usefixtures("data_repository")
 
 
 class TestLectureToStr:
-    def test_an_seance_publique(self):
+    def test_an_seance_publique(self, texte_an):
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
             chambre="an",
             session="15",
-            num_texte=269,
+            texte=texte_an,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO717460",
         )
@@ -22,13 +22,13 @@ class TestLectureToStr:
         )
         assert str(lecture) == result
 
-    def test_an_commission(self):
+    def test_an_commission(self, texte_an):
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
             chambre="an",
             session="15",
-            num_texte=269,
+            texte=texte_an,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO59048",
         )
@@ -38,13 +38,13 @@ class TestLectureToStr:
         )
         assert str(lecture) == result
 
-    def test_an_commission_speciale(self):
+    def test_an_commission_speciale(self, texte_commission_speciale):
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
             chambre="an",
             session="15",
-            num_texte=806,
+            texte=texte_commission_speciale,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO744107",
         )
@@ -54,13 +54,13 @@ class TestLectureToStr:
         )
         assert str(lecture) == result
 
-    def test_senat_seance_publique(self):
+    def test_senat_seance_publique(self, texte_senat):
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
             chambre="senat",
             session="2017-2018",
-            num_texte=63,
+            texte=texte_senat,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO78718",
         )

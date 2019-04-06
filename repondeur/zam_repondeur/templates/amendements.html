@@ -15,7 +15,7 @@
 </svg>
 
 <h1>Index des amendements</h1>
-<h2 class="subtitle">{{ lecture.dossier_legislatif }}</h2>
+<h2 class="subtitle">{{ lecture.dossier.titre }}</h2>
 <h3 class="subtitle">{{ lecture }}</h3>
 {{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}
 {% set count = amendements| length %}
@@ -23,11 +23,7 @@
     data-controller="amendements-filters"
     data-amendements-filters-initial-count="{{ count }}">
     <div class="options">
-        <a class="toggle" href="#"
-            data-action="amendements-filters#toggle"
-            data-target="amendements-filters.link">
-            Filtrer
-        </a>
+        <a href="">{# Keep the empty link for consistency with flexbox and user table. #}</a>
         <span data-target="amendements-filters.count">{{ count }} amendements</span>
     </div>
 
@@ -56,7 +52,7 @@
                 <th>Réponse</th>
                 <th></th>
             </tr>
-            <tr class="filters d-none"
+            <tr class="filters {% if not amendements %}d-none{% endif %}"
                 data-target="amendements-filters.row amendements-selection.filters">
                 <th>
                     <input type="checkbox" name="select-all"

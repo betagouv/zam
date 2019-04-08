@@ -1,7 +1,7 @@
 class Transfers extends Stimulus.Controller {
     static get targets() {
         return [
-            'submit',
+            'submitTo',
             'submitIndex',
             'amendementsWithTableActive',
             'amendementsWithTableInactive'
@@ -46,27 +46,27 @@ class Transfers extends Stimulus.Controller {
 
     // Sadly, Safari does not support classList.replace()
     dangerClasses() {
-        this.submitTarget.classList.add('danger')
-        this.submitTarget.classList.remove('primary')
-        this.submitTarget.classList.remove('warning')
+        this.submitToTarget.classList.add('danger')
+        this.submitToTarget.classList.remove('primary')
+        this.submitToTarget.classList.remove('warning')
         this.submitIndexTarget.classList.add('danger')
         this.submitIndexTarget.classList.remove('primary')
         this.submitIndexTarget.classList.remove('warning')
     }
 
     warningClasses() {
-        this.submitTarget.classList.add('warning')
-        this.submitTarget.classList.remove('primary')
-        this.submitTarget.classList.remove('primary')
+        this.submitToTarget.classList.add('warning')
+        this.submitToTarget.classList.remove('primary')
+        this.submitToTarget.classList.remove('primary')
         this.submitIndexTarget.classList.add('warning')
         this.submitIndexTarget.classList.remove('primary')
         this.submitIndexTarget.classList.remove('primary')
     }
 
     primaryClasses() {
-        this.submitTarget.classList.remove('warning')
-        this.submitTarget.classList.remove('danger')
-        this.submitTarget.classList.add('primary')
+        this.submitToTarget.classList.remove('warning')
+        this.submitToTarget.classList.remove('danger')
+        this.submitToTarget.classList.add('primary')
         this.submitIndexTarget.classList.remove('warning')
         this.submitIndexTarget.classList.remove('danger')
         this.submitIndexTarget.classList.add('primary')

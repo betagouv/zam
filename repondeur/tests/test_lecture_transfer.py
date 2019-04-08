@@ -45,7 +45,7 @@ def test_lecture_get_transfer_amendements(
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["nums", "target", "submit"]
+    assert list(resp.form.fields.keys()) == ["nums", "target", "submit-to"]
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
@@ -64,7 +64,12 @@ def test_lecture_get_transfer_amendements_from_index(
     )
     assert resp.status_code == 200
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["nums", "from_index", "target", "submit"]
+    assert list(resp.form.fields.keys()) == [
+        "nums",
+        "from_index",
+        "target",
+        "submit-to",
+    ]
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
@@ -97,7 +102,12 @@ def test_lecture_get_transfer_amendements_from_me(
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["nums", "target", "submit", "submit-index"]
+    assert list(resp.form.fields.keys()) == [
+        "nums",
+        "target",
+        "submit-to",
+        "submit-index",
+    ]
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
@@ -127,7 +137,12 @@ def test_lecture_get_transfer_amendements_including_me(
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["nums", "target", "submit", "submit-index"]
+    assert list(resp.form.fields.keys()) == [
+        "nums",
+        "target",
+        "submit-to",
+        "submit-index",
+    ]
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
@@ -159,7 +174,12 @@ def test_lecture_get_transfer_amendements_from_me_from_save(
     assert resp.parser.css_first('input[type="hidden"]').attributes["value"] == "666"
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["nums", "target", "submit", "submit-index"]
+    assert list(resp.form.fields.keys()) == [
+        "nums",
+        "target",
+        "submit-to",
+        "submit-index",
+    ]
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
@@ -193,7 +213,12 @@ def test_lecture_get_transfer_amendements_from_other(
     )
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["nums", "target", "submit", "submit-index"]
+    assert list(resp.form.fields.keys()) == [
+        "nums",
+        "target",
+        "submit-to",
+        "submit-index",
+    ]
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
@@ -247,7 +272,7 @@ def test_lecture_post_transfer_amendements_to_me(
     )
     form = resp.form
     form["target"] = user_david.email
-    resp = form.submit("submit")
+    resp = form.submit("submit-to")
 
     # We're redirected to our table
     assert resp.status_code == 302
@@ -288,7 +313,7 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
     )
     form = resp.form
     form["target"] = user_david.email
-    resp = form.submit("submit")
+    resp = form.submit("submit-to")
 
     # We're redirected to our table
     assert resp.status_code == 302

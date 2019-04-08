@@ -62,7 +62,7 @@ def test_post_form(app):
 
     responses.add(
         responses.GET,
-        "http://www.assemblee-nationale.fr/15/amendements/0269/AN/liste.xml",
+        "http://www.assemblee-nationale.fr/eloi/15/amendements/0269/AN/liste.xml",
         body=read_sample_data("an/269/liste.xml"),
         status=200,
     )

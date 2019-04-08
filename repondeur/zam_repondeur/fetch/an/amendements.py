@@ -31,7 +31,9 @@ BASE_URL = "http://www.assemblee-nationale.fr"
 
 # Deprecation warning: this API for fetching amendements will be removed in the future
 # and has no Service Level Agreement (SLA)
-PATTERN_LISTE = "/{legislature}/amendements/{texte}{suffixe}/{organe_abrev}/liste.xml"
+PATTERN_LISTE = (
+    "/eloi/{legislature}/amendements/{texte}{suffixe}/{organe_abrev}/liste.xml"
+)
 PATTERN_AMENDEMENT = (
     "/{legislature}/xml/amendements/"
     "{texte}{suffixe}/{organe_abrev}/{numero_prefixe}.xml"

@@ -22,7 +22,7 @@ def test_transfer_amendements_switch_color_on_check_from_inactive_user(
     driver.get(f"{LECTURE_URL}/transfer_amendements?nums={amendements_an[0].num}")
 
     checkbox = driver.find_element_by_css_selector('input[type="checkbox"]')
-    submit_button = driver.find_element_by_css_selector('input[name="submit"]')
+    submit_button = driver.find_element_by_css_selector('input[name="submit-to"]')
     submit_index_button = driver.find_element_by_css_selector(
         'input[name="submit-index"]'
     )
@@ -65,7 +65,7 @@ def test_transfer_amendements_switch_color_on_check_from_active_user(
     driver.get(f"{LECTURE_URL}/transfer_amendements?nums={amendements_an[0].num}")
 
     checkbox = driver.find_element_by_css_selector('input[type="checkbox"]')
-    submit_button = driver.find_element_by_css_selector('input[name="submit"]')
+    submit_button = driver.find_element_by_css_selector('input[name="submit-to"]')
     submit_index_button = driver.find_element_by_css_selector(
         'input[name="submit-index"]'
     )
@@ -117,7 +117,7 @@ def test_transfer_amendements_switch_color_on_check_from_active_and_inactive_use
     checkbox_active, checkbox_inactive = driver.find_elements_by_css_selector(
         'input[type="checkbox"]'
     )
-    submit_button = driver.find_element_by_css_selector('input[name="submit"]')
+    submit_button = driver.find_element_by_css_selector('input[name="submit-to"]')
     submit_index_button = driver.find_element_by_css_selector(
         'input[name="submit-index"]'
     )

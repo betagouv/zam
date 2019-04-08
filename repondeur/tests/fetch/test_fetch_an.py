@@ -595,6 +595,50 @@ class TestFetchAmendementAgain:
         )
 
     @responses.activate
+    def test_sort_turn_irrecevable_transfers_to_index(
+        self, lecture_an, app, source, user_david_table_an
+    ):
+        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.models import DBSession
+        from zam_repondeur.models.events.amendement import AmendementIrrecevable
+
+        sample_data = read_sample_data("an/269/177.xml")
+        responses.add(
+            responses.GET, build_url(lecture_an, 177), body=sample_data, status=200
+        )
+        # On second call we want an irrecevable.
+        responses.add(
+            responses.GET,
+            build_url(lecture_an, 177),
+            body=sample_data.replace(
+                "<sortEnSeance>Rejeté</sortEnSeance>",
+                "<sortEnSeance>Irrecevable</sortEnSeance>",
+            ),
+            status=200,
+        )
+
+        # Let's fetch a new amendement
+        amendement1, created = source.fetch_amendement(
+            lecture=lecture_an, numero_prefixe="177", position=1
+        )
+        # Put it on a user table
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendement1)
+        assert user_david_table_an.amendements == [amendement1]
+        assert amendement1.user_table == user_david_table_an
+
+        # Now fetch the same amendement again (now irrecevable)
+        amendement2, created = source.fetch_amendement(
+            lecture=lecture_an, numero_prefixe="177", position=1
+        )
+
+        # An irrecevable event has been created
+        assert isinstance(amendement2.events[0], AmendementIrrecevable)
+        # And the amendement is now on the index
+        assert amendement2.user_table is None
+        assert user_david_table_an.amendements == []
+
+    @responses.activate
     def test_article_has_changed(self, lecture_an, app, source):
         from zam_repondeur.fetch.an.amendements import build_url
 

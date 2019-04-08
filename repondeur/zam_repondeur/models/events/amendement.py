@@ -91,6 +91,9 @@ class AmendementIrrecevable(AmendementEvent):
 
     def apply(self) -> None:
         self.amendement.sort = self.data["new_value"]
+        # Put the amendement back to the index.
+        if self.amendement.user_table:
+            self.amendement.user_table = None
 
     def render_details(self) -> str:
         return ""

@@ -170,6 +170,79 @@ def test_aspire_senat_again_with_irrecevable(app, lecture_senat):
 
 
 @responses.activate
+def test_aspire_senat_again_with_irrecevable_transfers_to_index(
+    app, lecture_senat, user_david_table_an
+):
+    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.models import DBSession
+    from zam_repondeur.models.events.amendement import AmendementIrrecevable
+
+    sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv",
+        body=sample_data,
+        status=200,
+    )
+    # On second call we want an irrecevable.
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv",
+        body=sample_data.decode("latin-1")
+        .replace(
+            "Adopté\t//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",
+            "Irrecevable\t//www.senat.fr/amendements/2017-2018/63/Amdt_1.html",
+        )
+        .encode("latin-1"),
+        status=200,
+    )
+
+    odsen_data = read_sample_data("ODSEN_GENERAL.csv")
+
+    responses.add(
+        responses.GET,
+        "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
+        body=odsen_data,
+        status=200,
+    )
+
+    json_data = json.loads(read_sample_data("liste_discussion_63.json"))
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json",
+        json=json_data,
+        status=200,
+    )
+
+    DBSession.add(lecture_senat)
+
+    source = Senat()
+
+    # Let's fetch a new amendement
+    amendements, created, errored = source.fetch(lecture_senat)
+    amendement = [amendement for amendement in amendements if amendement.num == 1][0]
+    assert len(amendement.events) == 3
+
+    # Put it on a user table
+    DBSession.add(user_david_table_an)
+    user_david_table_an.amendements.append(amendement)
+    assert user_david_table_an.amendements == [amendement]
+    assert amendement.user_table == user_david_table_an
+
+    # Now fetch the same amendement again (now irrecevable)
+    amendements, created, errored = source.fetch(lecture_senat)
+    amendement = [amendement for amendement in amendements if amendement.num == 1][0]
+    assert len(amendement.events) == 4
+
+    assert isinstance(amendement.events[3], AmendementIrrecevable)
+    # The amendement is now on the index
+    assert amendement.user_table is None
+    assert user_david_table_an.amendements == []
+
+
+@responses.activate
 def test_aspire_senat_plf2019_1re_partie(app, texte_senat, dossier_senat):
     from zam_repondeur.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession, Lecture

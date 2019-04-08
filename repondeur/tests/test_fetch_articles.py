@@ -1,3 +1,4 @@
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -6,36 +7,60 @@ import transaction
 
 
 class TestGetPossibleUrls:
-    def test_assemblee_nationale(self, texte_an):
+    def test_assemblee_nationale_pjl(self, texte_an):
         from zam_repondeur.fetch.articles import get_possible_texte_urls
-        from zam_repondeur.models import Lecture
 
-        lecture = Lecture(
-            chambre="an",
-            session="15",
-            texte=texte_an,
-            titre="Titre lecture",
-            organe="PO420120",
-        )
-        assert get_possible_texte_urls(lecture) == [
+        assert get_possible_texte_urls(texte_an) == [
             "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
+            "http://www.assemblee-nationale.fr/15/ta-commission/r0269-a0.asp",
+        ]
+
+    def test_assemblee_nationale_ppl(self, db):
+        from zam_repondeur.fetch.articles import get_possible_texte_urls
+        from zam_repondeur.models import Chambre, Texte, TypeTexte
+
+        with transaction.manager:
+            texte = Texte.create(
+                uid="dummy-ppl-an",
+                type_=TypeTexte.PROPOSITION,
+                chambre=Chambre.AN,
+                legislature=15,
+                numero=269,
+                titre_long="proposition de loi fictive",
+                titre_court="PPL fictive",
+                date_depot=date(2017, 10, 11),
+            )
+
+        assert get_possible_texte_urls(texte) == [
             "http://www.assemblee-nationale.fr/15/propositions/pion0269.asp",
             "http://www.assemblee-nationale.fr/15/ta-commission/r0269-a0.asp",
         ]
 
-    def test_senat(self, texte_senat):
+    def test_senat_pjl(self, texte_senat):
         from zam_repondeur.fetch.articles import get_possible_texte_urls
-        from zam_repondeur.models import Lecture
 
-        lecture = Lecture(
-            chambre="senat",
-            session="2017-2018",
-            texte=texte_senat,
-            titre="Titre lecture",
-            organe="PO78718",
-        )
-        assert get_possible_texte_urls(lecture) == [
+        assert get_possible_texte_urls(texte_senat) == [
             "https://www.senat.fr/leg/pjl17-063.html"
+        ]
+
+    def test_senat_ppl(self, db):
+        from zam_repondeur.fetch.articles import get_possible_texte_urls
+        from zam_repondeur.models import Chambre, Texte, TypeTexte
+
+        with transaction.manager:
+            texte = Texte.create(
+                uid="dummy-ppl-senat",
+                type_=TypeTexte.PROPOSITION,
+                chambre=Chambre.SENAT,
+                session=2017,
+                numero=63,
+                titre_long="proposition de loi fictive",
+                titre_court="PPL fictive",
+                date_depot=date(2017, 10, 11),
+            )
+
+        assert get_possible_texte_urls(texte) == [
+            "https://www.senat.fr/leg/ppl17-063.html"
         ]
 
 

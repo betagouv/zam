@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional
 import enum
 
@@ -108,7 +108,7 @@ class Texte(Base):
         numero: int,
         titre_long: str,
         titre_court: str,
-        date_depot: datetime,
+        date_depot: date,
         session: Optional[int] = None,
         legislature: Optional[int] = None,
     ) -> "Texte":

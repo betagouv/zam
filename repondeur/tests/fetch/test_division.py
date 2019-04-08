@@ -112,6 +112,7 @@ def test_parse_article_additionnel(text, type_, num, mult, pos):
     "text,type_,num,mult,pos",
     [
         ("", "", "", "", ""),
+        ("Intitulé de la proposition de loi", "titre", "", "", ""),
         ("Intitulé du projet de loi", "titre", "", "", ""),
         ("Intitulé du projet de loi constitutionnelle", "titre", "", "", ""),
         ("TITRE Ier : Bla bla", "section", "Ier", "", ""),

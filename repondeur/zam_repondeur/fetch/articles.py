@@ -7,7 +7,14 @@ from typing import Any, Callable, Dict, List, Tuple
 from tlfp.tools.parse_texte import parse
 
 from zam_repondeur.fetch.exceptions import NotFound
-from zam_repondeur.models import Article, Lecture, get_one_or_create
+from zam_repondeur.models import (
+    Article,
+    Chambre,
+    Lecture,
+    Texte,
+    TypeTexte,
+    get_one_or_create,
+)
 from zam_repondeur.models.events.article import (
     ContenuArticleModifie,
     TitreArticleModifie,
@@ -18,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_articles(lecture: Lecture) -> bool:
-    urls = get_possible_texte_urls(lecture)
+    urls = get_possible_texte_urls(lecture.texte)
     try:
         articles = parse_first_working_url(urls)
     except NotFound:
@@ -31,17 +38,26 @@ AN_URL = "http://www.assemblee-nationale.fr/"
 SENAT_URL = "https://www.senat.fr/"
 
 
-def get_possible_texte_urls(lecture: Lecture) -> List[str]:
-    if lecture.chambre == "an":
-        return [
-            f"{AN_URL}{lecture.session}/projets/pl{lecture.texte.numero:04}.asp",
-            f"{AN_URL}{lecture.session}/propositions/pion{lecture.texte.numero:04}.asp",
-            f"{AN_URL}{lecture.session}/ta-commission/r{lecture.texte.numero:04}-a0.asp",  # noqa
-        ]
+def get_possible_texte_urls(texte: Texte) -> List[str]:
+    if texte.chambre == Chambre.AN:
+        prefix = f"{AN_URL}{texte.legislature}"
+        numero = f"{texte.numero:04}"
+        if texte.type_ == TypeTexte.PROJET:
+            url = f"{prefix}/projets/pl{numero}.asp"
+        elif texte.type_ == TypeTexte.PROPOSITION:
+            url = f"{prefix}/propositions/pion{numero}.asp"
+        else:
+            raise ValueError(f"Invalid texte type {texte.type_!r}")
+        return [url, f"{prefix}/ta-commission/r{numero}-a0.asp"]
     else:
-        return [
-            f"{SENAT_URL}leg/pjl{lecture.session[2:4]}-{lecture.texte.numero:03}.html"
-        ]
+        if texte.type_ == TypeTexte.PROJET:
+            type_ = "pjl"
+        elif texte.type_ == TypeTexte.PROPOSITION:
+            type_ = "ppl"
+        else:
+            raise ValueError(f"Invalid texte type {texte.type_!r}")
+        session = str(texte.session)[2:4]
+        return [f"{SENAT_URL}leg/{type_}{session}-{texte.numero:03}.html"]
 
 
 def parse_first_working_url(urls: List[str]) -> List[dict]:

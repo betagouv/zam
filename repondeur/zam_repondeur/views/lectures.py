@@ -87,7 +87,7 @@ class LecturesAdd:
         texte_model = get_one_or_create(
             TexteModel,
             uid=texte.uid,
-            type_=texte.type_.name,
+            type_=texte.type_,
             chambre=Chambre.AN if lecture_ref.chambre.value == "an" else Chambre.SENAT,
             legislature=int(session) if chambre == "an" else None,
             session=int(session.split("-")[0]) if chambre == "senat" else None,

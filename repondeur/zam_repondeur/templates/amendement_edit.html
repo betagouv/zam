@@ -319,7 +319,7 @@
     {% if is_on_my_table %}
         data-notifications-with-diff-unique-table-url="{{ my_table_url }}"
         data-notifications-with-diff-unique-check-url="{{ check_url }}"
-        data-notifications-with-diff-unique-check-interval="30" {# seconds #}
+        data-notifications-with-diff-unique-check-interval="{{ request.registry.settings['zam.check.on_thefts_while_editing'] }}"
         data-notifications-with-diff-unique-amendement-num="{{ amendement.num }}"
         data-notifications-with-diff-unique-current="{{ table.amendements_as_string }}"
     {% endif %}

@@ -82,6 +82,8 @@ class LecturesAdd:
         session = lecture_ref.get_session()
         texte = lecture_ref.texte
 
+        assert texte.date_depot is not None
+
         texte_model = get_one_or_create(
             TexteModel,
             uid=texte.uid,

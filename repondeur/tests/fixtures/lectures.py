@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 import pytest
 import transaction
@@ -17,7 +17,7 @@ def texte_an(db):
             numero=269,
             titre_long="projet de loi de financement de la sécurité sociale pour 2018",
             titre_court="PLFSS pour 2018",
-            date_depot=datetime(2017, 10, 11),
+            date_depot=date(2017, 10, 11),
         )
 
     return texte
@@ -36,7 +36,7 @@ def texte_commission_speciale(db):
             numero=806,
             titre_long="long",
             titre_court="court",
-            date_depot=datetime(2017, 10, 11),
+            date_depot=date(2017, 10, 11),
         )
 
     return texte
@@ -82,7 +82,7 @@ def texte_senat(db):
             numero=63,
             titre_long="long",
             titre_court="court",
-            date_depot=datetime(2017, 10, 11),
+            date_depot=date(2017, 10, 11),
         )
 
     return texte
@@ -249,7 +249,7 @@ def texte_essoc(db):
             numero=806,
             titre_long="long",
             titre_court="court",
-            date_depot=datetime(2017, 10, 11),
+            date_depot=date(2017, 10, 11),
         )
 
     return texte

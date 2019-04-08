@@ -280,17 +280,10 @@ class TransferAmendements:
 
     @property
     def back_url(self) -> str:
-        return self.index_url if self.from_index else self.table_url
-
-    @property
-    def index_url(self) -> str:
-        return self.request.resource_url(self.context["amendements"])
-
-    @property
-    def table_url(self) -> str:
-        return self.request.resource_url(
-            self.context["tables"][self.request.user.email]
-        )
+        url: str = self.request.GET.get("back")
+        if url is None or not url.startswith("/"):
+            return self.request.resource_url(self.context["amendements"])
+        return url
 
 
 @view_config(context=LectureResource, name="manual_refresh")

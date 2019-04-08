@@ -31,12 +31,18 @@
         data-controller="amendements-selection"
         data-target="amendements-filters.table">
         <thead class="box sticky">
-            <tr class="groupActions d-none">
+            <tr class="groupActions d-none"
+                data-controller="amendements-backlinks">
                 <th colspan="2">
                     Actions groupées :
                 </th>
                 <th colspan="2">
-                    <a id="transfer-amendements" href="{{ request.resource_url(context.parent, 'transfer_amendements', query={'from_index': 1}) }}" class="button primary">Transférer</a>
+                    <a id="transfer-amendements"
+                        href="{{ request.resource_url(context.parent, 'transfer_amendements', query={'from_index': 1}) }}"
+                        class="button primary"
+                        data-action="amendements-backlinks#update">
+                        Transférer
+                    </a>
                 </th>
                 <th colspan="2">
                     <a id="export-pdf" href="{{ request.resource_url(context.parent, 'export_pdf') }}" class="button primary">Exporter en PDF</a>

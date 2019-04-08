@@ -67,7 +67,7 @@ class Senat(RemoteSource):
         ]
 
     def parse_from_csv(self, row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
-        subdiv = _parse_subdiv(row["Subdivision "])
+        subdiv = _parse_subdiv(row["Subdivision "], texte=lecture.texte)
         article, _ = lecture.find_or_create_article(subdiv)
 
         num, rectif = Amendement.parse_num(row["Numéro "])

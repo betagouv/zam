@@ -14,7 +14,7 @@ from zam_repondeur.fetch.an.dossiers.models import (
     Lecture as LectureRef,
 )
 from zam_repondeur.fetch.dates import parse_date
-from zam_repondeur.fetch.division import _parse_subdiv
+from zam_repondeur.fetch.division import parse_subdiv
 from zam_repondeur.models import (
     DBSession,
     Article,
@@ -205,7 +205,7 @@ def _parse_division(node: etree.Element) -> SubDiv:
     if division_titre is None:
         raise ValueError("Missing division titre")
 
-    subdiv = _parse_subdiv(division_titre)
+    subdiv = parse_subdiv(division_titre)
 
     pos = parse_avant_apres(
         extract("pointeurFragmentTexte", "division", "avant_A_Apres") or ""

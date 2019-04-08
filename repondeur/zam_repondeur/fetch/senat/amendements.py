@@ -13,7 +13,7 @@ import requests
 from zam_repondeur.clean import clean_html
 from zam_repondeur.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.fetch.dates import parse_date
-from zam_repondeur.fetch.division import _parse_subdiv
+from zam_repondeur.fetch.division import parse_subdiv
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.fetch.senat.senateurs import fetch_and_parse_senateurs, Senateur
 from zam_repondeur.models import Amendement, Lecture
@@ -67,7 +67,7 @@ class Senat(RemoteSource):
         ]
 
     def parse_from_csv(self, row: dict, lecture: Lecture) -> Tuple[Amendement, bool]:
-        subdiv = _parse_subdiv(row["Subdivision "], texte=lecture.texte)
+        subdiv = parse_subdiv(row["Subdivision "], texte=lecture.texte)
         article, _ = lecture.find_or_create_article(subdiv)
 
         num, rectif = Amendement.parse_num(row["Numéro "])

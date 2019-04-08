@@ -187,7 +187,7 @@ DIVISION = (
 )
 
 
-def _parse_subdiv(libelle: str, texte: Optional[Texte] = None) -> SubDiv:
+def parse_subdiv(libelle: str, texte: Optional[Texte] = None) -> SubDiv:
     if texte is not None and libelle == texte.titre_long.capitalize():
         return SubDiv("titre", "", "", "")
     try:

@@ -22,9 +22,11 @@
             <ul data-controller="account-menu">
                 {% if request.user %}
                     <li class="account-menu-toggle">
-                        <a class="account" data-action="account-menu#toggle click@window->account-menu#dismiss">{{ request.user.name }}</a>
+                        <a class="account" data-action="account-menu#toggle click@window->account-menu#dismiss">{{ request.user.name or "" }}</a>
                         <ul class="account-menu d-none" data-target="account-menu.menu">
-                            <li><a href="{{ request.route_url('welcome') }}">Modifier mon nom</a></li>
+                            {% if request.user.name %}
+                                <li><a href="{{ request.route_url('welcome') }}">Modifier mon nom</a></li>
+                            {% endif %}
                             <li><a class="logout" href="{{ request.route_url('logout') }}" title="Se déconnecter de Zam">Déconnexion</a></li>
                         </ul>
                     </li>

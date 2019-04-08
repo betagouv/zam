@@ -55,6 +55,7 @@ def wsgi_server(settings, db, mock_dossiers, mock_organes_acteurs):
     settings = {**settings, "zam.auth_cookie_secure": False}
     wsgi_app = make_app(None, **settings)
     server = StopableWSGIServer.create(wsgi_app)
+    server.settings = settings
     yield server
     server.shutdown()
 

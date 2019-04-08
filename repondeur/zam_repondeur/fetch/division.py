@@ -7,11 +7,12 @@ modularity and easier maintenance than a big regex...
 https://parsy.readthedocs.io/en/latest/overview.html
 
 """
-from typing import Any, List
+from typing import Any, List, Optional
 
 from parsy import ParseError, regex, seq, string, string_from, whitespace
 
 from zam_repondeur.models.division import ADJECTIFS_MULTIPLICATIFS, SubDiv
+from zam_repondeur.models.texte import Texte
 
 
 def case_insensitive_string(expected_string: str) -> Any:
@@ -186,7 +187,9 @@ DIVISION = (
 )
 
 
-def _parse_subdiv(libelle: str) -> SubDiv:
+def parse_subdiv(libelle: str, texte: Optional[Texte] = None) -> SubDiv:
+    if texte is not None and libelle == texte.titre_long.capitalize():
+        return SubDiv("titre", "", "", "")
     try:
         subdiv: SubDiv = DIVISION.parse(libelle)
         return subdiv

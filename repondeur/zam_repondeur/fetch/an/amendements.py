@@ -9,7 +9,7 @@ from urllib.parse import urljoin
 import xmltodict
 
 from zam_repondeur.fetch.amendements import FetchResult, RemoteSource
-from zam_repondeur.fetch.division import _parse_subdiv
+from zam_repondeur.fetch.division import parse_subdiv
 from zam_repondeur.fetch.exceptions import FetchError, NotFound
 from zam_repondeur.fetch.http import cached_session
 from zam_repondeur.models import (
@@ -518,9 +518,9 @@ def parse_division(division: dict) -> SubDiv:
     if division["type"] == "TITRE":
         return SubDiv("titre", "", "", "")
     if division["type"] == "ARTICLE":
-        subdiv = _parse_subdiv(division["titre"])
+        subdiv = parse_subdiv(division["titre"])
     else:
-        subdiv = _parse_subdiv(division["divisionRattache"])
+        subdiv = parse_subdiv(division["divisionRattache"])
     if division["avantApres"]:
         pos = parse_avant_apres(division["avantApres"])
         subdiv = subdiv._replace(pos=pos)

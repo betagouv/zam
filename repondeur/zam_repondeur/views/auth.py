@@ -11,13 +11,13 @@ from zam_repondeur.models import DBSession, User, get_one_or_create
 from zam_repondeur.resources import Root
 
 
-@view_defaults(route_name="login", permission=NO_PERMISSION_REQUIRED, context=Root)
-class Login:
+@view_defaults(route_name="user_login", permission=NO_PERMISSION_REQUIRED, context=Root)
+class UserLogin:
     def __init__(self, context: Root, request: Request) -> None:
         self.request = request
         self.context = context
 
-    @view_config(request_method="GET", renderer="login.html")
+    @view_config(request_method="GET", renderer="auth/user_login.html")
     def get(self) -> Any:
         # Skip the form if we're already logged in
         if self.request.unauthenticated_userid:
@@ -29,7 +29,7 @@ class Login:
         email = self.request.params.get("email")
         if not email:
             self.request.session["missing_email"] = True
-            return HTTPFound(location=self.request.route_url("login"))
+            return HTTPFound(location=self.request.route_url("user_login"))
 
         user, created = get_one_or_create(User, email=User.normalize_email(email))
 
@@ -43,7 +43,7 @@ class Login:
         # Prevent from impersonating an existing member of another team
         if self.request.team and self.request.team not in user.teams:
             self.request.session["already_in_use"] = True
-            return HTTPFound(location=self.request.route_url("login"))
+            return HTTPFound(location=self.request.route_url("user_login"))
 
         user.last_login_at = datetime.utcnow()
 
@@ -58,7 +58,7 @@ class Login:
     @property
     def next_url(self) -> Any:
         url = self.request.params.get("source")
-        if url is None or url == self.request.route_url("login"):
+        if url is None or url == self.request.route_url("user_login"):
             url = self.request.resource_url(self.context["lectures"])
         return url
 
@@ -69,7 +69,7 @@ class Welcome:
         self.request = request
         self.context = context
 
-    @view_config(request_method="GET", renderer="welcome.html")
+    @view_config(request_method="GET", renderer="auth/welcome.html")
     def get(self) -> Any:
         return {"name": self.request.user.name or self.request.user.default_name()}
 
@@ -93,7 +93,7 @@ def logout(request: Request) -> Any:
     Clear the authentication cookie
     """
     headers = forget(request)
-    next_url = request.route_url("login")
+    next_url = request.route_url("user_login")
     return HTTPFound(location=next_url, headers=headers)
 
 
@@ -103,7 +103,7 @@ def forbidden_view(request: Request) -> Any:
     # Redirect unauthenticated users to the login page
     if request.user is None:
         return HTTPFound(
-            location=request.route_url("login", _query={"source": request.url})
+            location=request.route_url("user_login", _query={"source": request.url})
         )
 
     # Redirect authenticated ones to the home page with an error message

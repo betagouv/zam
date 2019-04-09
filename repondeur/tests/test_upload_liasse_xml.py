@@ -6,8 +6,8 @@ from webtest import Upload
 SAMPLE_DATA = Path(__file__).parent / "sample_data"
 
 
-def test_get_form(app, lecture_essoc):
-    resp = app.get("/lectures/an.15.806.PO744107/options", user="user@example.com")
+def test_get_form(app, lecture_essoc, user_david):
+    resp = app.get("/lectures/an.15.806.PO744107/options", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -25,12 +25,12 @@ def test_get_form(app, lecture_essoc):
     assert form.fields["upload"][0].attrs["type"] == "submit"
 
 
-def test_upload_liasse_success(app, lecture_essoc):
+def test_upload_liasse_success(app, lecture_essoc, user_david):
     from zam_repondeur.models import Lecture
 
     initial_modified_at = lecture_essoc.modified_at
 
-    resp = app.get("/lectures/an.15.806.PO744107/options", user="user@example.com")
+    resp = app.get("/lectures/an.15.806.PO744107/options", user=user_david)
     form = resp.forms["import-liasse-xml"]
     form["liasse"] = Upload("liasse.xml", (SAMPLE_DATA / "liasse.xml").read_bytes())
     resp = form.submit()
@@ -57,10 +57,10 @@ def test_upload_liasse_success(app, lecture_essoc):
     )
 
 
-def test_upload_liasse_with_table(app, lecture_essoc):
+def test_upload_liasse_with_table(app, lecture_essoc, user_david):
     from zam_repondeur.models import Lecture
 
-    resp = app.get("/lectures/an.15.806.PO744107/options", user="user@example.com")
+    resp = app.get("/lectures/an.15.806.PO744107/options", user=user_david)
     form = resp.forms["import-liasse-xml"]
     form["liasse"] = Upload(
         "liasse.xml", (SAMPLE_DATA / "liasse_with_table.xml").read_bytes()
@@ -90,8 +90,8 @@ def test_upload_liasse_with_table(app, lecture_essoc):
     )
 
 
-def test_upload_liasse_success_with_a_deposer(app, lecture_essoc):
-    resp = app.get("/lectures/an.15.806.PO744107/options", user="user@example.com")
+def test_upload_liasse_success_with_a_deposer(app, lecture_essoc, user_david):
+    resp = app.get("/lectures/an.15.806.PO744107/options", user=user_david)
     form = resp.forms["import-liasse-xml"]
     # The second amendement has `etat == "A déposer"` and thus is ignored.
     form["liasse"] = Upload(
@@ -102,12 +102,12 @@ def test_upload_liasse_success_with_a_deposer(app, lecture_essoc):
     assert "2 nouveaux amendements récupérés (import liasse XML)." in resp.text
 
 
-def test_upload_liasse_missing_file(app, lecture_essoc):
+def test_upload_liasse_missing_file(app, lecture_essoc, user_david):
     from zam_repondeur.models import Lecture
 
     initial_modified_at = lecture_essoc.modified_at
 
-    resp = app.get("/lectures/an.15.806.PO744107/options", user="user@example.com")
+    resp = app.get("/lectures/an.15.806.PO744107/options", user=user_david)
     form = resp.forms["import-liasse-xml"]
     resp = form.submit()
 

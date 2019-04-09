@@ -13,18 +13,18 @@ def read_sample_data(basename):
     return (SAMPLE_DATA_DIR / basename).read_text()
 
 
-def test_lecture_link_in_navbar_if_at_least_one_lecture(app, lecture_an):
-    resp = app.get("/lectures/add", user="user@example.com")
+def test_lecture_link_in_navbar_if_at_least_one_lecture(app, lecture_an, user_david):
+    resp = app.get("/lectures/add", user=user_david)
     assert 'title="Aller à la liste des lectures">Lectures</a></li>' in resp.text
 
 
-def test_lecture_link_not_in_navbar_if_no_lecture(app):
-    resp = app.get("/lectures/add", user="user@example.com")
+def test_lecture_link_not_in_navbar_if_no_lecture(app, user_david):
+    resp = app.get("/lectures/add", user=user_david)
     assert 'title="Aller à la liste des lectures">Lectures</a></li>' not in resp.text
 
 
-def test_get_form(app):
-    resp = app.get("/lectures/add", user="user@example.com")
+def test_get_form(app, user_david):
+    resp = app.get("/lectures/add", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -55,7 +55,7 @@ def test_get_form(app):
 
 
 @responses.activate
-def test_post_form(app):
+def test_post_form(app, user_david):
     from zam_repondeur.models import DBSession, Lecture
 
     assert not DBSession.query(Lecture).all()
@@ -116,7 +116,7 @@ def test_post_form(app):
     resp = app.post(
         "/lectures/add",
         {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460-"},
-        user="user@example.com",
+        user=user_david,
     )
 
     assert resp.status_code == 302
@@ -158,7 +158,7 @@ def test_post_form(app):
 
 
 @responses.activate
-def test_post_form_senat_2019(app):
+def test_post_form_senat_2019(app, user_david):
     from zam_repondeur.models import DBSession, Lecture
 
     assert not DBSession.query(Lecture).all()
@@ -208,7 +208,7 @@ def test_post_form_senat_2019(app):
     resp = app.post(
         "/lectures/add",
         {"dossier": "DLR5L15N36892", "lecture": "PRJLSNR5S319B0106-PO78718-"},
-        user="user@example.com",
+        user=user_david,
     )
 
     assert resp.status_code == 302
@@ -237,7 +237,7 @@ def test_post_form_senat_2019(app):
 
 
 @responses.activate
-def test_post_form_already_exists(app, texte_an, lecture_an):
+def test_post_form_already_exists(app, texte_an, lecture_an, user_david):
     from zam_repondeur.models import Lecture
 
     assert Lecture.exists(
@@ -249,7 +249,7 @@ def test_post_form_already_exists(app, texte_an, lecture_an):
     resp = app.post(
         "/lectures/add",
         {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460-"},
-        user="user@example.com",
+        user=user_david,
     )
 
     assert resp.status_code == 302
@@ -261,9 +261,9 @@ def test_post_form_already_exists(app, texte_an, lecture_an):
     assert "Cette lecture existe déjà…" in resp.text
 
 
-def test_choices_lectures(app):
+def test_choices_lectures(app, user_david):
 
-    resp = app.get("/choices/dossiers/DLR5L15N36030/", user="user@example.com")
+    resp = app.get("/choices/dossiers/DLR5L15N36030/", user=user_david)
 
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "application/json"

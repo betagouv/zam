@@ -97,8 +97,9 @@ def assert_amendements_have_event_with_summary(amendements, summary):
 
 
 def test_tables_empty(app, lecture_an, user_david):
-    email = user_david.email
-    resp = app.get(f"/lectures/an.15.269.PO717460/tables/{email}", user=email)
+    resp = app.get(
+        f"/lectures/an.15.269.PO717460/tables/{user_david.email}", user=user_david
+    )
 
     assert resp.status_code == 200
     assert "Ma table" in resp.text
@@ -107,8 +108,9 @@ def test_tables_empty(app, lecture_an, user_david):
 def test_tables_with_amendement(
     app, lecture_an, amendements_an, user_david, david_has_one_amendement
 ):
-    email = user_david.email
-    resp = app.get(f"/lectures/an.15.269.PO717460/tables/{email}", user=email)
+    resp = app.get(
+        f"/lectures/an.15.269.PO717460/tables/{user_david.email}", user=user_david
+    )
 
     assert resp.status_code == 200
     assert "Ma table" in resp.text
@@ -127,7 +129,7 @@ def test_tables_grab_amendement(
     resp = app.post(
         f"/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amendements_an[0].num], "submit-table": True},
-        user=email,
+        user=user_david,
     )
 
     # We're redirected to our table
@@ -156,7 +158,7 @@ def test_tables_grab_amendements(
     resp = app.post(
         f"/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amdt.num for amdt in amendements_an], "submit-table": True},
-        user=email,
+        user=user_david,
     )
 
     # We're redirected to our table
@@ -187,7 +189,7 @@ def test_tables_release_amendement(
     resp = app.post(
         f"/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amendements_an[0].num], "submit-index": True},
-        user=email,
+        user=user_david,
     )
 
     # We're redirected to our table
@@ -217,7 +219,7 @@ def test_tables_release_amendements(
     resp = app.post(
         f"/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amendements_an[0].num, amendements_an[1].num], "submit-index": True},
-        user=email,
+        user=user_david,
     )
 
     # We're redirected to our table
@@ -262,7 +264,7 @@ class TestTransfer:
         resp = app.post(
             f"/lectures/an.15.269.PO717460/tables/{email}",
             {"nums": [amendements_an[0].num], "target": user_ronan.email},
-            user=email,
+            user=user_david,
         )
 
         # We're redirected to our table
@@ -291,7 +293,7 @@ class TestTransfer:
         resp = app.post(
             f"/lectures/an.15.269.PO717460/tables/{email}",
             {"nums": [amendements_an[0].num], "submit-table": True},
-            user=email,
+            user=user_david,
         )
 
         # We're redirected to our table
@@ -316,7 +318,7 @@ class TestTransfer:
         resp = app.post(
             f"/lectures/an.15.269.PO717460/tables/{email}",
             {"nums": [amendements_an[0].num], "target": ""},
-            user=email,
+            user=user_david,
         )
 
         # We're redirected back to the form
@@ -352,7 +354,7 @@ class TestTransfer:
                 "nums": [amendements_an[0].num, amendements_an[1].num],
                 "target": user_ronan.email,
             },
-            user=email,
+            user=user_david,
         )
 
         # We're redirected to our table
@@ -384,7 +386,7 @@ def test_tables_steal_amendement(
     resp = app.post(
         f"/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amendements_an[0].num], "submit-table": True},
-        user=email,
+        user=user_ronan,
     )
 
     # We're redirected to our table
@@ -417,7 +419,7 @@ def test_tables_steal_amendements(
     resp = app.post(
         f"/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amendements_an[0].num, amendements_an[1].num], "submit-table": True},
-        user=email,
+        user=user_ronan,
     )
 
     # We're redirected to our table
@@ -448,7 +450,7 @@ def test_tables_check_with_amendements(
     resp = app.get(
         f"/lectures/an.15.269.PO717460/tables/{email}/check",
         {"current": current},
-        user=email,
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -466,7 +468,7 @@ def test_tables_check_without_amendements(
     resp = app.get(
         f"/lectures/an.15.269.PO717460/tables/{email}/check",
         {"current": current},
-        user=email,
+        user=user_david,
     )
 
     assert resp.status_code == 200

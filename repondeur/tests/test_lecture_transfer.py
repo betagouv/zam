@@ -34,7 +34,7 @@ def test_lecture_get_transfer_amendements(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
-        user=user_david.email,
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -60,7 +60,7 @@ def test_lecture_get_transfer_amendements_from_index(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]], "from_index": 1},
-        user=user_david.email,
+        user=user_david,
     )
     assert resp.status_code == 200
     assert resp.form.method == "POST"
@@ -92,7 +92,7 @@ def test_lecture_get_transfer_amendements_from_me(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
-        user=user_david.email,
+        user=user_david,
     )
     assert resp.status_code == 200
     assert (
@@ -127,7 +127,7 @@ def test_lecture_get_transfer_amendements_including_me(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": amendements_an},
-        user=user_david.email,
+        user=user_david,
     )
     assert resp.status_code == 200
     assert (
@@ -164,7 +164,7 @@ def test_lecture_get_transfer_amendements_from_me_from_save(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]], "from_save": 1},
-        user=user_david.email,
+        user=user_david,
     )
     assert resp.status_code == 200
     assert "Transférer l’amendement Nº 666" == " ".join(
@@ -200,7 +200,7 @@ def test_lecture_get_transfer_amendements_from_other(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
-        user=user_david.email,
+        user=user_david,
     )
     assert resp.status_code == 200
     assert (
@@ -241,7 +241,7 @@ def test_lecture_get_transfer_amendements_from_other_active(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
-        user=user_david.email,
+        user=user_david,
     )
     assert resp.status_code == 200
     assert (
@@ -268,7 +268,7 @@ def test_lecture_post_transfer_amendements_to_me(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amdt]},
-        user=user_david.email,
+        user=user_david,
     )
     form = resp.form
     form["target"] = user_david.email
@@ -309,7 +309,7 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendement]},
-        user=user_david.email,
+        user=user_david,
     )
     form = resp.form
     form["target"] = user_david.email
@@ -349,7 +349,7 @@ def test_lecture_post_transfer_amendements_to_index(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
-        user=user_david.email,
+        user=user_david,
     )
     resp = resp.form.submit("submit-index")
 
@@ -384,7 +384,7 @@ def test_lecture_post_transfer_amendements_to_index_from_index(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]], "from_index": 1},
-        user=user_david.email,
+        user=user_david,
     )
     resp = resp.form.submit("submit-index")
     assert resp.status_code == 302
@@ -416,7 +416,7 @@ def test_lecture_post_transfer_amendements_to_other(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
-        user=user_david.email,
+        user=user_david,
     )
     form = resp.form
     form["target"] = user_ronan.email
@@ -451,7 +451,7 @@ def test_lecture_post_transfer_amendements_to_other_from_index(
     resp = app.get(
         "/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]], "from_index": 1},
-        user=user_david.email,
+        user=user_david,
     )
     form = resp.form
     form["target"] = user_ronan.email

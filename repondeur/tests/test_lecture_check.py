@@ -3,7 +3,7 @@ from datetime import datetime
 import transaction
 
 
-def test_lecture_check(app, lecture_an, amendements_an):
+def test_lecture_check(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -13,7 +13,7 @@ def test_lecture_check(app, lecture_an, amendements_an):
     resp = app.get(
         "/lectures/an.15.269.PO717460/check",
         {"since": initial_modified_at_timestamp},
-        user="user@example.com",
+        user=user_david,
     )
     assert resp.status_code == 200
     assert resp.json == {
@@ -22,7 +22,7 @@ def test_lecture_check(app, lecture_an, amendements_an):
     }
 
 
-def test_lecture_check_updates(app, lecture_an, amendements_an):
+def test_lecture_check_updates(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -34,7 +34,7 @@ def test_lecture_check_updates(app, lecture_an, amendements_an):
     resp = app.get(
         "/lectures/an.15.269.PO717460/check",
         {"since": initial_modified_at_timestamp},
-        user="user@example.com",
+        user=user_david,
     )
     assert resp.status_code == 200
     assert resp.json == {
@@ -49,7 +49,7 @@ def test_lecture_check_updates(app, lecture_an, amendements_an):
     resp2 = app.get(
         "/lectures/an.15.269.PO717460/check",
         {"since": initial_modified_at_timestamp},
-        user="user@example.com",
+        user=user_david,
     )
     assert resp2.status_code == 200
     assert resp2.json == {
@@ -62,11 +62,11 @@ def test_lecture_check_updates(app, lecture_an, amendements_an):
         DBSession.add_all(amendements_an)
 
 
-def test_lecture_check_not_found(app, lecture_an, amendements_an):
+def test_lecture_check_not_found(app, lecture_an, amendements_an, user_david):
     resp = app.get(
         "/lectures/an.16.269.PO717460/check",
         {"since": amendements_an[1].modified_at_timestamp},
-        user="user@example.com",
+        user=user_david,
         expect_errors=True,
     )
     assert resp.status_code == 404

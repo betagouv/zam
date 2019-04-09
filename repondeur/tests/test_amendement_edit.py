@@ -15,7 +15,7 @@ def test_get_amendement_edit_form(
 
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",
-        user=user_david.email,
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -43,7 +43,9 @@ def test_get_amendement_edit_form(
     assert resp.parser.css_first(".corps h4 + *").text() == "Supprimer cet article."
 
 
-def test_get_amendement_edit_form_only_if_owner(app, lecture_an, amendements_an):
+def test_get_amendement_edit_form_only_if_owner(
+    app, lecture_an, amendements_an, user_david
+):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -55,7 +57,7 @@ def test_get_amendement_edit_form_only_if_owner(app, lecture_an, amendements_an)
 
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
-        user="user@example.com",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -89,7 +91,7 @@ def test_transfer_amendement_from_edit_form(
 
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
-        user=user_david.email,
+        user=user_david,
     )
 
     form = resp.forms["transfer"]
@@ -127,7 +129,7 @@ def test_transfer_amendement_from_edit_form_given_activity(
     # With amendement from index.
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
-        user=user_david.email,
+        user=user_david,
     )
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
@@ -144,7 +146,7 @@ def test_transfer_amendement_from_edit_form_given_activity(
         table_ronan.amendements.append(amdt)
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
-        user=user_david.email,
+        user=user_david,
     )
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
@@ -158,7 +160,7 @@ def test_transfer_amendement_from_edit_form_given_activity(
     user_ronan.record_activity()
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
-        user=user_david.email,
+        user=user_david,
     )
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
@@ -181,8 +183,7 @@ def test_get_amendement_edit_form_gouvernemental(
         user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
     )
 
     assert resp.status_code == 200
@@ -198,10 +199,12 @@ def test_get_amendement_edit_form_gouvernemental(
     assert resp.forms.get("prefill-reponse") is None
 
 
-def test_get_amendement_edit_form_not_found(app, lecture_an, amendements_an):
+def test_get_amendement_edit_form_not_found(
+    app, lecture_an, amendements_an, user_david
+):
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/998/amendement_edit",
-        user="user@example.com",
+        user=user_david,
         expect_errors=True,
     )
     assert resp.status_code == 404
@@ -224,8 +227,7 @@ def test_post_amendement_edit_form(
     initial_amendement_modified_at = amendement.modified_at
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
@@ -274,8 +276,7 @@ def test_post_amendement_edit_form_switch_table(
         user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
@@ -326,8 +327,7 @@ def test_post_amendement_edit_form_and_transfer(
     initial_amendement_modified_at = amendement.modified_at
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
@@ -378,8 +378,7 @@ def test_post_amendement_edit_form_gouvernemental(
     initial_amendement_modified_at = amendement.modified_at
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
     )
     form = resp.forms["edit-amendement"]
     form["reponse"] = "Une réponse <strong>très</strong> appropriée"
@@ -427,8 +426,7 @@ def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
 
     # Let's post the response edit form, but with unchanged values
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/amendement_edit",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/amendements/666/amendement_edit", user=user_david
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"

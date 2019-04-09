@@ -31,14 +31,13 @@ def test_article_journal_title(app, lecture_an, article1_an, user_david):
         assert article1_an.events[0].data["new_value"] == "Title"
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/articles/article.1../journal", user=user_david
     )
     assert first_summary_text(resp) == "David a ajouté le titre"
     assert first_details_text(resp) == "Title"
 
 
-def test_article_journal_title_from_services(app, lecture_an, article1_an):
+def test_article_journal_title_from_services(app, lecture_an, article1_an, user_david):
     from zam_repondeur.models.events.article import TitreArticleModifie
 
     with transaction.manager:
@@ -48,8 +47,7 @@ def test_article_journal_title_from_services(app, lecture_an, article1_an):
         assert article1_an.events[0].data["new_value"] == "Title"
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../journal",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../journal", user=user_david
     )
     assert first_summary_text(resp) == (
         "Le titre de l’article a été modifié par les services "
@@ -73,8 +71,7 @@ def test_article_journal_presentation(app, lecture_an, article1_an, user_david):
         assert article1_an.events[0].data["new_value"] == "Présentation"
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/articles/article.1../journal", user=user_david
     )
     assert first_summary_text(resp) == "David a ajouté la présentation"
     assert first_details_text(resp) == "Présentation"
@@ -92,8 +89,7 @@ def test_article_journal_content(app, lecture_an, article1_an, user_david):
         assert article1_an.events[0].data["new_value"] == {"Foo": "Bar"}
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../journal",
-        user=user_david.email,
+        "/lectures/an.15.269.PO717460/articles/article.1../journal", user=user_david
     )
     assert first_description_text(resp) == (
         "Le contenu de l’article a été modifié par les services "

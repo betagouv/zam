@@ -8,12 +8,12 @@ import pytest
         ("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
     ],
 )
-def test_download(app, lecture_an, amendements_an, format_, content_type):
+def test_download(app, lecture_an, amendements_an, format_, content_type, user_david):
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/download_amendements",
         {"format": format_},
-        user="user@example.com",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -24,11 +24,11 @@ def test_download(app, lecture_an, amendements_an, format_, content_type):
     )
 
 
-def test_download_bad_format(app, lecture_an):
+def test_download_bad_format(app, lecture_an, user_david):
     resp = app.get(
         "/lectures/an.15.269.PO717460/download_amendements",
         {"format": "docx"},
-        user="user@example.com",
+        user=user_david,
         expect_errors=True,
     )
 
@@ -37,10 +37,9 @@ def test_download_bad_format(app, lecture_an):
     assert 'Invalid value "docx" for "format" param' in resp.text
 
 
-def test_download_multiple_amendements(app, lecture_an, amendements_an):
+def test_download_multiple_amendements(app, lecture_an, amendements_an, user_david):
     resp = app.get(
-        "/lectures/an.15.269.PO717460/export_pdf?nums=666&nums=999",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/export_pdf?nums=666&nums=999", user=user_david
     )
     assert resp.status_code == 200
     assert resp.content_type == "application/pdf"

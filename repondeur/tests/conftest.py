@@ -1,4 +1,5 @@
 import os
+from contextlib import contextmanager
 
 import pytest
 
@@ -9,22 +10,28 @@ from fixtures.users import *  # noqa: F401,F403
 from testapp import TestApp as BaseTestApp
 
 
+@contextmanager
+def auto_login(self, kwargs):
+    user = kwargs.pop("user", None)
+    if user is not None:
+        assert isinstance(user, str)
+        self.user_login(email=user, headers=kwargs.get("headers"))
+
+    yield
+
+
 class TestApp(BaseTestApp):
-    def login(self, email, headers=None):
+    def user_login(self, email, headers=None):
         resp = self.post("/identification", {"email": email}, headers=headers)
         assert resp.status_code == 302
 
     def get(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
-        if user is not None:
-            self.login(user, headers=kwargs.get("headers"))
-        return super().get(*args, **kwargs)
+        with auto_login(self, kwargs):
+            return super().get(*args, **kwargs)
 
     def post(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
-        if user is not None:
-            self.login(user, headers=kwargs.get("headers"))
-        return super().post(*args, **kwargs)
+        with auto_login(self, kwargs):
+            return super().post(*args, **kwargs)
 
 
 @pytest.fixture(scope="session")

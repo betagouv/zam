@@ -199,7 +199,7 @@ class TestPostForm:
         assert "david@larlet.fr" not in {user.email for user in team_zam.users}
 
         self._upload_csv(
-            app, "reponses_with_affectation.csv", user=user_ronan, team=team_zam
+            app, "reponses_with_affectation.csv", user=user_ronan.email, team=team_zam
         )
 
         DBSession.add(team_zam)

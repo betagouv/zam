@@ -10,30 +10,29 @@ from fixtures.users import *  # noqa: F401,F403
 from testapp import TestApp as BaseTestApp
 
 
-@contextmanager
-def auto_login(self, kwargs):
-    from zam_repondeur.models import User
-
-    user = kwargs.pop("user", None)
-    if user is not None:
-        assert isinstance(user, User)
-        self.user_login(email=user.email, headers=kwargs.get("headers"))
-
-    yield
-
-
 class TestApp(BaseTestApp):
-    def user_login(self, email, headers=None):
-        resp = self.post("/identification", {"email": email}, headers=headers)
-        assert resp.status_code == 302
-
     def get(self, *args, **kwargs):
-        with auto_login(self, kwargs):
+        with self.auto_login(kwargs):
             return super().get(*args, **kwargs)
 
     def post(self, *args, **kwargs):
-        with auto_login(self, kwargs):
+        with self.auto_login(kwargs):
             return super().post(*args, **kwargs)
+
+    @contextmanager
+    def auto_login(self, kwargs):
+        from zam_repondeur.models import User
+
+        user = kwargs.pop("user", None)
+        if user is not None:
+            assert isinstance(user, User)
+            self.user_login(email=user.email, headers=kwargs.get("headers"))
+
+        yield
+
+    def user_login(self, email, headers=None):
+        resp = self.post("/identification", {"email": email}, headers=headers)
+        assert resp.status_code == 302
 
 
 @pytest.fixture(scope="session")

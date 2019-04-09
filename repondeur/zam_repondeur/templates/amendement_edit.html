@@ -94,7 +94,7 @@
                 <h2>Amendement nº&nbsp;{{ amendement }}</h2>
 
                 {% if amendement.parent %}
-                    <h3>Sous-amendement au {{ amendement.parent }}</h3>
+                    <h3>Sous-amendement au <a href="{{ request.resource_url(context.lecture_resource['amendements'][amendement.parent.num_str], 'amendement_edit') }}">{{ amendement.parent }}</a></h3>
                 {% endif %}
 
                 {{ macros.status(amendement) }}

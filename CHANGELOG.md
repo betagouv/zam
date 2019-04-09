@@ -25,6 +25,49 @@
 
 ### Changements récents
 
+#### 9 avril 2019
+
+Possibilité d’importer un fichier CSV contenant les affectations.
+Voir la [spécification d’import](https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses) des réponses.
+
+---
+
+Restructuration de la table des matières dans l’export PDF.
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-04-09-vol-amendement-depuis-multiple.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-04-09-vol-amendement-depuis-multiple.png">
+    </a>
+    <figcaption>
+        Avertissement sur le transfert de plusieurs amendements présents sur la table d’un utilisateur actif.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-04-09-vol-amendement-depuis-unitaire.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-04-09-vol-amendement-depuis-unitaire.png">
+    </a>
+    <figcaption>
+        Avertissement sur le transfert d’un amendement présent sur la table d’un utilisateur actif.
+        Ajout d’un bouton « Transférer à… » depuis le détail d’un amendement.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-04-09-filtres-ameliores.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-04-09-filtres-ameliores.png">
+    </a>
+    <figcaption>
+        Amélioration des filtres, ouverts par défaut.
+    </figcaption>
+</figure>
+
 #### 19 mars 2019
 
 <figure>

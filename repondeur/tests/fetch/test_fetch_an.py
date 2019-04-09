@@ -562,6 +562,7 @@ class TestFetchAmendementAgain:
         responses.add(
             responses.GET, build_url(lecture_an, 177), body=sample_data, status=200
         )
+
         # On second call we want an irrecevable.
         responses.add(
             responses.GET,
@@ -596,16 +597,20 @@ class TestFetchAmendementAgain:
 
     @responses.activate
     def test_sort_turn_irrecevable_transfers_to_index(
-        self, lecture_an, app, source, user_david_table_an
+        self, lecture_an, app, source, user_david, user_david_table_an
     ):
         from zam_repondeur.fetch.an.amendements import build_url
         from zam_repondeur.models import DBSession
-        from zam_repondeur.models.events.amendement import AmendementIrrecevable
+        from zam_repondeur.models.events.amendement import (
+            AmendementIrrecevable,
+            AmendementTransfere,
+        )
 
         sample_data = read_sample_data("an/269/177.xml")
         responses.add(
             responses.GET, build_url(lecture_an, 177), body=sample_data, status=200
         )
+
         # On second call we want an irrecevable.
         responses.add(
             responses.GET,
@@ -621,6 +626,7 @@ class TestFetchAmendementAgain:
         amendement1, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="177", position=1
         )
+
         # Put it on a user table
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendement1)
@@ -633,7 +639,26 @@ class TestFetchAmendementAgain:
         )
 
         # An irrecevable event has been created
-        assert isinstance(amendement2.events[0], AmendementIrrecevable)
+        assert any(
+            isinstance(event, AmendementIrrecevable) for event in amendement2.events
+        )
+
+        # An automatic transfer event has been created
+        assert any(
+            isinstance(event, AmendementTransfere) for event in amendement2.events
+        )
+        transfer_event = next(
+            event
+            for event in amendement2.events
+            if isinstance(event, AmendementTransfere)
+        )
+        assert transfer_event.user is None
+        assert transfer_event.data["old_value"] == "David (david@example.com)"
+        assert transfer_event.data["new_value"] == ""
+        assert transfer_event.render_summary() == (
+            "L’amendement a été remis automatiquement sur l’index"
+        )
+
         # And the amendement is now on the index
         assert amendement2.user_table is None
         assert user_david_table_an.amendements == []

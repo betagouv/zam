@@ -91,9 +91,6 @@ class AmendementIrrecevable(AmendementEvent):
 
     def apply(self) -> None:
         self.amendement.sort = self.data["new_value"]
-        # Put the amendement back to the index.
-        if self.amendement.user_table:
-            self.amendement.user_table = None
 
     def render_details(self) -> str:
         return ""
@@ -123,16 +120,19 @@ class AmendementTransfere(AmendementEvent):
                     "de « $old_value » à « $new_value »"
                 )
         elif self.template_vars["old_value"] and not self.template_vars["new_value"]:
-            if str(self.user) == self.template_vars["old_value"]:
-                summary = (
-                    "<abbr title='$email'>$user</abbr> a remis l’amendement "
-                    "dans l’index"
-                )
+            if self.user:
+                if str(self.user) == self.template_vars["old_value"]:
+                    summary = (
+                        "<abbr title='$email'>$user</abbr> a remis l’amendement "
+                        "dans l’index"
+                    )
+                else:
+                    summary = (
+                        "<abbr title='$email'>$user</abbr> a remis l’amendement "
+                        "de « $old_value » dans l’index"
+                    )
             else:
-                summary = (
-                    "<abbr title='$email'>$user</abbr> a remis l’amendement "
-                    "de « $old_value » dans l’index"
-                )
+                summary = "L’amendement a été remis automatiquement sur l’index"
         else:
             if str(self.user) == self.template_vars["new_value"]:
                 summary = (

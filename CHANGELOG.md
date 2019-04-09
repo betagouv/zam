@@ -32,7 +32,14 @@ Voir la [spécification d’import](https://github.com/betagouv/zam/wiki/Sp%C3%A
 
 ---
 
-Restructuration de la table des matières dans l’export PDF.
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-04-09-table-des-matieres-pdf.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-04-09-table-des-matieres-pdf.png">
+    </a>
+    <figcaption>
+        Restructuration de la table des matières dans l’export PDF.
+    </figcaption>
+</figure>
 
 ---
 

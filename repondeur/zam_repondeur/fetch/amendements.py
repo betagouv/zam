@@ -4,6 +4,7 @@ from zam_repondeur.models import Amendement, Lecture
 from zam_repondeur.models.events.amendement import (
     AmendementIrrecevable,
     AmendementRectifie,
+    AmendementTransfere,
     CorpsAmendementModifie,
     ExposeAmendementModifie,
 )
@@ -34,6 +35,15 @@ class Source:
                 AmendementIrrecevable.create(
                     request=None, amendement=amendement, sort=sort
                 )
+                # Put the amendement back to the index?
+                if amendement.user_table is not None:
+                    AmendementTransfere.create(
+                        request=None,
+                        amendement=amendement,
+                        old_value=str(amendement.user_table.user),
+                        new_value="",
+                    )
+                    amendement.user_table = None
             else:
                 amendement.sort = sort
             modified = True

@@ -168,12 +168,18 @@ class Amendement(Base):
         backref=backref("children"),
         post_update=True,
     )
+
     lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"))
     lecture: "Lecture" = relationship("Lecture", back_populates="amendements")
+
     article_pk: int = Column(Integer, ForeignKey("articles.pk"))
     article: "Article" = relationship("Article", back_populates="amendements")
-    user_table_pk: int = Column(Integer, ForeignKey("user_tables.pk"))
-    user_table: "UserTable" = relationship("UserTable", back_populates="amendements")
+
+    user_table_pk: int = Column(Integer, ForeignKey("user_tables.pk"), nullable=True)
+    user_table: "Optional[UserTable]" = relationship(
+        "UserTable", back_populates="amendements"
+    )
+
     user_content = relationship(
         AmendementUserContent, back_populates="amendement", uselist=False, lazy="joined"
     )

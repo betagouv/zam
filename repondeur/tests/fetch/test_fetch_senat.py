@@ -175,7 +175,10 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
 ):
     from zam_repondeur.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
-    from zam_repondeur.models.events.amendement import AmendementIrrecevable
+    from zam_repondeur.models.events.amendement import (
+        AmendementIrrecevable,
+        AmendementTransfere,
+    )
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
 
@@ -234,9 +237,23 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
     # Now fetch the same amendement again (now irrecevable)
     amendements, created, errored = source.fetch(lecture_senat)
     amendement = [amendement for amendement in amendements if amendement.num == 1][0]
-    assert len(amendement.events) == 4
+    assert len(amendement.events) == 5  # two more
 
-    assert isinstance(amendement.events[3], AmendementIrrecevable)
+    # An irrecevable event has been created
+    assert any(isinstance(event, AmendementIrrecevable) for event in amendement.events)
+
+    # An automatic transfer event has been created
+    assert any(isinstance(event, AmendementTransfere) for event in amendement.events)
+    transfer_event = next(
+        event for event in amendement.events if isinstance(event, AmendementTransfere)
+    )
+    assert transfer_event.user is None
+    assert transfer_event.data["old_value"] == "David (david@example.com)"
+    assert transfer_event.data["new_value"] == ""
+    assert transfer_event.render_summary() == (
+        "L’amendement a été remis automatiquement sur l’index"
+    )
+
     # The amendement is now on the index
     assert amendement.user_table is None
     assert user_david_table_an.amendements == []

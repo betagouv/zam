@@ -2,9 +2,9 @@ import pytest
 import transaction
 
 
-def test_get_list_empty(app):
+def test_get_list_empty(app, user_david):
 
-    resp = app.get("/lectures/", user="user@example.com")
+    resp = app.get("/lectures/", user=user_david)
 
     assert resp.status_code == 302
     assert resp.location == "https://zam.test/lectures/add"
@@ -32,9 +32,9 @@ def lecture_commission(db, texte_an, dossier_an):
     return lecture
 
 
-def test_get_list_not_empty(app, lecture_an, lecture_commission):
+def test_get_list_not_empty(app, lecture_an, lecture_commission, user_david):
 
-    resp = app.get("/lectures/", user="user@example.com")
+    resp = app.get("/lectures/", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -42,7 +42,7 @@ def test_get_list_not_empty(app, lecture_an, lecture_commission):
     assert len(resp.parser.css(".lecture")) == 3  # First one is the top link.
 
 
-def test_get_list_reverse_datetime_order(app, lecture_an):
+def test_get_list_reverse_datetime_order(app, lecture_an, user_david):
     from zam_repondeur.models import DBSession, Lecture
 
     with transaction.manager:
@@ -58,7 +58,7 @@ def test_get_list_reverse_datetime_order(app, lecture_an):
         title2 = str(lecture2)
         DBSession.add(lecture2)
 
-    resp = app.get("/lectures/", user="user@example.com")
+    resp = app.get("/lectures/", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -72,10 +72,11 @@ def test_team_member_can_see_owned_lecture(app, lecture_an, team_zam, user_david
 
     with transaction.manager:
         lecture_an.owned_by_team = team_zam
+        DBSession.add(user_david)
         user_david.teams.append(team_zam)
         DBSession.add(team_zam)
 
-    resp = app.get("/lectures/", user=user_david.email)
+    resp = app.get("/lectures/", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -92,7 +93,7 @@ def test_non_team_member_cannot_see_owned_lecture(
         lecture_an.owned_by_team = team_zam
         DBSession.add(team_zam)
 
-    resp = app.get("/lectures/", user=user_david.email)
+    resp = app.get("/lectures/", user=user_david)
 
     assert resp.status_code == 302
     assert resp.location == "https://zam.test/lectures/add"

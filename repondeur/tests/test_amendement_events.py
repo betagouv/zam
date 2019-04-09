@@ -20,7 +20,7 @@ def test_post_amendement_init_form_events(
 
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",
-        user=user_david.email,
+        user=user_david,
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
@@ -119,7 +119,7 @@ def test_post_amendement_edit_form_events(
 
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",
-        user=user_david.email,
+        user=user_david,
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
@@ -211,7 +211,7 @@ def test_post_amendement_edit_form_events_empty(
 
     resp = app.get(
         f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",
-        user=user_david.email,
+        user=user_david,
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = ""

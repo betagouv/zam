@@ -63,8 +63,8 @@ def test_unauthentified_user_is_redirected_to_login_page(app):
     )
 
 
-def test_authentified_user_is_not_redirected_to_login_page(app):
-    resp = app.get("/lectures/add", user="jane.doe@example.com")
+def test_authentified_user_is_not_redirected_to_login_page(app, user_david):
+    resp = app.get("/lectures/add", user=user_david)
     assert resp.status_code == 200
 
 
@@ -128,7 +128,7 @@ def test_new_user_without_name_get_an_error(app):
 def test_user_with_name_can_edit_it(app, user_david):
     from zam_repondeur.models import DBSession, User
 
-    resp = app.get("/bienvenue", user=user_david.email)
+    resp = app.get("/bienvenue", user=user_david)
     assert resp.status_code == 200
     assert resp.form["name"].value == "David"
     resp.form["name"] = " Something Else  "

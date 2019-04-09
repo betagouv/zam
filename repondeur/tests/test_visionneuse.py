@@ -8,11 +8,10 @@ def _text_from_node(node, selector):
     )
 
 
-def test_reponses_empty(app, lecture_an, amendements_an):
+def test_reponses_empty(app, lecture_an, amendements_an, user_david):
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     assert resp.status_code == 200
@@ -21,7 +20,7 @@ def test_reponses_empty(app, lecture_an, amendements_an):
     assert resp.find_amendement(amendements_an[1]) is None
 
 
-def test_reponses_full(app, lecture_an, amendements_an):
+def test_reponses_full(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -32,8 +31,7 @@ def test_reponses_full(app, lecture_an, amendements_an):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     assert resp.status_code == 200
@@ -54,7 +52,7 @@ def test_reponses_full(app, lecture_an, amendements_an):
     assert _text_from_node(test_amendement_666.node, "header h2") == "Amendement 666"
 
 
-def test_reponses_grouping(app, lecture_an, amendements_an):
+def test_reponses_grouping(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -65,8 +63,7 @@ def test_reponses_grouping(app, lecture_an, amendements_an):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     assert resp.status_code == 200
@@ -86,7 +83,7 @@ def test_reponses_grouping(app, lecture_an, amendements_an):
     )
 
 
-def test_reponses_authors_not_grouping(app, lecture_an, amendements_an):
+def test_reponses_authors_not_grouping(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -101,8 +98,7 @@ def test_reponses_authors_not_grouping(app, lecture_an, amendements_an):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     assert resp.status_code == 200
@@ -118,7 +114,7 @@ def test_reponses_authors_not_grouping(app, lecture_an, amendements_an):
     )
 
 
-def test_reponses_authors_grouping(app, lecture_an, amendements_an):
+def test_reponses_authors_grouping(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -131,8 +127,7 @@ def test_reponses_authors_grouping(app, lecture_an, amendements_an):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     assert resp.status_code == 200
@@ -148,7 +143,7 @@ def test_reponses_authors_grouping(app, lecture_an, amendements_an):
     )
 
 
-def test_reponses_groupe_grouping(app, lecture_an, amendements_an):
+def test_reponses_groupe_grouping(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -162,8 +157,7 @@ def test_reponses_groupe_grouping(app, lecture_an, amendements_an):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     assert resp.status_code == 200
@@ -179,7 +173,9 @@ def test_reponses_groupe_grouping(app, lecture_an, amendements_an):
     )
 
 
-def test_reponses_many_grouping(app, lecture_an, article1_an, amendements_an):
+def test_reponses_many_grouping(
+    app, lecture_an, article1_an, amendements_an, user_david
+):
     from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
@@ -237,8 +233,7 @@ def test_reponses_many_grouping(app, lecture_an, article1_an, amendements_an):
         )
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     assert resp.status_code == 200
@@ -259,7 +254,9 @@ def test_reponses_many_grouping(app, lecture_an, article1_an, amendements_an):
     )
 
 
-def test_reponses_not_grouping_on_same_reponse_only(app, lecture_an, amendements_an):
+def test_reponses_not_grouping_on_same_reponse_only(
+    app, lecture_an, amendements_an, user_david
+):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -270,8 +267,7 @@ def test_reponses_not_grouping_on_same_reponse_only(app, lecture_an, amendements
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     assert resp.status_code == 200
@@ -287,7 +283,7 @@ def test_reponses_not_grouping_on_same_reponse_only(app, lecture_an, amendements
     )
 
 
-def test_reponses_gouvernemental(app, lecture_an, amendements_an):
+def test_reponses_gouvernemental(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -296,8 +292,7 @@ def test_reponses_gouvernemental(app, lecture_an, amendements_an):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     test_amendement = resp.find_amendement(amendements_an[0])
@@ -315,7 +310,9 @@ def test_reponses_gouvernemental(app, lecture_an, amendements_an):
     "sort",
     ["retiré", "irrecevable", "Irrecevable art. 40 C", "tombé", "retiré avant séance"],
 )
-def test_reponses_abandoned_not_displayed(app, lecture_an, amendements_an, sort):
+def test_reponses_abandoned_not_displayed(
+    app, lecture_an, amendements_an, sort, user_david
+):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -328,8 +325,7 @@ def test_reponses_abandoned_not_displayed(app, lecture_an, amendements_an, sort)
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     test_amendement = resp.find_amendement(amendements_an[0])
@@ -345,7 +341,7 @@ def test_reponses_abandoned_not_displayed(app, lecture_an, amendements_an, sort)
     ["retiré", "irrecevable", "Irrecevable art. 40 C", "tombé", "retiré avant séance"],
 )
 def test_reponses_abandoned_and_gouvernemental_not_displayed(
-    app, lecture_an, amendements_an, sort
+    app, lecture_an, amendements_an, sort, user_david
 ):
     from zam_repondeur.models import DBSession
 
@@ -360,8 +356,7 @@ def test_reponses_abandoned_and_gouvernemental_not_displayed(
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     test_amendement = resp.find_amendement(amendements_an[0])
@@ -372,7 +367,7 @@ def test_reponses_abandoned_and_gouvernemental_not_displayed(
     assert resp.find_amendement(amendements_an[1]) is None
 
 
-def test_reponses_with_textes(app, lecture_an, amendements_an):
+def test_reponses_with_textes(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -385,8 +380,7 @@ def test_reponses_with_textes(app, lecture_an, amendements_an):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     fake_anchor = resp.parser.css_first("#content-article-1")
@@ -397,7 +391,7 @@ def test_reponses_with_textes(app, lecture_an, amendements_an):
     assert article_content.css_first("dd").text().strip() == "Premier paragraphe"
 
 
-def test_reponses_with_presentations(app, lecture_an, amendements_an):
+def test_reponses_with_presentations(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -411,8 +405,7 @@ def test_reponses_with_presentations(app, lecture_an, amendements_an):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     fake_anchor = resp.parser.css_first("#content-article-1")
@@ -421,7 +414,9 @@ def test_reponses_with_presentations(app, lecture_an, amendements_an):
     assert article_content.css_first("p").text().strip() == "Contenu de la présentation"
 
 
-def test_reponses_without_textes_or_presentations(app, lecture_an, amendements_an):
+def test_reponses_without_textes_or_presentations(
+    app, lecture_an, amendements_an, user_david
+):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -432,8 +427,7 @@ def test_reponses_without_textes_or_presentations(app, lecture_an, amendements_a
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     fake_anchor = resp.parser.css_first("#content-article-1")
@@ -442,7 +436,7 @@ def test_reponses_without_textes_or_presentations(app, lecture_an, amendements_a
 
 
 def test_reponses_with_different_articles(
-    app, lecture_an, amendements_an, article7bis_an
+    app, lecture_an, amendements_an, article7bis_an, user_david
 ):
     from zam_repondeur.models import DBSession
 
@@ -457,8 +451,7 @@ def test_reponses_with_different_articles(
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     assert resp.parser.css(".titles h2")[0].text() == "Article 1"
@@ -484,7 +477,7 @@ def test_reponses_with_different_articles(
     )
 
 
-def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe_an):
+def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -498,15 +491,14 @@ def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe_an):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/annexe.../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/annexe.../reponses", user=user_david
     )
 
     assert resp.parser.css(".titles h2")[0].text() == "Annexes"
 
 
 def test_reponses_article_additionnel_avant(
-    app, lecture_an, amendements_an, article1av_an
+    app, lecture_an, amendements_an, article1av_an, user_david
 ):
     from zam_repondeur.models import DBSession
 
@@ -520,7 +512,7 @@ def test_reponses_article_additionnel_avant(
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/articles/article.1..avant/reponses",
-        user="user@example.com",
+        user=user_david,
     )
 
     section_ids = [
@@ -533,7 +525,7 @@ def test_reponses_article_additionnel_avant(
     assert article_titles == ["Article add. av. 1"]
 
 
-def test_reponses_amendement_rect(app, lecture_an, amendements_an):
+def test_reponses_amendement_rect(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -546,8 +538,7 @@ def test_reponses_amendement_rect(app, lecture_an, amendements_an):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     assert "666" in resp
@@ -555,7 +546,7 @@ def test_reponses_amendement_rect(app, lecture_an, amendements_an):
 
 
 def test_links_to_previous_and_next_articles(
-    app, lecture_an, amendements_an, article1av_an, article7bis_an
+    app, lecture_an, amendements_an, article1av_an, article7bis_an, user_david
 ):
     from zam_repondeur.models import DBSession
 
@@ -565,8 +556,7 @@ def test_links_to_previous_and_next_articles(
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     assert resp.status_code == 200
@@ -575,11 +565,10 @@ def test_links_to_previous_and_next_articles(
 
 
 def test_links_to_previous_and_next_articles_when_empty_additional(
-    app, lecture_an, amendements_an, article1av_an, article7bis_an
+    app, lecture_an, amendements_an, article1av_an, article7bis_an, user_david
 ):
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses",
-        user="user@example.com",
+        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
     )
 
     assert resp.status_code == 200

@@ -12,10 +12,12 @@ from testapp import TestApp as BaseTestApp
 
 @contextmanager
 def auto_login(self, kwargs):
+    from zam_repondeur.models import User
+
     user = kwargs.pop("user", None)
     if user is not None:
-        assert isinstance(user, str)
-        self.user_login(email=user, headers=kwargs.get("headers"))
+        assert isinstance(user, User)
+        self.user_login(email=user.email, headers=kwargs.get("headers"))
 
     yield
 

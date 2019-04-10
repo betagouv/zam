@@ -1,5 +1,6 @@
 import time
 
+import pytest
 import transaction
 
 
@@ -44,6 +45,16 @@ def test_user_must_authenticate_with_an_email(app):
     assert resp.location == "https://zam.test/identification"
     resp = resp.follow()
     assert "La saisie d’une adresse de courriel est requise." in resp.text
+
+
+@pytest.mark.parametrize("incorrect_email", [" ", "foo"])
+def test_user_must_authenticate_with_a_valid_email(app, incorrect_email):
+    resp = app.post("/identification", {"email": incorrect_email})
+
+    assert resp.status_code == 302
+    assert resp.location == "https://zam.test/identification"
+    resp = resp.follow()
+    assert "La saisie d’une adresse de courriel valide est requise." in resp.text
 
 
 def test_user_loses_the_auth_cookie_when_loggin_out(app):

@@ -82,6 +82,10 @@ class User(Base):
         return email.strip().lower()
 
     @staticmethod
+    def validate_email(email: str) -> bool:
+        return email != "" and "@" in email
+
+    @staticmethod
     def normalize_name(name: str) -> str:
         return name.strip()
 

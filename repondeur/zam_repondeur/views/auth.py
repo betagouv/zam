@@ -32,7 +32,7 @@ class UserLogin:
             return HTTPFound(location=self.request.route_url("user_login"))
 
         email = User.normalize_email(email)
-        if not email or "@" not in email:
+        if not User.validate_email(email):
             self.request.session["incorrect_email"] = True
             return HTTPFound(location=self.request.route_url("user_login"))
 

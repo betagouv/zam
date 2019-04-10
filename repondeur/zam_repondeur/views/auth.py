@@ -31,7 +31,12 @@ class UserLogin:
             self.request.session["missing_email"] = True
             return HTTPFound(location=self.request.route_url("user_login"))
 
-        user, created = get_one_or_create(User, email=User.normalize_email(email))
+        email = User.normalize_email(email)
+        if not email or "@" not in email:
+            self.request.session["incorrect_email"] = True
+            return HTTPFound(location=self.request.route_url("user_login"))
+
+        user, created = get_one_or_create(User, email=email)
 
         # Automatically add user without a team to the authenticated team
         if not user.teams and self.request.team is not None:

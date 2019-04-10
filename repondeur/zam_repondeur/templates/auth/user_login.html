@@ -8,6 +8,9 @@
         {% if request.session.pop('missing_email', None) %}
             <p class="error">La saisie d’une adresse de courriel est requise.</p>
         {% endif %}
+        {% if request.session.pop('incorrect_email', None) %}
+            <p class="error">La saisie d’une adresse de courriel valide est requise.</p>
+        {% endif %}
         {% if request.session.pop('already_in_use', None) %}
             <p class="error">Cette adresse de courriel est déjà utilisée<br>dans une autre équipe.</p>
         {% endif %}

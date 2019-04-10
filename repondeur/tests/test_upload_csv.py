@@ -181,6 +181,20 @@ class TestPostForm:
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere not in events
 
+    def test_upload_with_affectation_empty_name(self, app, user_david):
+        from zam_repondeur.models import DBSession, Amendement
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.user_table is None
+
+        self._upload_csv(
+            app, "reponses_with_affectation_empty_name.csv", user=user_david
+        )
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.user_table.user.email == "melodie@example.com"
+        assert amendement.user_table.user.name == "melodie@example.com"
+
     def test_upload_with_affectation_to_unknown_user_with_team(
         self, app, lecture_an, user_ronan, team_zam
     ):

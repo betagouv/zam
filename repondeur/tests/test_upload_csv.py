@@ -171,8 +171,8 @@ class TestPostForm:
         self._upload_csv(app, "reponses_with_affectation.csv", user=user_david)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.user_table.user.email == "david@larlet.fr"
-        assert amendement.user_table.user.name == "David2"
+        assert amendement.user_table.user.email == "melodie@example.com"
+        assert amendement.user_table.user.name == "Mélodie Dahi"
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere in events
 
@@ -198,9 +198,11 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_table is None
 
-        user_david2 = DBSession.query(User).filter_by(email="david@larlet.fr").first()
-        assert user_david2 is None
-        assert "david@larlet.fr" not in {user.email for user in team_zam.users}
+        user_melodie = (
+            DBSession.query(User).filter_by(email="melodie@example.com").first()
+        )
+        assert user_melodie is None
+        assert "melodie@example.com" not in {user.email for user in team_zam.users}
 
         self._upload_csv(
             app, "reponses_with_affectation.csv", user=user_ronan, team=team_zam
@@ -210,18 +212,20 @@ class TestPostForm:
         DBSession.refresh(team_zam)
 
         # Check the new user was created
-        user_david2 = DBSession.query(User).filter_by(email="david@larlet.fr").first()
-        assert user_david2 is not None
-        assert user_david2.email == "david@larlet.fr"
-        assert user_david2.name == "David2"
+        user_melodie = (
+            DBSession.query(User).filter_by(email="melodie@example.com").first()
+        )
+        assert user_melodie is not None
+        assert user_melodie.email == "melodie@example.com"
+        assert user_melodie.name == "Mélodie Dahi"
 
         # Check the new user was added to the team
-        assert "david@larlet.fr" in {user.email for user in team_zam.users}
-        assert user_david2.teams == [team_zam]
+        assert "melodie@example.com" in {user.email for user in team_zam.users}
+        assert user_melodie.teams == [team_zam]
 
         # Check the amendement is on the new user's table
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.user_table.user is user_david2
+        assert amendement.user_table.user is user_melodie
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere in events
 
@@ -240,8 +244,8 @@ class TestPostForm:
         self._upload_csv(app, "reponses_with_affectation.csv", user=user_david)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.user_table.user.email == "david@larlet.fr"
-        assert amendement.user_table.user.name == "David2"
+        assert amendement.user_table.user.email == "melodie@example.com"
+        assert amendement.user_table.user.name == "Mélodie Dahi"
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere in events
 

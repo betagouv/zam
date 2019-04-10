@@ -81,7 +81,8 @@ def transfer_amendement(
 
     user, created = get_one_or_create(User, email=email)
     if created:
-        user.name = item["affectation_name"] if item["affectation_name"] else email
+        affectation_name = User.normalize_name(item["affectation_name"])
+        user.name = affectation_name if affectation_name != "" else email
         if lecture.owned_by_team:
             user.teams.append(lecture.owned_by_team)
 

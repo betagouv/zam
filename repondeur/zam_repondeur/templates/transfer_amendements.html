@@ -207,7 +207,7 @@
         {% endif %}
         <div class="targets">
             <label for="target">Destinataire</label>
-            <select id="target" name="target" required>
+            <select id="target" name="target">
                 <option selected></option>
                 {% if show_transfer_to_myself %}
                     <option value="{{ request.user.email }}">Moi — {{ request.user }}</option>

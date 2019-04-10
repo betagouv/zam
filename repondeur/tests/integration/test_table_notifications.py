@@ -26,7 +26,7 @@ def test_table_notification_on_amendement_transfer(
         amendements_an[0].user_table = None
         DBSession.add_all(amendements_an)
 
-    sleep(wsgi_server.settings["zam.check.on_transfers_from_to_my_table"])
+    sleep(wsgi_server.settings["zam.check_for.transfers_from_to_my_table"])
 
     assert status.is_displayed()
     assert status.text == "L’amendement 666 a été retiré de votre table. Rafraîchir"

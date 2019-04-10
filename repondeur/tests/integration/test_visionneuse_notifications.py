@@ -29,7 +29,7 @@ def test_visionneuse_notification_on_amendement_update(
         amendements_an[0].modified_at = datetime.utcnow()
         DBSession.add_all(amendements_an)
 
-    sleep(wsgi_server.settings["zam.check.on_content_upates_during_seance"])
+    sleep(wsgi_server.settings["zam.check_for.content_updated_during_seance"])
 
     assert status.is_displayed()
     assert status.text == "L’amendement 666 a été mis à jour ! Rafraîchir"

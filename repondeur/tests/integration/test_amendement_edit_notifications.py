@@ -28,7 +28,7 @@ def test_amendement_edit_notification_on_amendement_transfer(
         amendements_an[0].user_table = None
         DBSession.add_all(amendements_an)
 
-    sleep(wsgi_server.settings["zam.check.on_thefts_while_editing"])
+    sleep(wsgi_server.settings["zam.check_for.amendement_stolen_while_editing"])
 
     assert status.is_displayed()
     assert status.text == (

@@ -341,7 +341,7 @@
 
 {% block notifications_extras %}
     data-notifications-with-diff-check-url="{{ check_url }}"
-    data-notifications-with-diff-check-interval="{{ request.registry.settings['zam.check.on_transfers_from_to_my_table'] }}"
+    data-notifications-with-diff-check-interval="{{ request.registry.settings['zam.check_for.transfers_from_to_my_table'] }}"
     data-notifications-with-diff-current="{{ table.amendements_as_string }}"
 {% endblock %}
 

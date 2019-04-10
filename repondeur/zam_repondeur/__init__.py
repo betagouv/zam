@@ -32,12 +32,12 @@ BASE_SETTINGS = {
     "huey.workers": (cpu_count() * 2) + 1,
     # Intervals in seconds for notifications checks:
     # Keep it low: potential data loss for the user.
-    "zam.check.on_thefts_while_editing": 30,
+    "zam.check_for.amendement_stolen_while_editing": 30,
     # Keep it low: critical during public intervention.
-    "zam.check.on_content_upates_during_seance": 30,
-    "zam.check.on_transfers_from_to_my_table": 60,
+    "zam.check_for.content_updated_during_seance": 30,
+    "zam.check_for.transfers_from_to_my_table": 60,
     # Keep it high: lot of modifications happen in the meantime.
-    "zam.check.on_updates_for_the_index": 180,
+    "zam.check_for.index_updates": 180,
 }
 
 

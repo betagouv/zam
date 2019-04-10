@@ -64,11 +64,10 @@ def import_amendement(
             CommentsAmendementModifie.create(request, amendement, comments)
 
     if "affectation_email" in item and item["affectation_email"]:
-        email = item["affectation_email"]
-        user, created = get_one_or_create(User, email=User.normalize_email(email))
+        email = User.normalize_email(item["affectation_email"])
+        user, created = get_one_or_create(User, email=email)
         if created:
-            if item["affectation_name"]:
-                user.name = item["affectation_name"]
+            user.name = item["affectation_name"] if item["affectation_name"] else email
             if lecture.owned_by_team:
                 user.teams.append(lecture.owned_by_team)
         target_table = user.table_for(lecture)

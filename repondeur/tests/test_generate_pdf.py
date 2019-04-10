@@ -85,7 +85,7 @@ def test_generate_pdf_without_responses(
         generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
     )
 
-    assert parser.css_first("h1").text() == "Titre dossier legislatif sénat"
+    assert parser.css_first("h1").text() == "Sécurité sociale : loi de financement 2018"
     assert (
         parser.css_first(".first-page .lecture").text()
         == "Sénat, session 2017-2018, Séance publique, Numéro lecture, texte nº\xa063"

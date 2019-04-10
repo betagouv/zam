@@ -151,10 +151,11 @@ def test_parse_subdiv(text, type_, num, mult, pos):
     assert parse_subdiv(text) == (type_, num, mult, pos)
 
 
-def test_parse_subdiv_texte_title(texte_an):
+def test_parse_subdiv_texte_title(texte_plfss2018_an_premiere_lecture):
     from zam_repondeur.fetch.division import parse_subdiv
 
     subdiv = parse_subdiv(
-        "Projet de loi de financement de la sécurité sociale pour 2018", texte=texte_an
+        "Projet de loi de financement de la sécurité sociale pour 2018",
+        texte=texte_plfss2018_an_premiere_lecture,
     )
     assert subdiv == ("titre", "", "", "")

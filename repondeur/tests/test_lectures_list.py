@@ -16,17 +16,17 @@ def test_get_list_empty(app, user_david):
 
 
 @pytest.fixture
-def lecture_commission(db, texte_an, dossier_an):
+def lecture_commission(db, dossier_plfss2018, texte_plfss2018_an_premiere_lecture):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
         lecture = Lecture.create(
             chambre="an",
             session="15",
-            texte=texte_an,
+            texte=texte_plfss2018_an_premiere_lecture,
             titre="Numéro lecture – Titre lecture",
             organe="PO420120",
-            dossier=dossier_an,
+            dossier=dossier_plfss2018,
         )
 
     return lecture

@@ -154,18 +154,20 @@ class TestFetchAndParseAll:
         assert errored == []
 
     @responses.activate
-    def test_sous_amendements(self, app, source, texte_an, dossier_an):
+    def test_sous_amendements(
+        self, app, source, dossier_plfss2018, texte_plfss2018_an_premiere_lecture
+    ):
         from zam_repondeur.models import DBSession, Lecture
 
         with transaction.manager:
-            texte_an.numero = 911
+            texte_plfss2018_an_premiere_lecture.numero = 911
             lecture = Lecture.create(
                 chambre="an",
                 session="15",
-                texte=texte_an,
+                texte=texte_plfss2018_an_premiere_lecture,
                 titre="Titre lecture",
                 organe="PO717460",
-                dossier=dossier_an,
+                dossier=dossier_plfss2018,
             )
 
         DBSession.add(lecture)

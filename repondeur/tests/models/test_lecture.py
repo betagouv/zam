@@ -6,13 +6,13 @@ pytestmark = pytest.mark.usefixtures("data_repository")
 
 
 class TestLectureToStr:
-    def test_an_seance_publique(self, texte_an):
+    def test_an_seance_publique(self, texte_plfss2018_an_premiere_lecture):
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
             chambre="an",
             session="15",
-            texte=texte_an,
+            texte=texte_plfss2018_an_premiere_lecture,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO717460",
         )
@@ -22,13 +22,13 @@ class TestLectureToStr:
         )
         assert str(lecture) == result
 
-    def test_an_commission(self, texte_an):
+    def test_an_commission(self, texte_plfss2018_an_premiere_lecture):
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
             chambre="an",
             session="15",
-            texte=texte_an,
+            texte=texte_plfss2018_an_premiere_lecture,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO59048",
         )
@@ -38,13 +38,15 @@ class TestLectureToStr:
         )
         assert str(lecture) == result
 
-    def test_an_commission_speciale(self, texte_commission_speciale):
+    def test_an_commission_speciale(
+        self, texte_essoc2018_an_nouvelle_lecture_commission_fond
+    ):
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
             chambre="an",
             session="15",
-            texte=texte_commission_speciale,
+            texte=texte_essoc2018_an_nouvelle_lecture_commission_fond,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO744107",
         )
@@ -54,13 +56,13 @@ class TestLectureToStr:
         )
         assert str(lecture) == result
 
-    def test_senat_seance_publique(self, texte_senat):
+    def test_senat_seance_publique(self, texte_plfss2018_senat_premiere_lecture):
         from zam_repondeur.models import Lecture
 
         lecture = Lecture(
             chambre="senat",
             session="2017-2018",
-            texte=texte_senat,
+            texte=texte_plfss2018_senat_premiere_lecture,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO78718",
         )

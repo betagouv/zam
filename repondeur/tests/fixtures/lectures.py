@@ -1,115 +1,36 @@
-from datetime import date
-
 import pytest
 import transaction
 
 
 @pytest.fixture
-def texte_an(db):
-    from zam_repondeur.models import Chambre, Texte, TypeTexte
-
-    with transaction.manager:
-        texte = Texte.create(
-            uid="PRJLANR5L15B0269",
-            type_=TypeTexte.PROJET,
-            chambre=Chambre.AN,
-            legislature=15,
-            numero=269,
-            titre_long="projet de loi de financement de la sécurité sociale pour 2018",
-            titre_court="PLFSS pour 2018",
-            date_depot=date(2017, 10, 11),
-        )
-
-    return texte
-
-
-@pytest.fixture
-def texte_commission_speciale(db):
-    from zam_repondeur.models import Chambre, Texte, TypeTexte
-
-    with transaction.manager:
-        texte = Texte.create(
-            uid="PRJLANR5L15B0806",
-            type_=TypeTexte.PROJET,
-            chambre=Chambre.AN,
-            legislature=15,
-            numero=806,
-            titre_long="long",
-            titre_court="court",
-            date_depot=date(2017, 10, 11),
-        )
-
-    return texte
-
-
-@pytest.fixture
-def dossier_an(db):
-    from zam_repondeur.models import Dossier
-
-    with transaction.manager:
-        texte = Dossier.create(uid="foo", titre="Titre dossier legislatif AN")
-
-    return texte
-
-
-@pytest.fixture
-def lecture_an(db, texte_an, dossier_an):
+def lecture_an(db, dossier_plfss2018, texte_plfss2018_an_premiere_lecture):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
         lecture = Lecture.create(
             chambre="an",
             session="15",
-            texte=texte_an,
+            texte=texte_plfss2018_an_premiere_lecture,
             titre="Numéro lecture – Titre lecture",
             organe="PO717460",
-            dossier=dossier_an,
+            dossier=dossier_plfss2018,
         )
 
     return lecture
 
 
 @pytest.fixture
-def texte_senat(db):
-    from zam_repondeur.models import Chambre, Texte, TypeTexte
-
-    with transaction.manager:
-        texte = Texte.create(
-            uid="baz",
-            type_=TypeTexte.PROJET,
-            chambre=Chambre.SENAT,
-            session=2017,
-            numero=63,
-            titre_long="long",
-            titre_court="court",
-            date_depot=date(2017, 10, 11),
-        )
-
-    return texte
-
-
-@pytest.fixture
-def dossier_senat(db):
-    from zam_repondeur.models import Dossier
-
-    with transaction.manager:
-        texte = Dossier.create(uid="bar", titre="Titre dossier legislatif sénat")
-
-    return texte
-
-
-@pytest.fixture
-def lecture_senat(db, texte_senat, dossier_senat):
+def lecture_senat(db, dossier_plfss2018, texte_plfss2018_senat_premiere_lecture):
     from zam_repondeur.models import Lecture
 
     with transaction.manager:
         lecture = Lecture.create(
             chambre="senat",
             session="2017-2018",
-            texte=texte_senat,
+            texte=texte_plfss2018_senat_premiere_lecture,
             titre="Numéro lecture – Titre lecture sénat",
             organe="PO78718",
-            dossier=dossier_senat,
+            dossier=dossier_plfss2018,
         )
 
     return lecture
@@ -234,52 +155,3 @@ def amendements_senat(db, lecture_senat, article1_senat):
         ]
 
     return amendements
-
-
-@pytest.fixture
-def texte_essoc(db):
-    from zam_repondeur.models import Chambre, Texte, TypeTexte
-
-    with transaction.manager:
-        texte = Texte.create(
-            uid="PRJLANR5L15B0806",
-            type_=TypeTexte.PROJET,
-            chambre=Chambre.AN,
-            legislature=15,
-            numero=806,
-            titre_long="long",
-            titre_court="court",
-            date_depot=date(2017, 10, 11),
-        )
-
-    return texte
-
-
-@pytest.fixture
-def dossier_essoc(db):
-    from zam_repondeur.models import Dossier
-
-    with transaction.manager:
-        texte = Dossier.create(
-            uid="bar",
-            titre="Fonction publique : un Etat au service d'une société de confiance",
-        )
-
-    return texte
-
-
-@pytest.fixture
-def lecture_essoc(db, texte_essoc, dossier_essoc):
-    from zam_repondeur.models import Lecture
-
-    with transaction.manager:
-        lecture = Lecture.create(
-            chambre="an",
-            session="15",
-            texte=texte_essoc,
-            titre="Nouvelle lecture – Titre lecture",
-            organe="PO744107",
-            dossier=dossier_essoc,
-        )
-
-    return lecture

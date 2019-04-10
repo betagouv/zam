@@ -74,6 +74,11 @@ def transfer_amendement(
     request: Request, lecture: Lecture, amendement: Amendement, item: dict
 ) -> None:
     email = User.normalize_email(item["affectation_email"])
+
+    if not User.validate_email(email):
+        logging.warning("Invalid email address %r", email)
+        return
+
     user, created = get_one_or_create(User, email=email)
     if created:
         user.name = item["affectation_name"] if item["affectation_name"] else email

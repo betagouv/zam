@@ -64,21 +64,27 @@ def import_amendement(
             CommentsAmendementModifie.create(request, amendement, comments)
 
     if "affectation_email" in item and item["affectation_email"]:
-        email = User.normalize_email(item["affectation_email"])
-        user, created = get_one_or_create(User, email=email)
-        if created:
-            user.name = item["affectation_name"] if item["affectation_name"] else email
-            if lecture.owned_by_team:
-                user.teams.append(lecture.owned_by_team)
-        target_table = user.table_for(lecture)
-        DBSession.add(target_table)
-
-        old = str(amendement.user_table.user) if amendement.user_table else ""
-        new = str(target_table.user) if target_table else ""
-        if amendement.user_table is target_table:
-            return
-        amendement.user_table = target_table
-        AmendementTransfere.create(request, amendement, old, new)
+        transfer_amendement(request, lecture, amendement, item)
 
     previous_reponse = reponse
     counter["reponses"] += 1
+
+
+def transfer_amendement(
+    request: Request, lecture: Lecture, amendement: Amendement, item: dict
+) -> None:
+    email = User.normalize_email(item["affectation_email"])
+    user, created = get_one_or_create(User, email=email)
+    if created:
+        user.name = item["affectation_name"] if item["affectation_name"] else email
+        if lecture.owned_by_team:
+            user.teams.append(lecture.owned_by_team)
+    target_table = user.table_for(lecture)
+    DBSession.add(target_table)
+
+    old = str(amendement.user_table.user) if amendement.user_table else ""
+    new = str(target_table.user) if target_table else ""
+    if amendement.user_table is target_table:
+        return
+    amendement.user_table = target_table
+    AmendementTransfere.create(request, amendement, old, new)

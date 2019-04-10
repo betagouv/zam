@@ -55,10 +55,10 @@ def settings():
         "zam.session_secret": "dummy",
         "zam.auth_secret": "dummier",
         # Only wait for 1 second to speed up integration tests.
-        "zam.check.on_thefts_while_editing": 1,
-        "zam.check.on_content_upates_during_seance": 1,
-        "zam.check.on_transfers_from_to_my_table": 1,
-        "zam.check.on_updates_for_the_index": 1,
+        "zam.check_for.amendement_stolen_while_editing": 1,
+        "zam.check_for.content_updated_during_seance": 1,
+        "zam.check_for.transfers_from_to_my_table": 1,
+        "zam.check_for.index_updates": 1,
     }
 
 

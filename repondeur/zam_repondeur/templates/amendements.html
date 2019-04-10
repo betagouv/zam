@@ -308,7 +308,7 @@
 
 {% block check_url %}{{ check_url }}{% endblock %}
 {% block check_timestamp %}{{ timestamp }}{% endblock %}
-{% block check_interval %}{{ request.registry.settings['zam.check.on_updates_for_the_index'] }}{% endblock %}
+{% block check_interval %}{{ request.registry.settings['zam.check_for.index_updates'] }}{% endblock %}
 
 {% block scripts %}
     <script src="{{ request.static_url('zam_repondeur:static/tinysort/tinysort.min.js') }}"></script>

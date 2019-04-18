@@ -26,7 +26,7 @@ echo "Rotating local backups"
 # See: https://pypi.org/project/rotate-backups/ for options
 rotate-backups --prefer-recent --relaxed --include='*.sql.gz' \
     --hourly=24 \
-    --daily=30 \
+    --daily=7 \
     --weekly=4 \
     --monthly=12 \
     --yearly=always \

@@ -10,18 +10,21 @@ sudo -Hiu postgres LANG="C.UTF-8" LC_CTYPE="C.UTF-8" \
     pg_dump --dbname=zam --create --encoding=UTF8 \
     --file="$BACKUP_DIR/$FILENAME"
 
+echo "Compressing backup"
+gzip $FILENAME
+
 if [ -n "$OS_STORAGE_URL" ] && [ -n "$OS_AUTH_TOKEN" ]; then
     echo "Uploading backup to OVH Public Cloud Storage"
     python3-swift -v \
         --os-storage-url="$OS_STORAGE_URL" \
         --os-auth-token="$OS_AUTH_TOKEN" \
-        upload db "$BACKUP_DIR/$FILENAME" \
-        --object-name="$FILENAME"
+        upload db "$BACKUP_DIR/$FILENAME.gz" \
+        --object-name="$FILENAME.gz"
 fi
 
 echo "Rotating local backups"
 # See: https://pypi.org/project/rotate-backups/ for options
-rotate-backups --prefer-recent --relaxed --include='*.sql' \
+rotate-backups --prefer-recent --relaxed --include='*.sql.gz' \
     --hourly=24 \
     --daily=30 \
     --weekly=4 \

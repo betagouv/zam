@@ -3,8 +3,8 @@ from contextlib import contextmanager
 
 import pytest
 
-from fixtures.dossiers import mock_dossiers  # noqa: F401
-from fixtures.organes_acteurs import mock_organes_acteurs  # noqa: F401
+from fixtures.dossiers import *  # noqa: F401,F403
+from fixtures.organes_acteurs import *  # noqa: F401,F403
 from fixtures.lectures import *  # noqa: F401,F403
 from fixtures.users import *  # noqa: F401,F403
 from testapp import TestApp as BaseTestApp

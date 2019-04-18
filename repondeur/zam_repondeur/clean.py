@@ -1,7 +1,7 @@
 import threading
 from html import unescape
 
-from bleach import Cleaner
+from bleach.sanitizer import Cleaner
 
 
 ALLOWED_TAGS = [

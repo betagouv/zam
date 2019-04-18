@@ -3,7 +3,7 @@
 -e git+https://github.com/regardscitoyens/legipy.git@2fa6ff95498f896ea5e8c9a63c1f29b2fa2244ab#egg=legipy
 -e git+https://github.com/regardscitoyens/senapy.git@800b1d1a696a6ac832549c8b6f46c73f3027b9ad#egg=senapy
 -e git+https://github.com/regardscitoyens/the-law-factory-parser.git@dad1ccf46f9348a545b1325bcc129561b69f4dbd#egg=tlfp
-alembic==1.0.5
+alembic==1.0.9
 attrs==17.4.0               # anpy: < 17.5, >= 17.4
 beautifulsoup4==4.6.3       # lawfactory_utils, legipy: < 4.7, >= 4.6
 bleach==3.0.2

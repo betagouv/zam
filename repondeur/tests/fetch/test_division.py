@@ -131,6 +131,7 @@ def test_parse_article_additionnel(text, type_, num, mult, pos):
         ("Soussection 2", "sous-section", "2", "", ""),
         ("Sous-section 2", "sous-section", "2", "", ""),
         ("Sous-section 2 : extras", "sous-section", "2", "", ""),
+        ("Chapitre IER : Bla bla", "chapitre", "Ier", "", ""),
         ("Chapitre III", "chapitre", "III", "", ""),
         ("Motions", "motion", "", "", ""),
         ("Articles 55 septdecies à 55 novodecies", "article", "55", "septdecies", ""),

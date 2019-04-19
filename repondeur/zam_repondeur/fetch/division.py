@@ -25,9 +25,9 @@ def case_insensitive_string_from(*expected_strings: str) -> Any:
 
 # Numéro
 
-CHIFFRES_ARABES = string("1er").result("1") | regex(r"\d+")
+CHIFFRES_ARABES = case_insensitive_string("1er").result("1") | regex(r"\d+")
 
-CHIFFRES_ROMAINS = string("Ier") | regex(r"[IVXLCDM]+")
+CHIFFRES_ROMAINS = case_insensitive_string("Ier") | regex(r"[IVXLCDM]+")
 
 LETTRES = regex(r"[A-Z]+")
 

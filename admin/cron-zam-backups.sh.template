@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 BACKUP_DIR=/var/backups/zam
 FILENAME=postgres-dump-$(date --utc --iso-8601=seconds).sql

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 BACKUP_DIR=/var/backups/zam
 FILENAME=postgres-dump-$(date --utc --iso-8601=seconds).sql
@@ -11,7 +11,7 @@ sudo -Hiu postgres LANG="C.UTF-8" LC_CTYPE="C.UTF-8" \
     --file="$BACKUP_DIR/$FILENAME"
 
 echo "Compressing backup"
-gzip $FILENAME
+gzip "$BACKUP_DIR/$FILENAME"
 
 if [ -n "$OS_STORAGE_URL" ] && [ -n "$OS_AUTH_TOKEN" ]; then
     echo "Uploading backup to OVH Public Cloud Storage"

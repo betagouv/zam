@@ -36,7 +36,7 @@ jobs:
           name: Install Python deps
           command: |
             cd repondeur
-            sudo pip install -r requirements.txt -r requirements-dev.txt -e .
+            sudo pip install --no-use-pep517 -r requirements.txt -r requirements-dev.txt -e .
       - run:
           name: Check formatting with black
           command: |

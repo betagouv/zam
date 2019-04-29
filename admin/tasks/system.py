@@ -62,13 +62,14 @@ def http(ctx):
         "/etc/nginx/snippets/letsencrypt.conf",
     )
     sudo_put(ctx, "files/nginx/ssl.conf", "/etc/nginx/snippets/ssl.conf")
-    certif = f"/etc/letsencrypt/live/{ctx.host}/fullchain.pem"
+    hostname = ctx.run("hostname").stdout
+    certif = f"/etc/letsencrypt/live/{hostname}/fullchain.pem"
     exists = ctx.sudo(f'[ -f "{certif}" ]', warn=True)
     if exists.ok:
         with template_local_file(
             "files/nginx/https.conf.template",
             "files/nginx/https.conf",
-            {"host": ctx.host, "timeout": ctx.config["request_timeout"]},
+            {"host": hostname, "timeout": ctx.config["request_timeout"]},
         ):
             sudo_put(
                 ctx, "files/nginx/https.conf", "/etc/nginx/sites-available/default"
@@ -78,7 +79,7 @@ def http(ctx):
         with template_local_file(
             "files/nginx/http.conf.template",
             "files/nginx/http.conf",
-            {"host": ctx.host},
+            {"host": hostname},
         ):
             sudo_put(ctx, "files/nginx/http.conf", "/etc/nginx/sites-available/default")
     ctx.sudo("systemctl restart nginx")
@@ -96,10 +97,11 @@ def basicauth(ctx, user="demozam"):
 def letsencrypt(ctx):
     ctx.sudo("add-apt-repository ppa:certbot/certbot")
     install_packages(ctx, "certbot", "software-properties-common")
+    hostname = ctx.run("hostname").stdout
     with template_local_file(
         "files/letsencrypt/certbot.ini.template",
         "files/letsencrypt/certbot.ini",
-        {"host": ctx.host},
+        {"host": hostname},
     ):
         sudo_put(ctx, "files/letsencrypt/certbot.ini", "/srv/zam/certbot.ini")
     sudo_put(ctx, "files/letsencrypt/ssl-renew", "/etc/cron.weekly/ssl-renew")

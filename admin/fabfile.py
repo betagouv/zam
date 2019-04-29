@@ -21,9 +21,6 @@ from tools import (
 )
 
 
-REQUEST_TIMEOUT = 180
-
-
 # Rollbar token with permissions to post items & deploys
 # cf. https://rollbar.com/zam/zam/settings/access_tokens/
 ROLLBAR_TOKEN = "8173da84cb344c169bdee21f91e8f529"
@@ -67,7 +64,7 @@ def http(ctx):
         with template_local_file(
             "nginx-https.conf.template",
             "nginx-https.conf",
-            {"host": ctx.host, "timeout": REQUEST_TIMEOUT},
+            {"host": ctx.host, "timeout": ctx.config["request_timeout"]},
         ):
             sudo_put(ctx, "nginx-https.conf", "/etc/nginx/sites-available/default")
     else:
@@ -193,7 +190,7 @@ def deploy_repondeur(
                 "auth_secret": auth_secret,
                 "rollbar_token": rollbar_token,
                 "gunicorn_workers": gunicorn_workers,
-                "gunicorn_timeout": REQUEST_TIMEOUT,
+                "gunicorn_timeout": ctx.config["request_timeout"],
             },
         )
         if wipe:

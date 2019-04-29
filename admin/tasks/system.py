@@ -17,10 +17,8 @@ def system(ctx):
     install_packages(
         ctx,
         "git",
-        "libpq-dev",
         "locales",
         "nginx",
-        "postgresql",
         "python3",
         "python3-pip",
         "python3-venv",
@@ -35,7 +33,20 @@ def system(ctx):
     create_user(ctx, "zam", "/srv/zam/")
     ctx.sudo("chown zam:users /srv/zam/")
     ctx.sudo("chsh -s /bin/bash zam")
+    setup_postgres(ctx)
     setup_unattended_upgrades(ctx)
+
+
+@task
+def setup_postgres(ctx):
+    install_packages(ctx, "postgresql", "libpq-dev")
+    sudo_put(
+        ctx,
+        "files/postgres.conf",
+        "/etc/postgresql/10/main/conf.d/zam.conf",
+        chown="postgres",
+    )
+    ctx.sudo("systemctl reload postgresql@10-main")
 
 
 @task

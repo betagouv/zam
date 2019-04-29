@@ -29,6 +29,23 @@ def system(ctx):
     create_user(ctx, "zam", "/srv/zam/")
     ctx.sudo("chown zam:users /srv/zam/")
     ctx.sudo("chsh -s /bin/bash zam")
+    setup_unattended_upgrades(ctx)
+
+
+@task
+def setup_unattended_upgrades(ctx):
+    install_packages(ctx, "unattended-upgrades", "bsd-mailx")
+    admins = ctx.config.get("admins", [])
+    with template_local_file(
+        "files/unattended-upgrades.conf.template",
+        "files/unattended-upgrades.conf",
+        {"email": ",".join(admins)},
+    ):
+        sudo_put(
+            ctx,
+            "files/unattended-upgrades.conf",
+            "/etc/apt/apt.conf.d/50unattended-upgrades",
+        )
 
 
 @task

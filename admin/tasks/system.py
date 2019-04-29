@@ -31,27 +31,33 @@ def system(ctx):
     ctx.sudo("chsh -s /bin/bash zam")
 
 
-
-
 @task
 def http(ctx):
-    sudo_put(ctx, "letsencrypt.conf", "/etc/nginx/snippets/letsencrypt.conf")
-    sudo_put(ctx, "ssl.conf", "/etc/nginx/snippets/ssl.conf")
+    sudo_put(
+        ctx,
+        "files/letsencrypt/letsencrypt.conf",
+        "/etc/nginx/snippets/letsencrypt.conf",
+    )
+    sudo_put(ctx, "files/nginx/ssl.conf", "/etc/nginx/snippets/ssl.conf")
     certif = f"/etc/letsencrypt/live/{ctx.host}/fullchain.pem"
     exists = ctx.sudo(f'[ -f "{certif}" ]', warn=True)
     if exists.ok:
         with template_local_file(
-            "nginx-https.conf.template",
-            "nginx-https.conf",
+            "files/nginx/https.conf.template",
+            "files/nginx/https.conf",
             {"host": ctx.host, "timeout": ctx.config["request_timeout"]},
         ):
-            sudo_put(ctx, "nginx-https.conf", "/etc/nginx/sites-available/default")
+            sudo_put(
+                ctx, "files/nginx/https.conf", "/etc/nginx/sites-available/default"
+            )
     else:
         # Before letsencrypt.
         with template_local_file(
-            "nginx-http.conf.template", "nginx-http.conf", {"host": ctx.host}
+            "files/nginx/http.conf.template",
+            "files/nginx/http.conf",
+            {"host": ctx.host},
         ):
-            sudo_put(ctx, "nginx-http.conf", "/etc/nginx/sites-available/default")
+            sudo_put(ctx, "files/nginx/http.conf", "/etc/nginx/sites-available/default")
     ctx.sudo("systemctl restart nginx")
 
 
@@ -67,9 +73,13 @@ def basicauth(ctx, user="demozam"):
 def letsencrypt(ctx):
     ctx.sudo("add-apt-repository ppa:certbot/certbot")
     install_packages(ctx, "certbot", "software-properties-common")
-    with template_local_file("certbot.ini.template", "certbot.ini", {"host": ctx.host}):
-        sudo_put(ctx, "certbot.ini", "/srv/zam/certbot.ini")
-    sudo_put(ctx, "ssl-renew", "/etc/cron.weekly/ssl-renew")
+    with template_local_file(
+        "files/letsencrypt/certbot.ini.template",
+        "files/letsencrypt/certbot.ini",
+        {"host": ctx.host},
+    ):
+        sudo_put(ctx, "files/letsencrypt/certbot.ini", "/srv/zam/certbot.ini")
+    sudo_put(ctx, "files/letsencrypt/ssl-renew", "/etc/cron.weekly/ssl-renew")
     ctx.sudo("chmod +x /etc/cron.weekly/ssl-renew")
     ctx.sudo("certbot certonly -c /srv/zam/certbot.ini --non-interactive --agree-tos")
 

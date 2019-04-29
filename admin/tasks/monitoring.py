@@ -11,8 +11,8 @@ def monitoring(ctx):
     install_packages(
         ctx, "munin", "munin-node", "libdbd-pg-perl", "libparse-http-useragent-perl"
     )
-    sudo_put(ctx, "munin/munin.conf", "/etc/munin/munin.conf")
-    sudo_put(ctx, "munin/munin-node.conf", "/etc/munin/munin-node.conf")
+    sudo_put(ctx, "files/munin/munin.conf", "/etc/munin/munin.conf")
+    sudo_put(ctx, "files/munin/munin-node.conf", "/etc/munin/munin-node.conf")
     _munin_setup_nginx_plugin(ctx)
     _munin_setup_postgres_plugin(ctx)
     _munin_setup_redis_plugin(ctx)
@@ -20,7 +20,9 @@ def monitoring(ctx):
 
 
 def _munin_setup_nginx_plugin(ctx):
-    sudo_put(ctx, "munin/munin-nginx.conf", "/etc/munin/plugin-conf.d/munin-nginx.conf")
+    sudo_put(
+        ctx, "files/munin/munin-nginx.conf", "/etc/munin/plugin-conf.d/munin-nginx.conf"
+    )
     ctx.sudo(
         "ln -sf '/usr/share/munin/plugins/nginx_request' '/etc/munin/plugins/nginx_request'"
     )
@@ -81,7 +83,7 @@ def _munin_setup_postgres_plugin(ctx):
 
 
 def _munin_setup_redis_plugin(ctx):
-    sudo_put(ctx, "munin/munin-redis.sh", "/usr/share/munin/plugins/redis_")
+    sudo_put(ctx, "files/munin/munin-redis.sh", "/usr/share/munin/plugins/redis_")
     ctx.sudo("chmod +x /usr/share/munin/plugins/redis_")
     ctx.sudo(
         "ln -sf '/usr/share/munin/plugins/redis_' '/etc/munin/plugins/redis_127.0.0.1_6379'"

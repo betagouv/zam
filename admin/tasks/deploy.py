@@ -186,14 +186,14 @@ def setup_webapp_service(ctx):
         )
         + " || exit 0"
     )
-    sudo_put(ctx, "zam_webapp.service", "/etc/systemd/system/zam_webapp.service")
+    sudo_put(ctx, "files/zam_webapp.service", "/etc/systemd/system/zam_webapp.service")
     ctx.sudo("systemctl enable zam_webapp")
     ctx.sudo("systemctl restart zam_webapp")
 
 
 @task
 def setup_worker_service(ctx):
-    sudo_put(ctx, "zam_worker.service", "/etc/systemd/system/zam_worker.service")
+    sudo_put(ctx, "files/zam_worker.service", "/etc/systemd/system/zam_worker.service")
     ctx.sudo("systemctl enable zam_worker")
     ctx.sudo("systemctl restart zam_worker")
 

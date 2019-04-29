@@ -4,6 +4,12 @@ from tools import create_user, install_packages, sudo_put, template_local_file
 
 
 @task
+def set_hostname(ctx, hostname):
+    ctx.sudo(f"hostname {hostname}")
+    ctx.sudo(f"echo {hostname} | sudo tee /etc/hostname")
+
+
+@task
 def system(ctx):
     ctx.sudo(
         "curl -L -O https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb"

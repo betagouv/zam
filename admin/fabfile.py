@@ -21,11 +21,6 @@ from tools import (
 )
 
 
-# Rollbar token with permissions to post items & deploys
-# cf. https://rollbar.com/zam/zam/settings/access_tokens/
-ROLLBAR_TOKEN = "8173da84cb344c169bdee21f91e8f529"
-
-
 @task
 def system(ctx):
     ctx.sudo(
@@ -133,7 +128,6 @@ def deploy_repondeur(
     message="",
     session_secret="",
     auth_secret="",
-    rollbar_token=ROLLBAR_TOKEN,
     wipe=False,
     dbname="zam",
     dbuser="zam",
@@ -154,7 +148,7 @@ def deploy_repondeur(
     environment = ctx.host.split(".", 1)[0]
 
     deploy_id = rollbar_deploy_start(
-        ctx, rollbar_token, branch, environment, comment=f"[{branch}] {message}"
+        ctx, branch, environment, comment=f"[{branch}] {message}"
     )
 
     try:
@@ -188,7 +182,7 @@ def deploy_repondeur(
                 "branch": branch,
                 "session_secret": session_secret,
                 "auth_secret": auth_secret,
-                "rollbar_token": rollbar_token,
+                "rollbar_token": ctx.config["rollbar_token"],
                 "gunicorn_workers": gunicorn_workers,
                 "gunicorn_timeout": ctx.config["request_timeout"],
             },
@@ -200,9 +194,11 @@ def deploy_repondeur(
         setup_webapp_service(ctx)
         setup_worker_service(ctx)
     except Exception as exc:
-        rollbar_deploy_update(rollbar_token, deploy_id, status="failed")
+        rollbar_deploy_update(ctx.config["rollbar_token"], deploy_id, status="failed")
     else:
-        rollbar_deploy_update(rollbar_token, deploy_id, status="succeeded")
+        rollbar_deploy_update(
+            ctx.config["rollbar_token"], deploy_id, status="succeeded"
+        )
 
 
 def retrieve_secret_from_config(ctx, name):
@@ -309,13 +305,13 @@ def setup_worker_service(ctx):
     ctx.sudo("systemctl restart zam_worker")
 
 
-def rollbar_deploy_start(ctx, rollbar_token, branch, environment, comment):
+def rollbar_deploy_start(ctx, branch, environment, comment):
     local_username = ctx.local("whoami").stdout
     revision = ctx.local(f'git log -n 1 --pretty=format:"%H" origin/{branch}').stdout
     resp = requests.post(
         "https://api.rollbar.com/api/1/deploy/",
         {
-            "access_token": rollbar_token,
+            "access_token": ctx.config["rollbar_token"],
             "environment": environment,
             "local_username": local_username,
             "revision": revision,

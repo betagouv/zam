@@ -5,3 +5,7 @@ ssh_keys:
 
 # How long before we give up on a long-running request (e.g. PDF generation)?
 request_timeout: 180
+
+# Rollbar token with permissions to post items & deploys
+# cf. https://rollbar.com/zam/zam/settings/access_tokens/
+rollbar_token: 8173da84cb344c169bdee21f91e8f529

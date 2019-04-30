@@ -78,4 +78,4 @@ RUN apt-get update && \
     apt-get autoremove --yes && \
     rm -rf /var/lib/apt/lists/*
 COPY . ./
-RUN python3.6 -m pip install --no-cache-dir --src=/src -e .
+RUN python3.6 -m pip install --no-cache-dir --src=/src --no-use-pep517 -e .

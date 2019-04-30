@@ -224,7 +224,10 @@ def create_virtualenv(ctx, venv_dir, user):
 def install_requirements(ctx, app_dir, venv_dir, user):
     ctx.sudo(f"{venv_dir}/bin/pip install --upgrade pip setuptools", user=user)
     cmd = (
-        f"{venv_dir}/bin/pip install -r requirements.txt -r requirements-prod.txt -e ."
+        f"{venv_dir}/bin/pip install "
+        "-r requirements.txt "
+        "-r requirements-prod.txt "
+        "--no-use-pep517 -e ."
     )
     ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 

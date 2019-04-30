@@ -24,6 +24,8 @@ class LectureEvent(Event):
 
     @property
     def template_vars(self) -> dict:
+        if self.user:
+            return {"user": self.user.display_name, "email": self.user.email}
         return {}
 
     def render_summary(self) -> str:
@@ -120,6 +122,21 @@ class AmendementsNonTrouves(LectureEvent):
     icon = "document"
 
     summary_template = Template("Les amendements n’ont pas été trouvés.")
+
+    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
+        super().__init__(request, lecture, **kwargs)
+
+    def apply(self) -> None:
+        pass
+
+
+class ReponsesImportees(LectureEvent):
+    __mapper_args__ = {"polymorphic_identity": "reponses_importees"}
+    icon = "document"
+
+    summary_template = Template(
+        "<abbr title='$email'>$user</abbr> a importé des réponses d’un fichier CSV."
+    )
 
     def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
         super().__init__(request, lecture, **kwargs)

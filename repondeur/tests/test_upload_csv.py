@@ -121,13 +121,9 @@ class TestPostForm:
         assert amendement.position == 2
 
     @pytest.mark.parametrize("filename", TEST_FILES)
-    def test_upload_updates_modification_date(
-        self, app, lecture_an, filename, user_david
-    ):
+    def test_upload_adds_an_event(self, app, lecture_an, filename, user_david):
         from zam_repondeur.models import Lecture
-
-        with transaction.manager:
-            initial_modified_at = lecture_an.modified_at
+        from zam_repondeur.models.events.lecture import ReponsesImportees
 
         self._upload_csv(app, filename, user=user_david)
 
@@ -138,7 +134,8 @@ class TestPostForm:
             partie=None,
             organe=lecture_an.organe,
         )
-        assert lecture.modified_at != initial_modified_at
+        events = {type(event): event for event in lecture.events}
+        assert ReponsesImportees in events
 
     def test_upload_with_comments(self, app, user_david):
         from zam_repondeur.models import DBSession, Amendement

@@ -57,7 +57,6 @@ def settings():
         # Only wait for 1 second to speed up integration tests.
         "zam.check_for.amendement_stolen_while_editing": 1,
         "zam.check_for.transfers_from_to_my_table": 1,
-        "zam.check_for.index_updates": 1,
     }
 
 

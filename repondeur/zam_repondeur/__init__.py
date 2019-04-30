@@ -34,8 +34,6 @@ BASE_SETTINGS = {
     # Keep it low: potential data loss for the user.
     "zam.check_for.amendement_stolen_while_editing": 30,
     "zam.check_for.transfers_from_to_my_table": 60,
-    # Keep it high: lot of modifications happen in the meantime.
-    "zam.check_for.index_updates": 180,
 }
 
 

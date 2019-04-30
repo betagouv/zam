@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Any
 from string import Template
 
@@ -44,7 +43,7 @@ class ArticlesRecuperes(LectureEvent):
         super().__init__(request, lecture, **kwargs)
 
     def apply(self) -> None:
-        self.lecture.modified_at = datetime.utcnow()
+        pass
 
 
 class AmendementsRecuperes(LectureEvent):

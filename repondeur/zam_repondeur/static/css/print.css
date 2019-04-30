@@ -63,7 +63,7 @@ table {
 .page {
   page-break-after: always;
 }
-  .page div {
+  .page > div {
     margin: 50pt 30pt;
     text-align: justify;
   }

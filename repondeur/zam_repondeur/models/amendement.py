@@ -134,7 +134,6 @@ class Amendement(Base):
 
     pk: int = Column(Integer, primary_key=True)
     created_at: datetime = Column(DateTime, nullable=False)
-    modified_at: datetime = Column(DateTime, nullable=False)
 
     # Meta informations.
     num: int = Column(Integer, nullable=False)
@@ -238,7 +237,6 @@ class Amendement(Base):
             alinea=alinea,
             parent=parent,
             created_at=now,
-            modified_at=now,
         )
         user_content = AmendementUserContent(
             amendement=amendement,
@@ -259,11 +257,6 @@ class Amendement(Base):
         # Useful proxy to be able to use it as a sort key in `group_amendements`.
         reponse: Reponse = self.user_content.full_reponse()
         return reponse
-
-    @property
-    def modified_at_timestamp(self) -> float:
-        timestamp: float = (self.modified_at - datetime(1970, 1, 1)).total_seconds()
-        return timestamp
 
     @property
     def sort_key(self) -> Tuple[bool, int, int]:

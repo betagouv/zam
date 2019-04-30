@@ -3,7 +3,6 @@ import logging
 import re
 from collections import OrderedDict
 
-from datetime import datetime
 from http import HTTPStatus
 from urllib.parse import urlparse
 from typing import Dict, Iterable, List, Optional, Tuple
@@ -86,9 +85,6 @@ class Senat(RemoteSource):
             matricule=extract_matricule(row["Fiche Sénateur"]),
             date_depot=parse_date(row["Date de dépôt "]),
         )
-
-        if not created and modified:
-            amendement.modified_at = datetime.utcnow()
 
         return amendement, created
 

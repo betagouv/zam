@@ -1,7 +1,6 @@
 import logging
 import re
 from collections import OrderedDict
-from datetime import datetime
 from http import HTTPStatus
 from typing import Dict, List, Optional, Set, Tuple, Union
 from urllib.parse import urljoin
@@ -220,9 +219,6 @@ class AssembleeNationale(RemoteSource):
             groupe=groupe,
             auteur=auteur,
         )
-
-        if not created and modified:
-            amendement.modified_at = datetime.utcnow()
 
         DBSession.flush()  # make sure foreign keys are updated
 

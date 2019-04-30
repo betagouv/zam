@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import date
 from typing import Any, Dict
 
 from pyramid.httpexceptions import HTTPFound
@@ -59,7 +59,6 @@ class AmendementEdit:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        now = datetime.utcnow()
         avis = self.request.POST.get("avis", "")
         objet = clean_html(self.request.POST.get("objet", ""))
         reponse = clean_html(self.request.POST.get("reponse", ""))
@@ -82,10 +81,6 @@ class AmendementEdit:
                 )
             self.request.session.flash(Message(cls="danger", text=message))
             return HTTPFound(location=self.my_table_url)
-
-        if avis_changed or objet_changed or reponse_changed or comments_changed:
-            self.amendement.modified_at = now
-            self.lecture.modified_at = now
 
         if avis_changed:
             AvisAmendementModifie.create(self.request, self.amendement, avis)

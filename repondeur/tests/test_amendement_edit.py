@@ -224,7 +224,6 @@ def test_post_amendement_edit_form(
     assert amendement.user_content.avis is None
     assert amendement.user_content.objet is None
     assert amendement.user_content.reponse is None
-    initial_amendement_modified_at = amendement.modified_at
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
@@ -253,7 +252,6 @@ def test_post_amendement_edit_form(
         amendement.user_content.comments
         == "Avec des <table><tbody><tr><td>commentaires</td></tr></tbody></table>"
     )
-    assert initial_amendement_modified_at < amendement.modified_at
 
     # Should create events.
     assert len(amendement.events) == 4
@@ -324,7 +322,6 @@ def test_post_amendement_edit_form_and_transfer(
     assert amendement.user_content.avis is None
     assert amendement.user_content.objet is None
     assert amendement.user_content.reponse is None
-    initial_amendement_modified_at = amendement.modified_at
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
@@ -353,7 +350,6 @@ def test_post_amendement_edit_form_and_transfer(
         amendement.user_content.comments
         == "Avec des <table><tbody><tr><td>commentaires</td></tr></tbody></table>"
     )
-    assert initial_amendement_modified_at < amendement.modified_at
 
     # Should create events.
     assert len(amendement.events) == 4
@@ -375,7 +371,6 @@ def test_post_amendement_edit_form_gouvernemental(
     assert amendement.user_content.objet is None
     assert amendement.user_content.reponse is None
     assert amendement.gouvernemental
-    initial_amendement_modified_at = amendement.modified_at
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
@@ -402,19 +397,14 @@ def test_post_amendement_edit_form_gouvernemental(
         amendement.user_content.comments
         == "Avec des <table><tbody><tr><td>commentaires</td></tr></tbody></table>"
     )
-    assert initial_amendement_modified_at < amendement.modified_at
 
 
-def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
+def test_post_amendement_edit_form_creates_event_only_if_modified(
     app, lecture_an, amendements_an, user_david, user_david_table_an
 ):
-    from zam_repondeur.models import Amendement, DBSession, Lecture
+    from zam_repondeur.models import DBSession
 
     amendement = amendements_an[0]
-
-    # Let's remember the initial modification dates
-    initial_lecture_modified_at = lecture_an.modified_at
-    initial_amendement_modified_at = amendement.modified_at
 
     # Let's set a response on the amendement
     with transaction.manager:
@@ -435,23 +425,6 @@ def test_post_amendement_edit_form_updates_modification_dates_only_if_modified(
     form["reponse"] = "  Une réponse très appropriée"
     form.submit("save")
 
-    # The lecture modification date should not be updated
-    lecture = Lecture.get(
-        chambre=lecture_an.chambre,
-        session_or_legislature=lecture_an.session,
-        num_texte=lecture_an.texte.numero,
-        partie=None,
-        organe=lecture_an.organe,
-    )
-    assert initial_lecture_modified_at == lecture.modified_at
-
-    # The amendement modification date should not be updated
-    amendement = (
-        DBSession.query(Amendement)
-        .filter(Amendement.num == amendements_an[0].num)
-        .first()
-    )
-    assert initial_amendement_modified_at == amendement.modified_at
-
-    # And no event should be created.
+    # No event should be created
+    DBSession.add(amendement)
     assert len(amendement.events) == 0

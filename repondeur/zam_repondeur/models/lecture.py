@@ -8,6 +8,7 @@ from .amendement import Amendement
 from .article import Article
 from .base import Base, DBSession
 from .division import SubDiv
+from .events.base import LastEventMixin
 from .texte import Chambre, Texte
 from .users import Team
 
@@ -24,7 +25,7 @@ SESSIONS = {
 }
 
 
-class Lecture(Base):
+class Lecture(Base, LastEventMixin):
     __tablename__ = "lectures"
     __table_args__ = (
         Index(
@@ -43,8 +44,7 @@ class Lecture(Base):
     partie = Column(Integer, nullable=True)  # only for PLF
     organe = Column(Text)
     titre = Column(Text)
-    created_at = Column(DateTime)
-    modified_at = Column(DateTime)
+    created_at: datetime = Column(DateTime)
     amendements = relationship(
         Amendement,
         order_by=(Amendement.position, Amendement.num),
@@ -123,29 +123,6 @@ class Lecture(Base):
             other.texte.numero,
             other.organe,
         )
-
-    @property
-    def modified_at_timestamp(self) -> float:
-        timestamp: float = (self.modified_at - datetime(1970, 1, 1)).total_seconds()
-        return timestamp
-
-    @property
-    def modified_amendements_at_timestamp(self) -> float:
-        if not self.amendements:
-            return 0
-        max_modified_at: float = max(
-            amendement.modified_at_timestamp for amendement in self.amendements
-        )
-        return max_modified_at
-
-    def modified_amendements_numbers_since(self, timestamp: float) -> List[str]:
-        if not self.amendements:
-            return []
-        return [
-            str(amendement)
-            for amendement in self.amendements
-            if amendement.modified_at_timestamp > timestamp
-        ]
 
     @property
     def displayable(self) -> bool:
@@ -240,7 +217,6 @@ class Lecture(Base):
             partie=partie,
             owned_by_team=owned_by_team,
             created_at=now,
-            modified_at=now,
         )
         DBSession.add(lecture)
         return lecture

@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Any
 from string import Template
 
@@ -15,7 +14,7 @@ from ..article import Article
 class ArticleEvent(Event):
     article_pk = Column(Integer, ForeignKey("articles.pk"))
     article = relationship(
-        Article, backref=backref("events", order_by=Event.created_at.desc())
+        Article, backref=backref("events", order_by="Event.created_at.desc()")
     )
 
     def __init__(self, request: Request, article: Article, **kwargs: Any):
@@ -71,7 +70,6 @@ class ContenuArticleModifie(ArticleEvent):
 
     def apply(self) -> None:
         self.article.content = self.data["new_value"]
-        self.article.modified_at = datetime.utcnow()
 
     def render_details(self) -> str:
         return ""
@@ -110,7 +108,6 @@ class TitreArticleModifie(ArticleEvent):
 
     def apply(self) -> None:
         self.article.user_content.title = self.data["new_value"]
-        self.article.modified_at = datetime.utcnow()
 
 
 class PresentationArticleModifiee(ArticleEvent):
@@ -136,4 +133,3 @@ class PresentationArticleModifiee(ArticleEvent):
 
     def apply(self) -> None:
         self.article.user_content.presentation = self.data["new_value"]
-        self.article.modified_at = datetime.utcnow()

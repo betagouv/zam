@@ -1,6 +1,6 @@
 from datetime import datetime
 from uuid import uuid4
-from typing import Any, Union
+from typing import Any, List, Optional, Union
 
 from pyramid.request import Request
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
@@ -20,7 +20,7 @@ class Event(Base):
     __mapper_args__ = {"polymorphic_identity": "event", "polymorphic_on": type}
 
     pk = Column(UUIDType, primary_key=True, default=uuid4)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    created_at: datetime = Column(DateTime, nullable=False, default=datetime.utcnow)
 
     user_pk = Column(Integer, ForeignKey("users.pk"), nullable=True)
     user = relationship(User)
@@ -58,3 +58,27 @@ class Event(Base):
         event.apply()
         DBSession.add(event)
         return event
+
+
+class LastEventMixin:
+
+    created_at: datetime
+    events: List[Event]
+
+    @property
+    def last_event(self) -> Optional[Event]:
+        if self.events:
+            return self.events[0]
+        return None
+
+    @property
+    def last_event_datetime(self) -> datetime:
+        event = self.last_event
+        if event:
+            return event.created_at
+        return self.created_at
+
+    @property
+    def last_event_timestamp(self) -> float:
+        delta = self.last_event_datetime - datetime(1970, 1, 1)
+        return delta.total_seconds()

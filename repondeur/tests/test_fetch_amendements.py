@@ -24,8 +24,6 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
         # our changes will be committed with the current transaction
         DBSession.add(amendement)
 
-    initial_modified_at = amendement.modified_at
-
     # Update amendements
     with patch(
         "zam_repondeur.fetch.senat.amendements._fetch_all"
@@ -173,10 +171,6 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
     assert amendement.user_content.objet == "Objet"
     assert amendement.user_content.reponse == "Réponse"
 
-    # Check that the modified date was updated
-    assert amendement.modified_at > amendement.created_at
-    assert amendement.modified_at > initial_modified_at
-
     # Check that the position was changed on the updated amendement
     assert amendement.position == 3
 
@@ -189,10 +183,7 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
-    amendement_6 = Amendement.create(
-        lecture=lecture_an, article=article1_an, num=6, position=1
-    )
-    DBSession.add(amendement_6)
+    Amendement.create(lecture=lecture_an, article=article1_an, num=6, position=1)
 
     amendement_9 = Amendement.create(
         lecture=lecture_an,
@@ -203,9 +194,6 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
         objet="Objet",
         reponse="Réponse",
     )
-    DBSession.add(amendement_9)
-
-    initial_modified_at_9 = amendement_9.modified_at
 
     with patch(
         "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
@@ -270,17 +258,9 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
     # Check that the position was changed on the updated amendement
     assert amendement_9.position == 3
 
-    # Check that the modified date was updated
-    assert amendement_9.modified_at > amendement_9.created_at
-    assert amendement_9.modified_at > initial_modified_at_9
-
     # Check that the position was set for the new amendement
     amendement_7 = DBSession.query(Amendement).filter(Amendement.num == 7).one()
     assert amendement_7.position == 2
-
-    # Check that the modified date was initialized
-    assert amendement_7.modified_at is not None
-    assert amendement_7.modified_at == amendement_7.created_at
 
 
 def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, caplog):

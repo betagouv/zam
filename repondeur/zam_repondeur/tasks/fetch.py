@@ -2,7 +2,6 @@
 NB: make sure tasks.huey.init_huey() has been called before importing this module
 """
 import logging
-from datetime import datetime
 
 import transaction
 
@@ -60,4 +59,3 @@ def fetch_amendements(lecture_pk: int) -> None:
 
         if amendements and not (created or errored):
             AmendementsAJour.create(request=None, lecture=lecture)
-        lecture.modified_at = datetime.utcnow()

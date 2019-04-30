@@ -35,8 +35,6 @@ def test_get_form(app, lecture_an, amendements_an, user_david):
 def test_post_form(app, lecture_an, article1_an, user_david):
     from zam_repondeur.models import Amendement, Lecture
 
-    initial_modified_at = lecture_an.modified_at
-
     # Initially, we only have one amendement (#135), with a response
     with transaction.manager:
         Amendement.create(lecture=lecture_an, article=article1_an, num=135, position=1)
@@ -76,30 +74,15 @@ def test_post_form(app, lecture_an, article1_an, user_david):
 
     assert resp.status_code == 200
 
-    with transaction.manager:
-        lecture_an = Lecture.get(
-            chambre=lecture_an.chambre,
-            session_or_legislature=lecture_an.session,
-            num_texte=lecture_an.texte.numero,
-            partie=None,
-            organe=lecture_an.organe,
-        )
-        events = lecture_an.events
-        texte = lecture_an.texte
-        organe = lecture_an.organe
-
+    lecture_an = Lecture.get(
+        chambre=lecture_an.chambre,
+        session_or_legislature=lecture_an.session,
+        num_texte=lecture_an.texte.numero,
+        partie=None,
+        organe=lecture_an.organe,
+    )
+    events = lecture_an.events
     assert len(events) == 2
     assert events[0].render_summary() == "Le contenu des articles a été récupéré."
     assert events[1].render_summary() == "4 nouveaux amendements récupérés."
     assert "Rafraichissement des amendements et des articles en cours." in resp.text
-
-    # Check that the update timestamp has been updated
-    with transaction.manager:
-        lecture = Lecture.get(
-            chambre=lecture_an.chambre,
-            session_or_legislature=lecture_an.session,
-            num_texte=texte.numero,
-            partie=None,
-            organe=organe,
-        )
-        assert lecture.modified_at != initial_modified_at

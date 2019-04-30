@@ -14,7 +14,7 @@ from ..amendement import Amendement
 class AmendementEvent(Event):
     amendement_pk = Column(Integer, ForeignKey("amendements.pk"))
     amendement = relationship(
-        Amendement, backref=backref("events", order_by=Event.created_at.desc())
+        Amendement, backref=backref("events", order_by="Event.created_at.desc()")
     )
 
     icon = ""

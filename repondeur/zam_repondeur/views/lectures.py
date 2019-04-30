@@ -209,8 +209,6 @@ def list_amendements(context: AmendementCollection, request: Request) -> dict:
         "current_tab": "index",
         "amendements": lecture.amendements,
         "articles": lecture.articles,
-        "check_url": request.resource_path(context.parent, "check"),
-        "timestamp": lecture.modified_amendements_at_timestamp,
     }
 
 
@@ -302,22 +300,6 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
         )
     )
     return HTTPFound(location=request.resource_url(context, "amendements"))
-
-
-@view_config(context=LectureResource, name="check", renderer="json")
-def lecture_check(context: LectureResource, request: Request) -> dict:
-    lecture = context.model()
-    timestamp = float(request.GET["since"])
-    modified_amendements_at_timestamp = lecture.modified_amendements_at_timestamp
-    modified_amendements_numbers: list = []
-    if timestamp < modified_amendements_at_timestamp:
-        modified_amendements_numbers = lecture.modified_amendements_numbers_since(
-            timestamp
-        )
-    return {
-        "modified_amendements_numbers": modified_amendements_numbers,
-        "modified_at": modified_amendements_at_timestamp,
-    }
 
 
 @view_config(route_name="choices_lectures", renderer="json")

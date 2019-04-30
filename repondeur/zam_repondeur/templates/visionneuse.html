@@ -1,10 +1,6 @@
 {% extends "_base_visionneuse.html" %}
 {% import "macros.html" as macros %}
 
-{% block extra_styles %}
-  <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/notifications.css') }}">
-{% endblock %}
-
 {% block title %}
   <section id="{{ article.slug }}">
     <header>
@@ -213,11 +209,4 @@
   {% endif %}
 {% endblock %}
 
-{% block check_url %}{{ check_url }}{% endblock %}
-{% block check_timestamp %}{{ timestamp }}{% endblock %}
-{% block check_interval %}{{ request.registry.settings['zam.check_for.content_updated_during_seance'] }}{% endblock %}
-
-{% block extra_scripts %}
-<script src="{{ request.static_url('zam_repondeur:static/js/notifications.js') }}"></script>
-{% endblock %}
 </html>

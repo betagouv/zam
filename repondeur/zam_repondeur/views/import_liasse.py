@@ -89,7 +89,6 @@ def upload_liasse_xml(context: LectureResource, request: Request) -> Response:
     AmendementsRecuperesLiasse.create(
         request=None, lecture=lecture, count=len(amendements)
     )
-    lecture.modified_at = datetime.utcnow()
     DBSession.add(lecture)
     return HTTPFound(location=request.resource_url(context, "amendements"))
 

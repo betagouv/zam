@@ -1,17 +1,3 @@
-{% macro update_informations(item, journal_link) %}
-    <div class="last-update">
-        Dernière mise à jour :
-        <a class="underlined" href="{{ journal_link }}">
-            <time xsi:type="xsd:dateTime"
-                datetime="{{ item.modified_at.isoformat() }}"
-                data-controller="timestamp"
-                data-timestamp-modified-at="{{ item.modified_at_timestamp }}">
-                    {{ item.modified_at.strftime("%A %d %B à %I:%M%p") }}
-            </time>
-        </a>
-    </div>
-{% endmacro %}
-
 {% macro status(amendement) %}
     {% if amendement.is_abandoned_before_seance %}
         {% if amendement.is_withdrawn %}

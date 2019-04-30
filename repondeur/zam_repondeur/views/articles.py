@@ -20,22 +20,6 @@ def list_articles(context: ArticleCollection, request: Request) -> Dict[str, Any
     return {"lecture": context.lecture_resource.model(), "articles": context.models()}
 
 
-@view_config(context=ArticleResource, name="check", renderer="json")
-def article_check(context: ArticleResource, request: Request) -> dict:
-    article = context.model()
-    timestamp = float(request.GET["since"])
-    modified_amendements_at_timestamp = article.modified_amendements_at_timestamp
-    modified_amendements_numbers: list = []
-    if timestamp < modified_amendements_at_timestamp:
-        modified_amendements_numbers = article.modified_amendements_numbers_since(
-            timestamp
-        )
-    return {
-        "modified_amendements_numbers": modified_amendements_numbers,
-        "modified_at": modified_amendements_at_timestamp,
-    }
-
-
 @view_defaults(context=ArticleResource)
 class ArticleEdit:
     def __init__(self, context: ArticleResource, request: Request) -> None:

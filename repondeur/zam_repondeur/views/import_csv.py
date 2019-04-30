@@ -1,7 +1,6 @@
 import csv
 import io
 from collections import Counter
-from datetime import datetime
 from typing import BinaryIO, Dict, TextIO
 
 from pyramid.httpexceptions import HTTPFound
@@ -12,6 +11,7 @@ from pyramid.view import view_config
 from zam_repondeur.export.spreadsheet import column_name_to_field
 from zam_repondeur.message import Message
 from zam_repondeur.models import Amendement, Lecture
+from zam_repondeur.models.events.lecture import ReponsesImportees
 from zam_repondeur.resources import LectureResource
 
 from .import_items import import_amendement
@@ -56,7 +56,7 @@ def import_csv(context: LectureResource, request: Request) -> Response:
                 text=f"{counter['reponses']} réponse(s) chargée(s) avec succès",
             )
         )
-        lecture.modified_at = datetime.utcnow()
+        ReponsesImportees.create(lecture=lecture, request=request)
 
     if counter["reponses_errors"]:
         request.session.flash(

@@ -14,7 +14,7 @@ from ..article import Article
 class ArticleEvent(Event):
     article_pk = Column(Integer, ForeignKey("articles.pk"))
     article = relationship(
-        Article, backref=backref("events", order_by=Event.created_at.desc())
+        Article, backref=backref("events", order_by="Event.created_at.desc()")
     )
 
     def __init__(self, request: Request, article: Article, **kwargs: Any):

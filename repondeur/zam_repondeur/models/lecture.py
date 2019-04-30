@@ -8,6 +8,7 @@ from .amendement import Amendement
 from .article import Article
 from .base import Base, DBSession
 from .division import SubDiv
+from .events.base import LastEventMixin
 from .texte import Chambre, Texte
 from .users import Team
 
@@ -24,7 +25,7 @@ SESSIONS = {
 }
 
 
-class Lecture(Base):
+class Lecture(Base, LastEventMixin):
     __tablename__ = "lectures"
     __table_args__ = (
         Index(
@@ -43,7 +44,7 @@ class Lecture(Base):
     partie = Column(Integer, nullable=True)  # only for PLF
     organe = Column(Text)
     titre = Column(Text)
-    created_at = Column(DateTime)
+    created_at: datetime = Column(DateTime)
     modified_at = Column(DateTime)
     amendements = relationship(
         Amendement,

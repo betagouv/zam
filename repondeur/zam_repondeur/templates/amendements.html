@@ -17,7 +17,19 @@
 <h1>Index des amendements</h1>
 <h2 class="subtitle">{{ lecture.dossier.titre }}</h2>
 <h3 class="subtitle">{{ lecture }}</h3>
-{{ macros.update_informations(lecture, request.resource_url(context.parent, 'journal')) }}
+
+<div class="last-update">
+    Dernière mise à jour :
+    <a class="underlined" href="{{ request.resource_url(context.parent, 'journal') }}">
+        <time xsi:type="xsd:dateTime"
+            datetime="{{ lecture.last_event_datetime.isoformat() }}"
+            data-controller="timestamp"
+            data-timestamp-modified-at="{{ lecture.last_event_timestamp }}">
+                {{ lecture.last_event_datetime.strftime("%A %d %B à %I:%M%p") }}
+        </time>
+    </a>
+</div>
+
 {% set count = amendements| length %}
 <div class="content"
     data-controller="amendements-filters"

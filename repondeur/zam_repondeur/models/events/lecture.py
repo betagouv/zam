@@ -13,7 +13,7 @@ from ..lecture import Lecture
 class LectureEvent(Event):
     lecture_pk = Column(Integer, ForeignKey("lectures.pk"))
     lecture = relationship(
-        Lecture, backref=backref("events", order_by=Event.created_at.desc())
+        Lecture, backref=backref("events", order_by="Event.created_at.desc()")
     )
 
     details_template = Template("")

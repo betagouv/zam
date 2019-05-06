@@ -103,3 +103,7 @@ def cpu_count(ctx):
 def install_packages(ctx, *names):
     ctx.sudo("apt-get update")
     ctx.sudo("apt-get install --yes {}".format(" ".join(names)))
+
+
+def debconf(ctx, package, key, type_, value):
+    ctx.sudo(f"debconf-set-selections <<< \"{package} {key} {type_} {quote(value)}\"")

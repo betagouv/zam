@@ -16,22 +16,22 @@
 
 1.  Install dependencies (see above) and/or activate venv
 2.  Add the public key to `admin/fabric.yml` under `ssh_keys` section
-3.  Run `fab -eH root@zam-test.beta.gouv.fr sshkeys`
+3.  Run `fab -eH ubuntu@zam-test.beta.gouv.fr sshkeys`
 
-## Bootstraping server
+## Bootstrapping server
 
 ⚠️ Only required once.
 
 1.  Install dependencies (see above) and/or activate venv
-2.  Run `fab -eH root@zam-test.beta.gouv.fr bootstrap`
+2.  Run `fab -eH ubuntu@zam-test.beta.gouv.fr bootstrap`
 3.  Note that a password for Basic Auth access will be prompted
 
 ## Deploying changelog
 
 1.  Edit the `CHANGELOG.md` file at the root of the repository
 2.  Install dependencies (see above) and/or activate venv
-3.  Run `fab -eH root@zam-test.beta.gouv.fr deploy-changelog`
+3.  Run `fab -eH ubuntu@zam-test.beta.gouv.fr deploy-changelog`
 
 ## Deploying répondeur
 
-1.  Run `fab -eH root@zam-test.beta.gouv.fr deploy-repondeur --branch=master --secret=...`
+1.  Run `fab -eH ubuntu@zam-test.beta.gouv.fr deploy-repondeur --branch=master`

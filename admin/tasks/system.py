@@ -1,6 +1,6 @@
 from fabric.tasks import task
 
-from tools import create_user, install_packages, sudo_put, template_local_file
+from tools import create_user, debconf, install_packages, sudo_put, template_local_file
 
 
 @task
@@ -34,6 +34,7 @@ def system(ctx):
     ctx.sudo("chown zam:users /srv/zam/")
     ctx.sudo("chsh -s /bin/bash zam")
     setup_postgres(ctx)
+    setup_smtp_server(ctx)
     setup_unattended_upgrades(ctx)
 
 
@@ -47,6 +48,14 @@ def setup_postgres(ctx):
         chown="postgres",
     )
     ctx.sudo("systemctl reload postgresql@10-main")
+
+
+@task
+def setup_smtp_server(ctx):
+    hostname = ctx.run("hostname").stdout.strip()
+    debconf(ctx, "postfix", "postfix/main_mailer_type", "string", "Internet Site")
+    debconf(ctx, "postfix", "postfix/mailname", "string", hostname)
+    install_packages(ctx, "postfix")
 
 
 @task

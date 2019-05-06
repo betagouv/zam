@@ -73,7 +73,7 @@ def http(ctx):
         "/etc/nginx/snippets/letsencrypt.conf",
     )
     sudo_put(ctx, "files/nginx/ssl.conf", "/etc/nginx/snippets/ssl.conf")
-    hostname = ctx.run("hostname").stdout
+    hostname = ctx.run("hostname").stdout.strip()
     certif = f"/etc/letsencrypt/live/{hostname}/fullchain.pem"
     exists = ctx.sudo(f'[ -f "{certif}" ]', warn=True)
     if exists.ok:
@@ -108,7 +108,7 @@ def basicauth(ctx, user="demozam"):
 def letsencrypt(ctx):
     ctx.sudo("add-apt-repository ppa:certbot/certbot")
     install_packages(ctx, "certbot", "software-properties-common")
-    hostname = ctx.run("hostname").stdout
+    hostname = ctx.run("hostname").stdout.strip()
     with template_local_file(
         "files/letsencrypt/certbot.ini.template",
         "files/letsencrypt/certbot.ini",

@@ -5,7 +5,9 @@ from tasks.system import *
 
 
 @task
-def bootstrap(ctx, os_storage_url="", os_auth_token=""):
+def bootstrap(ctx, hostname="", os_storage_url="", os_auth_token=""):
+    if hostname:
+        set_hostname(ctx, hostname)
     system(ctx)
     monitoring(ctx)
     http(ctx)

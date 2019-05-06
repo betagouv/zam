@@ -51,7 +51,7 @@ def deploy_repondeur(
         auth_secret = uuid4()
         print(f"Initializing auth_secret to {auth_secret}")
 
-    hostname = ctx.run("hostname").stdout
+    hostname = ctx.run("hostname").stdout.strip()
     environment = hostname.split(".", 1)[0]
 
     deploy_id = rollbar_deploy_start(

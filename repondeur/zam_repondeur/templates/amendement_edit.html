@@ -154,8 +154,10 @@
                     {% set amendement_user = amendement.user_table.user %}
                     {% if amendement_user.is_active %}
                         <p>
-                            Cet amendement est actuellement sur la table de
-                            <nobr class="user active" title="Activité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>.
+                            Cet amendement <strong>est ouvert depuis la table de
+                            <nobr class="user active" title="Activité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr></strong>.
+                            Si cette personne est en train de traiter cet amendement lors du transfert,
+                            <strong>ses modifications ne seront pas enregistrées</strong>.
                         </p>
                         <form id="transfer" action="{{ my_table_url }}" method="POST">
                             <input type="hidden" name="nums" value="{{ amendement.num }}">
@@ -164,8 +166,10 @@
                         </form>
                     {% else %}
                         <p>
-                            Cet amendement est actuellement sur la table de
-                            <nobr class="user inactive" title="Inactivité au cours des {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>.
+                            Cet amendement <strong>est déjà sur la table de
+                            <nobr class="user inactive" title="Inactivité au cours des {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr></strong>.
+                            Si cette personne est en train de traiter cet amendement lors du transfert,
+                            <strong>ses modifications ne seront pas enregistrées</strong>.
                         </p>
                         <form id="transfer" action="{{ my_table_url }}" method="POST">
                             <input type="hidden" name="nums" value="{{ amendement.num }}">

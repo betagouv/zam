@@ -1,3 +1,5 @@
+from shlex import quote
+
 from fabric.tasks import task
 
 from tools import create_user, debconf, install_packages, sudo_put, template_local_file
@@ -75,21 +77,32 @@ def setup_unattended_upgrades(ctx):
 
 
 @task
-def http(ctx):
+def http(ctx, ssl=False):
     sudo_put(
         ctx,
         "files/letsencrypt/letsencrypt.conf",
         "/etc/nginx/snippets/letsencrypt.conf",
     )
     sudo_put(ctx, "files/nginx/ssl.conf", "/etc/nginx/snippets/ssl.conf")
+
     hostname = ctx.run("hostname").stdout.strip()
-    certif = f"/etc/letsencrypt/live/{hostname}/fullchain.pem"
-    exists = ctx.sudo(f'[ -f "{certif}" ]', warn=True)
-    if exists.ok:
+
+    if ssl:
+        ssl_cert = f"/etc/letsencrypt/live/{hostname}/fullchain.pem"
+        ssl_key = f"/etc/letsencrypt/live/{hostname}/privkey.pem"
+        if not ctx.sudo(f"[ -f {quote(ssl_cert)} ]", warn=True).ok:
+            ssl_cert = "/etc/nginx/self-signed.crt"
+            ssl_key = "/etc/nginx/self-signed.key"
+
         with template_local_file(
             "files/nginx/https.conf.template",
             "files/nginx/https.conf",
-            {"host": hostname, "timeout": ctx.config["request_timeout"]},
+            {
+                "host": hostname,
+                "timeout": ctx.config["request_timeout"],
+                "ssl_cert": ssl_cert,
+                "ssl_key": ssl_key,
+            },
         ):
             sudo_put(
                 ctx, "files/nginx/https.conf", "/etc/nginx/sites-available/default"
@@ -127,6 +140,20 @@ def letsencrypt(ctx):
     sudo_put(ctx, "files/letsencrypt/ssl-renew", "/etc/cron.weekly/ssl-renew")
     ctx.sudo("chmod +x /etc/cron.weekly/ssl-renew")
     ctx.sudo("certbot certonly -c /srv/zam/certbot.ini --non-interactive --agree-tos")
+
+
+@task
+def setup_self_signed_cert(ctx):
+    hostname = ctx.run("hostname").stdout.strip()
+    ctx.sudo(
+        "openssl req -x509 -newkey rsa:4096"
+        " -keyout /etc/nginx/self-signed.key"
+        " -out /etc/nginx/self-signed.crt"
+        " -days 365"
+        " -sha256"
+        " -nodes"
+        f" -subj '/C=FR/OU=Zam/CN={hostname}'"
+    )
 
 
 @task

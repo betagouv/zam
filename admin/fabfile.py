@@ -8,14 +8,27 @@ from tasks.system import *
 def bootstrap(ctx, hostname="", os_storage_url="", os_auth_token=""):
     if hostname:
         set_hostname(ctx, hostname)
+    else:
+        hostname = ctx.run("hostname").stdout.strip()
+
     system(ctx)
     monitoring(ctx)
-    http(ctx)
-    letsencrypt(ctx)
-    basicauth(ctx)
-    # Now put the https ready Nginx conf.
-    http(ctx)
     setup_backups(ctx, os_storage_url, os_auth_token)
+    http(ctx, ssl=False)
+
+    # Add password if not set
+    if not ctx.sudo("grep -q demozam /etc/nginx/.htpasswd", warn=True).ok:
+        basicauth(ctx)
+
+    # We need DNS to be configured before we can set up SSL
+    if ctx.host == hostname:
+        letsencrypt(ctx)
+    else:
+        print("Using a self-signed certificate because DNS is not configured yet")
+        setup_self_signed_cert(ctx)
+
+    # Now put the https ready Nginx conf.
+    http(ctx, ssl=True)
 
 
 @task

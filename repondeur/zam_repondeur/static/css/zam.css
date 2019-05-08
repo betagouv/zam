@@ -412,17 +412,44 @@ nobr.user {
             background: no-repeat left 25%/40% url("../img/switch_on.svg");
         }
 /* Sticky table header */
+.sticky {
+    box-shadow: none;
+}
 .sticky th {
     position: sticky;
     position: -webkit-sticky;
     background: white;
     z-index: 10;
-    box-shadow: 0 3px 3px 0 #CCC;
     top: 0;
 }
-.sticky .filters th {
-    top: 2.5rem;
+.sticky tr.headers th {
+    padding-bottom: 0;
 }
+.sticky tr.filters th:first-child,
+.sticky tr.groupActions th:first-child {
+    background: linear-gradient(to right, #fff 0%, #ccc 5px, #fff 1%)
+}
+.sticky tr.filters th:last-child,
+.sticky tr.groupActions th:last-child {
+    background: linear-gradient(to left, #fff 0%, #ccc 5px, #fff 1%)
+}
+.table thead th {
+    vertical-align: 0;
+}
+.sticky tr.shadow-bottom th {
+    top: 3rem;
+    padding: 3px 0;
+    background: linear-gradient(to top, #fff 0%, #ccc 5px, #fff 1%);
+}
+.sticky .filters th {
+    top: 2.2rem;
+}
+.sticky label {
+    margin-bottom: 0;
+}
+    .sticky label abbr {
+        font-size: .8rem;
+    }
 tr.groupActions th {
     padding: 1rem 0 1rem 0;
     text-align: center;
@@ -430,6 +457,14 @@ tr.groupActions th {
     tr.groupActions th:first-child {
         vertical-align: middle;
     }
+.table tbody tr td {
+    border-top: none;
+    border-bottom: 1px solid #dee2e6;
+}
+.article-header input.form-control,
+.amendement-header input.form-control {
+    width: 3rem;
+}
 /* Filtering */
 th input.form-control {
     display: inline;

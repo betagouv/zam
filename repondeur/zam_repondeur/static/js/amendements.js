@@ -26,7 +26,7 @@ application.register(
     'amendements-selection',
     class extends Stimulus.Controller {
         static get targets() {
-            return ['headers', 'filters']
+            return ['filters', 'bottom']
         }
         initialize() {
             this.groupActions = this.element.querySelector('.groupActions')
@@ -53,31 +53,19 @@ application.register(
             )
             this.groupActions.classList.toggle('d-none', checkeds.length < 1)
             if (checkeds.length < 1) {
-                if (this.hasHeadersTarget) {
-                    this.headersTarget
-                        .querySelectorAll('th')
-                        .forEach(th => (th.style.top = '0'))
-                    this.filtersTarget
-                        .querySelectorAll('th')
-                        .forEach(th => (th.style.top = '2.5rem'))
-                } else {
-                    this.filtersTarget
-                        .querySelectorAll('th')
-                        .forEach(th => (th.style.top = '0'))
-                }
+                this.filtersTarget
+                    .querySelectorAll('th')
+                    .forEach(th => (th.style.top = '0'))
+                this.bottomTarget
+                    .querySelectorAll('th')
+                    .forEach(th => (th.style.top = '3rem'))
             } else {
-                if (this.hasHeadersTarget) {
-                    this.headersTarget
-                        .querySelectorAll('th')
-                        .forEach(th => (th.style.top = '3.5rem'))
-                    this.filtersTarget
-                        .querySelectorAll('th')
-                        .forEach(th => (th.style.top = '6.5rem'))
-                } else {
-                    this.filtersTarget
-                        .querySelectorAll('th')
-                        .forEach(th => (th.style.top = '3rem'))
-                }
+                this.filtersTarget
+                    .querySelectorAll('th')
+                    .forEach(th => (th.style.top = '3.8rem'))
+                this.bottomTarget
+                    .querySelectorAll('th')
+                    .forEach(th => (th.style.top = '7rem'))
             }
             this.changeURLGivenChecks(
                 this.groupActions.querySelector('#transfer-amendements'),
@@ -128,6 +116,7 @@ class AmendementsFilters extends Stimulus.Controller {
         return [
             'row',
             'link',
+            'bottom',
             'count',
             'table',
             'tbody',
@@ -216,6 +205,7 @@ class AmendementsFilters extends Stimulus.Controller {
         if (this.hasLinkTarget && this.hasRowTarget) {
             this.linkTarget.classList.toggle('enabled')
             this.rowTarget.classList.toggle('d-none')
+            this.bottomTarget.classList.toggle('d-none')
         }
         if (event) event.preventDefault()
     }

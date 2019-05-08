@@ -61,29 +61,22 @@
                 </th>
                 <th></th>
             </tr>
-            <tr class="headers" data-target="amendements-selection.headers">
-                <th></th>
-                <th>Article</th>
-                <th>Nº</th>
-                <th>Table</th>
-                <th>Avis</th>
-                <th>Réponse</th>
-                <th></th>
-            </tr>
             <tr class="filters {% if not amendements %}d-none{% endif %}"
                 data-target="amendements-filters.row amendements-selection.filters">
                 <th>
                     <input type="checkbox" name="select-all"
                         data-action="amendements-selection#selectAll">
                 </th>
-                <th>
-                    <input type="text" class="form-control form-control-sm" placeholder="Nº"
+                <th class="article-header">
+                    Article
+                    <input type="text" class="form-control form-control-sm"
                         autocomplete="off" autocorrect="off"
                         data-action="keyup->amendements-filters#filterArticle"
                         data-target="amendements-filters.articleInput">
                 </th>
-                <th>
-                    <input type="text" class="form-control form-control-sm" placeholder="Nº"
+                <th class="amendement-header">
+                    Nº
+                    <input type="text" class="form-control form-control-sm"
                         autocomplete="off" autocorrect="off"
                         data-action="keyup->amendements-filters#filterAmendement"
                         data-target="amendements-filters.amendementInput">
@@ -96,6 +89,7 @@
                     </label>
                 </th>
                 <th>
+                    Table
                     <input type="text" class="form-control form-control-sm"
                         autocomplete="off" autocorrect="off"
                         data-action="keyup->amendements-filters#filterTable"
@@ -109,6 +103,7 @@
                     </label>
                 </th>
                 <th>
+                    Avis
                     <select
                         data-action="amendements-filters#filterAvis"
                         data-target="amendements-filters.avisSelect">
@@ -118,6 +113,7 @@
                     </select>
                 </th>
                 <th>
+                    Réponse
                     <select
                         data-action="amendements-filters#filterReponse"
                         data-target="amendements-filters.reponseSelect">
@@ -127,6 +123,9 @@
                     </select>
                 </th>
                 <th></th>
+            </tr>
+            <tr class="shadow-bottom" data-target="amendements-selection.bottom">
+                <th colspan="7"></th>
             </tr>
         </thead>
         <tbody data-controller="amendements-backlinks" data-target="amendements-filters.tbody">

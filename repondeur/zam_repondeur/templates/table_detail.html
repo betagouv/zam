@@ -121,7 +121,7 @@
     .table thead th {
         border: none;
     }
-    .table tbody td {
+    .table tbody tr td {
         border: none;
         padding: 0;
     }
@@ -172,7 +172,7 @@
             data-controller="amendements-selection"
             data-target="amendements-filters.table">
             <thead class="sticky">
-                <tr class="groupActions box d-none"
+                <tr class="groupActions d-none"
                     data-controller="amendements-backlinks">
                     <th colspan="2">
                         Actions groupées :
@@ -189,7 +189,7 @@
                         <a id="export-pdf" href="{{ request.resource_url(context.lecture_resource, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
                     </th>
                 </tr>
-                <tr class="filters box d-none"
+                <tr class="filters d-none"
                     data-target="amendements-filters.row amendements-selection.filters">
                     <th>
                         <label for="article">Article </label>
@@ -227,6 +227,10 @@
                             data-action="amendements-selection#selectAll">
                         <label for="select-all">Tous</label>
                     </th>
+                </tr>
+                <tr class="shadow-bottom d-none"
+                    data-target="amendements-selection.bottom amendements-filters.bottom">
+                    <th colspan="4"></th>
                 </tr>
             </thead>
             <tbody data-controller="amendements-backlinks" data-target="amendements-filters.tbody">

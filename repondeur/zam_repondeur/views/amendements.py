@@ -52,7 +52,7 @@ class AmendementEdit:
             "transfer_url": self.request.resource_url(
                 self.context.parent.parent,
                 "transfer_amendements",
-                query={"nums": self.amendement.num},
+                query={"nums": self.amendement.num, "from_index": 1},
             ),
             "reponses": self.amendement.article.grouped_displayable_amendements(),
         }

@@ -469,6 +469,7 @@ label[for="emptytable"] abbr {
             font-weight: 600;
         }
         .intro fieldset input {
+            width: 100%;
             font-size: 1.2rem;
         }
     .intro .controls {

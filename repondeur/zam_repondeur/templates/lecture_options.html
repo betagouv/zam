@@ -35,6 +35,10 @@
                     {{ macros.svg_icon("file-pdf") }}
                     Format PDF
                 </a>
+                <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'json'}) }}">
+                    {{ macros.svg_icon("file-archive") }}
+                    Format JSON
+                </a>
             </div>
         </div>
         <div class="no-border" data-controller="filename">

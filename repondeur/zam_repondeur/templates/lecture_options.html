@@ -24,8 +24,8 @@
             </form>
         </div>
         <div data-controller="multiple-clicks">
-            <h3>Télécharger le tableau</h3>
-            <p>Télécharger le tableau de tous les amendements déposés ainsi que de leurs réponses, par ordre de passage.</p>
+            <h3>Exporter les données</h3>
+            <p>Télécharger l’ensemble des informations de la lecture dans divers formats.</p>
             <div role="group" aria-label="Format de téléchargement">
                 <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'xlsx'}) }}">
                     {{ macros.svg_icon("file-excel") }}

@@ -1,9 +1,7 @@
-#!/bin/sh -e
+#!/bin/bash -ex
 
 BACKUP_DIR=/var/backups/zam
 FILENAME=postgres-dump-$(date --utc --iso-8601=seconds).sql
-OS_STORAGE_URL=$$os_storage_url
-OS_AUTH_TOKEN=$$os_auth_token
 
 echo "Dumping Postgres database to $BACKUP_DIR/$FILENAME"
 sudo -Hiu postgres LANG="C.UTF-8" LC_CTYPE="C.UTF-8" \
@@ -12,15 +10,6 @@ sudo -Hiu postgres LANG="C.UTF-8" LC_CTYPE="C.UTF-8" \
 
 echo "Compressing backup"
 gzip "$BACKUP_DIR/$FILENAME"
-
-if [ -n "$OS_STORAGE_URL" ] && [ -n "$OS_AUTH_TOKEN" ]; then
-    echo "Uploading backup to OVH Public Cloud Storage"
-    python3-swift -v \
-        --os-storage-url="$OS_STORAGE_URL" \
-        --os-auth-token="$OS_AUTH_TOKEN" \
-        upload db "$BACKUP_DIR/$FILENAME.gz" \
-        --object-name="$FILENAME.gz"
-fi
 
 echo "Rotating local backups"
 # See: https://pypi.org/project/rotate-backups/ for options
@@ -31,3 +20,33 @@ rotate-backups --prefer-recent --relaxed --include='*.sql.gz' \
     --monthly=12 \
     --yearly=always \
     $BACKUP_DIR
+
+
+export OS_STORAGE_URL=$$os_storage_url
+
+# To use an Openstack cloud you need to authenticate against keystone, which
+# returns a **Token** and **Service Catalog**. The catalog contains the
+# endpoint for all services the user/tenant has access to - including nova,
+# glance, keystone, swift.
+#
+export OS_AUTH_URL=https://auth.cloud.ovh.net/v2.0/
+export OS_IDENTITY_API_VERSION=2
+
+# With the addition of Keystone we have standardized on the term **tenant**
+# as the entity that owns the resources.
+export OS_TENANT_ID=$$os_tenant_id
+export OS_TENANT_NAME=$$os_tenant_name
+
+# In addition to the owning entity (tenant), openstack stores the entity
+# performing the action as the **user**.
+export OS_USERNAME="$$os_username"
+export OS_PASSWORD="$$os_password"
+
+# If your configuration has multiple regions, we set that information here.
+# OS_REGION_NAME is optional and only valid in certain environments.
+export OS_REGION_NAME="SBG5"
+
+if [ -n "$OS_STORAGE_URL" ] && [ -n "$OS_USERNAME" ] && [ -n "$OS_PASSWORD" ]; then
+    echo "Uploading backup to OVH Public Cloud Storage"
+    python3-swift -v upload db "$BACKUP_DIR/$FILENAME.gz" --object-name="$FILENAME.gz"
+fi

@@ -102,11 +102,9 @@ application.register(
             this.checkboxes.forEach(checkbox => {
                 if (checkbox.offsetParent !== null) {
                     checkbox.checked = this.selectAllCheckbox.checked
-                    // Required because the change event is not propagated by default.
-                    const event = new Event('change')
-                    checkbox.dispatchEvent(event)
                 }
             })
+            this.toggleGroupActions()
         }
     }
 )

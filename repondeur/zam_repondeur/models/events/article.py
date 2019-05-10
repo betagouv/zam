@@ -4,19 +4,12 @@ from string import Template
 from jinja2 import Markup
 from lxml.html.diff import htmldiff
 from pyramid.request import Request
-from sqlalchemy import Column, ForeignKey, Integer
-from sqlalchemy.orm import backref, relationship
 
 from .base import Event
 from ..article import Article
 
 
 class ArticleEvent(Event):
-    article_pk = Column(Integer, ForeignKey("articles.pk"))
-    article = relationship(
-        Article, backref=backref("events", order_by="Event.created_at.desc()")
-    )
-
     def __init__(self, request: Request, article: Article, **kwargs: Any):
         super().__init__(request, **kwargs)
         self.article = article

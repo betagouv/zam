@@ -25,6 +25,10 @@ class Event(Base):
     user_pk = Column(Integer, ForeignKey("users.pk"), nullable=True)
     user = relationship(User)
 
+    amendement_pk = Column(Integer, ForeignKey("amendements.pk"), nullable=True)
+
+    article_pk = Column(Integer, ForeignKey("articles.pk"), nullable=True)
+
     data = Column(JSONType, nullable=True)
     meta = Column(JSONType, nullable=True)
 

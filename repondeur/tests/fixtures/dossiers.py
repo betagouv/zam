@@ -34,7 +34,22 @@ def mock_dossiers():
                             date_depot=date(2017, 10, 11),
                         ),
                         organe="PO717460",  # séance publique
-                    )
+                    ),
+                    Lecture(
+                        chambre=Chambre.SENAT,
+                        titre="Première lecture – Titre lecture",
+                        texte=Texte(
+                            uid="PRJLSNR5S299B0063",
+                            type_=TypeTexte.PROJET,
+                            chambre=Chambre.SENAT,
+                            legislature=2017,
+                            numero=63,
+                            titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                            titre_court="PLFSS pour 2018",
+                            date_depot=date(2017, 11, 6),
+                        ),
+                        organe="PO78718",  # séance publique
+                    ),
                 ],
             ),
             "DLR5L15N36159": Dossier(

@@ -13,11 +13,13 @@ def open_liasse(filename):
     return (Path(__file__).parent.parent / "sample_data" / filename).open(mode="rb")
 
 
-def test_import_liasse_xml(lecture_essoc):
+def test_import_liasse_xml(lecture_essoc2018_an_nouvelle_lecture_commission_fond):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
     from zam_repondeur.models import Amendement
 
-    amendements, errors = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
+    amendements, errors = import_liasse_xml(
+        open_liasse("liasse.xml"), lecture_essoc2018_an_nouvelle_lecture_commission_fond
+    )
 
     assert isinstance(amendements, list)
     assert len(amendements) == 3
@@ -30,11 +32,14 @@ def test_import_liasse_xml(lecture_essoc):
     assert errors == []
 
 
-def test_import_liasse_xml_article_additionnel(lecture_essoc):
+def test_import_liasse_xml_article_additionnel(
+    lecture_essoc2018_an_nouvelle_lecture_commission_fond
+):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     amendements, errors = import_liasse_xml(
-        open_liasse("liasse_apres.xml"), lecture_essoc
+        open_liasse("liasse_apres.xml"),
+        lecture_essoc2018_an_nouvelle_lecture_commission_fond,
     )
 
     assert amendements[0].article.num == "2"
@@ -43,11 +48,15 @@ def test_import_liasse_xml_article_additionnel(lecture_essoc):
     assert errors == []
 
 
-def test_import_same_liasse_xml_again_preserve_response(lecture_essoc):
+def test_import_same_liasse_xml_again_preserve_response(
+    lecture_essoc2018_an_nouvelle_lecture_commission_fond
+):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     # Let's import amendements
-    amendements, _ = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
+    amendements, _ = import_liasse_xml(
+        open_liasse("liasse.xml"), lecture_essoc2018_an_nouvelle_lecture_commission_fond
+    )
 
     # Now let's add a response
     amendements[1].user_content.avis = "Favorable"
@@ -55,7 +64,9 @@ def test_import_same_liasse_xml_again_preserve_response(lecture_essoc):
     amendements[1].user_content.reponse = "Réponse"
 
     # And import the same amendements again
-    amendements2, errors = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
+    amendements2, errors = import_liasse_xml(
+        open_liasse("liasse.xml"), lecture_essoc2018_an_nouvelle_lecture_commission_fond
+    )
 
     assert amendements == amendements2
     assert amendements2[1].user_content.avis == "Favorable"
@@ -65,12 +76,16 @@ def test_import_same_liasse_xml_again_preserve_response(lecture_essoc):
     assert errors == []
 
 
-def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
+def test_import_smaller_liasse_xml_preserves_responses(
+    lecture_essoc2018_an_nouvelle_lecture_commission_fond
+):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
     from zam_repondeur.models import Amendement, DBSession
 
     # Let's import amendements
-    amendements, _ = import_liasse_xml(open_liasse("liasse.xml"), lecture_essoc)
+    amendements, _ = import_liasse_xml(
+        open_liasse("liasse.xml"), lecture_essoc2018_an_nouvelle_lecture_commission_fond
+    )
 
     # Now let's add a response
     amendements[1].user_content.avis = "Favorable"
@@ -84,7 +99,8 @@ def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
 
     # And import a smaller liasse
     amendements2, errors = import_liasse_xml(
-        open_liasse("liasse_smaller.xml"), lecture_essoc
+        open_liasse("liasse_smaller.xml"),
+        lecture_essoc2018_an_nouvelle_lecture_commission_fond,
     )
 
     assert amendements[0] == amendements2[0]
@@ -99,12 +115,15 @@ def test_import_smaller_liasse_xml_preserves_responses(lecture_essoc):
     assert errors == []
 
 
-def test_import_liasse_xml_with_unknown_parent(lecture_essoc):
+def test_import_liasse_xml_with_unknown_parent(
+    lecture_essoc2018_an_nouvelle_lecture_commission_fond
+):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     # Let's import a liasse with only a child amendement
     amendements, errors = import_liasse_xml(
-        open_liasse("liasse_only_child.xml"), lecture_essoc
+        open_liasse("liasse_only_child.xml"),
+        lecture_essoc2018_an_nouvelle_lecture_commission_fond,
     )
 
     assert amendements == []
@@ -114,12 +133,15 @@ def test_import_liasse_xml_with_unknown_parent(lecture_essoc):
     assert cause == "Unknown parent amendement 28"
 
 
-def test_import_liasse_xml_with_known_but_missing_parent(lecture_essoc):
+def test_import_liasse_xml_with_known_but_missing_parent(
+    lecture_essoc2018_an_nouvelle_lecture_commission_fond
+):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
 
     # Let's import the parent amendement
     amendements, errors = import_liasse_xml(
-        open_liasse("liasse_only_parent.xml"), lecture_essoc
+        open_liasse("liasse_only_parent.xml"),
+        lecture_essoc2018_an_nouvelle_lecture_commission_fond,
     )
     assert len(amendements) == 1
     assert amendements[0].num == 28
@@ -128,7 +150,8 @@ def test_import_liasse_xml_with_known_but_missing_parent(lecture_essoc):
 
     # Now let's import a liasse with only a child amendement
     amendements, errors = import_liasse_xml(
-        open_liasse("liasse_only_child.xml"), lecture_essoc
+        open_liasse("liasse_only_child.xml"),
+        lecture_essoc2018_an_nouvelle_lecture_commission_fond,
     )
     assert len(amendements) == 1
     assert amendements[0].num == 26
@@ -136,7 +159,9 @@ def test_import_liasse_xml_with_known_but_missing_parent(lecture_essoc):
     assert errors == []
 
 
-def test_import_liasse_second_part(app, texte_commission_speciale, dossier_an):
+def test_import_liasse_second_part(
+    app, dossier_essoc2018, texte_essoc2018_an_nouvelle_lecture_commission_fond
+):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml, LectureDoesNotMatch
     from zam_repondeur.models import DBSession, Lecture
 
@@ -144,20 +169,20 @@ def test_import_liasse_second_part(app, texte_commission_speciale, dossier_an):
         part1 = Lecture.create(
             chambre="an",
             session="15",
-            texte=texte_commission_speciale,
+            texte=texte_essoc2018_an_nouvelle_lecture_commission_fond,
             partie=1,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO744107",
-            dossier=dossier_an,
+            dossier=dossier_essoc2018,
         )
         part2 = Lecture.create(
             chambre="an",
             session="15",
-            texte=texte_commission_speciale,
+            texte=texte_essoc2018_an_nouvelle_lecture_commission_fond,
             partie=2,
             titre="Nouvelle lecture – Titre lecture",
             organe="PO744107",
-            dossier=dossier_an,
+            dossier=dossier_essoc2018,
         )
 
     DBSession.add(part2)

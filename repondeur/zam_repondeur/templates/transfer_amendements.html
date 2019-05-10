@@ -1,5 +1,9 @@
 {% extends "_base.html" %}
 
+{% block title %}
+    {{ lecture }} • {{ lecture.texte.titre_court }} • Zam
+{% endblock %}
+
 {% block header %}
     <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.css') }}">
     <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.bootstrap3.css') }}">

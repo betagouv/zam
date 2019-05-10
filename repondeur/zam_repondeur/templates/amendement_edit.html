@@ -1,6 +1,10 @@
 {% extends "_base_edit.html" %}
 {% import "macros.html" as macros %}
 
+{% block title %}
+    {{ amendement.lecture }} • {{ amendement.lecture.texte.titre_court }} • Zam
+{% endblock %}
+
 {% block header %}
     {{ super() }}
     <style type="text/css">

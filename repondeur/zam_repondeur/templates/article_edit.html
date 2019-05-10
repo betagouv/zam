@@ -1,6 +1,10 @@
 {% extends "_base_edit.html" %}
 {% import "macros.html" as macros %}
 
+{% block title %}
+    {{ article.lecture }} • {{ article.lecture.texte.titre_court }} • Zam
+{% endblock %}
+
 {% block extra_nav %}
     <li>
         <a href="{{ request.resource_url(context.parent.parent['tables'], request.user.email) }}">

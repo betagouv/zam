@@ -4,19 +4,12 @@ from typing import Any
 from jinja2 import Markup
 from lxml.html.diff import htmldiff
 from pyramid.request import Request
-from sqlalchemy import Column, ForeignKey, Integer
-from sqlalchemy.orm import backref, relationship
 
 from .base import Event
 from ..amendement import Amendement
 
 
 class AmendementEvent(Event):
-    amendement_pk = Column(Integer, ForeignKey("amendements.pk"))
-    amendement = relationship(
-        Amendement, backref=backref("events", order_by="Event.created_at.desc()")
-    )
-
     icon = ""
 
     summary_template = Template("<abbr title='$email'>$user</abbr>")

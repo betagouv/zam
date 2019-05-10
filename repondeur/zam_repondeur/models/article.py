@@ -62,7 +62,7 @@ class ArticleUserContent(Base):
     title: Optional[str] = Column(Text, nullable=True)
     presentation: Optional[str] = Column(Text, nullable=True)
 
-    article_pk: int = Column(Integer, ForeignKey("articles.pk"))
+    article_pk: int = Column(Integer, ForeignKey("articles.pk"), nullable=False)
     article: "Article" = relationship("Article", back_populates="user_content")
 
 
@@ -89,8 +89,20 @@ class Article(Base):
         order_by=(Amendement.position, Amendement.num),
         back_populates="article",
     )
+
     user_content = relationship(
-        ArticleUserContent, back_populates="article", uselist=False, lazy="joined"
+        ArticleUserContent,
+        back_populates="article",
+        uselist=False,
+        lazy="joined",
+        cascade="all, delete-orphan",
+    )
+
+    events = relationship(
+        "Event",
+        order_by="Event.created_at.desc()",
+        cascade="all, delete-orphan",
+        backref="article",
     )
 
     @validates("type")

@@ -1,5 +1,9 @@
 {% extends "_base.html" %}
 
+{% block title %}
+    {{ lecture }} • {{ lecture.texte.titre_court }} • Zam
+{% endblock %}
+
 {% block extra_nav %}
     <li{% if current_tab == 'table' %} class="selected"{% endif %}>
         <a href="{{ request.resource_url(lecture_resource['tables'], request.user.email) }}">

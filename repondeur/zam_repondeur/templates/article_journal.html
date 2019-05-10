@@ -1,6 +1,10 @@
 {% extends "_base.html" %}
 {% import "macros.html" as macros %}
 
+{% block title %}
+    {{ article.lecture }} • {{ article.lecture.texte.titre_court }} • Zam
+{% endblock %}
+
 {% block header %}
     <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/journal.css') }}">
 {% endblock %}

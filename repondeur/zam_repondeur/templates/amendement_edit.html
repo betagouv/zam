@@ -81,9 +81,14 @@
             Index
         </a>
     </li>
+    <li>
+        <a href="{{ request.resource_url(context.lecture_resource, 'options') }}">
+            Options avancées
+        </a>
+    </li>
     {% if amendement.is_displayable %}
         <li>
-            <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key], 'reponses', anchor=amendement.slug) }}" target="_blank">
+            <a href="{{ request.resource_url(context.lecture_resource, 'articles', amendement.article.url_key, 'reponses', anchor=amendement.slug) }}" target="_blank">
                 Dossier de banc
             </a>
         </li>

@@ -77,18 +77,23 @@
 
 {% block extra_nav %}
     <li>
-        <a href="{{ request.resource_url(context['tables'], request.user.email) }}">
+        <a href="{{ request.resource_url(context, 'tables', request.user.email) }}">
             Ma table
         </a>
     </li>
     <li>
-        <a href="{{ request.resource_url(context['amendements']) }}">
+        <a href="{{ request.resource_url(context, 'amendements') }}">
             Index
+        </a>
+    </li>
+    <li>
+        <a href="{{ request.resource_url(context, 'options') }}">
+            Options avancées
         </a>
     </li>
     {% if lecture.displayable %}
         <li>
-            <a href="{{ request.resource_url(context['articles']) }}" target="_blank">
+            <a href="{{ request.resource_url(context, 'articles') }}" target="_blank">
                 Dossier de banc
             </a>
         </li>

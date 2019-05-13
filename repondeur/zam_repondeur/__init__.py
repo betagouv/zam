@@ -71,6 +71,7 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         init_huey(settings)
         config.include("zam_repondeur.data")
         config.include("zam_repondeur.users")
+        config.include("zam_repondeur.amendements")
         load_version(config)
 
         config.scan()

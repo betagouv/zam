@@ -49,7 +49,9 @@ def chrome_driver():
 
 
 @pytest.fixture
-def wsgi_server(settings, db, mock_dossiers, mock_organes_acteurs):
+def wsgi_server(
+    settings, db, mock_dossiers, mock_organes_acteurs, amendements_repository
+):
     from zam_repondeur import make_app
 
     settings = {**settings, "zam.auth_cookie_secure": False}
@@ -68,6 +70,7 @@ class HeadlessFirefox(webdriver.Firefox):
     def options():
         firefox_options = webdriver.firefox.options.Options()
         firefox_options.add_argument("-headless")
+        firefox_options.set_preference("dom.disable_beforeunload", False)
         return firefox_options
 
     def get(self, url):

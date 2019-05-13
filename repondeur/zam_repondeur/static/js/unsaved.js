@@ -21,7 +21,7 @@ class UnsavedChanges extends Stimulus.Controller {
     }
 
     isFormChanged() {
-        return this.data.get('changed') == 'true'
+        return this.data.get('changed') === 'true'
     }
 }
 

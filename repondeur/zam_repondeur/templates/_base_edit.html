@@ -92,9 +92,9 @@
             block_formats: 'Paragraphe=p;Titre=h3',
             browser_spellcheck: true,
             init_instance_callback: function(editor) {
-                editor.on('Dirty', function(event) {
-                    var form = document.getElementById('edit-amendement')
-                    var controller = application.getControllerForElementAndIdentifier(
+                editor.on('Dirty', event => {
+                    const form = document.getElementById('edit-amendement')
+                    const controller = application.getControllerForElementAndIdentifier(
                         form,
                         'unsaved-changes'
                     )

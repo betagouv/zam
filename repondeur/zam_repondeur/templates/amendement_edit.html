@@ -289,13 +289,13 @@
           method="POST"
           data-controller="unsaved-changes"
           data-action="beforeunload@window->unsaved-changes#leaving"
-          data-unsaved-changes-changed="false"
+          data-unsaved-changes-dirty="false"
           class="mt-3">
 
         {% if not amendement.gouvernemental %}
         <div class="form-group">
             <label for="avis">Position du gouvernement</label>
-            <select name="avis" class="form-control" data-action="unsaved-changes#formIsChanged">
+            <select name="avis" class="form-control" data-action="unsaved-changes#setDirty">
                 <option value="">Choisir dans la liste…</option>
                 {% for value in avis %}
                     <option value="{{ value }}" {%- if amendement.user_content.avis == value %} selected{% endif %}>{{ value }}</option>
@@ -306,7 +306,7 @@
 
         <div class="form-group">
             <label for="objet">Objet de l’amendement</label>
-            <textarea name="objet" class="form-control" data-action="input->unsaved-changes#formIsChanged" style="height: 100px;">{{ amendement.user_content.objet or "" | safe }}</textarea>
+            <textarea name="objet" class="form-control" style="height: 100px;">{{ amendement.user_content.objet or "" | safe }}</textarea>
         </div>
 
         <div class="form-group">
@@ -317,12 +317,12 @@
                     Présentation de l’amendement
                 {% endif %}
             </label>
-            <textarea name="reponse" class="form-control" data-action="input->unsaved-changes#formIsChanged" style="height: 600px;">{{ amendement.user_content.reponse or "" | safe }}</textarea>
+            <textarea name="reponse" class="form-control" style="height: 600px;">{{ amendement.user_content.reponse or "" | safe }}</textarea>
         </div>
 
         <div class="form-group">
             <label for="comments">Commentaires</label>
-            <textarea name="comments" class="form-control" data-action="input->unsaved-changes#formIsChanged">{{ amendement.user_content.comments or "" | safe }}</textarea>
+            <textarea name="comments" class="form-control">{{ amendement.user_content.comments or "" | safe }}</textarea>
         </div>
 
         <div class="form-group save-buttons">

@@ -76,28 +76,32 @@
 {% block main_class %}{% endblock %}
 
 {% block scripts %}
+    <script src="{{ request.static_url('zam_repondeur:static/js/unsaved.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/tinymce/tinymce.min.js') }}"></script>
     <script type="text/javascript">
         tinymce.init({
-            selector: "textarea",
-            language: "fr_FR",
+            selector: 'textarea',
+            language: 'fr_FR',
             menubar: false,
-            plugins: "lists fullscreen paste table",
-            toolbar: "undo redo | formatselect | bold italic removeformat | bullist numlist | table | cut copy paste",
+            plugins: 'lists fullscreen paste table',
+            toolbar:
+                'undo redo | formatselect | bold italic removeformat | bullist numlist | table | cut copy paste',
             branding: false,
             elementpath: false,
-            content_style: "p, li { line-height: 1.5; margin: 1em 0; }",
-            block_formats: "Paragraphe=p;Titre=h3",
+            content_style: 'p, li { line-height: 1.5; margin: 1em 0; }',
+            block_formats: 'Paragraphe=p;Titre=h3',
             browser_spellcheck: true,
-            init_instance_callback: function (editor) {
-                editor.on('Dirty', function (event) {
-                    var form = document.getElementById("edit-amendement");
-                    var controller = application.getControllerForElementAndIdentifier(form, "unsaved-changes");
-                    controller.formIsChanged();
+            init_instance_callback: function(editor) {
+                editor.on('Dirty', function(event) {
+                    var form = document.getElementById('edit-amendement')
+                    var controller = application.getControllerForElementAndIdentifier(
+                        form,
+                        'unsaved-changes'
+                    )
+                    controller.setDirty()
                 })
             }
-        });
+        })
     </script>
-    <script src="{{ request.static_url('zam_repondeur:static/js/unsaved.js') }}"></script>
     {% block extra_scripts %}{% endblock %}
 {% endblock %}

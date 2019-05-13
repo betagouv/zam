@@ -342,7 +342,6 @@ class TestTransfer:
         david_has_two_amendements,
         user_ronan,
     ):
-        # from zam_repondeur.models import DBSession, User
         from zam_repondeur.models import Amendement
 
         assert len(user_ronan.table_for(lecture_an).amendements) == 0
@@ -404,6 +403,26 @@ def test_tables_steal_amendement(
         "<abbr title='ronan@example.com'>Ronan</abbr> "
         "a transféré l’amendement de « David (david@example.com) » à lui/elle-même",
     )
+
+
+def test_tables_steal_amendement_resets_editing_status(
+    app, lecture_an, amendements_an, user_david, david_has_one_amendement, user_ronan
+):
+    from zam_repondeur.models import Amendement
+
+    amendements_an[0].start_editing()
+    assert amendements_an[0].is_being_edited
+
+    # Transfer amendement to ronan's table (stealing it from david)
+    email = user_ronan.email
+    app.post(
+        f"/lectures/an.15.269.PO717460/tables/{email}",
+        {"nums": [amendements_an[0].num], "submit-table": True},
+        user=user_ronan,
+    )
+
+    amendement = Amendement.get(lecture_an, amendements_an[0].num)
+    assert not amendement.is_being_edited
 
 
 def test_tables_steal_amendements(

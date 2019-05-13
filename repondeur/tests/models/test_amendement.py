@@ -230,3 +230,31 @@ def test_amendement_displayable_identiques_are_not_similaires_reponses(amendemen
     assert amendement_999.displayable_identiques == [amendement_666]
     assert not amendement_666.displayable_identiques_are_similaires
     assert not amendement_999.displayable_identiques_are_similaires
+
+
+@pytest.mark.usefixtures("amendements_repository")
+class TestAmendementEdition:
+    def test_amendement_is_not_being_edited(self, amendements_an):
+        assert not amendements_an[0].is_being_edited
+
+    def test_amendement_is_being_edited(self, amendements_an, user_david_table_an):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            DBSession.add(user_david_table_an)
+            user_david_table_an.amendements.append(amendements_an[0])
+        amendements_an[0].start_editing()
+        assert amendements_an[0].is_being_edited
+
+    def test_amendement_no_longer_being_edited(
+        self, amendements_an, user_david_table_an
+    ):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            DBSession.add(user_david_table_an)
+            user_david_table_an.amendements.append(amendements_an[0])
+        amendements_an[0].start_editing()
+        assert amendements_an[0].is_being_edited
+        amendements_an[0].stop_editing()
+        assert not amendements_an[0].is_being_edited

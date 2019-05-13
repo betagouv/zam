@@ -130,19 +130,19 @@
             {% set amendement = amendements_with_table[0] %}
             <input type="hidden" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}">
         {% else %}
-            {% if amendements_with_table_active %}
+            {% if amendements_being_edited %}
                 <div class="notice danger">
                     <p>
-                        {% trans count=amendements_with_table_active|length %}
-                            Cet amendement <strong>est ouvert depuis la table de quelqu’un d’autre</strong>.
+                        {% trans count=amendements_being_edited|length %}
+                            Cet amendement <strong>est en cours d’édition par quelqu’un d’autre</strong>.
+                            Si vous transférez cet amendement, <strong>ses modifications ne seront pas enregistrées</strong>.
                         {% pluralize %}
-                            Ces amendements <strong>sont ouverts depuis la table de quelqu’un d’autre</strong>.
+                            Ces amendements <strong>sont en cours d’édition par d’autres personnes</strong>.
+                            Si vous transférez ces amendements, <strong>les modifications ne seront pas enregistrées</strong>.
                         {% endtrans %}
-                        Si cette personne est en train de traiter cet amendement lors du transfert,
-                        <strong>ses modifications ne seront pas enregistrées</strong>.
                     </p>
                     <ul class="amendements" data-target="transfers.amendementsWithTableActive">
-                        {% for amendement in amendements_with_table_active|sort(attribute="user_table") %}
+                        {% for amendement in amendements_being_edited|sort(attribute="user_table") %}
                             {% set amendement_user = amendement.user_table.user %}
                             <li>
                                 <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}"  data-action="transfers#check">
@@ -151,7 +151,11 @@
                                     {% if amendement_user == request.user %}
                                         Cet amendement est sur votre table
                                     {% else %}
-                                        <nobr class="user active" title="Activité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
+                                        {% if amendement_user.is_active %}
+                                            <nobr class="user active" title="Activité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
+                                        {% else %}
+                                            <nobr class="user inactive" title="Inactivité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
+                                        {% endif %}
                                     {% endif %}
                                 </label>
                             </li>
@@ -159,19 +163,17 @@
                     </ul>
                 </div>
             {% endif %}
-            {% if amendements_with_table_inactive %}
+            {% if amendements_not_being_edited %}
                 <div class="notice warning">
                     <p>
-                        {% trans count=amendements_with_table_inactive|length %}
+                        {% trans count=amendements_not_being_edited|length %}
                             Cet amendement <strong>est déjà sur la table de quelqu’un</strong>.
                         {% pluralize %}
                             Ces amendements <strong>sont déjà sur la table de quelqu’un</strong>.
                         {% endtrans %}
-                        Si cette personne est en train de traiter cet amendement lors du transfert,
-                        <strong>ses modifications ne seront pas enregistrées</strong>.
                     </p>
                     <ul class="amendements" data-target="transfers.amendementsWithTableInactive">
-                        {% for amendement in amendements_with_table_inactive|sort(attribute="user_table") %}
+                        {% for amendement in amendements_not_being_edited|sort(attribute="user_table") %}
                             {% set amendement_user = amendement.user_table.user %}
                             <li>
                                 <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked data-action="transfers#check">
@@ -180,7 +182,11 @@
                                     {% if amendement_user == request.user %}
                                         Cet amendement est sur votre table
                                     {% else %}
-                                        <nobr class="user inactive" title="Inactivité au cours des {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
+                                        {% if amendement_user.is_active %}
+                                            <nobr class="user active" title="Activité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
+                                        {% else %}
+                                            <nobr class="user inactive" title="Inactivité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
+                                        {% endif %}
                                     {% endif %}
                                 </label>
                             </li>

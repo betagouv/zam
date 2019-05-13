@@ -164,6 +164,20 @@ def test_transfer_amendement_from_edit_form_given_activity(
     )
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
+    assert submit_button.attributes.get("value") == "Transférer sur ma table"
+    assert submit_button.attributes.get("class") == "button enabled warning"
+    link_to_transfer = resp.parser.css_first("form#transfer a")
+    assert link_to_transfer.text() == "Transférer à…"
+    assert link_to_transfer.attributes.get("class") == "button warning"
+
+    # With amendement from amendement being edited.
+    amdt.start_editing()
+    resp = app.get(
+        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
+        user=user_david,
+    )
+
+    submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Forcer le transfert sur ma table"
     assert submit_button.attributes.get("class") == "button enabled danger"
     link_to_transfer = resp.parser.css_first("form#transfer a")
@@ -255,6 +269,33 @@ def test_post_amendement_edit_form(
 
     # Should create events.
     assert len(amendement.events) == 4
+
+
+def test_post_amendement_edit_form_reset_editing_state(
+    app, lecture_an, amendements_an, user_david, user_david_table_an
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    amendement = amendements_an[1]
+    with transaction.manager:
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendement)
+
+    amendement.start_editing()
+    assert amendement.is_being_edited
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
+    )
+    form = resp.forms["edit-amendement"]
+    form["avis"] = "Favorable"
+    form["objet"] = "Un objet très pertinent"
+    form["reponse"] = "Une réponse <strong>très</strong> appropriée"
+    form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
+    resp = form.submit("save")
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    assert not amendement.is_being_edited
 
 
 def test_post_amendement_edit_form_switch_table(

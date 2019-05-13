@@ -247,10 +247,37 @@ def test_lecture_get_transfer_amendements_from_other_active(
     assert (
         "Ronan (ronan@example.com)" in resp.parser.css_first(".amendements li").text()
     )
-    assert "checked" not in resp.parser.css_first(".amendements li input").attributes
+    assert "checked" in resp.parser.css_first(".amendements li input").attributes
     assert (
         resp.parser.css_first(".amendements li nobr").attributes.get("class")
         == "user active"
+    )
+
+
+def test_lecture_get_transfer_amendements_from_edited_amendement(
+    app, lecture_an, amendements_an, user_david, user_ronan
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(amendements_an[0])
+        table_ronan = user_ronan.table_for(lecture_an)
+        table_ronan.amendements.append(amendements_an[0])
+        amendements_an[0].start_editing()
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/transfer_amendements",
+        {"nums": [amendements_an[0]]},
+        user=user_david,
+    )
+    assert resp.status_code == 200
+    assert (
+        "Ronan (ronan@example.com)" in resp.parser.css_first(".amendements li").text()
+    )
+    assert "checked" not in resp.parser.css_first(".amendements li input").attributes
+    assert (
+        resp.parser.css_first(".amendements li nobr").attributes.get("class")
+        == "user inactive"
     )
 
 

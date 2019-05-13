@@ -84,6 +84,7 @@ class TableView:
             if amendement.user_table is target_table:
                 continue
             amendement.user_table = target_table
+            amendement.stop_editing()
             AmendementTransfere.create(self.request, amendement, old, new)
 
         if target != self.request.user.email and self.request.POST.get("from_index"):

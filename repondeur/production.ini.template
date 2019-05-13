@@ -31,6 +31,7 @@ sqlalchemy.url = $$db_url
 zam.tasks.redis_url = redis://localhost:6379/1
 zam.data.redis_url = redis://localhost:6379/2
 zam.users.redis_url = redis://localhost:6379/3
+zam.amendements.redis_url = redis://localhost:6379/4
 
 zam.session_secret = $$session_secret
 

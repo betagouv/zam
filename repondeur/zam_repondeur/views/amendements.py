@@ -94,6 +94,8 @@ class AmendementEdit:
         if comments_changed:
             CommentsAmendementModifie.create(self.request, self.amendement, comments)
 
+        self.amendement.stop_editing()
+
         self.request.session.flash(
             Message(cls="success", text="Les modifications ont bien été enregistrées.")
         )
@@ -135,3 +137,15 @@ def amendement_journal(context: AmendementResource, request: Request) -> Dict[st
         "today": date.today(),
         "back_url": request.resource_url(context, "amendement_edit"),
     }
+
+
+@view_config(context=AmendementResource, name="start_editing", renderer="json")
+def start_editing(context: AmendementResource, request: Request) -> dict:
+    context.model().start_editing()
+    return {}
+
+
+@view_config(context=AmendementResource, name="stop_editing", renderer="json")
+def stop_editing(context: AmendementResource, request: Request) -> dict:
+    context.model().stop_editing()
+    return {}

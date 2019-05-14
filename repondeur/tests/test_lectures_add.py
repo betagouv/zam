@@ -2,7 +2,6 @@ import re
 from pathlib import Path
 
 import responses
-import transaction
 from webtest.forms import Select
 
 
@@ -288,9 +287,8 @@ def test_post_form_already_exists(
     assert resp.status_code == 200
     assert "Cette lecture existe déjà…" in resp.text
 
-    with transaction.manager:
-        DBSession.add(lecture_an)
-        assert len(lecture_an.events) == 0
+    DBSession.add(lecture_an)
+    assert len(lecture_an.events) == 0
 
 
 def test_choices_lectures(app, user_david):

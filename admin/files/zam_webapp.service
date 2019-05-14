@@ -1,6 +1,7 @@
 [Unit]
 Description=Zam Web Application
-After=network.target
+Requires=postgresql.service redis-server.service
+After=network.target postgresql.service redis-server.service
 
 [Service]
 Type=simple

@@ -86,6 +86,7 @@ def parse_dossiers(export: dict, textes: Dict[str, Texte]) -> Dict[str, Dossier]
     dossier_dicts = (
         item["dossierParlementaire"]
         for item in export["dossiersLegislatifs"]["dossier"]
+        if isinstance(item, dict)
     )
     dossier_models = []
     for dossier_dict in dossier_dicts:

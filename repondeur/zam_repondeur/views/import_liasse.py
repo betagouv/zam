@@ -86,9 +86,7 @@ def upload_liasse_xml(context: LectureResource, request: Request) -> Response:
             f"{len(amendements)} nouveaux amendements récupérés (import liasse XML)."
         )
     request.session.flash(Message(cls="success", text=message))
-    AmendementsRecuperesLiasse.create(
-        request=None, lecture=lecture, count=len(amendements)
-    )
+    AmendementsRecuperesLiasse.create(request, lecture, count=len(amendements))
     DBSession.add(lecture)
     return HTTPFound(location=request.resource_url(context, "amendements"))
 

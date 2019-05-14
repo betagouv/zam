@@ -2,6 +2,7 @@ import re
 from pathlib import Path
 
 import responses
+import transaction
 from webtest.forms import Select
 
 
@@ -144,10 +145,14 @@ def test_post_form(app, user_david):
     assert str(lecture) == result
 
     # We should have an event entry for articles, and one for amendements
-    assert len(lecture.events) == 2
+    assert len(lecture.events) == 3
     assert lecture.events[0].render_summary() == "5 nouveaux amendements récupérés."
     assert (
         lecture.events[1].render_summary() == "Le contenu des articles a été récupéré."
+    )
+    assert (
+        lecture.events[2].render_summary()
+        == "<abbr title='david@example.com'>david@example.com</abbr> a créé la lecture."
     )
 
     # We should have articles from the page (1, 2) and from the amendements (3, 8, 9)
@@ -236,10 +241,14 @@ def test_post_form_senat_2019(app, user_david):
     assert str(lecture) == result
 
     # We should have an event entry for articles, and one for amendements
-    assert len(lecture.events) == 2
+    assert len(lecture.events) == 3
     assert lecture.events[0].render_summary() == "2 nouveaux amendements récupérés."
     assert (
         lecture.events[1].render_summary() == "Le contenu des articles a été récupéré."
+    )
+    assert (
+        lecture.events[2].render_summary()
+        == "<abbr title='david@example.com'>david@example.com</abbr> a créé la lecture."
     )
 
     # We should have articles from the page (1) and from the amendements (19, 29)
@@ -253,7 +262,7 @@ def test_post_form_senat_2019(app, user_david):
 def test_post_form_already_exists(
     app, texte_plfss2018_an_premiere_lecture, lecture_an, user_david
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import DBSession, Lecture
 
     assert Lecture.exists(
         chambre="an",
@@ -278,6 +287,10 @@ def test_post_form_already_exists(
 
     assert resp.status_code == 200
     assert "Cette lecture existe déjà…" in resp.text
+
+    with transaction.manager:
+        DBSession.add(lecture_an)
+        assert len(lecture_an.events) == 0
 
 
 def test_choices_lectures(app, user_david):

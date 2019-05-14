@@ -21,7 +21,7 @@ from zam_repondeur.models import (
     User,
     get_one_or_create,
 )
-from zam_repondeur.models.events.lecture import ArticlesRecuperes
+from zam_repondeur.models.events.lecture import ArticlesRecuperes, LectureCreee
 from zam_repondeur.models.users import Team
 from zam_repondeur.resources import (
     AmendementCollection,
@@ -118,6 +118,7 @@ class LecturesAdd:
             dossier=dossier_model,
         )
         get_articles(lecture_model)
+        LectureCreee.create(self.request, lecture=lecture_model)
         ArticlesRecuperes.create(request=None, lecture=lecture_model)
         # Call to fetch_* tasks below being asynchronous, we need to make
         # sure the lecture_model already exists once and for all in the database

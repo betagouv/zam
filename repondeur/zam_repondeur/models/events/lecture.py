@@ -35,6 +35,19 @@ class LectureEvent(Event):
         return Markup(self.details_template.safe_substitute(**self.template_vars))
 
 
+class LectureCreee(LectureEvent):
+    __mapper_args__ = {"polymorphic_identity": "lecture_creee"}
+    icon = "document"
+
+    summary_template = Template("<abbr title='$email'>$user</abbr> a créé la lecture.")
+
+    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
+        super().__init__(request, lecture, **kwargs)
+
+    def apply(self) -> None:
+        pass
+
+
 class ArticlesRecuperes(LectureEvent):
     __mapper_args__ = {"polymorphic_identity": "articles_recuperes"}
     icon = "document"

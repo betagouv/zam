@@ -56,6 +56,19 @@ class TestPostForm:
         assert resp.status_code == 200
         assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
+    def test_upload_success_event(self, app, user_david, lecture_an):
+        from zam_repondeur.models import DBSession
+
+        self._upload_backup(app, "backup.json", user_david).follow()
+
+        with transaction.manager:
+            DBSession.add(lecture_an)
+            assert len(lecture_an.events) == 1
+            assert lecture_an.events[0].render_summary() == (
+                "<abbr title='david@example.com'>david@example.com</abbr> a importé "
+                "des réponses d’un fichier JSON."
+            )
+
     def test_upload_updates_user_content(self, app, user_david):
         from zam_repondeur.models import DBSession, Amendement
         from zam_repondeur.models.events.amendement import (

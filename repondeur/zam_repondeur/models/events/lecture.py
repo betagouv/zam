@@ -88,11 +88,12 @@ class AmendementsRecuperesLiasse(LectureEvent):
     @property
     def summary_template(self) -> Template:
         count = self.data["count"]
+        base = "<abbr title='$email'>$user</abbr> a importé une liasse XML"
         if count == 1:
-            message = "1 nouvel amendement récupéré (import liasse XML)."
+            message = "1 nouvel amendement récupéré."
         else:
-            message = f"{count} nouveaux amendements récupérés (import liasse XML)."
-        return Template(message)
+            message = f"{count} nouveaux amendements récupérés."
+        return Template(f"{base} : {message}")
 
     def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
         super().__init__(request, lecture, **kwargs)

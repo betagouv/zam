@@ -157,3 +157,18 @@ class ReponsesImportees(LectureEvent):
 
     def apply(self) -> None:
         pass
+
+
+class ReponsesImporteesJSON(LectureEvent):
+    __mapper_args__ = {"polymorphic_identity": "reponses_importees_json"}
+    icon = "document"
+
+    summary_template = Template(
+        "<abbr title='$email'>$user</abbr> a importé des réponses d’un fichier JSON."
+    )
+
+    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
+        super().__init__(request, lecture, **kwargs)
+
+    def apply(self) -> None:
+        pass

@@ -1,6 +1,5 @@
 import logging
 from collections import Counter
-from datetime import datetime
 from typing import BinaryIO, Dict
 
 import ujson as json
@@ -10,6 +9,7 @@ from pyramid.response import Response
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload
 
+from zam_repondeur.models.events.lecture import ReponsesImporteesJSON
 from zam_repondeur.message import Message
 from zam_repondeur.models import Amendement, Article, Lecture
 from zam_repondeur.resources import LectureResource
@@ -53,7 +53,7 @@ def import_backup(context: LectureResource, request: Request) -> Response:
         elif counter["articles"]:
             message = f"{counter['articles']} article(s) chargé(s) avec succès"
         request.session.flash(Message(cls="success", text=message))
-        lecture.modified_at = datetime.utcnow()
+        ReponsesImporteesJSON.create(request, lecture)
 
     if counter["reponses_errors"] or counter["articles_errors"]:
         message = "Le fichier de sauvegarde n’a pas pu être chargé"

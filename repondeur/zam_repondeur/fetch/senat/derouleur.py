@@ -183,6 +183,9 @@ def get_parent_num(uid_map: Dict[str, int], amend: dict) -> Optional[int]:
         and parse_bool(amend["isSousAmendement"])
         and "idAmendementPere" in amend
     ):
-        return uid_map[amend["idAmendementPere"]]
-    else:
-        return None
+        parent_uid = amend["idAmendementPere"]
+        if parent_uid in uid_map:
+            return uid_map[parent_uid]
+        else:
+            logger.warning("Unknown parent amendement %s", parent_uid)
+    return None

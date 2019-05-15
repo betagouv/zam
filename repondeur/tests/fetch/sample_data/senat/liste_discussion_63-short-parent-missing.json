@@ -1,0 +1,66 @@
+{
+    "info_generales": {
+        "natureLoi": "Projet de loi",
+        "intituleLoi": "Financement de la sécurité sociale pour 2018",
+        "lecture": "1ère lecture",
+        "tsgenhtml": "1531427548000",
+        "idtxt": "103021",
+        "nbAmdtsDeposes": "595",
+        "nbAmdtsAExaminer": "0",
+        "doslegsignet": "plfss2018"
+    },
+    "Subdivisions": [
+        {
+            "libelle_subdivision": "Article 3",
+            "id_subdivision": "151610",
+            "signet": "../../textes/2017-2018/63.html#AMELI_SUB_4__Article_3",
+            "Amendements": [
+                {
+                    "idAmendement": "1103376",
+                    "posder": "1",
+                    "subpos": "0",
+                    "isSousAmendement": "false",
+                    "idAmendementPere": "0",
+                    "urlAmdt": "Amdt_31.html",
+                    "typeAmdt": "Amt",
+                    "num": "31",
+                    "libelleAlinea": "Al. 8",
+                    "urlAuteur": "vanlerenberghe_jean_marie01034p.html",
+                    "auteur": "M. VANLERENBERGHE",
+                    "isDiscussionCommune": "false",
+                    "isDiscussionCommuneIsolee": "false",
+                    "isIdentique": "false",
+                    "sort": "Adopté",
+                    "isAdopte": "true",
+                    "isRejete": "false"
+                }
+            ]
+        },
+        {
+            "libelle_subdivision": "Article 4",
+            "id_subdivision": "151611",
+            "signet": "../../textes/2017-2018/63.html#AMELI_SUB_4__Article_4",
+            "Amendements": [
+                {
+                    "idAmendement": "1104044",
+                    "posder": "1",
+                    "subpos": "0",
+                    "isSousAmendement": "true",
+                    "idAmendementPere": "1234",
+                    "urlAmdt": "Amdt_443.html",
+                    "typeAmdt": "Amt",
+                    "num": "443",
+                    "libelleAlinea": "Réd. glob.",
+                    "urlAuteur": "cohen_laurence11031d.html",
+                    "auteur": "Mme COHEN",
+                    "isDiscussionCommune": "false",
+                    "isDiscussionCommuneIsolee": "false",
+                    "isIdentique": "false",
+                    "sort": "Rejeté",
+                    "isAdopte": "false",
+                    "isRejete": "true"
+                }
+            ]
+        }
+    ]
+}

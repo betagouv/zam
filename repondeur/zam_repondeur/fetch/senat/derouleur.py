@@ -51,12 +51,17 @@ def _parse_derouleur_data(data_iter: Iterable[Any]) -> List[DiscussionDetails]:
         for subdiv in data["Subdivisions"]
         for amend in subdiv["Amendements"]
     ]
-    uid_map: Dict[str, int] = {}
-    discussion_details = []
-    for position, (subdiv, amend) in enumerate(subdivs_amends, start=1):
-        details = parse_discussion_details(uid_map, amend, position)
-        uid_map[amend["idAmendement"]] = details.num
-        discussion_details.append(details)
+
+    uid_map: Dict[str, int] = {
+        amend["idAmendement"]: Amendement.parse_num(amend["num"])[0]
+        for _, amend in subdivs_amends
+    }
+
+    discussion_details = [
+        parse_discussion_details(uid_map, amend, position)
+        for position, (subdiv, amend) in enumerate(subdivs_amends, start=1)
+    ]
+
     return discussion_details
 
 
@@ -178,6 +183,9 @@ def get_parent_num(uid_map: Dict[str, int], amend: dict) -> Optional[int]:
         and parse_bool(amend["isSousAmendement"])
         and "idAmendementPere" in amend
     ):
-        return uid_map[amend["idAmendementPere"]]
-    else:
-        return None
+        parent_uid = amend["idAmendementPere"]
+        if parent_uid in uid_map:
+            return uid_map[parent_uid]
+        else:
+            logger.warning("Unknown parent amendement %s", parent_uid)
+    return None

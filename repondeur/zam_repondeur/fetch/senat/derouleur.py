@@ -51,12 +51,17 @@ def _parse_derouleur_data(data_iter: Iterable[Any]) -> List[DiscussionDetails]:
         for subdiv in data["Subdivisions"]
         for amend in subdiv["Amendements"]
     ]
-    uid_map: Dict[str, int] = {}
-    discussion_details = []
-    for position, (subdiv, amend) in enumerate(subdivs_amends, start=1):
-        details = parse_discussion_details(uid_map, amend, position)
-        uid_map[amend["idAmendement"]] = details.num
-        discussion_details.append(details)
+
+    uid_map: Dict[str, int] = {
+        amend["idAmendement"]: Amendement.parse_num(amend["num"])[0]
+        for _, amend in subdivs_amends
+    }
+
+    discussion_details = [
+        parse_discussion_details(uid_map, amend, position)
+        for position, (subdiv, amend) in enumerate(subdivs_amends, start=1)
+    ]
+
     return discussion_details
 
 

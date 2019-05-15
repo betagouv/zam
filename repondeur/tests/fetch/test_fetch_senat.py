@@ -678,6 +678,47 @@ def test_fetch_and_parse_discussion_details_empty_and_logs_when_url_not_found(
     assert f"Could not fetch {url}" in [rec.message for rec in caplog.records]
 
 
+@responses.activate
+def test_fetch_and_parse_discussion_details_parent_before(lecture_senat, caplog):
+    from zam_repondeur.fetch.senat.derouleur import fetch_and_parse_discussion_details
+
+    data = json.loads(read_sample_data("liste_discussion_63-short-parent-before.json"))
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json",
+        json=data,
+        status=200,
+    )
+
+    details = fetch_and_parse_discussion_details(lecture_senat, phase="commission")
+
+    assert len(details) == 2
+    assert details[0].parent_num == 31
+    assert details[1].parent_num is None
+
+
+@responses.activate
+def test_fetch_and_parse_discussion_details_parent_missing(lecture_senat, caplog):
+    from zam_repondeur.fetch.senat.derouleur import fetch_and_parse_discussion_details
+
+    data = json.loads(read_sample_data("liste_discussion_63-short-parent-missing.json"))
+
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json",
+        json=data,
+        status=200,
+    )
+
+    details = fetch_and_parse_discussion_details(lecture_senat, phase="commission")
+
+    assert len(details) == 2
+    assert details[0].parent_num is None
+    assert details[1].parent_num is None
+    assert f"Unknown parent amendement 1234" in [rec.message for rec in caplog.records]
+
+
 def test_derouleur_urls(lecture_senat):
     from zam_repondeur.fetch.senat.derouleur import derouleur_urls
 

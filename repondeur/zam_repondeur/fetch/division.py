@@ -7,6 +7,7 @@ modularity and easier maintenance than a big regex...
 https://parsy.readthedocs.io/en/latest/overview.html
 
 """
+import re
 from typing import Any, List, Optional
 
 from parsy import ParseError, regex, seq, string, string_from, whitespace
@@ -150,7 +151,7 @@ ARTICLE_ADDITIONNEL = (
     .combine_dict(SubDiv.create)
     .skip(STATUT_NAVETTE.optional())
     .skip(BLA_BLA.optional())
-)
+) | seq(AVANT_APRES.tag("pos"), INTITULE.tag("type_")).combine_dict(SubDiv.create)
 
 
 INTERVALLE = seq(
@@ -190,10 +191,16 @@ DIVISION = (
 
 
 def parse_subdiv(libelle: str, texte: Optional[Texte] = None) -> SubDiv:
-    if texte is not None and libelle == texte.titre_long.capitalize():
-        return SubDiv("titre", "", "", "")
+
+    input_string = libelle
+
+    # Case-insensitively replace the litteral title
+    if texte is not None and texte.titre_long is not None:
+        title_re = re.compile(re.escape(texte.titre_long.lower()), re.I)
+        input_string = title_re.sub("Intitulé du projet de loi", input_string)
+
     try:
-        subdiv: SubDiv = DIVISION.parse(libelle)
+        subdiv: SubDiv = DIVISION.parse(input_string)
         return subdiv
     except ParseError:
         raise ValueError(f"Could not parse subdivision {libelle!r}")

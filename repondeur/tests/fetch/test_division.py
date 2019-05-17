@@ -148,14 +148,28 @@ def test_parse_article_additionnel(text, type_, num, mult, pos):
 def test_parse_subdiv(text, type_, num, mult, pos):
     from zam_repondeur.fetch.division import parse_subdiv
 
-    assert parse_subdiv(text) == (type_, num, mult, pos)
+    assert parse_subdiv(text) == SubDiv(type_, num, mult, pos)
 
 
-def test_parse_subdiv_texte_title(texte_plfss2018_an_premiere_lecture):
+@pytest.mark.parametrize(
+    "division",
+    [
+        "Projet de loi de financement de la sécurité sociale pour 2018",
+        "PROJET DE LOI de financement de la sécurité sociale pour 2018",
+    ],
+)
+def test_parse_subdiv_texte_title(texte_plfss2018_an_premiere_lecture, division):
+    from zam_repondeur.fetch.division import parse_subdiv
+
+    subdiv = parse_subdiv(division, texte=texte_plfss2018_an_premiere_lecture)
+    assert subdiv == SubDiv("titre", "", "", "")
+
+
+def test_parse_subdiv_art_add_av_texte_title(texte_plfss2018_an_premiere_lecture):
     from zam_repondeur.fetch.division import parse_subdiv
 
     subdiv = parse_subdiv(
-        "Projet de loi de financement de la sécurité sociale pour 2018",
+        "art. add. avant PROJET DE LOI de financement de la sécurité sociale pour 2018",
         texte=texte_plfss2018_an_premiere_lecture,
     )
-    assert subdiv == ("titre", "", "", "")
+    assert subdiv == SubDiv("titre", "", "", "avant")

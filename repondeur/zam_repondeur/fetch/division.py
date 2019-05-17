@@ -144,7 +144,7 @@ ARTICLE_UNIQUE = (
 ARTICLE_ADDITIONNEL = (
     seq(
         AVANT_APRES.tag("pos"),
-        (ARTICLE | TITRE).tag("type_"),
+        (ARTICLE | CHAPITRE | TITRE).tag("type_"),
         (whitespace >> NUMERO).tag("num"),
         (whitespace >> MULT_ADD).optional().tag("mult"),
     )

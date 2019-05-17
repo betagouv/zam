@@ -77,6 +77,7 @@ def test_parse_article(text, type_, num, mult, pos):
     [
         ("art. add. avant TITRE Ier : BLA BLA", "section", "Ier", "", "avant"),
         ("art. add. avant TITRE III : BLA BLA", "section", "III", "", "avant"),
+        ("art. add. avant Chapitre Ier : BLA BLA", "chapitre", "Ier", "", "avant"),
         ("art. add. après Article 7", "article", "7", "", "après"),
         ("art. add. après Article 26 (Supprimé)", "article", "26", "", "après"),
         (

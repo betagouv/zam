@@ -164,11 +164,7 @@
                     {% if amendement.is_being_edited %}
                         <p>
                             Cet amendement est <strong>en cours d’édition par
-                            {% if amendement_user.is_active %}
-                                <nobr class="user active" title="Activité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
-                            {% else %}
-                                <nobr class="user inactive" title="Inactivité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
-                            {% endif %}
+                            {{ macros.user_activity(amendement_user) }}
                             </strong>.
                             Si vous transférez cet amendement, <strong>ses modifications ne seront pas enregistrées</strong>.
                         </p>
@@ -180,11 +176,7 @@
                     {% else %}
                         <p>
                             Cet amendement <strong>est déjà sur la table de
-                            {% if amendement_user.is_active %}
-                                <nobr class="user active" title="Activité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
-                            {% else %}
-                                <nobr class="user inactive" title="Inactivité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
-                            {% endif %}
+                            {{ macros.user_activity(amendement_user) }}
                             </strong>.
                         </p>
                         <form id="transfer" action="{{ my_table_url }}" method="POST">

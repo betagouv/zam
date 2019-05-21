@@ -366,6 +366,9 @@ path {
 nobr.user {
     font-weight: 600;
 }
+    nobr.user .email {
+        font-weight: normal;
+    }
 .centered {
     text-align: center;
 }
@@ -534,16 +537,16 @@ label[for="emptytable"] abbr {
 .user {
     cursor: pointer;
 }
-    .user span {
+    .user span.activity {
         display: inline-block;
         width: .7rem;
         height: .7rem;
         border-radius: 50%;
     }
-        .user.active span {
+        .user.active span.activity {
             background: green;
         }
-        .user.inactive span {
+        .user.inactive span.activity {
             background: aliceblue;
             border: 2px solid darkgray;
         }

@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% import "macros.html" as macros %}
 
 {% block title %}
     {{ lecture }} • {{ lecture.texte.titre_court }} • Zam
@@ -151,11 +152,7 @@
                                     {% if amendement_user == request.user %}
                                         Cet amendement est sur votre table
                                     {% else %}
-                                        {% if amendement_user.is_active %}
-                                            <nobr class="user active" title="Activité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
-                                        {% else %}
-                                            <nobr class="user inactive" title="Inactivité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
-                                        {% endif %}
+                                        {{ macros.user_activity(amendement_user) }}
                                     {% endif %}
                                 </label>
                             </li>
@@ -182,11 +179,7 @@
                                     {% if amendement_user == request.user %}
                                         Cet amendement est sur votre table
                                     {% else %}
-                                        {% if amendement_user.is_active %}
-                                            <nobr class="user active" title="Activité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
-                                        {% else %}
-                                            <nobr class="user inactive" title="Inactivité dans les {{ amendement_user.INACTIVE_AFTER }} dernières minutes"><span></span> {{ amendement_user }}</nobr>
-                                        {% endif %}
+                                        {{ macros.user_activity(amendement_user) }}
                                     {% endif %}
                                 </label>
                             </li>

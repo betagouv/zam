@@ -10,6 +10,14 @@
     {% endif %}
 {% endmacro %}
 
+{% macro user_activity(user) %}
+    {% if user.is_active %}
+        <nobr class="user active" title="Activité dans les {{ user.INACTIVE_AFTER }} dernières minutes"><span class="activity"></span> {{ user.name }} <span class="email">({{ user.email }})</span></nobr>
+    {% else %}
+        <nobr class="user inactive" title="Inactivité dans les {{ user.INACTIVE_AFTER }} dernières minutes"><span class="activity"></span> {{ user.name }} <span class="email">({{ user.email }})</span></nobr>
+    {% endif %}
+{% endmacro %}
+
 {% macro timeline(events, today) %}
     <div class="container timeline">
         {% for key, events in events|group_by_day %}

@@ -182,4 +182,4 @@ def test_parse_subdiv_error(texte_plfss2018_an_premiere_lecture):
     subdiv = parse_subdiv(
         "this is unparsable garbage", texte=texte_plfss2018_an_premiere_lecture
     )
-    assert subdiv == SubDiv("error", "", "", "")
+    assert subdiv == SubDiv("erreur", "999999999", "", "")

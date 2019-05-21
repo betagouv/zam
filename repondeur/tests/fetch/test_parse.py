@@ -76,8 +76,8 @@ def test_parse_from_csv_unparsable_article(lecture_senat):
     assert amendement.rectif == 1
     assert amendement.num_disp == "1 rect."
 
-    assert amendement.article.num == ""
-    assert str(amendement.article) == "Error"
+    assert amendement.article.num == "999999999"
+    assert str(amendement.article) == "Erreur 999999999"
 
 
 class TestExtractMatricule:

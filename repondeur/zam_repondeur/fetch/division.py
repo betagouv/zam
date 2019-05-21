@@ -18,6 +18,8 @@ from zam_repondeur.models.texte import Texte
 
 logger = logging.getLogger(__name__)
 
+VERY_BIG_NUMBER = 999_999_999
+
 
 def case_insensitive_string(expected_string: str) -> Any:
     return string(expected_string, transform=lambda s: s.lower())
@@ -207,4 +209,4 @@ def parse_subdiv(libelle: str, texte: Optional[Texte] = None) -> SubDiv:
         return subdiv
     except ParseError:
         logger.warning(f"Could not parse subdivision {libelle!r}")
-        return SubDiv("error", "", "", "")
+        return SubDiv("erreur", str(VERY_BIG_NUMBER), "", "")

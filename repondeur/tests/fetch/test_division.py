@@ -174,3 +174,12 @@ def test_parse_subdiv_art_add_av_texte_title(texte_plfss2018_an_premiere_lecture
         texte=texte_plfss2018_an_premiere_lecture,
     )
     assert subdiv == SubDiv("titre", "", "", "avant")
+
+
+def test_parse_subdiv_error(texte_plfss2018_an_premiere_lecture):
+    from zam_repondeur.fetch.division import parse_subdiv
+
+    subdiv = parse_subdiv(
+        "this is unparsable garbage", texte=texte_plfss2018_an_premiere_lecture
+    )
+    assert subdiv == SubDiv("error", "", "", "")

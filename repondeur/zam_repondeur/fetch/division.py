@@ -8,12 +8,15 @@ https://parsy.readthedocs.io/en/latest/overview.html
 
 """
 import re
+import logging
 from typing import Any, List, Optional
 
 from parsy import ParseError, regex, seq, string, string_from, whitespace
 
 from zam_repondeur.models.division import ADJECTIFS_MULTIPLICATIFS, SubDiv
 from zam_repondeur.models.texte import Texte
+
+logger = logging.getLogger(__name__)
 
 
 def case_insensitive_string(expected_string: str) -> Any:
@@ -203,4 +206,5 @@ def parse_subdiv(libelle: str, texte: Optional[Texte] = None) -> SubDiv:
         subdiv: SubDiv = DIVISION.parse(input_string)
         return subdiv
     except ParseError:
-        raise ValueError(f"Could not parse subdivision {libelle!r}")
+        logger.warning(f"Could not parse subdivision {libelle!r}")
+        return SubDiv("error", "", "", "")

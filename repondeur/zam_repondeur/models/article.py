@@ -50,6 +50,7 @@ ALLOWED_TYPE = (
     "sous-section",
     "article",
     "annexe",
+    "error",
 )
 
 ALLOWED_POS = ("avant", "", "après")

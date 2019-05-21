@@ -278,7 +278,7 @@ class TransferAmendements:
     @property
     def back_url(self) -> str:
         url: str = self.request.GET.get("back")
-        if url is None or not url.startswith("/"):
+        if url is None:
             return self.request.resource_url(self.context["amendements"])
         return url
 

@@ -104,7 +104,11 @@ class AmendementEdit:
                 location=self.request.resource_url(
                     self.context.parent.parent,
                     "transfer_amendements",
-                    query={"nums": self.amendement.num, "from_save": 1},
+                    query={
+                        "nums": self.amendement.num,
+                        "from_save": 1,
+                        "back": self.back_url,
+                    },
                 )
             )
         else:

@@ -303,6 +303,9 @@ form.box input[type=submit] {
 }
 
 /* Overwrite Bootstrap styles on upload inputs. */
+.custom-file-input:hover {
+    cursor: pointer;
+}
 .custom-file-label {
     white-space: nowrap;
     overflow: hidden;

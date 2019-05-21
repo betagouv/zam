@@ -104,23 +104,9 @@
                 </th>
                 <th>
                     Avis
-                    <select
-                        data-action="amendements-filters#filterAvis"
-                        data-target="amendements-filters.avisSelect">
-                        <option value="">Tout</option>
-                        <option value="1">Avec</option>
-                        <option value="0">Sans</option>
-                    </select>
                 </th>
                 <th>
                     Réponse
-                    <select
-                        data-action="amendements-filters#filterReponse"
-                        data-target="amendements-filters.reponseSelect">
-                        <option value="">Tout</option>
-                        <option value="1">Avec</option>
-                        <option value="0">Sans</option>
-                    </select>
                 </th>
                 <th></th>
             </tr>
@@ -153,8 +139,6 @@
                         {{ amendement.user_table.user.name }}
                     {% endif %}"
                 data-emptytable="{{ 1 if not amendement.user_table and not amendement.is_abandoned else 0 }}"
-                data-avis="{{ 1 if amendement.gouvernemental or amendement.user_content.avis else 0 }}"
-                data-reponse="{{ 1 if amendement.user_content.reponse else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 data-abandoned-before-seance="{{ 1 if amendement.is_abandoned_before_seance else 0 }}"
                 id="{{ amendement.slug }}"

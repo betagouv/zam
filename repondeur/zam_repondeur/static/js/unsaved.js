@@ -15,8 +15,10 @@ class UnsavedChanges extends Stimulus.Controller {
   }
 
   setDirty(event) {
-    this.data.set('dirty', 'true')
-    this.postStartEditing()
+    if (!this.isDirty()) {
+      this.data.set('dirty', 'true')
+      this.postStartEditing()
+    }
   }
 
   allowFormSubmission(event) {

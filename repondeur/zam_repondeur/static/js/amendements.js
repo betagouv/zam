@@ -127,8 +127,6 @@ class AmendementsFilters extends Stimulus.Controller {
             'tableInput',
             'emptytableCheckbox',
             'emptytableLabel',
-            'avisSelect',
-            'reponseSelect'
         ]
     }
 
@@ -168,18 +166,6 @@ class AmendementsFilters extends Stimulus.Controller {
                 .querySelector('abbr')
                 .classList.add('selected')
             this.filterByEmptytable(emptytableFilter)
-        }
-        const avisFilter = this.getURLParam('avis')
-        if (avisFilter !== '') {
-            this.toggle()
-            this.avisSelectTarget.value = avisFilter
-            this.filterByAvis(avisFilter)
-        }
-        const reponseFilter = this.getURLParam('reponse')
-        if (reponseFilter !== '') {
-            this.toggle()
-            this.reponseSelectTarget.value = reponseFilter
-            this.filterByReponse(reponseFilter)
         }
         this.updateCount()
     }
@@ -265,20 +251,6 @@ class AmendementsFilters extends Stimulus.Controller {
         this.updateCount()
     }
 
-    filterAvis(event) {
-        const value = event.target.value.trim()
-        this.filterByAvis(value)
-        this.setURLParam('avis', value)
-        this.updateCount()
-    }
-
-    filterReponse(event) {
-        const value = event.target.value.trim()
-        this.filterByReponse(value)
-        this.setURLParam('reponse', value)
-        this.updateCount()
-    }
-
     filterByArticle(value) {
         this.filterColumn('hidden-article', line => {
             if (!value) {
@@ -328,32 +300,6 @@ class AmendementsFilters extends Stimulus.Controller {
             return line.dataset.emptytable.trim() === value
         })
         this.tableTarget.classList.toggle('filtered-emptytable', value)
-    }
-
-    filterByAvis(value) {
-        this.filterColumn('hidden-avis', line => {
-            if (value === '') {
-                return true
-            }
-            if (
-                line.dataset.gouvernemental === '1' ||
-                line.dataset.abandonedBeforeSeance === '1'
-            ) {
-                return false
-            }
-            return line.dataset.avis === value
-        })
-        this.tableTarget.classList.toggle('filtered-avis', value)
-    }
-
-    filterByReponse(value) {
-        this.filterColumn('hidden-reponse', line => {
-            if (value === '') {
-                return true
-            }
-            return line.dataset.reponse === value
-        })
-        this.tableTarget.classList.toggle('filtered-reponse', value)
     }
 
     filterColumn(className, shouldShow) {

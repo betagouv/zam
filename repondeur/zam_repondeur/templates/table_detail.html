@@ -213,14 +213,7 @@
                         </label>
                     </th>
                     <th>
-                        <label for="avis">Avis </label>
-                        <select id="avis"
-                            data-action="amendements-filters#filterAvis"
-                            data-target="amendements-filters.avisSelect">
-                            <option value="">Tout</option>
-                            <option value="1">Avec</option>
-                            <option value="0">Sans</option>
-                        </select>
+                        Avis
                     </th>
                     <th>
                         <input id="select-all" type="checkbox" name="select-all"
@@ -249,7 +242,6 @@
                        data-order="{{ loop.index }}"
                        data-amendement="{{ amendement.num }}"
                        data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
-                       data-avis="{{ 1 if amendement.gouvernemental or amendement.user_content.avis else 0 }}"
                        data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}">
                         <td colspan="4">
                             <div class="box amendement-card {% if amendement.slug == highlighted_amdt %}highlighted{% endif %}">

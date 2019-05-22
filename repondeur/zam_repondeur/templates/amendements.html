@@ -150,11 +150,14 @@
                     <input type="checkbox" name="amendement-selected" value="{{ amendement.num }}">
                 </td>
                 <td class="article" data-sortkey="
-                    {%- if amendement.is_abandoned_before_seance -%}
+                    {%- if amendement.is_abandoned_before_seance or amendement.article.is_erreur -%}
                         {{ amendement.VERY_BIG_NUMBER }}
                     {%- else -%}
                         {{ amendement.article.sort_key_as_str }}
                     {%- endif -%}">
+                    {% if amendement.article.is_erreur %}
+                        ⚠️
+                    {% endif %}
                     {{ amendement.article }}
                 </td>
                 <td data-sortkey="
@@ -286,8 +289,8 @@
             data-target="amendements-articles.list">
             <ul>
                 {% for article in articles | sort %}
-                    {# On ne liste pas les inconnus ni les intersticiels ici #}
-                    {% if article.type and not article.pos %}
+                    {# On ne liste pas les inconnus ni les intersticiels ni les erreurs ici #}
+                    {% if article.type and not article.pos and not article.type == "erreur" %}
                         <li>
                             <a class="underlined" href="{{ request.resource_url(context.parent['articles'][article.url_key]) }}">
                                 {{ article.format() }}

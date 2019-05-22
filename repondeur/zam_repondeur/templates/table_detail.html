@@ -247,7 +247,9 @@
                             <div class="box amendement-card {% if amendement.slug == highlighted_amdt %}highlighted{% endif %}">
                                 <div class="amendement-card-infos">
                                     <div class="entete">
-                                        {% if amendement.article.pos %}
+                                        {% if amendement.article.is_erreur %}
+                                            <span class="article">⚠️ Erreur de récupération de l’article</span>
+                                        {% elif amendement.article.pos %}
                                             <span class="article">{{ amendement.article.format() }}</span>
                                         {% else %}
                                             <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article" target="_blank">{{ amendement.article.format() }}</a>

@@ -155,6 +155,10 @@ class Article(Base):
             return "liminaire"
         return self.num or ""
 
+    @property
+    def is_erreur(self):
+        return self.type == "erreur"
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Article):
             return NotImplemented
@@ -175,7 +179,8 @@ class Article(Base):
         "sous-section": 5,
         "article": 6,
         "annexe": 7,
-        "": 8,
+        "erreur": 8,
+        "": 9,
     }
 
     _ORDER_MULT = {"": 1, **ADJECTIFS_MULTIPLICATIFS}

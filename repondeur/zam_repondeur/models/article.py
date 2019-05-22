@@ -156,7 +156,7 @@ class Article(Base):
         return self.num or ""
 
     @property
-    def is_erreur(self):
+    def is_erreur(self) -> bool:
         return self.type == "erreur"
 
     def __eq__(self, other: object) -> bool:

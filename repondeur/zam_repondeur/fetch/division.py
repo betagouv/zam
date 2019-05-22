@@ -206,5 +206,5 @@ def parse_subdiv(libelle: str, texte: Optional[Texte] = None) -> SubDiv:
         subdiv: SubDiv = DIVISION.parse(input_string)
         return subdiv
     except ParseError:
-        logger.warning(f"Could not parse subdivision {libelle!r}")
+        logger.error(f"Could not parse subdivision {libelle!r}")
         return SubDiv("erreur", "", "", "")

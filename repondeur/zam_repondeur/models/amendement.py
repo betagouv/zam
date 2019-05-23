@@ -271,8 +271,13 @@ class Amendement(Base):
         return reponse
 
     @property
-    def sort_key(self) -> Tuple[bool, int, int]:
-        return (self.is_abandoned, self.position or self.VERY_BIG_NUMBER, self.num)
+    def sort_key(self) -> Tuple[bool, int, "Article", int]:
+        return (
+            self.is_abandoned,
+            self.position or self.VERY_BIG_NUMBER,
+            self.article,
+            self.num,
+        )
 
     @reify
     def num_str(self) -> str:

@@ -125,6 +125,10 @@ class Lecture(Base, LastEventMixin):
         )
 
     @property
+    def is_commission(self) -> bool:
+        return self.format_organe().startswith("Commission")
+
+    @property
     def displayable(self) -> bool:
         return any(amd.is_displayable for amd in self.amendements)
 

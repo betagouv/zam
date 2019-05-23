@@ -97,6 +97,26 @@ def test_get_amendements_order_default(app, lecture_an, amendements_an, user_dav
     ]
 
 
+def test_get_amendements_order_fallback_article(
+    app, lecture_an, amendements_an, user_david, article7bis_an
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        for amendement in amendements_an:
+            amendement.position = None
+        amendements_an[0].article = article7bis_an
+        DBSession.add_all(amendements_an)
+
+    resp = app.get("/lectures/an.15.269.PO717460/amendements", user=user_david)
+
+    assert resp.status_code == 200
+    assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(3)")] == [
+        "999",
+        "666",
+    ]
+
+
 def test_get_amendements_order_abandoned_last(
     app, lecture_an, amendements_an, user_david
 ):

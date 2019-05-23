@@ -117,10 +117,10 @@ def test_write_json(
     }
     assert [amdt["article_order"] for amdt in amendements] == [
         "6|001|01|__________|1",
-        "6|007|02|__________|1",
-        "6|001|01|__________|1",
         "6|001|01|__________|0",
         "6|001|01|__________|1",
+        "6|001|01|__________|1",
+        "6|007|02|__________|1",
     ]
     assert articles == [
         {"presentation": "", "sort_key_as_str": "6|001|01|__________|0", "title": ""},
@@ -316,7 +316,7 @@ def test_write_json_sous_amendement(
     assert counter["amendements"] == len(amendements) == 5
     assert counter["articles"] == len(articles) == 3
 
-    assert amendements[-1] == {
+    assert amendements[-2] == {
         "alinea": "",
         "auteur": "M. JEAN",
         "avis": "",

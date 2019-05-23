@@ -1,6 +1,6 @@
 ### Perspectives
 
-<p class="notice">Date de prochaine démonstration : 22 mai 2019, 15h, Babylone.</p>
+<p class="notice">Date de prochaine démonstration : 5 juin 2019, 15h, Babylone.</p>
 
 #### Rappel des objectifs prioritaires des développements 2019
 
@@ -24,6 +24,29 @@
 - PLFSS pour 2020 (DSS - ministère des solidarités et de la santé)
 
 ### Changements récents
+
+#### 23 mai 2019
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-05-23-message-edition-en-cours.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-05-23-message-edition-en-cours.png">
+    </a>
+    <figcaption>
+        Notion d’édition en cours d’une réponse générant un message d’avertissement approprié en cas de transfert d’amendement. Un message est également affiché lorsqu’on quitte une page en cours d’édition sans avoir préalablement sauvegardé sa saisie.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-05-23-message-transferts.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-05-23-message-transferts.png">
+    </a>
+    <figcaption>
+        Avertissements plus explicites en cas de transferts depuis la table d’une autre personne.
+    </figcaption>
+</figure>
+
 
 #### 9 avril 2019
 

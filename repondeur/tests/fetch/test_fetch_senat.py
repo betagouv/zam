@@ -630,6 +630,7 @@ def test_fetch_discussion_details(texte_senat, lecture_senat):
         texte_senat.numero = 610
         lecture_senat.session = "2016-2017"
         lecture_senat.texte = texte_senat
+        lecture_senat.organe = "PO744107"
         DBSession.add(lecture_senat)
 
     json_data = json.loads(read_sample_data("liste_discussion_610.json"))
@@ -641,7 +642,7 @@ def test_fetch_discussion_details(texte_senat, lecture_senat):
         status=200,
     )
 
-    data = list(_fetch_discussion_details(lecture_senat, "commission"))
+    data = list(_fetch_discussion_details(lecture_senat))
 
     assert len(data) == 1
     assert data[0] == json_data
@@ -650,6 +651,11 @@ def test_fetch_discussion_details(texte_senat, lecture_senat):
 @responses.activate
 def test_fetch_discussion_details_empty_when_url_not_found(lecture_senat):
     from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        lecture_senat.organe = "PO744107"
+        DBSession.add(lecture_senat)
 
     responses.add(
         responses.GET,
@@ -657,7 +663,7 @@ def test_fetch_discussion_details_empty_when_url_not_found(lecture_senat):
         status=404,
     )
 
-    assert list(_fetch_discussion_details(lecture_senat, "commission")) == []
+    assert list(_fetch_discussion_details(lecture_senat)) == []
 
 
 @responses.activate
@@ -665,6 +671,11 @@ def test_fetch_and_parse_discussion_details_empty_and_logs_when_url_not_found(
     lecture_senat, caplog
 ):
     from zam_repondeur.fetch.senat.derouleur import fetch_and_parse_discussion_details
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        lecture_senat.organe = "PO744107"
+        DBSession.add(lecture_senat)
 
     responses.add(
         responses.GET,
@@ -672,7 +683,7 @@ def test_fetch_and_parse_discussion_details_empty_and_logs_when_url_not_found(
         status=404,
     )
 
-    assert fetch_and_parse_discussion_details(lecture_senat, phase="commission") == []
+    assert fetch_and_parse_discussion_details(lecture_senat) == []
 
     url = "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json"
     assert f"Could not fetch {url}" in [rec.message for rec in caplog.records]
@@ -681,6 +692,11 @@ def test_fetch_and_parse_discussion_details_empty_and_logs_when_url_not_found(
 @responses.activate
 def test_fetch_and_parse_discussion_details_parent_before(lecture_senat, caplog):
     from zam_repondeur.fetch.senat.derouleur import fetch_and_parse_discussion_details
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        lecture_senat.organe = "PO744107"
+        DBSession.add(lecture_senat)
 
     data = json.loads(read_sample_data("liste_discussion_63-short-parent-before.json"))
 
@@ -691,7 +707,7 @@ def test_fetch_and_parse_discussion_details_parent_before(lecture_senat, caplog)
         status=200,
     )
 
-    details = fetch_and_parse_discussion_details(lecture_senat, phase="commission")
+    details = fetch_and_parse_discussion_details(lecture_senat)
 
     assert len(details) == 2
     assert details[0].parent_num == 31
@@ -701,6 +717,11 @@ def test_fetch_and_parse_discussion_details_parent_before(lecture_senat, caplog)
 @responses.activate
 def test_fetch_and_parse_discussion_details_parent_missing(lecture_senat, caplog):
     from zam_repondeur.fetch.senat.derouleur import fetch_and_parse_discussion_details
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        lecture_senat.organe = "PO744107"
+        DBSession.add(lecture_senat)
 
     data = json.loads(read_sample_data("liste_discussion_63-short-parent-missing.json"))
 
@@ -711,7 +732,7 @@ def test_fetch_and_parse_discussion_details_parent_missing(lecture_senat, caplog
         status=200,
     )
 
-    details = fetch_and_parse_discussion_details(lecture_senat, phase="commission")
+    details = fetch_and_parse_discussion_details(lecture_senat)
 
     assert len(details) == 2
     assert details[0].parent_num is None
@@ -721,9 +742,18 @@ def test_fetch_and_parse_discussion_details_parent_missing(lecture_senat, caplog
 
 def test_derouleur_urls(lecture_senat):
     from zam_repondeur.fetch.senat.derouleur import derouleur_urls
+    from zam_repondeur.models import DBSession
 
-    assert list(derouleur_urls(lecture_senat, "seance")) == [
+    assert list(derouleur_urls(lecture_senat)) == [
         "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json"
+    ]
+
+    with transaction.manager:
+        lecture_senat.organe = "PO744107"
+        DBSession.add(lecture_senat)
+
+    assert list(derouleur_urls(lecture_senat)) == [
+        "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json"
     ]
 
 
@@ -742,7 +772,7 @@ def test_derouleur_urls_plf2019_1re_partie(texte_senat, dossier_plf):
         dossier=dossier_plf,
     )
 
-    assert list(derouleur_urls(lecture, "seance")) == [
+    assert list(derouleur_urls(lecture)) == [
         "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103393.json"
     ]
 
@@ -762,7 +792,7 @@ def test_derouleur_urls_plf2019_2e_partie(texte_senat, dossier_plf):
         dossier=dossier_plf,
     )
 
-    urls = list(derouleur_urls(lecture, "seance"))
+    urls = list(derouleur_urls(lecture))
     assert len(urls) > 1
     assert (
         urls[0]

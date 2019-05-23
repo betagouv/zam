@@ -21,22 +21,18 @@ class DiscussionDetails(NamedTuple):
     parent_num: Optional[int]
 
 
-def fetch_and_parse_discussion_details(
-    lecture: Lecture, phase: str
-) -> List[DiscussionDetails]:
-    data_iter = _fetch_discussion_details(lecture, phase)
+def fetch_and_parse_discussion_details(lecture: Lecture) -> List[DiscussionDetails]:
+    data_iter = _fetch_discussion_details(lecture)
     return _parse_derouleur_data(data_iter)
 
 
-def _fetch_discussion_details(lecture: Lecture, phase: str) -> Iterator[Any]:
+def _fetch_discussion_details(lecture: Lecture) -> Iterator[Any]:
     """
     Récupère les amendements à discuter, dans l'ordre de passage
 
     NB : les amendements jugés irrecevables ne sont pas inclus.
     """
-    assert phase in ("commission", "seance")
-
-    for url in derouleur_urls(lecture, phase):
+    for url in derouleur_urls(lecture):
         resp = requests.get(url)
         if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
             logger.warning(f"Could not fetch {url}")
@@ -130,12 +126,13 @@ IDTXTS = {
 }
 
 
-def derouleur_urls(lecture: Lecture, phase: str) -> Iterator[str]:
+def derouleur_urls(lecture: Lecture) -> Iterator[str]:
     idtxts = (
         IDTXTS.get(lecture.session, {})
         .get(lecture.texte.numero, {})
         .get(lecture.partie)
     )
+    phase = "commission" if lecture.is_commission else "seance"
     if idtxts is not None:
         for idtxt in idtxts:
             yield (

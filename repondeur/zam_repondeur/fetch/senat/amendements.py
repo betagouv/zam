@@ -97,9 +97,7 @@ class Senat(RemoteSource):
             "Récupération des amendements soumis à la discussion sur %r", lecture
         )
 
-        discussion_details = fetch_and_parse_discussion_details(
-            lecture=lecture, phase="seance"
-        )
+        discussion_details = fetch_and_parse_discussion_details(lecture=lecture)
         if len(discussion_details) == 0:
             logger.info("Aucun amendement soumis à la discussion pour l'instant!")
         self._enrich_discussion_details(amendements, discussion_details, lecture)

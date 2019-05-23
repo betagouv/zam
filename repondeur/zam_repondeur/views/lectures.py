@@ -291,11 +291,7 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
     request.session.flash(
         Message(
             cls="success",
-            text=(
-                "Rafraichissement des amendements et des articles en cours. "
-                "Vous serez notifié·e dès que les nouvelles informations "
-                "seront disponibles."
-            ),
+            text="Rafraichissement des amendements et des articles en cours.",
         )
     )
     return HTTPFound(location=request.resource_url(context, "amendements"))

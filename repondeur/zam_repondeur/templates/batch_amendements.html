@@ -1,0 +1,135 @@
+{% extends "_base.html" %}
+{% import "macros.html" as macros %}
+
+{% block title %}
+    {{ lecture }} • {{ lecture.texte.titre_court }} • Zam
+{% endblock %}
+
+{% block header %}
+    <style type="text/css">
+        h3.line-through {
+            margin: 2rem auto;
+            width: 40rem;
+            font-size: 1.5rem;
+        }
+        form {
+            width: 40rem;
+            margin: 3rem auto;
+        }
+            form *:not(.amendements *):not(summary) {
+                width: 100%;
+            }
+            form .amendements {
+                margin-bottom: 1rem;
+            }
+                form .amendements li {
+                    display: flex;
+                    align-items: baseline;
+                }
+                    form .amendements input[type="checkbox"] {
+                        margin: .5rem 1rem .5rem 1rem;
+                        transform: scale(1.5);
+                    }
+                    form .amendements label {
+                        margin: .5rem 1rem .5rem 0;
+                        font-weight: normal;
+                    }
+                        form .amendements a {
+                            text-decoration: underline;
+                        }
+            form label {
+                display: block;
+                margin: 0;
+                font-size: 1.1rem;
+                font-weight: 600;
+            }
+            form input[type="submit"] {
+                text-align: center;
+                margin: 1.5rem 0;
+            }
+            form input[type="submit"].enabled {
+                width: 12rem;
+            }
+            form input[type="submit"]:not(.enabled) {
+                width: 22rem;
+            }
+            form .buttons {
+                text-align: right;
+            }
+                form .buttons.transfer-amendements-custom {
+                    text-align: center;
+                }
+            form details,
+            form > div {
+                margin-bottom: 2rem;
+            }
+                form div.targets {
+                    margin-bottom: 0;
+                }
+            form summary,
+            form div p {
+                margin: 0 2rem 1rem 2rem;
+                font-size: 1.3rem;
+            }
+    </style>
+{% endblock %}
+
+{% block extra_nav %}
+    <li>
+        <a href="{{ request.resource_url(context, 'tables', request.user.email) }}">
+            Ma table
+        </a>
+    </li>
+    <li>
+        <a href="{{ request.resource_url(context, 'amendements') }}">
+            Index
+        </a>
+    </li>
+    <li>
+        <a href="{{ request.resource_url(context, 'options') }}">
+            Options avancées
+        </a>
+    </li>
+    {% if lecture.displayable %}
+        <li>
+            <a href="{{ request.resource_url(context, 'articles') }}" target="_blank">
+                Dossier de banc
+            </a>
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <nav class="back">
+        <a href="{{ back_url }}" class="arrow-left">Retourner à ma table</a>
+    </nav>
+    <h1>
+        Associer les amendements
+    </h1>
+    <form id="batch-amendements"
+        action="{{ request.resource_url(context, 'batch_amendements') }}"
+        method="POST">
+        <details class="notice" open>
+            <summary>
+                Ces amendements vont être associés afin de pouvoir les traiter par lots.
+            </summary>
+            <ul class="amendements">
+                {% for amendement in amendements %}
+                    <li>
+                        <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked>
+                        <label for="amendement-{{ amendement.num }}">
+                            Nº&nbsp;<a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>
+                        </label>
+                    </li>
+                {% endfor %}
+            </ul>
+        </details>
+        <div class="buttons">
+            <input type="submit"
+                name="submit-to"
+                value="Associer"
+                class="button primary enabled">
+        </div>
+    </form>
+{% endblock %}
+

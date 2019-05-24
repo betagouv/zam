@@ -13,6 +13,7 @@ from zam_repondeur.fetch import get_articles
 from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
 from zam_repondeur.message import Message
 from zam_repondeur.models import (
+    Batch,
     Chambre,
     DBSession,
     Dossier as DossierModel,
@@ -22,6 +23,7 @@ from zam_repondeur.models import (
     get_one_or_create,
 )
 from zam_repondeur.models.events.lecture import ArticlesRecuperes, LectureCreee
+from zam_repondeur.models.events.amendement import BatchSet, BatchUnset
 from zam_repondeur.models.users import Team
 from zam_repondeur.resources import (
     AmendementCollection,
@@ -278,6 +280,59 @@ class TransferAmendements:
         if url is None:
             return self.request.resource_url(self.context["amendements"])
         return url
+
+
+@view_defaults(
+    context=LectureResource, renderer="batch_amendements.html", name="batch_amendements"
+)
+class BatchAmendements:
+    def __init__(self, context: LectureResource, request: Request) -> None:
+        self.context = context
+        self.request = request
+        self.lecture = self.context.model(joinedload("amendements"))
+
+    @view_config(request_method="GET")
+    def get(self) -> dict:
+        amendements_nums: List[int] = self.request.GET.getall("nums")
+        amendements = [
+            amendement
+            for amendement in self.lecture.amendements
+            if str(amendement.num) in amendements_nums
+        ]
+        return {
+            "lecture": self.lecture,
+            "amendements": amendements,
+            "back_url": self.request.resource_url(
+                self.context, "tables", self.request.user.email
+            ),
+        }
+
+    @view_config(request_method="POST")
+    def post(self) -> Response:
+        amendements_nums: List[int] = self.request.POST.getall("nums")
+        amendements = [
+            amendement
+            for amendement in self.lecture.amendements
+            if str(amendement.num) in amendements_nums
+        ]
+        if len(amendements_nums) == 1:
+            BatchUnset.create(self.request, amendements[0])
+            return HTTPFound(location=self.back_url)
+
+        batch = Batch.create()
+        for amendement in amendements:
+            if amendement.batch:
+                BatchUnset.create(self.request, amendement)
+            BatchSet.create(
+                self.request, amendement, batch, amendements_nums=amendements_nums
+            )
+        return HTTPFound(location=self.back_url)
+
+    @property
+    def back_url(self) -> str:
+        return self.request.resource_url(
+            self.context, "tables", self.request.user.email
+        )
 
 
 @view_config(context=LectureResource, name="manual_refresh")

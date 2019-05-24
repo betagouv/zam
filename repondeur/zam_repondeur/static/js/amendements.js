@@ -30,6 +30,7 @@ application.register(
         }
         initialize() {
             this.groupActions = this.element.querySelector('.groupActions')
+            this.batchAmendementsLink = this.groupActions.querySelector('#batch-amendements')
             this.selectAllCheckbox = this.element.querySelector(
                 'thead input[type="checkbox"][name="select-all"]'
             )
@@ -52,6 +53,7 @@ application.register(
                 box => box.checked
             )
             this.groupActions.classList.toggle('d-none', checkeds.length < 1)
+            this.batchAmendementsLink.classList.toggle('d-none', checkeds.length < 2)
             if (checkeds.length < 1) {
                 this.filtersTarget
                     .querySelectorAll('th')
@@ -75,6 +77,9 @@ application.register(
                 this.groupActions.querySelector('#export-pdf'),
                 checkeds
             )
+            if (checkeds.length >= 2) {
+                this.changeURLGivenChecks(this.batchAmendementsLink, checkeds)
+            }
         }
 
         changeURLGivenChecks(target, checkeds) {

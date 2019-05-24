@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from .base import Base, DBSession, log_query_with_origin  # noqa
 
-from .amendement import Amendement, AVIS  # noqa
+from .amendement import Amendement, Batch, AVIS  # noqa
 from .article import Article, ArticleUserContent  # noqa
 from .dossier import Dossier  # noqa
 from .lecture import Lecture, CHAMBRES, SESSIONS  # noqa

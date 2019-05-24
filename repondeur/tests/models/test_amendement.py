@@ -54,6 +54,22 @@ def test_amendement_parent_relationship(amendements_an):
     assert b.parent_pk == a.pk
 
 
+def test_amendement_batches(amendements_an):
+    from zam_repondeur.models import DBSession, Amendement, Batch
+
+    a, b = DBSession.query(Amendement).all()
+
+    assert a.batch is None
+    assert b.batch is None
+
+    batch = Batch.create()
+    a.batch = batch
+    b.batch = batch
+
+    a, b = DBSession.query(Amendement).all()
+    assert a.batch == b.batch == batch
+
+
 def test_amendement_unicity(amendements_an, article1av_an):
     from zam_repondeur.models import Amendement, DBSession
 

@@ -174,7 +174,7 @@
             <thead class="sticky">
                 <tr class="groupActions d-none"
                     data-controller="amendements-backlinks">
-                    <th colspan="2">
+                    <th>
                         Actions groupées :
                     </th>
                     <th>
@@ -187,6 +187,9 @@
                     </th>
                     <th>
                         <a id="export-pdf" href="{{ request.resource_url(context.lecture_resource, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
+                    </th>
+                    <th>
+                        <a id="batch-amendements" href="{{ request.resource_url(context.lecture_resource, 'batch_amendements') }}" class="button primary">Associer</a>
                     </th>
                 </tr>
                 <tr class="filters d-none"
@@ -268,6 +271,9 @@
                                                     L’amendement identique {{ identiques[0] }} n’a pas une réponse similaire
                                                 {%- endif %}">⚠️</span>
                                             {% endif %}
+                                        {% endif %}
+                                        {% if amendement.batch %}
+                                            — Lot : {{ amendement.batch.pk }}
                                         {% endif %}
                                         {{ macros.status(amendement) }}
                                     </div>

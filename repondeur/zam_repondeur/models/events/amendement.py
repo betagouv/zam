@@ -6,7 +6,7 @@ from lxml.html.diff import htmldiff  # nosec
 from pyramid.request import Request
 
 from .base import Event
-from ..amendement import Amendement
+from ..amendement import Amendement, Batch
 
 
 class AmendementEvent(Event):
@@ -314,3 +314,68 @@ class CommentsAmendementModifie(AmendementEvent):
 
     def apply(self) -> None:
         self.amendement.user_content.comments = self.data["new_value"]
+
+
+class BatchSet(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "batch_set"}
+
+    icon = "edit"
+
+    def __init__(
+        self, request: Request, amendement: Amendement, batch: Batch, **kwargs: Any
+    ) -> None:
+        self.request = request
+        amendements_nums = [
+            amendement_num
+            for amendement_num in kwargs["amendements_nums"]
+            if int(amendement_num) != amendement.num
+        ]
+        kwargs["amendements_nums"] = amendements_nums
+        super().__init__(request, amendement, **kwargs)
+        self.batch = batch
+
+    def apply(self) -> None:
+        if self.amendement.batch:
+            BatchUnset.create(self.request, self.amendement)
+        self.amendement.batch = self.batch
+
+    def render_details(self) -> str:
+        return ""
+
+    def render_summary(self) -> str:
+        amendements_nums = ", ".join(self.data["amendements_nums"])
+        return Markup(
+            f"<abbr title='{self.user.email}'>{self.user.name}</abbr> a placé "
+            f"l’amendement dans un lot avec les amendements numéro {amendements_nums}."
+        )
+
+
+class BatchUnset(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "batch_unset"}
+
+    icon = "edit"
+
+    def __init__(self, request: Request, amendement: Amendement, **kwargs: Any) -> None:
+        self.request = request
+        super().__init__(request, amendement, **kwargs)
+
+    def apply(self) -> None:
+        if self.amendement.batch is None:
+            return
+        # Avoid lonely amendement in a batch.
+        batch_amendements = self.amendement.batch.amendements
+        if len(batch_amendements) == 2:
+            for amdt in batch_amendements:
+                self.amendement.batch = None
+                self.create(self.request, amdt)
+        else:
+            self.amendement.batch = None
+
+    def render_details(self) -> str:
+        return ""
+
+    def render_summary(self) -> str:
+        return Markup(
+            f"<abbr title='{self.user.email}'>{self.user.name}</abbr> a sorti "
+            "l’amendement du lot dans lequel il était."
+        )

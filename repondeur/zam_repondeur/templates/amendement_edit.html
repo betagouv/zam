@@ -67,6 +67,53 @@
         form#transfer a {
             margin-right: 3rem;
         }
+        {% if amendement.batch %}
+            .box,
+            .box.edit {
+                padding: 0;
+            }
+            .box > *:not(.batch) {
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+            .batch {
+                text-align: center;
+                background: #d6eaff;
+                margin: 0 0 3rem 0;
+                padding: .5rem 1rem;
+                min-height: 2.8rem;
+            }
+            .batch p {
+                margin-bottom: 0;
+            }
+            .batch .button {
+                border-color: white;
+                color: white;
+                font-size: .9rem;
+                padding: 0.3rem 1.5rem 0.1rem 1.5rem;
+            }
+            .batch .button:hover {
+                border-color: white;
+                color: #3167a6;
+                background: white;
+            }
+            .content .batch {
+                background: #3167a6;
+                color: white;
+                margin-bottom: 1rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+            }
+            .content .batch a {
+                color: white;
+                padding: 0 1rem;
+            }
+            .content .batch .current {
+                margin: 0 1rem;
+                border-bottom: 3px solid white;
+            }
+        {% endif %}
     </style>
 {% endblock %}
 
@@ -97,7 +144,27 @@
 
 {% block body %}
     <section class="content box">
-        <a href="{{ back_url }}" class="arrow-left">Retour</a>
+        {% if amendement.batch %}
+            <div class="batch">
+                <p>
+                    Afficher le n°
+                    {% for amdt in amendement.batch.amendements %}
+                        {% if amdt.num == amendement.num %}
+                            <span class="current">{{ amendement.num }}</span>
+                        {% else %}
+                            <a href="{{ request.resource_url(context.parent, amdt.num_str, 'amendement_edit') }}">{{ amdt.num }}</a>
+                        {% endif %}
+                    {% endfor %}
+                </p>
+                <form method="post" action="{{ request.resource_url(context.lecture_resource, 'batch_amendements') }}">
+                    <input type="hidden" name="nums" value="{{ amendement.num }}">
+                    <input type="submit" class="button" value="Retirer du lot">
+                </form>
+            </div>
+        {% endif %}
+        <p>
+            <a href="{{ back_url }}" class="arrow-left">Retour</a>
+        </p>
         <div class="title">
             <header>
                 <h2>Amendement nº&nbsp;{{ amendement }}</h2>
@@ -251,34 +318,10 @@
 
 {% macro form(amendement) %}
 
-    {% if not amendement.gouvernemental %}
-        <h3>Réutiliser</h3>
-        <form id="prefill-reponse" action="" method="POST" class="mt-3">
-            <div class="form-group" style="margin-bottom: 1.5rem">
-                <label for="autofill">Remplir à partir de…</label>
-                <select name="autofill" class="form-control">
-                    <option value="">Choisir dans la liste…</option>
-                    {% for reponse, amendements in reponses %}
-                        {% if amendement not in amendements %}
-                            <option value="{{ loop.index }}"
-                                    data-reponse-avis="{{ reponse.avis }}"
-                                    data-reponse-objet="{{ reponse.objet }}"
-                                    data-reponse-content="{{ reponse.content }}">
-                                {{ macros.multiple_amendements_title(amendements) }}
-                                {% if amendements[0].user_content.is_redactionnel %}
-                                    (rédactionnel)
-                                {% endif %}
-                            </option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group save-buttons">
-                <a href="" id="cancel">Annuler</a>
-                <input type="submit" name="submit" value="Remplir"
-                    class="button allow-multiple-submit secondary">
-            </div>
-        </form>
+    {% if amendement.batch %}
+        <div class="batch">
+            <p>Cet amendement fait partie d’un lot, leur réponse est identique.</p>
+        </div>
     {% endif %}
 
     <h3>

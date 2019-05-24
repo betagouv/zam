@@ -52,6 +52,22 @@ AVIS = [
 ]
 
 
+class Batch(Base):
+    __tablename__ = "batches"
+
+    pk: int = Column(Integer, primary_key=True)
+
+    amendements = relationship("Amendement", back_populates="batch")
+
+    __repr_keys__ = ("pk",)
+
+    @classmethod
+    def create(cls) -> "Batch":
+        batch = cls()
+        DBSession.add(batch)
+        return batch
+
+
 class Reponse(NamedTuple):
     avis: str
     objet: str
@@ -179,6 +195,9 @@ class Amendement(Base):
     user_table: "Optional[UserTable]" = relationship(
         "UserTable", back_populates="amendements"
     )
+
+    batch_pk: int = Column(Integer, ForeignKey("batches.pk"), nullable=True)
+    batch: Optional[Batch] = relationship(Batch, back_populates="amendements")
 
     user_content = relationship(
         AmendementUserContent,

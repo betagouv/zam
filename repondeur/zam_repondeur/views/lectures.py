@@ -305,6 +305,14 @@ class BatchAmendements:
             self.request.session.flash(Message(cls="danger", text=message))
             return HTTPFound(location=self.my_table_url)
 
+        if not self.have_all_same_reponse_or_empty(amendements):
+            message = (
+                "Tous les amendements doivent avoir la même réponse avant de pouvoir "
+                "être associés."
+            )
+            self.request.session.flash(Message(cls="danger", text=message))
+            return HTTPFound(location=self.my_table_url)
+
         return {
             "lecture": self.lecture,
             "amendements": amendements,
@@ -319,6 +327,14 @@ class BatchAmendements:
             message = (
                 "Tous les amendements doivent être sur votre table "
                 "pour pouvoir les associer."
+            )
+            self.request.session.flash(Message(cls="danger", text=message))
+            return HTTPFound(location=self.my_table_url)
+
+        if not self.have_all_same_reponse_or_empty(amendements):
+            message = (
+                "Tous les amendements doivent avoir la même réponse avant de pouvoir "
+                "être associés."
             )
             self.request.session.flash(Message(cls="danger", text=message))
             return HTTPFound(location=self.my_table_url)
@@ -356,6 +372,18 @@ class BatchAmendements:
             if amendement.user_table
             else False
             for amendement in amendements
+        )
+
+    def have_all_same_reponse_or_empty(self, amendements: List[Amendement]) -> bool:
+        return (
+            len(
+                set(
+                    amendement.full_reponse()
+                    for amendement in amendements
+                    if not amendement.full_reponse().is_empty
+                )
+            )
+            <= 1  # Same reponse (1) or empty (0).
         )
 
 

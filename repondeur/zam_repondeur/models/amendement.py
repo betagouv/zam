@@ -82,6 +82,10 @@ class Reponse(NamedTuple):
             == do_striptags(other.content)  # type: ignore
         )
 
+    @property
+    def is_empty(self) -> bool:
+        return self.avis == "" and self.objet == "" and self.content == ""
+
 
 class AmendementUserContent(Base):
     __tablename__ = "amendement_user_contents"

@@ -53,7 +53,9 @@ application.register(
                 box => box.checked
             )
             this.groupActions.classList.toggle('d-none', checkeds.length < 1)
-            this.batchAmendementsLink.classList.toggle('d-none', checkeds.length < 2)
+            if (this.batchAmendementsLink) {
+              this.batchAmendementsLink.classList.toggle('d-none', checkeds.length < 2)
+            }
             if (checkeds.length < 1) {
                 this.filtersTarget
                     .querySelectorAll('th')
@@ -77,7 +79,7 @@ application.register(
                 this.groupActions.querySelector('#export-pdf'),
                 checkeds
             )
-            if (checkeds.length >= 2) {
+            if (checkeds.length >= 2 && this.batchAmendementsLink) {
                 this.changeURLGivenChecks(this.batchAmendementsLink, checkeds)
             }
         }

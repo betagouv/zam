@@ -82,6 +82,71 @@ def test_lecture_get_batch_amendements_not_all_on_table(
     )
 
 
+def test_lecture_get_batch_amendements_only_one_reponse(
+    app, amendements_an, user_david, david_has_two_amendements
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        amendements_an[0].user_content.avis = "Favorable"
+        DBSession.add_all(amendements_an)
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/batch_amendements",
+        {"nums": amendements_an},
+        user=user_david,
+    )
+
+    assert resp.status_code == 200
+
+
+def test_lecture_get_batch_amendements_same_reponses(
+    app, amendements_an, user_david, david_has_two_amendements
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        amendements_an[0].user_content.avis = "Favorable"
+        amendements_an[0].user_content.avis = "Favorable"
+        DBSession.add_all(amendements_an)
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/batch_amendements",
+        {"nums": amendements_an},
+        user=user_david,
+    )
+
+    assert resp.status_code == 200
+
+
+def test_lecture_get_batch_amendements_different_reponses(
+    app, lecture_an, amendements_an, user_david, david_has_two_amendements
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        amendements_an[0].user_content.avis = "Favorable"
+        amendements_an[1].user_content.avis = "Défavorable"
+        DBSession.add_all(amendements_an)
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/batch_amendements",
+        {"nums": amendements_an},
+        user=user_david,
+    )
+
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com"
+    )
+    resp = resp.follow()
+    assert (
+        "Tous les amendements doivent avoir la même réponse avant de pouvoir "
+        "être associés."
+    ) in resp.text
+
+
 def test_lecture_post_batch_set_amendements(
     app, lecture_an, amendements_an, user_david, david_has_two_amendements
 ):
@@ -161,6 +226,130 @@ def test_lecture_post_batch_set_amendements_not_all_on_table(
     assert (
         "Tous les amendements doivent être sur votre table pour pouvoir les associer."
         in resp.text
+    )
+
+    # Reload amendements as they were updated in another transaction.
+    amendement_666 = Amendement.get(lecture_an, amendements_an[0].num)
+    amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
+
+    # No amendement has any batch set.
+    assert not amendement_666.batch
+    assert not amendement_999.batch
+
+
+def test_lecture_post_batch_set_amendements_only_one_reponse(
+    app, lecture_an, amendements_an, user_david, david_has_two_amendements
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    DBSession.add_all(amendements_an)
+    assert not amendements_an[0].batch
+    assert not amendements_an[1].batch
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/batch_amendements",
+        {"nums": amendements_an},
+        user=user_david,
+    )
+    form = resp.form
+
+    # Let's change reponses of the amendements before submission.
+    with transaction.manager:
+        amendements_an[0].user_content.avis = "Favorable"
+        DBSession.add_all(amendements_an)
+
+    resp = form.submit("submit-to")
+
+    # We're redirected to our table
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    )
+
+    # Reload amendements as they were updated in another transaction
+    amendement_666 = Amendement.get(lecture_an, amendements_an[0].num)
+    amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
+
+    # Both amendements are in the same batch
+    assert amendement_666.batch.pk == 1
+    assert amendement_999.batch.pk == 1
+
+
+def test_lecture_post_batch_set_amendements_same_reponses(
+    app, lecture_an, amendements_an, user_david, david_has_two_amendements
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    DBSession.add_all(amendements_an)
+    assert not amendements_an[0].batch
+    assert not amendements_an[1].batch
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/batch_amendements",
+        {"nums": amendements_an},
+        user=user_david,
+    )
+    form = resp.form
+
+    # Let's change reponses of the amendements before submission.
+    with transaction.manager:
+        amendements_an[0].user_content.avis = "Favorable"
+        amendements_an[1].user_content.avis = "Favorable"
+        DBSession.add_all(amendements_an)
+
+    resp = form.submit("submit-to")
+
+    # We're redirected to our table
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    )
+
+    # Reload amendements as they were updated in another transaction
+    amendement_666 = Amendement.get(lecture_an, amendements_an[0].num)
+    amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
+
+    # Both amendements are in the same batch
+    assert amendement_666.batch.pk == 1
+    assert amendement_999.batch.pk == 1
+
+
+def test_lecture_post_batch_set_amendements_different_reponses(
+    app, lecture_an, amendements_an, user_david, david_has_two_amendements
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    DBSession.add_all(amendements_an)
+    assert not amendements_an[0].batch
+    assert not amendements_an[1].batch
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/batch_amendements",
+        {"nums": amendements_an},
+        user=user_david,
+    )
+    form = resp.form
+
+    # Let's change reponses of the amendements before submission.
+    with transaction.manager:
+        amendements_an[0].user_content.avis = "Favorable"
+        amendements_an[1].user_content.avis = "Défavorable"
+        DBSession.add_all(amendements_an)
+
+    resp = form.submit("submit-to")
+
+    # We are redirected to our table.
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    )
+    resp = resp.follow()
+    assert (
+        "Tous les amendements doivent avoir la même réponse avant de pouvoir "
+        "être associés." in resp.text
     )
 
     # Reload amendements as they were updated in another transaction.

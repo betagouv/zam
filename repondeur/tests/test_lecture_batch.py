@@ -71,8 +71,10 @@ def test_lecture_post_batch_unset_amendement(
 ):
     from zam_repondeur.models import Amendement, DBSession
 
+    with transaction.manager:
+        DBSession.add(user_david)
+
     DBSession.add_all(amendements_an)
-    DBSession.add(user_david)
     assert not amendements_an[0].batch
     assert not amendements_an[1].batch
 

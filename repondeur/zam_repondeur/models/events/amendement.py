@@ -360,16 +360,18 @@ class BatchUnset(AmendementEvent):
         super().__init__(request, amendement, **kwargs)
 
     def apply(self) -> None:
-        if self.amendement.batch is None:
+        batch = self.amendement.batch
+        if batch is None:
             return
+
+        others = [amdt for amdt in batch.amendements if amdt is not self.amendement]
+
+        # Remove amendement from batch.
+        self.amendement.batch = None
+
         # Avoid lonely amendement in a batch.
-        batch_amendements = self.amendement.batch.amendements
-        if len(batch_amendements) == 2:
-            for amdt in batch_amendements:
-                self.amendement.batch = None
-                self.create(self.request, amdt)
-        else:
-            self.amendement.batch = None
+        if len(others) == 1:
+            self.create(self.request, others[0])
 
     def render_details(self) -> str:
         return ""

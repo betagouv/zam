@@ -1,18 +1,20 @@
 import transaction
 from datetime import date
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.orm import joinedload
+from webob.multidict import MultiDict
 
 from zam_repondeur.data import repository
 from zam_repondeur.fetch import get_articles
 from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
 from zam_repondeur.message import Message
 from zam_repondeur.models import (
+    Amendement,
     Batch,
     Chambre,
     DBSession,
@@ -292,32 +294,39 @@ class BatchAmendements:
         self.lecture = self.context.model(joinedload("amendements"))
 
     @view_config(request_method="GET")
-    def get(self) -> dict:
-        amendements_nums: List[int] = self.request.GET.getall("nums")
-        amendements = [
-            amendement
-            for amendement in self.lecture.amendements
-            if str(amendement.num) in amendements_nums
-        ]
+    def get(self) -> Any:
+        amendements = self.get_amendements_from(self.request.GET)
+
+        if not self.are_all_on_my_table(amendements):
+            message = (
+                "Tous les amendements doivent être sur votre table "
+                "pour pouvoir les associer."
+            )
+            self.request.session.flash(Message(cls="danger", text=message))
+            return HTTPFound(location=self.my_table_url)
+
         return {
             "lecture": self.lecture,
             "amendements": amendements,
-            "back_url": self.request.resource_url(
-                self.context, "tables", self.request.user.email
-            ),
+            "back_url": self.my_table_url,
         }
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        amendements_nums: List[int] = self.request.POST.getall("nums")
-        amendements = [
-            amendement
-            for amendement in self.lecture.amendements
-            if str(amendement.num) in amendements_nums
-        ]
+        amendements = self.get_amendements_from(self.request.POST)
+
+        if not self.are_all_on_my_table(amendements):
+            message = (
+                "Tous les amendements doivent être sur votre table "
+                "pour pouvoir les associer."
+            )
+            self.request.session.flash(Message(cls="danger", text=message))
+            return HTTPFound(location=self.my_table_url)
+
+        amendements_nums = self.request.POST.getall("nums")
         if len(amendements_nums) == 1:
             BatchUnset.create(self.request, amendements[0])
-            return HTTPFound(location=self.back_url)
+            return HTTPFound(location=self.my_table_url)
 
         batch = Batch.create()
         for amendement in amendements:
@@ -326,12 +335,27 @@ class BatchAmendements:
             BatchSet.create(
                 self.request, amendement, batch, amendements_nums=amendements_nums
             )
-        return HTTPFound(location=self.back_url)
+        return HTTPFound(location=self.my_table_url)
 
     @property
-    def back_url(self) -> str:
+    def my_table_url(self) -> str:
         return self.request.resource_url(
             self.context, "tables", self.request.user.email
+        )
+
+    def get_amendements_from(self, source: MultiDict) -> List[Amendement]:
+        return [
+            amendement
+            for amendement in self.lecture.amendements
+            if str(amendement.num) in source.getall("nums")
+        ]
+
+    def are_all_on_my_table(self, amendements: List[Amendement]) -> bool:
+        return all(
+            amendement.user_table.user == self.request.user
+            if amendement.user_table
+            else False
+            for amendement in amendements
         )
 
 

@@ -1,7 +1,50 @@
+import pytest
 import transaction
 
 
-def test_lecture_get_batch_amendements(app, amendements_an, user_david):
+@pytest.fixture
+def user_david(user_david):
+    """
+    Override fixture so that we commit the user to the database
+    """
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(user_david)
+
+    return user_david
+
+
+@pytest.fixture
+def david_has_one_amendement(
+    user_david, lecture_an, user_david_table_an, amendements_an
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendements_an[0])
+
+    assert len(user_david.table_for(lecture_an).amendements) == 1
+
+
+@pytest.fixture
+def david_has_two_amendements(
+    user_david, lecture_an, user_david_table_an, amendements_an
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.amendements.append(amendements_an[1])
+
+    assert len(user_david.table_for(lecture_an).amendements) == 2
+
+
+def test_lecture_get_batch_amendements(
+    app, amendements_an, user_david, david_has_two_amendements
+):
     resp = app.get(
         "/lectures/an.15.269.PO717460/batch_amendements",
         {"nums": amendements_an},
@@ -18,16 +61,35 @@ def test_lecture_get_batch_amendements(app, amendements_an, user_david):
     assert resp.form.fields["nums"][1].value == "999"
 
 
+def test_lecture_get_batch_amendements_not_all_on_table(
+    app, amendements_an, user_david, david_has_one_amendement
+):
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/batch_amendements",
+        {"nums": amendements_an},
+        user=user_david,
+    )
+
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com"
+    )
+    resp = resp.follow()
+    assert (
+        "Tous les amendements doivent être sur votre table pour pouvoir les associer."
+        in resp.text
+    )
+
+
 def test_lecture_post_batch_set_amendements(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an, amendements_an, user_david, david_has_two_amendements
 ):
     from zam_repondeur.models import Amendement, DBSession
 
-    with transaction.manager:
-        DBSession.add_all(amendements_an)
-        DBSession.add(user_david)
-        assert not amendements_an[0].batch
-        assert not amendements_an[1].batch
+    DBSession.add_all(amendements_an)
+    assert not amendements_an[0].batch
+    assert not amendements_an[1].batch
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/batch_amendements",
@@ -66,13 +128,54 @@ def test_lecture_post_batch_set_amendements(
     )
 
 
-def test_lecture_post_batch_unset_amendement(
-    app, lecture_an, amendements_an, user_david
+def test_lecture_post_batch_set_amendements_not_all_on_table(
+    app, lecture_an, amendements_an, user_david, david_has_two_amendements
 ):
     from zam_repondeur.models import Amendement, DBSession
 
+    DBSession.add_all(amendements_an)
+    assert not amendements_an[0].batch
+    assert not amendements_an[1].batch
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/batch_amendements",
+        {"nums": amendements_an},
+        user=user_david,
+    )
+    form = resp.form
+
+    # Let's remove an amendement from the table before submission.
     with transaction.manager:
-        DBSession.add(user_david)
+        amendements_an[0].user_table = None
+        DBSession.add(amendements_an[0])
+
+    resp = form.submit("submit-to")
+
+    # We are redirected to our table.
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    )
+    resp = resp.follow()
+    assert (
+        "Tous les amendements doivent être sur votre table pour pouvoir les associer."
+        in resp.text
+    )
+
+    # Reload amendements as they were updated in another transaction.
+    amendement_666 = Amendement.get(lecture_an, amendements_an[0].num)
+    amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
+
+    # No amendement has any batch set.
+    assert not amendement_666.batch
+    assert not amendement_999.batch
+
+
+def test_lecture_post_batch_unset_amendement(
+    app, lecture_an, amendements_an, user_david, david_has_two_amendements
+):
+    from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add_all(amendements_an)
     assert not amendements_an[0].batch

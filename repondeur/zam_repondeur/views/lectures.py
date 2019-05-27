@@ -78,8 +78,6 @@ class LecturesAdd:
         titre = lecture_ref.titre
         organe = lecture_ref.organe
         partie = lecture_ref.partie
-
-        session = lecture_ref.get_session()
         texte = lecture_ref.texte
 
         assert texte.date_depot is not None
@@ -89,8 +87,8 @@ class LecturesAdd:
             uid=texte.uid,
             type_=texte.type_,
             chambre=Chambre.AN if lecture_ref.chambre.value == "an" else Chambre.SENAT,
-            legislature=int(session) if chambre == "an" else None,
-            session=int(session.split("-")[0]) if chambre == "senat" else None,
+            legislature=texte.legislature,
+            session=texte.session,
             numero=texte.numero,
             titre_long=texte.titre_long,
             titre_court=texte.titre_court,
@@ -100,6 +98,8 @@ class LecturesAdd:
         dossier_model = get_one_or_create(
             DossierModel, uid=dossier_ref.uid, titre=dossier_ref.titre
         )[0]
+
+        session = lecture_ref.get_session()
 
         if LectureModel.exists(chambre, session, texte_model, partie, organe):
             self.request.session.flash(

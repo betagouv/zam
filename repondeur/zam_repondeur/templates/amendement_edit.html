@@ -110,13 +110,19 @@
 
             </header>
 
-            <p class="article">
-                {% if amendement.article.pos %}
-                    {{ amendement.article.format() }}
-                {% else %}
-                    <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a>
-                {% endif %}
-            </p>
+            {% if amendement.article.is_erreur %}
+                <p class="article notice warning">
+                    La récupération de l’article correspondant à cet amendement n’a pas pu être effectuée correctement. L’équipe de développement de Zam a été prévenue de cette anomalie critique.
+                </p>
+            {% else %}
+                <p class="article">
+                    {% if amendement.article.pos %}
+                        {{ amendement.article.format() }}
+                    {% else %}
+                        <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a>
+                    {% endif %}
+                </p>
+            {% endif %}
             {% if amendement.auteur %}
             <div class="auteur">
                 <p>

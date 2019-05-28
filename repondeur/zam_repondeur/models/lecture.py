@@ -114,16 +114,6 @@ class Lecture(Base, LastEventMixin):
             partie = ""
         return f"texte nº\u00a0{self.texte.numero}{partie}"
 
-    def __lt__(self, other: Any) -> bool:
-        if type(self) != type(other):
-            return NotImplemented
-        return (self.chambre, self.session, self.texte.numero, self.organe) < (
-            other.chambre,
-            other.session,
-            other.texte.numero,
-            other.organe,
-        )
-
     @property
     def is_commission(self) -> bool:
         return self.format_organe().startswith("Commission")

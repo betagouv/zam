@@ -200,6 +200,10 @@ class Lecture(Base, LastEventMixin):
         owned_by_team: Optional[Team] = None,
     ) -> "Lecture":
         now = datetime.utcnow()
+        assert chambre == texte.chambre.name.lower()
+        assert session == (
+            str(texte.legislature) if texte.chambre == Chambre.AN else texte.session_str
+        )
         lecture = cls(
             chambre=chambre,
             session=session,

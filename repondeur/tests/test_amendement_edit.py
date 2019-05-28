@@ -31,7 +31,6 @@ def test_get_amendement_edit_form(
         "save-and-transfer",
         "save",
     ]
-    assert resp.forms["prefill-reponse"].method == "POST"
 
     # Check the displayed amendement
     assert resp.parser.css_first(".title .article").text().strip() == "Article 1"
@@ -62,9 +61,6 @@ def test_get_amendement_edit_form_only_if_owner(
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
-
-    # Check no prefill form
-    assert "prefill-reponse" not in resp.forms
 
     # Check has transfer form
     assert resp.forms["transfer"].method == "POST"
@@ -210,7 +206,6 @@ def test_get_amendement_edit_form_gouvernemental(
         "save-and-transfer",
         "save",
     ]
-    assert resp.forms.get("prefill-reponse") is None
 
 
 def test_get_amendement_edit_form_not_found(

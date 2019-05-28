@@ -20,7 +20,7 @@ def test_download(app, lecture_an, amendements_an, format_, content_type, user_d
     assert resp.content_type == content_type
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=lecture-an-15-269-PO717460.{format_}"
+        == f"attachment; filename=lecture-an-269-PO717460.{format_}"
     )
 
 
@@ -45,5 +45,5 @@ def test_download_multiple_amendements(app, lecture_an, amendements_an, user_dav
     assert resp.content_type == "application/pdf"
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=amendements-666,999-an-15-269-PO717460.pdf"
+        == f"attachment; filename=amendements-666,999-an-269-PO717460.pdf"
     )

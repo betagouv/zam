@@ -24,17 +24,6 @@
                 background: #3167a6;
             }
 
-        #prefill-reponse {
-            margin-bottom: 2rem;
-        }
-            #prefill-reponse .save-buttons {
-                justify-content: flex-end;
-                align-items: baseline;
-            }
-            #prefill-reponse #cancel {
-                margin-right: 1.5rem;
-            }
-
         #edit-amendement .save-buttons {
             background: white;
             padding: 1rem;
@@ -397,47 +386,5 @@
 {% block extra_scripts %}
     {% if is_on_my_table %}
         <script>;(() => application.register('notifications-with-diff-unique', NotificationsWithDiffUnique))()</script>
-        {% if not amendement.gouvernemental %}
-            <script type="text/javascript">
-                window.onload = () => {
-                    // Wait for iframes to be loaded.
-                    setTimeout(() => {
-                        const prefillForm = document.querySelector('form#prefill-reponse')
-                        const editReponseForm = document.querySelector('form#edit-amendement')
-                        const initialAvis = editReponseForm.querySelector('option:checked')
-                            .value
-                        const objetWindow = document.querySelector('iframe#objet_ifr')
-                            .contentWindow
-                        const objetBody = objetWindow.document.body
-                        const initialObjet = objetBody.innerHTML
-                        const reponseWindow = document.querySelector('iframe#reponse_ifr')
-                            .contentWindow
-                        const reponseBody = reponseWindow.document.body
-                        const initialReponse = reponseBody.innerHTML
-                        prefillForm.addEventListener('submit', e => {
-                            e.preventDefault()
-                            const data = new FormData(e.target)
-                            const index = data.get('autofill')
-                            const option = e.target.querySelector(
-                                `select[name="autofill"] option[value="${index}"]`
-                            )
-                            editReponseForm.querySelector(
-                                `option[value="${option.dataset.reponseAvis}"]`
-                            ).selected = true
-                            objetBody.innerHTML = option.dataset.reponseObjet
-                            reponseBody.innerHTML = option.dataset.reponseContent
-                        })
-                        document.querySelector('#cancel').addEventListener('click', e => {
-                            e.preventDefault()
-                            editReponseForm.querySelector(
-                                `option[value="${initialAvis}"]`
-                            ).selected = true
-                            objetBody.innerHTML = initialObjet
-                            reponseBody.innerHTML = initialReponse
-                        })
-                    }, 1)
-                }
-            </script>
-        {% endif %}
     {% endif %}
 {% endblock %}

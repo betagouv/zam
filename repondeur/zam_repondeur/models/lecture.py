@@ -152,7 +152,6 @@ class Lecture(Base, LastEventMixin):
             .join(Texte)
             .filter(
                 cls.chambre == chambre,
-                cls.session == session_or_legislature,
                 cls.partie == partie,
                 cls.organe == organe,
                 Texte.chambre == Chambre.from_string(chambre),

@@ -127,6 +127,7 @@ IDTXTS = {
 
 
 def derouleur_urls(lecture: Lecture) -> Iterator[str]:
+    assert lecture.texte.session_str is not None  # mypy hint
     idtxts = (
         IDTXTS.get(lecture.texte.session_str, {})
         .get(lecture.texte.numero, {})

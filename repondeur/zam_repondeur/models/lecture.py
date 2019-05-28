@@ -68,7 +68,7 @@ class Lecture(Base, LastEventMixin):
         return ", ".join(
             [
                 self.format_chambre(),
-                self.format_session(),
+                self.format_session_or_legislature(),
                 self.format_organe(),
                 self.format_num_lecture(),
                 self.format_texte(),
@@ -78,11 +78,11 @@ class Lecture(Base, LastEventMixin):
     def format_chambre(self) -> str:
         return CHAMBRES[self.chambre]
 
-    def format_session(self) -> str:
+    def format_session_or_legislature(self) -> str:
         if self.chambre == "an":
-            return f"{self.session}e législature"
+            return f"{self.texte.legislature}e législature"
         else:
-            return f"session {self.session}"
+            return f"session {self.texte.session_str}"
 
     def format_organe(self) -> str:
         from zam_repondeur.data import repository  # avoid circular imports

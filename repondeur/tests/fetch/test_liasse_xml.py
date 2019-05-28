@@ -167,8 +167,6 @@ def test_import_liasse_second_part(
 
     with transaction.manager:
         part1 = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_essoc2018_an_nouvelle_lecture_commission_fond,
             partie=1,
             titre="Nouvelle lecture – Titre lecture",
@@ -176,8 +174,6 @@ def test_import_liasse_second_part(
             dossier=dossier_essoc2018,
         )
         part2 = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_essoc2018_an_nouvelle_lecture_commission_fond,
             partie=2,
             titre="Nouvelle lecture – Titre lecture",

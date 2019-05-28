@@ -162,8 +162,6 @@ class TestFetchAndParseAll:
         with transaction.manager:
             texte_plfss2018_an_premiere_lecture.numero = 911
             lecture = Lecture.create(
-                chambre="an",
-                session="15",
                 texte=texte_plfss2018_an_premiere_lecture,
                 titre="Titre lecture",
                 organe="PO717460",

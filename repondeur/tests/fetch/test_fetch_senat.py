@@ -51,9 +51,7 @@ def lecture_plf_1re_partie(dossier_plf, texte_plf):
 
     with transaction.manager:
         return Lecture.create(
-            chambre="senat",
             texte=texte_plf,
-            session=texte_plf.session_str,
             partie=1,
             titre="Numéro lecture – Titre lecture sénat",
             organe="PO78718",
@@ -67,9 +65,7 @@ def lecture_plf_2e_partie(dossier_plf, texte_plf):
 
     with transaction.manager:
         return Lecture.create(
-            chambre="senat",
             texte=texte_plf,
-            session=texte_plf.session_str,
             partie=2,
             titre="Numéro lecture – Titre lecture sénat",
             organe="PO78718",
@@ -578,9 +574,7 @@ def test_fetch_all_commission(dossier_plfss2018):
             date_depot=date(2017, 1, 1),
         )
         lecture = Lecture.create(
-            chambre="senat",
             texte=texte,
-            session=texte.session_str,
             titre="Numéro lecture – Titre lecture sénat",
             organe="PO78718",
             dossier=dossier_plfss2018,
@@ -658,9 +652,7 @@ def test_fetch_discussion_details(dossier_plfss2018):
             date_depot=date(2017, 1, 1),
         )
         lecture = Lecture.create(
-            chambre="senat",
             texte=texte,
-            session=texte.session_str,
             titre="Numéro lecture – Titre lecture sénat",
             organe="PO744107",
             dossier=dossier_plfss2018,
@@ -796,9 +788,7 @@ def test_derouleur_urls_plf2019_1re_partie(dossier_plf, texte_plf):
     from zam_repondeur.models import Lecture
 
     lecture = Lecture.create(
-        chambre="senat",
         texte=texte_plf,
-        session=texte_plf.session_str,
         partie=1,
         titre="Première lecture – Séance publique (1re partie)",
         organe="PO78718",
@@ -815,9 +805,7 @@ def test_derouleur_urls_plf2019_2e_partie(dossier_plf, texte_plf):
     from zam_repondeur.models import Lecture
 
     lecture = Lecture.create(
-        chambre="senat",
         texte=texte_plf,
-        session=texte_plf.session_str,
         partie=2,
         titre="Première lecture – Séance publique (2e partie)",
         organe="PO78718",

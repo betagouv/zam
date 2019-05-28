@@ -21,8 +21,6 @@ def lecture_commission(db, dossier_plfss2018, texte_plfss2018_an_premiere_lectur
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plfss2018_an_premiere_lecture,
             titre="Numéro lecture – Titre lecture",
             organe="PO420120",
@@ -48,8 +46,6 @@ def test_get_list_reverse_datetime_order(app, lecture_an, user_david):
     with transaction.manager:
         title = str(lecture_an)
         lecture2 = Lecture.create(
-            chambre=lecture_an.chambre,
-            session=lecture_an.session,
             texte=lecture_an.texte,
             titre="Numéro lecture – Titre lecture 2",
             organe=lecture_an.organe,

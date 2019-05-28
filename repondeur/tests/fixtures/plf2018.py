@@ -43,8 +43,6 @@ def lecture_plf2018_an_premiere_lecture_commission_fond_1(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             partie=1,
             texte=texte_plf2018_an_premiere_lecture,
             titre="Première lecture – Commission saisie au fond",
@@ -63,8 +61,6 @@ def lecture_plf2018_an_premiere_lecture_commission_fond_2(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             partie=2,
             texte=texte_plf2018_an_premiere_lecture,
             titre="Première lecture – Commission saisie au fond",
@@ -83,8 +79,6 @@ def lecture_plf2018_an_premiere_lecture_commission_avis_1(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             partie=1,
             texte=texte_plf2018_an_premiere_lecture,
             titre="Première lecture – Commission saisie pour avis",
@@ -103,8 +97,6 @@ def lecture_plf2018_an_premiere_lecture_commission_avis_2(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             partie=2,
             texte=texte_plf2018_an_premiere_lecture,
             titre="Première lecture – Commission saisie pour avis",
@@ -127,8 +119,6 @@ def lecture_plf2018_an_premiere_lecture_seance_publique_1(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             partie=1,
             texte=texte_plf2018_an_premiere_lecture,
             titre="Première lecture – Séance publique",
@@ -147,8 +137,6 @@ def lecture_plf2018_an_premiere_lecture_seance_publique_2(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             partie=2,
             texte=texte_plf2018_an_premiere_lecture,
             titre="Première lecture – Séance publique",
@@ -186,8 +174,6 @@ def lecture_plf2018_senat_premiere_lecture_commission_fond_1(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             partie=1,
             texte=texte_plf2018_senat_premiere_lecture,
             titre="Première lecture – Commission saisie au fond",
@@ -206,8 +192,6 @@ def lecture_plf2018_senat_premiere_lecture_commission_fond_2(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             partie=2,
             texte=texte_plf2018_senat_premiere_lecture,
             titre="Première lecture – Commission saisie au fond",
@@ -226,8 +210,6 @@ def lecture_plf2018_senat_premiere_lecture_seance_publique_1(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             partie=1,
             texte=texte_plf2018_senat_premiere_lecture,
             titre="Première lecture – Séance publique",
@@ -246,8 +228,6 @@ def lecture_plf2018_senat_premiere_lecture_seance_publique_2(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             partie=2,
             texte=texte_plf2018_senat_premiere_lecture,
             titre="Première lecture – Séance publique",
@@ -285,8 +265,6 @@ def lecture_plf2018_an_nouvelle_lecture_commission_fond(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plf2018_an_nouvelle_lecture,
             titre="Nouvelle lecture – Commission saisie au fond",
             organe="PO59048",
@@ -304,8 +282,6 @@ def lecture_plf2018_an_nouvelle_lecture_seance_publique(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plf2018_an_nouvelle_lecture,
             titre="Nouvelle lecture – Séance publique",
             organe="PO717460",
@@ -342,8 +318,6 @@ def lecture_plf2018_senat_nouvelle_lecture_commission_fond(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             texte=texte_plf2018_senat_nouvelle_lecture,
             titre="Nouvelle lecture – Commission saisie au fond",
             organe="PO211494",
@@ -361,8 +335,6 @@ def lecture_plf2018_senat_nouvelle_lecture_seance_publique(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             texte=texte_plf2018_senat_nouvelle_lecture,
             titre="Nouvelle lecture – Séance publique",
             organe="PO78718",
@@ -399,8 +371,6 @@ def lecture_plf2018_an_lecture_definitive_commission_fond(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plf2018_an_lecture_definitive,
             titre="Lecture définitive – Commission saisie au fond",
             organe="PO59048",
@@ -418,8 +388,6 @@ def lecture_plf2018_an_lecture_definitive_seance_publique(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plf2018_an_lecture_definitive,
             titre="Lecture définitive – Séance publique",
             organe="PO717460",

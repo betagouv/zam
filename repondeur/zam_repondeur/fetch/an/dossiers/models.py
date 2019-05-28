@@ -67,13 +67,6 @@ class Lecture:
             partie = ""
         return f"{self.chambre} – {self.titre} – Texte Nº {self.texte.numero}{partie}"
 
-    def get_session(self) -> str:
-        if self.chambre == Chambre.AN:
-            return str(self.texte.legislature)
-        else:
-            assert self.texte.session is not None  # nosec (mypy hint)
-            return f"{self.texte.session}-{self.texte.session + 1}"
-
 
 @dataclass
 class Dossier:

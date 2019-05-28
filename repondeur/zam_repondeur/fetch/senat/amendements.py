@@ -176,8 +176,8 @@ def _fetch_all(lecture: Lecture) -> List[OrderedDict]:
     """
     # Fallback to commissions.
     urls = [
-        f"{BASE_URL}/amendements/{lecture.session}/{lecture.texte.numero}/jeu_complet_{lecture.session}_{lecture.texte.numero}.csv",  # noqa
-        f"{BASE_URL}/amendements/commissions/{lecture.session}/{lecture.texte.numero}/jeu_complet_commission_{lecture.session}_{lecture.texte.numero}.csv",  # noqa
+        f"{BASE_URL}/amendements/{lecture.texte.session_str}/{lecture.texte.numero}/jeu_complet_{lecture.texte.session_str}_{lecture.texte.numero}.csv",  # noqa
+        f"{BASE_URL}/amendements/commissions/{lecture.texte.session_str}/{lecture.texte.numero}/jeu_complet_commission_{lecture.texte.session_str}_{lecture.texte.numero}.csv",  # noqa
     ]
 
     for url in urls:

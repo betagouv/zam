@@ -128,7 +128,7 @@ IDTXTS = {
 
 def derouleur_urls(lecture: Lecture) -> Iterator[str]:
     idtxts = (
-        IDTXTS.get(lecture.session, {})
+        IDTXTS.get(lecture.texte.session_str, {})
         .get(lecture.texte.numero, {})
         .get(lecture.partie)
     )
@@ -136,13 +136,13 @@ def derouleur_urls(lecture: Lecture) -> Iterator[str]:
     if idtxts is not None:
         for idtxt in idtxts:
             yield (
-                f"{BASE_URL}/en{phase}/{lecture.session}/{lecture.texte.numero}"
-                f"/liste_discussion_{idtxt}.json"
+                f"{BASE_URL}/en{phase}/{lecture.texte.session_str}"
+                f"/{lecture.texte.numero}/liste_discussion_{idtxt}.json"
             )
     else:
         yield (
-            f"{BASE_URL}/en{phase}/{lecture.session}/{lecture.texte.numero}"
-            f"/liste_discussion.json"
+            f"{BASE_URL}/en{phase}/{lecture.texte.session_str}"
+            f"/{lecture.texte.numero}/liste_discussion.json"
         )
 
 

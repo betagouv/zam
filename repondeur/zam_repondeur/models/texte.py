@@ -85,6 +85,12 @@ class Texte(Base):
         "date_depot",
     )
 
+    @property
+    def session_str(self) -> Optional[str]:
+        if self.session is None:
+            return None
+        return f"{self.session}-{self.session + 1}"
+
     @classmethod
     def get(
         cls, chambre: Chambre, session_or_legislature: str, numero: int

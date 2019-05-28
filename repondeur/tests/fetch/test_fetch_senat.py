@@ -29,23 +29,52 @@ def dossier_plf(db):
 
 
 @pytest.fixture
-def texte_senat(db):
-    # TODO: reuse existing texte or better, create fixtures for PLF2019.
-    from zam_repondeur.models import Chambre, Texte, TypeTexte
+def texte_plf(db):
+    from zam_repondeur.models import Texte, TypeTexte, Chambre
 
     with transaction.manager:
-        texte = Texte.create(
-            uid="baz",
+        return Texte.create(
+            uid="PRJLSNR5S319B0146",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
-            session=2017,
-            numero=63,
-            titre_long="long",
-            titre_court="court",
-            date_depot=date(2017, 10, 11),
+            session=2018,
+            numero=146,
+            titre_long="Loi de finances pour 2019",
+            titre_court="Budget 2019",
+            date_depot=date(2018, 11, 22),
         )
 
-    return texte
+
+@pytest.fixture
+def lecture_plf_1re_partie(dossier_plf, texte_plf):
+    from zam_repondeur.models import Lecture
+
+    with transaction.manager:
+        return Lecture.create(
+            chambre="senat",
+            texte=texte_plf,
+            session=texte_plf.session_str,
+            partie=1,
+            titre="Numéro lecture – Titre lecture sénat",
+            organe="PO78718",
+            dossier=dossier_plf,
+        )
+
+
+@pytest.fixture
+def lecture_plf_2e_partie(dossier_plf, texte_plf):
+    from zam_repondeur.models import Lecture
+
+    with transaction.manager:
+        return Lecture.create(
+            chambre="senat",
+            texte=texte_plf,
+            session=texte_plf.session_str,
+            partie=2,
+            titre="Numéro lecture – Titre lecture sénat",
+            organe="PO78718",
+            dossier=dossier_plf,
+        )
 
 
 @responses.activate
@@ -293,21 +322,9 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
 
 
 @responses.activate
-def test_aspire_senat_plf2019_1re_partie(app, texte_senat, dossier_plf):
+def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie):
     from zam_repondeur.fetch.senat.amendements import Senat
-    from zam_repondeur.models import DBSession, Lecture
-
-    with transaction.manager:
-        texte_senat.numero = 146
-        lecture = Lecture.create(
-            chambre="senat",
-            session="2018-2019",
-            texte=texte_senat,
-            partie=1,
-            titre="Numéro lecture – Titre lecture sénat",
-            organe="PO78718",
-            dossier=dossier_plf,
-        )
+    from zam_repondeur.models import DBSession
 
     sample_data = read_sample_data("jeu_complet_2018-2019_146.csv")
 
@@ -336,32 +353,20 @@ def test_aspire_senat_plf2019_1re_partie(app, texte_senat, dossier_plf):
         status=200,
     )
 
-    DBSession.add(lecture)
+    DBSession.add(lecture_plf_1re_partie)
 
     source = Senat()
 
-    amendements, created, errored = source.fetch(lecture)
+    amendements, created, errored = source.fetch(lecture_plf_1re_partie)
 
     # All amendements from part 1 are fetched
     assert len(amendements) == 1005
 
 
 @responses.activate
-def test_aspire_senat_plf2019_2e_partie(app, texte_senat, dossier_plf):
+def test_aspire_senat_plf2019_2e_partie(app, lecture_plf_2e_partie):
     from zam_repondeur.fetch.senat.amendements import Senat
-    from zam_repondeur.models import DBSession, Lecture
-
-    with transaction.manager:
-        texte_senat.numero = 146
-        lecture = Lecture.create(
-            chambre="senat",
-            session="2018-2019",
-            texte=texte_senat,
-            partie=2,
-            titre="Numéro lecture – Titre lecture sénat",
-            organe="PO78718",
-            dossier=dossier_plf,
-        )
+    from zam_repondeur.models import DBSession
 
     sample_data = read_sample_data("jeu_complet_2018-2019_146.csv")
 
@@ -406,11 +411,11 @@ def test_aspire_senat_plf2019_2e_partie(app, texte_senat, dossier_plf):
             status=404,
         )
 
-    DBSession.add(lecture)
+    DBSession.add(lecture_plf_2e_partie)
 
     source = Senat()
 
-    amendements, created, errored = source.fetch(lecture)
+    amendements, created, errored = source.fetch(lecture_plf_2e_partie)
 
     # All amendements from part 2 are fetched
     assert len(amendements) == 35
@@ -557,14 +562,29 @@ def test_fetch_all_buggy_csv(lecture_senat):
 
 
 @responses.activate
-def test_fetch_all_commission(texte_senat, lecture_senat):
+def test_fetch_all_commission(dossier_plfss2018):
     from zam_repondeur.fetch.senat.amendements import _fetch_all
-    from zam_repondeur.models import DBSession
+    from zam_repondeur.models import Lecture, Texte, TypeTexte, Chambre
 
     with transaction.manager:
-        texte_senat.numero = 583
-        lecture_senat.texte = texte_senat
-        DBSession.add(lecture_senat)
+        texte = Texte.create(
+            uid="...",
+            type_=TypeTexte.PROJET,
+            chambre=Chambre.SENAT,
+            session=2017,
+            numero=583,
+            titre_long="bla bla",
+            titre_court="bla bla",
+            date_depot=date(2017, 1, 1),
+        )
+        lecture = Lecture.create(
+            chambre="senat",
+            texte=texte,
+            session=texte.session_str,
+            titre="Numéro lecture – Titre lecture sénat",
+            organe="PO78718",
+            dossier=dossier_plfss2018,
+        )
 
     sample_data = read_sample_data("jeu_complet_commission_2017-2018_583.csv")
 
@@ -581,7 +601,7 @@ def test_fetch_all_commission(texte_senat, lecture_senat):
         status=200,
     )
 
-    items = _fetch_all(lecture_senat)
+    items = _fetch_all(lecture)
 
     assert len(items) == 434
 
@@ -622,16 +642,30 @@ def test_fetch_all_not_found(lecture_senat):
 
 
 @responses.activate
-def test_fetch_discussion_details(texte_senat, lecture_senat):
+def test_fetch_discussion_details(dossier_plfss2018):
     from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details
-    from zam_repondeur.models import DBSession
+    from zam_repondeur.models import DBSession, Lecture, Texte, TypeTexte, Chambre
 
     with transaction.manager:
-        texte_senat.numero = 610
-        lecture_senat.session = "2016-2017"
-        lecture_senat.texte = texte_senat
-        lecture_senat.organe = "PO744107"
-        DBSession.add(lecture_senat)
+        texte = Texte.create(
+            uid="...",
+            type_=TypeTexte.PROJET,
+            chambre=Chambre.SENAT,
+            session=2016,
+            numero=610,
+            titre_long="...",
+            titre_court="...",
+            date_depot=date(2017, 1, 1),
+        )
+        lecture = Lecture.create(
+            chambre="senat",
+            texte=texte,
+            session=texte.session_str,
+            titre="Numéro lecture – Titre lecture sénat",
+            organe="PO744107",
+            dossier=dossier_plfss2018,
+        )
+        DBSession.add(lecture)
 
     json_data = json.loads(read_sample_data("liste_discussion_610.json"))
 
@@ -642,7 +676,7 @@ def test_fetch_discussion_details(texte_senat, lecture_senat):
         status=200,
     )
 
-    data = list(_fetch_discussion_details(lecture_senat))
+    data = list(_fetch_discussion_details(lecture))
 
     assert len(data) == 1
     assert data[0] == json_data
@@ -757,15 +791,14 @@ def test_derouleur_urls(lecture_senat):
     ]
 
 
-def test_derouleur_urls_plf2019_1re_partie(texte_senat, dossier_plf):
+def test_derouleur_urls_plf2019_1re_partie(dossier_plf, texte_plf):
     from zam_repondeur.fetch.senat.derouleur import derouleur_urls
     from zam_repondeur.models import Lecture
 
-    texte_senat.numero = 146
     lecture = Lecture.create(
         chambre="senat",
-        session="2018-2019",
-        texte=texte_senat,
+        texte=texte_plf,
+        session=texte_plf.session_str,
         partie=1,
         titre="Première lecture – Séance publique (1re partie)",
         organe="PO78718",
@@ -777,15 +810,14 @@ def test_derouleur_urls_plf2019_1re_partie(texte_senat, dossier_plf):
     ]
 
 
-def test_derouleur_urls_plf2019_2e_partie(texte_senat, dossier_plf):
+def test_derouleur_urls_plf2019_2e_partie(dossier_plf, texte_plf):
     from zam_repondeur.fetch.senat.derouleur import derouleur_urls
     from zam_repondeur.models import Lecture
 
-    texte_senat.numero = 146
     lecture = Lecture.create(
         chambre="senat",
-        session="2018-2019",
-        texte=texte_senat,
+        texte=texte_plf,
+        session=texte_plf.session_str,
         partie=2,
         titre="Première lecture – Séance publique (2e partie)",
         organe="PO78718",

@@ -62,7 +62,7 @@ class Lecture(Base, LastEventMixin):
     texte_pk = Column(Integer, ForeignKey("textes.pk"))
     texte = relationship(Texte, back_populates="lectures")
 
-    __repr_keys__ = ("pk", "chambre", "session", "organe", "partie", "owned_by_team")
+    __repr_keys__ = ("pk", "chambre", "organe", "partie", "owned_by_team")
 
     def __str__(self) -> str:
         return ", ".join(

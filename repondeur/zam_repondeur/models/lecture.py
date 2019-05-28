@@ -183,18 +183,12 @@ class Lecture(Base, LastEventMixin):
 
     @classmethod
     def exists(
-        cls,
-        chambre: str,
-        session: str,
-        texte: "Texte",
-        partie: Optional[int],
-        organe: str,
+        cls, chambre: str, texte: "Texte", partie: Optional[int], organe: str
     ) -> bool:
         res: bool = DBSession.query(
             DBSession.query(cls)
             .filter(
                 cls.chambre == chambre,
-                cls.session == session,
                 cls.texte == texte,
                 cls.partie == partie,
                 cls.organe == organe,

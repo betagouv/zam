@@ -125,7 +125,7 @@ def _make_amendement(
 
     check_same_lecture(
         lecture=lecture,
-        session=extract("identifiant", "legislature"),
+        legislature=extract("identifiant", "legislature"),
         partie=extract_partie(node),
         organe=extract("identifiant", "saisine", "organeExamen"),
         texte_uid=texte_uid,
@@ -164,19 +164,19 @@ def _make_amendement(
 
 def check_same_lecture(
     lecture: Lecture,
-    session: Optional[str],
+    legislature: Optional[str],
     partie: Optional[int],
     organe: Optional[str],
     texte_uid: str,
 ) -> None:
-    if session is None:
+    if legislature is None:
         raise ValueError("Missing legislature")
 
     if organe is None:
         raise ValueError("Missing organeExamen")
 
     if (
-        session != lecture.session
+        legislature != str(lecture.texte.legislature)
         or partie != lecture.partie
         or organe != lecture.organe
         or texte_uid != lecture.texte.uid

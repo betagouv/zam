@@ -36,12 +36,18 @@ class AmendementEdit:
             self.amendement.user_table
             and self.amendement.user_table.user == self.request.user
         )
+        self.amendements = (
+            self.amendement.batch.amendements
+            if self.amendement.batch
+            else [self.amendement]
+        )
 
     @view_config(request_method="GET")
     def get(self) -> dict:
         check_url = self.request.resource_path(self.my_table_resource, "check")
         return {
             "amendement": self.amendement,
+            "amendements": self.amendements,
             "avis": AVIS,
             "table": self.amendement.user_table,
             "is_on_my_table": self.is_on_my_table,
@@ -82,19 +88,20 @@ class AmendementEdit:
             self.request.session.flash(Message(cls="danger", text=message))
             return HTTPFound(location=self.my_table_url)
 
-        if avis_changed:
-            AvisAmendementModifie.create(self.request, self.amendement, avis)
+        for amendement in self.amendements:
+            if avis_changed:
+                AvisAmendementModifie.create(self.request, amendement, avis)
 
-        if objet_changed:
-            ObjetAmendementModifie.create(self.request, self.amendement, objet)
+            if objet_changed:
+                ObjetAmendementModifie.create(self.request, amendement, objet)
 
-        if reponse_changed:
-            ReponseAmendementModifiee.create(self.request, self.amendement, reponse)
+            if reponse_changed:
+                ReponseAmendementModifiee.create(self.request, amendement, reponse)
 
-        if comments_changed:
-            CommentsAmendementModifie.create(self.request, self.amendement, comments)
+            if comments_changed:
+                CommentsAmendementModifie.create(self.request, amendement, comments)
 
-        self.amendement.stop_editing()
+            amendement.stop_editing()
 
         self.request.session.flash(
             Message(cls="success", text="Les modifications ont bien été enregistrées.")
@@ -105,7 +112,7 @@ class AmendementEdit:
                     self.context.parent.parent,
                     "transfer_amendements",
                     query={
-                        "nums": self.amendement.num,
+                        "nums": [amendement.num for amendement in self.amendements],
                         "from_save": 1,
                         "back": self.back_url,
                     },

@@ -100,13 +100,13 @@ class LecturesAdd:
             DossierModel, uid=dossier_ref.uid, titre=dossier_ref.titre
         )[0]
 
-        session = lecture_ref.get_session()
-
-        if LectureModel.exists(chambre, session, texte_model, partie, organe):
+        if LectureModel.exists(chambre, texte_model, partie, organe):
             self.request.session.flash(
                 Message(cls="warning", text="Cette lecture existe déjà…")
             )
             return HTTPFound(location=self.request.resource_url(self.context))
+
+        session = lecture_ref.get_session()
 
         lecture_model: LectureModel = LectureModel.create(
             owned_by_team=self.request.team,

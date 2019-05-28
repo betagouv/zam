@@ -265,7 +265,6 @@ def test_post_form_already_exists(
 
     assert Lecture.exists(
         chambre="an",
-        session="15",
         texte=texte_plfss2018_an_premiere_lecture,
         partie=None,
         organe="PO717460",

@@ -39,7 +39,6 @@ class Lecture(Base, LastEventMixin):
 
     pk = Column(Integer, primary_key=True)
     chambre = Column(Text)
-    session = Column(Text)
     partie = Column(Integer, nullable=True)  # only for PLF
     organe = Column(Text)
     titre = Column(Text)
@@ -197,12 +196,8 @@ class Lecture(Base, LastEventMixin):
     ) -> "Lecture":
         now = datetime.utcnow()
         chambre = texte.chambre.name.lower()
-        session = (
-            str(texte.legislature) if texte.chambre == Chambre.AN else texte.session_str
-        )
         lecture = cls(
             chambre=chambre,
-            session=session,
             texte=texte,
             titre=titre,
             organe=organe,

@@ -359,7 +359,7 @@ def _get_parent(
 
 def build_url(lecture: Lecture, numero_prefixe: str = "") -> str:
 
-    legislature = int(lecture.session)
+    legislature = lecture.texte.legislature
     texte = f"{lecture.texte.numero:04}"
 
     # The 1st "lecture" of the "projet de loi de finances" (PLF) has two parts

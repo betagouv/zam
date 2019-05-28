@@ -29,9 +29,8 @@ class Lecture(Base, LastEventMixin):
     __tablename__ = "lectures"
     __table_args__ = (
         Index(
-            "ix_lectures__chambre__session__partie__organe",
-            "chambre",
-            "session",
+            "ix_lectures__texte_pk__partie__organe",
+            "texte_pk",
             "partie",
             "organe",
             unique=True,

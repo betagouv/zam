@@ -127,13 +127,7 @@ class TestPostForm:
 
         self._upload_csv(app, filename, user=user_david)
 
-        lecture = Lecture.get(
-            chambre=lecture_an.chambre,
-            session_or_legislature=lecture_an.session,
-            num_texte=lecture_an.texte.numero,
-            partie=None,
-            organe=lecture_an.organe,
-        )
+        lecture = Lecture.get_by_pk(lecture_an.pk)  # refresh object
         events = {type(event): event for event in lecture.events}
         assert ReponsesImportees in events
 

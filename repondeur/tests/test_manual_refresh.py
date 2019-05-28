@@ -74,13 +74,8 @@ def test_post_form(app, lecture_an, article1_an, user_david):
 
     assert resp.status_code == 200
 
-    lecture_an = Lecture.get(
-        chambre=lecture_an.chambre,
-        session_or_legislature=lecture_an.session,
-        num_texte=lecture_an.texte.numero,
-        partie=None,
-        organe=lecture_an.organe,
-    )
+    lecture_an = Lecture.get_by_pk(lecture_an.pk)  # refresh object
+
     events = lecture_an.events
     assert len(events) == 2
     assert events[0].render_summary() == "Le contenu des articles a été récupéré."

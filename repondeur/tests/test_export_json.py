@@ -108,6 +108,7 @@ def test_write_json(
         "rectif": 1,
         "reponse": "",
         "resume": "Suppression de l'article",
+        "legislature": "",
         "session": "2017-2018",
         "sort": "",
         "gouvernemental": False,
@@ -192,6 +193,7 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
         "rectif": 1,
         "reponse": "<p>La réponse</p>",
         "resume": "Suppression de l'article",
+        "legislature": "",
         "session": "2017-2018",
         "sort": "",
         "gouvernemental": False,
@@ -341,9 +343,48 @@ def test_write_json_sous_amendement(
         "rectif": 1,
         "reponse": "",
         "resume": "",
+        "legislature": "",
         "session": "2017-2018",
         "sort": "",
         "gouvernemental": False,
         "affectation_email": "",
         "affectation_name": "",
     }
+
+
+class TestAmendementsHaveSessionOrLegislature:
+    def test_an_amendements_have_legislature(self, lecture_an, amendements_an, tmpdir):
+        from zam_repondeur.export.json import write_json
+        from zam_repondeur.models import DBSession
+
+        DBSession.add(lecture_an)
+
+        filename = str(tmpdir.join("test.json"))
+
+        write_json(lecture_an, filename, request={})
+
+        with open(filename, "r", encoding="utf-8-sig") as f_:
+            export = json.loads(f_.read())
+
+        for amendement in export["amendements"]:
+            assert amendement["legislature"] == 15
+            assert amendement["session"] == ""
+
+    def test_senat_amendements_have_session(
+        self, lecture_senat, amendements_senat, tmpdir
+    ):
+        from zam_repondeur.export.json import write_json
+        from zam_repondeur.models import DBSession
+
+        DBSession.add(lecture_senat)
+
+        filename = str(tmpdir.join("test.json"))
+
+        write_json(lecture_senat, filename, request={})
+
+        with open(filename, "r", encoding="utf-8-sig") as f_:
+            export = json.loads(f_.read())
+
+        for amendement in export["amendements"]:
+            assert amendement["legislature"] == ""
+            assert amendement["session"] == "2017-2018"

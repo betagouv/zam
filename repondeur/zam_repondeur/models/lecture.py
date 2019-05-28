@@ -60,7 +60,7 @@ class Lecture(Base, LastEventMixin):
     dossier_pk = Column(Integer, ForeignKey("dossiers.pk"))
     dossier = relationship("Dossier", back_populates="lectures")
     texte_pk = Column(Integer, ForeignKey("textes.pk"))
-    texte = relationship(Texte, back_populates="lectures")
+    texte: Texte = relationship(Texte, back_populates="lectures")
 
     __repr_keys__ = ("pk", "chambre", "organe", "partie", "owned_by_team")
 
@@ -222,9 +222,21 @@ class Lecture(Base, LastEventMixin):
             partie = f"-{self.partie}"
         else:
             partie = ""
-        return (
-            f"{self.chambre}.{self.session}.{self.texte.numero}{partie}.{self.organe}"
+        return ".".join(
+            [
+                self.chambre,
+                self._session_or_legislature,
+                f"{self.texte.numero}{partie}",
+                self.organe,
+            ]
         )
+
+    @property
+    def _session_or_legislature(self) -> str:
+        if self.texte.chambre == Chambre.AN:
+            return str(self.texte.legislature)
+        assert self.texte.session_str is not None  # mypy hint
+        return self.texte.session_str
 
     def find_article(self, subdiv: SubDiv) -> Optional[Article]:
         article: Article

@@ -50,7 +50,7 @@ def download_amendements(context: LectureResource, request: Request) -> Response
 
         response = FileResponse(tmp_file_path)
         attach_name = (
-            f"lecture-{lecture.chambre}-{lecture.session}-{lecture.texte.numero}-"
+            f"lecture-{lecture.chambre}-{lecture.texte.numero}-"
             f"{lecture.organe}.{fmt}"
         )
         response.content_type = content_type
@@ -91,7 +91,7 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
         attach_name = (
             f"amendement{'s' if len(nums) > 1 else ''}-"
             f"{','.join(str(num) for num in nums)}-"
-            f"{lecture.chambre}-{lecture.session}-{lecture.texte.numero}-"
+            f"{lecture.chambre}-{lecture.texte.numero}-"
             f"{lecture.organe}.pdf"
         )
         response.content_type = "application/pdf"

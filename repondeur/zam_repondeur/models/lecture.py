@@ -143,6 +143,11 @@ class Lecture(Base, LastEventMixin):
         return lectures
 
     @classmethod
+    def get_by_pk(cls, pk: int) -> Optional["Lecture"]:
+        lecture: Optional["Lecture"] = DBSession.query(cls).get(pk)
+        return lecture
+
+    @classmethod
     def get(
         cls,
         chambre: str,

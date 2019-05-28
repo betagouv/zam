@@ -43,12 +43,8 @@ def test_upload_liasse_success(
     resp = resp.follow()
     assert "3 nouveaux amendements récupérés (import liasse XML)." in resp.text
 
-    lecture = Lecture.get(
-        chambre=lecture_essoc2018_an_nouvelle_lecture_commission_fond.chambre,
-        session_or_legislature=lecture_essoc2018_an_nouvelle_lecture_commission_fond.session,  # noqa
-        num_texte=lecture_essoc2018_an_nouvelle_lecture_commission_fond.texte.numero,
-        partie=None,
-        organe=lecture_essoc2018_an_nouvelle_lecture_commission_fond.organe,
+    lecture = Lecture.get_by_pk(
+        lecture_essoc2018_an_nouvelle_lecture_commission_fond.pk
     )
     assert lecture.events[0].render_summary() == (
         "<abbr title='david@example.com'>david@example.com</abbr> a importé "
@@ -74,12 +70,8 @@ def test_upload_liasse_with_table(
     resp = resp.follow()
     assert "3 nouveaux amendements récupérés (import liasse XML)." in resp.text
 
-    lecture = Lecture.get(
-        chambre=lecture_essoc2018_an_nouvelle_lecture_commission_fond.chambre,
-        session_or_legislature=lecture_essoc2018_an_nouvelle_lecture_commission_fond.session,  # noqa
-        num_texte=lecture_essoc2018_an_nouvelle_lecture_commission_fond.texte.numero,
-        partie=None,
-        organe=lecture_essoc2018_an_nouvelle_lecture_commission_fond.organe,
+    lecture = Lecture.get_by_pk(
+        lecture_essoc2018_an_nouvelle_lecture_commission_fond.pk
     )
     assert (
         "<table>\n<tbody>\n<tr>\n<td>Durée minimale de services"
@@ -121,11 +113,7 @@ def test_upload_liasse_missing_file(
     assert "Veuillez d’abord sélectionner un fichier" in resp.text
 
     # Check the update timestamp has NOT been updated.
-    lecture = Lecture.get(
-        chambre=lecture_essoc2018_an_nouvelle_lecture_commission_fond.chambre,
-        session_or_legislature=lecture_essoc2018_an_nouvelle_lecture_commission_fond.session,  # noqa
-        num_texte=lecture_essoc2018_an_nouvelle_lecture_commission_fond.texte.numero,
-        partie=None,
-        organe=lecture_essoc2018_an_nouvelle_lecture_commission_fond.organe,
+    lecture = Lecture.get_by_pk(
+        lecture_essoc2018_an_nouvelle_lecture_commission_fond.pk
     )
     assert lecture.events == []

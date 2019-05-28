@@ -106,12 +106,8 @@ class LecturesAdd:
             )
             return HTTPFound(location=self.request.resource_url(self.context))
 
-        session = lecture_ref.get_session()
-
         lecture_model: LectureModel = LectureModel.create(
             owned_by_team=self.request.team,
-            chambre=chambre,
-            session=session,
             texte=texte_model,
             partie=partie,
             titre=titre,

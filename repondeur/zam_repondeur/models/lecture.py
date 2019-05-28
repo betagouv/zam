@@ -190,8 +190,6 @@ class Lecture(Base, LastEventMixin):
     @classmethod
     def create(
         cls,
-        chambre: str,
-        session: str,
         texte: "Texte",
         titre: str,
         organe: str,
@@ -200,8 +198,8 @@ class Lecture(Base, LastEventMixin):
         owned_by_team: Optional[Team] = None,
     ) -> "Lecture":
         now = datetime.utcnow()
-        assert chambre == texte.chambre.name.lower()
-        assert session == (
+        chambre = texte.chambre.name.lower()
+        session = (
             str(texte.legislature) if texte.chambre == Chambre.AN else texte.session_str
         )
         lecture = cls(

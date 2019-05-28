@@ -44,8 +44,6 @@ def lecture_essoc2018_an_premier_lecture_commission_fond(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_essoc2018_an_premier_lecture_commission_fond,
             titre="Première lecture – Commission saisie au fond",
             organe="PO744107",
@@ -82,8 +80,6 @@ def lecture_essoc2018_an_premiere_lecture_seance_publique(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_essoc2018_an_premiere_lecture_seance_publique,
             titre="Première lecture – Séance publique",
             organe="PO717460",
@@ -120,8 +116,6 @@ def lecture_essoc2018_senat_premiere_lecture_commission_fond(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             texte=texte_essoc2018_senat_premiere_lecture_commission_fond,
             titre="Première lecture – Commission saisie au fond",
             organe="PO748821",
@@ -158,8 +152,6 @@ def lecture_essoc2018_senat_premiere_lecture_seance_publique(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             texte=texte_essoc2018_senat_premiere_lecture_seance_publique,
             titre="Première lecture – Séance publique",
             organe="PO78718",
@@ -196,8 +188,6 @@ def lecture_essoc2018_an_nouvelle_lecture_commission_fond(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_essoc2018_an_nouvelle_lecture_commission_fond,
             titre="Nouvelle lecture – Commission saisie au fond",
             organe="PO744107",
@@ -234,8 +224,6 @@ def lecture_essoc2018_an_nouvelle_lecture_seance_publique(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_essoc2018_an_nouvelle_lecture_seance_publique,
             titre="Nouvelle lecture – Séance publique",
             organe="PO717460",

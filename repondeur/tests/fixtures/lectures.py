@@ -8,8 +8,6 @@ def lecture_an(db, dossier_plfss2018, texte_plfss2018_an_premiere_lecture):
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plfss2018_an_premiere_lecture,
             titre="Numéro lecture – Titre lecture",
             organe="PO717460",
@@ -25,8 +23,6 @@ def lecture_senat(db, dossier_plfss2018, texte_plfss2018_senat_premiere_lecture)
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             texte=texte_plfss2018_senat_premiere_lecture,
             titre="Numéro lecture – Titre lecture sénat",
             organe="PO78718",

@@ -43,8 +43,6 @@ def lecture_plfss2018_an_premiere_lecture_commission_fond(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plfss2018_an_premiere_lecture,
             titre="Première lecture – Commission saisie au fond",
             organe="PO420120",
@@ -62,8 +60,6 @@ def lecture_plfss2018_an_premiere_lecture_commission_avis(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plfss2018_an_premiere_lecture,
             titre="Première lecture – Commission saisie pour avis",
             organe="PO59048",
@@ -81,8 +77,6 @@ def lecture_plfss2018_an_premiere_lecture_seance_publique(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plfss2018_an_premiere_lecture,
             titre="Première lecture – Séance publique",
             organe="PO717460",
@@ -119,8 +113,6 @@ def lecture_plfss2018_senat_premiere_lecture_commission_fond(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             texte=texte_plfss2018_senat_premiere_lecture,
             titre="Première lecture – Commission saisie au fond",
             organe="PO211493",
@@ -138,8 +130,6 @@ def lecture_plfss2018_senat_premiere_lecture_commission_avis(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             texte=texte_plfss2018_senat_premiere_lecture,
             titre="Première lecture – Commission saisie pour avis",
             organe="PO211494",
@@ -157,8 +147,6 @@ def lecture_plfss2018_senat_premiere_lecture_seance_publique(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             texte=texte_plfss2018_senat_premiere_lecture,
             titre="Première lecture – Séance publique",
             organe="PO78718",
@@ -195,8 +183,6 @@ def lecture_plfss2018_an_nouvelle_lecture_commission_fond(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plfss2018_an_nouvelle_lecture,
             titre="Nouvelle lecture – Commission saisie au fond",
             organe="PO420120",
@@ -214,8 +200,6 @@ def lecture_plfss2018_an_nouvelle_lecture_seance_publique(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plfss2018_an_nouvelle_lecture,
             titre="Nouvelle lecture – Séance publique",
             organe="PO717460",
@@ -252,8 +236,6 @@ def lecture_plfss2018_senat_nouvelle_lecture_commission_fond(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             texte=texte_plfss2018_senat_nouvelle_lecture,
             titre="Nouvelle lecture – Commission saisie au fond",
             organe="PO211493",
@@ -271,8 +253,6 @@ def lecture_plfss2018_senat_nouvelle_lecture_seance_publique(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="senat",
-            session="2017-2018",
             texte=texte_plfss2018_senat_nouvelle_lecture,
             titre="Nouvelle lecture – Séance publique",
             organe="PO78718",
@@ -309,8 +289,6 @@ def lecture_plfss2018_an_lecture_definitive_commission_fond(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plfss2018_an_lecture_definitive,
             titre="Lecture définitive – Commission saisie au fond",
             organe="PO420120",
@@ -328,8 +306,6 @@ def lecture_plfss2018_an_lecture_definitive_seance_publique(
 
     with transaction.manager:
         lecture = Lecture.create(
-            chambre="an",
-            session="15",
             texte=texte_plfss2018_an_lecture_definitive,
             titre="Lecture définitive – Séance publique",
             organe="PO717460",

@@ -1,4 +1,4 @@
-import pickle
+import pickle  # nosec
 from typing import Dict, List
 
 from pyramid.config import Configurator
@@ -60,7 +60,7 @@ class DataRepository:
         if raw_bytes is None:
             return {}
 
-        data: dict = pickle.loads(raw_bytes)
+        data: dict = pickle.loads(raw_bytes)  # nosec (not arbitrary data)
         return data
 
 

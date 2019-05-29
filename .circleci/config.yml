@@ -38,6 +38,11 @@ jobs:
             cd repondeur
             sudo pip install --no-use-pep517 -r requirements.txt -r requirements-dev.txt -e .
       - run:
+          name: Check Python deps conflicts
+          command: |
+            cd repondeur
+            python -c "from paste.deploy.loadwsgi import appconfig ; appconfig('config:development.ini', relative_to='.')"
+      - run:
           name: Check formatting with black
           command: |
             cd repondeur

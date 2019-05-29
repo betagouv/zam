@@ -78,7 +78,7 @@ class TableView:
             Amendement.lecture == self.lecture, Amendement.num.in_(nums)  # type: ignore
         )
 
-        for amendement in amendements:
+        for amendement in Batch.expanded_batches(amendements):
             old = str(amendement.user_table.user) if amendement.user_table else ""
             new = str(target_table.user) if target_table else ""
             if amendement.user_table is target_table:

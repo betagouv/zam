@@ -101,6 +101,23 @@
     {% endif %}
 {% endblock %}
 
+{% macro numero_amendement(amendement) %}
+    {% if amendement.batch %}
+        N<sup>os</sup>&nbsp;
+        {% for amdt in amendement.batch.amendements[:-1] %}
+            {{ link_amendement(amdt) }}
+            {%- if not loop.last %}, {% endif %}
+        {% endfor %}
+        et {{ link_amendement(amendement.batch.amendements[-1]) }}
+    {% else %}
+        Nº&nbsp;{{ link_amendement(amendement) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro link_amendement(amendement) %}
+    <a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>
+{% endmacro %}
+
 {% block body %}
     <nav class="back">
         <a href="{{ back_url }}" class="arrow-left">
@@ -113,14 +130,14 @@
     </nav>
     <h1>
         Transférer
-        {% if amendements|length > 1 %}
+        {% if amendements|length_including_batches > 1 %}
             les amendements
         {% else %}
             l’amendement
         {% endif %}
         {% if from_save %}
             {% set amendement = amendements_with_table[0] %}
-            Nº&nbsp;<a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>
+            {{ numero_amendement(amendement) }}
         {% endif %}
     </h1>
     <form id="transfer-amendements"
@@ -134,7 +151,7 @@
             {% if amendements_being_edited %}
                 <div class="notice danger">
                     <p>
-                        {% trans count=amendements_being_edited|length %}
+                        {% trans count=amendements_being_edited|length_including_batches %}
                             Cet amendement <strong>est en cours d’édition par quelqu’un d’autre</strong>.
                             Si vous transférez cet amendement, <strong>ses modifications ne seront pas enregistrées</strong>.
                         {% pluralize %}
@@ -148,9 +165,14 @@
                             <li>
                                 <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}"  data-action="transfers#check">
                                 <label for="amendement-{{ amendement.num }}">
-                                    Nº&nbsp;<a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a> —
+                                    {{ numero_amendement(amendement)}}
+                                     —
                                     {% if amendement_user == request.user %}
-                                        Cet amendement est sur votre table
+                                        {% if amendement.batch %}
+                                            Ces amendements sont sur votre table
+                                        {% else %}
+                                            Cet amendement est sur votre table
+                                        {% endif %}
                                     {% else %}
                                         {{ macros.user_activity(amendement_user) }}
                                     {% endif %}
@@ -163,7 +185,7 @@
             {% if amendements_not_being_edited %}
                 <div class="notice warning">
                     <p>
-                        {% trans count=amendements_not_being_edited|length %}
+                        {% trans count=amendements_not_being_edited|length_including_batches %}
                             Cet amendement <strong>est déjà sur la table de quelqu’un</strong>.
                         {% pluralize %}
                             Ces amendements <strong>sont déjà sur la table de quelqu’un</strong>.
@@ -175,9 +197,14 @@
                             <li>
                                 <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked data-action="transfers#check">
                                 <label for="amendement-{{ amendement.num }}">
-                                    Nº&nbsp;<a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a> —
+                                    {{ numero_amendement(amendement)}}
+                                     —
                                     {% if amendement_user == request.user %}
-                                        Cet amendement est sur votre table
+                                        {% if amendement.batch %}
+                                            Ces amendements sont sur votre table
+                                        {% else %}
+                                            Cet amendement est sur votre table
+                                        {% endif %}
                                     {% else %}
                                         {{ macros.user_activity(amendement_user) }}
                                     {% endif %}
@@ -191,7 +218,7 @@
         {% if amendements_without_table %}
             <details class="notice" {% if not amendements_with_table %}open{% endif %}>
                 <summary>
-                    {% trans count=amendements_without_table|length %}
+                    {% trans count=amendements_without_table|length_including_batches %}
                         Cet amendement est sur l’index
                     {% pluralize %}
                         Ces {{ count }} amendements sont sur l’index
@@ -202,8 +229,13 @@
                         <li>
                             <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked>
                             <label for="amendement-{{ amendement.num }}">
-                                Nº&nbsp;<a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a> —
-                                Cet amendement est sur l’index
+                                {{ numero_amendement(amendement)}}
+                                 —
+                                {% if amendement.batch %}
+                                    Ces amendements sont sur l’index
+                                {% else %}
+                                    Cet amendement est sur l’index
+                                {% endif %}
                             </label>
                         </li>
                     {% endfor %}

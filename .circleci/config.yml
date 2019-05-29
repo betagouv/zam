@@ -58,6 +58,11 @@ jobs:
             cd repondeur
             mypy zam_repondeur
       - run:
+          name: Check for potential security issues with bandit
+          command: |
+            cd repondeur
+            bandit -r zam_repondeur
+      - run:
           name: Run tests
           command: |
             cd repondeur

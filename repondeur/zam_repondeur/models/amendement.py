@@ -7,10 +7,11 @@ from typing import (
     List,
     NamedTuple,
     Optional,
+    Set,
     Tuple,
     Union,
     TYPE_CHECKING,
-)  # noqa
+)
 
 from jinja2.filters import do_striptags
 from sqlalchemy import (
@@ -52,14 +53,22 @@ AVIS = [
 ]
 
 
+def deduplicate(items: Iterable[Optional[str]]) -> Set[str]:
+    return set(filter(None, items))
+
+
 class Batch(Base):
     __tablename__ = "batches"
 
     pk: int = Column(Integer, primary_key=True)
 
-    amendements = relationship("Amendement", back_populates="batch")
+    _amendements = relationship("Amendement", back_populates="batch")
 
     __repr_keys__ = ("pk",)
+
+    @property
+    def amendements(self) -> List["Amendement"]:
+        return sorted(self._amendements)
 
     @classmethod
     def create(cls) -> "Batch":
@@ -201,7 +210,7 @@ class Amendement(Base):
     )
 
     batch_pk: int = Column(Integer, ForeignKey("batches.pk"), nullable=True)
-    batch: Optional[Batch] = relationship(Batch, back_populates="amendements")
+    batch: Optional[Batch] = relationship(Batch, back_populates="_amendements")
 
     user_content = relationship(
         AmendementUserContent,

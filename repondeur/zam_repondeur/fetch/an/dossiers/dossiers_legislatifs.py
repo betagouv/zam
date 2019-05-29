@@ -150,7 +150,6 @@ def gen_lectures(
         else:
             raise NotImplementedError
 
-        assert result.texte is not None
         texte = textes[result.texte]
 
         # The 1st "lecture" of the "projet de loi de finances" (PLF) has two parts
@@ -172,7 +171,7 @@ def gen_lectures(
 class WalkResult(NamedTuple):
     phase: str
     organe: str
-    texte: Optional[str]
+    texte: str
     premiere_lecture: bool
 
 

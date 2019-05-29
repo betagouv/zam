@@ -1,4 +1,4 @@
-from subprocess import check_output, CalledProcessError, STDOUT
+from subprocess import check_output, CalledProcessError, STDOUT  # nosec
 from typing import List
 
 from pyramid.config import Configurator
@@ -14,7 +14,8 @@ def load_version(config: Configurator) -> None:
 
 def run(command: List[str]) -> str:
     try:
-        res: bytes = check_output(command, stderr=STDOUT)
+        # This is considered safe as we only run predefined git commands
+        res: bytes = check_output(command, stderr=STDOUT)  # nosec
         return res.decode("utf-8").strip()
     except CalledProcessError:
         return "unknown"

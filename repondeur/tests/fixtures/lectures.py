@@ -122,7 +122,7 @@ def article7bis_senat(db, lecture_senat):
 
 @pytest.fixture
 def amendements_an(db, lecture_an, article1_an):
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
         amendements = [
@@ -132,12 +132,13 @@ def amendements_an(db, lecture_an, article1_an):
             for position, num in enumerate((666, 999), 1)
         ]
 
+    DBSession.add_all(amendements)
     return amendements
 
 
 @pytest.fixture
 def amendements_senat(db, lecture_senat, article1_senat):
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
         amendements = [
@@ -150,4 +151,5 @@ def amendements_senat(db, lecture_senat, article1_senat):
             for position, num in enumerate((6666, 9999), 1)
         ]
 
+    DBSession.add_all(amendements)
     return amendements

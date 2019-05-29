@@ -11,6 +11,12 @@
         padding: 1rem;
         position: relative;
     }
+        main.box {
+            z-index: 0;
+        }
+        .box.amendement-card {
+            box-shadow: none;
+        }
     .options {
         margin-left: 3.5rem;
         margin-right: 3.5rem;
@@ -104,6 +110,32 @@
                 color: inherit;
                 font-weight: 600;
             }
+    .amendement-batch {
+        position: relative;
+    }
+        .amendement-batch, .amendement-batch:before, .amendement-batch:after, .amendement-card {
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+        .amendement-batch:before, .amendement-batch:after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-transform: rotateZ(0.5deg);
+            -o-transform: rotate(0.5deg);
+            transform: rotateZ(0.5deg);
+            z-index: -1;
+            left: 11px;
+            top: 11px;
+        }
+        .amendement-batch:after {
+            -webkit-transform: rotateZ(0.25deg);
+            -o-transform: rotate(0.25deg);
+            transform: rotateZ(0.25deg);
+            left: 6px;
+            top: 6px;
+        }
     .highlighted {
         background: #d4edda66;
     }
@@ -247,7 +279,10 @@
                        data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                        data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}">
                         <td colspan="4">
-                            <div class="box amendement-card {% if amendement.slug == highlighted_amdt %}highlighted{% endif %}">
+                            <div class="box amendement-card
+                                {% if amendement.slug == highlighted_amdt %}highlighted{% endif %}
+                                {% if amendement.batch %}amendement-batch{% endif %}
+                                ">
                                 <div class="amendement-card-infos">
                                     <div class="entete">
                                         {% if amendement.article.is_erreur %}
@@ -258,7 +293,14 @@
                                             <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article" target="_blank">{{ amendement.article.format() }}</a>
                                         {% endif %}
                                         –
-                                        Nº&nbsp;<span class="numero">{{ amendement }}</span>
+
+                                        {# Numéro(s) #}
+                                        {% if amendement.batch %}
+                                            N<sup>os</sup>&nbsp;<span class="numero">{{ amendement.batch.nums|enumeration }}</span>
+                                        {% else %}
+                                            Nº&nbsp;<span class="numero">{{ amendement }}</span>
+                                        {% endif %}
+
                                         {% if amendement.identique %}
                                             {{ macros.svg_icon("identique") }}
                                             {% set identiques = amendement.displayable_identiques %}
@@ -272,9 +314,6 @@
                                                 {%- endif %}">⚠️</span>
                                             {% endif %}
                                         {% endif %}
-                                        {% if amendement.batch %}
-                                            — Lot : {{ amendement.batch.pk }}
-                                        {% endif %}
                                         {{ macros.status(amendement) }}
                                     </div>
                                     <div class="objet">
@@ -285,10 +324,14 @@
                                         {% if amendement.gouvernemental %}
                                             Le gouvernement
                                         {% else %}
-                                            {% if amendement.groupe %}
-                                                {{ amendement.groupe }} ({{ amendement.auteur }})
+                                            {% if amendement.batch %}
+                                                {{ amendement.batch.groupes | join(', ') }}
                                             {% else %}
-                                                {{ amendement.auteur }}
+                                                {% if amendement.groupe %}
+                                                    {{ amendement.groupe }} ({{ amendement.auteur }})
+                                                {% else %}
+                                                    {{ amendement.auteur }}
+                                                {% endif %}
                                             {% endif %}
                                         {% endif %}
                                     </div>

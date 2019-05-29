@@ -212,7 +212,8 @@ def list_amendements(context: AmendementCollection, request: Request) -> dict:
         "lecture": lecture,
         "lecture_resource": lecture_resource,
         "current_tab": "index",
-        "amendements": lecture.amendements,
+        "all_amendements": lecture.amendements,
+        "collapsed_amendements": Batch.collapsed_batches(lecture.amendements),
         "articles": lecture.articles,
     }
 

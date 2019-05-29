@@ -2,7 +2,7 @@ from typing import Any
 from string import Template
 
 from jinja2 import Markup
-from lxml.html.diff import htmldiff
+from lxml.html.diff import htmldiff  # nosec
 from pyramid.request import Request
 
 from .base import Event

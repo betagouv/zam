@@ -71,7 +71,7 @@ class Lecture:
         if self.chambre == Chambre.AN:
             return str(self.texte.legislature)
         else:
-            assert self.texte.session is not None
+            assert self.texte.session is not None  # nosec (mypy hint)
             return f"{self.texte.session}-{self.texte.session + 1}"
 
 

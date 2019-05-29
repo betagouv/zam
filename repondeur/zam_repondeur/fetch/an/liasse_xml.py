@@ -4,7 +4,8 @@ from datetime import date
 from functools import partial
 from typing import Dict, IO, List, Optional, Tuple, cast
 
-from lxml import etree
+from defusedxml.lxml import parse, RestrictedElement
+from lxml.etree import XMLSyntaxError  # nosec
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import repository
@@ -56,8 +57,8 @@ def import_liasse_xml(
         raise BadChambre
 
     try:
-        tree = etree.parse(xml_file)
-    except etree.XMLSyntaxError:
+        tree = parse(xml_file)
+    except XMLSyntaxError:
         message = "Not a valid XML file"
         logger.exception(message)
         raise ValueError(message)
@@ -94,7 +95,7 @@ def import_liasse_xml(
 
 
 def _make_amendement(
-    node: etree.Element, uid_map: Dict[str, Amendement], lecture: Lecture
+    node: RestrictedElement, uid_map: Dict[str, Amendement], lecture: Lecture
 ) -> Amendement:
     extract = partial(extract_from_node, node)
 
@@ -185,7 +186,7 @@ def check_same_lecture(
         raise LectureDoesNotMatch(lecture_fmt)
 
 
-def _parse_division(node: etree.Element) -> SubDiv:
+def _parse_division(node: RestrictedElement) -> SubDiv:
     extract = partial(extract_from_node, node)
 
     division_titre = extract("pointeurFragmentTexte", "division", "titre")
@@ -214,9 +215,9 @@ def _parse_division(node: etree.Element) -> SubDiv:
     return subdiv._replace(pos=pos)
 
 
-def extract_from_node(node: etree.Element, *path: str) -> Optional[str]:
+def extract_from_node(node: RestrictedElement, *path: str) -> Optional[str]:
     element_path = "." + "/".join((NS + elem) for elem in path)
-    elem: Optional[etree.Element] = node.find(element_path)
+    elem: Optional[RestrictedElement] = node.find(element_path)
     if elem is None:
         return None
     text: str = elem.text
@@ -245,7 +246,7 @@ def _find_dossier_lecture(texte_uid: str) -> Tuple[DossierRef, LectureRef]:
     raise ValueError(f"Unknown texte {texte_uid}")
 
 
-def extract_partie(node: etree.Element) -> Optional[int]:
+def extract_partie(node: RestrictedElement) -> Optional[int]:
     text = extract_from_node(node, "identifiant", "saisine", "numeroPartiePLF")
     if text is not None and text != "0":
         return int(text)

@@ -105,6 +105,17 @@ class Batch(Base):
 
         return list(_collapsed_batches(amendements))
 
+    @staticmethod
+    def expanded_batches(amendements: Iterable["Amendement"]) -> Iterable["Amendement"]:
+        """
+        Expand list of amendements to include those in batches
+        """
+        for amendement in amendements:
+            if amendement.batch:
+                yield from amendement.batch.amendements
+            else:
+                yield amendement
+
 
 class Reponse(NamedTuple):
     avis: str

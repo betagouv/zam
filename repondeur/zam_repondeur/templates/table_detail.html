@@ -275,9 +275,14 @@
                            {%- endif -%}
                        "
                        data-order="{{ loop.index }}"
-                       data-amendement="{{ amendement.num }}"
-                       data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
-                       data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}">
+                       data-amendement="
+                           {%- if amendement.batch -%}
+                               {{ amendement.batch.nums|join(',') }}
+                           {%- else -%}
+                               {{ amendement.num }}
+                           {%- endif -%}
+                        "
+                        data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}">
                         <td colspan="4">
                             <div class="box amendement-card
                                 {% if amendement.slug == highlighted_amdt %}highlighted{% endif %}

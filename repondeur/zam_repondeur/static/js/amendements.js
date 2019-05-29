@@ -272,7 +272,7 @@ class AmendementsFilters extends Stimulus.Controller {
             if (!value) {
                 return true
             }
-            return line.dataset.amendement.trim() === value
+            return line.dataset.amendement.split(',').some(num => num === value)
         })
         this.tableTarget.classList.toggle('filtered-amendement', value)
     }

@@ -127,17 +127,24 @@
                     {%- endif -%}
                 "
                 data-order="{{ loop.index }}"
-                data-amendement="{{ amendement.num }}"
+                data-amendement="
+                {%- if amendement.batch -%}
+                    {{ amendement.batch.nums|join(',') }}
+                {%- else -%}
+                    {{ amendement.num }}
+                {%- endif -%}
+                "
                 data-table="
-                    {% if amendement.is_abandoned_before_seance %}
-                        {% if amendement.is_withdrawn %}
+                    {%- if amendement.is_abandoned_before_seance -%}
+                        {%- if amendement.is_withdrawn -%}
                             Retiré
-                        {% else %}
+                        {%- else -%}
                             Irrecevable
-                        {% endif %}
-                    {% elif amendement.user_table %}
+                        {%- endif -%}
+                    {%- elif amendement.user_table -%}
                         {{ amendement.user_table.user.name }}
-                    {% endif %}"
+                    {%- endif -%}
+                "
                 data-emptytable="{{ 1 if not amendement.user_table and not amendement.is_abandoned else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 data-abandoned-before-seance="{{ 1 if amendement.is_abandoned_before_seance else 0 }}"

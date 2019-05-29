@@ -203,6 +203,9 @@ class LectureView:
 
 @view_config(context=AmendementCollection, renderer="amendements.html")
 def list_amendements(context: AmendementCollection, request: Request) -> dict:
+    """
+    The index
+    """
     lecture_resource = context.parent
     lecture = lecture_resource.model(joinedload("articles"), joinedload("user_tables"))
     return {

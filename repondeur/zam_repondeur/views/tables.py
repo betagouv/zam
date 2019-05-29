@@ -6,7 +6,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.message import Message
-from zam_repondeur.models import DBSession, Amendement, User, UserTable
+from zam_repondeur.models import DBSession, Amendement, Batch, User, UserTable
 from zam_repondeur.models.events.amendement import AmendementTransfere
 from zam_repondeur.resources import TableResource
 
@@ -27,7 +27,7 @@ class TableView:
             "lecture_resource": self.context.lecture_resource,
             "current_tab": "table",
             "table": self.table,
-            "amendements": self.table.amendements,
+            "amendements": Batch.collapsed_batches(self.table.amendements),
             "is_owner": self.owner.email == self.request.user.email,
             "table_url": self.request.resource_url(
                 self.context.parent[self.request.user.email]

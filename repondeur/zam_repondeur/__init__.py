@@ -24,6 +24,8 @@ BASE_SETTINGS = {
         "filter_out_empty_additionals": f"{FILTERS_PATH}:filter_out_empty_additionals",
         "group_by_day": f"{FILTERS_PATH}:group_by_day",
         "h3_to_h5": f"{FILTERS_PATH}:h3_to_h5",
+        "enumeration": f"{FILTERS_PATH}:enumeration",
+        "length_including_batches": f"{FILTERS_PATH}:length_including_batches",
     },
     "jinja2.undefined": "strict",
     "zam.auth_cookie_duration": 7 * 24 * 3600,  # a user stays identified for 7 days

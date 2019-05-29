@@ -1,11 +1,11 @@
 from datetime import date
 from itertools import groupby
-from typing import List, Optional, Tuple
+from typing import Iterable, List, Optional, Tuple
 
 from jinja2 import Markup, contextfilter
 from jinja2.runtime import Context
 
-from zam_repondeur.models import Article, Lecture
+from zam_repondeur.models import Amendement, Article, Lecture
 from zam_repondeur.models.events.base import Event
 
 
@@ -61,3 +61,16 @@ def h3_to_h5(content: Optional[str]) -> str:
     if content is None:
         return ""
     return content.replace("<h3>", "<h5>").replace("</h3>", "</h5>")
+
+
+def enumeration(items: List[str]) -> str:
+    str_items = [str(item) for item in items]
+    if len(str_items) == 0:
+        return ""
+    if len(str_items) == 1:
+        return str_items[0]
+    return ", ".join(str_items[:-1]) + " et " + str_items[-1]
+
+
+def length_including_batches(amendements: Iterable[Amendement]) -> int:
+    return sum(len(amdt.batch.amendements) if amdt.batch else 1 for amdt in amendements)

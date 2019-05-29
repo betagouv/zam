@@ -30,7 +30,7 @@
     </a>
 </div>
 
-{% set count = amendements| length %}
+{% set count = all_amendements|length %}
 <div class="content"
     data-controller="amendements-filters"
     data-amendements-filters-initial-count="{{ count }}">
@@ -61,7 +61,7 @@
                 </th>
                 <th></th>
             </tr>
-            <tr class="filters {% if not amendements %}d-none{% endif %}"
+            <tr class="filters {% if not all_amendements %}d-none{% endif %}"
                 data-target="amendements-filters.row amendements-selection.filters">
                 <th>
                     <input type="checkbox" name="select-all"
@@ -116,7 +116,7 @@
         </thead>
         <tbody data-controller="amendements-backlinks" data-target="amendements-filters.tbody">
         {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
-        {% for amendement in amendements | sort %}
+        {% for amendement in collapsed_amendements | sort %}
             <tr data-article="
                     {%- if amendement.is_abandoned_before_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }}
@@ -181,7 +181,11 @@
                     "
                     {% endif -%}
                 >
-                    {{ amendement.num_disp }}
+                    {% if amendement.batch %}
+                        {{ amendement.batch.amendements|join(', ', attribute='num_disp') }}
+                    {% else %}
+                        {{ amendement.num_disp }}
+                    {% endif %}
                     {% if amendement.parent %}
                         (ss-amdt au {{ amendement.parent.num_disp }})
                     {% endif %}
@@ -270,7 +274,7 @@
         {% endfor %}
         </tbody>
     </table>
-    {% if not amendements %}
+    {% if not all_amendements %}
         <div class="notice">
             <h3>Les amendements ne sont pas encore disponibles.</h3>
             <p>Si vous venez de créer la lecture, merci de patienter quelques instants, les amendements sont en cours de récupération, cela peut prendre quelques minutes.</p>
@@ -307,7 +311,7 @@
 {% block scripts %}
     <script src="{{ request.static_url('zam_repondeur:static/tinysort/tinysort.min.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
-    {% if amendements %}
+    {% if all_amendements %}
         <script>;(() => application.register('amendements-filters', AmendementsFilters))()</script>
     {% endif %}
 {% endblock %}

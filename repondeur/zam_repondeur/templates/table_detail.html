@@ -185,7 +185,7 @@
         </defs>
     </svg>
     <h1 data-controller="table-anchor">Ma table</h1>
-    {% set count = amendements| length %}
+    {% set count = all_amendements|length %}
     <div class="content"
         data-controller="amendements-filters"
         data-amendements-filters-initial-count="{{ count }}">
@@ -263,7 +263,7 @@
             </thead>
             <tbody data-controller="amendements-backlinks" data-target="amendements-filters.tbody">
                 {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
-                {% for amendement in amendements %}
+                {% for amendement in collapsed_amendements %}
                     <tr id="{{ amendement.slug }}"
                         data-article="
                            {%- if amendement.is_abandoned_before_seance -%}
@@ -400,7 +400,7 @@
 {% block scripts %}
     <script src="{{ request.static_url('zam_repondeur:static/js/table.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
-    {% if amendements %}
+    {% if all_amendements %}
         <script>;(() => application.register('amendements-filters', AmendementsFilters))()</script>
     {% endif %}
     <script>;(() => application.register('notifications-with-diff', NotificationsWithDiff))()</script>

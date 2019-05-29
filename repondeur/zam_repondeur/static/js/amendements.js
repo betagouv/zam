@@ -206,8 +206,19 @@ class AmendementsFilters extends Stimulus.Controller {
 
   updateCount() {
     const initial = parseInt(this.data.get('initial-count'))
-    const current = this.tbodyTarget.querySelectorAll('tr:not([class^=hidden])')
-      .length
+    const visibleRows = this.tbodyTarget.querySelectorAll(
+      'tr:not([class^=hidden])'
+    )
+    if (!visibleRows.length) {
+      this.countTarget.innerHTML = `Aucun amendement (${initial} au total)`
+      return
+    }
+    const current = Array.from(visibleRows).reduce(
+      (accumulator, currentValue) => {
+        return accumulator + currentValue.dataset.amendement.split(',').length
+      },
+      0
+    )
     const plural = current > 1 ? 's' : ''
     if (initial === current)
       this.countTarget.innerHTML = `${current} amendement${plural}`

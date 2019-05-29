@@ -27,7 +27,8 @@ class TableView:
             "lecture_resource": self.context.lecture_resource,
             "current_tab": "table",
             "table": self.table,
-            "amendements": Batch.collapsed_batches(self.table.amendements),
+            "all_amendements": self.table.amendements,
+            "collapsed_amendements": Batch.collapsed_batches(self.table.amendements),
             "is_owner": self.owner.email == self.request.user.email,
             "table_url": self.request.resource_url(
                 self.context.parent[self.request.user.email]

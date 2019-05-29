@@ -100,7 +100,8 @@ DIVISION_NUMEROTEE = (
 
 
 def check_all_equal(pos_list: List[str]) -> str:
-    assert len(set(pos_list)) == 1, pos_list
+    if len(set(pos_list)) != 1:
+        raise RuntimeError(f"Inconsistent data ({pos_list!r})")
     return pos_list[0]
 
 
@@ -205,6 +206,6 @@ def parse_subdiv(libelle: str, texte: Optional[Texte] = None) -> SubDiv:
     try:
         subdiv: SubDiv = DIVISION.parse(input_string)
         return subdiv
-    except ParseError:
+    except (ParseError, RuntimeError):
         logger.error(f"Could not parse subdivision {libelle!r}")
         return SubDiv("erreur", "", "", "")

@@ -80,7 +80,8 @@ class LecturesAdd:
         partie = lecture_ref.partie
         texte = lecture_ref.texte
 
-        assert texte.date_depot is not None
+        if texte.date_depot is None:
+            raise RuntimeError("Cannot create Lecture for Texte with no date_depot")
 
         texte_model = get_one_or_create(
             TexteModel,

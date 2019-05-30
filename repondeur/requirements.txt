@@ -44,7 +44,7 @@ pathlib==1.0.1              # anpy: < 1.1, >= 1.0
 pdfkit==0.6.1
 plaster==1.0
 plaster-pastedeploy==0.7
-psycopg2==2.7.6.1
+psycopg2==2.8.2
 pycparser==2.19             # cffi
 pyOpenSSL==18.0.0           # urllib3[secure]: pyOpenSSL>=0.14
 pyramid==1.10.4

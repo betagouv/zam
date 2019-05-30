@@ -15,7 +15,7 @@ freezegun==0.3.11
 gitdb2==2.0.5
 GitPython==2.1.11
 ipdb==0.12
-ipython==7.4.0
+ipython==7.5.0
 ipython-genutils==0.2.0
 jedi==0.13.3
 mccabe==0.6.1

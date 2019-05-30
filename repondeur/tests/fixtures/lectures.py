@@ -137,6 +137,19 @@ def amendements_an(db, lecture_an, article1_an):
 
 
 @pytest.fixture
+def amendements_an_batch(amendements_an):
+    from zam_repondeur.models import Batch, DBSession
+
+    with transaction.manager:
+        batch = Batch.create()
+        amendements_an[0].batch = batch
+        amendements_an[1].batch = batch
+        DBSession.add_all(amendements_an)
+
+    return amendements_an
+
+
+@pytest.fixture
 def amendements_senat(db, lecture_senat, article1_senat):
     from zam_repondeur.models import Amendement, DBSession
 

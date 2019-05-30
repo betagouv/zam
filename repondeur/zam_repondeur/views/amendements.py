@@ -9,7 +9,7 @@ from pyramid.view import view_config, view_defaults
 from zam_repondeur.clean import clean_html
 from zam_repondeur.decorator import reify
 from zam_repondeur.message import Message
-from zam_repondeur.models import AVIS
+from zam_repondeur.models import AVIS, Batch
 from zam_repondeur.resources import AmendementResource
 from zam_repondeur.utils import add_url_fragment, add_url_params
 from zam_repondeur.models.events.amendement import (
@@ -152,11 +152,13 @@ def amendement_journal(context: AmendementResource, request: Request) -> Dict[st
 
 @view_config(context=AmendementResource, name="start_editing", renderer="json")
 def start_editing(context: AmendementResource, request: Request) -> dict:
-    context.model().start_editing()
+    for amendement in Batch.expanded_batches([context.model()]):
+        amendement.start_editing()
     return {}
 
 
 @view_config(context=AmendementResource, name="stop_editing", renderer="json")
 def stop_editing(context: AmendementResource, request: Request) -> dict:
-    context.model().stop_editing()
+    for amendement in Batch.expanded_batches([context.model()]):
+        amendement.stop_editing()
     return {}

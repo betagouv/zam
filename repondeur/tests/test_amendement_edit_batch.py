@@ -1,18 +1,4 @@
-import pytest
 import transaction
-
-
-@pytest.fixture
-def amendements_an_batch(amendements_an):
-    from zam_repondeur.models import Batch, DBSession
-
-    with transaction.manager:
-        batch = Batch.create()
-        amendements_an[0].batch = batch
-        amendements_an[1].batch = batch
-        DBSession.add_all(amendements_an)
-
-    return amendements_an
 
 
 def test_get_amendement_edit_form(

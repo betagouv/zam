@@ -119,7 +119,7 @@ class AmendementEdit:
                 )
             )
         else:
-            self.request.session["highlighted_amdt"] = self.amendement.slug
+            self.request.session["highlighted_amdt"] = self.amendements[0].slug
             return HTTPFound(location=self.back_url)
 
     @reify
@@ -127,7 +127,7 @@ class AmendementEdit:
         url: str = self.request.GET.get("back")
         if url is None or not url.startswith("/"):
             url = self.my_table_url
-        return add_url_fragment(url, self.amendement.slug)
+        return add_url_fragment(url, self.amendements[0].slug)
 
     @property
     def submit_url(self) -> str:

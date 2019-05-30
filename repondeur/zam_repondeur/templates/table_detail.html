@@ -113,11 +113,15 @@
     .amendement-batch {
         position: relative;
     }
-        .amendement-batch, .amendement-batch:before, .amendement-batch:after, .amendement-card {
+        .amendement-batch,
+        .amendement-batch:before,
+        .amendement-batch:after,
+        .amendement-card {
             background-color: #fff;
             border: 1px solid #ccc;
         }
-        .amendement-batch:before, .amendement-batch:after {
+        .amendement-batch:before,
+        .amendement-batch:after {
             content: "";
             position: absolute;
             width: 100%;
@@ -137,8 +141,14 @@
             top: 6px;
         }
     .highlighted {
-        background: #d4edda66;
+        background: #d4edda;
     }
+        .highlighted.amendement-batch,
+        .highlighted.amendement-batch:before,
+        .highlighted.amendement-batch:after,
+        .highlighted.amendement-card {
+            background-color: #d4edda;
+        }
     .button {
         min-width: 10rem;
         text-align: center;

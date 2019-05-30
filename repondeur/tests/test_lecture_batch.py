@@ -216,12 +216,12 @@ def test_lecture_post_batch_set_amendements(
     assert len(amendement_666.events) == 1
     assert amendement_666.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a placé l’amendement dans un lot avec les amendements numéro 999."
+        "a placé cet amendement dans un lot avec l’amendement 999."
     )
     assert len(amendement_999.events) == 1
     assert amendement_999.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a placé l’amendement dans un lot avec les amendements numéro 666."
+        "a placé cet amendement dans un lot avec l’amendement 666."
     )
 
 
@@ -497,12 +497,12 @@ def test_lecture_post_batch_unset_amendement(
     assert len(amendement_666.events) == 2
     assert amendement_666.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a sorti l’amendement du lot dans lequel il était."
+        "a sorti cet amendement du lot dans lequel il était."
     )
     assert len(amendement_999.events) == 2
     assert amendement_999.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a sorti l’amendement du lot dans lequel il était."
+        "a sorti cet amendement du lot dans lequel il était."
     )
 
 
@@ -577,27 +577,27 @@ def test_lecture_post_batch_reset_amendement(
     assert len(amendement_666.events) == 3
     assert amendement_666.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a placé l’amendement dans un lot avec les amendements numéro 777."
+        "a placé cet amendement dans un lot avec l’amendement 777."
     )
     assert amendement_666.events[1].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a sorti l’amendement du lot dans lequel il était."
+        "a sorti cet amendement du lot dans lequel il était."
     )
     assert amendement_666.events[2].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a placé l’amendement dans un lot avec les amendements numéro 999."
+        "a placé cet amendement dans un lot avec l’amendement 999."
     )
     assert len(amendement_999.events) == 2
     assert amendement_999.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a sorti l’amendement du lot dans lequel il était."
+        "a sorti cet amendement du lot dans lequel il était."
     )
     assert amendement_999.events[1].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a placé l’amendement dans un lot avec les amendements numéro 666."
+        "a placé cet amendement dans un lot avec l’amendement 666."
     )
     assert len(amendement_777.events) == 1
     assert amendement_777.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a placé l’amendement dans un lot avec les amendements numéro 666."
+        "a placé cet amendement dans un lot avec l’amendement 666."
     )

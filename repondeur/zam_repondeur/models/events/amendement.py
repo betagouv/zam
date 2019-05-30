@@ -5,6 +5,7 @@ from jinja2 import Markup
 from lxml.html.diff import htmldiff  # nosec
 from pyramid.request import Request
 
+from zam_repondeur.views.jinja2_filters import enumeration
 from .base import Event
 from ..amendement import Amendement, Batch
 
@@ -343,10 +344,14 @@ class BatchSet(AmendementEvent):
         return ""
 
     def render_summary(self) -> str:
-        amendements_nums = ", ".join(self.data["amendements_nums"])
+        nums = self.data["amendements_nums"]
+        if len(nums) == 1:
+            siblings = f"l’amendement {nums[0]}"
+        else:
+            siblings = f"les amendements {enumeration(nums)}"
         return Markup(
             f"<abbr title='{self.user.email}'>{self.user.name}</abbr> a placé "
-            f"l’amendement dans un lot avec les amendements numéro {amendements_nums}."
+            f"cet amendement dans un lot avec {siblings}."
         )
 
 
@@ -379,5 +384,5 @@ class BatchUnset(AmendementEvent):
     def render_summary(self) -> str:
         return Markup(
             f"<abbr title='{self.user.email}'>{self.user.name}</abbr> a sorti "
-            "l’amendement du lot dans lequel il était."
+            "cet amendement du lot dans lequel il était."
         )

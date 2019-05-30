@@ -50,16 +50,29 @@ application.register(
       })
     }
 
+    fromSameArticle(checkeds) {
+      const articleNumFromChecked = item =>
+        item.closest('tr').dataset.article.trim()
+      const firstArticleChecked = articleNumFromChecked(checkeds[0])
+      return checkeds.every(
+        checked => articleNumFromChecked(checked) === firstArticleChecked
+      )
+    }
+
     toggleGroupActions() {
       const checkeds = Array.from(this.checkboxes).filter(box => box.checked)
+      const checkedsLength = checkeds.length
       this.groupActions.classList.toggle('d-none', checkeds.length < 1)
       if (this.batchAmendementsLink) {
-        this.batchAmendementsLink.classList.toggle(
-          'd-none',
-          checkeds.length < 2
-        )
+        this.batchAmendementsLink.classList.toggle('d-none', checkedsLength < 2)
+        if (checkedsLength >= 2) {
+          this.batchAmendementsLink.classList.toggle(
+            'd-none',
+            !this.fromSameArticle(checkeds)
+          )
+        }
       }
-      if (checkeds.length < 1) {
+      if (checkedsLength < 1) {
         this.filtersTarget
           .querySelectorAll('th')
           .forEach(th => (th.style.top = '0'))
@@ -82,7 +95,7 @@ application.register(
         this.groupActions.querySelector('#export-pdf'),
         checkeds
       )
-      if (checkeds.length >= 2 && this.batchAmendementsLink) {
+      if (checkedsLength >= 2 && this.batchAmendementsLink) {
         this.changeURLGivenChecks(this.batchAmendementsLink, checkeds)
       }
     }

@@ -28,6 +28,7 @@ class AmendementEdit:
         self.context = context
         self.request = request
         self.amendement = context.model()
+        self.amendements = list(Batch.expanded_batches([self.amendement]))
         self.lecture = self.amendement.lecture
         self.my_table_resource = self.context.lecture_resource["tables"][
             self.request.user.email
@@ -35,11 +36,6 @@ class AmendementEdit:
         self.is_on_my_table = (
             self.amendement.user_table
             and self.amendement.user_table.user == self.request.user
-        )
-        self.amendements = (
-            self.amendement.batch.amendements
-            if self.amendement.batch
-            else [self.amendement]
         )
 
     @view_config(request_method="GET")

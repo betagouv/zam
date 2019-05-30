@@ -235,9 +235,7 @@
                             Si vous transférez cet amendement, <strong>ses modifications ne seront pas enregistrées</strong>.
                         </p>
                         <form id="transfer" action="{{ my_table_url }}" method="POST">
-                            {% for amdt in amendements %}
-                                <input type="hidden" name="nums" value="{{ amdt.num }}">
-                            {% endfor %}
+                            <input type="hidden" name="nums" value="{{ amendement.num }}">
                             <a href="{{ transfer_url }}" class="button danger">Transférer à…</a>
                             <input type="submit" name="submit-table" class="button enabled danger" value="Forcer le transfert sur ma table">
                         </form>
@@ -248,18 +246,14 @@
                             </strong>.
                         </p>
                         <form id="transfer" action="{{ my_table_url }}" method="POST">
-                            {% for amdt in amendements %}
-                                <input type="hidden" name="nums" value="{{ amdt.num }}">
-                            {% endfor %}
+                            <input type="hidden" name="nums" value="{{ amendement.num }}">
                             <a href="{{ transfer_url }}" class="button warning">Transférer à…</a>
                             <input type="submit" name="submit-table" class="button enabled warning" value="Transférer sur ma table">
                         </form>
                     {% endif %}
                 {% else %}
                     <form id="transfer" action="{{ my_table_url }}" method="POST">
-                        {% for amdt in amendements %}
-                            <input type="hidden" name="nums" value="{{ amdt.num }}">
-                        {% endfor %}
+                        <input type="hidden" name="nums" value="{{ amendement.num }}">
                         <a href="{{ transfer_url }}" class="button primary">Transférer à…</a>
                         <input type="submit" name="submit-table" class="button primary enabled" value="Transférer sur ma table">
                     </form>

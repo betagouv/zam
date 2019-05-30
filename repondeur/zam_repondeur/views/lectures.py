@@ -317,6 +317,14 @@ class BatchAmendements:
             self.request.session.flash(Message(cls="danger", text=message))
             return HTTPFound(location=self.my_table_url)
 
+        if not self.are_all_from_same_article(amendements):
+            message = (
+                "Tous les amendements doivent être relatifs au même article "
+                "pour pouvoir être associés."
+            )
+            self.request.session.flash(Message(cls="danger", text=message))
+            return HTTPFound(location=self.my_table_url)
+
         return {
             "lecture": self.lecture,
             "amendements": amendements,
@@ -339,6 +347,14 @@ class BatchAmendements:
             message = (
                 "Tous les amendements doivent avoir la même réponse avant de pouvoir "
                 "être associés."
+            )
+            self.request.session.flash(Message(cls="danger", text=message))
+            return HTTPFound(location=self.my_table_url)
+
+        if not self.are_all_from_same_article(amendements):
+            message = (
+                "Tous les amendements doivent être relatifs au même article "
+                "pour pouvoir être associés."
             )
             self.request.session.flash(Message(cls="danger", text=message))
             return HTTPFound(location=self.my_table_url)
@@ -389,6 +405,10 @@ class BatchAmendements:
             )
             <= 1  # Same reponse (1) or empty (0).
         )
+
+    def are_all_from_same_article(self, amendements: List[Amendement]) -> bool:
+        first_article = amendements[0].article
+        return all(amdt.article == first_article for amdt in amendements)
 
 
 @view_config(context=LectureResource, name="manual_refresh")

@@ -106,6 +106,25 @@ def test_amendement_displayable_identiques(amendements_an):
     assert amendement_999.displayable_identiques == [amendement_666]
 
 
+def test_amendement_displayable_identiques_with_batch(amendements_an_batch):
+    from zam_repondeur.models import Amendement, DBSession
+
+    amendement_666, amendement_999 = DBSession.query(Amendement).all()
+
+    assert amendement_666.displayable_identiques == []
+    assert amendement_999.displayable_identiques == []
+
+    amendement_666.id_identique = 41
+    amendement_999.id_identique = 41
+    amendement_666.id_discussion_commune = 42
+    amendement_999.id_discussion_commune = 42
+    amendement_666.user_content.avis = "Sagesse"
+    amendement_999.user_content.avis = "Sagesse"
+
+    assert amendement_666.displayable_identiques == []
+    assert amendement_999.displayable_identiques == []
+
+
 def test_amendement_displayable_identiques_are_similaires(amendements_an):
     from zam_repondeur.models import Amendement, DBSession
 

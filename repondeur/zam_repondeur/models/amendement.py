@@ -500,6 +500,7 @@ class Amendement(Base):
             amendement
             for amendement in self.all_identiques
             if amendement.is_displayable
+            and (amendement not in self.batch.amendements if self.batch else True)
         ]
 
     @property

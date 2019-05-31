@@ -328,7 +328,7 @@
         </div>
 
         <div class="form-group">
-            <label for="comments">Commentaires</label>
+            <label for="comments">Commentaires <small>(n’apparaît pas dans le dossier final)</small></label>
             <textarea name="comments" class="form-control" data-action="keydown->unsaved-changes#setDirty">{{ amendement.user_content.comments or "" | safe }}</textarea>
         </div>
 

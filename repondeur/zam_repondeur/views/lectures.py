@@ -301,29 +301,9 @@ class BatchAmendements:
     def get(self) -> Any:
         amendements = self.get_amendements_from(self.request.GET)
 
-        if not self.are_all_on_my_table(amendements):
-            message = (
-                "Tous les amendements doivent être sur votre table "
-                "pour pouvoir les associer."
-            )
-            self.request.session.flash(Message(cls="danger", text=message))
-            return HTTPFound(location=self.my_table_url)
-
-        if not self.have_all_same_reponse_or_empty(amendements):
-            message = (
-                "Tous les amendements doivent avoir la même réponse avant de pouvoir "
-                "être associés."
-            )
-            self.request.session.flash(Message(cls="danger", text=message))
-            return HTTPFound(location=self.my_table_url)
-
-        if not self.are_all_from_same_article(amendements):
-            message = (
-                "Tous les amendements doivent être relatifs au même article "
-                "pour pouvoir être associés."
-            )
-            self.request.session.flash(Message(cls="danger", text=message))
-            return HTTPFound(location=self.my_table_url)
+        self.check_amendements_are_all_on_my_table(amendements)
+        self.check_amendements_have_all_same_reponse_or_empty(amendements)
+        self.check_amendements_are_all_from_same_article(amendements)
 
         return {
             "lecture": self.lecture,
@@ -335,29 +315,9 @@ class BatchAmendements:
     def post(self) -> Response:
         amendements = self.get_amendements_from(self.request.POST)
 
-        if not self.are_all_on_my_table(amendements):
-            message = (
-                "Tous les amendements doivent être sur votre table "
-                "pour pouvoir les associer."
-            )
-            self.request.session.flash(Message(cls="danger", text=message))
-            return HTTPFound(location=self.my_table_url)
-
-        if not self.have_all_same_reponse_or_empty(amendements):
-            message = (
-                "Tous les amendements doivent avoir la même réponse avant de pouvoir "
-                "être associés."
-            )
-            self.request.session.flash(Message(cls="danger", text=message))
-            return HTTPFound(location=self.my_table_url)
-
-        if not self.are_all_from_same_article(amendements):
-            message = (
-                "Tous les amendements doivent être relatifs au même article "
-                "pour pouvoir être associés."
-            )
-            self.request.session.flash(Message(cls="danger", text=message))
-            return HTTPFound(location=self.my_table_url)
+        self.check_amendements_are_all_on_my_table(amendements)
+        self.check_amendements_have_all_same_reponse_or_empty(amendements)
+        self.check_amendements_are_all_from_same_article(amendements)
 
         amendements_nums = self.request.POST.getall("nums")
         if len(amendements_nums) == 1:
@@ -386,16 +346,29 @@ class BatchAmendements:
             if str(amendement.num) in source.getall("nums")
         ]
 
-    def are_all_on_my_table(self, amendements: List[Amendement]) -> bool:
-        return all(
+    def check_amendements_are_all_on_my_table(
+        self, amendements: List[Amendement]
+    ) -> None:
+        are_all_on_my_table = all(
             amendement.user_table.user == self.request.user
             if amendement.user_table
             else False
             for amendement in amendements
         )
+        if are_all_on_my_table:
+            return
 
-    def have_all_same_reponse_or_empty(self, amendements: List[Amendement]) -> bool:
-        return (
+        message = (
+            "Tous les amendements doivent être sur votre table "
+            "pour pouvoir les associer."
+        )
+        self.request.session.flash(Message(cls="danger", text=message))
+        raise HTTPFound(location=self.my_table_url)
+
+    def check_amendements_have_all_same_reponse_or_empty(
+        self, amendements: List[Amendement]
+    ) -> None:
+        have_all_same_reponse_or_empty = (
             len(
                 set(
                     amendement.full_reponse()
@@ -405,10 +378,32 @@ class BatchAmendements:
             )
             <= 1  # Same reponse (1) or empty (0).
         )
+        if have_all_same_reponse_or_empty:
+            return
 
-    def are_all_from_same_article(self, amendements: List[Amendement]) -> bool:
+        message = (
+            "Tous les amendements doivent avoir la même réponse avant de pouvoir "
+            "être associés."
+        )
+        self.request.session.flash(Message(cls="danger", text=message))
+        raise HTTPFound(location=self.my_table_url)
+
+    def check_amendements_are_all_from_same_article(
+        self, amendements: List[Amendement]
+    ) -> None:
         first_article = amendements[0].article
-        return all(amdt.article == first_article for amdt in amendements)
+        are_all_from_same_article = all(
+            amdt.article == first_article for amdt in amendements
+        )
+        if are_all_from_same_article:
+            return
+
+        message = (
+            "Tous les amendements doivent être relatifs au même article "
+            "pour pouvoir être associés."
+        )
+        self.request.session.flash(Message(cls="danger", text=message))
+        raise HTTPFound(location=self.my_table_url)
 
 
 @view_config(context=LectureResource, name="manual_refresh")

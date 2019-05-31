@@ -5,7 +5,7 @@ from typing import Any, Iterable, Optional
 from inscriptis import get_text
 from openpyxl import Workbook
 from openpyxl.styles import Color, Font, PatternFill
-from openpyxl.worksheet import Worksheet
+from openpyxl.worksheet.worksheet import Worksheet
 from pyramid.request import Request
 
 from zam_repondeur.models import Amendement, Lecture

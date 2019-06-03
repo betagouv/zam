@@ -9,11 +9,7 @@ from lxml.etree import XMLSyntaxError  # nosec
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import repository
-from zam_repondeur.fetch.an.dossiers.models import (
-    Chambre,
-    Dossier as DossierRef,
-    Lecture as LectureRef,
-)
+from zam_repondeur.fetch.an.dossiers.models import ChambreRef, DossierRef, LectureRef
 from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import parse_subdiv
 from zam_repondeur.models import (
@@ -53,7 +49,7 @@ def import_liasse_xml(
     xml_file: IO[bytes], lecture: Lecture
 ) -> Tuple[List[Amendement], List[Tuple[str, str]]]:
 
-    if lecture.chambre != Chambre.AN.value:
+    if lecture.chambre != ChambreRef.AN.value:
         raise BadChambre
 
     try:

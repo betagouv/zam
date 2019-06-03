@@ -6,7 +6,7 @@ from typing import List, Optional
 from zam_repondeur.models.texte import TypeTexte
 
 
-class Chambre(Enum):
+class ChambreRef(Enum):
     AN = "an"
     SENAT = "senat"
 
@@ -22,10 +22,10 @@ class Chambre(Enum):
 
 
 @dataclass(eq=True, frozen=True)
-class Texte:
+class TexteRef:
     uid: str
     type_: TypeTexte
-    chambre: Chambre
+    chambre: ChambreRef
     legislature: Optional[int]
     numero: int
     titre_long: str
@@ -34,7 +34,7 @@ class Texte:
 
     @property
     def session(self) -> Optional[int]:
-        if self.chambre == Chambre.AN:
+        if self.chambre == ChambreRef.AN:
             return None
         if not self.date_depot:
             raise NotImplementedError
@@ -46,10 +46,10 @@ class Texte:
 
 
 @dataclass
-class Lecture:
-    chambre: Chambre
+class LectureRef:
+    chambre: ChambreRef
     titre: str
-    texte: Texte
+    texte: TexteRef
     organe: str
     partie: Optional[int] = None
 
@@ -69,7 +69,7 @@ class Lecture:
 
 
 @dataclass
-class Dossier:
+class DossierRef:
     uid: str
     titre: str
-    lectures: List[Lecture]
+    lectures: List[LectureRef]

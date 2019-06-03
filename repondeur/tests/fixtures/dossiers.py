@@ -7,26 +7,26 @@ import pytest
 @pytest.yield_fixture(scope="session", autouse=True)
 def mock_dossiers():
     from zam_repondeur.fetch.an.dossiers.models import (
-        Chambre,
-        Dossier,
-        Lecture,
-        Texte,
+        ChambreRef,
+        DossierRef,
+        LectureRef,
+        TexteRef,
         TypeTexte,
     )
 
     with patch("zam_repondeur.data.get_dossiers_legislatifs") as m_dossiers:
         m_dossiers.return_value = {
-            "DLR5L15N36030": Dossier(
+            "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
                 lectures=[
-                    Lecture(
-                        chambre=Chambre.AN,
+                    LectureRef(
+                        chambre=ChambreRef.AN,
                         titre="Première lecture – Titre lecture",
-                        texte=Texte(
+                        texte=TexteRef(
                             uid="PRJLANR5L15B0269",
                             type_=TypeTexte.PROJET,
-                            chambre=Chambre.AN,
+                            chambre=ChambreRef.AN,
                             legislature=15,
                             numero=269,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -35,13 +35,13 @@ def mock_dossiers():
                         ),
                         organe="PO717460",  # séance publique
                     ),
-                    Lecture(
-                        chambre=Chambre.SENAT,
+                    LectureRef(
+                        chambre=ChambreRef.SENAT,
                         titre="Première lecture – Titre lecture",
-                        texte=Texte(
+                        texte=TexteRef(
                             uid="PRJLSNR5S299B0063",
                             type_=TypeTexte.PROJET,
-                            chambre=Chambre.SENAT,
+                            chambre=ChambreRef.SENAT,
                             legislature=2017,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -52,17 +52,17 @@ def mock_dossiers():
                     ),
                 ],
             ),
-            "DLR5L15N36159": Dossier(
+            "DLR5L15N36159": DossierRef(
                 uid="DLR5L15N36159",
                 titre="Fonction publique : un Etat au service d'une société de confiance",  # noqa
                 lectures=[
-                    Lecture(
-                        chambre=Chambre.AN,
+                    LectureRef(
+                        chambre=ChambreRef.AN,
                         titre="Nouvelle lecture – Titre lecture",
-                        texte=Texte(
+                        texte=TexteRef(
                             uid="PRJLANR5L15B0806",
                             type_=TypeTexte.PROJET,
-                            chambre=Chambre.AN,
+                            chambre=ChambreRef.AN,
                             legislature=15,
                             numero=806,
                             titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
@@ -73,17 +73,17 @@ def mock_dossiers():
                     )
                 ],
             ),
-            "DLR5L15N36892": Dossier(
+            "DLR5L15N36892": DossierRef(
                 uid="DLR5L15N36892",
                 titre="Sécurité sociale : loi de financement 2019",
                 lectures=[
-                    Lecture(
-                        chambre=Chambre.SENAT,
+                    LectureRef(
+                        chambre=ChambreRef.SENAT,
                         titre="Première lecture – Titre lecture",
-                        texte=Texte(
+                        texte=TexteRef(
                             uid="PRJLSNR5S319B0106",
                             type_=TypeTexte.PROJET,
-                            chambre=Chambre.SENAT,
+                            chambre=ChambreRef.SENAT,
                             legislature=None,
                             numero=106,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2019",  # noqa

@@ -4,27 +4,20 @@ from typing import Dict, Iterator, List, NamedTuple, Optional
 
 from ...dates import parse_date
 from ..common import extract_from_remote_zip, roman
-from .models import Chambre, Lecture, Dossier, Texte, TypeTexte
+from .models import ChambreRef, LectureRef, DossierRef, TexteRef, TypeTexte
 
 
 logger = logging.getLogger(__name__)
 
 
-class TexteRef(NamedTuple):
-    type_: str
-    code: str
-    key: str
-    uid: str
-
-
-def get_dossiers_legislatifs(*legislatures: int) -> Dict[str, Dossier]:
-    dossiers: Dict[str, Dossier] = {}
+def get_dossiers_legislatifs(*legislatures: int) -> Dict[str, DossierRef]:
+    dossiers: Dict[str, DossierRef] = {}
     for legislature in legislatures:
         dossiers.update(_get_dossiers_legislatifs(legislature))
     return dossiers
 
 
-def _get_dossiers_legislatifs(legislature: int) -> Dict[str, Dossier]:
+def _get_dossiers_legislatifs(legislature: int) -> Dict[str, DossierRef]:
     data = fetch_dossiers_legislatifs(legislature)
     textes = parse_textes(data["export"])
     dossiers = parse_dossiers(data["export"], textes)
@@ -40,9 +33,9 @@ def fetch_dossiers_legislatifs(legislature: int) -> dict:
     return data
 
 
-def parse_textes(export: dict) -> Dict[str, Texte]:
+def parse_textes(export: dict) -> Dict[str, TexteRef]:
     return {
-        item["uid"]: Texte(
+        item["uid"]: TexteRef(
             uid=item["uid"],
             type_=type_texte(item),
             chambre=chambre_texte(item),
@@ -67,11 +60,11 @@ def type_texte(item: dict) -> TypeTexte:
     raise NotImplementedError
 
 
-def chambre_texte(item: dict) -> Chambre:
+def chambre_texte(item: dict) -> ChambreRef:
     if item["uid"][4:6] == "AN":
-        return Chambre.AN
+        return ChambreRef.AN
     if item["uid"][4:6] == "SN":
-        return Chambre.SENAT
+        return ChambreRef.SENAT
     raise NotImplementedError
 
 
@@ -82,7 +75,7 @@ def legislature_texte(item: dict) -> Optional[int]:
     return int(legislature)
 
 
-def parse_dossiers(export: dict, textes: Dict[str, Texte]) -> Dict[str, Dossier]:
+def parse_dossiers(export: dict, textes: Dict[str, TexteRef]) -> Dict[str, DossierRef]:
     dossier_dicts = (
         item["dossierParlementaire"]
         for item in export["dossiersLegislatifs"]["dossier"]
@@ -110,15 +103,15 @@ def _has_dossier_uid(data: dict) -> bool:
 
 
 TOP_LEVEL_ACTES = {
-    "AN1": (Chambre.AN, "Première lecture"),
-    "SN1": (Chambre.SENAT, "Première lecture"),
-    "ANNLEC": (Chambre.AN, "Nouvelle lecture"),
-    "SNNLEC": (Chambre.SENAT, "Nouvelle lecture"),
-    "ANLDEF": (Chambre.AN, "Lecture définitive"),
+    "AN1": (ChambreRef.AN, "Première lecture"),
+    "SN1": (ChambreRef.SENAT, "Première lecture"),
+    "ANNLEC": (ChambreRef.AN, "Nouvelle lecture"),
+    "SNNLEC": (ChambreRef.SENAT, "Nouvelle lecture"),
+    "ANLDEF": (ChambreRef.AN, "Lecture définitive"),
 }
 
 
-def parse_dossier(dossier: dict, textes: Dict[str, Texte]) -> Dossier:
+def parse_dossier(dossier: dict, textes: Dict[str, TexteRef]) -> DossierRef:
     uid = dossier["uid"]
     titre = dossier["titreDossier"]["titre"]
     is_plf = "PLF" in dossier
@@ -127,7 +120,7 @@ def parse_dossier(dossier: dict, textes: Dict[str, Texte]) -> Dossier:
         for acte in top_level_actes(dossier)
         for lecture in gen_lectures(acte, textes, is_plf)
     ]
-    return Dossier(uid=uid, titre=titre, lectures=lectures)
+    return DossierRef(uid=uid, titre=titre, lectures=lectures)
 
 
 def top_level_actes(dossier: dict) -> Iterator[dict]:
@@ -137,8 +130,8 @@ def top_level_actes(dossier: dict) -> Iterator[dict]:
 
 
 def gen_lectures(
-    acte: dict, textes: Dict[str, Texte], is_plf: bool = False
-) -> Iterator[Lecture]:
+    acte: dict, textes: Dict[str, TexteRef], is_plf: bool = False
+) -> Iterator[LectureRef]:
     for result in walk_actes(acte):
         chambre, titre = TOP_LEVEL_ACTES[acte["codeActe"]]
         if result.phase == "COM-FOND":
@@ -159,7 +152,7 @@ def gen_lectures(
         ] if is_plf and result.premiere_lecture else [None]
 
         for partie in parties:
-            yield Lecture(
+            yield LectureRef(
                 chambre=chambre,
                 titre=titre,
                 texte=texte,

@@ -46,7 +46,7 @@ plaster==1.0
 plaster-pastedeploy==0.7
 psycopg2==2.8.2
 pycparser==2.19             # cffi
-pyOpenSSL==18.0.0           # urllib3[secure]: pyOpenSSL>=0.14
+pyOpenSSL==19.0.0           # urllib3[secure]: pyOpenSSL>=0.14
 pyramid==1.10.4
 pyramid-default-cors==0.2.1
 pyramid-jinja2==2.8

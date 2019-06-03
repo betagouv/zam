@@ -197,10 +197,25 @@ def _fetch_all(lecture: Lecture) -> List[OrderedDict]:
 
 def _filter_line(line: str) -> str:
     """
-    Fix buggy TSVs with unescaped tabs around a <link> tag in an HTML cell
+    Fix buggy TSVs with unescaped tabs inside the HTML
     """
-    filtered_line, count = re.subn(r"\t?(<link .*?>)\t?", r" \1 ", line)
+    chunks = line.split("\t")
+    merged_chunks = list(_merge_badly_split_chunks(chunks))
+    if len(merged_chunks) != 12:
+        raise ValueError(f"Could not parse malformed TSV line: {line!r}")
+    filtered_line = "\t".join(merged_chunks)
     return filtered_line
+
+
+def _merge_badly_split_chunks(chunks: Iterable[str]) -> Iterable[str]:
+    chunks = iter(chunks)
+    for chunk in chunks:
+        while chunk.startswith("<body>") and not chunk.rstrip().endswith("</body>"):
+            try:
+                chunk += " " + next(chunks)
+            except StopIteration:
+                break
+        yield chunk
 
 
 FICHE_RE = re.compile(r"^[\w\/_]+(\d{5}[\da-z])\.html$")

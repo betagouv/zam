@@ -37,6 +37,9 @@ def _fetch_discussion_details(lecture: Lecture) -> Iterator[Any]:
         if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
             logger.warning(f"Could not fetch {url}")
             continue
+        if resp.text == "":
+            logger.warning(f"Empty response for {url}")
+            continue
         yield resp.json()
 
 

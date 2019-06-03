@@ -454,11 +454,15 @@ def test_fetch_all(lecture_senat):
     }
 
 
+@pytest.mark.parametrize(
+    "filename",
+    ["jeu_complet_2018-2019_106.csv", "jeu_complet_commission_2013-2014_310.csv"],
+)
 @responses.activate
-def test_fetch_all_buggy_csv(lecture_senat):
+def test_fetch_all_buggy_csv(lecture_senat, filename):
     from zam_repondeur.fetch.senat.amendements import _fetch_all
 
-    sample_data = read_sample_data("jeu_complet_2018-2019_106.csv")
+    sample_data = read_sample_data(filename)
 
     responses.add(
         responses.GET,
@@ -467,94 +471,23 @@ def test_fetch_all_buggy_csv(lecture_senat):
         status=200,
     )
 
-    items = _fetch_all(lecture_senat)
-
-    assert len(items) == 2
-
-    assert items[0] == {
-        "Alinéa": "Amendement de suppression",
-        "Au nom de ": "",
-        "Auteur ": "Mme ESTROSI SASSONE",
-        "Date de dépôt ": "2018-11-12",
-        "Dispositif ": "<body><p>Supprimer cet article.</p></body>",
-        "Fiche Sénateur": "//www.senat.fr/senfic/estrosi_sassone_dominique14187a.html",
-        "Nature ": "Amt",
-        "Numéro ": "1 rect. bis",
-        "Objet ": (
-            '<body><p style="text-align: justify;">Ins&#233;r&#233; par '
-            "l&#8217;Assembl&#233;e nationale, cet article vise la "
-            "cr&#233;ation d&#8217;un forfait de r&#233;orientation et "
-            "d&#8217;un forfait de consultation aux urgences. Toutefois, les "
-            "cons&#233;quences de cet article peuvent &#234;tre "
-            "extr&#234;mement graves pour la sant&#233; des Fran&#231;ais sous "
-            "couvert de vouloir r&#233;duire le temps d&#8217;attente dans les "
-            "services d&#8217;urgences hospitali&#232;res.</p><p "
-            'style="text-align: justify;">En effet, en &#233;tablissant un '
-            "nouveau mode de tarification aux urgences qui pourrait "
-            "s&#8217;&#233;lever de 20 &#224; 60 euros par &#233;tablissement "
-            "et par r&#233;orientation de patient vers un m&#233;decin de "
-            "ville pour une consultation ult&#233;rieure ou bien au sein "
-            "d&#8217;un autre service hospitalier, deux risques sont "
-            'encourus.</p><p style="text-align: justify;">Le premier risque '
-            "est d&#8217;envoyer un mauvais signal comptable, qu&#8217;il "
-            "serait pr&#233;f&#233;rable de r&#233;orienter plut&#244;t que de "
-            "soigner notamment &#224; l&#8217;heure o&#249; la fiabilisation "
-            "des comptes des &#233;tablissements est un facteur "
-            "d&#233;terminant pour la r&#233;alisation des classements "
-            'g&#233;n&#233;raux.</p><p style="text-align: justify;">Le second '
-            "risque est m&#233;dical car si pour certaines pathologies "
-            "simples, le dispositif peut &#234;tre pertinent, comment prendre "
-            "la d&#233;cision de r&#233;orienter certains patients et avoir la "
-            "certitude que toute urgence vitale est &#233;cart&#233;e, "
-            "d&#8217;autant que lors des passages aux urgences, les "
-            "ant&#233;c&#233;dents et les informations de sant&#233; sont "
-            'g&#233;n&#233;ralement parcellaires.</p><p style="text-align: '
-            'justify;">Enfin, l&#8217;article est parcellaire puisque se pose '
-            "la question de la responsabilit&#233; de la direction des "
-            "&#233;tablissements de soins et des personnels soignants. Sur qui "
-            "reposeront les cons&#233;quences d&#8217;une &#233;ventuelle "
-            "erreur de diagnostic ou de posologie pour un traitement ou bien "
-            "d&#8217;un retard de prise en charge d&#251; &#224; la "
-            "r&#233;orientation chez un m&#233;decin de ville plusieurs jours "
-            "apr&#232;s le passage aux urgences qui aura peut-&#234;tre fait "
-            "perdre un temps pr&#233;cieux dans la r&#233;alisation du "
-            "diagnostic&#160;?</p><p>En th&#233;orie, si le refus de "
-            "r&#233;orientation par le patient est pr&#233;vu, la pratique ne "
-            "laissera gu&#232;re le choix et sera source d&#8217;une prise en "
-            "charge complexifi&#233;e.</p></body>"
-        ),
-        "Sort ": "",
-        "Subdivision ": "Article 29\xa0quinquies",
-        "Url amendement ": "//www.senat.fr/amendements/2018-2019/106/Amdt_1.html",
-    }
-
-    assert items[1] == {
-        "Alinéa": "68",
-        "Au nom de ": "commission des affaires sociales",
-        "Auteur ": "M. VANLERENBERGHE",
-        "Date de dépôt ": "2018-11-13",
-        "Dispositif ": (
-            "<body><p>Apr&#232;s l&#8217;alin&#233;a "
-            "68</p><p>Ins&#233;rer un alin&#233;a ainsi "
-            "r&#233;dig&#233;&#160;:</p><p><!-- [if lte IE 7]> <link "
-            'href="/css_legifrance/squelette_IE6.css" rel="stylesheet" '
-            'type="text/css" media="screen">  <link '
-            'href="/css_legifrance/commun_IE6.css" rel="stylesheet" '
-            'type="text/css" media="screen"> <![endif]-->&#8230;) Au '
-            "dernier alin&#233;a du m&#234;me III, les mots&#160;: &#171; "
-            "40 % du produit des contributions vis&#233;es aux 1&#176; et "
-            "2&#176; &#187; sont remplac&#233;s par les mots&#160;: "
-            "&#171; 24 % du produit des contributions mentionn&#233;es "
-            "aux 1&#176; et 3&#176; &#187;&#160;;</p></body>"
-        ),
-        "Fiche Sénateur": "//www.senat.fr/senfic/vanlerenberghe_jean_marie01034p.html",
-        "Nature ": "Amt",
-        "Numéro ": "629",
-        "Objet ": "<body><p>Amendement de coordination.</p></body>",
-        "Sort ": "Recevable art. 40 C / LOLF",
-        "Subdivision ": "Article 19",
-        "Url amendement ": "//www.senat.fr/amendements/2018-2019/106/Amdt_629.html",
-    }
+    for item in _fetch_all(lecture_senat):
+        assert set(item.keys()) == {
+            "Sort ",
+            "Subdivision ",
+            "Alinéa",
+            "Numéro ",
+            "Dispositif ",
+            "Fiche Sénateur",
+            "Auteur ",
+            "Objet ",
+            "Au nom de ",
+            "Nature ",
+            "Date de dépôt ",
+            "Url amendement ",
+        }
+        assert item["Dispositif "].startswith("<body>") or item["Dispositif "] == ""
+        assert item["Objet "].startswith("<body>") or item["Objet "] == ""
 
 
 @responses.activate

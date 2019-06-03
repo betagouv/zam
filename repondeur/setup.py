@@ -39,6 +39,9 @@ setup(
     install_requires=requires,
     entry_points={
         "paste.app_factory": ["main = zam_repondeur:make_app"],
-        "console_scripts": ["zam_worker = zam_repondeur.scripts.worker:main"],
+        "console_scripts": [
+            "zam_worker = zam_repondeur.scripts.worker:main",
+            "zam_fetch_amendements = zam_repondeur.scripts.fetch_amendements:main",
+        ],
     },
 )

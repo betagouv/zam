@@ -228,7 +228,7 @@ class Lecture(Base, LastEventMixin):
     def _session_or_legislature(self) -> str:
         if self.texte.chambre == Chambre.AN:
             return str(self.texte.legislature)
-        assert self.texte.session_str is not None  # mypy hint
+        assert self.texte.session_str is not None  # nosec (mypy hint)
         return self.texte.session_str
 
     def find_article(self, subdiv: SubDiv) -> Optional[Article]:

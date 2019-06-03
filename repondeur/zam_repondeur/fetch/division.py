@@ -7,7 +7,6 @@ modularity and easier maintenance than a big regex...
 https://parsy.readthedocs.io/en/latest/overview.html
 
 """
-import re
 import logging
 from typing import Any, List, Optional
 
@@ -29,7 +28,9 @@ def case_insensitive_string_from(*expected_strings: str) -> Any:
 
 # Numéro
 
-CHIFFRES_ARABES = case_insensitive_string("1er").result("1") | regex(r"\d+")
+CHIFFRES_ARABES = case_insensitive_string_from("1e", "1er", "1ère").result("1") | regex(
+    r"\d+"
+)
 
 CHIFFRES_ROMAINS = case_insensitive_string("Ier") | regex(r"[IVXLCDM]+")
 
@@ -37,7 +38,8 @@ LETTRES = regex(r"[A-Z]+")
 
 NUMERO = (
     string("liminaire").result("0")
-    | case_insensitive_string("premier").result("1")
+    | case_insensitive_string_from("premier", "unique").result("1")
+    | string("PRÉLIMINAIRE")
     | CHIFFRES_ARABES
     | CHIFFRES_ROMAINS
     | LETTRES
@@ -48,7 +50,7 @@ MULTIPLICATIF = string_from(*ADJECTIFS_MULTIPLICATIFS)
 ADDITIONNEL = regex(r"[A-Z]+")  # alias "andouillette" (AAAAA)
 
 MULT_ADD = (
-    seq(MULTIPLICATIF.skip(whitespace), ADDITIONNEL).map(" ".join)
+    seq(MULTIPLICATIF << whitespace.optional(), ADDITIONNEL).map(" ".join)
     | MULTIPLICATIF
     | ADDITIONNEL
 )
@@ -56,11 +58,18 @@ MULT_ADD = (
 
 # Divisions uniques
 
-INTITULE = string_from(
-    "Intitulé de la proposition de loi",
-    "Intitulé du projet de loi",
-    "Intitulé du projet de loi constitutionnelle",
-).result("titre")
+INTITULE = (
+    (
+        case_insensitive_string("Intitulé")
+        >> whitespace
+        >> case_insensitive_string_from("de la", "de  la", "du")
+        >> whitespace
+    ).optional()
+    >> case_insensitive_string_from(
+        "proposition de loi", "projet de loi", "texte"
+    ).result("titre")
+    << regex(".*")
+)
 
 MOTION = string("Motions").result("motion")
 
@@ -69,27 +78,31 @@ DIVISION_UNIQUE = (INTITULE | MOTION).map(lambda type_: SubDiv.create(type_=type
 
 # Divisions numérotées
 
-CHAPITRE = case_insensitive_string("Chapitre").result("chapitre")
+CHAPITRE = (case_insensitive_string("Chapitre") << whitespace).result("chapitre")
 
-TITRE = case_insensitive_string("Titre").result("section")
+TITRE = (case_insensitive_string("Titre") << whitespace).result("section")
 
-SECTION = case_insensitive_string("Section").result("section")
+SECTION = (case_insensitive_string("Section") << whitespace).result("section")
 
-SOUS_SECTION = case_insensitive_string_from("Soussection", "Sous-section").result(
-    "sous-section"
-)
+SOUS_SECTION = (
+    case_insensitive_string_from("Soussection", "Sous-section") << whitespace
+).result("sous-section")
 
 BLA_BLA = (
-    regex(r"\s+:\s+.+")  # xxx : bla bla
-    | regex(r"\s+-\s+.+")  # xxx - Bla bla
-    | regex(r"\s+\(.*\)")  # xxx (bla bla)
+    regex(r"\s*:\s+.+")  # xxx : bla bla
+    | regex(r"\s\s.+")  # xxx  bla bla
+    | regex(r"\s*-\s+.+")  # xxx - Bla bla
+    | regex(r"\s*\(.*\)?")  # xxx (bla bla)
+    | regex(r"\s*\[.*\]")  # xxx [bla bla]
+    | regex(r"\s*.*")  # xxx bla bla
+    | whitespace
 )
 
 DIVISION_NUMEROTEE = (
     seq(
         (CHAPITRE | TITRE | SECTION | SOUS_SECTION).tag("type_"),
-        (whitespace >> NUMERO).tag("num"),
-        (whitespace >> MULT_ADD).optional().tag("mult"),
+        NUMERO.tag("num"),
+        (whitespace >> MULTIPLICATIF).optional().tag("mult"),
     )
     .combine_dict(SubDiv.create)
     .skip(BLA_BLA.optional())
@@ -105,13 +118,20 @@ def check_all_equal(pos_list: List[str]) -> str:
     return pos_list[0]
 
 
-ARTICLE = case_insensitive_string("Article").result("article")
-ARTICLES = case_insensitive_string("Articles").result("article")
+ARTICLE = (
+    (case_insensitive_string_from("Art.", "Article", "Articles") << whitespace)
+    .optional()
+    .result("article")
+)
 
 AVANT_APRES = (
     (
         string_from(
-            "art. add.", "div. add.", "Article additionnel", "Article(s) additionnel(s)"
+            "art. add.",
+            "div. add.",
+            "Article additionnel",
+            "Articles additionnels",
+            "Article(s) additionnel(s)",
         )
         << whitespace
     ).optional()
@@ -124,43 +144,52 @@ AVANT_APRES = (
 ).at_least(1).map(check_all_equal) << case_insensitive_string("l'").optional()
 
 
-STATUT_NAVETTE = seq(
-    whitespace.optional(),
-    string("("),
-    case_insensitive_string_from("nouveau", "précédemment examiné", "supprimé"),
-    string(")"),
-)
-
-
 ARTICLE_UNIQUE = (
     seq(
         ARTICLE.tag("type_"),
-        (whitespace >> case_insensitive_string("article")).optional().tag(None),
-        (whitespace >> NUMERO).tag("num"),
-        (whitespace >> MULT_ADD << whitespace.optional()).optional().tag("mult"),
+        (case_insensitive_string("article") << whitespace).optional().tag(None),
+        NUMERO.tag("num"),
+        (whitespace.optional() >> MULT_ADD << whitespace.optional())
+        .optional()
+        .tag("mult"),
     )
     .combine_dict(SubDiv.create)
-    .skip(STATUT_NAVETTE.optional())
     .skip(BLA_BLA.optional())
 )
 
 
-ARTICLE_ADDITIONNEL = (
+ART_ADD_TITRE = seq(AVANT_APRES.tag("pos"), INTITULE.tag("type_")).combine_dict(
+    SubDiv.create
+)
+
+ART_ADD_DIVISION = (
     seq(
         AVANT_APRES.tag("pos"),
-        (ARTICLE | CHAPITRE | TITRE).tag("type_"),
-        (whitespace >> NUMERO).tag("num"),
+        (CHAPITRE | TITRE).tag("type_"),
+        NUMERO.tag("num"),
+        (whitespace >> MULTIPLICATIF).optional().tag("mult"),
+    )
+    .combine_dict(SubDiv.create)
+    .skip(BLA_BLA.optional())
+)
+
+ART_ADD_ARTICLE = (
+    seq(
+        AVANT_APRES.tag("pos"),
+        ARTICLE.tag("type_"),
+        NUMERO.tag("num"),
         (whitespace >> MULT_ADD).optional().tag("mult"),
     )
     .combine_dict(SubDiv.create)
-    .skip(STATUT_NAVETTE.optional())
     .skip(BLA_BLA.optional())
-) | seq(AVANT_APRES.tag("pos"), INTITULE.tag("type_")).combine_dict(SubDiv.create)
+)
+
+ARTICLE_ADDITIONNEL = ART_ADD_TITRE | ART_ADD_DIVISION | ART_ADD_ARTICLE
 
 
 INTERVALLE = seq(
-    (ARTICLES | ARTICLE).tag("type_"),
-    (whitespace >> NUMERO).tag("num"),
+    ARTICLE.tag("type_"),
+    NUMERO.tag("num"),
     (whitespace >> MULT_ADD).optional().tag("mult"),
     seq(
         whitespace,
@@ -184,28 +213,20 @@ EMPTY = string("").result(SubDiv.create(type_=""))
 # Main parser
 
 DIVISION = (
-    DIVISION_UNIQUE
+    ANNEXE
+    | DIVISION_UNIQUE
     | DIVISION_NUMEROTEE
     | INTERVALLE  # must remain before ARTICLE_* parsing.
-    | ARTICLE_UNIQUE
     | ARTICLE_ADDITIONNEL
-    | ANNEXE
+    | ARTICLE_UNIQUE
     | EMPTY
 )
 
 
 def parse_subdiv(libelle: str, texte: Optional[Texte] = None) -> SubDiv:
-
-    input_string = libelle
-
-    # Case-insensitively replace the litteral title
-    if texte is not None and texte.titre_long is not None:
-        title_re = re.compile(re.escape(texte.titre_long.lower()), re.I)
-        input_string = title_re.sub("Intitulé du projet de loi", input_string)
-
     try:
-        subdiv: SubDiv = DIVISION.parse(input_string)
+        subdiv: SubDiv = DIVISION.parse(libelle)
         return subdiv
     except (ParseError, RuntimeError):
-        logger.error(f"Could not parse subdivision {libelle!r}")
+        logger.exception(f"Could not parse subdivision {libelle!r}")
         return SubDiv("erreur", "", "", "")

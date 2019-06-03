@@ -11,16 +11,16 @@ from webob.multidict import MultiDict
 
 from zam_repondeur.data import repository
 from zam_repondeur.fetch import get_articles
-from zam_repondeur.fetch.an.dossiers.models import Dossier, Lecture
+from zam_repondeur.fetch.an.dossiers.models import DossierRef, LectureRef
 from zam_repondeur.message import Message
 from zam_repondeur.models import (
     Amendement,
     Batch,
     Chambre,
     DBSession,
-    Dossier as DossierModel,
-    Lecture as LectureModel,
-    Texte as TexteModel,
+    Dossier,
+    Lecture,
+    Texte,
     User,
     get_one_or_create,
 )
@@ -59,7 +59,7 @@ class LecturesAdd:
     def __init__(self, context: LectureCollection, request: Request) -> None:
         self.context = context
         self.request = request
-        self.dossiers_by_uid: Dict[str, Dossier] = repository.get_data("dossiers")
+        self.dossiers_by_uid: Dict[str, DossierRef] = repository.get_data("dossiers")
 
     @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:
@@ -85,10 +85,10 @@ class LecturesAdd:
         texte = lecture_ref.texte
 
         if texte.date_depot is None:
-            raise RuntimeError("Cannot create Lecture for Texte with no date_depot")
+            raise RuntimeError("Cannot create LectureRef for Texte with no date_depot")
 
         texte_model = get_one_or_create(
-            TexteModel,
+            Texte,
             uid=texte.uid,
             type_=texte.type_,
             chambre=Chambre.AN if lecture_ref.chambre.value == "an" else Chambre.SENAT,
@@ -101,16 +101,16 @@ class LecturesAdd:
         )[0]
 
         dossier_model = get_one_or_create(
-            DossierModel, uid=dossier_ref.uid, titre=dossier_ref.titre
+            Dossier, uid=dossier_ref.uid, titre=dossier_ref.titre
         )[0]
 
-        if LectureModel.exists(chambre, texte_model, partie, organe):
+        if Lecture.exists(chambre, texte_model, partie, organe):
             self.request.session.flash(
                 Message(cls="warning", text="Cette lecture existe déjà…")
             )
             return HTTPFound(location=self.request.resource_url(self.context))
 
-        lecture_model: LectureModel = LectureModel.create(
+        lecture_model: Lecture = Lecture.create(
             owned_by_team=self.request.team,
             texte=texte_model,
             partie=partie,
@@ -141,7 +141,7 @@ class LecturesAdd:
             )
         )
 
-    def _get_dossier_ref(self) -> Dossier:
+    def _get_dossier_ref(self) -> DossierRef:
         try:
             dossier_uid = self.request.POST["dossier"]
         except KeyError:
@@ -152,7 +152,7 @@ class LecturesAdd:
             raise HTTPNotFound
         return dossier_ref
 
-    def _get_lecture_ref(self, dossier: Dossier) -> Lecture:
+    def _get_lecture_ref(self, dossier: DossierRef) -> LectureRef:
         try:
             texte_uid, organe, partie_str = self.request.POST["lecture"].split("-", 2)
         except (KeyError, ValueError):

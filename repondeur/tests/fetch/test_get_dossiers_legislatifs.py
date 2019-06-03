@@ -50,9 +50,9 @@ def dossier_plfss_2018():
 def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
     from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
     from zam_repondeur.fetch.an.dossiers.models import (
-        Chambre,
-        Lecture,
-        Texte,
+        ChambreRef,
+        LectureRef,
+        TexteRef,
         TypeTexte,
     )
 
@@ -60,50 +60,50 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
 
     assert dossier.uid == "DLR5L15N36030"
     assert dossier.titre == "Sécurité sociale : loi de financement 2018"
-    texte_269 = Texte(
+    texte_269 = TexteRef(
         uid="PRJLANR5L15B0269",
         type_=TypeTexte.PROJET,
-        chambre=Chambre.AN,
+        chambre=ChambreRef.AN,
         legislature=15,
         numero=269,
         titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
         titre_court="PLFSS pour 2018",
         date_depot=datetime.date(2017, 10, 11),
     )
-    texte_63 = Texte(
+    texte_63 = TexteRef(
         uid="PRJLSNR5S299B0063",
         type_=TypeTexte.PROJET,
-        chambre=Chambre.SENAT,
+        chambre=ChambreRef.SENAT,
         legislature=None,
         numero=63,
         titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
         titre_court="PLFSS pour 2018",
         date_depot=datetime.date(2017, 11, 6),
     )
-    texte_387 = Texte(
+    texte_387 = TexteRef(
         uid="PRJLANR5L15B0387",
         type_=TypeTexte.PROJET,
-        chambre=Chambre.AN,
+        chambre=ChambreRef.AN,
         legislature=15,
         numero=387,
         titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
         titre_court="PLFSS pour 2018",
         date_depot=datetime.date(2017, 11, 21),
     )
-    texte_121 = Texte(
+    texte_121 = TexteRef(
         uid="PRJLSNR5S299B0121",
         type_=TypeTexte.PROJET,
-        chambre=Chambre.SENAT,
+        chambre=ChambreRef.SENAT,
         legislature=None,
         numero=121,
         titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
         titre_court="PLFSS pour 2018",
         date_depot=datetime.date(2017, 11, 30),
     )
-    texte_434 = Texte(
+    texte_434 = TexteRef(
         uid="PRJLANR5L15B0434",
         type_=TypeTexte.PROJET,
-        chambre=Chambre.AN,
+        chambre=ChambreRef.AN,
         legislature=15,
         numero=434,
         titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -111,74 +111,74 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
         date_depot=datetime.date(2017, 12, 1),
     )
     assert dossier.lectures == [
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie au fond",
             texte=texte_269,
             organe="PO420120",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_269,
             organe="PO59048",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Séance publique",
             texte=texte_269,
             organe="PO717460",
         ),
-        Lecture(
-            chambre=Chambre.SENAT,
+        LectureRef(
+            chambre=ChambreRef.SENAT,
             titre="Première lecture – Commission saisie au fond",
             texte=texte_63,
             organe="PO211493",
         ),
-        Lecture(
-            chambre=Chambre.SENAT,
+        LectureRef(
+            chambre=ChambreRef.SENAT,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_63,
             organe="PO211494",
         ),
-        Lecture(
-            chambre=Chambre.SENAT,
+        LectureRef(
+            chambre=ChambreRef.SENAT,
             titre="Première lecture – Séance publique",
             texte=texte_63,
             organe="PO78718",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Nouvelle lecture – Commission saisie au fond",
             texte=texte_387,
             organe="PO420120",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Nouvelle lecture – Séance publique",
             texte=texte_387,
             organe="PO717460",
         ),
-        Lecture(
-            chambre=Chambre.SENAT,
+        LectureRef(
+            chambre=ChambreRef.SENAT,
             titre="Nouvelle lecture – Commission saisie au fond",
             texte=texte_121,
             organe="PO211493",
         ),
-        Lecture(
-            chambre=Chambre.SENAT,
+        LectureRef(
+            chambre=ChambreRef.SENAT,
             titre="Nouvelle lecture – Séance publique",
             texte=texte_121,
             organe="PO78718",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Lecture définitive – Commission saisie au fond",
             texte=texte_434,
             organe="PO420120",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Lecture définitive – Séance publique",
             texte=texte_434,
             organe="PO717460",
@@ -195,9 +195,9 @@ def dossier_plf_2018():
 def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
     from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
     from zam_repondeur.fetch.an.dossiers.models import (
-        Chambre,
-        Lecture,
-        Texte,
+        ChambreRef,
+        LectureRef,
+        TexteRef,
         TypeTexte,
     )
 
@@ -205,50 +205,50 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
 
     assert dossier.uid == "DLR5L15N35854"
     assert dossier.titre == "Budget : loi de finances 2018"
-    texte_235 = Texte(
+    texte_235 = TexteRef(
         uid="PRJLANR5L15B0235",
         type_=TypeTexte.PROJET,
-        chambre=Chambre.AN,
+        chambre=ChambreRef.AN,
         legislature=15,
         numero=235,
         titre_long="projet de loi de finances pour 2018",
         titre_court="PLF pour 2018",
         date_depot=datetime.date(2017, 9, 27),
     )
-    texte_107 = Texte(
+    texte_107 = TexteRef(
         uid="PRJLSNR5S299B0107",
         type_=TypeTexte.PROJET,
-        chambre=Chambre.SENAT,
+        chambre=ChambreRef.SENAT,
         legislature=None,
         numero=107,
         titre_long="projet de loi de finances pour 2018",
         titre_court="PLF pour 2018",
         date_depot=datetime.date(2017, 11, 23),
     )
-    texte_485 = Texte(
+    texte_485 = TexteRef(
         uid="PRJLANR5L15B0485",
         type_=TypeTexte.PROJET,
-        chambre=Chambre.AN,
+        chambre=ChambreRef.AN,
         legislature=15,
         numero=485,
         titre_long="projet de loi de finances pour 2018",
         titre_court="PLF pour 2018",
         date_depot=datetime.date(2017, 12, 12),
     )
-    texte_172 = Texte(
+    texte_172 = TexteRef(
         uid="PRJLSNR5S299B0172",
         type_=TypeTexte.PROJET,
-        chambre=Chambre.SENAT,
+        chambre=ChambreRef.SENAT,
         legislature=None,
         numero=172,
         titre_long="projet de loi de finances pour 2018",
         titre_court="PLF pour 2018",
         date_depot=datetime.date(2017, 12, 18),
     )
-    texte_506 = Texte(
+    texte_506 = TexteRef(
         uid="PRJLANR5L15B0506",
         type_=TypeTexte.PROJET,
-        chambre=Chambre.AN,
+        chambre=ChambreRef.AN,
         legislature=15,
         numero=506,
         titre_long="projet de loi de finances pour 2018",
@@ -256,192 +256,192 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
         date_depot=datetime.date(2017, 12, 19),
     )
     assert dossier.lectures == [
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie au fond",
             texte=texte_235,
             partie=1,
             organe="PO59048",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie au fond",
             texte=texte_235,
             partie=2,
             organe="PO59048",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=1,
             organe="PO420120",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=2,
             organe="PO420120",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=1,
             organe="PO419604",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=2,
             organe="PO419604",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=1,
             organe="PO419610",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=2,
             organe="PO419610",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=1,
             organe="PO59047",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=2,
             organe="PO59047",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=1,
             organe="PO59046",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=2,
             organe="PO59046",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=1,
             organe="PO59051",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=2,
             organe="PO59051",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=1,
             organe="PO419865",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
             partie=2,
             organe="PO419865",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Séance publique",
             texte=texte_235,
             partie=1,
             organe="PO717460",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Première lecture – Séance publique",
             texte=texte_235,
             partie=2,
             organe="PO717460",
         ),
-        Lecture(
-            chambre=Chambre.SENAT,
+        LectureRef(
+            chambre=ChambreRef.SENAT,
             titre="Première lecture – Commission saisie au fond",
             texte=texte_107,
             partie=1,
             organe="PO211494",
         ),
-        Lecture(
-            chambre=Chambre.SENAT,
+        LectureRef(
+            chambre=ChambreRef.SENAT,
             titre="Première lecture – Commission saisie au fond",
             texte=texte_107,
             partie=2,
             organe="PO211494",
         ),
-        Lecture(
-            chambre=Chambre.SENAT,
+        LectureRef(
+            chambre=ChambreRef.SENAT,
             titre="Première lecture – Séance publique",
             texte=texte_107,
             partie=1,
             organe="PO78718",
         ),
-        Lecture(
-            chambre=Chambre.SENAT,
+        LectureRef(
+            chambre=ChambreRef.SENAT,
             titre="Première lecture – Séance publique",
             texte=texte_107,
             partie=2,
             organe="PO78718",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Nouvelle lecture – Commission saisie au fond",
             texte=texte_485,
             organe="PO59048",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Nouvelle lecture – Séance publique",
             texte=texte_485,
             organe="PO717460",
         ),
-        Lecture(
-            chambre=Chambre.SENAT,
+        LectureRef(
+            chambre=ChambreRef.SENAT,
             titre="Nouvelle lecture – Commission saisie au fond",
             texte=texte_172,
             organe="PO211494",
         ),
-        Lecture(
-            chambre=Chambre.SENAT,
+        LectureRef(
+            chambre=ChambreRef.SENAT,
             titre="Nouvelle lecture – Séance publique",
             texte=texte_172,
             organe="PO78718",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Lecture définitive – Commission saisie au fond",
             texte=texte_506,
             organe="PO59048",
         ),
-        Lecture(
-            chambre=Chambre.AN,
+        LectureRef(
+            chambre=ChambreRef.AN,
             titre="Lecture définitive – Séance publique",
             texte=texte_506,
             organe="PO717460",
@@ -458,26 +458,26 @@ def dossier_essoc():
 def test_parse_dossier_essoc(dossier_essoc, textes):
     from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
     from zam_repondeur.fetch.an.dossiers.models import (
-        Chambre,
-        Lecture,
-        Dossier,
-        Texte,
+        ChambreRef,
+        LectureRef,
+        DossierRef,
+        TexteRef,
         TypeTexte,
     )
 
     dossier = parse_dossier(dossier_essoc, textes)
 
-    assert dossier == Dossier(
+    assert dossier == DossierRef(
         uid="DLR5L15N36159",
         titre="Fonction publique : un Etat au service d'une société de confiance",
         lectures=[
-            Lecture(
-                chambre=Chambre.AN,
+            LectureRef(
+                chambre=ChambreRef.AN,
                 titre="Première lecture – Commission saisie au fond",
-                texte=Texte(
+                texte=TexteRef(
                     uid="PRJLANR5L15B0424",
                     type_=TypeTexte.PROJET,
-                    chambre=Chambre.AN,
+                    chambre=ChambreRef.AN,
                     legislature=15,
                     numero=424,
                     titre_long="projet de loi pour un Etat au service d’une société de confiance",  # noqa
@@ -486,13 +486,13 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                 ),
                 organe="PO744107",
             ),
-            Lecture(
-                chambre=Chambre.AN,
+            LectureRef(
+                chambre=ChambreRef.AN,
                 titre="Première lecture – Séance publique",
-                texte=Texte(
+                texte=TexteRef(
                     uid="PRJLANR5L15BTC0575",
                     type_=TypeTexte.PROJET,
-                    chambre=Chambre.AN,
+                    chambre=ChambreRef.AN,
                     legislature=15,
                     numero=575,
                     titre_long="projet de loi sur le projet de loi, après engagement de la procédure accélérée, pour un Etat au service d’une société de confiance (n°424).",  # noqa
@@ -501,13 +501,13 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                 ),
                 organe="PO717460",
             ),
-            Lecture(
-                chambre=Chambre.SENAT,
+            LectureRef(
+                chambre=ChambreRef.SENAT,
                 titre="Première lecture – Commission saisie au fond",
-                texte=Texte(
+                texte=TexteRef(
                     uid="PRJLSNR5S299B0259",
                     type_=TypeTexte.PROJET,
-                    chambre=Chambre.SENAT,
+                    chambre=ChambreRef.SENAT,
                     legislature=None,
                     numero=259,
                     titre_long="projet de loi pour un Etat au service d'une société de confiance",  # noqa
@@ -516,13 +516,13 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                 ),
                 organe="PO748821",
             ),
-            Lecture(
-                chambre=Chambre.SENAT,
+            LectureRef(
+                chambre=ChambreRef.SENAT,
                 titre="Première lecture – Séance publique",
-                texte=Texte(
+                texte=TexteRef(
                     uid="PRJLSNR5S299BTC0330",
                     type_=TypeTexte.PROJET,
-                    chambre=Chambre.SENAT,
+                    chambre=ChambreRef.SENAT,
                     legislature=None,
                     numero=330,
                     titre_long="projet de loi  sur le projet de loi, adopté, par l'Assemblée nationale après engagement de la procédure accélérée, pour un Etat au service d'une société de confiance (n°259).",  # noqa
@@ -531,13 +531,13 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                 ),
                 organe="PO78718",
             ),
-            Lecture(
-                chambre=Chambre.AN,
+            LectureRef(
+                chambre=ChambreRef.AN,
                 titre="Nouvelle lecture – Commission saisie au fond",
-                texte=Texte(
+                texte=TexteRef(
                     uid="PRJLANR5L15B0806",
                     type_=TypeTexte.PROJET,
-                    chambre=Chambre.AN,
+                    chambre=ChambreRef.AN,
                     legislature=15,
                     numero=806,
                     titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
@@ -546,13 +546,13 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
                 ),
                 organe="PO744107",
             ),
-            Lecture(
-                chambre=Chambre.AN,
+            LectureRef(
+                chambre=ChambreRef.AN,
                 titre="Nouvelle lecture – Séance publique",
-                texte=Texte(
+                texte=TexteRef(
                     uid="PRJLANR5L15BTC1056",
                     type_=TypeTexte.PROJET,
-                    chambre=Chambre.AN,
+                    chambre=ChambreRef.AN,
                     legislature=15,
                     numero=1056,
                     titre_long="projet de loi , en nouvelle lecture, sur le projet de loi, modifié par le Sénat, renforçant l'efficacité de l'administration pour une relation de confiance avec le public (n°806).",  # noqa

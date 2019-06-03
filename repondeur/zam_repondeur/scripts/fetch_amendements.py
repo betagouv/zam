@@ -1,5 +1,6 @@
 import logging
 import os
+import random
 import sys
 from argparse import ArgumentParser, Namespace
 from typing import Dict, List, Optional
@@ -68,11 +69,12 @@ def parse_args(argv: List[str]) -> Namespace:
 
 
 def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> None:
-    dossier_refs: Dict[str, DossierRef] = repository.get_data("dossiers")
-    dossier_refs = dossier_refs.values()
+    dossier_refs_dict: Dict[str, DossierRef] = repository.get_data("dossiers")
+    dossier_refs: List[DossierRef] = list(dossier_refs_dict.values())
     bar = ProgressBar(
         total=sum(len(dossier_ref.lectures) for dossier_ref in dossier_refs)
     )
+    random.shuffle(dossier_refs)
     for dossier_ref in dossier_refs:
         fetch_amendements_for_dossier(dossier_ref, chambre, num)
         bar.update(step=len(dossier_ref.lectures))

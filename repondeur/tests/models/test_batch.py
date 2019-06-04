@@ -1,8 +1,9 @@
+from datetime import timedelta
 from itertools import islice
 from random import randint, shuffle
 from typing import Any, Iterable
 
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis.strategies import integers
 
 import pytest
@@ -63,7 +64,8 @@ def partition(
             break
 
 
-@given(integers(min_value=2, max_value=42))
+@given(integers(min_value=2, max_value=27))
+@settings(deadline=timedelta(milliseconds=300))
 def test_reversibility(lecture_an, article1_an, nb_amendements):
     from zam_repondeur.models.amendement import Amendement, Batch
 

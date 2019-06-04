@@ -69,7 +69,10 @@ class LecturesAdd:
     def __init__(self, context: LectureCollection, request: Request) -> None:
         self.context = context
         self.request = request
-        self.dossiers_by_uid: Dict[str, DossierRef] = repository.get_data("dossiers")
+        self.dossiers_by_uid: Dict[str, DossierRef] = self.get_dossiers()
+
+    def get_dossiers(self) -> Dict[str, DossierRef]:
+        return repository.get_data("dossiers")
 
     @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:

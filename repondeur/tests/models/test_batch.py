@@ -1,10 +1,3 @@
-from itertools import islice
-from random import randint, shuffle
-from typing import Any, Iterable
-
-from hypothesis import given
-from hypothesis.strategies import integers
-
 import pytest
 
 
@@ -51,39 +44,24 @@ class TestExpandedBatches:
         } == {1, 2, 3, 4}
 
 
-def partition(
-    li: Iterable[Any], min_chunk: int = 1, max_chunk: int = 100
-) -> Iterable[Any]:
-    it = iter(li)
-    while True:
-        nxt = list(islice(it, randint(min_chunk, max_chunk)))
-        if nxt:
-            yield nxt
-        else:
-            break
-
-
-@given(integers(min_value=2, max_value=42))
-def test_reversibility(lecture_an, article1_an, nb_amendements):
+@pytest.fixture
+def batched_amendements(lecture_an, article1_an):
     from zam_repondeur.models.amendement import Amendement, Batch
 
     amendements = [
         Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)
-        for i in range(nb_amendements)
+        for i in range(10)
     ]
 
-    shuffle(amendements)
+    amendements[0].batch = amendements[3].batch = Batch.create()
+    amendements[2].batch = amendements[4].batch = amendements[8].batch = Batch.create()
 
-    batches = []
-    for chunk in partition(amendements, max_chunk=max(1, len(amendements))):
-        if len(chunk) < 2:
-            continue
-        batch = Batch.create()
-        batch.amendements.extend(chunk)
-        batches.append(batch)
+    return amendements
 
-    assert not any(len(batch.amendements) == 1 for batch in batches)
 
-    assert set(Batch.expanded_batches(Batch.collapsed_batches(amendements))) == set(
-        amendements
-    )
+def test_reversibility(batched_amendements):
+    from zam_repondeur.models.amendement import Batch
+
+    assert set(
+        Batch.expanded_batches(Batch.collapsed_batches(batched_amendements))
+    ) == set(batched_amendements)

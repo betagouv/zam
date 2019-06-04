@@ -1,4 +1,4 @@
-class TestMergeDossiers():
+class TestMergeDossiers:
     def test_merge_empty_dossiers(self):
         from zam_repondeur.fetch.an.dossiers.models import DossierRef
 
@@ -39,12 +39,8 @@ class TestMergeDossiers():
     def test_merge_same_dossier(self):
         from zam_repondeur.fetch.an.dossiers.models import DossierRef, LectureRef
 
-        dossiers1 = {"a": DossierRef("a", "titre1", [
-            LectureRef(...),
-        ])}
-        dossiers2 = {"1": DossierRef("a", "titre2", [
-            LectureRef(...),
-        ])}
+        dossiers1 = {"a": DossierRef("a", "titre1", [LectureRef(...)])}
+        dossiers2 = {"1": DossierRef("a", "titre2", [LectureRef(...)])}
         assert DossierRef.merge_dossiers(dossiers1, dossiers2) == {
-            "a": DossierRef("a", "titre1", [...]),
+            "a": DossierRef("a", "titre1", [...])
         }

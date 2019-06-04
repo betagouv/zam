@@ -13,6 +13,7 @@ from webob.multidict import MultiDict
 
 from zam_repondeur.data import repository
 from zam_repondeur.fetch import get_articles
+from zam_repondeur.fetch.senat.scraping import get_dossiers_senat
 from zam_repondeur.fetch.an.dossiers.models import (
     DossierRef,
     DossierRefsByUID,
@@ -91,7 +92,7 @@ class LecturesAdd:
         return {}
 
     def get_dossiers_scraping_senat(self) -> DossierRefsByUID:
-        return {}
+        return get_dossiers_senat()
 
     @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<feed xmlns="http://www.w3.org/2005/Atom" version="0.3" xml:lang="fr-FR">
+<title>Sénat - Accords France-Suisse et France-Luxembourg</title>
+<subtitle>convention autorisant l'approbation de l'accord-cadre sur la coopération sanitaire transfrontalière entre le Gouvernement de la République française et le Conseil fédéral suisse et de l'accord-cadre entre le Gouvernement de la République française et le Gouvernement du Grand-Duché de Luxembourg sur la coopération sanitaire transfrontalière ( en cours de discussion ) </subtitle>
+<link href="http://www.senat.fr/rss/syndication.html"/>
+<updated>2019-05-24T13:40:09Z</updated>
+<modified>2019-05-24T13:40:09Z</modified>
+<author>
+<name>Sénat français</name>
+<email>sitn@senat.fr</email>
+<uri>http://www.senat.fr/</uri>
+</author>
+<icon>http://www.senat.fr/images/logoniv1.gif</icon>
+<id>http://www.senat.fr/dossierleg/pjl18-526.html</id>
+<entry>
+<title>Inscription à l'ordre du jour du 20 juin 2019</title>
+<link href="http://www.senat.fr/dossierleg/pjl18-526.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/dossierleg/pjl18-526.html</id>
+<updated>2019-05-24T13:40:09Z</updated>
+<modified>2019-05-24T13:40:09Z</modified>
+<published>2019-05-24T13:40:09Z</published>
+<issued>2019-05-24T13:40:09Z</issued>
+<created>2019-05-24T13:40:09Z</created>
+<category term=""/>
+<summary>Inscription à l'ordre du jour du 20 juin 2019</summary>
+</entry>
+<entry>
+<title>Texte n° 526</title>
+<link href="http://www.senat.fr/leg/pjl18-526.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/leg/pjl18-526.html</id>
+<updated>2019-05-23T22:00:00Z</updated>
+<modified>2019-05-23T22:00:00Z</modified>
+<published>2019-05-23T22:00:00Z</published>
+<issued>2019-05-23T22:00:00Z</issued>
+<created>2019-05-23T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Texte transmis au Sénat le 24 mai 2019</summary>
+</entry>
+<entry>
+<title>Texte n° 278</title>
+<link href="http://www2.assemblee-nationale.fr/documents/notice/15/ta/ta0278/(index)/ta"  rel="alternate" type="text/html"/>
+<id>http://www2.assemblee-nationale.fr/documents/notice/15/ta/ta0278/(index)/ta</id>
+<updated>2019-05-22T22:00:00Z</updated>
+<modified>2019-05-22T22:00:00Z</modified>
+<published>2019-05-22T22:00:00Z</published>
+<issued>2019-05-22T22:00:00Z</issued>
+<created>2019-05-22T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Assemblée nationale : Texte adopté par l'Assemblée nationale le 23 mai 2019</summary>
+</entry>
+<entry>
+<title>Texte de la commission n° 1436</title>
+<link href="http://www2.assemblee-nationale.fr/documents/notice/15/rapports/r1436/(index)/depots#P639_179537"  rel="alternate" type="text/html"/>
+<id>http://www2.assemblee-nationale.fr/documents/notice/15/rapports/r1436/(index)/depots#P639_179537</id>
+<updated>2018-11-20T23:00:00Z</updated>
+<modified>2018-11-20T23:00:00Z</modified>
+<published>2018-11-20T23:00:00Z</published>
+<issued>2018-11-20T23:00:00Z</issued>
+<created>2018-11-20T23:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Assemblée nationale : Texte de la commission déposé le 21 novembre 2018</summary>
+</entry>
+<entry>
+<title>Rapport n° 1436</title>
+<link href="http://www2.assemblee-nationale.fr/documents/notice/15/rapports/r1436/(index)/rapports"  rel="alternate" type="text/html"/>
+<id>http://www2.assemblee-nationale.fr/documents/notice/15/rapports/r1436/(index)/rapports</id>
+<updated>2018-11-20T23:00:00Z</updated>
+<modified>2018-11-20T23:00:00Z</modified>
+<published>2018-11-20T23:00:00Z</published>
+<issued>2018-11-20T23:00:00Z</issued>
+<created>2018-11-20T23:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Assemblée nationale : Rapport de M. Bruno FUCHS, fait au nom de la commission des affaires étrangères (21 novembre 2018)</summary>
+</entry>
+<entry>
+<title>Texte n° 390</title>
+<link href="http://www2.assemblee-nationale.fr/documents/notice/15/projets/pl0390/(index)/projets-loi"  rel="alternate" type="text/html"/>
+<id>http://www2.assemblee-nationale.fr/documents/notice/15/projets/pl0390/(index)/projets-loi</id>
+<updated>2017-11-21T23:00:00Z</updated>
+<modified>2017-11-21T23:00:00Z</modified>
+<published>2017-11-21T23:00:00Z</published>
+<issued>2017-11-21T23:00:00Z</issued>
+<created>2017-11-21T23:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Assemblée nationale : Texte de M. Jean-Yves LE DRIAN, ministre de l'Europe et des affaires étrangères,  déposé à l'Assemblée Nationale le 22 novembre 2017</summary>
+</entry>
+</feed>

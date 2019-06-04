@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<feed xmlns="http://www.w3.org/2005/Atom" version="0.3" xml:lang="fr-FR">
+<title>Sénat - Accord France Arménie</title>
+<subtitle>convention autorisant l'approbation  du protocole entre le Gouvernement de la République française et le Gouvernement de la République d'Arménie portant application de l'accord signé à Bruxelles le 19 avril 2013 entre l'Union européenne et la République d'Arménie concernant la réadmission des personnes en séjour irrégulier ( en cours de discussion ) </subtitle>
+<link href="http://www.senat.fr/rss/syndication.html"/>
+<updated>2019-05-22T15:55:09Z</updated>
+<modified>2019-05-22T15:55:09Z</modified>
+<author>
+<name>Sénat français</name>
+<email>sitn@senat.fr</email>
+<uri>http://www.senat.fr/</uri>
+</author>
+<icon>http://www.senat.fr/images/logoniv1.gif</icon>
+<id>http://www.senat.fr/dossierleg/pjl18-523.html</id>
+<entry>
+<title>Inscription à l'ordre du jour du 20 juin 2019</title>
+<link href="http://www.senat.fr/dossierleg/pjl18-523.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/dossierleg/pjl18-523.html</id>
+<updated>2019-05-22T15:55:09Z</updated>
+<modified>2019-05-22T15:55:09Z</modified>
+<published>2019-05-22T15:55:09Z</published>
+<issued>2019-05-22T15:55:09Z</issued>
+<created>2019-05-22T15:55:09Z</created>
+<category term=""/>
+<summary>Inscription à l'ordre du jour du 20 juin 2019</summary>
+</entry>
+<entry>
+<title>Etude d'impact associée au texte n°523</title>
+<link href="http://www.senat.fr/leg/etudes-impact/pjl18-523-ei/pjl18-523-ei.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/leg/etudes-impact/pjl18-523-ei/pjl18-523-ei.html</id>
+<updated>2019-05-21T22:00:00Z</updated>
+<modified>2019-05-21T22:00:00Z</modified>
+<published>2019-05-21T22:00:00Z</published>
+<issued>2019-05-21T22:00:00Z</issued>
+<created>2019-05-21T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat</summary>
+</entry>
+<entry>
+<title>Texte n° 523</title>
+<link href="http://www.senat.fr/leg/pjl18-523.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/leg/pjl18-523.html</id>
+<updated>2019-05-21T22:00:00Z</updated>
+<modified>2019-05-21T22:00:00Z</modified>
+<published>2019-05-21T22:00:00Z</published>
+<issued>2019-05-21T22:00:00Z</issued>
+<created>2019-05-21T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Texte de M. Jean-Yves LE DRIAN, ministre de l'Europe et des affaires étrangères,  déposé au Sénat le 22 mai 2019</summary>
+</entry>
+<entry>
+<title>Comptes rendus des réunions de la commission des affaires étrangères, de la défense et des forces armées</title>
+<link href="http://www.senat.fr/compte-rendu-commissions/20190520/etr.html#toc7"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/compte-rendu-commissions/20190520/etr.html#toc7</id>
+<updated>2019-05-21T22:00:00Z</updated>
+<modified>2019-05-21T22:00:00Z</modified>
+<published>2019-05-21T22:00:00Z</published>
+<issued>2019-05-21T22:00:00Z</issued>
+<created>2019-05-21T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Comptes rendus des réunions de la commission des affaires étrangères, de la défense et des forces armées</summary>
+</entry>
+</feed>

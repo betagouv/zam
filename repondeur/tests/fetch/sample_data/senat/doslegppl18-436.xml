@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<feed xmlns="http://www.w3.org/2005/Atom" version="0.3" xml:lang="fr-FR">
+<title>Sénat - Accès des PME à la commande publique</title>
+<subtitle>proposition de loi relative à l'accès effectif et direct des petites et moyennes entreprises à la commande publique ( en cours de discussion ) </subtitle>
+<link href="http://www.senat.fr/rss/syndication.html"/>
+<updated>2019-05-28T22:00:00Z</updated>
+<modified>2019-05-28T22:00:00Z</modified>
+<author>
+<name>Sénat français</name>
+<email>sitn@senat.fr</email>
+<uri>http://www.senat.fr/</uri>
+</author>
+<icon>http://www.senat.fr/images/logoniv1.gif</icon>
+<id>http://www.senat.fr/dossierleg/ppl18-436.html</id>
+<entry>
+<title>Texte n° 531</title>
+<link href="http://www.senat.fr/leg/ppl18-531.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/leg/ppl18-531.html</id>
+<updated>2019-05-28T22:00:00Z</updated>
+<modified>2019-05-28T22:00:00Z</modified>
+<published>2019-05-28T22:00:00Z</published>
+<issued>2019-05-28T22:00:00Z</issued>
+<created>2019-05-28T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Texte résultat des travaux de la commission le 29 mai 2019</summary>
+</entry>
+<entry>
+<title>Rapport n° 530</title>
+<link href="http://www.senat.fr/rap/l18-530/l18-530.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/rap/l18-530/l18-530.html</id>
+<updated>2019-05-28T22:00:00Z</updated>
+<modified>2019-05-28T22:00:00Z</modified>
+<published>2019-05-28T22:00:00Z</published>
+<issued>2019-05-28T22:00:00Z</issued>
+<created>2019-05-28T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Rapport de M. André REICHARDT, fait au nom de la commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale (29 mai 2019)</summary>
+</entry>
+<entry>
+<title>Comptes rendus des réunions de la commission des lois</title>
+<link href="http://www.senat.fr/compte-rendu-commissions/20190527/lois.html#toc2"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/compte-rendu-commissions/20190527/lois.html#toc2</id>
+<updated>2019-05-28T22:00:00Z</updated>
+<modified>2019-05-28T22:00:00Z</modified>
+<published>2019-05-28T22:00:00Z</published>
+<issued>2019-05-28T22:00:00Z</issued>
+<created>2019-05-28T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Comptes rendus des réunions de la commission des lois</summary>
+</entry>
+<entry>
+<title>Inscription à l'ordre du jour du 13 juin 2019</title>
+<link href="http://www.senat.fr/dossierleg/ppl18-436.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/dossierleg/ppl18-436.html</id>
+<updated>2019-05-15T08:50:09Z</updated>
+<modified>2019-05-15T08:50:09Z</modified>
+<published>2019-05-15T08:50:09Z</published>
+<issued>2019-05-15T08:50:09Z</issued>
+<created>2019-05-15T08:50:09Z</created>
+<category term=""/>
+<summary>Inscription à l'ordre du jour du 13 juin 2019</summary>
+</entry>
+<entry>
+<title>Texte n° 436</title>
+<link href="http://www.senat.fr/leg/ppl18-436.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/leg/ppl18-436.html</id>
+<updated>2019-04-03T22:00:00Z</updated>
+<modified>2019-04-03T22:00:00Z</modified>
+<published>2019-04-03T22:00:00Z</published>
+<issued>2019-04-03T22:00:00Z</issued>
+<created>2019-04-03T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Texte de MM. Jean-Marc GABOUTY, Jean-Claude REQUIER et plusieurs de leurs collègues,  déposé au Sénat le 4 avril 2019</summary>
+</entry>
+</feed>

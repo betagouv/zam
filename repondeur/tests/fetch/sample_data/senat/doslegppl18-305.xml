@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<feed xmlns="http://www.w3.org/2005/Atom" version="0.3" xml:lang="fr-FR">
+<title>Sénat - Création d'un statut de l'élu communal</title>
+<subtitle>proposition de loi créant un statut de l'élu communal ( en cours de discussion ) </subtitle>
+<link href="http://www.senat.fr/rss/syndication.html"/>
+<updated>2019-06-03T14:08:53Z</updated>
+<modified>2019-06-03T14:08:53Z</modified>
+<author>
+<name>Sénat français</name>
+<email>sitn@senat.fr</email>
+<uri>http://www.senat.fr/</uri>
+</author>
+<icon>http://www.senat.fr/images/logoniv1.gif</icon>
+<id>http://www.senat.fr/dossierleg/ppl18-305.html</id>
+<entry>
+<title>Amendements déposés sur le texte n°305</title>
+<link href="http://www.senat.fr/amendements/2018-2019/305/accueil.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/amendements/2018-2019/305/accueil.html</id>
+<updated>2019-06-03T14:08:53Z</updated>
+<modified>2019-06-03T14:08:53Z</modified>
+<published>2019-06-03T14:08:53Z</published>
+<issued>2019-06-03T14:08:53Z</issued>
+<created>2019-06-03T14:08:53Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Amendements déposés sur le texte n°305</summary>
+</entry>
+<entry>
+<title>Texte n° 534</title>
+<link href="http://www.senat.fr/leg/ppl18-534.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/leg/ppl18-534.html</id>
+<updated>2019-05-28T22:00:00Z</updated>
+<modified>2019-05-28T22:00:00Z</modified>
+<published>2019-05-28T22:00:00Z</published>
+<issued>2019-05-28T22:00:00Z</issued>
+<created>2019-05-28T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Texte résultat des travaux de la commission le 29 mai 2019</summary>
+</entry>
+<entry>
+<title>Rapport n° 533</title>
+<link href="http://www.senat.fr/rap/l18-533/l18-533.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/rap/l18-533/l18-533.html</id>
+<updated>2019-05-28T22:00:00Z</updated>
+<modified>2019-05-28T22:00:00Z</modified>
+<published>2019-05-28T22:00:00Z</published>
+<issued>2019-05-28T22:00:00Z</issued>
+<created>2019-05-28T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Rapport de M. Mathieu DARNAUD, fait au nom de la commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale (29 mai 2019)</summary>
+</entry>
+<entry>
+<title>Comptes rendus des réunions de la commission des lois</title>
+<link href="http://www.senat.fr/compte-rendu-commissions/20190527/lois.html#toc4"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/compte-rendu-commissions/20190527/lois.html#toc4</id>
+<updated>2019-05-28T22:00:00Z</updated>
+<modified>2019-05-28T22:00:00Z</modified>
+<published>2019-05-28T22:00:00Z</published>
+<issued>2019-05-28T22:00:00Z</issued>
+<created>2019-05-28T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Comptes rendus des réunions de la commission des lois</summary>
+</entry>
+<entry>
+<title>Inscription à l'ordre du jour du 12 juin 2019</title>
+<link href="http://www.senat.fr/dossierleg/ppl18-305.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/dossierleg/ppl18-305.html</id>
+<updated>2019-05-15T08:40:07Z</updated>
+<modified>2019-05-15T08:40:07Z</modified>
+<published>2019-05-15T08:40:07Z</published>
+<issued>2019-05-15T08:40:07Z</issued>
+<created>2019-05-15T08:40:07Z</created>
+<category term=""/>
+<summary>Inscription à l'ordre du jour du 12 juin 2019</summary>
+</entry>
+<entry>
+<title>Texte n° 305</title>
+<link href="http://www.senat.fr/leg/ppl18-305.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/leg/ppl18-305.html</id>
+<updated>2019-02-11T23:00:00Z</updated>
+<modified>2019-02-11T23:00:00Z</modified>
+<published>2019-02-11T23:00:00Z</published>
+<issued>2019-02-11T23:00:00Z</issued>
+<created>2019-02-11T23:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Texte de M. Pierre-Yves COLLOMBAT et plusieurs de ses collègues,  déposé au Sénat le 12 février 2019</summary>
+</entry>
+</feed>

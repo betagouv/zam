@@ -1,7 +1,8 @@
 import transaction
 from datetime import date
+from functools import reduce
 from operator import attrgetter
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -12,7 +13,11 @@ from webob.multidict import MultiDict
 
 from zam_repondeur.data import repository
 from zam_repondeur.fetch import get_articles
-from zam_repondeur.fetch.an.dossiers.models import DossierRef, LectureRef
+from zam_repondeur.fetch.an.dossiers.models import (
+    DossierRef,
+    DossierRefsByUID,
+    LectureRef,
+)
 from zam_repondeur.message import Message
 from zam_repondeur.models import (
     Amendement,
@@ -69,10 +74,24 @@ class LecturesAdd:
     def __init__(self, context: LectureCollection, request: Request) -> None:
         self.context = context
         self.request = request
-        self.dossiers_by_uid: Dict[str, DossierRef] = self.get_dossiers()
+        self.dossiers_by_uid: DossierRefsByUID = self.get_dossiers()
 
-    def get_dossiers(self) -> Dict[str, DossierRef]:
+    def get_dossiers(self) -> DossierRefsByUID:
+        dossiers = [
+            self.get_dossiers_open_data_an(),
+            self.get_dossiers_scraping_an(),
+            self.get_dossiers_scraping_senat(),
+        ]
+        return reduce(DossierRef.merge_dossiers, dossiers, {})
+
+    def get_dossiers_open_data_an(self) -> DossierRefsByUID:
         return repository.get_data("dossiers")
+
+    def get_dossiers_scraping_an(self) -> DossierRefsByUID:
+        return {}
+
+    def get_dossiers_scraping_senat(self) -> DossierRefsByUID:
+        return {}
 
     @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:

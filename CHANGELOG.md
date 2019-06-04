@@ -1,6 +1,6 @@
 ### Perspectives
 
-<p class="notice">Date de prochaine démonstration : A CONFIRMER 6 juin 2019, 14h, Babylone.</p>
+<p class="notice">Date de prochaine démonstration : ATTENTION ATYPIQUE jeudi 6 juin 2019, 14h, Babylone.</p>
 
 #### Rappel des objectifs prioritaires des développements 2019
 

@@ -1,5 +1,6 @@
 import transaction
 from datetime import date
+from operator import attrgetter
 from typing import Any, Dict, List, Optional, Union
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
@@ -66,8 +67,12 @@ class LecturesAdd:
         lectures = self.context.models()
         return {
             "dossiers": [
-                {"uid": uid, "titre": dossier.titre}
-                for uid, dossier in self.dossiers_by_uid.items()
+                {"uid": dossier.uid, "titre": dossier.titre}
+                for dossier in sorted(
+                    self.dossiers_by_uid.values(),
+                    key=attrgetter("most_recent_texte_date"),
+                    reverse=True,
+                )
             ],
             "lectures": lectures,
             "hide_lectures_link": len(lectures) == 0,

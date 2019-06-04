@@ -111,7 +111,7 @@ class DossierRef:
             raise ValueError
         return DossierRef(
             uid=self.uid,
-            titre=self.titre,
+            titre=self.titre or other.titre,
             lectures=self._merge_lectures(other.lectures),
         )
 

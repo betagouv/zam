@@ -68,8 +68,18 @@ class LectureRef:
         return f"{self.chambre} – {self.titre} – Texte Nº {self.texte.numero}{partie}"
 
 
+MIN_DATE = date(1900, 1, 1)
+
+
 @dataclass
 class DossierRef:
     uid: str
     titre: str
     lectures: List[LectureRef]
+
+    @property
+    def most_recent_texte_date(self) -> date:
+        return max(
+            (lecture.texte.date_depot or MIN_DATE for lecture in self.lectures),
+            default=MIN_DATE,
+        )

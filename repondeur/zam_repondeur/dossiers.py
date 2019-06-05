@@ -2,26 +2,26 @@ from functools import reduce
 
 from zam_repondeur.data import repository
 from zam_repondeur.fetch.an.dossiers.models import DossierRef, DossierRefsByUID
-from zam_repondeur.fetch.senat.scraping import get_dossiers_senat
 
 
-def get_dossiers_legislatifs() -> DossierRefsByUID:
+def get_dossiers_legislatifs_from_cache() -> DossierRefsByUID:
     dossiers = [
-        get_dossiers_legislatifs_open_data(),
-        get_dossiers_legislatifs_scraping_an(),
-        get_dossiers_legislatifs_scraping_senat(),
+        get_dossiers_legislatifs_open_data_from_cache(),
+        get_dossiers_legislatifs_scraping_an_from_cache(),
+        get_dossiers_legislatifs_scraping_senat_from_cache(),
     ]
     return reduce(DossierRef.merge_dossiers, dossiers, {})
 
 
-def get_dossiers_legislatifs_open_data() -> DossierRefsByUID:
+def get_dossiers_legislatifs_open_data_from_cache() -> DossierRefsByUID:
     dossiers: DossierRefsByUID = repository.get_data("an.opendata.dossiers")
     return dossiers
 
 
-def get_dossiers_legislatifs_scraping_an() -> DossierRefsByUID:
+def get_dossiers_legislatifs_scraping_an_from_cache() -> DossierRefsByUID:
     return {}
 
 
-def get_dossiers_legislatifs_scraping_senat() -> DossierRefsByUID:
-    return get_dossiers_senat()
+def get_dossiers_legislatifs_scraping_senat_from_cache() -> DossierRefsByUID:
+    dossiers: DossierRefsByUID = repository.get_data("senat.scraping.dossiers")
+    return dossiers

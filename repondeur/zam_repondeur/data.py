@@ -9,6 +9,7 @@ from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
     get_dossiers_legislatifs
 )
 from zam_repondeur.fetch.an.organes_acteurs import get_organes_acteurs
+from zam_repondeur.fetch.senat.scraping import get_dossiers_senat
 
 from .initialize import needs_init
 
@@ -47,11 +48,13 @@ class DataRepository:
     def load_data(self) -> None:
         dossiers = get_dossiers_legislatifs(*self.legislatures)
         organes, acteurs = get_organes_acteurs()
+        dossiers_senat = get_dossiers_senat()
         with Lock(self.connection, "data"):
             self.connection.delete("dossiers", "organes", "acteurs")  # remove old keys
             self.connection.set("an.opendata.dossiers", pickle.dumps(dossiers))
             self.connection.set("an.opendata.organes", pickle.dumps(organes))
             self.connection.set("an.opendata.acteurs", pickle.dumps(acteurs))
+            self.connection.set("senat.scraping.dossiers", pickle.dumps(dossiers_senat))
 
     @needs_init
     def get_data(self, key: str) -> dict:

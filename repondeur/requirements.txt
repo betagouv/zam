@@ -59,7 +59,7 @@ python-gitlab==1.5.1        # the-law-factory-parser: == 1.5.1
 python-redis-lock==3.3.1
 pytz==2019.1
 redis==3.2.1
-regex==2019.06.02            # dateparser
+regex==2019.06.05            # dateparser
 requests==2.20.1            # lawfactory_utils, legipy: < 2.21, >= 2.20
 rollbar==0.14.6
 selectolax==0.1.13

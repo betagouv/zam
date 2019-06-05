@@ -97,10 +97,12 @@ class Lecture(Base, LastEventMixin):
             return "Séance publique"
         if label.startswith("Commission"):
             return label
-        return f"Commission des {label.lower()}"
+        if label:
+            return f"Commission des {label.lower()}"
+        return "Commissions"
 
     def format_num_lecture(self) -> str:
-        num_lecture, title = self.titre.split(" – ", 1)
+        num_lecture, _ = self.titre.split(" – ", 1)
         return str(num_lecture.strip())
 
     def format_texte(self) -> str:
@@ -114,7 +116,7 @@ class Lecture(Base, LastEventMixin):
 
     @property
     def is_commission(self) -> bool:
-        return self.format_organe().startswith("Commission")
+        return self.organe not in ("PO717460", "PO78718")  # FIXME
 
     @property
     def displayable(self) -> bool:

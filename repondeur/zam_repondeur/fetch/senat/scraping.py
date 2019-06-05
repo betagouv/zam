@@ -65,9 +65,12 @@ def create_dossier(pid: str, rss_url: str) -> DossierRef:
     lectures = [
         create_lecture(pid, entry)
         for entry in soup.select("entry")
-        if entry.title.string.startswith("Texte n° ")
+        if (
+            entry.title.string.startswith("Texte ")
+            and guess_chambre(entry) == ChambreRef.SENAT
+        )
     ]
-    dossier = DossierRef(uid=pid, titre=title, lectures=lectures)
+    dossier = DossierRef(uid=pid, titre=title, lectures=list(reversed(lectures)))
     return dossier
 
 
@@ -80,16 +83,21 @@ def download_rss(url: str) -> str:
 
 
 def create_lecture(pid: str, entry: element.Tag) -> LectureRef:
-    titre = entry.summary.string.split(" - ", 1)[0]
+    num_lecture = entry.summary.string.split(" - ", 1)[0]
+    if entry.title.string.startswith("Texte de la commission"):
+        examen = "Séance publique"
+        organe = "PO78718"
+    else:
+        examen = "Commissions"
+        organe = ""  # ???
+    titre = f"{num_lecture} – {examen}"
     chambre = guess_chambre(entry)
-    organe = ""  # TODO
     texte = create_texte(pid, entry)
     return LectureRef(chambre=chambre, titre=titre, organe=organe, texte=texte)
 
 
 def create_texte(pid: str, entry: element.Tag) -> TexteRef:
-    prefix = len("Texte n° ")
-    numero = entry.title.string[prefix:]
+    numero = entry.title.string.split(" n° ", 1)[1]
     titre_long = entry.summary.string.split(" : ", 1)[1]
     type_dict = {
         "ppr": TypeTexte.PROPOSITION,

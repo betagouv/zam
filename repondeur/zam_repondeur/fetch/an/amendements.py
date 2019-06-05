@@ -396,7 +396,7 @@ def get_organe_abrev(organe: str) -> str:
     from zam_repondeur.data import repository
 
     try:
-        data = repository.get_data("organes")[organe]
+        data = repository.get_data("an.opendata.organes")[organe]
         abrev: str = data["libelleAbrev"]
         return abrev
     except KeyError:
@@ -426,7 +426,7 @@ def get_groupe(raw_auteur: OrderedDict, amendement_num: int) -> str:
     groupe_tribun_id = get_str_or_none(raw_auteur, "groupeTribunId")
     if gouvernemental or (groupe_tribun_id is None):
         return ""
-    groupes = repository.get_data("organes")
+    groupes = repository.get_data("an.opendata.organes")
     try:
         groupe_tribun_id = f"PO{raw_auteur['groupeTribunId']}"
     except KeyError:

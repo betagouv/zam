@@ -15,7 +15,7 @@ def get_dossiers_legislatifs() -> DossierRefsByUID:
 
 
 def get_dossiers_legislatifs_open_data() -> DossierRefsByUID:
-    dossiers: DossierRefsByUID = repository.get_data("dossiers")
+    dossiers: DossierRefsByUID = repository.get_data("an.opendata.dossiers")
     return dossiers
 
 

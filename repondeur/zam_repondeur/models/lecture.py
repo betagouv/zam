@@ -86,7 +86,7 @@ class Lecture(Base, LastEventMixin):
         from zam_repondeur.data import repository  # avoid circular imports
 
         result: str = self.organe
-        organes = repository.get_data("organes")
+        organes = repository.get_data("an.opendata.organes")
         if self.organe in organes:
             organe_data = organes[self.organe]
             result = organe_data["libelleAbrege"]

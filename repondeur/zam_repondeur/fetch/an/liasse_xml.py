@@ -259,7 +259,7 @@ def get_sort(sort: Optional[str], etat: Optional[str]) -> str:
 
 
 def get_auteur_name(uid: str) -> str:
-    acteurs = repository.get_data("acteurs")
+    acteurs = repository.get_data("an.opendata.acteurs")
     if uid not in acteurs:
         raise ValueError(f"Unknown auteur {uid}")
     acteur = acteurs[uid]
@@ -268,7 +268,7 @@ def get_auteur_name(uid: str) -> str:
 
 
 def get_groupe_name(uid: str) -> str:
-    organes = repository.get_data("organes")
+    organes = repository.get_data("an.opendata.organes")
     if uid not in organes:
         raise ValueError(f"Unknown groupe {uid}")
     libelle: str = organes[uid]["libelle"]

@@ -48,9 +48,10 @@ class DataRepository:
         dossiers = get_dossiers_legislatifs(*self.legislatures)
         organes, acteurs = get_organes_acteurs()
         with Lock(self.connection, "data"):
-            self.connection.set("dossiers", pickle.dumps(dossiers))
-            self.connection.set("organes", pickle.dumps(organes))
-            self.connection.set("acteurs", pickle.dumps(acteurs))
+            self.connection.delete("dossiers", "organes", "acteurs")  # remove old keys
+            self.connection.set("an.opendata.dossiers", pickle.dumps(dossiers))
+            self.connection.set("an.opendata.organes", pickle.dumps(organes))
+            self.connection.set("an.opendata.acteurs", pickle.dumps(acteurs))
 
     @needs_init
     def get_data(self, key: str) -> dict:

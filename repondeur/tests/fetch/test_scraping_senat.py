@@ -107,7 +107,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=523,
-                        titre_long="Texte de M. Jean-Yves LE DRIAN, ministre de l'Europe et des affaires étrangères,  déposé au Sénat le 22 mai 2019",
+                        titre_long="Texte de M. Jean-Yves LE DRIAN, ministre de l'Europe et des affaires étrangères,  déposé au Sénat le 22 mai 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 22),
                     ),
@@ -173,7 +173,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=17,
                         numero=699,
-                        titre_long="Texte de Mme Nathalie DELATTRE, M. François PILLET et plusieurs de leurs collègues,  déposé au Sénat le 30 juillet 2018",
+                        titre_long="Texte de Mme Nathalie DELATTRE, M. François PILLET et plusieurs de leurs collègues,  déposé au Sénat le 30 juillet 2018",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2018, 7, 30),
                     ),
@@ -195,7 +195,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=2,
-                        titre_long="Texte de M. Jean-Claude REQUIER et plusieurs de ses collègues,  déposé au Sénat le 2 octobre 2018",
+                        titre_long="Texte de M. Jean-Claude REQUIER et plusieurs de ses collègues,  déposé au Sénat le 2 octobre 2018",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2018, 10, 2),
                     ),
@@ -236,14 +236,14 @@ def test_get_dossiers_senat():
                 ),
                 LectureRef(
                     chambre=ChambreRef.SENAT,
-                    titre="Commission mixte paritaire (désaccord) : Texte résultat des travaux de la commission le 3 avril 2019 – Commissions",
+                    titre="Commission mixte paritaire (désaccord) : Texte résultat des travaux de la commission le 3 avril 2019 – Commissions",  # noqa
                     texte=TexteRef(
                         uid="PPLSENAT2019X434",
                         type_=TypeTexte.PROPOSITION,
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=434,
-                        titre_long="Texte résultat des travaux de la commission le 3 avril 2019",
+                        titre_long="Texte résultat des travaux de la commission le 3 avril 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 3),
                     ),
@@ -259,7 +259,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=518,
-                        titre_long="Texte transmis au Sénat le 21 mai 2019",
+                        titre_long="Texte transmis au Sénat le 21 mai 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 21),
                     ),
@@ -270,7 +270,7 @@ def test_get_dossiers_senat():
         ),
         DossierRef(
             uid="ppl18-043",
-            titre="Directeur général de l'Agence nationale de la cohésion des territoires",
+            titre="Directeur général de l'Agence nationale de la cohésion des territoires",  # noqa
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -281,7 +281,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=43,
-                        titre_long="Texte de MM. Hervé MAUREY et Jean-Claude REQUIER,  déposé au Sénat le 16 octobre 2018",
+                        titre_long="Texte de MM. Hervé MAUREY et Jean-Claude REQUIER,  déposé au Sénat le 16 octobre 2018",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2018, 10, 16),
                     ),
@@ -322,7 +322,7 @@ def test_get_dossiers_senat():
                 ),
                 LectureRef(
                     chambre=ChambreRef.SENAT,
-                    titre="Commission mixte paritaire (accord) : Texte de la commission déposé le 3 avril 2019 – Séance publique",
+                    titre="Commission mixte paritaire (accord) : Texte de la commission déposé le 3 avril 2019 – Séance publique",  # noqa
                     texte=TexteRef(
                         uid="PPLSENAT2019X432",
                         type_=TypeTexte.PROPOSITION,
@@ -351,7 +351,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=229,
-                        titre_long="Texte de M. Bruno GILLES et plusieurs de ses collègues,  déposé au Sénat le 20 décembre 2018",
+                        titre_long="Texte de M. Bruno GILLES et plusieurs de ses collègues,  déposé au Sénat le 20 décembre 2018",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2018, 12, 20),
                     ),
@@ -367,7 +367,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=326,
-                        titre_long="Texte résultat des travaux de la commission le 20 février 2019",
+                        titre_long="Texte résultat des travaux de la commission le 20 février 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 2, 20),
                     ),
@@ -405,7 +405,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=260,
-                        titre_long="Texte de M. Fabien GAY, Mme Éliane ASSASSI et plusieurs de leurs collègues,  déposé au Sénat le 22 janvier 2019",
+                        titre_long="Texte de M. Fabien GAY, Mme Éliane ASSASSI et plusieurs de leurs collègues,  déposé au Sénat le 22 janvier 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 1, 22),
                     ),
@@ -421,7 +421,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=538,
-                        titre_long="Texte résultat des travaux de la commission le 29 mai 2019",
+                        titre_long="Texte résultat des travaux de la commission le 29 mai 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 29),
                     ),
@@ -443,7 +443,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=305,
-                        titre_long="Texte de M. Pierre-Yves COLLOMBAT et plusieurs de ses collègues,  déposé au Sénat le 12 février 2019",
+                        titre_long="Texte de M. Pierre-Yves COLLOMBAT et plusieurs de ses collègues,  déposé au Sénat le 12 février 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 2, 12),
                     ),
@@ -459,7 +459,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=534,
-                        titre_long="Texte résultat des travaux de la commission le 29 mai 2019",
+                        titre_long="Texte résultat des travaux de la commission le 29 mai 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 29),
                     ),
@@ -481,7 +481,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=385,
-                        titre_long="Texte de M. Alain RICHARD et plusieurs de ses collègues,  déposé au Sénat le 19 mars 2019",
+                        titre_long="Texte de M. Alain RICHARD et plusieurs de ses collègues,  déposé au Sénat le 19 mars 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 3, 19),
                     ),
@@ -519,7 +519,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=386,
-                        titre_long="Texte de M. Alain RICHARD et plusieurs de ses collègues,  déposé au Sénat le 19 mars 2019",
+                        titre_long="Texte de M. Alain RICHARD et plusieurs de ses collègues,  déposé au Sénat le 19 mars 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 3, 19),
                     ),
@@ -557,7 +557,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=436,
-                        titre_long="Texte de MM. Jean-Marc GABOUTY, Jean-Claude REQUIER et plusieurs de leurs collègues,  déposé au Sénat le 4 avril 2019",
+                        titre_long="Texte de MM. Jean-Marc GABOUTY, Jean-Claude REQUIER et plusieurs de leurs collègues,  déposé au Sénat le 4 avril 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 4),
                     ),
@@ -573,7 +573,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=531,
-                        titre_long="Texte résultat des travaux de la commission le 29 mai 2019",
+                        titre_long="Texte résultat des travaux de la commission le 29 mai 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 29),
                     ),
@@ -617,7 +617,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=462,
-                        titre_long="Texte de M. François-Noël BUFFET et plusieurs de ses collègues,  déposé au Sénat le 16 avril 2019",
+                        titre_long="Texte de M. François-Noël BUFFET et plusieurs de ses collègues,  déposé au Sénat le 16 avril 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 16),
                     ),
@@ -639,7 +639,7 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=458,
-                        titre_long="Texte de M. Gérard LARCHER, Président du Sénat,  déposé au Sénat le 12 avril 2019",
+                        titre_long="Texte de M. Gérard LARCHER, Président du Sénat,  déposé au Sénat le 12 avril 2019",  # noqa
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 12),
                     ),

@@ -1,10 +1,18 @@
+from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Dict, Set
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, element
 
-from zam_repondeur.fetch.an.dossiers.models import DossierRef, DossierRefsByUID
+from zam_repondeur.fetch.an.dossiers.models import (
+    ChambreRef,
+    DossierRef,
+    DossierRefsByUID,
+    LectureRef,
+    TexteRef,
+    TypeTexte,
+)
 
 
 BASE_URL_SENAT = "http://www.senat.fr"
@@ -54,7 +62,12 @@ def create_dossier(pid: str, rss_url: str) -> DossierRef:
     soup = BeautifulSoup(rss_content, "html5lib")
     prefix = len("Sénat - ")
     title = soup.title.string[prefix:]
-    dossier = DossierRef(uid=pid, titre=title, lectures=[])
+    lectures = [
+        create_lecture(pid, entry)
+        for entry in soup.select("entry")
+        if entry.title.string.startswith("Texte n° ")
+    ]
+    dossier = DossierRef(uid=pid, titre=title, lectures=lectures)
     return dossier
 
 
@@ -64,3 +77,55 @@ def download_rss(url: str) -> str:
         raise RuntimeError(f"Failed to download RSS url: {url}")
 
     return resp.text
+
+
+def create_lecture(pid: str, entry: element.Tag) -> LectureRef:
+    titre = entry.summary.string.split(" - ", 1)[0]
+    chambre = guess_chambre(entry)
+    organe = ""  # TODO
+    texte = create_texte(pid, entry)
+    return LectureRef(chambre=chambre, titre=titre, organe=organe, texte=texte)
+
+
+def create_texte(pid: str, entry: element.Tag) -> TexteRef:
+    prefix = len("Texte n° ")
+    numero = entry.title.string[prefix:]
+    titre_long = entry.summary.string.split(" : ", 1)[1]
+    type_dict = {
+        "ppr": TypeTexte.PROPOSITION,
+        "ppl": TypeTexte.PROPOSITION,
+        "pjl": TypeTexte.PROJET,
+    }
+    type_legislature = pid.split("-", 1)[0]
+    type_ = type_legislature[:3]
+    legislature = int(type_legislature[-2:])
+    chambre = guess_chambre(entry)
+    # One day is added considering we have to deal with timezones
+    # and we only need the date.
+    # E.g.: 2019-05-21T22:00:00Z
+    datetime_depot = datetime.strptime(entry.created.string, "%Y-%m-%dT%H:%M:%SZ")
+    date_depot = datetime_depot.date() + timedelta(days=1)
+    # TODO: uniformize with AN fetch?
+    uid = f"{type_.upper()}{chambre.name.upper()}{date_depot.year}X{numero}"
+    return TexteRef(
+        uid=uid,
+        type_=type_dict[type_],
+        chambre=chambre,
+        legislature=legislature,
+        numero=int(numero),
+        titre_long=titre_long,
+        titre_court="",
+        date_depot=date_depot,
+    )
+
+
+def guess_chambre(entry: element.Tag) -> ChambreRef:
+    if entry.id.string.startswith(BASE_URL_SENAT):
+        return ChambreRef.SENAT
+    elif entry.id.string.startswith(
+        "http://www.assemblee-nationale.fr"
+    ) or entry.id.string.startswith("http://www2.assemblee-nationale.fr"):
+        return ChambreRef.AN
+    else:
+        # Fallback on Senat given sometimes URLs are relative.
+        return ChambreRef.SENAT

@@ -3,7 +3,7 @@ import os
 import random
 import sys
 from argparse import ArgumentParser, Namespace
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 import transaction
 from progressist import ProgressBar
@@ -12,6 +12,7 @@ from sqlalchemy import engine_from_config
 
 from zam_repondeur import BASE_SETTINGS
 from zam_repondeur.data import init_repository, repository
+from zam_repondeur.dossiers import get_dossiers_legislatifs_open_data
 from zam_repondeur.fetch.amendements import RemoteSource
 from zam_repondeur.fetch.an.dossiers.models import DossierRef
 from zam_repondeur.models import (
@@ -69,7 +70,7 @@ def parse_args(argv: List[str]) -> Namespace:
 
 
 def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> None:
-    dossier_refs_dict: Dict[str, DossierRef] = repository.get_data("dossiers")
+    dossier_refs_dict = get_dossiers_legislatifs_open_data()
     dossier_refs: List[DossierRef] = list(dossier_refs_dict.values())
     bar = ProgressBar(
         total=sum(len(dossier_ref.lectures) for dossier_ref in dossier_refs)

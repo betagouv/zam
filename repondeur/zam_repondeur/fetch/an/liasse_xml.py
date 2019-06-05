@@ -9,6 +9,7 @@ from lxml.etree import XMLSyntaxError  # nosec
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import repository
+from zam_repondeur.dossiers import get_dossiers_legislatifs_open_data
 from zam_repondeur.fetch.an.dossiers.models import ChambreRef, DossierRef, LectureRef
 from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import parse_subdiv
@@ -234,7 +235,7 @@ def to_date(text: Optional[str]) -> Optional[date]:
 
 def _find_dossier_lecture(texte_uid: str) -> Tuple[DossierRef, LectureRef]:
     # FIXME: this is not efficient
-    dossiers: Dict[str, DossierRef] = repository.get_data("dossiers")
+    dossiers = get_dossiers_legislatifs_open_data()
     for dossier in dossiers.values():
         for lecture in dossier.lectures:
             if lecture.texte.uid == texte_uid:

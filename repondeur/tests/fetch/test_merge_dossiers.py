@@ -201,3 +201,121 @@ class TestMergeDossiers:
                 ],
             )
         }
+
+    def test_merge_dossiers_by_senat_url_with_additional_lecture(self):
+        from zam_repondeur.fetch.an.dossiers.models import (
+            ChambreRef,
+            DossierRef,
+            LectureRef,
+            TexteRef,
+            TypeTexte,
+        )
+
+        dossiers1 = {
+            "DLR5L15N36030": DossierRef(
+                uid="DLR5L15N36030",
+                titre="Sécurité sociale : loi de financement 2018",
+                an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
+                senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
+                lectures=[
+                    LectureRef(
+                        chambre=ChambreRef.AN,
+                        titre="Première lecture – Titre lecture",
+                        texte=TexteRef(
+                            uid="PRJLANR5L15B0269",
+                            type_=TypeTexte.PROJET,
+                            chambre=ChambreRef.AN,
+                            legislature=15,
+                            numero=269,
+                            titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                            titre_court="PLFSS pour 2018",
+                            date_depot=date(2017, 10, 11),
+                        ),
+                        organe="PO717460",
+                    )
+                ],
+            )
+        }
+        dossiers2 = {
+            "ANOTHER": DossierRef(
+                uid="ANOTHER",
+                titre="Sécurité sociale : loi de financement 2018",
+                an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
+                senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
+                lectures=[
+                    LectureRef(
+                        chambre=ChambreRef.AN,
+                        titre="Première lecture – Titre lecture",
+                        texte=TexteRef(
+                            uid="DIFFERENT",
+                            type_=TypeTexte.PROJET,
+                            chambre=ChambreRef.AN,
+                            legislature=15,
+                            numero=269,
+                            titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                            titre_court="PLFSS pour 2018",
+                            date_depot=date(2017, 10, 11),
+                        ),
+                        organe="PO717460",
+                    ),
+                    LectureRef(
+                        chambre=ChambreRef.SENAT,
+                        titre="Première lecture – Titre lecture",
+                        texte=TexteRef(
+                            uid="DIFFERENT2",
+                            type_=TypeTexte.PROJET,
+                            chambre=ChambreRef.SENAT,
+                            legislature=2017,
+                            numero=63,
+                            titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                            titre_court="PLFSS pour 2018",
+                            date_depot=date(2017, 11, 6),
+                        ),
+                        organe="PO78718",
+                    ),
+                ],
+            )
+        }
+
+        merged = DossierRef.merge_dossiers(dossiers1, dossiers2)
+
+        assert merged == {
+            "DLR5L15N36030": DossierRef(
+                uid="DLR5L15N36030",
+                titre="Sécurité sociale : loi de financement 2018",
+                an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
+                senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
+                lectures=[
+                    LectureRef(
+                        chambre=ChambreRef.AN,
+                        titre="Première lecture – Titre lecture",
+                        texte=TexteRef(
+                            uid="PRJLANR5L15B0269",
+                            type_=TypeTexte.PROJET,
+                            chambre=ChambreRef.AN,
+                            legislature=15,
+                            numero=269,
+                            titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                            titre_court="PLFSS pour 2018",
+                            date_depot=date(2017, 10, 11),
+                        ),
+                        organe="PO717460",
+                    ),
+                    LectureRef(
+                        chambre=ChambreRef.SENAT,
+                        titre="Première lecture – Titre lecture",
+                        texte=TexteRef(
+                            uid="DIFFERENT2",
+                            type_=TypeTexte.PROJET,
+                            chambre=ChambreRef.SENAT,
+                            legislature=2017,
+                            numero=63,
+                            titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                            titre_court="PLFSS pour 2018",
+                            date_depot=date(2017, 11, 6),
+                        ),
+                        organe="PO78718",
+                    ),
+                ],
+            )
+        }

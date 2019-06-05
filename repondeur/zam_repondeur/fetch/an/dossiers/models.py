@@ -101,6 +101,7 @@ class DossierRef:
     def merge_dossiers(
         cls, dossiers: DossierRefsByUID, others: DossierRefsByUID
     ) -> DossierRefsByUID:
+        dossiers, others = cls.merge_by("senat_url", dossiers, others)
         return {
             uid: (
                 dossiers.get(uid, DossierRef(uid, "", "", "", []))
@@ -109,11 +110,27 @@ class DossierRef:
             for uid in dossiers.keys() | others.keys()
         }
 
+    @classmethod
+    def merge_by(
+        cls, key: str, dossiers: DossierRefsByUID, others: DossierRefsByUID
+    ) -> Tuple[DossierRefsByUID, DossierRefsByUID]:
+        if not others:
+            return dossiers, others
+        dossiers2 = {}
+        others2 = deepcopy(others)
+        for uid, dossier in dossiers.items():
+            for uid2, dossier2 in others.items():
+                if getattr(dossier, key) == getattr(dossier2, key) != "":
+                    dossiers2[uid] = dossier + dossier2
+                    del others2[uid2]
+                else:
+                    dossiers2[uid] = dossier
+
+        return dossiers2, others2
+
     def __add__(self, other: "DossierRef") -> "DossierRef":
         if not isinstance(other, DossierRef):
             raise NotImplementedError
-        if other.uid != self.uid:
-            raise ValueError
         return DossierRef(
             uid=self.uid,
             titre=self.titre or other.titre,

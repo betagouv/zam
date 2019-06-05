@@ -99,7 +99,7 @@ def db():
     DBSession.remove()
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def data_repository():
     from zam_repondeur.data import repository
 

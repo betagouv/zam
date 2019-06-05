@@ -25,7 +25,7 @@ def textes():
 @pytest.fixture(scope="module")
 def dossiers():
     from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
-        get_dossiers_legislatifs
+        get_dossiers_legislatifs,
     )
 
     with patch(

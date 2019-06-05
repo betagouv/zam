@@ -11,9 +11,12 @@ from pyramid.view import view_config, view_defaults
 from sqlalchemy.orm import joinedload
 from webob.multidict import MultiDict
 
-from zam_repondeur.dossiers import get_dossiers_legislatifs_open_data
+from zam_repondeur.dossiers import (
+    get_dossiers_legislatifs_open_data,
+    get_dossiers_legislatifs_scraping_an,
+    get_dossiers_legislatifs_scraping_senat,
+)
 from zam_repondeur.fetch import get_articles
-from zam_repondeur.fetch.senat.scraping import get_dossiers_senat
 from zam_repondeur.fetch.an.dossiers.models import (
     DossierRef,
     DossierRefsByUID,
@@ -79,16 +82,10 @@ class LectureAddBase:
     def get_dossiers(self) -> DossierRefsByUID:
         dossiers = [
             get_dossiers_legislatifs_open_data(),
-            self.get_dossiers_scraping_an(),
-            self.get_dossiers_scraping_senat(),
+            get_dossiers_legislatifs_scraping_an(),
+            get_dossiers_legislatifs_scraping_senat(),
         ]
         return reduce(DossierRef.merge_dossiers, dossiers, {})
-
-    def get_dossiers_scraping_an(self) -> DossierRefsByUID:
-        return {}
-
-    def get_dossiers_scraping_senat(self) -> DossierRefsByUID:
-        return get_dossiers_senat()
 
 
 @view_defaults(context=LectureCollection, name="add")

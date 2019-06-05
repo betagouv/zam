@@ -70,8 +70,7 @@ def lectures_list(
     return {"lectures": lectures}
 
 
-@view_defaults(context=LectureCollection, name="add")
-class LecturesAdd:
+class LectureAddBase:
     def __init__(self, context: LectureCollection, request: Request) -> None:
         self.context = context
         self.request = request
@@ -94,6 +93,9 @@ class LecturesAdd:
     def get_dossiers_scraping_senat(self) -> DossierRefsByUID:
         return get_dossiers_senat()
 
+
+@view_defaults(context=LectureCollection, name="add")
+class LecturesAddForm(LectureAddBase):
     @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:
         lectures = self.context.models()
@@ -211,6 +213,19 @@ class LecturesAdd:
         if len(matching) != 1:
             raise HTTPNotFound
         return matching[0]
+
+
+class LectureAddChoices(LectureAddBase):
+    @view_config(route_name="choices_lectures", request_method="GET", renderer="json")
+    def get(self) -> dict:
+        uid = self.request.matchdict["uid"]
+        dossier = self.dossiers_by_uid[uid]
+        return {
+            "lectures": [
+                {"key": lecture.key, "label": lecture.label}
+                for lecture in dossier.lectures
+            ]
+        }
 
 
 @view_defaults(context=LectureResource)
@@ -481,18 +496,6 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
         )
     )
     return HTTPFound(location=request.resource_url(context, "amendements"))
-
-
-@view_config(route_name="choices_lectures", renderer="json")
-def choices_lectures(request: Request) -> dict:
-    uid = request.matchdict["uid"]
-    dossiers_by_uid = repository.get_data("dossiers")
-    dossier = dossiers_by_uid[uid]
-    return {
-        "lectures": [
-            {"key": lecture.key, "label": lecture.label} for lecture in dossier.lectures
-        ]
-    }
 
 
 @view_config(context=LectureResource, name="journal", renderer="lecture_journal.html")

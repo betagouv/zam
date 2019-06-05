@@ -114,13 +114,21 @@ TOP_LEVEL_ACTES = {
 def parse_dossier(dossier: dict, textes: Dict[str, TexteRef]) -> DossierRef:
     uid = dossier["uid"]
     titre = dossier["titreDossier"]["titre"]
+    an_url = build_an_url(dossier["titreDossier"]["titreChemin"])
+    senat_url = dossier["titreDossier"]["senatChemin"]
     is_plf = "PLF" in dossier
     lectures = [
         lecture
         for acte in top_level_actes(dossier)
         for lecture in gen_lectures(acte, textes, is_plf)
     ]
-    return DossierRef(uid=uid, titre=titre, lectures=lectures)
+    return DossierRef(
+        uid=uid, titre=titre, an_url=an_url, senat_url=senat_url, lectures=lectures
+    )
+
+
+def build_an_url(slug: str) -> str:
+    return f"http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/{slug}"
 
 
 def top_level_actes(dossier: dict) -> Iterator[dict]:

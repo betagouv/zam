@@ -83,6 +83,8 @@ DossierRefsByUID = Dict[str, "DossierRef"]
 class DossierRef:
     uid: str
     titre: str
+    an_url: str
+    senat_url: str
     lectures: List[LectureRef]
 
     @property
@@ -98,8 +100,8 @@ class DossierRef:
     ) -> DossierRefsByUID:
         return {
             uid: (
-                dossiers.get(uid, DossierRef(uid, "", []))
-                + others.get(uid, DossierRef(uid, "", []))
+                dossiers.get(uid, DossierRef(uid, "", "", "", []))
+                + others.get(uid, DossierRef(uid, "", "", "", []))
             )
             for uid in dossiers.keys() | others.keys()
         }
@@ -112,6 +114,8 @@ class DossierRef:
         return DossierRef(
             uid=self.uid,
             titre=self.titre or other.titre,
+            an_url=self.an_url or other.an_url,
+            senat_url=self.senat_url or self.senat_url,
             lectures=self._merge_lectures(other.lectures),
         )
 

@@ -62,6 +62,10 @@ def create_dossier(pid: str, rss_url: str) -> DossierRef:
     soup = BeautifulSoup(rss_content, "html5lib")
     prefix = len("Sénat - ")
     title = soup.title.string[prefix:]
+    # We cast the bs4 output explicitly to a string because of something
+    # related to https://bugs.python.org/issue1757057
+    # Once pickled to put in Redis, it would otherwise raise a RecursionError.
+    senat_url = str(soup.id.string)
     lectures = [
         create_lecture(pid, entry)
         for entry in soup.select("entry")
@@ -70,7 +74,13 @@ def create_dossier(pid: str, rss_url: str) -> DossierRef:
             and guess_chambre(entry) == ChambreRef.SENAT
         )
     ]
-    dossier = DossierRef(uid=pid, titre=title, lectures=list(reversed(lectures)))
+    dossier = DossierRef(
+        uid=pid,
+        titre=title,
+        an_url="",
+        senat_url=senat_url,
+        lectures=list(reversed(lectures)),
+    )
     return dossier
 
 

@@ -11,33 +11,33 @@ class TestMergeDossiers:
     def test_merge_dossiers_and_empty(self):
         from zam_repondeur.fetch.an.dossiers.models import DossierRef
 
-        dossiers1 = {"a": DossierRef("a", "titre1", [])}
+        dossiers1 = {"a": DossierRef("a", "titre1", "", "", [])}
         assert DossierRef.merge_dossiers(dossiers1, {}) == dossiers1
 
     def test_merge_empty_and_dossiers(self):
         from zam_repondeur.fetch.an.dossiers.models import DossierRef
 
-        dossiers1 = {"a": DossierRef("a", "titre1", [])}
+        dossiers1 = {"a": DossierRef("a", "titre1", "", "", [])}
         assert DossierRef.merge_dossiers({}, dossiers1) == dossiers1
 
     def test_merge_different_dossiers(self):
         from zam_repondeur.fetch.an.dossiers.models import DossierRef
 
-        dossiers1 = {"a": DossierRef("a", "titre1", [])}
-        dossiers2 = {"b": DossierRef("b", "titre2", [])}
+        dossiers1 = {"a": DossierRef("a", "titre1", "", "", [])}
+        dossiers2 = {"b": DossierRef("b", "titre2", "", "", [])}
         assert DossierRef.merge_dossiers(dossiers1, dossiers2) == {
-            "a": DossierRef("a", "titre1", []),
-            "b": DossierRef("b", "titre2", []),
+            "a": DossierRef("a", "titre1", "", "", []),
+            "b": DossierRef("b", "titre2", "", "", []),
         }
 
     def test_merge_different_dossiers_reversed(self):
         from zam_repondeur.fetch.an.dossiers.models import DossierRef
 
-        dossiers1 = {"a": DossierRef("a", "titre1", [])}
-        dossiers2 = {"b": DossierRef("b", "titre2", [])}
+        dossiers1 = {"a": DossierRef("a", "titre1", "", "", [])}
+        dossiers2 = {"b": DossierRef("b", "titre2", "", "", [])}
         assert DossierRef.merge_dossiers(dossiers2, dossiers1) == {
-            "a": DossierRef("a", "titre1", []),
-            "b": DossierRef("b", "titre2", []),
+            "a": DossierRef("a", "titre1", "", "", []),
+            "b": DossierRef("b", "titre2", "", "", []),
         }
 
     def test_merge_identical_dossiers(self):
@@ -53,6 +53,8 @@ class TestMergeDossiers:
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
+                senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
                         chambre=ChambreRef.AN,
@@ -95,6 +97,8 @@ class TestMergeDossiers:
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
+                senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
                         chambre=ChambreRef.AN,
@@ -118,6 +122,8 @@ class TestMergeDossiers:
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
+                senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
                         chambre=ChambreRef.AN,
@@ -159,6 +165,8 @@ class TestMergeDossiers:
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
+                senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
                         chambre=ChambreRef.AN,

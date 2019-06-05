@@ -80,15 +80,16 @@ class LecturesAddForm(LectureAddBase):
     @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:
         lectures = self.context.models()
+        dossiers = [
+            {"uid": dossier.uid, "titre": dossier.titre}
+            for dossier in sorted(
+                self.dossiers_by_uid.values(),
+                key=attrgetter("most_recent_texte_date"),
+                reverse=True,
+            )
+        ]
         return {
-            "dossiers": [
-                {"uid": dossier.uid, "titre": dossier.titre}
-                for dossier in sorted(
-                    self.dossiers_by_uid.values(),
-                    key=attrgetter("most_recent_texte_date"),
-                    reverse=True,
-                )
-            ],
+            "dossiers": dossiers,
             "lectures": lectures,
             "hide_lectures_link": len(lectures) == 0,
         }

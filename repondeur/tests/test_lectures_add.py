@@ -39,6 +39,38 @@ def test_get_form(app, user_david):
     assert isinstance(form.fields["dossier"][0], Select)
     assert form.fields["dossier"][0].options == [
         ("", True, ""),
+        ("ppr18-458", False, "Clarifier et actualiser le Règlement du Sénat"),
+        (
+            "ppl18-462",
+            False,
+            "Participation des conseillers de Lyon aux élections sénatoriales",
+        ),
+        (
+            "ppl17-699",
+            False,
+            "Instituer un médiateur territorial dans certaines collectivités",
+        ),
+        ("ppl18-436", False, "Accès des PME à la commande publique"),
+        ("ppl18-305", False, "Création d'un statut de l'élu communal"),
+        (
+            "ppl18-260",
+            False,
+            "Accès à l'énergie et lutte contre la précarité énergétique",
+        ),
+        ("ppl18-229", False, "Lutte contre l'habitat insalubre ou dangereux"),
+        ("pjl18-532", False, "Transformation de la fonction publique"),
+        ("pjl18-526", False, "Accords France-Suisse et France-Luxembourg"),
+        ("pjl18-523", False, "Accord France Arménie"),
+        ("pjl18-404", False, "Organisation du système de santé"),
+        ("ppl18-002", False, "Agence nationale de la cohésion des territoires"),
+        ("ppl18-454", False, "Exploitation des réseaux radioélectriques mobiles"),
+        ("ppl18-386", False, "Clarifier diverses dispositions du droit électoral"),
+        ("ppl18-385", False, "Clarifier diverses dispositions du droit électoral"),
+        (
+            "ppl18-043",
+            False,
+            "Directeur général de l'Agence nationale de la cohésion des territoires",
+        ),
         ("DLR5L15N36892", False, "Sécurité sociale : loi de financement 2019"),
         (
             "DLR5L15N36159",

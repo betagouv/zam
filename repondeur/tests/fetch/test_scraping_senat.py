@@ -75,7 +75,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 3, 26),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -115,7 +115,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 22),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 )
             ],
@@ -139,7 +139,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 24),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 )
             ],
@@ -163,7 +163,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 29),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 )
             ],
@@ -187,7 +187,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2018, 7, 30),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 )
             ],
@@ -211,7 +211,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2018, 10, 2),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -243,7 +243,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2018, 11, 8),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -259,7 +259,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 3),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -275,7 +275,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 21),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
             ],
@@ -299,7 +299,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2018, 10, 16),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -331,7 +331,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2018, 11, 8),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -371,7 +371,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2018, 12, 20),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -387,7 +387,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 2, 20),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -427,7 +427,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 1, 22),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -443,7 +443,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 29),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
             ],
@@ -467,7 +467,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 2, 12),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -483,7 +483,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 29),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
             ],
@@ -507,7 +507,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 3, 19),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -547,7 +547,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 3, 19),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -587,7 +587,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 4),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
                 LectureRef(
@@ -603,7 +603,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 29),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 ),
             ],
@@ -627,7 +627,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 11),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 )
             ],
@@ -651,7 +651,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 16),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 )
             ],
@@ -675,7 +675,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 12),
                     ),
-                    organe="PO211495",
+                    organe="",
                     partie=None,
                 )
             ],
@@ -776,7 +776,7 @@ def test_create_dossier():
                     titre_court="",
                     date_depot=datetime.date(2019, 3, 26),
                 ),
-                organe="PO211495",  # commission X
+                organe="",  # commission X
                 partie=None,
             ),
             LectureRef(

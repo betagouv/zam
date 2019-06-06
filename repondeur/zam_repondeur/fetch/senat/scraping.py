@@ -101,7 +101,7 @@ def create_lecture(pid: str, entry: element.Tag) -> LectureRef:
         organe = "PO78718"
     else:
         examen = "Commissions"
-        organe = "PO211495"
+        organe = ""  # TODO: PO211495 is not a sane default.
     titre = f"{num_lecture} – {examen}"
     chambre = guess_chambre(entry)
     texte = create_texte(pid, entry)

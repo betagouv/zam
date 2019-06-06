@@ -69,8 +69,8 @@ class LectureRef:
         return f"{self.chambre} – {self.titre} – Texte Nº {self.texte.numero}{partie}"
 
     @property
-    def cmp_key(self) -> Tuple[ChambreRef, str, int, Optional[int]]:
-        return (self.chambre, self.organe, self.texte.numero, self.partie)
+    def cmp_key(self) -> Tuple[ChambreRef, int, Optional[int]]:
+        return (self.chambre, self.texte.numero, self.partie)
 
 
 MIN_DATE = date(1900, 1, 1)

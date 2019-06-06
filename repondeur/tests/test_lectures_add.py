@@ -357,6 +357,6 @@ def test_choices_lectures_merged(app, user_david):
         "lectures": [
             {"key": "PRJLANR5L15B1802-PO59051-", "label": label_an1},
             {"key": "PRJLANR5L15BTC1924-PO717460-", "label": label_an2},
-            {"key": "PJLSENAT2019X532-PO211495-", "label": label_senat},
+            {"key": "PJLSENAT2019X532--", "label": label_senat},
         ]
     }

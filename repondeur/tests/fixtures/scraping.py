@@ -5,7 +5,7 @@ import pytest
 
 
 HERE = Path(__file__)
-SAMPLE_DATA_DIR = HERE.parent / "sample_data" / "senat"
+SAMPLE_DATA_DIR = HERE.parent.parent / "fetch" / "sample_data" / "senat"
 
 
 @pytest.yield_fixture(scope="session", autouse=True)

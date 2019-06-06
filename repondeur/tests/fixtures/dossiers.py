@@ -100,5 +100,62 @@ def mock_dossiers():
                     )
                 ],
             ),
+            "DLR5L15N37357": DossierRef(
+                uid="DLR5L15N37357",
+                titre="Fonction publique : transformation de la fonction publique",
+                an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/transformation_fonction_publique",  # noqa
+                senat_url="http://www.senat.fr/dossier-legislatif/pjl18-532.html",
+                lectures=[
+                    LectureRef(
+                        chambre=ChambreRef.AN,
+                        titre="Première lecture – Commission saisie au fond",
+                        texte=TexteRef(
+                            uid="PRJLANR5L15B1802",
+                            type_=TypeTexte.PROJET,
+                            chambre=ChambreRef.AN,
+                            legislature=15,
+                            numero=1802,
+                            titre_long="projet de loi de transformation de la fonction publique",  # noqa
+                            titre_court="Transformation de la fonction publique",
+                            date_depot=date(2019, 3, 27),
+                        ),
+                        organe="PO59051",
+                        partie=None,
+                    ),
+                    LectureRef(
+                        chambre=ChambreRef.AN,
+                        titre="Première lecture – Séance publique",
+                        texte=TexteRef(
+                            uid="PRJLANR5L15BTC1924",
+                            type_=TypeTexte.PROJET,
+                            chambre=ChambreRef.AN,
+                            legislature=15,
+                            numero=1924,
+                            titre_long="projet de loi sur le projet de loi, après engagement de la procédure accélérée, de transformation de la fonction publique (n°1802).",  # noqa
+                            titre_court="Transformation de la fonction publique",
+                            date_depot=date(2019, 5, 3),
+                        ),
+                        organe="PO717460",
+                        partie=None,
+                    ),
+                    # Intentionnaly removed to check it merges with Senat scraped data.
+                    # LectureRef(
+                    #     chambre=ChambreRef.SENAT,
+                    #     titre="Première lecture – Commission saisie au fond",
+                    #     texte=TexteRef(
+                    #         uid="PRJLSNR5S319B0532",
+                    #         type_=TypeTexte.PROJET,
+                    #         chambre=ChambreRef.SENAT,
+                    #         legislature=None,
+                    #         numero=532,
+                    #         titre_long="projet de loi de transformation de la fonction publique",  # noqa
+                    #         titre_court="Transformation de la fonction publique",
+                    #         date_depot=date(2019, 5, 29),
+                    #     ),
+                    #     organe="PO211495",
+                    #     partie=None,
+                    # ),
+                ],
+            ),
         }
         yield

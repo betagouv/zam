@@ -60,7 +60,7 @@ def test_get_dossiers_senat():
             uid="pjl18-404",
             titre="Organisation du système de santé",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/pjl18-404.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/pjl18-404.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -75,7 +75,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 3, 26),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -100,7 +100,7 @@ def test_get_dossiers_senat():
             uid="pjl18-523",
             titre="Accord France Arménie",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/pjl18-523.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/pjl18-523.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -115,7 +115,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 22),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 )
             ],
@@ -124,7 +124,7 @@ def test_get_dossiers_senat():
             uid="pjl18-526",
             titre="Accords France-Suisse et France-Luxembourg",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/pjl18-526.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/pjl18-526.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -139,7 +139,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 24),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 )
             ],
@@ -148,7 +148,7 @@ def test_get_dossiers_senat():
             uid="pjl18-532",
             titre="Transformation de la fonction publique",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/pjl18-532.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/pjl18-532.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -163,7 +163,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 29),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 )
             ],
@@ -172,7 +172,7 @@ def test_get_dossiers_senat():
             uid="ppl17-699",
             titre="Instituer un médiateur territorial dans certaines collectivités",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/ppl17-699.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/ppl17-699.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -187,7 +187,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2018, 7, 30),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 )
             ],
@@ -196,7 +196,7 @@ def test_get_dossiers_senat():
             uid="ppl18-002",
             titre="Agence nationale de la cohésion des territoires",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/ppl18-002.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-002.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -211,7 +211,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2018, 10, 2),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -243,7 +243,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2018, 11, 8),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -259,7 +259,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 3),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -275,7 +275,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 21),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
             ],
@@ -284,7 +284,7 @@ def test_get_dossiers_senat():
             uid="ppl18-043",
             titre="Directeur général de l'Agence nationale de la cohésion des territoires",  # noqa
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/ppl18-043.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-043.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -299,7 +299,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2018, 10, 16),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -331,7 +331,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2018, 11, 8),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -356,7 +356,7 @@ def test_get_dossiers_senat():
             uid="ppl18-229",
             titre="Lutte contre l'habitat insalubre ou dangereux",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/ppl18-229.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-229.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -371,7 +371,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2018, 12, 20),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -387,7 +387,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 2, 20),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -412,7 +412,7 @@ def test_get_dossiers_senat():
             uid="ppl18-260",
             titre="Accès à l'énergie et lutte contre la précarité énergétique",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/ppl18-260.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-260.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -427,7 +427,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 1, 22),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -443,7 +443,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 29),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
             ],
@@ -452,7 +452,7 @@ def test_get_dossiers_senat():
             uid="ppl18-305",
             titre="Création d'un statut de l'élu communal",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/ppl18-305.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-305.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -467,7 +467,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 2, 12),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -483,7 +483,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 29),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
             ],
@@ -492,7 +492,7 @@ def test_get_dossiers_senat():
             uid="ppl18-385",
             titre="Clarifier diverses dispositions du droit électoral",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/ppl18-385.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-385.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -507,7 +507,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 3, 19),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -532,7 +532,7 @@ def test_get_dossiers_senat():
             uid="ppl18-386",
             titre="Clarifier diverses dispositions du droit électoral",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/ppl18-386.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-386.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -547,7 +547,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 3, 19),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -572,7 +572,7 @@ def test_get_dossiers_senat():
             uid="ppl18-436",
             titre="Accès des PME à la commande publique",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/ppl18-436.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-436.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -587,7 +587,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 4),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
                 LectureRef(
@@ -603,7 +603,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 29),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 ),
             ],
@@ -612,7 +612,7 @@ def test_get_dossiers_senat():
             uid="ppl18-454",
             titre="Exploitation des réseaux radioélectriques mobiles",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/ppl18-454.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-454.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -627,7 +627,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 11),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 )
             ],
@@ -636,7 +636,7 @@ def test_get_dossiers_senat():
             uid="ppl18-462",
             titre="Participation des conseillers de Lyon aux élections sénatoriales",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/ppl18-462.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-462.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -651,7 +651,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 16),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 )
             ],
@@ -660,7 +660,7 @@ def test_get_dossiers_senat():
             uid="ppr18-458",
             titre="Clarifier et actualiser le Règlement du Sénat",
             an_url="",
-            senat_url="http://www.senat.fr/dossierleg/ppr18-458.html",
+            senat_url="http://www.senat.fr/dossier-legislatif/ppr18-458.html",
             lectures=[
                 LectureRef(
                     chambre=ChambreRef.SENAT,
@@ -675,7 +675,7 @@ def test_get_dossiers_senat():
                         titre_court="",
                         date_depot=datetime.date(2019, 4, 12),
                     ),
-                    organe="",
+                    organe="PO211495",
                     partie=None,
                 )
             ],
@@ -761,7 +761,7 @@ def test_create_dossier():
         uid="pjl18-404",
         titre="Organisation du système de santé",
         an_url="",
-        senat_url="http://www.senat.fr/dossierleg/pjl18-404.html",
+        senat_url="http://www.senat.fr/dossier-legislatif/pjl18-404.html",
         lectures=[
             LectureRef(
                 chambre=ChambreRef.SENAT,
@@ -776,7 +776,7 @@ def test_create_dossier():
                     titre_court="",
                     date_depot=datetime.date(2019, 3, 26),
                 ),
-                organe="",  # commission X
+                organe="PO211495",  # commission X
                 partie=None,
             ),
             LectureRef(

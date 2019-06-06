@@ -136,7 +136,7 @@ class DossierRef:
             uid=self.uid,
             titre=self.titre or other.titre,
             an_url=self.an_url or other.an_url,
-            senat_url=self.senat_url or self.senat_url,
+            senat_url=self.senat_url or other.senat_url,
             lectures=self._merge_lectures(other.lectures),
         )
 

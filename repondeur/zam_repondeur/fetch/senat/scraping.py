@@ -66,6 +66,8 @@ def create_dossier(pid: str, rss_url: str) -> DossierRef:
     # related to https://bugs.python.org/issue1757057
     # Once pickled to put in Redis, it would otherwise raise a RecursionError.
     senat_url = str(soup.id.string)
+    # URLs in Senat's own feeds are actually redirections.
+    senat_url = senat_url.replace("dossierleg", "dossier-legislatif")
     lectures = [
         create_lecture(pid, entry)
         for entry in soup.select("entry")
@@ -99,7 +101,7 @@ def create_lecture(pid: str, entry: element.Tag) -> LectureRef:
         organe = "PO78718"
     else:
         examen = "Commissions"
-        organe = ""  # ???
+        organe = "PO211495"
     titre = f"{num_lecture} – {examen}"
     chambre = guess_chambre(entry)
     texte = create_texte(pid, entry)

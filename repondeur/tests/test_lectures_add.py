@@ -58,7 +58,11 @@ def test_get_form(app, user_david):
             "Accès à l'énergie et lutte contre la précarité énergétique",
         ),
         ("ppl18-229", False, "Lutte contre l'habitat insalubre ou dangereux"),
-        ("pjl18-532", False, "Transformation de la fonction publique"),
+        (
+            "DLR5L15N37357",
+            False,
+            "Fonction publique : transformation de la fonction publique",
+        ),
         ("pjl18-526", False, "Accords France-Suisse et France-Luxembourg"),
         ("pjl18-523", False, "Accord France Arménie"),
         ("pjl18-404", False, "Organisation du système de santé"),
@@ -334,5 +338,25 @@ def test_choices_lectures(app, user_david):
         "lectures": [
             {"key": "PRJLANR5L15B0269-PO717460-", "label": label_an},
             {"key": "PRJLSNR5S299B0063-PO78718-", "label": label_senat},
+        ]
+    }
+
+
+def test_choices_lectures_merged(app, user_david):
+
+    resp = app.get("/choices/dossiers/DLR5L15N37357/", user=user_david)
+
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "application/json"
+    label_an1 = "Assemblée nationale – Première lecture – Commission saisie au fond – Texte Nº 1802"  # noqa
+    label_an2 = (
+        "Assemblée nationale – Première lecture – Séance publique – Texte Nº 1924"
+    )
+    label_senat = "Sénat – Première lecture – Commissions – Texte Nº 532"
+    assert resp.json == {
+        "lectures": [
+            {"key": "PRJLANR5L15B1802-PO59051-", "label": label_an1},
+            {"key": "PRJLANR5L15BTC1924-PO717460-", "label": label_an2},
+            {"key": "PJLSENAT2019X532-PO211495-", "label": label_senat},
         ]
     }

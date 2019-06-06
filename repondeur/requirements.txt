@@ -23,7 +23,7 @@ future==0.16.0              # anpy: < 0.17, >= 0.16
 html2text==2018.1.9         # anpy: == 2018.1.9
 html5lib==1.0.1             # anpy, legipy, senapy: < 1.1, >= 1.0
 huey==1.10.5
-hupper==1.6.1
+hupper==1.7
 idna==2.7
 inscriptis==0.0.3.7
 jdcal==1.4.1

@@ -116,17 +116,18 @@ class DossierRef:
     ) -> Tuple[DossierRefsByUID, DossierRefsByUID]:
         if not others:
             return dossiers, others
-        dossiers2 = {}
-        others2 = deepcopy(others)
-        for uid, dossier in dossiers.items():
-            for uid2, dossier2 in others.items():
-                if getattr(dossier, key) == getattr(dossier2, key) != "":
-                    dossiers2[uid] = dossier + dossier2
-                    del others2[uid2]
-                else:
-                    dossiers2[uid] = dossier
 
-        return dossiers2, others2
+        to_be_merged = [
+            (uid, dossier, uid_other, dossier_other)
+            for uid, dossier in dossiers.items()
+            for uid_other, dossier_other in others.items()
+            if getattr(dossier, key) == getattr(dossier_other, key) != ""
+        ]
+        for uid, dossier, uid_other, dossier_other in to_be_merged:
+            dossiers[uid] = dossier + dossier_other
+            del others[uid_other]
+
+        return dossiers, others
 
     def __add__(self, other: "DossierRef") -> "DossierRef":
         if not isinstance(other, DossierRef):

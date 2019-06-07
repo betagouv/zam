@@ -287,7 +287,12 @@ class AmendementsFilters extends Stimulus.Controller {
       if (!value) {
         return true
       }
-      return line.dataset.article.trim() === value
+      if (value.includes(' ')) {
+        // Special case of `6 b` for `6 bis` for instance.
+        return line.dataset.article.startsWith(value)
+      } else {
+        return line.dataset.article.trim() === value
+      }
     })
   }
 

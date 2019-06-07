@@ -52,7 +52,7 @@ def settings():
         "zam.tasks.redis_url": os.environ.get(
             "ZAM_TEST_TASKS_REDIS_URL", "redis://localhost:6379/10"
         ),
-        "zam.tasks.always_eager": True,
+        "zam.tasks.immediate": True,
         "zam.data.redis_url": os.environ.get(
             "ZAM_TEST_DATA_REDIS_URL", "redis://localhost:6379/11"
         ),

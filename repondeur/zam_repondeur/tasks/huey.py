@@ -8,6 +8,6 @@ def init_huey(settings: dict) -> RedisHuey:
     global huey
     huey = RedisHuey(
         url=settings["zam.tasks.redis_url"],
-        always_eager=asbool(settings.get("zam.tasks.always_eager", "False")),
+        immediate=asbool(settings.get("zam.tasks.immediate", "False")),
     )
     return huey

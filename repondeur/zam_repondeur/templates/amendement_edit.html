@@ -314,7 +314,7 @@
 
     {% if amendement.batch %}
         <div class="batch">
-            <p>Cet amendement fait partie d’un lot, leur réponse est identique.</p>
+            <p>La réponse saisie ci-dessous est commune à tous les amendements du lot.</p>
         </div>
     {% endif %}
 
@@ -365,7 +365,7 @@
         </div>
 
         <div class="form-group">
-            <label for="comments">Commentaires <small>(n’apparaissent pas dans le dossier final)</small></label>
+            <label for="comments">Commentaires <small>(n’apparaissent pas dans le dossier de banc)</small></label>
             <textarea name="comments" class="form-control" data-action="keydown->unsaved-changes#setDirty">{{ amendement.user_content.comments or "" | safe }}</textarea>
         </div>
 

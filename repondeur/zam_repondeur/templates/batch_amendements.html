@@ -104,14 +104,14 @@
         <a href="{{ back_url }}" class="arrow-left">Retourner à ma table</a>
     </nav>
     <h1>
-        Associer les amendements
+        Créer un lot d’amendements
     </h1>
     <form id="batch-amendements"
         action="{{ request.resource_url(context, 'batch_amendements') }}"
         method="POST">
         <details class="notice" open>
             <summary>
-                Ces amendements vont être associés afin de pouvoir les traiter par lots.
+                Ces amendements vont être associés au sein d’un lot pour mutualiser le traitement.
             </summary>
             <ul class="amendements">
                 {% for amendement in amendements %}
@@ -127,7 +127,7 @@
         <div class="buttons">
             <input type="submit"
                 name="submit-to"
-                value="Associer"
+                value="Créer un lot"
                 class="button primary enabled">
         </div>
     </form>

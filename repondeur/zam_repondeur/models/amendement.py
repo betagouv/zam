@@ -121,6 +121,7 @@ class Reponse(NamedTuple):
     avis: str
     objet: str
     content: str
+    comments: str
 
     def __eq__(self, other: Any) -> bool:
         return bool(
@@ -133,7 +134,12 @@ class Reponse(NamedTuple):
 
     @property
     def is_empty(self) -> bool:
-        return self.avis == "" and self.objet == "" and self.content == ""
+        return (
+            self.avis == ""
+            and self.objet == ""
+            and self.content == ""
+            and self.comments == ""
+        )
 
 
 class AmendementUserContent(Base):
@@ -187,10 +193,22 @@ class AmendementUserContent(Base):
             return False
         return self.avis == "Sagesse" or self.avis == "Satisfait donc rejet"
 
-    def full_reponse(self) -> Reponse:
+    def full_reponse(self, with_comments: bool = False) -> Reponse:
         if self.amendement.gouvernemental:
-            return Reponse(self.amendement.num_str, "", "")
-        return Reponse(self.avis or "", self.objet or "", self.reponse or "")
+            reponse = Reponse(
+                self.amendement.num_str,
+                self.objet or "",
+                self.reponse or "",
+                (self.comments or "") if with_comments else "",
+            )
+        else:
+            reponse = Reponse(
+                self.avis or "",
+                self.objet or "",
+                self.reponse or "",
+                (self.comments or "") if with_comments else "",
+            )
+        return reponse
 
 
 class Amendement(Base):
@@ -337,9 +355,9 @@ class Amendement(Base):
             return NotImplemented
         return self.sort_key < other.sort_key
 
-    def full_reponse(self) -> Reponse:
-        # Useful proxy to be able to use it as a sort key in `group_amendements`.
-        reponse: Reponse = self.user_content.full_reponse()
+    def full_reponse(self, with_comments: bool = False) -> Reponse:
+        # Proxy to be able to use it as a sort key in `group_amendements`.
+        reponse: Reponse = self.user_content.full_reponse(with_comments=with_comments)
         return reponse
 
     @property

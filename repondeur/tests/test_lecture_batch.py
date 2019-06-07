@@ -314,7 +314,7 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
     )
     form = resp.form
 
-    # Let's change reponses of the amendements before submission.
+    # Let's change reponses of the first amendement before submission.
     with transaction.manager:
         amendements_an[0].user_content.avis = "Favorable"
         DBSession.add_all(amendements_an)
@@ -335,6 +335,48 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
     # Both amendements are in the same batch
     assert amendement_666.batch.pk == 1
     assert amendement_999.batch.pk == 1
+
+    # Both amendements should have the same avis
+    assert amendement_666.user_content.avis == "Favorable"
+    assert amendement_999.user_content.avis == "Favorable"
+
+
+def test_lecture_post_batch_set_amendements_update_all_user_content(
+    app, lecture_an, amendements_an, user_david, david_has_two_amendements
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    DBSession.add_all(amendements_an)
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/batch_amendements",
+        {"nums": amendements_an},
+        user=user_david,
+    )
+    form = resp.form
+
+    # Let's change user content of the first amendement before submission.
+    with transaction.manager:
+        amendements_an[0].user_content.avis = "Favorable"
+        amendements_an[0].user_content.objet = "Objet"
+        amendements_an[0].user_content.reponse = "Contenu"
+        amendements_an[0].user_content.comments = "Commentaire"
+        DBSession.add_all(amendements_an)
+
+    resp = form.submit("submit-to")
+
+    # Reload amendements as they were updated in another transaction
+    amendement_666 = Amendement.get(lecture_an, amendements_an[0].num)
+    amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
+
+    # Both amendements should have the same user content
+    assert amendement_666.user_content.avis == "Favorable"
+    assert amendement_666.user_content.objet == "Objet"
+    assert amendement_666.user_content.reponse == "Contenu"
+    assert amendement_666.user_content.comments == "Commentaire"
+    assert amendement_999.user_content.avis == "Favorable"
+    assert amendement_999.user_content.objet == "Objet"
+    assert amendement_999.user_content.reponse == "Contenu"
+    assert amendement_999.user_content.comments == "Commentaire"
 
 
 def test_lecture_post_batch_set_amendements_same_reponses(

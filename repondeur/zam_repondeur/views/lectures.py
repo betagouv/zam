@@ -330,12 +330,27 @@ class BatchAmendements:
             return HTTPFound(location=self.my_table_url)
 
         batch = Batch.create()
+        shared_reponse = None
+        to_be_updated = []
         for amendement in amendements:
             if amendement.batch:
                 BatchUnset.create(self.request, amendement)
             BatchSet.create(
                 self.request, amendement, batch, amendements_nums=amendements_nums
             )
+            reponse = amendement.full_reponse(with_comments=True)
+            if not reponse.is_empty:
+                shared_reponse = reponse
+            else:
+                to_be_updated.append(amendement)
+
+        if shared_reponse and to_be_updated:
+            for amendement in to_be_updated:
+                amendement.user_content.avis = shared_reponse.avis
+                amendement.user_content.objet = shared_reponse.objet
+                amendement.user_content.reponse = shared_reponse.content
+                amendement.user_content.comments = shared_reponse.comments
+
         return HTTPFound(location=self.my_table_url)
 
     @property

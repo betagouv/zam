@@ -376,9 +376,9 @@ class BatchAmendements:
         have_all_same_reponse_or_empty = (
             len(
                 set(
-                    amendement.full_reponse()
+                    amendement.full_reponse(with_comments=True)
                     for amendement in amendements
-                    if not amendement.full_reponse().is_empty
+                    if not amendement.full_reponse(with_comments=True).is_empty
                 )
             )
             <= 1  # Same reponse (1) or empty (0).
@@ -387,8 +387,8 @@ class BatchAmendements:
             return
 
         message = (
-            "Tous les amendements doivent avoir la même réponse avant de pouvoir "
-            "être associés."
+            "Tous les amendements doivent avoir les mêmes réponses et commentaires "
+            "avant de pouvoir être associés."
         )
         self.request.session.flash(Message(cls="danger", text=message))
         raise HTTPFound(location=self.my_table_url)

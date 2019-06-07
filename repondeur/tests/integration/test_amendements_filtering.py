@@ -26,6 +26,9 @@ def test_filters_are_ineffective_without_amendements(wsgi_server, driver, lectur
     "column_index,input_text,kind,initial,filtered",
     [
         ("2", "1", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], ["Art. 1", "Art. 1"]),
+        ("2", "7", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], []),
+        ("2", "7 b", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], ["Art. 7 bis"]),
+        ("2", "7 bis", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], ["Art. 7 bis"]),
         ("3", "777", "amendement", ["666", "999", "777"], ["777"]),
         ("4", "Da", "table", ["Ronan", "David", "Daniel"], ["David", "Daniel"]),
     ],
@@ -69,7 +72,10 @@ def test_column_filtering_by_value(
     input_field.send_keys(input_text)
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == filtered
-    assert driver.current_url == f"{LECTURE_URL}/amendements?{kind}={input_text}"
+    assert (
+        driver.current_url
+        == f"{LECTURE_URL}/amendements?{kind}={input_text.replace(' ', '+')}"
+    )
 
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))

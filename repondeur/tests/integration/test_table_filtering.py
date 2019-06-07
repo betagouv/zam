@@ -56,6 +56,30 @@ def test_filters_are_absent_without_amendements(
             ["Article 1", "Article 1", "Article 7 bis"],
             ["Article 1", "Article 1"],
         ),
+        (
+            "1",
+            ".article",
+            "7",
+            "article",
+            ["Article 1", "Article 1", "Article 7 bis"],
+            [],
+        ),
+        (
+            "1",
+            ".article",
+            "7 b",
+            "article",
+            ["Article 1", "Article 1", "Article 7 bis"],
+            ["Article 7 bis"],
+        ),
+        (
+            "1",
+            ".article",
+            "7 bis",
+            "article",
+            ["Article 1", "Article 1", "Article 7 bis"],
+            ["Article 7 bis"],
+        ),
         ("2", ".numero", "777", "amendement", ["666", "999", "777"], ["777"]),
     ],
 )
@@ -97,7 +121,10 @@ def test_column_filtering_by_value(
     input_field.send_keys(input_text)
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == filtered
-    assert driver.current_url == f"{LECTURE_URL}/tables/{email}?{kind}={input_text}"
+    assert (
+        driver.current_url
+        == f"{LECTURE_URL}/tables/{email}?{kind}={input_text.replace(' ', '+')}"
+    )
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")

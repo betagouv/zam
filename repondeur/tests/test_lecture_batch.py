@@ -317,6 +317,9 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
     # Let's change reponses of the first amendement before submission.
     with transaction.manager:
         amendements_an[0].user_content.avis = "Favorable"
+        amendements_an[0].user_content.objet = "Quelque chose"
+        amendements_an[0].user_content.reponse = "Bla bla bla"
+        amendements_an[0].user_content.comments = "Lorem ipsum"
         DBSession.add_all(amendements_an)
 
     resp = form.submit("submit-to")
@@ -339,6 +342,21 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
     # Both amendements should have the same avis
     assert amendement_666.user_content.avis == "Favorable"
     assert amendement_999.user_content.avis == "Favorable"
+
+    # An event was added to the second one
+    assert len(amendement_999.events) == 5
+    assert [
+        str(event.render_summary()) for event in reversed(amendement_999.events)
+    ] == [
+        (
+            "<abbr title='david@example.com'>David</abbr> a placé cet amendement"
+            " dans un lot avec l’amendement 666."
+        ),
+        "<abbr title='david@example.com'>David</abbr> a mis l’avis à « Favorable »",
+        "<abbr title='david@example.com'>David</abbr> a ajouté l’objet",
+        "<abbr title='david@example.com'>David</abbr> a ajouté la réponse",
+        "<abbr title='david@example.com'>David</abbr> a ajouté des commentaires",
+    ]
 
 
 def test_lecture_post_batch_set_amendements_update_all_user_content(

@@ -26,7 +26,15 @@ from zam_repondeur.models import (
     get_one_or_create,
 )
 from zam_repondeur.models.events.lecture import ArticlesRecuperes, LectureCreee
-from zam_repondeur.models.events.amendement import BatchSet, BatchUnset
+from zam_repondeur.models.events.amendement import (
+    AvisAmendementModifie,
+    BatchSet,
+    BatchUnset,
+    CommentsAmendementModifie,
+    ObjetAmendementModifie,
+    ReponseAmendementModifiee,
+)
+
 from zam_repondeur.models.users import Team
 from zam_repondeur.resources import (
     AmendementCollection,
@@ -346,10 +354,22 @@ class BatchAmendements:
 
         if shared_reponse and to_be_updated:
             for amendement in to_be_updated:
-                amendement.user_content.avis = shared_reponse.avis
-                amendement.user_content.objet = shared_reponse.objet
-                amendement.user_content.reponse = shared_reponse.content
-                amendement.user_content.comments = shared_reponse.comments
+                if (amendement.user_content.avis or "") != shared_reponse.avis:
+                    AvisAmendementModifie.create(
+                        self.request, amendement, shared_reponse.avis
+                    )
+                if (amendement.user_content.objet or "") != shared_reponse.objet:
+                    ObjetAmendementModifie.create(
+                        self.request, amendement, shared_reponse.objet
+                    )
+                if (amendement.user_content.reponse or "") != shared_reponse.content:
+                    ReponseAmendementModifiee.create(
+                        self.request, amendement, shared_reponse.content
+                    )
+                if (amendement.user_content.comments or "") != shared_reponse.comments:
+                    CommentsAmendementModifie.create(
+                        self.request, amendement, shared_reponse.comments
+                    )
 
         return HTTPFound(location=self.my_table_url)
 

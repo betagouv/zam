@@ -27,7 +27,7 @@ mypy-extensions==0.4.1
 packaging==19.0
 parso==0.4.0
 pbr==5.2.0
-pexpect==4.6.0 ; sys_platform != 'win32'
+pexpect==4.7.0 ; sys_platform != 'win32'
 pickleshare==0.7.5
 pluggy==0.12.0
 prompt-toolkit==2.0.9

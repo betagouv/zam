@@ -112,7 +112,7 @@ def test_transfer_amendement_from_edit_form(
     assert len(amdt.events) == 1
     assert amdt.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a mis l’amendement sur sa table"
+        "a mis l’amendement sur sa table."
     )
 
 

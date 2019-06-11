@@ -22,7 +22,7 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an, user_davi
     assert event.data["new_value"] == "Titre article"
     assert (
         event.render_summary()
-        == "<abbr title='david@example.com'>david@example.com</abbr> a ajouté le titre"
+        == "<abbr title='david@example.com'>david@example.com</abbr> a ajouté le titre."
     )
     assert event.render_details() == "<ins>Titre article</ins> <del></del>"
 
@@ -53,6 +53,6 @@ def test_post_article_edit_form_presentation(
     assert event.data["new_value"] == "<p>Content</p>"
     assert event.render_summary() == (
         "<abbr title='david@example.com'>david@example.com</abbr> a ajouté "
-        "la présentation"
+        "la présentation."
     )
     assert event.render_details() == "<p><ins>Content</ins></p> <del></del>"

@@ -318,7 +318,7 @@ def test_lecture_post_transfer_amendements_to_me(
     assert len(amendement.events) == 1
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a mis l’amendement sur sa table"
+        "a mis l’amendement sur sa table."
     )
 
 
@@ -359,7 +359,7 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
     assert len(amendement.events) == 1
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a mis l’amendement sur sa table"
+        "a mis l’amendement sur sa table."
     )
 
 
@@ -394,7 +394,7 @@ def test_lecture_post_transfer_amendements_to_index(
     assert amendement.user_table is None
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a remis l’amendement dans l’index"
+        "a remis l’amendement dans l’index."
     )
 
 
@@ -426,7 +426,7 @@ def test_lecture_post_transfer_amendements_to_index_from_index(
     )
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a remis l’amendement dans l’index"
+        "a remis l’amendement dans l’index."
     )
 
 
@@ -461,7 +461,7 @@ def test_lecture_post_transfer_amendements_to_other(
     assert len(table_ronan.amendements) == 1
     assert table_ronan.amendements[0].events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a transféré l’amendement à « Ronan (ronan@example.com) »"
+        "a transféré l’amendement à « Ronan (ronan@example.com) »."
     )
 
 
@@ -493,5 +493,5 @@ def test_lecture_post_transfer_amendements_to_other_from_index(
     assert len(table_ronan.amendements) == 1
     assert table_ronan.amendements[0].events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a transféré l’amendement à « Ronan (ronan@example.com) »"
+        "a transféré l’amendement à « Ronan (ronan@example.com) »."
     )

@@ -45,7 +45,7 @@ class AmendementRectifie(AmendementEvent):
 
     icon = "edit"
 
-    summary_template = Template("L’amendement a été rectifié")
+    summary_template = Template("L’amendement a été rectifié.")
 
     def __init__(
         self, request: Request, amendement: Amendement, rectif: str, **kwargs: Any
@@ -73,7 +73,7 @@ class AmendementIrrecevable(AmendementEvent):
         else:
             de_qui = "du Sénat"
         return Template(
-            f"L’amendement a été déclaré irrecevable par les services {de_qui}"
+            f"L’amendement a été déclaré irrecevable par les services {de_qui}."
         )
 
     def __init__(
@@ -101,42 +101,42 @@ class AmendementTransfere(AmendementEvent):
             if str(self.user) == self.template_vars["old_value"]:
                 summary = (
                     "<abbr title='$email'>$user</abbr> a transféré l’amendement "
-                    "à « $new_value »"
+                    "à « $new_value »."
                 )
             elif str(self.user) == self.template_vars["new_value"]:
                 summary = (
                     "<abbr title='$email'>$user</abbr> a transféré l’amendement "
-                    "de « $old_value » à lui/elle-même"
+                    "de « $old_value » à lui/elle-même."
                 )
             else:
                 summary = (
                     "<abbr title='$email'>$user</abbr> a transféré l’amendement "
-                    "de « $old_value » à « $new_value »"
+                    "de « $old_value » à « $new_value »."
                 )
         elif self.template_vars["old_value"] and not self.template_vars["new_value"]:
             if self.user:
                 if str(self.user) == self.template_vars["old_value"]:
                     summary = (
                         "<abbr title='$email'>$user</abbr> a remis l’amendement "
-                        "dans l’index"
+                        "dans l’index."
                     )
                 else:
                     summary = (
                         "<abbr title='$email'>$user</abbr> a remis l’amendement "
-                        "de « $old_value » dans l’index"
+                        "de « $old_value » dans l’index."
                     )
             else:
-                summary = "L’amendement a été remis automatiquement sur l’index"
+                summary = "L’amendement a été remis automatiquement sur l’index."
         else:
             if str(self.user) == self.template_vars["new_value"]:
                 summary = (
                     "<abbr title='$email'>$user</abbr> a mis l’amendement "
-                    "sur sa table"
+                    "sur sa table."
                 )
             else:
                 summary = (
                     "<abbr title='$email'>$user</abbr> a mis l’amendement "
-                    "sur la table de « $new_value »"
+                    "sur la table de « $new_value »."
                 )
         return Template(summary)
 
@@ -178,7 +178,7 @@ class CorpsAmendementModifie(AmendementEvent):
     @property
     def summary_template(self) -> Template:  # type: ignore
         action = "modifié" if self.template_vars["old_value"] else "initialisé"
-        return Template(f"Le corps de l’amendement a été {action}")
+        return Template(f"Le corps de l’amendement a été {action}.")
 
     def apply(self) -> None:
         self.amendement.corps = self.data["new_value"]
@@ -202,7 +202,7 @@ class ExposeAmendementModifie(AmendementEvent):
     @property
     def summary_template(self) -> Template:  # type: ignore
         action = "modifié" if self.template_vars["old_value"] else "initialisé"
-        return Template(f"L’exposé de l’amendement a été {action}")
+        return Template(f"L’exposé de l’amendement a été {action}.")
 
     def apply(self) -> None:
         self.amendement.expose = self.data["new_value"]
@@ -232,10 +232,10 @@ class AvisAmendementModifie(AmendementEvent):
         if self.template_vars["old_value"]:
             summary = (
                 "<abbr title='$email'>$user</abbr> a modifié l’avis "
-                "de « $old_value » à « $new_value »"
+                "de « $old_value » à « $new_value »."
             )
         else:
-            summary = "<abbr title='$email'>$user</abbr> a mis l’avis à « $new_value »"
+            summary = "<abbr title='$email'>$user</abbr> a mis l’avis à « $new_value »."
         return Template(summary)
 
     def render_details(self) -> str:
@@ -261,7 +261,7 @@ class ObjetAmendementModifie(AmendementEvent):
     @property
     def summary_template(self) -> Template:  # type: ignore
         action = "modifié" if self.template_vars["old_value"] else "ajouté"
-        return Template(f"<abbr title='$email'>$user</abbr> a {action} l’objet")
+        return Template(f"<abbr title='$email'>$user</abbr> a {action} l’objet.")
 
     def apply(self) -> None:
         self.amendement.user_content.objet = self.data["new_value"]
@@ -286,7 +286,7 @@ class ReponseAmendementModifiee(AmendementEvent):
     @property
     def summary_template(self) -> Template:  # type: ignore
         action = "modifié" if self.template_vars["old_value"] else "ajouté"
-        return Template(f"<abbr title='$email'>$user</abbr> a {action} la réponse")
+        return Template(f"<abbr title='$email'>$user</abbr> a {action} la réponse.")
 
     def apply(self) -> None:
         self.amendement.user_content.reponse = self.data["new_value"]
@@ -311,7 +311,7 @@ class CommentsAmendementModifie(AmendementEvent):
     @property
     def summary_template(self) -> Template:  # type: ignore
         action = "modifié les" if self.template_vars["old_value"] else "ajouté des"
-        return Template(f"<abbr title='$email'>$user</abbr> a {action} commentaires")
+        return Template(f"<abbr title='$email'>$user</abbr> a {action} commentaires.")
 
     def apply(self) -> None:
         self.amendement.user_content.comments = self.data["new_value"]

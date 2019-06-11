@@ -47,7 +47,7 @@ class ContenuArticleModifie(ArticleEvent):
         else:
             de_qui = "du Sénat"
         return Template(
-            f"Le contenu de l’article a été modifié par les services {de_qui}"
+            f"Le contenu de l’article a été modifié par les services {de_qui}."
         )
 
     def __init__(
@@ -79,13 +79,13 @@ class TitreArticleModifie(ArticleEvent):
     def summary_template(self) -> Template:
         if self.user:
             action = "modifié" if self.template_vars["old_value"] else "ajouté"
-            return Template(f"<abbr title='$email'>$user</abbr> a {action} le titre")
+            return Template(f"<abbr title='$email'>$user</abbr> a {action} le titre.")
         if self.article.lecture.chambre == "an":
             de_qui = "de l’Asssemblée nationale"
         else:
             de_qui = "du Sénat"
         return Template(
-            f"Le titre de l’article a été modifié par les services {de_qui}"
+            f"Le titre de l’article a été modifié par les services {de_qui}."
         )
 
     def __init__(
@@ -111,7 +111,9 @@ class PresentationArticleModifiee(ArticleEvent):
     @property
     def summary_template(self) -> Template:
         action = "modifié" if self.template_vars["old_value"] else "ajouté"
-        return Template(f"<abbr title='$email'>$user</abbr> a {action} la présentation")
+        return Template(
+            f"<abbr title='$email'>$user</abbr> a {action} la présentation."
+        )
 
     def __init__(
         self, request: Request, article: Article, presentation: str, **kwargs: Any

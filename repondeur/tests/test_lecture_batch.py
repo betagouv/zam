@@ -352,10 +352,10 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
             "<abbr title='david@example.com'>David</abbr> a placé cet amendement"
             " dans un lot avec l’amendement 666."
         ),
-        "<abbr title='david@example.com'>David</abbr> a mis l’avis à « Favorable »",
-        "<abbr title='david@example.com'>David</abbr> a ajouté l’objet",
-        "<abbr title='david@example.com'>David</abbr> a ajouté la réponse",
-        "<abbr title='david@example.com'>David</abbr> a ajouté des commentaires",
+        "<abbr title='david@example.com'>David</abbr> a mis l’avis à « Favorable ».",
+        "<abbr title='david@example.com'>David</abbr> a ajouté l’objet.",
+        "<abbr title='david@example.com'>David</abbr> a ajouté la réponse.",
+        "<abbr title='david@example.com'>David</abbr> a ajouté des commentaires.",
     ]
 
 

@@ -65,7 +65,7 @@ def partition(
 
 
 @given(integers(min_value=2, max_value=27))
-@settings(deadline=timedelta(milliseconds=300))
+@settings(deadline=timedelta(milliseconds=500))
 def test_reversibility(lecture_an, article1_an, nb_amendements):
     from zam_repondeur.models.amendement import Amendement, Batch
 

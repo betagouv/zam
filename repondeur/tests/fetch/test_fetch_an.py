@@ -391,7 +391,7 @@ class TestFetchAmendement:
         assert amendement.events[0].data["old_value"] == ""
         assert amendement.events[0].data["new_value"].startswith("<p>Amendement")
         assert amendement.events[0].render_summary() == (
-            "L’exposé de l’amendement a été initialisé"
+            "L’exposé de l’amendement a été initialisé."
         )
 
         assert isinstance(amendement.events[1], CorpsAmendementModifie)
@@ -400,7 +400,7 @@ class TestFetchAmendement:
         assert amendement.events[1].data["old_value"] == ""
         assert amendement.events[1].data["new_value"].startswith("<p>Supprimer")
         assert amendement.events[1].render_summary() == (
-            "Le corps de l’amendement a été initialisé"
+            "Le corps de l’amendement a été initialisé."
         )
 
     @responses.activate
@@ -592,7 +592,7 @@ class TestFetchAmendementAgain:
         assert amendement1.events[0].data["new_value"] == "irrecevable"
         assert amendement1.events[0].render_summary() == (
             "L’amendement a été déclaré irrecevable par les services "
-            "de l’Asssemblée nationale"
+            "de l’Asssemblée nationale."
         )
 
     @responses.activate
@@ -656,7 +656,7 @@ class TestFetchAmendementAgain:
         assert transfer_event.data["old_value"] == "David (david@example.com)"
         assert transfer_event.data["new_value"] == ""
         assert transfer_event.render_summary() == (
-            "L’amendement a été remis automatiquement sur l’index"
+            "L’amendement a été remis automatiquement sur l’index."
         )
 
         # And the amendement is now on the index

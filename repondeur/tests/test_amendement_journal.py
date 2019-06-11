@@ -36,7 +36,7 @@ def test_amendement_journal_avis(app, lecture_an, amendements_an, user_david):
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
     )
-    assert first_description_text(resp) == "David a mis l’avis à « Favorable »"
+    assert first_description_text(resp) == "David a mis l’avis à « Favorable »."
 
 
 def test_amendement_journal_avis_with_existing_avis(
@@ -66,7 +66,7 @@ def test_amendement_journal_avis_with_existing_avis(
     )
     assert (
         first_description_text(resp)
-        == "David a modifié l’avis de « Favorable » à « Défavorable »"
+        == "David a modifié l’avis de « Favorable » à « Défavorable »."
     )
 
 
@@ -84,7 +84,7 @@ def test_amendement_journal_objet(app, lecture_an, amendements_an, user_david):
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
     )
-    assert first_summary_text(resp) == "David a ajouté l’objet"
+    assert first_summary_text(resp) == "David a ajouté l’objet."
     assert first_details_text(resp) == "Objet"
 
 
@@ -105,7 +105,7 @@ def test_amendement_journal_reponse(app, lecture_an, amendements_an, user_david)
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
     )
-    assert first_summary_text(resp) == "David a ajouté la réponse"
+    assert first_summary_text(resp) == "David a ajouté la réponse."
     assert first_details_text(resp) == "Réponse"
 
 
@@ -126,7 +126,7 @@ def test_amendement_journal_comments(app, lecture_an, amendements_an, user_david
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
     )
-    assert first_summary_text(resp) == "David a ajouté des commentaires"
+    assert first_summary_text(resp) == "David a ajouté des commentaires."
     assert first_details_text(resp) == "Un commentaire"
 
 
@@ -156,7 +156,7 @@ def test_amendement_journal_affectation(
     )
     assert (
         first_description_text(resp)
-        == "David a transféré l’amendement à « Ronan (ronan@example.com) »"
+        == "David a transféré l’amendement à « Ronan (ronan@example.com) »."
     )
 
 
@@ -187,7 +187,7 @@ def test_amendement_journal_affectation_by_other(
     )
     assert first_description_text(resp) == (
         "David a transféré l’amendement de "
-        "« Ronan (ronan@example.com) » à « Daniel (daniel@example.com) »"
+        "« Ronan (ronan@example.com) » à « Daniel (daniel@example.com) »."
     )
 
 
@@ -213,7 +213,7 @@ def test_amendement_journal_affectation_taken(
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
     )
-    assert first_description_text(resp) == "David a mis l’amendement sur sa table"
+    assert first_description_text(resp) == "David a mis l’amendement sur sa table."
 
 
 def test_amendement_journal_affectation_taken_by_other(
@@ -240,7 +240,7 @@ def test_amendement_journal_affectation_taken_by_other(
     )
     assert (
         first_description_text(resp)
-        == "Ronan a mis l’amendement sur la table de « David (david@example.com) »"
+        == "Ronan a mis l’amendement sur la table de « David (david@example.com) »."
     )
 
 
@@ -266,7 +266,7 @@ def test_amendement_journal_affectation_released(
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
     )
-    assert first_description_text(resp) == "David a remis l’amendement dans l’index"
+    assert first_description_text(resp) == "David a remis l’amendement dans l’index."
 
 
 def test_amendement_journal_affectation_released_by_other(
@@ -293,5 +293,5 @@ def test_amendement_journal_affectation_released_by_other(
     )
     assert (
         first_description_text(resp)
-        == "Ronan a remis l’amendement de « David (david@example.com) » dans l’index"
+        == "Ronan a remis l’amendement de « David (david@example.com) » dans l’index."
     )

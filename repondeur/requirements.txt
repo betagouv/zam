@@ -61,7 +61,7 @@ pytz==2019.1
 redis==3.2.1
 regex==2019.06.05            # dateparser
 requests==2.20.1            # lawfactory_utils, legipy: < 2.21, >= 2.20
-rollbar==0.14.6
+rollbar==0.14.7
 selectolax==0.1.13
 six==1.11.0                 # legipy: < 1.12, >= 1.11
 slugify==0.0.1              # anpy: < 0.1, >= 0.0

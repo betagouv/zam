@@ -5,7 +5,7 @@
 -e git+https://github.com/regardscitoyens/the-law-factory-parser.git@dad1ccf46f9348a545b1325bcc129561b69f4dbd#egg=tlfp
 alembic==1.0.10
 asn1crypto==0.24.0          # cryptography: >= 0.21.0
-attrs==17.4.0               # anpy: < 17.5, >= 17.4
+attrs==19.1.0               # anpy: < 17.5, >= 17.4
 beautifulsoup4==4.6.3       # lawfactory_utils, legipy: < 4.7, >= 4.6
 bleach==3.1.0
 CacheControl==0.12.5

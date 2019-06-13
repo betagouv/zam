@@ -1,4 +1,8 @@
+import pytest
 import transaction
+
+
+pytestmark = pytest.mark.flaky(max_runs=5)
 
 
 def test_transfer_amendements_switch_color_on_check_from_inactive_user(

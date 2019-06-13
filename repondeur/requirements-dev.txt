@@ -14,7 +14,7 @@ flaky==3.5.3
 freezegun==0.3.12
 gitdb2==2.0.5
 GitPython==2.1.11
-hypothesis==4.24.1
+hypothesis==4.24.3
 importlib-metadata==0.18
 ipdb==0.12
 ipython==7.5.0

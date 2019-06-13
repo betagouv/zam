@@ -180,6 +180,43 @@
 </style>
 {% endblock %}
 
+{% macro avis(amendement) %}
+    {% if is_owner %}
+        {% if amendement.user_content.avis %}
+            <p>
+                {{ avis_icon(amendement) }}
+                {{ amendement.user_content.avis }}
+            </p>
+        {% endif %}
+    {% else %}
+        {{ amendement.user_content.avis or "Aucun" }}
+    {% endif %}
+{% endmacro %}
+
+{% macro avis_icon(amendement) %}
+    {% if amendement.user_content.favorable %}
+        {% set icon_class = "favorable" %}
+    {% elif amendement.user_content.sagesse %}
+        {% set icon_class = "sagesse" %}
+    {% else %}
+        {% set icon_class = "defavorable" %}
+    {% endif %}
+    {{ macros.svg_icon("edit", icon_class) }}
+{% endmacro %}
+
+{% macro edit_button(amendement) %}
+    {% if is_owner %}
+        {% set edit_url = request.resource_url(
+            context.lecture_resource['amendements'][amendement.num_str], 'amendement_edit'
+        ) %}
+        {% if amendement.user_content.avis %}
+            <a class="primary button" href="{{ edit_url }}">Traiter</a>
+        {% else %}
+            <a class="primary button enabled" href="{{ edit_url }}">Traiter</a>
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
 {% block body %}
     <svg aria-hidden="true" style="position: absolute; width: 0; height: 0;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <defs>
@@ -358,27 +395,8 @@
                                         </div>
                                     </div>
                                     <div class="avis">
-                                        {% if is_owner %}
-                                            {% set edit_url = request.resource_url(context.lecture_resource['amendements'][amendement.num_str], 'amendement_edit') %}
-                                            {% if amendement.user_content.avis %}
-                                                {% if amendement.user_content.favorable %}
-                                                    {% set icon_class = "favorable" %}
-                                                {% elif amendement.user_content.sagesse %}
-                                                    {% set icon_class = "sagesse" %}
-                                                {% else %}
-                                                    {% set icon_class = "defavorable" %}
-                                                {% endif %}
-                                                <p>
-                                                    {{ macros.svg_icon("edit", icon_class) }}
-                                                    {{ amendement.user_content.avis }}
-                                                </p>
-                                                <a class="button primary" href="{{ edit_url }}">Traiter</a>
-                                            {% else %}
-                                                <a class="primary button enabled" href="{{ edit_url }}">Traiter</a>
-                                            {% endif %}
-                                        {% else %}
-                                            {{ amendement.user_content.avis or "Aucun" }}
-                                        {% endif %}
+                                        {{ avis(amendement) }}
+                                        {{ edit_button(amendement) }}
                                     </div>
                                 </div>
                             </div>

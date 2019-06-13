@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-{% import "macros.html" as macros %}
+{% import "macros.html" as macros with context %}
 
 {% block title %}
     {{ lecture }} • {{ lecture.texte.titre_court }} • Zam
@@ -118,7 +118,7 @@
                     <li>
                         <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked>
                         <label for="amendement-{{ amendement.num }}">
-                            Nº&nbsp;<a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>
+                            {{ macros.numero_amendement(amendement) }}
                         </label>
                     </li>
                 {% endfor %}

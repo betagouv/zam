@@ -200,6 +200,7 @@ def test_get_amendement_edit_form_gouvernemental(
     assert resp.content_type == "text/html"
     assert resp.forms["edit-amendement"].method == "POST"
     assert list(resp.forms["edit-amendement"].fields.keys()) == [
+        "avis",
         "objet",
         "reponse",
         "comments",

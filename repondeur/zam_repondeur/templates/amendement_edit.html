@@ -346,6 +346,8 @@
                 {% endfor %}
             </select>
         </div>
+        {% else %}
+        <input type="hidden" name="avis" value="{{ amendement.user_content.avis or '' }}">
         {% endif %}
 
         <div class="form-group">

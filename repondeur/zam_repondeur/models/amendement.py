@@ -225,6 +225,17 @@ class AmendementUserContent(Base):
             )
         return reponse
 
+    def similaire(self, other: "AmendementUserContent") -> bool:
+        """
+        Same answer (with maybe some markup differences)
+        """
+        return (
+            self.avis == other.avis
+            and do_striptags(self.objet) == do_striptags(other.objet)  # type: ignore
+            and do_striptags(self.reponse)  # type: ignore
+            == do_striptags(other.reponse)  # type: ignore
+        )
+
 
 class Amendement(Base):
     VERY_BIG_NUMBER = 999_999_999
@@ -285,7 +296,7 @@ class Amendement(Base):
     batch_pk: int = Column(Integer, ForeignKey("batches.pk"), nullable=True)
     batch: Optional[Batch] = relationship(Batch, back_populates="_amendements")
 
-    user_content = relationship(
+    user_content: AmendementUserContent = relationship(  # technically it's Optional
         AmendementUserContent,
         back_populates="amendement",
         uselist=False,
@@ -542,12 +553,14 @@ class Amendement(Base):
             amendement
             for amendement in self.article.amendements
             if (
-                amendement.user_content.full_reponse()
-                == self.user_content.full_reponse()
+                amendement.reponse_similaire(self)
                 and amendement.num != self.num
                 and amendement.is_displayable
             )
         )
+
+    def reponse_similaire(self, other: "Amendement") -> bool:
+        return self.user_content.similaire(other.user_content)
 
     @property
     def displayable_identiques_are_similaires(self) -> bool:

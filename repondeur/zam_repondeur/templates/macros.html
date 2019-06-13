@@ -99,16 +99,16 @@
 {% macro numero_amendement(amendement) %}
     {% if amendement.batch %}
         N<sup>os</sup>&nbsp;
-        {% for amdt in amendement.batch.amendements[:-1] %}
+        {%- for amdt in amendement.batch.amendements[:-1] -%}
             {{ link_amendement(amdt) }}
             {%- if not loop.last %}, {% endif %}
-        {% endfor %}
+        {%- endfor %}
         et {{ link_amendement(amendement.batch.amendements[-1]) }}
     {% else %}
         Nº&nbsp;{{ link_amendement(amendement) }}
     {% endif %}
 {% endmacro %}
 
-{% macro link_amendement(amendement) %}
+{% macro link_amendement(amendement) -%}
     <a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>
-{% endmacro %}
+{%- endmacro %}

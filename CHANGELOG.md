@@ -1,6 +1,6 @@
 ### Perspectives
 
-<p class="notice">Date de prochaine démonstration : ATTENTION ATYPIQUE jeudi 6 juin 2019, 14h, Babylone.</p>
+<p class="notice">Date de prochaine démonstration : mercredi 19 juin 2019, 15h, Babylone.</p>
 
 #### Rappel des objectifs prioritaires des développements 2019
 
@@ -15,12 +15,13 @@
 - projet de loi pour une école de la confiance (SG - ministère de l’éducation nationale)
 - projet de loi relatif à l’organisation et la transformation du système de santé (DGOS - ministère des solidarités et de la santé)
 - proposition de loi relative au droit de résiliation sans frais de contrats de complémentaire santé (DSS - ministère des solidarités et de la santé)
-- projet de loi portant sur la création d’une taxe sur les services numériques et modification de la trajectoire de baisse de l’impôt sur les sociétés (DLF - ministère de l’action et des comptes publics)
-- projet de loi de transformation de la fonction publique (DGAFP - ministère de l’action et des comptes publics)
+- projet de loi portant sur la création d’une taxe sur les services numériques et modification de la trajectoire de baisse de l’impôt sur les sociétés (DLF - Bercy)
+- projet de loi de transformation de la fonction publique (DGAFP - Bercy)
+- proposition de loi visant à lutter contre la haine sur Internet (DGE - Bercy)
 
 ##### Semestre 2
 
-- PLF pour 2020 (DLF - ministère de l’action et des comptes publics)
+- PLF pour 2020 (DLF - Bercy)
 - PLFSS pour 2020 (DSS - ministère des solidarités et de la santé)
 
 ### Changements récents

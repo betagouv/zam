@@ -1,7 +1,6 @@
 import re
 from datetime import date, datetime
 from typing import (
-    Any,
     Dict,
     Iterable,
     List,
@@ -126,13 +125,26 @@ class Reponse(NamedTuple):
     content: str
     comments: str
 
-    def __eq__(self, other: Any) -> bool:
-        return bool(
-            self.avis == other.avis
-            and do_striptags(self.objet)  # type: ignore
-            == do_striptags(other.objet)  # type: ignore
-            and do_striptags(self.content)  # type: ignore
-            == do_striptags(other.content)  # type: ignore
+    @classmethod
+    def from_amendement(cls, amendement: "Amendement") -> "Reponse":
+        user_content = amendement.user_content
+        return cls(
+            avis=user_content.avis or "",
+            objet=(
+                do_striptags(user_content.objet)  # type: ignore
+                if user_content.objet
+                else ""
+            ),
+            content=(
+                do_striptags(user_content.reponse)  # type: ignore
+                if user_content.reponse
+                else ""
+            ),
+            comments=(
+                do_striptags(user_content.comments)  # type: ignore
+                if user_content.comments
+                else ""
+            ),
         )
 
     @property

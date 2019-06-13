@@ -25,6 +25,7 @@ from zam_repondeur.models import (
     User,
     get_one_or_create,
 )
+from zam_repondeur.models.amendement import Reponse
 from zam_repondeur.models.events.lecture import ArticlesRecuperes, LectureCreee
 from zam_repondeur.models.events.amendement import (
     AvisAmendementModifie,
@@ -338,21 +339,21 @@ class BatchAmendements:
             return HTTPFound(location=self.my_table_url)
 
         batch = Batch.create()
-        shared_reponse = None
-        to_be_updated = []
+        shared_reponse: Optional[Reponse] = None
+        to_be_updated: List[Amendement] = []
         for amendement in amendements:
             if amendement.batch:
                 BatchUnset.create(self.request, amendement)
             BatchSet.create(
                 self.request, amendement, batch, amendements_nums=amendements_nums
             )
-            reponse = amendement.full_reponse(with_comments=True)
+            reponse = Reponse.from_amendement(amendement)
             if not reponse.is_empty:
                 shared_reponse = reponse
             else:
                 to_be_updated.append(amendement)
 
-        if shared_reponse and to_be_updated:
+        if shared_reponse is not None and to_be_updated:
             for amendement in to_be_updated:
                 if (amendement.user_content.avis or "") != shared_reponse.avis:
                     AvisAmendementModifie.create(
@@ -408,17 +409,10 @@ class BatchAmendements:
     def check_amendements_have_all_same_reponse_or_empty(
         self, amendements: List[Amendement]
     ) -> None:
-        have_all_same_reponse_or_empty = (
-            len(
-                set(
-                    amendement.full_reponse(with_comments=True)
-                    for amendement in amendements
-                    if not amendement.full_reponse(with_comments=True).is_empty
-                )
-            )
-            <= 1  # Same reponse (1) or empty (0).
-        )
-        if have_all_same_reponse_or_empty:
+        reponses = (Reponse.from_amendement(amendement) for amendement in amendements)
+        non_empty_reponses = (reponse for reponse in reponses if not reponse.is_empty)
+
+        if len(set(non_empty_reponses)) <= 1:  # all the same (1) or all empty (0)
             return
 
         message = (

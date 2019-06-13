@@ -150,10 +150,12 @@
                         {% endif %}
                     {% endfor %}
                 </p>
+                {% if is_on_my_table %}
                 <form method="post" action="{{ request.resource_url(context.lecture_resource, 'batch_amendements') }}">
                     <input type="hidden" name="nums" value="{{ amendement.num }}">
                     <input type="submit" class="button" value="Retirer du lot">
                 </form>
+                {% endif %}
             </div>
         {% endif %}
         <p>

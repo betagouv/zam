@@ -45,7 +45,6 @@ PyYAML==5.1.1
 repoze.lru==0.7
 responses==0.10.6
 selenium==3.141.0
-simplegeneric==0.8.1
 smmap2==2.0.5
 soupsieve==1.9.1
 stevedore==1.30.1

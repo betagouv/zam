@@ -181,15 +181,17 @@
 {% endblock %}
 
 {% macro avis(amendement) %}
-    {% if is_owner %}
-        {% if amendement.user_content.avis %}
-            <p>
-                {{ avis_icon(amendement) }}
-                {{ amendement.user_content.avis }}
-            </p>
+    {% if not amendement.gouvernemental %}
+        {% if is_owner %}
+            {% if amendement.user_content.avis %}
+                <p>
+                    {{ avis_icon(amendement) }}
+                    {{ amendement.user_content.avis }}
+                </p>
+            {% endif %}
+        {% else %}
+            {{ amendement.user_content.avis or "Aucun" }}
         {% endif %}
-    {% else %}
-        {{ amendement.user_content.avis or "Aucun" }}
     {% endif %}
 {% endmacro %}
 

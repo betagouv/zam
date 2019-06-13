@@ -203,7 +203,7 @@
                             Identique au{% if identiques_length > 1 %}x{% endif %} nº
                             {% for identique in identiques -%}
                                 <a href="{{ request.resource_url(context.parent[identique.num_str], 'amendement_edit') }}">{{ identique }}</a>
-                                {% if identique.user_content.full_reponse() != amendement.user_content.full_reponse() %}
+                                {% if not identique.reponse_similaire(amendement) %}
                                     <span title="Cet amendement identique n’a pas une réponse similaire">⚠️</span>
                                 {% endif %}
                                 {% if loop.revindex == 2 and identiques_length > 1 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}

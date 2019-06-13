@@ -57,6 +57,9 @@ def deduplicate(items: Iterable[Optional[str]]) -> Set[str]:
     return set(filter(None, items))
 
 
+GroupingKey = Tuple[str, str, str, str]
+
+
 class Batch(Base):
     __tablename__ = "batches"
 
@@ -540,7 +543,7 @@ class Amendement(Base):
 
     def grouped_displayable_children(
         self
-    ) -> Iterable[Tuple[Reponse, List["Amendement"]]]:
+    ) -> Iterable[Tuple[GroupingKey, List["Amendement"]]]:
         return self.article.group_amendements(
             amdt for amdt in self.children if amdt.is_displayable
         )

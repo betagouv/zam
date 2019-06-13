@@ -3,6 +3,7 @@ from datetime import datetime
 from itertools import groupby
 from typing import Iterable, List, Optional, Tuple, TYPE_CHECKING
 
+from jinja2.filters import do_striptags
 from sqlalchemy import (
     Column,
     DateTime,
@@ -18,7 +19,7 @@ from sqlalchemy.orm import relationship, validates
 from zam_repondeur.decorator import reify
 
 from .base import Base, DBSession
-from .amendement import Amendement, Reponse
+from .amendement import Amendement, GroupingKey
 from .division import ADJECTIFS_MULTIPLICATIFS, SubDiv
 
 # Make this type available to mypy, but avoid circular imports
@@ -292,14 +293,14 @@ class Article(Base):
 
     def grouped_displayable_amendements(
         self
-    ) -> Iterable[Tuple[Reponse, List[Amendement]]]:
+    ) -> Iterable[Tuple[GroupingKey, List[Amendement]]]:
         return self.group_amendements(
             amdt for amdt in self.amendements if amdt.is_displayable
         )
 
     def grouped_displayable_top_level_amendements(
         self
-    ) -> Iterable[Tuple[Reponse, List[Amendement]]]:
+    ) -> Iterable[Tuple[GroupingKey, List[Amendement]]]:
         return self.group_amendements(
             amdt
             for amdt in self.amendements
@@ -308,10 +309,31 @@ class Article(Base):
 
     def group_amendements(
         self, amendements: Iterable[Amendement]
-    ) -> Iterable[Tuple[Reponse, List[Amendement]]]:
+    ) -> Iterable[Tuple[GroupingKey, List[Amendement]]]:
         return (
             (reponse, list(group))
-            for reponse, group in groupby(amendements, key=Amendement.full_reponse)
+            for reponse, group in groupby(amendements, key=self.grouping_key)
+        )
+
+    @staticmethod
+    def grouping_key(amendement: Amendement) -> GroupingKey:
+        """
+        Group successive amendements with the same answer (except maybe for tags),
+        but not gouvernementaux.
+        """
+        return (
+            amendement.num_str if amendement.gouvernemental else "",
+            amendement.user_content.avis or "",
+            (
+                do_striptags(amendement.user_content.objet)  # type: ignore
+                if amendement.user_content.objet
+                else ""
+            ),
+            (
+                do_striptags(amendement.user_content.reponse)  # type: ignore
+                if amendement.user_content.reponse
+                else ""
+            ),
         )
 
     def asdict(self) -> dict:

@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-{% import "macros.html" as macros %}
+{% import "macros.html" as macros with context %}
 
 {% block title %}
     {{ lecture }} • {{ lecture.texte.titre_court }} • Zam
@@ -101,23 +101,6 @@
     {% endif %}
 {% endblock %}
 
-{% macro numero_amendement(amendement) %}
-    {% if amendement.batch %}
-        N<sup>os</sup>&nbsp;
-        {% for amdt in amendement.batch.amendements[:-1] %}
-            {{ link_amendement(amdt) }}
-            {%- if not loop.last %}, {% endif %}
-        {% endfor %}
-        et {{ link_amendement(amendement.batch.amendements[-1]) }}
-    {% else %}
-        Nº&nbsp;{{ link_amendement(amendement) }}
-    {% endif %}
-{% endmacro %}
-
-{% macro link_amendement(amendement) %}
-    <a href="{{ request.resource_url(context['amendements'][amendement.num_str], 'amendement_edit') }}">{{ amendement }}</a>
-{% endmacro %}
-
 {% block body %}
     <nav class="back">
         <a href="{{ back_url }}" class="arrow-left">
@@ -137,7 +120,7 @@
         {% endif %}
         {% if from_save %}
             {% set amendement = amendements_with_table[0] %}
-            {{ numero_amendement(amendement) }}
+            {{ macros.numero_amendement(amendement) }}
         {% endif %}
     </h1>
     <form id="transfer-amendements"
@@ -165,7 +148,7 @@
                             <li>
                                 <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}"  data-action="transfers#check">
                                 <label for="amendement-{{ amendement.num }}">
-                                    {{ numero_amendement(amendement)}}
+                                    {{ macros.numero_amendement(amendement)}}
                                      —
                                     {% if amendement_user == request.user %}
                                         {% if amendement.batch %}
@@ -197,7 +180,7 @@
                             <li>
                                 <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked data-action="transfers#check">
                                 <label for="amendement-{{ amendement.num }}">
-                                    {{ numero_amendement(amendement)}}
+                                    {{ macros.numero_amendement(amendement)}}
                                      —
                                     {% if amendement_user == request.user %}
                                         {% if amendement.batch %}
@@ -229,7 +212,7 @@
                         <li>
                             <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked>
                             <label for="amendement-{{ amendement.num }}">
-                                {{ numero_amendement(amendement)}}
+                                {{ macros.numero_amendement(amendement)}}
                                  —
                                 {% if amendement.batch %}
                                     Ces amendements sont sur l’index

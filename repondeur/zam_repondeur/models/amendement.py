@@ -208,23 +208,6 @@ class AmendementUserContent(Base):
             return False
         return self.avis == "Sagesse" or self.avis == "Satisfait donc rejet"
 
-    def full_reponse(self, with_comments: bool = False) -> Reponse:
-        if self.amendement.gouvernemental:
-            reponse = Reponse(
-                self.amendement.num_str,
-                self.objet or "",
-                self.reponse or "",
-                (self.comments or "") if with_comments else "",
-            )
-        else:
-            reponse = Reponse(
-                self.avis or "",
-                self.objet or "",
-                self.reponse or "",
-                (self.comments or "") if with_comments else "",
-            )
-        return reponse
-
     def similaire(self, other: "AmendementUserContent") -> bool:
         """
         Same answer (with maybe some markup differences)
@@ -380,11 +363,6 @@ class Amendement(Base):
         if not isinstance(other, Amendement):
             return NotImplemented
         return self.sort_key < other.sort_key
-
-    def full_reponse(self, with_comments: bool = False) -> Reponse:
-        # Proxy to be able to use it as a sort key in `group_amendements`.
-        reponse: Reponse = self.user_content.full_reponse(with_comments=with_comments)
-        return reponse
 
     @property
     def sort_key(self) -> Tuple[bool, int, "Article", int]:

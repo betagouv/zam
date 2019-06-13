@@ -52,7 +52,7 @@ def test_lecture_get_batch_amendements(
     )
 
     assert resp.status_code == 200
-    assert "Nº 666" in resp.parser.css_first(".amendements li").text()
+    assert "Nº\xa0666" in resp.parser.css_first(".amendements li").text()
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
     assert resp.form.method == "POST"
@@ -697,22 +697,26 @@ def test_lecture_post_batch_reset_amendement(
         == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
     )
 
-    # Reload amendement as it was updated in another transaction.
-    amendement_666 = Amendement.get(lecture_an, amendements_an[0].num)
-    amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
-    amendement_777 = Amendement.get(lecture_an, amendement_777.num)
+    # Reload amendements as they were updated in another transaction.
+    amendement_666 = Amendement.get(lecture_an, 666)
+    amendement_999 = Amendement.get(lecture_an, 999)
+    amendement_777 = Amendement.get(lecture_an, 777)
 
-    # A new batch is created and 999 has no batch anymore.
+    # A new batch is created and 999 is also included.
     assert amendement_666.batch.pk == 2
-    assert not amendement_999.batch
+    assert amendement_999.batch.pk == 2
     assert amendement_777.batch.pk == 2
-    assert amendement_666.batch.amendements == [amendement_666, amendement_777]
+    assert amendement_666.batch.amendements == [
+        amendement_666,
+        amendement_999,
+        amendement_777,
+    ]
 
     # We should have events for all actions.
     assert len(amendement_666.events) == 3
     assert amendement_666.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a placé cet amendement dans un lot avec l’amendement 777."
+        "a placé cet amendement dans un lot avec les amendements 999 et 777."
     )
     assert amendement_666.events[1].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
@@ -722,17 +726,23 @@ def test_lecture_post_batch_reset_amendement(
         "<abbr title='david@example.com'>David</abbr> "
         "a placé cet amendement dans un lot avec l’amendement 999."
     )
-    assert len(amendement_999.events) == 2
+
+    assert len(amendement_999.events) == 3
     assert amendement_999.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a sorti cet amendement du lot dans lequel il était."
+        "a placé cet amendement dans un lot avec les amendements 666 et 777."
     )
     assert amendement_999.events[1].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
+        "a sorti cet amendement du lot dans lequel il était."
+    )
+    assert amendement_999.events[2].render_summary() == (
+        "<abbr title='david@example.com'>David</abbr> "
         "a placé cet amendement dans un lot avec l’amendement 666."
     )
+
     assert len(amendement_777.events) == 1
     assert amendement_777.events[0].render_summary() == (
         "<abbr title='david@example.com'>David</abbr> "
-        "a placé cet amendement dans un lot avec l’amendement 666."
+        "a placé cet amendement dans un lot avec les amendements 666 et 999."
     )

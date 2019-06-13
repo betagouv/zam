@@ -327,16 +327,19 @@ class BatchAmendements:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        amendements = self.get_amendements_from(self.request.POST)
+        # Special case: unbatch (TODO: move to a separate route)
+        if len(self.request.POST.getall("nums")) == 1:
+            amendement = self.get_amendements_from(self.request.POST)[0]
+            BatchUnset.create(self.request, amendement)
+            return HTTPFound(location=self.my_table_url)
+
+        amendements = list(
+            Batch.expanded_batches(self.get_amendements_from(self.request.POST))
+        )
 
         self.check_amendements_are_all_on_my_table(amendements)
         self.check_amendements_have_all_same_reponse_or_empty(amendements)
         self.check_amendements_are_all_from_same_article(amendements)
-
-        amendements_nums = self.request.POST.getall("nums")
-        if len(amendements_nums) == 1:
-            BatchUnset.create(self.request, amendements[0])
-            return HTTPFound(location=self.my_table_url)
 
         batch = Batch.create()
         shared_reponse: Optional[Reponse] = None
@@ -345,7 +348,10 @@ class BatchAmendements:
             if amendement.batch:
                 BatchUnset.create(self.request, amendement)
             BatchSet.create(
-                self.request, amendement, batch, amendements_nums=amendements_nums
+                self.request,
+                amendement,
+                batch,
+                amendements_nums=[amendement.num for amendement in amendements],
             )
             reponse = Reponse.from_amendement(amendement)
             if not reponse.is_empty:

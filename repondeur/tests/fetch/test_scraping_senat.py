@@ -307,22 +307,6 @@ def test_get_dossiers_senat(mock_scraping_senat):
                 ),
                 LectureRef(
                     chambre=ChambreRef.SENAT,
-                    titre="Commission mixte paritaire (désaccord) : Texte résultat des travaux de la commission le 3 avril 2019 – Commissions",  # noqa
-                    texte=TexteRef(
-                        uid="PPLSENAT2019X434",
-                        type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
-                        legislature=18,
-                        numero=434,
-                        titre_long="Texte résultat des travaux de la commission le 3 avril 2019",  # noqa
-                        titre_court="",
-                        date_depot=datetime.date(2019, 4, 3),
-                    ),
-                    organe="",
-                    partie=None,
-                ),
-                LectureRef(
-                    chambre=ChambreRef.SENAT,
                     titre="Nouvelle lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2019X518",
@@ -407,22 +391,6 @@ def test_get_dossiers_senat(mock_scraping_senat):
                         date_depot=datetime.date(2018, 11, 8),
                     ),
                     organe="",
-                    partie=None,
-                ),
-                LectureRef(
-                    chambre=ChambreRef.SENAT,
-                    titre="Commission mixte paritaire (accord) : Texte de la commission déposé le 3 avril 2019 – Séance publique",  # noqa
-                    texte=TexteRef(
-                        uid="PPLSENAT2019X432",
-                        type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
-                        legislature=18,
-                        numero=432,
-                        titre_long="Texte de la commission déposé le 3 avril 2019",
-                        titre_court="",
-                        date_depot=datetime.date(2019, 4, 3),
-                    ),
-                    organe="PO78718",
                     partie=None,
                 ),
             ],

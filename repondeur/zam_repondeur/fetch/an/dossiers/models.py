@@ -10,6 +10,7 @@ from zam_repondeur.models.texte import TypeTexte
 class ChambreRef(Enum):
     AN = "an"
     SENAT = "senat"
+    CMP = "cmp"
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}.{self.name}"
@@ -19,6 +20,8 @@ class ChambreRef(Enum):
             return "Assemblée nationale"
         if self.value == "senat":
             return "Sénat"
+        if self.value == "cmp":
+            return "Commission mixte paritaire"
         raise NotImplementedError
 
 

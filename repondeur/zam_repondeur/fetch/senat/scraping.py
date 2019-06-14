@@ -1,6 +1,7 @@
+import re
 from datetime import datetime, timedelta
 from http import HTTPStatus
-from typing import Dict, Set
+from typing import Dict, Optional, Set
 
 import requests
 from bs4 import BeautifulSoup, element
@@ -142,10 +143,12 @@ def create_texte(pid: str, entry: element.Tag) -> TexteRef:
 def guess_chambre(entry: element.Tag) -> ChambreRef:
     if entry.id.string.startswith(BASE_URL_SENAT):
         return ChambreRef.SENAT
-    elif entry.id.string.startswith(
-        "http://www.assemblee-nationale.fr"
-    ) or entry.id.string.startswith("http://www2.assemblee-nationale.fr"):
+
+    if re.search(r"^http://www2?\.assemblee-nationale\.fr", entry.id.string):
         return ChambreRef.AN
-    else:
-        # Fallback on Senat given sometimes URLs are relative.
-        return ChambreRef.SENAT
+
+    if entry.summary.string.startswith("Commission mixte paritaire"):
+        return ChambreRef.CMP
+
+    # Fallback on Senat given sometimes URLs are relative.
+    return ChambreRef.SENAT

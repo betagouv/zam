@@ -70,12 +70,9 @@ def create_dossier(pid: str, rss_url: str) -> DossierRef:
     # URLs in Senat's own feeds are actually redirections.
     senat_url = senat_url.replace("dossierleg", "dossier-legislatif")
     lectures = [
-        create_lecture(pid, entry)
-        for entry in soup.select("entry")
-        if (
-            entry.title.string.startswith("Texte ")
-            and guess_chambre(entry) == ChambreRef.SENAT
-        )
+        lecture
+        for lecture in (create_lecture(pid, entry) for entry in soup.select("entry"))
+        if lecture is not None
     ]
     dossier = DossierRef(
         uid=pid,
@@ -95,16 +92,27 @@ def download_rss(url: str) -> str:
     return resp.text
 
 
-def create_lecture(pid: str, entry: element.Tag) -> LectureRef:
-    num_lecture = entry.summary.string.split(" - ", 1)[0]
-    if entry.title.string.startswith("Texte de la commission"):
+def create_lecture(pid: str, entry: element.Tag) -> Optional[LectureRef]:
+    title = entry.title.string
+    if not title.startswith("Texte "):
+        return None
+
+    chambre = guess_chambre(entry)
+    if chambre != ChambreRef.SENAT:
+        return None
+
+    summary = entry.summary.string
+    if re.search(r"Texte (adopté|modifié) par le Sénat", summary):
+        return None
+
+    num_lecture = summary.split(" - ", 1)[0]
+    if title.startswith("Texte de la commission"):
         examen = "Séance publique"
         organe = "PO78718"
     else:
         examen = "Commissions"
         organe = ""  # TODO: PO211495 is not a sane default.
     titre = f"{num_lecture} – {examen}"
-    chambre = guess_chambre(entry)
     texte = create_texte(pid, entry)
     return LectureRef(chambre=chambre, titre=titre, organe=organe, texte=texte)
 

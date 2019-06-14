@@ -1,12 +1,8 @@
 import datetime
 from operator import attrgetter
-from pathlib import Path
-
-import responses
 
 
-@responses.activate
-def test_get_dossiers_senat():
+def test_get_dossiers_senat(mock_scraping_senat):
     from zam_repondeur.fetch.an.dossiers.models import (
         ChambreRef,
         DossierRef,
@@ -16,7 +12,9 @@ def test_get_dossiers_senat():
     )
     from zam_repondeur.fetch.senat.scraping import get_dossiers_senat
 
-    pids = {
+    dossiers = get_dossiers_senat()
+
+    assert set(dossiers.keys()) == {
         "ppl18-462",
         "ppl18-260",
         "ppl18-385",
@@ -34,26 +32,7 @@ def test_get_dossiers_senat():
         "ppl17-699",
         "ppl18-436",
     }
-    responses.add(
-        responses.GET,
-        f"http://www.senat.fr/dossiers-legislatifs/textes-recents.html",
-        body=(
-            Path(__file__).parent / "sample_data" / "senat" / "textes-recents.html"
-        ).read_text("utf-8", "ignore"),
-        status=200,
-    )
-    for pid in pids:
-        responses.add(
-            responses.GET,
-            f"http://www.senat.fr/dossier-legislatif/rss/dosleg{pid}.xml",
-            body=(Path(__file__).parent / "sample_data" / "senat" / f"dosleg{pid}.xml")
-            .read_text("utf-8")
-            .encode("latin-1"),
-            status=200,
-        )
 
-    dossiers = get_dossiers_senat()
-    assert set(dossiers.keys()) == pids
     dossiers_values = sorted(dossiers.values(), key=attrgetter("uid"))
     assert dossiers_values == [
         DossierRef(
@@ -94,6 +73,22 @@ def test_get_dossiers_senat():
                     organe="PO78718",
                     partie=None,
                 ),
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Commissions",
+                    texte=TexteRef(
+                        uid="PJLSENAT2019X109",
+                        type_=TypeTexte.PROJET,
+                        chambre=ChambreRef.SENAT,
+                        legislature=18,
+                        numero=109,
+                        titre_long="Texte modifié par le Sénat le 11 juin 2019",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 6, 11),
+                    ),
+                    organe="",
+                    partie=None,
+                ),
             ],
         ),
         DossierRef(
@@ -117,7 +112,23 @@ def test_get_dossiers_senat():
                     ),
                     organe="",
                     partie=None,
-                )
+                ),
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="PJLSENAT2019X565",
+                        type_=TypeTexte.PROJET,
+                        chambre=ChambreRef.SENAT,
+                        legislature=18,
+                        numero=565,
+                        titre_long="Texte de la commission déposé le 12 juin 2019",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 6, 12),
+                    ),
+                    organe="PO78718",
+                    partie=None,
+                ),
             ],
         ),
         DossierRef(
@@ -141,7 +152,23 @@ def test_get_dossiers_senat():
                     ),
                     organe="",
                     partie=None,
-                )
+                ),
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="PJLSENAT2019X567",
+                        type_=TypeTexte.PROJET,
+                        chambre=ChambreRef.SENAT,
+                        legislature=18,
+                        numero=567,
+                        titre_long="Texte de la commission déposé le 12 juin 2019",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 6, 12),
+                    ),
+                    organe="PO78718",
+                    partie=None,
+                ),
             ],
         ),
         DossierRef(
@@ -165,7 +192,23 @@ def test_get_dossiers_senat():
                     ),
                     organe="",
                     partie=None,
-                )
+                ),
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="PJLSENAT2019X571",
+                        type_=TypeTexte.PROJET,
+                        chambre=ChambreRef.SENAT,
+                        legislature=18,
+                        numero=571,
+                        titre_long="Texte de la commission déposé le 12 juin 2019",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 6, 12),
+                    ),
+                    organe="PO78718",
+                    partie=None,
+                ),
             ],
         ),
         DossierRef(
@@ -189,7 +232,23 @@ def test_get_dossiers_senat():
                     ),
                     organe="",
                     partie=None,
-                )
+                ),
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="PPLSENAT2019X547",
+                        type_=TypeTexte.PROPOSITION,
+                        chambre=ChambreRef.SENAT,
+                        legislature=17,
+                        numero=547,
+                        titre_long="Texte de la commission déposé le 5 juin 2019",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 6, 5),
+                    ),
+                    organe="PO78718",
+                    partie=None,
+                ),
             ],
         ),
         DossierRef(
@@ -271,11 +330,27 @@ def test_get_dossiers_senat():
                         chambre=ChambreRef.SENAT,
                         legislature=18,
                         numero=518,
-                        titre_long="Texte transmis au Sénat le 21 mai 2019",  # noqa
+                        titre_long="Texte transmis au Sénat le 21 mai 2019",
                         titre_court="",
                         date_depot=datetime.date(2019, 5, 21),
                     ),
                     organe="",
+                    partie=None,
+                ),
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Nouvelle lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="PPLSENAT2019X562",
+                        type_=TypeTexte.PROPOSITION,
+                        chambre=ChambreRef.SENAT,
+                        legislature=18,
+                        numero=562,
+                        titre_long="Texte de la commission déposé le 12 juin 2019",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 6, 12),
+                    ),
+                    organe="PO78718",
                     partie=None,
                 ),
             ],
@@ -653,7 +728,39 @@ def test_get_dossiers_senat():
                     ),
                     organe="",
                     partie=None,
-                )
+                ),
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="PPLSENAT2019X552",
+                        type_=TypeTexte.PROPOSITION,
+                        chambre=ChambreRef.SENAT,
+                        legislature=18,
+                        numero=552,
+                        titre_long="Texte de la commission déposé le 5 juin 2019",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 6, 5),
+                    ),
+                    organe="PO78718",
+                    partie=None,
+                ),
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Commissions",
+                    texte=TexteRef(
+                        uid="PPLSENAT2019X108",
+                        type_=TypeTexte.PROPOSITION,
+                        chambre=ChambreRef.SENAT,
+                        legislature=18,
+                        numero=108,
+                        titre_long="Texte adopté par le Sénat le 11 juin 2019",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 6, 11),
+                    ),
+                    organe="",
+                    partie=None,
+                ),
             ],
         ),
         DossierRef(
@@ -677,7 +784,23 @@ def test_get_dossiers_senat():
                     ),
                     organe="",
                     partie=None,
-                )
+                ),
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="PPRSENAT2019X550",
+                        type_=TypeTexte.PROPOSITION,
+                        chambre=ChambreRef.SENAT,
+                        legislature=18,
+                        numero=550,
+                        titre_long="Texte de la commission déposé le 5 juin 2019",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 6, 5),
+                    ),
+                    organe="PO78718",
+                    partie=None,
+                ),
             ],
         ),
     ]
@@ -736,7 +859,6 @@ def test_convert_to_rss_urls():
     }
 
 
-@responses.activate
 def test_create_dossier():
     from zam_repondeur.fetch.an.dossiers.models import (
         ChambreRef,
@@ -747,14 +869,6 @@ def test_create_dossier():
     )
     from zam_repondeur.fetch.senat.scraping import create_dossier
 
-    responses.add(
-        responses.GET,
-        "http://www.senat.fr/dossier-legislatif/rss/doslegpjl18-404.xml",
-        body=(Path(__file__).parent / "sample_data" / "senat" / "doslegpjl18-404.xml")
-        .read_text("utf-8")
-        .encode("latin-1"),
-        status=200,
-    )
     assert create_dossier(
         "pjl18-404", "/dossier-legislatif/rss/doslegpjl18-404.xml"
     ) == DossierRef(
@@ -793,6 +907,22 @@ def test_create_dossier():
                     date_depot=datetime.date(2019, 5, 22),
                 ),
                 organe="PO78718",  # séance publique
+                partie=None,
+            ),
+            LectureRef(
+                chambre=ChambreRef.SENAT,
+                titre="Première lecture – Commissions",
+                texte=TexteRef(
+                    uid="PJLSENAT2019X109",
+                    type_=TypeTexte.PROJET,
+                    chambre=ChambreRef.SENAT,
+                    legislature=18,
+                    numero=109,
+                    titre_long="Texte modifié par le Sénat le 11 juin 2019",
+                    titre_court="",
+                    date_depot=datetime.date(2019, 6, 11),
+                ),
+                organe="",
                 partie=None,
             ),
         ],

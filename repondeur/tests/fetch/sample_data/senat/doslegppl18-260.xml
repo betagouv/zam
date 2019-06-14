@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 <feed xmlns="http://www.w3.org/2005/Atom" version="0.3" xml:lang="fr-FR">
-<title>SÃ©nat - AccÃšs Ã  l'Ã©nergie et lutte contre la prÃ©caritÃ© Ã©nergÃ©tique</title>
-<subtitle>proposition de loi visant Ã  instaurer un droit effectif Ã  l'accÃšs Ã  l'Ã©nergie et Ã  lutter contre la prÃ©caritÃ© Ã©nergÃ©tique ( en cours de discussion ) </subtitle>
+<title>Sénat - Accès à l'énergie et lutte contre la précarité énergétique</title>
+<subtitle>proposition de loi visant à instaurer un droit effectif à l'accès à l'énergie et à lutter contre la précarité énergétique ( en cours de discussion ) </subtitle>
 <link href="http://www.senat.fr/rss/syndication.html"/>
-<updated>2019-05-28T22:00:00Z</updated>
-<modified>2019-05-28T22:00:00Z</modified>
+<updated>2019-06-06T07:08:47Z</updated>
+<modified>2019-06-06T07:08:47Z</modified>
 <author>
-<name>SÃ©nat franÃ§ais</name>
+<name>Sénat français</name>
 <email>sitn@senat.fr</email>
 <uri>http://www.senat.fr/</uri>
 </author>
 <icon>http://www.senat.fr/images/logoniv1.gif</icon>
 <id>http://www.senat.fr/dossierleg/ppl18-260.html</id>
 <entry>
-<title>Texte nÂ° 538</title>
+<title>Amendements déposés sur le texte n°260</title>
+<link href="http://www.senat.fr/amendements/2018-2019/260/accueil.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/amendements/2018-2019/260/accueil.html</id>
+<updated>2019-06-06T07:08:47Z</updated>
+<modified>2019-06-06T07:08:47Z</modified>
+<published>2019-06-06T07:08:47Z</published>
+<issued>2019-06-06T07:08:47Z</issued>
+<created>2019-06-06T07:08:47Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Amendements déposés sur le texte n°260</summary>
+</entry>
+<entry>
+<title>Texte n° 538</title>
 <link href="http://www.senat.fr/leg/ppl18-538.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/leg/ppl18-538.html</id>
 <updated>2019-05-28T22:00:00Z</updated>
@@ -22,10 +34,10 @@
 <issued>2019-05-28T22:00:00Z</issued>
 <created>2019-05-28T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Texte rÃ©sultat des travaux de la commission le 29 mai 2019</summary>
+<summary>Première lecture - Sénat : Texte résultat des travaux de la commission le 29 mai 2019</summary>
 </entry>
 <entry>
-<title>Rapport nÂ° 537</title>
+<title>Rapport n° 537</title>
 <link href="http://www.senat.fr/rap/l18-537/l18-537.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/rap/l18-537/l18-537.html</id>
 <updated>2019-05-28T22:00:00Z</updated>
@@ -34,10 +46,10 @@
 <issued>2019-05-28T22:00:00Z</issued>
 <created>2019-05-28T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Rapport de Mme Denise SAINT-PÃ, fait au nom de la commission des affaires Ã©conomiques (29 mai 2019)</summary>
+<summary>Première lecture - Sénat : Rapport de Mme Denise SAINT-PÉ, fait au nom de la commission des affaires économiques (29 mai 2019)</summary>
 </entry>
 <entry>
-<title>Comptes rendus des rÃ©unions de la commission des affaires Ã©conomiques</title>
+<title>Comptes rendus des réunions de la commission des affaires économiques</title>
 <link href="http://www.senat.fr/doslegcom/ppl18-260_com.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/doslegcom/ppl18-260_com.html</id>
 <updated>2019-05-28T22:00:00Z</updated>
@@ -46,22 +58,10 @@
 <issued>2019-05-28T22:00:00Z</issued>
 <created>2019-05-28T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Comptes rendus des rÃ©unions de la commission des affaires Ã©conomiques</summary>
+<summary>Première lecture - Sénat : Comptes rendus des réunions de la commission des affaires économiques</summary>
 </entry>
 <entry>
-<title>Inscription Ã  l'ordre du jour du 12 juin 2019</title>
-<link href="http://www.senat.fr/dossierleg/ppl18-260.html"  rel="alternate" type="text/html"/>
-<id>http://www.senat.fr/dossierleg/ppl18-260.html</id>
-<updated>2019-05-15T08:40:06Z</updated>
-<modified>2019-05-15T08:40:06Z</modified>
-<published>2019-05-15T08:40:06Z</published>
-<issued>2019-05-15T08:40:06Z</issued>
-<created>2019-05-15T08:40:06Z</created>
-<category term=""/>
-<summary>Inscription Ã  l'ordre du jour du 12 juin 2019</summary>
-</entry>
-<entry>
-<title>Texte nÂ° 260</title>
+<title>Texte n° 260</title>
 <link href="http://www.senat.fr/leg/ppl18-260.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/leg/ppl18-260.html</id>
 <updated>2019-01-21T23:00:00Z</updated>
@@ -70,6 +70,6 @@
 <issued>2019-01-21T23:00:00Z</issued>
 <created>2019-01-21T23:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Texte de M. Fabien GAY, Mme Ãliane ASSASSI et plusieurs de leurs collÃšgues,  dÃ©posÃ© au SÃ©nat le 22 janvier 2019</summary>
+<summary>Première lecture - Sénat : Texte de M. Fabien GAY, Mme Éliane ASSASSI et plusieurs de leurs collègues,  déposé au Sénat le 22 janvier 2019</summary>
 </entry>
 </feed>

@@ -1,43 +1,103 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 <feed xmlns="http://www.w3.org/2005/Atom" version="0.3" xml:lang="fr-FR">
-<title>SÃ©nat - Instituer un mÃ©diateur territorial dans certaines collectivitÃ©s</title>
-<subtitle>proposition de loi visant Ã  instituer un mÃ©diateur territorial dans certaines collectivitÃ©s territoriales ( en cours de discussion ) </subtitle>
+<title>Sénat - Instituer un médiateur territorial dans certaines collectivités</title>
+<subtitle>proposition de loi visant à instituer un médiateur territorial dans certaines collectivités territoriales ( en cours de discussion ) </subtitle>
 <link href="http://www.senat.fr/rss/syndication.html"/>
-<updated>2019-05-15T08:50:08Z</updated>
-<modified>2019-05-15T08:50:08Z</modified>
+<updated>2019-06-13T14:01:13Z</updated>
+<modified>2019-06-13T14:01:13Z</modified>
 <author>
-<name>SÃ©nat franÃ§ais</name>
+<name>Sénat français</name>
 <email>sitn@senat.fr</email>
 <uri>http://www.senat.fr/</uri>
 </author>
 <icon>http://www.senat.fr/images/logoniv1.gif</icon>
 <id>http://www.senat.fr/dossierleg/ppl17-699.html</id>
 <entry>
-<title>Inscription Ã  l'ordre du jour du 13 juin 2019</title>
-<link href="http://www.senat.fr/dossierleg/ppl17-699.html"  rel="alternate" type="text/html"/>
-<id>http://www.senat.fr/dossierleg/ppl17-699.html</id>
-<updated>2019-05-15T08:50:08Z</updated>
-<modified>2019-05-15T08:50:08Z</modified>
-<published>2019-05-15T08:50:08Z</published>
-<issued>2019-05-15T08:50:08Z</issued>
-<created>2019-05-15T08:50:08Z</created>
+<title>Petite loi</title>
+<link href="/petite-loi-ameli/2018-2019/547.html"  rel="alternate" type="text/html"/>
+<id>/petite-loi-ameli/2018-2019/547.html</id>
+<updated>2019-06-13T14:01:13Z</updated>
+<modified>2019-06-13T14:01:13Z</modified>
+<published>2019-06-13T14:01:13Z</published>
+<issued>2019-06-13T14:01:13Z</issued>
+<created>2019-06-13T14:01:13Z</created>
 <category term=""/>
-<summary>Inscription Ã  l'ordre du jour du 13 juin 2019</summary>
+<summary>Première lecture - Sénat : Petite loi</summary>
 </entry>
 <entry>
-<title>Comptes rendus des rÃ©unions de la commission des lois</title>
-<link href="http://www.senat.fr/compte-rendu-commissions/20190506/lois.html#toc2"  rel="alternate" type="text/html"/>
-<id>http://www.senat.fr/compte-rendu-commissions/20190506/lois.html#toc2</id>
-<updated>2019-05-06T22:00:00Z</updated>
-<modified>2019-05-06T22:00:00Z</modified>
-<published>2019-05-06T22:00:00Z</published>
-<issued>2019-05-06T22:00:00Z</issued>
-<created>2019-05-06T22:00:00Z</created>
+<title>Compte rendu intégral de la séance du 13 juin 2019</title>
+<link href="http://www.senat.fr/seances/s201906/s20190613/st20190613000.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/seances/s201906/s20190613/st20190613000.html</id>
+<updated>2019-06-13T07:40:06Z</updated>
+<modified>2019-06-13T07:40:06Z</modified>
+<published>2019-06-13T07:40:06Z</published>
+<issued>2019-06-13T07:40:06Z</issued>
+<created>2019-06-13T07:40:06Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Comptes rendus des rÃ©unions de la commission des lois</summary>
+<summary>Première lecture - Sénat : Compte rendu intégral de la séance du 13 juin 2019</summary>
 </entry>
 <entry>
-<title>Texte nÂ° 699</title>
+<title>Texte n° 2037</title>
+<link href="http://www.assemblee-nationale.fr/15/propositions/pion2037.asp"  rel="alternate" type="text/html"/>
+<id>http://www.assemblee-nationale.fr/15/propositions/pion2037.asp</id>
+<updated>2019-06-12T22:00:00Z</updated>
+<modified>2019-06-12T22:00:00Z</modified>
+<published>2019-06-12T22:00:00Z</published>
+<issued>2019-06-12T22:00:00Z</issued>
+<created>2019-06-12T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Assemblée nationale : Texte transmis à l'Assemblée nationale le 13 juin 2019</summary>
+</entry>
+<entry>
+<title>Amendements déposés sur le texte n°547</title>
+<link href="http://www.senat.fr/amendements/2018-2019/547/accueil.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/amendements/2018-2019/547/accueil.html</id>
+<updated>2019-06-07T09:45:30Z</updated>
+<modified>2019-06-07T09:45:30Z</modified>
+<published>2019-06-07T09:45:30Z</published>
+<issued>2019-06-07T09:45:30Z</issued>
+<created>2019-06-07T09:45:30Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Amendements déposés sur le texte n°547</summary>
+</entry>
+<entry>
+<title>Texte de la commission n° 547</title>
+<link href="http://www.senat.fr/leg/ppl18-547.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/leg/ppl18-547.html</id>
+<updated>2019-06-04T22:00:00Z</updated>
+<modified>2019-06-04T22:00:00Z</modified>
+<published>2019-06-04T22:00:00Z</published>
+<issued>2019-06-04T22:00:00Z</issued>
+<created>2019-06-04T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Texte de la commission déposé le 5 juin 2019</summary>
+</entry>
+<entry>
+<title>Rapport n° 546</title>
+<link href="http://www.senat.fr/rap/l18-546/l18-546.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/rap/l18-546/l18-546.html</id>
+<updated>2019-06-04T22:00:00Z</updated>
+<modified>2019-06-04T22:00:00Z</modified>
+<published>2019-06-04T22:00:00Z</published>
+<issued>2019-06-04T22:00:00Z</issued>
+<created>2019-06-04T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Rapport de M. François BONHOMME, fait au nom de la commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale (5 juin 2019)</summary>
+</entry>
+<entry>
+<title>Comptes rendus des réunions de la commission des lois</title>
+<link href="http://www.senat.fr/doslegcom/ppl17-699_com.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/doslegcom/ppl17-699_com.html</id>
+<updated>2019-06-04T22:00:00Z</updated>
+<modified>2019-06-04T22:00:00Z</modified>
+<published>2019-06-04T22:00:00Z</published>
+<issued>2019-06-04T22:00:00Z</issued>
+<created>2019-06-04T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Comptes rendus des réunions de la commission des lois</summary>
+</entry>
+<entry>
+<title>Texte n° 699</title>
 <link href="http://www.senat.fr/leg/ppl17-699.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/leg/ppl17-699.html</id>
 <updated>2018-07-29T22:00:00Z</updated>
@@ -46,6 +106,6 @@
 <issued>2018-07-29T22:00:00Z</issued>
 <created>2018-07-29T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Texte de Mme Nathalie DELATTRE, M. FranÃ§ois PILLET et plusieurs de leurs collÃšgues,  dÃ©posÃ© au SÃ©nat le 30 juillet 2018</summary>
+<summary>Première lecture - Sénat : Texte de Mme Nathalie DELATTRE, M. François PILLET et plusieurs de leurs collègues,  déposé au Sénat le 30 juillet 2018</summary>
 </entry>
 </feed>

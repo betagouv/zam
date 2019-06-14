@@ -1,19 +1,247 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 <feed xmlns="http://www.w3.org/2005/Atom" version="0.3" xml:lang="fr-FR">
-<title>SÃ©nat - Organisation du systÃšme de santÃ©</title>
-<subtitle>projet de loi relatif Ã  l'organisation et Ã  la transformation du systÃšme de santÃ© ( en cours de discussion ) </subtitle>
+<title>Sénat - Organisation du système de santé</title>
+<subtitle>projet de loi relatif à l'organisation et à la transformation du système de santé ( en cours de discussion ) </subtitle>
 <link href="http://www.senat.fr/rss/syndication.html"/>
-<updated>2019-06-04T07:40:09Z</updated>
-<modified>2019-06-04T07:40:09Z</modified>
+<updated>2019-06-11T14:01:20Z</updated>
+<modified>2019-06-11T14:01:20Z</modified>
 <author>
-<name>SÃ©nat franÃ§ais</name>
+<name>Sénat français</name>
 <email>sitn@senat.fr</email>
 <uri>http://www.senat.fr/</uri>
 </author>
 <icon>http://www.senat.fr/images/logoniv1.gif</icon>
 <id>http://www.senat.fr/dossierleg/pjl18-404.html</id>
 <entry>
-<title>Compte rendu intÃ©gral de la sÃ©ance du 4 juin 2019</title>
+<title>Compte rendu intégral de la séance du 11 juin 2019</title>
+<link href="http://www.senat.fr/seances/s201906/s20190611/st20190611000.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/seances/s201906/s20190611/st20190611000.html</id>
+<updated>2019-06-11T14:01:20Z</updated>
+<modified>2019-06-11T14:01:20Z</modified>
+<published>2019-06-11T14:01:20Z</published>
+<issued>2019-06-11T14:01:20Z</issued>
+<created>2019-06-11T14:01:20Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Compte rendu intégral de la séance du 11 juin 2019</summary>
+</entry>
+<entry>
+<title>Texte n° 109</title>
+<link href="http://www.senat.fr/leg/tas18-109.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/leg/tas18-109.html</id>
+<updated>2019-06-10T22:00:00Z</updated>
+<modified>2019-06-10T22:00:00Z</modified>
+<published>2019-06-10T22:00:00Z</published>
+<issued>2019-06-10T22:00:00Z</issued>
+<created>2019-06-10T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Texte modifié par le Sénat le 11 juin 2019</summary>
+</entry>
+<entry>
+<title>Scrutin public n°149 du 11 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-149.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-149.html</id>
+<updated>2019-06-10T22:00:00Z</updated>
+<modified>2019-06-10T22:00:00Z</modified>
+<published>2019-06-10T22:00:00Z</published>
+<issued>2019-06-10T22:00:00Z</issued>
+<created>2019-06-10T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'ensemble du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°148 du 11 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-148.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-148.html</id>
+<updated>2019-06-10T22:00:00Z</updated>
+<modified>2019-06-10T22:00:00Z</modified>
+<published>2019-06-10T22:00:00Z</published>
+<issued>2019-06-10T22:00:00Z</issued>
+<created>2019-06-10T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° A-1, présenté en seconde délibération par M. Alain Milon au nom de la commission des affaires sociales, tendant à supprimer l'article 28 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°147 du 11 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-147.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-147.html</id>
+<updated>2019-06-10T22:00:00Z</updated>
+<modified>2019-06-10T22:00:00Z</modified>
+<published>2019-06-10T22:00:00Z</published>
+<issued>2019-06-10T22:00:00Z</issued>
+<created>2019-06-10T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur la demande de seconde délibération de l'article 28 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Compte rendu intégral de la séance du 7 juin 2019</title>
+<link href="http://www.senat.fr/seances/s201906/s20190607/st20190607000.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/seances/s201906/s20190607/st20190607000.html</id>
+<updated>2019-06-07T07:55:18Z</updated>
+<modified>2019-06-07T07:55:18Z</modified>
+<published>2019-06-07T07:55:18Z</published>
+<issued>2019-06-07T07:55:18Z</issued>
+<created>2019-06-07T07:55:18Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Compte rendu intégral de la séance du 7 juin 2019</summary>
+</entry>
+<entry>
+<title>Scrutin public n°146 du 7 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-146.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-146.html</id>
+<updated>2019-06-06T22:00:00Z</updated>
+<modified>2019-06-06T22:00:00Z</modified>
+<published>2019-06-06T22:00:00Z</published>
+<issued>2019-06-06T22:00:00Z</issued>
+<created>2019-06-06T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 629 rectifié, présenté par Mme Laurence Rossignol et plusieurs de ses collègues, tendant à insérer un article additionnel après l'article 27 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°145 du 7 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-145.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-145.html</id>
+<updated>2019-06-06T22:00:00Z</updated>
+<modified>2019-06-06T22:00:00Z</modified>
+<published>2019-06-06T22:00:00Z</published>
+<issued>2019-06-06T22:00:00Z</issued>
+<created>2019-06-06T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 349, présenté par Mme Laurence Cohen et les membres du groupe communiste citoyen républicain et écologiste, tendant à insérer un article additionnel après l'article 27 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Compte rendu intégral de la séance du 6 juin 2019</title>
+<link href="http://www.senat.fr/seances/s201906/s20190606/st20190606000.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/seances/s201906/s20190606/st20190606000.html</id>
+<updated>2019-06-06T08:50:20Z</updated>
+<modified>2019-06-06T08:50:20Z</modified>
+<published>2019-06-06T08:50:20Z</published>
+<issued>2019-06-06T08:50:20Z</issued>
+<created>2019-06-06T08:50:20Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Compte rendu intégral de la séance du 6 juin 2019</summary>
+</entry>
+<entry>
+<title>Scrutin public n°144 du 6 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-144.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-144.html</id>
+<updated>2019-06-05T22:00:00Z</updated>
+<modified>2019-06-05T22:00:00Z</modified>
+<published>2019-06-05T22:00:00Z</published>
+<issued>2019-06-05T22:00:00Z</issued>
+<created>2019-06-05T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 775 rectifié, présenté par M. Daniel Gremillet et plusieurs de ses collègues, à l'article 8 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°143 du 6 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-143.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-143.html</id>
+<updated>2019-06-05T22:00:00Z</updated>
+<modified>2019-06-05T22:00:00Z</modified>
+<published>2019-06-05T22:00:00Z</published>
+<issued>2019-06-05T22:00:00Z</issued>
+<created>2019-06-05T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 311 rectifié, présenté par Mme Laurence Cohen et les membres du groupe communiste citoyen républicain et écologiste, à l'article 8 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°142 du 6 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-142.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-142.html</id>
+<updated>2019-06-05T22:00:00Z</updated>
+<modified>2019-06-05T22:00:00Z</modified>
+<published>2019-06-05T22:00:00Z</published>
+<issued>2019-06-05T22:00:00Z</issued>
+<created>2019-06-05T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 356 rectifié, présenté par Mme Maryse Carrère et plusieurs de ses collègues, à l'article 8 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°141 du 6 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-141.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-141.html</id>
+<updated>2019-06-05T22:00:00Z</updated>
+<modified>2019-06-05T22:00:00Z</modified>
+<published>2019-06-05T22:00:00Z</published>
+<issued>2019-06-05T22:00:00Z</issued>
+<created>2019-06-05T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 774 rectifié, présenté par M. Daniel Gremillet et plusieurs de ses collègues, à l'article 8 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Compte rendu intégral de la séance du 5 juin 2019</title>
+<link href="http://www.senat.fr/seances/s201906/s20190605/st20190605000.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/seances/s201906/s20190605/st20190605000.html</id>
+<updated>2019-06-05T12:50:06Z</updated>
+<modified>2019-06-05T12:50:06Z</modified>
+<published>2019-06-05T12:50:06Z</published>
+<issued>2019-06-05T12:50:06Z</issued>
+<created>2019-06-05T12:50:06Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Compte rendu intégral de la séance du 5 juin 2019</summary>
+</entry>
+<entry>
+<title>Scrutin public n°140 du 5 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-140.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-140.html</id>
+<updated>2019-06-04T22:00:00Z</updated>
+<modified>2019-06-04T22:00:00Z</modified>
+<published>2019-06-04T22:00:00Z</published>
+<issued>2019-06-04T22:00:00Z</issued>
+<created>2019-06-04T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 309, présenté par Mme Laurence Cohen et les membres du groupe communiste républicain citoyen et écologiste, tendant à supprimer l'article 8 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°139 du 5 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-139.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-139.html</id>
+<updated>2019-06-04T22:00:00Z</updated>
+<modified>2019-06-04T22:00:00Z</modified>
+<published>2019-06-04T22:00:00Z</published>
+<issued>2019-06-04T22:00:00Z</issued>
+<created>2019-06-04T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 346 rectifié, présenté par Mme Laurence Cohen et les membres du groupe communiste républicain citoyen et écologiste, tendant à insérer un article additionnel après l'article 4 ter du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°138 du 5 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-138.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-138.html</id>
+<updated>2019-06-04T22:00:00Z</updated>
+<modified>2019-06-04T22:00:00Z</modified>
+<published>2019-06-04T22:00:00Z</published>
+<issued>2019-06-04T22:00:00Z</issued>
+<created>2019-06-04T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 122 rectifié bis, présenté par Mme Marie-Pierre Monier et plusieurs de ses collègues, à l'article additionnel après l'article 4 ter du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°137 du 5 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-137.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-137.html</id>
+<updated>2019-06-04T22:00:00Z</updated>
+<modified>2019-06-04T22:00:00Z</modified>
+<published>2019-06-04T22:00:00Z</published>
+<issued>2019-06-04T22:00:00Z</issued>
+<created>2019-06-04T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 168 rectifié quinquies, présenté par M. Jean-Pierre Moga et plusieurs de ses collègues, tendant à insérer un article additionnel après l'article 4 ter du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Comptes rendus des réunions des commissions</title>
+<link href="http://www.senat.fr/doslegcom/pjl18-404_com.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/doslegcom/pjl18-404_com.html</id>
+<updated>2019-06-04T22:00:00Z</updated>
+<modified>2019-06-04T22:00:00Z</modified>
+<published>2019-06-04T22:00:00Z</published>
+<issued>2019-06-04T22:00:00Z</issued>
+<created>2019-06-04T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Comptes rendus des réunions des commissions</summary>
+</entry>
+<entry>
+<title>Compte rendu intégral de la séance du 4 juin 2019</title>
 <link href="http://www.senat.fr/seances/s201906/s20190604/st20190604000.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/seances/s201906/s20190604/st20190604000.html</id>
 <updated>2019-06-04T07:40:09Z</updated>
@@ -22,10 +250,82 @@
 <issued>2019-06-04T07:40:09Z</issued>
 <created>2019-06-04T07:40:09Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Compte rendu intÃ©gral de la sÃ©ance du 4 juin 2019</summary>
+<summary>Première lecture - Sénat : Compte rendu intégral de la séance du 4 juin 2019</summary>
 </entry>
 <entry>
-<title>Scrutin public nÂ°130 du 4 juin 2019</title>
+<title>Scrutin public n°136 du 4 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-136.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-136.html</id>
+<updated>2019-06-03T22:00:00Z</updated>
+<modified>2019-06-03T22:00:00Z</modified>
+<published>2019-06-03T22:00:00Z</published>
+<issued>2019-06-03T22:00:00Z</issued>
+<created>2019-06-03T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 116 rectifié ter, présenté par M. Loïc Hervé et plusieurs de ses collègues, tendant à insérer un article additionnel après l'article 4 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°135 du 4 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-135.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-135.html</id>
+<updated>2019-06-03T22:00:00Z</updated>
+<modified>2019-06-03T22:00:00Z</modified>
+<published>2019-06-03T22:00:00Z</published>
+<issued>2019-06-03T22:00:00Z</issued>
+<created>2019-06-03T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 233 rectifié quater, présenté par M. Martial Bourquin et plusieurs de ses collègues, tendant à insérer un article additionnel après l'article 4 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°134 du 4 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-134.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-134.html</id>
+<updated>2019-06-03T22:00:00Z</updated>
+<modified>2019-06-03T22:00:00Z</modified>
+<published>2019-06-03T22:00:00Z</published>
+<issued>2019-06-03T22:00:00Z</issued>
+<created>2019-06-03T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur les amendements identiques n° 178 rectifié ter, présenté par M. Joël Bigot et plusieurs de ses collègues et n°421 rectifié présenté par M. Jean-François Longeot au nom de la commission de l'aménagement du territoire et du développement durable tendant à insérer un article additionnel après l'article 4 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°133 du 4 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-133.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-133.html</id>
+<updated>2019-06-03T22:00:00Z</updated>
+<modified>2019-06-03T22:00:00Z</modified>
+<published>2019-06-03T22:00:00Z</published>
+<issued>2019-06-03T22:00:00Z</issued>
+<created>2019-06-03T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 232 rectifié quater, présenté par M. Martial Bourquin et plusieurs de ses collègues, tendant à insérer un article additionnel après l'article 4 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°132 du 4 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-132.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-132.html</id>
+<updated>2019-06-03T22:00:00Z</updated>
+<modified>2019-06-03T22:00:00Z</modified>
+<published>2019-06-03T22:00:00Z</published>
+<issued>2019-06-03T22:00:00Z</issued>
+<created>2019-06-03T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur les amendements identiques n° 179 rectifié, présenté par M. Joël Bigot et plusieurs de ses collègues, n° 365 rectifié bis, présenté par M. Raymond Vall et plusieurs de ses collègues, n° 422, présenté par M. Jean-François Longeot au nom de la commission de l'aménagement du territoire et du développement durable et n° 437 rectifié ter, présenté par M. Michel Vaspart et plusieurs de ses collègues, tendant à insérer un article additionnel après l'article 4 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°131 du 4 juin 2019</title>
+<link href="http://www.senat.fr/scrupub/2018/scr2018-131.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/scrupub/2018/scr2018-131.html</id>
+<updated>2019-06-03T22:00:00Z</updated>
+<modified>2019-06-03T22:00:00Z</modified>
+<published>2019-06-03T22:00:00Z</published>
+<issued>2019-06-03T22:00:00Z</issued>
+<created>2019-06-03T22:00:00Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Scrutin public sur les amendements identiques n° 423, présenté par M. Jean-François Longeot au nom de la commission de l'aménagement du territoire et du développement durable et n° 438 rectifié bis, présenté par M. Michel Vaspart et plusieurs de ses collègues, tendant à insérer un article additionnel après l'article 4 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
+</entry>
+<entry>
+<title>Scrutin public n°130 du 4 juin 2019</title>
 <link href="http://www.senat.fr/scrupub/2018/scr2018-130.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/scrupub/2018/scr2018-130.html</id>
 <updated>2019-06-03T22:00:00Z</updated>
@@ -34,22 +334,10 @@
 <issued>2019-06-03T22:00:00Z</issued>
 <created>2019-06-03T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Scrutin public sur l'amendement nÂ° 56 rectifiÃ©, prÃ©sentÃ© par Mme Sylviane NoÃ«l et plusieurs de ses collÃšgues, Ã  l'article 2 bis du projet de loi, adoptÃ© par l'AssemblÃ©e nationale aprÃšs engagement de la procÃ©dure accÃ©lÃ©rÃ©e, relatif Ã  l'organisation et Ã  la transformation du systÃšme de santÃ©</summary>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 56 rectifié, présenté par Mme Sylviane Noël et plusieurs de ses collègues, à l'article 2 bis du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
 </entry>
 <entry>
-<title>Petite loi (articles dÃ©jÃ  examinÃ©s)</title>
-<link href="/petite-loi-ameli/2018-2019/525.html"  rel="alternate" type="text/html"/>
-<id>/petite-loi-ameli/2018-2019/525.html</id>
-<updated>2019-06-03T20:11:02Z</updated>
-<modified>2019-06-03T20:11:02Z</modified>
-<published>2019-06-03T20:11:02Z</published>
-<issued>2019-06-03T20:11:02Z</issued>
-<created>2019-06-03T20:11:02Z</created>
-<category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Petite loi (articles dÃ©jÃ  examinÃ©s)</summary>
-</entry>
-<entry>
-<title>Compte rendu intÃ©gral de la sÃ©ance du 3 juin 2019</title>
+<title>Compte rendu intégral de la séance du 3 juin 2019</title>
 <link href="http://www.senat.fr/seances/s201906/s20190603/st20190603000.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/seances/s201906/s20190603/st20190603000.html</id>
 <updated>2019-06-03T13:10:07Z</updated>
@@ -58,10 +346,10 @@
 <issued>2019-06-03T13:10:07Z</issued>
 <created>2019-06-03T13:10:07Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Compte rendu intÃ©gral de la sÃ©ance du 3 juin 2019</summary>
+<summary>Première lecture - Sénat : Compte rendu intégral de la séance du 3 juin 2019</summary>
 </entry>
 <entry>
-<title>Scrutin public nÂ°129 du 3 juin 2019</title>
+<title>Scrutin public n°129 du 3 juin 2019</title>
 <link href="http://www.senat.fr/scrupub/2018/scr2018-129.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/scrupub/2018/scr2018-129.html</id>
 <updated>2019-06-02T22:00:00Z</updated>
@@ -70,10 +358,10 @@
 <issued>2019-06-02T22:00:00Z</issued>
 <created>2019-06-02T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Scrutin public sur les amendements identiques nÂ° 1 rectifiÃ© quater, prÃ©sentÃ© par Mme Corinne Imbert et plusieurs de ses collÃšgues, nÂ° 542 rectifiÃ© quinquies, prÃ©sentÃ© par M. Daniel Chasseing et plusieurs de ses collÃšgues, et nÂ° 762 rectifiÃ©, prÃ©sentÃ© par M. Yves Daudigny et les membres du groupe socialiste et rÃ©publicain, Ã  l'article 2 du projet de loi, adoptÃ© par l'AssemblÃ©e nationale aprÃšs engagement de la procÃ©dure accÃ©lÃ©rÃ©e, relatif Ã  l'organisation et Ã  la transformation du systÃšme de santÃ©</summary>
+<summary>Première lecture - Sénat : Scrutin public sur les amendements identiques n° 1 rectifié quater, présenté par Mme Corinne Imbert et plusieurs de ses collègues, n° 542 rectifié quinquies, présenté par M. Daniel Chasseing et plusieurs de ses collègues, et n° 762 rectifié, présenté par M. Yves Daudigny et les membres du groupe socialiste et républicain, à l'article 2 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
 </entry>
 <entry>
-<title>Scrutin public nÂ°128 du 3 juin 2019</title>
+<title>Scrutin public n°128 du 3 juin 2019</title>
 <link href="http://www.senat.fr/scrupub/2018/scr2018-128.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/scrupub/2018/scr2018-128.html</id>
 <updated>2019-06-02T22:00:00Z</updated>
@@ -82,10 +370,10 @@
 <issued>2019-06-02T22:00:00Z</issued>
 <created>2019-06-02T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Scrutin public sur le sous-amendement nÂ° 419 rectifiÃ©, prÃ©sentÃ© par M. Jean-FranÃ§ois Longeot au nom de la commission de l'amÃ©nagement du territoire et du dÃ©veloppement durable, Ã  l'article 2 du projet de loi, adoptÃ© par l'AssemblÃ©e nationale aprÃšs engagement de la procÃ©dure accÃ©lÃ©rÃ©e, relatif Ã  l'organisation et Ã  la transformation du systÃšme de santÃ©</summary>
+<summary>Première lecture - Sénat : Scrutin public sur le sous-amendement n° 419 rectifié, présenté par M. Jean-François Longeot au nom de la commission de l'aménagement du territoire et du développement durable, sur l'amendement n° 1 rectifié quater, présenté par Mme Corinne Imbert et plusieurs de ses collègues, à l'article 2 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
 </entry>
 <entry>
-<title>Scrutin public nÂ°127 du 3 juin 2019</title>
+<title>Scrutin public n°127 du 3 juin 2019</title>
 <link href="http://www.senat.fr/scrupub/2018/scr2018-127.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/scrupub/2018/scr2018-127.html</id>
 <updated>2019-06-02T22:00:00Z</updated>
@@ -94,10 +382,10 @@
 <issued>2019-06-02T22:00:00Z</issued>
 <created>2019-06-02T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Scrutin public sur l'amendement nÂ° 712 rectifiÃ©, prÃ©sentÃ© par M. Bernard Jomier et les membres du groupe socialiste et rÃ©publicain, Ã  l'article 2 du projet de loi, adoptÃ© par l'AssemblÃ©e nationale aprÃšs engagement de la procÃ©dure accÃ©lÃ©rÃ©e, relatif Ã  l'organisation et Ã  la transformation du systÃšme de santÃ©</summary>
+<summary>Première lecture - Sénat : Scrutin public sur l'amendement n° 712 rectifié, présenté par M. Bernard Jomier et les membres du groupe socialiste et républicain, à l'article 2 du projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
 </entry>
 <entry>
-<title>Scrutin public nÂ°126 du 3 juin 2019</title>
+<title>Scrutin public n°126 du 3 juin 2019</title>
 <link href="http://www.senat.fr/scrupub/2018/scr2018-126.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/scrupub/2018/scr2018-126.html</id>
 <updated>2019-06-02T22:00:00Z</updated>
@@ -106,22 +394,10 @@
 <issued>2019-06-02T22:00:00Z</issued>
 <created>2019-06-02T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Scrutin public sur la motion nÂ° 792, prÃ©sentÃ©e par Mme Laurence Cohen et les membres du groupe communiste rÃ©publicain citoyen et Ã©cologiste, tendant Ã  poser la question prÃ©alable au projet de loi, adoptÃ© par l'AssemblÃ©e nationale aprÃšs engagement de la procÃ©dure accÃ©lÃ©rÃ©e, relatif Ã  l'organisation et Ã  la transformation du systÃšme de santÃ©</summary>
+<summary>Première lecture - Sénat : Scrutin public sur la motion n° 792, présentée par Mme Laurence Cohen et les membres du groupe communiste républicain citoyen et écologiste, tendant à poser la question préalable au projet de loi, adopté par l'Assemblée nationale après engagement de la procédure accélérée, relatif à l'organisation et à la transformation du système de santé</summary>
 </entry>
 <entry>
-<title>Comptes rendus des rÃ©unions des commissions</title>
-<link href="http://www.senat.fr/doslegcom/pjl18-404_com.html"  rel="alternate" type="text/html"/>
-<id>http://www.senat.fr/doslegcom/pjl18-404_com.html</id>
-<updated>2019-05-28T22:00:00Z</updated>
-<modified>2019-05-28T22:00:00Z</modified>
-<published>2019-05-28T22:00:00Z</published>
-<issued>2019-05-28T22:00:00Z</issued>
-<created>2019-05-28T22:00:00Z</created>
-<category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Comptes rendus des rÃ©unions des commissions</summary>
-</entry>
-<entry>
-<title>Amendements dÃ©posÃ©s sur le texte nÂ°525</title>
+<title>Amendements déposés sur le texte n°525</title>
 <link href="http://www.senat.fr/amendements/2018-2019/525/accueil.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/amendements/2018-2019/525/accueil.html</id>
 <updated>2019-05-23T08:51:57Z</updated>
@@ -130,10 +406,10 @@
 <issued>2019-05-23T08:51:57Z</issued>
 <created>2019-05-23T08:51:57Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Amendements dÃ©posÃ©s sur le texte nÂ°525</summary>
+<summary>Première lecture - Sénat : Amendements déposés sur le texte n°525</summary>
 </entry>
 <entry>
-<title>Texte de la commission nÂ° 525</title>
+<title>Texte de la commission n° 525</title>
 <link href="http://www.senat.fr/leg/pjl18-525.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/leg/pjl18-525.html</id>
 <updated>2019-05-21T22:00:00Z</updated>
@@ -142,10 +418,10 @@
 <issued>2019-05-21T22:00:00Z</issued>
 <created>2019-05-21T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Texte de la commission dÃ©posÃ© le 22 mai 2019</summary>
+<summary>Première lecture - Sénat : Texte de la commission déposé le 22 mai 2019</summary>
 </entry>
 <entry>
-<title>Rapport nÂ° 524</title>
+<title>Rapport n° 524</title>
 <link href="http://www.senat.fr/rap/l18-524/l18-524.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/rap/l18-524/l18-524.html</id>
 <updated>2019-05-21T22:00:00Z</updated>
@@ -154,10 +430,10 @@
 <issued>2019-05-21T22:00:00Z</issued>
 <created>2019-05-21T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Rapport de M. Alain MILON, fait au nom de la commission des affaires sociales (22 mai 2019)</summary>
+<summary>Première lecture - Sénat : Rapport de M. Alain MILON, fait au nom de la commission des affaires sociales (22 mai 2019)</summary>
 </entry>
 <entry>
-<title>Avis nÂ° 516</title>
+<title>Avis n° 516</title>
 <link href="http://www.senat.fr/rap/a18-516/a18-516.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/rap/a18-516/a18-516.html</id>
 <updated>2019-05-20T22:00:00Z</updated>
@@ -166,10 +442,10 @@
 <issued>2019-05-20T22:00:00Z</issued>
 <created>2019-05-20T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Avis de M. Laurent LAFON, fait au nom de la commission de la culture, de l'Ã©ducation et de la communication (21 mai 2019)</summary>
+<summary>Première lecture - Sénat : Avis de M. Laurent LAFON, fait au nom de la commission de la culture, de l'éducation et de la communication (21 mai 2019)</summary>
 </entry>
 <entry>
-<title>Avis nÂ° 515</title>
+<title>Avis n° 515</title>
 <link href="http://www.senat.fr/rap/a18-515/a18-515.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/rap/a18-515/a18-515.html</id>
 <updated>2019-05-20T22:00:00Z</updated>
@@ -178,22 +454,10 @@
 <issued>2019-05-20T22:00:00Z</issued>
 <created>2019-05-20T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Avis de M. Jean-FranÃ§ois LONGEOT, fait au nom de la commission de l'amÃ©nagement du territoire et du dÃ©veloppement durable (21 mai 2019)</summary>
+<summary>Première lecture - Sénat : Avis de M. Jean-François LONGEOT, fait au nom de la commission de l'aménagement du territoire et du développement durable (21 mai 2019)</summary>
 </entry>
 <entry>
-<title>Inscription Ã  l'ordre du jour du 5, 6 et 11 juin 2019</title>
-<link href="http://www.senat.fr/dossierleg/pjl18-404.html"  rel="alternate" type="text/html"/>
-<id>http://www.senat.fr/dossierleg/pjl18-404.html</id>
-<updated>2019-05-15T08:30:09Z</updated>
-<modified>2019-05-15T08:30:09Z</modified>
-<published>2019-05-15T08:30:09Z</published>
-<issued>2019-05-15T08:30:09Z</issued>
-<created>2019-05-15T08:30:09Z</created>
-<category term=""/>
-<summary>Inscription Ã  l'ordre du jour du 5, 6 et 11 juin 2019</summary>
-</entry>
-<entry>
-<title>Texte nÂ° 404</title>
+<title>Texte n° 404</title>
 <link href="http://www.senat.fr/leg/pjl18-404.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/leg/pjl18-404.html</id>
 <updated>2019-03-25T23:00:00Z</updated>
@@ -202,10 +466,10 @@
 <issued>2019-03-25T23:00:00Z</issued>
 <created>2019-03-25T23:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Texte transmis au SÃ©nat le 26 mars 2019</summary>
+<summary>Première lecture - Sénat : Texte transmis au Sénat le 26 mars 2019</summary>
 </entry>
 <entry>
-<title>Texte nÂ° 245</title>
+<title>Texte n° 245</title>
 <link href="http://www.assemblee-nationale.fr/15/ta/ta0245.asp"  rel="alternate" type="text/html"/>
 <id>http://www.assemblee-nationale.fr/15/ta/ta0245.asp</id>
 <updated>2019-03-25T23:00:00Z</updated>
@@ -214,10 +478,10 @@
 <issued>2019-03-25T23:00:00Z</issued>
 <created>2019-03-25T23:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - AssemblÃ©e nationale : Texte adoptÃ© par l'AssemblÃ©e nationale le 26 mars 2019</summary>
+<summary>Première lecture - Assemblée nationale : Texte adopté par l'Assemblée nationale le 26 mars 2019</summary>
 </entry>
 <entry>
-<title>Texte de la commission nÂ° 1767</title>
+<title>Texte de la commission n° 1767</title>
 <link href="http://www.assemblee-nationale.fr/15/ta-commission/r1767-a0.asp"  rel="alternate" type="text/html"/>
 <id>http://www.assemblee-nationale.fr/15/ta-commission/r1767-a0.asp</id>
 <updated>2019-03-13T23:00:00Z</updated>
@@ -226,10 +490,10 @@
 <issued>2019-03-13T23:00:00Z</issued>
 <created>2019-03-13T23:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - AssemblÃ©e nationale : Texte de la commission dÃ©posÃ© le 14 mars 2019</summary>
+<summary>Première lecture - Assemblée nationale : Texte de la commission déposé le 14 mars 2019</summary>
 </entry>
 <entry>
-<title>Rapport nÂ° 1767</title>
+<title>Rapport n° 1767</title>
 <link href="http://www2.assemblee-nationale.fr/documents/notice/15/rapports/r1767/(index)/depots"  rel="alternate" type="text/html"/>
 <id>http://www2.assemblee-nationale.fr/documents/notice/15/rapports/r1767/(index)/depots</id>
 <updated>2019-03-13T23:00:00Z</updated>
@@ -238,10 +502,10 @@
 <issued>2019-03-13T23:00:00Z</issued>
 <created>2019-03-13T23:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - AssemblÃ©e nationale : Rapport de Mme StÃ©phanie RIST et M. Thomas MESNIER, fait au nom de la  commission des Affaires sociales (14 mars 2019)</summary>
+<summary>Première lecture - Assemblée nationale : Rapport de Mme Stéphanie RIST et M. Thomas MESNIER, fait au nom de la  commission des Affaires sociales (14 mars 2019)</summary>
 </entry>
 <entry>
-<title>Avis nÂ° 1762</title>
+<title>Avis n° 1762</title>
 <link href="http://www2.assemblee-nationale.fr/documents/notice/15/rapports/r1762/(index)/depots"  rel="alternate" type="text/html"/>
 <id>http://www2.assemblee-nationale.fr/documents/notice/15/rapports/r1762/(index)/depots</id>
 <updated>2019-03-10T23:00:00Z</updated>
@@ -250,10 +514,10 @@
 <issued>2019-03-10T23:00:00Z</issued>
 <created>2019-03-10T23:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - AssemblÃ©e nationale : Avis de M. GaÃ«l LE BOHEC, fait au nom de la commission des affaires culturelles et de l'Ã©ducation (11 mars 2019)</summary>
+<summary>Première lecture - Assemblée nationale : Avis de M. Gaël LE BOHEC, fait au nom de la commission des affaires culturelles et de l'éducation (11 mars 2019)</summary>
 </entry>
 <entry>
-<title>Texte nÂ° 1681</title>
+<title>Texte n° 1681</title>
 <link href="http://www.assemblee-nationale.fr/15/projets/pl1681.asp"  rel="alternate" type="text/html"/>
 <id>http://www.assemblee-nationale.fr/15/projets/pl1681.asp</id>
 <updated>2019-02-12T23:00:00Z</updated>
@@ -262,6 +526,6 @@
 <issued>2019-02-12T23:00:00Z</issued>
 <created>2019-02-12T23:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - AssemblÃ©e nationale : Texte de Mme AgnÃšs BUZYN, ministre des SolidaritÃ©s et de la SantÃ©,  dÃ©posÃ© Ã  l'AssemblÃ©e Nationale le 13 fÃ©vrier 2019</summary>
+<summary>Première lecture - Assemblée nationale : Texte de Mme Agnès BUZYN, ministre des Solidarités et de la Santé,  déposé à l'Assemblée Nationale le 13 février 2019</summary>
 </entry>
 </feed>

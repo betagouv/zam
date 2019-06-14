@@ -1,43 +1,55 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 <feed xmlns="http://www.w3.org/2005/Atom" version="0.3" xml:lang="fr-FR">
-<title>SÃ©nat - Lutte contre l'habitat insalubre ou dangereux</title>
-<subtitle>proposition de loi visant Ã  amÃ©liorer la lutte contre l'habitat insalubre ou dangereux ( en cours de discussion ) </subtitle>
+<title>Sénat - Lutte contre l'habitat insalubre ou dangereux</title>
+<subtitle>proposition de loi visant à améliorer la lutte contre l'habitat insalubre ou dangereux ( en cours de discussion ) </subtitle>
 <link href="http://www.senat.fr/rss/syndication.html"/>
-<updated>2019-06-12T22:00:00Z</updated>
-<modified>2019-06-12T22:00:00Z</modified>
+<updated>2019-06-11T23:05:21Z</updated>
+<modified>2019-06-11T23:05:21Z</modified>
 <author>
-<name>SÃ©nat franÃ§ais</name>
+<name>Sénat français</name>
 <email>sitn@senat.fr</email>
 <uri>http://www.senat.fr/</uri>
 </author>
 <icon>http://www.senat.fr/images/logoniv1.gif</icon>
 <id>http://www.senat.fr/dossierleg/ppl18-229.html</id>
 <entry>
-<title>RÃ©sumÃ© des dÃ©bats en sÃ©ance publique du 13 juin 2019</title>
-<link href="http://www.senat.fr/interventions/criresume_ppl18-229_1.html"  rel="alternate" type="text/html"/>
-<id>http://www.senat.fr/interventions/criresume_ppl18-229_1.html</id>
-<updated>2019-06-12T22:00:00Z</updated>
-<modified>2019-06-12T22:00:00Z</modified>
-<published>2019-06-12T22:00:00Z</published>
-<issued>2019-06-12T22:00:00Z</issued>
-<created>2019-06-12T22:00:00Z</created>
+<title>Petite loi</title>
+<link href="/petite-loi-ameli/2018-2019/536.html"  rel="alternate" type="text/html"/>
+<id>/petite-loi-ameli/2018-2019/536.html</id>
+<updated>2019-06-11T23:05:21Z</updated>
+<modified>2019-06-11T23:05:21Z</modified>
+<published>2019-06-11T23:05:21Z</published>
+<issued>2019-06-11T23:05:21Z</issued>
+<created>2019-06-11T23:05:21Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat</summary>
+<summary>Première lecture - Sénat : Petite loi</summary>
 </entry>
 <entry>
-<title>RÃ©sumÃ© des dÃ©bats en sÃ©ance publique du 12 juin 2019</title>
-<link href="http://www.senat.fr/interventions/criresume_ppl18-229_1.html"  rel="alternate" type="text/html"/>
-<id>http://www.senat.fr/interventions/criresume_ppl18-229_1.html</id>
+<title>Texte n° 2028</title>
+<link href="http://www.assemblee-nationale.fr/15/propositions/pion2028.asp"  rel="alternate" type="text/html"/>
+<id>http://www.assemblee-nationale.fr/15/propositions/pion2028.asp</id>
 <updated>2019-06-11T22:00:00Z</updated>
 <modified>2019-06-11T22:00:00Z</modified>
 <published>2019-06-11T22:00:00Z</published>
 <issued>2019-06-11T22:00:00Z</issued>
 <created>2019-06-11T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat</summary>
+<summary>Première lecture - Assemblée nationale : Texte transmis à l'Assemblée nationale le 12 juin 2019</summary>
 </entry>
 <entry>
-<title>RÃ©sumÃ© des dÃ©bats en sÃ©ance publique du 11 juin 2019</title>
+<title>Compte rendu intégral de la séance du 11 juin 2019</title>
+<link href="http://www.senat.fr/seances/s201906/s20190611/st20190611000.html"  rel="alternate" type="text/html"/>
+<id>http://www.senat.fr/seances/s201906/s20190611/st20190611000.html</id>
+<updated>2019-06-11T15:00:11Z</updated>
+<modified>2019-06-11T15:00:11Z</modified>
+<published>2019-06-11T15:00:11Z</published>
+<issued>2019-06-11T15:00:11Z</issued>
+<created>2019-06-11T15:00:11Z</created>
+<category term=""/>
+<summary>Première lecture - Sénat : Compte rendu intégral de la séance du 11 juin 2019</summary>
+</entry>
+<entry>
+<title>Résumé des débats en séance publique du 11 juin 2019</title>
 <link href="http://www.senat.fr/interventions/criresume_ppl18-229_1.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/interventions/criresume_ppl18-229_1.html</id>
 <updated>2019-06-10T22:00:00Z</updated>
@@ -46,10 +58,10 @@
 <issued>2019-06-10T22:00:00Z</issued>
 <created>2019-06-10T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat</summary>
+<summary>Première lecture - Sénat</summary>
 </entry>
 <entry>
-<title>Amendements dÃ©posÃ©s sur le texte nÂ°536</title>
+<title>Amendements déposés sur le texte n°536</title>
 <link href="http://www.senat.fr/amendements/2018-2019/536/accueil.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/amendements/2018-2019/536/accueil.html</id>
 <updated>2019-06-03T08:38:13Z</updated>
@@ -58,10 +70,10 @@
 <issued>2019-06-03T08:38:13Z</issued>
 <created>2019-06-03T08:38:13Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Amendements dÃ©posÃ©s sur le texte nÂ°536</summary>
+<summary>Première lecture - Sénat : Amendements déposés sur le texte n°536</summary>
 </entry>
 <entry>
-<title>Texte de la commission nÂ° 536</title>
+<title>Texte de la commission n° 536</title>
 <link href="http://www.senat.fr/leg/ppl18-536.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/leg/ppl18-536.html</id>
 <updated>2019-05-28T22:00:00Z</updated>
@@ -70,10 +82,10 @@
 <issued>2019-05-28T22:00:00Z</issued>
 <created>2019-05-28T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Texte de la commission dÃ©posÃ© le 29 mai 2019</summary>
+<summary>Première lecture - Sénat : Texte de la commission déposé le 29 mai 2019</summary>
 </entry>
 <entry>
-<title>Rapport nÂ° 535</title>
+<title>Rapport n° 535</title>
 <link href="http://www.senat.fr/rap/l18-535/l18-535.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/rap/l18-535/l18-535.html</id>
 <updated>2019-05-28T22:00:00Z</updated>
@@ -82,10 +94,10 @@
 <issued>2019-05-28T22:00:00Z</issued>
 <created>2019-05-28T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Rapport de Mme Dominique ESTROSI SASSONE, fait au nom de la commission des affaires Ã©conomiques (29 mai 2019)</summary>
+<summary>Première lecture - Sénat : Rapport de Mme Dominique ESTROSI SASSONE, fait au nom de la commission des affaires économiques (29 mai 2019)</summary>
 </entry>
 <entry>
-<title>Comptes rendus des rÃ©unions de la commission des affaires Ã©conomiques</title>
+<title>Comptes rendus des réunions de la commission des affaires économiques</title>
 <link href="http://www.senat.fr/compte-rendu-commissions/20190527/eco.html#toc5"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/compte-rendu-commissions/20190527/eco.html#toc5</id>
 <updated>2019-05-28T22:00:00Z</updated>
@@ -94,34 +106,10 @@
 <issued>2019-05-28T22:00:00Z</issued>
 <created>2019-05-28T22:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Comptes rendus des rÃ©unions de la commission des affaires Ã©conomiques</summary>
+<summary>Première lecture - Sénat : Comptes rendus des réunions de la commission des affaires économiques</summary>
 </entry>
 <entry>
-<title>Inscription Ã  l'ordre du jour du 12 et 13 juin 2019</title>
-<link href="http://www.senat.fr/dossierleg/ppl18-229.html"  rel="alternate" type="text/html"/>
-<id>http://www.senat.fr/dossierleg/ppl18-229.html</id>
-<updated>2019-05-16T15:50:08Z</updated>
-<modified>2019-05-16T15:50:08Z</modified>
-<published>2019-05-16T15:50:08Z</published>
-<issued>2019-05-16T15:50:08Z</issued>
-<created>2019-05-16T15:50:08Z</created>
-<category term=""/>
-<summary>Inscription Ã  l'ordre du jour du 12 et 13 juin 2019</summary>
-</entry>
-<entry>
-<title>Inscription Ã  l'ordre du jour du 11 juin 2019</title>
-<link href="http://www.senat.fr/dossierleg/ppl18-229.html"  rel="alternate" type="text/html"/>
-<id>http://www.senat.fr/dossierleg/ppl18-229.html</id>
-<updated>2019-05-15T08:40:07Z</updated>
-<modified>2019-05-15T08:40:07Z</modified>
-<published>2019-05-15T08:40:07Z</published>
-<issued>2019-05-15T08:40:07Z</issued>
-<created>2019-05-15T08:40:07Z</created>
-<category term=""/>
-<summary>Inscription Ã  l'ordre du jour du 11 juin 2019</summary>
-</entry>
-<entry>
-<title>Compte rendu intÃ©gral de la sÃ©ance du 5 mars 2019</title>
+<title>Compte rendu intégral de la séance du 5 mars 2019</title>
 <link href="http://www.senat.fr/seances/s201903/s20190305/st20190305000.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/seances/s201903/s20190305/st20190305000.html</id>
 <updated>2019-03-05T13:50:04Z</updated>
@@ -130,10 +118,10 @@
 <issued>2019-03-05T13:50:04Z</issued>
 <created>2019-03-05T13:50:04Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Compte rendu intÃ©gral de la sÃ©ance du 5 mars 2019</summary>
+<summary>Première lecture - Sénat : Compte rendu intégral de la séance du 5 mars 2019</summary>
 </entry>
 <entry>
-<title>RÃ©sumÃ© des dÃ©bats en sÃ©ance publique du 5 mars 2019</title>
+<title>Résumé des débats en séance publique du 5 mars 2019</title>
 <link href="http://www.senat.fr/interventions/criresume_ppl18-229_1.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/interventions/criresume_ppl18-229_1.html</id>
 <updated>2019-03-04T23:00:00Z</updated>
@@ -142,10 +130,10 @@
 <issued>2019-03-04T23:00:00Z</issued>
 <created>2019-03-04T23:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat</summary>
+<summary>Première lecture - Sénat</summary>
 </entry>
 <entry>
-<title>Amendements dÃ©posÃ©s sur le texte nÂ°229</title>
+<title>Amendements déposés sur le texte n°229</title>
 <link href="http://www.senat.fr/amendements/2018-2019/229/accueil.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/amendements/2018-2019/229/accueil.html</id>
 <updated>2019-02-22T10:32:36Z</updated>
@@ -154,10 +142,10 @@
 <issued>2019-02-22T10:32:36Z</issued>
 <created>2019-02-22T10:32:36Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Amendements dÃ©posÃ©s sur le texte nÂ°229</summary>
+<summary>Première lecture - Sénat : Amendements déposés sur le texte n°229</summary>
 </entry>
 <entry>
-<title>Texte nÂ° 326</title>
+<title>Texte n° 326</title>
 <link href="http://www.senat.fr/leg/ppl18-326.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/leg/ppl18-326.html</id>
 <updated>2019-02-19T23:00:00Z</updated>
@@ -166,10 +154,10 @@
 <issued>2019-02-19T23:00:00Z</issued>
 <created>2019-02-19T23:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Texte rÃ©sultat des travaux de la commission le 20 fÃ©vrier 2019</summary>
+<summary>Première lecture - Sénat : Texte résultat des travaux de la commission le 20 février 2019</summary>
 </entry>
 <entry>
-<title>Rapport nÂ° 325</title>
+<title>Rapport n° 325</title>
 <link href="http://www.senat.fr/rap/l18-325/l18-325.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/rap/l18-325/l18-325.html</id>
 <updated>2019-02-19T23:00:00Z</updated>
@@ -178,10 +166,10 @@
 <issued>2019-02-19T23:00:00Z</issued>
 <created>2019-02-19T23:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Rapport de Mme Dominique ESTROSI SASSONE, fait au nom de la commission des affaires Ã©conomiques (20 fÃ©vrier 2019)</summary>
+<summary>Première lecture - Sénat : Rapport de Mme Dominique ESTROSI SASSONE, fait au nom de la commission des affaires économiques (20 février 2019)</summary>
 </entry>
 <entry>
-<title>Comptes rendus des rÃ©unions de la commission des affaires Ã©conomiques</title>
+<title>Comptes rendus des réunions de la commission des affaires économiques</title>
 <link href="http://www.senat.fr/doslegcom/ppl18-229_com.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/doslegcom/ppl18-229_com.html</id>
 <updated>2019-02-19T23:00:00Z</updated>
@@ -190,10 +178,10 @@
 <issued>2019-02-19T23:00:00Z</issued>
 <created>2019-02-19T23:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Comptes rendus des rÃ©unions de la commission des affaires Ã©conomiques</summary>
+<summary>Première lecture - Sénat : Comptes rendus des réunions de la commission des affaires économiques</summary>
 </entry>
 <entry>
-<title>Texte nÂ° 229</title>
+<title>Texte n° 229</title>
 <link href="http://www.senat.fr/leg/ppl18-229.html"  rel="alternate" type="text/html"/>
 <id>http://www.senat.fr/leg/ppl18-229.html</id>
 <updated>2018-12-19T23:00:00Z</updated>
@@ -202,6 +190,6 @@
 <issued>2018-12-19T23:00:00Z</issued>
 <created>2018-12-19T23:00:00Z</created>
 <category term=""/>
-<summary>PremiÃšre lecture - SÃ©nat : Texte de M. Bruno GILLES et plusieurs de ses collÃšgues,  dÃ©posÃ© au SÃ©nat le 20 dÃ©cembre 2018</summary>
+<summary>Première lecture - Sénat : Texte de M. Bruno GILLES et plusieurs de ses collègues,  déposé au Sénat le 20 décembre 2018</summary>
 </entry>
 </feed>

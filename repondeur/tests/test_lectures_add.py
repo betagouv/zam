@@ -39,12 +39,21 @@ def test_get_form(app, user_david):
     assert isinstance(form.fields["dossier"][0], Select)
     assert form.fields["dossier"][0].options == [
         ("", True, ""),
-        ("ppr18-458", False, "Clarifier et actualiser le Règlement du Sénat"),
+        ("ppl18-002", False, "Agence nationale de la cohésion des territoires"),
+        ("pjl18-526", False, "Accords France-Suisse et France-Luxembourg"),
+        ("pjl18-523", False, "Accord France Arménie"),
+        (
+            "DLR5L15N37357",
+            False,
+            "Fonction publique : transformation de la fonction publique",
+        ),
         (
             "ppl18-462",
             False,
             "Participation des conseillers de Lyon aux élections sénatoriales",
         ),
+        ("pjl18-404", False, "Organisation du système de santé"),
+        ("ppr18-458", False, "Clarifier et actualiser le Règlement du Sénat"),
         (
             "ppl17-699",
             False,
@@ -58,15 +67,6 @@ def test_get_form(app, user_david):
             "Accès à l'énergie et lutte contre la précarité énergétique",
         ),
         ("ppl18-229", False, "Lutte contre l'habitat insalubre ou dangereux"),
-        (
-            "DLR5L15N37357",
-            False,
-            "Fonction publique : transformation de la fonction publique",
-        ),
-        ("pjl18-526", False, "Accords France-Suisse et France-Luxembourg"),
-        ("pjl18-523", False, "Accord France Arménie"),
-        ("pjl18-404", False, "Organisation du système de santé"),
-        ("ppl18-002", False, "Agence nationale de la cohésion des territoires"),
         ("ppl18-454", False, "Exploitation des réseaux radioélectriques mobiles"),
         ("ppl18-386", False, "Clarifier diverses dispositions du droit électoral"),
         ("ppl18-385", False, "Clarifier diverses dispositions du droit électoral"),
@@ -358,5 +358,9 @@ def test_choices_lectures_merged(app, user_david):
             {"key": "PRJLANR5L15B1802-PO59051-", "label": label_an1},
             {"key": "PRJLANR5L15BTC1924-PO717460-", "label": label_an2},
             {"key": "PJLSENAT2019X532--", "label": label_senat},
+            {
+                "key": "PJLSENAT2019X571-PO78718-",
+                "label": "Sénat – Première lecture – Séance publique – Texte Nº 571",
+            },
         ]
     }

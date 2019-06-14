@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime, timedelta
 from http import HTTPStatus
@@ -14,6 +15,9 @@ from zam_repondeur.fetch.an.dossiers.models import (
     TexteRef,
     TypeTexte,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 BASE_URL_SENAT = "http://www.senat.fr"
@@ -69,17 +73,16 @@ def create_dossier(pid: str, rss_url: str) -> DossierRef:
     senat_url = str(soup.id.string)
     # URLs in Senat's own feeds are actually redirections.
     senat_url = senat_url.replace("dossierleg", "dossier-legislatif")
-    lectures = [
-        lecture
-        for lecture in (create_lecture(pid, entry) for entry in soup.select("entry"))
-        if lecture is not None
-    ]
+    prev_texte: Optional[TexteRef] = None
+    lectures = []
+    entries = sorted(soup.select("entry"), key=lambda e: e.created.string)
+    for entry in entries:
+        lecture = create_lecture(pid, entry, prev_texte=prev_texte)
+        if lecture is not None:
+            prev_texte = lecture.texte
+            lectures.append(lecture)
     dossier = DossierRef(
-        uid=pid,
-        titre=title,
-        an_url="",
-        senat_url=senat_url,
-        lectures=list(reversed(lectures)),
+        uid=pid, titre=title, an_url="", senat_url=senat_url, lectures=lectures
     )
     return dossier
 
@@ -92,7 +95,9 @@ def download_rss(url: str) -> str:
     return resp.text
 
 
-def create_lecture(pid: str, entry: element.Tag) -> Optional[LectureRef]:
+def create_lecture(
+    pid: str, entry: element.Tag, prev_texte: Optional[TexteRef] = None
+) -> Optional[LectureRef]:
     title = entry.title.string
     if not title.startswith("Texte "):
         return None
@@ -106,14 +111,23 @@ def create_lecture(pid: str, entry: element.Tag) -> Optional[LectureRef]:
         return None
 
     num_lecture = summary.split(" - ", 1)[0]
-    if title.startswith("Texte de la commission"):
+    texte = create_texte(pid, entry)
+
+    mo = re.search(r"Texte (résultat des travaux )?de la commission", summary)
+    if mo is not None:
         examen = "Séance publique"
         organe = "PO78718"
+        if mo.group(1):
+            if prev_texte is None:
+                logger.warning("Expected a prev_texte")
+                return None
+            texte = prev_texte
     else:
         examen = "Commissions"
         organe = ""  # TODO: PO211495 is not a sane default.
+
     titre = f"{num_lecture} – {examen}"
-    texte = create_texte(pid, entry)
+
     return LectureRef(chambre=chambre, titre=titre, organe=organe, texte=texte)
 
 

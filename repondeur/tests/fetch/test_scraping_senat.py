@@ -371,18 +371,18 @@ def test_get_dossiers_senat(mock_scraping_senat):
                 ),
                 LectureRef(
                     chambre=ChambreRef.SENAT,
-                    titre="Première lecture – Commissions",
+                    titre="Première lecture – Séance publique",
                     texte=TexteRef(
-                        uid="PPLSENAT2019X326",
+                        uid="PPLSENAT2018X229",
                         type_=TypeTexte.PROPOSITION,
                         chambre=ChambreRef.SENAT,
                         legislature=18,
-                        numero=326,
-                        titre_long="Texte résultat des travaux de la commission le 20 février 2019",  # noqa
+                        numero=229,
+                        titre_long="Texte de M. Bruno GILLES et plusieurs de ses collègues,  déposé au Sénat le 20 décembre 2018",  # noqa
                         titre_court="",
-                        date_depot=datetime.date(2019, 2, 20),
+                        date_depot=datetime.date(2018, 12, 20),
                     ),
-                    organe="",
+                    organe="PO78718",
                     partie=None,
                 ),
                 LectureRef(
@@ -427,18 +427,18 @@ def test_get_dossiers_senat(mock_scraping_senat):
                 ),
                 LectureRef(
                     chambre=ChambreRef.SENAT,
-                    titre="Première lecture – Commissions",
+                    titre="Première lecture – Séance publique",
                     texte=TexteRef(
-                        uid="PPLSENAT2019X538",
+                        uid="PPLSENAT2019X260",
                         type_=TypeTexte.PROPOSITION,
                         chambre=ChambreRef.SENAT,
                         legislature=18,
-                        numero=538,
-                        titre_long="Texte résultat des travaux de la commission le 29 mai 2019",  # noqa
+                        numero=260,
+                        titre_long="Texte de M. Fabien GAY, Mme Éliane ASSASSI et plusieurs de leurs collègues,  déposé au Sénat le 22 janvier 2019",  # noqa
                         titre_court="",
-                        date_depot=datetime.date(2019, 5, 29),
+                        date_depot=datetime.date(2019, 1, 22),
                     ),
-                    organe="",
+                    organe="PO78718",
                     partie=None,
                 ),
             ],
@@ -467,18 +467,18 @@ def test_get_dossiers_senat(mock_scraping_senat):
                 ),
                 LectureRef(
                     chambre=ChambreRef.SENAT,
-                    titre="Première lecture – Commissions",
+                    titre="Première lecture – Séance publique",
                     texte=TexteRef(
-                        uid="PPLSENAT2019X534",
+                        uid="PPLSENAT2019X305",
                         type_=TypeTexte.PROPOSITION,
                         chambre=ChambreRef.SENAT,
                         legislature=18,
-                        numero=534,
-                        titre_long="Texte résultat des travaux de la commission le 29 mai 2019",  # noqa
+                        numero=305,
+                        titre_long="Texte de M. Pierre-Yves COLLOMBAT et plusieurs de ses collègues,  déposé au Sénat le 12 février 2019",  # noqa
                         titre_court="",
-                        date_depot=datetime.date(2019, 5, 29),
+                        date_depot=datetime.date(2019, 2, 12),
                     ),
-                    organe="",
+                    organe="PO78718",
                     partie=None,
                 ),
             ],
@@ -587,18 +587,18 @@ def test_get_dossiers_senat(mock_scraping_senat):
                 ),
                 LectureRef(
                     chambre=ChambreRef.SENAT,
-                    titre="Première lecture – Commissions",
+                    titre="Première lecture – Séance publique",
                     texte=TexteRef(
-                        uid="PPLSENAT2019X531",
+                        uid="PPLSENAT2019X436",
                         type_=TypeTexte.PROPOSITION,
                         chambre=ChambreRef.SENAT,
                         legislature=18,
-                        numero=531,
-                        titre_long="Texte résultat des travaux de la commission le 29 mai 2019",  # noqa
+                        numero=436,
+                        titre_long="Texte de MM. Jean-Marc GABOUTY, Jean-Claude REQUIER et plusieurs de leurs collègues,  déposé au Sénat le 4 avril 2019",  # noqa
                         titre_court="",
-                        date_depot=datetime.date(2019, 5, 29),
+                        date_depot=datetime.date(2019, 4, 4),
                     ),
-                    organe="",
+                    organe="PO78718",
                     partie=None,
                 ),
             ],

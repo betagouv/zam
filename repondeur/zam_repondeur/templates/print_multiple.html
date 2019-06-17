@@ -8,7 +8,12 @@
   <main>
     {% for amendement in amendements %}
         {{ macros.response_page([amendement] + amendement.similaires) }}
-        {% for amdt in expanded_amendements %}
+        {% if amendement.batch %}
+            {% set amdts = amendement.batch.amendements %}
+        {% else %}
+            {% set amdts = [amendement] %}
+        {% endif %}
+        {% for amdt in amdts %}
             {{ macros.amendement_page(amdt) }}
         {% endfor %}
     {% endfor %}

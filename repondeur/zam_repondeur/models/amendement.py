@@ -323,6 +323,7 @@ class Amendement(Base):
         resume: Optional[str] = None,
         alinea: Optional[str] = None,
         parent: Optional["Amendement"] = None,
+        batch: Optional[Batch] = None,
         avis: Optional[str] = None,
         objet: Optional[str] = None,
         reponse: Optional[str] = None,
@@ -347,6 +348,7 @@ class Amendement(Base):
             resume=resume,
             alinea=alinea,
             parent=parent,
+            batch=batch,
             created_at=now,
         )
         user_content = AmendementUserContent(

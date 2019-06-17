@@ -1,3 +1,5 @@
+import pytest
+import transaction
 from pyramid.testing import DummyRequest
 from selectolax.parser import HTMLParser
 
@@ -803,7 +805,30 @@ def test_generate_pdf_amendement_with_similaire(
     assert "La réponse" in response_node.css("div p")[-1].text()
 
 
-def test_generate_pdf_amendement_with_batches(app, lecture_an, amendements_an_batch):
+@pytest.fixture
+def another_amendements_an_batch(lecture_an, article1_an):
+    from zam_repondeur.models import Amendement, Batch, DBSession
+
+    with transaction.manager:
+        batch = Batch.create()
+        amendements = [
+            Amendement.create(
+                lecture=lecture_an,
+                article=article1_an,
+                num=num,
+                position=position,
+                batch=batch,
+            )
+            for position, num in enumerate((555, 888), 3)
+        ]
+        DBSession.add_all(amendements)
+
+    return amendements
+
+
+def test_generate_pdf_amendement_with_batches(
+    app, lecture_an, amendements_an_batch, another_amendements_an_batch
+):
     from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import DBSession
 
@@ -820,17 +845,36 @@ def test_generate_pdf_amendement_with_batches(app, lecture_an, amendements_an_ba
     amendement_999.user_content.objet = "L’objet"
     amendement_999.user_content.reponse = "La réponse"
 
-    DBSession.add_all(amendements_an_batch)
+    amendement_555, amendement_888 = another_amendements_an_batch
+    amendement_555.auteur = "M. JACQUES"
+    amendement_555.groupe = "Les Indépendants"
+    amendement_555.user_content.avis = "Défavorable"
+    amendement_555.user_content.objet = "L’autre objet"
+    amendement_555.user_content.reponse = "L’autre réponse"
+
+    amendement_888.auteur = "M. ROBERT"
+    amendement_888.groupe = "Les Mécontents"
+    amendement_888.user_content.avis = "Défavorable"
+    amendement_888.user_content.objet = "L’autre objet"
+    amendement_888.user_content.reponse = "L’autre réponse"
+
+    DBSession.add_all([amendement_666, amendement_999, amendement_555, amendement_888])
 
     assert amendement_666.similaires == [amendement_999]
+    assert amendement_555.similaires == [amendement_888]
 
     parser = HTMLParser(
         generate_html_for_pdf(
             DummyRequest(),
             "print_multiple.html",
             {
-                "amendements": [amendement_666],
-                "expanded_amendements": [amendement_666, amendement_999],
+                "amendements": [amendement_666, amendement_555],
+                "expanded_amendements": [
+                    amendement_666,
+                    amendement_999,
+                    amendement_555,
+                    amendement_888,
+                ],
             },
         )
     )
@@ -839,6 +883,9 @@ def test_generate_pdf_amendement_with_batches(app, lecture_an, amendements_an_ba
         "Réponse",
         "Amendement nº 666",
         "Amendement nº 999",
+        "Réponse",
+        "Amendement nº 555",
+        "Amendement nº 888",
     ]
     response_node = parser.css_first(".reponse")
     assert _cartouche_to_list(response_node) == [

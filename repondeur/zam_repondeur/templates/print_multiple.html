@@ -8,7 +8,9 @@
   <main>
     {% for amendement in amendements %}
         {{ macros.response_page([amendement] + amendement.similaires) }}
-        {{ macros.amendement_page(amendement) }}
+        {% for amdt in expanded_amendements %}
+            {{ macros.amendement_page(amdt) }}
+        {% endfor %}
     {% endfor %}
   </main>
 </body>

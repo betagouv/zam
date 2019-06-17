@@ -8,10 +8,11 @@ from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload
 
-from zam_repondeur.resources import LectureResource
 from zam_repondeur.export.json import write_json
 from zam_repondeur.export.pdf import write_pdf, write_pdf_multiple
 from zam_repondeur.export.spreadsheet import write_xlsx
+from zam_repondeur.models import Batch
+from zam_repondeur.resources import LectureResource
 
 
 DOWNLOAD_FORMATS = {
@@ -75,6 +76,7 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
         for amendement in (lecture.find_amendement(num) for num in nums)
         if amendement is not None
     ]
+    expanded_amendements = list(Batch.expanded_batches(amendements))
 
     with NamedTemporaryFile() as file_:
 
@@ -83,14 +85,15 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
         write_pdf_multiple(
             lecture=lecture,
             amendements=amendements,
+            expanded_amendements=expanded_amendements,
             filename=tmp_file_path,
             request=request,
         )
 
         response = FileResponse(tmp_file_path)
         attach_name = (
-            f"amendement{'s' if len(nums) > 1 else ''}-"
-            f"{','.join(str(num) for num in nums)}-"
+            f"amendement{'s' if len(expanded_amendements) > 1 else ''}-"
+            f"{','.join(str(amdt.num) for amdt in expanded_amendements)}-"
             f"{lecture.chambre}-{lecture.texte.numero}-"
             f"{lecture.organe}.pdf"
         )

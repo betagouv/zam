@@ -47,3 +47,15 @@ def test_download_multiple_amendements(app, lecture_an, amendements_an, user_dav
         resp.headers["Content-Disposition"]
         == f"attachment; filename=amendements-666,999-an-269-PO717460.pdf"
     )
+
+
+def test_download_multiple_amendements_same_batch(
+    app, lecture_an, amendements_an_batch, user_david
+):
+    resp = app.get("/lectures/an.15.269.PO717460/export_pdf?nums=666", user=user_david)
+    assert resp.status_code == 200
+    assert resp.content_type == "application/pdf"
+    assert (
+        resp.headers["Content-Disposition"]
+        == f"attachment; filename=amendements-666,999-an-269-PO717460.pdf"
+    )

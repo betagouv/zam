@@ -664,7 +664,9 @@ def test_generate_pdf_amendement_without_responses(app, lecture_senat, article1_
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print_multiple.html", {"amendements": [amendement]}
+            DummyRequest(),
+            "print_multiple.html",
+            {"amendements": [amendement], "expanded_amendements": [amendement]},
         )
     )
 
@@ -693,7 +695,9 @@ def test_generate_pdf_amendement_with_responses(app, lecture_senat, article1_sen
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print_multiple.html", {"amendements": [amendement]}
+            DummyRequest(),
+            "print_multiple.html",
+            {"amendements": [amendement], "expanded_amendements": [amendement]},
         )
     )
 
@@ -716,7 +720,12 @@ def test_generate_pdf_amendement_with_content(
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print_multiple.html", {"amendements": [amendement_6666]}
+            DummyRequest(),
+            "print_multiple.html",
+            {
+                "amendements": [amendement_6666],
+                "expanded_amendements": [amendement_6666],
+            },
         )
     )
 
@@ -765,7 +774,12 @@ def test_generate_pdf_amendement_with_similaire(
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print_multiple.html", {"amendements": [amendement_6666]}
+            DummyRequest(),
+            "print_multiple.html",
+            {
+                "amendements": [amendement_6666],
+                "expanded_amendements": [amendement_6666],
+            },
         )
     )
 
@@ -776,6 +790,62 @@ def test_generate_pdf_amendement_with_similaire(
         "Art. 1",
         "Amendements",
         "6666 et 9999",
+        "Auteurs",
+        "M. CLAUDE et M. JEAN",
+        "Groupes",
+        "Les Indépendants et Les Mécontents",
+        "Avis",
+        "Favorable",
+    ]
+    assert response_node.css_first("div h5").text() == "Objet"
+    assert "L’objet" in response_node.css_first("div p").text()
+    assert response_node.css("div h5")[-1].text() == "Réponse"
+    assert "La réponse" in response_node.css("div p")[-1].text()
+
+
+def test_generate_pdf_amendement_with_batches(app, lecture_an, amendements_an_batch):
+    from zam_repondeur.export.pdf import generate_html_for_pdf
+    from zam_repondeur.models import DBSession
+
+    amendement_666, amendement_999 = amendements_an_batch
+    amendement_666.auteur = "M. JEAN"
+    amendement_666.groupe = "Les Indépendants"
+    amendement_666.user_content.avis = "Favorable"
+    amendement_666.user_content.objet = "L’objet"
+    amendement_666.user_content.reponse = "La réponse"
+
+    amendement_999.auteur = "M. CLAUDE"
+    amendement_999.groupe = "Les Mécontents"
+    amendement_999.user_content.avis = "Favorable"
+    amendement_999.user_content.objet = "L’objet"
+    amendement_999.user_content.reponse = "La réponse"
+
+    DBSession.add_all(amendements_an_batch)
+
+    assert amendement_666.similaires == [amendement_999]
+
+    parser = HTMLParser(
+        generate_html_for_pdf(
+            DummyRequest(),
+            "print_multiple.html",
+            {
+                "amendements": [amendement_666],
+                "expanded_amendements": [amendement_666, amendement_999],
+            },
+        )
+    )
+
+    assert _html_page_titles(parser) == [
+        "Réponse",
+        "Amendement nº 666",
+        "Amendement nº 999",
+    ]
+    response_node = parser.css_first(".reponse")
+    assert _cartouche_to_list(response_node) == [
+        "Article",
+        "Art. 1",
+        "Amendements",
+        "666 et 999",
         "Auteurs",
         "M. CLAUDE et M. JEAN",
         "Groupes",

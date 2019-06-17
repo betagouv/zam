@@ -168,7 +168,7 @@ def test_column_filtering_by_value_with_batches(
         DBSession.add_all(amendements_an)
         user = DBSession.query(User).filter(User.email == email).first()
 
-        batch = Batch()
+        batch = Batch.create()
         amendements_an[0].batch = batch
         amendements_an[1].batch = batch
 

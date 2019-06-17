@@ -666,9 +666,7 @@ def test_generate_pdf_amendement_without_responses(app, lecture_senat, article1_
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(),
-            "print_multiple.html",
-            {"amendements": [amendement], "expanded_amendements": [amendement]},
+            DummyRequest(), "print_multiple.html", {"amendements": [amendement]}
         )
     )
 
@@ -697,9 +695,7 @@ def test_generate_pdf_amendement_with_responses(app, lecture_senat, article1_sen
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(),
-            "print_multiple.html",
-            {"amendements": [amendement], "expanded_amendements": [amendement]},
+            DummyRequest(), "print_multiple.html", {"amendements": [amendement]}
         )
     )
 
@@ -722,12 +718,7 @@ def test_generate_pdf_amendement_with_content(
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(),
-            "print_multiple.html",
-            {
-                "amendements": [amendement_6666],
-                "expanded_amendements": [amendement_6666],
-            },
+            DummyRequest(), "print_multiple.html", {"amendements": [amendement_6666]}
         )
     )
 
@@ -776,12 +767,7 @@ def test_generate_pdf_amendement_with_similaire(
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(),
-            "print_multiple.html",
-            {
-                "amendements": [amendement_6666],
-                "expanded_amendements": [amendement_6666],
-            },
+            DummyRequest(), "print_multiple.html", {"amendements": [amendement_6666]}
         )
     )
 
@@ -867,15 +853,7 @@ def test_generate_pdf_amendement_with_batches(
         generate_html_for_pdf(
             DummyRequest(),
             "print_multiple.html",
-            {
-                "amendements": [amendement_666, amendement_555],
-                "expanded_amendements": [
-                    amendement_666,
-                    amendement_999,
-                    amendement_555,
-                    amendement_888,
-                ],
-            },
+            {"amendements": [amendement_666, amendement_555]},
         )
     )
 

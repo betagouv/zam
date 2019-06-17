@@ -85,7 +85,6 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
         write_pdf_multiple(
             lecture=lecture,
             amendements=amendements,
-            expanded_amendements=expanded_amendements,
             filename=tmp_file_path,
             request=request,
         )

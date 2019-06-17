@@ -128,7 +128,7 @@ def test_column_filtering_by_value_with_batches(
         DBSession.add(user_david_table_an)
         DBSession.add(user_daniel_table_an)
 
-        batch = Batch()
+        batch = Batch.create()
         amendements_an[0].batch = batch
         amendements_an[1].batch = batch
 

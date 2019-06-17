@@ -22,7 +22,6 @@ def texte_plfss2018_an_premiere_lecture(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLANR5L15B0269",
             type_=TypeTexte.PROJET,
             chambre=Chambre.AN,
             legislature=15,
@@ -92,7 +91,6 @@ def texte_plfss2018_senat_premiere_lecture(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLSNR5S299B0063",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2017,
@@ -162,7 +160,6 @@ def texte_plfss2018_an_nouvelle_lecture(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLANR5L15B0387",
             type_=TypeTexte.PROJET,
             chambre=Chambre.AN,
             legislature=15,
@@ -215,7 +212,6 @@ def texte_plfss2018_senat_nouvelle_lecture(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLSNR5S299B0121",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2017,
@@ -268,7 +264,6 @@ def texte_plfss2018_an_lecture_definitive(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLANR5L15B0434",
             type_=TypeTexte.PROJET,
             chambre=Chambre.AN,
             legislature=15,

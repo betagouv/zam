@@ -53,7 +53,6 @@ class Texte(Base):
 
     pk = Column(Integer, primary_key=True)
 
-    uid = Column(Text, nullable=False, unique=True)  # UID from Assemblée Nationale
     type_ = Column(Enum(TypeTexte), nullable=False)
     chambre = Column(Enum(Chambre), nullable=False)
 
@@ -75,15 +74,7 @@ class Texte(Base):
 
     lectures = relationship("Lecture", back_populates="texte")
 
-    __repr_keys__ = (
-        "pk",
-        "uid",
-        "type_",
-        "numero",
-        "titre_long",
-        "titre_court",
-        "date_depot",
-    )
+    __repr_keys__ = ("pk", "type_", "numero", "titre_long", "titre_court", "date_depot")
 
     @property
     def session_str(self) -> Optional[str]:
@@ -108,7 +99,6 @@ class Texte(Base):
     @classmethod
     def create(
         cls,
-        uid: str,
         type_: TypeTexte,
         chambre: Chambre,
         numero: int,
@@ -124,7 +114,6 @@ class Texte(Base):
         if chambre == Chambre.SENAT and session is None:
             raise ValueError("session is required for SENAT")
         texte = cls(
-            uid=uid,
             type_=type_,
             chambre=chambre,
             numero=numero,

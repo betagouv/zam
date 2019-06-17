@@ -93,7 +93,6 @@ def fetch_amendements_for_dossier(
             continue
         texte, _ = get_one_or_create(
             Texte,
-            uid=texte_ref.uid,
             create_kwargs=dict(
                 type_=texte_ref.type_,
                 chambre=(

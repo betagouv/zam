@@ -34,7 +34,6 @@ def texte_plf(db):
 
     with transaction.manager:
         return Texte.create(
-            uid="PRJLSNR5S319B0146",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2018,
@@ -497,7 +496,6 @@ def test_fetch_all_commission(dossier_plfss2018):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="...",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2017,
@@ -575,7 +573,6 @@ def test_fetch_discussion_details(dossier_plfss2018):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="...",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2016,

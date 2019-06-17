@@ -23,7 +23,6 @@ def texte_essoc2018_an_premier_lecture_commission_fond(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLANR5L15B0424",
             type_=TypeTexte.PROJET,
             chambre=Chambre.AN,
             legislature=15,
@@ -59,7 +58,6 @@ def texte_essoc2018_an_premiere_lecture_seance_publique(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLANR5L15BTC0575",
             type_=TypeTexte.PROJET,
             chambre=Chambre.AN,
             legislature=15,
@@ -95,7 +93,6 @@ def texte_essoc2018_senat_premiere_lecture_commission_fond(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLSNR5S299B0259",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2017,
@@ -131,7 +128,6 @@ def texte_essoc2018_senat_premiere_lecture_seance_publique(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLSNR5S299BTC0330",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2017,
@@ -167,7 +163,6 @@ def texte_essoc2018_an_nouvelle_lecture_commission_fond(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLANR5L15B0806",
             type_=TypeTexte.PROJET,
             chambre=Chambre.AN,
             legislature=15,
@@ -203,7 +198,6 @@ def texte_essoc2018_an_nouvelle_lecture_seance_publique(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLANR5L15BTC1056",
             type_=TypeTexte.PROJET,
             chambre=Chambre.AN,
             legislature=15,

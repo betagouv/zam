@@ -110,7 +110,6 @@ class LecturesAddForm(LectureAddBase):
 
         texte_model = get_one_or_create(
             Texte,
-            uid=texte.uid,
             type_=texte.type_,
             chambre=Chambre.AN if lecture_ref.chambre.value == "an" else Chambre.SENAT,
             legislature=texte.legislature,

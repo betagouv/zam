@@ -176,7 +176,6 @@ def check_same_lecture(
         legislature != str(lecture.texte.legislature)
         or partie != lecture.partie
         or organe != lecture.organe
-        or texte_uid != lecture.texte.uid
     ):
         dossier_ref, lecture_ref = _find_dossier_lecture(texte_uid)
         lecture_fmt = f"{lecture_ref.label} ({dossier_ref.titre})"

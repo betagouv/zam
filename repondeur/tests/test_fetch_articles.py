@@ -21,7 +21,6 @@ class TestGetPossibleUrls:
 
         with transaction.manager:
             texte = Texte.create(
-                uid="dummy-ppl-an",
                 type_=TypeTexte.PROPOSITION,
                 chambre=Chambre.AN,
                 legislature=15,
@@ -49,7 +48,6 @@ class TestGetPossibleUrls:
 
         with transaction.manager:
             texte = Texte.create(
-                uid="dummy-ppl-senat",
                 type_=TypeTexte.PROPOSITION,
                 chambre=Chambre.SENAT,
                 session=2017,

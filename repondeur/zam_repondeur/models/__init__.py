@@ -1,6 +1,6 @@
-from copy import deepcopy
 from typing import Any, Tuple
 
+from pyramid_retry import mark_error_retryable
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -20,6 +20,9 @@ from .events.article import *  # noqa
 from .events.lecture import *  # noqa
 
 
+mark_error_retryable(IntegrityError)
+
+
 def _get_one(model: Any, options: Any = None, **kwargs: Any) -> Tuple[Any, bool]:
     query = DBSession.query(model).filter_by(**kwargs)
     if options is not None:
@@ -28,7 +31,6 @@ def _get_one(model: Any, options: Any = None, **kwargs: Any) -> Tuple[Any, bool]
 
 
 def _create(model: Any, create_kwargs: Any = None, **kwargs: Any) -> Tuple[Any, bool]:
-    kwargs = deepcopy(kwargs)  # Otherwise updated in place for all subsequent queries.
     kwargs.update(create_kwargs or {})
     with DBSession.begin_nested():
         created = model.create(**kwargs)
@@ -42,10 +44,4 @@ def get_one_or_create(
     try:
         return _get_one(model, options, **kwargs)
     except NoResultFound:
-        try:
-            return _create(model, create_kwargs, **kwargs)
-        except IntegrityError:  # Race condition.
-            try:
-                return _get_one(model, options, **kwargs)
-            except NoResultFound:  # Retry to raise the appropriated IntegrityError.
-                return _create(model, create_kwargs, **kwargs)
+        return _create(model, create_kwargs, **kwargs)

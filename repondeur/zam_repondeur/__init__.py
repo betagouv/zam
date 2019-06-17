@@ -60,7 +60,7 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         config.include("zam_repondeur.auth")
 
         config.include("pyramid_default_cors")
-
+        config.include("pyramid_retry")
         config.include("pyramid_jinja2")
         config.add_jinja2_renderer(".html")
         config.add_jinja2_search_path("zam_repondeur:templates", name=".html")

@@ -88,6 +88,15 @@ $ createdb --owner=zam zam
 (zam)$ alembic -c development.ini upgrade head
 ```
 
+### Load data from external sources
+
+Fetch (open)data from AN and Sénat websites to be able to create
+up-to-date lectures.
+
+```
+(zam)$ zam_load_data development.ini
+```
+
 ### Start the web app
 
 ```

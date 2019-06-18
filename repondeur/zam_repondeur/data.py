@@ -18,7 +18,6 @@ def includeme(config: Configurator) -> None:
     Called automatically via config.include("zam_repondeur.data")
     """
     init_repository(config.registry.settings)
-    repository.load_data()
 
 
 def init_repository(settings: Dict[str, str]) -> None:

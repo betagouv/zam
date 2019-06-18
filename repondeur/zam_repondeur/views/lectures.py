@@ -172,7 +172,7 @@ class LecturesAddForm(LectureAddBase):
             raise HTTPNotFound
         return dossier_ref
 
-    def _get_lecture_ref(self, dossier: DossierRef) -> LectureRef:
+    def _get_lecture_ref(self, dossier_ref: DossierRef) -> LectureRef:
         try:
             texte_uid, organe, partie_str = self.request.POST["lecture"].split("-", 2)
         except (KeyError, ValueError):
@@ -183,12 +183,12 @@ class LecturesAddForm(LectureAddBase):
         else:
             partie = int(partie_str)
         matching = [
-            lecture
-            for lecture in dossier.lectures
+            lecture_ref
+            for lecture_ref in dossier_ref.lectures
             if (
-                lecture.texte.uid == texte_uid
-                and lecture.organe == organe
-                and lecture.partie == partie
+                lecture_ref.texte.uid == texte_uid
+                and lecture_ref.organe == organe
+                and lecture_ref.partie == partie
             )
         ]
         if len(matching) != 1:

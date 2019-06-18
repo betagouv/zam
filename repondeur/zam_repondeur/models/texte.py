@@ -2,7 +2,7 @@ from datetime import date, datetime
 from typing import Optional
 import enum
 
-from sqlalchemy import Column, Date, DateTime, Enum, Index, Integer, Text
+from sqlalchemy import Column, Date, DateTime, Enum, Index, Integer
 from sqlalchemy.orm import relationship
 
 from .base import Base, DBSession
@@ -63,8 +63,6 @@ class Texte(Base):
     legislature = Column(Integer, nullable=True)
 
     numero = Column(Integer, nullable=False)
-    titre_long = Column(Text, nullable=False)
-    titre_court = Column(Text, nullable=False)
     date_depot = Column(Date, nullable=False)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
@@ -74,7 +72,7 @@ class Texte(Base):
 
     lectures = relationship("Lecture", back_populates="texte")
 
-    __repr_keys__ = ("pk", "type_", "numero", "titre_long", "titre_court", "date_depot")
+    __repr_keys__ = ("pk", "type_", "numero", "date_depot")
 
     @property
     def session_str(self) -> Optional[str]:
@@ -102,8 +100,6 @@ class Texte(Base):
         type_: TypeTexte,
         chambre: Chambre,
         numero: int,
-        titre_long: str,
-        titre_court: str,
         date_depot: date,
         session: Optional[int] = None,
         legislature: Optional[int] = None,
@@ -117,8 +113,6 @@ class Texte(Base):
             type_=type_,
             chambre=chambre,
             numero=numero,
-            titre_long=titre_long,
-            titre_court=titre_court,
             date_depot=date_depot,
             session=session,
             legislature=legislature,

@@ -115,8 +115,6 @@ class LecturesAddForm(LectureAddBase):
             legislature=texte.legislature,
             session=texte.session,
             numero=texte.numero,
-            titre_long=texte.titre_long,
-            titre_court=texte.titre_court,
             date_depot=texte.date_depot,
         )[0]
 

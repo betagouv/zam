@@ -26,8 +26,6 @@ def texte_plfss2018_an_premiere_lecture(db):
             chambre=Chambre.AN,
             legislature=15,
             numero=269,
-            titre_long="projet de loi de financement de la sécurité sociale pour 2018",
-            titre_court="PLFSS pour 2018",
             date_depot=date(2017, 10, 11),
         )
 
@@ -95,8 +93,6 @@ def texte_plfss2018_senat_premiere_lecture(db):
             chambre=Chambre.SENAT,
             session=2017,
             numero=63,
-            titre_long="projet de loi de financement de la sécurité sociale pour 2018",
-            titre_court="PLFSS pour 2018",
             date_depot=date(2017, 11, 6),
         )
 
@@ -164,8 +160,6 @@ def texte_plfss2018_an_nouvelle_lecture(db):
             chambre=Chambre.AN,
             legislature=15,
             numero=387,
-            titre_long="projet de loi de financement de la sécurité sociale pour 2018",
-            titre_court="PLFSS pour 2018",
             date_depot=date(2017, 11, 21),
         )
 
@@ -216,8 +210,6 @@ def texte_plfss2018_senat_nouvelle_lecture(db):
             chambre=Chambre.SENAT,
             session=2017,
             numero=121,
-            titre_long="projet de loi de financement de la sécurité sociale pour 2018",
-            titre_court="PLFSS pour 2018",
             date_depot=date(2017, 11, 30),
         )
 
@@ -268,8 +260,6 @@ def texte_plfss2018_an_lecture_definitive(db):
             chambre=Chambre.AN,
             legislature=15,
             numero=434,
-            titre_long="projet de loi de financement de la sécurité sociale pour 2018",
-            titre_court="PLFSS pour 2018",
             date_depot=date(2017, 12, 1),
         )
 

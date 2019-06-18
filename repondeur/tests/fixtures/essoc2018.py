@@ -27,8 +27,6 @@ def texte_essoc2018_an_premier_lecture_commission_fond(db):
             chambre=Chambre.AN,
             legislature=15,
             numero=424,
-            titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
-            titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
             date_depot=date(2017, 11, 27),
         )
 
@@ -62,8 +60,6 @@ def texte_essoc2018_an_premiere_lecture_seance_publique(db):
             chambre=Chambre.AN,
             legislature=15,
             numero=575,
-            titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
-            titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
             date_depot=date(2018, 1, 18),
         )
 
@@ -97,8 +93,6 @@ def texte_essoc2018_senat_premiere_lecture_commission_fond(db):
             chambre=Chambre.SENAT,
             session=2017,
             numero=259,
-            titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
-            titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
             date_depot=date(2018, 1, 31),
         )
 
@@ -132,8 +126,6 @@ def texte_essoc2018_senat_premiere_lecture_seance_publique(db):
             chambre=Chambre.SENAT,
             session=2017,
             numero=330,
-            titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
-            titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
             date_depot=date(2018, 2, 22),
         )
 
@@ -167,8 +159,6 @@ def texte_essoc2018_an_nouvelle_lecture_commission_fond(db):
             chambre=Chambre.AN,
             legislature=15,
             numero=806,
-            titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
-            titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
             date_depot=date(2018, 3, 21),
         )
 
@@ -202,8 +192,6 @@ def texte_essoc2018_an_nouvelle_lecture_seance_publique(db):
             chambre=Chambre.AN,
             legislature=15,
             numero=1056,
-            titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
-            titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
             date_depot=date(2018, 6, 13),
         )
 

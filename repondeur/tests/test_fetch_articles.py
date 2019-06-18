@@ -25,8 +25,6 @@ class TestGetPossibleUrls:
                 chambre=Chambre.AN,
                 legislature=15,
                 numero=269,
-                titre_long="proposition de loi fictive",
-                titre_court="PPL fictive",
                 date_depot=date(2017, 10, 11),
             )
 
@@ -52,8 +50,6 @@ class TestGetPossibleUrls:
                 chambre=Chambre.SENAT,
                 session=2017,
                 numero=63,
-                titre_long="proposition de loi fictive",
-                titre_court="PPL fictive",
                 date_depot=date(2017, 10, 11),
             )
 

@@ -101,8 +101,6 @@ def fetch_amendements_for_dossier(
                 legislature=texte_ref.legislature,
                 session=texte_ref.session,
                 numero=texte_ref.numero,
-                titre_long=texte_ref.titre_long,
-                titre_court=texte_ref.titre_court,
                 date_depot=texte_ref.date_depot,
             ),
         )

@@ -100,6 +100,7 @@ def deploy_repondeur(
         migrate_db(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
         setup_webapp_service(ctx)
         setup_worker_service(ctx)
+        load_data(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
     except Exception as exc:
         rollbar_deploy_update(ctx.config["rollbar_token"], deploy_id, status="failed")
     else:
@@ -199,6 +200,11 @@ def setup_worker_service(ctx):
     ctx.sudo("systemctl daemon-reload")
     ctx.sudo("systemctl enable zam_worker")
     ctx.sudo("systemctl restart zam_worker")
+
+
+def load_data(ctx, app_dir, venv_dir, user):
+    cmd = f"{venv_dir}/bin/zam_load_data production.ini#repondeur"
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 
 def rollbar_deploy_start(ctx, branch, environment, comment):

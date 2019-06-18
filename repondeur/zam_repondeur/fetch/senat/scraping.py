@@ -133,7 +133,6 @@ def create_lecture(
 
 def create_texte(pid: str, entry: element.Tag) -> TexteRef:
     numero = entry.title.string.split(" n° ", 1)[1]
-    titre_long = entry.summary.string.split(" : ", 1)[1]
     type_dict = {
         "ppr": TypeTexte.PROPOSITION,
         "ppl": TypeTexte.PROPOSITION,
@@ -156,7 +155,7 @@ def create_texte(pid: str, entry: element.Tag) -> TexteRef:
         chambre=chambre,
         legislature=legislature,
         numero=int(numero),
-        titre_long=titre_long,
+        titre_long="",
         titre_court="",
         date_depot=date_depot,
     )

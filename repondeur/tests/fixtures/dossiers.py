@@ -14,8 +14,70 @@ def mock_dossiers():
         TypeTexte,
     )
 
-    with patch("zam_repondeur.data.get_dossiers_legislatifs") as m_dossiers:
-        m_dossiers.return_value = {
+    with patch("zam_repondeur.data.get_dossiers_legislatifs_and_textes") as m_dossiers:
+        textes = {
+            "PRJLANR5L15B0269": TexteRef(
+                uid="PRJLANR5L15B0269",
+                type_=TypeTexte.PROJET,
+                chambre=ChambreRef.AN,
+                legislature=15,
+                numero=269,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=date(2017, 10, 11),
+            ),
+            "PRJLSNR5S299B0063": TexteRef(
+                uid="PRJLSNR5S299B0063",
+                type_=TypeTexte.PROJET,
+                chambre=ChambreRef.SENAT,
+                legislature=2017,
+                numero=63,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
+                titre_court="PLFSS pour 2018",
+                date_depot=date(2017, 11, 6),
+            ),
+            "PRJLANR5L15B0806": TexteRef(
+                uid="PRJLANR5L15B0806",
+                type_=TypeTexte.PROJET,
+                chambre=ChambreRef.AN,
+                legislature=15,
+                numero=806,
+                titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
+                titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
+                date_depot=date(2018, 3, 21),
+            ),
+            "PRJLSNR5S319B0106": TexteRef(
+                uid="PRJLSNR5S319B0106",
+                type_=TypeTexte.PROJET,
+                chambre=ChambreRef.SENAT,
+                legislature=None,
+                numero=106,
+                titre_long="projet de loi de financement de la sécurité sociale pour 2019",  # noqa
+                titre_court="PLFSS pour 2019",
+                date_depot=date(2018, 11, 5),
+            ),
+            "PRJLANR5L15B1802": TexteRef(
+                uid="PRJLANR5L15B1802",
+                type_=TypeTexte.PROJET,
+                chambre=ChambreRef.AN,
+                legislature=15,
+                numero=1802,
+                titre_long="projet de loi de transformation de la fonction publique",  # noqa
+                titre_court="Transformation de la fonction publique",
+                date_depot=date(2019, 3, 27),
+            ),
+            "PRJLANR5L15BTC1924": TexteRef(
+                uid="PRJLANR5L15BTC1924",
+                type_=TypeTexte.PROJET,
+                chambre=ChambreRef.AN,
+                legislature=15,
+                numero=1924,
+                titre_long="projet de loi sur le projet de loi, après engagement de la procédure accélérée, de transformation de la fonction publique (n°1802).",  # noqa
+                titre_court="Transformation de la fonction publique",
+                date_depot=date(2019, 5, 3),
+            ),
+        }
+        dossiers = {
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
@@ -25,31 +87,13 @@ def mock_dossiers():
                     LectureRef(
                         chambre=ChambreRef.AN,
                         titre="Première lecture – Titre lecture",
-                        texte=TexteRef(
-                            uid="PRJLANR5L15B0269",
-                            type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
-                            legislature=15,
-                            numero=269,
-                            titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
-                            titre_court="PLFSS pour 2018",
-                            date_depot=date(2017, 10, 11),
-                        ),
+                        texte=textes["PRJLANR5L15B0269"],
                         organe="PO717460",  # séance publique
                     ),
                     LectureRef(
                         chambre=ChambreRef.SENAT,
                         titre="Première lecture – Titre lecture",
-                        texte=TexteRef(
-                            uid="PRJLSNR5S299B0063",
-                            type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.SENAT,
-                            legislature=2017,
-                            numero=63,
-                            titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
-                            titre_court="PLFSS pour 2018",
-                            date_depot=date(2017, 11, 6),
-                        ),
+                        texte=textes["PRJLSNR5S299B0063"],
                         organe="PO78718",  # séance publique
                     ),
                 ],
@@ -63,16 +107,7 @@ def mock_dossiers():
                     LectureRef(
                         chambre=ChambreRef.AN,
                         titre="Nouvelle lecture – Titre lecture",
-                        texte=TexteRef(
-                            uid="PRJLANR5L15B0806",
-                            type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
-                            legislature=15,
-                            numero=806,
-                            titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
-                            titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
-                            date_depot=date(2018, 3, 21),
-                        ),
+                        texte=textes["PRJLANR5L15B0806"],
                         organe="PO744107",  # commission spéciale
                     )
                 ],
@@ -86,16 +121,7 @@ def mock_dossiers():
                     LectureRef(
                         chambre=ChambreRef.SENAT,
                         titre="Première lecture – Titre lecture",
-                        texte=TexteRef(
-                            uid="PRJLSNR5S319B0106",
-                            type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.SENAT,
-                            legislature=None,
-                            numero=106,
-                            titre_long="projet de loi de financement de la sécurité sociale pour 2019",  # noqa
-                            titre_court="PLFSS pour 2019",
-                            date_depot=date(2018, 11, 5),
-                        ),
+                        texte=textes["PRJLSNR5S319B0106"],
                         organe="PO78718",  # séance publique
                     )
                 ],
@@ -109,32 +135,14 @@ def mock_dossiers():
                     LectureRef(
                         chambre=ChambreRef.AN,
                         titre="Première lecture – Commission saisie au fond",
-                        texte=TexteRef(
-                            uid="PRJLANR5L15B1802",
-                            type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
-                            legislature=15,
-                            numero=1802,
-                            titre_long="projet de loi de transformation de la fonction publique",  # noqa
-                            titre_court="Transformation de la fonction publique",
-                            date_depot=date(2019, 3, 27),
-                        ),
+                        texte=textes["PRJLANR5L15B1802"],
                         organe="PO59051",
                         partie=None,
                     ),
                     LectureRef(
                         chambre=ChambreRef.AN,
                         titre="Première lecture – Séance publique",
-                        texte=TexteRef(
-                            uid="PRJLANR5L15BTC1924",
-                            type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
-                            legislature=15,
-                            numero=1924,
-                            titre_long="projet de loi sur le projet de loi, après engagement de la procédure accélérée, de transformation de la fonction publique (n°1802).",  # noqa
-                            titre_court="Transformation de la fonction publique",
-                            date_depot=date(2019, 5, 3),
-                        ),
+                        texte=textes["PRJLANR5L15BTC1924"],
                         organe="PO717460",
                         partie=None,
                     ),
@@ -158,4 +166,5 @@ def mock_dossiers():
                 ],
             ),
         }
+        m_dossiers.return_value = dossiers, textes
         yield

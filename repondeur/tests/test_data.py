@@ -6,6 +6,14 @@ def test_get_dossiers(app):
     assert "DLR5L15N36030" in dossiers
 
 
+def test_get_textes(app):
+    from zam_repondeur.data import repository
+
+    textes = repository.get_data("an.opendata.textes")
+
+    assert "PRJLANR5L15B0269" in textes
+
+
 def test_get_organes(app):
     from zam_repondeur.data import repository
 

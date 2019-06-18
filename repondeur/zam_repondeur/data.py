@@ -6,7 +6,7 @@ from redis import Redis
 from redis_lock import Lock
 
 from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
-    get_dossiers_legislatifs
+    get_dossiers_legislatifs_and_textes
 )
 from zam_repondeur.fetch.an.organes_acteurs import get_organes_acteurs
 from zam_repondeur.fetch.senat.scraping import get_dossiers_senat
@@ -46,12 +46,13 @@ class DataRepository:
 
     @needs_init
     def load_data(self) -> None:
-        dossiers = get_dossiers_legislatifs(*self.legislatures)
+        dossiers, textes = get_dossiers_legislatifs_and_textes(*self.legislatures)
         organes, acteurs = get_organes_acteurs()
         dossiers_senat = get_dossiers_senat()
         with Lock(self.connection, "data"):
             self.connection.delete("dossiers", "organes", "acteurs")  # remove old keys
             self.connection.set("an.opendata.dossiers", pickle.dumps(dossiers))
+            self.connection.set("an.opendata.textes", pickle.dumps(textes))
             self.connection.set("an.opendata.organes", pickle.dumps(organes))
             self.connection.set("an.opendata.acteurs", pickle.dumps(acteurs))
             self.connection.set("senat.scraping.dossiers", pickle.dumps(dossiers_senat))

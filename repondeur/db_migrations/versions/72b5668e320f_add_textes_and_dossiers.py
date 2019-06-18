@@ -11,7 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 
 from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
-    get_dossiers_legislatifs
+    get_dossiers_legislatifs_and_textes
 )
 
 
@@ -82,7 +82,7 @@ def upgrade():
     )
 
     # Get the data
-    dossiers_by_uid = get_dossiers_legislatifs(*LEGISLATURES)
+    dossiers_by_uid, _ = get_dossiers_legislatifs_and_textes(*LEGISLATURES)
 
     now = datetime.utcnow()
 

@@ -148,7 +148,7 @@ class TestMergeDossiers:
                             uid="PRJLSNR5S299B0063",
                             type_=TypeTexte.PROJET,
                             chambre=ChambreRef.SENAT,
-                            legislature=2017,
+                            legislature=None,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                             titre_court="PLFSS pour 2018",
@@ -191,7 +191,7 @@ class TestMergeDossiers:
                             uid="PRJLSNR5S299B0063",
                             type_=TypeTexte.PROJET,
                             chambre=ChambreRef.SENAT,
-                            legislature=2017,
+                            legislature=None,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                             titre_court="PLFSS pour 2018",
@@ -266,7 +266,7 @@ class TestMergeDossiers:
                             uid="DIFFERENT2",
                             type_=TypeTexte.PROJET,
                             chambre=ChambreRef.SENAT,
-                            legislature=2017,
+                            legislature=None,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                             titre_court="PLFSS pour 2018",
@@ -309,7 +309,7 @@ class TestMergeDossiers:
                             uid="DIFFERENT2",
                             type_=TypeTexte.PROJET,
                             chambre=ChambreRef.SENAT,
-                            legislature=2017,
+                            legislature=None,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                             titre_court="PLFSS pour 2018",
@@ -408,7 +408,7 @@ class TestMergeDossiers:
                             uid="DIFFERENT2",
                             type_=TypeTexte.PROJET,
                             chambre=ChambreRef.SENAT,
-                            legislature=2017,
+                            legislature=None,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                             titre_court="PLFSS pour 2018",
@@ -474,7 +474,7 @@ class TestMergeDossiers:
                             uid="DIFFERENT2",
                             type_=TypeTexte.PROJET,
                             chambre=ChambreRef.SENAT,
-                            legislature=2017,
+                            legislature=None,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
                             titre_court="PLFSS pour 2018",

@@ -40,24 +40,32 @@ SENAT_URL = "https://www.senat.fr/"
 
 def get_possible_texte_urls(texte: Texte) -> List[str]:
     if texte.chambre == Chambre.AN:
-        prefix = f"{AN_URL}{texte.legislature}"
-        numero = f"{texte.numero:04}"
-        if texte.type_ == TypeTexte.PROJET:
-            url = f"{prefix}/projets/pl{numero}.asp"
-        elif texte.type_ == TypeTexte.PROPOSITION:
-            url = f"{prefix}/propositions/pion{numero}.asp"
-        else:
-            raise ValueError(f"Invalid texte type {texte.type_!r}")
-        return [url, f"{prefix}/ta-commission/r{numero}-a0.asp"]
+        return get_possible_texte_urls_an(texte)
     else:
-        if texte.type_ == TypeTexte.PROJET:
-            type_ = "pjl"
-        elif texte.type_ == TypeTexte.PROPOSITION:
-            type_ = "ppl"
-        else:
-            raise ValueError(f"Invalid texte type {texte.type_!r}")
-        session = str(texte.session)[2:4]
-        return [f"{SENAT_URL}leg/{type_}{session}-{texte.numero:03}.html"]
+        return get_possible_texte_urls_senat(texte)
+
+
+def get_possible_texte_urls_an(texte: Texte) -> List[str]:
+    prefix = f"{AN_URL}{texte.legislature}"
+    numero = f"{texte.numero:04}"
+    if texte.type_ == TypeTexte.PROJET:
+        url = f"{prefix}/projets/pl{numero}.asp"
+    elif texte.type_ == TypeTexte.PROPOSITION:
+        url = f"{prefix}/propositions/pion{numero}.asp"
+    else:
+        raise ValueError(f"Invalid texte type {texte.type_!r}")
+    return [url, f"{prefix}/ta-commission/r{numero}-a0.asp"]
+
+
+def get_possible_texte_urls_senat(texte: Texte) -> List[str]:
+    if texte.type_ == TypeTexte.PROJET:
+        type_ = "pjl"
+    elif texte.type_ == TypeTexte.PROPOSITION:
+        type_ = "ppl"
+    else:
+        raise ValueError(f"Invalid texte type {texte.type_!r}")
+    session = str(texte.session)[2:4]
+    return [f"{SENAT_URL}leg/{type_}{session}-{texte.numero:03}.html"]
 
 
 def parse_first_working_url(urls: List[str]) -> List[dict]:

@@ -8,11 +8,12 @@ from .base import Base, DBSession, log_query_with_origin  # noqa
 
 from .amendement import Amendement, Batch, AVIS  # noqa
 from .article import Article, ArticleUserContent  # noqa
+from .chambre import Chambre  # noqa
 from .dossier import Dossier  # noqa
 from .lecture import Lecture, CHAMBRES, SESSIONS  # noqa
 from .users import Team, User  # noqa
 from .table import UserTable  # noqa
-from .texte import Chambre, Texte, TypeTexte  # noqa
+from .texte import Texte, TypeTexte  # noqa
 
 from .events.base import Event  # noqa
 from .events.amendement import *  # noqa

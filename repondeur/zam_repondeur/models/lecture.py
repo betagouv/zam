@@ -7,10 +7,11 @@ from sqlalchemy.orm import joinedload, relationship
 from .amendement import Amendement
 from .article import Article
 from .base import Base, DBSession
+from .chambre import Chambre
 from .division import SubDiv
 from .events.base import LastEventMixin
 from .organe import ORGANE_AN, ORGANE_SENAT
-from .texte import Chambre, Texte
+from .texte import Texte
 from .users import Team
 
 # Make these types available to mypy, but avoid circular imports

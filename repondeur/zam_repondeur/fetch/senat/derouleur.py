@@ -1,10 +1,11 @@
 import logging
 from http import HTTPStatus
-from typing import Any, Dict, Iterable, Iterator, List, NamedTuple, Optional
+from typing import Any, Dict, Iterable, Iterator, List, NamedTuple, Optional, Tuple
 
 import requests
 
 from zam_repondeur.models import Amendement, Lecture
+from .missions import MISSIONS, Mission
 
 
 BASE_URL = "https://www.senat.fr"
@@ -19,6 +20,7 @@ class DiscussionDetails(NamedTuple):
     id_discussion_commune: Optional[int]
     id_identique: Optional[int]
     parent_num: Optional[int]
+    mission: Optional[Mission]
 
 
 def fetch_and_parse_discussion_details(lecture: Lecture) -> List[DiscussionDetails]:
@@ -26,13 +28,13 @@ def fetch_and_parse_discussion_details(lecture: Lecture) -> List[DiscussionDetai
     return _parse_derouleur_data(data_iter)
 
 
-def _fetch_discussion_details(lecture: Lecture) -> Iterator[Any]:
+def _fetch_discussion_details(lecture: Lecture) -> Iterator[Tuple[Any, Mission]]:
     """
     Récupère les amendements à discuter, dans l'ordre de passage
 
     NB : les amendements jugés irrecevables ne sont pas inclus.
     """
-    for url in derouleur_urls(lecture):
+    for url, mission in derouleur_urls_and_missions(lecture):
         resp = requests.get(url)
         if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
             logger.warning(f"Could not fetch {url}")
@@ -40,118 +42,59 @@ def _fetch_discussion_details(lecture: Lecture) -> Iterator[Any]:
         if resp.text == "":
             logger.warning(f"Empty response for {url}")
             continue
-        yield resp.json()
+        yield resp.json(), mission
 
 
-def _parse_derouleur_data(data_iter: Iterable[Any]) -> List[DiscussionDetails]:
-    subdivs_amends = [
-        (subdiv, amend)
-        for data in data_iter
+def _parse_derouleur_data(
+    data_iter: Iterable[Tuple[Any, Mission]]
+) -> List[DiscussionDetails]:
+    subdivs_amends_missions = [
+        (subdiv, amend, mission)
+        for data, mission in data_iter
         for subdiv in data["Subdivisions"]
         for amend in subdiv["Amendements"]
     ]
 
     uid_map: Dict[str, int] = {
         amend["idAmendement"]: Amendement.parse_num(amend["num"])[0]
-        for _, amend in subdivs_amends
+        for _, amend, _ in subdivs_amends_missions
     }
 
     discussion_details = [
-        parse_discussion_details(uid_map, amend, position)
-        for position, (subdiv, amend) in enumerate(subdivs_amends, start=1)
+        parse_discussion_details(uid_map, amend, position, mission)
+        for position, (subdiv, amend, mission) in enumerate(
+            subdivs_amends_missions, start=1
+        )
     ]
 
     return discussion_details
 
 
-# Special case for PLF 2019
-# cf. http://www.senat.fr/ordre-du-jour/files/Calendrier_budgetaire_PLF2019.pdf
-IDTXTS = {
-    "2018-2019": {
-        146: {
-            1: [103393],
-            2: [
-                103427,  # Mission Économie
-                103411,  # Compte spécial - Prêts et avances à des particuliers ou à des organismes privés  # noqa
-                103440,  # Mission Remboursements et dégrèvements
-                103428,  # Mission Engagements financiers de l'État
-                103407,  # Compte spécial - Participation de la France au désendettement de la Grèce  # noqa
-                103408,  # Compte spécial - Participations financières de l'État
-                103397,  # Compte spécial - Accords monétaires internationaux
-                103399,  # Compte spécial - Avances à divers services de l'État ou organismes gérant des services publics  # noqa
-                103432,  # Mission Investissements d'avenir
-                103420,  # Mission Cohésion des territoires
-                103416,  # Mission Administration générale et territoriale de l'État
-                103419,  # Mission Anciens combattants, mémoire et liens avec la nation
-                103433,  # Mission Justice
-                103417,  # Mission Agriculture, alimentation, forêt et affaires rurales
-                103403,  # Compte spécial - Développement agricole et rural
-                103424,  # Mission Défense
-                103426,  # Mission Écologie, développement et mobilité durables
-                103395,  # Budget annexe - Contrôle et exploitation aériens
-                103398,  # Compte spécial - Aides à l'acquisition de véhicules propres
-                103404,  # Compte spécial - Financement des aides aux collectivités pour l'électrification rurale  # noqa
-                103412,  # Compte spécial - Services nationaux de transport conventionnés de voyageurs  # noqa
-                103413,  # Compte spécial - Transition énergétique
-                103444,  # Mission Sport, jeunesse et vie associative
-                103435,  # Mission Outre-mer
-                103418,  # Mission Aide publique au développement
-                103410,  # Compte spécial - Prêts à des États étrangers
-                103415,  # Mission Action extérieure de l'État
-                103437,  # Mission Recherche et enseignement supérieur
-                103423,  # Mission Culture
-                103434,  # Mission Médias, livre et industries culturelles
-                103400,  # Compte spécial - Avances à l'audiovisuel public
-                103436,  # Mission Pouvoirs publics
-                103421,  # Mission Conseil et contrôle de l'État
-                103425,  # Mission Direction de l'action du Gouvernement
-                103396,  # Budget annexe - Publications officielles et information administrative  # noqa
-                103445,  # Mission Travail et emploi
-                103405,  # Compte spécial - Financement national du développement et de la modernisation de l'apprentissage  # noqa
-                103439,  # Mission Relations avec les collectivités territoriales
-                103401,  # Compte spécial - Avances aux collectivités territoriales
-                103429,  # Mission Enseignement scolaire
-                103443,  # Mission Solidarité, insertion et égalité des chances
-                103441,  # Mission Santé
-                103430,  # Mission Gestion des finances publiques et des ressources humaines  # noqa
-                103422,  # Mission Crédits non répartis
-                103414,  # Mission Action et transformation publiques
-                103406,  # Compte spécial - Gestion du patrimoine immobilier de l'État
-                103438,  # Mission Régimes sociaux et de retraite
-                103409,  # Compte spécial - Pensions
-                103431,  # Mission Immigration, asile et intégration
-                103442,  # Mission Sécurités
-                103402,  # Compte spécial - Contrôle de la circulation et du stationnement routiers  # noqa
-                103394,  # Articles non rattachés
-            ],
-        }
-    }
-}
-
-
-def derouleur_urls(lecture: Lecture) -> Iterator[str]:
+def derouleur_urls_and_missions(lecture: Lecture) -> Iterator[Tuple[str, Mission]]:
     assert lecture.texte.session_str is not None  # nosec (mypy hint)
-    idtxts = (
-        IDTXTS.get(lecture.texte.session_str, {})
+    missions = (
+        MISSIONS.get(lecture.texte.session_str, {})
         .get(lecture.texte.numero, {})
         .get(lecture.partie)
     )
     phase = "commission" if lecture.is_commission else "seance"
-    if idtxts is not None:
-        for idtxt in idtxts:
+    if missions is not None:
+        for mission in missions:
             yield (
                 f"{BASE_URL}/en{phase}/{lecture.texte.session_str}"
-                f"/{lecture.texte.numero}/liste_discussion_{idtxt}.json"
+                f"/{lecture.texte.numero}/liste_discussion_{mission.num}.json",
+                mission,
             )
     else:
         yield (
             f"{BASE_URL}/en{phase}/{lecture.texte.session_str}"
-            f"/{lecture.texte.numero}/liste_discussion.json"
+            f"/{lecture.texte.numero}/liste_discussion.json",
+            Mission(num=None, titre="", titre_court=""),
         )
 
 
 def parse_discussion_details(
-    uid_map: Dict[str, int], amend: dict, position: int
+    uid_map: Dict[str, int], amend: dict, position: int, mission: Mission
 ) -> DiscussionDetails:
     num, rectif = Amendement.parse_num(amend["num"])
     details = DiscussionDetails(
@@ -166,6 +109,7 @@ def parse_discussion_details(
             int(amend["idIdentique"]) if parse_bool(amend["isIdentique"]) else None
         ),
         parent_num=get_parent_num(uid_map, amend),
+        mission=mission if mission.titre else None,
     )
     return details
 

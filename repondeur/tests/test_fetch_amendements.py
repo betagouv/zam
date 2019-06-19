@@ -10,6 +10,7 @@ from fetch.mock_an import setup_mock_responses
 def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements_senat):
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.fetch.senat.missions import Mission
     from zam_repondeur.fetch.senat.senateurs.models import Senateur
 
     # Add a response to one of the amendements
@@ -68,84 +69,87 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
             },
         )
         mock_fetch_discussion_details.return_value = [
-            {
-                "info_generales": {
-                    "natureLoi": "Projet de loi",
-                    "intituleLoi": "Financement de la sécurité sociale pour 2018",
-                    "lecture": "1ère lecture",
-                    "tsgenhtml": "1531427548000",
-                    "idtxt": "103021",
-                    "nbAmdtsDeposes": "595",
-                    "nbAmdtsAExaminer": "0",
-                    "doslegsignet": "plfss2018",
+            (
+                {
+                    "info_generales": {
+                        "natureLoi": "Projet de loi",
+                        "intituleLoi": "Financement de la sécurité sociale pour 2018",
+                        "lecture": "1ère lecture",
+                        "tsgenhtml": "1531427548000",
+                        "idtxt": "103021",
+                        "nbAmdtsDeposes": "595",
+                        "nbAmdtsAExaminer": "0",
+                        "doslegsignet": "plfss2018",
+                    },
+                    "Subdivisions": [
+                        {
+                            "libelle_subdivision": "Article 1",
+                            "id_subdivision": "151610",
+                            "signet": "../../textes/2017-2018/63.html#AMELI_SUB_4__Article_3",  # noqa
+                            "Amendements": [
+                                {
+                                    "idAmendement": "1103376",
+                                    "posder": "1",
+                                    "subpos": "0",
+                                    "isSousAmendement": "false",
+                                    "idAmendementPere": "0",
+                                    "urlAmdt": "Amdt_31.html",
+                                    "typeAmdt": "Amt",
+                                    "num": "6666",
+                                    "libelleAlinea": "Al. 8",
+                                    "urlAuteur": "vanlerenberghe_jean_marie01034p.html",
+                                    "auteur": "M. VANLERENBERGHE",
+                                    "isDiscussionCommune": "false",
+                                    "isDiscussionCommuneIsolee": "false",
+                                    "isIdentique": "false",
+                                    "sort": "Adopté",
+                                    "isAdopte": "true",
+                                    "isRejete": "false",
+                                },
+                                {
+                                    "idAmendement": "1103376",
+                                    "posder": "1",
+                                    "subpos": "0",
+                                    "isSousAmendement": "false",
+                                    "idAmendementPere": "0",
+                                    "urlAmdt": "Amdt_31.html",
+                                    "typeAmdt": "Amt",
+                                    "num": "7777",
+                                    "libelleAlinea": "Al. 8",
+                                    "urlAuteur": "vanlerenberghe_jean_marie01034p.html",
+                                    "auteur": "M. VANLERENBERGHE",
+                                    "isDiscussionCommune": "false",
+                                    "isDiscussionCommuneIsolee": "false",
+                                    "isIdentique": "false",
+                                    "sort": "Adopté",
+                                    "isAdopte": "true",
+                                    "isRejete": "false",
+                                },
+                                {
+                                    "idAmendement": "1103376",
+                                    "posder": "1",
+                                    "subpos": "0",
+                                    "isSousAmendement": "false",
+                                    "idAmendementPere": "0",
+                                    "urlAmdt": "Amdt_31.html",
+                                    "typeAmdt": "Amt",
+                                    "num": "9999",
+                                    "libelleAlinea": "Al. 8",
+                                    "urlAuteur": "vanlerenberghe_jean_marie01034p.html",
+                                    "auteur": "M. VANLERENBERGHE",
+                                    "isDiscussionCommune": "false",
+                                    "isDiscussionCommuneIsolee": "false",
+                                    "isIdentique": "false",
+                                    "sort": "Adopté",
+                                    "isAdopte": "true",
+                                    "isRejete": "false",
+                                },
+                            ],
+                        }
+                    ],
                 },
-                "Subdivisions": [
-                    {
-                        "libelle_subdivision": "Article 1",
-                        "id_subdivision": "151610",
-                        "signet": "../../textes/2017-2018/63.html#AMELI_SUB_4__Article_3",  # noqa
-                        "Amendements": [
-                            {
-                                "idAmendement": "1103376",
-                                "posder": "1",
-                                "subpos": "0",
-                                "isSousAmendement": "false",
-                                "idAmendementPere": "0",
-                                "urlAmdt": "Amdt_31.html",
-                                "typeAmdt": "Amt",
-                                "num": "6666",
-                                "libelleAlinea": "Al. 8",
-                                "urlAuteur": "vanlerenberghe_jean_marie01034p.html",
-                                "auteur": "M. VANLERENBERGHE",
-                                "isDiscussionCommune": "false",
-                                "isDiscussionCommuneIsolee": "false",
-                                "isIdentique": "false",
-                                "sort": "Adopté",
-                                "isAdopte": "true",
-                                "isRejete": "false",
-                            },
-                            {
-                                "idAmendement": "1103376",
-                                "posder": "1",
-                                "subpos": "0",
-                                "isSousAmendement": "false",
-                                "idAmendementPere": "0",
-                                "urlAmdt": "Amdt_31.html",
-                                "typeAmdt": "Amt",
-                                "num": "7777",
-                                "libelleAlinea": "Al. 8",
-                                "urlAuteur": "vanlerenberghe_jean_marie01034p.html",
-                                "auteur": "M. VANLERENBERGHE",
-                                "isDiscussionCommune": "false",
-                                "isDiscussionCommuneIsolee": "false",
-                                "isIdentique": "false",
-                                "sort": "Adopté",
-                                "isAdopte": "true",
-                                "isRejete": "false",
-                            },
-                            {
-                                "idAmendement": "1103376",
-                                "posder": "1",
-                                "subpos": "0",
-                                "isSousAmendement": "false",
-                                "idAmendementPere": "0",
-                                "urlAmdt": "Amdt_31.html",
-                                "typeAmdt": "Amt",
-                                "num": "9999",
-                                "libelleAlinea": "Al. 8",
-                                "urlAuteur": "vanlerenberghe_jean_marie01034p.html",
-                                "auteur": "M. VANLERENBERGHE",
-                                "isDiscussionCommune": "false",
-                                "isDiscussionCommuneIsolee": "false",
-                                "isIdentique": "false",
-                                "sort": "Adopté",
-                                "isAdopte": "true",
-                                "isRejete": "false",
-                            },
-                        ],
-                    }
-                ],
-            }
+                Mission(num=None, titre="", titre_court=""),
+            )
         ]
         mock_fetch_and_parse_senateurs.return_value = {
             "01034P": Senateur(

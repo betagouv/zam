@@ -156,6 +156,30 @@ class Reponse(NamedTuple):
         )
 
 
+class AmendementMission(Base):
+    __tablename__ = "amendement_missions"
+
+    pk: int = Column(Integer, primary_key=True)
+    titre: Optional[str] = Column(Text, nullable=True)
+    titre_court: Optional[str] = Column(Text, nullable=True)
+
+    amendement_pk: int = Column(Integer, ForeignKey("amendements.pk"), nullable=False)
+    amendement: "Amendement" = relationship("Amendement", back_populates="mission")
+
+    __repr_keys__ = ("pk", "amendement_pk", "titre")
+
+    @classmethod
+    def create(
+        cls,
+        amendement: "Amendement",
+        titre: Optional[str] = None,
+        titre_court: Optional[str] = None,
+    ) -> "AmendementMission":
+        mission = cls(amendement=amendement, titre=titre, titre_court=titre_court)
+        DBSession.add(mission)
+        return mission
+
+
 class AmendementUserContent(Base):
     __tablename__ = "amendement_user_contents"
 
@@ -280,6 +304,14 @@ class Amendement(Base):
 
     user_content: AmendementUserContent = relationship(  # technically it's Optional
         AmendementUserContent,
+        back_populates="amendement",
+        uselist=False,
+        lazy="joined",
+        cascade="all, delete-orphan",
+    )
+
+    mission: AmendementMission = relationship(  # technically it's Optional
+        AmendementMission,
         back_populates="amendement",
         uselist=False,
         lazy="joined",

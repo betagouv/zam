@@ -34,13 +34,10 @@ def texte_plf(db):
 
     with transaction.manager:
         return Texte.create(
-            uid="PRJLSNR5S319B0146",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2018,
             numero=146,
-            titre_long="Loi de finances pour 2019",
-            titre_court="Budget 2019",
             date_depot=date(2018, 11, 22),
         )
 
@@ -497,13 +494,10 @@ def test_fetch_all_commission(dossier_plfss2018):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="...",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2017,
             numero=583,
-            titre_long="bla bla",
-            titre_court="bla bla",
             date_depot=date(2017, 1, 1),
         )
         lecture = Lecture.create(
@@ -575,13 +569,10 @@ def test_fetch_discussion_details(dossier_plfss2018):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="...",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2016,
             numero=610,
-            titre_long="...",
-            titre_court="...",
             date_depot=date(2017, 1, 1),
         )
         lecture = Lecture.create(

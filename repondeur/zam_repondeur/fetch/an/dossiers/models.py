@@ -1,7 +1,8 @@
+from copy import copy, deepcopy
 from dataclasses import dataclass
 from datetime import date
 from enum import Enum
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from zam_repondeur.models.texte import TypeTexte
 
@@ -9,6 +10,7 @@ from zam_repondeur.models.texte import TypeTexte
 class ChambreRef(Enum):
     AN = "an"
     SENAT = "senat"
+    CMP = "cmp"
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}.{self.name}"
@@ -18,6 +20,8 @@ class ChambreRef(Enum):
             return "Assemblée nationale"
         if self.value == "senat":
             return "Sénat"
+        if self.value == "cmp":
+            return "Commission mixte paritaire"
         raise NotImplementedError
 
 
@@ -67,19 +71,99 @@ class LectureRef:
             partie = ""
         return f"{self.chambre} – {self.titre} – Texte Nº {self.texte.numero}{partie}"
 
+    def overrides(self, other: "LectureRef") -> bool:
+        if self.cmp_key == other.cmp_key:
+            return True
+        return (
+            self.texte.chambre == ChambreRef.SENAT
+            and self.organe != "PO78718"
+            and other.organe == ""
+        )
+
+    @property
+    def cmp_key(
+        self
+    ) -> Tuple[ChambreRef, str, Optional[int], Optional[int], int, Optional[int]]:
+        return (
+            self.chambre,
+            self.organe,
+            self.texte.legislature,
+            self.texte.session,
+            self.texte.numero,
+            self.partie,
+        )
+
 
 MIN_DATE = date(1900, 1, 1)
+
+
+DossierRefsByUID = Dict[str, "DossierRef"]
 
 
 @dataclass
 class DossierRef:
     uid: str
     titre: str
+    an_url: str
+    senat_url: str
     lectures: List[LectureRef]
 
     @property
-    def most_recent_texte_date(self) -> date:
-        return max(
-            (lecture.texte.date_depot or MIN_DATE for lecture in self.lectures),
-            default=MIN_DATE,
+    def most_recent_texte_date(self) -> Tuple[date, str]:
+        return (
+            max(
+                (lecture.texte.date_depot or MIN_DATE for lecture in self.lectures),
+                default=MIN_DATE,
+            ),
+            self.uid,
         )
+
+    @classmethod
+    def merge_dossiers(
+        cls, dossiers: DossierRefsByUID, others: DossierRefsByUID
+    ) -> DossierRefsByUID:
+        dossiers, others = cls.merge_by("senat_url", dossiers, others)
+        return {
+            uid: (
+                dossiers.get(uid, DossierRef(uid, "", "", "", []))
+                + others.get(uid, DossierRef(uid, "", "", "", []))
+            )
+            for uid in dossiers.keys() | others.keys()
+        }
+
+    @classmethod
+    def merge_by(
+        cls, key: str, dossiers: DossierRefsByUID, others: DossierRefsByUID
+    ) -> Tuple[DossierRefsByUID, DossierRefsByUID]:
+        if not others:
+            return dossiers, others
+
+        to_be_merged = [
+            (uid, dossier, uid_other, dossier_other)
+            for uid, dossier in dossiers.items()
+            for uid_other, dossier_other in others.items()
+            if getattr(dossier, key) == getattr(dossier_other, key) != ""
+        ]
+        for uid, dossier, uid_other, dossier_other in to_be_merged:
+            dossiers[uid] = dossier + dossier_other
+            del others[uid_other]
+
+        return dossiers, others
+
+    def __add__(self, other: "DossierRef") -> "DossierRef":
+        if not isinstance(other, DossierRef):
+            raise NotImplementedError
+        return DossierRef(
+            uid=self.uid,
+            titre=self.titre or other.titre,
+            an_url=self.an_url or other.an_url,
+            senat_url=self.senat_url or other.senat_url,
+            lectures=self._merge_lectures(other.lectures),
+        )
+
+    def _merge_lectures(self, other_lectures: List[LectureRef]) -> List[LectureRef]:
+        return deepcopy(self.lectures) + [
+            copy(other)
+            for other in other_lectures
+            if not any(lecture.overrides(other) for lecture in self.lectures)
+        ]

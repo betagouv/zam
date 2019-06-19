@@ -22,13 +22,10 @@ def texte_plf2018_an_premiere_lecture(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLANR5L15B0235",
             type_=TypeTexte.PROJET,
             chambre=Chambre.AN,
             legislature=15,
             numero=235,
-            titre_long="projet de loi de finances pour 2018",
-            titre_court="PLF pour 2018",
             date_depot=date(2017, 9, 27),
         )
 
@@ -153,13 +150,10 @@ def texte_plf2018_senat_premiere_lecture(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLSNR5S299B0107",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2017,
             numero=107,
-            titre_long="projet de loi de finances pour 2018",
-            titre_court="PLF pour 2018",
             date_depot=date(2017, 11, 23),
         )
 
@@ -244,13 +238,10 @@ def texte_plf2018_an_nouvelle_lecture(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLANR5L15B0485",
             type_=TypeTexte.PROJET,
             chambre=Chambre.AN,
             legislature=15,
             numero=485,
-            titre_long="projet de loi de finances pour 2018",
-            titre_court="PLF pour 2018",
             date_depot=date(2017, 12, 12),
         )
 
@@ -297,13 +288,10 @@ def texte_plf2018_senat_nouvelle_lecture(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLSNR5S299B0172",
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2017,
             numero=172,
-            titre_long="projet de loi de finances pour 2018",
-            titre_court="PLF pour 2018",
             date_depot=date(2017, 12, 18),
         )
 
@@ -350,13 +338,10 @@ def texte_plf2018_an_lecture_definitive(db):
 
     with transaction.manager:
         texte = Texte.create(
-            uid="PRJLANR5L15B0506",
             type_=TypeTexte.PROJET,
             chambre=Chambre.AN,
             legislature=15,
             numero=506,
-            titre_long="projet de loi de finances pour 2018",
-            titre_court="PLF pour 2018",
             date_depot=date(2017, 12, 19),
         )
 

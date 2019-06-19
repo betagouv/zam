@@ -9,6 +9,7 @@ from fixtures.lectures import *  # noqa: F401,F403
 from fixtures.essoc2018 import *  # noqa: F401,F403
 from fixtures.plf2018 import *  # noqa: F401,F403
 from fixtures.plfss2018 import *  # noqa: F401,F403
+from fixtures.scraping import *  # noqa: F401,F403
 from fixtures.users import *  # noqa: F401,F403
 from testapp import TestApp as BaseTestApp
 
@@ -71,7 +72,7 @@ def settings():
 
 
 @pytest.fixture(scope="session")  # noqa: F811
-def wsgi_app(settings, mock_dossiers, mock_organes_acteurs):
+def wsgi_app(settings, mock_dossiers, mock_organes_acteurs, mock_scraping_senat):
     from zam_repondeur import make_app
 
     return make_app(None, **settings)
@@ -99,7 +100,7 @@ def db():
     DBSession.remove()
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def data_repository():
     from zam_repondeur.data import repository
 

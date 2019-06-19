@@ -9,7 +9,13 @@ from lxml.etree import XMLSyntaxError  # nosec
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import repository
-from zam_repondeur.fetch.an.dossiers.models import ChambreRef, DossierRef, LectureRef
+from zam_repondeur.dossiers import get_dossiers_legislatifs_open_data_from_cache
+from zam_repondeur.fetch.an.dossiers.models import (
+    ChambreRef,
+    DossierRef,
+    LectureRef,
+    TexteRef,
+)
 from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import parse_subdiv
 from zam_repondeur.models import (
@@ -121,10 +127,9 @@ def _make_amendement(
 
     check_same_lecture(
         lecture=lecture,
-        legislature=extract("identifiant", "legislature"),
+        texte_uid=texte_uid,
         partie=extract_partie(node),
         organe=extract("identifiant", "saisine", "organeExamen"),
-        texte_uid=texte_uid,
     )
 
     article, created = get_one_or_create(
@@ -159,25 +164,25 @@ def _make_amendement(
 
 
 def check_same_lecture(
-    lecture: Lecture,
-    legislature: Optional[str],
-    partie: Optional[int],
-    organe: Optional[str],
-    texte_uid: str,
+    lecture: Lecture, texte_uid: str, partie: Optional[int], organe: Optional[str]
 ) -> None:
-    if legislature is None:
-        raise ValueError("Missing legislature")
-
     if organe is None:
         raise ValueError("Missing organeExamen")
 
+    textes_by_uid = get_textes_open_data_from_cache()
+    try:
+        texte_ref = textes_by_uid[texte_uid]
+    except KeyError:
+        raise ValueError("Unknown texte")
+
     if (
-        legislature != str(lecture.texte.legislature)
+        texte_ref.chambre.value != lecture.texte.chambre.name.lower()
+        or texte_ref.legislature != lecture.texte.legislature
+        or texte_ref.numero != lecture.texte.numero
         or partie != lecture.partie
         or organe != lecture.organe
-        or texte_uid != lecture.texte.uid
     ):
-        dossier_ref, lecture_ref = _find_dossier_lecture(texte_uid)
+        dossier_ref, lecture_ref = _find_dossier_lecture(texte_ref)
         lecture_fmt = f"{lecture_ref.label} ({dossier_ref.titre})"
         raise LectureDoesNotMatch(lecture_fmt)
 
@@ -232,14 +237,13 @@ def to_date(text: Optional[str]) -> Optional[date]:
     return parse_date(text)
 
 
-def _find_dossier_lecture(texte_uid: str) -> Tuple[DossierRef, LectureRef]:
+def _find_dossier_lecture(texte_ref: TexteRef) -> Tuple[DossierRef, LectureRef]:
     # FIXME: this is not efficient
-    dossiers: Dict[str, DossierRef] = repository.get_data("dossiers")
-    for dossier in dossiers.values():
-        for lecture in dossier.lectures:
-            if lecture.texte.uid == texte_uid:
-                return dossier, lecture
-    raise ValueError(f"Unknown texte {texte_uid}")
+    for dossier_ref in get_dossiers_legislatifs_open_data_from_cache().values():
+        for lecture_ref in dossier_ref.lectures:
+            if lecture_ref.texte == texte_ref:
+                return dossier_ref, lecture_ref
+    raise ValueError(f"Unknown texte {texte_ref}")
 
 
 def extract_partie(node: RestrictedElement) -> Optional[int]:
@@ -258,7 +262,7 @@ def get_sort(sort: Optional[str], etat: Optional[str]) -> str:
 
 
 def get_auteur_name(uid: str) -> str:
-    acteurs = repository.get_data("acteurs")
+    acteurs = repository.get_data("an.opendata.acteurs")
     if uid not in acteurs:
         raise ValueError(f"Unknown auteur {uid}")
     acteur = acteurs[uid]
@@ -267,7 +271,7 @@ def get_auteur_name(uid: str) -> str:
 
 
 def get_groupe_name(uid: str) -> str:
-    organes = repository.get_data("organes")
+    organes = repository.get_data("an.opendata.organes")
     if uid not in organes:
         raise ValueError(f"Unknown groupe {uid}")
     libelle: str = organes[uid]["libelle"]
@@ -304,3 +308,8 @@ def get_number_from_uid(uid: str) -> int:
     if mo is None:
         raise ValueError(f"Cannot extract amendement number from {uid}") from None
     return int(mo.group("num"))
+
+
+def get_textes_open_data_from_cache() -> Dict[str, TexteRef]:
+    textes: Dict[str, TexteRef] = repository.get_data("an.opendata.textes")
+    return textes

@@ -1,7 +1,7 @@
 import transaction
 from datetime import date
 from operator import attrgetter
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -10,9 +10,14 @@ from pyramid.view import view_config, view_defaults
 from sqlalchemy.orm import joinedload
 from webob.multidict import MultiDict
 
-from zam_repondeur.data import repository
+from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch import get_articles
-from zam_repondeur.fetch.an.dossiers.models import DossierRef, LectureRef
+from zam_repondeur.fetch.an.dossiers.models import (
+    ChambreRef,
+    DossierRef,
+    DossierRefsByUID,
+    LectureRef,
+)
 from zam_repondeur.message import Message
 from zam_repondeur.models import (
     Amendement,
@@ -64,31 +69,35 @@ def lectures_list(
     return {"lectures": lectures}
 
 
-@view_defaults(context=LectureCollection, name="add")
-class LecturesAdd:
+class LectureAddBase:
     def __init__(self, context: LectureCollection, request: Request) -> None:
         self.context = context
         self.request = request
-        self.dossiers_by_uid: Dict[str, DossierRef] = repository.get_data("dossiers")
+        self.dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
 
+
+@view_defaults(context=LectureCollection, name="add")
+class LecturesAddForm(LectureAddBase):
     @view_config(request_method="GET", renderer="lectures_add.html")
     def get(self) -> dict:
         lectures = self.context.models()
+        dossiers = [
+            {"uid": dossier.uid, "titre": dossier.titre}
+            for dossier in sorted(
+                self.dossiers_by_uid.values(),
+                key=attrgetter("most_recent_texte_date"),
+                reverse=True,
+            )
+        ]
         return {
-            "dossiers": [
-                {"uid": dossier.uid, "titre": dossier.titre}
-                for dossier in sorted(
-                    self.dossiers_by_uid.values(),
-                    key=attrgetter("most_recent_texte_date"),
-                    reverse=True,
-                )
-            ],
+            "dossiers": dossiers,
             "lectures": lectures,
             "hide_lectures_link": len(lectures) == 0,
         }
 
     @view_config(request_method="POST")
     def post(self) -> Response:
+
         dossier_ref = self._get_dossier_ref()
         lecture_ref = self._get_lecture_ref(dossier_ref)
 
@@ -101,24 +110,21 @@ class LecturesAdd:
         if texte.date_depot is None:
             raise RuntimeError("Cannot create LectureRef for Texte with no date_depot")
 
-        texte_model = get_one_or_create(
+        texte_model, _ = get_one_or_create(
             Texte,
-            uid=texte.uid,
             type_=texte.type_,
             chambre=Chambre.AN if lecture_ref.chambre.value == "an" else Chambre.SENAT,
             legislature=texte.legislature,
             session=texte.session,
             numero=texte.numero,
-            titre_long=texte.titre_long,
-            titre_court=texte.titre_court,
             date_depot=texte.date_depot,
-        )[0]
+        )
 
-        dossier_model = get_one_or_create(
+        dossier_model, _ = get_one_or_create(
             Dossier, uid=dossier_ref.uid, titre=dossier_ref.titre
-        )[0]
+        )
 
-        if Lecture.exists(chambre, texte_model, partie, organe):
+        if self._lecture_exists(chambre, texte_model, partie, organe):
             self.request.session.flash(
                 Message(cls="warning", text="Cette lecture existe déjà…")
             )
@@ -155,6 +161,17 @@ class LecturesAdd:
             )
         )
 
+    def _lecture_exists(
+        self, chambre: str, texte_model: Texte, partie: Optional[int], organe: str
+    ) -> bool:
+        if Lecture.exists(chambre, texte_model, partie, organe):
+            return True
+        # We might already have a Sénat commission lecture created earlier from
+        # scraping data, and that would not have the organe.
+        if chambre == ChambreRef.SENAT.value and organe != "PO78718":
+            return Lecture.exists(chambre, texte_model, partie, "")
+        return False
+
     def _get_dossier_ref(self) -> DossierRef:
         try:
             dossier_uid = self.request.POST["dossier"]
@@ -166,7 +183,7 @@ class LecturesAdd:
             raise HTTPNotFound
         return dossier_ref
 
-    def _get_lecture_ref(self, dossier: DossierRef) -> LectureRef:
+    def _get_lecture_ref(self, dossier_ref: DossierRef) -> LectureRef:
         try:
             texte_uid, organe, partie_str = self.request.POST["lecture"].split("-", 2)
         except (KeyError, ValueError):
@@ -177,17 +194,30 @@ class LecturesAdd:
         else:
             partie = int(partie_str)
         matching = [
-            lecture
-            for lecture in dossier.lectures
+            lecture_ref
+            for lecture_ref in dossier_ref.lectures
             if (
-                lecture.texte.uid == texte_uid
-                and lecture.organe == organe
-                and lecture.partie == partie
+                lecture_ref.texte.uid == texte_uid
+                and lecture_ref.organe == organe
+                and lecture_ref.partie == partie
             )
         ]
         if len(matching) != 1:
             raise HTTPNotFound
         return matching[0]
+
+
+class LectureAddChoices(LectureAddBase):
+    @view_config(route_name="choices_lectures", request_method="GET", renderer="json")
+    def get(self) -> dict:
+        uid = self.request.matchdict["uid"]
+        dossier = self.dossiers_by_uid[uid]
+        return {
+            "lectures": [
+                {"key": lecture.key, "label": lecture.label}
+                for lecture in dossier.lectures
+            ]
+        }
 
 
 @view_defaults(context=LectureResource)
@@ -458,18 +488,6 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
         )
     )
     return HTTPFound(location=request.resource_url(context, "amendements"))
-
-
-@view_config(route_name="choices_lectures", renderer="json")
-def choices_lectures(request: Request) -> dict:
-    uid = request.matchdict["uid"]
-    dossiers_by_uid = repository.get_data("dossiers")
-    dossier = dossiers_by_uid[uid]
-    return {
-        "lectures": [
-            {"key": lecture.key, "label": lecture.label} for lecture in dossier.lectures
-        ]
-    }
 
 
 @view_config(context=LectureResource, name="journal", renderer="lecture_journal.html")

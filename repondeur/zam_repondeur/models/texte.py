@@ -2,7 +2,7 @@ from datetime import date, datetime
 from typing import Optional
 import enum
 
-from sqlalchemy import Column, Date, DateTime, Enum, Index, Integer, Text
+from sqlalchemy import Column, Date, DateTime, Enum, Index, Integer
 from sqlalchemy.orm import relationship
 
 from .base import Base, DBSession
@@ -53,7 +53,6 @@ class Texte(Base):
 
     pk = Column(Integer, primary_key=True)
 
-    uid = Column(Text, nullable=False, unique=True)  # UID from Assemblée Nationale
     type_ = Column(Enum(TypeTexte), nullable=False)
     chambre = Column(Enum(Chambre), nullable=False)
 
@@ -64,8 +63,6 @@ class Texte(Base):
     legislature = Column(Integer, nullable=True)
 
     numero = Column(Integer, nullable=False)
-    titre_long = Column(Text, nullable=False)
-    titre_court = Column(Text, nullable=False)
     date_depot = Column(Date, nullable=False)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
@@ -77,11 +74,11 @@ class Texte(Base):
 
     __repr_keys__ = (
         "pk",
-        "uid",
         "type_",
+        "chambre",
         "numero",
-        "titre_long",
-        "titre_court",
+        "session",
+        "legislature",
         "date_depot",
     )
 
@@ -108,12 +105,9 @@ class Texte(Base):
     @classmethod
     def create(
         cls,
-        uid: str,
         type_: TypeTexte,
         chambre: Chambre,
         numero: int,
-        titre_long: str,
-        titre_court: str,
         date_depot: date,
         session: Optional[int] = None,
         legislature: Optional[int] = None,
@@ -124,12 +118,9 @@ class Texte(Base):
         if chambre == Chambre.SENAT and session is None:
             raise ValueError("session is required for SENAT")
         texte = cls(
-            uid=uid,
             type_=type_,
             chambre=chambre,
             numero=numero,
-            titre_long=titre_long,
-            titre_court=titre_court,
             date_depot=date_depot,
             session=session,
             legislature=legislature,

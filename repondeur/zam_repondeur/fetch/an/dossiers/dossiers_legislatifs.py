@@ -1,6 +1,6 @@
 import logging
 from json import load
-from typing import Dict, Iterator, List, NamedTuple, Optional
+from typing import Dict, Iterator, List, NamedTuple, Optional, Tuple
 
 from ...dates import parse_date
 from ..common import extract_from_remote_zip, roman
@@ -10,21 +10,28 @@ from .models import ChambreRef, LectureRef, DossierRef, TexteRef, TypeTexte
 logger = logging.getLogger(__name__)
 
 
-def get_dossiers_legislatifs(*legislatures: int) -> Dict[str, DossierRef]:
-    dossiers: Dict[str, DossierRef] = {}
+def get_dossiers_legislatifs_and_textes(
+    *legislatures: int
+) -> Tuple[Dict[str, DossierRef], Dict[str, TexteRef]]:
+    all_dossiers: Dict[str, DossierRef] = {}
+    all_textes: Dict[str, TexteRef] = {}
     for legislature in legislatures:
-        dossiers.update(_get_dossiers_legislatifs(legislature))
-    return dossiers
+        dossiers, textes = _get_dossiers_legislatifs_and_textes(legislature)
+        all_dossiers.update(dossiers)
+        all_textes.update(textes)
+    return all_dossiers, all_textes
 
 
-def _get_dossiers_legislatifs(legislature: int) -> Dict[str, DossierRef]:
-    data = fetch_dossiers_legislatifs(legislature)
+def _get_dossiers_legislatifs_and_textes(
+    legislature: int
+) -> Tuple[Dict[str, DossierRef], Dict[str, TexteRef]]:
+    data = fetch_dossiers_legislatifs_and_textes(legislature)
     textes = parse_textes(data["export"])
     dossiers = parse_dossiers(data["export"], textes)
-    return dossiers
+    return dossiers, textes
 
 
-def fetch_dossiers_legislatifs(legislature: int) -> dict:
+def fetch_dossiers_legislatifs_and_textes(legislature: int) -> dict:
     legislature_roman = roman(legislature)
     filename = f"Dossiers_Legislatifs_{legislature_roman}.json"
     url = f"http://data.assemblee-nationale.fr/static/openData/repository/{legislature}/loi/dossiers_legislatifs/{filename}.zip"  # noqa
@@ -114,13 +121,21 @@ TOP_LEVEL_ACTES = {
 def parse_dossier(dossier: dict, textes: Dict[str, TexteRef]) -> DossierRef:
     uid = dossier["uid"]
     titre = dossier["titreDossier"]["titre"]
+    an_url = build_an_url(dossier["titreDossier"]["titreChemin"])
+    senat_url = dossier["titreDossier"]["senatChemin"]
     is_plf = "PLF" in dossier
     lectures = [
         lecture
         for acte in top_level_actes(dossier)
         for lecture in gen_lectures(acte, textes, is_plf)
     ]
-    return DossierRef(uid=uid, titre=titre, lectures=lectures)
+    return DossierRef(
+        uid=uid, titre=titre, an_url=an_url, senat_url=senat_url, lectures=lectures
+    )
+
+
+def build_an_url(slug: str) -> str:
+    return f"http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/{slug}"
 
 
 def top_level_actes(dossier: dict) -> Iterator[dict]:

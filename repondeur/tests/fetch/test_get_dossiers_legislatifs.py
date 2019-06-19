@@ -14,27 +14,28 @@ DOSSIERS = HERE / "sample_data" / "Dossiers_Legislatifs_XV.json"
 
 
 @pytest.fixture(scope="module")
-def textes():
-    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_textes
-
-    with open(DOSSIERS) as f_:
-        data = json.load(f_)
-    return parse_textes(data["export"])
-
-
-@pytest.fixture(scope="module")
-def dossiers():
+def dossiers_and_textes():
     from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
-        get_dossiers_legislatifs
+        get_dossiers_legislatifs_and_textes
     )
 
     with patch(
         "zam_repondeur.fetch.an.dossiers.dossiers_legislatifs.extract_from_remote_zip"
     ) as m_open:
         m_open.return_value = DOSSIERS.open()
-        dossiers_by_uid = get_dossiers_legislatifs(15)
+        dossiers_by_uid, textes_by_uid = get_dossiers_legislatifs_and_textes(15)
 
-    return dossiers_by_uid
+    return dossiers_by_uid, textes_by_uid
+
+
+@pytest.fixture(scope="module")
+def dossiers(dossiers_and_textes):
+    return dossiers_and_textes[0]
+
+
+@pytest.fixture(scope="module")
+def textes(dossiers_and_textes):
+    return dossiers_and_textes[1]
 
 
 def test_number_of_dossiers(dossiers):
@@ -470,6 +471,8 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
     assert dossier == DossierRef(
         uid="DLR5L15N36159",
         titre="Fonction publique : un Etat au service d'une société de confiance",
+        an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/etat_service_societe_confiance",  # noqa
+        senat_url="http://www.senat.fr/dossier-legislatif/pjl17-259.html",
         lectures=[
             LectureRef(
                 chambre=ChambreRef.AN,

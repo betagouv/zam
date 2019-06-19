@@ -125,7 +125,7 @@ def create_lecture(
             texte = prev_texte
     else:
         examen = "Commissions"
-        organe = ""  # TODO: PO211495 is not a sane default.
+        organe = ""
 
     titre = f"{num_lecture} – {examen}"
 
@@ -148,7 +148,6 @@ def create_texte(pid: str, entry: element.Tag) -> TexteRef:
     # E.g.: 2019-05-21T22:00:00Z
     datetime_depot = datetime.strptime(entry.created.string, "%Y-%m-%dT%H:%M:%SZ")
     date_depot = datetime_depot.date() + timedelta(days=1)
-    # TODO: uniformize with AN fetch?
     uid = f"{type_.upper()}{chambre.name.upper()}{date_depot.year}X{numero}"
     return TexteRef(
         uid=uid,

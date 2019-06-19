@@ -72,7 +72,15 @@ class Texte(Base):
 
     lectures = relationship("Lecture", back_populates="texte")
 
-    __repr_keys__ = ("pk", "type_", "numero", "date_depot")
+    __repr_keys__ = (
+        "pk",
+        "type_",
+        "chambre",
+        "numero",
+        "session",
+        "legislature",
+        "date_depot",
+    )
 
     @property
     def session_str(self) -> Optional[str]:

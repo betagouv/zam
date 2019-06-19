@@ -108,7 +108,7 @@ class LecturesAddForm(LectureAddBase):
         if texte.date_depot is None:
             raise RuntimeError("Cannot create LectureRef for Texte with no date_depot")
 
-        texte_model = get_one_or_create(
+        texte_model, _ = get_one_or_create(
             Texte,
             type_=texte.type_,
             chambre=Chambre.AN if lecture_ref.chambre.value == "an" else Chambre.SENAT,
@@ -116,11 +116,11 @@ class LecturesAddForm(LectureAddBase):
             session=texte.session,
             numero=texte.numero,
             date_depot=texte.date_depot,
-        )[0]
+        )
 
-        dossier_model = get_one_or_create(
+        dossier_model, _ = get_one_or_create(
             Dossier, uid=dossier_ref.uid, titre=dossier_ref.titre
-        )[0]
+        )
 
         if Lecture.exists(chambre, texte_model, partie, organe):
             self.request.session.flash(

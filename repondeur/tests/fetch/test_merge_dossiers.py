@@ -203,6 +203,8 @@ class TestMergeDossiers:
             )
         }
 
+
+class TestMergeBySenatURL:
     def test_merge_dossiers_by_senat_url_with_additional_lecture(self):
         from zam_repondeur.fetch.an.dossiers.models import (
             ChambreRef,
@@ -533,3 +535,132 @@ class TestMergeDossiers:
                 ],
             )
         }
+
+
+class TestAddDossiers:
+    def test_senat_commission_lecture(self):
+        from zam_repondeur.fetch.an.dossiers.models import (
+            ChambreRef,
+            DossierRef,
+            LectureRef,
+            TexteRef,
+            TypeTexte,
+        )
+
+        dossier_open_data = DossierRef(
+            uid="DLR5L15N36030",
+            titre="Titre 1",
+            an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
+            senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
+            lectures=[
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Commission saisie au fond",
+                    texte=TexteRef(
+                        uid="UID-TEXTE-1",
+                        type_=TypeTexte.PROJET,
+                        chambre=ChambreRef.SENAT,
+                        legislature=None,
+                        numero=63,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=date(2017, 11, 6),
+                    ),
+                    organe="PO211493",  # known exact organe
+                ),
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="UID-TEXTE-1",
+                        type_=TypeTexte.PROJET,
+                        chambre=ChambreRef.SENAT,
+                        legislature=None,
+                        numero=63,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=date(2017, 11, 6),
+                    ),
+                    organe="PO78718",
+                ),
+            ],
+        )
+        dossier_scraping = DossierRef(
+            uid="pjl17-063",
+            titre="Titre 2",
+            an_url="",
+            senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
+            lectures=[
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Commissions",
+                    texte=TexteRef(
+                        uid="UID-TEXTE-2",
+                        type_=TypeTexte.PROJET,
+                        chambre=ChambreRef.SENAT,
+                        legislature=None,
+                        numero=63,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=date(2017, 11, 6),
+                    ),
+                    organe="",  # unknown exact organe
+                ),
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="UID-TEXTE-2",
+                        type_=TypeTexte.PROJET,
+                        chambre=ChambreRef.SENAT,
+                        legislature=None,
+                        numero=63,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=date(2017, 11, 6),
+                    ),
+                    organe="PO78718",
+                ),
+            ],
+        )
+
+        merged = dossier_open_data + dossier_scraping
+
+        assert merged == DossierRef(
+            uid="DLR5L15N36030",
+            titre="Titre 1",
+            an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
+            senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
+            lectures=[
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Commission saisie au fond",
+                    texte=TexteRef(
+                        uid="UID-TEXTE-1",
+                        type_=TypeTexte.PROJET,
+                        chambre=ChambreRef.SENAT,
+                        legislature=None,
+                        numero=63,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=date(2017, 11, 6),
+                    ),
+                    organe="PO211493",  # known exact organe
+                ),
+                LectureRef(
+                    chambre=ChambreRef.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="UID-TEXTE-1",
+                        type_=TypeTexte.PROJET,
+                        chambre=ChambreRef.SENAT,
+                        legislature=None,
+                        numero=63,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=date(2017, 11, 6),
+                    ),
+                    organe="PO78718",
+                ),
+            ],
+        )

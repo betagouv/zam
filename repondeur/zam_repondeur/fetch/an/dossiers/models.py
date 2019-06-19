@@ -71,9 +71,27 @@ class LectureRef:
             partie = ""
         return f"{self.chambre} – {self.titre} – Texte Nº {self.texte.numero}{partie}"
 
+    def overrides(self, other: "LectureRef") -> bool:
+        if self.cmp_key == other.cmp_key:
+            return True
+        return (
+            self.texte.chambre == ChambreRef.SENAT
+            and self.organe != "PO78718"
+            and other.organe == ""
+        )
+
     @property
-    def cmp_key(self) -> Tuple[ChambreRef, int, Optional[int]]:
-        return (self.chambre, self.texte.numero, self.partie)
+    def cmp_key(
+        self
+    ) -> Tuple[ChambreRef, str, Optional[int], Optional[int], int, Optional[int]]:
+        return (
+            self.chambre,
+            self.organe,
+            self.texte.legislature,
+            self.texte.session,
+            self.texte.numero,
+            self.partie,
+        )
 
 
 MIN_DATE = date(1900, 1, 1)
@@ -145,7 +163,7 @@ class DossierRef:
 
     def _merge_lectures(self, other_lectures: List[LectureRef]) -> List[LectureRef]:
         return deepcopy(self.lectures) + [
-            copy(lecture)
-            for lecture in other_lectures
-            if not any(l.cmp_key == lecture.cmp_key for l in self.lectures)
+            copy(other)
+            for other in other_lectures
+            if not any(lecture.overrides(other) for lecture in self.lectures)
         ]

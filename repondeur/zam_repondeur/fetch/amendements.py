@@ -1,6 +1,6 @@
 from typing import Any, List, NamedTuple
 
-from zam_repondeur.models import Amendement, Lecture
+from zam_repondeur.models import Amendement, Chambre, Lecture
 from zam_repondeur.models.events.amendement import (
     AmendementIrrecevable,
     AmendementRectifie,
@@ -88,16 +88,15 @@ class RemoteSource(Source):
         raise NotImplementedError
 
     @classmethod
-    def get_remote_source_for_chambre(cls, chambre: str) -> "RemoteSource":
+    def get_remote_source_for_chambre(cls, chambre: Chambre) -> "RemoteSource":
         from zam_repondeur.fetch.an.amendements import AssembleeNationale
         from zam_repondeur.fetch.senat.amendements import Senat
 
-        if chambre == "an":
+        if chambre == Chambre.AN:
             return AssembleeNationale()
-        elif chambre == "senat":
+        if chambre == Chambre.SENAT:
             return Senat()
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
 
 def get_amendements(lecture: Lecture) -> FetchResult:

@@ -10,18 +10,14 @@ from lxml.etree import XMLSyntaxError  # nosec
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import repository
 from zam_repondeur.dossiers import get_dossiers_legislatifs_open_data_from_cache
-from zam_repondeur.fetch.an.dossiers.models import (
-    ChambreRef,
-    DossierRef,
-    LectureRef,
-    TexteRef,
-)
+from zam_repondeur.fetch.an.dossiers.models import DossierRef, LectureRef, TexteRef
 from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import parse_subdiv
 from zam_repondeur.models import (
     DBSession,
     Article,
     Amendement,
+    Chambre,
     Lecture,
     get_one_or_create,
 )
@@ -55,7 +51,7 @@ def import_liasse_xml(
     xml_file: IO[bytes], lecture: Lecture
 ) -> Tuple[List[Amendement], List[Tuple[str, str]]]:
 
-    if lecture.chambre != ChambreRef.AN.value:
+    if lecture.chambre != Chambre.AN:
         raise BadChambre
 
     try:
@@ -176,7 +172,7 @@ def check_same_lecture(
         raise ValueError("Unknown texte")
 
     if (
-        texte_ref.chambre.value != lecture.texte.chambre.name.lower()
+        texte_ref.chambre != lecture.texte.chambre
         or texte_ref.legislature != lecture.texte.legislature
         or texte_ref.numero != lecture.texte.numero
         or partie != lecture.partie

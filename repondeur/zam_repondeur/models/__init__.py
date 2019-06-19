@@ -10,7 +10,7 @@ from .amendement import Amendement, Batch, AVIS  # noqa
 from .article import Article, ArticleUserContent  # noqa
 from .chambre import Chambre  # noqa
 from .dossier import Dossier  # noqa
-from .lecture import Lecture, CHAMBRES, SESSIONS  # noqa
+from .lecture import Lecture  # noqa
 from .users import Team, User  # noqa
 from .table import UserTable  # noqa
 from .texte import Texte, TypeTexte  # noqa
@@ -33,7 +33,7 @@ def _get_one(model: Any, options: Any = None, **kwargs: Any) -> Tuple[Any, bool]
 
 def _create(model: Any, create_kwargs: Any = None, **kwargs: Any) -> Tuple[Any, bool]:
     kwargs.update(create_kwargs or {})
-    with DBSession.begin_nested():
+    with DBSession.begin_nested():  # unnecessary?
         created = model.create(**kwargs)
         DBSession.add(created)
     return created, True

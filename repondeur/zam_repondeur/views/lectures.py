@@ -13,7 +13,6 @@ from webob.multidict import MultiDict
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch import get_articles
 from zam_repondeur.fetch.an.dossiers.models import (
-    ChambreRef,
     DossierRef,
     DossierRefsByUID,
     LectureRef,
@@ -102,7 +101,7 @@ class LecturesAddForm(LectureAddBase):
         dossier_ref = self._get_dossier_ref()
         lecture_ref = self._get_lecture_ref(dossier_ref)
 
-        chambre = lecture_ref.chambre.value
+        chambre = lecture_ref.chambre
         titre = lecture_ref.titre
         organe = lecture_ref.organe
         partie = lecture_ref.partie
@@ -114,7 +113,7 @@ class LecturesAddForm(LectureAddBase):
         texte_model, _ = get_one_or_create(
             Texte,
             type_=texte.type_,
-            chambre=Chambre.AN if lecture_ref.chambre.value == "an" else Chambre.SENAT,
+            chambre=chambre,
             legislature=texte.legislature,
             session=texte.session,
             numero=texte.numero,
@@ -163,13 +162,13 @@ class LecturesAddForm(LectureAddBase):
         )
 
     def _lecture_exists(
-        self, chambre: str, texte_model: Texte, partie: Optional[int], organe: str
+        self, chambre: Chambre, texte_model: Texte, partie: Optional[int], organe: str
     ) -> bool:
         if Lecture.exists(chambre, texte_model, partie, organe):
             return True
         # We might already have a Sénat commission lecture created earlier from
         # scraping data, and that would not have the organe.
-        if chambre == ChambreRef.SENAT.value and organe != ORGANE_SENAT:
+        if chambre == Chambre.SENAT and organe != ORGANE_SENAT:
             return Lecture.exists(chambre, texte_model, partie, "")
         return False
 

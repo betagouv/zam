@@ -7,19 +7,19 @@ import pytest
 @pytest.yield_fixture(scope="session", autouse=True)
 def mock_dossiers():
     from zam_repondeur.fetch.an.dossiers.models import (
-        ChambreRef,
         DossierRef,
         LectureRef,
         TexteRef,
         TypeTexte,
     )
+    from zam_repondeur.models.chambre import Chambre
 
     with patch("zam_repondeur.data.get_dossiers_legislatifs_and_textes") as m_dossiers:
         textes = {
             "PRJLANR5L15B0269": TexteRef(
                 uid="PRJLANR5L15B0269",
                 type_=TypeTexte.PROJET,
-                chambre=ChambreRef.AN,
+                chambre=Chambre.AN,
                 legislature=15,
                 numero=269,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -29,7 +29,7 @@ def mock_dossiers():
             "PRJLSNR5S299B0063": TexteRef(
                 uid="PRJLSNR5S299B0063",
                 type_=TypeTexte.PROJET,
-                chambre=ChambreRef.SENAT,
+                chambre=Chambre.SENAT,
                 legislature=None,
                 numero=63,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -39,7 +39,7 @@ def mock_dossiers():
             "PRJLANR5L15B0806": TexteRef(
                 uid="PRJLANR5L15B0806",
                 type_=TypeTexte.PROJET,
-                chambre=ChambreRef.AN,
+                chambre=Chambre.AN,
                 legislature=15,
                 numero=806,
                 titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
@@ -49,7 +49,7 @@ def mock_dossiers():
             "PRJLSNR5S319B0106": TexteRef(
                 uid="PRJLSNR5S319B0106",
                 type_=TypeTexte.PROJET,
-                chambre=ChambreRef.SENAT,
+                chambre=Chambre.SENAT,
                 legislature=None,
                 numero=106,
                 titre_long="projet de loi de financement de la sécurité sociale pour 2019",  # noqa
@@ -59,7 +59,7 @@ def mock_dossiers():
             "PRJLANR5L15B1802": TexteRef(
                 uid="PRJLANR5L15B1802",
                 type_=TypeTexte.PROJET,
-                chambre=ChambreRef.AN,
+                chambre=Chambre.AN,
                 legislature=15,
                 numero=1802,
                 titre_long="projet de loi de transformation de la fonction publique",  # noqa
@@ -69,7 +69,7 @@ def mock_dossiers():
             "PRJLANR5L15BTC1924": TexteRef(
                 uid="PRJLANR5L15BTC1924",
                 type_=TypeTexte.PROJET,
-                chambre=ChambreRef.AN,
+                chambre=Chambre.AN,
                 legislature=15,
                 numero=1924,
                 titre_long="projet de loi sur le projet de loi, après engagement de la procédure accélérée, de transformation de la fonction publique (n°1802).",  # noqa
@@ -85,19 +85,19 @@ def mock_dossiers():
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=textes["PRJLANR5L15B0269"],
                         organe="PO717460",  # séance publique
                     ),
                     LectureRef(
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=textes["PRJLSNR5S299B0063"],
                         organe="PO78718",  # séance publique
                     ),
                     LectureRef(
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         titre="Première lecture – Commission saisie au fond",
                         texte=textes["PRJLSNR5S299B0063"],
                         organe="PO211493",
@@ -111,7 +111,7 @@ def mock_dossiers():
                 senat_url="http://www.senat.fr/dossier-legislatif/pjl17-259.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Nouvelle lecture – Titre lecture",
                         texte=textes["PRJLANR5L15B0806"],
                         organe="PO744107",  # commission spéciale
@@ -125,7 +125,7 @@ def mock_dossiers():
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2019.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=textes["PRJLSNR5S319B0106"],
                         organe="PO78718",  # séance publique
@@ -139,14 +139,14 @@ def mock_dossiers():
                 senat_url="http://www.senat.fr/dossier-legislatif/pjl18-532.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Commission saisie au fond",
                         texte=textes["PRJLANR5L15B1802"],
                         organe="PO59051",
                         partie=None,
                     ),
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Séance publique",
                         texte=textes["PRJLANR5L15BTC1924"],
                         organe="PO717460",
@@ -154,12 +154,12 @@ def mock_dossiers():
                     ),
                     # Intentionnaly removed to check it merges with Senat scraped data.
                     # LectureRef(
-                    #     chambre=ChambreRef.SENAT,
+                    #     chambre=Chambre.SENAT,
                     #     titre="Première lecture – Commission saisie au fond",
                     #     texte=TexteRef(
                     #         uid="PRJLSNR5S319B0532",
                     #         type_=TypeTexte.PROJET,
-                    #         chambre=ChambreRef.SENAT,
+                    #         chambre=Chambre.SENAT,
                     #         legislature=None,
                     #         numero=532,
                     #         titre_long="projet de loi de transformation de la fonction publique",  # noqa

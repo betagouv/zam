@@ -10,6 +10,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from zam_repondeur.models import (
     Amendement,
     Article,
+    Chambre,
     DBSession,
     Lecture,
     User,
@@ -115,7 +116,7 @@ class LectureResource(Resource):
         organe: str,
     ) -> None:
         super().__init__(name=name, parent=parent)
-        self.chambre = chambre
+        self.chambre = Chambre.from_string(chambre)
         self.session_or_legislature = session_or_legislature
         self.num_texte = num_texte
         self.partie = partie

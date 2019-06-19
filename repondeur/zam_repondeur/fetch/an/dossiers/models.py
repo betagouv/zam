@@ -1,33 +1,19 @@
 from copy import copy, deepcopy
 from dataclasses import dataclass
 from datetime import date
-from enum import Enum
+
 from typing import Dict, List, Optional, Tuple
 
+from zam_repondeur.models.chambre import Chambre
 from zam_repondeur.models.organe import ORGANE_SENAT
 from zam_repondeur.models.texte import TypeTexte
-
-
-class ChambreRef(Enum):
-    AN = "an"
-    SENAT = "senat"
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}.{self.name}"
-
-    def __str__(self) -> str:
-        if self.value == "an":
-            return "Assemblée nationale"
-        if self.value == "senat":
-            return "Sénat"
-        raise NotImplementedError
 
 
 @dataclass(eq=True, frozen=True)
 class TexteRef:
     uid: str
     type_: TypeTexte
-    chambre: ChambreRef
+    chambre: Chambre
     legislature: Optional[int]
     numero: int
     titre_long: str
@@ -36,7 +22,7 @@ class TexteRef:
 
     @property
     def session(self) -> Optional[int]:
-        if self.chambre == ChambreRef.AN:
+        if self.chambre == Chambre.AN:
             return None
         if not self.date_depot:
             raise NotImplementedError
@@ -49,7 +35,7 @@ class TexteRef:
 
 @dataclass
 class LectureRef:
-    chambre: ChambreRef
+    chambre: Chambre
     titre: str
     texte: TexteRef
     organe: str
@@ -67,13 +53,15 @@ class LectureRef:
             partie = " (seconde partie)"
         else:
             partie = ""
-        return f"{self.chambre} – {self.titre} – Texte Nº {self.texte.numero}{partie}"
+        return " – ".join(
+            [self.chambre.value, self.titre, f"Texte Nº {self.texte.numero}{partie}"]
+        )
 
     def overrides(self, other: "LectureRef") -> bool:
         if self.cmp_key == other.cmp_key:
             return True
         return (
-            self.texte.chambre == ChambreRef.SENAT
+            self.texte.chambre == Chambre.SENAT
             and self.organe != ORGANE_SENAT
             and other.organe == ""
         )
@@ -81,7 +69,7 @@ class LectureRef:
     @property
     def cmp_key(
         self
-    ) -> Tuple[ChambreRef, str, Optional[int], Optional[int], int, Optional[int]]:
+    ) -> Tuple[Chambre, str, Optional[int], Optional[int], int, Optional[int]]:
         return (
             self.chambre,
             self.organe,

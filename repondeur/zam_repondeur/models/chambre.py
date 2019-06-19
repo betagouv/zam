@@ -12,3 +12,6 @@ class Chambre(enum.Enum):
         if chambre == "senat":
             return Chambre.SENAT
         raise ValueError(f"Invalid string value {chambre!r} for Chambre")
+
+    def __str__(self) -> str:
+        return self.name.lower()

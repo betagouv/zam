@@ -2,9 +2,11 @@ import logging
 from json import load
 from typing import Dict, Iterator, List, NamedTuple, Optional, Tuple
 
+from zam_repondeur.models.chambre import Chambre
+
 from ...dates import parse_date
 from ..common import extract_from_remote_zip, roman
-from .models import ChambreRef, LectureRef, DossierRef, TexteRef, TypeTexte
+from .models import LectureRef, DossierRef, TexteRef, TypeTexte
 
 
 logger = logging.getLogger(__name__)
@@ -67,11 +69,11 @@ def type_texte(item: dict) -> TypeTexte:
     raise NotImplementedError
 
 
-def chambre_texte(item: dict) -> ChambreRef:
+def chambre_texte(item: dict) -> Chambre:
     if item["uid"][4:6] == "AN":
-        return ChambreRef.AN
+        return Chambre.AN
     if item["uid"][4:6] == "SN":
-        return ChambreRef.SENAT
+        return Chambre.SENAT
     raise NotImplementedError
 
 
@@ -110,11 +112,11 @@ def _has_dossier_uid(data: dict) -> bool:
 
 
 TOP_LEVEL_ACTES = {
-    "AN1": (ChambreRef.AN, "Première lecture"),
-    "SN1": (ChambreRef.SENAT, "Première lecture"),
-    "ANNLEC": (ChambreRef.AN, "Nouvelle lecture"),
-    "SNNLEC": (ChambreRef.SENAT, "Nouvelle lecture"),
-    "ANLDEF": (ChambreRef.AN, "Lecture définitive"),
+    "AN1": (Chambre.AN, "Première lecture"),
+    "SN1": (Chambre.SENAT, "Première lecture"),
+    "ANNLEC": (Chambre.AN, "Nouvelle lecture"),
+    "SNNLEC": (Chambre.SENAT, "Nouvelle lecture"),
+    "ANLDEF": (Chambre.AN, "Lecture définitive"),
 }
 
 

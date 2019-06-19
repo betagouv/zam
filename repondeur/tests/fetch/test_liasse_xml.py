@@ -210,8 +210,9 @@ def test_import_liasse_xml_lecture_does_not_match(lecture_an):
 
 
 def _check_amendement_0(amendement):
+    from zam_repondeur.models import Chambre
 
-    assert amendement.lecture.chambre == "an"
+    assert amendement.lecture.chambre == Chambre.AN
     assert amendement.lecture.texte.legislature == 15
     assert amendement.lecture.texte.numero == 806
     assert amendement.lecture.organe == "PO744107"
@@ -257,8 +258,9 @@ def _check_amendement_0(amendement):
 
 
 def _check_amendement_1(amendement):
+    from zam_repondeur.models import Chambre
 
-    assert amendement.lecture.chambre == "an"
+    assert amendement.lecture.chambre == Chambre.AN
     assert amendement.lecture.texte.legislature == 15
     assert amendement.lecture.texte.numero == 806
     assert amendement.lecture.organe == "PO744107"

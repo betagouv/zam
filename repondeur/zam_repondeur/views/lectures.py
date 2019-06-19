@@ -41,6 +41,7 @@ from zam_repondeur.models.events.amendement import (
     ReponseAmendementModifiee,
 )
 
+from zam_repondeur.models.organe import ORGANE_SENAT
 from zam_repondeur.models.users import Team
 from zam_repondeur.resources import (
     AmendementCollection,
@@ -168,7 +169,7 @@ class LecturesAddForm(LectureAddBase):
             return True
         # We might already have a Sénat commission lecture created earlier from
         # scraping data, and that would not have the organe.
-        if chambre == ChambreRef.SENAT.value and organe != "PO78718":
+        if chambre == ChambreRef.SENAT.value and organe != ORGANE_SENAT:
             return Lecture.exists(chambre, texte_model, partie, "")
         return False
 

@@ -9,6 +9,7 @@ from .article import Article
 from .base import Base, DBSession
 from .division import SubDiv
 from .events.base import LastEventMixin
+from .organe import ORGANE_AN, ORGANE_SENAT
 from .texte import Chambre, Texte
 from .users import Team
 
@@ -116,7 +117,7 @@ class Lecture(Base, LastEventMixin):
 
     @property
     def is_commission(self) -> bool:
-        return self.organe not in ("PO717460", "PO78718")  # FIXME
+        return self.organe not in {ORGANE_AN, ORGANE_SENAT}
 
     @property
     def displayable(self) -> bool:

@@ -15,6 +15,7 @@ from zam_repondeur.fetch.an.dossiers.models import (
     TexteRef,
     TypeTexte,
 )
+from zam_repondeur.models.organe import ORGANE_SENAT
 
 
 logger = logging.getLogger(__name__)
@@ -116,7 +117,7 @@ def create_lecture(
     mo = re.search(r"Texte (résultat des travaux )?de la commission", summary)
     if mo is not None:
         examen = "Séance publique"
-        organe = "PO78718"
+        organe = ORGANE_SENAT
         if mo.group(1):
             if prev_texte is None:
                 logger.warning("Expected a prev_texte")

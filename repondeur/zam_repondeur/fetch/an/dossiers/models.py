@@ -4,6 +4,7 @@ from datetime import date
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
+from zam_repondeur.models.organe import ORGANE_SENAT
 from zam_repondeur.models.texte import TypeTexte
 
 
@@ -76,7 +77,7 @@ class LectureRef:
             return True
         return (
             self.texte.chambre == ChambreRef.SENAT
-            and self.organe != "PO78718"
+            and self.organe != ORGANE_SENAT
             and other.organe == ""
         )
 

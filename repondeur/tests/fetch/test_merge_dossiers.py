@@ -42,12 +42,12 @@ class TestMergeDossiers:
 
     def test_merge_identical_dossiers(self):
         from zam_repondeur.fetch.an.dossiers.models import (
-            ChambreRef,
             DossierRef,
             LectureRef,
             TexteRef,
             TypeTexte,
         )
+        from zam_repondeur.models.chambre import Chambre
 
         dossiers1 = {
             "DLR5L15N36030": DossierRef(
@@ -57,12 +57,12 @@ class TestMergeDossiers:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="PRJLANR5L15B0269",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
+                            chambre=Chambre.AN,
                             legislature=15,
                             numero=269,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -87,12 +87,12 @@ class TestMergeDossiers:
 
     def test_merge_dossiers_with_additional_lecture(self):
         from zam_repondeur.fetch.an.dossiers.models import (
-            ChambreRef,
             DossierRef,
             LectureRef,
             TexteRef,
             TypeTexte,
         )
+        from zam_repondeur.models.chambre import Chambre
 
         dossiers1 = {
             "DLR5L15N36030": DossierRef(
@@ -102,12 +102,12 @@ class TestMergeDossiers:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="PRJLANR5L15B0269",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
+                            chambre=Chambre.AN,
                             legislature=15,
                             numero=269,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -127,12 +127,12 @@ class TestMergeDossiers:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="PRJLANR5L15B0269",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
+                            chambre=Chambre.AN,
                             legislature=15,
                             numero=269,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -142,12 +142,12 @@ class TestMergeDossiers:
                         organe="PO717460",
                     ),
                     LectureRef(
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="PRJLSNR5S299B0063",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.SENAT,
+                            chambre=Chambre.SENAT,
                             legislature=None,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -170,12 +170,12 @@ class TestMergeDossiers:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="PRJLANR5L15B0269",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
+                            chambre=Chambre.AN,
                             legislature=15,
                             numero=269,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -185,12 +185,12 @@ class TestMergeDossiers:
                         organe="PO717460",  # séance publique
                     ),
                     LectureRef(
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="PRJLSNR5S299B0063",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.SENAT,
+                            chambre=Chambre.SENAT,
                             legislature=None,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -207,12 +207,12 @@ class TestMergeDossiers:
 class TestMergeBySenatURL:
     def test_merge_dossiers_by_senat_url_with_additional_lecture(self):
         from zam_repondeur.fetch.an.dossiers.models import (
-            ChambreRef,
             DossierRef,
             LectureRef,
             TexteRef,
             TypeTexte,
         )
+        from zam_repondeur.models.chambre import Chambre
 
         dossiers1 = {
             "DLR5L15N36030": DossierRef(
@@ -222,12 +222,12 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="PRJLANR5L15B0269",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
+                            chambre=Chambre.AN,
                             legislature=15,
                             numero=269,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -247,12 +247,12 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="DIFFERENT",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
+                            chambre=Chambre.AN,
                             legislature=15,
                             numero=269,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -262,12 +262,12 @@ class TestMergeBySenatURL:
                         organe="PO717460",
                     ),
                     LectureRef(
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="DIFFERENT2",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.SENAT,
+                            chambre=Chambre.SENAT,
                             legislature=None,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -290,12 +290,12 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="PRJLANR5L15B0269",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
+                            chambre=Chambre.AN,
                             legislature=15,
                             numero=269,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -305,12 +305,12 @@ class TestMergeBySenatURL:
                         organe="PO717460",
                     ),
                     LectureRef(
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="DIFFERENT2",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.SENAT,
+                            chambre=Chambre.SENAT,
                             legislature=None,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -326,12 +326,12 @@ class TestMergeBySenatURL:
 
     def test_merge_dossiers_by_senat_url_more_complex(self):
         from zam_repondeur.fetch.an.dossiers.models import (
-            ChambreRef,
             DossierRef,
             LectureRef,
             TexteRef,
             TypeTexte,
         )
+        from zam_repondeur.models.chambre import Chambre
 
         dossiers1 = {
             "DLR5L15N36030": DossierRef(
@@ -341,12 +341,12 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="PRJLANR5L15B0269",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
+                            chambre=Chambre.AN,
                             legislature=15,
                             numero=269,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -364,12 +364,12 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/pjl17-259.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Nouvelle lecture – Titre lecture",
                         texte=TexteRef(
                             uid="PRJLANR5L15B0806",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
+                            chambre=Chambre.AN,
                             legislature=15,
                             numero=806,
                             titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
@@ -389,12 +389,12 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="DIFFERENT",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
+                            chambre=Chambre.AN,
                             legislature=15,
                             numero=269,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -404,12 +404,12 @@ class TestMergeBySenatURL:
                         organe="PO717460",
                     ),
                     LectureRef(
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="DIFFERENT2",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.SENAT,
+                            chambre=Chambre.SENAT,
                             legislature=None,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -427,12 +427,12 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2019.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="DIFFERENT3",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.SENAT,
+                            chambre=Chambre.SENAT,
                             legislature=None,
                             numero=106,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2019",  # noqa
@@ -455,12 +455,12 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="PRJLANR5L15B0269",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
+                            chambre=Chambre.AN,
                             legislature=15,
                             numero=269,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -470,12 +470,12 @@ class TestMergeBySenatURL:
                         organe="PO717460",
                     ),
                     LectureRef(
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="DIFFERENT2",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.SENAT,
+                            chambre=Chambre.SENAT,
                             legislature=None,
                             numero=63,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2018",  # noqa
@@ -493,12 +493,12 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/pjl17-259.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.AN,
+                        chambre=Chambre.AN,
                         titre="Nouvelle lecture – Titre lecture",
                         texte=TexteRef(
                             uid="PRJLANR5L15B0806",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.AN,
+                            chambre=Chambre.AN,
                             legislature=15,
                             numero=806,
                             titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
@@ -518,12 +518,12 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2019.html",
                 lectures=[
                     LectureRef(
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
                             uid="DIFFERENT3",
                             type_=TypeTexte.PROJET,
-                            chambre=ChambreRef.SENAT,
+                            chambre=Chambre.SENAT,
                             legislature=None,
                             numero=106,
                             titre_long="projet de loi de financement de la sécurité sociale pour 2019",  # noqa
@@ -540,12 +540,12 @@ class TestMergeBySenatURL:
 class TestAddDossiers:
     def test_senat_commission_lecture(self):
         from zam_repondeur.fetch.an.dossiers.models import (
-            ChambreRef,
             DossierRef,
             LectureRef,
             TexteRef,
             TypeTexte,
         )
+        from zam_repondeur.models.chambre import Chambre
 
         dossier_open_data = DossierRef(
             uid="DLR5L15N36030",
@@ -554,12 +554,12 @@ class TestAddDossiers:
             senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commission saisie au fond",
                     texte=TexteRef(
                         uid="UID-TEXTE-1",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=None,
                         numero=63,
                         titre_long="",
@@ -569,12 +569,12 @@ class TestAddDossiers:
                     organe="PO211493",  # known exact organe
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="UID-TEXTE-1",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=None,
                         numero=63,
                         titre_long="",
@@ -592,12 +592,12 @@ class TestAddDossiers:
             senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="UID-TEXTE-2",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=None,
                         numero=63,
                         titre_long="",
@@ -607,12 +607,12 @@ class TestAddDossiers:
                     organe="",  # unknown exact organe
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="UID-TEXTE-2",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=None,
                         numero=63,
                         titre_long="",
@@ -633,12 +633,12 @@ class TestAddDossiers:
             senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commission saisie au fond",
                     texte=TexteRef(
                         uid="UID-TEXTE-1",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=None,
                         numero=63,
                         titre_long="",
@@ -648,12 +648,12 @@ class TestAddDossiers:
                     organe="PO211493",  # known exact organe
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="UID-TEXTE-1",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=None,
                         numero=63,
                         titre_long="",

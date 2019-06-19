@@ -8,13 +8,14 @@ import requests
 from bs4 import BeautifulSoup, element
 
 from zam_repondeur.fetch.an.dossiers.models import (
-    ChambreRef,
+    Chambre,
     DossierRef,
     DossierRefsByUID,
     LectureRef,
     TexteRef,
     TypeTexte,
 )
+from zam_repondeur.models.organe import ORGANE_SENAT
 
 
 logger = logging.getLogger(__name__)
@@ -103,7 +104,7 @@ def create_lecture(
         return None
 
     chambre = guess_chambre(entry)
-    if chambre != ChambreRef.SENAT:
+    if chambre != Chambre.SENAT:
         return None
 
     summary = entry.summary.string
@@ -116,7 +117,7 @@ def create_lecture(
     mo = re.search(r"Texte (résultat des travaux )?de la commission", summary)
     if mo is not None:
         examen = "Séance publique"
-        organe = "PO78718"
+        organe = ORGANE_SENAT
         if mo.group(1):
             if prev_texte is None:
                 logger.warning("Expected a prev_texte")
@@ -124,11 +125,11 @@ def create_lecture(
             texte = prev_texte
     else:
         examen = "Commissions"
-        organe = ""  # TODO: PO211495 is not a sane default.
+        organe = ""
 
     titre = f"{num_lecture} – {examen}"
 
-    return LectureRef(chambre=chambre, titre=titre, organe=organe, texte=texte)
+    return LectureRef(chambre=Chambre.SENAT, titre=titre, organe=organe, texte=texte)
 
 
 def create_texte(pid: str, entry: element.Tag) -> TexteRef:
@@ -141,18 +142,16 @@ def create_texte(pid: str, entry: element.Tag) -> TexteRef:
     type_legislature = pid.split("-", 1)[0]
     type_ = type_legislature[:3]
     legislature = int(type_legislature[-2:])
-    chambre = guess_chambre(entry)
     # One day is added considering we have to deal with timezones
     # and we only need the date.
     # E.g.: 2019-05-21T22:00:00Z
     datetime_depot = datetime.strptime(entry.created.string, "%Y-%m-%dT%H:%M:%SZ")
     date_depot = datetime_depot.date() + timedelta(days=1)
-    # TODO: uniformize with AN fetch?
-    uid = f"{type_.upper()}{chambre.name.upper()}{date_depot.year}X{numero}"
+    uid = f"{type_.upper()}SENAT{date_depot.year}X{numero}"
     return TexteRef(
         uid=uid,
         type_=type_dict[type_],
-        chambre=chambre,
+        chambre=Chambre.SENAT,
         legislature=legislature,
         numero=int(numero),
         titre_long="",
@@ -161,15 +160,15 @@ def create_texte(pid: str, entry: element.Tag) -> TexteRef:
     )
 
 
-def guess_chambre(entry: element.Tag) -> ChambreRef:
+def guess_chambre(entry: element.Tag) -> Optional[Chambre]:
     if entry.id.string.startswith(BASE_URL_SENAT):
-        return ChambreRef.SENAT
+        return Chambre.SENAT
 
     if re.search(r"^http://www2?\.assemblee-nationale\.fr", entry.id.string):
-        return ChambreRef.AN
+        return Chambre.AN
 
     if entry.summary.string.startswith("Commission mixte paritaire"):
-        return ChambreRef.CMP
+        return None
 
     # Fallback on Senat given sometimes URLs are relative.
-    return ChambreRef.SENAT
+    return Chambre.SENAT

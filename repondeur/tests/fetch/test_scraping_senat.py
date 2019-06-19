@@ -4,13 +4,13 @@ from operator import attrgetter
 
 def test_get_dossiers_senat(mock_scraping_senat):
     from zam_repondeur.fetch.an.dossiers.models import (
-        ChambreRef,
         DossierRef,
         LectureRef,
         TexteRef,
         TypeTexte,
     )
     from zam_repondeur.fetch.senat.scraping import get_dossiers_senat
+    from zam_repondeur.models.chambre import Chambre
 
     dossiers = get_dossiers_senat()
 
@@ -42,12 +42,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/pjl18-404.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PJLSENAT2019X404",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=404,
                         titre_long="",
@@ -58,12 +58,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PJLSENAT2019X525",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=525,
                         titre_long="",
@@ -82,12 +82,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/pjl18-523.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PJLSENAT2019X523",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=523,
                         titre_long="",
@@ -98,12 +98,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PJLSENAT2019X565",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=565,
                         titre_long="",
@@ -122,12 +122,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/pjl18-526.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PJLSENAT2019X526",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=526,
                         titre_long="",
@@ -138,12 +138,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PJLSENAT2019X567",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=567,
                         titre_long="",
@@ -162,12 +162,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/pjl18-532.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PJLSENAT2019X532",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=532,
                         titre_long="",
@@ -178,12 +178,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PJLSENAT2019X571",
                         type_=TypeTexte.PROJET,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=571,
                         titre_long="",
@@ -202,12 +202,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl17-699.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2018X699",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=17,
                         numero=699,
                         titre_long="",
@@ -218,12 +218,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPLSENAT2019X547",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=17,
                         numero=547,
                         titre_long="",
@@ -242,12 +242,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-002.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2018X2",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=2,
                         titre_long="",
@@ -258,12 +258,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPLSENAT2018X99",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=99,
                         titre_long="",
@@ -274,12 +274,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Nouvelle lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2019X518",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=518,
                         titre_long="",
@@ -290,12 +290,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Nouvelle lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPLSENAT2019X562",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=562,
                         titre_long="",
@@ -314,12 +314,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-043.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2018X43",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=43,
                         titre_long="",
@@ -330,12 +330,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPLSENAT2018X100",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=100,
                         titre_long="",
@@ -354,12 +354,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-229.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2018X229",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=229,
                         titre_long="",
@@ -370,12 +370,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPLSENAT2018X229",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=229,
                         titre_long="",
@@ -386,12 +386,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPLSENAT2019X536",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=536,
                         titre_long="",
@@ -410,12 +410,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-260.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2019X260",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=260,
                         titre_long="",
@@ -426,12 +426,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPLSENAT2019X260",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=260,
                         titre_long="",
@@ -450,12 +450,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-305.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2019X305",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=305,
                         titre_long="",
@@ -466,12 +466,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPLSENAT2019X305",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=305,
                         titre_long="",
@@ -490,12 +490,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-385.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2019X385",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=385,
                         titre_long="",
@@ -506,12 +506,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPLSENAT2019X444",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=444,
                         titre_long="",
@@ -530,12 +530,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-386.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2019X386",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=386,
                         titre_long="",
@@ -546,12 +546,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPLSENAT2019X445",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=445,
                         titre_long="",
@@ -570,12 +570,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-436.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2019X436",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=436,
                         titre_long="",
@@ -586,12 +586,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPLSENAT2019X436",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=436,
                         titre_long="",
@@ -610,12 +610,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-454.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2019X454",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=454,
                         titre_long="",
@@ -634,12 +634,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-462.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PPLSENAT2019X462",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=462,
                         titre_long="",
@@ -650,12 +650,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPLSENAT2019X552",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=552,
                         titre_long="",
@@ -674,12 +674,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppr18-458.html",
             lectures=[
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
                         uid="PPRSENAT2019X458",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=458,
                         titre_long="",
@@ -690,12 +690,12 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
                         uid="PPRSENAT2019X550",
                         type_=TypeTexte.PROPOSITION,
-                        chambre=ChambreRef.SENAT,
+                        chambre=Chambre.SENAT,
                         legislature=18,
                         numero=550,
                         titre_long="",
@@ -765,13 +765,13 @@ def test_convert_to_rss_urls():
 
 def test_create_dossier():
     from zam_repondeur.fetch.an.dossiers.models import (
-        ChambreRef,
         DossierRef,
         LectureRef,
         TexteRef,
         TypeTexte,
     )
     from zam_repondeur.fetch.senat.scraping import create_dossier
+    from zam_repondeur.models.chambre import Chambre
 
     assert create_dossier(
         "pjl18-404", "/dossier-legislatif/rss/doslegpjl18-404.xml"
@@ -782,12 +782,12 @@ def test_create_dossier():
         senat_url="http://www.senat.fr/dossier-legislatif/pjl18-404.html",
         lectures=[
             LectureRef(
-                chambre=ChambreRef.SENAT,
+                chambre=Chambre.SENAT,
                 titre="Première lecture – Commissions",
                 texte=TexteRef(
                     uid="PJLSENAT2019X404",
                     type_=TypeTexte.PROJET,
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     legislature=18,
                     numero=404,
                     titre_long="",
@@ -798,12 +798,12 @@ def test_create_dossier():
                 partie=None,
             ),
             LectureRef(
-                chambre=ChambreRef.SENAT,
+                chambre=Chambre.SENAT,
                 titre="Première lecture – Séance publique",
                 texte=TexteRef(
                     uid="PJLSENAT2019X525",
                     type_=TypeTexte.PROJET,
-                    chambre=ChambreRef.SENAT,
+                    chambre=Chambre.SENAT,
                     legislature=18,
                     numero=525,
                     titre_long="",

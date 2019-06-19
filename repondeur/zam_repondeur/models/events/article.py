@@ -7,6 +7,7 @@ from pyramid.request import Request
 
 from .base import Event
 from ..article import Article
+from ..chambre import Chambre
 
 
 class ArticleEvent(Event):
@@ -42,10 +43,13 @@ class ContenuArticleModifie(ArticleEvent):
 
     @property
     def summary_template(self) -> Template:
-        if self.article.lecture.chambre == "an":
+        chambre = self.article.lecture.chambre
+        if chambre == Chambre.AN:
             de_qui = "de l’Asssemblée nationale"
-        else:
+        elif chambre == Chambre.SENAT:
             de_qui = "du Sénat"
+        else:
+            raise ValueError(f"Unsupported chambre {chambre}")
         return Template(
             f"Le contenu de l’article a été modifié par les services {de_qui}."
         )
@@ -80,10 +84,13 @@ class TitreArticleModifie(ArticleEvent):
         if self.user:
             action = "modifié" if self.template_vars["old_value"] else "ajouté"
             return Template(f"<abbr title='$email'>$user</abbr> a {action} le titre.")
-        if self.article.lecture.chambre == "an":
+        chambre = self.article.lecture.chambre
+        if chambre == Chambre.AN:
             de_qui = "de l’Asssemblée nationale"
-        else:
+        elif chambre == Chambre.SENAT:
             de_qui = "du Sénat"
+        else:
+            raise ValueError(f"Unsupported chambre {chambre}")
         return Template(
             f"Le titre de l’article a été modifié par les services {de_qui}."
         )

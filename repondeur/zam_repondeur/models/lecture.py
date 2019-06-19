@@ -1,28 +1,22 @@
 from datetime import datetime
 from typing import Any, List, Optional, Tuple, TYPE_CHECKING
 
-from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, Text, desc
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, Index, Integer, Text, desc
 from sqlalchemy.orm import joinedload, relationship
 
 from .amendement import Amendement
 from .article import Article
 from .base import Base, DBSession
+from .chambre import Chambre
 from .division import SubDiv
 from .events.base import LastEventMixin
-from .texte import Chambre, Texte
+from .organe import ORGANE_AN, ORGANE_SENAT
+from .texte import Texte
 from .users import Team
 
 # Make these types available to mypy, but avoid circular imports
 if TYPE_CHECKING:
     from .dossier import Dossier  # noqa
-
-
-CHAMBRES = {"an": "Assemblée nationale", "senat": "Sénat"}
-
-SESSIONS = {
-    "an": {"15": "15e législature", "14": "14e législature"},
-    "senat": {"2017-2018": "2017-2018"},
-}
 
 
 class Lecture(Base, LastEventMixin):
@@ -38,7 +32,7 @@ class Lecture(Base, LastEventMixin):
     )
 
     pk = Column(Integer, primary_key=True)
-    chambre = Column(Text)
+    chambre = Column(Enum(Chambre))
     partie = Column(Integer, nullable=True)  # only for PLF
     organe = Column(Text)
     titre = Column(Text)
@@ -74,10 +68,10 @@ class Lecture(Base, LastEventMixin):
         )
 
     def format_chambre(self) -> str:
-        return CHAMBRES[self.chambre]
+        return str(self.chambre.value)
 
     def format_session_or_legislature(self) -> str:
-        if self.chambre == "an":
+        if self.chambre == Chambre.AN:
             return f"{self.texte.legislature}e législature"
         else:
             return f"session {self.texte.session_str}"
@@ -116,7 +110,7 @@ class Lecture(Base, LastEventMixin):
 
     @property
     def is_commission(self) -> bool:
-        return self.organe not in ("PO717460", "PO78718")  # FIXME
+        return self.organe not in {ORGANE_AN, ORGANE_SENAT}
 
     @property
     def displayable(self) -> bool:
@@ -140,7 +134,7 @@ class Lecture(Base, LastEventMixin):
     @classmethod
     def get(
         cls,
-        chambre: str,
+        chambre: Chambre,
         session_or_legislature: str,
         num_texte: int,
         partie: Optional[int],
@@ -154,14 +148,14 @@ class Lecture(Base, LastEventMixin):
                 cls.chambre == chambre,
                 cls.partie == partie,
                 cls.organe == organe,
-                Texte.chambre == Chambre.from_string(chambre),
+                Texte.chambre == chambre,
                 Texte.numero == num_texte,
             )
             .options(*options)
         )
-        if chambre == "an":
+        if chambre == Chambre.AN:
             query = query.filter(Texte.legislature == int(session_or_legislature))
-        elif chambre == "senat":
+        elif chambre == Chambre.SENAT:
             query = query.filter(
                 Texte.session == int(session_or_legislature.split("-")[0])
             )
@@ -172,7 +166,7 @@ class Lecture(Base, LastEventMixin):
 
     @classmethod
     def exists(
-        cls, chambre: str, texte: "Texte", partie: Optional[int], organe: str
+        cls, chambre: Chambre, texte: "Texte", partie: Optional[int], organe: str
     ) -> bool:
         res: bool = DBSession.query(
             DBSession.query(cls)
@@ -197,7 +191,7 @@ class Lecture(Base, LastEventMixin):
         owned_by_team: Optional[Team] = None,
     ) -> "Lecture":
         now = datetime.utcnow()
-        chambre = texte.chambre.name.lower()
+        chambre = texte.chambre
         lecture = cls(
             chambre=chambre,
             texte=texte,
@@ -219,7 +213,7 @@ class Lecture(Base, LastEventMixin):
             partie = ""
         return ".".join(
             [
-                self.chambre,
+                self.chambre.name.lower(),
                 self._session_or_legislature,
                 f"{self.texte.numero}{partie}",
                 self.organe,

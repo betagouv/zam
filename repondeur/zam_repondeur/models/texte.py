@@ -6,6 +6,7 @@ from sqlalchemy import Column, Date, DateTime, Enum, Index, Integer
 from sqlalchemy.orm import relationship
 
 from .base import Base, DBSession
+from .chambre import Chambre
 
 
 class TypeTexte(enum.Enum):
@@ -23,19 +24,6 @@ class TypeTexte(enum.Enum):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}.{self.name}"
-
-
-class Chambre(enum.Enum):
-    AN = "Assemblée nationale"
-    SENAT = "Sénat"
-
-    @staticmethod
-    def from_string(chambre: str) -> "Chambre":
-        if chambre == "an":
-            return Chambre.AN
-        if chambre == "senat":
-            return Chambre.SENAT
-        raise ValueError(f"Invalid string value {chambre!r} for Chambre")
 
 
 class Texte(Base):

@@ -12,8 +12,8 @@ class TestRepr:
 
     def test_lecture(self, lecture_an):
         expected_repr = (
-            "<Lecture pk=1 chambre='an' organe='PO717460' "
-            "partie=None owned_by_team=None>"
+            "<Lecture pk=1 chambre=<Chambre.AN: 'Assemblée nationale'>"
+            " organe='PO717460' partie=None owned_by_team=None>"
         )
         assert repr(lecture_an) == expected_repr
 

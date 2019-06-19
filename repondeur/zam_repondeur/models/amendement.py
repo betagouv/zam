@@ -582,7 +582,7 @@ class Amendement(Base):
             "reponse": self.user_content.reponse or "",
             "comments": self.user_content.comments or "",
             "parent": self.parent and self.parent.num_disp or "",
-            "chambre": self.lecture.chambre,
+            "chambre": str(self.lecture.chambre),
             "num_texte": self.lecture.texte.numero,
             "organe": self.lecture.organe,
             "legislature": self.lecture.texte.legislature or "",

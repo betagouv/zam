@@ -15,14 +15,7 @@ from zam_repondeur.data import init_repository, repository
 from zam_repondeur.dossiers import get_dossiers_legislatifs_open_data_from_cache
 from zam_repondeur.fetch.amendements import RemoteSource
 from zam_repondeur.fetch.an.dossiers.models import DossierRef
-from zam_repondeur.models import (
-    Chambre,
-    DBSession,
-    Dossier,
-    Lecture,
-    Texte,
-    get_one_or_create,
-)
+from zam_repondeur.models import DBSession, Dossier, Lecture, Texte, get_one_or_create
 
 
 logger = logging.getLogger(__name__)
@@ -95,9 +88,7 @@ def fetch_amendements_for_dossier(
             Texte,
             create_kwargs=dict(
                 type_=texte_ref.type_,
-                chambre=(
-                    Chambre.AN if texte_ref.chambre.value == "an" else Chambre.SENAT
-                ),
+                chambre=texte_ref.chambre,
                 legislature=texte_ref.legislature,
                 session=texte_ref.session,
                 numero=texte_ref.numero,
@@ -115,7 +106,7 @@ def fetch_amendements_for_dossier(
 
 
 def fetch_amendements_for_lecture(lecture: Lecture) -> None:
-    chambre = lecture.texte.chambre.name.lower()
+    chambre = lecture.texte.chambre
     source: RemoteSource = RemoteSource.get_remote_source_for_chambre(chambre)
     try:
         source.fetch(lecture)

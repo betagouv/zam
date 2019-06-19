@@ -8,6 +8,7 @@ from pyramid.request import Request
 from zam_repondeur.views.jinja2_filters import enumeration
 from .base import Event
 from ..amendement import Amendement, Batch
+from ..chambre import Chambre
 
 
 class AmendementEvent(Event):
@@ -68,10 +69,13 @@ class AmendementIrrecevable(AmendementEvent):
 
     @property
     def summary_template(self) -> Template:  # type: ignore
-        if self.amendement.lecture.chambre == "an":
+        chambre = self.amendement.lecture.chambre
+        if chambre == Chambre.AN:
             de_qui = "de l’Asssemblée nationale"
-        else:
+        elif chambre == Chambre.SENAT:
             de_qui = "du Sénat"
+        else:
+            raise ValueError(f"Unsupported chambre {chambre}")
         return Template(
             f"L’amendement a été déclaré irrecevable par les services {de_qui}."
         )

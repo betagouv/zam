@@ -97,7 +97,7 @@ def test_get_form(app, user_david):
 class TestPostForm:
     @responses.activate
     def test_plfss_2018_an(self, app, user_david):
-        from zam_repondeur.models import DBSession, Lecture
+        from zam_repondeur.models import Chambre, DBSession, Lecture
 
         assert not DBSession.query(Lecture).all()
 
@@ -173,13 +173,13 @@ class TestPostForm:
         assert "Lecture créée avec succès," in resp.text
 
         lecture = Lecture.get(
-            chambre="an",
+            chambre=Chambre.AN,
             session_or_legislature="15",
             num_texte=269,
             partie=None,
             organe="PO717460",
         )
-        assert lecture.chambre == "an"
+        assert lecture.chambre == Chambre.AN
         assert lecture.titre == "Première lecture – Titre lecture"
         assert lecture.dossier.titre == "Sécurité sociale : loi de financement 2018"
         result = (
@@ -214,7 +214,7 @@ class TestPostForm:
 
     @responses.activate
     def test_plfss_2019_senat(self, app, user_david):
-        from zam_repondeur.models import DBSession, Lecture
+        from zam_repondeur.models import Chambre, DBSession, Lecture
 
         assert not DBSession.query(Lecture).all()
 
@@ -279,13 +279,13 @@ class TestPostForm:
         assert "Lecture créée avec succès," in resp.text
 
         lecture = Lecture.get(
-            chambre="senat",
+            chambre=Chambre.SENAT,
             session_or_legislature="2018-2019",
             num_texte=106,
             partie=None,
             organe="PO78718",
         )
-        assert lecture.chambre == "senat"
+        assert lecture.chambre == Chambre.SENAT
         assert lecture.titre == "Première lecture – Titre lecture"
         assert lecture.dossier.titre == "Sécurité sociale : loi de financement 2019"
         result = (
@@ -315,10 +315,10 @@ class TestPostForm:
     def test_plfss_2018_an_lecture_already_exists(
         self, app, texte_plfss2018_an_premiere_lecture, lecture_an, user_david
     ):
-        from zam_repondeur.models import DBSession, Lecture
+        from zam_repondeur.models import Chambre, DBSession, Lecture
 
         assert Lecture.exists(
-            chambre="an",
+            chambre=Chambre.AN,
             texte=texte_plfss2018_an_premiere_lecture,
             partie=None,
             organe="PO717460",

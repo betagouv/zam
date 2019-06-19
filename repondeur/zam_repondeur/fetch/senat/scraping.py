@@ -162,7 +162,7 @@ def create_texte(pid: str, entry: element.Tag) -> TexteRef:
     )
 
 
-def guess_chambre(entry: element.Tag) -> ChambreRef:
+def guess_chambre(entry: element.Tag) -> Optional[ChambreRef]:
     if entry.id.string.startswith(BASE_URL_SENAT):
         return ChambreRef.SENAT
 
@@ -170,7 +170,7 @@ def guess_chambre(entry: element.Tag) -> ChambreRef:
         return ChambreRef.AN
 
     if entry.summary.string.startswith("Commission mixte paritaire"):
-        return ChambreRef.CMP
+        return None
 
     # Fallback on Senat given sometimes URLs are relative.
     return ChambreRef.SENAT

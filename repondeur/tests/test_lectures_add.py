@@ -1,7 +1,9 @@
 import re
+from datetime import date
 from pathlib import Path
 
 import responses
+import transaction
 from webtest.forms import Select
 
 
@@ -215,6 +217,7 @@ class TestPostForm:
         from zam_repondeur.models import DBSession, Lecture
 
         assert not DBSession.query(Lecture).all()
+
         responses.add(
             responses.GET,
             "https://www.senat.fr/amendements/2018-2019/106/jeu_complet_2018-2019_106.csv",  # noqa
@@ -340,6 +343,42 @@ class TestPostForm:
         DBSession.add(lecture_an)
         assert len(lecture_an.events) == 0
 
+    @responses.activate
+    def test_plfss_2018_senat_lecture_commission_from_scraping_already_exists(
+        self, app, user_david, dossier_plfss2018
+    ):
+        from zam_repondeur.models import Chambre, Lecture, Texte, TypeTexte
+
+        with transaction.manager:
+            Lecture.create(
+                texte=Texte.create(
+                    type_=TypeTexte.PROJET,
+                    chambre=Chambre.SENAT,
+                    session=2017,
+                    numero=63,
+                    date_depot=date(2017, 11, 6),
+                ),
+                titre="Première lecture – Titre lecture",
+                organe="",  # scraping does not know the commission
+                dossier=dossier_plfss2018,
+            )
+
+        # We cannot use form.submit() given the form is dynamic and does not
+        # contain choices for lectures (dynamically loaded via JS).
+        resp = app.post(
+            "/lectures/add",
+            {"dossier": "DLR5L15N36030", "lecture": "PRJLSNR5S299B0063-PO211493-"},
+            user=user_david,
+        )
+
+        assert resp.status_code == 302
+        assert resp.location == "https://zam.test/lectures/"
+
+        resp = resp.follow()
+
+        assert resp.status_code == 200
+        assert "Cette lecture existe déjà…" in resp.text
+
 
 class TestChoicesLectures:
     def test_open_data_only(self, app, user_david):
@@ -348,14 +387,20 @@ class TestChoicesLectures:
 
         assert resp.status_code == 200
         assert resp.headers["content-type"] == "application/json"
-        label_an = (
-            "Assemblée nationale – Première lecture – Titre lecture – Texte Nº 269"
-        )
-        label_senat = "Sénat – Première lecture – Titre lecture – Texte Nº 63"
         assert resp.json == {
             "lectures": [
-                {"key": "PRJLANR5L15B0269-PO717460-", "label": label_an},
-                {"key": "PRJLSNR5S299B0063-PO78718-", "label": label_senat},
+                {
+                    "key": "PRJLANR5L15B0269-PO717460-",
+                    "label": "Assemblée nationale – Première lecture – Titre lecture – Texte Nº 269",  # noqa
+                },
+                {
+                    "key": "PRJLSNR5S299B0063-PO78718-",
+                    "label": "Sénat – Première lecture – Titre lecture – Texte Nº 63",
+                },
+                {
+                    "key": "PRJLSNR5S299B0063-PO211493-",
+                    "label": "Sénat – Première lecture – Commission saisie au fond – Texte Nº 63",  # noqa
+                },
             ]
         }
 

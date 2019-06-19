@@ -13,6 +13,7 @@ from webob.multidict import MultiDict
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch import get_articles
 from zam_repondeur.fetch.an.dossiers.models import (
+    ChambreRef,
     DossierRef,
     DossierRefsByUID,
     LectureRef,
@@ -96,6 +97,7 @@ class LecturesAddForm(LectureAddBase):
 
     @view_config(request_method="POST")
     def post(self) -> Response:
+
         dossier_ref = self._get_dossier_ref()
         lecture_ref = self._get_lecture_ref(dossier_ref)
 
@@ -122,7 +124,7 @@ class LecturesAddForm(LectureAddBase):
             Dossier, uid=dossier_ref.uid, titre=dossier_ref.titre
         )
 
-        if Lecture.exists(chambre, texte_model, partie, organe):
+        if self._lecture_exists(chambre, texte_model, partie, organe):
             self.request.session.flash(
                 Message(cls="warning", text="Cette lecture existe déjà…")
             )
@@ -158,6 +160,17 @@ class LecturesAddForm(LectureAddBase):
                 self.context[lecture_model.url_key], "amendements"
             )
         )
+
+    def _lecture_exists(
+        self, chambre: str, texte_model: Texte, partie: Optional[int], organe: str
+    ) -> bool:
+        if Lecture.exists(chambre, texte_model, partie, organe):
+            return True
+        # We might already have a Sénat commission lecture created earlier from
+        # scraping data, and that would not have the organe.
+        if chambre == ChambreRef.SENAT.value and organe != "PO78718":
+            return Lecture.exists(chambre, texte_model, partie, "")
+        return False
 
     def _get_dossier_ref(self) -> DossierRef:
         try:

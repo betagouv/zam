@@ -96,6 +96,12 @@ def mock_dossiers():
                         texte=textes["PRJLSNR5S299B0063"],
                         organe="PO78718",  # séance publique
                     ),
+                    LectureRef(
+                        chambre=ChambreRef.SENAT,
+                        titre="Première lecture – Commission saisie au fond",
+                        texte=textes["PRJLSNR5S299B0063"],
+                        organe="PO211493",
+                    ),
                 ],
             ),
             "DLR5L15N36159": DossierRef(

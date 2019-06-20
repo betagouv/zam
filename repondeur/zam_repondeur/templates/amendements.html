@@ -74,6 +74,9 @@
                         data-action="keyup->amendements-filters#filterArticle"
                         data-target="amendements-filters.articleInput">
                 </th>
+                {% if lecture.has_missions %}
+                    <th>Mission</th>
+                {% endif %}
                 <th class="amendement-header">
                     Nº
                     <input type="text" class="form-control form-control-sm"
@@ -167,6 +170,15 @@
                     {% endif %}
                     {{ amendement.article }}
                 </td>
+                {% if lecture.has_missions %}
+                    <td>
+                        {% if amendement.mission %}
+                            <abbr title="{{ amendement.mission.titre }}">
+                                {{ amendement.mission.titre_court }}
+                            </abbr>
+                        {% endif %}
+                    </td>
+                {% endif %}
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }} {# Keep at the end. #}

@@ -113,6 +113,10 @@ class Lecture(Base, LastEventMixin):
         return self.organe not in {ORGANE_AN, ORGANE_SENAT}
 
     @property
+    def has_missions(self) -> bool:
+        return bool(self.partie and self.partie == 2)
+
+    @property
     def displayable(self) -> bool:
         return any(amd.is_displayable for amd in self.amendements)
 

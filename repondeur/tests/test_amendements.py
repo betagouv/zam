@@ -150,3 +150,46 @@ def test_get_amendements_not_found_does_not_exist(app, user_david):
         "/lectures/an.15.269.PO717461/amendements", user=user_david, expect_errors=True
     )
     assert resp.status_code == 404
+
+
+def test_get_amendements_columns_default(app, lecture_an, amendements_an, user_david):
+    resp = app.get("/lectures/an.15.269.PO717460/amendements", user=user_david)
+
+    assert resp.status_code == 200
+    assert [
+        node.text().strip().split()
+        for node in resp.parser.css("thead tr.filters th")
+        if node.text().strip().split()
+    ] == [["Article"], ["Nº", "Gouv."], ["Table", "Vide"], ["Avis"], ["Réponse"]]
+
+
+def test_get_amendements_columns_missions_for_plf2(
+    app, amendements_plf2018_an_premiere_lecture_seance_publique_2, user_david
+):
+    resp = app.get("/lectures/an.15.235-2.PO717460/amendements", user=user_david)
+
+    assert resp.status_code == 200
+    assert [
+        node.text().strip().split()
+        for node in resp.parser.css("thead tr.filters th")
+        if node.text().strip().split()
+    ] == [
+        ["Article"],
+        ["Mission"],
+        ["Nº", "Gouv."],
+        ["Table", "Vide"],
+        ["Avis"],
+        ["Réponse"],
+    ]
+
+
+def test_get_amendements_missions_title_for_plf2(
+    app, amendements_plf2018_an_premiere_lecture_seance_publique_2, user_david
+):
+    resp = app.get("/lectures/an.15.235-2.PO717460/amendements", user=user_david)
+
+    assert resp.status_code == 200
+    assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(3)")] == [
+        "Action transfo.",
+        "Action transfo.",
+    ]

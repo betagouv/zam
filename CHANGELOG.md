@@ -1,6 +1,6 @@
 ### Perspectives
 
-<p class="notice">Date de prochaine démonstration : mercredi 19 juin 2019, 15h, Babylone.</p>
+<p class="notice">Date de prochaine démonstration : à déterminer.</p>
 
 #### Rappel des objectifs prioritaires des développements 2019
 
@@ -25,6 +25,29 @@
 - PLFSS pour 2020 (DSS - ministère des solidarités et de la santé)
 
 ### Changements récents
+
+#### 20 juin 2019
+
+Amélioration de la résilience du système en vérifiant la possibilité
+de récupérer les amendements de 6600 lectures passées.
+
+---
+
+Enrichissement des données pour la création de lectures afin de les voir
+apparaitre plus tôt et initier le traitement des amendements dès qu’ils
+sont disponibles.
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-06-20-regroupement-lots.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-06-20-regroupement-lots.png">
+    </a>
+    <figcaption>
+        Possibilité de regrouper les amendements par lots afin d’en faciliter le traitement.
+    </figcaption>
+</figure>
+
 
 #### 23 mai 2019
 

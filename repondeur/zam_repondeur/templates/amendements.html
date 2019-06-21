@@ -75,7 +75,13 @@
                         data-target="amendements-filters.articleInput">
                 </th>
                 {% if lecture.has_missions %}
-                    <th>Mission</th>
+                    <th class="mission-header">
+                        Mission
+                        <input type="text" class="form-control form-control-sm"
+                            autocomplete="off" autocorrect="off"
+                            data-action="keyup->amendements-filters#filterMission"
+                            data-target="amendements-filters.missionInput">
+                    </th>
                 {% endif %}
                 <th class="amendement-header">
                     Nº
@@ -129,6 +135,9 @@
                         {{ amendement.article.type }}
                     {%- endif -%}
                 "
+                {% if lecture.has_missions %}
+                    data-mission="{{ amendement.mission and amendement.mission.titre_court.lower() }}"
+                {% endif %}
                 data-order="{{ loop.index }}"
                 data-amendement="
                 {%- if amendement.batch -%}
@@ -171,7 +180,7 @@
                     {{ amendement.article }}
                 </td>
                 {% if lecture.has_missions %}
-                    <td>
+                    <td class="mission">
                         {% if amendement.mission %}
                             <abbr title="{{ amendement.mission.titre }}">
                                 {{ amendement.mission.titre_court }}

@@ -475,6 +475,7 @@ th input.form-control {
     padding: 0 .25rem;
 }
 tr.hidden-article,
+tr.hidden-mission,
 tr.hidden-amendement,
 tr.hidden-gouvernemental,
 tr.hidden-table,

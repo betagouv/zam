@@ -1,8 +1,7 @@
 import logging
-from contextlib import contextmanager
 from http import HTTPStatus
 from io import BytesIO, TextIOWrapper
-from typing import Generator, IO
+from typing import Generator, IO, Tuple
 from zipfile import ZipFile
 
 from zam_repondeur.fetch.http import cached_session
@@ -19,8 +18,7 @@ def roman(n: int) -> str:
     raise NotImplementedError
 
 
-@contextmanager
-def extract_from_remote_zip(url: str, filename: str) -> Generator[IO[str], None, None]:
+def extract_from_remote_zip(url: str) -> Generator[Tuple[str, IO[str]], None, None]:
     response = cached_session.get(url)
 
     if response.status_code not in (HTTPStatus.OK, HTTPStatus.NOT_MODIFIED):
@@ -37,6 +35,11 @@ def extract_from_remote_zip(url: str, filename: str) -> Generator[IO[str], None,
         logger.error(message)
         raise RuntimeError(message)
 
-    with ZipFile(BytesIO(response.content)) as zip_file:
-        with zip_file.open(filename) as file_:
-            yield TextIOWrapper(file_, encoding="utf-8")
+    yield from extract_from_zip(BytesIO(response.content))
+
+
+def extract_from_zip(content: BytesIO) -> Generator[Tuple[str, IO[str]], None, None]:
+    with ZipFile(content) as zip_file:
+        for filename in zip_file.namelist():
+            with zip_file.open(filename) as file_:
+                yield (filename, TextIOWrapper(file_, encoding="utf-8"))

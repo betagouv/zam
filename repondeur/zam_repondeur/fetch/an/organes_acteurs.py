@@ -1,32 +1,41 @@
 from json import load
-from typing import Dict, Tuple
+from typing import Any, Dict, List, Tuple
 
 from .common import extract_from_remote_zip
 
 
 def get_organes_acteurs() -> Tuple[Dict[str, dict], Dict[str, dict]]:
     data = fetch_organes_acteurs()
-    organes = extract_organes(data)
-    acteurs = extract_acteurs(data)
+    organes_data: List[Dict[str, Any]] = [
+        dict_["organe"]
+        for filename, dict_ in data.items()
+        if filename.startswith("json/organe")
+    ]
+    organes = extract_organes(organes_data)
+    acteurs_data: List[Dict[str, Any]] = [
+        dict_["acteur"]
+        for filename, dict_ in data.items()
+        if filename.startswith("json/acteur")
+    ]
+    acteurs = extract_acteurs(acteurs_data)
     return organes, acteurs
 
 
-def fetch_organes_acteurs() -> dict:
-    filename = "AMO10_deputes_actifs_mandats_actifs_organes_XV.json"
+def fetch_organes_acteurs() -> Dict[str, Any]:
     url = (
         "http://data.assemblee-nationale.fr/static/openData/repository/15/amo/"
-        f"deputes_actifs_mandats_actifs_organes/{filename}.zip"
+        "deputes_actifs_mandats_actifs_organes/"
+        "AMO10_deputes_actifs_mandats_actifs_organes_XV.json.zip"
     )
-    with extract_from_remote_zip(url, filename) as json_file:
-        data: dict = load(json_file)
-    return data
-
-
-def extract_organes(data: dict) -> Dict[str, dict]:
-    return {organe["uid"]: organe for organe in data["export"]["organes"]["organe"]}
-
-
-def extract_acteurs(data: dict) -> Dict[str, dict]:
     return {
-        organe["uid"]["#text"]: organe for organe in data["export"]["acteurs"]["acteur"]
+        filename: load(json_file)
+        for filename, json_file in extract_from_remote_zip(url)
     }
+
+
+def extract_organes(organes: List[dict]) -> Dict[str, dict]:
+    return {organe["uid"]: organe for organe in organes}
+
+
+def extract_acteurs(acteurs: List[dict]) -> Dict[str, dict]:
+    return {acteur["uid"]["#text"]: acteur for acteur in acteurs}

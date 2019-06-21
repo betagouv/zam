@@ -6,23 +6,21 @@ from unittest.mock import patch
 
 import pytest
 
-
 HERE = Path(os.path.dirname(__file__))
-
-
-DOSSIERS = HERE / "sample_data" / "Dossiers_Legislatifs_XV.json"
+DOSSIERS = HERE / "sample_data" / "Dossiers_Legislatifs_XV.json.zip"
 
 
 @pytest.fixture(scope="module")
 def dossiers_and_textes():
+    from zam_repondeur.fetch.an.common import extract_from_zip
     from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
         get_dossiers_legislatifs_and_textes
     )
 
     with patch(
         "zam_repondeur.fetch.an.dossiers.dossiers_legislatifs.extract_from_remote_zip"
-    ) as m_open:
-        m_open.return_value = DOSSIERS.open()
+    ) as extract:
+        extract.return_value = extract_from_zip(open(DOSSIERS, "rb"))
         dossiers_by_uid, textes_by_uid = get_dossiers_legislatifs_and_textes(15)
 
     return dossiers_by_uid, textes_by_uid
@@ -39,7 +37,7 @@ def textes(dossiers_and_textes):
 
 
 def test_number_of_dossiers(dossiers):
-    assert len(dossiers) == 839
+    assert len(dossiers) == 1648
 
 
 @pytest.fixture
@@ -458,105 +456,110 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
     )
     from zam_repondeur.models.chambre import Chambre
 
+    lectures = [
+        LectureRef(
+            chambre=Chambre.AN,
+            titre="Première lecture – Commission saisie au fond",
+            texte=TexteRef(
+                uid="PRJLANR5L15B0424",
+                type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
+                numero=424,
+                titre_long="projet de loi pour un Etat au service d’une société de confiance",  # noqa
+                titre_court="Etat service société de confiance",
+                date_depot=datetime.date(2017, 11, 27),
+            ),
+            organe="PO744107",
+        ),
+        LectureRef(
+            chambre=Chambre.AN,
+            titre="Première lecture – Séance publique",
+            texte=TexteRef(
+                uid="PRJLANR5L15BTC0575",
+                type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
+                numero=575,
+                titre_long="projet de loi sur le projet de loi, après engagement de la procédure accélérée, pour un Etat au service d’une société de confiance (n°424).",  # noqa
+                titre_court="Etat service société de confiance",
+                date_depot=datetime.date(2018, 1, 18),
+            ),
+            organe="PO717460",
+        ),
+        LectureRef(
+            chambre=Chambre.SENAT,
+            titre="Première lecture – Commission saisie au fond",
+            texte=TexteRef(
+                uid="PRJLSNR5S299B0259",
+                type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
+                numero=259,
+                titre_long="projet de loi pour un Etat au service d'une société de confiance",  # noqa
+                titre_court="État au service d'une société de confiance",
+                date_depot=datetime.date(2018, 1, 31),
+            ),
+            organe="PO748821",
+        ),
+        LectureRef(
+            chambre=Chambre.SENAT,
+            titre="Première lecture – Séance publique",
+            texte=TexteRef(
+                uid="PRJLSNR5S299BTC0330",
+                type_=TypeTexte.PROJET,
+                chambre=Chambre.SENAT,
+                legislature=None,
+                numero=330,
+                titre_long="projet de loi  sur le projet de loi, adopté, par l'Assemblée nationale après engagement de la procédure accélérée, pour un Etat au service d'une société de confiance (n°259).",  # noqa
+                titre_court="État au service d'une société de confiance",
+                date_depot=datetime.date(2018, 2, 22),
+            ),
+            organe="PO78718",
+        ),
+        LectureRef(
+            chambre=Chambre.AN,
+            titre="Nouvelle lecture – Commission saisie au fond",
+            texte=TexteRef(
+                uid="PRJLANR5L15B0806",
+                type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
+                numero=806,
+                titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
+                titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
+                date_depot=datetime.date(2018, 3, 21),
+            ),
+            organe="PO744107",
+        ),
+        LectureRef(
+            chambre=Chambre.AN,
+            titre="Nouvelle lecture – Séance publique",
+            texte=TexteRef(
+                uid="PRJLANR5L15BTC1056",
+                type_=TypeTexte.PROJET,
+                chambre=Chambre.AN,
+                legislature=15,
+                numero=1056,
+                titre_long="projet de loi , en nouvelle lecture, sur le projet de loi, modifié par le Sénat, renforçant l'efficacité de l'administration pour une relation de confiance avec le public (n°806).",  # noqa
+                titre_court="Etat au service d'une société de confiance",
+                date_depot=datetime.date(2018, 6, 13),
+            ),
+            organe="PO717460",
+        ),
+    ]
+
     dossier = parse_dossier(dossier_essoc, textes)
+
+    for lecture1, lecture2 in zip(dossier.lectures, lectures):
+        assert lecture1 == lecture2
 
     assert dossier == DossierRef(
         uid="DLR5L15N36159",
         titre="Fonction publique : un Etat au service d'une société de confiance",
         an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/etat_service_societe_confiance",  # noqa
         senat_url="http://www.senat.fr/dossier-legislatif/pjl17-259.html",
-        lectures=[
-            LectureRef(
-                chambre=Chambre.AN,
-                titre="Première lecture – Commission saisie au fond",
-                texte=TexteRef(
-                    uid="PRJLANR5L15B0424",
-                    type_=TypeTexte.PROJET,
-                    chambre=Chambre.AN,
-                    legislature=15,
-                    numero=424,
-                    titre_long="projet de loi pour un Etat au service d’une société de confiance",  # noqa
-                    titre_court="Etat service société de confiance",
-                    date_depot=datetime.date(2017, 11, 27),
-                ),
-                organe="PO744107",
-            ),
-            LectureRef(
-                chambre=Chambre.AN,
-                titre="Première lecture – Séance publique",
-                texte=TexteRef(
-                    uid="PRJLANR5L15BTC0575",
-                    type_=TypeTexte.PROJET,
-                    chambre=Chambre.AN,
-                    legislature=15,
-                    numero=575,
-                    titre_long="projet de loi sur le projet de loi, après engagement de la procédure accélérée, pour un Etat au service d’une société de confiance (n°424).",  # noqa
-                    titre_court="Etat service société de confiance",
-                    date_depot=datetime.date(2018, 1, 18),
-                ),
-                organe="PO717460",
-            ),
-            LectureRef(
-                chambre=Chambre.SENAT,
-                titre="Première lecture – Commission saisie au fond",
-                texte=TexteRef(
-                    uid="PRJLSNR5S299B0259",
-                    type_=TypeTexte.PROJET,
-                    chambre=Chambre.SENAT,
-                    legislature=None,
-                    numero=259,
-                    titre_long="projet de loi pour un Etat au service d'une société de confiance",  # noqa
-                    titre_court="État au service d'une société de confiance",
-                    date_depot=datetime.date(2018, 1, 31),
-                ),
-                organe="PO748821",
-            ),
-            LectureRef(
-                chambre=Chambre.SENAT,
-                titre="Première lecture – Séance publique",
-                texte=TexteRef(
-                    uid="PRJLSNR5S299BTC0330",
-                    type_=TypeTexte.PROJET,
-                    chambre=Chambre.SENAT,
-                    legislature=None,
-                    numero=330,
-                    titre_long="projet de loi  sur le projet de loi, adopté, par l'Assemblée nationale après engagement de la procédure accélérée, pour un Etat au service d'une société de confiance (n°259).",  # noqa
-                    titre_court="État au service d'une société de confiance",
-                    date_depot=datetime.date(2018, 2, 22),
-                ),
-                organe="PO78718",
-            ),
-            LectureRef(
-                chambre=Chambre.AN,
-                titre="Nouvelle lecture – Commission saisie au fond",
-                texte=TexteRef(
-                    uid="PRJLANR5L15B0806",
-                    type_=TypeTexte.PROJET,
-                    chambre=Chambre.AN,
-                    legislature=15,
-                    numero=806,
-                    titre_long="projet de loi renforçant l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
-                    titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
-                    date_depot=datetime.date(2018, 3, 21),
-                ),
-                organe="PO744107",
-            ),
-            LectureRef(
-                chambre=Chambre.AN,
-                titre="Nouvelle lecture – Séance publique",
-                texte=TexteRef(
-                    uid="PRJLANR5L15BTC1056",
-                    type_=TypeTexte.PROJET,
-                    chambre=Chambre.AN,
-                    legislature=15,
-                    numero=1056,
-                    titre_long="projet de loi , en nouvelle lecture, sur le projet de loi, modifié par le Sénat, renforçant l'efficacité de l'administration pour une relation de confiance avec le public (n°806).",  # noqa
-                    titre_court="Renforcement de l'efficacité de l'administration pour une relation de confiance avec le public",  # noqa
-                    date_depot=datetime.date(2018, 6, 13),
-                ),
-                organe="PO717460",
-            ),
-        ],
+        lectures=lectures,
     )
 
 

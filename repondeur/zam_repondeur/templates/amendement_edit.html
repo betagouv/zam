@@ -186,6 +186,11 @@
                     {% endif %}
                 </p>
             {% endif %}
+            {% if amendement.mission and amendement.mission.titre %}
+                <p>
+                    {{ amendement.mission.titre }}
+                </p>
+            {% endif %}
             {% if amendement.auteur %}
             <div class="auteur">
                 <p>

@@ -1,6 +1,6 @@
 import logging
 from json import load
-from typing import Dict, Iterator, List, NamedTuple, Optional, Tuple
+from typing import Any, Dict, Iterator, List, NamedTuple, Optional, Tuple
 
 from zam_repondeur.models.chambre import Chambre
 
@@ -27,22 +27,47 @@ def get_dossiers_legislatifs_and_textes(
 def _get_dossiers_legislatifs_and_textes(
     legislature: int
 ) -> Tuple[Dict[str, DossierRef], Dict[str, TexteRef]]:
-    data = fetch_dossiers_legislatifs_and_textes(legislature)
-    textes = parse_textes(data["export"])
-    dossiers = parse_dossiers(data["export"], textes)
+    # As of June 20th, 2019 the Assemblée Nationale website updated the way
+    # their opendata zip content is splitted, without changing old
+    # legislatures. Hence we have to keep two ways to parse their content
+    # forever. And ever.
+    if legislature <= 14:
+        data = list(fetch_dossiers_legislatifs_and_textes(legislature).values())[0]
+        textes = parse_textes(data["export"]["textesLegislatifs"]["document"])
+        dossiers = parse_dossiers(
+            data["export"]["dossiersLegislatifs"]["dossier"], textes
+        )
+    else:
+        data = fetch_dossiers_legislatifs_and_textes(legislature)
+        textes_data: List[Dict[str, Any]] = [
+            dict_["document"]
+            for filename, dict_ in data.items()
+            if filename.startswith("json/document")
+        ]
+        textes = parse_textes(textes_data)
+        dossiers_data: List[Dict[str, Any]] = [
+            dict_
+            for filename, dict_ in data.items()
+            if filename.startswith("json/dossierParlementaire")
+        ]
+        dossiers = parse_dossiers(dossiers_data, textes)
     return dossiers, textes
 
 
 def fetch_dossiers_legislatifs_and_textes(legislature: int) -> dict:
     legislature_roman = roman(legislature)
-    filename = f"Dossiers_Legislatifs_{legislature_roman}.json"
-    url = f"http://data.assemblee-nationale.fr/static/openData/repository/{legislature}/loi/dossiers_legislatifs/{filename}.zip"  # noqa
-    with extract_from_remote_zip(url, filename) as json_file:
-        data: dict = load(json_file)
-    return data
+    url = (
+        f"http://data.assemblee-nationale.fr/static/openData/repository/"
+        f"{legislature}/loi/dossiers_legislatifs/"
+        f"Dossiers_Legislatifs_{legislature_roman}.json.zip"
+    )
+    return {
+        filename: load(json_file)
+        for filename, json_file in extract_from_remote_zip(url)
+    }
 
 
-def parse_textes(export: dict) -> Dict[str, TexteRef]:
+def parse_textes(textes: list) -> Dict[str, TexteRef]:
     return {
         item["uid"]: TexteRef(
             uid=item["uid"],
@@ -54,7 +79,7 @@ def parse_textes(export: dict) -> Dict[str, TexteRef]:
             titre_court=item["titres"]["titrePrincipalCourt"],
             date_depot=parse_date(item["cycleDeVie"]["chrono"]["dateDepot"]),
         )
-        for item in export["textesLegislatifs"]["document"]
+        for item in textes
         if item["@xsi:type"] == "texteLoi_Type"
         if item["classification"]["type"]["code"] in {"PION", "PRJL"}
     }
@@ -84,11 +109,11 @@ def legislature_texte(item: dict) -> Optional[int]:
     return int(legislature)
 
 
-def parse_dossiers(export: dict, textes: Dict[str, TexteRef]) -> Dict[str, DossierRef]:
+def parse_dossiers(
+    dossiers: list, textes: Dict[str, TexteRef]
+) -> Dict[str, DossierRef]:
     dossier_dicts = (
-        item["dossierParlementaire"]
-        for item in export["dossiersLegislatifs"]["dossier"]
-        if isinstance(item, dict)
+        item["dossierParlementaire"] for item in dossiers if isinstance(item, dict)
     )
     dossier_models = []
     for dossier_dict in dossier_dicts:

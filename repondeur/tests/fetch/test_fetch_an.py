@@ -812,7 +812,7 @@ def test_parse_numero_long_with_rect(text, expected):
             Mission(
                 0,
                 titre="« Avances à l'audiovisuel public »",
-                titre_court="« Avances à l'audiovisuel public »",
+                titre_court="Avances à l'audiovisuel public",
             ),
         ),
     ],

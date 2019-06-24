@@ -516,7 +516,7 @@ def parse_numero_long_with_rect(text: str) -> int:
     return 0
 
 
-RE_MISSION_VISEE = re.compile(r"""Mission « (?P<titre_court>.*) »""")
+RE_MISSION_VISEE = re.compile(r"""(Mission )?« (?P<titre_court>.*) »""")
 
 
 def parse_mission_visee(mission_visee: str) -> Mission:

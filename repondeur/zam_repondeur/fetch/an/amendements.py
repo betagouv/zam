@@ -211,9 +211,7 @@ class AssembleeNationale(RemoteSource):
 
         modified = False
         modified |= self.update_rectif(amendement, get_rectif(amend))
-        modified |= self.update_corps(
-            amendement, unjustify(get_str_or_none(amend, "dispositif") or "")
-        )
+        modified |= self.update_corps(amendement, get_corps(amend))
         modified |= self.update_expose(
             amendement, unjustify(get_str_or_none(amend, "exposeSommaire") or "")
         )
@@ -491,6 +489,58 @@ def get_rectif(amendement: OrderedDict) -> int:
     if numero_long is None:
         return 0
     return parse_numero_long_with_rect(numero_long)
+
+
+def get_corps(amendement: OrderedDict) -> str:
+    # TODO: use Jinja?
+    if "listeProgrammesAmdt" in amendement:
+        first_paragraph = (
+            "<p>Modifier ainsi les autorisations d'engagement "
+            "et les crédits de paiement :</p>"
+        )
+        table = """
+        <table>
+            <thead>
+                <th>Programmes</th>
+                <th>+</th>
+                <th>-</th>
+            </thead>
+            <tbody>
+        """
+        programmes = amendement["listeProgrammesAmdt"]["programmeAmdt"]
+        for programme in programmes:
+            nouveau = programme["programmeAmdtNouveau"] == "true"
+            suffix = " (ligne nouvelle)" if nouveau else ""
+            line = f"""
+                <tr>
+                    <td>{programme["libelleProgrammeAmdt"]}{suffix}</td>
+                    <td>{programme["aEPositifFormat"]}</td>
+                    <td>{programme["aENegatifFormat"]}</td>
+                </tr>
+            """
+            table += line
+        line_total = f"""
+                <tr>
+                    <td>Totaux</td>
+                    <td>{amendement["totalAEPositifFormat"]}</td>
+                    <td>{amendement["totalAENegatifFormat"]}</td>
+                </tr>
+        """
+        table += line_total
+        line_solde = f"""
+                <tr>
+                    <td>Solde</td>
+                    <td colspan="2">{amendement["soldeAEFormat"]}</td>
+                </tr>
+        """
+        table += line_solde
+        table += """
+            </tbody>
+        </table>
+        """
+        table = "\n".join(line for line in table.split("\n") if line.strip())
+        return f"{first_paragraph}\n{table}"
+    return unjustify(get_str_or_none(amendement, "dispositif") or "")
 
 
 def get_mission_ref(amendement: OrderedDict) -> Optional[MissionRef]:

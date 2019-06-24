@@ -25,6 +25,14 @@ ALLOWED_TAGS = [
     "td",
 ]
 
+ALLOWED_ATTRIBUTES = {
+    "a": ["href", "title"],
+    "abbr": ["title"],
+    "acronym": ["title"],
+    "td": ["colspan"],
+    "th": ["colspan"],
+}
+
 
 # Bleach uses html5lib, which is not thread-safe, so we have to use a cleaner instance
 # per thread instead of a global one to avoid transient errors in our workers
@@ -38,7 +46,9 @@ def clean_html(html: str) -> str:
     text = unescape(html)  # decode HTML entities
 
     if not hasattr(_THREAD_LOCALS, "cleaner"):
-        _THREAD_LOCALS.cleaner = Cleaner(tags=ALLOWED_TAGS, strip=True)
+        _THREAD_LOCALS.cleaner = Cleaner(
+            tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES, strip=True
+        )
 
     sanitized: str = _THREAD_LOCALS.cleaner.clean(text)
     return sanitized.strip()

@@ -22,6 +22,16 @@ def test_table_tags_are_preserved():
     assert clean_html(html) == "<table><tbody><tr><td>foo</td></tr></tbody></table>"
 
 
+def test_table_colspan_attributes_are_preserved():
+    from zam_repondeur.clean import clean_html
+
+    html = '<table><tr><td colspan="2">foo</td></tr></table>'
+    assert (
+        clean_html(html)
+        == '<table><tbody><tr><td colspan="2">foo</td></tr></tbody></table>'
+    )
+
+
 @pytest.mark.parametrize("tag", ["body"])
 def test_not_allowed_tags_are_removed(tag):
     from zam_repondeur.clean import clean_html

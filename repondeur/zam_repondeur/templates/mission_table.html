@@ -1,0 +1,29 @@
+<p>Modifier ainsi les autorisations d’engagement et les crédits de paiement :</p>
+<table>
+    <thead>
+        <tr>
+            <th>Programmes</th>
+            <th>+</th>
+            <th>-</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%- for programme in amendement.listeProgrammesAmdt.programmeAmdt -%}
+            {% set nouveau = programme.programmeAmdtNouveau == "true" %}
+            <tr>
+                <td>{{ programme.libelleProgrammeAmdt }}{% if nouveau %} (ligne nouvelle){% endif %}</td>
+                <td>{{ programme.aEPositifFormat|safe }}</td>
+                <td>{{ programme.aENegatifFormat|safe }}</td>
+            </tr>
+        {%- endfor %}
+        <tr>
+            <td>Totaux</td>
+            <td>{{ amendement.totalAEPositifFormat|safe }}</td>
+            <td>{{ amendement.totalAENegatifFormat|safe }}</td>
+        </tr>
+        <tr>
+            <td>Solde</td>
+            <td colspan="2">{{ amendement.soldeAEFormat|safe }}</td>
+        </tr>
+    </tbody>
+</table>

@@ -6,6 +6,8 @@ from typing import Dict, List, Optional, Set, Tuple, Union
 from urllib.parse import urljoin
 
 import xmltodict
+from pyramid.testing import DummyRequest
+from pyramid_jinja2 import get_jinja2_environment
 
 from zam_repondeur.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.fetch.division import parse_subdiv
@@ -492,54 +494,12 @@ def get_rectif(amendement: OrderedDict) -> int:
 
 
 def get_corps(amendement: OrderedDict) -> str:
-    # TODO: use Jinja?
     if "listeProgrammesAmdt" in amendement:
-        first_paragraph = (
-            "<p>Modifier ainsi les autorisations d'engagement "
-            "et les crédits de paiement :</p>"
-        )
-        table = """
-        <table>
-            <thead>
-                <th>Programmes</th>
-                <th>+</th>
-                <th>-</th>
-            </thead>
-            <tbody>
-        """
-        programmes = amendement["listeProgrammesAmdt"]["programmeAmdt"]
-        for programme in programmes:
-            nouveau = programme["programmeAmdtNouveau"] == "true"
-            suffix = " (ligne nouvelle)" if nouveau else ""
-            line = f"""
-                <tr>
-                    <td>{programme["libelleProgrammeAmdt"]}{suffix}</td>
-                    <td>{programme["aEPositifFormat"]}</td>
-                    <td>{programme["aENegatifFormat"]}</td>
-                </tr>
-            """
-            table += line
-        line_total = f"""
-                <tr>
-                    <td>Totaux</td>
-                    <td>{amendement["totalAEPositifFormat"]}</td>
-                    <td>{amendement["totalAENegatifFormat"]}</td>
-                </tr>
-        """
-        table += line_total
-        line_solde = f"""
-                <tr>
-                    <td>Solde</td>
-                    <td colspan="2">{amendement["soldeAEFormat"]}</td>
-                </tr>
-        """
-        table += line_solde
-        table += """
-            </tbody>
-        </table>
-        """
-        table = "\n".join(line for line in table.split("\n") if line.strip())
-        return f"{first_paragraph}\n{table}"
+        # FIXME: is that safe to use DummyRequest here?
+        env = get_jinja2_environment(DummyRequest(), name=".html")
+        template = env.get_template("mission_table.html")
+        content: str = template.render(amendement=amendement)
+        return content
     return unjustify(get_str_or_none(amendement, "dispositif") or "")
 
 

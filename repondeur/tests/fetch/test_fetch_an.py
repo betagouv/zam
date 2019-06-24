@@ -460,40 +460,43 @@ class TestFetchAmendement:
         assert amendement.mission.titre_court == "Outre-mer"
         assert (
             amendement.corps
-            == """<p>Modifier ainsi les autorisations d'engagement et les crédits de paiement :</p>
-        <table>
-            <thead>
-                <th>Programmes</th>
-                <th>+</th>
-                <th>-</th>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Emploi outre-mer</td>
-                    <td>0</td>
-                    <td>0</td>
-                </tr>
-                <tr>
-                    <td>Conditions de vie outre-mer</td>
-                    <td>0</td>
-                    <td>30&#160;000&#160;000</td>
-                </tr>
-                <tr>
-                    <td>Fonds de lutte contre les maladies vectorielles (ligne nouvelle)</td>
-                    <td>30&#160;000&#160;000</td>
-                    <td>0</td>
-                </tr>
-                <tr>
-                    <td>Totaux</td>
-                    <td>30&#160;000&#160;000</td>
-                    <td>30&#160;000&#160;000</td>
-                </tr>
-                <tr>
-                    <td>Solde</td>
-                    <td colspan="2">0</td>
-                </tr>
-            </tbody>
-        </table>"""  # noqa
+            == """\
+<p>Modifier ainsi les autorisations d’engagement et les crédits de paiement :</p>
+<table>
+    <thead>
+        <tr>
+            <th>Programmes</th>
+            <th>+</th>
+            <th>-</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td>Emploi outre-mer</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>Conditions de vie outre-mer</td>
+                <td>0</td>
+                <td>30&#160;000&#160;000</td>
+            </tr>
+            <tr>
+                <td>Fonds de lutte contre les maladies vectorielles (ligne nouvelle)</td>
+                <td>30&#160;000&#160;000</td>
+                <td>0</td>
+            </tr>
+        <tr>
+            <td>Totaux</td>
+            <td>30&#160;000&#160;000</td>
+            <td>30&#160;000&#160;000</td>
+        </tr>
+        <tr>
+            <td>Solde</td>
+            <td colspan="2">0</td>
+        </tr>
+    </tbody>
+</table>"""  # noqa
         )
 
     @responses.activate

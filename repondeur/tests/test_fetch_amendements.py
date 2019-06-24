@@ -10,7 +10,7 @@ from fetch.mock_an import setup_mock_responses
 def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements_senat):
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
-    from zam_repondeur.fetch.senat.missions import Mission
+    from zam_repondeur.fetch.missions import Mission
     from zam_repondeur.fetch.senat.senateurs.models import Senateur
 
     # Add a response to one of the amendements
@@ -265,6 +265,78 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
     # Check that the position was set for the new amendement
     amendement_7 = DBSession.query(Amendement).filter(Amendement.num == 7).one()
     assert amendement_7.position == 2
+
+
+def test_fetch_amendements_an_with_mission(app, lecture_an, article1_an):
+    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.models import Amendement, DBSession
+
+    Amendement.create(lecture=lecture_an, article=article1_an, num=6, position=1)
+
+    amendement_9 = Amendement.create(
+        lecture=lecture_an,
+        article=article1_an,
+        num=9,
+        position=2,
+        avis="Favorable",
+        objet="Objet",
+        reponse="Réponse",
+    )
+
+    with patch(
+        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+    ) as mock_fetch_discussion_list, patch(
+        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+    ) as mock_retrieve_amendement:
+        mock_fetch_discussion_list.return_value = [
+            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
+        ]
+
+        def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.fetch.exceptions import NotFound
+
+            if numero_prefixe not in {"6", "7", "9"}:
+                raise NotFound
+
+            return {
+                "division": {
+                    "titre": "Article 1",
+                    "type": "ARTICLE",
+                    "avantApres": "",
+                    "divisionRattache": "ARTICLE 1",
+                },
+                "numero": numero_prefixe,
+                "numeroLong": numero_prefixe,
+                "auteur": {
+                    "tribunId": "642788",
+                    "groupeTribunId": "730964",
+                    "estGouvernement": "0",
+                    "nom": "Véran",
+                    "prenom": "Olivier",
+                },
+                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
+                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                "etat": "AC",
+                "retireAvantPublication": "0",
+                "missionVisee": "Mission « Outre-mer »",
+            }
+
+        mock_retrieve_amendement.side_effect = dynamic_return_value
+
+        amendements, created, errored = get_amendements(lecture_an)
+
+    assert [amendement.num for amendement in amendements] == [6, 7, 9]
+    assert created == 1
+    assert errored == []
+
+    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
+    # Check that the mission is created
+    assert amendement_9.mission.titre == "Mission « Outre-mer »"
+    assert amendement_9.mission.titre_court == "Outre-mer"
 
 
 def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, caplog):

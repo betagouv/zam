@@ -7,6 +7,7 @@ import transaction
 
 from fetch.mock_an import setup_mock_responses
 
+from zam_repondeur.fetch.missions import Mission
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data"
@@ -441,6 +442,24 @@ class TestFetchAmendement:
         assert amendement.groupe == ""
 
     @responses.activate
+    def test_fetch_amendement_with_mission(self, lecture_an, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+
+        responses.add(
+            responses.GET,
+            build_url(lecture_an, 494),
+            body=read_sample_data("an/1255/494.xml"),
+            status=200,
+        )
+
+        amendement, created = source.fetch_amendement(
+            lecture=lecture_an, numero_prefixe="494", position=1
+        )
+
+        assert amendement.mission.titre == "Mission « Outre-mer »"
+        assert amendement.mission.titre_court == "Outre-mer"
+
+    @responses.activate
     def test_fetch_sous_amendement(self, lecture_an, app, source):
         from zam_repondeur.fetch.an.amendements import build_url
 
@@ -779,3 +798,26 @@ def test_parse_numero_long_with_rect(text, expected):
     from zam_repondeur.fetch.an.amendements import parse_numero_long_with_rect
 
     assert parse_numero_long_with_rect(text) == expected
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        (
+            "Mission « Outre-mer »",
+            Mission(0, titre="Mission « Outre-mer »", titre_court="Outre-mer"),
+        ),
+        (
+            "« Avances à l'audiovisuel public »",
+            Mission(
+                0,
+                titre="« Avances à l'audiovisuel public »",
+                titre_court="« Avances à l'audiovisuel public »",
+            ),
+        ),
+    ],
+)
+def test_parse_mission_visee(text, expected):
+    from zam_repondeur.fetch.an.amendements import parse_mission_visee
+
+    assert parse_mission_visee(text) == expected

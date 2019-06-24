@@ -710,7 +710,7 @@ def test_fetch_and_parse_discussion_details_parent_missing(lecture_senat, caplog
 
 def test_derouleur_urls_and_missions(lecture_senat):
     from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_missions
-    from zam_repondeur.fetch.senat.missions import Mission
+    from zam_repondeur.fetch.missions import Mission
     from zam_repondeur.models import DBSession
 
     assert list(derouleur_urls_and_missions(lecture_senat)) == [
@@ -734,7 +734,7 @@ def test_derouleur_urls_and_missions(lecture_senat):
 
 def test_derouleur_urls_and_missions_plf2019_1re_partie(dossier_plf, texte_plf):
     from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_missions
-    from zam_repondeur.fetch.senat.missions import Mission
+    from zam_repondeur.fetch.missions import Mission
     from zam_repondeur.models import Lecture
 
     lecture = Lecture.create(
@@ -755,7 +755,7 @@ def test_derouleur_urls_and_missions_plf2019_1re_partie(dossier_plf, texte_plf):
 
 def test_derouleur_urls_and_missions_plf2019_2e_partie(dossier_plf, texte_plf):
     from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_missions
-    from zam_repondeur.fetch.senat.missions import Mission
+    from zam_repondeur.fetch.missions import Mission
     from zam_repondeur.models import Lecture
 
     lecture = Lecture.create(

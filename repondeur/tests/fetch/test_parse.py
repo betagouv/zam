@@ -108,7 +108,7 @@ class TestExtractMatricule:
 class TestParseDiscussionDetails:
     def test_parse_basic_data(self):
         from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
-        from zam_repondeur.fetch.senat.missions import Mission
+        from zam_repondeur.fetch.missions import Mission
 
         amend = {
             "idAmendement": "1104289",
@@ -141,7 +141,7 @@ class TestParseDiscussionDetails:
 
     def test_discussion_commune(self):
         from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
-        from zam_repondeur.fetch.senat.missions import Mission
+        from zam_repondeur.fetch.missions import Mission
 
         amend = {
             "idAmendement": "1110174",
@@ -171,7 +171,7 @@ class TestParseDiscussionDetails:
 
     def test_not_discussion_commune(self):
         from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
-        from zam_repondeur.fetch.senat.missions import Mission
+        from zam_repondeur.fetch.missions import Mission
 
         amend = {
             "idAmendement": "1103376",
@@ -201,7 +201,7 @@ class TestParseDiscussionDetails:
 
     def test_parse_sous_amendement(self):
         from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
-        from zam_repondeur.fetch.senat.missions import Mission
+        from zam_repondeur.fetch.missions import Mission
 
         amend1 = {
             "idAmendement": "1104289",

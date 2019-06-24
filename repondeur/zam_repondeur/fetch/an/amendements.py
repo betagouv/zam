@@ -15,11 +15,13 @@ from zam_repondeur.models import (
     DBSession,
     Article,
     Amendement,
+    AmendementMission,
     Lecture,
     get_one_or_create,
 )
 from zam_repondeur.models.division import SubDiv
 
+from ..missions import Mission
 from .division import parse_avant_apres
 
 
@@ -219,6 +221,12 @@ class AssembleeNationale(RemoteSource):
             groupe=groupe,
             auteur=auteur,
         )
+
+        mission = get_mission(amend)
+        if mission is not None:
+            AmendementMission.create(
+                amendement, titre=mission.titre, titre_court=mission.titre_court
+            )
 
         DBSession.flush()  # make sure foreign keys are updated
 
@@ -482,6 +490,15 @@ def get_rectif(amendement: OrderedDict) -> int:
     return parse_numero_long_with_rect(numero_long)
 
 
+def get_mission(amendement: OrderedDict) -> Optional[Mission]:
+    if "missionVisee" not in amendement:
+        return None
+    mission_visee = get_str_or_none(amendement, "missionVisee")
+    if mission_visee is None:
+        return None
+    return parse_mission_visee(mission_visee)
+
+
 RE_NUM_LONG = re.compile(
     r"""
     (?P<prefix>[A-Z]*)
@@ -497,6 +514,15 @@ def parse_numero_long_with_rect(text: str) -> int:
     if mo is not None and mo.group("rect"):
         return int(mo.group("rect_mult") or 1)
     return 0
+
+
+RE_MISSION_VISEE = re.compile(r"""Mission « (?P<titre_court>.*) »""")
+
+
+def parse_mission_visee(mission_visee: str) -> Mission:
+    mo = RE_MISSION_VISEE.match(mission_visee)
+    titre_court = mo.group("titre_court") if mo is not None else mission_visee
+    return Mission(0, titre=mission_visee, titre_court=titre_court)
 
 
 def get_str_or_none(amendement: OrderedDict, key: str) -> Optional[str]:

@@ -108,7 +108,7 @@ class TestExtractMatricule:
 class TestParseDiscussionDetails:
     def test_parse_basic_data(self):
         from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
-        from zam_repondeur.fetch.missions import Mission
+        from zam_repondeur.fetch.missions import MissionRef
 
         amend = {
             "idAmendement": "1104289",
@@ -130,7 +130,7 @@ class TestParseDiscussionDetails:
             "isRejete": "true",
         }
         details = parse_discussion_details(
-            {}, amend, position=1, mission=Mission(num=None, titre="", titre_court="")
+            {}, amend, position=1, mission_ref=MissionRef(titre="", titre_court="")
         )
 
         assert details.num == 230
@@ -141,7 +141,7 @@ class TestParseDiscussionDetails:
 
     def test_discussion_commune(self):
         from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
-        from zam_repondeur.fetch.missions import Mission
+        from zam_repondeur.fetch.missions import MissionRef
 
         amend = {
             "idAmendement": "1110174",
@@ -164,14 +164,14 @@ class TestParseDiscussionDetails:
             "isRejete": "true",
         }
         details = parse_discussion_details(
-            {}, amend, position=1, mission=Mission(num=None, titre="", titre_court="")
+            {}, amend, position=1, mission_ref=MissionRef(titre="", titre_court="")
         )
 
         assert details.id_discussion_commune == 110541
 
     def test_not_discussion_commune(self):
         from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
-        from zam_repondeur.fetch.missions import Mission
+        from zam_repondeur.fetch.missions import MissionRef
 
         amend = {
             "idAmendement": "1103376",
@@ -194,14 +194,14 @@ class TestParseDiscussionDetails:
         }
 
         details = parse_discussion_details(
-            {}, amend, position=1, mission=Mission(num=None, titre="", titre_court="")
+            {}, amend, position=1, mission_ref=MissionRef(titre="", titre_court="")
         )
 
         assert details.id_discussion_commune is None
 
     def test_parse_sous_amendement(self):
         from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
-        from zam_repondeur.fetch.missions import Mission
+        from zam_repondeur.fetch.missions import MissionRef
 
         amend1 = {
             "idAmendement": "1104289",
@@ -243,13 +243,13 @@ class TestParseDiscussionDetails:
             "isRejete": "true",
         }
         details1 = parse_discussion_details(
-            {}, amend1, position=1, mission=Mission(num=None, titre="", titre_court="")
+            {}, amend1, position=1, mission_ref=MissionRef(titre="", titre_court="")
         )
         details2 = parse_discussion_details(
             {"1104289": details1.num},
             amend2,
             position=2,
-            mission=Mission(num=None, titre="", titre_court=""),
+            mission_ref=MissionRef(titre="", titre_court=""),
         )
 
         assert details2.num == 131

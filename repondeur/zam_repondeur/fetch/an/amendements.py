@@ -15,13 +15,13 @@ from zam_repondeur.models import (
     DBSession,
     Article,
     Amendement,
-    AmendementMission,
+    Mission,
     Lecture,
     get_one_or_create,
 )
 from zam_repondeur.models.division import SubDiv
 
-from ..missions import Mission
+from ..missions import MissionRef
 from .division import parse_avant_apres
 
 
@@ -201,6 +201,14 @@ class AssembleeNationale(RemoteSource):
             groupe = get_groupe(raw_auteur, amendement.num)
             auteur = get_auteur(raw_auteur)
 
+        mission_ref = get_mission_ref(amend)
+        if mission_ref is not None:
+            mission, _ = get_one_or_create(
+                Mission, titre=mission_ref.titre, titre_court=mission_ref.titre_court
+            )
+        else:
+            mission = None
+
         modified = False
         modified |= self.update_rectif(amendement, get_rectif(amend))
         modified |= self.update_corps(
@@ -220,13 +228,8 @@ class AssembleeNationale(RemoteSource):
             matricule=matricule,
             groupe=groupe,
             auteur=auteur,
+            mission=mission,
         )
-
-        mission = get_mission(amend)
-        if mission is not None:
-            AmendementMission.create(
-                amendement, titre=mission.titre, titre_court=mission.titre_court
-            )
 
         DBSession.flush()  # make sure foreign keys are updated
 
@@ -490,7 +493,7 @@ def get_rectif(amendement: OrderedDict) -> int:
     return parse_numero_long_with_rect(numero_long)
 
 
-def get_mission(amendement: OrderedDict) -> Optional[Mission]:
+def get_mission_ref(amendement: OrderedDict) -> Optional[MissionRef]:
     if "missionVisee" not in amendement:
         return None
     mission_visee = get_str_or_none(amendement, "missionVisee")
@@ -519,10 +522,10 @@ def parse_numero_long_with_rect(text: str) -> int:
 RE_MISSION_VISEE = re.compile(r"""(Mission )?« (?P<titre_court>.*) »""")
 
 
-def parse_mission_visee(mission_visee: str) -> Mission:
+def parse_mission_visee(mission_visee: str) -> MissionRef:
     mo = RE_MISSION_VISEE.match(mission_visee)
     titre_court = mo.group("titre_court") if mo is not None else mission_visee
-    return Mission(0, titre=mission_visee, titre_court=titre_court)
+    return MissionRef(titre=mission_visee, titre_court=titre_court)
 
 
 def get_str_or_none(amendement: OrderedDict, key: str) -> Optional[str]:

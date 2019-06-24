@@ -7,7 +7,7 @@ import transaction
 
 from fetch.mock_an import setup_mock_responses
 
-from zam_repondeur.fetch.missions import Mission
+from zam_repondeur.fetch.missions import MissionRef
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data"
@@ -805,12 +805,11 @@ def test_parse_numero_long_with_rect(text, expected):
     [
         (
             "Mission « Outre-mer »",
-            Mission(0, titre="Mission « Outre-mer »", titre_court="Outre-mer"),
+            MissionRef(titre="Mission « Outre-mer »", titre_court="Outre-mer"),
         ),
         (
             "« Avances à l'audiovisuel public »",
-            Mission(
-                0,
+            MissionRef(
                 titre="« Avances à l'audiovisuel public »",
                 titre_court="Avances à l'audiovisuel public",
             ),

@@ -708,15 +708,15 @@ def test_fetch_and_parse_discussion_details_parent_missing(lecture_senat, caplog
     assert f"Unknown parent amendement 1234" in [rec.message for rec in caplog.records]
 
 
-def test_derouleur_urls_and_missions(lecture_senat):
-    from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_missions
-    from zam_repondeur.fetch.missions import Mission
+def test_derouleur_urls_and_mission_refs(lecture_senat):
+    from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_mission_refs
+    from zam_repondeur.fetch.missions import MissionRef
     from zam_repondeur.models import DBSession
 
-    assert list(derouleur_urls_and_missions(lecture_senat)) == [
+    assert list(derouleur_urls_and_mission_refs(lecture_senat)) == [
         (
             "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json",
-            Mission(num=None, titre="", titre_court=""),
+            MissionRef(titre="", titre_court=""),
         )
     ]
 
@@ -724,17 +724,17 @@ def test_derouleur_urls_and_missions(lecture_senat):
         lecture_senat.organe = "PO744107"
         DBSession.add(lecture_senat)
 
-    assert list(derouleur_urls_and_missions(lecture_senat)) == [
+    assert list(derouleur_urls_and_mission_refs(lecture_senat)) == [
         (
             "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json",
-            Mission(num=None, titre="", titre_court=""),
+            MissionRef(titre="", titre_court=""),
         )
     ]
 
 
-def test_derouleur_urls_and_missions_plf2019_1re_partie(dossier_plf, texte_plf):
-    from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_missions
-    from zam_repondeur.fetch.missions import Mission
+def test_derouleur_urls_and_mission_refs_plf2019_1re_partie(dossier_plf, texte_plf):
+    from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_mission_refs
+    from zam_repondeur.fetch.missions import MissionRef
     from zam_repondeur.models import Lecture
 
     lecture = Lecture.create(
@@ -745,17 +745,17 @@ def test_derouleur_urls_and_missions_plf2019_1re_partie(dossier_plf, texte_plf):
         dossier=dossier_plf,
     )
 
-    assert list(derouleur_urls_and_missions(lecture)) == [
+    assert list(derouleur_urls_and_mission_refs(lecture)) == [
         (
             "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103393.json",
-            Mission(num=103393, titre="", titre_court=""),
+            MissionRef(titre="", titre_court=""),
         )
     ]
 
 
-def test_derouleur_urls_and_missions_plf2019_2e_partie(dossier_plf, texte_plf):
-    from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_missions
-    from zam_repondeur.fetch.missions import Mission
+def test_derouleur_urls_and_mission_refs_plf2019_2e_partie(dossier_plf, texte_plf):
+    from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_mission_refs
+    from zam_repondeur.fetch.missions import MissionRef
     from zam_repondeur.models import Lecture
 
     lecture = Lecture.create(
@@ -766,27 +766,24 @@ def test_derouleur_urls_and_missions_plf2019_2e_partie(dossier_plf, texte_plf):
         dossier=dossier_plf,
     )
 
-    urls = list(derouleur_urls_and_missions(lecture))
+    urls = list(derouleur_urls_and_mission_refs(lecture))
     assert len(urls) == 52
     assert urls[0] == (
         "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103414.json",
-        Mission(
-            num=103414,
+        MissionRef(
             titre="Mission Action et transformation publiques",
             titre_court="Action transfo.",
         ),
     )
     assert urls[1] == (
         "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103415.json",
-        Mission(
-            num=103415,
-            titre="Mission Action extérieure de l'État",
-            titre_court="Action ext.",
+        MissionRef(
+            titre="Mission Action extérieure de l'État", titre_court="Action ext."
         ),
     )
     assert urls[-1] == (
         "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103394.json",
-        Mission(103394, titre="", titre_court=""),
+        MissionRef(titre="", titre_court=""),
     )
 
 

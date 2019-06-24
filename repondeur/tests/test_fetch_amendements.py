@@ -10,7 +10,7 @@ from fetch.mock_an import setup_mock_responses
 def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements_senat):
     from zam_repondeur.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
-    from zam_repondeur.fetch.missions import Mission
+    from zam_repondeur.fetch.missions import MissionRef
     from zam_repondeur.fetch.senat.senateurs.models import Senateur
 
     # Add a response to one of the amendements
@@ -148,7 +148,7 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
                         }
                     ],
                 },
-                Mission(num=None, titre="", titre_court=""),
+                MissionRef(titre="", titre_court=""),
             )
         ]
         mock_fetch_and_parse_senateurs.return_value = {

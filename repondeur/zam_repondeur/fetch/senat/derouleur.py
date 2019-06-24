@@ -5,7 +5,7 @@ from typing import Any, Dict, Iterable, Iterator, List, NamedTuple, Optional, Tu
 import requests
 
 from zam_repondeur.models import Amendement, Lecture
-from ..missions import MISSIONS, Mission
+from ..missions import ID_TXT_MISSIONS, MissionRef
 
 
 BASE_URL = "https://www.senat.fr"
@@ -20,7 +20,7 @@ class DiscussionDetails(NamedTuple):
     id_discussion_commune: Optional[int]
     id_identique: Optional[int]
     parent_num: Optional[int]
-    mission: Optional[Mission]
+    mission_ref: Optional[MissionRef]
 
 
 def fetch_and_parse_discussion_details(lecture: Lecture) -> List[DiscussionDetails]:
@@ -28,13 +28,13 @@ def fetch_and_parse_discussion_details(lecture: Lecture) -> List[DiscussionDetai
     return _parse_derouleur_data(data_iter)
 
 
-def _fetch_discussion_details(lecture: Lecture) -> Iterator[Tuple[Any, Mission]]:
+def _fetch_discussion_details(lecture: Lecture) -> Iterator[Tuple[Any, MissionRef]]:
     """
     Récupère les amendements à discuter, dans l'ordre de passage
 
     NB : les amendements jugés irrecevables ne sont pas inclus.
     """
-    for url, mission in derouleur_urls_and_missions(lecture):
+    for url, mission_ref in derouleur_urls_and_mission_refs(lecture):
         resp = requests.get(url)
         if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
             logger.warning(f"Could not fetch {url}")
@@ -42,59 +42,61 @@ def _fetch_discussion_details(lecture: Lecture) -> Iterator[Tuple[Any, Mission]]
         if resp.text == "":
             logger.warning(f"Empty response for {url}")
             continue
-        yield resp.json(), mission
+        yield resp.json(), mission_ref
 
 
 def _parse_derouleur_data(
-    data_iter: Iterable[Tuple[Any, Mission]]
+    data_iter: Iterable[Tuple[Any, MissionRef]]
 ) -> List[DiscussionDetails]:
-    subdivs_amends_missions = [
-        (subdiv, amend, mission)
-        for data, mission in data_iter
+    subdivs_amends_mission_refs = [
+        (subdiv, amend, mission_ref)
+        for data, mission_ref in data_iter
         for subdiv in data["Subdivisions"]
         for amend in subdiv["Amendements"]
     ]
 
     uid_map: Dict[str, int] = {
         amend["idAmendement"]: Amendement.parse_num(amend["num"])[0]
-        for _, amend, _ in subdivs_amends_missions
+        for _, amend, _ in subdivs_amends_mission_refs
     }
 
     discussion_details = [
-        parse_discussion_details(uid_map, amend, position, mission)
-        for position, (subdiv, amend, mission) in enumerate(
-            subdivs_amends_missions, start=1
+        parse_discussion_details(uid_map, amend, position, mission_ref)
+        for position, (subdiv, amend, mission_ref) in enumerate(
+            subdivs_amends_mission_refs, start=1
         )
     ]
 
     return discussion_details
 
 
-def derouleur_urls_and_missions(lecture: Lecture) -> Iterator[Tuple[str, Mission]]:
+def derouleur_urls_and_mission_refs(
+    lecture: Lecture
+) -> Iterator[Tuple[str, MissionRef]]:
     assert lecture.texte.session_str is not None  # nosec (mypy hint)
-    missions = (
-        MISSIONS.get(lecture.texte.session_str, {})
+    id_txt_missions = (
+        ID_TXT_MISSIONS.get(lecture.texte.session_str, {})
         .get(lecture.texte.numero, {})
         .get(lecture.partie)
     )
     phase = "commission" if lecture.is_commission else "seance"
-    if missions is not None:
-        for mission in missions:
+    if id_txt_missions is not None:
+        for id_txt, mission in id_txt_missions:
             yield (
                 f"{BASE_URL}/en{phase}/{lecture.texte.session_str}"
-                f"/{lecture.texte.numero}/liste_discussion_{mission.num}.json",
+                f"/{lecture.texte.numero}/liste_discussion_{id_txt}.json",
                 mission,
             )
     else:
         yield (
             f"{BASE_URL}/en{phase}/{lecture.texte.session_str}"
             f"/{lecture.texte.numero}/liste_discussion.json",
-            Mission(num=None, titre="", titre_court=""),
+            MissionRef(titre="", titre_court=""),
         )
 
 
 def parse_discussion_details(
-    uid_map: Dict[str, int], amend: dict, position: int, mission: Mission
+    uid_map: Dict[str, int], amend: dict, position: int, mission_ref: MissionRef
 ) -> DiscussionDetails:
     num, rectif = Amendement.parse_num(amend["num"])
     details = DiscussionDetails(
@@ -109,7 +111,7 @@ def parse_discussion_details(
             int(amend["idIdentique"]) if parse_bool(amend["isIdentique"]) else None
         ),
         parent_num=get_parent_num(uid_map, amend),
-        mission=mission if mission.titre else None,
+        mission_ref=mission_ref if mission_ref.titre else None,
     )
     return details
 

@@ -166,24 +166,23 @@ def amendements_plf2018_an_premiere_lecture_seance_publique_2(
     lecture_plf2018_an_premiere_lecture_seance_publique_2,
     article1_plf2018_an_premiere_lecture_seance_publique_2,
 ):
-    from zam_repondeur.models import Amendement, AmendementMission, DBSession
+    from zam_repondeur.models import Amendement, Mission, DBSession
 
     with transaction.manager:
+        mission = Mission.create(
+            titre="Mission Action et transformation publiques",
+            titre_court="Action transfo.",
+        )
         amendements = [
             Amendement.create(
                 lecture=lecture_plf2018_an_premiere_lecture_seance_publique_2,
                 article=article1_plf2018_an_premiere_lecture_seance_publique_2,
                 num=num,
                 position=position,
+                mission=mission,
             )
             for position, num in enumerate((111, 333), 1)
         ]
-        for amendement in amendements:
-            AmendementMission.create(
-                amendement,
-                titre="Mission Action et transformation publiques",
-                titre_court="Action transfo.",
-            )
 
     DBSession.add_all(amendements)
     return amendements

@@ -16,9 +16,35 @@ from .table import UserTable  # noqa
 from .texte import Texte, TypeTexte  # noqa
 
 from .events.base import Event  # noqa
-from .events.amendement import *  # noqa
-from .events.article import *  # noqa
-from .events.lecture import *  # noqa
+from .events.amendement import (  # noqa
+    AmendementRectifie,
+    AmendementIrrecevable,
+    AmendementTransfere,
+    CorpsAmendementModifie,
+    ExposeAmendementModifie,
+    AvisAmendementModifie,
+    ObjetAmendementModifie,
+    ReponseAmendementModifiee,
+    CommentsAmendementModifie,
+    BatchSet,
+    BatchUnset,
+)
+from .events.article import (  # noqa
+    ContenuArticleModifie,
+    TitreArticleModifie,
+    PresentationArticleModifiee,
+)
+from .events.lecture import (  # noqa
+    LectureCreee,
+    ArticlesRecuperes,
+    AmendementsRecuperes,
+    AmendementsRecuperesLiasse,
+    AmendementsNonRecuperes,
+    AmendementsAJour,
+    AmendementsNonTrouves,
+    ReponsesImportees,
+    ReponsesImporteesJSON,
+)
 
 
 mark_error_retryable(IntegrityError)

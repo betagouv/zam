@@ -1,6 +1,6 @@
 import logging
-import os
 import sys
+from argparse import ArgumentParser, Namespace
 from typing import List
 
 from huey import RedisHuey
@@ -18,20 +18,12 @@ from zam_repondeur.tasks.huey import init_huey
 logger = logging.getLogger(__name__)
 
 
-def usage(argv: List[str]) -> None:
-    cmd = os.path.basename(argv[0])
-    print("usage: %s <config_uri>\n" '(example: "%s development.ini")' % (cmd, cmd))
-    sys.exit(1)
-
-
 def main(argv: List[str] = sys.argv) -> None:
-    if len(argv) != 2:
-        usage(argv)
-    config_uri = argv[1]
+    args = parse_args(argv[1:])
 
-    setup_logging(config_uri)
+    setup_logging(args.config_uri)
 
-    settings = get_appsettings(config_uri)
+    settings = get_appsettings(args.config_uri)
     settings = {**BASE_SETTINGS, **settings}
 
     rollbar_settings = extract_settings(settings, prefix="rollbar.")
@@ -65,6 +57,12 @@ def main(argv: List[str] = sys.argv) -> None:
         flush_locks=True,
     )
     consumer.run()
+
+
+def parse_args(argv: List[str]) -> Namespace:
+    parser = ArgumentParser()
+    parser.add_argument("config_uri")
+    return parser.parse_args(argv)
 
 
 def flush_stale_locks(huey: RedisHuey) -> None:

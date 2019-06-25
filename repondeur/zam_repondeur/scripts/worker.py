@@ -1,7 +1,7 @@
 import logging
 import sys
 from argparse import ArgumentParser, Namespace
-from typing import List
+from typing import Any, Dict, List
 
 from huey import RedisHuey
 from pyramid.paster import get_appsettings, setup_logging
@@ -39,6 +39,10 @@ def main(argv: List[str] = sys.argv) -> None:
     init_repository(settings)
     repository.load_data()
 
+    start_huey(settings)
+
+
+def start_huey(settings: Dict[str, Any]) -> None:
     huey = init_huey(settings)
 
     from zam_repondeur.tasks.fetch import fetch_articles, fetch_amendements  # noqa

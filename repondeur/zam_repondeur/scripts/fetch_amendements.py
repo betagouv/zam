@@ -1,5 +1,4 @@
 import logging
-import os
 import random
 import sys
 from argparse import ArgumentParser, Namespace
@@ -19,12 +18,6 @@ from zam_repondeur.models import DBSession, Dossier, Lecture, Texte, get_one_or_
 
 
 logger = logging.getLogger(__name__)
-
-
-def usage(argv: List[str]) -> None:
-    cmd = os.path.basename(argv[0])
-    print("usage: %s <config_uri>\n" '(example: "%s development.ini")' % (cmd, cmd))
-    sys.exit(1)
 
 
 def main(argv: List[str] = sys.argv) -> None:

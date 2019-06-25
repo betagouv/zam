@@ -1,5 +1,4 @@
 import logging
-import os
 import sys
 from argparse import ArgumentParser, Namespace
 from typing import List
@@ -11,12 +10,6 @@ from zam_repondeur.data import init_repository, repository
 
 
 logger = logging.getLogger(__name__)
-
-
-def usage(argv: List[str]) -> None:
-    cmd = os.path.basename(argv[0])
-    print("usage: %s <config_uri>\n" '(example: "%s development.ini")' % (cmd, cmd))
-    sys.exit(1)
 
 
 def main(argv: List[str] = sys.argv) -> None:

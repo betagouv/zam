@@ -16,18 +16,7 @@ from zam_repondeur.tasks.huey import init_huey
 from zam_repondeur.version import load_version
 
 
-FILTERS_PATH = "zam_repondeur.views.jinja2_filters"
 BASE_SETTINGS = {
-    "jinja2.filters": {
-        "paragriphy": f"{FILTERS_PATH}:paragriphy",
-        "amendement_matches": f"{FILTERS_PATH}:amendement_matches",
-        "filter_out_empty_additionals": f"{FILTERS_PATH}:filter_out_empty_additionals",
-        "group_by_day": f"{FILTERS_PATH}:group_by_day",
-        "h3_to_h5": f"{FILTERS_PATH}:h3_to_h5",
-        "enumeration": f"{FILTERS_PATH}:enumeration",
-        "length_including_batches": f"{FILTERS_PATH}:length_including_batches",
-    },
-    "jinja2.undefined": "strict",
     "zam.auth_cookie_duration": 7 * 24 * 3600,  # a user stays identified for 7 days
     "zam.auth_cookie_secure": True,  # disable for local HTTP access in development
     "zam.legislatures": "14,15",
@@ -58,12 +47,10 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         setup_database(config, settings)
 
         config.include("zam_repondeur.auth")
+        config.include("zam_repondeur.templating")
 
         config.include("pyramid_default_cors")
         config.include("pyramid_retry")
-        config.include("pyramid_jinja2")
-        config.add_jinja2_renderer(".html")
-        config.add_jinja2_search_path("zam_repondeur:templates", name=".html")
 
         config.add_route("choices_lectures", "/choices/dossiers/{uid}/")
         config.add_route("error", "/error")

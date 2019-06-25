@@ -6,8 +6,6 @@ from typing import Dict, List, Optional, Set, Tuple, Union
 from urllib.parse import urljoin
 
 import xmltodict
-from pyramid.testing import DummyRequest
-from pyramid_jinja2 import get_jinja2_environment
 
 from zam_repondeur.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.fetch.division import parse_subdiv
@@ -22,6 +20,7 @@ from zam_repondeur.models import (
     get_one_or_create,
 )
 from zam_repondeur.models.division import SubDiv
+from zam_repondeur.templating import render_template
 
 from ..missions import MissionRef
 from .division import parse_avant_apres
@@ -495,11 +494,7 @@ def get_rectif(amendement: OrderedDict) -> int:
 
 def get_corps(amendement: OrderedDict) -> str:
     if "listeProgrammesAmdt" in amendement:
-        # FIXME: is that safe to use DummyRequest here?
-        env = get_jinja2_environment(DummyRequest(), name=".html")
-        template = env.get_template("mission_table.html")
-        content: str = template.render(amendement=amendement)
-        return content
+        return render_template("mission_table.html", context={"amendement": amendement})
     return unjustify(get_str_or_none(amendement, "dispositif") or "")
 
 

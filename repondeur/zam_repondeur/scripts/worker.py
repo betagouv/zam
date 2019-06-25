@@ -20,17 +20,21 @@ def main(argv: List[str] = sys.argv) -> None:
 
     setup_logging(args.config_uri)
 
-    with bootstrap(args.config_uri, options={"app": "zam_worker"}) as env:
+    options = {"app": "zam_worker"}
+
+    with bootstrap(args.config_uri, options=options) as env:
         settings = env["registry"].settings
 
         rollbar_settings = extract_settings(settings, prefix="rollbar.")
         if "access_token" in rollbar_settings and "environment" in rollbar_settings:
             setup_rollbar_log_handler(rollbar_settings)
 
-        start_huey(settings)
+        start_huey(args.config_uri, options, settings)
 
 
-def start_huey(settings: Dict[str, Any]) -> None:
+def start_huey(
+    config_uri: str, options: Dict[str, str], settings: Dict[str, Any]
+) -> None:
 
     huey = init_huey(settings)
 
@@ -42,6 +46,10 @@ def start_huey(settings: Dict[str, Any]) -> None:
     except ConnectionError:
         logger.exception("Failed to connect to Redis")
         sys.exit(1)
+
+    @huey.on_startup()
+    def startup_hook() -> None:
+        bootstrap(config_uri, options=options)
 
     consumer = huey.create_consumer(
         worker_type="thread",

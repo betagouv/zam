@@ -7,7 +7,7 @@ After=network.target postgresql.service redis-server.service
 Type=simple
 User=repondeur
 WorkingDirectory=/srv/repondeur/src/repondeur/
-ExecStart=/srv/repondeur/venv/bin/gunicorn --paste production.ini
+ExecStart=/srv/repondeur/venv/bin/gunicorn --paste production.ini --paste-global app=zam_webapp
 Restart=on-failure
 
 [Install]

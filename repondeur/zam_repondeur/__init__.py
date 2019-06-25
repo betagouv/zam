@@ -79,9 +79,7 @@ def setup_database(config: Configurator, settings: dict) -> None:
 
     config.include("pyramid_tm")
 
-    engine = engine_from_config(
-        settings, "sqlalchemy.", connect_args={"application_name": "zam_webapp"}
-    )
+    engine = engine_from_config(settings, "sqlalchemy.")
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
 

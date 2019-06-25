@@ -23,16 +23,16 @@ def main(argv: List[str] = sys.argv) -> None:
 
     setup_logging(args.config_uri)
 
-    settings = get_appsettings(args.config_uri)
+    settings = get_appsettings(
+        args.config_uri, options={"app": "zam_worker"}
+    )
     settings = {**BASE_SETTINGS, **settings}
 
     rollbar_settings = extract_settings(settings, prefix="rollbar.")
     if "access_token" in rollbar_settings and "environment" in rollbar_settings:
         setup_rollbar_log_handler(rollbar_settings)
 
-    engine = engine_from_config(
-        settings, "sqlalchemy.", connect_args={"application_name": "zam_worker"}
-    )
+    engine = engine_from_config(settings, "sqlalchemy.")
 
     DBSession.configure(bind=engine)
 

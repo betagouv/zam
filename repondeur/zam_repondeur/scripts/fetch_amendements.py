@@ -29,12 +29,12 @@ def main(argv: List[str] = sys.argv) -> None:
     logging.getLogger().setLevel(logging.WARNING)
     logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
-    settings = get_appsettings(args.config_uri)
+    settings = get_appsettings(
+        args.config_uri, options={"app": "fetch_amendements"}
+    )
     settings = {**BASE_SETTINGS, **settings}
 
-    engine = engine_from_config(
-        settings, "sqlalchemy.", connect_args={"application_name": "zam_worker"}
-    )
+    engine = engine_from_config(settings, "sqlalchemy.")
 
     DBSession.configure(bind=engine)
 

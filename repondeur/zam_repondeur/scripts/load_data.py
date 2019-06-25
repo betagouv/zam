@@ -21,7 +21,9 @@ def main(argv: List[str] = sys.argv) -> None:
     logging.getLogger().setLevel(logging.WARNING)
     logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
-    settings = get_appsettings(args.config_uri)
+    settings = get_appsettings(
+        args.config_uri, options={"app": "zam_load_data"}
+    )
     settings = {**BASE_SETTINGS, **settings}
 
     init_repository(settings)

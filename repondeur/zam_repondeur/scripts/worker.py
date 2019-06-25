@@ -4,14 +4,10 @@ from argparse import ArgumentParser, Namespace
 from typing import Any, Dict, List
 
 from huey import RedisHuey
-from pyramid.paster import get_appsettings, setup_logging
+from pyramid.paster import bootstrap, setup_logging
 from redis.exceptions import ConnectionError
-from sqlalchemy import engine_from_config
 
-from zam_repondeur import BASE_SETTINGS
-from zam_repondeur.data import init_repository
 from zam_repondeur.errors import extract_settings, setup_rollbar_log_handler
-from zam_repondeur.models import DBSession
 from zam_repondeur.tasks.huey import init_huey
 
 
@@ -19,29 +15,23 @@ logger = logging.getLogger(__name__)
 
 
 def main(argv: List[str] = sys.argv) -> None:
+
     args = parse_args(argv[1:])
 
     setup_logging(args.config_uri)
 
-    settings = get_appsettings(
-        args.config_uri, options={"app": "zam_worker"}
-    )
-    settings = {**BASE_SETTINGS, **settings}
+    with bootstrap(args.config_uri, options={"app": "zam_worker"}) as env:
+        settings = env["registry"].settings
 
-    rollbar_settings = extract_settings(settings, prefix="rollbar.")
-    if "access_token" in rollbar_settings and "environment" in rollbar_settings:
-        setup_rollbar_log_handler(rollbar_settings)
+        rollbar_settings = extract_settings(settings, prefix="rollbar.")
+        if "access_token" in rollbar_settings and "environment" in rollbar_settings:
+            setup_rollbar_log_handler(rollbar_settings)
 
-    engine = engine_from_config(settings, "sqlalchemy.")
-
-    DBSession.configure(bind=engine)
-
-    init_repository(settings)
-
-    start_huey(settings)
+        start_huey(settings)
 
 
 def start_huey(settings: Dict[str, Any]) -> None:
+
     huey = init_huey(settings)
 
     from zam_repondeur.tasks.fetch import fetch_articles, fetch_amendements  # noqa

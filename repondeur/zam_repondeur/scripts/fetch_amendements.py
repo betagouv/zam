@@ -6,15 +6,13 @@ from typing import List, Optional
 
 import transaction
 from progressist import ProgressBar
-from pyramid.paster import get_appsettings, setup_logging
-from sqlalchemy import engine_from_config
+from pyramid.paster import bootstrap, setup_logging
 
-from zam_repondeur import BASE_SETTINGS
-from zam_repondeur.data import init_repository, repository
+from zam_repondeur.data import repository
 from zam_repondeur.dossiers import get_dossiers_legislatifs_open_data_from_cache
 from zam_repondeur.fetch.amendements import RemoteSource
 from zam_repondeur.fetch.an.dossiers.models import DossierRef
-from zam_repondeur.models import DBSession, Dossier, Lecture, Texte, get_one_or_create
+from zam_repondeur.models import Dossier, Lecture, Texte, get_one_or_create
 
 
 logger = logging.getLogger(__name__)
@@ -29,22 +27,14 @@ def main(argv: List[str] = sys.argv) -> None:
     logging.getLogger().setLevel(logging.WARNING)
     logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
-    settings = get_appsettings(
-        args.config_uri, options={"app": "fetch_amendements"}
-    )
-    settings = {**BASE_SETTINGS, **settings}
+    with bootstrap(args.config_uri, options={"app": "zam_fetch_amendements"}):
 
-    engine = engine_from_config(settings, "sqlalchemy.")
+        repository.load_data()
 
-    DBSession.configure(bind=engine)
-
-    init_repository(settings)
-    repository.load_data()
-
-    try:
-        fetch_amendements(args.chambre, args.num)
-    finally:
-        transaction.abort()
+        try:
+            fetch_amendements(args.chambre, args.num)
+        finally:
+            transaction.abort()
 
 
 def parse_args(argv: List[str]) -> Namespace:

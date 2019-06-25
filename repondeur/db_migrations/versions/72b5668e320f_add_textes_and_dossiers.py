@@ -105,7 +105,7 @@ def upgrade():
         {
             "uid": texte.uid,
             "type_": texte.type_.name,
-            "chambre": texte.chambre.value.upper(),
+            "chambre": texte.chambre.name,
             "session": texte.session,
             "legislature": texte.legislature,
             "numero": texte.numero,

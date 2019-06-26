@@ -59,13 +59,30 @@
         .corps table {
           width: 100%;
           border-collapse: collapse;
+          margin-bottom: 3rem;
         }
-          .corps table td {
-            padding: .4rem .6rem;
+          .corps table td,
+          .corps table th {
+            padding: .6rem 1rem;
             border: 1px solid #565656;
           }
-            .corps table td p {
-              margin: 0;
+        .corps table.credits th {
+            text-align: center;
+        }
+        .corps table.credits th:first-child {
+            text-align: left;
+        }
+        .corps table.credits td {
+            text-align: right;
+        }
+        .corps table.credits td:first-child {
+            text-align: left;
+        }
+        .corps table.credits tr:last-child {
+            font-weight: bold;
+        }
+            .corps table.credits tr:last-child td:last-child {
+                text-align: center;
             }
         {% if amendement.batch %}
             .box,

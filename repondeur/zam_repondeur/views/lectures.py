@@ -277,7 +277,7 @@ class TransferAmendements:
     @view_config(request_method="GET")
     def get(self) -> dict:
         from_save = bool(self.request.GET.get("from_save"))
-        lecture = self.context.model(joinedload("amendements"))
+        lecture = self.context.model()  # PERFS: do not joinedload("amendements").
         my_table = self.request.user.table_for(lecture)
         amendements = [
             amendement

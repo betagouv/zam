@@ -471,6 +471,7 @@ class TestFetchAmendement:
             """
             <p>Modifier ainsi les autorisations d’engagement et les crédits de paiement :</p>
             <table class="credits">
+                <caption>(en euros)</caption>
                 <thead>
                     <tr>
                         <th>Programmes</th>
@@ -530,6 +531,7 @@ class TestFetchAmendement:
             """
             <p>I. Modifier ainsi les autorisations d’engagement :</p>
             <table class="credits">
+                <caption>(en euros)</caption>
                 <thead>
                     <tr>
                         <th>Programmes</th>
@@ -581,6 +583,7 @@ class TestFetchAmendement:
             </table>
             <p>II. Modifier ainsi les crédits de paiement :</p>
             <table class="credits">
+                <caption>(en euros)</caption>
                 <thead>
                     <tr>
                         <th>Programmes</th>
@@ -655,6 +658,7 @@ class TestFetchAmendement:
             """
             <p>Modifier ainsi les crédits de paiement :</p>
             <table class="credits">
+                <caption>(en euros)</caption>
                 <thead>
                     <tr>
                         <th>Programmes</th>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendement>
+    <numero>1463</numero>
+    <numeroLong>II-1463 (2ème Rect)</numeroLong>
+    <numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amendementEtendu>0</amendementEtendu>
+    <etat>DI</etat>
+    <missionVisee>Mission « Cohésion des territoires »</missionVisee>
+    <dispositif xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <exposeSommaire><![CDATA[<p style="text-align: justify;">Cet amendement vise &#224; supprimer les cr&#233;dits allou&#233;s &#224; la prime d&#8217;am&#233;nagement du territoire port&#233;e par l&#8217;action 1 (&#171;&#160;Attractivit&#233; &#233;conomique et comp&#233;titivit&#233; des territoires&#160;&#187;) du programme 112.</p>
+<p style="text-align: justify;">En effet, si le Gouvernement refuse de maintenir le dispositif, a minima, au niveau de 2018, et continue d&#8217;en diminuer progressivement les cr&#233;dits vers&#233;s, il est tout aussi pertinent de le supprimer purement et simplement d&#232;s 2019. Par cet amendement d&#8217;appel, l&#8217;auteur cherche &#224; attirer l&#8217;attention du Gouvernement sur l&#8217;absolue n&#233;cessit&#233; de conserver ce dispositif &#224; un niveau strat&#233;gique pertinent, ce qui n&#233;cessite donc une forte hausse de la dotation qui lui est allou&#233;e.</p>]]></exposeSommaire>
+    <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <listeDesSignataires> M.&amp;#160;Laqhila</listeDesSignataires>
+    <listeDesTribunCosignataires xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <libelleSeance>54 so;</libelleSeance>
+    <sortEnSeance>Retiré</sortEnSeance>
+    <dateDepot>06/11/2018</dateDepot>
+    <datePublication>07/11/2018</datePublication>
+    <dateSaisieSort>09/11/2018</dateSaisieSort>
+    <article99>0</article99>
+    <triAmendement>bbfaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaai</triAmendement>
+    <codeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <refCodeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <urlPDF>/15/amendements/1255C/AN/1463.pdf</urlPDF>
+    <dateDepotAffiche>6 novembre 2018 </dateDepotAffiche>
+    <division>
+        <titre>ÉTAT B</titre>
+        <divisionDesignation>ART. 39</divisionDesignation>
+        <type>ANNEXE</type>
+        <avantApres>A</avantApres>
+        <divisionRattache>ARTICLE 39</divisionRattache>
+        <articleAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <divisionAdditionnelle xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlDivisionTexteVise>/15/textes/1255C.asp#D_ETAT_B</urlDivisionTexteVise>
+    </division>
+    <examen>
+        <examenId>1670</examenId>
+        <organeSaisi>Séance publique</organeSaisi>
+        <typeSaisie>En séance</typeSaisie>
+        <idOrganeProprietaire>717460</idOrganeProprietaire>
+    </examen>
+    <texte>
+        <titre>POUR 2019</titre>
+        <titreCourt>PLF POUR 2019</titreCourt>
+        <numBibard>1255</numBibard>
+        <numsBibardsDesPropositions></numsBibardsDesPropositions>
+        <etapeTexte>1ère lecture (1ère assemblée saisie)</etapeTexte>
+        <numeroLegislature>15</numeroLegislature>
+        <mentionSecondeDeliberation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <numeroPartiePLF>II</numeroPartiePLF>
+        <idDossier>36733</idDossier>
+        <libelleDossier>Budget : loi de finances 2019</libelleDossier>
+        <urlDossierWeb>http://www.assemblee-nationale.fr/15/dossiers/loi_finances_2019.asp</urlDossierWeb>
+    </texte>
+    <seance>
+        <legisId>21335</legisId>
+        <legisIdperiode>614</legisIdperiode>
+        <numero>57</numero>
+        <debut>09/11/2018 15:00</debut>
+        <fin xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlcr>/15/cri/2018-2019/20190057.asp</urlcr>
+        <quantieme>Deuxième</quantieme>
+    </seance>
+    <alinea xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <auteur>
+        <tribunId>718978</tribunId>
+        <civilite>M.</civilite>
+        <nom>Laqhila</nom>
+        <prenom>Mohamed</prenom>
+        <auteurLabel>M. Laqhila</auteurLabel>
+        <estGouvernement>0</estGouvernement>
+        <estRapporteur>0</estRapporteur>
+        <groupeTribunId>730970</groupeTribunId>
+    </auteur>
+    <cosignataires/>
+    <auteurParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amdtDejaMisADiscute>1</amdtDejaMisADiscute>
+    <typeRectification xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <causeDeRetrait xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <listeProgrammesAmdt>
+        <programmeAmdt>
+            <id>47216</id>
+            <libelleProgrammeAmdt>Hébergement, parcours vers le logement et insertion des personnes vulnérables</libelleProgrammeAmdt>
+            <aEPositifFormat>0</aEPositifFormat>
+            <aENegatifFormat>0</aENegatifFormat>
+            <cPPositifFormat>0</cPPositifFormat>
+            <cPNegatifFormat>0</cPNegatifFormat>
+            <programmeAmdtNouveau>false</programmeAmdtNouveau>
+            <listeLigneCreditsAmdt/>
+            <programmeAmdtSupprimee>false</programmeAmdtSupprimee>
+        </programmeAmdt>
+        <programmeAmdt>
+            <id>47217</id>
+            <libelleProgrammeAmdt>Aide à l'accès au logement</libelleProgrammeAmdt>
+            <aEPositifFormat>0</aEPositifFormat>
+            <aENegatifFormat>0</aENegatifFormat>
+            <cPPositifFormat>0</cPPositifFormat>
+            <cPNegatifFormat>0</cPNegatifFormat>
+            <programmeAmdtNouveau>false</programmeAmdtNouveau>
+            <listeLigneCreditsAmdt/>
+            <programmeAmdtSupprimee>false</programmeAmdtSupprimee>
+        </programmeAmdt>
+        <programmeAmdt>
+            <id>47218</id>
+            <libelleProgrammeAmdt>Urbanisme, territoires et amélioration de l'habitat</libelleProgrammeAmdt>
+            <aEPositifFormat>0</aEPositifFormat>
+            <aENegatifFormat>0</aENegatifFormat>
+            <cPPositifFormat>0</cPPositifFormat>
+            <cPNegatifFormat>0</cPNegatifFormat>
+            <programmeAmdtNouveau>false</programmeAmdtNouveau>
+            <listeLigneCreditsAmdt/>
+            <programmeAmdtSupprimee>false</programmeAmdtSupprimee>
+        </programmeAmdt>
+        <programmeAmdt>
+            <id>47219</id>
+            <libelleProgrammeAmdt>Impulsion et coordination de la politique d'aménagement du territoire</libelleProgrammeAmdt>
+            <aEPositifFormat>0</aEPositifFormat>
+            <aENegatifFormat>10&amp;#160;000&amp;#160;000</aENegatifFormat>
+            <cPPositifFormat>0</cPPositifFormat>
+            <cPNegatifFormat>19&amp;#160;329&amp;#160;355</cPNegatifFormat>
+            <programmeAmdtNouveau>false</programmeAmdtNouveau>
+            <listeLigneCreditsAmdt/>
+            <programmeAmdtSupprimee>false</programmeAmdtSupprimee>
+        </programmeAmdt>
+        <programmeAmdt>
+            <id>47220</id>
+            <libelleProgrammeAmdt>Interventions territoriales de l'État</libelleProgrammeAmdt>
+            <aEPositifFormat>0</aEPositifFormat>
+            <aENegatifFormat>0</aENegatifFormat>
+            <cPPositifFormat>0</cPPositifFormat>
+            <cPNegatifFormat>0</cPNegatifFormat>
+            <programmeAmdtNouveau>false</programmeAmdtNouveau>
+            <listeLigneCreditsAmdt/>
+            <programmeAmdtSupprimee>false</programmeAmdtSupprimee>
+        </programmeAmdt>
+        <programmeAmdt>
+            <id>47221</id>
+            <libelleProgrammeAmdt>Politique de la ville</libelleProgrammeAmdt>
+            <aEPositifFormat>0</aEPositifFormat>
+            <aENegatifFormat>0</aENegatifFormat>
+            <cPPositifFormat>0</cPPositifFormat>
+            <cPNegatifFormat>0</cPNegatifFormat>
+            <programmeAmdtNouveau>false</programmeAmdtNouveau>
+            <listeLigneCreditsAmdt/>
+            <programmeAmdtSupprimee>false</programmeAmdtSupprimee>
+        </programmeAmdt>
+    </listeProgrammesAmdt>
+    <totalAEPositifFormat>0</totalAEPositifFormat>
+    <totalAENegatifFormat>10&amp;#160;000&amp;#160;000</totalAENegatifFormat>
+    <soldeAEFormat>-10&amp;#160;000&amp;#160;000</soldeAEFormat>
+    <totalCPPositifFormat>0</totalCPPositifFormat>
+    <totalCPNegatifFormat>19&amp;#160;329&amp;#160;355</totalCPNegatifFormat>
+    <soldeCPFormat>-19&amp;#160;329&amp;#160;355</soldeCPFormat>
+    <cpEgalAe>false</cpEgalAe>
+    <estMasque>0</estMasque>
+    <retireAvantPublication>0</retireAvantPublication>
+    <afficherEnRecevabilite>false</afficherEnRecevabilite>
+    <isLiasseRapporteur>false</isLiasseRapporteur>
+    <isMarqueDeRevisionVisible>false</isMarqueDeRevisionVisible>
+    <isPlfrMode>false</isPlfrMode>
+    <isPlfMode>true</isPlfMode>
+    <accordGouvernement xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <statutDiffusion>normal</statutDiffusion>
+</amendement>

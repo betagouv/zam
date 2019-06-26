@@ -494,7 +494,25 @@ def get_rectif(amendement: OrderedDict) -> int:
 
 def get_corps(amendement: OrderedDict) -> str:
     if "listeProgrammesAmdt" in amendement:
-        return render_template("mission_table.html", context={"amendement": amendement})
+        programmes = amendement["listeProgrammesAmdt"]["programmeAmdt"]
+        ae = [
+            (programme["aEPositifFormat"], programme["aENegatifFormat"])
+            for programme in programmes
+        ]
+        cp = [
+            (programme["cPPositifFormat"], programme["cPNegatifFormat"])
+            for programme in programmes
+        ]
+        return render_template(
+            "mission_table.html",
+            context={
+                "amendement": amendement,
+                "programmes": programmes,
+                "cp_only": all((plus, moins) == ("0", "0") for plus, moins in ae),
+                "ae_only": all((plus, moins) == ("0", "0") for plus, moins in cp),
+                "ae_cp_different": ae != cp,
+            },
+        )
     return unjustify(get_str_or_none(amendement, "dispositif") or "")
 
 

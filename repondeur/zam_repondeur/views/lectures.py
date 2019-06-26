@@ -348,6 +348,7 @@ class BatchAmendements:
         self.check_amendements_are_all_on_my_table(amendements)
         self.check_amendements_have_all_same_reponse_or_empty(amendements)
         self.check_amendements_are_all_from_same_article(amendements)
+        self.check_amendements_are_all_from_same_mission(amendements)
 
         return {
             "lecture": self.lecture,
@@ -470,6 +471,23 @@ class BatchAmendements:
 
         message = (
             "Tous les amendements doivent être relatifs au même article "
+            "pour pouvoir être associés."
+        )
+        self.request.session.flash(Message(cls="danger", text=message))
+        raise HTTPFound(location=self.my_table_url)
+
+    def check_amendements_are_all_from_same_mission(
+        self, amendements: List[Amendement]
+    ) -> None:
+        first_mission = amendements[0].mission
+        are_all_from_same_mission = all(
+            amdt.mission is first_mission for amdt in amendements
+        )
+        if are_all_from_same_mission:
+            return
+
+        message = (
+            "Tous les amendements doivent être relatifs à la même mission "
             "pour pouvoir être associés."
         )
         self.request.session.flash(Message(cls="danger", text=message))

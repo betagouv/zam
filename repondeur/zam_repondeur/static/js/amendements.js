@@ -59,6 +59,15 @@ application.register(
       )
     }
 
+    fromSameMission(checkeds) {
+      const missionFromChecked = item =>
+        item.closest('tr').dataset.mission
+      const firstMissionChecked = missionFromChecked(checkeds[0])
+      return checkeds.every(
+        checked => missionFromChecked(checked) === firstMissionChecked
+      )
+    }
+
     toggleGroupActions() {
       const checkeds = Array.from(this.checkboxes).filter(box => box.checked)
       const checkedsLength = checkeds.length
@@ -68,7 +77,7 @@ application.register(
         if (checkedsLength >= 2) {
           this.batchAmendementsLink.classList.toggle(
             'd-none',
-            !this.fromSameArticle(checkeds)
+            !(this.fromSameArticle(checkeds) && this.fromSameMission(checkeds))
           )
         }
       }

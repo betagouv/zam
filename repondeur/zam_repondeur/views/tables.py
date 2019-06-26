@@ -4,6 +4,7 @@ from pyramid.httpexceptions import HTTPForbidden, HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
+from sqlalchemy.orm import joinedload
 
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, Amendement, Batch, User, UserTable
@@ -16,20 +17,24 @@ class TableView:
     def __init__(self, context: TableResource, request: Request) -> None:
         self.context = context
         self.request = request
-        self.table = context.model()
-        self.owner = self.table.user
         self.lecture = context.lecture_resource.model()
 
     @view_config(request_method="GET", renderer="table_detail.html")
     def get(self) -> dict:
+        table = self.context.model(
+            options=(
+                joinedload("amendements").joinedload("article"),
+                joinedload("amendements").joinedload("mission"),
+            )
+        )
         return {
             "lecture": self.lecture,
             "lecture_resource": self.context.lecture_resource,
             "current_tab": "table",
-            "table": self.table,
-            "all_amendements": self.table.amendements,
-            "collapsed_amendements": Batch.collapsed_batches(self.table.amendements),
-            "is_owner": self.owner.email == self.request.user.email,
+            "table": table,
+            "all_amendements": table.amendements,
+            "collapsed_amendements": Batch.collapsed_batches(table.amendements),
+            "is_owner": table.user.email == self.request.user.email,
             "table_url": self.request.resource_url(
                 self.context.parent[self.request.user.email]
             ),
@@ -93,8 +98,9 @@ class TableView:
                 self.context.lecture_resource, "amendements"
             )
         else:
+            table = self.context.model()
             next_location = self.request.resource_url(
-                self.context.parent, self.owner.email
+                self.context.parent, table.user.email
             )
         return HTTPFound(location=next_location)
 

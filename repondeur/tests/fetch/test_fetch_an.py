@@ -7,6 +7,7 @@ import transaction
 
 from fetch.mock_an import setup_mock_responses
 
+from zam_repondeur.fetch.missions import MissionRef
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data"
@@ -25,6 +26,13 @@ def source():
     from zam_repondeur.fetch.an.amendements import AssembleeNationale
 
     return AssembleeNationale()
+
+
+def assert_html_looks_like(value, expected):
+    from textwrap import dedent
+    from selectolax.parser import HTMLParser
+
+    assert HTMLParser(value).html == HTMLParser(dedent(expected)).html
 
 
 class TestFetchAndParseAll:
@@ -441,6 +449,259 @@ class TestFetchAmendement:
         assert amendement.groupe == ""
 
     @responses.activate
+    def test_fetch_amendement_with_mission_cp_ae_identical(self, lecture_an, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+
+        responses.add(
+            responses.GET,
+            build_url(lecture_an, 494),
+            body=read_sample_data("an/1255/494.xml"),
+            status=200,
+        )
+
+        amendement, created = source.fetch_amendement(
+            lecture=lecture_an, numero_prefixe="494", position=1
+        )
+
+        assert amendement.mission.titre == "Mission « Outre-mer »"
+        assert amendement.mission.titre_court == "Outre-mer"
+
+        assert_html_looks_like(
+            amendement.corps,
+            """
+            <p>Modifier ainsi les autorisations d’engagement et les crédits de paiement :</p>
+            <table class="credits">
+                <caption>(en euros)</caption>
+                <thead>
+                    <tr>
+                        <th>Programmes</th>
+                        <th>+</th>
+                        <th>-</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>Emploi outre-mer</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Conditions de vie outre-mer</td>
+                            <td>0</td>
+                            <td>30&#160;000&#160;000</td>
+                        </tr>
+                        <tr>
+                            <td>Fonds de lutte contre les maladies vectorielles (ligne nouvelle)</td>
+                            <td>30&#160;000&#160;000</td>
+                            <td>0</td>
+                        </tr>
+                    <tr>
+                        <td>Totaux</td>
+                        <td>30&#160;000&#160;000</td>
+                        <td>30&#160;000&#160;000</td>
+                    </tr>
+                    <tr>
+                        <td>Solde</td>
+                        <td colspan="2">0</td>
+                    </tr>
+                </tbody>
+            </table>
+            """,  # noqa
+        )
+
+    @responses.activate
+    def test_fetch_amendement_with_mission_cp_ae_different(self, lecture_an, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+
+        responses.add(
+            responses.GET,
+            build_url(lecture_an, 1463),
+            body=read_sample_data("an/1255/1463.xml"),
+            status=200,
+        )
+
+        amendement, created = source.fetch_amendement(
+            lecture=lecture_an, numero_prefixe="1463", position=1
+        )
+
+        assert amendement.mission.titre == "Mission « Cohésion des territoires »"
+        assert amendement.mission.titre_court == "Cohésion des territoires"
+        assert_html_looks_like(
+            amendement.corps,
+            """
+            <p>I. Modifier ainsi les autorisations d’engagement :</p>
+            <table class="credits">
+                <caption>(en euros)</caption>
+                <thead>
+                    <tr>
+                        <th>Programmes</th>
+                        <th>+</th>
+                        <th>-</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>Hébergement, parcours vers le logement et insertion des personnes vulnérables</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Aide à l&#39;accès au logement</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Urbanisme, territoires et amélioration de l&#39;habitat</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Impulsion et coordination de la politique d&#39;aménagement du territoire</td>
+                            <td>0</td>
+                            <td>10&#160;000&#160;000</td>
+                        </tr>
+                        <tr>
+                            <td>Interventions territoriales de l&#39;État</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Politique de la ville</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                    <tr>
+                        <td>Totaux</td>
+                        <td>0</td>
+                        <td>10&#160;000&#160;000</td>
+                    </tr>
+                    <tr>
+                        <td>Solde</td>
+                        <td colspan="2">-10&#160;000&#160;000</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>II. Modifier ainsi les crédits de paiement :</p>
+            <table class="credits">
+                <caption>(en euros)</caption>
+                <thead>
+                    <tr>
+                        <th>Programmes</th>
+                        <th>+</th>
+                        <th>-</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>Hébergement, parcours vers le logement et insertion des personnes vulnérables</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Aide à l&#39;accès au logement</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Urbanisme, territoires et amélioration de l&#39;habitat</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Impulsion et coordination de la politique d&#39;aménagement du territoire</td>
+                            <td>0</td>
+                            <td>19&#160;329&#160;355</td>
+                        </tr>
+                        <tr>
+                            <td>Interventions territoriales de l&#39;État</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Politique de la ville</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                    <tr>
+                        <td>Totaux</td>
+                        <td>0</td>
+                        <td>19&#160;329&#160;355</td>
+                    </tr>
+                    <tr>
+                        <td>Solde</td>
+                        <td colspan="2">-19&#160;329&#160;355</td>
+                    </tr>
+                </tbody>
+            </table>
+            """,  # noqa
+        )
+
+    @responses.activate
+    def test_fetch_amendement_with_mission_cp_only(self, lecture_an, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+
+        responses.add(
+            responses.GET,
+            build_url(lecture_an, 398),
+            body=read_sample_data("an/1255/398.xml"),
+            status=200,
+        )
+
+        amendement, created = source.fetch_amendement(
+            lecture=lecture_an, numero_prefixe="398", position=1
+        )
+
+        assert amendement.mission.titre == "Mission « Investissements d'avenir »"
+        assert amendement.mission.titre_court == "Investissements d'avenir"
+        assert_html_looks_like(
+            amendement.corps,
+            """
+            <p>Modifier ainsi les crédits de paiement :</p>
+            <table class="credits">
+                <caption>(en euros)</caption>
+                <thead>
+                    <tr>
+                        <th>Programmes</th>
+                        <th>+</th>
+                        <th>-</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>Soutien des progrès de l&#39;enseignement et de la recherche</td>
+                            <td>0</td>
+                            <td>70&#160;000&#160;000</td>
+                        </tr>
+                        <tr>
+                            <td>Valorisation de la recherche</td>
+                            <td>0</td>
+                            <td>206&#160;000&#160;000</td>
+                        </tr>
+                        <tr>
+                            <td>Accélération de la modernisation des entreprises</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Fonds dédié à la planification écologique (ligne nouvelle)</td>
+                            <td>276&#160;000&#160;000</td>
+                            <td>0</td>
+                        </tr>
+                    <tr>
+                        <td>Totaux</td>
+                        <td>276&#160;000&#160;000</td>
+                        <td>276&#160;000&#160;000</td>
+                    </tr>
+                    <tr>
+                        <td>Solde</td>
+                        <td colspan="2">0</td>
+                    </tr>
+                </tbody>
+            </table>
+            """,  # noqa
+        )
+
+    @responses.activate
     def test_fetch_sous_amendement(self, lecture_an, app, source):
         from zam_repondeur.fetch.an.amendements import build_url
 
@@ -779,3 +1040,25 @@ def test_parse_numero_long_with_rect(text, expected):
     from zam_repondeur.fetch.an.amendements import parse_numero_long_with_rect
 
     assert parse_numero_long_with_rect(text) == expected
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        (
+            "Mission « Outre-mer »",
+            MissionRef(titre="Mission « Outre-mer »", titre_court="Outre-mer"),
+        ),
+        (
+            "« Avances à l'audiovisuel public »",
+            MissionRef(
+                titre="« Avances à l'audiovisuel public »",
+                titre_court="Avances à l'audiovisuel public",
+            ),
+        ),
+    ],
+)
+def test_parse_mission_visee(text, expected):
+    from zam_repondeur.fetch.an.amendements import parse_mission_visee
+
+    assert parse_mission_visee(text) == expected

@@ -100,7 +100,7 @@ up-to-date lectures.
 ### Start the web app
 
 ```
-(zam)$ pserve development.ini --reload
+(zam)$ pserve --reload development.ini app=zam_webapp
 ```
 
 You can now access the web app at http://localhost:6543/

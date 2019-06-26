@@ -15,11 +15,14 @@ from zam_repondeur.models import (
     DBSession,
     Article,
     Amendement,
+    Mission,
     Lecture,
     get_one_or_create,
 )
 from zam_repondeur.models.division import SubDiv
+from zam_repondeur.templating import render_template
 
+from ..missions import MissionRef
 from .division import parse_avant_apres
 
 
@@ -199,11 +202,17 @@ class AssembleeNationale(RemoteSource):
             groupe = get_groupe(raw_auteur, amendement.num)
             auteur = get_auteur(raw_auteur)
 
+        mission_ref = get_mission_ref(amend)
+        if mission_ref is not None:
+            mission, _ = get_one_or_create(
+                Mission, titre=mission_ref.titre, titre_court=mission_ref.titre_court
+            )
+        else:
+            mission = None
+
         modified = False
         modified |= self.update_rectif(amendement, get_rectif(amend))
-        modified |= self.update_corps(
-            amendement, unjustify(get_str_or_none(amend, "dispositif") or "")
-        )
+        modified |= self.update_corps(amendement, get_corps(amend))
         modified |= self.update_expose(
             amendement, unjustify(get_str_or_none(amend, "exposeSommaire") or "")
         )
@@ -218,6 +227,7 @@ class AssembleeNationale(RemoteSource):
             matricule=matricule,
             groupe=groupe,
             auteur=auteur,
+            mission=mission,
         )
 
         DBSession.flush()  # make sure foreign keys are updated
@@ -482,6 +492,39 @@ def get_rectif(amendement: OrderedDict) -> int:
     return parse_numero_long_with_rect(numero_long)
 
 
+def get_corps(amendement: OrderedDict) -> str:
+    if "listeProgrammesAmdt" in amendement:
+        programmes = amendement["listeProgrammesAmdt"]["programmeAmdt"]
+        ae = [
+            (programme["aEPositifFormat"], programme["aENegatifFormat"])
+            for programme in programmes
+        ]
+        cp = [
+            (programme["cPPositifFormat"], programme["cPNegatifFormat"])
+            for programme in programmes
+        ]
+        return render_template(
+            "mission_table.html",
+            context={
+                "amendement": amendement,
+                "programmes": programmes,
+                "cp_only": all((plus, moins) == ("0", "0") for plus, moins in ae),
+                "ae_only": all((plus, moins) == ("0", "0") for plus, moins in cp),
+                "ae_cp_different": ae != cp,
+            },
+        )
+    return unjustify(get_str_or_none(amendement, "dispositif") or "")
+
+
+def get_mission_ref(amendement: OrderedDict) -> Optional[MissionRef]:
+    if "missionVisee" not in amendement:
+        return None
+    mission_visee = get_str_or_none(amendement, "missionVisee")
+    if mission_visee is None:
+        return None
+    return parse_mission_visee(mission_visee)
+
+
 RE_NUM_LONG = re.compile(
     r"""
     (?P<prefix>[A-Z]*)
@@ -497,6 +540,15 @@ def parse_numero_long_with_rect(text: str) -> int:
     if mo is not None and mo.group("rect"):
         return int(mo.group("rect_mult") or 1)
     return 0
+
+
+RE_MISSION_VISEE = re.compile(r"""(Mission )?« (?P<titre_court>.*) »""")
+
+
+def parse_mission_visee(mission_visee: str) -> MissionRef:
+    mo = RE_MISSION_VISEE.match(mission_visee)
+    titre_court = mo.group("titre_court") if mo is not None else mission_visee
+    return MissionRef(titre=mission_visee, titre_court=titre_court)
 
 
 def get_str_or_none(amendement: OrderedDict, key: str) -> Optional[str]:

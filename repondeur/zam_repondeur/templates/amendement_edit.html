@@ -56,6 +56,39 @@
         form#transfer a {
             margin-right: 3rem;
         }
+        .corps table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 3rem;
+        }
+          .corps table td,
+          .corps table th {
+            padding: .6rem 1rem;
+            border: 1px solid #565656;
+          }
+        .corps table.credits caption {
+            caption-side: top;
+            text-align: right;
+            padding-bottom: 0;
+        }
+        .corps table.credits th {
+            text-align: center;
+        }
+            .corps table.credits th:first-child {
+                text-align: left;
+            }
+        .corps table.credits td {
+            text-align: right;
+        }
+            .corps table.credits td:first-child {
+                text-align: left;
+            }
+        .corps table.credits tr:last-child {
+            font-weight: bold;
+        }
+            .corps table.credits tr:last-child td:last-child {
+                text-align: center;
+            }
         {% if amendement.batch %}
             .box,
             .box.edit {
@@ -184,6 +217,11 @@
                     {% else %}
                         <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" target="_blank">{{ amendement.article.format() }}</a>
                     {% endif %}
+                </p>
+            {% endif %}
+            {% if amendement.mission and amendement.mission.titre %}
+                <p>
+                    {{ amendement.mission.titre }}
                 </p>
             {% endif %}
             {% if amendement.auteur %}

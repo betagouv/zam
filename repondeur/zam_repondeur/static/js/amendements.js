@@ -59,6 +59,15 @@ application.register(
       )
     }
 
+    fromSameMission(checkeds) {
+      const missionFromChecked = item =>
+        item.closest('tr').dataset.mission
+      const firstMissionChecked = missionFromChecked(checkeds[0])
+      return checkeds.every(
+        checked => missionFromChecked(checked) === firstMissionChecked
+      )
+    }
+
     toggleGroupActions() {
       const checkeds = Array.from(this.checkboxes).filter(box => box.checked)
       const checkedsLength = checkeds.length
@@ -68,7 +77,7 @@ application.register(
         if (checkedsLength >= 2) {
           this.batchAmendementsLink.classList.toggle(
             'd-none',
-            !this.fromSameArticle(checkeds)
+            !(this.fromSameArticle(checkeds) && this.fromSameMission(checkeds))
           )
         }
       }
@@ -144,6 +153,7 @@ class AmendementsFilters extends Stimulus.Controller {
       'table',
       'tbody',
       'articleInput',
+      'missionInput',
       'amendementInput',
       'gouvernementalCheckbox',
       'gouvernementalLabel',
@@ -159,6 +169,12 @@ class AmendementsFilters extends Stimulus.Controller {
       this.toggle()
       this.articleInputTarget.value = articleFilter
       this.filterByArticle(articleFilter)
+    }
+    const missionFilter = this.getURLParam('mission')
+    if (missionFilter !== '' && this.hasMissionInputTarget) {
+      this.toggle()
+      this.missionInputTarget.value = missionFilter
+      this.filterByMission(missionFilter)
     }
     const amendementFilter = this.getURLParam('amendement')
     if (amendementFilter !== '') {
@@ -246,6 +262,13 @@ class AmendementsFilters extends Stimulus.Controller {
     this.updateCount()
   }
 
+  filterMission(event) {
+    const value = event.target.value.trim()
+    this.filterByMission(value)
+    this.setURLParam('mission', value)
+    this.updateCount()
+  }
+
   filterAmendement(event) {
     const value = event.target.value.trim()
     this.filterByAmendement(value)
@@ -293,6 +316,15 @@ class AmendementsFilters extends Stimulus.Controller {
       } else {
         return line.dataset.article.trim() === value
       }
+    })
+  }
+
+  filterByMission(value) {
+    this.filterColumn('hidden-mission', line => {
+      if (!value) {
+        return true
+      }
+      return line.dataset.mission.startsWith(value.toLowerCase())
     })
   }
 

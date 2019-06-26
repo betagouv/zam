@@ -145,6 +145,50 @@ def lecture_plf2018_an_premiere_lecture_seance_publique_2(
 
 
 @pytest.fixture
+def article1_plf2018_an_premiere_lecture_seance_publique_2(
+    db, lecture_plf2018_an_premiere_lecture_seance_publique_2
+):
+    from zam_repondeur.models import Article
+
+    with transaction.manager:
+        article = Article.create(
+            lecture=lecture_plf2018_an_premiere_lecture_seance_publique_2,
+            type="article",
+            num="1",
+        )
+
+    return article
+
+
+@pytest.fixture
+def amendements_plf2018_an_premiere_lecture_seance_publique_2(
+    db,
+    lecture_plf2018_an_premiere_lecture_seance_publique_2,
+    article1_plf2018_an_premiere_lecture_seance_publique_2,
+):
+    from zam_repondeur.models import Amendement, Mission, DBSession
+
+    with transaction.manager:
+        mission = Mission.create(
+            titre="Mission Action et transformation publiques",
+            titre_court="Action transfo.",
+        )
+        amendements = [
+            Amendement.create(
+                lecture=lecture_plf2018_an_premiere_lecture_seance_publique_2,
+                article=article1_plf2018_an_premiere_lecture_seance_publique_2,
+                num=num,
+                position=position,
+                mission=mission,
+            )
+            for position, num in enumerate((111, 333), 1)
+        ]
+
+    DBSession.add_all(amendements)
+    return amendements
+
+
+@pytest.fixture
 def texte_plf2018_senat_premiere_lecture(db):
     from zam_repondeur.models import Chambre, Texte, TypeTexte
 

@@ -267,5 +267,7 @@ class TableResource(Resource):
         except NoResultFound:
             raise ResourceNotFound
 
-    def model(self) -> UserTable:
-        return self.owner.table_for(lecture=self.lecture_resource.model())
+    def model(self, options: Any = None) -> UserTable:
+        return self.owner.table_for(
+            lecture=self.lecture_resource.model(), options=options
+        )

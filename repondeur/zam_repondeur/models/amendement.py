@@ -156,6 +156,28 @@ class Reponse(NamedTuple):
         )
 
 
+class Mission(Base):
+    __tablename__ = "missions"
+
+    pk: int = Column(Integer, primary_key=True)
+    titre: Optional[str] = Column(Text, nullable=True)
+    titre_court: Optional[str] = Column(Text, nullable=True)
+
+    amendements: List["Amendement"] = relationship(
+        "Amendement", back_populates="mission", cascade="all, delete-orphan"
+    )
+
+    __repr_keys__ = ("pk", "titre", "titre_court")
+
+    @classmethod
+    def create(
+        cls, titre: Optional[str] = None, titre_court: Optional[str] = None
+    ) -> "Mission":
+        mission = cls(titre=titre, titre_court=titre_court)
+        DBSession.add(mission)
+        return mission
+
+
 class AmendementUserContent(Base):
     __tablename__ = "amendement_user_contents"
 
@@ -270,6 +292,9 @@ class Amendement(Base):
     article_pk: int = Column(Integer, ForeignKey("articles.pk"))
     article: "Article" = relationship("Article", back_populates="amendements")
 
+    mission_pk: int = Column(Integer, ForeignKey("missions.pk"), nullable=True)
+    mission: "Optional[Mission]" = relationship("Mission", back_populates="amendements")
+
     user_table_pk: int = Column(Integer, ForeignKey("user_tables.pk"), nullable=True)
     user_table: "Optional[UserTable]" = relationship(
         "UserTable", back_populates="amendements"
@@ -323,6 +348,7 @@ class Amendement(Base):
         alinea: Optional[str] = None,
         parent: Optional["Amendement"] = None,
         batch: Optional[Batch] = None,
+        mission: Optional["Mission"] = None,
         avis: Optional[str] = None,
         objet: Optional[str] = None,
         reponse: Optional[str] = None,
@@ -348,6 +374,7 @@ class Amendement(Base):
             alinea=alinea,
             parent=parent,
             batch=batch,
+            mission=mission,
             created_at=now,
         )
         user_content = AmendementUserContent(

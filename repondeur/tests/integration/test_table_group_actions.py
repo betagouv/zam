@@ -70,7 +70,7 @@ def test_batch_amendements_are_visible_with_at_least_two_selections(
     assert batch_amendements.is_displayed()
 
 
-def test_batch_amendements_are_visible_with_at_least_two_selections_if_same_article(
+def test_batch_amendements_is_hidden_when_selected_amendements_have_different_articles(
     wsgi_server, driver, lecture_an, article7bis_an, amendements_an
 ):
     from zam_repondeur.models import Amendement, DBSession, User
@@ -80,6 +80,39 @@ def test_batch_amendements_are_visible_with_at_least_two_selections_if_same_arti
         amendement = Amendement.create(
             lecture=lecture_an, article=article7bis_an, num=777
         )
+        user = DBSession.query(User).filter(User.email == email).first()
+        table = user.table_for(lecture_an)
+        table.amendements.append(amendements_an[0])
+        table.amendements.append(amendements_an[1])
+        table.amendements.append(amendement)
+
+    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    driver.get(f"{LECTURE_URL}/tables/{email}")
+    checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
+    checkboxes[0].click()
+    checkboxes[1].click()
+    checkboxes[2].click()
+    group_actions = driver.find_element_by_css_selector(".groupActions")
+    assert group_actions.is_displayed()
+    batch_amendements = driver.find_element_by_css_selector("#batch-amendements")
+    assert not batch_amendements.is_displayed()
+
+
+def test_batch_amendements_is_hidden_when_selected_amendements_have_different_missions(
+    wsgi_server, driver, lecture_an, article1_an, amendements_an
+):
+    from zam_repondeur.models import Amendement, DBSession, Mission, User
+
+    email = "user@example.com"
+    with transaction.manager:
+        mission1 = Mission.create(titre="Mission 1")
+        amendements_an[0].mission = amendements_an[1].mission = mission1
+
+        mission2 = Mission.create(titre="Mission 2")
+        amendement = Amendement.create(
+            lecture=lecture_an, article=article1_an, mission=mission2, num=777
+        )
+
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])

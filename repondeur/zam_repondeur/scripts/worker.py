@@ -1,51 +1,40 @@
 import logging
-import os
 import sys
-from typing import List
+from argparse import ArgumentParser, Namespace
+from typing import Any, Dict, List
 
 from huey import RedisHuey
-from pyramid.paster import get_appsettings, setup_logging
+from pyramid.paster import bootstrap, setup_logging
 from redis.exceptions import ConnectionError
-from sqlalchemy import engine_from_config
 
-from zam_repondeur import BASE_SETTINGS
-from zam_repondeur.data import init_repository, repository
 from zam_repondeur.errors import extract_settings, setup_rollbar_log_handler
-from zam_repondeur.models import DBSession
 from zam_repondeur.tasks.huey import init_huey
 
 
 logger = logging.getLogger(__name__)
 
 
-def usage(argv: List[str]) -> None:
-    cmd = os.path.basename(argv[0])
-    print("usage: %s <config_uri>\n" '(example: "%s development.ini")' % (cmd, cmd))
-    sys.exit(1)
-
-
 def main(argv: List[str] = sys.argv) -> None:
-    if len(argv) != 2:
-        usage(argv)
-    config_uri = argv[1]
 
-    setup_logging(config_uri)
+    args = parse_args(argv[1:])
 
-    settings = get_appsettings(config_uri)
-    settings = {**BASE_SETTINGS, **settings}
+    setup_logging(args.config_uri)
 
-    rollbar_settings = extract_settings(settings, prefix="rollbar.")
-    if "access_token" in rollbar_settings and "environment" in rollbar_settings:
-        setup_rollbar_log_handler(rollbar_settings)
+    options = {"app": "zam_worker"}
 
-    engine = engine_from_config(
-        settings, "sqlalchemy.", connect_args={"application_name": "zam_worker"}
-    )
+    with bootstrap(args.config_uri, options=options) as env:
+        settings = env["registry"].settings
 
-    DBSession.configure(bind=engine)
+        rollbar_settings = extract_settings(settings, prefix="rollbar.")
+        if "access_token" in rollbar_settings and "environment" in rollbar_settings:
+            setup_rollbar_log_handler(rollbar_settings)
 
-    init_repository(settings)
-    repository.load_data()
+        start_huey(args.config_uri, options, settings)
+
+
+def start_huey(
+    config_uri: str, options: Dict[str, str], settings: Dict[str, Any]
+) -> None:
 
     huey = init_huey(settings)
 
@@ -58,6 +47,10 @@ def main(argv: List[str] = sys.argv) -> None:
         logger.exception("Failed to connect to Redis")
         sys.exit(1)
 
+    @huey.on_startup()
+    def startup_hook() -> None:
+        bootstrap(config_uri, options=options)
+
     consumer = huey.create_consumer(
         worker_type="thread",
         workers=int(settings["huey.workers"]),
@@ -65,6 +58,12 @@ def main(argv: List[str] = sys.argv) -> None:
         flush_locks=True,
     )
     consumer.run()
+
+
+def parse_args(argv: List[str]) -> Namespace:
+    parser = ArgumentParser()
+    parser.add_argument("config_uri")
+    return parser.parse_args(argv)
 
 
 def flush_stale_locks(huey: RedisHuey) -> None:

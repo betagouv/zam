@@ -1,22 +1,14 @@
 import logging
-import os
 import sys
 from argparse import ArgumentParser, Namespace
 from typing import List
 
-from pyramid.paster import get_appsettings, setup_logging
+from pyramid.paster import bootstrap, setup_logging
 
-from zam_repondeur import BASE_SETTINGS
-from zam_repondeur.data import init_repository, repository
+from zam_repondeur.data import repository
 
 
 logger = logging.getLogger(__name__)
-
-
-def usage(argv: List[str]) -> None:
-    cmd = os.path.basename(argv[0])
-    print("usage: %s <config_uri>\n" '(example: "%s development.ini")' % (cmd, cmd))
-    sys.exit(1)
 
 
 def main(argv: List[str] = sys.argv) -> None:
@@ -28,11 +20,8 @@ def main(argv: List[str] = sys.argv) -> None:
     logging.getLogger().setLevel(logging.WARNING)
     logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
-    settings = get_appsettings(args.config_uri)
-    settings = {**BASE_SETTINGS, **settings}
-
-    init_repository(settings)
-    repository.load_data()
+    with bootstrap(args.config_uri, options={"app": "zam_load_data"}):
+        repository.load_data()
 
 
 def parse_args(argv: List[str]) -> Namespace:

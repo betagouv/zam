@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import List, Optional, TYPE_CHECKING
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, Text, func
-from sqlalchemy.orm import relationship, backref, joinedload
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy_utils import EmailType
 
 from zam_repondeur.users import repository as users_repository
@@ -110,16 +110,13 @@ class User(Base):
         elapsed = (datetime.utcnow() - self.last_activity).total_seconds()
         return elapsed < self.INACTIVE_AFTER * 60
 
-    def table_for(self, lecture: "Lecture") -> "UserTable":
+    def table_for(self, lecture: "Lecture", options: Any = None) -> "UserTable":
         from . import get_one_or_create
         from .table import UserTable
 
         table: UserTable
         table, _ = get_one_or_create(
-            UserTable,
-            user=self,
-            lecture=lecture,
-            options=joinedload("amendements").joinedload("article"),
+            UserTable, user=self, lecture=lecture, options=options
         )
         return table
 

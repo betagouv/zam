@@ -42,7 +42,7 @@ jobs:
           name: Check Python deps conflicts
           command: |
             cd repondeur
-            python -c "from paste.deploy.loadwsgi import appconfig ; appconfig('config:development.ini', relative_to='.')"
+            python -c "from paste.deploy.loadwsgi import appconfig ; appconfig('config:development.ini', relative_to='.', global_conf={'app': 'test'})"
       - run:
           name: Check formatting with black
           command: |

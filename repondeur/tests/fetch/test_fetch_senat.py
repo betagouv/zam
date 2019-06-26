@@ -123,6 +123,8 @@ def test_aspire_senat(app, lecture_senat):
     assert amendement.article.num == "7"
     assert amendement.article.pos == "après"
     assert amendement.parent is None
+    # Missions are not set if not PLF
+    assert amendement.mission is None
 
     events = sorted(amendement.events, key=attrgetter("created_at"), reverse=True)
 
@@ -355,6 +357,9 @@ def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie):
     # All amendements from part 1 are fetched
     assert len(amendements) == 1005
 
+    # Missions are not set on first part
+    assert amendements[0].mission is None
+
 
 @responses.activate
 def test_aspire_senat_plf2019_2e_partie(app, lecture_plf_2e_partie):
@@ -416,6 +421,19 @@ def test_aspire_senat_plf2019_2e_partie(app, lecture_plf_2e_partie):
     # Positions are unique
     positions = [amdt.position for amdt in amendements if amdt.position is not None]
     assert len(set(positions)) == len(positions) == 12
+
+    # Missions are filled
+    assert (
+        amendements[0].mission.titre
+        == "Budget annexe - Contrôle et exploitation aériens"
+    )
+    assert (
+        amendements[1].mission.titre
+        == "Budget annexe - Contrôle et exploitation aériens"
+    )
+    assert amendements[0].mission.titre_court == "Contrôle et exploitation aériens"
+    assert amendements[1].mission.titre_court == "Contrôle et exploitation aériens"
+    assert amendements[2].mission is None
 
 
 @responses.activate
@@ -595,7 +613,7 @@ def test_fetch_discussion_details(dossier_plfss2018):
     data = list(_fetch_discussion_details(lecture))
 
     assert len(data) == 1
-    assert data[0] == json_data
+    assert data[0][0] == json_data
 
 
 @responses.activate
@@ -690,25 +708,33 @@ def test_fetch_and_parse_discussion_details_parent_missing(lecture_senat, caplog
     assert f"Unknown parent amendement 1234" in [rec.message for rec in caplog.records]
 
 
-def test_derouleur_urls(lecture_senat):
-    from zam_repondeur.fetch.senat.derouleur import derouleur_urls
+def test_derouleur_urls_and_mission_refs(lecture_senat):
+    from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_mission_refs
+    from zam_repondeur.fetch.missions import MissionRef
     from zam_repondeur.models import DBSession
 
-    assert list(derouleur_urls(lecture_senat)) == [
-        "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json"
+    assert list(derouleur_urls_and_mission_refs(lecture_senat)) == [
+        (
+            "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json",
+            MissionRef(titre="", titre_court=""),
+        )
     ]
 
     with transaction.manager:
         lecture_senat.organe = "PO744107"
         DBSession.add(lecture_senat)
 
-    assert list(derouleur_urls(lecture_senat)) == [
-        "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json"
+    assert list(derouleur_urls_and_mission_refs(lecture_senat)) == [
+        (
+            "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json",
+            MissionRef(titre="", titre_court=""),
+        )
     ]
 
 
-def test_derouleur_urls_plf2019_1re_partie(dossier_plf, texte_plf):
-    from zam_repondeur.fetch.senat.derouleur import derouleur_urls
+def test_derouleur_urls_and_mission_refs_plf2019_1re_partie(dossier_plf, texte_plf):
+    from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_mission_refs
+    from zam_repondeur.fetch.missions import MissionRef
     from zam_repondeur.models import Lecture
 
     lecture = Lecture.create(
@@ -719,13 +745,17 @@ def test_derouleur_urls_plf2019_1re_partie(dossier_plf, texte_plf):
         dossier=dossier_plf,
     )
 
-    assert list(derouleur_urls(lecture)) == [
-        "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103393.json"
+    assert list(derouleur_urls_and_mission_refs(lecture)) == [
+        (
+            "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103393.json",
+            MissionRef(titre="", titre_court=""),
+        )
     ]
 
 
-def test_derouleur_urls_plf2019_2e_partie(dossier_plf, texte_plf):
-    from zam_repondeur.fetch.senat.derouleur import derouleur_urls
+def test_derouleur_urls_and_mission_refs_plf2019_2e_partie(dossier_plf, texte_plf):
+    from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_mission_refs
+    from zam_repondeur.fetch.missions import MissionRef
     from zam_repondeur.models import Lecture
 
     lecture = Lecture.create(
@@ -736,15 +766,24 @@ def test_derouleur_urls_plf2019_2e_partie(dossier_plf, texte_plf):
         dossier=dossier_plf,
     )
 
-    urls = list(derouleur_urls(lecture))
-    assert len(urls) > 1
-    assert (
-        urls[0]
-        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103427.json"
+    urls = list(derouleur_urls_and_mission_refs(lecture))
+    assert len(urls) == 52
+    assert urls[0] == (
+        "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103414.json",
+        MissionRef(
+            titre="Mission Action et transformation publiques",
+            titre_court="Action transfo.",
+        ),
     )
-    assert (
-        urls[-1]
-        == "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103394.json"
+    assert urls[1] == (
+        "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103415.json",
+        MissionRef(
+            titre="Mission Action extérieure de l'État", titre_court="Action ext."
+        ),
+    )
+    assert urls[-1] == (
+        "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103394.json",
+        MissionRef(titre="", titre_court=""),
     )
 
 

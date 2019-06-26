@@ -15,7 +15,7 @@ from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import parse_subdiv
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.fetch.senat.senateurs import fetch_and_parse_senateurs, Senateur
-from zam_repondeur.models import Amendement, Lecture
+from zam_repondeur.models import Amendement, Lecture, Mission, get_one_or_create
 
 from .derouleur import DiscussionDetails, fetch_and_parse_discussion_details
 
@@ -138,12 +138,22 @@ class Senat(RemoteSource):
             )
         else:
             parent = None
+
+        mission_ref = discussion_details.mission_ref
+        if mission_ref:
+            mission, _ = get_one_or_create(
+                Mission, titre=mission_ref.titre, titre_court=mission_ref.titre_court
+            )
+        else:
+            mission = None
+
         self.update_attributes(
             amendement,
             position=discussion_details.position,
             id_discussion_commune=discussion_details.id_discussion_commune,
             id_identique=discussion_details.id_identique,
             parent=parent,
+            mission=mission,
         )
 
     def _enrich_groupe_parlementaire(

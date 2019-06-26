@@ -277,7 +277,7 @@ class TransferAmendements:
     @view_config(request_method="GET")
     def get(self) -> dict:
         from_save = bool(self.request.GET.get("from_save"))
-        lecture = self.context.model(joinedload("amendements"))
+        lecture = self.context.model()  # PERFS: do not joinedload("amendements").
         my_table = self.request.user.table_for(lecture)
         amendements = [
             amendement
@@ -348,6 +348,7 @@ class BatchAmendements:
         self.check_amendements_are_all_on_my_table(amendements)
         self.check_amendements_have_all_same_reponse_or_empty(amendements)
         self.check_amendements_are_all_from_same_article(amendements)
+        self.check_amendements_are_all_from_same_mission(amendements)
 
         return {
             "lecture": self.lecture,
@@ -470,6 +471,23 @@ class BatchAmendements:
 
         message = (
             "Tous les amendements doivent être relatifs au même article "
+            "pour pouvoir être associés."
+        )
+        self.request.session.flash(Message(cls="danger", text=message))
+        raise HTTPFound(location=self.my_table_url)
+
+    def check_amendements_are_all_from_same_mission(
+        self, amendements: List[Amendement]
+    ) -> None:
+        first_mission = amendements[0].mission
+        are_all_from_same_mission = all(
+            amdt.mission is first_mission for amdt in amendements
+        )
+        if are_all_from_same_mission:
+            return
+
+        message = (
+            "Tous les amendements doivent être relatifs à la même mission "
             "pour pouvoir être associés."
         )
         self.request.session.flash(Message(cls="danger", text=message))

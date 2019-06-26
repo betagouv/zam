@@ -4,10 +4,10 @@ from typing import Generator, Iterable
 
 import pdfkit
 from pyramid.request import Request
-from pyramid_jinja2 import get_jinja2_environment
 from xvfbwrapper import Xvfb
 
 from zam_repondeur.models import Amendement, Lecture
+from zam_repondeur.templating import render_template
 
 
 # Command-line options for wkhtmltopdf
@@ -34,10 +34,7 @@ def xvfb_if_supported() -> Generator:
 
 def generate_html_for_pdf(request: Request, template_name: str, context: dict) -> str:
     """Mostly useful for testing purpose."""
-    env = get_jinja2_environment(request, name=".html")
-    template = env.get_template(template_name)
-    content: str = template.render(**context)
-    return content
+    return render_template(template_name, context, registry=request.registry)
 
 
 def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:

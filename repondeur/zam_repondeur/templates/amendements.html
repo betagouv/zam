@@ -74,6 +74,15 @@
                         data-action="keyup->amendements-filters#filterArticle"
                         data-target="amendements-filters.articleInput">
                 </th>
+                {% if lecture.has_missions %}
+                    <th class="mission-header">
+                        Mission
+                        <input type="text" class="form-control form-control-sm"
+                            autocomplete="off" autocorrect="off"
+                            data-action="keyup->amendements-filters#filterMission"
+                            data-target="amendements-filters.missionInput">
+                    </th>
+                {% endif %}
                 <th class="amendement-header">
                     Nº
                     <input type="text" class="form-control form-control-sm"
@@ -126,6 +135,9 @@
                         {{ amendement.article.type }}
                     {%- endif -%}
                 "
+                {% if lecture.has_missions %}
+                    data-mission="{{ amendement.mission and amendement.mission.titre_court.lower() }}"
+                {% endif %}
                 data-order="{{ loop.index }}"
                 data-amendement="
                 {%- if amendement.batch -%}
@@ -167,6 +179,15 @@
                     {% endif %}
                     {{ amendement.article }}
                 </td>
+                {% if lecture.has_missions %}
+                    <td class="mission">
+                        {% if amendement.mission %}
+                            <abbr title="{{ amendement.mission.titre }}">
+                                {{ amendement.mission.titre_court }}
+                            </abbr>
+                        {% endif %}
+                    </td>
+                {% endif %}
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }} {# Keep at the end. #}

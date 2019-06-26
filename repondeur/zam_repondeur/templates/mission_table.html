@@ -1,0 +1,47 @@
+{% macro render_table(amendement, programmes, type_credits) -%}
+<table class="credits">
+    <caption>(en euros)</caption>
+    <thead>
+        <tr>
+            <th>Programmes</th>
+            <th>+</th>
+            <th>-</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%- for programme in programmes -%}
+            {% set nouveau = programme.programmeAmdtNouveau == "true" %}
+            <tr>
+                <td>{{ programme.libelleProgrammeAmdt }}{% if nouveau %} (ligne nouvelle){% endif %}</td>
+                <td>{{ programme[type_credits + "PositifFormat"]|safe }}</td>
+                <td>{{ programme[type_credits + "NegatifFormat"]|safe }}</td>
+            </tr>
+        {%- endfor %}
+        <tr>
+            <td>Totaux</td>
+            <td>{{ amendement["total" + type_credits.upper() + "PositifFormat"]|safe }}</td>
+            <td>{{ amendement["total" + type_credits.upper() + "NegatifFormat"]|safe }}</td>
+        </tr>
+        <tr>
+            <td>Solde</td>
+            <td colspan="2">{{ amendement["solde" + type_credits.upper() + "Format"]|safe }}</td>
+        </tr>
+    </tbody>
+</table>
+{%- endmacro %}
+
+{%- if cp_only -%}
+<p>Modifier ainsi les crédits de paiement :</p>
+{{ render_table(amendement, programmes, "cP") }}
+{% elif ae_only -%}
+<p>Modifier ainsi les autorisations d’engagement :</p>
+{{ render_table(amendement, programmes, "aE") }}
+{% elif ae_cp_different -%}
+<p>I. Modifier ainsi les autorisations d’engagement :</p>
+{{ render_table(amendement, programmes, "aE") }}
+<p>II. Modifier ainsi les crédits de paiement :</p>
+{{ render_table(amendement, programmes, "cP") }}
+{% else -%}
+<p>Modifier ainsi les autorisations d’engagement et les crédits de paiement :</p>
+{{ render_table(amendement, programmes, "aE") }}
+{% endif %}

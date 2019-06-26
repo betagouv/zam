@@ -26,7 +26,7 @@ rollbar.environment = $$environment
 rollbar.branch = $$branch
 rollbar.root = %(here)s
 
-sqlalchemy.url = $$db_url
+sqlalchemy.url = $$db_url?application_name=%(app)s
 
 zam.tasks.redis_url = redis://localhost:6379/1
 zam.data.redis_url = redis://localhost:6379/2
@@ -48,7 +48,7 @@ timeout = $$gunicorn_timeout
 
 [alembic]
 script_location = db_migrations
-sqlalchemy.url = $$db_url
+sqlalchemy.url = $$db_url?application_name=alembic
 
 
 ###

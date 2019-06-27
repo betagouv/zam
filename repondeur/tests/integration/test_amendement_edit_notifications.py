@@ -13,7 +13,9 @@ def test_amendement_edit_notification_on_amendement_transfer(
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
-        user = DBSession.query(User).filter(User.email == "user@example.com").first()
+        user = (
+            DBSession.query(User).filter(User.email == "user@exemple.gouv.fr").first()
+        )
         table = user.table_for(lecture_an)
         DBSession.add(table)
         table.amendements.append(amendements_an[0])

@@ -13,21 +13,21 @@ def team_zam(db):
 def user_david(db, team_zam):
     from zam_repondeur.models import User
 
-    return User.create(name="David", email="david@example.com")
+    return User.create(name="David", email="david@exemple.gouv.fr")
 
 
 @pytest.fixture
 def user_ronan(db):
     from zam_repondeur.models import User
 
-    return User.create(name="Ronan", email="ronan@example.com")
+    return User.create(name="Ronan", email="ronan@exemple.gouv.fr")
 
 
 @pytest.fixture
 def user_daniel(db):
     from zam_repondeur.models import User
 
-    return User.create(name="Daniel", email="daniel@example.com")
+    return User.create(name="Daniel", email="daniel@exemple.gouv.fr")
 
 
 @pytest.fixture

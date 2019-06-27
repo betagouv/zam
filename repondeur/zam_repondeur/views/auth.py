@@ -36,6 +36,10 @@ class UserLogin:
             self.request.session["incorrect_email"] = True
             return HTTPFound(location=self.request.route_url("user_login"))
 
+        if not User.validate_email_domain(email):
+            self.request.session["incorrect_domain"] = True
+            return HTTPFound(location=self.request.route_url("user_login"))
+
         user, created = get_one_or_create(User, email=email)
 
         # Automatically add user without a team to the authenticated team

@@ -12,7 +12,9 @@ def test_amendement_edition_start_editing_status(
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     amendement = amendements_an[0]
     with transaction.manager:
-        user = DBSession.query(User).filter(User.email == "user@example.com").first()
+        user = (
+            DBSession.query(User).filter(User.email == "user@exemple.gouv.fr").first()
+        )
         table = user.table_for(lecture_an)
         DBSession.add(table)
         table.amendements.append(amendement)
@@ -36,7 +38,9 @@ def test_amendement_edition_exit_stop_editing_status(
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     amendement = amendements_an[0]
     with transaction.manager:
-        user = DBSession.query(User).filter(User.email == "user@example.com").first()
+        user = (
+            DBSession.query(User).filter(User.email == "user@exemple.gouv.fr").first()
+        )
         table = user.table_for(lecture_an)
         DBSession.add(table)
         table.amendements.append(amendement)

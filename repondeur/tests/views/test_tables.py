@@ -144,7 +144,10 @@ def test_tables_grab_amendement(
     assert_amendement_is_on_table_for(amendement, user_david)
     assert_amendement_has_event_with_summary(
         amendement,
-        "<abbr title='david@example.com'>David</abbr> a mis l’amendement sur sa table.",
+        (
+            "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+            "a mis l’amendement sur sa table."
+        ),
     )
 
 
@@ -173,7 +176,10 @@ def test_tables_grab_amendements(
     assert_amendements_are_on_table_for(amendements, user_david)
     assert_amendements_have_event_with_summary(
         amendements,
-        "<abbr title='david@example.com'>David</abbr> a mis l’amendement sur sa table.",
+        (
+            "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+            "a mis l’amendement sur sa table."
+        ),
     )
 
 
@@ -204,7 +210,7 @@ def test_tables_release_amendement(
     assert_amendement_is_on_the_index(amendement)
     assert_amendement_has_event_with_summary(
         amendement,
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a remis l’amendement dans l’index.",
     )
 
@@ -234,7 +240,7 @@ def test_tables_release_amendements(
     assert_amendements_are_on_the_index(amendements)
     assert_amendements_have_event_with_summary(
         amendements,
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a remis l’amendement dans l’index.",
     )
 
@@ -280,8 +286,8 @@ class TestTransfer:
         assert_amendement_is_on_table_for(amendement, user_ronan)
         assert_amendement_has_event_with_summary(
             amendement,
-            "<abbr title='david@example.com'>David</abbr> "
-            "a transféré l’amendement à « Ronan (ronan@example.com) ».",
+            "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+            "a transféré l’amendement à « Ronan (ronan@exemple.gouv.fr) ».",
         )
 
     def test_transfer_one_amendement_to_myself_is_a_no_op(
@@ -368,8 +374,8 @@ class TestTransfer:
         assert_amendements_are_on_table_for(amendements, user_ronan)
         assert_amendements_have_event_with_summary(
             amendements,
-            "<abbr title='david@example.com'>David</abbr> "
-            "a transféré l’amendement à « Ronan (ronan@example.com) ».",
+            "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+            "a transféré l’amendement à « Ronan (ronan@exemple.gouv.fr) ».",
         )
 
 
@@ -400,8 +406,9 @@ def test_tables_steal_amendement(
     assert_amendement_is_on_table_for(amendement, user_ronan)
     assert_amendement_has_event_with_summary(
         amendement,
-        "<abbr title='ronan@example.com'>Ronan</abbr> "
-        "a transféré l’amendement de « David (david@example.com) » à lui/elle-même.",
+        "<abbr title='ronan@exemple.gouv.fr'>Ronan</abbr> "
+        "a transféré l’amendement de « David (david@exemple.gouv.fr) » "
+        "à lui/elle-même.",
     )
 
 
@@ -453,8 +460,9 @@ def test_tables_steal_amendements(
     assert_amendements_are_on_table_for(amendements, user_ronan)
     assert_amendements_have_event_with_summary(
         amendements,
-        "<abbr title='ronan@example.com'>Ronan</abbr> "
-        "a transféré l’amendement de « David (david@example.com) » à lui/elle-même.",
+        "<abbr title='ronan@exemple.gouv.fr'>Ronan</abbr> "
+        "a transféré l’amendement de « David (david@exemple.gouv.fr) » "
+        "à lui/elle-même.",
     )
 
 

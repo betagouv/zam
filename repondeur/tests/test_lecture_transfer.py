@@ -49,8 +49,8 @@ def test_lecture_get_transfer_amendements(
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
-        ("david@example.com", False, "Moi — David (david@example.com)"),
-        ("ronan@example.com", False, "Ronan (ronan@example.com)"),
+        ("david@exemple.gouv.fr", False, "Moi — David (david@exemple.gouv.fr)"),
+        ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
 
 
@@ -73,8 +73,8 @@ def test_lecture_get_transfer_amendements_from_index(
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
-        ("david@example.com", False, "Moi — David (david@example.com)"),
-        ("ronan@example.com", False, "Ronan (ronan@example.com)"),
+        ("david@exemple.gouv.fr", False, "Moi — David (david@exemple.gouv.fr)"),
+        ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
     assert resp.form.fields["from_index"][0].value == "1"
 
@@ -111,7 +111,7 @@ def test_lecture_get_transfer_amendements_from_me(
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
-        ("ronan@example.com", False, "Ronan (ronan@example.com)"),
+        ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
 
 
@@ -146,8 +146,8 @@ def test_lecture_get_transfer_amendements_including_me(
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
-        ("david@example.com", False, "Moi — David (david@example.com)"),
-        ("ronan@example.com", False, "Ronan (ronan@example.com)"),
+        ("david@exemple.gouv.fr", False, "Moi — David (david@exemple.gouv.fr)"),
+        ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
 
 
@@ -183,7 +183,7 @@ def test_lecture_get_transfer_amendements_from_me_from_save(
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
-        ("ronan@example.com", False, "Ronan (ronan@example.com)"),
+        ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
 
 
@@ -204,7 +204,8 @@ def test_lecture_get_transfer_amendements_from_other(
     )
     assert resp.status_code == 200
     assert (
-        "Ronan (ronan@example.com)" in resp.parser.css_first(".amendements li").text()
+        "Ronan (ronan@exemple.gouv.fr)"
+        in resp.parser.css_first(".amendements li").text()
     )
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
     assert (
@@ -222,8 +223,8 @@ def test_lecture_get_transfer_amendements_from_other(
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
-        ("david@example.com", False, "Moi — David (david@example.com)"),
-        ("ronan@example.com", False, "Ronan (ronan@example.com)"),
+        ("david@exemple.gouv.fr", False, "Moi — David (david@exemple.gouv.fr)"),
+        ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
 
 
@@ -245,7 +246,8 @@ def test_lecture_get_transfer_amendements_from_other_active(
     )
     assert resp.status_code == 200
     assert (
-        "Ronan (ronan@example.com)" in resp.parser.css_first(".amendements li").text()
+        "Ronan (ronan@exemple.gouv.fr)"
+        in resp.parser.css_first(".amendements li").text()
     )
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
     assert (
@@ -272,7 +274,8 @@ def test_lecture_get_transfer_amendements_from_edited_amendement(
     )
     assert resp.status_code == 200
     assert (
-        "Ronan (ronan@example.com)" in resp.parser.css_first(".amendements li").text()
+        "Ronan (ronan@exemple.gouv.fr)"
+        in resp.parser.css_first(".amendements li").text()
     )
     assert "checked" not in resp.parser.css_first(".amendements li input").attributes
     assert (
@@ -317,7 +320,7 @@ def test_lecture_post_transfer_amendements_to_me(
     # An event was added to the amendement
     assert len(amendement.events) == 1
     assert amendement.events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a mis l’amendement sur sa table."
     )
 
@@ -358,7 +361,7 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
     # An event was added to the amendement
     assert len(amendement.events) == 1
     assert amendement.events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a mis l’amendement sur sa table."
     )
 
@@ -393,7 +396,7 @@ def test_lecture_post_transfer_amendements_to_index(
     # The amendement is now on the index
     assert amendement.user_table is None
     assert amendement.events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a remis l’amendement dans l’index."
     )
 
@@ -425,7 +428,7 @@ def test_lecture_post_transfer_amendements_to_index_from_index(
         .first()
     )
     assert amendement.events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a remis l’amendement dans l’index."
     )
 
@@ -460,8 +463,8 @@ def test_lecture_post_transfer_amendements_to_other(
     table_ronan = user_ronan.table_for(lecture_an)
     assert len(table_ronan.amendements) == 1
     assert table_ronan.amendements[0].events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
-        "a transféré l’amendement à « Ronan (ronan@example.com) »."
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+        "a transféré l’amendement à « Ronan (ronan@exemple.gouv.fr) »."
     )
 
 
@@ -492,6 +495,6 @@ def test_lecture_post_transfer_amendements_to_other_from_index(
     table_ronan = user_ronan.table_for(lecture_an)
     assert len(table_ronan.amendements) == 1
     assert table_ronan.amendements[0].events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
-        "a transféré l’amendement à « Ronan (ronan@example.com) »."
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+        "a transféré l’amendement à « Ronan (ronan@exemple.gouv.fr) »."
     )

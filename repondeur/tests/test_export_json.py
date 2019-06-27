@@ -236,7 +236,7 @@ def test_write_with_affectation(
 
     assert counter["amendements"] == len(amendements) == 1
     assert counter["articles"] == len(articles) == 1
-    assert amendements[0]["affectation_email"] == "david@example.com"
+    assert amendements[0]["affectation_email"] == "david@exemple.gouv.fr"
     assert amendements[0]["affectation_name"] == "David"
 
 

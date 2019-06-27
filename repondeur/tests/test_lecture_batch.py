@@ -73,7 +73,7 @@ def test_lecture_get_batch_amendements_not_all_on_table(
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com"
+        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
     )
     resp = resp.follow()
     assert (
@@ -138,7 +138,7 @@ def test_lecture_get_batch_amendements_different_reponses(
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com"
+        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
     )
     resp = resp.follow()
     assert (
@@ -167,7 +167,7 @@ def test_lecture_get_batch_amendements_same_reponses_different_comments(
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com"
+        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
     )
     resp = resp.follow()
     assert (
@@ -199,7 +199,7 @@ def test_lecture_get_batch_amendements_different_articles(
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com"
+        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
     )
     resp = resp.follow()
     assert (
@@ -231,7 +231,7 @@ def test_lecture_get_batch_amendements_different_mission(
     assert resp.status_code == 302
     assert (
         resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@example.com"
+        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
     )
     resp = resp.follow()
     assert (
@@ -276,12 +276,12 @@ def test_lecture_post_batch_set_amendements(
     # An event was added to both amendements
     assert len(amendement_666.events) == 1
     assert amendement_666.events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a placé cet amendement dans un lot avec l’amendement 999."
     )
     assert len(amendement_999.events) == 1
     assert amendement_999.events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a placé cet amendement dans un lot avec l’amendement 666."
     )
 
@@ -381,13 +381,16 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
         str(event.render_summary()) for event in reversed(amendement_999.events)
     ] == [
         (
-            "<abbr title='david@example.com'>David</abbr> a placé cet amendement"
+            "<abbr title='david@exemple.gouv.fr'>David</abbr> a placé cet amendement"
             " dans un lot avec l’amendement 666."
         ),
-        "<abbr title='david@example.com'>David</abbr> a mis l’avis à « Favorable ».",
-        "<abbr title='david@example.com'>David</abbr> a ajouté l’objet.",
-        "<abbr title='david@example.com'>David</abbr> a ajouté la réponse.",
-        "<abbr title='david@example.com'>David</abbr> a ajouté des commentaires.",
+        (
+            "<abbr title='david@exemple.gouv.fr'>David</abbr> a mis l’avis "
+            "à « Favorable »."
+        ),
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> a ajouté l’objet.",
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> a ajouté la réponse.",
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> a ajouté des commentaires.",
     ]
 
 
@@ -663,12 +666,12 @@ def test_lecture_post_batch_unset_amendement(
     # An event was added to both amendements
     assert len(amendement_666.events) == 2
     assert amendement_666.events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a sorti cet amendement du lot dans lequel il était."
     )
     assert len(amendement_999.events) == 2
     assert amendement_999.events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a sorti cet amendement du lot dans lequel il était."
     )
 
@@ -747,34 +750,34 @@ def test_lecture_post_batch_reset_amendement(
     # We should have events for all actions.
     assert len(amendement_666.events) == 3
     assert amendement_666.events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a placé cet amendement dans un lot avec les amendements 999 et 777."
     )
     assert amendement_666.events[1].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a sorti cet amendement du lot dans lequel il était."
     )
     assert amendement_666.events[2].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a placé cet amendement dans un lot avec l’amendement 999."
     )
 
     assert len(amendement_999.events) == 3
     assert amendement_999.events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a placé cet amendement dans un lot avec les amendements 666 et 777."
     )
     assert amendement_999.events[1].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a sorti cet amendement du lot dans lequel il était."
     )
     assert amendement_999.events[2].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a placé cet amendement dans un lot avec l’amendement 666."
     )
 
     assert len(amendement_777.events) == 1
     assert amendement_777.events[0].render_summary() == (
-        "<abbr title='david@example.com'>David</abbr> "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a placé cet amendement dans un lot avec les amendements 666 et 999."
     )

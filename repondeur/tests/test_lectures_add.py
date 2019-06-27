@@ -197,7 +197,7 @@ class TestPostForm:
         )
         assert (
             lecture.events[2].render_summary()
-            == "<abbr title='david@example.com'>david@example.com</abbr> a créé la lecture."  # noqa
+            == "<abbr title='david@exemple.gouv.fr'>david@exemple.gouv.fr</abbr> a créé la lecture."  # noqa
         )
 
         # We expect articles from the page (1, 2) and from the amendements (3, 8, 9)
@@ -302,7 +302,7 @@ class TestPostForm:
         )
         assert (
             lecture.events[2].render_summary()
-            == "<abbr title='david@example.com'>david@example.com</abbr> a créé la lecture."  # noqa
+            == "<abbr title='david@exemple.gouv.fr'>david@exemple.gouv.fr</abbr> a créé la lecture."  # noqa
         )
 
         # We should have articles from the page (1) and from the amendements (19, 29)

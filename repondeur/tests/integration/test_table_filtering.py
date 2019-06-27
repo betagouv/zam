@@ -8,7 +8,7 @@ from .helpers import extract_item_text
 def test_filters_are_hidden_by_default(wsgi_server, driver, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -23,7 +23,7 @@ def test_filters_are_hidden_by_default(wsgi_server, driver, lecture_an, amendeme
 def test_filters_are_opened_by_click(wsgi_server, driver, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -39,7 +39,7 @@ def test_filters_are_opened_by_click(wsgi_server, driver, lecture_an, amendement
 def test_filters_are_absent_without_amendements(
     wsgi_server, driver, lecture_an, user_david
 ):
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     assert not driver.find_element_by_css_selector("thead tr.filters").is_displayed()
@@ -99,7 +99,7 @@ def test_column_filtering_by_value(
     from zam_repondeur.models import Amendement, DBSession, User
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         DBSession.add_all(amendements_an)
         user = DBSession.query(User).filter(User.email == email).first()
@@ -163,7 +163,7 @@ def test_column_filtering_by_value_with_batches(
     from zam_repondeur.models import Amendement, Batch, DBSession, User
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         DBSession.add_all(amendements_an)
         user = DBSession.query(User).filter(User.email == email).first()
@@ -217,7 +217,7 @@ def test_column_filtering_by_checkbox(
     from zam_repondeur.models import Amendement, DBSession, User
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         DBSession.add_all(amendements_an)
         user = DBSession.query(User).filter(User.email == email).first()

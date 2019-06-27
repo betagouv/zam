@@ -9,10 +9,11 @@ def test_unauthentified_user_can_view_login_page(app):
     assert resp.status_code == 200
 
 
-def test_user_gets_an_auth_cookie_after_identifying_herself(app):
+@pytest.mark.parametrize("valid_email", ["foo@exemple.gouv.fr", "BAR@EXEMPLE.GOUV.FR"])
+def test_user_gets_an_auth_cookie_after_identifying_herself(app, valid_email):
     assert "auth_tkt" not in app.cookies  # no auth cookie yet
 
-    resp = app.post("/identification", {"email": "jane.doe@example.com"})
+    resp = app.post("/identification", {"email": valid_email})
 
     assert resp.status_code == 302
     assert (
@@ -48,7 +49,7 @@ def test_user_must_authenticate_with_an_email(app):
 
 
 @pytest.mark.parametrize("incorrect_email", [" ", "foo"])
-def test_user_must_authenticate_with_a_valid_email(app, incorrect_email):
+def test_user_cannot_authenticate_with_an_invalid_email(app, incorrect_email):
     resp = app.post("/identification", {"email": incorrect_email})
 
     assert resp.status_code == 302
@@ -57,8 +58,21 @@ def test_user_must_authenticate_with_a_valid_email(app, incorrect_email):
     assert "La saisie d’une adresse de courriel valide est requise." in resp.text
 
 
+@pytest.mark.parametrize(
+    "notgouvfr_email",
+    ["jane.doe@example.com", "john@notgouv.fr", "fs0c131y@exemple.gouv.fr@example.com"],
+)
+def test_user_cannot_authenticate_with_an_invalid_domain(app, notgouvfr_email):
+    resp = app.post("/identification", {"email": notgouvfr_email})
+
+    assert resp.status_code == 302
+    assert resp.location == "https://zam.test/identification"
+    resp = resp.follow()
+    assert "Cette adresse de courriel n’est pas en .gouv.fr." in resp.text
+
+
 def test_user_loses_the_auth_cookie_when_loggin_out(app):
-    app.post("/identification", {"email": "jane.doe@example.com"})
+    app.post("/identification", {"email": "jane.doe@exemple.gouv.fr"})
     assert "auth_tkt" in app.cookies  # the auth cookie is set
 
     app.get("/deconnexion")
@@ -82,17 +96,17 @@ def test_authentified_user_is_not_redirected_to_login_page(app, user_david):
 def test_new_user_must_enter_their_name_on_the_welcome_page(app):
     from zam_repondeur.models import DBSession, User
 
-    user = DBSession.query(User).filter_by(email="jane.doe@example.com").first()
+    user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
     assert user is None
 
-    resp = app.post("/identification", {"email": "jane.doe@example.com"})
+    resp = app.post("/identification", {"email": "jane.doe@exemple.gouv.fr"})
     assert resp.status_code == 302
     assert (
         resp.location
         == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
     )
 
-    user = DBSession.query(User).filter_by(email="jane.doe@example.com").first()
+    user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
     assert user.name is None
 
     resp = resp.follow()
@@ -101,24 +115,24 @@ def test_new_user_must_enter_their_name_on_the_welcome_page(app):
     resp.form["name"] = " Something Else  "
     resp.form.submit()
 
-    user = DBSession.query(User).filter_by(email="jane.doe@example.com").first()
+    user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
     assert user.name == "Something Else"
 
 
 def test_new_user_without_name_get_an_error(app):
     from zam_repondeur.models import DBSession, User
 
-    user = DBSession.query(User).filter_by(email="jane.doe@example.com").first()
+    user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
     assert user is None
 
-    resp = app.post("/identification", {"email": "jane.doe@example.com"})
+    resp = app.post("/identification", {"email": "jane.doe@exemple.gouv.fr"})
     assert resp.status_code == 302
     assert (
         resp.location
         == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
     )
 
-    user = DBSession.query(User).filter_by(email="jane.doe@example.com").first()
+    user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
     assert user.name is None
 
     resp = resp.follow()
@@ -132,7 +146,7 @@ def test_new_user_without_name_get_an_error(app):
     resp = resp.follow()
     assert "La saisie d’un nom est requise." in resp.text
 
-    user = DBSession.query(User).filter_by(email="jane.doe@example.com").first()
+    user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
     assert user.name is None
 
 
@@ -157,6 +171,6 @@ def test_user_with_a_name_skips_the_welcome_page(app, user_david):
 
     assert user_david.name == "David"
 
-    resp = app.post("/identification", {"email": "david@example.com"})
+    resp = app.post("/identification", {"email": "david@exemple.gouv.fr"})
     assert resp.status_code == 302
     assert resp.location == f"https://zam.test/lectures/"

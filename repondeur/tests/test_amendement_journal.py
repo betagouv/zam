@@ -145,10 +145,12 @@ def test_amendement_journal_affectation(
         )
         assert len(amendements_an[0].events) == 1
         assert (
-            amendements_an[0].events[0].data["old_value"] == "David (david@example.com)"
+            amendements_an[0].events[0].data["old_value"]
+            == "David (david@exemple.gouv.fr)"
         )
         assert (
-            amendements_an[0].events[0].data["new_value"] == "Ronan (ronan@example.com)"
+            amendements_an[0].events[0].data["new_value"]
+            == "Ronan (ronan@exemple.gouv.fr)"
         )
 
     resp = app.get(
@@ -156,7 +158,7 @@ def test_amendement_journal_affectation(
     )
     assert (
         first_description_text(resp)
-        == "David a transféré l’amendement à « Ronan (ronan@example.com) »."
+        == "David a transféré l’amendement à « Ronan (ronan@exemple.gouv.fr) »."
     )
 
 
@@ -175,11 +177,12 @@ def test_amendement_journal_affectation_by_other(
         )
         assert len(amendements_an[0].events) == 1
         assert (
-            amendements_an[0].events[0].data["old_value"] == "Ronan (ronan@example.com)"
+            amendements_an[0].events[0].data["old_value"]
+            == "Ronan (ronan@exemple.gouv.fr)"
         )
         assert (
             amendements_an[0].events[0].data["new_value"]
-            == "Daniel (daniel@example.com)"
+            == "Daniel (daniel@exemple.gouv.fr)"
         )
 
     resp = app.get(
@@ -187,7 +190,7 @@ def test_amendement_journal_affectation_by_other(
     )
     assert first_description_text(resp) == (
         "David a transféré l’amendement de "
-        "« Ronan (ronan@example.com) » à « Daniel (daniel@example.com) »."
+        "« Ronan (ronan@exemple.gouv.fr) » à « Daniel (daniel@exemple.gouv.fr) »."
     )
 
 
@@ -207,7 +210,8 @@ def test_amendement_journal_affectation_taken(
         assert len(amendements_an[0].events) == 1
         assert amendements_an[0].events[0].data["old_value"] == ""
         assert (
-            amendements_an[0].events[0].data["new_value"] == "David (david@example.com)"
+            amendements_an[0].events[0].data["new_value"]
+            == "David (david@exemple.gouv.fr)"
         )
 
     resp = app.get(
@@ -232,7 +236,8 @@ def test_amendement_journal_affectation_taken_by_other(
         assert len(amendements_an[0].events) == 1
         assert amendements_an[0].events[0].data["old_value"] == ""
         assert (
-            amendements_an[0].events[0].data["new_value"] == "David (david@example.com)"
+            amendements_an[0].events[0].data["new_value"]
+            == "David (david@exemple.gouv.fr)"
         )
 
     resp = app.get(
@@ -240,7 +245,7 @@ def test_amendement_journal_affectation_taken_by_other(
     )
     assert (
         first_description_text(resp)
-        == "Ronan a mis l’amendement sur la table de « David (david@example.com) »."
+        == "Ronan a mis l’amendement sur la table de « David (david@exemple.gouv.fr) »."
     )
 
 
@@ -259,7 +264,8 @@ def test_amendement_journal_affectation_released(
         )
         assert len(amendements_an[0].events) == 1
         assert (
-            amendements_an[0].events[0].data["old_value"] == "David (david@example.com)"
+            amendements_an[0].events[0].data["old_value"]
+            == "David (david@exemple.gouv.fr)"
         )
         assert amendements_an[0].events[0].data["new_value"] == ""
 
@@ -284,14 +290,15 @@ def test_amendement_journal_affectation_released_by_other(
         )
         assert len(amendements_an[0].events) == 1
         assert (
-            amendements_an[0].events[0].data["old_value"] == "David (david@example.com)"
+            amendements_an[0].events[0].data["old_value"]
+            == "David (david@exemple.gouv.fr)"
         )
         assert amendements_an[0].events[0].data["new_value"] == ""
 
     resp = app.get(
         "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
     )
-    assert (
-        first_description_text(resp)
-        == "Ronan a remis l’amendement de « David (david@example.com) » dans l’index."
+    assert first_description_text(resp) == (
+        "Ronan a remis l’amendement de "
+        "« David (david@exemple.gouv.fr) » dans l’index."
     )

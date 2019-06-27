@@ -13,7 +13,7 @@ def driver(request, wsgi_server):
     factory = driver_factory(request.param)
     with factory() as _driver:
         try:
-            login(_driver, wsgi_server.application_url, "user@example.com")
+            login(_driver, wsgi_server.application_url, "user@exemple.gouv.fr")
             yield _driver
         finally:
             _driver.quit()

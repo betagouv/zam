@@ -86,6 +86,10 @@ class User(Base):
         return email != "" and "@" in email
 
     @staticmethod
+    def validate_email_domain(email: str) -> bool:
+        return email.endswith(".gouv.fr")
+
+    @staticmethod
     def normalize_name(name: str) -> str:
         return name.strip()
 

@@ -4,7 +4,7 @@ import transaction
 def test_create_batch_from_table(wsgi_server, driver, lecture_an, amendements_an):
     from zam_repondeur.models import Amendement, DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -36,7 +36,7 @@ def test_dissociate_batch_from_amendement_edit(
 ):
     from zam_repondeur.models import Amendement, DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -60,7 +60,7 @@ def test_transfer_batch_from_table(
 ):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -78,7 +78,7 @@ def test_transfer_batch_from_table(
     transfer_amendements.click()
     assert driver.current_url == (
         f"{LECTURE_URL}/transfer_amendements?nums=666"
-        "&back=%2Flectures%2Fan.15.269.PO717460%2Ftables%2Fuser%40example.com"
+        "&back=%2Flectures%2Fan.15.269.PO717460%2Ftables%2Fuser%40exemple.gouv.fr"
     )
     submit_button = driver.find_element_by_css_selector('input[name="submit-index"]')
     submit_button.click()

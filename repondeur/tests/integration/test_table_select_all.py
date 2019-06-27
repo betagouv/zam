@@ -7,7 +7,7 @@ def test_select_all_not_visible_by_default(
 ):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -24,7 +24,7 @@ def test_select_all_is_visible_with_filters(
 ):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -42,7 +42,7 @@ def test_select_all_toggle_group_actions(
 ):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -65,7 +65,7 @@ def test_select_all_change_transfer_url(
 ):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -101,7 +101,7 @@ def test_select_all_checks_only_visible_amendements(
     from zam_repondeur.models import Amendement, DBSession, User
 
     LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         DBSession.add_all(amendements_an)
         user = DBSession.query(User).filter(User.email == email).first()

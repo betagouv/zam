@@ -914,7 +914,7 @@ class TestFetchAmendementAgain:
             if isinstance(event, AmendementTransfere)
         )
         assert transfer_event.user is None
-        assert transfer_event.data["old_value"] == "David (david@example.com)"
+        assert transfer_event.data["old_value"] == "David (david@exemple.gouv.fr)"
         assert transfer_event.data["new_value"] == ""
         assert transfer_event.render_summary() == (
             "L’amendement a été remis automatiquement sur l’index."

@@ -13,7 +13,7 @@ def test_group_actions_not_visible_by_default(
 ):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -32,7 +32,7 @@ def test_group_actions_are_visible_by_selection(
 ):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -52,7 +52,7 @@ def test_batch_amendements_are_visible_with_at_least_two_selections(
 ):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -75,7 +75,7 @@ def test_batch_amendements_is_hidden_when_selected_amendements_have_different_ar
 ):
     from zam_repondeur.models import Amendement, DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         amendement = Amendement.create(
             lecture=lecture_an, article=article7bis_an, num=777
@@ -103,7 +103,7 @@ def test_batch_amendements_is_hidden_when_selected_amendements_have_different_mi
 ):
     from zam_repondeur.models import Amendement, DBSession, Mission, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         mission1 = Mission.create(titre="Mission 1")
         amendements_an[0].mission = amendements_an[1].mission = mission1
@@ -136,7 +136,7 @@ def test_group_actions_are_made_invisible_by_unselection(
 ):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -157,7 +157,7 @@ def test_group_actions_button_urls_change_with_selection(
 ):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -213,7 +213,7 @@ def test_group_actions_button_urls_change_on_the_fly(
 ):
     from zam_repondeur.models import DBSession, User
 
-    email = "user@example.com"
+    email = "user@exemple.gouv.fr"
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         table = user.table_for(lecture_an)
@@ -241,6 +241,6 @@ def test_group_actions_button_urls_change_on_the_fly(
     transfer_link.click()
     assert driver.current_url == (
         f"{LECTURE_URL}/transfer_amendements?nums=666&"
-        f"back=%2Flectures%2F{lecture_an.url_key}%2Ftables%2Fuser%40example.com"
+        f"back=%2Flectures%2F{lecture_an.url_key}%2Ftables%2Fuser%40exemple.gouv.fr"
         f"%3Farticle%3D1"
     )

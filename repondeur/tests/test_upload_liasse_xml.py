@@ -47,7 +47,7 @@ def test_upload_liasse_success(
         lecture_essoc2018_an_nouvelle_lecture_commission_fond.pk
     )
     assert lecture.events[0].render_summary() == (
-        "<abbr title='david@example.com'>david@example.com</abbr> a importé "
+        "<abbr title='david@exemple.gouv.fr'>david@exemple.gouv.fr</abbr> a importé "
         "une liasse XML : 3 nouveaux amendements récupérés."
     )
 

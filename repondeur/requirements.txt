@@ -51,6 +51,7 @@ pyOpenSSL==19.0.0           # urllib3[secure]: pyOpenSSL>=0.14
 pyramid==1.10.4
 pyramid-default-cors==0.2.1
 pyramid-jinja2==2.8
+pyramid-mailer==0.15.1
 pyramid-retry==2.0
 pyramid-tm==2.2.1
 python-dateutil==2.8.0

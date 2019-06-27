@@ -5,6 +5,8 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.security import NO_PERMISSION_REQUIRED, remember, forget
 from pyramid.view import forbidden_view_config, view_config, view_defaults
+from pyramid_mailer import get_mailer
+from pyramid_mailer.message import Message as MailMessage
 
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, User, get_one_or_create
@@ -61,6 +63,22 @@ class UserLogin:
             next_url = self.request.route_url("welcome", _query={"source": next_url})
 
         headers = remember(self.request, user.pk)
+
+        mailer = get_mailer(self.request)
+        message = MailMessage(
+            subject="Se connecter à Zam",
+            sender="contact@zam.beta.gouv.fr",
+            recipients=[email],
+            body="""
+Bonjour,
+
+Pour vous connecter à Zam, veuillez cliquer sur l’adresse suivante :
+https://zam.beta.gouv.fr/login?token=FOO
+
+Bonne journée !
+            """.strip(),
+        )
+        mailer.send(message)
 
         return HTTPFound(location=next_url, headers=headers)
 

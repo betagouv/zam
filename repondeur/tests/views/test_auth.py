@@ -2,6 +2,7 @@ import time
 
 import pytest
 import transaction
+from pyramid_mailer import get_mailer
 
 
 def test_unauthentified_user_can_view_login_page(app):
@@ -37,6 +38,33 @@ def test_user_gets_an_auth_cookie_after_identifying_herself(app, valid_email):
         # We want users to be able to follow an e-mailed link to the app
         # (see: https://www.owasp.org/index.php/SameSite)
         assert cookie.get_nonstandard_attr("SameSite") == "Lax"
+
+
+def test_user_gets_an_email_after_identifying_herself(app):
+    mailer = get_mailer(app.app.registry)
+
+    mailer.outbox = []  # FIXME: do that within the fixture!
+    assert len(mailer.outbox) == 0
+
+    resp = app.post("/identification", {"email": "jane.doe@exemple.gouv.fr"})
+
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
+    )
+    assert len(mailer.outbox) == 1
+    assert mailer.outbox[0].subject == "Se connecter à Zam"
+    assert (
+        mailer.outbox[0].body
+        == """\
+Bonjour,
+
+Pour vous connecter à Zam, veuillez cliquer sur l’adresse suivante :
+https://zam.beta.gouv.fr/login?token=FOO
+
+Bonne journée !"""
+    )
 
 
 def test_user_must_authenticate_with_an_email(app):

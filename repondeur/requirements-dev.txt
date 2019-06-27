@@ -13,7 +13,7 @@ GitPython==2.1.11
 hypothesis==4.24.5
 importlib-metadata==0.18
 mccabe==0.6.1
-more-itertools==7.0.0
+more-itertools==7.1.0
 mypy==0.711
 mypy-extensions==0.4.1
 packaging==19.0

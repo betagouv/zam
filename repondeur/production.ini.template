@@ -32,6 +32,9 @@ sqlalchemy.url = $$db_url?application_name=%(app)s
 zam.tasks.redis_url = redis://localhost:6379/1
 zam.data.redis_url = redis://localhost:6379/2
 zam.users.redis_url = redis://localhost:6379/3
+# Duration in seconds.
+# FIXME: sane default?
+zam.users.auth_token_duration = 300
 zam.amendements.redis_url = redis://localhost:6379/4
 
 zam.session_secret = $$session_secret

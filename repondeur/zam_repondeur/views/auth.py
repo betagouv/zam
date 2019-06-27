@@ -8,9 +8,11 @@ from pyramid.view import forbidden_view_config, view_config, view_defaults
 from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message as MailMessage
 
+from zam_repondeur.auth import generate_auth_token
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, User, get_one_or_create
 from zam_repondeur.resources import Root
+from zam_repondeur.users import repository
 
 
 @view_defaults(route_name="user_login", permission=NO_PERMISSION_REQUIRED, context=Root)
@@ -64,16 +66,19 @@ class UserLogin:
 
         headers = remember(self.request, user.pk)
 
+        token = generate_auth_token()
+        repository.set_auth_token(email, token)
+
         mailer = get_mailer(self.request)
         message = MailMessage(
             subject="Se connecter à Zam",
             sender="contact@zam.beta.gouv.fr",
             recipients=[email],
-            body="""
+            body=f"""
 Bonjour,
 
 Pour vous connecter à Zam, veuillez cliquer sur l’adresse suivante :
-https://zam.beta.gouv.fr/login?token=FOO
+https://zam.beta.gouv.fr/login?token={token}
 
 Bonne journée !
             """.strip(),

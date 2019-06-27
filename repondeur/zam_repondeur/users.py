@@ -11,7 +11,10 @@ def includeme(config: Configurator) -> None:
     """
     Called automatically via config.include("zam_repondeur.users")
     """
-    repository.initialize(redis_url=config.registry.settings["zam.users.redis_url"])
+    repository.initialize(
+        redis_url=config.registry.settings["zam.users.redis_url"],
+        auth_token_duration=config.registry.settings["zam.users.auth_token_duration"],
+    )
 
 
 class UsersRepository:
@@ -22,8 +25,9 @@ class UsersRepository:
     def __init__(self) -> None:
         self.initialized = True
 
-    def initialize(self, redis_url: str) -> None:
+    def initialize(self, redis_url: str, auth_token_duration: str) -> None:
         self.connection = Redis.from_url(redis_url)
+        self.auth_token_duration = auth_token_duration
         self.initialized = True
 
     @needs_init
@@ -42,6 +46,15 @@ class UsersRepository:
     def set_last_activity_time(self, email: str) -> None:
         timestamp = datetime.utcnow().isoformat(timespec="seconds")
         self.connection.set(email, timestamp)
+
+    @needs_init
+    def set_auth_token(self, email: str, token: str) -> None:
+        self.connection.set(f"auth-{email}", token, self.auth_token_duration)
+
+    @needs_init
+    def get_auth_token(self, email: str) -> Optional[str]:
+        token = self.connection.get(f"auth-{email}")
+        return token.decode("utf-8") if token else None
 
 
 repository = UsersRepository()

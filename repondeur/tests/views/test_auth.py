@@ -1,4 +1,5 @@
 import time
+from unittest.mock import patch
 
 import pytest
 import transaction
@@ -40,13 +41,19 @@ def test_user_gets_an_auth_cookie_after_identifying_herself(app, valid_email):
         assert cookie.get_nonstandard_attr("SameSite") == "Lax"
 
 
-def test_user_gets_an_email_after_identifying_herself(app):
+def test_user_gets_an_email_with_url_token_after_identifying_herself(app):
+
     mailer = get_mailer(app.app.registry)
 
     mailer.outbox = []  # FIXME: do that within the fixture!
     assert len(mailer.outbox) == 0
 
-    resp = app.post("/identification", {"email": "jane.doe@exemple.gouv.fr"})
+    with patch(
+        "zam_repondeur.views.auth.generate_auth_token"
+    ) as mock_generate_auth_token:
+        mock_generate_auth_token.return_value = "FOOBARBA"
+
+        resp = app.post("/identification", {"email": "jane.doe@exemple.gouv.fr"})
 
     assert resp.status_code == 302
     assert (
@@ -61,7 +68,7 @@ def test_user_gets_an_email_after_identifying_herself(app):
 Bonjour,
 
 Pour vous connecter à Zam, veuillez cliquer sur l’adresse suivante :
-https://zam.beta.gouv.fr/login?token=FOO
+https://zam.beta.gouv.fr/login?token=FOOBARBA
 
 Bonne journée !"""
     )
@@ -202,3 +209,15 @@ def test_user_with_a_name_skips_the_welcome_page(app, user_david):
     resp = app.post("/identification", {"email": "david@exemple.gouv.fr"})
     assert resp.status_code == 302
     assert resp.location == f"https://zam.test/lectures/"
+
+
+def test_auth_token_expires(app):
+    from zam_repondeur.users import repository
+
+    email = "david@exemple.gouv.fr"
+    token = "FOOBARBA"
+    repository.set_auth_token(email, token)
+
+    assert repository.get_auth_token(email) == "FOOBARBA"
+    time.sleep(app.app.settings["zam.users.auth_token_duration"])
+    assert repository.get_auth_token(email) is None

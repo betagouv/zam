@@ -61,6 +61,7 @@ def settings():
         "zam.users.redis_url": os.environ.get(
             "ZAM_TEST_USERS_REDIS_URL", "redis://localhost:6379/12"
         ),
+        "zam.users.auth_token_duration": 1,
         "zam.amendements.redis_url": os.environ.get(
             "ZAM_TEST_AMENDEMENTS_REDIS_URL", "redis://localhost:6379/13"
         ),
@@ -76,7 +77,9 @@ def settings():
 def wsgi_app(settings, mock_dossiers, mock_organes_acteurs, mock_scraping_senat):
     from zam_repondeur import make_app
 
-    return make_app(None, **settings)
+    app = make_app(None, **settings)
+    app.settings = settings
+    return app
 
 
 @pytest.yield_fixture(scope="session", autouse=True)

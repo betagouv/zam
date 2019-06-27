@@ -1,3 +1,5 @@
+import random
+import string
 from typing import List, Optional
 
 from paste.deploy.converters import asbool
@@ -96,3 +98,11 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
             for team in request.user.teams:
                 principals.append(f"team:{team.pk}")
         return principals
+
+
+def generate_auth_token(length: int = 8) -> str:
+    """See http://stackoverflow.com/a/23728630/315168"""
+    return "".join(
+        random.SystemRandom().choice(string.ascii_uppercase + string.digits)
+        for _ in range(length)
+    )

@@ -9,7 +9,7 @@ from freezegun import freeze_time
 from pyramid_mailer import get_mailer
 
 
-class TestLogin:
+class TestLoginPage:
     def test_unauthentified_user_can_view_login_page(self, app):
         resp = app.get("/identification")
         assert resp.status_code == 200
@@ -17,50 +17,20 @@ class TestLogin:
     @pytest.mark.parametrize(
         "valid_email", ["foo@exemple.gouv.fr", "BAR@EXEMPLE.GOUV.FR"]
     )
-    def test_user_gets_an_auth_cookie_after_identifying_herself(self, app, valid_email):
-        assert "auth_tkt" not in app.cookies  # no auth cookie yet
-
-        resp = app.post("/identification", {"email": valid_email})
-
-        assert resp.status_code == 302
-        assert (
-            resp.location
-            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
-        )
-
-        assert "auth_tkt" in app.cookies  # and now we have the auth cookie
-
-        domains = {cookie.domain for cookie in app.cookiejar}
-        assert domains == {".zam.test", "zam.test"}
-
-        for cookie in app.cookiejar:
-            assert cookie.name == "auth_tkt"
-            assert cookie.path == "/"
-            assert cookie.secure is True
-
-            # Auth cookie should expire after 7 days
-            assert cookie.expires == int(time.time()) + (7 * 24 * 3600)
-
-            # We want users to be able to follow an e-mailed link to the app
-            # (see: https://www.owasp.org/index.php/SameSite)
-            assert cookie.get_nonstandard_attr("SameSite") == "Lax"
-
-    def test_user_gets_an_email_with_url_token_after_identifying_herself(self, app):
-
-        mailer = get_mailer(app.app.registry)
+    def test_an_email_with_a_token_is_sent_if_address_is_valid(self, app, valid_email):
 
         with patch(
             "zam_repondeur.views.auth.generate_auth_token"
         ) as mock_generate_auth_token:
             mock_generate_auth_token.return_value = "FOOBARBA"
 
-            resp = app.post("/identification", {"email": "jane.doe@exemple.gouv.fr"})
+            resp = app.post("/identification", {"email": valid_email})
 
-        assert resp.status_code == 302
-        assert (
-            resp.location
-            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
-        )
+        resp = resp.maybe_follow()
+
+        assert "Un message a été envoyé sur votre adresse" in resp.text
+
+        mailer = get_mailer(app.app.registry)
         assert len(mailer.outbox) == 1
         assert mailer.outbox[0].subject == "Se connecter à Zam"
         assert mailer.outbox[0].body == dedent(
@@ -68,7 +38,7 @@ class TestLogin:
             Bonjour,
 
             Pour vous connecter à Zam, veuillez cliquer sur l’adresse suivante :
-            https://zam.beta.gouv.fr/login?token=FOOBARBA
+            https://zam.test/authentification?token=FOOBARBA
 
             Bonne journée !"""
         )
@@ -109,9 +79,84 @@ class TestLogin:
         assert "Cette adresse de courriel n’est pas en .gouv.fr." in resp.text
 
 
+class TestLoginWithToken:
+    def test_user_can_login_with_auth_token(self, app):
+        from zam_repondeur.users import repository
+
+        email = "david@exemple.gouv.fr"
+        token = "FOOBARBA"
+
+        repository.set_auth_token(email, token)
+
+        resp = app.get("/authentification", params={"token": token})
+
+        assert resp.status_code == 302
+        assert (
+            resp.location
+            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
+        )
+
+        resp = resp.maybe_follow()
+
+        assert "Bienvenue dans Zam" in resp.text
+
+    def test_user_cannot_login_with_bad_auth_token(self, app):
+        from zam_repondeur.users import repository
+
+        email = "david@exemple.gouv.fr"
+        token = "FOOBARBA"
+
+        repository.set_auth_token(email, token)
+
+        resp = app.get("/authentification", params={"token": "BADTOKEN"})
+
+        assert resp.status_code == 302
+        assert resp.location == "https://zam.test/identification"
+
+        resp = resp.maybe_follow()
+
+        assert "Le lien est invalide ou a expiré" in resp.text
+
+    def test_authenticated_user_gets_an_auth_cookie(self, app):
+        assert "auth_tkt" not in app.cookies  # no auth cookie yet
+
+        from zam_repondeur.users import repository
+
+        email = "david@exemple.gouv.fr"
+        token = "FOOBARBA"
+
+        repository.set_auth_token(email, token)
+
+        app.get("/authentification", params={"token": token})
+
+        assert "auth_tkt" in app.cookies  # and now we have the auth cookie
+
+        domains = {cookie.domain for cookie in app.cookiejar}
+        assert domains == {".zam.test", "zam.test"}
+
+        auth_cookies = [cookie for cookie in app.cookiejar if cookie.name == "auth_tkt"]
+        for cookie in auth_cookies:
+            assert cookie.path == "/"
+            assert cookie.secure is True
+
+            # Auth cookie should expire after 7 days
+            assert cookie.expires == int(time.time()) + (7 * 24 * 3600)
+
+            # We want users to be able to follow an e-mailed link to the app
+            # (see: https://www.owasp.org/index.php/SameSite)
+            assert cookie.get_nonstandard_attr("SameSite") == "Lax"
+
+
 class TestLogout:
     def test_user_loses_the_auth_cookie_when_logging_out(self, app):
-        app.post("/identification", {"email": "jane.doe@exemple.gouv.fr"})
+        from zam_repondeur.users import repository
+
+        email = "david@exemple.gouv.fr"
+        token = "FOOBARBA"
+
+        repository.set_auth_token(email, token)
+
+        app.get("/authentification", params={"token": "FOOBARBA"})
         assert "auth_tkt" in app.cookies  # the auth cookie is set
 
         app.get("/deconnexion")
@@ -134,12 +179,18 @@ class TestAuthenticationRequired:
 
 class TestOnboarding:
     def test_new_user_must_enter_their_name_on_the_welcome_page(self, app):
+        from zam_repondeur.auth import generate_auth_token
         from zam_repondeur.models import DBSession, User
+        from zam_repondeur.users import repository
 
         user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
         assert user is None
 
-        resp = app.post("/identification", {"email": "jane.doe@exemple.gouv.fr"})
+        token = generate_auth_token()
+
+        repository.set_auth_token("jane.doe@exemple.gouv.fr", token)
+
+        resp = app.get("/authentification", params={"token": token})
         assert resp.status_code == 302
         assert (
             resp.location
@@ -159,12 +210,18 @@ class TestOnboarding:
         assert user.name == "Something Else"
 
     def test_new_user_without_name_get_an_error(self, app):
+        from zam_repondeur.auth import generate_auth_token
         from zam_repondeur.models import DBSession, User
+        from zam_repondeur.users import repository
 
         user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
         assert user is None
 
-        resp = app.post("/identification", {"email": "jane.doe@exemple.gouv.fr"})
+        token = generate_auth_token()
+
+        repository.set_auth_token("jane.doe@exemple.gouv.fr", token)
+
+        resp = app.get("/authentification", params={"token": token})
         assert resp.status_code == 302
         assert (
             resp.location
@@ -201,14 +258,20 @@ class TestOnboarding:
         assert user.name == "Something Else"
 
     def test_user_with_a_name_skips_the_welcome_page(self, app, user_david):
+        from zam_repondeur.auth import generate_auth_token
         from zam_repondeur.models import DBSession
+        from zam_repondeur.users import repository
 
         with transaction.manager:
             DBSession.add(user_david)
 
         assert user_david.name == "David"
 
-        resp = app.post("/identification", {"email": "david@exemple.gouv.fr"})
+        token = generate_auth_token()
+
+        repository.set_auth_token(user_david.email, token)
+
+        resp = app.get("/authentification", params={"token": token})
         assert resp.status_code == 302
         assert resp.location == f"https://zam.test/lectures/"
 
@@ -222,7 +285,7 @@ class TestAuthTokenExpiration:
 
         repository.set_auth_token(email, token)
 
-        assert repository.get_auth_token(email) == "FOOBARBA"
+        assert repository.get_auth_token_data(token) is not None
 
     def test_cannot_get_auth_token_after_expiration(self, settings):
         from zam_repondeur.users import repository
@@ -235,4 +298,4 @@ class TestAuthTokenExpiration:
         initial_time = datetime.now(tz=timezone.utc)
         expiration_delay = int(settings["zam.users.auth_token_duration"])
         with freeze_time(initial_time + timedelta(seconds=expiration_delay + 0.01)):
-            assert repository.get_auth_token(email) is None
+            assert repository.get_auth_token_data(token) is None

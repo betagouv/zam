@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import Optional
+from datetime import datetime, timedelta, timezone
+from typing import Optional, cast
 
 from pyramid.config import Configurator
 from redis import Redis
@@ -27,7 +27,7 @@ class UsersRepository:
 
     def initialize(self, redis_url: str, auth_token_duration: str) -> None:
         self.connection = Redis.from_url(redis_url)
-        self.auth_token_duration = auth_token_duration
+        self.auth_token_duration = int(auth_token_duration)
         self.initialized = True
 
     @needs_init
@@ -49,12 +49,42 @@ class UsersRepository:
 
     @needs_init
     def set_auth_token(self, email: str, token: str) -> None:
-        self.connection.set(f"auth-{email}", token, self.auth_token_duration)
+        key = self._auth_key(email)
+        expires_at = self.now() + timedelta(seconds=self.auth_token_duration)
+        self.connection.hmset(
+            key, {"token": token, "expires_at": self.to_timestamp(expires_at)}
+        )
+        self.connection.expireat(key, expires_at)
 
     @needs_init
     def get_auth_token(self, email: str) -> Optional[str]:
-        token = self.connection.get(f"auth-{email}")
-        return token.decode("utf-8") if token else None
+        key = self._auth_key(email)
+        auth = self.connection.hgetall(key)
+        if auth == {}:  # does not exist, or expired in Redis
+            return None
+
+        # Double check expiration
+        expires_at = self.from_timestamp(float(auth[b"expires_at"]))
+        if self.now() >= expires_at:
+            return None
+
+        return cast(bytes, auth[b"token"]).decode("utf-8")
+
+    @staticmethod
+    def _auth_key(email: str) -> str:
+        return f"auth-{email}"
+
+    @staticmethod
+    def now() -> datetime:
+        return datetime.now(tz=timezone.utc)
+
+    @staticmethod
+    def from_timestamp(timestamp: float) -> datetime:
+        return datetime(1970, 1, 1, tzinfo=timezone.utc) + timedelta(seconds=timestamp)
+
+    @staticmethod
+    def to_timestamp(dt: datetime) -> float:
+        return (dt - datetime(1970, 1, 1, tzinfo=timezone.utc)).total_seconds()
 
 
 repository = UsersRepository()

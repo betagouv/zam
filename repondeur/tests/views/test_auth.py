@@ -1,8 +1,10 @@
-import time
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
+import time
 
 import pytest
 import transaction
+from freezegun import freeze_time
 from pyramid_mailer import get_mailer
 
 
@@ -211,13 +213,26 @@ def test_user_with_a_name_skips_the_welcome_page(app, user_david):
     assert resp.location == f"https://zam.test/lectures/"
 
 
-def test_auth_token_expires(app):
-    from zam_repondeur.users import repository
+class TestAuthTokenExpiration:
+    def test_can_get_auth_token_before_expiration(self):
+        from zam_repondeur.users import repository
 
-    email = "david@exemple.gouv.fr"
-    token = "FOOBARBA"
-    repository.set_auth_token(email, token)
+        email = "david@exemple.gouv.fr"
+        token = "FOOBARBA"
 
-    assert repository.get_auth_token(email) == "FOOBARBA"
-    time.sleep(app.app.settings["zam.users.auth_token_duration"])
-    assert repository.get_auth_token(email) is None
+        repository.set_auth_token(email, token)
+
+        assert repository.get_auth_token(email) == "FOOBARBA"
+
+    def test_cannot_get_auth_token_after_expiration(self, settings):
+        from zam_repondeur.users import repository
+
+        email = "david@exemple.gouv.fr"
+        token = "FOOBARBA"
+
+        repository.set_auth_token(email, token)
+
+        initial_time = datetime.now(tz=timezone.utc)
+        expiration_delay = int(settings["zam.users.auth_token_duration"])
+        with freeze_time(initial_time + timedelta(seconds=expiration_delay + 0.01)):
+            assert repository.get_auth_token(email) is None

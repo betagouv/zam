@@ -61,7 +61,7 @@ def settings():
         "zam.users.redis_url": os.environ.get(
             "ZAM_TEST_USERS_REDIS_URL", "redis://localhost:6379/12"
         ),
-        "zam.users.auth_token_duration": 1,
+        "zam.users.auth_token_duration": "1",
         "zam.amendements.redis_url": os.environ.get(
             "ZAM_TEST_AMENDEMENTS_REDIS_URL", "redis://localhost:6379/13"
         ),

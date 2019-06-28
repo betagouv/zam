@@ -39,7 +39,9 @@ def includeme(config: Configurator) -> None:
     config.set_default_permission("view")
 
     # Add routes for login, logout and welcome
-    config.add_route("user_login", "/identification")
+    config.add_route("login", "/identification")
+    config.add_route("email_sent", "/courriel-envoye")
+    config.add_route("auth", "/authentification")
     config.add_route("logout", "/deconnexion")
     config.add_route("welcome", "/bienvenue")
 

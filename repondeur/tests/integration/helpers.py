@@ -1,6 +1,9 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 
+from zam_repondeur.auth import generate_auth_token
+from zam_repondeur.users import repository
+
 
 def find_header_by_index(index, headers):
     return headers.find_element_by_css_selector(f"th:nth-child({index})")
@@ -28,15 +31,10 @@ def extract_item_text(selector, trs):
 def login(driver, base_url, email):
     wait = WebDriverWait(driver, 1)
 
-    # Enter email on identification page
-    identification_url = f"{base_url}identification"
-    driver.get(identification_url)
-    if driver.current_url.startswith(f"{base_url}lectures/"):
-        return  # already logged in
-    assert driver.find_element_by_css_selector("h1").text == "Entrer dans Zam"
-    driver.find_element_by_css_selector("input[type='email']").send_keys(email)
-    driver.find_element_by_css_selector("input[type='submit']").click()
-    wait.until(lambda driver: not driver.current_url.startswith(identification_url))
+    # Click on authentication link
+    token = generate_auth_token()
+    repository.set_auth_token(email, token)
+    driver.get(f"{base_url}authentification?token={token}")
 
     # Submit name on first login
     welcome_url = f"{base_url}bienvenue"

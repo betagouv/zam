@@ -15,6 +15,9 @@ from fixtures.scraping import *  # noqa: F401,F403
 from fixtures.users import *  # noqa: F401,F403
 from testapp import TestApp as BaseTestApp
 
+from zam_repondeur.auth import generate_auth_token
+from zam_repondeur.users import repository
+
 
 class TestApp(BaseTestApp):
     def get(self, *args, **kwargs):
@@ -41,7 +44,9 @@ class TestApp(BaseTestApp):
         yield
 
     def user_login(self, email, headers=None):
-        resp = self.post("/identification", {"email": email}, headers=headers)
+        token = generate_auth_token()
+        repository.set_auth_token(email, token)
+        resp = self.get("/authentification", params={"token": token}, headers=headers)
         assert resp.status_code == 302
 
 

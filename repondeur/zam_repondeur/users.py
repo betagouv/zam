@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional, cast
+from typing import Dict, Optional
 
 from pyramid.config import Configurator
 from redis import Redis
@@ -49,16 +49,16 @@ class UsersRepository:
 
     @needs_init
     def set_auth_token(self, email: str, token: str) -> None:
-        key = self._auth_key(email)
+        key = self._auth_key(token)
         expires_at = self.now() + timedelta(seconds=self.auth_token_duration)
         self.connection.hmset(
-            key, {"token": token, "expires_at": self.to_timestamp(expires_at)}
+            key, {"email": email, "expires_at": self.to_timestamp(expires_at)}
         )
         self.connection.expireat(key, expires_at)
 
     @needs_init
-    def get_auth_token(self, email: str) -> Optional[str]:
-        key = self._auth_key(email)
+    def get_auth_token_data(self, token: str) -> Optional[Dict[str, str]]:
+        key = self._auth_key(token)
         auth = self.connection.hgetall(key)
         if auth == {}:  # does not exist, or expired in Redis
             return None
@@ -68,11 +68,13 @@ class UsersRepository:
         if self.now() >= expires_at:
             return None
 
-        return cast(bytes, auth[b"token"]).decode("utf-8")
+        return {
+            key.decode("utf-8"): value.decode("utf-8") for key, value in auth.items()
+        }
 
     @staticmethod
-    def _auth_key(email: str) -> str:
-        return f"auth-{email}"
+    def _auth_key(token: str) -> str:
+        return f"auth-{token}"
 
     @staticmethod
     def now() -> datetime:

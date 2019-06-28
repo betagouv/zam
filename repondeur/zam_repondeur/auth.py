@@ -1,4 +1,4 @@
-import random
+import secrets
 import string
 from typing import List, Optional
 
@@ -101,8 +101,12 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
 
 
 def generate_auth_token(length: int = 8) -> str:
-    """See http://stackoverflow.com/a/23728630/315168"""
+    """
+    We use the convenient APIs added in Python 3.6 for generating cryptographically
+    strong random numbers suitable for authentication tokens.
+
+    See https://docs.python.org/3/library/secrets.html
+    """
     return "".join(
-        random.SystemRandom().choice(string.ascii_uppercase + string.digits)
-        for _ in range(length)
+        secrets.choice(string.ascii_uppercase + string.digits) for _ in range(length)
     )

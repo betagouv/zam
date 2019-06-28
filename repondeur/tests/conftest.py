@@ -2,6 +2,8 @@ import os
 from contextlib import contextmanager
 
 import pytest
+from pyramid.threadlocal import get_current_registry
+from pyramid_mailer import get_mailer
 
 from fixtures.dossiers import *  # noqa: F401,F403
 from fixtures.organes_acteurs import *  # noqa: F401,F403
@@ -138,3 +140,16 @@ def app(wsgi_app, db, data_repository, users_repository, amendements_repository)
     yield TestApp(
         wsgi_app, extra_environ={"HTTP_HOST": "zam.test", "wsgi.url_scheme": "https"}
     )
+
+
+def pytest_runtest_call(item):
+    """
+    Clear e-mail outbox before each test
+
+    This hook is called by pytest before running each test (after fixtures / setup)
+
+    See: https://docs.pytest.org/en/latest/reference.html#hook-reference
+    """
+    registry = get_current_registry()
+    mailer = get_mailer(registry)
+    mailer.outbox = []

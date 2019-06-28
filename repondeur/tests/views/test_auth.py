@@ -49,9 +49,6 @@ class TestLogin:
 
         mailer = get_mailer(app.app.registry)
 
-        mailer.outbox = []  # FIXME: do that within the fixture!
-        assert len(mailer.outbox) == 0
-
         with patch(
             "zam_repondeur.views.auth.generate_auth_token"
         ) as mock_generate_auth_token:

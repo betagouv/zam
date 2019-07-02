@@ -84,9 +84,7 @@ def settings():
 def wsgi_app(settings, mock_dossiers, mock_organes_acteurs, mock_scraping_senat):
     from zam_repondeur import make_app
 
-    app = make_app(None, **settings)
-    app.settings = settings
-    return app
+    return make_app(None, **settings)
 
 
 @pytest.yield_fixture(scope="session", autouse=True)

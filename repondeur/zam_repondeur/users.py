@@ -72,6 +72,11 @@ class UsersRepository:
             key.decode("utf-8"): value.decode("utf-8") for key, value in auth.items()
         }
 
+    @needs_init
+    def delete_auth_token(self, token: str) -> None:
+        key = self._auth_key(token)
+        self.connection.delete(key)
+
     @staticmethod
     def _auth_key(token: str) -> str:
         return f"auth-{token}"

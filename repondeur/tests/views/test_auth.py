@@ -146,6 +146,20 @@ class TestLoginWithToken:
             # (see: https://www.owasp.org/index.php/SameSite)
             assert cookie.get_nonstandard_attr("SameSite") == "Lax"
 
+    def test_auth_token_is_deleted_after_use(self, app):
+        from zam_repondeur.users import repository
+
+        email = "david@exemple.gouv.fr"
+        token = "FOOBARBA"
+
+        repository.set_auth_token(email, token)
+
+        assert repository.get_auth_token_data(token) is not None  # token is here
+
+        app.get("/authentification", params={"token": token})
+
+        assert repository.get_auth_token_data(token) is None  # token is gone
+
 
 class TestLogout:
     def test_user_loses_the_auth_cookie_when_logging_out(self, app):

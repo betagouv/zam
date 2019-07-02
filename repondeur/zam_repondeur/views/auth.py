@@ -115,6 +115,7 @@ class Authenticate:
         token = self.request.params.get("token")
         auth = repository.get_auth_token_data(token)
         if auth is None:
+            self.log_failed_login_attempt(token)
             self.request.session.flash(
                 Message(
                     cls="error",
@@ -126,7 +127,7 @@ class Authenticate:
         # Delete token from repository after it's been used successfully
         repository.delete_auth_token(token)
 
-        email = auth.get("email")
+        email = auth["email"]
         user, created = get_one_or_create(User, email=email)
 
         # Automatically add user without a team to the authenticated team
@@ -141,12 +142,15 @@ class Authenticate:
             self.request.session["already_in_use"] = True
             return HTTPFound(location=self.request.route_url("login"))
 
+        self.log_successful_login_attempt(email)
+
         user.last_login_at = datetime.utcnow()
 
         next_url = self.next_url
         if not user.name:
             next_url = self.request.route_url("welcome", _query={"source": next_url})
 
+        # Compute response headers for the session cookie
         headers = remember(self.request, user.pk)
 
         self.request.session.flash(Message(cls="success", text="Bienvenue dans Zam !"))
@@ -159,6 +163,14 @@ class Authenticate:
         if url is None or url == self.request.route_url("login"):
             url = self.request.resource_url(self.context["lectures"])
         return url
+
+    def log_successful_login_attempt(self, email: str) -> None:
+        ip = self.request.remote_addr
+        logger.info("Successful authentication by %r from %s", email, ip)
+
+    def log_failed_login_attempt(self, token: str) -> None:
+        ip = self.request.remote_addr
+        logger.warning("Failed authentication attempt with token %r from %s", token, ip)
 
 
 @view_defaults(route_name="welcome", context=Root)

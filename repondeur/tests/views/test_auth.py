@@ -1,7 +1,8 @@
+import logging
+import time
 from datetime import datetime, timedelta, timezone
 from textwrap import dedent
 from unittest.mock import patch
-import time
 
 import pytest
 import transaction
@@ -109,6 +110,16 @@ class TestLoginWithToken:
 
         assert "Bienvenue dans Zam" in resp.text
 
+    def test_successful_authentication_attempts_are_logged(
+        self, app, auth_token, caplog
+    ):
+        caplog.set_level(logging.INFO)
+        app.get("/authentification", params={"token": auth_token})
+        assert (
+            "INFO Successful authentication by 'david@exemple.gouv.fr' from 127.0.0.1"  # noqa
+            in caplog.text
+        )
+
     def test_user_cannot_login_with_bad_auth_token(self, app, auth_token):
 
         resp = app.get("/authentification", params={"token": "BADTOKEN"})
@@ -119,6 +130,13 @@ class TestLoginWithToken:
         resp = resp.maybe_follow()
 
         assert "Le lien est invalide ou a expiré" in resp.text
+
+    def test_failed_authentication_attempts_are_logged(self, app, auth_token, caplog):
+        app.get("/authentification", params={"token": "BADTOKEN"})
+        assert (
+            "WARNING Failed authentication attempt with token 'BADTOKEN' from 127.0.0.1"  # noqa
+            in caplog.text
+        )
 
     def test_authenticated_user_gets_an_auth_cookie(self, app, auth_token):
         assert "auth_tkt" not in app.cookies  # no auth cookie yet

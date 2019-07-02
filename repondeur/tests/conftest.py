@@ -143,7 +143,12 @@ def amendements_repository():
 @pytest.fixture
 def app(wsgi_app, db, data_repository, users_repository, amendements_repository):
     yield TestApp(
-        wsgi_app, extra_environ={"HTTP_HOST": "zam.test", "wsgi.url_scheme": "https"}
+        wsgi_app,
+        extra_environ={
+            "HTTP_HOST": "zam.test",
+            "REMOTE_ADDR": "127.0.0.1",
+            "wsgi.url_scheme": "https",
+        },
     )
 
 

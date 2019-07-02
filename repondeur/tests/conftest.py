@@ -152,6 +152,12 @@ def app(wsgi_app, db, data_repository, users_repository, amendements_repository)
     )
 
 
+@pytest.fixture
+def mailer():
+    registry = get_current_registry()
+    yield get_mailer(registry)
+
+
 def pytest_runtest_call(item):
     """
     Clear e-mail outbox before each test

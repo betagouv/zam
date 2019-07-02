@@ -9,6 +9,21 @@ from freezegun import freeze_time
 from pyramid_mailer import get_mailer
 
 
+@pytest.fixture
+def email():
+    return "david@exemple.gouv.fr"
+
+
+@pytest.fixture
+def auth_token(email):
+    from zam_repondeur.users import repository
+
+    token = "FOOBARBA"
+    repository.set_auth_token(email, token)
+    yield token
+    repository.delete_auth_token(token)
+
+
 class TestLoginPage:
     def test_unauthentified_user_can_view_login_page(self, app):
         resp = app.get("/identification")
@@ -80,15 +95,9 @@ class TestLoginPage:
 
 
 class TestLoginWithToken:
-    def test_user_can_login_with_auth_token(self, app):
-        from zam_repondeur.users import repository
+    def test_user_can_login_with_auth_token(self, app, auth_token):
 
-        email = "david@exemple.gouv.fr"
-        token = "FOOBARBA"
-
-        repository.set_auth_token(email, token)
-
-        resp = app.get("/authentification", params={"token": token})
+        resp = app.get("/authentification", params={"token": auth_token})
 
         assert resp.status_code == 302
         assert (
@@ -100,13 +109,7 @@ class TestLoginWithToken:
 
         assert "Bienvenue dans Zam" in resp.text
 
-    def test_user_cannot_login_with_bad_auth_token(self, app):
-        from zam_repondeur.users import repository
-
-        email = "david@exemple.gouv.fr"
-        token = "FOOBARBA"
-
-        repository.set_auth_token(email, token)
+    def test_user_cannot_login_with_bad_auth_token(self, app, auth_token):
 
         resp = app.get("/authentification", params={"token": "BADTOKEN"})
 
@@ -117,17 +120,10 @@ class TestLoginWithToken:
 
         assert "Le lien est invalide ou a expiré" in resp.text
 
-    def test_authenticated_user_gets_an_auth_cookie(self, app):
+    def test_authenticated_user_gets_an_auth_cookie(self, app, auth_token):
         assert "auth_tkt" not in app.cookies  # no auth cookie yet
 
-        from zam_repondeur.users import repository
-
-        email = "david@exemple.gouv.fr"
-        token = "FOOBARBA"
-
-        repository.set_auth_token(email, token)
-
-        app.get("/authentification", params={"token": token})
+        app.get("/authentification", params={"token": auth_token})
 
         assert "auth_tkt" in app.cookies  # and now we have the auth cookie
 
@@ -146,31 +142,20 @@ class TestLoginWithToken:
             # (see: https://www.owasp.org/index.php/SameSite)
             assert cookie.get_nonstandard_attr("SameSite") == "Lax"
 
-    def test_auth_token_is_deleted_after_use(self, app):
+    def test_auth_token_is_deleted_after_use(self, app, auth_token):
         from zam_repondeur.users import repository
 
-        email = "david@exemple.gouv.fr"
-        token = "FOOBARBA"
+        assert repository.get_auth_token_data(auth_token) is not None  # token is here
 
-        repository.set_auth_token(email, token)
+        app.get("/authentification", params={"token": auth_token})
 
-        assert repository.get_auth_token_data(token) is not None  # token is here
-
-        app.get("/authentification", params={"token": token})
-
-        assert repository.get_auth_token_data(token) is None  # token is gone
+        assert repository.get_auth_token_data(auth_token) is None  # token is gone
 
 
 class TestLogout:
-    def test_user_loses_the_auth_cookie_when_logging_out(self, app):
-        from zam_repondeur.users import repository
+    def test_user_loses_the_auth_cookie_when_logging_out(self, app, auth_token):
 
-        email = "david@exemple.gouv.fr"
-        token = "FOOBARBA"
-
-        repository.set_auth_token(email, token)
-
-        app.get("/authentification", params={"token": "FOOBARBA"})
+        app.get("/authentification", params={"token": auth_token})
         assert "auth_tkt" in app.cookies  # the auth cookie is set
 
         app.get("/deconnexion")
@@ -291,25 +276,15 @@ class TestOnboarding:
 
 
 class TestAuthTokenExpiration:
-    def test_can_get_auth_token_before_expiration(self):
+    def test_can_get_auth_token_before_expiration(self, auth_token):
         from zam_repondeur.users import repository
 
-        email = "david@exemple.gouv.fr"
-        token = "FOOBARBA"
+        assert repository.get_auth_token_data(auth_token) is not None
 
-        repository.set_auth_token(email, token)
-
-        assert repository.get_auth_token_data(token) is not None
-
-    def test_cannot_get_auth_token_after_expiration(self, settings):
+    def test_cannot_get_auth_token_after_expiration(self, settings, auth_token):
         from zam_repondeur.users import repository
-
-        email = "david@exemple.gouv.fr"
-        token = "FOOBARBA"
-
-        repository.set_auth_token(email, token)
 
         initial_time = datetime.now(tz=timezone.utc)
         expiration_delay = int(settings["zam.users.auth_token_duration"])
         with freeze_time(initial_time + timedelta(seconds=expiration_delay + 0.01)):
-            assert repository.get_auth_token_data(token) is None
+            assert repository.get_auth_token_data(auth_token) is None

@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from typing import Any, Dict
 
@@ -12,7 +13,10 @@ from zam_repondeur.auth import generate_auth_token
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, User, get_one_or_create
 from zam_repondeur.resources import Root
-from zam_repondeur.users import repository
+from zam_repondeur.users import repository, TokenAlreadyExists
+
+
+logger = logging.getLogger(__name__)
 
 
 @view_defaults(route_name="login", permission=NO_PERMISSION_REQUIRED, context=Root)
@@ -51,8 +55,7 @@ class UserLogin:
             self.request.session["incorrect_domain"] = True
             return HTTPFound(location=self.request.route_url("login"))
 
-        token = generate_auth_token()
-        repository.set_auth_token(email=email, token=token)
+        token = self.create_auth_token(email)
 
         url = self.request.route_url("auth", _query={"token": token})
 
@@ -75,6 +78,16 @@ Bonne journée !
         return HTTPFound(
             location=self.request.route_url("email_sent", _query={"email": email})
         )
+
+    def create_auth_token(self, email: str) -> str:
+        while True:
+            token = generate_auth_token()
+            try:
+                repository.set_auth_token(email=email, token=token)
+            except TokenAlreadyExists:
+                logger.warning("Random token already exists, generating a new one")
+            else:
+                return token
 
 
 @view_config(

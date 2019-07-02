@@ -7,7 +7,6 @@ from unittest.mock import patch
 import pytest
 import transaction
 from freezegun import freeze_time
-from pyramid_mailer import get_mailer
 
 
 @pytest.fixture
@@ -33,7 +32,9 @@ class TestLoginPage:
     @pytest.mark.parametrize(
         "valid_email", ["foo@exemple.gouv.fr", "BAR@EXEMPLE.GOUV.FR"]
     )
-    def test_an_email_with_a_token_is_sent_if_address_is_valid(self, app, valid_email):
+    def test_an_email_with_a_token_is_sent_if_address_is_valid(
+        self, app, mailer, valid_email
+    ):
 
         with patch(
             "zam_repondeur.views.auth.generate_auth_token"
@@ -46,7 +47,6 @@ class TestLoginPage:
 
         assert "Vous devriez recevoir un lien dans les minutes" in resp.text
 
-        mailer = get_mailer(app.app.registry)
         assert len(mailer.outbox) == 1
         assert mailer.outbox[0].subject == "Se connecter à Zam"
         assert mailer.outbox[0].body == dedent(

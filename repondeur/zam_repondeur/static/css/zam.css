@@ -155,6 +155,10 @@ main.box {
     max-width: 60rem;
     margin: 2rem auto;
 }
+    main.box-small {
+        max-width: 45rem;
+        padding: 2rem 5rem;
+    }
 
 /* Liens */
 a {

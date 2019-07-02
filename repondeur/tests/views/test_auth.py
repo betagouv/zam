@@ -44,7 +44,7 @@ class TestLoginPage:
 
         resp = resp.maybe_follow()
 
-        assert "Un message a été envoyé sur votre adresse" in resp.text
+        assert "Vous devriez recevoir un lien dans les minutes" in resp.text
 
         mailer = get_mailer(app.app.registry)
         assert len(mailer.outbox) == 1

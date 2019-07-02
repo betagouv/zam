@@ -3,6 +3,7 @@ from typing import Dict, Optional
 
 from pyramid.config import Configurator
 from redis import Redis
+from redis.exceptions import WatchError
 
 from .initialize import needs_init
 
@@ -15,6 +16,10 @@ def includeme(config: Configurator) -> None:
         redis_url=config.registry.settings["zam.users.redis_url"],
         auth_token_duration=config.registry.settings["zam.users.auth_token_duration"],
     )
+
+
+class TokenAlreadyExists(Exception):
+    pass
 
 
 class UsersRepository:
@@ -51,10 +56,20 @@ class UsersRepository:
     def set_auth_token(self, email: str, token: str) -> None:
         key = self._auth_key(token)
         expires_at = self.now() + timedelta(seconds=self.auth_token_duration)
-        self.connection.hmset(
-            key, {"email": email, "expires_at": self.to_timestamp(expires_at)}
-        )
-        self.connection.expireat(key, expires_at)
+        pipe = self.connection.pipeline()
+        try:
+            pipe.watch(key)  # detect race condition with other thread/process
+            if pipe.exists(key):
+                pipe.unwatch()
+                raise TokenAlreadyExists
+            pipe.multi()  # start transaction
+            pipe.hmset(
+                key, {"email": email, "expires_at": self.to_timestamp(expires_at)}
+            )
+            pipe.expireat(key, expires_at)
+            pipe.execute()  # execute transaction atomically
+        except WatchError:
+            raise TokenAlreadyExists
 
     @needs_init
     def get_auth_token_data(self, token: str) -> Optional[Dict[str, str]]:

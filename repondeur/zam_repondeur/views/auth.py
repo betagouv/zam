@@ -109,6 +109,10 @@ class Authenticate:
                 )
             )
             raise HTTPFound(location=self.request.route_url("login"))
+
+        # Delete token from repository after it's been used successfully
+        repository.delete_auth_token(token)
+
         email = auth.get("email")
         user, created = get_one_or_create(User, email=email)
 

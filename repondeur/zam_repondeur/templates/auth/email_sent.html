@@ -1,10 +1,39 @@
 {% extends "_base.html" %}
 
+{% block header %}
+<style type="text/css">
+    p {
+        margin: 2rem 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block main_class %}
+    box box-small
+{% endblock %}
 
 {% block body %}
-<h1>Surveillez votre boîte aux lettres !</h1>
+<h1>Courriel validé !</h1>
 <p>
-    Un message a été envoyé sur votre adresse <b>{{ email }}</b> avec un lien
-    qui vous permettra de vous authentifier.
+    <strong>
+        Vous devriez recevoir un lien dans les minutes qui viennent sur l’adresse
+        « {{ email }} », vous permettant de vous connecter à Zam et d’accéder
+        aux dossiers disponibles.
+    </strong>
+</p>
+<p>
+    <a href="{{ request.route_url('login') }}" class="arrow-left">
+        Je me suis trompé·e de courriel
+    </a>
+</p>
+<p>
+    Si vous n’avez pas reçu de lien après plusieurs minutes, veuillez vérifier
+    si le courriel n’est pas dans votre dossier d’indésirables (spam),
+    vous pouvez en générer un nouveau
+    <a href="{{ request.route_url('login') }}">en cliquant ici</a>.
+</p>
+<p>
+    Si le problème persiste, vous pouvez nous contacter sur
+    <a href="mailto:contact@zam.beta.gouv.fr">contact@zam.beta.gouv.fr</a>
 </p>
 {% endblock %}

@@ -96,6 +96,23 @@ class TestLoginPage:
         resp = resp.follow()
         assert "Cette adresse de courriel n’est pas en .gouv.fr." in resp.text
 
+    def test_successful_auth_token_request_is_logged(self, app, caplog):
+        caplog.set_level(logging.INFO)
+        app.post("/identification", {"email": "foo@exemple.gouv.fr"})
+        assert (
+            "INFO Successful token request by 'foo@exemple.gouv.fr' from 127.0.0.1"  # noqa
+            in caplog.text
+        )
+
+    @pytest.mark.parametrize("email", ["", "foo", "jane.doe@example.com"])
+    def test_failed_auth_token_request_is_logged(self, app, caplog, email):
+        caplog.set_level(logging.WARNING)
+        app.post("/identification", {"email": email})
+        assert (
+            f"WARNING Failed token request by '{email}' from 127.0.0.1"  # noqa
+            in caplog.text
+        )
+
 
 class TestLoginWithToken:
     def test_user_can_login_with_auth_token(self, app, auth_token):

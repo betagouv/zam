@@ -43,15 +43,18 @@ class UserLogin:
     def post(self) -> Any:
         email = self.request.params.get("email")
         if not email:
+            self.log_failed_token_request(email)
             self.request.session["missing_email"] = True
             return HTTPFound(location=self.request.route_url("login"))
 
         email = User.normalize_email(email)
         if not User.validate_email(email):
+            self.log_failed_token_request(email)
             self.request.session["incorrect_email"] = True
             return HTTPFound(location=self.request.route_url("login"))
 
         if not User.validate_email_domain(email):
+            self.log_failed_token_request(email)
             self.request.session["incorrect_domain"] = True
             return HTTPFound(location=self.request.route_url("login"))
 
@@ -75,6 +78,8 @@ Bonne journée !
         )
         mailer.send(message)
 
+        self.log_successful_token_request(email)
+
         return HTTPFound(
             location=self.request.route_url("email_sent", _query={"email": email})
         )
@@ -88,6 +93,14 @@ Bonne journée !
                 logger.warning("Random token already exists, generating a new one")
             else:
                 return token
+
+    def log_successful_token_request(self, email: str) -> None:
+        ip = self.request.remote_addr
+        logger.info("Successful token request by %r from %s", email, ip)
+
+    def log_failed_token_request(self, email: str) -> None:
+        ip = self.request.remote_addr
+        logger.warning("Failed token request by %r from %s", email, ip)
 
 
 @view_config(

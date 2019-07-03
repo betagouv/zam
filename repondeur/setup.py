@@ -21,6 +21,7 @@ requires = [
     "pyramid_retry",
     "pyramid_tm",
     "python-redis-lock",
+    "python-throttle",
     "redis",
     "requests",
     "rollbar",

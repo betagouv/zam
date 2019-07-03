@@ -113,6 +113,65 @@ class TestLoginPage:
             in caplog.text
         )
 
+    def test_many_token_requests_for_the_same_email_get_throttled(self, app, settings):
+        # We do a number of requests for the same email address (from different IPs)
+        # We can to a number of requests from different IPs without being throttled
+        for n in range(5):
+            resp = app.post(
+                "/identification",
+                {"email": "spam@exemple.gouv.fr"},
+                extra_environ={"REMOTE_ADDR": f"127.0.0.{n + 1}"},
+            )
+            assert 200 <= resp.status_code < 400
+
+        # Oops, now we're being throttled
+        resp = app.post(
+            "/identification", {"email": "spam@exemple.gouv.fr"}, expect_errors=True
+        )
+        assert resp.status_code == 429  # Too Many Requests
+
+        initial_time = datetime.now(tz=timezone.utc)
+
+        # If we wait 50 seconds we're still throttled
+        with freeze_time(initial_time + timedelta(seconds=50)):
+            resp = app.post(
+                "/identification", {"email": "spam@exemple.gouv.fr"}, expect_errors=True
+            )
+            assert resp.status_code == 429  # Too Many Requests
+
+        # If we wait 1 minute (sliding window) we can do a request again
+        with freeze_time(initial_time + timedelta(seconds=60 + 0.01)):
+            resp = app.post("/identification", {"email": f"spam@exemple.gouv.fr"})
+            assert 200 <= resp.status_code < 400
+
+    def test_many_token_requests_from_the_same_ip_get_throttled(self, app):
+        # We do a number of requests from the same IP (for different email addresses)
+        for n in range(10):
+            resp = app.post("/identification", {"email": f"{n + 1}@exemple.gouv.fr"})
+            assert 200 <= resp.status_code < 400
+
+        # Oops, now we're being throttled
+        resp = app.post(
+            "/identification", {"email": f"oops@exemple.gouv.fr"}, expect_errors=True
+        )
+        assert resp.status_code == 429  # Too Many Requests
+
+        initial_time = datetime.now(tz=timezone.utc)
+
+        # If we wait 50 seconds we're still throttled
+        with freeze_time(initial_time + timedelta(seconds=50)):
+            resp = app.post(
+                "/identification",
+                {"email": f"oops@exemple.gouv.fr"},
+                expect_errors=True,
+            )
+            assert resp.status_code == 429  # Too Many Requests
+
+        # If we wait 1 minute (sliding window) we can do a request again
+        with freeze_time(initial_time + timedelta(seconds=60 + 0.01)):
+            resp = app.post("/identification", {"email": f"again@exemple.gouv.fr"})
+            assert 200 <= resp.status_code < 400
+
 
 class TestLoginWithToken:
     def test_user_can_login_with_auth_token(self, app, auth_token):

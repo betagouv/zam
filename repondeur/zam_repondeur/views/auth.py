@@ -74,22 +74,25 @@ class UserLogin(RateLimiterMixin):
 
     @view_config(request_method="POST")
     def post(self) -> Any:
-        email = self.request.params.get("email")
-        if not email:
-            return self.invalid_email(email=email, reason="missing_email")
-
-        email = User.normalize_email(email)
-        if not User.validate_email(email):
-            return self.invalid_email(email=email, reason="incorrect_email")
-
-        if not User.validate_email_domain(email):
-            return self.invalid_email(email=email, reason="incorrect_domain")
-
         if self.ip_limiter.exceeded(self.request.remote_addr):
             return HTTPTooManyRequests()
 
+        email = User.normalize_email(self.request.params.get("email"))
+
         if self.email_limiter.exceeded(email):
             return HTTPTooManyRequests()
+
+        # Will usually be prevented by the browser (required)
+        if not email:
+            return self.invalid_email(email=email, reason="missing_email")
+
+        # Will usually be prevented by the browser (type=email)
+        if not User.validate_email(email):
+            return self.invalid_email(email=email, reason="incorrect_email")
+
+        # Will usually be prevented by the browser (pattern=...)
+        if not User.validate_email_domain(email):
+            return self.invalid_email(email=email, reason="incorrect_domain")
 
         token = self.create_auth_token(email)
         self.send_auth_token_email(token=token, email=email)

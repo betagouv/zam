@@ -214,6 +214,32 @@ class TestLoginWithToken:
             in caplog.text
         )
 
+    def test_authentication_attempts_from_same_ip_are_throttled(self, app, auth_token):
+        # We do a number of requests from the same IP
+        for n in range(10):
+            resp = app.get("/authentification", params={"token": f"BADTOKEN{n + 1}"})
+            assert 200 <= resp.status_code < 400
+
+        # Oops, now we're being throttled
+        resp = app.get(
+            "/authentification", params={"token": f"BADTOKEN"}, expect_errors=True
+        )
+        assert resp.status_code == 429  # Too Many Requests
+
+        initial_time = datetime.now(tz=timezone.utc)
+
+        # If we wait 50 seconds we're still throttled
+        with freeze_time(initial_time + timedelta(seconds=50)):
+            resp = app.get(
+                "/authentification", params={"token": f"BADTOKEN"}, expect_errors=True
+            )
+            assert resp.status_code == 429  # Too Many Requests
+
+        # If we wait 1 minute (sliding window) we can do a request again
+        with freeze_time(initial_time + timedelta(seconds=60 + 0.01)):
+            resp = app.get("/authentification", params={"token": f"BADTOKEN"})
+            assert 200 <= resp.status_code < 400
+
     def test_authenticated_user_gets_an_auth_cookie(self, app, auth_token):
         assert "auth_tkt" not in app.cookies  # no auth cookie yet
 

@@ -23,35 +23,40 @@ from zam_repondeur.users import repository, TokenAlreadyExists
 logger = logging.getLogger(__name__)
 
 
-@view_defaults(route_name="login", permission=NO_PERMISSION_REQUIRED, context=Root)
-class UserLogin:
-    def __init__(self, context: Root, request: Request) -> None:
-        self.request = request
-        self.context = context
-        self.email_limiter = self._make_limiter("email")
-        self.ip_limiter = self._make_limiter("ip")
+class RateLimiterMixin:
+    request: Request
 
-    def _make_limiter(self, name: str) -> SlidingWindowLimiter:
+    def make_limiter(self, action: str, key: str) -> SlidingWindowLimiter:
         return SlidingWindowLimiter(
-            threshold=self._get_max_requests_per_minute(name),
+            threshold=self._get_max_actions_per_minute(action, key),
             interval=60,  # 1 minute
-            redis_config=self._redis_config,
-            name_space=f"auth_token_requests_per_{name}",
+            redis_config=self.redis_config,
+            name_space=f"{action}_per_{key}",
         )
 
-    def _get_max_requests_per_minute(self, name: str) -> int:
-        settings = self.request.registry.settings
-        key = f"zam.users.max_auth_token_requests_per_{name}_per_minute"
-        return int(settings[key])
-
     @reify
-    def _redis_config(self) -> Dict[str, Any]:
-        url = urlparse(self.request.registry.settings["zam.users.redis_url"])
+    def redis_config(self) -> Dict[str, Any]:
+        settings = self.request.registry.settings
+        url = urlparse(settings["zam.users.redis_url"])
         return {
             "host": url.hostname,
             "port": int(url.port or 6379),
             "db": int(url.path.replace("/", "")),
         }
+
+    def _get_max_actions_per_minute(self, action: str, name: str) -> int:
+        settings = self.request.registry.settings
+        key = f"zam.users.max_{action}_per_{name}_per_minute"
+        return int(settings[key])
+
+
+@view_defaults(route_name="login", permission=NO_PERMISSION_REQUIRED, context=Root)
+class UserLogin(RateLimiterMixin):
+    def __init__(self, context: Root, request: Request) -> None:
+        self.request = request
+        self.context = context
+        self.email_limiter = self.make_limiter(action="token_requests", key="email")
+        self.ip_limiter = self.make_limiter(action="token_requests", key="ip")
 
     @view_config(request_method="GET", renderer="auth/user_login.html")
     def get(self) -> Any:
@@ -150,13 +155,17 @@ def email_sent(context: Root, request: Request) -> Dict[str, str]:
 
 
 @view_defaults(route_name="auth", permission=NO_PERMISSION_REQUIRED, context=Root)
-class Authenticate:
+class Authenticate(RateLimiterMixin):
     def __init__(self, context: Root, request: Request) -> None:
         self.request = request
         self.context = context
+        self.ip_limiter = self.make_limiter(action="token_validations", key="ip")
 
     @view_config(request_method="GET")
     def get(self) -> Any:
+
+        if self.ip_limiter.exceeded(self.request.remote_addr):
+            return HTTPTooManyRequests()
 
         token = self.request.params.get("token")
         auth = repository.get_auth_token_data(token)

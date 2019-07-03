@@ -29,6 +29,9 @@ rollbar.root = %(here)s
 
 sqlalchemy.url = $$db_url?application_name=%(app)s
 
+mail.host = localhost
+mail.port = 25
+
 zam.tasks.redis_url = redis://localhost:6379/1
 zam.data.redis_url = redis://localhost:6379/2
 zam.users.redis_url = redis://localhost:6379/3

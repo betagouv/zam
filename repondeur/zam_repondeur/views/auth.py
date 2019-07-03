@@ -59,25 +59,7 @@ class UserLogin:
             return HTTPFound(location=self.request.route_url("login"))
 
         token = self.create_auth_token(email)
-
-        url = self.request.route_url("auth", _query={"token": token})
-
-        mailer = get_mailer(self.request)
-        message = MailMessage(
-            subject="Se connecter à Zam",
-            sender="contact@zam.beta.gouv.fr",
-            recipients=[email],
-            body=f"""
-Bonjour,
-
-Pour vous connecter à Zam, veuillez cliquer sur l’adresse suivante :
-{url}
-
-Bonne journée !
-            """.strip(),
-        )
-        mailer.send(message)
-
+        self.send_auth_token_email(token=token, email=email)
         self.log_successful_token_request(email)
 
         return HTTPFound(
@@ -93,6 +75,24 @@ Bonne journée !
                 logger.warning("Random token already exists, generating a new one")
             else:
                 return token
+
+    def send_auth_token_email(self, token: str, email: str) -> None:
+        url = self.request.route_url("auth", _query={"token": token})
+        mailer = get_mailer(self.request)
+        message = MailMessage(
+            subject="Se connecter à Zam",
+            sender="contact@zam.beta.gouv.fr",
+            recipients=[email],
+            body=f"""
+Bonjour,
+
+Pour vous connecter à Zam, veuillez cliquer sur l’adresse suivante :
+{url}
+
+Bonne journée !
+            """.strip(),
+        )
+        mailer.send(message)
 
     def log_successful_token_request(self, email: str) -> None:
         ip = self.request.remote_addr

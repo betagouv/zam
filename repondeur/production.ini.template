@@ -35,6 +35,8 @@ zam.users.redis_url = redis://localhost:6379/3
 # Duration in seconds.
 # FIXME: sane default?
 zam.users.auth_token_duration = 300
+zam.users.max_auth_token_requests_per_email_per_minute = 10
+zam.users.max_auth_token_requests_per_ip_per_minute = 50
 zam.amendements.redis_url = redis://localhost:6379/4
 
 zam.session_secret = $$session_secret

@@ -69,6 +69,8 @@ def settings():
             "ZAM_TEST_USERS_REDIS_URL", "redis://localhost:6379/12"
         ),
         "zam.users.auth_token_duration": "60",
+        "zam.users.max_auth_token_requests_per_email_per_minute": "5",
+        "zam.users.max_auth_token_requests_per_ip_per_minute": "10",
         "zam.amendements.redis_url": os.environ.get(
             "ZAM_TEST_AMENDEMENTS_REDIS_URL", "redis://localhost:6379/13"
         ),

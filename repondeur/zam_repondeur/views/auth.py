@@ -1,8 +1,11 @@
 import logging
 from datetime import datetime
 from typing import Any, Dict
+from urllib.parse import urlparse
 
-from pyramid.httpexceptions import HTTPFound
+from limiter import SlidingWindowLimiter
+from pyramid.decorator import reify
+from pyramid.httpexceptions import HTTPFound, HTTPTooManyRequests
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.security import NO_PERMISSION_REQUIRED, remember, forget
@@ -25,6 +28,30 @@ class UserLogin:
     def __init__(self, context: Root, request: Request) -> None:
         self.request = request
         self.context = context
+        self.email_limiter = self._make_limiter("email")
+        self.ip_limiter = self._make_limiter("ip")
+
+    def _make_limiter(self, name: str) -> SlidingWindowLimiter:
+        return SlidingWindowLimiter(
+            threshold=self._get_max_requests_per_minute(name),
+            interval=60,  # 1 minute
+            redis_config=self._redis_config,
+            name_space=f"auth_token_requests_per_{name}",
+        )
+
+    def _get_max_requests_per_minute(self, name: str) -> int:
+        settings = self.request.registry.settings
+        key = f"zam.users.max_auth_token_requests_per_{name}_per_minute"
+        return int(settings[key])
+
+    @reify
+    def _redis_config(self) -> Dict[str, Any]:
+        url = urlparse(self.request.registry.settings["zam.users.redis_url"])
+        return {
+            "host": url.hostname,
+            "port": int(url.port or 6379),
+            "db": int(url.path.replace("/", "")),
+        }
 
     @view_config(request_method="GET", renderer="auth/user_login.html")
     def get(self) -> Any:
@@ -52,6 +79,12 @@ class UserLogin:
 
         if not User.validate_email_domain(email):
             return self.invalid_email(email=email, reason="incorrect_domain")
+
+        if self.ip_limiter.exceeded(self.request.remote_addr):
+            return HTTPTooManyRequests()
+
+        if self.email_limiter.exceeded(email):
+            return HTTPTooManyRequests()
 
         token = self.create_auth_token(email)
         self.send_auth_token_email(token=token, email=email)

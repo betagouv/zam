@@ -10,6 +10,7 @@ requires = [
     "inscriptis",
     "lxml",
     "lockfile",
+    "more-itertools",
     "openpyxl",
     "parsy",
     "pdfkit",

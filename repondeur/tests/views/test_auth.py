@@ -59,7 +59,7 @@ class TestLoginPage:
             Bonne journée !"""
         )
 
-    def test_user_must_authenticate_with_an_email(self, app):
+    def test_user_cannot_ask_for_a_token_with_a_missing_email(self, app):
         resp = app.post("/identification", {"email": ""})
 
         assert resp.status_code == 302
@@ -68,7 +68,9 @@ class TestLoginPage:
         assert "La saisie d’une adresse de courriel est requise." in resp.text
 
     @pytest.mark.parametrize("incorrect_email", [" ", "foo"])
-    def test_user_cannot_authenticate_with_an_invalid_email(self, app, incorrect_email):
+    def test_user_cannot_ask_for_a_token_with_an_invalid_email(
+        self, app, incorrect_email
+    ):
         resp = app.post("/identification", {"email": incorrect_email})
 
         assert resp.status_code == 302
@@ -84,7 +86,7 @@ class TestLoginPage:
             "fs0c131y@exemple.gouv.fr@example.com",
         ],
     )
-    def test_user_cannot_authenticate_with_an_invalid_domain(
+    def test_user_cannot_ask_for_a_token_with_an_invalid_domain_name(
         self, app, notgouvfr_email
     ):
         resp = app.post("/identification", {"email": notgouvfr_email})
@@ -110,9 +112,7 @@ class TestLoginWithToken:
 
         assert "Bienvenue dans Zam" in resp.text
 
-    def test_successful_authentication_attempts_are_logged(
-        self, app, auth_token, caplog
-    ):
+    def test_successful_authentication_attempt_is_logged(self, app, auth_token, caplog):
         caplog.set_level(logging.INFO)
         app.get("/authentification", params={"token": auth_token})
         assert (
@@ -131,7 +131,7 @@ class TestLoginWithToken:
 
         assert "Le lien est invalide ou a expiré" in resp.text
 
-    def test_failed_authentication_attempts_are_logged(self, app, auth_token, caplog):
+    def test_failed_authentication_attempt_is_logged(self, app, auth_token, caplog):
         app.get("/authentification", params={"token": "BADTOKEN"})
         assert (
             "WARNING Failed authentication attempt with token 'BADTOKEN' from 127.0.0.1"  # noqa

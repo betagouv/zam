@@ -59,15 +59,16 @@ class TestLoginPage:
             Bonne journée !"""
         )
 
-    def test_user_cannot_ask_for_a_token_with_a_missing_email(self, app):
-        resp = app.post("/identification", {"email": ""})
+    @pytest.mark.parametrize("missing_email", ["", " "])
+    def test_user_cannot_ask_for_a_token_with_a_missing_email(self, app, missing_email):
+        resp = app.post("/identification", {"email": missing_email})
 
         assert resp.status_code == 302
         assert resp.location == "https://zam.test/identification"
         resp = resp.follow()
         assert "La saisie d’une adresse de courriel est requise." in resp.text
 
-    @pytest.mark.parametrize("incorrect_email", [" ", "foo"])
+    @pytest.mark.parametrize("incorrect_email", ["foo"])
     def test_user_cannot_ask_for_a_token_with_an_invalid_email(
         self, app, incorrect_email
     ):

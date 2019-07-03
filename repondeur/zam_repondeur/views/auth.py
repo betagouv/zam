@@ -4,6 +4,7 @@ from typing import Any, Dict
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
+from pyramid.response import Response
 from pyramid.security import NO_PERMISSION_REQUIRED, remember, forget
 from pyramid.view import forbidden_view_config, view_config, view_defaults
 from pyramid_mailer import get_mailer
@@ -43,20 +44,14 @@ class UserLogin:
     def post(self) -> Any:
         email = self.request.params.get("email")
         if not email:
-            self.log_failed_token_request(email)
-            self.request.session["missing_email"] = True
-            return HTTPFound(location=self.request.route_url("login"))
+            return self.invalid_email(email=email, reason="missing_email")
 
         email = User.normalize_email(email)
         if not User.validate_email(email):
-            self.log_failed_token_request(email)
-            self.request.session["incorrect_email"] = True
-            return HTTPFound(location=self.request.route_url("login"))
+            return self.invalid_email(email=email, reason="incorrect_email")
 
         if not User.validate_email_domain(email):
-            self.log_failed_token_request(email)
-            self.request.session["incorrect_domain"] = True
-            return HTTPFound(location=self.request.route_url("login"))
+            return self.invalid_email(email=email, reason="incorrect_domain")
 
         token = self.create_auth_token(email)
         self.send_auth_token_email(token=token, email=email)
@@ -65,6 +60,11 @@ class UserLogin:
         return HTTPFound(
             location=self.request.route_url("email_sent", _query={"email": email})
         )
+
+    def invalid_email(self, email: str, reason: str) -> Response:
+        self.log_failed_token_request(email)
+        self.request.session[reason] = True
+        return HTTPFound(location=self.request.route_url("login"))
 
     def create_auth_token(self, email: str) -> str:
         while True:

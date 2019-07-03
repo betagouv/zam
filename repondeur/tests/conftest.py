@@ -161,12 +161,27 @@ def mailer():
 
 def pytest_runtest_call(item):
     """
-    Clear e-mail outbox before each test
-
     This hook is called by pytest before running each test (after fixtures / setup)
 
     See: https://docs.pytest.org/en/latest/reference.html#hook-reference
     """
+    clear_email_outbox()
+    clear_rate_limiting_counters()
+
+
+def clear_email_outbox():
     registry = get_current_registry()
     mailer = get_mailer(registry)
     mailer.outbox = []
+
+
+def clear_rate_limiting_counters():
+    """
+    This prevents throttling caused by the many logins from automatic tests
+    """
+    from zam_repondeur.users import repository
+
+    redis = repository.connection
+    keys = redis.keys("rate-limiter:*")
+    if keys:
+        redis.delete(*keys)

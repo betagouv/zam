@@ -77,7 +77,7 @@ def setup_unattended_upgrades(ctx):
 
 
 @task
-def http(ctx, ssl=False):
+def http(ctx, ssl=False, alias=""):
     sudo_put(
         ctx,
         "files/letsencrypt/letsencrypt.conf",
@@ -86,6 +86,9 @@ def http(ctx, ssl=False):
     sudo_put(ctx, "files/nginx/ssl.conf", "/etc/nginx/snippets/ssl.conf")
 
     hostname = ctx.run("hostname").stdout.strip()
+
+    aliases = alias.split(",")
+    aliases.append(f"www.{hostname}")
 
     if ssl:
         ssl_cert = f"/etc/letsencrypt/live/{hostname}/fullchain.pem"
@@ -99,6 +102,7 @@ def http(ctx, ssl=False):
             "files/nginx/https.conf",
             {
                 "host": hostname,
+                "aliases": " ".join(aliases),
                 "timeout": ctx.config["request_timeout"],
                 "ssl_cert": ssl_cert,
                 "ssl_key": ssl_key,

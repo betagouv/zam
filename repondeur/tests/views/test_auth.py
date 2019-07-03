@@ -18,7 +18,7 @@ def email():
 def auth_token(email):
     from zam_repondeur.users import repository
 
-    token = "FOOBARBA"
+    token = "FOOBA-RBAZQ-UXQUU-XQUUZ"
     repository.set_auth_token(email, token)
     yield token
     repository.delete_auth_token(token)
@@ -39,7 +39,7 @@ class TestLoginPage:
         with patch(
             "zam_repondeur.views.auth.generate_auth_token"
         ) as mock_generate_auth_token:
-            mock_generate_auth_token.return_value = "FOOBARBA"
+            mock_generate_auth_token.return_value = "FOOBA-RBAZQ-UXQUU-XQUUZ"
 
             resp = app.post("/identification", {"email": valid_email})
 
@@ -54,7 +54,7 @@ class TestLoginPage:
             Bonjour,
 
             Pour vous connecter à Zam, veuillez cliquer sur l’adresse suivante :
-            https://zam.test/authentification?token=FOOBARBA
+            https://zam.test/authentification?token=FOOBA-RBAZQ-UXQUU-XQUUZ
 
             Bonne journée !"""
         )

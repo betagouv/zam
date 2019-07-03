@@ -2,6 +2,7 @@ import secrets
 import string
 from typing import List, Optional
 
+from more_itertools import ichunked
 from paste.deploy.converters import asbool
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -102,13 +103,14 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
         return principals
 
 
-def generate_auth_token(length: int = 8) -> str:
+def generate_auth_token(length: int = 20, chunk_size: int = 5) -> str:
     """
     We use the convenient APIs added in Python 3.6 for generating cryptographically
     strong random numbers suitable for authentication tokens.
 
     See https://docs.python.org/3/library/secrets.html
     """
-    return "".join(
-        secrets.choice(string.ascii_uppercase + string.digits) for _ in range(length)
-    )
+    alphabet = string.ascii_uppercase + string.digits
+    chars = (secrets.choice(alphabet) for _ in range(length))
+    chunks = ("".join(chunk) for chunk in ichunked(chars, chunk_size))
+    return "-".join(chunks)

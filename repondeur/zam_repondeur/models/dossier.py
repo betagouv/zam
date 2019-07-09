@@ -14,6 +14,7 @@ class Dossier(Base):
 
     uid = Column(Text, nullable=False)  # the Assemblée Nationale UID
     titre = Column(Text, nullable=False)  # TODO: make it unique?
+    slug = Column(Text, nullable=False, unique=True)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     modified_at = Column(
@@ -44,9 +45,9 @@ class Dossier(Base):
         return dossiers
 
     @classmethod
-    def create(cls, uid: str, titre: str) -> "Dossier":
+    def create(cls, uid: str, titre: str, slug: str) -> "Dossier":
         now = datetime.utcnow()
-        dossier = cls(uid=uid, titre=titre, created_at=now, modified_at=now)
+        dossier = cls(uid=uid, titre=titre, slug=slug, created_at=now, modified_at=now)
         DBSession.add(dossier)
         return dossier
 

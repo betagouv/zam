@@ -22,7 +22,9 @@ def dossier_plf(db):
 
     with transaction.manager:
         dossier = Dossier.create(
-            uid="DLR5L15N36733", titre="Budget : loi de finances 2019"
+            uid="DLR5L15N36733",
+            titre="Budget : loi de finances 2019",
+            slug="loi-finances-2019",
         )
 
     return dossier

@@ -2,6 +2,8 @@ import logging
 from json import load
 from typing import Any, Dict, Iterator, List, NamedTuple, Optional, Tuple
 
+from slugify import slugify
+
 from zam_repondeur.models.chambre import Chambre
 
 from ...dates import parse_date
@@ -148,6 +150,7 @@ TOP_LEVEL_ACTES = {
 def parse_dossier(dossier: dict, textes: Dict[str, TexteRef]) -> DossierRef:
     uid = dossier["uid"]
     titre = dossier["titreDossier"]["titre"]
+    slug = slugify(dossier["titreDossier"]["titreChemin"] or titre)
     an_url = build_an_url(dossier["titreDossier"]["titreChemin"])
     senat_url = dossier["titreDossier"]["senatChemin"]
     is_plf = "PLF" in dossier
@@ -157,7 +160,12 @@ def parse_dossier(dossier: dict, textes: Dict[str, TexteRef]) -> DossierRef:
         for lecture in gen_lectures(acte, textes, is_plf)
     ]
     return DossierRef(
-        uid=uid, titre=titre, an_url=an_url, senat_url=senat_url, lectures=lectures
+        uid=uid,
+        titre=titre,
+        slug=slug,
+        an_url=an_url,
+        senat_url=senat_url,
+        lectures=lectures,
     )
 
 

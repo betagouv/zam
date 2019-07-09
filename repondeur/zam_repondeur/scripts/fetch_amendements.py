@@ -60,7 +60,9 @@ def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> None:
 def fetch_amendements_for_dossier(
     dossier_ref: DossierRef, chambre: Optional[str], num: Optional[int]
 ) -> None:
-    dossier = Dossier.create(uid=dossier_ref.uid, titre=dossier_ref.titre)
+    dossier = Dossier.create(
+        uid=dossier_ref.uid, titre=dossier_ref.titre, slug=dossier_ref.slug
+    )
     for lecture_ref in dossier_ref.lectures:
         texte_ref = lecture_ref.texte
         if chambre is not None and texte_ref.chambre.value != chambre:

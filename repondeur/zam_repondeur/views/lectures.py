@@ -121,7 +121,7 @@ class LecturesAddForm(LectureAddBase):
         )
 
         dossier_model, _ = get_one_or_create(
-            Dossier, uid=dossier_ref.uid, titre=dossier_ref.titre
+            Dossier, uid=dossier_ref.uid, titre=dossier_ref.titre, slug=dossier_ref.slug
         )
 
         if self._lecture_exists(chambre, texte_model, partie, organe):

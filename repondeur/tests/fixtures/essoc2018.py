@@ -12,6 +12,7 @@ def dossier_essoc2018(db):
         dossier = Dossier.create(
             uid="DLR5L15N36159",
             titre="Fonction publique : un Etat au service d'une société de confiance",
+            slug="etat-service-societe-confiance",
         )
 
     return dossier

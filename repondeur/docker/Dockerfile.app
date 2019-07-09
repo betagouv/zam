@@ -63,7 +63,6 @@ COPY requirements.txt requirements-dev.txt ./
 RUN apt-get update && \
     apt-get -f install --yes --no-install-recommends \
         build-essential \
-        libpq-dev \
         python3-dev \
     && \
     python3.6 -m pip install --upgrade pip setuptools && \
@@ -72,7 +71,6 @@ RUN apt-get update && \
         -r requirements-dev.txt && \
     apt-get remove --yes \
         build-essential \
-        libpq-dev \
         python3-dev \
     && \
     apt-get autoremove --yes && \

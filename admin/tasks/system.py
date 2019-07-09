@@ -42,7 +42,7 @@ def system(ctx):
 
 @task
 def setup_postgres(ctx):
-    install_packages(ctx, "postgresql", "libpq-dev")
+    install_packages(ctx, "postgresql")
     sudo_put(
         ctx,
         "files/postgres.conf",

@@ -14,7 +14,7 @@ requires = [
     "parsy",
     "pdfkit",
     "progressist",
-    "psycopg2",
+    "psycopg2-binary",
     "pyramid",
     "pyramid-default-cors",
     "pyramid-jinja2",

@@ -1,11 +1,15 @@
 **/__pycache__
 **/.DS_Store
 .coverage
+.hypothesis
+.ipynb_checkpoints
 .mypy_cache
 .pytest_cache
 .web_cache
 *.asp
 *.db
 *.json
+*.log
 *.zip
 docker-compose.yml
+zam_repondeur.egg-info

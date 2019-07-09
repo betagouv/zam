@@ -10,7 +10,7 @@ pytestmark = pytest.mark.usefixtures("lecture_an")
 
 
 def test_get_form(app, user_david):
-    resp = app.get("/lectures/an.15.269.PO717460/options/", user=user_david)
+    resp = app.get("/dossiers/1/lectures/an.15.269.PO717460/options/", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -19,7 +19,7 @@ def test_get_form(app, user_david):
     assert resp.forms["backup-form"].method == "post"
     assert (
         resp.forms["backup-form"].action
-        == "https://zam.test/lectures/an.15.269.PO717460/import_backup"
+        == "https://zam.test/dossiers/1/lectures/an.15.269.PO717460/import_backup"
     )
 
     assert list(resp.forms["backup-form"].fields.keys()) == ["backup", "upload"]
@@ -32,7 +32,9 @@ def test_get_form(app, user_david):
 class TestPostForm:
     def _get_upload_form(self, app, user, headers=None):
         return app.get(
-            "/lectures/an.15.269.PO717460/options/", user=user, headers=headers
+            "/dossiers/1/lectures/an.15.269.PO717460/options/",
+            user=user,
+            headers=headers,
         ).forms["backup-form"]
 
     def _upload_backup(self, app, filename, user, team=None):
@@ -42,13 +44,11 @@ class TestPostForm:
         form["backup"] = Upload("file.json", path.read_bytes())
         return form.submit(user=user, headers=headers)
 
-    def test_upload_redirects_to_index(self, app, user_david):
+    def test_upload_redirects_to_index(self, app, user_david, lecture_an):
         resp = self._upload_backup(app, "backup.json", user_david)
 
         assert resp.status_code == 302
-        assert (
-            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
-        )
+        assert resp.location == f"https://zam.test/{lecture_an.url}/"
 
     def test_upload_success_message(self, app, user_david):
         resp = self._upload_backup(app, "backup.json", user_david).follow()
@@ -280,7 +280,10 @@ class TestPostForm:
         resp = form.submit()
 
         assert resp.status_code == 302
-        assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/options"
+        assert (
+            resp.location
+            == "https://zam.test/dossiers/1/lectures/an.15.269.PO717460/options"
+        )
 
         resp = resp.follow()
 
@@ -319,15 +322,15 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir, user_david)
         article1_an.user_content.title = ""
         article1_an.user_content.presentation = ""
 
-    form = app.get("/lectures/an.15.269.PO717460/options/", user=user_david).forms[
-        "backup-form"
-    ]
+    form = app.get(
+        "/dossiers/1/lectures/an.15.269.PO717460/options/", user=user_david
+    ).forms["backup-form"]
     form["backup"] = Upload("file.json", Path(filename).read_bytes())
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == f"https://zam.test/{lecture_an.url}/"
 
     resp = resp.follow()
 

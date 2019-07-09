@@ -11,7 +11,7 @@ def test_create_batch_from_table(wsgi_server, driver, lecture_an, amendements_an
         table.amendements.append(amendements_an[0])
         table.amendements.append(amendements_an[1])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
     checkboxes[0].click()
@@ -43,8 +43,8 @@ def test_dissociate_batch_from_amendement_edit(
         table.amendements.append(amendements_an_batch[0])
         table.amendements.append(amendements_an_batch[1])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/amendements/{amendements_an_batch[0]}/amendement_edit")
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
+    driver.get(f"{LECTURE_URL}/{amendements_an_batch[0]}/amendement_edit")
     dissociate_button = driver.find_element_by_css_selector('[value="Retirer du lot"]')
     dissociate_button.click()
     assert driver.current_url == f"{LECTURE_URL}/tables/{email}"
@@ -67,7 +67,7 @@ def test_transfer_batch_from_table(
         table.amendements.append(amendements_an_batch[0])
         table.amendements.append(amendements_an_batch[1])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     checkbox = driver.find_element_by_css_selector('[name="amendement-selected"]')
     checkbox.click()

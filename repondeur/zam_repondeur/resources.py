@@ -12,6 +12,7 @@ from zam_repondeur.models import (
     Article,
     Chambre,
     DBSession,
+    Dossier,
     Lecture,
     User,
     UserTable,
@@ -65,10 +66,43 @@ class Root(Resource):
     __acl__ = [(Allow, Authenticated, "view")]
 
     def __init__(self, _request: Request) -> None:
+        self.add_child(DossierCollection(name="dossiers", parent=self))
+
+
+class DossierCollection(Resource):
+    def models(self) -> List[Dossier]:
+        return Dossier.all()
+
+    def __getitem__(self, key: str) -> Resource:
+        return DossierResource(name=key, parent=self)
+
+
+class DossierResource(Resource):
+    def __init__(self, name: str, parent: Resource) -> None:
+        super().__init__(name=name, parent=parent)
+        self.pk = int(name)
         self.add_child(LectureCollection(name="lectures", parent=self))
+
+    @property
+    def parent(self) -> DossierCollection:
+        return cast(DossierCollection, self.__parent__)
+
+    @reify
+    def dossier(self) -> Dossier:
+        return self.model()
+
+    def model(self) -> Dossier:
+        dossier = Dossier.get(self.pk)
+        if dossier is None:
+            raise ResourceNotFound(self)
+        return dossier
 
 
 class LectureCollection(Resource):
+    @property
+    def parent(self) -> DossierResource:
+        return cast(DossierResource, self.__parent__)
+
     def models(self) -> List[Lecture]:
         return Lecture.all()
 

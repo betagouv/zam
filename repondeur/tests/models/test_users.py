@@ -8,12 +8,12 @@ def test_user_activity_default(users_repository, user_david):
 
 
 def test_user_activity_in_use(app, user_david):
-    app.get("/lectures/", user=user_david)
+    app.get("/dossiers/1/lectures/", user=user_david)
     assert user_david.is_active
 
 
 def test_user_activity_not_anymore_in_use(app, user_david):
-    app.get("/lectures/", user=user_david)
+    app.get("/dossiers/1/lectures/", user=user_david)
     assert user_david.is_active
 
     with freeze_time(datetime.utcnow() + timedelta(minutes=29)):

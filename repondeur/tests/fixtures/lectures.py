@@ -14,6 +14,10 @@ def lecture_an(db, dossier_plfss2018, texte_plfss2018_an_premiere_lecture):
             dossier=dossier_plfss2018,
         )
 
+    # Shortcut for testing purpose.
+    lecture.url = (
+        f"dossiers/{dossier_plfss2018.url_key}/lectures/{lecture.url_key}/amendements"
+    )
     return lecture
 
 

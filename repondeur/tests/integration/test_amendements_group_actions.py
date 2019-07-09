@@ -1,8 +1,8 @@
 def test_group_actions_not_visible_by_default(
     wsgi_server, driver, lecture_an, amendements_an
 ):
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/amendements")
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
+    driver.get(LECTURE_URL)
     group_actions = driver.find_element_by_css_selector(".groupActions")
     assert not group_actions.is_displayed()
 
@@ -10,8 +10,8 @@ def test_group_actions_not_visible_by_default(
 def test_group_actions_are_visible_by_selection(
     wsgi_server, driver, lecture_an, amendements_an
 ):
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/amendements")
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
+    driver.get(LECTURE_URL)
     driver.find_element_by_css_selector('[name="amendement-selected"]').click()
     group_actions = driver.find_element_by_css_selector(".groupActions")
     assert group_actions.is_displayed()
@@ -20,8 +20,8 @@ def test_group_actions_are_visible_by_selection(
 def test_group_actions_are_made_invisible_by_unselection(
     wsgi_server, driver, lecture_an, amendements_an
 ):
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/amendements")
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
+    driver.get(LECTURE_URL)
     driver.find_element_by_css_selector('[name="amendement-selected"]').click()
     group_actions = driver.find_element_by_css_selector(".groupActions")
     assert group_actions.is_displayed()
@@ -33,8 +33,8 @@ def test_group_actions_are_made_invisible_by_unselection(
 def test_group_actions_button_urls_change_with_selection(
     wsgi_server, driver, lecture_an, amendements_an
 ):
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/amendements")
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
+    driver.get(LECTURE_URL)
     find = driver.find_element_by_css_selector
 
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
@@ -87,8 +87,8 @@ def test_group_actions_button_urls_change_with_selection(
 def test_group_actions_button_urls_change_on_the_fly(
     wsgi_server, driver, lecture_an, amendements_an
 ):
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/amendements")
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
+    driver.get(LECTURE_URL)
     find = driver.find_element_by_css_selector
 
     # Set a filter on the article

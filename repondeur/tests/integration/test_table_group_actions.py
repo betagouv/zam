@@ -19,7 +19,7 @@ def test_group_actions_not_visible_by_default(
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     group_actions = driver.find_element_by_css_selector(".groupActions")
     assert not group_actions.is_displayed()
@@ -38,7 +38,7 @@ def test_group_actions_are_visible_by_selection(
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     driver.find_element_by_css_selector('[name="amendement-selected"]').click()
     group_actions = driver.find_element_by_css_selector(".groupActions")
@@ -59,7 +59,7 @@ def test_batch_amendements_are_visible_with_at_least_two_selections(
         table.amendements.append(amendements_an[0])
         table.amendements.append(amendements_an[1])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
     checkboxes[0].click()
@@ -86,7 +86,7 @@ def test_batch_amendements_is_hidden_when_selected_amendements_have_different_ar
         table.amendements.append(amendements_an[1])
         table.amendements.append(amendement)
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
     checkboxes[0].click()
@@ -119,7 +119,7 @@ def test_batch_amendements_is_hidden_when_selected_amendements_have_different_mi
         table.amendements.append(amendements_an[1])
         table.amendements.append(amendement)
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
     checkboxes[0].click()
@@ -142,7 +142,7 @@ def test_group_actions_are_made_invisible_by_unselection(
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     driver.find_element_by_css_selector('[name="amendement-selected"]').click()
     group_actions = driver.find_element_by_css_selector(".groupActions")
@@ -164,7 +164,7 @@ def test_group_actions_button_urls_change_with_selection(
         table.amendements.append(amendements_an[0])
         table.amendements.append(amendements_an[1])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     find = driver.find_element_by_css_selector
 
@@ -220,7 +220,7 @@ def test_group_actions_button_urls_change_on_the_fly(
         table.amendements.append(amendements_an[0])
         table.amendements.append(amendements_an[1])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     find = driver.find_element_by_css_selector
     driver.find_element_by_link_text("Filtrer").click()

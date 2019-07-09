@@ -14,8 +14,7 @@ def test_get_amendement_edit_form(
         user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
-        f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/amendement_edit",
-        user=user_david,
+        f"/{lecture_an.url}/{amendement.num}/amendement_edit", user=user_david
     )
 
     assert resp.status_code == 200
@@ -54,10 +53,7 @@ def test_get_amendement_edit_form_only_if_owner(
         amdt.user_content.avis = "Favorable"
         DBSession.add(amdt)
 
-    resp = app.get(
-        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
-        user=user_david,
-    )
+    resp = app.get(f"/{lecture_an.url}/{amdt.num}/amendement_edit", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -85,19 +81,16 @@ def test_transfer_amendement_from_edit_form(
 
     amdt = amendements_an[0]
 
-    resp = app.get(
-        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
-        user=user_david,
-    )
+    resp = app.get(f"/{lecture_an.url}/{amdt.num}/amendement_edit", user=user_david)
 
     form = resp.forms["transfer"]
     resp = form.submit("submit-table")
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
+    assert resp.location == (
+        "https://zam.test"
+        "/dossiers/1/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
     )
 
     # The amendement is now on our table
@@ -123,10 +116,7 @@ def test_transfer_amendement_from_edit_form_given_activity(
     amdt = amendements_an[0]
 
     # With amendement from index.
-    resp = app.get(
-        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
-        user=user_david,
-    )
+    resp = app.get(f"/{lecture_an.url}/{amdt.num}/amendement_edit", user=user_david)
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Transférer sur ma table"
@@ -140,10 +130,7 @@ def test_transfer_amendement_from_edit_form_given_activity(
         DBSession.add(user_ronan)
         table_ronan = user_ronan.table_for(lecture_an)
         table_ronan.amendements.append(amdt)
-    resp = app.get(
-        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
-        user=user_david,
-    )
+    resp = app.get(f"/{lecture_an.url}/{amdt.num}/amendement_edit", user=user_david)
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Transférer sur ma table"
@@ -154,10 +141,7 @@ def test_transfer_amendement_from_edit_form_given_activity(
 
     # With amendement from active user.
     user_ronan.record_activity()
-    resp = app.get(
-        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
-        user=user_david,
-    )
+    resp = app.get(f"/{lecture_an.url}/{amdt.num}/amendement_edit", user=user_david)
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Transférer sur ma table"
@@ -168,10 +152,7 @@ def test_transfer_amendement_from_edit_form_given_activity(
 
     # With amendement from amendement being edited.
     amdt.start_editing()
-    resp = app.get(
-        f"/lectures/an.15.269.PO717460/amendements/{amdt.num}/amendement_edit",
-        user=user_david,
-    )
+    resp = app.get(f"/{lecture_an.url}/{amdt.num}/amendement_edit", user=user_david)
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Forcer le transfert sur ma table"
@@ -192,9 +173,7 @@ def test_get_amendement_edit_form_gouvernemental(
         amendement.auteur = "LE GOUVERNEMENT"
         user_david_table_an.amendements.append(amendement)
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/999/amendement_edit", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -213,9 +192,7 @@ def test_get_amendement_edit_form_not_found(
     app, lecture_an, amendements_an, user_david
 ):
     resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/998/amendement_edit",
-        user=user_david,
-        expect_errors=True,
+        f"/{lecture_an.url}998/amendement_edit", user=user_david, expect_errors=True
     )
     assert resp.status_code == 404
 
@@ -235,9 +212,7 @@ def test_post_amendement_edit_form(
     assert amendement.user_content.objet is None
     assert amendement.user_content.reponse is None
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/999/amendement_edit", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
@@ -246,9 +221,9 @@ def test_post_amendement_edit_form(
     resp = form.submit("save")
 
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/#amdt-999"  # noqa
+    assert resp.location == (
+        "https://zam.test"
+        "/dossiers/1/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/#amdt-999"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -280,9 +255,7 @@ def test_post_amendement_edit_form_reset_editing_state(
     amendement.start_editing()
     assert amendement.is_being_edited
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/999/amendement_edit", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
@@ -310,9 +283,7 @@ def test_post_amendement_edit_form_switch_table(
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendement)
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/999/amendement_edit", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
@@ -327,9 +298,9 @@ def test_post_amendement_edit_form_switch_table(
     resp = form.submit("save")
 
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/"
+    assert resp.location == (
+        "https://zam.test"
+        "/dossiers/1/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/"
     )
     resp = resp.maybe_follow()
     assert "Les modifications n’ont PAS été enregistrées" in resp.text
@@ -360,9 +331,7 @@ def test_post_amendement_edit_form_and_transfer(
     assert amendement.user_content.objet is None
     assert amendement.user_content.reponse is None
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/999/amendement_edit", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
@@ -372,10 +341,11 @@ def test_post_amendement_edit_form_and_transfer(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test/lectures/an.15.269.PO717460/transfer_amendements"
+        "https://zam.test"
+        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements"
         "?nums=999&from_save=1&"
-        "back=https%3A%2F%2Fzam.test%2Flectures%2Fan.15.269.PO717460%2Ftables%2F"
-        "david%40exemple.gouv.fr%2F%23amdt-999"
+        "back=https%3A%2F%2Fzam.test%2Fdossiers%2F1%2Flectures%2Fan.15.269.PO717460"
+        "%2Ftables%2Fdavid%40exemple.gouv.fr%2F%23amdt-999"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -411,18 +381,16 @@ def test_post_amendement_edit_form_gouvernemental(
     assert amendement.user_content.reponse is None
     assert amendement.gouvernemental
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/999/amendement_edit", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/999/amendement_edit", user=user_david)
     form = resp.forms["edit-amendement"]
     form["reponse"] = "Une réponse <strong>très</strong> appropriée"
     form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
     resp = form.submit("save")
 
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == "https://zam.test/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/#amdt-999"  # noqa
+    assert resp.location == (
+        "https://zam.test"
+        "/dossiers/1/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/#amdt-999"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -454,9 +422,7 @@ def test_post_amendement_edit_form_creates_event_only_if_modified(
         user_david_table_an.amendements.append(amendement)
 
     # Let's post the response edit form, but with unchanged values
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/amendement_edit", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/666/amendement_edit", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     # Even with extra spaces.

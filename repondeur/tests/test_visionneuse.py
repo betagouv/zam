@@ -11,7 +11,8 @@ def _text_from_node(node, selector):
 def test_reponses_empty(app, lecture_an, amendements_an, user_david):
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -31,7 +32,8 @@ def test_reponses_full(app, lecture_an, amendements_an, user_david):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -63,7 +65,8 @@ def test_reponses_grouping(app, lecture_an, amendements_an, user_david):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -98,7 +101,8 @@ def test_reponses_authors_not_grouping(app, lecture_an, amendements_an, user_dav
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -127,7 +131,8 @@ def test_reponses_authors_grouping(app, lecture_an, amendements_an, user_david):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -157,7 +162,8 @@ def test_reponses_groupe_grouping(app, lecture_an, amendements_an, user_david):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -233,7 +239,8 @@ def test_reponses_many_grouping(
         )
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -267,7 +274,8 @@ def test_reponses_not_grouping_on_same_reponse_only(
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -292,7 +300,8 @@ def test_reponses_gouvernemental(app, lecture_an, amendements_an, user_david):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     test_amendement = resp.find_amendement(amendements_an[0])
@@ -325,7 +334,8 @@ def test_reponses_abandoned_not_displayed(
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     test_amendement = resp.find_amendement(amendements_an[0])
@@ -356,7 +366,8 @@ def test_reponses_abandoned_and_gouvernemental_not_displayed(
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     test_amendement = resp.find_amendement(amendements_an[0])
@@ -380,7 +391,8 @@ def test_reponses_with_textes(app, lecture_an, amendements_an, user_david):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     fake_anchor = resp.parser.css_first("#content-article-1")
@@ -405,7 +417,8 @@ def test_reponses_with_presentations(app, lecture_an, amendements_an, user_david
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     fake_anchor = resp.parser.css_first("#content-article-1")
@@ -427,7 +440,8 @@ def test_reponses_without_textes_or_presentations(
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     fake_anchor = resp.parser.css_first("#content-article-1")
@@ -451,7 +465,8 @@ def test_reponses_with_different_articles(
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     assert resp.parser.css(".titles h2")[0].text() == "Article 1"
@@ -465,7 +480,9 @@ def test_reponses_with_different_articles(
         == "Article 7 bis"
     )
 
-    resp = app.get("/lectures/an.15.269.PO717460/articles/article.7.bis./reponses")
+    resp = app.get(
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.7.bis./reponses"
+    )
 
     assert resp.parser.css(".titles h2")[0].text() == "Article 7 bis"
     assert (
@@ -491,7 +508,8 @@ def test_reponses_with_annexes(app, lecture_an, amendements_an, annexe_an, user_
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/annexe.../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/annexe.../reponses",
+        user=user_david,
     )
 
     assert resp.parser.css(".titles h2")[0].text() == "Annexes"
@@ -511,7 +529,7 @@ def test_reponses_article_additionnel_avant(
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1..avant/reponses",
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1..avant/reponses",
         user=user_david,
     )
 
@@ -538,7 +556,8 @@ def test_reponses_amendement_rect(app, lecture_an, amendements_an, user_david):
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     assert "666" in resp
@@ -556,7 +575,8 @@ def test_links_to_previous_and_next_articles(
         DBSession.add_all(amendements_an)
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -568,7 +588,8 @@ def test_links_to_previous_and_next_articles_when_empty_additional(
     app, lecture_an, amendements_an, article1av_an, article7bis_an, user_david
 ):
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../reponses", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../reponses",
+        user=user_david,
     )
 
     assert resp.status_code == 200

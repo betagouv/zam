@@ -11,7 +11,7 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an, user_davi
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../", user=user_david
     )
     form = resp.forms["edit-article"]
     form["title"] = "Titre article"
@@ -44,7 +44,7 @@ def test_post_article_edit_form_presentation(
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/articles/article.1../", user=user_david
+        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../", user=user_david
     )
     form = resp.forms["edit-article"]
     form["presentation"] = "<p>Content</p>"

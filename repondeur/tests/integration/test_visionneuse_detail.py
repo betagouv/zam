@@ -10,7 +10,7 @@ pytestmark = pytest.mark.flaky(max_runs=5)
 def test_visionneuse_detail_amendement(wsgi_server, driver, lecture_an, amendements_an):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     with transaction.manager:
         amendements_an[0].user_content.avis = "Favorable"
         amendements_an[0].auteur = "M. Content"
@@ -36,7 +36,7 @@ def test_visionneuse_detail_amendement_reponse(
 ):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     with transaction.manager:
         amendements_an[0].user_content.avis = "Favorable"
         amendements_an[0].user_content.reponse = "La réponse"
@@ -61,7 +61,7 @@ def test_visionneuse_detail_amendement_texte(
 ):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     with transaction.manager:
         amendements_an[0].user_content.avis = "Favorable"
         amendements_an[0].corps = "Le corps"
@@ -98,7 +98,7 @@ def test_visionneuse_detail_amendement_reponse_then_texte(
 ):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     with transaction.manager:
         amendements_an[0].user_content.avis = "Favorable"
         amendements_an[0].user_content.reponse = "La réponse"

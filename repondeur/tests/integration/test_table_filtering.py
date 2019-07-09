@@ -14,7 +14,7 @@ def test_filters_are_hidden_by_default(wsgi_server, driver, lecture_an, amendeme
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     thead = driver.find_element_by_css_selector("thead")
     assert not thead.find_element_by_css_selector("tr.filters").is_displayed()
@@ -29,7 +29,7 @@ def test_filters_are_opened_by_click(wsgi_server, driver, lecture_an, amendement
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     driver.find_element_by_link_text("Filtrer").click()
     thead = driver.find_element_by_css_selector("thead")
@@ -40,7 +40,7 @@ def test_filters_are_absent_without_amendements(
     wsgi_server, driver, lecture_an, user_david
 ):
     email = "user@exemple.gouv.fr"
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     assert not driver.find_element_by_css_selector("thead tr.filters").is_displayed()
 
@@ -98,7 +98,7 @@ def test_column_filtering_by_value(
 ):
     from zam_repondeur.models import Amendement, DBSession, User
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     email = "user@exemple.gouv.fr"
     with transaction.manager:
         DBSession.add_all(amendements_an)
@@ -162,7 +162,7 @@ def test_column_filtering_by_value_with_batches(
 ):
     from zam_repondeur.models import Amendement, Batch, DBSession, User
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     email = "user@exemple.gouv.fr"
     with transaction.manager:
         DBSession.add_all(amendements_an)
@@ -216,7 +216,7 @@ def test_column_filtering_by_checkbox(
 ):
     from zam_repondeur.models import Amendement, DBSession, User
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     email = "user@exemple.gouv.fr"
     with transaction.manager:
         DBSession.add_all(amendements_an)

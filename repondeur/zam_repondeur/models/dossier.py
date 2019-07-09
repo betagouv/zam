@@ -1,7 +1,8 @@
 from datetime import datetime
+from typing import List, Optional
 
-from sqlalchemy import Column, DateTime, Integer, Text
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, DateTime, Integer, Text, desc
+from sqlalchemy.orm import joinedload, relationship
 
 from .base import Base, DBSession
 
@@ -12,7 +13,7 @@ class Dossier(Base):
     pk = Column(Integer, primary_key=True)
 
     uid = Column(Text, nullable=False)  # the Assemblée Nationale UID
-    titre = Column(Text, nullable=False)
+    titre = Column(Text, nullable=False)  # TODO: make it unique?
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     modified_at = Column(
@@ -23,9 +24,33 @@ class Dossier(Base):
 
     __repr_keys__ = ("pk", "uid", "titre")
 
+    @property
+    def owned_by_team(self) -> None:
+        return None  # TODO: transfer ownership to the whole dossier.
+
+    @property
+    def url_key(self) -> str:
+        return str(self.pk)
+        return "-".join(part.lower() for part in self.titre.split())
+
+    @classmethod
+    def all(cls) -> List["Dossier"]:
+        dossiers: List["Dossier"] = (
+            DBSession.query(cls)
+            .options(joinedload("lectures"))
+            .order_by(desc(cls.created_at))
+            .all()
+        )
+        return dossiers
+
     @classmethod
     def create(cls, uid: str, titre: str) -> "Dossier":
         now = datetime.utcnow()
         dossier = cls(uid=uid, titre=titre, created_at=now, modified_at=now)
         DBSession.add(dossier)
         return dossier
+
+    @classmethod
+    def get(cls, pk: int) -> Optional["Dossier"]:
+        res: Optional["Dossier"] = DBSession.query(cls).filter(cls.pk == pk).first()
+        return res

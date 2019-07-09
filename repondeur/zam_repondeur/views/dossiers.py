@@ -1,0 +1,192 @@
+import transaction
+from operator import attrgetter
+from typing import Optional, Union
+
+from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
+from pyramid.request import Request
+from pyramid.response import Response
+from pyramid.view import view_config, view_defaults
+
+from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
+from zam_repondeur.fetch import get_articles
+from zam_repondeur.fetch.an.dossiers.models import (
+    DossierRef,
+    DossierRefsByUID,
+    LectureRef,
+)
+from zam_repondeur.message import Message
+from zam_repondeur.models import Chambre, Dossier, Lecture, Texte, get_one_or_create
+from zam_repondeur.models.events.lecture import ArticlesRecuperes, LectureCreee
+
+from zam_repondeur.models.organe import ORGANE_SENAT
+from zam_repondeur.resources import DossierCollection, DossierResource
+from zam_repondeur.tasks.fetch import fetch_amendements
+
+
+@view_config(context=DossierCollection, renderer="dossiers_list.html")
+def dossiers_list(
+    context: DossierCollection, request: Request
+) -> Union[Response, dict]:
+
+    all_dossiers = context.models()
+
+    dossiers = [
+        dossier
+        for dossier in all_dossiers
+        if dossier.lectures
+        and (
+            dossier.owned_by_team is None or dossier.owned_by_team in request.user.teams
+        )
+    ]
+    available_dossiers = [dossier for dossier in all_dossiers if not dossier.lectures]
+
+    if not dossiers:
+        return HTTPFound(request.resource_url(context, "add"))
+
+    return {"dossiers": dossiers, "available_dossiers": available_dossiers}
+
+
+@view_config(context=DossierResource, renderer="dossier_item.html")
+def dossier_item(context: DossierResource, request: Request) -> Union[Response, dict]:
+
+    dossier = context.dossier
+
+    return {"dossier": dossier, "lectures": dossier.lectures}
+
+
+class DossierAddBase:
+    def __init__(self, context: DossierCollection, request: Request) -> None:
+        self.context = context
+        self.request = request
+        self.dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
+
+
+@view_defaults(context=DossierCollection, name="add")
+class DossierAddForm(DossierAddBase):
+    @view_config(request_method="GET", renderer="lectures_add.html")
+    def get(self) -> dict:
+        lectures = self.context.models()
+        dossiers = [
+            {"uid": dossier.uid, "titre": dossier.titre}
+            for dossier in sorted(
+                self.dossiers_by_uid.values(),
+                key=attrgetter("most_recent_texte_date"),
+                reverse=True,
+            )
+        ]
+        return {
+            "dossiers": dossiers,
+            "lectures": lectures,
+            "hide_lectures_link": len(lectures) == 0,
+        }
+
+    @view_config(request_method="POST")
+    def post(self) -> Response:
+
+        dossier_ref = self._get_dossier_ref()
+        lecture_ref = self._get_lecture_ref(dossier_ref)
+
+        chambre = lecture_ref.chambre
+        titre = lecture_ref.titre
+        organe = lecture_ref.organe
+        partie = lecture_ref.partie
+        texte = lecture_ref.texte
+
+        if texte.date_depot is None:
+            raise RuntimeError("Cannot create LectureRef for Texte with no date_depot")
+
+        texte_model, _ = get_one_or_create(
+            Texte,
+            type_=texte.type_,
+            chambre=chambre,
+            legislature=texte.legislature,
+            session=texte.session,
+            numero=texte.numero,
+            date_depot=texte.date_depot,
+        )
+
+        dossier_model, _ = get_one_or_create(
+            Dossier, uid=dossier_ref.uid, titre=dossier_ref.titre
+        )
+
+        if self._lecture_exists(chambre, texte_model, partie, organe):
+            self.request.session.flash(
+                Message(cls="warning", text="Cette lecture existe déjà…")
+            )
+            return HTTPFound(location=self.request.resource_url(self.context))
+
+        lecture_model: Lecture = Lecture.create(
+            owned_by_team=self.request.team,
+            texte=texte_model,
+            partie=partie,
+            titre=titre,
+            organe=organe,
+            dossier=dossier_model,
+        )
+        get_articles(lecture_model)
+        LectureCreee.create(self.request, lecture=lecture_model)
+        ArticlesRecuperes.create(request=None, lecture=lecture_model)
+        # Call to fetch_* tasks below being asynchronous, we need to make
+        # sure the lecture_model already exists once and for all in the database
+        # for future access. Otherwise, it may create many instances and
+        # thus many objects within the database.
+        transaction.commit()
+        fetch_amendements(lecture_model.pk)
+        self.request.session.flash(
+            Message(
+                cls="success",
+                text=(
+                    "Lecture créée avec succès, amendements en cours de récupération."
+                ),
+            )
+        )
+        return HTTPFound(
+            location=self.request.resource_url(
+                self.context[lecture_model.url_key], "amendements"
+            )
+        )
+
+    def _lecture_exists(
+        self, chambre: Chambre, texte_model: Texte, partie: Optional[int], organe: str
+    ) -> bool:
+        if Lecture.exists(chambre, texte_model, partie, organe):
+            return True
+        # We might already have a Sénat commission lecture created earlier from
+        # scraping data, and that would not have the organe.
+        if chambre == Chambre.SENAT and organe != ORGANE_SENAT:
+            return Lecture.exists(chambre, texte_model, partie, "")
+        return False
+
+    def _get_dossier_ref(self) -> DossierRef:
+        try:
+            dossier_uid = self.request.POST["dossier"]
+        except KeyError:
+            raise HTTPBadRequest
+        try:
+            dossier_ref = self.dossiers_by_uid[dossier_uid]
+        except KeyError:
+            raise HTTPNotFound
+        return dossier_ref
+
+    def _get_lecture_ref(self, dossier_ref: DossierRef) -> LectureRef:
+        try:
+            texte_uid, organe, partie_str = self.request.POST["lecture"].split("-", 2)
+        except (KeyError, ValueError):
+            raise HTTPBadRequest
+        partie: Optional[int]
+        if partie_str == "":
+            partie = None
+        else:
+            partie = int(partie_str)
+        matching = [
+            lecture_ref
+            for lecture_ref in dossier_ref.lectures
+            if (
+                lecture_ref.texte.uid == texte_uid
+                and lecture_ref.organe == organe
+                and lecture_ref.partie == partie
+            )
+        ]
+        if len(matching) != 1:
+            raise HTTPNotFound
+        return matching[0]

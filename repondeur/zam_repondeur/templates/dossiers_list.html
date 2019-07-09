@@ -1,0 +1,94 @@
+{% extends "_base.html" %}
+{% import "macros.html" as macros %}
+
+{% block header %}
+<style type="text/css">
+    main {
+        max-width: 60rem;
+        margin: 2rem auto;
+    }
+    h2 {
+        margin: 4rem 0 2rem 2rem;
+    }
+
+    .dossier {
+        margin: 2rem 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+    }
+    .dossier:first-child {
+        margin-top: 2rem;
+    }
+    .dossier nav {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        flex-direction: column;
+        text-align: right;
+        min-width: 250px;
+    }
+    .dossier nav a {
+        background: no-repeat right center url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}");
+    }
+    .dossier nav a {
+        font-size: 1.1rem;
+        padding-right: 1.8rem;
+        background-position: 99% 42%;
+        background-size: 5%;
+    }
+    .dossier nav a:first-child {
+        font-size: 1.7rem;
+        padding-right: 2rem;
+        background-position: right 40%;
+        background-size: 7%;
+    }
+    .dossier .details {
+        line-height: 1.2;
+    }
+    .extra-button {
+        justify-content: flex-end;
+        margin-top: 1rem;
+    }
+        .extra-button a.button {
+            color: #3167a6;
+            border: 1px solid #3167a6;
+        }
+        .extra-button a.button:hover {
+            background-color: #3167a6;
+            color: white;
+        }
+</style>
+{% endblock %}
+
+{% block main_class %}{% endblock %}
+
+{% block body %}
+    <h2>Mes Zams</h2>
+    {% for dossier in dossiers %}
+        <div class="dossier box">
+            <div>
+                <h3><a href="{{ request.resource_url(context, dossier.url_key) }}">{{ dossier.titre }}</a></h3>
+                <ul>
+                    {% for lecture in dossier.lectures %}
+                        <li>{{ lecture }} <a href="{{ request.resource_url(context[dossier.url_key]['lectures'][lecture.url_key], 'amendements') }}" class="arrow-right">Consulter la lecture</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+
+    <h2>Dossiers disponibles</h2>
+    {% for dossier in available_dossiers %}
+        <div class="dossier box">
+            <div>
+                <h3>{{ dossier.titre }}</h3>
+            </div>
+            <nav>
+                <button href="#TODO" class="button primary">
+                    Demander ce Zam
+                </button>
+            </nav>
+        </div>
+    {% endfor %}
+{% endblock %}

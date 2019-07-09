@@ -23,7 +23,7 @@ def test_transfer_amendements_switch_color_on_check_from_inactive_user(
         user_david_table_an.amendements.append(amendements_an[0])
         DBSession.add_all(amendements_an)
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/transfer_amendements?nums={amendements_an[0].num}")
 
     checkbox = driver.find_element_by_css_selector('input[type="checkbox"]')
@@ -69,7 +69,7 @@ def test_transfer_amendements_switch_color_on_check_from_edited_amendement(
         amendements_an[0].start_editing()
         DBSession.add_all(amendements_an)
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/transfer_amendements?nums={amendements_an[0].num}")
 
     checkbox = driver.find_element_by_css_selector('input[type="checkbox"]')
@@ -119,7 +119,7 @@ def test_transfer_amendements_switch_color_on_check_from_edited_an_unedited_amen
         user_ronan_table_an.amendements.append(amendements_an[1])
         DBSession.add_all(amendements_an)
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(
         f"{LECTURE_URL}/transfer_amendements?"
         f"nums={amendements_an[0].num}&nums={amendements_an[1].num}"

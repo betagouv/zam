@@ -14,8 +14,7 @@ def test_amendement_start_editing(
     assert not amendement.is_being_edited
 
     resp = app.post_json(
-        f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/start_editing",
-        user=user_david,
+        f"/{lecture_an.url}/{amendement.num}/start_editing", user=user_david
     )
 
     assert resp.status_code == 200
@@ -38,12 +37,10 @@ def test_amendement_stop_editing(
     assert not amendement.is_being_edited
 
     resp = app.post_json(
-        f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/start_editing",
-        user=user_david,
+        f"/{lecture_an.url}/{amendement.num}/start_editing", user=user_david
     )
     resp = app.post_json(
-        f"/lectures/an.15.269.PO717460/amendements/{amendement.num}/stop_editing",
-        user=user_david,
+        f"/{lecture_an.url}/{amendement.num}/stop_editing", user=user_david
     )
 
     assert resp.status_code == 200

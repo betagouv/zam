@@ -9,15 +9,15 @@ from .helpers import extract_column_text
 def test_filters_are_visible_by_default(
     wsgi_server, driver, lecture_an, amendements_an
 ):
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/amendements")
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
+    driver.get(LECTURE_URL)
     thead = driver.find_element_by_css_selector("thead")
     assert thead.find_element_by_css_selector("tr.filters").is_displayed()
 
 
 def test_filters_are_ineffective_without_amendements(wsgi_server, driver, lecture_an):
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/amendements")
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
+    driver.get(LECTURE_URL)
     thead = driver.find_element_by_css_selector("thead")
     assert not thead.find_element_by_css_selector("tr.filters").is_displayed()
 
@@ -50,7 +50,7 @@ def test_column_filtering_by_value(
 ):
     from zam_repondeur.models import Amendement, DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     with transaction.manager:
         DBSession.add(user_ronan_table_an)
         DBSession.add(user_david_table_an)
@@ -63,7 +63,7 @@ def test_column_filtering_by_value(
         )
         user_daniel_table_an.amendements.append(amendement)
 
-    driver.get(f"{LECTURE_URL}/amendements")
+    driver.get(LECTURE_URL)
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
     input_field = driver.find_element_by_css_selector(
@@ -72,19 +72,16 @@ def test_column_filtering_by_value(
     input_field.send_keys(input_text)
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == filtered
-    assert (
-        driver.current_url
-        == f"{LECTURE_URL}/amendements?{kind}={input_text.replace(' ', '+')}"
-    )
+    assert driver.current_url == f"{LECTURE_URL}?{kind}={input_text.replace(' ', '+')}"
 
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
-    assert driver.current_url == f"{LECTURE_URL}/amendements"
+    assert driver.current_url == LECTURE_URL
 
     # Check filters are active on URL (re)load.
-    driver.get(f"{LECTURE_URL}/amendements?{kind}={input_text}")
+    driver.get(f"{LECTURE_URL}?{kind}={input_text}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == filtered
     input_field = driver.find_element_by_css_selector(
@@ -93,7 +90,7 @@ def test_column_filtering_by_value(
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
-    assert driver.current_url == f"{LECTURE_URL}/amendements"
+    assert driver.current_url == LECTURE_URL
 
 
 @pytest.mark.parametrize(
@@ -186,7 +183,7 @@ def test_column_filtering_by_value_with_batches(
 ):
     from zam_repondeur.models import Amendement, Batch, DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     with transaction.manager:
         DBSession.add(user_ronan_table_an)
         DBSession.add(user_david_table_an)
@@ -203,7 +200,7 @@ def test_column_filtering_by_value_with_batches(
         )
         user_daniel_table_an.amendements.append(amendement)
 
-    driver.get(f"{LECTURE_URL}/amendements")
+    driver.get(LECTURE_URL)
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
     input_field = driver.find_element_by_css_selector(
@@ -212,16 +209,16 @@ def test_column_filtering_by_value_with_batches(
     input_field.send_keys(input_text)
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == filtered
-    assert driver.current_url == f"{LECTURE_URL}/amendements?{kind}={input_text}"
+    assert driver.current_url == f"{LECTURE_URL}?{kind}={input_text}"
 
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
-    assert driver.current_url == f"{LECTURE_URL}/amendements"
+    assert driver.current_url == LECTURE_URL
 
     # Check filters are active on URL (re)load.
-    driver.get(f"{LECTURE_URL}/amendements?{kind}={input_text}")
+    driver.get(f"{LECTURE_URL}?{kind}={input_text}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == filtered
     input_field = driver.find_element_by_css_selector(
@@ -230,7 +227,7 @@ def test_column_filtering_by_value_with_batches(
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
-    assert driver.current_url == f"{LECTURE_URL}/amendements"
+    assert driver.current_url == LECTURE_URL
 
 
 @pytest.mark.parametrize(
@@ -254,7 +251,7 @@ def test_column_filtering_by_checkbox(
 ):
     from zam_repondeur.models import Amendement, DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     with transaction.manager:
         DBSession.add(user_david_table_an)
         amendement = Amendement.create(
@@ -265,7 +262,7 @@ def test_column_filtering_by_checkbox(
         )
         user_david_table_an.amendements.append(amendement)
 
-    driver.get(f"{LECTURE_URL}/amendements")
+    driver.get(LECTURE_URL)
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
     label = driver.find_element_by_css_selector(
@@ -274,16 +271,16 @@ def test_column_filtering_by_checkbox(
     label.click()
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == filtered
-    assert driver.current_url == f"{LECTURE_URL}/amendements?{kind}=1"
+    assert driver.current_url == f"{LECTURE_URL}?{kind}=1"
 
     # Restore initial state.
     label.click()
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
-    assert driver.current_url == f"{LECTURE_URL}/amendements"
+    assert driver.current_url == LECTURE_URL
 
     # Check filters are active on URL (re)load.
-    driver.get(f"{LECTURE_URL}/amendements?{kind}=1")
+    driver.get(f"{LECTURE_URL}?{kind}=1")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == filtered
     label = driver.find_element_by_css_selector(
@@ -292,7 +289,7 @@ def test_column_filtering_by_checkbox(
     label.click()
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
-    assert driver.current_url == f"{LECTURE_URL}/amendements"
+    assert driver.current_url == LECTURE_URL
 
 
 @pytest.mark.parametrize(
@@ -347,7 +344,7 @@ def test_column_filtering_by_value_for_missions(
         )
         DBSession.add(amendement)
 
-    driver.get(f"{LECTURE_URL}/amendements")
+    driver.get(LECTURE_URL)
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
     input_field = driver.find_element_by_css_selector(
@@ -356,19 +353,16 @@ def test_column_filtering_by_value_for_missions(
     input_field.send_keys(input_text)
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == filtered
-    assert (
-        driver.current_url
-        == f"{LECTURE_URL}/amendements?{kind}={input_text.replace(' ', '+')}"
-    )
+    assert driver.current_url == f"{LECTURE_URL}?{kind}={input_text.replace(' ', '+')}"
 
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
-    assert driver.current_url == f"{LECTURE_URL}/amendements"
+    assert driver.current_url == LECTURE_URL
 
     # Check filters are active on URL (re)load.
-    driver.get(f"{LECTURE_URL}/amendements?{kind}={input_text}")
+    driver.get(f"{LECTURE_URL}?{kind}={input_text}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == filtered
     input_field = driver.find_element_by_css_selector(
@@ -377,4 +371,4 @@ def test_column_filtering_by_value_for_missions(
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
-    assert driver.current_url == f"{LECTURE_URL}/amendements"
+    assert driver.current_url == LECTURE_URL

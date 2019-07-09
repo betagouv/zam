@@ -33,9 +33,7 @@ def test_amendement_journal_avis(app, lecture_an, amendements_an, user_david):
         assert amendements_an[0].events[0].data["old_value"] == ""
         assert amendements_an[0].events[0].data["new_value"] == "Favorable"
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/666/journal", user=user_david)
     assert first_description_text(resp) == "David a mis l’avis à « Favorable »."
 
 
@@ -61,9 +59,7 @@ def test_amendement_journal_avis_with_existing_avis(
         assert amendements_an[0].events[0].data["old_value"] == "Favorable"
         assert amendements_an[0].events[0].data["new_value"] == "Défavorable"
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/666/journal", user=user_david)
     assert (
         first_description_text(resp)
         == "David a modifié l’avis de « Favorable » à « Défavorable »."
@@ -81,9 +77,7 @@ def test_amendement_journal_objet(app, lecture_an, amendements_an, user_david):
         assert amendements_an[0].events[0].data["old_value"] == ""
         assert amendements_an[0].events[0].data["new_value"] == "Objet"
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/666/journal", user=user_david)
     assert first_summary_text(resp) == "David a ajouté l’objet."
     assert first_details_text(resp) == "Objet"
 
@@ -102,9 +96,7 @@ def test_amendement_journal_reponse(app, lecture_an, amendements_an, user_david)
         assert amendements_an[0].events[0].data["old_value"] == ""
         assert amendements_an[0].events[0].data["new_value"] == "Réponse"
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/666/journal", user=user_david)
     assert first_summary_text(resp) == "David a ajouté la réponse."
     assert first_details_text(resp) == "Réponse"
 
@@ -123,9 +115,7 @@ def test_amendement_journal_comments(app, lecture_an, amendements_an, user_david
         assert amendements_an[0].events[0].data["old_value"] == ""
         assert amendements_an[0].events[0].data["new_value"] == "Un commentaire"
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/666/journal", user=user_david)
     assert first_summary_text(resp) == "David a ajouté des commentaires."
     assert first_details_text(resp) == "Un commentaire"
 
@@ -153,9 +143,7 @@ def test_amendement_journal_affectation(
             == "Ronan (ronan@exemple.gouv.fr)"
         )
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/666/journal", user=user_david)
     assert (
         first_description_text(resp)
         == "David a transféré l’amendement à « Ronan (ronan@exemple.gouv.fr) »."
@@ -185,9 +173,7 @@ def test_amendement_journal_affectation_by_other(
             == "Daniel (daniel@exemple.gouv.fr)"
         )
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/666/journal", user=user_david)
     assert first_description_text(resp) == (
         "David a transféré l’amendement de "
         "« Ronan (ronan@exemple.gouv.fr) » à « Daniel (daniel@exemple.gouv.fr) »."
@@ -214,9 +200,7 @@ def test_amendement_journal_affectation_taken(
             == "David (david@exemple.gouv.fr)"
         )
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/666/journal", user=user_david)
     assert first_description_text(resp) == "David a mis l’amendement sur sa table."
 
 
@@ -240,9 +224,7 @@ def test_amendement_journal_affectation_taken_by_other(
             == "David (david@exemple.gouv.fr)"
         )
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/666/journal", user=user_david)
     assert (
         first_description_text(resp)
         == "Ronan a transféré l’amendement à « David (david@exemple.gouv.fr) »."
@@ -269,9 +251,7 @@ def test_amendement_journal_affectation_released(
         )
         assert amendements_an[0].events[0].data["new_value"] == ""
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/666/journal", user=user_david)
     assert first_description_text(resp) == "David a remis l’amendement dans l’index."
 
 
@@ -295,9 +275,7 @@ def test_amendement_journal_affectation_released_by_other(
         )
         assert amendements_an[0].events[0].data["new_value"] == ""
 
-    resp = app.get(
-        "/lectures/an.15.269.PO717460/amendements/666/journal", user=user_david
-    )
+    resp = app.get(f"/{lecture_an.url}/666/journal", user=user_david)
     assert first_description_text(resp) == (
         "Ronan a remis l’amendement de "
         "« David (david@exemple.gouv.fr) » dans l’index."

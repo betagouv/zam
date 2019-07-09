@@ -13,7 +13,7 @@ def test_select_all_not_visible_by_default(
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     assert not all_selected.is_displayed()
@@ -30,7 +30,7 @@ def test_select_all_is_visible_with_filters(
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     driver.find_element_by_link_text("Filtrer").click()
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
@@ -48,7 +48,7 @@ def test_select_all_toggle_group_actions(
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     driver.find_element_by_link_text("Filtrer").click()
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
@@ -72,7 +72,7 @@ def test_select_all_change_transfer_url(
         table.amendements.append(amendements_an[0])
         table.amendements.append(amendements_an[1])
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/tables/{email}")
     driver.find_element_by_link_text("Filtrer").click()
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
@@ -100,7 +100,7 @@ def test_select_all_checks_only_visible_amendements(
 ):
     from zam_repondeur.models import Amendement, DBSession, User
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     email = "user@exemple.gouv.fr"
     with transaction.manager:
         DBSession.add_all(amendements_an)

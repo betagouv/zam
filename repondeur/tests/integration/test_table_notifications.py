@@ -11,7 +11,7 @@ def test_table_notification_on_amendement_transfer(
 ):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     with transaction.manager:
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendements_an[0])

@@ -181,7 +181,7 @@ class TestLoginWithToken:
         assert resp.status_code == 302
         assert (
             resp.location
-            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
+            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Fdossiers%2F"
         )
 
         resp = resp.maybe_follow()
@@ -288,15 +288,15 @@ class TestLogout:
 
 class TestAuthenticationRequired:
     def test_unauthenticated_user_is_redirected_to_login_page(self, app):
-        resp = app.get("/lectures/add")
+        resp = app.get("/dossiers/1/lectures/add")
         assert resp.status_code == 302
         assert resp.location == (
             "https://zam.test/identification"
-            "?source=https%3A%2F%2Fzam.test%2Flectures%2Fadd"
+            "?source=https%3A%2F%2Fzam.test%2Fdossiers%2F1%2Flectures%2Fadd"
         )
 
     def test_authenticated_user_is_not_redirected_to_login_page(self, app, user_david):
-        resp = app.get("/lectures/add", user=user_david)
+        resp = app.get("/dossiers/1/lectures/add", user=user_david)
         assert resp.status_code == 200
 
 
@@ -317,7 +317,7 @@ class TestOnboarding:
         assert resp.status_code == 302
         assert (
             resp.location
-            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
+            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Fdossiers%2F"
         )
 
         user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
@@ -348,7 +348,7 @@ class TestOnboarding:
         assert resp.status_code == 302
         assert (
             resp.location
-            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
+            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Fdossiers%2F"
         )
 
         user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
@@ -396,7 +396,7 @@ class TestOnboarding:
 
         resp = app.get("/authentification", params={"token": token})
         assert resp.status_code == 302
-        assert resp.location == f"https://zam.test/lectures/"
+        assert resp.location == f"https://zam.test/dossiers/"
 
 
 class TestAuthTokenExpiration:

@@ -219,7 +219,7 @@ class Authenticate(RateLimiterMixin):
     def next_url(self) -> Any:
         url = self.request.params.get("source")
         if url is None or url == self.request.route_url("login"):
-            url = self.request.resource_url(self.context["lectures"])
+            url = self.request.resource_url(self.context["dossiers"])
         return url
 
     def log_successful_login_attempt(self, email: str) -> None:
@@ -250,7 +250,7 @@ class Welcome:
 
         self.request.user.name = User.normalize_name(name)
         next_url = self.request.params.get("source") or self.request.resource_url(
-            self.context["lectures"]
+            self.context["dossiers"]
         )
         return HTTPFound(location=next_url)
 

@@ -9,7 +9,7 @@ def test_visionneuse_articles_search(
 ):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     with transaction.manager:
         amendements_an[0].article = article7bis_an
         DBSession.add_all(amendements_an)
@@ -31,7 +31,7 @@ def test_visionneuse_articles_search(
 def test_visionneuse_articles_search_not_found(
     wsgi_server, driver, lecture_an, amendements_an
 ):
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/articles/")
     articles = driver.find_elements_by_css_selector("section.article")
     assert len(articles) == 1
@@ -51,7 +51,7 @@ def test_visionneuse_amendements_search(
 ):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     with transaction.manager:
         amendements_an[0].user_content.avis = "Favorable"
         DBSession.add_all(amendements_an)
@@ -70,7 +70,7 @@ def test_visionneuse_amendements_search(
 def test_visionneuse_amendements_search_not_found(
     wsgi_server, driver, lecture_an, amendements_an
 ):
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
+    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     driver.get(f"{LECTURE_URL}/articles/")
     assert not driver.find_element_by_css_selector(
         "#search-amendements .error"

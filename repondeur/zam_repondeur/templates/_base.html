@@ -15,7 +15,7 @@
         {% block nav %}
             <ul>
                 {% if request.user and not (hide_lectures_link is defined and hide_lectures_link) %}
-                    <li><a class="home" href="{{ request.resource_url(request.root['lectures']) }}" title="Aller à la liste des lectures">Lectures</a></li>
+                    <li><a class="home" href="{{ request.resource_url(request.root['dossiers']) }}" title="Aller à la liste des dossiers">Dossiers</a></li>
                     {% block extra_nav %}{% endblock %}
                 {% endif %}
             </ul>

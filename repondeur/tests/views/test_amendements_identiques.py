@@ -1,8 +1,8 @@
 import transaction
 
 
-def test_amendements_not_identiques(app, lecture_an, amendements_an, user_david):
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+def test_amendements_not_identiques(app, lecture_an_url, amendements_an, user_david):
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 200
 
@@ -13,7 +13,7 @@ def test_amendements_not_identiques(app, lecture_an, amendements_an, user_david)
     assert len(identiques) == 0
 
 
-def test_amendements_identiques(app, lecture_an, amendements_an, user_david):
+def test_amendements_identiques(app, lecture_an_url, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -23,7 +23,7 @@ def test_amendements_identiques(app, lecture_an, amendements_an, user_david):
         assert amendements_an[0].all_identiques == [amendements_an[1]]
         assert amendements_an[1].all_identiques == [amendements_an[0]]
 
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 200
 
@@ -40,7 +40,7 @@ def test_amendements_identiques(app, lecture_an, amendements_an, user_david):
 
 
 def test_amendements_identiques_with_abandoned(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an_url, amendements_an, user_david
 ):
     from zam_repondeur.models import DBSession
 
@@ -54,7 +54,7 @@ def test_amendements_identiques_with_abandoned(
         assert amendements_an[0].all_identiques == []
         assert amendements_an[1].all_identiques == [amendements_an[0]]
 
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 200
 

@@ -2,7 +2,7 @@ import transaction
 
 
 def test_amendement_start_editing(
-    app, lecture_an, amendements_an_batch, user_david, user_david_table_an
+    app, lecture_an_url, amendements_an_batch, user_david, user_david_table_an
 ):
     from zam_repondeur.models import DBSession, Amendement
 
@@ -17,7 +17,8 @@ def test_amendement_start_editing(
     assert not amendement_999.is_being_edited
 
     resp = app.post_json(
-        f"/{lecture_an.url}/{amendement_666.num}/start_editing", user=user_david
+        f"{lecture_an_url}/amendements/{amendement_666.num}/start_editing",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -29,7 +30,7 @@ def test_amendement_start_editing(
 
 
 def test_amendement_stop_editing(
-    app, lecture_an, amendements_an_batch, user_david, user_david_table_an
+    app, lecture_an_url, amendements_an_batch, user_david, user_david_table_an
 ):
     from zam_repondeur.models import DBSession, Amendement
 
@@ -44,10 +45,12 @@ def test_amendement_stop_editing(
     assert not amendement_999.is_being_edited
 
     resp = app.post_json(
-        f"/{lecture_an.url}/{amendement_666.num}/start_editing", user=user_david
+        f"{lecture_an_url}/amendements/{amendement_666.num}/start_editing",
+        user=user_david,
     )
     resp = app.post_json(
-        f"/{lecture_an.url}/{amendement_666.num}/stop_editing", user=user_david
+        f"{lecture_an_url}/amendements/{amendement_666.num}/stop_editing",
+        user=user_david,
     )
 
     assert resp.status_code == 200

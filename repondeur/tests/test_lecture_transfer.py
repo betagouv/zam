@@ -471,7 +471,7 @@ def test_lecture_post_transfer_amendements_to_index(
 
 
 def test_lecture_post_transfer_amendements_to_index_from_index(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an, lecture_an_url, amendements_an, user_david
 ):
     from zam_repondeur.models import DBSession, User, Amendement
 
@@ -487,7 +487,7 @@ def test_lecture_post_transfer_amendements_to_index_from_index(
     )
     resp = resp.form.submit("submit-index")
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test/{lecture_an.url}"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements"
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
     table = user_david.table_for(lecture_an)
     assert len(table.amendements) == 0
@@ -540,7 +540,7 @@ def test_lecture_post_transfer_amendements_to_other(
 
 
 def test_lecture_post_transfer_amendements_to_other_from_index(
-    app, lecture_an, amendements_an, user_david, user_ronan
+    app, lecture_an, lecture_an_url, amendements_an, user_david, user_ronan
 ):
     from zam_repondeur.models import DBSession, User
 
@@ -558,7 +558,7 @@ def test_lecture_post_transfer_amendements_to_other_from_index(
     form["target"] = user_ronan.email
     resp = form.submit()
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test/{lecture_an.url}"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements"
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
     table_david = user_david.table_for(lecture_an)
     assert len(table_david.amendements) == 0

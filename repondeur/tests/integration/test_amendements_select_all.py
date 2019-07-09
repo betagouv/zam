@@ -3,19 +3,17 @@ import transaction
 
 
 def test_select_all_is_visible_by_default(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an_url, amendements_an
 ):
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
-    driver.get(LECTURE_URL)
+    driver.get(f"{lecture_an_url}/amendements")
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     assert all_selected.is_displayed()
 
 
 def test_select_all_toggle_group_actions(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an_url, amendements_an
 ):
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
-    driver.get(LECTURE_URL)
+    driver.get(f"{lecture_an_url}/amendements")
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     all_selected.click()
     group_actions = driver.find_element_by_css_selector(".groupActions")
@@ -26,16 +24,15 @@ def test_select_all_toggle_group_actions(
 
 
 def test_select_all_change_transfer_url(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an_url, amendements_an
 ):
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
-    driver.get(LECTURE_URL)
+    driver.get(f"{lecture_an_url}/amendements")
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     all_selected.click()
     transfer_amendements = driver.find_element_by_css_selector("#transfer-amendements")
     assert (
         transfer_amendements.get_attribute("href")
-        == f"{LECTURE_URL}/transfer_amendements?from_index=1&nums=666&nums=999"
+        == f"{lecture_an_url}/transfer_amendements?from_index=1&nums=666&nums=999"
     )
 
 
@@ -51,6 +48,7 @@ def test_select_all_checks_only_visible_amendements(
     wsgi_server,
     driver,
     lecture_an,
+    lecture_an_url,
     article7bis_an,
     amendements_an,
     user_david_table_an,
@@ -62,7 +60,6 @@ def test_select_all_checks_only_visible_amendements(
 ):
     from zam_repondeur.models import Amendement, DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     with transaction.manager:
         DBSession.add(user_ronan_table_an)
         DBSession.add(user_david_table_an)
@@ -75,7 +72,7 @@ def test_select_all_checks_only_visible_amendements(
         )
         user_daniel_table_an.amendements.append(amendement)
 
-    driver.get(LECTURE_URL)
+    driver.get(f"{lecture_an_url}/amendements")
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )
@@ -85,5 +82,5 @@ def test_select_all_checks_only_visible_amendements(
     transfer_amendements = driver.find_element_by_css_selector("#transfer-amendements")
     assert (
         transfer_amendements.get_attribute("href")
-        == f"{LECTURE_URL}/transfer_amendements?from_index=1&{expected_nums}"
+        == f"{lecture_an_url}/transfer_amendements?from_index=1&{expected_nums}"
     )

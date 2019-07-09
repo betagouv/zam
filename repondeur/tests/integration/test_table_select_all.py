@@ -3,7 +3,7 @@ import transaction
 
 
 def test_select_all_not_visible_by_default(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url
 ):
     from zam_repondeur.models import DBSession, User
 
@@ -13,14 +13,13 @@ def test_select_all_not_visible_by_default(
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
-    driver.get(f"{LECTURE_URL}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{email}")
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     assert not all_selected.is_displayed()
 
 
 def test_select_all_is_visible_with_filters(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url
 ):
     from zam_repondeur.models import DBSession, User
 
@@ -30,15 +29,14 @@ def test_select_all_is_visible_with_filters(
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
-    driver.get(f"{LECTURE_URL}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{email}")
     driver.find_element_by_link_text("Filtrer").click()
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     assert all_selected.is_displayed()
 
 
 def test_select_all_toggle_group_actions(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url
 ):
     from zam_repondeur.models import DBSession, User
 
@@ -48,8 +46,7 @@ def test_select_all_toggle_group_actions(
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
-    driver.get(f"{LECTURE_URL}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{email}")
     driver.find_element_by_link_text("Filtrer").click()
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     all_selected.click()
@@ -61,7 +58,7 @@ def test_select_all_toggle_group_actions(
 
 
 def test_select_all_change_transfer_url(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url
 ):
     from zam_repondeur.models import DBSession, User
 
@@ -72,15 +69,14 @@ def test_select_all_change_transfer_url(
         table.amendements.append(amendements_an[0])
         table.amendements.append(amendements_an[1])
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
-    driver.get(f"{LECTURE_URL}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{email}")
     driver.find_element_by_link_text("Filtrer").click()
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     all_selected.click()
     transfer_amendements = driver.find_element_by_css_selector("#transfer-amendements")
     assert (
         transfer_amendements.get_attribute("href")
-        == f"{LECTURE_URL}/transfer_amendements?nums=666&nums=999"
+        == f"{lecture_an_url}/transfer_amendements?nums=666&nums=999"
     )
 
 
@@ -92,6 +88,7 @@ def test_select_all_checks_only_visible_amendements(
     wsgi_server,
     driver,
     lecture_an,
+    lecture_an_url,
     article7bis_an,
     amendements_an,
     column_index,
@@ -100,7 +97,6 @@ def test_select_all_checks_only_visible_amendements(
 ):
     from zam_repondeur.models import Amendement, DBSession, User
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     email = "user@exemple.gouv.fr"
     with transaction.manager:
         DBSession.add_all(amendements_an)
@@ -113,7 +109,7 @@ def test_select_all_checks_only_visible_amendements(
         )
         table.amendements.append(amendement)
 
-    driver.get(f"{LECTURE_URL}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{email}")
     driver.find_element_by_link_text("Filtrer").click()
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
@@ -124,5 +120,5 @@ def test_select_all_checks_only_visible_amendements(
     transfer_amendements = driver.find_element_by_css_selector("#transfer-amendements")
     assert (
         transfer_amendements.get_attribute("href")
-        == f"{LECTURE_URL}/transfer_amendements?{expected_nums}"
+        == f"{lecture_an_url}/transfer_amendements?{expected_nums}"
     )

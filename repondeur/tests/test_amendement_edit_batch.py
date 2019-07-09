@@ -2,7 +2,7 @@ import transaction
 
 
 def test_get_amendement_edit_form(
-    app, lecture_an, amendements_an_batch, user_david, user_david_table_an
+    app, lecture_an_url, amendements_an_batch, user_david, user_david_table_an
 ):
     from zam_repondeur.models import DBSession
 
@@ -14,7 +14,8 @@ def test_get_amendement_edit_form(
         user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
-        f"/{lecture_an.url}/{amendement.num}/amendement_edit", user=user_david
+        f"{lecture_an_url}/amendements/{amendement.num}/amendement_edit",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -42,7 +43,7 @@ def test_get_amendement_edit_form(
 
 
 def test_get_amendement_edit_form_only_if_owner(
-    app, lecture_an, amendements_an_batch, user_david
+    app, lecture_an_url, amendements_an_batch, user_david
 ):
     from zam_repondeur.models import DBSession
 
@@ -53,7 +54,9 @@ def test_get_amendement_edit_form_only_if_owner(
         amdt.user_content.avis = "Favorable"
         DBSession.add(amdt)
 
-    resp = app.get(f"/{lecture_an.url}/{amdt.num}/amendement_edit", user=user_david)
+    resp = app.get(
+        f"{lecture_an_url}/amendements/{amdt.num}/amendement_edit", user=user_david
+    )
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -67,7 +70,7 @@ def test_get_amendement_edit_form_only_if_owner(
 
 
 def test_transfer_amendement_from_edit_form(
-    app, lecture_an, amendements_an_batch, user_david
+    app, lecture_an, lecture_an_url, amendements_an_batch, user_david
 ):
     from zam_repondeur.models import DBSession, User
 
@@ -81,7 +84,9 @@ def test_transfer_amendement_from_edit_form(
 
     amdt = amendements_an_batch[0]
 
-    resp = app.get(f"/{lecture_an.url}/{amdt.num}/amendement_edit", user=user_david)
+    resp = app.get(
+        f"{lecture_an_url}/amendements/{amdt.num}/amendement_edit", user=user_david
+    )
 
     form = resp.forms["transfer"]
     resp = form.submit("submit-table")
@@ -110,14 +115,16 @@ def test_transfer_amendement_from_edit_form(
 
 
 def test_transfer_amendement_from_edit_form_given_activity(
-    app, lecture_an, amendements_an_batch, user_david, user_ronan
+    app, lecture_an, lecture_an_url, amendements_an_batch, user_david, user_ronan
 ):
     from zam_repondeur.models import DBSession
 
     amdt = amendements_an_batch[0]
 
     # With amendement from index.
-    resp = app.get(f"/{lecture_an.url}/{amdt.num}/amendement_edit", user=user_david)
+    resp = app.get(
+        f"{lecture_an_url}/amendements/{amdt.num}/amendement_edit", user=user_david
+    )
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Transférer sur ma table"
@@ -131,7 +138,9 @@ def test_transfer_amendement_from_edit_form_given_activity(
         DBSession.add(user_ronan)
         table_ronan = user_ronan.table_for(lecture_an)
         table_ronan.amendements.append(amdt)
-    resp = app.get(f"/{lecture_an.url}/{amdt.num}/amendement_edit", user=user_david)
+    resp = app.get(
+        f"{lecture_an_url}/amendements/{amdt.num}/amendement_edit", user=user_david
+    )
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Transférer sur ma table"
@@ -142,7 +151,9 @@ def test_transfer_amendement_from_edit_form_given_activity(
 
     # With amendement from active user.
     user_ronan.record_activity()
-    resp = app.get(f"/{lecture_an.url}/{amdt.num}/amendement_edit", user=user_david)
+    resp = app.get(
+        f"{lecture_an_url}/amendements/{amdt.num}/amendement_edit", user=user_david
+    )
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Transférer sur ma table"
@@ -153,7 +164,9 @@ def test_transfer_amendement_from_edit_form_given_activity(
 
     # With amendement from amendement being edited.
     amdt.start_editing()
-    resp = app.get(f"/{lecture_an.url}/{amdt.num}/amendement_edit", user=user_david)
+    resp = app.get(
+        f"{lecture_an_url}/amendements/{amdt.num}/amendement_edit", user=user_david
+    )
 
     submit_button = resp.parser.css_first('form#transfer input[type="submit"]')
     assert submit_button.attributes.get("value") == "Forcer le transfert sur ma table"
@@ -164,7 +177,7 @@ def test_transfer_amendement_from_edit_form_given_activity(
 
 
 def test_post_amendement_edit_form_save_batch(
-    app, lecture_an, amendements_an_batch, user_david, user_david_table_an
+    app, lecture_an_url, amendements_an_batch, user_david, user_david_table_an
 ):
     from zam_repondeur.models import Amendement, DBSession
 
@@ -178,7 +191,7 @@ def test_post_amendement_edit_form_save_batch(
     assert amendement.user_content.objet is None
     assert amendement.user_content.reponse is None
 
-    resp = app.get(f"/{lecture_an.url}/999/amendement_edit", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements/999/amendement_edit", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
@@ -222,7 +235,7 @@ def test_post_amendement_edit_form_save_batch(
 
 
 def test_post_amendement_edit_form_reset_editing_state(
-    app, lecture_an, amendements_an_batch, user_david, user_david_table_an
+    app, lecture_an_url, amendements_an_batch, user_david, user_david_table_an
 ):
     from zam_repondeur.models import Amendement, DBSession
 
@@ -237,7 +250,7 @@ def test_post_amendement_edit_form_reset_editing_state(
     amendement_999.start_editing()
     assert amendement_999.is_being_edited
 
-    resp = app.get(f"/{lecture_an.url}/999/amendement_edit", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements/999/amendement_edit", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
@@ -253,7 +266,7 @@ def test_post_amendement_edit_form_reset_editing_state(
 
 def test_post_amendement_edit_form_switch_table(
     app,
-    lecture_an,
+    lecture_an_url,
     amendements_an_batch,
     user_david,
     user_david_table_an,
@@ -267,7 +280,7 @@ def test_post_amendement_edit_form_switch_table(
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendement_999)
 
-    resp = app.get(f"/{lecture_an.url}/999/amendement_edit", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements/999/amendement_edit", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
@@ -308,7 +321,7 @@ def test_post_amendement_edit_form_switch_table(
 
 
 def test_post_amendement_edit_form_and_transfer(
-    app, lecture_an, amendements_an_batch, user_david, user_david_table_an
+    app, lecture_an_url, amendements_an_batch, user_david, user_david_table_an
 ):
     from zam_repondeur.models import Amendement, DBSession
 
@@ -322,7 +335,7 @@ def test_post_amendement_edit_form_and_transfer(
     assert amendement.user_content.objet is None
     assert amendement.user_content.reponse is None
 
-    resp = app.get(f"/{lecture_an.url}/999/amendement_edit", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements/999/amendement_edit", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
@@ -368,7 +381,7 @@ def test_post_amendement_edit_form_and_transfer(
 
 
 def test_post_amendement_edit_form_creates_event_only_if_modified(
-    app, lecture_an, amendements_an_batch, user_david, user_david_table_an
+    app, lecture_an_url, amendements_an_batch, user_david, user_david_table_an
 ):
     from zam_repondeur.models import DBSession
 
@@ -383,7 +396,7 @@ def test_post_amendement_edit_form_creates_event_only_if_modified(
         user_david_table_an.amendements.append(amendement_666)
 
     # Let's post the response edit form, but with unchanged values
-    resp = app.get(f"/{lecture_an.url}/666/amendement_edit", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements/666/amendement_edit", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     # Even with extra spaces.

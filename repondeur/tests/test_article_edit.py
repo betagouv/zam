@@ -24,7 +24,7 @@ def test_get_article_edit_form_not_found_bad_format(app, lecture_an, user_david)
     assert resp.status_code == 404
 
 
-def test_post_article_edit_form_title(app, lecture_an, amendements_an, user_david):
+def test_post_article_edit_form_title(app, lecture_an_url, amendements_an, user_david):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -38,7 +38,7 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an, user_davi
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test/{lecture_an.url}/"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.title == "Titre article"
@@ -77,7 +77,7 @@ def test_post_article_edit_form_title_redirect_next(
 
 
 def test_post_article_edit_form_title_redirect_amendements_if_intersticial_is_last(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an, lecture_an_url, amendements_an, user_david
 ):
     from zam_repondeur.models import Amendement, Article, DBSession
 
@@ -99,7 +99,7 @@ def test_post_article_edit_form_title_redirect_amendements_if_intersticial_is_la
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test/{lecture_an.url}/"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.title == "Titre article"
@@ -178,7 +178,7 @@ def test_post_article_edit_form_title_redirect_next_with_apres_and_avant(
 
 
 def test_post_article_edit_form_presentation(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an_url, amendements_an, user_david
 ):
     from zam_repondeur.models import Amendement, DBSession
 
@@ -193,7 +193,7 @@ def test_post_article_edit_form_presentation(
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test/{lecture_an.url}/"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.presentation == "<p>Content</p>"
@@ -202,7 +202,7 @@ def test_post_article_edit_form_presentation(
 
 
 def test_post_article_edit_form_presentation_cleaned(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an_url, amendements_an, user_david
 ):
     from zam_repondeur.models import Amendement, DBSession
 
@@ -217,7 +217,7 @@ def test_post_article_edit_form_presentation_cleaned(
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test/{lecture_an.url}/"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.article.user_content.presentation == "Content"

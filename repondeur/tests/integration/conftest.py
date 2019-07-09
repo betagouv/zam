@@ -98,3 +98,12 @@ class HeadlessChrome(webdriver.Chrome):
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--no-sandbox")
         return chrome_options
+
+
+@pytest.fixture
+def lecture_an_url(wsgi_server, lecture_an):
+    return (
+        f"{wsgi_server.application_url}"
+        f"dossiers/{lecture_an.dossier.url_key}"
+        f"/lectures/{lecture_an.url_key}"
+    )

@@ -1,15 +1,15 @@
 import transaction
 
 
-def test_get_amendements(app, lecture_an, amendements_an, user_david):
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+def test_get_amendements(app, lecture_an_url, amendements_an, user_david):
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 200
     assert "Dossier de banc" not in resp.text
 
 
-def test_no_amendements(app, lecture_an, user_david):
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+def test_no_amendements(app, lecture_an_url, user_david):
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 200
     assert "Dossier de banc" not in resp.text
@@ -17,7 +17,7 @@ def test_no_amendements(app, lecture_an, user_david):
 
 
 def test_team_member_can_access_owned_lecture(
-    app, lecture_an, team_zam, user_david, amendements_an
+    app, lecture_an, lecture_an_url, team_zam, user_david, amendements_an
 ):
     from zam_repondeur.models import DBSession
 
@@ -26,14 +26,14 @@ def test_team_member_can_access_owned_lecture(
         user_david.teams.append(team_zam)
         DBSession.add(team_zam)
 
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 200
     assert "Dossier de banc" not in resp.text
 
 
 def test_non_team_member_cannot_access_owned_lecture(
-    app, lecture_an, team_zam, user_david, amendements_an
+    app, lecture_an, lecture_an_url, team_zam, user_david, amendements_an
 ):
     from zam_repondeur.models import DBSession
 
@@ -41,7 +41,7 @@ def test_non_team_member_cannot_access_owned_lecture(
         lecture_an.owned_by_team = team_zam
         DBSession.add(team_zam)
 
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 302
     resp = resp.maybe_follow()
@@ -49,7 +49,7 @@ def test_non_team_member_cannot_access_owned_lecture(
     assert "L’accès à cette lecture est réservé aux personnes autorisées." in resp.text
 
 
-def test_get_amendements_with_avis(app, lecture_an, amendements_an, user_david):
+def test_get_amendements_with_avis(app, lecture_an_url, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -57,14 +57,14 @@ def test_get_amendements_with_avis(app, lecture_an, amendements_an, user_david):
         amendement.user_content.avis = "Favorable"
         DBSession.add(amendement)
 
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 200
     assert "Dossier de banc" in resp.text
 
 
 def test_get_amendements_with_gouvernemental(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an_url, amendements_an, user_david
 ):
     from zam_repondeur.models import DBSession
 
@@ -73,13 +73,13 @@ def test_get_amendements_with_gouvernemental(
         amendement.auteur = "LE GOUVERNEMENT"
         DBSession.add(amendement)
 
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 200
     assert "Dossier de banc" in resp.text
 
 
-def test_get_amendements_order_default(app, lecture_an, amendements_an, user_david):
+def test_get_amendements_order_default(app, lecture_an_url, amendements_an, user_david):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -87,7 +87,7 @@ def test_get_amendements_order_default(app, lecture_an, amendements_an, user_dav
             amendement.user_content.avis = "Favorable"
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 200
     assert "Dossier de banc" in resp.text
@@ -98,7 +98,7 @@ def test_get_amendements_order_default(app, lecture_an, amendements_an, user_dav
 
 
 def test_get_amendements_order_fallback_article(
-    app, lecture_an, amendements_an, user_david, article7bis_an
+    app, lecture_an_url, amendements_an, user_david, article7bis_an
 ):
     from zam_repondeur.models import DBSession
 
@@ -108,7 +108,7 @@ def test_get_amendements_order_fallback_article(
         amendements_an[0].article = article7bis_an
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 200
     assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(3)")] == [
@@ -118,7 +118,7 @@ def test_get_amendements_order_fallback_article(
 
 
 def test_get_amendements_order_abandoned_last(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an_url, amendements_an, user_david
 ):
     from zam_repondeur.models import DBSession
 
@@ -128,7 +128,7 @@ def test_get_amendements_order_abandoned_last(
             amendement.user_content.avis = "Favorable"
         DBSession.add_all(amendements_an)
 
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 200
     assert "Dossier de banc" in resp.text
@@ -156,8 +156,10 @@ def test_get_amendements_not_found_does_not_exist(app, user_david):
     assert resp.status_code == 404
 
 
-def test_get_amendements_columns_default(app, lecture_an, amendements_an, user_david):
-    resp = app.get(f"/{lecture_an.url}", user=user_david)
+def test_get_amendements_columns_default(
+    app, lecture_an_url, amendements_an, user_david
+):
+    resp = app.get(f"{lecture_an_url}/amendements", user=user_david)
 
     assert resp.status_code == 200
     assert [

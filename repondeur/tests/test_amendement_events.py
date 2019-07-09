@@ -2,7 +2,7 @@ import transaction
 
 
 def test_post_amendement_init_form_events(
-    app, lecture_an, amendements_an, user_david, user_david_table_an
+    app, lecture_an_url, amendements_an, user_david, user_david_table_an
 ):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import (
@@ -19,7 +19,8 @@ def test_post_amendement_init_form_events(
         user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
-        f"/{lecture_an.url}/{amendement.num}/amendement_edit", user=user_david
+        f"{lecture_an_url}/amendements/{amendement.num}/amendement_edit",
+        user=user_david,
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
@@ -96,7 +97,7 @@ def test_post_amendement_init_form_events(
 
 
 def test_post_amendement_edit_form_events(
-    app, lecture_an, amendements_an, user_david, user_david_table_an
+    app, lecture_an_url, amendements_an, user_david, user_david_table_an
 ):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import (
@@ -117,7 +118,8 @@ def test_post_amendement_edit_form_events(
         user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
-        f"/{lecture_an.url}/{amendement.num}/amendement_edit", user=user_david
+        f"{lecture_an_url}/amendements/{amendement.num}/amendement_edit",
+        user=user_david,
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
@@ -197,7 +199,7 @@ def test_post_amendement_edit_form_events(
 
 
 def test_post_amendement_edit_form_events_empty(
-    app, lecture_an, amendements_an, user_david, user_david_table_an
+    app, lecture_an_url, amendements_an, user_david, user_david_table_an
 ):
     from zam_repondeur.models import Amendement, DBSession
 
@@ -208,7 +210,8 @@ def test_post_amendement_edit_form_events_empty(
         user_david_table_an.amendements.append(amendement)
 
     resp = app.get(
-        f"/{lecture_an.url}/{amendement.num}/amendement_edit", user=user_david
+        f"{lecture_an_url}/amendements/{amendement.num}/amendement_edit",
+        user=user_david,
     )
     form = resp.forms["edit-amendement"]
     form["avis"] = ""

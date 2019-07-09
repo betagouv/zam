@@ -7,17 +7,16 @@ pytestmark = pytest.mark.flaky(max_runs=5)
 
 
 def test_table_notification_on_amendement_transfer(
-    wsgi_server, driver, lecture_an, amendements_an, user_david_table_an, user_david
+    wsgi_server, driver, lecture_an_url, amendements_an, user_david_table_an, user_david
 ):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     with transaction.manager:
         DBSession.add(user_david_table_an)
         user_david_table_an.amendements.append(amendements_an[0])
         DBSession.add_all(amendements_an)
 
-    driver.get(f"{LECTURE_URL}/tables/{user_david.email}")
+    driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     status = driver.find_element_by_css_selector('div[role="status"] div')
     assert not status.is_displayed()
     assert not status.text

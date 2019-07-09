@@ -5,11 +5,10 @@ from selenium.webdriver.support.ui import Select
 
 
 def test_amendement_edition_start_editing_status(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url
 ):
     from zam_repondeur.models import DBSession, User
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     amendement = amendements_an[0]
     with transaction.manager:
         user = (
@@ -22,7 +21,7 @@ def test_amendement_edition_start_editing_status(
 
     assert not amendement.is_being_edited
 
-    driver.get(f"{LECTURE_URL}/{amendements_an[0].num}/amendement_edit")
+    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit")
     avis = Select(driver.find_element_by_css_selector('select[name="avis"]'))
     avis.select_by_visible_text("Défavorable")
     time.sleep(1)  # Wait for the option to be selected.
@@ -31,11 +30,10 @@ def test_amendement_edition_start_editing_status(
 
 
 def test_amendement_edition_exit_stop_editing_status(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url
 ):
     from zam_repondeur.models import DBSession, User
 
-    LECTURE_URL = f"{wsgi_server.application_url}/{lecture_an.url}"
     amendement = amendements_an[0]
     with transaction.manager:
         user = (
@@ -48,7 +46,7 @@ def test_amendement_edition_exit_stop_editing_status(
 
     assert not amendement.is_being_edited
 
-    driver.get(f"{LECTURE_URL}/{amendements_an[0].num}/amendement_edit")
+    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit")
     avis = Select(driver.find_element_by_css_selector('select[name="avis"]'))
     avis.select_by_visible_text("Défavorable")
     time.sleep(1)  # Wait for the option to be selected.

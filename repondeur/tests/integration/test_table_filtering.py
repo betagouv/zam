@@ -5,7 +5,9 @@ from selenium.webdriver.common.keys import Keys
 from .helpers import extract_item_text
 
 
-def test_filters_are_hidden_by_default(wsgi_server, driver, lecture_an, amendements_an):
+def test_filters_are_hidden_by_default(
+    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url
+):
     from zam_repondeur.models import DBSession, User
 
     email = "user@exemple.gouv.fr"
@@ -14,13 +16,14 @@ def test_filters_are_hidden_by_default(wsgi_server, driver, lecture_an, amendeme
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
-    driver.get(f"{LECTURE_URL}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{email}")
     thead = driver.find_element_by_css_selector("thead")
     assert not thead.find_element_by_css_selector("tr.filters").is_displayed()
 
 
-def test_filters_are_opened_by_click(wsgi_server, driver, lecture_an, amendements_an):
+def test_filters_are_opened_by_click(
+    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url
+):
     from zam_repondeur.models import DBSession, User
 
     email = "user@exemple.gouv.fr"
@@ -29,19 +32,17 @@ def test_filters_are_opened_by_click(wsgi_server, driver, lecture_an, amendement
         table = user.table_for(lecture_an)
         table.amendements.append(amendements_an[0])
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
-    driver.get(f"{LECTURE_URL}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{email}")
     driver.find_element_by_link_text("Filtrer").click()
     thead = driver.find_element_by_css_selector("thead")
     assert thead.find_element_by_css_selector("tr.filters").is_displayed()
 
 
 def test_filters_are_absent_without_amendements(
-    wsgi_server, driver, lecture_an, user_david
+    wsgi_server, driver, lecture_an_url, user_david
 ):
     email = "user@exemple.gouv.fr"
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
-    driver.get(f"{LECTURE_URL}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{email}")
     assert not driver.find_element_by_css_selector("thead tr.filters").is_displayed()
 
 
@@ -87,6 +88,7 @@ def test_column_filtering_by_value(
     wsgi_server,
     driver,
     lecture_an,
+    lecture_an_url,
     article7bis_an,
     amendements_an,
     column_index,
@@ -98,7 +100,6 @@ def test_column_filtering_by_value(
 ):
     from zam_repondeur.models import Amendement, DBSession, User
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     email = "user@exemple.gouv.fr"
     with transaction.manager:
         DBSession.add_all(amendements_an)
@@ -111,7 +112,7 @@ def test_column_filtering_by_value(
         )
         table.amendements.append(amendement)
 
-    driver.get(f"{LECTURE_URL}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{email}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == initial
     driver.find_element_by_link_text("Filtrer").click()
@@ -123,7 +124,7 @@ def test_column_filtering_by_value(
     assert extract_item_text(selector, trs) == filtered
     assert (
         driver.current_url
-        == f"{LECTURE_URL}/tables/{email}?{kind}={input_text.replace(' ', '+')}"
+        == f"{lecture_an_url}/tables/{email}?{kind}={input_text.replace(' ', '+')}"
     )
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
@@ -151,6 +152,7 @@ def test_column_filtering_by_value_with_batches(
     wsgi_server,
     driver,
     lecture_an,
+    lecture_an_url,
     article7bis_an,
     amendements_an,
     column_index,
@@ -162,7 +164,6 @@ def test_column_filtering_by_value_with_batches(
 ):
     from zam_repondeur.models import Amendement, Batch, DBSession, User
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     email = "user@exemple.gouv.fr"
     with transaction.manager:
         DBSession.add_all(amendements_an)
@@ -180,7 +181,7 @@ def test_column_filtering_by_value_with_batches(
         )
         table.amendements.append(amendement)
 
-    driver.get(f"{LECTURE_URL}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{email}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == initial
     driver.find_element_by_link_text("Filtrer").click()
@@ -190,7 +191,7 @@ def test_column_filtering_by_value_with_batches(
     input_field.send_keys(input_text)
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == filtered
-    assert driver.current_url == f"{LECTURE_URL}/tables/{email}?{kind}={input_text}"
+    assert driver.current_url == f"{lecture_an_url}/tables/{email}?{kind}={input_text}"
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
@@ -205,6 +206,7 @@ def test_column_filtering_by_checkbox(
     wsgi_server,
     driver,
     lecture_an,
+    lecture_an_url,
     article7bis_an,
     amendements_an,
     user_david_table_an,
@@ -216,7 +218,6 @@ def test_column_filtering_by_checkbox(
 ):
     from zam_repondeur.models import Amendement, DBSession, User
 
-    LECTURE_URL = f"{wsgi_server.application_url}{lecture_an.url}"
     email = "user@exemple.gouv.fr"
     with transaction.manager:
         DBSession.add_all(amendements_an)
@@ -233,7 +234,7 @@ def test_column_filtering_by_checkbox(
         )
         table.amendements.append(amendement)
 
-    driver.get(f"{LECTURE_URL}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{email}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == initial
     driver.find_element_by_link_text("Filtrer").click()
@@ -243,16 +244,16 @@ def test_column_filtering_by_checkbox(
     label.click()
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == filtered
-    assert driver.current_url == f"{LECTURE_URL}/tables/{email}?{kind}=1"
+    assert driver.current_url == f"{lecture_an_url}/tables/{email}?{kind}=1"
 
     # Restore initial state.
     label.click()
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == initial
-    assert driver.current_url == f"{LECTURE_URL}/tables/{email}"
+    assert driver.current_url == f"{lecture_an_url}/tables/{email}"
 
     # Check filters are active on URL (re)load.
-    driver.get(f"{LECTURE_URL}/tables/{email}?{kind}=1")
+    driver.get(f"{lecture_an_url}/tables/{email}?{kind}=1")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == filtered
     label = driver.find_element_by_css_selector(
@@ -261,4 +262,4 @@ def test_column_filtering_by_checkbox(
     label.click()
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == initial
-    assert driver.current_url == f"{LECTURE_URL}/tables/{email}"
+    assert driver.current_url == f"{lecture_an_url}/tables/{email}"

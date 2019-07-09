@@ -48,11 +48,11 @@ class TestPostForm:
         return form.submit(user=user, headers=headers)
 
     @pytest.mark.parametrize("filename", TEST_FILES)
-    def test_upload_redirects_to_index(self, app, lecture_an, filename, user_david):
+    def test_upload_redirects_to_index(self, app, lecture_an_url, filename, user_david):
         resp = self._upload_csv(app, filename, user=user_david)
 
         assert resp.status_code == 302
-        assert resp.location == f"https://zam.test/{lecture_an.url}/"
+        assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     @pytest.mark.parametrize("filename", TEST_FILES)
     def test_upload_success_message(self, app, filename, user_david):
@@ -287,7 +287,9 @@ class TestPostForm:
         assert "Veuillez d’abord sélectionner un fichier" in resp.text
 
 
-def test_post_form_from_export(app, lecture_an, article1_an, tmpdir, user_david):
+def test_post_form_from_export(
+    app, lecture_an, lecture_an_url, article1_an, tmpdir, user_david
+):
     from zam_repondeur.export.spreadsheet import write_csv
     from zam_repondeur.models import DBSession, Amendement
 
@@ -323,7 +325,7 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir, user_david)
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test/{lecture_an.url}/"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     resp = resp.follow()
 

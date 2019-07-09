@@ -32,7 +32,7 @@ def test_get_form(app, lecture_an, amendements_an, user_david):
 
 
 @responses.activate
-def test_post_form(app, lecture_an, article1_an, user_david):
+def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_david):
     from zam_repondeur.models import Amendement, Lecture
 
     # Initially, we only have one amendement (#135), with a response
@@ -68,7 +68,7 @@ def test_post_form(app, lecture_an, article1_an, user_david):
         resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test/{lecture_an.url}"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements"
 
     resp = resp.follow()
 

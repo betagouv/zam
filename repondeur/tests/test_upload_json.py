@@ -44,11 +44,11 @@ class TestPostForm:
         form["backup"] = Upload("file.json", path.read_bytes())
         return form.submit(user=user, headers=headers)
 
-    def test_upload_redirects_to_index(self, app, user_david, lecture_an):
+    def test_upload_redirects_to_index(self, app, user_david, lecture_an_url):
         resp = self._upload_backup(app, "backup.json", user_david)
 
         assert resp.status_code == 302
-        assert resp.location == f"https://zam.test/{lecture_an.url}/"
+        assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     def test_upload_success_message(self, app, user_david):
         resp = self._upload_backup(app, "backup.json", user_david).follow()
@@ -291,7 +291,9 @@ class TestPostForm:
         assert "Veuillez d’abord sélectionner un fichier" in resp.text
 
 
-def test_post_form_from_export(app, lecture_an, article1_an, tmpdir, user_david):
+def test_post_form_from_export(
+    app, lecture_an, lecture_an_url, article1_an, tmpdir, user_david
+):
     from zam_repondeur.export.json import write_json
     from zam_repondeur.models import DBSession, Amendement, Article
 
@@ -330,7 +332,7 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir, user_david)
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test/{lecture_an.url}/"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     resp = resp.follow()
 

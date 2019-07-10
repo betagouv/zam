@@ -24,8 +24,8 @@ def get_organes_acteurs() -> Tuple[Dict[str, dict], Dict[str, dict]]:
 def fetch_organes_acteurs() -> Dict[str, Any]:
     url = (
         "http://data.assemblee-nationale.fr/static/openData/repository/15/amo/"
-        "deputes_actifs_mandats_actifs_organes/"
-        "AMO10_deputes_actifs_mandats_actifs_organes_XV.json.zip"
+        "tous_acteurs_mandats_organes_xi_legislature/"
+        "AMO30_tous_acteurs_tous_mandats_tous_organes_historique.json.zip"
     )
     return {
         filename: load(json_file)

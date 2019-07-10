@@ -287,7 +287,9 @@ class TestLogout:
 
 
 class TestAuthenticationRequired:
-    def test_unauthenticated_user_is_redirected_to_login_page(self, app):
+    def test_unauthenticated_user_is_redirected_to_login_page(
+        self, app, dossier_plfss_2018
+    ):
         resp = app.get("/dossiers/1/lectures/add")
         assert resp.status_code == 302
         assert resp.location == (
@@ -295,7 +297,9 @@ class TestAuthenticationRequired:
             "?source=https%3A%2F%2Fzam.test%2Fdossiers%2F1%2Flectures%2Fadd"
         )
 
-    def test_authenticated_user_is_not_redirected_to_login_page(self, app, user_david):
+    def test_authenticated_user_is_not_redirected_to_login_page(
+        self, app, dossier_plfss_2018, user_david
+    ):
         resp = app.get("/dossiers/1/lectures/add", user=user_david)
         assert resp.status_code == 200
 

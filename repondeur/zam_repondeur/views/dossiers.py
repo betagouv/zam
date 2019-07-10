@@ -40,9 +40,6 @@ def dossiers_list(
     ]
     available_dossiers = [dossier for dossier in all_dossiers if not dossier.lectures]
 
-    if not dossiers:
-        return HTTPFound(request.resource_url(context, "add"))
-
     return {"dossiers": dossiers, "available_dossiers": available_dossiers}
 
 
@@ -106,7 +103,11 @@ class DossierAddForm(DossierAddBase):
         )
 
         dossier_model, _ = get_one_or_create(
-            Dossier, uid=dossier_ref.uid, titre=dossier_ref.titre, slug=dossier_ref.slug
+            Dossier,
+            uid=dossier_ref.uid,
+            titre=dossier_ref.titre,
+            slug=dossier_ref.slug,
+            owned_by_team=self.request.team,
         )
 
         if self._lecture_exists(chambre, texte_model, partie, organe):
@@ -116,7 +117,6 @@ class DossierAddForm(DossierAddBase):
             return HTTPFound(location=self.request.resource_url(self.context))
 
         lecture_model: Lecture = Lecture.create(
-            owned_by_team=self.request.team,
             texte=texte_model,
             partie=partie,
             titre=titre,

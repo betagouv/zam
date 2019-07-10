@@ -27,7 +27,7 @@ class TestDossiersLinkInNavbar:
         )
 
 
-def test_get_form(app, user_david):
+def test_get_form(app, user_david, dossier_plfss2018):
     resp = app.get("/dossiers/plfss-2018/lectures/add", user=user_david)
 
     assert resp.status_code == 200
@@ -96,7 +96,7 @@ def test_get_form(app, user_david):
 
 class TestPostForm:
     @responses.activate
-    def test_plfss_2018_an(self, app, user_david):
+    def test_plfss_2018_an(self, app, user_david, dossier_plfss2018):
         from zam_repondeur.models import Chambre, DBSession, Lecture
 
         with transaction.manager:
@@ -219,7 +219,7 @@ class TestPostForm:
         assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 135, 192]
 
     @responses.activate
-    def test_plfss_2019_senat(self, app, user_david):
+    def test_plfss_2019_senat(self, app, user_david, dossier_plfss2019):
         from zam_repondeur.models import Chambre, DBSession, Lecture
 
         with transaction.manager:

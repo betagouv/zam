@@ -7,12 +7,12 @@ def test_user_activity_default(users_repository, user_david):
     assert not user_david.is_active
 
 
-def test_user_activity_in_use(app, user_david):
+def test_user_activity_in_use(app, user_david, dossier_plfss2018):
     app.get("/dossiers/plfss-2018/lectures/", user=user_david)
     assert user_david.is_active
 
 
-def test_user_activity_not_anymore_in_use(app, user_david):
+def test_user_activity_not_anymore_in_use(app, user_david, dossier_plfss2018):
     app.get("/dossiers/plfss-2018/lectures/", user=user_david)
     assert user_david.is_active
 

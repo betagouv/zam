@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import List, Optional
 
-from sqlalchemy import Column, DateTime, Integer, Text, desc
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Text, desc
 from sqlalchemy.orm import joinedload, relationship
 
 from .base import Base, DBSession
+from .users import Team
 
 
 class Dossier(Base):
@@ -16,6 +17,9 @@ class Dossier(Base):
     titre = Column(Text, nullable=False)  # TODO: make it unique?
     slug: str = Column(Text, nullable=False, unique=True)
 
+    owned_by_team_pk = Column(Integer, ForeignKey("teams.pk"), nullable=True)
+    owned_by_team = relationship("Team", backref="dossiers")
+
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     modified_at = Column(
         DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
@@ -23,11 +27,7 @@ class Dossier(Base):
 
     lectures = relationship("Lecture", back_populates="dossier")
 
-    __repr_keys__ = ("pk", "uid", "titre")
-
-    @property
-    def owned_by_team(self) -> None:
-        return None  # TODO: transfer ownership to the whole dossier.
+    __repr_keys__ = ("pk", "slug", "titre", "uid", "owned_by_team")
 
     @property
     def url_key(self) -> str:
@@ -44,9 +44,18 @@ class Dossier(Base):
         return dossiers
 
     @classmethod
-    def create(cls, uid: str, titre: str, slug: str) -> "Dossier":
+    def create(
+        cls, uid: str, titre: str, slug: str, owned_by_team: Optional[Team] = None
+    ) -> "Dossier":
         now = datetime.utcnow()
-        dossier = cls(uid=uid, titre=titre, slug=slug, created_at=now, modified_at=now)
+        dossier = cls(
+            uid=uid,
+            titre=titre,
+            slug=slug,
+            owned_by_team=owned_by_team,
+            created_at=now,
+            modified_at=now,
+        )
         DBSession.add(dossier)
         return dossier
 

@@ -195,7 +195,7 @@ class TestPostForm:
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         with transaction.manager:
-            lecture_an.owned_by_team = team_zam
+            lecture_an.dossier.owned_by_team = team_zam
             DBSession.add(user_ronan)
             user_ronan.teams.append(team_zam)
 

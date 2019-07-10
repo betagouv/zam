@@ -83,8 +83,8 @@ def transfer_amendement(
     if created:
         affectation_name = User.normalize_name(item["affectation_name"])
         user.name = affectation_name if affectation_name != "" else email
-        if lecture.owned_by_team:
-            user.teams.append(lecture.owned_by_team)
+        if lecture.dossier.owned_by_team:
+            user.teams.append(lecture.dossier.owned_by_team)
 
     target_table = user.table_for(lecture)
     old = str(amendement.user_table.user) if amendement.user_table else ""

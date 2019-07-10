@@ -55,13 +55,7 @@ def lectures_list(
     context: LectureCollection, request: Request
 ) -> Union[Response, dict]:
 
-    all_lectures = context.models()
-
-    lectures = [
-        lecture
-        for lecture in all_lectures
-        if lecture.owned_by_team is None or lecture.owned_by_team in request.user.teams
-    ]
+    lectures = context.models()
 
     if not lectures:
         return HTTPFound(request.resource_url(context, "add"))
@@ -131,7 +125,6 @@ class LecturesAddForm(LectureAddBase):
             return HTTPFound(location=self.request.resource_url(self.context))
 
         lecture_model: Lecture = Lecture.create(
-            owned_by_team=self.request.team,
             texte=texte_model,
             partie=partie,
             titre=titre,

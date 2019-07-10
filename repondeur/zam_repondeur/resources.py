@@ -78,6 +78,17 @@ class DossierCollection(Resource):
 
 
 class DossierResource(Resource):
+    def __acl__(self) -> List[ACE]:
+        # If the dossier is owned by a team, then only team members can view it
+        if self.dossier.owned_by_team is not None:
+            return [
+                (Allow, f"team:{self.dossier.owned_by_team.pk}", "view"),
+                (Deny, Authenticated, "view"),
+            ]
+
+        # If the dossier is not owned by any team, anyone can view it
+        return [(Allow, Authenticated, "view")]
+
     def __init__(self, name: str, parent: Resource) -> None:
         super().__init__(name=name, parent=parent)
         self.slug = name
@@ -129,17 +140,6 @@ class LectureCollection(Resource):
 
 
 class LectureResource(Resource):
-    def __acl__(self) -> List[ACE]:
-        # If the lecture is owned by team, then team members can view it, but not others
-        if self.lecture.owned_by_team is not None:
-            return [
-                (Allow, f"team:{self.lecture.owned_by_team.pk}", "view"),
-                (Deny, Authenticated, "view"),
-            ]
-
-        # If the lecture is not owned by any team, anyone can view it
-        return [(Allow, Authenticated, "view")]
-
     def __init__(
         self,
         name: str,

@@ -64,6 +64,7 @@
 {% block main_class %}{% endblock %}
 
 {% block body %}
+    <section id="mes-zams">
     <h2>Mes Zams</h2>
     {% for dossier in dossiers %}
         <div class="dossier box">
@@ -76,8 +77,12 @@
                 </ul>
             </div>
         </div>
+    {% else %}
+        <p>Vous ne participez à aucun dossier législatif pour l’instant.</p>
     {% endfor %}
+    </section>
 
+    <section id="dossiers-disponibles">
     <h2>Dossiers disponibles</h2>
     {% for dossier in available_dossiers %}
         <div class="dossier box">
@@ -91,4 +96,5 @@
             </nav>
         </div>
     {% endfor %}
+    </section>
 {% endblock %}

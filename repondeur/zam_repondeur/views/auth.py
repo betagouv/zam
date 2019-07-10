@@ -278,7 +278,7 @@ def forbidden_view(request: Request) -> Any:
     request.session.flash(
         Message(
             cls="warning",
-            text="L’accès à cette lecture est réservé aux personnes autorisées.",
+            text="L’accès à ce dossier est réservé aux personnes autorisées.",
         )
     )
     return HTTPFound(location=request.resource_url(request.root))

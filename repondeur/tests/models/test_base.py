@@ -10,10 +10,18 @@ class TestRepr:
         foo = Foo()
         assert repr(foo) == f"<Foo at 0x{id(foo):x}>"
 
+    def test_dossier(self, dossier_plfss2018):
+        expected_repr = (
+            "<Dossier pk=1 slug='plfss-2018'"
+            " titre='Sécurité sociale : loi de financement 2018'"
+            " uid='DLR5L15N36030' owned_by_team=None>"
+        )
+        assert repr(dossier_plfss2018) == expected_repr
+
     def test_lecture(self, lecture_an):
         expected_repr = (
             "<Lecture pk=1 chambre=<Chambre.AN: 'Assemblée nationale'>"
-            " organe='PO717460' partie=None owned_by_team=None>"
+            " organe='PO717460' partie=None>"
         )
         assert repr(lecture_an) == expected_repr
 

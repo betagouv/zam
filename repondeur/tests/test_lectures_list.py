@@ -37,7 +37,7 @@ def test_get_list_not_empty(app, lecture_an, lecture_commission, user_david):
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
-    assert len(resp.parser.css(".lecture")) == 3  # First one is the top link.
+    assert len(resp.parser.css(".lecture")) == 2
 
 
 def test_get_list_reverse_datetime_order(app, lecture_an, user_david):
@@ -58,6 +58,5 @@ def test_get_list_reverse_datetime_order(app, lecture_an, user_david):
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
-    # First one is the top link.
-    assert title2 in resp.parser.css(".lecture")[1].text()
-    assert title in resp.parser.css(".lecture")[2].text()
+    assert title2 in resp.parser.css(".lecture")[0].text()
+    assert title in resp.parser.css(".lecture")[1].text()

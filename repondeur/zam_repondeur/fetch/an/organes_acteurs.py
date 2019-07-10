@@ -30,6 +30,7 @@ def fetch_organes_acteurs() -> Dict[str, Any]:
     return {
         filename: load(json_file)
         for filename, json_file in extract_from_remote_zip(url)
+        if filename.endswith(".json")
     }
 
 

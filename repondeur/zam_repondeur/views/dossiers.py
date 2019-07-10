@@ -1,6 +1,6 @@
 import transaction
 from operator import attrgetter
-from typing import Optional, Union
+from typing import Optional
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -17,17 +17,14 @@ from zam_repondeur.fetch.an.dossiers.models import (
 from zam_repondeur.message import Message
 from zam_repondeur.models import Chambre, Dossier, Lecture, Texte, get_one_or_create
 from zam_repondeur.models.events.lecture import ArticlesRecuperes, LectureCreee
-
 from zam_repondeur.models.organe import ORGANE_SENAT
+
 from zam_repondeur.resources import DossierCollection, DossierResource
 from zam_repondeur.tasks.fetch import fetch_amendements
 
 
 @view_config(context=DossierCollection, renderer="dossiers_list.html")
-def dossiers_list(
-    context: DossierCollection, request: Request
-) -> Union[Response, dict]:
-
+def dossiers_list(context: DossierCollection, request: Request) -> dict:
     all_dossiers = context.models()
 
     dossiers = [
@@ -43,14 +40,6 @@ def dossiers_list(
     return {"dossiers": dossiers, "available_dossiers": available_dossiers}
 
 
-@view_config(context=DossierResource, renderer="dossier_item.html")
-def dossier_item(context: DossierResource, request: Request) -> Union[Response, dict]:
-
-    dossier = context.dossier
-
-    return {"dossier": dossier, "lectures": dossier.lectures}
-
-
 class DossierAddBase:
     def __init__(self, context: DossierCollection, request: Request) -> None:
         self.context = context
@@ -60,10 +49,10 @@ class DossierAddBase:
 
 @view_defaults(context=DossierCollection, name="add")
 class DossierAddForm(DossierAddBase):
-    @view_config(request_method="GET", renderer="lectures_add.html")
+    @view_config(request_method="GET", renderer="dossiers_add.html")
     def get(self) -> dict:
-        lectures = self.context.models()
-        dossiers = [
+        dossiers = self.context.models()
+        dossiers_refs = [
             {"uid": dossier.uid, "titre": dossier.titre}
             for dossier in sorted(
                 self.dossiers_by_uid.values(),
@@ -73,16 +62,56 @@ class DossierAddForm(DossierAddBase):
         ]
         return {
             "dossiers": dossiers,
-            "lectures": lectures,
-            "hide_lectures_link": len(lectures) == 0,
+            "dossiers_refs": dossiers_refs,
+            "hide_dossiers_link": len(dossiers) == 0,
         }
 
     @view_config(request_method="POST")
     def post(self) -> Response:
 
         dossier_ref = self._get_dossier_ref()
-        lecture_ref = self._get_lecture_ref(dossier_ref)
 
+        if Dossier.exists(
+            uid=dossier_ref.uid, titre=dossier_ref.titre, slug=dossier_ref.slug
+        ):
+            self.request.session.flash(
+                Message(cls="warning", text="Ce dossier existe déjà…")
+            )
+            return HTTPFound(location=self.request.resource_url(self.context))
+
+        dossier_model, _ = get_one_or_create(
+            Dossier,
+            uid=dossier_ref.uid,
+            titre=dossier_ref.titre,
+            slug=dossier_ref.slug,
+            owned_by_team=self.request.team,
+        )
+
+        for lecture_ref in dossier_ref.lectures:
+            self._create_lecture(dossier_model, lecture_ref)
+
+        self.request.session.flash(
+            Message(
+                cls="success",
+                text=("Dossier créé avec succès, lectures en cours de création."),
+            )
+        )
+        return HTTPFound(
+            location=self.request.resource_url(self.context[dossier_model.url_key])
+        )
+
+    def _get_dossier_ref(self) -> DossierRef:
+        try:
+            dossier_uid = self.request.POST["dossier"]
+        except KeyError:
+            raise HTTPBadRequest
+        try:
+            dossier_ref = self.dossiers_by_uid[dossier_uid]
+        except KeyError:
+            raise HTTPNotFound
+        return dossier_ref
+
+    def _create_lecture(self, dossier_model: Dossier, lecture_ref: LectureRef) -> None:
         chambre = lecture_ref.chambre
         titre = lecture_ref.titre
         organe = lecture_ref.organe
@@ -102,21 +131,10 @@ class DossierAddForm(DossierAddBase):
             date_depot=texte.date_depot,
         )
 
-        dossier_model, _ = get_one_or_create(
-            Dossier,
-            uid=dossier_ref.uid,
-            titre=dossier_ref.titre,
-            slug=dossier_ref.slug,
-            owned_by_team=self.request.team,
-        )
-
         if self._lecture_exists(chambre, texte_model, partie, organe):
-            self.request.session.flash(
-                Message(cls="warning", text="Cette lecture existe déjà…")
-            )
-            return HTTPFound(location=self.request.resource_url(self.context))
+            return
 
-        lecture_model: Lecture = Lecture.create(
+        lecture_model = Lecture.create(
             texte=texte_model,
             partie=partie,
             titre=titre,
@@ -132,19 +150,7 @@ class DossierAddForm(DossierAddBase):
         # thus many objects within the database.
         transaction.commit()
         fetch_amendements(lecture_model.pk)
-        self.request.session.flash(
-            Message(
-                cls="success",
-                text=(
-                    "Lecture créée avec succès, amendements en cours de récupération."
-                ),
-            )
-        )
-        return HTTPFound(
-            location=self.request.resource_url(
-                self.context[lecture_model.url_key], "amendements"
-            )
-        )
+        return
 
     def _lecture_exists(
         self, chambre: Chambre, texte_model: Texte, partie: Optional[int], organe: str
@@ -157,36 +163,10 @@ class DossierAddForm(DossierAddBase):
             return Lecture.exists(chambre, texte_model, partie, "")
         return False
 
-    def _get_dossier_ref(self) -> DossierRef:
-        try:
-            dossier_uid = self.request.POST["dossier"]
-        except KeyError:
-            raise HTTPBadRequest
-        try:
-            dossier_ref = self.dossiers_by_uid[dossier_uid]
-        except KeyError:
-            raise HTTPNotFound
-        return dossier_ref
 
-    def _get_lecture_ref(self, dossier_ref: DossierRef) -> LectureRef:
-        try:
-            texte_uid, organe, partie_str = self.request.POST["lecture"].split("-", 2)
-        except (KeyError, ValueError):
-            raise HTTPBadRequest
-        partie: Optional[int]
-        if partie_str == "":
-            partie = None
-        else:
-            partie = int(partie_str)
-        matching = [
-            lecture_ref
-            for lecture_ref in dossier_ref.lectures
-            if (
-                lecture_ref.texte.uid == texte_uid
-                and lecture_ref.organe == organe
-                and lecture_ref.partie == partie
-            )
-        ]
-        if len(matching) != 1:
-            raise HTTPNotFound
-        return matching[0]
+@view_config(context=DossierResource, renderer="dossier_item.html")
+def dossier_item(context: DossierResource, request: Request) -> dict:
+
+    dossier = context.dossier
+
+    return {"dossier": dossier, "lectures": dossier.lectures}

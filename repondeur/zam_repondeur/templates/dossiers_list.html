@@ -64,6 +64,11 @@
 {% block main_class %}{% endblock %}
 
 {% block body %}
+    <div class="extra-button dossier box">
+        <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
+            Ajouter un nouveau dossier
+        </a>
+    </div>
     <section id="mes-zams">
     <h2>Mes Zams</h2>
     {% for dossier in dossiers %}

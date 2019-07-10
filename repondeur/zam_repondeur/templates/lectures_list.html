@@ -61,11 +61,6 @@
 {% block main_class %}{% endblock %}
 
 {% block body %}
-    <div class="extra-button lecture box">
-        <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
-            Ajouter une nouvelle lecture
-        </a>
-    </div>
     {% for lecture in lectures %}
         <div class="lecture box">
             <div>

@@ -63,3 +63,13 @@ class Dossier(Base):
     def get(cls, slug: str) -> Optional["Dossier"]:
         res: Optional["Dossier"] = DBSession.query(cls).filter(cls.slug == slug).first()
         return res
+
+    @classmethod
+    def exists(cls, uid: str, titre: str, slug: str) -> bool:
+        res: bool = DBSession.query(
+            DBSession.query(cls)
+            .filter(cls.uid == uid, cls.titre == titre, cls.slug == slug)
+            .exists()
+        ).scalar()
+
+        return res

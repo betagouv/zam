@@ -1,0 +1,50 @@
+{% extends "_base.html" %}
+
+{% block header %}
+    <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.css') }}">
+    <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.bootstrap3.css') }}">
+    <style type="text/css">
+        h2 {
+            text-align: center;
+            margin: 2.5rem 0 1.5rem 0;
+            font-weight: 600;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <form id="add-dossier" action="{{ request.path }}" method="POST">
+        <h2>Ajouter un dossier…</h2>
+        <div class="form-group">
+            <label for="dossier">Dossier législatif</label>
+            <select id="select-dossier" name="dossier" class="form-control" placeholder="Choisir un dossier législatif…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <option value="" selected="selected"></option>
+                {% for dossier in dossiers %}
+                    <option value="{{ dossier['uid'] }}">{{ dossier['titre'] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group save-buttons">
+            <input type="submit" name="submit" value="Ajouter le dossier" class="button enabled primary" disabled>
+        </div>
+
+    </form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ request.static_url('zam_repondeur:static/jquery/jquery-1.12.4.min.js') }}"></script>
+<script src="{{ request.static_url('zam_repondeur:static/selectize/js/standalone/selectize.min.js') }}"></script>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        $("#select-dossier").selectize({
+            valueField: "uid",
+            labelField: "titre",
+            searchField: ["titre"],
+            onInitialize: function () {
+                $("#select-dossier-selectized").attr("spellcheck", "false")
+            },
+        })
+    })
+</script>
+{% endblock %}

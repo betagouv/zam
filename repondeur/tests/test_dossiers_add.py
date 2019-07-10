@@ -17,28 +17,28 @@ def read_sample_data(basename):
 
 class TestDossiersLinkInNavbar:
     def test_link_in_navbar_if_at_least_one_dossier(self, app, lecture_an, user_david):
-        resp = app.get("/dossiers/plfss-2018/lectures/add", user=user_david)
+        resp = app.get("/dossiers/add", user=user_david)
         assert 'title="Aller à la liste des dossiers">Dossiers</a></li>' in resp.text
 
     def test_no_link_in_navbar_if_no_dossier(self, app, user_david):
-        resp = app.get("/dossiers/plfss-2018/lectures/add", user=user_david)
+        resp = app.get("/dossiers/add", user=user_david)
         assert (
             'title="Aller à la liste des dossiers">Dossiers</a></li>' not in resp.text
         )
 
 
 def test_get_form(app, user_david, dossier_plfss2018):
-    resp = app.get("/dossiers/plfss-2018/lectures/add", user=user_david)
+    resp = app.get("/dossiers/add", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
     # Check the form
-    form = resp.forms["add-lecture"]
+    form = resp.forms["add-dossier"]
     assert form.method == "POST"
-    assert form.action == "/dossiers/plfss-2018/lectures/add"
+    assert form.action == "/dossiers/add"
 
-    assert list(form.fields.keys()) == ["dossier", "lecture", "submit"]
+    assert list(form.fields.keys()) == ["dossier", "submit"]
 
     assert isinstance(form.fields["dossier"][0], Select)
     assert form.fields["dossier"][0].options == [
@@ -88,20 +88,18 @@ def test_get_form(app, user_david, dossier_plfss2018):
         ("DLR5L15N36030", False, "Sécurité sociale : loi de financement 2018"),
     ]
 
-    assert isinstance(form.fields["lecture"][0], Select)
-    assert form.fields["lecture"][0].options == [("", True, "")]
-
     assert form.fields["submit"][0].attrs["type"] == "submit"
 
 
 class TestPostForm:
     @responses.activate
-    def test_plfss_2018_an(self, app, user_david, dossier_plfss2018):
-        from zam_repondeur.models import Chambre, DBSession, Lecture
+    def test_plfss_2018_an(self, app, user_david):
+        from zam_repondeur.models import Chambre, DBSession, Dossier, Lecture
 
         with transaction.manager:
             DBSession.add(user_david)
 
+        assert not DBSession.query(Dossier).all()
         assert not DBSession.query(Lecture).all()
 
         responses.add(
@@ -157,26 +155,18 @@ class TestPostForm:
             status=200,
         )
 
+        # TODO: not true anymore!
         # We cannot use form.submit() given the form is dynamic and does not
         # contain choices for lectures (dynamically loaded via JS).
-        resp = app.post(
-            "/dossiers/plfss-2018/lectures/add",
-            {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460-"},
-            user=user_david,
-        )
+        resp = app.post("/dossiers/add", {"dossier": "DLR5L15N36030"}, user=user_david)
 
         assert resp.status_code == 302
-        assert resp.location == (
-            "https://zam.test"
-            "/dossiers/plfss-2018"
-            "/lectures/an.15.269.PO717460"
-            "/amendements"
-        )
+        assert resp.location == "https://zam.test/dossiers/plfss-2018"
 
         resp = resp.follow()
 
         assert resp.status_code == 200
-        assert "Lecture créée avec succès," in resp.text
+        assert "Dossier créé avec succès," in resp.text
         lecture = Lecture.get(
             chambre=Chambre.AN,
             session_or_legislature="15",
@@ -219,12 +209,13 @@ class TestPostForm:
         assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 135, 192]
 
     @responses.activate
-    def test_plfss_2019_senat(self, app, user_david, dossier_plfss2019):
-        from zam_repondeur.models import Chambre, DBSession, Lecture
+    def test_plfss_2019_senat(self, app, user_david):
+        from zam_repondeur.models import Chambre, DBSession, Dossier, Lecture
 
         with transaction.manager:
             DBSession.add(user_david)
 
+        assert not DBSession.query(Dossier).all()
         assert not DBSession.query(Lecture).all()
 
         responses.add(
@@ -270,22 +261,15 @@ class TestPostForm:
 
         # We cannot use form.submit() given the form is dynamic and does not
         # contain choices for lectures (dynamically loaded via JS).
-        resp = app.post(
-            "/dossiers/plfss-2018/lectures/add",
-            {"dossier": "DLR5L15N36892", "lecture": "PRJLSNR5S319B0106-PO78718-"},
-            user=user_david,
-        )
+        resp = app.post("/dossiers/add", {"dossier": "DLR5L15N36892"}, user=user_david)
 
         assert resp.status_code == 302
-        assert resp.location == (
-            "https://zam.test"
-            "/dossiers/plfss-2018/lectures/senat.2018-2019.106.PO78718/amendements"
-        )
+        assert resp.location == "https://zam.test/dossiers/plfss-2019/"
 
         resp = resp.follow()
 
         assert resp.status_code == 200
-        assert "Lecture créée avec succès," in resp.text
+        assert "Dossier créé avec succès," in resp.text
 
         lecture = Lecture.get(
             chambre=Chambre.SENAT,
@@ -321,33 +305,29 @@ class TestPostForm:
         assert [amdt.num for amdt in lecture.amendements] == [629, 1]
 
     @responses.activate
-    def test_plfss_2018_an_lecture_already_exists(
-        self, app, texte_plfss2018_an_premiere_lecture, lecture_an, user_david
+    def test_plfss_2018_an_dossier_already_exists(
+        self, app, dossier_plfss2018, lecture_an, user_david
     ):
-        from zam_repondeur.models import Chambre, DBSession, Lecture
+        from zam_repondeur.models import DBSession, Dossier
 
-        assert Lecture.exists(
-            chambre=Chambre.AN,
-            texte=texte_plfss2018_an_premiere_lecture,
-            partie=None,
-            organe="PO717460",
+        assert Dossier.exists(
+            uid="DLR5L15N36030",
+            titre="Sécurité sociale : loi de financement 2018",
+            slug="plfss-2018",
         )
 
         # We cannot use form.submit() given the form is dynamic and does not
         # contain choices for lectures (dynamically loaded via JS).
-        resp = app.post(
-            "/dossiers/plfss-2018/lectures/add",
-            {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460-"},
-            user=user_david,
-        )
+        resp = app.post("/dossiers/add", {"dossier": "DLR5L15N36030"}, user=user_david)
 
         assert resp.status_code == 302
-        assert resp.location == "https://zam.test/dossiers/plfss-2018/lectures/"
+        assert resp.location == "https://zam.test/dossiers/plfss-2018/"
 
         resp = resp.follow()
 
         assert resp.status_code == 200
-        assert "Cette lecture existe déjà…" in resp.text
+        assert "Ce dossier existe déjà…" in resp.text
+        # TODO: what if it is not from the same team?
 
         DBSession.add(lecture_an)
         assert len(lecture_an.events) == 0
@@ -356,10 +336,10 @@ class TestPostForm:
     def test_plfss_2018_senat_lecture_commission_from_scraping_already_exists(
         self, app, user_david, dossier_plfss2018
     ):
-        from zam_repondeur.models import Chambre, Lecture, Texte, TypeTexte
+        from zam_repondeur.models import Chambre, DBSession, Lecture, Texte, TypeTexte
 
         with transaction.manager:
-            Lecture.create(
+            lecture = Lecture.create(
                 texte=Texte.create(
                     type_=TypeTexte.PROJET,
                     chambre=Chambre.SENAT,
@@ -374,64 +354,16 @@ class TestPostForm:
 
         # We cannot use form.submit() given the form is dynamic and does not
         # contain choices for lectures (dynamically loaded via JS).
-        resp = app.post(
-            "/dossiers/plfss-2018/lectures/add",
-            {"dossier": "DLR5L15N36030", "lecture": "PRJLSNR5S299B0063-PO211493-"},
-            user=user_david,
-        )
+        resp = app.post("/dossiers/add", {"dossier": "DLR5L15N36030"}, user=user_david)
 
         assert resp.status_code == 302
-        assert resp.location == "https://zam.test/dossiers/plfss-2018/lectures/"
+        assert resp.location == "https://zam.test/dossiers/plfss-2018/"
 
         resp = resp.follow()
 
         assert resp.status_code == 200
-        assert "Cette lecture existe déjà…" in resp.text
+        assert "Ce dossier existe déjà…" in resp.text
+        # TODO: what if it is not from the same team?
 
-
-class TestChoicesLectures:
-    def test_open_data_only(self, app, user_david):
-
-        resp = app.get("/choices/dossiers/DLR5L15N36030/", user=user_david)
-
-        assert resp.status_code == 200
-        assert resp.headers["content-type"] == "application/json"
-        assert resp.json == {
-            "lectures": [
-                {
-                    "key": "PRJLANR5L15B0269-PO717460-",
-                    "label": "Assemblée nationale – Première lecture – Titre lecture – Texte Nº 269",  # noqa
-                },
-                {
-                    "key": "PRJLSNR5S299B0063-PO78718-",
-                    "label": "Sénat – Première lecture – Titre lecture – Texte Nº 63",
-                },
-                {
-                    "key": "PRJLSNR5S299B0063-PO211493-",
-                    "label": "Sénat – Première lecture – Commission saisie au fond – Texte Nº 63",  # noqa
-                },
-            ]
-        }
-
-    def test_open_data_merged_with_senat(self, app, user_david):
-
-        resp = app.get("/choices/dossiers/DLR5L15N37357/", user=user_david)
-
-        assert resp.status_code == 200
-        assert resp.headers["content-type"] == "application/json"
-        label_an1 = "Assemblée nationale – Première lecture – Commission saisie au fond – Texte Nº 1802"  # noqa
-        label_an2 = (
-            "Assemblée nationale – Première lecture – Séance publique – Texte Nº 1924"
-        )
-        label_senat = "Sénat – Première lecture – Commissions – Texte Nº 532"
-        assert resp.json == {
-            "lectures": [
-                {"key": "PRJLANR5L15B1802-PO59051-", "label": label_an1},
-                {"key": "PRJLANR5L15BTC1924-PO717460-", "label": label_an2},
-                {"key": "PJLSENAT2019X532--", "label": label_senat},
-                {
-                    "key": "PJLSENAT2019X571-PO78718-",
-                    "label": "Sénat – Première lecture – Séance publique – Texte Nº 571",  # noqa
-                },
-            ]
-        }
+        DBSession.add(lecture)
+        assert len(lecture.events) == 0

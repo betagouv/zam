@@ -94,10 +94,10 @@ def test_transfer_amendement_from_edit_form(
     # We're redirected to our table
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
 
     # The amendement is now on our table
@@ -239,10 +239,11 @@ def test_post_amendement_edit_form(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr/#amdt-999"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
+        "#amdt-999"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -318,10 +319,10 @@ def test_post_amendement_edit_form_switch_table(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr/"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
     resp = resp.maybe_follow()
     assert "Les modifications n’ont PAS été enregistrées" in resp.text
@@ -415,10 +416,11 @@ def test_post_amendement_edit_form_gouvernemental(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr/#amdt-999"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
+        "#amdt-999"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()

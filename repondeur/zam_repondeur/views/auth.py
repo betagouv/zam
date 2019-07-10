@@ -54,7 +54,6 @@ class RateLimiterMixin:
 class UserLogin(RateLimiterMixin):
     def __init__(self, context: Root, request: Request) -> None:
         self.request = request
-        self.context = context
         self.email_limiter = self.make_limiter(action="token_requests", key="email")
         self.ip_limiter = self.make_limiter(action="token_requests", key="ip")
 
@@ -69,7 +68,7 @@ class UserLogin(RateLimiterMixin):
     def next_url(self) -> Any:
         url = self.request.params.get("source")
         if url is None or url == self.request.route_url("login"):
-            url = self.request.resource_url(self.context["lectures"])
+            url = self.request.resource_url(self.request.root["dossiers"])
         return url
 
     @view_config(request_method="POST")
@@ -219,7 +218,7 @@ class Authenticate(RateLimiterMixin):
     def next_url(self) -> Any:
         url = self.request.params.get("source")
         if url is None or url == self.request.route_url("login"):
-            url = self.request.resource_url(self.context["dossiers"])
+            url = self.request.resource_url(self.request.root["dossiers"])
         return url
 
     def log_successful_login_attempt(self, email: str) -> None:
@@ -235,7 +234,6 @@ class Authenticate(RateLimiterMixin):
 class Welcome:
     def __init__(self, context: Root, request: Request) -> None:
         self.request = request
-        self.context = context
 
     @view_config(request_method="GET", renderer="auth/welcome.html")
     def get(self) -> Any:
@@ -250,7 +248,7 @@ class Welcome:
 
         self.request.user.name = User.normalize_name(name)
         next_url = self.request.params.get("source") or self.request.resource_url(
-            self.context["dossiers"]
+            self.request.root["dossiers"]
         )
         return HTTPFound(location=next_url)
 

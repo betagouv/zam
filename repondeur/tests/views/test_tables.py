@@ -137,10 +137,10 @@ def test_tables_grab_amendement(
     # We're redirected to our table
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
 
     # Reload amendement as it was updated in another transaction
@@ -171,10 +171,11 @@ def test_tables_grab_amendements(
 
     # We're redirected to our table
     assert resp.status_code == 302
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr"
+    assert resp.location == (
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
 
     # Reload amendements as they were updated in another transaction
@@ -208,10 +209,10 @@ def test_tables_release_amendement(
     # We're redirected to our table
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
 
     # Reload amendement as it was updated in another transaction
@@ -241,10 +242,10 @@ def test_tables_release_amendements(
     # We're redirected to our table
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
 
     # Reload amendements as they were updated in another transaction
@@ -289,10 +290,10 @@ class TestTransfer:
         # We're redirected to our table
         assert resp.status_code == 302
         assert resp.location == (
-            "https://zam.test"
-            "/dossiers/plfss-2018"
-            "/lectures/an.15.269.PO717460"
-            "/tables/david@exemple.gouv.fr"
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
         )
 
         # Reload amendement as it was updated in another transaction
@@ -320,10 +321,10 @@ class TestTransfer:
         # We're redirected to our table
         assert resp.status_code == 302
         assert resp.location == (
-            "https://zam.test"
-            "/dossiers/plfss-2018"
-            "/lectures/an.15.269.PO717460"
-            "/tables/david@exemple.gouv.fr"
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
         )
 
         # Reload amendement before checking for changes in the web transaction
@@ -387,10 +388,10 @@ class TestTransfer:
         # We're redirected to our table
         assert resp.status_code == 302
         assert resp.location == (
-            "https://zam.test"
-            "/dossiers/plfss-2018"
-            "/lectures/an.15.269.PO717460"
-            "/tables/david@exemple.gouv.fr"
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
         )
 
         # Reload amendements as they were updated in another transaction
@@ -421,10 +422,10 @@ def test_tables_steal_amendement(
     # We're redirected to our table
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/ronan@exemple.gouv.fr"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/ronan@exemple.gouv.fr/"
     )
 
     # Reload amendement as it was updated in another transaction
@@ -478,10 +479,10 @@ def test_tables_steal_amendements(
     # We're redirected to our table
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/ronan@exemple.gouv.fr"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/ronan@exemple.gouv.fr/"
     )
 
     # Reload amendements as they were updated in another transaction

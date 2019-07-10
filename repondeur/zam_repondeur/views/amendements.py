@@ -52,7 +52,7 @@ class AmendementEdit:
             "check_url": check_url,
             "my_table_url": self.my_table_url,
             "transfer_url": self.request.resource_url(
-                self.context.parent.parent,
+                self.context.lecture_resource,
                 "transfer_amendements",
                 query={"nums": self.amendement.num, "from_index": 1},
             ),
@@ -105,7 +105,7 @@ class AmendementEdit:
         if "save-and-transfer" in self.request.POST:
             return HTTPFound(
                 location=self.request.resource_url(
-                    self.context.parent.parent,
+                    self.context.lecture_resource,
                     "transfer_amendements",
                     query={
                         "nums": [amendement.num for amendement in self.amendements],

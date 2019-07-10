@@ -22,10 +22,10 @@ def test_get_form(
 
     assert form.method == "post"
     assert form.action == (
-        "https://zam.test"
-        "/dossiers/etat-service-societe-confiance"
-        "/lectures/an.15.806.PO744107"
-        "/import_liasse_xml"
+        "https://zam.test/"
+        "dossiers/etat-service-societe-confiance/"
+        "lectures/an.15.806.PO744107/"
+        "import_liasse_xml"
     )
 
     assert list(form.fields.keys()) == ["liasse", "upload"]
@@ -52,10 +52,10 @@ def test_upload_liasse_success(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/etat-service-societe-confiance"
-        "/lectures/an.15.806.PO744107"
-        "/amendements"
+        "https://zam.test/"
+        "dossiers/etat-service-societe-confiance/"
+        "lectures/an.15.806.PO744107/"
+        "amendements/"
     )
 
     resp = resp.follow()
@@ -87,10 +87,10 @@ def test_upload_liasse_with_table(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/etat-service-societe-confiance"
-        "/lectures/an.15.806.PO744107"
-        "/amendements"
+        "https://zam.test/"
+        "dossiers/etat-service-societe-confiance/"
+        "lectures/an.15.806.PO744107/"
+        "amendements/"
     )
 
     resp = resp.follow()
@@ -140,10 +140,10 @@ def test_upload_liasse_missing_file(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/etat-service-societe-confiance"
-        "/lectures/an.15.806.PO744107"
-        "/options"
+        "https://zam.test/"
+        "dossiers/etat-service-societe-confiance/"
+        "lectures/an.15.806.PO744107/"
+        "options"
     )
 
     resp = resp.follow()

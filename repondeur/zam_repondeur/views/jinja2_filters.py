@@ -24,8 +24,7 @@ def amendement_matches(context: Context, lecture: Lecture) -> dict:
     )
     matches = {
         amendement.num: context["request"].resource_url(
-            resource_context,
-            amendement.article.url_key,
+            resource_context[amendement.article.url_key],
             "reponses",
             anchor=amendement.slug,
         )

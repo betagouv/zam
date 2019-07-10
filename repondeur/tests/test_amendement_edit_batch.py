@@ -94,10 +94,10 @@ def test_transfer_amendement_from_edit_form(
     # We're redirected to our table
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
 
     # All amendement from the batch are now on our table
@@ -203,10 +203,11 @@ def test_post_amendement_edit_form_save_batch(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr/#amdt-666"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
+        "#amdt-666"
     )
 
     amendement_666 = DBSession.query(Amendement).filter(Amendement.num == 666).one()
@@ -300,10 +301,10 @@ def test_post_amendement_edit_form_switch_table(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        "/dossiers/plfss-2018"
-        "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr/"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
     resp = resp.maybe_follow()
     assert "Les modifications n’ont PAS été enregistrées" in resp.text

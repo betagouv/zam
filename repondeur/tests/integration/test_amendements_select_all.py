@@ -5,7 +5,7 @@ import transaction
 def test_select_all_is_visible_by_default(
     wsgi_server, driver, lecture_an_url, amendements_an
 ):
-    driver.get(f"{lecture_an_url}/amendements")
+    driver.get(f"{lecture_an_url}/amendements/")
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     assert all_selected.is_displayed()
 
@@ -13,7 +13,7 @@ def test_select_all_is_visible_by_default(
 def test_select_all_toggle_group_actions(
     wsgi_server, driver, lecture_an_url, amendements_an
 ):
-    driver.get(f"{lecture_an_url}/amendements")
+    driver.get(f"{lecture_an_url}/amendements/")
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     all_selected.click()
     group_actions = driver.find_element_by_css_selector(".groupActions")
@@ -26,7 +26,7 @@ def test_select_all_toggle_group_actions(
 def test_select_all_change_transfer_url(
     wsgi_server, driver, lecture_an_url, amendements_an
 ):
-    driver.get(f"{lecture_an_url}/amendements")
+    driver.get(f"{lecture_an_url}/amendements/")
     all_selected = driver.find_element_by_css_selector('[name="select-all"]')
     all_selected.click()
     transfer_amendements = driver.find_element_by_css_selector("#transfer-amendements")
@@ -72,7 +72,7 @@ def test_select_all_checks_only_visible_amendements(
         )
         user_daniel_table_an.amendements.append(amendement)
 
-    driver.get(f"{lecture_an_url}/amendements")
+    driver.get(f"{lecture_an_url}/amendements/")
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )

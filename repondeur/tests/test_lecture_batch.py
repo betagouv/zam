@@ -73,7 +73,7 @@ def test_lecture_get_batch_amendements_not_all_on_table(
     assert resp.status_code == 302
     assert resp.location == (
         "https://zam.test"
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/"
     )
     resp = resp.follow()
     assert (
@@ -138,7 +138,7 @@ def test_lecture_get_batch_amendements_different_reponses(
     assert resp.status_code == 302
     assert resp.location == (
         "https://zam.test"
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/"
     )
     resp = resp.follow()
     assert (
@@ -167,7 +167,7 @@ def test_lecture_get_batch_amendements_same_reponses_different_comments(
     assert resp.status_code == 302
     assert resp.location == (
         "https://zam.test"
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/"
     )
     resp = resp.follow()
     assert (
@@ -199,7 +199,7 @@ def test_lecture_get_batch_amendements_different_articles(
     assert resp.status_code == 302
     assert resp.location == (
         "https://zam.test"
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/"
     )
     resp = resp.follow()
     assert (
@@ -231,7 +231,7 @@ def test_lecture_get_batch_amendements_different_mission(
     assert resp.status_code == 302
     assert resp.location == (
         "https://zam.test"
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/"
     )
     resp = resp.follow()
     assert (
@@ -260,8 +260,10 @@ def test_lecture_post_batch_set_amendements(
     # We're redirected to our table
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{user_david.email}"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
 
     # Reload amendements as they were updated in another transaction
@@ -312,8 +314,10 @@ def test_lecture_post_batch_set_amendements_not_all_on_table(
     # We are redirected to our table.
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{user_david.email}"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
     resp = resp.follow()
     assert (
@@ -359,8 +363,10 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
     # We're redirected to our table
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{user_david.email}"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
 
     # Reload amendements as they were updated in another transaction
@@ -459,8 +465,10 @@ def test_lecture_post_batch_set_amendements_same_reponses(
     # We're redirected to our table
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{user_david.email}"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
 
     # Reload amendements as they were updated in another transaction
@@ -499,8 +507,10 @@ def test_lecture_post_batch_set_amendements_different_reponses(
     # We are redirected to our table.
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{user_david.email}"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
     resp = resp.follow()
     assert (
@@ -545,8 +555,10 @@ def test_lecture_post_batch_set_amendements_same_reponses_different_comments(
     # We are redirected to our table.
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{user_david.email}"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
     resp = resp.follow()
     assert (
@@ -594,8 +606,10 @@ def test_lecture_post_batch_set_amendements_different_articles(
     # We are redirected to our table.
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{user_david.email}"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
     resp = resp.follow()
     assert (
@@ -651,8 +665,10 @@ def test_lecture_post_batch_unset_amendement(
     # We're redirected to our table
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{user_david.email}"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
 
     # Reload amendement as it was updated in another transaction
@@ -728,8 +744,10 @@ def test_lecture_post_batch_reset_amendement(
     # We're redirected to our table
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test"
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{user_david.email}"
+        "https://zam.test/"
+        "dossiers/plfss-2018/"
+        "lectures/an.15.269.PO717460/"
+        "tables/david@exemple.gouv.fr/"
     )
 
     # Reload amendements as they were updated in another transaction.

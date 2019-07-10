@@ -108,14 +108,12 @@ class TableView:
             AmendementTransfere.create(self.request, amendement, old, new)
 
         if target != self.request.user.email and self.request.POST.get("from_index"):
-            next_location = self.request.resource_url(
-                self.context.lecture_resource, "amendements"
-            )
+            amendements_collection = self.context.lecture_resource["amendements"]
+            next_location = self.request.resource_url(amendements_collection)
         else:
             table = self.context.model()
-            next_location = self.request.resource_url(
-                self.context.parent, table.user.email
-            )
+            table_resource = self.context.parent[table.user.email]
+            next_location = self.request.resource_url(table_resource)
         return HTTPFound(location=next_location)
 
     def get_target_user_table(self, target: str) -> Optional[UserTable]:

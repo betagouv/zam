@@ -74,7 +74,7 @@
     {% for dossier in dossiers %}
         <div class="dossier box">
             <div>
-                <h3><a href="{{ request.resource_url(context, dossier.url_key) }}">{{ dossier.titre }}</a></h3>
+                <h3><a href="{{ request.resource_url(context[dossier.url_key]) }}">{{ dossier.titre }}</a></h3>
                 <ul>
                     {% for lecture in dossier.lectures %}
                         <li>{{ lecture }} <a href="{{ request.resource_url(context[dossier.url_key]['lectures'][lecture.url_key], 'amendements') }}" class="arrow-right">Consulter la lecture</a></li>

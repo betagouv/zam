@@ -268,9 +268,8 @@ class BatchAmendements:
 
     @property
     def my_table_url(self) -> str:
-        return self.request.resource_url(
-            self.context, "tables", self.request.user.email
-        )
+        table_resource = self.context["tables"][self.request.user.email]
+        return self.request.resource_url(table_resource)
 
     def get_amendements_from(self, source: MultiDict) -> List[Amendement]:
         return [
@@ -360,7 +359,8 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
             text="Rafraichissement des amendements et des articles en cours.",
         )
     )
-    return HTTPFound(location=request.resource_url(context, "amendements"))
+    amendements_collection = context["amendements"]
+    return HTTPFound(location=request.resource_url(amendements_collection))
 
 
 @view_config(context=LectureResource, name="journal", renderer="lecture_journal.html")

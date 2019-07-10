@@ -371,10 +371,10 @@ def test_lecture_post_transfer_amendements_to_me(
     assert resp.status_code == 302
     assert resp.location == (
         (
-            "https://zam.test"
-            "/dossiers/plfss-2018"
-            "/lectures/an.15.269.PO717460"
-            "/tables/david@exemple.gouv.fr"
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
         )
     )
 
@@ -416,10 +416,10 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
     assert resp.status_code == 302
     assert resp.location == (
         (
-            "https://zam.test"
-            "/dossiers/plfss-2018"
-            "/lectures/an.15.269.PO717460"
-            "/tables/david@exemple.gouv.fr"
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
         )
     )
 
@@ -458,10 +458,10 @@ def test_lecture_post_transfer_amendements_to_index(
     assert resp.status_code == 302
     assert resp.location == (
         (
-            "https://zam.test"
-            "/dossiers/plfss-2018"
-            "/lectures/an.15.269.PO717460"
-            "/tables/david@exemple.gouv.fr"
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
         )
     )
 
@@ -493,7 +493,7 @@ def test_lecture_post_transfer_amendements_to_index_from_index(
     )
     resp = resp.form.submit("submit-index")
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test{lecture_an_url}/amendements"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
     table = user_david.table_for(lecture_an)
     assert len(table.amendements) == 0
@@ -529,10 +529,10 @@ def test_lecture_post_transfer_amendements_to_other(
     assert resp.status_code == 302
     assert resp.location == (
         (
-            "https://zam.test"
-            "/dossiers/plfss-2018"
-            "/lectures/an.15.269.PO717460"
-            "/tables/david@exemple.gouv.fr"
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
         )
     )
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
@@ -566,7 +566,7 @@ def test_lecture_post_transfer_amendements_to_other_from_index(
     form["target"] = user_ronan.email
     resp = form.submit()
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test{lecture_an_url}/amendements"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
     table_david = user_david.table_for(lecture_an)
     assert len(table_david.amendements) == 0

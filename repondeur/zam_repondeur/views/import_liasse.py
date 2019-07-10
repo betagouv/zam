@@ -88,7 +88,7 @@ def upload_liasse_xml(context: LectureResource, request: Request) -> Response:
     request.session.flash(Message(cls="success", text=message))
     AmendementsRecuperesLiasse.create(request, lecture, count=len(amendements))
     DBSession.add(lecture)
-    return HTTPFound(location=request.resource_url(context, "amendements"))
+    return HTTPFound(location=request.resource_url(context["amendements"]))
 
 
 def get_backup_path(request: Request) -> Optional[Path]:

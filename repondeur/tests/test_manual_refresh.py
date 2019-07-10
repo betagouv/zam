@@ -72,7 +72,7 @@ def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_david):
         resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == f"https://zam.test{lecture_an_url}/amendements"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     resp = resp.follow()
 

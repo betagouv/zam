@@ -76,7 +76,7 @@ class DossierCollection(Resource):
     def __getitem__(self, key: str) -> Resource:
         resource = DossierResource(name=key, parent=self)
         try:
-            model = resource.model()
+            resource.model()
         except ResourceNotFound:
             raise KeyError
         return resource

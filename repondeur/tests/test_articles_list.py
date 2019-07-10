@@ -13,7 +13,8 @@ class TestListArticles:
             DBSession.add_all(amendements_an)
 
         resp = app.get(
-            "/dossiers/1/lectures/an.15.269.PO717460/articles/", user=user_david
+            "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/",
+            user=user_david,
         )
         assert resp.status_code == 200
         titles = [node.text().strip() for node in resp.parser.css(".article")]
@@ -29,7 +30,8 @@ class TestListArticles:
             DBSession.add_all(amendements_an)
 
         resp = app.get(
-            "/dossiers/1/lectures/an.15.269.PO717460/articles/", user=user_david
+            "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/",
+            user=user_david,
         )
         assert resp.status_code == 200
         titles = [node.text().strip() for node in resp.parser.css(".article")]
@@ -39,7 +41,8 @@ class TestListArticles:
         self, app, chapitre_1er_an, user_david
     ):
         resp = app.get(
-            "/dossiers/1/lectures/an.15.269.PO717460/articles/", user=user_david
+            "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/",
+            user=user_david,
         )
         assert resp.status_code == 200
         titles = [node.text().strip() for node in resp.parser.css(".article")]
@@ -47,10 +50,14 @@ class TestListArticles:
 
     def test_link_to_articles_list(self, app, lecture_an, user_david):
         resp = app.get(
-            "/dossiers/1/lectures/an.15.269.PO717460/articles/", user=user_david
+            "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/",
+            user=user_david,
         )
         assert resp.status_code == 200
         link = resp.parser.css_first("nav.main .list").attributes.get("href")
-        assert (
-            link == "https://zam.test/dossiers/1/lectures/an.15.269.PO717460/articles/"
+        assert link == (
+            "https://zam.test"
+            "/dossiers/plfss-2018"
+            "/lectures/an.15.269.PO717460"
+            "/articles/"
         )

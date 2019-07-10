@@ -4,10 +4,10 @@ import transaction
 
 def test_get_list_empty(app, user_david):
 
-    resp = app.get("/dossiers/1/lectures/", user=user_david)
+    resp = app.get("/dossiers/plfss-2018/lectures/", user=user_david)
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/dossiers/1/lectures/add"
+    assert resp.location == "https://zam.test/dossiers/plfss-2018/lectures/add"
 
     resp = resp.follow()
 
@@ -32,7 +32,7 @@ def lecture_commission(db, dossier_plfss2018, texte_plfss2018_an_premiere_lectur
 
 def test_get_list_not_empty(app, lecture_an, lecture_commission, user_david):
 
-    resp = app.get("/dossiers/1/lectures/", user=user_david)
+    resp = app.get("/dossiers/plfss-2018/lectures/", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -54,7 +54,7 @@ def test_get_list_reverse_datetime_order(app, lecture_an, user_david):
         title2 = str(lecture2)
         DBSession.add(lecture2)
 
-    resp = app.get("/dossiers/1/lectures/", user=user_david)
+    resp = app.get("/dossiers/plfss-2018/lectures/", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -72,7 +72,7 @@ def test_team_member_can_see_owned_lecture(app, lecture_an, team_zam, user_david
         user_david.teams.append(team_zam)
         DBSession.add(team_zam)
 
-    resp = app.get("/dossiers/1/lectures/", user=user_david)
+    resp = app.get("/dossiers/plfss-2018/lectures/", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -89,7 +89,7 @@ def test_non_team_member_cannot_see_owned_lecture(
         lecture_an.owned_by_team = team_zam
         DBSession.add(team_zam)
 
-    resp = app.get("/dossiers/1/lectures/", user=user_david)
+    resp = app.get("/dossiers/plfss-2018/lectures/", user=user_david)
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/dossiers/1/lectures/add"
+    assert resp.location == "https://zam.test/dossiers/plfss-2018/lectures/add"

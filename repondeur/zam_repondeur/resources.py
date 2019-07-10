@@ -80,7 +80,7 @@ class DossierCollection(Resource):
 class DossierResource(Resource):
     def __init__(self, name: str, parent: Resource) -> None:
         super().__init__(name=name, parent=parent)
-        self.pk = int(name)
+        self.slug = name
         self.add_child(LectureCollection(name="lectures", parent=self))
 
     @property
@@ -92,7 +92,7 @@ class DossierResource(Resource):
         return self.model()
 
     def model(self) -> Dossier:
-        dossier = Dossier.get(self.pk)
+        dossier = Dossier.get(self.slug)
         if dossier is None:
             raise ResourceNotFound(self)
         return dossier

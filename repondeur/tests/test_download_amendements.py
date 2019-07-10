@@ -11,7 +11,7 @@ import pytest
 def test_download(app, lecture_an, amendements_an, format_, content_type, user_david):
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/download_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/download_amendements",
         {"format": format_},
         user=user_david,
     )
@@ -26,7 +26,7 @@ def test_download(app, lecture_an, amendements_an, format_, content_type, user_d
 
 def test_download_bad_format(app, lecture_an, user_david):
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/download_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/download_amendements",
         {"format": "docx"},
         user=user_david,
         expect_errors=True,
@@ -39,7 +39,7 @@ def test_download_bad_format(app, lecture_an, user_david):
 
 def test_download_multiple_amendements(app, lecture_an, amendements_an, user_david):
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/export_pdf?nums=666&nums=999",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf?nums=666&nums=999",
         user=user_david,
     )
     assert resp.status_code == 200
@@ -54,7 +54,8 @@ def test_download_multiple_amendements_same_batch(
     app, lecture_an, amendements_an_batch, user_david
 ):
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/export_pdf?nums=666", user=user_david
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf?nums=666",
+        user=user_david,
     )
     assert resp.status_code == 200
     assert resp.content_type == "application/pdf"

@@ -26,18 +26,20 @@ def test_lecture_delete(app, lecture_an, amendements_an, zam_user):
     )
     assert DBSession.query(Amendement).count() == 2
 
-    resp = app.get("/dossiers/1/lectures/an.15.269.PO717460/options", user=zam_user)
+    resp = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options", user=zam_user
+    )
     form = resp.forms["delete-lecture"]
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/dossiers/1/lectures/"
+    assert resp.location == "https://zam.test/dossiers/plfss-2018/lectures/"
 
     resp = resp.follow()
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/dossiers/1/lectures/add"
+    assert resp.location == "https://zam.test/dossiers/plfss-2018/lectures/add"
 
     resp = resp.follow()
 
@@ -68,14 +70,18 @@ def test_lecture_delete_non_zam_user(
     )
     assert DBSession.query(Amendement).count() == 2
 
-    resp = app.get("/dossiers/1/lectures/an.15.269.PO717460/options", user=user_david)
+    resp = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options", user=user_david
+    )
     assert "delete-lecture" not in resp.forms
 
     # The user bypasses the protection or we messed up.
-    resp = app.post("/dossiers/1/lectures/an.15.269.PO717460/", user=user_david)
+    resp = app.post(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/", user=user_david
+    )
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/dossiers/1/lectures/"
+    assert resp.location == "https://zam.test/dossiers/plfss-2018/lectures/"
 
     resp = resp.follow()
 

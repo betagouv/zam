@@ -10,7 +10,9 @@ pytestmark = pytest.mark.usefixtures("lecture_an")
 
 
 def test_get_form(app, user_david):
-    resp = app.get("/dossiers/1/lectures/an.15.269.PO717460/options/", user=user_david)
+    resp = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options/", user=user_david
+    )
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -19,7 +21,7 @@ def test_get_form(app, user_david):
     assert resp.forms["import-form"].method == "post"
     assert (
         resp.forms["import-form"].action
-        == "https://zam.test/dossiers/1/lectures/an.15.269.PO717460/import_csv"
+        == "https://zam.test/dossiers/plfss-2018/lectures/an.15.269.PO717460/import_csv"
     )
 
     assert list(resp.forms["import-form"].fields.keys()) == ["reponses", "upload"]
@@ -35,7 +37,7 @@ TEST_FILES = ["reponses.csv", "reponses_semicolumns.csv", "reponses_with_bom.csv
 class TestPostForm:
     def _get_upload_form(self, app, user, headers=None):
         return app.get(
-            "/dossiers/1/lectures/an.15.269.PO717460/options/",
+            "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options/",
             user=user,
             headers=headers,
         ).forms["import-form"]
@@ -276,9 +278,11 @@ class TestPostForm:
         resp = form.submit()
 
         assert resp.status_code == 302
-        assert (
-            resp.location
-            == "https://zam.test/dossiers/1/lectures/an.15.269.PO717460/options"
+        assert resp.location == (
+            "https://zam.test"
+            "/dossiers/plfss-2018"
+            "/lectures/an.15.269.PO717460"
+            "/options"
         )
 
         resp = resp.follow()
@@ -318,7 +322,7 @@ def test_post_form_from_export(
         amendements[1].user_content.avis = None
 
     form = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/options/", user=user_david
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options/", user=user_david
     ).forms["import-form"]
     form["reponses"] = Upload("file.csv", Path(filename).read_bytes())
 

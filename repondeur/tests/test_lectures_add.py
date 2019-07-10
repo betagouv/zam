@@ -17,18 +17,18 @@ def read_sample_data(basename):
 
 class TestDossiersLinkInNavbar:
     def test_link_in_navbar_if_at_least_one_dossier(self, app, lecture_an, user_david):
-        resp = app.get("/dossiers/1/lectures/add", user=user_david)
+        resp = app.get("/dossiers/plfss-2018/lectures/add", user=user_david)
         assert 'title="Aller à la liste des dossiers">Dossiers</a></li>' in resp.text
 
     def test_no_link_in_navbar_if_no_dossier(self, app, user_david):
-        resp = app.get("/dossiers/1/lectures/add", user=user_david)
+        resp = app.get("/dossiers/plfss-2018/lectures/add", user=user_david)
         assert (
             'title="Aller à la liste des dossiers">Dossiers</a></li>' not in resp.text
         )
 
 
 def test_get_form(app, user_david):
-    resp = app.get("/dossiers/1/lectures/add", user=user_david)
+    resp = app.get("/dossiers/plfss-2018/lectures/add", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -36,7 +36,7 @@ def test_get_form(app, user_david):
     # Check the form
     form = resp.forms["add-lecture"]
     assert form.method == "POST"
-    assert form.action == "/dossiers/1/lectures/add"
+    assert form.action == "/dossiers/plfss-2018/lectures/add"
 
     assert list(form.fields.keys()) == ["dossier", "lecture", "submit"]
 
@@ -160,15 +160,17 @@ class TestPostForm:
         # We cannot use form.submit() given the form is dynamic and does not
         # contain choices for lectures (dynamically loaded via JS).
         resp = app.post(
-            "/dossiers/1/lectures/add",
+            "/dossiers/plfss-2018/lectures/add",
             {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460-"},
             user=user_david,
         )
 
         assert resp.status_code == 302
-        assert (
-            resp.location
-            == "https://zam.test/dossiers/1/lectures/an.15.269.PO717460/amendements"
+        assert resp.location == (
+            "https://zam.test"
+            "/dossiers/plfss-2018"
+            "/lectures/an.15.269.PO717460"
+            "/amendements"
         )
 
         resp = resp.follow()
@@ -269,7 +271,7 @@ class TestPostForm:
         # We cannot use form.submit() given the form is dynamic and does not
         # contain choices for lectures (dynamically loaded via JS).
         resp = app.post(
-            "/dossiers/1/lectures/add",
+            "/dossiers/plfss-2018/lectures/add",
             {"dossier": "DLR5L15N36892", "lecture": "PRJLSNR5S319B0106-PO78718-"},
             user=user_david,
         )
@@ -277,7 +279,7 @@ class TestPostForm:
         assert resp.status_code == 302
         assert resp.location == (
             "https://zam.test"
-            "/dossiers/1/lectures/senat.2018-2019.106.PO78718/amendements"
+            "/dossiers/plfss-2018/lectures/senat.2018-2019.106.PO78718/amendements"
         )
 
         resp = resp.follow()
@@ -334,13 +336,13 @@ class TestPostForm:
         # We cannot use form.submit() given the form is dynamic and does not
         # contain choices for lectures (dynamically loaded via JS).
         resp = app.post(
-            "/dossiers/1/lectures/add",
+            "/dossiers/plfss-2018/lectures/add",
             {"dossier": "DLR5L15N36030", "lecture": "PRJLANR5L15B0269-PO717460-"},
             user=user_david,
         )
 
         assert resp.status_code == 302
-        assert resp.location == "https://zam.test/dossiers/1/lectures/"
+        assert resp.location == "https://zam.test/dossiers/plfss-2018/lectures/"
 
         resp = resp.follow()
 
@@ -373,13 +375,13 @@ class TestPostForm:
         # We cannot use form.submit() given the form is dynamic and does not
         # contain choices for lectures (dynamically loaded via JS).
         resp = app.post(
-            "/dossiers/1/lectures/add",
+            "/dossiers/plfss-2018/lectures/add",
             {"dossier": "DLR5L15N36030", "lecture": "PRJLSNR5S299B0063-PO211493-"},
             user=user_david,
         )
 
         assert resp.status_code == 302
-        assert resp.location == "https://zam.test/dossiers/1/lectures/"
+        assert resp.location == "https://zam.test/dossiers/plfss-2018/lectures/"
 
         resp = resp.follow()
 

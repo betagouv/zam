@@ -32,7 +32,7 @@ def test_lecture_get_transfer_amendements(
     app, lecture_an, amendements_an, user_david, user_ronan
 ):
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -85,7 +85,7 @@ def test_lecture_get_transfer_amendements_from_index(
     app, lecture_an, amendements_an, user_david, user_ronan
 ):
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]], "from_index": 1},
         user=user_david,
     )
@@ -117,7 +117,7 @@ def test_lecture_get_transfer_amendements_from_me(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -188,7 +188,7 @@ def test_lecture_get_transfer_amendements_including_me(
         user_david_table_an.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": amendements_an},
         user=user_david,
     )
@@ -225,7 +225,7 @@ def test_lecture_get_transfer_amendements_from_me_from_save(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]], "from_save": 1},
         user=user_david,
     )
@@ -261,7 +261,7 @@ def test_lecture_get_transfer_amendements_from_other(
         table_ronan.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -303,7 +303,7 @@ def test_lecture_get_transfer_amendements_from_other_active(
         user_ronan.record_activity()
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -331,7 +331,7 @@ def test_lecture_get_transfer_amendements_from_edited_amendement(
         amendements_an[0].start_editing()
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -359,7 +359,7 @@ def test_lecture_post_transfer_amendements_to_me(
     amdt = amendements_an[0]
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amdt]},
         user=user_david,
     )
@@ -372,7 +372,9 @@ def test_lecture_post_transfer_amendements_to_me(
     assert resp.location == (
         (
             "https://zam.test"
-            f"/dossiers/1/lectures/an.15.269.PO717460/tables/{user_david.email}"
+            "/dossiers/plfss-2018"
+            "/lectures/an.15.269.PO717460"
+            "/tables/david@exemple.gouv.fr"
         )
     )
 
@@ -402,7 +404,7 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
     amendement = amendements_an[0]
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendement]},
         user=user_david,
     )
@@ -415,7 +417,9 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
     assert resp.location == (
         (
             "https://zam.test"
-            f"/dossiers/1/lectures/an.15.269.PO717460/tables/{user_david.email}"
+            "/dossiers/plfss-2018"
+            "/lectures/an.15.269.PO717460"
+            "/tables/david@exemple.gouv.fr"
         )
     )
 
@@ -444,7 +448,7 @@ def test_lecture_post_transfer_amendements_to_index(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -455,7 +459,9 @@ def test_lecture_post_transfer_amendements_to_index(
     assert resp.location == (
         (
             "https://zam.test"
-            f"/dossiers/1/lectures/an.15.269.PO717460/tables/{user_david.email}"
+            "/dossiers/plfss-2018"
+            "/lectures/an.15.269.PO717460"
+            "/tables/david@exemple.gouv.fr"
         )
     )
 
@@ -481,7 +487,7 @@ def test_lecture_post_transfer_amendements_to_index_from_index(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]], "from_index": 1},
         user=user_david,
     )
@@ -513,7 +519,7 @@ def test_lecture_post_transfer_amendements_to_other(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -524,7 +530,9 @@ def test_lecture_post_transfer_amendements_to_other(
     assert resp.location == (
         (
             "https://zam.test"
-            f"/dossiers/1/lectures/an.15.269.PO717460/tables/{user_david.email}"
+            "/dossiers/plfss-2018"
+            "/lectures/an.15.269.PO717460"
+            "/tables/david@exemple.gouv.fr"
         )
     )
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
@@ -550,7 +558,7 @@ def test_lecture_post_transfer_amendements_to_other_from_index(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]], "from_index": 1},
         user=user_david,
     )

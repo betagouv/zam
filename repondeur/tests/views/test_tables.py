@@ -98,7 +98,7 @@ def assert_amendements_have_event_with_summary(amendements, summary):
 
 def test_tables_empty(app, lecture_an, user_david):
     resp = app.get(
-        f"/dossiers/1/lectures/an.15.269.PO717460/tables/{user_david.email}",
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{user_david.email}",
         user=user_david,
     )
 
@@ -110,7 +110,7 @@ def test_tables_with_amendement(
     app, lecture_an, amendements_an, user_david, david_has_one_amendement
 ):
     resp = app.get(
-        f"/dossiers/1/lectures/an.15.269.PO717460/tables/{user_david.email}",
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{user_david.email}",
         user=user_david,
     )
 
@@ -129,16 +129,18 @@ def test_tables_grab_amendement(
 
     # We're redirected to our table
     resp = app.post(
-        f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}",
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amendements_an[0].num], "submit-table": True},
         user=user_david,
     )
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/dossiers/1/lectures/an.15.269.PO717460/tables/{email}"
+    assert resp.location == (
+        "https://zam.test"
+        "/dossiers/plfss-2018"
+        "/lectures/an.15.269.PO717460"
+        "/tables/david@exemple.gouv.fr"
     )
 
     # Reload amendement as it was updated in another transaction
@@ -162,16 +164,17 @@ def test_tables_grab_amendements(
     email = user_david.email
 
     resp = app.post(
-        f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}",
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amdt.num for amdt in amendements_an], "submit-table": True},
         user=user_david,
     )
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/dossiers/1/lectures/an.15.269.PO717460/tables/{email}"
+        "https://zam.test"
+        "/dossiers/plfss-2018"
+        "/lectures/an.15.269.PO717460"
+        "/tables/david@exemple.gouv.fr"
     )
 
     # Reload amendements as they were updated in another transaction
@@ -197,16 +200,18 @@ def test_tables_release_amendement(
     assert_amendement_is_on_table_for(amendements_an[0], user_david)
 
     resp = app.post(
-        f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}",
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amendements_an[0].num], "submit-index": True},
         user=user_david,
     )
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/dossiers/1/lectures/an.15.269.PO717460/tables/{email}"
+    assert resp.location == (
+        "https://zam.test"
+        "/dossiers/plfss-2018"
+        "/lectures/an.15.269.PO717460"
+        "/tables/david@exemple.gouv.fr"
     )
 
     # Reload amendement as it was updated in another transaction
@@ -228,16 +233,18 @@ def test_tables_release_amendements(
     email = user_david.email
 
     resp = app.post(
-        f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}",
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amendements_an[0].num, amendements_an[1].num], "submit-index": True},
         user=user_david,
     )
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/dossiers/1/lectures/an.15.269.PO717460/tables/{email}"
+    assert resp.location == (
+        "https://zam.test"
+        "/dossiers/plfss-2018"
+        "/lectures/an.15.269.PO717460"
+        "/tables/david@exemple.gouv.fr"
     )
 
     # Reload amendements as they were updated in another transaction
@@ -274,16 +281,18 @@ class TestTransfer:
         email = user_david.email
 
         resp = app.post(
-            f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}",
+            f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
             {"nums": [amendements_an[0].num], "target": user_ronan.email},
             user=user_david,
         )
 
         # We're redirected to our table
         assert resp.status_code == 302
-        assert (
-            resp.location
-            == f"https://zam.test/dossiers/1/lectures/an.15.269.PO717460/tables/{email}"
+        assert resp.location == (
+            "https://zam.test"
+            "/dossiers/plfss-2018"
+            "/lectures/an.15.269.PO717460"
+            "/tables/david@exemple.gouv.fr"
         )
 
         # Reload amendement as it was updated in another transaction
@@ -303,16 +312,18 @@ class TestTransfer:
 
         email = user_david.email
         resp = app.post(
-            f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}",
+            f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
             {"nums": [amendements_an[0].num], "submit-table": True},
             user=user_david,
         )
 
         # We're redirected to our table
         assert resp.status_code == 302
-        assert (
-            resp.location
-            == f"https://zam.test/dossiers/1/lectures/an.15.269.PO717460/tables/{email}"
+        assert resp.location == (
+            "https://zam.test"
+            "/dossiers/plfss-2018"
+            "/lectures/an.15.269.PO717460"
+            "/tables/david@exemple.gouv.fr"
         )
 
         # Reload amendement before checking for changes in the web transaction
@@ -328,7 +339,7 @@ class TestTransfer:
 
         email = user_david.email
         resp = app.post(
-            f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}",
+            f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
             {"nums": [amendements_an[0].num], "target": ""},
             user=user_david,
         )
@@ -338,7 +349,9 @@ class TestTransfer:
         assert resp.location == (
             (
                 "https://zam.test"
-                "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements?nums=666"
+                "/dossiers/plfss-2018"
+                "/lectures/an.15.269.PO717460"
+                "/transfer_amendements?nums=666"
             )
         )
 
@@ -363,7 +376,7 @@ class TestTransfer:
 
         email = user_david.email
         resp = app.post(
-            f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}",
+            f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
             {
                 "nums": [amendements_an[0].num, amendements_an[1].num],
                 "target": user_ronan.email,
@@ -373,9 +386,11 @@ class TestTransfer:
 
         # We're redirected to our table
         assert resp.status_code == 302
-        assert (
-            resp.location
-            == f"https://zam.test/dossiers/1/lectures/an.15.269.PO717460/tables/{email}"
+        assert resp.location == (
+            "https://zam.test"
+            "/dossiers/plfss-2018"
+            "/lectures/an.15.269.PO717460"
+            "/tables/david@exemple.gouv.fr"
         )
 
         # Reload amendements as they were updated in another transaction
@@ -398,16 +413,18 @@ def test_tables_steal_amendement(
     # Transfer amendement to ronan's table (stealing it from david)
     email = user_ronan.email
     resp = app.post(
-        f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}",
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amendements_an[0].num], "submit-table": True},
         user=user_ronan,
     )
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/dossiers/1/lectures/an.15.269.PO717460/tables/{email}"
+    assert resp.location == (
+        "https://zam.test"
+        "/dossiers/plfss-2018"
+        "/lectures/an.15.269.PO717460"
+        "/tables/david@exemple.gouv.fr"
     )
 
     # Reload amendement as it was updated in another transaction
@@ -433,7 +450,7 @@ def test_tables_steal_amendement_resets_editing_status(
     # Transfer amendement to ronan's table (stealing it from david)
     email = user_ronan.email
     app.post(
-        f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}",
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amendements_an[0].num], "submit-table": True},
         user=user_ronan,
     )
@@ -453,16 +470,18 @@ def test_tables_steal_amendements(
 
     # Transfer amendements to ronan's table (stealing them from david)
     resp = app.post(
-        f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}",
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
         {"nums": [amendements_an[0].num, amendements_an[1].num], "submit-table": True},
         user=user_ronan,
     )
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/dossiers/1/lectures/an.15.269.PO717460/tables/{email}"
+    assert resp.location == (
+        "https://zam.test"
+        "/dossiers/plfss-2018"
+        "/lectures/an.15.269.PO717460"
+        "/tables/david@exemple.gouv.fr"
     )
 
     # Reload amendements as they were updated in another transaction
@@ -486,7 +505,7 @@ def test_tables_check_with_amendements(
 ):
     email = user_david.email
     resp = app.get(
-        f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}/check",
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}/check",
         {"current": current},
         user=user_david,
     )
@@ -504,7 +523,7 @@ def test_tables_check_without_amendements(
 ):
     email = user_david.email
     resp = app.get(
-        f"/dossiers/1/lectures/an.15.269.PO717460/tables/{email}/check",
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}/check",
         {"current": current},
         user=user_david,
     )

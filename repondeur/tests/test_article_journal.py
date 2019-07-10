@@ -31,7 +31,7 @@ def test_article_journal_title(app, lecture_an, article1_an, user_david):
         assert article1_an.events[0].data["new_value"] == "Title"
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../journal",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/article.1../journal",
         user=user_david,
     )
     assert first_summary_text(resp) == "David a ajouté le titre."
@@ -48,7 +48,7 @@ def test_article_journal_title_from_services(app, lecture_an, article1_an, user_
         assert article1_an.events[0].data["new_value"] == "Title"
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../journal",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/article.1../journal",
         user=user_david,
     )
     assert first_summary_text(resp) == (
@@ -73,7 +73,7 @@ def test_article_journal_presentation(app, lecture_an, article1_an, user_david):
         assert article1_an.events[0].data["new_value"] == "Présentation"
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../journal",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/article.1../journal",
         user=user_david,
     )
     assert first_summary_text(resp) == "David a ajouté la présentation."
@@ -92,7 +92,7 @@ def test_article_journal_content(app, lecture_an, article1_an, user_david):
         assert article1_an.events[0].data["new_value"] == {"Foo": "Bar"}
 
     resp = app.get(
-        "/dossiers/1/lectures/an.15.269.PO717460/articles/article.1../journal",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/article.1../journal",
         user=user_david,
     )
     assert first_description_text(resp) == (

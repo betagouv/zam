@@ -14,7 +14,7 @@ class Dossier(Base):
 
     uid = Column(Text, nullable=False)  # the Assemblée Nationale UID
     titre = Column(Text, nullable=False)  # TODO: make it unique?
-    slug = Column(Text, nullable=False, unique=True)
+    slug: str = Column(Text, nullable=False, unique=True)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     modified_at = Column(
@@ -31,8 +31,7 @@ class Dossier(Base):
 
     @property
     def url_key(self) -> str:
-        return str(self.pk)
-        return "-".join(part.lower() for part in self.titre.split())
+        return self.slug
 
     @classmethod
     def all(cls) -> List["Dossier"]:
@@ -52,6 +51,6 @@ class Dossier(Base):
         return dossier
 
     @classmethod
-    def get(cls, pk: int) -> Optional["Dossier"]:
-        res: Optional["Dossier"] = DBSession.query(cls).filter(cls.pk == pk).first()
+    def get(cls, slug: str) -> Optional["Dossier"]:
+        res: Optional["Dossier"] = DBSession.query(cls).filter(cls.slug == slug).first()
         return res

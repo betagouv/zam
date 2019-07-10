@@ -95,7 +95,9 @@ def test_transfer_amendement_from_edit_form(
     assert resp.status_code == 302
     assert resp.location == (
         "https://zam.test"
-        "/dossiers/1/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr"
+        "/dossiers/plfss-2018"
+        "/lectures/an.15.269.PO717460"
+        "/tables/david@exemple.gouv.fr"
     )
 
     # The amendement is now on our table
@@ -238,7 +240,9 @@ def test_post_amendement_edit_form(
     assert resp.status_code == 302
     assert resp.location == (
         "https://zam.test"
-        "/dossiers/1/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/#amdt-999"
+        "/dossiers/plfss-2018"
+        "/lectures/an.15.269.PO717460"
+        "/tables/david@exemple.gouv.fr/#amdt-999"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -315,7 +319,9 @@ def test_post_amendement_edit_form_switch_table(
     assert resp.status_code == 302
     assert resp.location == (
         "https://zam.test"
-        "/dossiers/1/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/"
+        "/dossiers/plfss-2018"
+        "/lectures/an.15.269.PO717460"
+        "/tables/david@exemple.gouv.fr/"
     )
     resp = resp.maybe_follow()
     assert "Les modifications n’ont PAS été enregistrées" in resp.text
@@ -357,10 +363,15 @@ def test_post_amendement_edit_form_and_transfer(
     assert resp.status_code == 302
     assert resp.location == (
         "https://zam.test"
-        "/dossiers/1/lectures/an.15.269.PO717460/transfer_amendements"
+        "/dossiers/plfss-2018"
+        "/lectures/an.15.269.PO717460"
+        "/transfer_amendements"
         "?nums=999&from_save=1&"
-        "back=https%3A%2F%2Fzam.test%2Fdossiers%2F1%2Flectures%2Fan.15.269.PO717460"
-        "%2Ftables%2Fdavid%40exemple.gouv.fr%2F%23amdt-999"
+        "back=https%3A%2F%2Fzam.test"
+        "%2Fdossiers%2Fplfss-2018"
+        "%2Flectures%2Fan.15.269.PO717460"
+        "%2Ftables%2Fdavid%40exemple.gouv.fr"
+        "%2F%23amdt-999"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
@@ -405,7 +416,9 @@ def test_post_amendement_edit_form_gouvernemental(
     assert resp.status_code == 302
     assert resp.location == (
         "https://zam.test"
-        "/dossiers/1/lectures/an.15.269.PO717460/tables/david@exemple.gouv.fr/#amdt-999"
+        "/dossiers/plfss-2018"
+        "/lectures/an.15.269.PO717460"
+        "/tables/david@exemple.gouv.fr/#amdt-999"
     )
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()

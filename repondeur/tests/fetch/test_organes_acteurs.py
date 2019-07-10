@@ -7,7 +7,9 @@ import pytest
 
 HERE = Path(os.path.dirname(__file__))
 ORGANES_ACTEURS = (
-    HERE / "sample_data" / "AMO10_deputes_actifs_mandats_actifs_organes_XV.json.zip"
+    HERE
+    / "sample_data"
+    / "AMO30_tous_acteurs_tous_mandats_tous_organes_historique.json.zip"
 )
 
 

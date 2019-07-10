@@ -11,7 +11,8 @@ def test_get_form(
     app, lecture_essoc2018_an_nouvelle_lecture_commission_fond, user_david
 ):
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.806.PO744107/options", user=user_david
+        "/dossiers/etat-service-societe-confiance/lectures/an.15.806.PO744107/options",
+        user=user_david,
     )
 
     assert resp.status_code == 200
@@ -22,7 +23,7 @@ def test_get_form(
     assert form.method == "post"
     assert form.action == (
         "https://zam.test"
-        "/dossiers/plfss-2018"
+        "/dossiers/etat-service-societe-confiance"
         "/lectures/an.15.806.PO744107"
         "/import_liasse_xml"
     )
@@ -42,7 +43,8 @@ def test_upload_liasse_success(
         DBSession.add(user_david)
 
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.806.PO744107/options", user=user_david
+        "/dossiers/etat-service-societe-confiance/lectures/an.15.806.PO744107/options",
+        user=user_david,
     )
     form = resp.forms["import-liasse-xml"]
     form["liasse"] = Upload("liasse.xml", (SAMPLE_DATA / "liasse.xml").read_bytes())
@@ -51,7 +53,7 @@ def test_upload_liasse_success(
     assert resp.status_code == 302
     assert resp.location == (
         "https://zam.test"
-        "/dossiers/plfss-2018"
+        "/dossiers/etat-service-societe-confiance"
         "/lectures/an.15.806.PO744107"
         "/amendements"
     )
@@ -74,7 +76,8 @@ def test_upload_liasse_with_table(
     from zam_repondeur.models import Lecture
 
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.806.PO744107/options", user=user_david
+        "/dossiers/etat-service-societe-confiance/lectures/an.15.806.PO744107/options",
+        user=user_david,
     )
     form = resp.forms["import-liasse-xml"]
     form["liasse"] = Upload(
@@ -85,7 +88,7 @@ def test_upload_liasse_with_table(
     assert resp.status_code == 302
     assert resp.location == (
         "https://zam.test"
-        "/dossiers/plfss-2018"
+        "/dossiers/etat-service-societe-confiance"
         "/lectures/an.15.806.PO744107"
         "/amendements"
     )
@@ -110,7 +113,8 @@ def test_upload_liasse_success_with_a_deposer(
     app, lecture_essoc2018_an_nouvelle_lecture_commission_fond, user_david
 ):
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.806.PO744107/options", user=user_david
+        "/dossiers/etat-service-societe-confiance/lectures/an.15.806.PO744107/options",
+        user=user_david,
     )
     form = resp.forms["import-liasse-xml"]
     # The second amendement has `etat == "A déposer"` and thus is ignored.
@@ -128,15 +132,18 @@ def test_upload_liasse_missing_file(
     from zam_repondeur.models import Lecture
 
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.806.PO744107/options", user=user_david
+        "/dossiers/etat-service-societe-confiance/lectures/an.15.806.PO744107/options",
+        user=user_david,
     )
     form = resp.forms["import-liasse-xml"]
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == "https://zam.test/dossiers/plfss-2018/lectures/an.15.806.PO744107/options"
+    assert resp.location == (
+        "https://zam.test"
+        "/dossiers/etat-service-societe-confiance"
+        "/lectures/an.15.806.PO744107"
+        "/options"
     )
 
     resp = resp.follow()

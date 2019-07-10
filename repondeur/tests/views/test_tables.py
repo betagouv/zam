@@ -424,7 +424,7 @@ def test_tables_steal_amendement(
         "https://zam.test"
         "/dossiers/plfss-2018"
         "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr"
+        "/tables/ronan@exemple.gouv.fr"
     )
 
     # Reload amendement as it was updated in another transaction
@@ -481,7 +481,7 @@ def test_tables_steal_amendements(
         "https://zam.test"
         "/dossiers/plfss-2018"
         "/lectures/an.15.269.PO717460"
-        "/tables/david@exemple.gouv.fr"
+        "/tables/ronan@exemple.gouv.fr"
     )
 
     # Reload amendements as they were updated in another transaction

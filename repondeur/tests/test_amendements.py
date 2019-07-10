@@ -107,7 +107,7 @@ def test_get_amendements_order_abandoned_last(
 
 def test_get_amendements_not_found_bad_format(app, user_david):
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/senat.2017-2018.1/amendements",
+        "/dossiers/loi-finances-2018/lectures/senat.2017-2018.1/amendements",
         user=user_david,
         expect_errors=True,
     )
@@ -116,7 +116,7 @@ def test_get_amendements_not_found_bad_format(app, user_david):
 
 def test_get_amendements_not_found_does_not_exist(app, user_david):
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717461/amendements",
+        "/dossiers/loi-finances-2018/lectures/an.15.269.PO717461/amendements",
         user=user_david,
         expect_errors=True,
     )
@@ -140,7 +140,7 @@ def test_get_amendements_columns_missions_for_plf2(
     app, amendements_plf2018_an_premiere_lecture_seance_publique_2, user_david
 ):
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.235-2.PO717460/amendements",
+        "/dossiers/loi-finances-2018/lectures/an.15.235-2.PO717460/amendements",
         user=user_david,
     )
 
@@ -163,7 +163,7 @@ def test_get_amendements_missions_title_for_plf2(
     app, amendements_plf2018_an_premiere_lecture_seance_publique_2, user_david
 ):
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.235-2.PO717460/amendements",
+        "/dossiers/loi-finances-2018/lectures/an.15.235-2.PO717460/amendements",
         user=user_david,
     )
 

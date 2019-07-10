@@ -16,7 +16,7 @@ from zam_repondeur.fetch.an.dossiers.models import (
     TypeTexte,
 )
 from zam_repondeur.models.organe import ORGANE_SENAT
-from zam_repondeur.slugify import slugify
+from zam_repondeur.slugs import slugify
 
 
 logger = logging.getLogger(__name__)

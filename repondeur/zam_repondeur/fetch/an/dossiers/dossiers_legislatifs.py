@@ -2,9 +2,9 @@ import logging
 from json import load
 from typing import Any, Dict, Iterator, List, NamedTuple, Optional, Tuple
 
-from slugify import slugify
 
 from zam_repondeur.models.chambre import Chambre
+from zam_repondeur.slugs import slugify
 
 from ...dates import parse_date
 from ..common import extract_from_remote_zip, roman

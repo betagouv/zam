@@ -61,7 +61,6 @@ class DossierAddForm(DossierAddBase):
             )
         ]
         return {
-            "dossiers": dossiers,
             "dossiers_refs": dossiers_refs,
             "hide_dossiers_link": len(dossiers) == 0,
         }

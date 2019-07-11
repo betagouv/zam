@@ -1,3 +1,4 @@
+import json
 import re
 from datetime import date
 from pathlib import Path
@@ -145,7 +146,6 @@ class TestPostForm:
             ),
             status=404,
         )
-
         responses.add(
             responses.GET,
             "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
@@ -155,13 +155,64 @@ class TestPostForm:
             status=200,
         )
 
-        # TODO: not true anymore!
-        # We cannot use form.submit() given the form is dynamic and does not
-        # contain choices for lectures (dynamically loaded via JS).
-        resp = app.post("/dossiers/add", {"dossier": "DLR5L15N36030"}, user=user_david)
+        responses.add(
+            responses.GET,
+            "https://www.senat.fr/leg/pjl17-063.html",
+            body=(HERE.parent / "sample_data" / "pjl17-063.html").read_text(
+                "utf-8", "ignore"
+            ),
+            status=200,
+        )
+        responses.add(
+            responses.GET,
+            (
+                "https://www.senat.fr"
+                "/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv"
+            ),
+            body=(
+                HERE.parent
+                / "fetch"
+                / "sample_data"
+                / "senat"
+                / "jeu_complet_2017-2018_63.csv"
+            ).read_bytes(),
+            status=200,
+        )
+        responses.add(
+            responses.GET,
+            "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json",
+            json=json.loads(
+                (
+                    HERE.parent
+                    / "fetch"
+                    / "sample_data"
+                    / "senat"
+                    / "liste_discussion_63.json"
+                ).read_bytes()
+            ),
+            status=200,
+        )
+        responses.add(
+            responses.GET,
+            "https://www.senat.fr/encommission/2017-2018/63/liste_discussion.json",
+            status=404,
+        )
+        responses.add(
+            responses.GET,
+            "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
+            body=(
+                HERE.parent / "fetch" / "sample_data" / "senat" / "ODSEN_GENERAL.csv"
+            ).read_bytes(),
+            status=200,
+        )
+
+        resp = app.get("/dossiers/add", user=user_david)
+        form = resp.forms["add-dossier"]
+        form["dossier"] = "DLR5L15N36030"
+        resp = form.submit()
 
         assert resp.status_code == 302
-        assert resp.location == "https://zam.test/dossiers/plfss-2018"
+        assert resp.location == "https://zam.test/dossiers/plfss-2018/"
 
         resp = resp.follow()
 
@@ -259,9 +310,10 @@ class TestPostForm:
             status=200,
         )
 
-        # We cannot use form.submit() given the form is dynamic and does not
-        # contain choices for lectures (dynamically loaded via JS).
-        resp = app.post("/dossiers/add", {"dossier": "DLR5L15N36892"}, user=user_david)
+        resp = app.get("/dossiers/add", user=user_david)
+        form = resp.forms["add-dossier"]
+        form["dossier"] = "DLR5L15N36892"
+        resp = form.submit()
 
         assert resp.status_code == 302
         assert resp.location == "https://zam.test/dossiers/plfss-2019/"
@@ -316,12 +368,13 @@ class TestPostForm:
             slug="plfss-2018",
         )
 
-        # We cannot use form.submit() given the form is dynamic and does not
-        # contain choices for lectures (dynamically loaded via JS).
-        resp = app.post("/dossiers/add", {"dossier": "DLR5L15N36030"}, user=user_david)
+        resp = app.get("/dossiers/add", user=user_david)
+        form = resp.forms["add-dossier"]
+        form["dossier"] = "DLR5L15N36030"
+        resp = form.submit()
 
         assert resp.status_code == 302
-        assert resp.location == "https://zam.test/dossiers/plfss-2018/"
+        assert resp.location == "https://zam.test/dossiers/"
 
         resp = resp.follow()
 
@@ -352,12 +405,13 @@ class TestPostForm:
                 dossier=dossier_plfss2018,
             )
 
-        # We cannot use form.submit() given the form is dynamic and does not
-        # contain choices for lectures (dynamically loaded via JS).
-        resp = app.post("/dossiers/add", {"dossier": "DLR5L15N36030"}, user=user_david)
+        resp = app.get("/dossiers/add", user=user_david)
+        form = resp.forms["add-dossier"]
+        form["dossier"] = "DLR5L15N36030"
+        resp = form.submit()
 
         assert resp.status_code == 302
-        assert resp.location == "https://zam.test/dossiers/plfss-2018/"
+        assert resp.location == "https://zam.test/dossiers/"
 
         resp = resp.follow()
 

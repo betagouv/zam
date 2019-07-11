@@ -24,6 +24,7 @@ class Dossier(Base):
     modified_at = Column(
         DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
     )
+    activated_at = Column(DateTime, nullable=True)
 
     lectures = relationship(
         "Lecture", back_populates="dossier", cascade="all, delete-orphan"
@@ -67,9 +68,13 @@ class Dossier(Base):
         return res
 
     @classmethod
-    def exists(cls, uid: str, slug: str) -> bool:
+    def exists(cls, slug: str) -> bool:
         res: bool = DBSession.query(
-            DBSession.query(cls).filter(cls.uid == uid, cls.slug == slug).exists()
+            DBSession.query(cls).filter(cls.slug == slug).exists()
         ).scalar()
 
         return res
+
+    def activate(self, owned_by_team: Optional[Team] = None) -> None:
+        self.activated_at = datetime.utcnow()
+        self.owned_by_team = owned_by_team

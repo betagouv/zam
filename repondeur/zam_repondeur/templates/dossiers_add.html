@@ -19,8 +19,8 @@
             <label for="dossier">Dossier législatif</label>
             <select id="select-dossier" name="dossier" class="form-control" placeholder="Choisir un dossier législatif…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 <option value="" selected="selected"></option>
-                {% for dossier_ref in dossiers_refs %}
-                    <option value="{{ dossier_ref['uid'] }}">{{ dossier_ref['titre'] }}</option>
+                {% for dossier in available_dossiers %}
+                    <option value="{{ dossier.slug }}">{{ dossier.titre }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -38,7 +38,7 @@
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", () => {
         $("#select-dossier").selectize({
-            valueField: "uid",
+            valueField: "slug",
             labelField: "titre",
             searchField: ["titre"],
             onInitialize: () => {

@@ -12,6 +12,7 @@ from fixtures.lectures import *  # noqa: F401,F403
 from fixtures.essoc2018 import *  # noqa: F401,F403
 from fixtures.plf2018 import *  # noqa: F401,F403
 from fixtures.plfss2018 import *  # noqa: F401,F403
+from fixtures.plfss2019 import *  # noqa: F401,F403
 from fixtures.scraping import *  # noqa: F401,F403
 from fixtures.shared_tables import *  # noqa: F401,F403
 from fixtures.users import *  # noqa: F401,F403

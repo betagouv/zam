@@ -1,12 +1,11 @@
 import json
 import re
-from datetime import date
+from datetime import datetime
 from pathlib import Path
 
 import responses
 import transaction
 from webtest.forms import Select
-
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "fetch" / "sample_data"
@@ -17,9 +16,25 @@ def read_sample_data(basename):
 
 
 class TestDossiersLinkInNavbar:
-    def test_link_in_navbar_if_at_least_one_dossier(self, app, lecture_an, user_david):
+    def test_link_in_navbar_if_at_least_one_dossier_activated(
+        self, app, lecture_an, user_david
+    ):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            lecture_an.dossier.activated_at = datetime.utcnow()
+            DBSession.add(lecture_an)
+
         resp = app.get("/dossiers/add", user=user_david)
         assert 'title="Aller à la liste des dossiers">Dossiers</a></li>' in resp.text
+
+    def test_no_link_in_navbar_if_one_dossier_not_activated(
+        self, app, lecture_an, user_david
+    ):
+        resp = app.get("/dossiers/add", user=user_david)
+        assert (
+            'title="Aller à la liste des dossiers">Dossiers</a></li>' not in resp.text
+        )
 
     def test_no_link_in_navbar_if_no_dossier(self, app, user_david):
         resp = app.get("/dossiers/add", user=user_david)
@@ -44,57 +59,29 @@ def test_get_form(app, user_david, dossier_plfss2018):
     assert isinstance(form.fields["dossier"][0], Select)
     assert form.fields["dossier"][0].options == [
         ("", True, ""),
-        ("ppl18-002", False, "Agence nationale de la cohésion des territoires"),
-        ("pjl18-526", False, "Accords France-Suisse et France-Luxembourg"),
-        ("pjl18-523", False, "Accord France Arménie"),
-        (
-            "DLR5L15N37357",
-            False,
-            "Fonction publique : transformation de la fonction publique",
-        ),
-        ("ppr18-458", False, "Clarifier et actualiser le Règlement du Sénat"),
-        (
-            "ppl18-462",
-            False,
-            "Participation des conseillers de Lyon aux élections sénatoriales",
-        ),
-        (
-            "ppl17-699",
-            False,
-            "Instituer un médiateur territorial dans certaines collectivités",
-        ),
-        ("ppl18-229", False, "Lutte contre l'habitat insalubre ou dangereux"),
-        ("pjl18-404", False, "Organisation du système de santé"),
-        ("ppl18-454", False, "Exploitation des réseaux radioélectriques mobiles"),
-        ("ppl18-386", False, "Clarifier diverses dispositions du droit électoral"),
-        ("ppl18-385", False, "Clarifier diverses dispositions du droit électoral"),
-        ("ppl18-436", False, "Accès des PME à la commande publique"),
-        ("ppl18-305", False, "Création d'un statut de l'élu communal"),
-        (
-            "ppl18-260",
-            False,
-            "Accès à l'énergie et lutte contre la précarité énergétique",
-        ),
-        ("DLR5L15N36892", False, "Sécurité sociale : loi de financement 2019"),
-        (
-            "ppl18-043",
-            False,
-            "Directeur général de l'Agence nationale de la cohésion des territoires",
-        ),
-        (
-            "DLR5L15N36159",
-            False,
-            "Fonction publique : un Etat au service d'une société de confiance",
-        ),
-        ("DLR5L15N36030", False, "Sécurité sociale : loi de financement 2018"),
+        ("plfss-2018", False, "Sécurité sociale : loi de financement 2018"),
     ]
 
     assert form.fields["submit"][0].attrs["type"] == "submit"
 
 
+def test_get_form_does_not_propose_activated_choices(
+    app, user_david, dossier_plfss2018, lecture_an
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        lecture_an.dossier.activated_at = datetime.utcnow()
+        DBSession.add(lecture_an)
+
+    resp = app.get("/dossiers/add", user=user_david)
+    form = resp.forms["add-dossier"]
+    assert form.fields["dossier"][0].options == [("", True, "")]
+
+
 class TestPostForm:
     @responses.activate
-    def test_plfss_2018_an(self, app, user_david):
+    def test_plfss_2018_an(self, app, user_david, dossier_plfss2018):
         from zam_repondeur.models import Chambre, DBSession, Dossier, Lecture
 
         with transaction.manager:
@@ -208,7 +195,7 @@ class TestPostForm:
 
         resp = app.get("/dossiers/add", user=user_david)
         form = resp.forms["add-dossier"]
-        form["dossier"] = "DLR5L15N36030"
+        form["dossier"] = "plfss-2018"
         resp = form.submit()
 
         assert resp.status_code == 302
@@ -260,7 +247,7 @@ class TestPostForm:
         assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 135, 192]
 
     @responses.activate
-    def test_plfss_2019_senat(self, app, user_david):
+    def test_plfss_2019_senat(self, app, user_david, dossier_plfss2019):
         from zam_repondeur.models import Chambre, DBSession, Dossier, Lecture
 
         with transaction.manager:
@@ -312,7 +299,7 @@ class TestPostForm:
 
         resp = app.get("/dossiers/add", user=user_david)
         form = resp.forms["add-dossier"]
-        form["dossier"] = "DLR5L15N36892"
+        form["dossier"] = "plfss-2019"
         resp = form.submit()
 
         assert resp.status_code == 302
@@ -357,17 +344,17 @@ class TestPostForm:
         assert [amdt.num for amdt in lecture.amendements] == [629, 1]
 
     @responses.activate
-    def test_plfss_2018_an_dossier_already_exists(
+    def test_plfss_2018_an_dossier_already_activated(
         self, app, dossier_plfss2018, lecture_an, user_david
     ):
-        from zam_repondeur.models import DBSession, Dossier
+        from zam_repondeur.models import DBSession
 
-        assert Dossier.exists(uid="DLR5L15N36030", slug="plfss-2018")
+        with transaction.manager:
+            lecture_an.dossier.activated_at = datetime.utcnow()
+            DBSession.add(lecture_an)
 
-        resp = app.get("/dossiers/add", user=user_david)
-        form = resp.forms["add-dossier"]
-        form["dossier"] = "DLR5L15N36030"
-        resp = form.submit()
+        # We cannot use form.submit() given the form does not contain that choice.
+        resp = app.post("/dossiers/add", {"dossier": "plfss-2018"}, user=user_david)
 
         assert resp.status_code == 302
         assert resp.location == "https://zam.test/dossiers/"
@@ -375,36 +362,23 @@ class TestPostForm:
         resp = resp.follow()
 
         assert resp.status_code == 200
-        assert "Ce dossier existe déjà…" in resp.text
-        # TODO: what if it is not from the same team?
+        assert "Ce dossier appartient à une autre équipe…" in resp.text
 
         DBSession.add(lecture_an)
         assert len(lecture_an.events) == 0
 
     @responses.activate
-    def test_plfss_2018_senat_lecture_commission_from_scraping_already_exists(
-        self, app, user_david, dossier_plfss2018
+    def test_plfss_2018_an_dossier_unknown(
+        self, app, dossier_plfss2018, lecture_an, user_david
     ):
-        from zam_repondeur.models import Chambre, DBSession, Lecture, Texte, TypeTexte
+        from zam_repondeur.models import DBSession
 
         with transaction.manager:
-            lecture = Lecture.create(
-                texte=Texte.create(
-                    type_=TypeTexte.PROJET,
-                    chambre=Chambre.SENAT,
-                    session=2017,
-                    numero=63,
-                    date_depot=date(2017, 11, 6),
-                ),
-                titre="Première lecture – Titre lecture",
-                organe="",  # scraping does not know the commission
-                dossier=dossier_plfss2018,
-            )
+            lecture_an.dossier.activated_at = datetime.utcnow()
+            DBSession.add(lecture_an)
 
-        resp = app.get("/dossiers/add", user=user_david)
-        form = resp.forms["add-dossier"]
-        form["dossier"] = "DLR5L15N36030"
-        resp = form.submit()
+        # We cannot use form.submit() given the form does not contain that choice.
+        resp = app.post("/dossiers/add", {"dossier": "plfss-2019"}, user=user_david)
 
         assert resp.status_code == 302
         assert resp.location == "https://zam.test/dossiers/"
@@ -412,8 +386,31 @@ class TestPostForm:
         resp = resp.follow()
 
         assert resp.status_code == 200
-        assert "Ce dossier existe déjà…" in resp.text
-        # TODO: what if it is not from the same team?
+        assert "Ce dossier n’existe pas." in resp.text
 
-        DBSession.add(lecture)
-        assert len(lecture.events) == 0
+        DBSession.add(lecture_an)
+        assert len(lecture_an.events) == 0
+
+    @responses.activate
+    def test_plfss_2018_an_dossier_empty(
+        self, app, dossier_plfss2018, lecture_an, user_david
+    ):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            lecture_an.dossier.activated_at = datetime.utcnow()
+            DBSession.add(lecture_an)
+
+        # We cannot use form.submit() given the form does not contain that choice.
+        resp = app.post("/dossiers/add", {"dossier": ""}, user=user_david)
+
+        assert resp.status_code == 302
+        assert resp.location == "https://zam.test/dossiers/"
+
+        resp = resp.follow()
+
+        assert resp.status_code == 200
+        assert "Ce dossier n’existe pas." in resp.text
+
+        DBSession.add(lecture_an)
+        assert len(lecture_an.events) == 0

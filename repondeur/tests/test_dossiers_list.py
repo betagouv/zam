@@ -1,10 +1,15 @@
+from datetime import datetime
+
 import transaction
 
 
-def test_team_member_can_see_owned_dossier(app, lecture_an, team_zam, user_david):
+def test_team_member_can_see_owned_and_activated_dossier(
+    app, lecture_an, team_zam, user_david
+):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
+        lecture_an.dossier.activated_at = datetime.utcnow()
         lecture_an.dossier.owned_by_team = team_zam
         DBSession.add(user_david)
         user_david.teams.append(team_zam)
@@ -18,12 +23,13 @@ def test_team_member_can_see_owned_dossier(app, lecture_an, team_zam, user_david
     assert len(resp.parser.css("#mes-zams .dossier")) == 1
 
 
-def test_non_team_member_cannot_see_owned_dossier(
+def test_non_team_member_cannot_see_owned_dossier_even_if_activated(
     app, lecture_an, team_zam, user_david
 ):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
+        lecture_an.dossier.activated_at = datetime.utcnow()
         lecture_an.dossier.owned_by_team = team_zam
         DBSession.add(team_zam)
 

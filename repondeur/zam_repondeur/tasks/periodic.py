@@ -25,6 +25,8 @@ def update_data() -> None:
 # Keep it last as it takes time and will add up with the growing number of dossiers.
 @huey.periodic_task(crontab(minute="10", hour="*"))
 def fetch_all_lectures() -> None:
-    for dossier in DBSession.query(Dossier):
+    for dossier in DBSession.query(Dossier).filter(
+        Dossier.activated_at != None
+    ):  # noqa: E711
         delay = (dossier.pk % 15) * 60  # spread out updates over 15 minutes
         fetch_lectures.schedule(args=(dossier.pk,), delay=delay)

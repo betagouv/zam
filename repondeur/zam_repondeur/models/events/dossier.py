@@ -28,11 +28,13 @@ class DossierEvent(Event):
         return Markup(self.details_template.safe_substitute(**self.template_vars))
 
 
-class DossierCree(DossierEvent):
-    __mapper_args__ = {"polymorphic_identity": "dossier_cree"}
+class DossierActive(DossierEvent):
+    __mapper_args__ = {"polymorphic_identity": "dossier_active"}
     icon = "document"
 
-    summary_template = Template("<abbr title='$email'>$user</abbr> a créé le dossier.")
+    summary_template = Template(
+        "<abbr title='$email'>$user</abbr> a activé le dossier."
+    )
 
     def __init__(self, request: Request, dossier: Dossier, **kwargs: Any) -> None:
         super().__init__(request, dossier, **kwargs)

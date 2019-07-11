@@ -13,10 +13,11 @@ def sgg_user(db, team_zam):
 
 
 def test_dossier_delete(app, lecture_an, amendements_an, sgg_user):
-    from zam_repondeur.models import Amendement, DBSession, Lecture
+    from zam_repondeur.models import Amendement, DBSession, Dossier, Lecture
 
     assert sgg_user.email.endswith("@sgg.pm.gouv.fr")
 
+    assert Dossier.exists(slug="plfss-2018")
     assert Lecture.exists(
         chambre=lecture_an.chambre,
         texte=lecture_an.texte,
@@ -26,7 +27,7 @@ def test_dossier_delete(app, lecture_an, amendements_an, sgg_user):
     assert DBSession.query(Amendement).count() == 2
 
     resp = app.get("/dossiers/plfss-2018/", user=sgg_user)
-    form = resp.forms["delete-lecture"]
+    form = resp.forms["delete-dossier"]
 
     resp = form.submit()
 
@@ -38,6 +39,7 @@ def test_dossier_delete(app, lecture_an, amendements_an, sgg_user):
     assert resp.status_code == 200
     assert "Dossier supprimé avec succès." in resp.text
 
+    assert Dossier.exists(slug="plfss-2018")
     assert not Lecture.exists(
         chambre=lecture_an.chambre,
         texte=lecture_an.texte,
@@ -63,7 +65,7 @@ def test_dossier_delete_non_sgg_user(
     assert DBSession.query(Amendement).count() == 2
 
     resp = app.get("/dossiers/plfss-2018/", user=user_david)
-    assert "delete-lecture" not in resp.forms
+    assert "delete-dossier" not in resp.forms
 
     # The user bypasses the protection or we messed up.
     resp = app.post("/dossiers/plfss-2018/", user=user_david)

@@ -43,31 +43,6 @@ def lectures_list(
     return {"lectures": lectures}
 
 
-@view_defaults(context=LectureResource)
-class LectureView:
-    def __init__(self, context: LectureResource, request: Request) -> None:
-        self.context = context
-        self.request = request
-        self.lecture = context.model()
-
-    @view_config(request_method="POST")
-    def post(self) -> Response:
-        if self.request.user.can_delete_lecture:
-            DBSession.delete(self.lecture)
-            DBSession.flush()
-            self.request.session.flash(
-                Message(cls="success", text="Lecture supprimée avec succès.")
-            )
-        else:
-            self.request.session.flash(
-                Message(
-                    cls="warning",
-                    text="Vous n’avez pas les droits pour supprimer une lecture.",
-                )
-            )
-        return HTTPFound(location=self.request.resource_url(self.context.parent))
-
-
 @view_config(context=AmendementCollection, renderer="amendements.html")
 def list_amendements(context: AmendementCollection, request: Request) -> dict:
     """

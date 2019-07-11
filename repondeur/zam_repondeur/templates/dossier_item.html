@@ -61,11 +61,16 @@
 {% block main_class %}{% endblock %}
 
 {% block body %}
-    <div class="extra-button lecture box">
-        <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
-            Ajouter une nouvelle lecture
-        </a>
-    </div>
+    {% if request.user.can_delete_dossier %}
+        <div class="extra-button lecture box">
+            <form method="post" action="{{ request.resource_url(context) }}" id="delete-lecture" data-controller="dossier-item">
+                <div role="group">
+                    <input type="submit" data-action="dossier-item#delete" class="danger allow-multiple-submit button" value="Supprimer le dossier">
+                </div>
+            </form>
+        </div>
+    {% endif %}
+
     {% for lecture in lectures %}
         <div class="lecture box">
             <div>
@@ -85,4 +90,8 @@
             </nav>
         </div>
     {% endfor %}
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ request.static_url('zam_repondeur:static/js/dossiers.js') }}"></script>
 {% endblock %}

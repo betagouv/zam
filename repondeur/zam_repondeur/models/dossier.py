@@ -25,7 +25,9 @@ class Dossier(Base):
         DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
     )
 
-    lectures = relationship("Lecture", back_populates="dossier")
+    lectures = relationship(
+        "Lecture", back_populates="dossier", cascade="all, delete-orphan"
+    )
 
     __repr_keys__ = ("pk", "slug", "titre", "uid", "owned_by_team")
 

@@ -144,21 +144,6 @@
                 </div>
             </form>
         </div>
-
-        {% if request.user.can_delete_lecture %}
-            <div class="flex-line">
-                <div>
-                    <h3>Supprimer</h3>
-                    <p>Supprimer la lecture ainsi que tous les amendements et réponses associés.</p>
-                </div>
-                <form method="post" action="{{ request.resource_url(context) }}" id="delete-lecture" data-controller="amendements-lecture">
-                    <div role="group">
-                        <input type="submit" data-action="amendements-lecture#delete" class="danger allow-multiple-submit button" value="Supprimer">
-                    </div>
-                </form>
-            </div>
-        {% endif %}
-
     </section>
 </div>
 

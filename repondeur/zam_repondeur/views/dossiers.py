@@ -15,7 +15,14 @@ from zam_repondeur.fetch.an.dossiers.models import (
     LectureRef,
 )
 from zam_repondeur.message import Message
-from zam_repondeur.models import Chambre, Dossier, Lecture, Texte, get_one_or_create
+from zam_repondeur.models import (
+    Chambre,
+    DBSession,
+    Dossier,
+    Lecture,
+    Texte,
+    get_one_or_create,
+)
 from zam_repondeur.models.events.lecture import ArticlesRecuperes, LectureCreee
 from zam_repondeur.models.organe import ORGANE_SENAT
 
@@ -161,9 +168,30 @@ class DossierAddForm(DossierAddBase):
         return False
 
 
-@view_config(context=DossierResource, renderer="dossier_item.html")
-def dossier_item(context: DossierResource, request: Request) -> dict:
+@view_defaults(context=DossierResource)
+class DossierView:
+    def __init__(self, context: DossierResource, request: Request) -> None:
+        self.context = context
+        self.request = request
+        self.dossier = context.dossier
 
-    dossier = context.dossier
+    @view_config(request_method="GET", renderer="dossier_item.html")
+    def get(self) -> Response:
+        return {"dossier": self.dossier, "lectures": self.dossier.lectures}
 
-    return {"dossier": dossier, "lectures": dossier.lectures}
+    @view_config(request_method="POST")
+    def post(self) -> Response:
+        if self.request.user.can_delete_dossier:
+            DBSession.delete(self.dossier)
+            DBSession.flush()
+            self.request.session.flash(
+                Message(cls="success", text="Dossier supprimé avec succès.")
+            )
+        else:
+            self.request.session.flash(
+                Message(
+                    cls="warning",
+                    text="Vous n’avez pas les droits pour supprimer un dossier.",
+                )
+            )
+        return HTTPFound(location=self.request.resource_url(self.context.parent))

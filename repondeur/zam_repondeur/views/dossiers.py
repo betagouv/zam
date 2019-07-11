@@ -8,7 +8,6 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
-from zam_repondeur.fetch import get_articles
 from zam_repondeur.fetch.an.dossiers.models import (
     DossierRef,
     DossierRefsByUID,
@@ -23,11 +22,11 @@ from zam_repondeur.models import (
     Texte,
     get_one_or_create,
 )
-from zam_repondeur.models.events.lecture import ArticlesRecuperes, LectureCreee
+from zam_repondeur.models.events.lecture import LectureCreee
 from zam_repondeur.models.organe import ORGANE_SENAT
 
 from zam_repondeur.resources import DossierCollection, DossierResource
-from zam_repondeur.tasks.fetch import fetch_amendements
+from zam_repondeur.tasks.fetch import fetch_amendements, fetch_articles
 
 
 @view_config(context=DossierCollection, renderer="dossiers_list.html")
@@ -145,14 +144,13 @@ class DossierAddForm(DossierAddBase):
             organe=organe,
             dossier=dossier_model,
         )
-        get_articles(lecture_model)
         LectureCreee.create(self.request, lecture=lecture_model)
-        ArticlesRecuperes.create(request=None, lecture=lecture_model)
         # Call to fetch_* tasks below being asynchronous, we need to make
         # sure the lecture_model already exists once and for all in the database
         # for future access. Otherwise, it may create many instances and
         # thus many objects within the database.
         transaction.commit()
+        fetch_articles(lecture_model.pk)
         fetch_amendements(lecture_model.pk)
         return
 

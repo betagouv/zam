@@ -36,13 +36,16 @@
 <script src="{{ request.static_url('zam_repondeur:static/jquery/jquery-1.12.4.min.js') }}"></script>
 <script src="{{ request.static_url('zam_repondeur:static/selectize/js/standalone/selectize.min.js') }}"></script>
 <script type="text/javascript">
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", () => {
         $("#select-dossier").selectize({
             valueField: "uid",
             labelField: "titre",
             searchField: ["titre"],
-            onInitialize: function () {
+            onInitialize: () => {
                 $("#select-dossier-selectized").attr("spellcheck", "false")
+            },
+            onChange: (key) => {
+                $("input[type=submit]").prop("disabled", (key === ""));
             },
         })
     })

@@ -39,7 +39,7 @@ def test_lecture_delete(app, lecture_an, amendements_an, zam_user):
     resp = resp.follow()
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/dossiers/plfss-2018/lectures/add"
+    assert resp.location == "https://zam.test/dossiers/plfss-2018/"
 
     resp = resp.follow()
 

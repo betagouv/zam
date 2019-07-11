@@ -362,11 +362,7 @@ class TestPostForm:
     ):
         from zam_repondeur.models import DBSession, Dossier
 
-        assert Dossier.exists(
-            uid="DLR5L15N36030",
-            titre="Sécurité sociale : loi de financement 2018",
-            slug="plfss-2018",
-        )
+        assert Dossier.exists(uid="DLR5L15N36030", slug="plfss-2018")
 
         resp = app.get("/dossiers/add", user=user_david)
         form = resp.forms["add-dossier"]

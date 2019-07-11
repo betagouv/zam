@@ -70,9 +70,7 @@ class DossierAddForm(DossierAddBase):
 
         dossier_ref = self._get_dossier_ref()
 
-        if Dossier.exists(
-            uid=dossier_ref.uid, titre=dossier_ref.titre, slug=dossier_ref.slug
-        ):
+        if Dossier.exists(uid=dossier_ref.uid, slug=dossier_ref.slug):
             self.request.session.flash(
                 Message(cls="warning", text="Ce dossier existe déjà…")
             )

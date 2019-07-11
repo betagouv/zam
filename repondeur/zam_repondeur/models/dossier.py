@@ -65,11 +65,9 @@ class Dossier(Base):
         return res
 
     @classmethod
-    def exists(cls, uid: str, titre: str, slug: str) -> bool:
+    def exists(cls, uid: str, slug: str) -> bool:
         res: bool = DBSession.query(
-            DBSession.query(cls)
-            .filter(cls.uid == uid, cls.titre == titre, cls.slug == slug)
-            .exists()
+            DBSession.query(cls).filter(cls.uid == uid, cls.slug == slug).exists()
         ).scalar()
 
         return res

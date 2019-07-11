@@ -7,7 +7,7 @@ def test_get_list_empty(app, dossier_plfss2018, user_david):
     resp = app.get("/dossiers/plfss-2018/lectures/", user=user_david)
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/dossiers/plfss-2018/lectures/add"
+    assert resp.location == "https://zam.test/dossiers/plfss-2018/"
 
     resp = resp.follow()
 

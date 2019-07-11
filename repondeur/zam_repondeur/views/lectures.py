@@ -38,7 +38,7 @@ def lectures_list(
     lectures = context.models()
 
     if not lectures:
-        return HTTPFound(request.resource_url(context, "add"))
+        return HTTPFound(request.resource_url(context.parent))
 
     return {"lectures": lectures}
 

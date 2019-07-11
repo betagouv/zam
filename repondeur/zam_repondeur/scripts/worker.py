@@ -35,9 +35,12 @@ def main(argv: List[str] = sys.argv) -> None:
 def start_huey(
     config_uri: str, options: Dict[str, str], settings: Dict[str, Any], huey: Huey
 ) -> None:
-
-    from zam_repondeur.tasks.fetch import fetch_articles, fetch_amendements  # noqa
-    from zam_repondeur.tasks.periodic import update_data, fetch_all_amendements  # noqa
+    from zam_repondeur.tasks.fetch import (  # noqa
+        fetch_articles,
+        fetch_amendements,
+        fetch_lectures,
+    )
+    from zam_repondeur.tasks.periodic import update_data, fetch_all_lectures  # noqa
 
     try:
         flush_stale_locks(huey)

@@ -4,8 +4,10 @@ NB: make sure tasks.huey.init_huey() has been called before importing this modul
 import logging
 
 from zam_repondeur.fetch import get_articles, get_amendements
+from zam_repondeur.fetch.lectures import get_lectures
 from zam_repondeur.tasks.huey import huey
-from zam_repondeur.models import DBSession, Lecture
+from zam_repondeur.models import DBSession, Dossier, Lecture
+from zam_repondeur.models.events.dossier import LecturesRecuperees
 from zam_repondeur.models.events.lecture import (
     ArticlesRecuperes,
     AmendementsNonTrouves,
@@ -19,6 +21,19 @@ logger = logging.getLogger(__name__)
 
 
 RETRY_DELAY = 5 * 60  # 5 minutes
+
+
+@huey.task(retries=3, retry_delay=RETRY_DELAY)
+def fetch_lectures(dossier_pk: int) -> None:
+    with huey.lock_task(f"fetch-{dossier_pk}"):
+        dossier = DBSession.query(Dossier).with_for_update().get(dossier_pk)
+        if dossier is None:
+            logger.error(f"Dossier {dossier_pk} introuvable")
+            return
+
+        changed: bool = get_lectures(dossier)
+        if changed:
+            LecturesRecuperees.create(request=None, dossier=dossier)
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)

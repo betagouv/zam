@@ -1,6 +1,5 @@
 import transaction
 from operator import attrgetter
-from typing import Optional
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -8,25 +7,14 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
-from zam_repondeur.fetch.an.dossiers.models import (
-    DossierRef,
-    DossierRefsByUID,
-    LectureRef,
-)
+from zam_repondeur.fetch.an.dossiers.models import DossierRef, DossierRefsByUID
 from zam_repondeur.message import Message
-from zam_repondeur.models import (
-    Chambre,
-    DBSession,
-    Dossier,
-    Lecture,
-    Texte,
-    get_one_or_create,
-)
+from zam_repondeur.models import DBSession, Dossier, Lecture, get_one_or_create
+from zam_repondeur.models.events.dossier import DossierCree
 from zam_repondeur.models.events.lecture import LectureCreee
-from zam_repondeur.models.organe import ORGANE_SENAT
 
 from zam_repondeur.resources import DossierCollection, DossierResource
-from zam_repondeur.tasks.fetch import fetch_amendements, fetch_articles
+from zam_repondeur.tasks.fetch import fetch_amendements, fetch_articles, fetch_lectures
 
 
 @view_config(context=DossierCollection, renderer="dossiers_list.html")
@@ -89,9 +77,20 @@ class DossierAddForm(DossierAddBase):
             slug=dossier_ref.slug,
             owned_by_team=self.request.team,
         )
+        DossierCree.create(self.request, dossier=dossier_model)
 
         for lecture_ref in dossier_ref.lectures:
-            self._create_lecture(dossier_model, lecture_ref)
+            lecture = Lecture.create_from_ref(dossier_model, lecture_ref)
+            if lecture is not None:
+                LectureCreee.create(self.request, lecture=lecture)
+                # Call to fetch_* tasks below being asynchronous, we need to make
+                # sure the lecture already exists once and for all in the database
+                # for future access. Otherwise, it may create many instances and
+                # thus many objects within the database.
+                transaction.commit()
+
+                fetch_articles(lecture.pk)
+                fetch_amendements(lecture.pk)
 
         self.request.session.flash(
             Message(
@@ -113,57 +112,6 @@ class DossierAddForm(DossierAddBase):
         except KeyError:
             raise HTTPNotFound
         return dossier_ref
-
-    def _create_lecture(self, dossier_model: Dossier, lecture_ref: LectureRef) -> None:
-        chambre = lecture_ref.chambre
-        titre = lecture_ref.titre
-        organe = lecture_ref.organe
-        partie = lecture_ref.partie
-        texte = lecture_ref.texte
-
-        if texte.date_depot is None:
-            raise RuntimeError("Cannot create LectureRef for Texte with no date_depot")
-
-        texte_model, _ = get_one_or_create(
-            Texte,
-            type_=texte.type_,
-            chambre=chambre,
-            legislature=texte.legislature,
-            session=texte.session,
-            numero=texte.numero,
-            date_depot=texte.date_depot,
-        )
-
-        if self._lecture_exists(chambre, texte_model, partie, organe):
-            return
-
-        lecture_model = Lecture.create(
-            texte=texte_model,
-            partie=partie,
-            titre=titre,
-            organe=organe,
-            dossier=dossier_model,
-        )
-        LectureCreee.create(self.request, lecture=lecture_model)
-        # Call to fetch_* tasks below being asynchronous, we need to make
-        # sure the lecture_model already exists once and for all in the database
-        # for future access. Otherwise, it may create many instances and
-        # thus many objects within the database.
-        transaction.commit()
-        fetch_articles(lecture_model.pk)
-        fetch_amendements(lecture_model.pk)
-        return
-
-    def _lecture_exists(
-        self, chambre: Chambre, texte_model: Texte, partie: Optional[int], organe: str
-    ) -> bool:
-        if Lecture.exists(chambre, texte_model, partie, organe):
-            return True
-        # We might already have a Sénat commission lecture created earlier from
-        # scraping data, and that would not have the organe.
-        if chambre == Chambre.SENAT and organe != ORGANE_SENAT:
-            return Lecture.exists(chambre, texte_model, partie, "")
-        return False
 
 
 @view_defaults(context=DossierResource)
@@ -193,3 +141,13 @@ class DossierView:
                 )
             )
         return HTTPFound(location=self.request.resource_url(self.context.parent))
+
+
+@view_config(context=DossierResource, name="manual_refresh")
+def manual_refresh(context: DossierResource, request: Request) -> Response:
+    dossier = context.dossier
+    fetch_lectures(dossier.pk)
+    request.session.flash(
+        Message(cls="success", text="Rafraichissement des lectures en cours.")
+    )
+    return HTTPFound(location=request.resource_url(context))

@@ -204,6 +204,55 @@ class Lecture(Base, LastEventMixin):
         DBSession.add(lecture)
         return lecture
 
+    @classmethod
+    def create_from_ref(
+        cls, dossier_model: "Dossier", lecture_ref: Any  # LectureRef.
+    ) -> Optional["Lecture"]:
+        from zam_repondeur.models import get_one_or_create  # Circular.
+
+        chambre = lecture_ref.chambre
+        titre = lecture_ref.titre
+        organe = lecture_ref.organe
+        partie = lecture_ref.partie
+        texte_ref = lecture_ref.texte
+
+        if texte_ref.date_depot is None:
+            raise RuntimeError("Cannot create LectureRef for Texte with no date_depot")
+
+        texte, _ = get_one_or_create(
+            Texte,
+            type_=texte_ref.type_,
+            chambre=chambre,
+            legislature=texte_ref.legislature,
+            session=texte_ref.session,
+            numero=texte_ref.numero,
+            date_depot=texte_ref.date_depot,
+        )
+
+        if cls.exists_with_fallback(chambre, texte, partie, organe):
+            return None
+
+        lecture = cls.create(
+            texte=texte,
+            partie=partie,
+            titre=titre,
+            organe=organe,
+            dossier=dossier_model,
+        )
+        return lecture
+
+    @classmethod
+    def exists_with_fallback(
+        cls, chambre: Chambre, texte: Texte, partie: Optional[int], organe: str
+    ) -> bool:
+        if cls.exists(chambre, texte, partie, organe):
+            return True
+        # We might already have a Sénat commission lecture created earlier from
+        # scraping data, and that would not have the organe.
+        if chambre == Chambre.SENAT and organe != ORGANE_SENAT:
+            return cls.exists(chambre, texte, partie, "")
+        return False
+
     @property
     def url_key(self) -> str:
         if self.partie is not None:

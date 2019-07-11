@@ -123,7 +123,7 @@ class DossierView:
 
     @view_config(request_method="GET", renderer="dossier_item.html")
     def get(self) -> Response:
-        return {"dossier": self.dossier, "lectures": self.dossier.lectures}
+        return {"dossier": self.dossier, "lectures": sorted(self.dossier.lectures)}
 
     @view_config(request_method="POST")
     def post(self) -> Response:

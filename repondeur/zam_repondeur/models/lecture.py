@@ -53,6 +53,13 @@ class Lecture(Base, LastEventMixin):
 
     __repr_keys__ = ("pk", "chambre", "organe", "partie")
 
+    def __lt__(self, other: "Lecture") -> bool:
+        return self.sort_key < other.sort_key
+
+    @property
+    def sort_key(self) -> Tuple[datetime, str, Optional[int]]:
+        return self.texte.date_depot, self.organe, self.partie
+
     def __str__(self) -> str:
         return ", ".join(
             [

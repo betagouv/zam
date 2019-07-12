@@ -32,7 +32,11 @@ def dossiers_list(context: DossierCollection, request: Request) -> dict:
         dossier for dossier in all_dossiers if not dossier.activated_at
     ]
 
-    return {"dossiers": dossiers, "available_dossiers": available_dossiers}
+    return {
+        "dossiers": dossiers,
+        "available_dossiers": available_dossiers,
+        "allowed_to_activate": request.has_permission("activate", context),
+    }
 
 
 class DossierAddBase:
@@ -41,7 +45,7 @@ class DossierAddBase:
         self.request = request
 
 
-@view_defaults(context=DossierCollection, name="add")
+@view_defaults(context=DossierCollection, name="add", permission="activate")
 class DossierAddForm(DossierAddBase):
     @view_config(request_method="GET", renderer="dossiers_add.html")
     def get(self) -> dict:

@@ -74,6 +74,8 @@ class Root(Resource):
 
 
 class DossierCollection(Resource):
+    __acl__ = [(Allow, "group:admins", "activate"), (Deny, Everyone, "activate")]
+
     def models(self) -> List[Dossier]:
         return Dossier.all()
 

@@ -49,11 +49,13 @@
 {% block main_class %}{% endblock %}
 
 {% block body %}
+    {% if allowed_to_activate %}
     <div class="extra-button dossier box">
         <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
-            Ajouter un nouveau dossier
+            Activer un dossier
         </a>
     </div>
+    {% endif %}
     <section id="mes-zams">
     <h2>Mes Zams</h2>
     {% for dossier in dossiers %}

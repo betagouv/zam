@@ -26,22 +26,7 @@
         flex-wrap: wrap;
         flex-direction: column;
         text-align: right;
-        min-width: 250px;
-    }
-    .dossier nav a {
-        background: no-repeat right center url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}");
-    }
-    .dossier nav a {
-        font-size: 1.1rem;
-        padding-right: 1.8rem;
-        background-position: 99% 42%;
-        background-size: 5%;
-    }
-    .dossier nav a:first-child {
-        font-size: 1.7rem;
-        padding-right: 2rem;
-        background-position: right 40%;
-        background-size: 7%;
+        margin-left: 2rem;
     }
     .dossier .details {
         line-height: 1.2;
@@ -90,9 +75,9 @@
                 <h3>{{ dossier.titre }}</h3>
             </div>
             <nav>
-                <button href="#TODO" class="button primary">
+                <a href="mailto:melodie.dahi@beta.gouv.fr?subject={{ "Demande du dossier Zam « " + dossier.titre + " »" | urlencode }}" class="button primary">
                     Demander ce Zam
-                </button>
+                </a>
             </nav>
         </div>
     {% endfor %}

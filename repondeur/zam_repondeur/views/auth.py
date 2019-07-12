@@ -5,10 +5,10 @@ from urllib.parse import urlparse
 
 from limiter import SlidingWindowLimiter
 from pyramid.decorator import reify
-from pyramid.httpexceptions import HTTPFound, HTTPTooManyRequests
+from pyramid.httpexceptions import HTTPForbidden, HTTPFound, HTTPTooManyRequests
 from pyramid.request import Request
 from pyramid.response import Response
-from pyramid.security import NO_PERMISSION_REQUIRED, remember, forget
+from pyramid.security import ACLDenied, NO_PERMISSION_REQUIRED, remember, forget
 from pyramid.view import forbidden_view_config, view_config, view_defaults
 from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message as MailMessage
@@ -264,7 +264,7 @@ def logout(request: Request) -> Any:
 
 
 @forbidden_view_config()
-def forbidden_view(request: Request) -> Any:
+def forbidden_view(exception: HTTPForbidden, request: Request) -> Any:
 
     # Redirect unauthenticated users to the login page
     if request.user is None:
@@ -272,11 +272,15 @@ def forbidden_view(request: Request) -> Any:
             location=request.route_url("login", _query={"source": request.url})
         )
 
-    # Redirect authenticated ones to the home page with an error message
-    request.session.flash(
-        Message(
-            cls="warning",
-            text="L’accès à ce dossier est réservé aux personnes autorisées.",
-        )
-    )
-    return HTTPFound(location=request.resource_url(request.root))
+    # Default
+    message = "L’accès à ce dossier est réservé aux personnes autorisées."
+    next_resource = request.root
+
+    if isinstance(exception.result, ACLDenied):
+        acl_denied: ACLDenied = exception.result
+        if acl_denied.permission == "delete":
+            message = "Vous n’êtes pas autorisé à supprimer ce dossier."
+            next_resource = request.context
+
+    request.session.flash(Message(cls="warning", text=message))
+    return HTTPFound(location=request.resource_url(next_resource))

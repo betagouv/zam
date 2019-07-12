@@ -3,6 +3,7 @@ from typing import Any, Dict, Optional
 from zam_repondeur.models.users import Team, User
 
 class Request:
+    def has_permission(self, permission: str, context: Any = None) -> bool: ...
     def route_url(self, route_name: str, *elements: Any, **kw: Any) -> str: ...
     def route_path(self, route_name: str, *elements: Any, **kw: Any) -> str: ...
     def resource_url(self, resource: Any, *elements: Any, **kw: Any) -> str: ...
@@ -12,6 +13,7 @@ class Request:
     is_xhr: bool
     registry: Any
     root: Any
+    context: Any
     url: str
     path: str
     matchdict: Dict[str, str]

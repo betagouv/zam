@@ -124,10 +124,3 @@ class User(Base):
     def everyone_but_me(self, me: "User") -> List["User"]:
         users: List["User"] = DBSession.query(User).filter(User.email != me.email).all()
         return users
-
-    @property
-    def can_delete_dossier(self) -> bool:
-        # TODO: explicit whitelist for betagouv users?
-        return self.email.endswith("@beta.gouv.fr") or self.email.endswith(
-            "@sgg.pm.gouv.fr"
-        )

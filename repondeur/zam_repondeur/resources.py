@@ -3,7 +3,7 @@ from typing import Any, Iterator, List, Optional, Tuple, cast
 from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
-from pyramid.security import Allow, Authenticated, Deny
+from pyramid.security import Allow, Authenticated, Deny, Everyone
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -63,7 +63,11 @@ class Resource(dict):
 
 
 class Root(Resource):
-    __acl__ = [(Allow, Authenticated, "view")]
+    __acl__ = [
+        (Allow, Authenticated, "view"),
+        (Allow, "group:admins", "delete"),
+        (Deny, Everyone, "delete"),
+    ]
 
     def __init__(self, _request: Request) -> None:
         self.add_child(DossierCollection(name="dossiers", parent=self))

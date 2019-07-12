@@ -133,25 +133,21 @@ class DossierView:
 
     @view_config(request_method="GET", renderer="dossier_item.html")
     def get(self) -> Response:
-        return {"dossier": self.dossier, "lectures": sorted(self.dossier.lectures)}
+        return {
+            "dossier": self.dossier,
+            "lectures": sorted(self.dossier.lectures),
+            "allowed_to_delete": self.request.has_permission("delete", self.context),
+        }
 
-    @view_config(request_method="POST")
+    @view_config(request_method="POST", permission="delete")
     def post(self) -> Response:
-        if self.request.user.can_delete_dossier:
-            self.dossier.activated_at = None
-            for lecture in self.dossier.lectures:
-                DBSession.delete(lecture)
-            DBSession.flush()
-            self.request.session.flash(
-                Message(cls="success", text="Dossier supprimé avec succès.")
-            )
-        else:
-            self.request.session.flash(
-                Message(
-                    cls="warning",
-                    text="Vous n’avez pas les droits pour supprimer un dossier.",
-                )
-            )
+        self.dossier.activated_at = None
+        for lecture in self.dossier.lectures:
+            DBSession.delete(lecture)
+        DBSession.flush()
+        self.request.session.flash(
+            Message(cls="success", text="Dossier supprimé avec succès.")
+        )
         return HTTPFound(location=self.request.resource_url(self.context.parent))
 
 

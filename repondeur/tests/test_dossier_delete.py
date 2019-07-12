@@ -71,12 +71,12 @@ def test_dossier_delete_non_sgg_user(
     resp = app.post("/dossiers/plfss-2018/", user=user_david)
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/dossiers/"
+    assert resp.location == "https://zam.test/dossiers/plfss-2018/"
 
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "Vous n’avez pas les droits pour supprimer un dossier." in resp.text
+    assert "Vous n’êtes pas autorisé à supprimer ce dossier." in resp.text
 
     assert Lecture.exists(
         chambre=lecture_an.chambre,

@@ -100,7 +100,15 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
             principals.append(f"user:{request.user.pk}")
             for team in request.user.teams:
                 principals.append(f"team:{team.pk}")
+            if self.is_admin(request.user):
+                principals.append("group:admins")
         return principals
+
+    ADMIN_DOMAINS = ["@beta.gouv.fr", "@sgg.pm.gouv.fr"]
+
+    def is_admin(self, user: User) -> bool:
+        # TODO: explicit whitelist for betagouv users?
+        return any(user.email.endswith(domain) for domain in self.ADMIN_DOMAINS)
 
 
 def generate_auth_token(length: int = 20, chunk_size: int = 5) -> str:

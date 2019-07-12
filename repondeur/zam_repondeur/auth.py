@@ -1,3 +1,4 @@
+from fnmatch import fnmatchcase
 import secrets
 import string
 from typing import List, Optional
@@ -104,11 +105,16 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
                 principals.append("group:admins")
         return principals
 
-    ADMIN_DOMAINS = ["@beta.gouv.fr", "@sgg.pm.gouv.fr"]
+    ADMIN_PATTERNS = [
+        "*@sgg.pm.gouv.fr",
+        "david.larlet@beta.gouv.fr",
+        "melodie.dahi@beta.gouv.fr",
+        "raphael.pierquin@beta.gouv.fr",
+        "ronan.amicel@beta.gouv.fr",
+    ]
 
     def is_admin(self, user: User) -> bool:
-        # TODO: explicit whitelist for betagouv users?
-        return any(user.email.endswith(domain) for domain in self.ADMIN_DOMAINS)
+        return any(fnmatchcase(user.email, pattern) for pattern in self.ADMIN_PATTERNS)
 
 
 def generate_auth_token(length: int = 20, chunk_size: int = 5) -> str:

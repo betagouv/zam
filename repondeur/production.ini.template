@@ -49,6 +49,12 @@ zam.amendements.redis_url = redis://localhost:6379/4
 zam.session_secret = $$session_secret
 
 zam.auth_secret = $$auth_secret
+zam.auth_admin_patterns =
+    *@sgg.pm.gouv.fr
+    david.larlet@beta.gouv.fr
+    melodie.dahi@beta.gouv.fr
+    raphael.pierquin@beta.gouv.fr
+    ronan.amicel@beta.gouv.fr
 
 zam.uploads_backup_dir = /srv/repondeur/data/uploads
 

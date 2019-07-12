@@ -1,10 +1,10 @@
 from fnmatch import fnmatchcase
 import secrets
 import string
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from more_itertools import ichunked
-from paste.deploy.converters import asbool
+from paste.deploy.converters import asbool, aslist
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
@@ -23,6 +23,7 @@ def includeme(config: Configurator) -> None:
         hashalg="sha512",
         max_age=int(settings["zam.auth_cookie_duration"]),
         secure=asbool(settings["zam.auth_cookie_secure"]),
+        admin_patterns=aslist(settings["zam.auth_admin_patterns"]),
     )
     config.set_authentication_policy(authn_policy)
 
@@ -73,6 +74,10 @@ def get_team(request: Request) -> Optional[Team]:
 
 
 class AuthenticationPolicy(AuthTktAuthenticationPolicy):
+    def __init__(self, secret: str, admin_patterns: List[str], **kwargs: Any) -> None:
+        super().__init__(secret, **kwargs)
+        self.admin_patterns = admin_patterns
+
     def authenticated_userid(self, request: Request) -> Optional[int]:
         """
         Return the authenticated userid or None if no authenticated userid
@@ -105,16 +110,8 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
                 principals.append("group:admins")
         return principals
 
-    ADMIN_PATTERNS = [
-        "*@sgg.pm.gouv.fr",
-        "david.larlet@beta.gouv.fr",
-        "melodie.dahi@beta.gouv.fr",
-        "raphael.pierquin@beta.gouv.fr",
-        "ronan.amicel@beta.gouv.fr",
-    ]
-
     def is_admin(self, user: User) -> bool:
-        return any(fnmatchcase(user.email, pattern) for pattern in self.ADMIN_PATTERNS)
+        return any(fnmatchcase(user.email, pattern) for pattern in self.admin_patterns)
 
 
 def generate_auth_token(length: int = 20, chunk_size: int = 5) -> str:

@@ -70,10 +70,10 @@
          </defs>
         </svg>
         <div class="extra-button lecture box">
-            <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh">
+            <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh" style="margin-right: 2rem">
                 <button type="submit" name="refresh" class="button primary">
                     {{ macros.svg_icon("sync") }}
-                    Rafraichir manuellement
+                    Rafraîchir tout le dossier
                 </button>
             </form>
             <form method="post" action="{{ request.resource_url(context) }}" id="delete-dossier" data-controller="dossier-item">

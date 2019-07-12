@@ -288,7 +288,7 @@ class TestLogout:
 
 class TestAuthenticationRequired:
     def test_unauthenticated_user_is_redirected_to_login_page(
-        self, app, dossier_plfss_2018
+        self, app, dossier_plfss2018
     ):
         resp = app.get("/dossiers/1/lectures/add")
         assert resp.status_code == 302
@@ -298,7 +298,7 @@ class TestAuthenticationRequired:
         )
 
     def test_authenticated_user_is_not_redirected_to_login_page(
-        self, app, dossier_plfss_2018, user_david
+        self, app, dossier_plfss2018, user_david
     ):
         resp = app.get("/dossiers/1/lectures/add", user=user_david)
         assert resp.status_code == 200

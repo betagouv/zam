@@ -297,17 +297,17 @@ class TestAuthenticationRequired:
     def test_unauthenticated_user_is_redirected_to_login_page(
         self, app, dossier_plfss2018
     ):
-        resp = app.get("/dossiers/add")
+        resp = app.get("/dossiers/")
         assert resp.status_code == 302
         assert resp.location == (
             "https://zam.test/identification"
-            "?source=https%3A%2F%2Fzam.test%2Fdossiers%2Fadd"
+            "?source=https%3A%2F%2Fzam.test%2Fdossiers%2F"
         )
 
     def test_authenticated_user_is_not_redirected_to_login_page(
         self, app, dossier_plfss2018, user_david
     ):
-        resp = app.get("/dossiers/add", user=user_david)
+        resp = app.get("/dossiers/", user=user_david)
         assert resp.status_code == 200
 
 

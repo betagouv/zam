@@ -1,7 +1,3 @@
-import pytest
-import transaction
-
-
 def test_dossier_delete(app, lecture_an, amendements_an, user_sgg):
     from zam_repondeur.models import Amendement, DBSession, Dossier, Lecture
 

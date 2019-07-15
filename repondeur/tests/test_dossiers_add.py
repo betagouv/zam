@@ -15,8 +15,8 @@ def read_sample_data(basename):
     return (SAMPLE_DATA_DIR / basename).read_text()
 
 
-def test_get_form(app, user_david, dossier_plfss2018):
-    resp = app.get("/dossiers/add", user=user_david)
+def test_get_form(app, user_sgg, dossier_plfss2018):
+    resp = app.get("/dossiers/add", user=user_sgg)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -38,7 +38,7 @@ def test_get_form(app, user_david, dossier_plfss2018):
 
 
 def test_get_form_does_not_propose_activated_choices(
-    app, user_david, dossier_plfss2018, lecture_an
+    app, user_sgg, dossier_plfss2018, lecture_an
 ):
     from zam_repondeur.models import DBSession
 
@@ -46,20 +46,16 @@ def test_get_form_does_not_propose_activated_choices(
         lecture_an.dossier.activated_at = datetime.utcnow()
         DBSession.add(lecture_an)
 
-    resp = app.get("/dossiers/add", user=user_david)
+    resp = app.get("/dossiers/add", user=user_sgg)
     form = resp.forms["add-dossier"]
     assert form.fields["dossier"][0].options == [("", True, "")]
 
 
 class TestPostForm:
     @responses.activate
-    def test_plfss_2018_an(self, app, user_david, dossier_plfss2018):
-        from zam_repondeur.models import Chambre, DBSession, Dossier, Lecture
+    def test_plfss_2018_an(self, app, user_sgg, dossier_plfss2018):
+        from zam_repondeur.models import Chambre, DBSession, Lecture
 
-        with transaction.manager:
-            DBSession.add(user_david)
-
-        assert not DBSession.query(Dossier).all()
         assert not DBSession.query(Lecture).all()
 
         responses.add(
@@ -165,7 +161,7 @@ class TestPostForm:
             status=200,
         )
 
-        resp = app.get("/dossiers/add", user=user_david)
+        resp = app.get("/dossiers/add", user=user_sgg)
         form = resp.forms["add-dossier"]
         form["dossier"] = "plfss-2018"
         resp = form.submit()
@@ -203,7 +199,7 @@ class TestPostForm:
         )
         assert (
             lecture.events[2].render_summary()
-            == "<abbr title='david@exemple.gouv.fr'>David</abbr> a créé la lecture."
+            == "<abbr title='user@sgg.pm.gouv.fr'>SGG user</abbr> a créé la lecture."
         )
 
         # We expect articles from the page (1, 2) and from the amendements (3, 8, 9)
@@ -219,13 +215,9 @@ class TestPostForm:
         assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 135, 192]
 
     @responses.activate
-    def test_plfss_2019_senat(self, app, user_david, dossier_plfss2019):
-        from zam_repondeur.models import Chambre, DBSession, Dossier, Lecture
+    def test_plfss_2019_senat(self, app, user_sgg, dossier_plfss2019):
+        from zam_repondeur.models import Chambre, DBSession, Lecture
 
-        with transaction.manager:
-            DBSession.add(user_david)
-
-        assert not DBSession.query(Dossier).all()
         assert not DBSession.query(Lecture).all()
 
         responses.add(
@@ -269,7 +261,7 @@ class TestPostForm:
             status=200,
         )
 
-        resp = app.get("/dossiers/add", user=user_david)
+        resp = app.get("/dossiers/add", user=user_sgg)
         form = resp.forms["add-dossier"]
         form["dossier"] = "plfss-2019"
         resp = form.submit()
@@ -306,7 +298,7 @@ class TestPostForm:
         )
         assert (
             lecture.events[2].render_summary()
-            == "<abbr title='david@exemple.gouv.fr'>David</abbr> a créé la lecture."
+            == "<abbr title='user@sgg.pm.gouv.fr'>SGG user</abbr> a créé la lecture."
         )
 
         # We should have articles from the page (1) and from the amendements (19, 29)
@@ -317,7 +309,7 @@ class TestPostForm:
 
     @responses.activate
     def test_plfss_2018_an_dossier_already_activated(
-        self, app, dossier_plfss2018, lecture_an, user_david
+        self, app, dossier_plfss2018, lecture_an, user_sgg
     ):
         from zam_repondeur.models import DBSession
 
@@ -326,7 +318,7 @@ class TestPostForm:
             DBSession.add(lecture_an)
 
         # We cannot use form.submit() given the form does not contain that choice.
-        resp = app.post("/dossiers/add", {"dossier": "plfss-2018"}, user=user_david)
+        resp = app.post("/dossiers/add", {"dossier": "plfss-2018"}, user=user_sgg)
 
         assert resp.status_code == 302
         assert resp.location == "https://zam.test/dossiers/"
@@ -341,7 +333,7 @@ class TestPostForm:
 
     @responses.activate
     def test_plfss_2018_an_dossier_unknown(
-        self, app, dossier_plfss2018, lecture_an, user_david
+        self, app, dossier_plfss2018, lecture_an, user_sgg
     ):
         from zam_repondeur.models import DBSession
 
@@ -350,7 +342,7 @@ class TestPostForm:
             DBSession.add(lecture_an)
 
         # We cannot use form.submit() given the form does not contain that choice.
-        resp = app.post("/dossiers/add", {"dossier": "plfss-2019"}, user=user_david)
+        resp = app.post("/dossiers/add", {"dossier": "plfss-2019"}, user=user_sgg)
 
         assert resp.status_code == 302
         assert resp.location == "https://zam.test/dossiers/"
@@ -365,7 +357,7 @@ class TestPostForm:
 
     @responses.activate
     def test_plfss_2018_an_dossier_empty(
-        self, app, dossier_plfss2018, lecture_an, user_david
+        self, app, dossier_plfss2018, lecture_an, user_sgg
     ):
         from zam_repondeur.models import DBSession
 
@@ -374,7 +366,7 @@ class TestPostForm:
             DBSession.add(lecture_an)
 
         # We cannot use form.submit() given the form does not contain that choice.
-        resp = app.post("/dossiers/add", {"dossier": ""}, user=user_david)
+        resp = app.post("/dossiers/add", {"dossier": ""}, user=user_sgg)
 
         assert resp.status_code == 302
         assert resp.location == "https://zam.test/dossiers/"

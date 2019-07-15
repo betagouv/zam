@@ -46,7 +46,6 @@ class DossierList(DossierCollectionBase):
             "allowed_to_activate": self.request.has_permission(
                 "activate", self.context
             ),
-            "hide_dossiers_link": len(self.my_dossiers) == 0,
         }
 
 
@@ -54,10 +53,7 @@ class DossierList(DossierCollectionBase):
 class DossierAddForm(DossierCollectionBase):
     @view_config(request_method="GET", renderer="dossiers_add.html")
     def get(self) -> dict:
-        return {
-            "available_dossiers": self.available_dossiers,
-            "hide_dossiers_link": len(self.my_dossiers) == 0,
-        }
+        return {"available_dossiers": self.available_dossiers}
 
     @view_config(request_method="POST")
     def post(self) -> Response:

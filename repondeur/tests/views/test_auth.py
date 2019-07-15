@@ -28,6 +28,13 @@ class TestLoginPage:
         resp = app.get("/identification")
         assert resp.status_code == 200
 
+    def test_unauthentified_user_do_not_have_link_to_dossiers(self, app):
+        resp = app.get("/identification")
+        assert resp.status_code == 200
+        assert (
+            'title="Aller à la liste des dossiers">Dossiers</a></li>' not in resp.text
+        )
+
     @pytest.mark.parametrize(
         "valid_email", ["foo@exemple.gouv.fr", "BAR@EXEMPLE.GOUV.FR"]
     )

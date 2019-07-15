@@ -15,36 +15,6 @@ def read_sample_data(basename):
     return (SAMPLE_DATA_DIR / basename).read_text()
 
 
-class TestDossiersLinkInNavbar:
-    def test_link_in_navbar_if_at_least_one_dossier_activated(
-        self, app, lecture_an, user_sgg
-    ):
-        from zam_repondeur.models import DBSession
-
-        with transaction.manager:
-            lecture_an.dossier.activated_at = datetime.utcnow()
-            DBSession.add(lecture_an)
-
-        resp = app.get("/dossiers/add", user=user_sgg)
-        assert 'title="Aller à la liste des dossiers">Dossiers</a></li>' in resp.text
-
-    def test_no_link_in_navbar_if_one_dossier_not_activated(
-        self, app, lecture_an, user_sgg
-    ):
-        assert lecture_an.dossier.activated_at is None
-
-        resp = app.get("/dossiers/add", user=user_sgg)
-        assert (
-            'title="Aller à la liste des dossiers">Dossiers</a></li>' not in resp.text
-        )
-
-    def test_no_link_in_navbar_if_no_dossier(self, app, user_sgg):
-        resp = app.get("/dossiers/add", user=user_sgg)
-        assert (
-            'title="Aller à la liste des dossiers">Dossiers</a></li>' not in resp.text
-        )
-
-
 def test_get_form(app, user_david, dossier_plfss2018):
     resp = app.get("/dossiers/add", user=user_david)
 

@@ -14,7 +14,7 @@
     <nav class="main">
         {% block nav %}
             <ul>
-                {% if request.user and not (hide_dossiers_link is defined and hide_dossiers_link) %}
+                {% if request.user %}
                     <li><a class="home" href="{{ request.resource_url(request.root['dossiers']) }}" title="Aller à la liste des dossiers">Dossiers</a></li>
                     {% block extra_nav %}{% endblock %}
                 {% endif %}

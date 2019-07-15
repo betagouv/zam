@@ -2,20 +2,10 @@ import pytest
 import transaction
 
 
-@pytest.fixture
-def sgg_user(db, team_zam):
-    from zam_repondeur.models import DBSession, User
-
-    with transaction.manager:
-        user = User.create(name="SGG user", email="user@sgg.pm.gouv.fr")
-        DBSession.add(user)
-        return user
-
-
-def test_dossier_delete(app, lecture_an, amendements_an, sgg_user):
+def test_dossier_delete(app, lecture_an, amendements_an, user_sgg):
     from zam_repondeur.models import Amendement, DBSession, Dossier, Lecture
 
-    assert sgg_user.email.endswith("@sgg.pm.gouv.fr")
+    assert user_sgg.email.endswith("@sgg.pm.gouv.fr")
 
     assert Dossier.exists(slug="plfss-2018")
     assert Lecture.exists(
@@ -26,7 +16,7 @@ def test_dossier_delete(app, lecture_an, amendements_an, sgg_user):
     )
     assert DBSession.query(Amendement).count() == 2
 
-    resp = app.get("/dossiers/plfss-2018/", user=sgg_user)
+    resp = app.get("/dossiers/plfss-2018/", user=user_sgg)
     form = resp.forms["delete-dossier"]
 
     resp = form.submit()

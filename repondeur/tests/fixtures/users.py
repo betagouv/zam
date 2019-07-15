@@ -31,6 +31,14 @@ def user_daniel(db):
 
 
 @pytest.fixture
+def user_sgg(db, team_zam):
+    from zam_repondeur.models import User
+
+    with transaction.manager:
+        return User.create(name="SGG user", email="user@sgg.pm.gouv.fr")
+
+
+@pytest.fixture
 def user_david_table_an(user_david, lecture_an):
     from zam_repondeur.models import DBSession
 

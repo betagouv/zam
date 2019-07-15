@@ -2,7 +2,7 @@
 -e git+https://github.com/regardscitoyens/anpy.git@af18fad01230893ceb9e991d86b1f99647e051d2#egg=anpy
 -e git+https://github.com/regardscitoyens/legipy.git@2fa6ff95498f896ea5e8c9a63c1f29b2fa2244ab#egg=legipy
 -e git+https://github.com/regardscitoyens/senapy.git@800b1d1a696a6ac832549c8b6f46c73f3027b9ad#egg=senapy
--e git+https://github.com/regardscitoyens/the-law-factory-parser.git@dad1ccf46f9348a545b1325bcc129561b69f4dbd#egg=tlfp
+-e git+https://github.com/regardscitoyens/the-law-factory-parser.git@c3137ba4d3338f6fff567681048288054a7764c8#egg=tlfp
 alembic==1.0.11
 asn1crypto==0.24.0          # cryptography: >= 0.21.0
 attrs==17.4.0               # anpy: < 17.5, >= 17.4

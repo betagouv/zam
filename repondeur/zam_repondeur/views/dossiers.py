@@ -16,42 +16,13 @@ from zam_repondeur.resources import DossierCollection, DossierResource
 from zam_repondeur.tasks.fetch import fetch_amendements, fetch_articles, fetch_lectures
 
 
-@view_config(context=DossierCollection, renderer="dossiers_list.html")
-def dossiers_list(context: DossierCollection, request: Request) -> dict:
-    all_dossiers = context.models()
-
-    dossiers = [
-        dossier
-        for dossier in all_dossiers
-        if dossier.activated_at
-        and (
-            dossier.owned_by_team is None or dossier.owned_by_team in request.user.teams
-        )
-    ]
-    available_dossiers = [
-        dossier for dossier in all_dossiers if not dossier.activated_at
-    ]
-
-    return {
-        "dossiers": dossiers,
-        "available_dossiers": available_dossiers,
-        "allowed_to_activate": request.has_permission("activate", context),
-    }
-
-
-class DossierAddBase:
+class DossierCollectionBase:
     def __init__(self, context: DossierCollection, request: Request) -> None:
         self.context = context
         self.request = request
 
-
-@view_defaults(context=DossierCollection, name="add", permission="activate")
-class DossierAddForm(DossierAddBase):
-    @view_config(request_method="GET", renderer="dossiers_add.html")
-    def get(self) -> dict:
-        all_dossiers = self.context.models()
-
-        dossiers = [
+        all_dossiers = context.models()
+        self.my_dossiers = [
             dossier
             for dossier in all_dossiers
             if dossier.activated_at
@@ -60,12 +31,32 @@ class DossierAddForm(DossierAddBase):
                 or dossier.owned_by_team in self.request.user.teams
             )
         ]
-        available_dossiers = [
+        self.available_dossiers = [
             dossier for dossier in all_dossiers if not dossier.activated_at
         ]
+
+
+@view_defaults(context=DossierCollection)
+class DossierList(DossierCollectionBase):
+    @view_config(request_method="GET", renderer="dossiers_list.html")
+    def get(self) -> dict:
         return {
-            "available_dossiers": available_dossiers,
-            "hide_dossiers_link": len(dossiers) == 0,
+            "dossiers": self.my_dossiers,
+            "available_dossiers": self.available_dossiers,
+            "allowed_to_activate": self.request.has_permission(
+                "activate", self.context
+            ),
+            "hide_dossiers_link": len(self.my_dossiers) == 0,
+        }
+
+
+@view_defaults(context=DossierCollection, name="add", permission="activate")
+class DossierAddForm(DossierCollectionBase):
+    @view_config(request_method="GET", renderer="dossiers_add.html")
+    def get(self) -> dict:
+        return {
+            "available_dossiers": self.available_dossiers,
+            "hide_dossiers_link": len(self.my_dossiers) == 0,
         }
 
     @view_config(request_method="POST")

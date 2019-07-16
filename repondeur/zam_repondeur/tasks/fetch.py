@@ -3,8 +3,6 @@ NB: make sure tasks.huey.init_huey() has been called before importing this modul
 """
 import logging
 
-import transaction
-
 from zam_repondeur.fetch import get_articles, get_amendements
 from zam_repondeur.tasks.huey import huey
 from zam_repondeur.models import DBSession, Lecture
@@ -25,7 +23,7 @@ RETRY_DELAY = 5 * 60  # 5 minutes
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
 def fetch_articles(lecture_pk: int) -> None:
-    with transaction.manager, huey.lock_task(f"fetch-{lecture_pk}"):
+    with huey.lock_task(f"fetch-{lecture_pk}"):
         lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
         if lecture is None:
             logger.error(f"Lecture {lecture_pk} introuvable")
@@ -38,7 +36,7 @@ def fetch_articles(lecture_pk: int) -> None:
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
 def fetch_amendements(lecture_pk: int) -> None:
-    with transaction.manager, huey.lock_task(f"fetch-{lecture_pk}"):
+    with huey.lock_task(f"fetch-{lecture_pk}"):
         lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
         if lecture is None:
             logger.error(f"Lecture {lecture_pk} introuvable")

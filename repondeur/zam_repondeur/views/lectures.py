@@ -1,4 +1,3 @@
-import transaction
 from datetime import date
 from operator import attrgetter
 from typing import Any, List, Optional, Union
@@ -138,15 +137,15 @@ class LecturesAddForm(LectureAddBase):
             organe=organe,
             dossier=dossier_model,
         )
-        get_articles(lecture_model)
         LectureCreee.create(self.request, lecture=lecture_model)
+
+        get_articles(lecture_model)
         ArticlesRecuperes.create(request=None, lecture=lecture_model)
-        # Call to fetch_* tasks below being asynchronous, we need to make
-        # sure the lecture_model already exists once and for all in the database
-        # for future access. Otherwise, it may create many instances and
-        # thus many objects within the database.
-        transaction.commit()
+
+        # Schedule task to run in worker
+        DBSession.flush()
         fetch_amendements(lecture_model.pk)
+
         self.request.session.flash(
             Message(
                 cls="success",
@@ -155,6 +154,7 @@ class LecturesAddForm(LectureAddBase):
                 ),
             )
         )
+
         return HTTPFound(
             location=self.request.resource_url(
                 self.context[lecture_model.url_key], "amendements"

@@ -62,7 +62,7 @@ def import_backup(context: LectureResource, request: Request) -> Response:
             if counter["articles_errors"]:
                 message += f" et {counter['articles_errors']} article(s)"
         elif counter["articles_errors"]:
-            message += f"pour {counter['articles_errors']} article(s)"
+            message += f" pour {counter['articles_errors']} article(s)"
         request.session.flash(Message(cls="warning", text=message))
 
     return HTTPFound(location=next_url)

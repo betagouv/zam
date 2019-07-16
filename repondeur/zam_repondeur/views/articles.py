@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 from datetime import date
 
 from pyramid.httpexceptions import HTTPFound
@@ -7,6 +7,8 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.clean import clean_html
+from zam_repondeur.models import Article
+from zam_repondeur.models.article import mult_key
 from zam_repondeur.models.events.article import (
     TitreArticleModifie,
     PresentationArticleModifiee,
@@ -17,7 +19,23 @@ from zam_repondeur.resources import ArticleCollection, ArticleResource
 
 @view_config(context=ArticleCollection, renderer="articles_list.html")
 def list_articles(context: ArticleCollection, request: Request) -> Dict[str, Any]:
-    return {"lecture": context.lecture_resource.model(), "articles": context.models()}
+    def _sort_key(item: Article) -> Tuple[int, str, Tuple[int, str], int]:
+        """Custom sort: we want link related to `Titre` to be at the very end.
+
+        This is because it is the correct order in the derouleur and thus
+        it is discussed at the end of the seance.
+        """
+        return (
+            Article._ORDER_TYPE[""]
+            if item.type == "titre"
+            else Article._ORDER_TYPE[item.type or ""],
+            str(item.num or "").zfill(3),
+            mult_key(item.mult or ""),
+            Article._ORDER_POS[item.pos or ""],
+        )
+
+    articles = sorted(context.models(), key=_sort_key)
+    return {"lecture": context.lecture_resource.model(), "articles": articles}
 
 
 @view_defaults(context=ArticleResource)

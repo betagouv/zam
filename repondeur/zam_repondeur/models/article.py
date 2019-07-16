@@ -200,7 +200,7 @@ class Article(Base):
         return (
             Article._ORDER_TYPE[self.type or ""],
             str(self.num or "").zfill(3),
-            _mult_key(self.mult or ""),
+            mult_key(self.mult or ""),
             Article._ORDER_POS[self.pos or ""],
         )
 
@@ -358,7 +358,7 @@ def format_list(items: Iterable[str]) -> str:
     return ", ".join(f"'{item}'" for item in items)
 
 
-def _mult_key(s: str) -> Tuple[int, str]:
+def mult_key(s: str) -> Tuple[int, str]:
     if " " in s:
         mult, intersticiel = s.split(" ", 1)
     else:

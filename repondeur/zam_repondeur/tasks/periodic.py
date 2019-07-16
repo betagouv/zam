@@ -3,7 +3,6 @@ NB: make sure tasks.huey.init_huey() has been called before importing this modul
 """
 import logging
 
-import transaction
 from huey import crontab
 
 from zam_repondeur.tasks.huey import huey
@@ -27,7 +26,6 @@ def update_data() -> None:
 # Keep it last as it takes time and will add up with the growing number of lectures.
 @huey.periodic_task(crontab(minute="10", hour="*"))
 def fetch_all_amendements() -> None:
-    with transaction.manager:
-        for lecture in DBSession.query(Lecture):
-            delay = (lecture.pk % 15) * 60  # spread out updates over 15 minutes
-            fetch_amendements.schedule(args=(lecture.pk,), delay=delay)
+    for lecture in DBSession.query(Lecture):
+        delay = (lecture.pk % 15) * 60  # spread out updates over 15 minutes
+        fetch_amendements.schedule(args=(lecture.pk,), delay=delay)

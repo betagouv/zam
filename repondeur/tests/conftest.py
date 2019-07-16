@@ -2,6 +2,7 @@ import os
 from contextlib import contextmanager
 
 import pytest
+import transaction
 from pyramid.threadlocal import get_current_registry
 from pyramid_mailer import get_mailer
 
@@ -110,6 +111,13 @@ def db():
     DBSession.close()
     Base.metadata.drop_all()
     DBSession.remove()
+
+
+@pytest.fixture(autouse=True)
+def run_each_test_in_a_fresh_new_transaction():
+    with transaction.manager:
+        yield
+        transaction.abort()  # rollback
 
 
 @pytest.fixture(scope="session")

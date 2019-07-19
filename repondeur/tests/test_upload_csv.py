@@ -194,10 +194,8 @@ class TestPostForm:
         from zam_repondeur.models import DBSession, Amendement, User
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
-        with transaction.manager:
-            lecture_an.dossier.owned_by_team = team_zam
-            DBSession.add(user_ronan)
-            user_ronan.teams.append(team_zam)
+        DBSession.add(user_ronan)
+        user_ronan.teams.append(team_zam)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_table is None

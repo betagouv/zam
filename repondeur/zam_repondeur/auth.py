@@ -108,6 +108,9 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
                 principals.append(f"team:{team.pk}")
             if self.is_admin(request.user):
                 principals.append("group:admins")
+                request.user.is_admin = True
+            else:
+                request.user.is_admin = False
         return principals
 
     def is_admin(self, user: User) -> bool:

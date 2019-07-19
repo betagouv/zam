@@ -6,7 +6,7 @@ from pyramid.view import view_config, view_defaults
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
 from zam_repondeur.message import Message
-from zam_repondeur.models import DBSession, Dossier, Lecture, Texte
+from zam_repondeur.models import DBSession, Dossier, Lecture, Team, Texte
 from zam_repondeur.models.events.dossier import DossierActive
 from zam_repondeur.models.events.lecture import LectureCreee
 
@@ -28,11 +28,8 @@ class DossierList(DossierCollectionBase):
         my_dossiers = [
             dossier
             for dossier in self.dossiers
-            if dossier.activated_at
-            and (
-                dossier.owned_by_team is None
-                or dossier.owned_by_team in self.request.user.teams
-            )
+            if dossier.team
+            and (self.request.user.is_admin or dossier.team in self.request.user.teams)
         ]
         return {
             "dossiers": my_dossiers,
@@ -46,9 +43,7 @@ class DossierList(DossierCollectionBase):
 class DossierAddForm(DossierCollectionBase):
     @view_config(request_method="GET", renderer="dossiers_add.html")
     def get(self) -> dict:
-        available_dossiers = [
-            dossier for dossier in self.dossiers if not dossier.activated_at
-        ]
+        available_dossiers = [dossier for dossier in self.dossiers if not dossier.team]
         return {"available_dossiers": available_dossiers}
 
     @view_config(request_method="POST")
@@ -69,13 +64,14 @@ class DossierAddForm(DossierCollectionBase):
             )
             return HTTPFound(location=self.request.resource_url(self.context))
 
-        if dossier.activated_at:
+        if dossier.team:
             self.request.session.flash(
                 Message(cls="warning", text="Ce dossier appartient à une autre équipe…")
             )
             return HTTPFound(location=self.request.resource_url(self.context))
 
-        dossier.activate(owned_by_team=self.request.team)
+        team = Team.create(name=dossier.slug)
+        dossier.team = team
         DossierActive.create(self.request, dossier=dossier)
 
         dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
@@ -127,7 +123,7 @@ class DossierView:
 
     @view_config(request_method="POST", permission="delete")
     def post(self) -> Response:
-        self.dossier.activated_at = None
+        self.dossier.team = None
         for lecture in self.dossier.lectures:
             DBSession.delete(lecture)
         DBSession.flush()

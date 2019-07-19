@@ -1,6 +1,5 @@
 import json
 import re
-from datetime import datetime
 from pathlib import Path
 
 import responses
@@ -16,6 +15,12 @@ def read_sample_data(basename):
 
 
 def test_get_form(app, user_sgg, dossier_plfss2018):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        dossier_plfss2018.team = None
+        DBSession.add(dossier_plfss2018)
+
     resp = app.get("/dossiers/add", user=user_sgg)
 
     assert resp.status_code == 200
@@ -37,15 +42,9 @@ def test_get_form(app, user_sgg, dossier_plfss2018):
     assert form.fields["submit"][0].attrs["type"] == "submit"
 
 
-def test_get_form_does_not_propose_activated_choices(
-    app, user_sgg, dossier_plfss2018, lecture_an
+def test_get_form_does_not_propose_dossiers_with_teams(
+    app, user_sgg, dossier_plfss2018
 ):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        lecture_an.dossier.activated_at = datetime.utcnow()
-        DBSession.add(lecture_an)
-
     resp = app.get("/dossiers/add", user=user_sgg)
     form = resp.forms["add-dossier"]
     assert form.fields["dossier"][0].options == [("", True, "")]
@@ -160,6 +159,10 @@ class TestPostForm:
             ).read_bytes(),
             status=200,
         )
+
+        with transaction.manager:
+            dossier_plfss2018.team = None
+            DBSession.add(dossier_plfss2018)
 
         resp = app.get("/dossiers/add", user=user_sgg)
         form = resp.forms["add-dossier"]
@@ -313,10 +316,6 @@ class TestPostForm:
     ):
         from zam_repondeur.models import DBSession
 
-        with transaction.manager:
-            lecture_an.dossier.activated_at = datetime.utcnow()
-            DBSession.add(lecture_an)
-
         # We cannot use form.submit() given the form does not contain that choice.
         resp = app.post("/dossiers/add", {"dossier": "plfss-2018"}, user=user_sgg)
 
@@ -337,10 +336,6 @@ class TestPostForm:
     ):
         from zam_repondeur.models import DBSession
 
-        with transaction.manager:
-            lecture_an.dossier.activated_at = datetime.utcnow()
-            DBSession.add(lecture_an)
-
         # We cannot use form.submit() given the form does not contain that choice.
         resp = app.post("/dossiers/add", {"dossier": "plfss-2019"}, user=user_sgg)
 
@@ -360,10 +355,6 @@ class TestPostForm:
         self, app, dossier_plfss2018, lecture_an, user_sgg
     ):
         from zam_repondeur.models import DBSession
-
-        with transaction.manager:
-            lecture_an.dossier.activated_at = datetime.utcnow()
-            DBSession.add(lecture_an)
 
         # We cannot use form.submit() given the form does not contain that choice.
         resp = app.post("/dossiers/add", {"dossier": ""}, user=user_sgg)

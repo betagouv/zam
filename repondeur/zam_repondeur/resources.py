@@ -90,15 +90,12 @@ class DossierCollection(Resource):
 
 class DossierResource(Resource):
     def __acl__(self) -> List[ACE]:
-        # If the dossier is owned by a team, then only team members can view it
-        if self.dossier.owned_by_team is not None:
-            return [
-                (Allow, f"team:{self.dossier.owned_by_team.pk}", "view"),
-                (Deny, Authenticated, "view"),
-            ]
-
-        # If the dossier is not owned by any team, anyone can view it
-        return [(Allow, Authenticated, "view")]
+        # Only team members and admins can view it.
+        return [
+            (Allow, f"group:admins", "view"),
+            (Allow, f"team:{self.dossier.team.pk}", "view"),
+            (Deny, Authenticated, "view"),
+        ]
 
     def __init__(self, name: str, parent: Resource) -> None:
         super().__init__(name=name, parent=parent)

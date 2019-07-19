@@ -28,6 +28,9 @@ class Team(Base):
 
     pk: int = Column(Integer, primary_key=True)
     name: str = Column(Text, nullable=False, unique=True)
+
+    dossier_pk = Column(Integer, ForeignKey("dossiers.pk"))
+    dossier = relationship("Dossier", back_populates="team")
     users = relationship(
         "User", secondary="teams2users", backref=backref("teams", lazy="joined")
     )

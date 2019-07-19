@@ -6,7 +6,7 @@ import logging
 from huey import crontab
 
 from zam_repondeur.tasks.huey import huey
-from zam_repondeur.models import DBSession, Dossier
+from zam_repondeur.models import DBSession, Team
 from zam_repondeur.tasks.fetch import fetch_lectures
 
 
@@ -25,8 +25,7 @@ def update_data() -> None:
 # Keep it last as it takes time and will add up with the growing number of dossiers.
 @huey.periodic_task(crontab(minute="10", hour="*"))
 def fetch_all_lectures() -> None:
-    for dossier in DBSession.query(Dossier).filter(
-        Dossier.activated_at != None
-    ):  # noqa: E711
-        delay = (dossier.pk % 15) * 60  # spread out updates over 15 minutes
-        fetch_lectures.schedule(args=(dossier.pk,), delay=delay)
+    for team in DBSession.query(Team):
+        dossier_pk = team.dossier.pk
+        delay = (dossier_pk % 15) * 60  # spread out updates over 15 minutes
+        fetch_lectures.schedule(args=(dossier_pk,), delay=delay)

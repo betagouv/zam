@@ -5,7 +5,7 @@ import transaction
 
 
 @pytest.fixture
-def dossier_plf2018(db):
+def dossier_plf2018(db, team_zam):
     from zam_repondeur.models import Dossier
 
     with transaction.manager:
@@ -14,6 +14,7 @@ def dossier_plf2018(db):
             titre="Budget : loi de finances 2018",
             slug="loi-finances-2018",
         )
+        dossier.team = team_zam
 
     return dossier
 

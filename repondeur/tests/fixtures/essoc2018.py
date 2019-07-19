@@ -5,7 +5,7 @@ import transaction
 
 
 @pytest.fixture
-def dossier_essoc2018(db):
+def dossier_essoc2018(db, team_zam):
     from zam_repondeur.models import Dossier
 
     with transaction.manager:
@@ -14,6 +14,7 @@ def dossier_essoc2018(db):
             titre="Fonction publique : un Etat au service d'une société de confiance",
             slug="etat-service-societe-confiance",
         )
+        dossier.team = team_zam
 
     return dossier
 

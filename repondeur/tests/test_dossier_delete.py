@@ -1,4 +1,4 @@
-def test_dossier_delete(app, lecture_an, amendements_an, user_sgg):
+def test_dossier_delete(app, lecture_an, amendements_an, user_sgg, team_zam):
     from zam_repondeur.models import Amendement, DBSession, Dossier, Lecture
 
     assert user_sgg.email.endswith("@sgg.pm.gouv.fr")

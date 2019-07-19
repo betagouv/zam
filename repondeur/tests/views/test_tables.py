@@ -405,9 +405,19 @@ class TestTransfer:
 
 
 def test_tables_steal_amendement(
-    app, lecture_an, amendements_an, user_david, david_has_one_amendement, user_ronan
+    app,
+    lecture_an,
+    amendements_an,
+    user_david,
+    david_has_one_amendement,
+    user_ronan,
+    team_zam,
 ):
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.models import Amendement, DBSession
+
+    with transaction.manager:
+        team_zam.users.append(user_ronan)
+        DBSession.add(team_zam)
 
     assert len(user_ronan.table_for(lecture_an).amendements) == 0
 
@@ -441,9 +451,19 @@ def test_tables_steal_amendement(
 
 
 def test_tables_steal_amendement_resets_editing_status(
-    app, lecture_an, amendements_an, user_david, david_has_one_amendement, user_ronan
+    app,
+    lecture_an,
+    amendements_an,
+    user_david,
+    david_has_one_amendement,
+    user_ronan,
+    team_zam,
 ):
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.models import Amendement, DBSession
+
+    with transaction.manager:
+        team_zam.users.append(user_ronan)
+        DBSession.add(team_zam)
 
     amendements_an[0].start_editing()
     assert amendements_an[0].is_being_edited
@@ -461,9 +481,19 @@ def test_tables_steal_amendement_resets_editing_status(
 
 
 def test_tables_steal_amendements(
-    app, lecture_an, amendements_an, user_david, david_has_two_amendements, user_ronan
+    app,
+    lecture_an,
+    amendements_an,
+    user_david,
+    david_has_two_amendements,
+    user_ronan,
+    team_zam,
 ):
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.models import Amendement, DBSession
+
+    with transaction.manager:
+        team_zam.users.append(user_ronan)
+        DBSession.add(team_zam)
 
     assert len(user_ronan.table_for(lecture_an).amendements) == 0
 

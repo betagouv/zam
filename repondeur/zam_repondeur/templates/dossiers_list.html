@@ -43,6 +43,12 @@
             background-color: #3167a6;
             color: white;
         }
+    .contact {
+        text-align: center;
+    }
+        .contact a.primary {
+            margin: 2rem 1rem;
+        }
 </style>
 {% endblock %}
 
@@ -56,32 +62,22 @@
         </a>
     </div>
     {% endif %}
-    <section id="mes-zams">
-    <h2>Mes Zams</h2>
-    {% for dossier in dossiers %}
-        <div class="dossier box">
-            <div>
+    <section>
+        <h2>Mes Zams</h2>
+        {% for dossier in dossiers %}
+            <div class="dossier box">
                 <h3><a href="{{ request.resource_url(context[dossier.url_key]) }}">{{ dossier.titre }}</a></h3>
             </div>
-        </div>
-    {% else %}
-        <p>Vous ne participez à aucun dossier législatif pour l’instant.</p>
-    {% endfor %}
-    </section>
-
-    <section id="dossiers-disponibles">
-    <h2>Dossiers disponibles</h2>
-    {% for dossier in available_dossiers %}
-        <div class="dossier box">
-            <div>
-                <h3>{{ dossier.titre }}</h3>
+        {% else %}
+            <div class="dossier box">
+                <h3>Vous ne participez à aucun dossier législatif pour l’instant.</h3>
             </div>
-            <nav>
-                <a href="mailto:melodie.dahi@beta.gouv.fr?subject={{ "Demande du dossier Zam « " + dossier.titre + " »" | urlencode }}" class="button primary">
-                    Demander ce Zam
-                </a>
-            </nav>
-        </div>
-    {% endfor %}
+        {% endfor %}
+        <p class="contact">
+            Si votre dossier législatif ne figure pas dans la liste, veuillez
+            <a href="mailto:melodie.dahi@beta.gouv.fr?subject={{ "Demande de dossier Zam" | urlencode }}" class="button primary">
+                contacter les administrateurs
+            </a>
+        </p>
     </section>
 {% endblock %}

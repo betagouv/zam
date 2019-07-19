@@ -20,29 +20,24 @@ class DossierCollectionBase:
     def __init__(self, context: DossierCollection, request: Request) -> None:
         self.context = context
         self.request = request
-
-        all_dossiers = context.models()
-        self.my_dossiers = [
-            dossier
-            for dossier in all_dossiers
-            if dossier.activated_at
-            and (
-                dossier.owned_by_team is None
-                or dossier.owned_by_team in self.request.user.teams
-            )
-        ]
-        self.available_dossiers = [
-            dossier for dossier in all_dossiers if not dossier.activated_at
-        ]
+        self.dossiers = context.models()
 
 
 @view_defaults(context=DossierCollection)
 class DossierList(DossierCollectionBase):
     @view_config(request_method="GET", renderer="dossiers_list.html")
     def get(self) -> dict:
+        my_dossiers = [
+            dossier
+            for dossier in self.dossiers
+            if dossier.activated_at
+            and (
+                dossier.owned_by_team is None
+                or dossier.owned_by_team in self.request.user.teams
+            )
+        ]
         return {
-            "dossiers": self.my_dossiers,
-            "available_dossiers": self.available_dossiers,
+            "dossiers": my_dossiers,
             "allowed_to_activate": self.request.has_permission(
                 "activate", self.context
             ),
@@ -53,7 +48,10 @@ class DossierList(DossierCollectionBase):
 class DossierAddForm(DossierCollectionBase):
     @view_config(request_method="GET", renderer="dossiers_add.html")
     def get(self) -> dict:
-        return {"available_dossiers": self.available_dossiers}
+        available_dossiers = [
+            dossier for dossier in self.dossiers if not dossier.activated_at
+        ]
+        return {"available_dossiers": available_dossiers}
 
     @view_config(request_method="POST")
     def post(self) -> Response:

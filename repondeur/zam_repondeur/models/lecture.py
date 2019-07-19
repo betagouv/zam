@@ -213,38 +213,18 @@ class Lecture(Base, LastEventMixin):
 
     @classmethod
     def create_from_ref(
-        cls, dossier_model: "Dossier", lecture_ref: Any  # LectureRef.
+        cls, lecture_ref: Any, dossier: "Dossier", texte: "Texte"
     ) -> Optional["Lecture"]:
-        from zam_repondeur.models import get_one_or_create  # Circular.
-
         chambre = lecture_ref.chambre
         titre = lecture_ref.titre
         organe = lecture_ref.organe
         partie = lecture_ref.partie
-        texte_ref = lecture_ref.texte
-
-        if texte_ref.date_depot is None:
-            raise RuntimeError("Cannot create LectureRef for Texte with no date_depot")
-
-        texte, _ = get_one_or_create(
-            Texte,
-            type_=texte_ref.type_,
-            chambre=chambre,
-            legislature=texte_ref.legislature,
-            session=texte_ref.session,
-            numero=texte_ref.numero,
-            date_depot=texte_ref.date_depot,
-        )
 
         if cls.exists_with_fallback(chambre, texte, partie, organe):
             return None
 
         lecture = cls.create(
-            texte=texte,
-            partie=partie,
-            titre=titre,
-            organe=organe,
-            dossier=dossier_model,
+            texte=texte, partie=partie, titre=titre, organe=organe, dossier=dossier
         )
         return lecture
 

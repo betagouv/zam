@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Optional
+from typing import Any, Optional, cast
 import enum
 
 from sqlalchemy import Column, Date, DateTime, Enum, Index, Integer
@@ -117,3 +117,21 @@ class Texte(Base):
         )
         DBSession.add(texte)
         return texte
+
+    @classmethod
+    def get_or_create_from_ref(cls, texte_ref: Any, chambre: Chambre) -> "Texte":
+        from zam_repondeur.models import get_one_or_create  # Circular.
+
+        if texte_ref.date_depot is None:
+            raise RuntimeError("Cannot create LectureRef for Texte with no date_depot")
+
+        texte, _ = get_one_or_create(
+            Texte,
+            type_=texte_ref.type_,
+            chambre=chambre,
+            legislature=texte_ref.legislature,
+            session=texte_ref.session,
+            numero=texte_ref.numero,
+            date_depot=texte_ref.date_depot,
+        )
+        return cast(Texte, texte)

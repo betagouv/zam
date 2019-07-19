@@ -1,5 +1,3 @@
-import transaction
-
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
@@ -8,7 +6,7 @@ from pyramid.view import view_config, view_defaults
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
 from zam_repondeur.message import Message
-from zam_repondeur.models import DBSession, Dossier, Lecture
+from zam_repondeur.models import DBSession, Dossier, Lecture, Texte
 from zam_repondeur.models.events.dossier import DossierActive
 from zam_repondeur.models.events.lecture import LectureCreee
 
@@ -83,14 +81,13 @@ class DossierAddForm(DossierCollectionBase):
         dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
         dossier_ref = dossiers_by_uid[dossier.uid]
         for lecture_ref in dossier_ref.lectures:
-            lecture = Lecture.create_from_ref(dossier, lecture_ref)
+            texte = Texte.get_or_create_from_ref(lecture_ref.texte, lecture_ref.chambre)
+            lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
             if lecture is not None:
                 LectureCreee.create(self.request, lecture=lecture)
-                # Call to fetch_* tasks below being asynchronous, we need to make
-                # sure the lecture already exists once and for all in the database
-                # for future access. Otherwise, it may create many instances and
-                # thus many objects within the database.
-                transaction.commit()
+
+                # Schedule task to run in worker
+                DBSession.flush()
 
                 fetch_articles(lecture.pk)
                 fetch_amendements(lecture.pk)

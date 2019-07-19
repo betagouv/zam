@@ -6,33 +6,41 @@ from .helpers import extract_item_text
 
 
 def test_filters_are_hidden_by_default(
-    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url
+    wsgi_server,
+    driver,
+    lecture_an,
+    amendements_an,
+    lecture_an_url,
+    user_david,
+    user_david_table_an,
 ):
-    from zam_repondeur.models import DBSession, User
+    from zam_repondeur.models import DBSession
 
-    email = "user@exemple.gouv.fr"
     with transaction.manager:
-        user = DBSession.query(User).filter(User.email == email).first()
-        table = user.table_for(lecture_an)
-        table.amendements.append(amendements_an[0])
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendements_an[0])
 
-    driver.get(f"{lecture_an_url}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     thead = driver.find_element_by_css_selector("thead")
     assert not thead.find_element_by_css_selector("tr.filters").is_displayed()
 
 
 def test_filters_are_opened_by_click(
-    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url
+    wsgi_server,
+    driver,
+    lecture_an,
+    amendements_an,
+    lecture_an_url,
+    user_david,
+    user_david_table_an,
 ):
-    from zam_repondeur.models import DBSession, User
+    from zam_repondeur.models import DBSession
 
-    email = "user@exemple.gouv.fr"
     with transaction.manager:
-        user = DBSession.query(User).filter(User.email == email).first()
-        table = user.table_for(lecture_an)
-        table.amendements.append(amendements_an[0])
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendements_an[0])
 
-    driver.get(f"{lecture_an_url}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     driver.find_element_by_link_text("Filtrer").click()
     thead = driver.find_element_by_css_selector("thead")
     assert thead.find_element_by_css_selector("tr.filters").is_displayed()
@@ -41,8 +49,7 @@ def test_filters_are_opened_by_click(
 def test_filters_are_absent_without_amendements(
     wsgi_server, driver, lecture_an_url, user_david
 ):
-    email = "user@exemple.gouv.fr"
-    driver.get(f"{lecture_an_url}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     assert not driver.find_element_by_css_selector("thead tr.filters").is_displayed()
 
 
@@ -91,6 +98,8 @@ def test_column_filtering_by_value(
     lecture_an_url,
     article7bis_an,
     amendements_an,
+    user_david,
+    user_david_table_an,
     column_index,
     selector,
     input_text,
@@ -98,21 +107,19 @@ def test_column_filtering_by_value(
     initial,
     filtered,
 ):
-    from zam_repondeur.models import Amendement, DBSession, User
+    from zam_repondeur.models import Amendement, DBSession
 
-    email = "user@exemple.gouv.fr"
     with transaction.manager:
+        DBSession.add(user_david_table_an)
         DBSession.add_all(amendements_an)
-        user = DBSession.query(User).filter(User.email == email).first()
-        table = user.table_for(lecture_an)
-        table.amendements.append(amendements_an[0])
-        table.amendements.append(amendements_an[1])
+        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.amendements.append(amendements_an[1])
         amendement = Amendement.create(
             lecture=lecture_an, article=article7bis_an, num=777
         )
-        table.amendements.append(amendement)
+        user_david_table_an.amendements.append(amendement)
 
-    driver.get(f"{lecture_an_url}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == initial
     driver.find_element_by_link_text("Filtrer").click()
@@ -122,9 +129,9 @@ def test_column_filtering_by_value(
     input_field.send_keys(input_text)
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == filtered
-    assert (
-        driver.current_url
-        == f"{lecture_an_url}/tables/{email}?{kind}={input_text.replace(' ', '+')}"
+    assert driver.current_url == (
+        f"{lecture_an_url}/tables/{user_david.email}"
+        f"?{kind}={input_text.replace(' ', '+')}"
     )
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
@@ -155,6 +162,8 @@ def test_column_filtering_by_value_with_batches(
     lecture_an_url,
     article7bis_an,
     amendements_an,
+    user_david_table_an,
+    user_david,
     column_index,
     selector,
     input_text,
@@ -162,26 +171,24 @@ def test_column_filtering_by_value_with_batches(
     initial,
     filtered,
 ):
-    from zam_repondeur.models import Amendement, Batch, DBSession, User
+    from zam_repondeur.models import Amendement, Batch, DBSession
 
-    email = "user@exemple.gouv.fr"
     with transaction.manager:
+        DBSession.add(user_david_table_an)
         DBSession.add_all(amendements_an)
-        user = DBSession.query(User).filter(User.email == email).first()
 
         batch = Batch.create()
         amendements_an[0].batch = batch
         amendements_an[1].batch = batch
 
-        table = user.table_for(lecture_an)
-        table.amendements.append(amendements_an[0])
-        table.amendements.append(amendements_an[1])
+        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.amendements.append(amendements_an[1])
         amendement = Amendement.create(
             lecture=lecture_an, article=article7bis_an, num=777
         )
-        table.amendements.append(amendement)
+        user_david_table_an.amendements.append(amendement)
 
-    driver.get(f"{lecture_an_url}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == initial
     driver.find_element_by_link_text("Filtrer").click()
@@ -191,7 +198,10 @@ def test_column_filtering_by_value_with_batches(
     input_field.send_keys(input_text)
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == filtered
-    assert driver.current_url == f"{lecture_an_url}/tables/{email}?{kind}={input_text}"
+    assert (
+        driver.current_url
+        == f"{lecture_an_url}/tables/{user_david.email}?{kind}={input_text}"
+    )
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
@@ -210,31 +220,30 @@ def test_column_filtering_by_checkbox(
     article7bis_an,
     amendements_an,
     user_david_table_an,
+    user_david,
     column_index,
     selector,
     kind,
     initial,
     filtered,
 ):
-    from zam_repondeur.models import Amendement, DBSession, User
+    from zam_repondeur.models import Amendement, DBSession
 
-    email = "user@exemple.gouv.fr"
     with transaction.manager:
+        DBSession.add(user_david_table_an)
         DBSession.add_all(amendements_an)
-        user = DBSession.query(User).filter(User.email == email).first()
 
-        table = user.table_for(lecture_an)
-        table.amendements.append(amendements_an[0])
-        table.amendements.append(amendements_an[1])
+        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.amendements.append(amendements_an[1])
         amendement = Amendement.create(
             lecture=lecture_an,
             article=article7bis_an,
             num=777,
             auteur="LE GOUVERNEMENT",
         )
-        table.amendements.append(amendement)
+        user_david_table_an.amendements.append(amendement)
 
-    driver.get(f"{lecture_an_url}/tables/{email}")
+    driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == initial
     driver.find_element_by_link_text("Filtrer").click()
@@ -244,16 +253,16 @@ def test_column_filtering_by_checkbox(
     label.click()
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == filtered
-    assert driver.current_url == f"{lecture_an_url}/tables/{email}?{kind}=1"
+    assert driver.current_url == f"{lecture_an_url}/tables/{user_david.email}?{kind}=1"
 
     # Restore initial state.
     label.click()
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == initial
-    assert driver.current_url == f"{lecture_an_url}/tables/{email}"
+    assert driver.current_url == f"{lecture_an_url}/tables/{user_david.email}"
 
     # Check filters are active on URL (re)load.
-    driver.get(f"{lecture_an_url}/tables/{email}?{kind}=1")
+    driver.get(f"{lecture_an_url}/tables/{user_david.email}?{kind}=1")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == filtered
     label = driver.find_element_by_css_selector(
@@ -262,4 +271,4 @@ def test_column_filtering_by_checkbox(
     label.click()
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_item_text(selector, trs) == initial
-    assert driver.current_url == f"{lecture_an_url}/tables/{email}"
+    assert driver.current_url == f"{lecture_an_url}/tables/{user_david.email}"

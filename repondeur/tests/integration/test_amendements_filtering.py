@@ -321,7 +321,6 @@ def test_column_filtering_by_value_for_missions(
     wsgi_server,
     driver,
     lecture_plf2018_an_premiere_lecture_seance_publique_2,
-    article7bis_an,
     amendements_plf2018_an_premiere_lecture_seance_publique_2,
     column_index,
     input_text,
@@ -329,7 +328,7 @@ def test_column_filtering_by_value_for_missions(
     initial,
     filtered,
 ):
-    from zam_repondeur.models import Amendement, Mission, DBSession
+    from zam_repondeur.models import Amendement, Article, Mission, DBSession
 
     LECTURE_URL = (
         f"{wsgi_server.application_url}"
@@ -340,6 +339,12 @@ def test_column_filtering_by_value_for_missions(
     with transaction.manager:
         mission = Mission.create(
             titre="Mission Action extérieure de l'État", titre_court="Action ext."
+        )
+        article7bis_an = Article.create(
+            lecture=lecture_plf2018_an_premiere_lecture_seance_publique_2,
+            type="article",
+            num="7",
+            mult="bis",
         )
         amendement = Amendement.create(
             lecture=lecture_plf2018_an_premiere_lecture_seance_publique_2,

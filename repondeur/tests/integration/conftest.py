@@ -9,11 +9,11 @@ from .helpers import login
 
 
 @pytest.fixture(params=["firefox", "chrome"])
-def driver(request, wsgi_server):
+def driver(request, wsgi_server, user_david):
     factory = driver_factory(request.param)
     with factory() as _driver:
         try:
-            login(_driver, wsgi_server.application_url, "user@exemple.gouv.fr")
+            login(_driver, wsgi_server.application_url, user_david.email)
             yield _driver
         finally:
             _driver.quit()

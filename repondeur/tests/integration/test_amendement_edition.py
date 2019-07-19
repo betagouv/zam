@@ -5,18 +5,14 @@ from selenium.webdriver.support.ui import Select
 
 
 def test_amendement_edition_start_editing_status(
-    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url
+    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url, user_david_table_an
 ):
-    from zam_repondeur.models import DBSession, User
+    from zam_repondeur.models import DBSession
 
     amendement = amendements_an[0]
     with transaction.manager:
-        user = (
-            DBSession.query(User).filter(User.email == "user@exemple.gouv.fr").first()
-        )
-        table = user.table_for(lecture_an)
-        DBSession.add(table)
-        table.amendements.append(amendement)
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendement)
         DBSession.add(amendement)
 
     assert not amendement.is_being_edited
@@ -30,18 +26,14 @@ def test_amendement_edition_start_editing_status(
 
 
 def test_amendement_edition_exit_stop_editing_status(
-    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url
+    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url, user_david_table_an
 ):
-    from zam_repondeur.models import DBSession, User
+    from zam_repondeur.models import DBSession
 
     amendement = amendements_an[0]
     with transaction.manager:
-        user = (
-            DBSession.query(User).filter(User.email == "user@exemple.gouv.fr").first()
-        )
-        table = user.table_for(lecture_an)
-        DBSession.add(table)
-        table.amendements.append(amendement)
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendement)
         DBSession.add(amendement)
 
     assert not amendement.is_being_edited

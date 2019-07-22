@@ -6,7 +6,7 @@
 alembic==1.0.11
 asn1crypto==0.24.0          # cryptography: >= 0.21.0
 attrs==17.4.0               # anpy: < 17.5, >= 17.4
-beautifulsoup4==4.6.3       # lawfactory_utils, legipy: < 4.7, >= 4.6
+beautifulsoup4==4.8.0       # lawfactory_utils, legipy: < 4.7, >= 4.6
 bleach==3.1.0
 CacheControl==0.12.5
 certifi==2019.6.16

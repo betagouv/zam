@@ -15,6 +15,7 @@ from zam_repondeur.models import (
     Lecture,
     User,
     UserTable,
+    SharedTable,
 )
 
 
@@ -124,6 +125,7 @@ class LectureResource(Resource):
         self.add_child(AmendementCollection(name="amendements", parent=self))
         self.add_child(ArticleCollection(name="articles", parent=self))
         self.add_child(TableCollection(name="tables", parent=self))
+        self.add_child(SharedTableCollection(name="boites", parent=self))
 
     @reify
     def lecture(self) -> Lecture:
@@ -271,3 +273,59 @@ class TableResource(Resource):
         return self.owner.table_for(
             lecture=self.lecture_resource.model(), options=options
         )
+
+
+class SharedTableCollection(Resource):
+    def __getitem__(self, key: str) -> Resource:
+        if key == "add":
+            raise KeyError
+        return SharedTableResource(name=key, parent=self)
+
+    @property
+    def parent(self) -> LectureResource:
+        return cast(LectureResource, self.__parent__)
+
+    @property
+    def lecture_resource(self) -> LectureResource:
+        return self.parent
+
+
+class SharedTableResource(Resource):
+    def __init__(self, name: str, parent: Resource) -> None:
+        super().__init__(name=name, parent=parent)
+        self.add_child(SharedTableDeleteResource(name="delete", parent=self))
+
+    @property
+    def parent(self) -> SharedTableCollection:
+        return cast(SharedTableCollection, self.__parent__)
+
+    @property
+    def lecture_resource(self) -> LectureResource:
+        return self.parent.parent
+
+    def model(self) -> SharedTable:
+        try:
+            shared_table: SharedTable = (
+                DBSession.query(SharedTable)
+                .filter(SharedTable.slug == self.__name__)
+                .one()
+            )
+        except NoResultFound:
+            raise ResourceNotFound(self)
+        return shared_table
+
+
+class SharedTableDeleteResource(Resource):
+    def __init__(self, name: str, parent: Resource) -> None:
+        super().__init__(name=name, parent=parent)
+
+    @property
+    def parent(self) -> SharedTableResource:
+        return cast(SharedTableResource, self.__parent__)
+
+    @property
+    def lecture_resource(self) -> LectureResource:
+        return self.parent.parent.parent
+
+    def model(self) -> SharedTable:
+        return self.parent.model()

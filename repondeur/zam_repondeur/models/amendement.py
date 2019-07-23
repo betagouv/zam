@@ -36,7 +36,7 @@ from .base import Base, DBSession
 if TYPE_CHECKING:
     from .article import Article  # noqa
     from .lecture import Lecture  # noqa
-    from .table import UserTable  # noqa
+    from .table import SharedTable, UserTable  # noqa
 
 
 AVIS = [
@@ -298,6 +298,13 @@ class Amendement(Base):
     user_table_pk: int = Column(Integer, ForeignKey("user_tables.pk"), nullable=True)
     user_table: "Optional[UserTable]" = relationship(
         "UserTable", back_populates="amendements"
+    )
+
+    shared_table_pk: int = Column(
+        Integer, ForeignKey("shared_tables.pk"), nullable=True
+    )
+    shared_table: "Optional[SharedTable]" = relationship(
+        "SharedTable", back_populates="amendements"
     )
 
     batch_pk: int = Column(Integer, ForeignKey("batches.pk"), nullable=True)
@@ -578,6 +585,15 @@ class Amendement(Base):
         return self.article.group_amendements(
             amdt for amdt in self.children if amdt.is_displayable
         )
+
+    @property
+    def table_name(self) -> str:
+        if self.shared_table:
+            return self.shared_table.titre or ""
+        elif self.user_table:
+            return self.user_table.user.name or ""
+        else:
+            return ""
 
     @property
     def is_being_edited(self) -> bool:

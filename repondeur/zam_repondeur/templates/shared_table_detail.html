@@ -1,0 +1,33 @@
+{% extends "_base_lecture.html" %}
+{% import "macros.html" as macros %}
+
+{% block header %}
+<style type="text/css">
+    .form-group {
+        text-align: center;
+        margin: 5rem 0 3rem;
+        font-size: 1.5rem;
+    }
+        .form-group input {
+            margin-left: 1rem;
+        }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% if shared_table is defined %}
+        <h1>Éditer cette boîte</h1>
+    {% else %}
+        <h1>Créer une boîte</h1>
+    {% endif %}
+    <form action="{{ request.path }}" method="POST">
+        <div class="form-group">
+            <label for="titre">Nom de la boîte :</label>
+            <input type="text" name="titre" {% if shared_table is defined %}value="{{ shared_table.titre }}"{% endif %} required>
+        </div>
+        <div class="form-group save-buttons">
+            <input type="submit" name="submit" value="Sauvegarde la boîte" class="button primary">
+        </div>
+
+    </form>
+{% endblock %}

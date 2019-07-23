@@ -97,10 +97,6 @@ class User(Base):
         return self.email.split("@")[0].replace(".", " ").title()
 
     @property
-    def display_name(self) -> str:
-        return self.name or self.email
-
-    @property
     def last_activity(self) -> Optional[datetime]:
         return users_repository.get_last_activity_time(self.email)
 

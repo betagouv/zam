@@ -198,6 +198,33 @@
                 </div>
             {% endif %}
         {% endif %}
+        {% if amendements_with_shared_table %}
+            <details class="notice" {% if not amendements_being_edited or amendements_not_being_edited %}open{% endif %}>
+                <summary>
+                    {% trans count=amendements_with_shared_table|length_including_batches %}
+                        Cet amendement est dans une boîte
+                    {% pluralize %}
+                        Ces {{ count }} amendements sont dans une boîte
+                    {% endtrans %}
+                </summary>
+                <ul class="amendements">
+                    {% for amendement in amendements_with_shared_table %}
+                        <li>
+                            <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked>
+                            <label for="amendement-{{ amendement.num }}">
+                                {{ macros.numero_amendement(amendement)}}
+                                 —
+                                {% if amendement.batch %}
+                                    Ces amendements sont dans la boîte « {{ amendement.shared_table.titre }} »
+                                {% else %}
+                                    Cet amendement est dans la boîte « {{ amendement.shared_table.titre }} »
+                                {% endif %}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </details>
+        {% endif %}
         {% if amendements_without_table %}
             <details class="notice" {% if not amendements_with_table %}open{% endif %}>
                 <summary>
@@ -229,15 +256,28 @@
             <input type="hidden" name="from_index" value="{{ from_index }}">
         {% endif %}
         <div class="targets">
-            <label for="target">Destinataire</label>
+            <label for="target">Destination</label>
             <select id="target" name="target">
                 <option selected></option>
                 {% if show_transfer_to_myself %}
-                    <option value="{{ request.user.email }}">Moi — {{ request.user }}</option>
+                    <optgroup label="Ma table">
+                        <option value="{{ request.user.email }}">{{ request.user }}</option>
+                    </optgroup>
                 {% endif %}
-                {% for user in users %}
-                    <option value="{{ user.email }}">{{ user }}</option>
-                {% endfor %}
+                {% if target_tables %}
+                    <optgroup label="Boîtes">
+                        {% for target_table in target_tables %}
+                            <option value="{{ target_table.slug }}">{{ target_table.titre }}</option>
+                        {% endfor %}
+                    </optgroup>
+                {% endif %}
+                {% if users %}
+                    <optgroup label="Tables">
+                        {% for user in users %}
+                            <option value="{{ user.email }}">{{ user }}</option>
+                        {% endfor %}
+                    </optgroup>
+                {% endif %}
             </select>
         </div>
         <div class="buttons">

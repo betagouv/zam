@@ -245,7 +245,7 @@ def test_amendement_journal_affectation_taken_by_other(
     )
     assert (
         first_description_text(resp)
-        == "Ronan a mis l’amendement sur la table de « David (david@exemple.gouv.fr) »."
+        == "Ronan a transféré l’amendement à « David (david@exemple.gouv.fr) »."
     )
 
 

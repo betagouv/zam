@@ -99,6 +99,9 @@ class TestPostForm:
     def test_plfss_2018_an(self, app, user_david):
         from zam_repondeur.models import Chambre, DBSession, Lecture
 
+        with transaction.manager:
+            DBSession.add(user_david)
+
         assert not DBSession.query(Lecture).all()
 
         responses.add(
@@ -197,7 +200,7 @@ class TestPostForm:
         )
         assert (
             lecture.events[2].render_summary()
-            == "<abbr title='david@exemple.gouv.fr'>david@exemple.gouv.fr</abbr> a créé la lecture."  # noqa
+            == "<abbr title='david@exemple.gouv.fr'>David</abbr> a créé la lecture."
         )
 
         # We expect articles from the page (1, 2) and from the amendements (3, 8, 9)
@@ -215,6 +218,9 @@ class TestPostForm:
     @responses.activate
     def test_plfss_2019_senat(self, app, user_david):
         from zam_repondeur.models import Chambre, DBSession, Lecture
+
+        with transaction.manager:
+            DBSession.add(user_david)
 
         assert not DBSession.query(Lecture).all()
 
@@ -302,7 +308,7 @@ class TestPostForm:
         )
         assert (
             lecture.events[2].render_summary()
-            == "<abbr title='david@exemple.gouv.fr'>david@exemple.gouv.fr</abbr> a créé la lecture."  # noqa
+            == "<abbr title='david@exemple.gouv.fr'>David</abbr> a créé la lecture."
         )
 
         # We should have articles from the page (1) and from the amendements (19, 29)

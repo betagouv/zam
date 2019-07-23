@@ -60,12 +60,17 @@
     <script src="{{ request.static_url('zam_repondeur:static/js/zam.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/js/notifications.js') }}"></script>
     <script>
-        ;(function disableOnSubmit () {
+        ;(function disableOnSubmit (duration = 3 /* Seconds. */) {
             const submitInputs = document.querySelectorAll('[type="submit"]:not(.allow-multiple-submit)')
             submitInputs.forEach(submitInput => {
                 submitInput.onclick = (e) => {
+                    const initialTextContent = submitInput.textContent
                     submitInput.classList.add('disabled')
                     submitInput.textContent = 'En cours de traitement…'
+                    setTimeout(() => {
+                        submitInput.classList.remove('disabled')
+                        submitInput.textContent = initialTextContent
+                    }, (duration * 1000))
                 }
             })
         })()

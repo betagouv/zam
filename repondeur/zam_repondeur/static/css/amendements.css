@@ -32,46 +32,6 @@ h3.subtitle {
     margin-bottom: 0.75rem;
 }
 
-#advanced {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 0 auto 1rem auto;
-    max-width: 56rem;
-}
-#advanced > div {
-    flex-basis: 26rem;
-    padding: 2rem;
-    border-bottom: thin solid #979797;
-}
-#advanced > div.no-border {
-    border-bottom: none;
-}
-#advanced > div h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-#advanced div[role="group"] {
-    margin-top: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-}
-#advanced .button {
-    margin: 0 0.75rem 0.75rem 0;
-    flex-basis: 10rem;
-}
-#advanced .button:last-child {
-    margin-right: 0;
-}
-#advanced .button i {
-    padding-right: 0.5rem;
-}
-@media(min-width:1900px) {
-    #advanced {
-        max-width: none;
-    }
-}
 
 /* Table formatting */
 .table {

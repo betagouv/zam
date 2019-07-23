@@ -25,7 +25,7 @@ class LectureEvent(Event):
     @property
     def template_vars(self) -> dict:
         if self.user:
-            return {"user": self.user.display_name, "email": self.user.email}
+            return {"user": self.user.name, "email": self.user.email}
         return {}
 
     def render_summary(self) -> str:

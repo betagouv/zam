@@ -26,6 +26,17 @@
             <input type="text" name="titre" {% if shared_table is defined %}value="{{ shared_table.titre }}"{% endif %} required>
         </div>
         <div class="form-group save-buttons">
+            {% if shared_table is defined %}
+                {% if shared_table.amendements %}
+                    <a class="button button-sm disabled">
+                        Supprimer
+                    </a>
+                {% else %}
+                    <a class="button button-sm danger" href="{{ request.resource_url(context, 'delete') }}">
+                        Supprimer
+                    </a>
+                {% endif %}
+            {% endif %}
             <input type="submit" name="submit" value="Sauvegarde la boîte" class="button primary">
         </div>
 

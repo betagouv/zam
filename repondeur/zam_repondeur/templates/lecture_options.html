@@ -192,15 +192,6 @@
                             <a class="button button-sm primary" href="{{ request.resource_url(context['boites'], shared_table.slug) }}">
                                 Éditer
                             </a>
-                            {% if shared_table.amendements %}
-                                <a class="button button-sm disabled">
-                                    Supprimer
-                                </a>
-                            {% else %}
-                                <a class="button button-sm danger" href="{{ request.resource_url(context['boites'], shared_table.slug, 'delete') }}">
-                                    Supprimer
-                                </a>
-                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

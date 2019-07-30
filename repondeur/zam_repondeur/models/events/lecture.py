@@ -172,3 +172,59 @@ class ReponsesImporteesJSON(LectureEvent):
 
     def apply(self) -> None:
         pass
+
+
+class SharedTableCreee(LectureEvent):
+    __mapper_args__ = {"polymorphic_identity": "shared_table_creee"}
+    icon = "document"
+
+    @property
+    def summary_template(self) -> Template:
+        titre = self.data["titre"]
+        return Template(
+            f"<abbr title='$email'>$user</abbr> a créé la boîte « {titre} »"
+        )
+
+    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
+        super().__init__(request, lecture, **kwargs)
+
+    def apply(self) -> None:
+        pass
+
+
+class SharedTableRenommee(LectureEvent):
+    __mapper_args__ = {"polymorphic_identity": "shared_table_renommee"}
+    icon = "document"
+
+    @property
+    def summary_template(self) -> Template:
+        old_titre = self.data["old_titre"]
+        new_titre = self.data["new_titre"]
+        return Template(
+            f"<abbr title='$email'>$user</abbr> a renommé la boîte "
+            f"« {old_titre} » en « {new_titre} »"
+        )
+
+    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
+        super().__init__(request, lecture, **kwargs)
+
+    def apply(self) -> None:
+        pass
+
+
+class SharedTableSupprimee(LectureEvent):
+    __mapper_args__ = {"polymorphic_identity": "shared_table_supprimee"}
+    icon = "document"
+
+    @property
+    def summary_template(self) -> Template:
+        titre = self.data["titre"]
+        return Template(
+            f"<abbr title='$email'>$user</abbr> a supprimé la boîte « {titre} »"
+        )
+
+    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
+        super().__init__(request, lecture, **kwargs)
+
+    def apply(self) -> None:
+        pass

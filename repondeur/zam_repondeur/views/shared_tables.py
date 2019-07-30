@@ -6,6 +6,11 @@ from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, SharedTable, get_one_or_create
+from zam_repondeur.models.events.lecture import (
+    SharedTableCreee,
+    SharedTableRenommee,
+    SharedTableSupprimee,
+)
 from zam_repondeur.resources import (
     SharedTableCollection,
     SharedTableResource,
@@ -35,6 +40,9 @@ class SharedTableCollectionView:
             SharedTable, titre=titre, lecture=self.lecture
         )
         if created:
+            SharedTableCreee.create(
+                request=self.request, lecture=self.lecture, titre=titre
+            )
             self.request.session.flash(
                 Message(
                     cls="success", text=f"Boîte « {table.titre} » créée avec succès."
@@ -70,9 +78,16 @@ class SharedTableResourceView:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
+        old_titre = self.shared_table.titre
         titre: str = self.request.POST.get("titre")
         self.shared_table.titre = titre
         self.shared_table.slug = slugify(titre)
+        SharedTableRenommee.create(
+            request=self.request,
+            lecture=self.lecture,
+            old_titre=old_titre,
+            new_titre=titre,
+        )
         self.request.session.flash(
             Message(cls="success", text=f"Boîte « {titre} » sauvegardée avec succès.")
         )
@@ -104,6 +119,9 @@ class SharedTableResourceDeleteView:
     def post(self) -> Response:
         titre = self.shared_table.titre
         DBSession.delete(self.shared_table)
+        SharedTableSupprimee.create(
+            request=self.request, lecture=self.lecture, titre=titre
+        )
         self.request.session.flash(
             Message(cls="success", text=f"Boîte « {titre} » supprimée avec succès.")
         )

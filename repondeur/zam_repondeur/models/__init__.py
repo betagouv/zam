@@ -44,6 +44,9 @@ from .events.lecture import (  # noqa
     AmendementsNonTrouves,
     ReponsesImportees,
     ReponsesImporteesJSON,
+    SharedTableCreee,
+    SharedTableRenommee,
+    SharedTableSupprimee,
 )
 
 

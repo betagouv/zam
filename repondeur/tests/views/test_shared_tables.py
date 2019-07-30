@@ -1,3 +1,6 @@
+import transaction
+
+
 def test_get_shared_tables_empty(app, lecture_an, amendements_an, user_david):
     resp = app.get(f"/lectures/an.15.269.PO717460/options", user=user_david)
 
@@ -24,7 +27,10 @@ def test_get_shared_tables_create_form(app, lecture_an, amendements_an, user_dav
 
 
 def test_post_shared_tables_create_form(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.models import DBSession, SharedTable
+    from zam_repondeur.models import DBSession, Lecture, SharedTable
+
+    with transaction.manager:
+        DBSession.add(user_david)
 
     resp = app.get(f"/lectures/an.15.269.PO717460/boites/add", user=user_david)
     form = resp.form
@@ -47,6 +53,14 @@ def test_post_shared_tables_create_form(app, lecture_an, amendements_an, user_da
     assert shared_table.slug == "test-table"
     assert shared_table.lecture.pk == lecture_an.pk
 
+    # A dedicated event should be created.
+    lecture_an = Lecture.get_by_pk(lecture_an.pk)  # refresh object
+    assert len(lecture_an.events) == 1
+    assert lecture_an.events[0].render_summary() == (
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+        "a créé la boîte « Test table »"
+    )
+
 
 def test_get_shared_tables_edit_form(
     app, lecture_an, amendements_an, user_david, shared_table_lecture_an
@@ -60,7 +74,10 @@ def test_get_shared_tables_edit_form(
 def test_post_shared_tables_edit_form(
     app, lecture_an, amendements_an, user_david, shared_table_lecture_an
 ):
-    from zam_repondeur.models import DBSession, SharedTable
+    from zam_repondeur.models import DBSession, Lecture, SharedTable
+
+    with transaction.manager:
+        DBSession.add(user_david)
 
     resp = app.get(f"/lectures/an.15.269.PO717460/boites/test-table/", user=user_david)
     form = resp.form
@@ -83,6 +100,14 @@ def test_post_shared_tables_edit_form(
     assert shared_table.slug == "test-table-2"
     assert shared_table.lecture.pk == lecture_an.pk
 
+    # A dedicated event should be created.
+    lecture_an = Lecture.get_by_pk(lecture_an.pk)  # refresh object
+    assert len(lecture_an.events) == 1
+    assert lecture_an.events[0].render_summary() == (
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+        "a renommé la boîte « Test table » en « Test table 2 »"
+    )
+
 
 def test_get_shared_tables_delete_form(
     app, lecture_an, amendements_an, user_david, shared_table_lecture_an
@@ -98,7 +123,10 @@ def test_get_shared_tables_delete_form(
 def test_post_shared_tables_delete_form(
     app, lecture_an, amendements_an, user_david, shared_table_lecture_an
 ):
-    from zam_repondeur.models import DBSession, SharedTable
+    from zam_repondeur.models import DBSession, Lecture, SharedTable
+
+    with transaction.manager:
+        DBSession.add(user_david)
 
     assert (
         DBSession.query(SharedTable).filter(SharedTable.titre == "Test table").count()
@@ -121,4 +149,12 @@ def test_post_shared_tables_delete_form(
     assert (
         DBSession.query(SharedTable).filter(SharedTable.titre == "Test table").count()
         == 0
+    )
+
+    # A dedicated event should be created.
+    lecture_an = Lecture.get_by_pk(lecture_an.pk)  # refresh object
+    assert len(lecture_an.events) == 1
+    assert lecture_an.events[0].render_summary() == (
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+        "a supprimé la boîte « Test table »"
     )

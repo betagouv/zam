@@ -15,7 +15,7 @@ importlib-metadata==0.19
 mccabe==0.6.1
 mypy==0.720
 mypy-extensions==0.4.1
-packaging==19.0
+packaging==19.1
 pbr==5.4.1
 pluggy==0.12.0
 prompt-toolkit==2.0.9

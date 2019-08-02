@@ -2,6 +2,7 @@ from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
+from sqlalchemy.orm import joinedload
 
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
@@ -18,7 +19,7 @@ class DossierCollectionBase:
     def __init__(self, context: DossierCollection, request: Request) -> None:
         self.context = context
         self.request = request
-        self.dossiers = context.models()
+        self.dossiers = context.models(joinedload("team"))
 
 
 @view_defaults(context=DossierCollection)

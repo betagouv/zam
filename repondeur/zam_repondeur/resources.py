@@ -76,8 +76,9 @@ class Root(Resource):
 class DossierCollection(Resource):
     __acl__ = [(Allow, "group:admins", "activate"), (Deny, Everyone, "activate")]
 
-    def models(self) -> List[Dossier]:
-        return Dossier.all()
+    def models(self, *options: Any) -> List[Dossier]:
+        result: List[Dossier] = DBSession.query(Dossier).options(*options)
+        return result
 
     def __getitem__(self, key: str) -> Resource:
         resource = DossierResource(name=key, parent=self)

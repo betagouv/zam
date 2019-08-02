@@ -42,6 +42,18 @@ def test_get_form(app, user_sgg, dossier_plfss2018):
     assert form.fields["submit"][0].attrs["type"] == "submit"
 
 
+def test_get_form_non_sgg_user(app, user_david):
+    resp = app.get("/dossiers/add", user=user_david)
+
+    assert resp.status_code == 302
+    assert resp.location == "https://zam.test/"
+
+    resp = resp.maybe_follow()
+
+    assert resp.status_code == 200
+    assert "L’accès à ce dossier est réservé aux personnes autorisées." in resp.text
+
+
 def test_get_form_does_not_propose_dossiers_with_teams(
     app, user_sgg, dossier_plfss2018
 ):

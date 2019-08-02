@@ -58,7 +58,7 @@ def test_lecture_get_transfer_amendements_with_shared_table(
     app, lecture_an, amendements_an, user_david, user_ronan, shared_table_lecture_an
 ):
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -152,7 +152,7 @@ def test_lecture_get_transfer_amendements_from_shared_table(
         amendements_an[0].shared_table = shared_table_lecture_an
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -585,7 +585,7 @@ def test_lecture_post_transfer_amendements_from_void_to_shared_table(
     from zam_repondeur.models import Amendement
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -595,9 +595,13 @@ def test_lecture_post_transfer_amendements_from_void_to_shared_table(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -623,7 +627,7 @@ def test_lecture_post_transfer_amendements_from_me_to_shared_table(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -633,9 +637,13 @@ def test_lecture_post_transfer_amendements_from_me_to_shared_table(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -661,7 +669,7 @@ def test_lecture_post_transfer_amendements_from_other_to_shared_table(
         table_ronan.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -671,9 +679,13 @@ def test_lecture_post_transfer_amendements_from_other_to_shared_table(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -699,7 +711,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_void(
         amendements_an[0].shared_table = shared_table_lecture_an
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -707,9 +719,13 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_void(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -734,7 +750,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_me(
         amendements_an[0].shared_table = shared_table_lecture_an
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -744,9 +760,13 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_me(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -771,7 +791,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_other(
         amendements_an[0].shared_table = shared_table_lecture_an
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -781,9 +801,13 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_other(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction

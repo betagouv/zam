@@ -107,6 +107,7 @@ def test_column_filtering_by_value_with_shared_tables(
     wsgi_server,
     driver,
     lecture_an,
+    lecture_an_url,
     article7bis_an,
     amendements_an,
     user_david_table_an,
@@ -119,7 +120,6 @@ def test_column_filtering_by_value_with_shared_tables(
 ):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
         DBSession.add(user_david_table_an)
         DBSession.add(shared_table_lecture_an)
@@ -127,7 +127,7 @@ def test_column_filtering_by_value_with_shared_tables(
         user_david_table_an.amendements.append(amendements_an[0])
         shared_table_lecture_an.amendements.append(amendements_an[1])
 
-    driver.get(f"{LECTURE_URL}/amendements")
+    driver.get(f"{lecture_an_url}/amendements")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
     input_field = driver.find_element_by_css_selector(
@@ -138,17 +138,17 @@ def test_column_filtering_by_value_with_shared_tables(
     assert extract_column_text(column_index, trs) == filtered
     assert (
         driver.current_url
-        == f"{LECTURE_URL}/amendements?{kind}={input_text.replace(' ', '+')}"
+        == f"{lecture_an_url}/amendements?{kind}={input_text.replace(' ', '+')}"
     )
 
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
-    assert driver.current_url == f"{LECTURE_URL}/amendements"
+    assert driver.current_url == f"{lecture_an_url}/amendements"
 
     # Check filters are active on URL (re)load.
-    driver.get(f"{LECTURE_URL}/amendements?{kind}={input_text}")
+    driver.get(f"{lecture_an_url}/amendements?{kind}={input_text}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == filtered
     input_field = driver.find_element_by_css_selector(
@@ -157,7 +157,7 @@ def test_column_filtering_by_value_with_shared_tables(
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
     assert extract_column_text(column_index, trs) == initial
-    assert driver.current_url == f"{LECTURE_URL}/amendements"
+    assert driver.current_url == f"{lecture_an_url}/amendements"
 
 
 @pytest.mark.parametrize(

@@ -1,6 +1,12 @@
+import transaction
+
+
 def test_post_article_edit_form_title(app, lecture_an, amendements_an, user_david):
     from zam_repondeur.models.events.article import TitreArticleModifie
     from zam_repondeur.models import Amendement, DBSession
+
+    with transaction.manager:
+        DBSession.add(user_david)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
 
@@ -21,8 +27,7 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an, user_davi
     assert event.data["old_value"] == ""
     assert event.data["new_value"] == "Titre article"
     assert event.render_summary() == (
-        "<abbr title='david@exemple.gouv.fr'>david@exemple.gouv.fr</abbr> "
-        "a ajouté le titre."
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> a ajouté le titre."
     )
     assert event.render_details() == "<ins>Titre article</ins> <del></del>"
 
@@ -32,6 +37,9 @@ def test_post_article_edit_form_presentation(
 ):
     from zam_repondeur.models.events.article import PresentationArticleModifiee
     from zam_repondeur.models import Amendement, DBSession
+
+    with transaction.manager:
+        DBSession.add(user_david)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
 
@@ -52,7 +60,6 @@ def test_post_article_edit_form_presentation(
     assert event.data["old_value"] == ""
     assert event.data["new_value"] == "<p>Content</p>"
     assert event.render_summary() == (
-        "<abbr title='david@exemple.gouv.fr'>david@exemple.gouv.fr</abbr> a ajouté "
-        "la présentation."
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> a ajouté la présentation."
     )
     assert event.render_details() == "<p><ins>Content</ins></p> <del></del>"

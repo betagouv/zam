@@ -22,9 +22,7 @@ class ArticleEvent(Event):
             "old_value": self.data["old_value"],
         }
         if self.user:
-            template_vars.update(
-                {"user": self.user.display_name, "email": self.user.email}
-            )
+            template_vars.update({"user": self.user.name, "email": self.user.email})
         return template_vars
 
     def render_summary(self) -> str:

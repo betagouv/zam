@@ -12,7 +12,7 @@ from .chambre import Chambre  # noqa
 from .dossier import Dossier  # noqa
 from .lecture import Lecture  # noqa
 from .users import Team, User  # noqa
-from .table import UserTable  # noqa
+from .table import SharedTable, UserTable  # noqa
 from .texte import Texte, TypeTexte  # noqa
 
 from .events.base import Event  # noqa
@@ -44,6 +44,9 @@ from .events.lecture import (  # noqa
     AmendementsNonTrouves,
     ReponsesImportees,
     ReponsesImporteesJSON,
+    SharedTableCreee,
+    SharedTableRenommee,
+    SharedTableSupprimee,
 )
 
 

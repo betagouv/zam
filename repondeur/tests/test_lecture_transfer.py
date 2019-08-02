@@ -49,7 +49,34 @@ def test_lecture_get_transfer_amendements(
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
-        ("david@exemple.gouv.fr", False, "Moi — David (david@exemple.gouv.fr)"),
+        ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
+        ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
+    ]
+
+
+def test_lecture_get_transfer_amendements_with_shared_table(
+    app, lecture_an, amendements_an, user_david, user_ronan, shared_table_lecture_an
+):
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/transfer_amendements",
+        {"nums": [amendements_an[0]]},
+        user=user_david,
+    )
+
+    assert resp.status_code == 200
+    assert (
+        "Cet amendement est sur l’index"
+        in resp.parser.css_first(".amendements li").text()
+    )
+    assert "checked" in resp.parser.css_first(".amendements li input").attributes
+
+    assert resp.form.method == "POST"
+    assert list(resp.form.fields.keys()) == ["nums", "target", "submit-to"]
+    assert resp.form.fields["nums"][0].value == "666"
+    assert resp.form.fields["target"][0].options == [
+        ("", True, ""),
+        ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
+        ("test-table", False, "Test table"),
         ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
 
@@ -73,7 +100,7 @@ def test_lecture_get_transfer_amendements_from_index(
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
-        ("david@exemple.gouv.fr", False, "Moi — David (david@exemple.gouv.fr)"),
+        ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
         ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
     assert resp.form.fields["from_index"][0].value == "1"
@@ -115,6 +142,42 @@ def test_lecture_get_transfer_amendements_from_me(
     ]
 
 
+def test_lecture_get_transfer_amendements_from_shared_table(
+    app, lecture_an, amendements_an, user_david, user_ronan, shared_table_lecture_an
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(amendements_an[0])
+        amendements_an[0].shared_table = shared_table_lecture_an
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/transfer_amendements",
+        {"nums": [amendements_an[0]]},
+        user=user_david,
+    )
+    assert resp.status_code == 200
+    assert (
+        "Cet amendement est dans la boîte « Test table »"
+        in resp.parser.css_first(".amendements li").text()
+    )
+    assert "checked" in resp.parser.css_first(".amendements li input").attributes
+
+    assert resp.form.method == "POST"
+    assert list(resp.form.fields.keys()) == [
+        "nums",
+        "target",
+        "submit-to",
+        "submit-index",
+    ]
+    assert resp.form.fields["nums"][0].value == "666"
+    assert resp.form.fields["target"][0].options == [
+        ("", True, ""),
+        ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
+        ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
+    ]
+
+
 def test_lecture_get_transfer_amendements_including_me(
     app, lecture_an, amendements_an, user_david, user_ronan, user_david_table_an
 ):
@@ -146,7 +209,7 @@ def test_lecture_get_transfer_amendements_including_me(
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
-        ("david@exemple.gouv.fr", False, "Moi — David (david@exemple.gouv.fr)"),
+        ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
         ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
 
@@ -223,7 +286,7 @@ def test_lecture_get_transfer_amendements_from_other(
     assert resp.form.fields["nums"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
-        ("david@exemple.gouv.fr", False, "Moi — David (david@exemple.gouv.fr)"),
+        ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
         ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
 
@@ -497,4 +560,224 @@ def test_lecture_post_transfer_amendements_to_other_from_index(
     assert table_ronan.amendements[0].events[0].render_summary() == (
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a transféré l’amendement à « Ronan (ronan@exemple.gouv.fr) »."
+    )
+
+
+def test_lecture_post_transfer_amendements_from_void_to_shared_table(
+    app, lecture_an, amendements_an, user_david, shared_table_lecture_an
+):
+    from zam_repondeur.models import Amendement
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/transfer_amendements",
+        {"nums": [amendements_an[0]]},
+        user=user_david,
+    )
+    form = resp.form
+    form["target"] = shared_table_lecture_an.slug
+    resp = form.submit("submit-to")
+
+    # We're redirected to our table
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    )
+
+    # Reload amendement as it was updated in another transaction
+    amendement = Amendement.get(lecture_an, amendements_an[0].num)
+
+    # The amendement is now on the shared table.
+    assert amendement.user_table is None
+    assert amendement.shared_table.pk == shared_table_lecture_an.pk
+    assert amendement.events[0].render_summary() == (
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+        "a transféré l’amendement à « Test table »."
+    )
+
+
+def test_lecture_post_transfer_amendements_from_me_to_shared_table(
+    app, lecture_an, amendements_an, user_david, shared_table_lecture_an
+):
+    from zam_repondeur.models import DBSession, Amendement
+
+    with transaction.manager:
+        DBSession.add(amendements_an[0])
+        table_david = user_david.table_for(lecture_an)
+        table_david.amendements.append(amendements_an[0])
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/transfer_amendements",
+        {"nums": [amendements_an[0]]},
+        user=user_david,
+    )
+    form = resp.form
+    form["target"] = shared_table_lecture_an.slug
+    resp = form.submit("submit-to")
+
+    # We're redirected to our table
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    )
+
+    # Reload amendement as it was updated in another transaction
+    amendement = Amendement.get(lecture_an, amendements_an[0].num)
+
+    # The amendement is now on the shared table.
+    assert amendement.user_table is None
+    assert amendement.shared_table.pk == shared_table_lecture_an.pk
+    assert amendement.events[0].render_summary() == (
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+        "a transféré l’amendement à « Test table »."
+    )
+
+
+def test_lecture_post_transfer_amendements_from_other_to_shared_table(
+    app, lecture_an, amendements_an, user_david, user_ronan, shared_table_lecture_an
+):
+    from zam_repondeur.models import DBSession, Amendement
+
+    with transaction.manager:
+        DBSession.add(amendements_an[0])
+        table_ronan = user_ronan.table_for(lecture_an)
+        table_ronan.amendements.append(amendements_an[0])
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/transfer_amendements",
+        {"nums": [amendements_an[0]]},
+        user=user_david,
+    )
+    form = resp.form
+    form["target"] = shared_table_lecture_an.slug
+    resp = form.submit("submit-to")
+
+    # We're redirected to our table
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    )
+
+    # Reload amendement as it was updated in another transaction
+    amendement = Amendement.get(lecture_an, amendements_an[0].num)
+
+    # The amendement is now on the shared table.
+    assert amendement.user_table is None
+    assert amendement.shared_table.pk == shared_table_lecture_an.pk
+    assert amendement.events[0].render_summary() == (
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+        "a transféré l’amendement de « Ronan (ronan@exemple.gouv.fr) » "
+        "à « Test table »."
+    )
+
+
+def test_lecture_post_transfer_amendements_from_shared_table_to_void(
+    app, lecture_an, amendements_an, user_david, shared_table_lecture_an
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    with transaction.manager:
+        DBSession.add(amendements_an[0])
+        amendements_an[0].shared_table = shared_table_lecture_an
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/transfer_amendements",
+        {"nums": [amendements_an[0]]},
+        user=user_david,
+    )
+    resp = resp.form.submit("submit-index")
+
+    # We're redirected to our table
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    )
+
+    # Reload amendement as it was updated in another transaction
+    amendement = Amendement.get(lecture_an, amendements_an[0].num)
+
+    # The amendement is now on the index.
+    assert amendement.user_table is None
+    assert amendement.shared_table is None
+    assert amendement.events[0].render_summary() == (
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+        "a remis l’amendement de « Test table » dans l’index."
+    )
+
+
+def test_lecture_post_transfer_amendements_from_shared_table_to_me(
+    app, lecture_an, amendements_an, user_david, shared_table_lecture_an
+):
+    from zam_repondeur.models import DBSession, Amendement
+
+    with transaction.manager:
+        DBSession.add(amendements_an[0])
+        amendements_an[0].shared_table = shared_table_lecture_an
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/transfer_amendements",
+        {"nums": [amendements_an[0]]},
+        user=user_david,
+    )
+    form = resp.form
+    form["target"] = user_david.email
+    resp = form.submit("submit-to")
+
+    # We're redirected to our table
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    )
+
+    # Reload amendement as it was updated in another transaction
+    amendement = Amendement.get(lecture_an, amendements_an[0].num)
+
+    # The amendement is now on our table.
+    assert amendement.user_table.user.email == user_david.email
+    assert amendement.shared_table is None
+    assert amendement.events[0].render_summary() == (
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+        "a transféré l’amendement de « Test table » à lui/elle-même."
+    )
+
+
+def test_lecture_post_transfer_amendements_from_shared_table_to_other(
+    app, lecture_an, amendements_an, user_david, user_ronan, shared_table_lecture_an
+):
+    from zam_repondeur.models import DBSession, Amendement
+
+    with transaction.manager:
+        DBSession.add(amendements_an[0])
+        amendements_an[0].shared_table = shared_table_lecture_an
+
+    resp = app.get(
+        "/lectures/an.15.269.PO717460/transfer_amendements",
+        {"nums": [amendements_an[0]]},
+        user=user_david,
+    )
+    form = resp.form
+    form["target"] = user_ronan.email
+    resp = form.submit("submit-to")
+
+    # We're redirected to our table
+    assert resp.status_code == 302
+    assert (
+        resp.location
+        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    )
+
+    # Reload amendement as it was updated in another transaction
+    amendement = Amendement.get(lecture_an, amendements_an[0].num)
+
+    # The amendement is now on their table.
+    assert amendement.user_table.user.email == user_ronan.email
+    assert amendement.shared_table is None
+    assert amendement.events[0].render_summary() == (
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+        "a transféré l’amendement de « Test table » "
+        "à « Ronan (ronan@exemple.gouv.fr) »."
     )

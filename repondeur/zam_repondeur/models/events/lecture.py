@@ -25,7 +25,7 @@ class LectureEvent(Event):
     @property
     def template_vars(self) -> dict:
         if self.user:
-            return {"user": self.user.display_name, "email": self.user.email}
+            return {"user": self.user.name, "email": self.user.email}
         return {}
 
     def render_summary(self) -> str:
@@ -166,6 +166,62 @@ class ReponsesImporteesJSON(LectureEvent):
     summary_template = Template(
         "<abbr title='$email'>$user</abbr> a importé des réponses d’un fichier JSON."
     )
+
+    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
+        super().__init__(request, lecture, **kwargs)
+
+    def apply(self) -> None:
+        pass
+
+
+class SharedTableCreee(LectureEvent):
+    __mapper_args__ = {"polymorphic_identity": "shared_table_creee"}
+    icon = "document"
+
+    @property
+    def summary_template(self) -> Template:
+        titre = self.data["titre"]
+        return Template(
+            f"<abbr title='$email'>$user</abbr> a créé la boîte « {titre} »"
+        )
+
+    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
+        super().__init__(request, lecture, **kwargs)
+
+    def apply(self) -> None:
+        pass
+
+
+class SharedTableRenommee(LectureEvent):
+    __mapper_args__ = {"polymorphic_identity": "shared_table_renommee"}
+    icon = "document"
+
+    @property
+    def summary_template(self) -> Template:
+        old_titre = self.data["old_titre"]
+        new_titre = self.data["new_titre"]
+        return Template(
+            f"<abbr title='$email'>$user</abbr> a renommé la boîte "
+            f"« {old_titre} » en « {new_titre} »"
+        )
+
+    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
+        super().__init__(request, lecture, **kwargs)
+
+    def apply(self) -> None:
+        pass
+
+
+class SharedTableSupprimee(LectureEvent):
+    __mapper_args__ = {"polymorphic_identity": "shared_table_supprimee"}
+    icon = "document"
+
+    @property
+    def summary_template(self) -> Template:
+        titre = self.data["titre"]
+        return Template(
+            f"<abbr title='$email'>$user</abbr> a supprimé la boîte « {titre} »"
+        )
 
     def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
         super().__init__(request, lecture, **kwargs)

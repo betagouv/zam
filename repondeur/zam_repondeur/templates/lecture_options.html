@@ -3,16 +3,104 @@
 
 {% block header %}
 <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/amendements.css') }}">
+<style type="text/css">
+    .box .box {
+        margin: 4rem auto;
+        max-width: 45rem;
+    }
+    .flex-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin: 1rem 1rem 4rem;
+    }
+        .flex-line > div {
+            margin-right: 3rem;
+        }
+        .flex-line p {
+            margin-bottom: 0;
+        }
+        .flex-line .button {
+            min-width: 15rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .flex-line .button-sm {
+            font-size: .9rem;
+            min-width: 1rem;
+            padding: 0.4rem 1rem 0.2rem 1rem;
+        }
+    .flex-line-sm {
+        margin: 1rem;
+    }
+    .table {
+        margin: 1rem;
+        max-width: 39rem;
+    }
+    .table tbody tr td,
+    .table tbody tr:first-child td {
+        padding-top: .8rem;
+    }
+    .table td:last-child {
+        text-align: right;
+    }
+    .btn-danger,
+    .btn-danger:hover {
+        color: #fff;
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+    .disabled {
+        background: white;
+    }
+</style>
 {% endblock %}
 
 {% block body %}
 {% include "svg-file-icons.html" %}
 <h1>Options avancées</h1>
-<div class="content">
-    <section id="advanced" data-target="amendements-options.details">
-        <div data-controller="filename">
-            <h3>Importer des réponses</h3>
-            <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a class="underlined" href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses" target="_blank">suivant la spécification dédiée</a>.</p>
+<div class="box" data-controller="multiple-clicks">
+    <div class="flex-line">
+        <div>
+            <h3>Exporter un tableau de RIM</h3>
+            <p>au format Excel</p>
+        </div>
+        <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'xlsx'}) }}">
+            {{ macros.svg_icon("file-excel") }}
+            Tableau de RIM
+        </a>
+    </div>
+
+    <div class="flex-line">
+        <div>
+            <h3>Exporter un dossier de banc</h3>
+            <p>au format PDF</p>
+        </div>
+        <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'pdf'}) }}">
+            {{ macros.svg_icon("file-pdf") }}
+            Dossier de banc
+        </a>
+    </div>
+
+    <div class="flex-line">
+        <div>
+            <h3>Exporter un fichier JSON</h3>
+        </div>
+        <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'json'}) }}">
+            {{ macros.svg_icon("file-archive") }}
+            Format JSON
+        </a>
+    </div>
+
+</div>
+
+<div class="box">
+    <section data-target="amendements-options.details">
+        <div class="flex-line" data-controller="filename">
+            <div>
+                <h3>Importer des réponses</h3>
+                <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a class="underlined" href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses" target="_blank">suivant la spécification dédiée</a>.</p>
+            </div>
             <form action="{{ request.resource_url(context, 'import_csv') }}" enctype="multipart/form-data" method="post" id="import-form">
                 <div class="custom-file">
                     <input type="file" data-action="filename#display" class="custom-file-input" id="reponses" name="reponses" required>
@@ -23,28 +111,13 @@
                 </div>
             </form>
         </div>
-        <div data-controller="multiple-clicks">
-            <h3>Exporter les données</h3>
-            <p>Télécharger l’ensemble des informations de la lecture dans divers formats.</p>
-            <div role="group" aria-label="Format de téléchargement">
-                <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'xlsx'}) }}">
-                    {{ macros.svg_icon("file-excel") }}
-                    Format Excel
-                </a>
-                <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'pdf'}) }}">
-                    {{ macros.svg_icon("file-pdf") }}
-                    Format PDF
-                </a>
-                <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'json'}) }}">
-                    {{ macros.svg_icon("file-archive") }}
-                    Format JSON
-                </a>
+
+        <div class="flex-line" data-controller="filename">
+            <div>
+                <h3>Importer une liasse XML</h3>
+                <p>Importer des amendements à partir d'un fichier XML provenant
+                de l’Assemblée nationale.</p>
             </div>
-        </div>
-        <div class="no-border" data-controller="filename">
-            <h3>Importer une liasse XML</h3>
-            <p>Importer des amendements à partir d'un fichier XML provenant
-            de l’Assemblée nationale.</p>
             <form action="{{ request.resource_url(context, 'import_liasse_xml') }}" enctype="multipart/form-data" method="post" id="import-liasse-xml" class="align-items-center">
                 <div class="custom-file">
                     <input type="file" data-action="filename#display" class="custom-file-input" id="liasse" name="liasse" required>
@@ -55,9 +128,12 @@
                 </div>
             </form>
         </div>
-        <div class="no-border" data-controller="filename">
-            <h3>Importer un fichier JSON</h3>
-            <p>À partir d’un fichier JSON précédemment exporté (usage avancé).</p>
+
+        <div class="flex-line" data-controller="filename">
+            <div>
+                <h3>Importer un fichier JSON</h3>
+                <p>À partir d’un fichier JSON précédemment exporté (usage avancé).</p>
+            </div>
             <form action="{{ request.resource_url(context, 'import_backup') }}" enctype="multipart/form-data" method="post" id="backup-form">
                 <div class="custom-file">
                     <input type="file" data-action="filename#display" class="custom-file-input" id="backup" name="backup" required>
@@ -68,10 +144,13 @@
                 </div>
             </form>
         </div>
+
         {% if request.user.can_delete_lecture %}
-            <div class="no-border">
-                <h3>Supprimer</h3>
-                <p>Supprimer la lecture ainsi que tous les amendements et réponses associés.</p>
+            <div class="flex-line">
+                <div>
+                    <h3>Supprimer</h3>
+                    <p>Supprimer la lecture ainsi que tous les amendements et réponses associés.</p>
+                </div>
                 <form method="post" action="{{ request.resource_url(context) }}" id="delete-lecture" data-controller="amendements-lecture">
                     <div role="group">
                         <input type="submit" data-action="amendements-lecture#delete" class="danger allow-multiple-submit button" value="Supprimer">
@@ -79,7 +158,54 @@
                 </form>
             </div>
         {% endif %}
+
     </section>
+</div>
+
+<div id="shared-tables" class="box" data-controller="multiple-clicks">
+    <div class="flex-line">
+        <h3>Boîtes</h3>
+        <a class="button primary enabled" href="{{ request.resource_url(context['boites'], 'add') }}">
+            Créer une nouvelle boîte
+        </a>
+    </div>
+
+    {% if shared_tables.count() %}
+        <table class="table">
+            <tbody>
+                {% for shared_table in shared_tables %}
+                    <tr>
+                        <td>
+                            {{ shared_table.titre }}
+                            {% set amendements_nb=shared_table.amendements|count %}
+                            {% if amendements_nb %}
+                                {% if amendements_nb == 1 %}
+                                    (1 amendement)
+                                {% else %}
+                                    ({{ amendements_nb }} amendements)
+                                {% endif %}
+                            {% else %}
+                                (aucun amendement)
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="button button-sm primary" href="{{ request.resource_url(context['boites'], shared_table.slug) }}">
+                                Éditer
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="flex-line">
+            Aucune boîte personnalisée n’existe pour l’instant.
+            Ces boîtes permettent d’y placer des amendements au même titre
+            que les tables des utilisateur·ice·s.
+            Par exemple « Pré RIM » ou « Validé Cab ».
+        </p>
+    {% endif %}
+
 </div>
 {% endblock %}
 

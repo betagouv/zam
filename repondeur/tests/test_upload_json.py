@@ -59,12 +59,15 @@ class TestPostForm:
     def test_upload_success_event(self, app, user_david, lecture_an):
         from zam_repondeur.models import DBSession
 
+        with transaction.manager:
+            DBSession.add(user_david)
+
         self._upload_backup(app, "backup.json", user_david).follow()
 
         DBSession.add(lecture_an)
         assert len(lecture_an.events) == 1
         assert lecture_an.events[0].render_summary() == (
-            "<abbr title='david@exemple.gouv.fr'>david@exemple.gouv.fr</abbr> "
+            "<abbr title='david@exemple.gouv.fr'>David</abbr> "
             "a importé des réponses d’un fichier JSON."
         )
 

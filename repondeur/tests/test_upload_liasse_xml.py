@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import transaction
 from webtest import Upload
 
 
@@ -30,7 +31,10 @@ def test_get_form(
 def test_upload_liasse_success(
     app, lecture_essoc2018_an_nouvelle_lecture_commission_fond, user_david
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import DBSession, Lecture
+
+    with transaction.manager:
+        DBSession.add(user_david)
 
     resp = app.get("/lectures/an.15.806.PO744107/options", user=user_david)
     form = resp.forms["import-liasse-xml"]
@@ -47,7 +51,7 @@ def test_upload_liasse_success(
         lecture_essoc2018_an_nouvelle_lecture_commission_fond.pk
     )
     assert lecture.events[0].render_summary() == (
-        "<abbr title='david@exemple.gouv.fr'>david@exemple.gouv.fr</abbr> a importé "
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> a importé "
         "une liasse XML : 3 nouveaux amendements récupérés."
     )
 

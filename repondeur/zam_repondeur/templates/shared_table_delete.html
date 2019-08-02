@@ -1,0 +1,26 @@
+{% extends "_base_lecture.html" %}
+{% import "macros.html" as macros %}
+
+{% block header %}
+<style type="text/css">
+    .notice {
+        max-width: 30rem;
+        text-align: center;
+        margin: 3rem auto;
+        font-size: 1.4rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    <h1>Supprimer la boîte « {{ shared_table.titre }} »</h1>
+    <p class="notice warning">
+        Vous êtes sur le point de supprimer cette boîte.
+    </p>
+    <form action="{{ request.path }}" method="POST">
+        <div class="form-group save-buttons">
+            <input type="submit" name="submit" value="Confirmer la suppression" class="button warning">
+        </div>
+
+    </form>
+{% endblock %}

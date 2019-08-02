@@ -160,7 +160,7 @@ def test_get_amendements_columns_default(app, lecture_an, amendements_an, user_d
         node.text().strip().split()
         for node in resp.parser.css("thead tr.filters th")
         if node.text().strip().split()
-    ] == [["Article"], ["Nº", "Gouv."], ["Table", "Vide"], ["Avis"], ["Réponse"]]
+    ] == [["Article"], ["Nº", "Gouv."], ["Table/boîte", "Vide"], ["Avis"], ["Réponse"]]
 
 
 def test_get_amendements_columns_missions_for_plf2(
@@ -177,7 +177,7 @@ def test_get_amendements_columns_missions_for_plf2(
         ["Article"],
         ["Mission"],
         ["Nº", "Gouv."],
-        ["Table", "Vide"],
+        ["Table/boîte", "Vide"],
         ["Avis"],
         ["Réponse"],
     ]

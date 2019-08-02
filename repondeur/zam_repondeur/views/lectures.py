@@ -1,6 +1,6 @@
 from datetime import date
 from operator import attrgetter
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Set, Union
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound, HTTPNotFound
 from pyramid.request import Request
@@ -24,6 +24,7 @@ from zam_repondeur.models import (
     DBSession,
     Dossier,
     Lecture,
+    SharedTable,
     Texte,
     User,
     get_one_or_create,
@@ -251,7 +252,9 @@ def list_amendements(context: AmendementCollection, request: Request) -> dict:
     The index
     """
     lecture_resource = context.parent
-    lecture = lecture_resource.model(joinedload("articles"), joinedload("user_tables"))
+    lecture = lecture_resource.model(
+        joinedload("articles"), joinedload("user_tables"), joinedload("shared_tables")
+    )
     return {
         "lecture": lecture,
         "lecture_resource": lecture_resource,
@@ -273,20 +276,21 @@ class TransferAmendements:
         self.request = request
         self.from_index = bool(request.GET.get("from_index"))
         self.amendements_nums: list = self.request.GET.getall("nums")
+        self.lecture = self.context.model()  # PERFS: do not joinedload("amendements").
 
     @view_config(request_method="GET")
     def get(self) -> dict:
         from_save = bool(self.request.GET.get("from_save"))
-        lecture = self.context.model()  # PERFS: do not joinedload("amendements").
-        my_table = self.request.user.table_for(lecture)
+        my_table = self.request.user.table_for(self.lecture)
         amendements = [
             amendement
-            for amendement in lecture.amendements
+            for amendement in self.lecture.amendements
             if str(amendement.num) in self.amendements_nums
         ]
         amendements_being_edited = []
         amendements_not_being_edited = []
         amendements_without_table = []
+        amendements_with_shared_table = []
         for amendement in amendements:
             if amendement.user_table:
                 if (
@@ -296,20 +300,33 @@ class TransferAmendements:
                     amendements_being_edited.append(amendement)
                 else:
                     amendements_not_being_edited.append(amendement)
+            elif amendement.shared_table:
+                amendements_with_shared_table.append(amendement)
             else:
                 amendements_without_table.append(amendement)
-        amendements_with_table = amendements_being_edited + amendements_not_being_edited
-        show_transfer_to_myself = amendements_without_table or not all(
-            amendement.user_table is my_table for amendement in amendements_with_table
+        amendements_with_table = (
+            amendements_being_edited
+            + amendements_not_being_edited
+            + amendements_with_shared_table
+        )
+        show_transfer_to_myself = (
+            amendements_without_table
+            or amendements_with_shared_table
+            or not all(
+                amendement.user_table is my_table
+                for amendement in amendements_with_table
+            )
         )
         return {
-            "lecture": lecture,
+            "lecture": self.lecture,
             "amendements": amendements,
             "amendements_with_table": amendements_with_table,
             "amendements_being_edited": amendements_being_edited,
             "amendements_not_being_edited": amendements_not_being_edited,
+            "amendements_with_shared_table": amendements_with_shared_table,
             "amendements_without_table": amendements_without_table,
             "users": self.target_users,
+            "target_tables": self.target_tables(amendements_with_shared_table),
             "from_index": int(self.from_index),
             "from_save": from_save,
             "show_transfer_to_index": bool(amendements_with_table),
@@ -323,6 +340,22 @@ class TransferAmendements:
         if team is not None:
             return team.everyone_but_me(self.request.user)
         return User.everyone_but_me(self.request.user)
+
+    def target_tables(
+        self, amendements_with_shared_table: List[Amendement]
+    ) -> List[SharedTable]:
+        shared_tables: Set[SharedTable] = set(
+            amendement.shared_table
+            for amendement in amendements_with_shared_table
+            if amendement.shared_table
+        )
+        if len(shared_tables) == 1:
+            return SharedTable.all_but_me(list(shared_tables)[0], self.lecture)
+        else:
+            result: List[SharedTable] = DBSession.query(SharedTable).filter(
+                SharedTable.lecture == self.lecture
+            )
+            return result
 
     @property
     def back_url(self) -> str:
@@ -517,4 +550,10 @@ def lecture_journal(context: LectureResource, request: Request) -> Response:
 @view_config(context=LectureResource, name="options", renderer="lecture_options.html")
 def lecture_options(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
-    return {"lecture": lecture, "lecture_resource": context, "current_tab": "options"}
+    shared_tables = DBSession.query(SharedTable).filter(SharedTable.lecture == lecture)
+    return {
+        "lecture": lecture,
+        "lecture_resource": context,
+        "current_tab": "options",
+        "shared_tables": shared_tables,
+    }

@@ -1,5 +1,4 @@
 import logging
-import time
 from datetime import datetime, timedelta, timezone
 from textwrap import dedent
 from unittest.mock import patch
@@ -244,7 +243,10 @@ class TestLoginWithToken:
     def test_authenticated_user_gets_an_auth_cookie(self, app, auth_token):
         assert "auth_tkt" not in app.cookies  # no auth cookie yet
 
-        app.get("/authentification", params={"token": auth_token})
+        initial_time = datetime.now(tz=timezone.utc)
+
+        with freeze_time(initial_time):
+            app.get("/authentification", params={"token": auth_token})
 
         assert "auth_tkt" in app.cookies  # and now we have the auth cookie
 
@@ -257,7 +259,8 @@ class TestLoginWithToken:
             assert cookie.secure is True
 
             # Auth cookie should expire after 7 days
-            assert cookie.expires == int(time.time()) + (7 * 24 * 3600)
+            in_7_days = int(datetime.timestamp(initial_time)) + (7 * 24 * 3600)
+            assert cookie.expires == in_7_days
 
             # We want users to be able to follow an e-mailed link to the app
             # (see: https://www.owasp.org/index.php/SameSite)

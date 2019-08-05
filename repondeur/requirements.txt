@@ -59,7 +59,7 @@ python-dateutil==2.8.0
 python-editor==1.0.4
 python-gitlab==1.5.1        # the-law-factory-parser: == 1.5.1
 python-redis-lock==3.3.1
-python-slugify==3.0.2
+python-slugify==3.0.3
 python-throttle==0.2.0
 pytz==2019.2
 redis==3.3.4

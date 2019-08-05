@@ -39,7 +39,7 @@ more-itertools==7.2.0
 msgpack==0.6.1
 openpyxl==2.6.2
 parsimonious==0.8.1         # metslesliens
-parsy==1.2.0
+parsy==1.3.0
 PasteDeploy==2.0.1
 pathlib==1.0.1              # anpy: < 1.1, >= 1.0
 pdfkit==0.6.1

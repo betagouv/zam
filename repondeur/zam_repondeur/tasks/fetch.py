@@ -37,25 +37,26 @@ def fetch_lectures(dossier_pk: int) -> None:
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
-def fetch_articles(lecture_pk: int) -> None:
+def fetch_articles(lecture_pk: int) -> bool:
     with huey.lock_task(f"fetch-{lecture_pk}"):
         lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
         if lecture is None:
             logger.error(f"Lecture {lecture_pk} introuvable")
-            return
+            return False
 
         changed: bool = get_articles(lecture)
         if changed:
             ArticlesRecuperes.create(request=None, lecture=lecture)
+        return changed
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
-def fetch_amendements(lecture_pk: int) -> None:
+def fetch_amendements(lecture_pk: int) -> bool:
     with huey.lock_task(f"fetch-{lecture_pk}"):
         lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
         if lecture is None:
             logger.error(f"Lecture {lecture_pk} introuvable")
-            return
+            return False
 
         amendements, created, errored = get_amendements(lecture)
 
@@ -70,5 +71,7 @@ def fetch_amendements(lecture_pk: int) -> None:
                 request=None, lecture=lecture, missings=errored
             )
 
-        if amendements and not (created or errored):
+        changed = bool(amendements and not (created or errored))
+        if changed:
             AmendementsAJour.create(request=None, lecture=lecture)
+        return changed

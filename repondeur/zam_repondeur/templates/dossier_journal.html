@@ -1,0 +1,58 @@
+{% extends "_base.html" %}
+{% import "macros.html" as macros %}
+
+{% block title %}
+    {{ dossier.titre }} • Zam
+{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/journal.css') }}">
+<style type="text/css">
+    .extra-button {
+        display: block;
+        text-align: right;
+        margin-right: .8rem;
+        margin-top: 1rem;
+    }
+        .extra-button form .button {
+            color: #3167a6;
+            border: 1px solid #3167a6;
+            background-color: white;
+        }
+        .extra-button form .button:hover {
+            background-color: #3167a6;
+            color: white;
+        }
+    h2 {
+        text-align: center;
+        font-weight: 600;
+        margin: 2.5rem 0 1.5rem 0;
+    }
+    .button .icon {
+        border-left: none;
+        width: 1.8rem;
+        margin: 0 0 -.2rem 0;
+    }
+
+</style>
+{% endblock %}
+
+{% block body %}
+    <svg aria-hidden="true" style="position: absolute; width: 0; height: 0;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+     <defs>
+         <symbol id="sync" viewBox="0 0 41 20">
+             <path d="M25.65 4.35A7.958 7.958 0 0 0 20 2c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 20 16c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L21 9h7V2l-2.35 2.35z"/>
+         </symbol>
+     </defs>
+    </svg>
+    <div class="extra-button">
+        <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh">
+            <button type="submit" name="refresh" class="button">
+                {{ macros.svg_icon("sync") }}
+                Rafraîchir manuellement
+            </button>
+        </form>
+    </div>
+    <h2>Journal</h2>
+    {{ macros.timeline(dossier.events, today) }}
+{% endblock %}

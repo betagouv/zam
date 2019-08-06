@@ -26,6 +26,13 @@ class Dossier(Base):
         "Lecture", back_populates="dossier", cascade="all, delete-orphan"
     )
 
+    events = relationship(
+        "Event",
+        order_by="Event.created_at.desc()",
+        cascade="all, delete-orphan",
+        backref="dossier",
+    )
+
     __repr_keys__ = ("pk", "slug", "titre", "uid", "team")
 
     @property

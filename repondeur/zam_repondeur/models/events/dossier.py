@@ -18,7 +18,7 @@ class DossierEvent(Event):
     @property
     def template_vars(self) -> dict:
         if self.user:
-            return {"user": self.user.display_name, "email": self.user.email}
+            return {"user": self.user.name, "email": self.user.email}
         return {}
 
     def render_summary(self) -> str:
@@ -36,9 +36,6 @@ class DossierActive(DossierEvent):
         "<abbr title='$email'>$user</abbr> a activé le dossier."
     )
 
-    def __init__(self, request: Request, dossier: Dossier, **kwargs: Any) -> None:
-        super().__init__(request, dossier, **kwargs)
-
     def apply(self) -> None:
         pass
 
@@ -49,8 +46,18 @@ class LecturesRecuperees(DossierEvent):
 
     summary_template = Template("Les lectures ont été récupérées.")
 
-    def __init__(self, request: Request, dossier: Dossier, **kwargs: Any) -> None:
-        super().__init__(request, dossier, **kwargs)
+    def apply(self) -> None:
+        pass
+
+
+class InvitationEnvoyee(DossierEvent):
+    __mapper_args__ = {"polymorphic_identity": "invitation_envoyee"}
+    icon = "document"
+
+    @property
+    def summary_template(self) -> Template:
+        email = self.data["email"]
+        return Template(f"<abbr title='$email'>$user</abbr> a invité « {email} »")
 
     def apply(self) -> None:
         pass

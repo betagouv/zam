@@ -1,14 +1,27 @@
+from datetime import date
+from typing import Iterator, List, Tuple
+
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
+from pyramid_mailer import get_mailer
+from pyramid_mailer.message import Message as MailMessage
 from sqlalchemy.orm import joinedload
 
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
 from zam_repondeur.message import Message
-from zam_repondeur.models import DBSession, Dossier, Lecture, Team, Texte
-from zam_repondeur.models.events.dossier import DossierActive
+from zam_repondeur.models import (
+    DBSession,
+    Dossier,
+    Lecture,
+    Team,
+    Texte,
+    User,
+    get_one_or_create,
+)
+from zam_repondeur.models.events.dossier import DossierActive, InvitationEnvoyee
 from zam_repondeur.models.events.lecture import LectureCreee
 
 from zam_repondeur.resources import DossierCollection, DossierResource
@@ -107,13 +120,15 @@ class DossierAddForm(DossierCollectionBase):
         return dossier_slug
 
 
-@view_defaults(context=DossierResource)
-class DossierView:
+class DossierViewBase:
     def __init__(self, context: DossierResource, request: Request) -> None:
         self.context = context
         self.request = request
         self.dossier = context.dossier
 
+
+@view_defaults(context=DossierResource)
+class DossierView(DossierViewBase):
     @view_config(request_method="GET", renderer="dossier_item.html")
     def get(self) -> Response:
         return {
@@ -132,6 +147,128 @@ class DossierView:
             Message(cls="success", text="Dossier supprimé avec succès.")
         )
         return HTTPFound(location=self.request.resource_url(self.context.parent))
+
+
+@view_defaults(context=DossierResource, name="invite")
+class DossierInviteForm(DossierViewBase):
+    @view_config(request_method="GET", renderer="dossier_invite.html")
+    def get(self) -> dict:
+        return {"dossier": self.dossier, "team": self.dossier.team}
+
+    @view_config(request_method="POST")
+    def post(self) -> Response:
+        emails: str = self.request.POST.get("emails")
+
+        new_users, existing_users = self._add_emails_to_team(emails, self.dossier.team)
+
+        invitations_sent = 0
+        if new_users:
+            invitations_sent += self._send_new_users_invitations(new_users)
+        if existing_users:
+            invitations_sent += self._send_existing_users_invitations(existing_users)
+
+        for user in new_users + existing_users:
+            InvitationEnvoyee.create(
+                request=self.request, dossier=self.dossier, email=user.email
+            )
+
+        if invitations_sent:
+            if invitations_sent > 1:
+                message = "Invitations envoyées avec succès."
+            else:
+                message = "Invitation envoyée avec succès."
+            self.request.session.flash(Message(cls="success", text=message))
+        else:
+            self.request.session.flash(
+                Message(
+                    cls="warning",
+                    text=(
+                        "Aucune invitation n’a été envoyée, veuillez vérifier "
+                        "les adresses de courriel qui doivent être en .gouv.fr"
+                    ),
+                )
+            )
+        return HTTPFound(location=self.request.resource_url(self.context))
+
+    def _add_emails_to_team(
+        self, emails: str, team: Team
+    ) -> Tuple[List[User], List[User]]:
+        new_users = []
+        existing_users = []
+        for email in self._cleaned_emails(emails):
+            user, created = get_one_or_create(User, email=email)
+            if created:
+                new_users.append(user)
+                team.users.append(user)
+            elif user not in team.users:
+                existing_users.append(user)
+                team.users.append(user)
+        return new_users, existing_users
+
+    def _cleaned_emails(self, emails: str) -> Iterator[str]:
+        email_list = emails.split("\n")  # TODO: very naive.
+        for email in email_list:
+            email = User.normalize_email(email)
+            if User.validate_email(email) and User.validate_email_domain(email):
+                yield email
+
+    def _send_new_users_invitations(self, users: List[User]) -> int:
+        # TODO: async?
+        mailer = get_mailer(self.request)
+        subject = "Invitation à rejoindre un dossier législatif sur Zam"
+        url = self.request.route_url("login")
+        body = f"""
+Bonjour,
+
+Vous venez d’être invité·e à rejoindre Zam
+pour participer au dossier législatif suivant :
+{self.dossier.titre}
+
+Veuillez vous connecter à Zam pour y accéder :
+{url}
+
+Bonne journée !
+            """
+        message = MailMessage(
+            subject=subject,
+            sender="contact@zam.beta.gouv.fr",
+            recipients=[user.email for user in users],  # Is that a privacy issue?
+            body=body.strip(),
+        )
+        mailer.send(message)
+        return len(users)
+
+    def _send_existing_users_invitations(self, users: List[User]) -> int:
+        # TODO: async?
+        mailer = get_mailer(self.request)
+        subject = "Invitation à participer à un dossier législatif sur Zam"
+        url = self.request.resource_url(self.request.context)
+        body = f"""
+Bonjour,
+
+Vous venez d’être invité·e à participer
+au dossier législatif suivant sur Zam :
+{self.dossier.titre}
+
+Vous pouvez y accéder via l’adresse suivante :
+{url}
+
+Bonne journée !
+            """
+        message = MailMessage(
+            subject=subject,
+            sender="contact@zam.beta.gouv.fr",
+            recipients=[user.email for user in users],  # Is that a privacy issue?
+            body=body.strip(),
+        )
+        mailer.send(message)
+        return len(users)
+
+
+@view_config(context=DossierResource, name="journal", renderer="dossier_journal.html")
+def lecture_journal(context: DossierResource, request: Request) -> Response:
+    dossier = context.model()
+    return {"dossier": dossier, "today": date.today()}
 
 
 @view_config(context=DossierResource, name="manual_refresh")

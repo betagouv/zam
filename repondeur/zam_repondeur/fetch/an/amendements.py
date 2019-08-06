@@ -299,6 +299,11 @@ def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
     if resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
         raise NotFound(url)
 
+    # Sometimes the URL returns a 200 but the content is empty which leads to
+    # a parsing error from xmltodict if not handled manually before.
+    if not resp.content:
+        raise NotFound(url)
+
     # Other errors
     if resp.status_code >= 400:
         raise FetchError(url, resp)

@@ -778,6 +778,17 @@ class TestFetchAmendement:
                 lecture=lecture_an, numero_prefixe="177", position=1
             )
 
+    @responses.activate
+    def test_fetch_amendement_content_empty(self, lecture_an, app, source):
+        from zam_repondeur.fetch.an.amendements import NotFound, build_url
+
+        responses.add(responses.GET, build_url(lecture_an, 177), status=200, body="")
+
+        with pytest.raises(NotFound):
+            source.fetch_amendement(
+                lecture=lecture_an, numero_prefixe="177", position=1
+            )
+
 
 class TestFetchAmendementAgain:
     @responses.activate

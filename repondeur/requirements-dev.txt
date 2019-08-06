@@ -16,7 +16,7 @@ mccabe==0.6.1
 mypy==0.720
 mypy-extensions==0.4.1
 packaging==19.1
-pbr==5.4.1
+pbr==5.4.2
 pluggy==0.12.0
 prompt-toolkit==2.0.9
 py==1.8.0

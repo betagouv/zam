@@ -65,7 +65,7 @@ def test_get_form_does_not_propose_dossiers_with_teams(
 class TestPostForm:
     @responses.activate
     def test_plfss_2018_an(self, app, user_sgg, dossier_plfss2018):
-        from zam_repondeur.models import Chambre, DBSession, Lecture
+        from zam_repondeur.models import Chambre, DBSession, Dossier, Lecture
 
         assert not DBSession.query(Lecture).all()
 
@@ -188,6 +188,16 @@ class TestPostForm:
 
         assert resp.status_code == 200
         assert "Dossier créé avec succès," in resp.text
+
+        dossier_plfss2018 = (
+            DBSession.query(Dossier).filter(Dossier.slug == "plfss-2018").one()
+        )
+        assert len(dossier_plfss2018.events) == 1
+        assert (
+            dossier_plfss2018.events[0].render_summary()
+            == "<abbr title='user@sgg.pm.gouv.fr'>SGG user</abbr> a activé le dossier."
+        )
+
         lecture = Lecture.get(
             chambre=Chambre.AN,
             session_or_legislature="15",

@@ -40,6 +40,18 @@ class DossierActive(DossierEvent):
         pass
 
 
+class DossierDesactive(DossierEvent):
+    __mapper_args__ = {"polymorphic_identity": "dossier_desactive"}
+    icon = "document"
+
+    summary_template = Template(
+        "<abbr title='$email'>$user</abbr> a désactivé le dossier."
+    )
+
+    def apply(self) -> None:
+        pass
+
+
 class LecturesRecuperees(DossierEvent):
     __mapper_args__ = {"polymorphic_identity": "lectures_recuperees"}
     icon = "document"

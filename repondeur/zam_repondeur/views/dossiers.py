@@ -21,7 +21,11 @@ from zam_repondeur.models import (
     User,
     get_one_or_create,
 )
-from zam_repondeur.models.events.dossier import DossierActive, InvitationEnvoyee
+from zam_repondeur.models.events.dossier import (
+    DossierActive,
+    DossierDesactive,
+    InvitationEnvoyee,
+)
 from zam_repondeur.models.events.lecture import LectureCreee
 
 from zam_repondeur.resources import DossierCollection, DossierResource
@@ -86,6 +90,10 @@ class DossierAddForm(DossierCollectionBase):
 
         team = Team.create(name=dossier.slug)
         dossier.team = team
+
+        # The team needs to be fully created before we create Textes.
+        DBSession.flush()
+
         DossierActive.create(self.request, dossier=dossier)
 
         dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
@@ -139,10 +147,11 @@ class DossierView(DossierViewBase):
 
     @view_config(request_method="POST", permission="delete")
     def post(self) -> Response:
-        self.dossier.team = None
+        DBSession.delete(self.dossier.team)
         for lecture in self.dossier.lectures:
             DBSession.delete(lecture)
         DBSession.flush()
+        DossierDesactive.create(self.request, dossier=self.dossier)
         self.request.session.flash(
             Message(cls="success", text="Dossier supprimé avec succès.")
         )

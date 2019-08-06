@@ -2,7 +2,7 @@ import transaction
 
 
 def test_dossier_delete(app, lecture_an, amendements_an, user_sgg, team_zam):
-    from zam_repondeur.models import Amendement, DBSession, Dossier, Lecture
+    from zam_repondeur.models import Amendement, DBSession, Dossier, Lecture, Team
 
     assert Dossier.exists(slug="plfss-2018")
     assert Lecture.exists(
@@ -12,6 +12,7 @@ def test_dossier_delete(app, lecture_an, amendements_an, user_sgg, team_zam):
         organe=lecture_an.organe,
     )
     assert DBSession.query(Amendement).count() == 2
+    assert DBSession.query(Team).count() == 1
 
     resp = app.get("/dossiers/plfss-2018/", user=user_sgg)
     form = resp.forms["delete-dossier"]
@@ -27,6 +28,10 @@ def test_dossier_delete(app, lecture_an, amendements_an, user_sgg, team_zam):
     assert "Dossier supprimé avec succès." in resp.text
 
     assert Dossier.exists(slug="plfss-2018")
+    dossier_plfss2018 = (
+        DBSession.query(Dossier).filter(Dossier.slug == lecture_an.dossier.slug).one()
+    )
+    assert dossier_plfss2018.team is None
     assert not Lecture.exists(
         chambre=lecture_an.chambre,
         texte=lecture_an.texte,
@@ -34,6 +39,14 @@ def test_dossier_delete(app, lecture_an, amendements_an, user_sgg, team_zam):
         organe=lecture_an.organe,
     )
     assert DBSession.query(Amendement).count() == 0
+    assert DBSession.query(Team).count() == 0
+
+    # We should have an event entry for the desactivation.
+    assert len(dossier_plfss2018.events) == 1
+    assert (
+        dossier_plfss2018.events[0].render_summary()
+        == "<abbr title='user@sgg.pm.gouv.fr'>SGG user</abbr> a désactivé le dossier."
+    )
 
 
 def test_dossier_delete_non_sgg_whitelisted_user(

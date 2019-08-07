@@ -6,7 +6,7 @@ black==18.6b4
 coverage==5.0a6
 entrypoints==0.3
 flake8==3.7.8
-flaky==3.6.0
+flaky==3.6.1
 freezegun==0.3.12
 gitdb2==2.0.5
 GitPython==2.1.13

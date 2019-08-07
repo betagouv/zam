@@ -32,10 +32,15 @@
         </ul>
     </details>
 
-    <form method="post" action="{{ request.resource_url(context, 'invite') }}">
+    <form
+        method="post"
+        action="{{ request.resource_url(context, 'invite') }}"
+        data-controller="dossier-invite">
         <div class="form-group">
             <label for="emails">Personnes à inviter <small>(une adresse courriel par ligne)</small></label>
-            <textarea name="emails" class="form-control" rows="10"></textarea>
+            <textarea
+                name="emails" class="form-control" rows="10"
+                data-action="paste->dossier-invite#clean"></textarea>
         </div>
         <div class="form-group save-buttons">
             <a href="{{ request.resource_url(context) }}" class="arrow-left">Retour</a>

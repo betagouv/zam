@@ -101,9 +101,10 @@ class HeadlessChrome(webdriver.Chrome):
 
 
 @pytest.fixture
-def lecture_an_url(wsgi_server, lecture_an):
-    return (
-        f"{wsgi_server.application_url}"
-        f"dossiers/{lecture_an.dossier.url_key}"
-        f"/lectures/{lecture_an.url_key}"
-    )
+def dossier_an_url(wsgi_server, lecture_an):
+    return f"{wsgi_server.application_url}dossiers/{lecture_an.dossier.url_key}"
+
+
+@pytest.fixture
+def lecture_an_url(wsgi_server, lecture_an, dossier_an_url):
+    return f"{dossier_an_url}/lectures/{lecture_an.url_key}"

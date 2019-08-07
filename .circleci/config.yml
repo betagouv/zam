@@ -31,7 +31,7 @@ jobs:
             google-chrome --version
       - run:
           name: Install system deps
-          command: sudo apt-get install -y wkhtmltopdf xvfb
+          command: sudo apt-get install -y wkhtmltopdf xvfb xclip
       - run:
           name: Install Python deps
           command: |

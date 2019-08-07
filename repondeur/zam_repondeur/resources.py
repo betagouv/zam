@@ -170,6 +170,14 @@ class LectureResource(Resource):
         self.add_child(TableCollection(name="tables", parent=self))
         self.add_child(SharedTableCollection(name="boites", parent=self))
 
+    @property
+    def parent(self) -> LectureCollection:
+        return cast(LectureCollection, self.__parent__)
+
+    @property
+    def dossier_resource(self) -> DossierResource:
+        return self.parent.parent
+
     @reify
     def lecture(self) -> Lecture:
         return self.model()

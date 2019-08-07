@@ -32,7 +32,7 @@
         line-height: 1.2;
     }
     .extra-button {
-        justify-content: flex-end;
+        justify-content: center;
         margin-top: 1rem;
     }
         .extra-button a.button {
@@ -55,15 +55,8 @@
 {% block main_class %}{% endblock %}
 
 {% block body %}
-    {% if allowed_to_activate %}
-    <div class="extra-button dossier box">
-        <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
-            Activer un dossier
-        </a>
-    </div>
-    {% endif %}
     <section>
-        <h2>Mes Zams</h2>
+        <h2>Dossiers législatifs</h2>
         {% for dossier in dossiers %}
             <div class="dossier box">
                 <h3><a href="{{ request.resource_url(context[dossier.url_key]) }}">{{ dossier.titre }}</a></h3>
@@ -73,11 +66,19 @@
                 <h3>Vous ne participez à aucun dossier législatif pour l’instant.</h3>
             </div>
         {% endfor %}
+    </section>
+    <div class="extra-button dossier box">
+    {% if allowed_to_activate %}
+        <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
+            Activer un dossier
+        </a>
+    {% else %}
         <p class="contact">
             Si votre dossier législatif ne figure pas dans la liste, veuillez
             <a href="mailto:melodie.dahi@beta.gouv.fr?subject={{ "Demande de dossier Zam" | urlencode }}" class="button primary">
                 contacter les administrateurs
             </a>
         </p>
-    </section>
+    {% endif %}
+    </div>
 {% endblock %}

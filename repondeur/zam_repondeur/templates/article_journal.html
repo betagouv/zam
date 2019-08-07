@@ -10,28 +10,29 @@
 {% endblock %}
 
 {% block extra_nav %}
+    <li>→</li>
     <li>
-        <a href="{{ request.resource_url(context.lecture_resource, 'tables', request.user.email) }}">
-            Ma table
+        <a href="{{ request.resource_url(lecture_resource.dossier_resource) }}" title="{{ lecture.dossier.titre }}">
+            Dossier
         </a>
     </li>
+    <li>→</li>
     <li>
-        <a href="{{ request.resource_url(context.lecture_resource, 'amendements') }}">
-            Index
+        <a href="{{ request.resource_url(lecture_resource['amendements']) }}" title="{{ lecture }}">
+            Lecture
         </a>
     </li>
-    <li>
-        <a href="{{ request.resource_url(context.lecture_resource, 'options') }}">
-            Options avancées
+    <li>→</li>
+    <li class="separator">
+        <a href="{{ request.resource_url(context) }}" title="{% if article.user_content.title %}{{ article.user_content.title }}{% endif %}">
+            {{ article.format() }}
         </a>
     </li>
-    {% if article.lecture.displayable %}
-        <li>
-            <a href="{{ request.resource_url(context.lecture_resource, 'articles') }}" target="_blank">
-                Dossier de banc
-            </a>
-        </li>
-    {% endif %}
+    <li class="selected">
+        <a href="{{ request.resource_url(context, 'journal') }}">
+            Journal
+        </a>
+    </li>
 {% endblock %}
 
 {% block body %}

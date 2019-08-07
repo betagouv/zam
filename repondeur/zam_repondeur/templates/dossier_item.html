@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+{% extends "_base_dossier.html" %}
 {% import "macros.html" as macros %}
 
 {% block header %}
@@ -57,13 +57,11 @@
 </style>
 {% endblock %}
 
-{% block main_class %}{% endblock %}
-
 {% block body %}
-    <div class="extra-button lecture box">
-        <a class="button primary" href="{{ request.resource_url(context, 'invite') }}">Inviter des personnes</a>
-        <a class="button primary" href="{{ request.resource_url(context, 'journal') }}">Journal</a>
-        {% if allowed_to_delete %}
+    <h1>{{ dossier.titre }}</h1>
+
+    {% if allowed_to_delete %}
+        <div class="extra-button lecture box">
             <svg aria-hidden="true" style="position: absolute; width: 0; height: 0;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
              <defs>
                  <symbol id="sync" viewBox="0 0 31 15">
@@ -71,23 +69,21 @@
                  </symbol>
              </defs>
             </svg>
-                <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh">
-                    <button type="submit" name="refresh" class="button primary">
-                        {{ macros.svg_icon("sync") }}
-                        Rafraîchir tout le dossier
-                    </button>
-                </form>
-                <form method="post" action="{{ request.resource_url(context) }}" id="delete-dossier" data-controller="dossier-item">
-                    <div role="group">
-                        <input type="submit" data-action="dossier-item#delete" class="danger allow-multiple-submit button" value="Supprimer le dossier">
-                    </div>
-                </form>
-        {% endif %}
-    </div>
+            <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh">
+                <button type="submit" name="refresh" class="button primary">
+                    {{ macros.svg_icon("sync") }}
+                    Rafraîchir tout le dossier
+                </button>
+            </form>
+            <form method="post" action="{{ request.resource_url(context) }}" id="delete-dossier" data-controller="dossier-item">
+                <div role="group">
+                    <input type="submit" data-action="dossier-item#delete" class="danger allow-multiple-submit button" value="Supprimer le dossier">
+                </div>
+            </form>
+        </div>
+    {% endif %}
 
-    <h1>{{ dossier.titre }}</h1>
-
-    {% for lecture in lectures %}
+    {% for lecture in lectures|reverse %}
         {# We can hardly use groupby here, so let's do that by hand. #}
         {% if loop.previtem is not defined or (loop.previtem is defined and loop.previtem.chambre != lecture.chambre) %}
             <h2>{{ lecture.chambre.value }}</h2>

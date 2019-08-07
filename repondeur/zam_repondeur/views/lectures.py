@@ -341,7 +341,12 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
 @view_config(context=LectureResource, name="journal", renderer="lecture_journal.html")
 def lecture_journal(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
-    return {"lecture": lecture, "today": date.today()}
+    return {
+        "lecture": lecture,
+        "lecture_resource": context,
+        "current_tab": "journal",
+        "today": date.today(),
+    }
 
 
 @view_config(context=LectureResource, name="options", renderer="lecture_options.html")

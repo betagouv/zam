@@ -66,11 +66,10 @@ nav.main {
             nav.main ul li.selected a:hover {
                 text-decoration: none;
             }
-    nav.main ul:first-child li:first-child {
+    nav.main ul:first-child li.separator {
         border-right: 2px solid white;
         padding-right: 2rem;
         margin-right: 0.3rem;
-        margin-left: 0;
     }
     nav.main a.home {
         padding: 0 0 0 1.5rem;

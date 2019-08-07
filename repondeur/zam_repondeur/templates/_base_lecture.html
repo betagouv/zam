@@ -5,22 +5,37 @@
 {% endblock %}
 
 {% block extra_nav %}
+    <li>→</li>
+    <li>
+        <a href="{{ request.resource_url(lecture_resource.dossier_resource) }}" title="{{ lecture.dossier.titre }}">
+            Dossier
+        </a>
+    </li>
+    <li>→</li>
+    <li class="separator{% if current_tab == 'index' %} selected{% endif %}">
+        <a href="{{ request.resource_url(lecture_resource['amendements']) }}" title="{{ lecture }}">
+            Lecture
+        </a>
+    </li>
     <li{% if current_tab == 'table' %} class="selected"{% endif %}>
         <a href="{{ request.resource_url(lecture_resource['tables'], request.user.email) }}">
             Ma table
         </a>
     </li>
-    <li{% if current_tab == 'index' %} class="selected"{% endif %}>
-        <a href="{{ request.resource_url(lecture_resource['amendements']) }}">
-            Index
+    <li>•</li>
+    <li{% if current_tab == 'journal' %} class="selected"{% endif %}>
+        <a href="{{ request.resource_url(lecture_resource, 'journal') }}">
+            Journal
         </a>
     </li>
+    <li>•</li>
     <li{% if current_tab == 'options' %} class="selected"{% endif %}>
         <a href="{{ request.resource_url(lecture_resource, 'options') }}">
             Options avancées
         </a>
     </li>
     {% if lecture.displayable %}
+        <li>•</li>
         <li>
             <a href="{{ request.resource_url(lecture_resource['articles']) }}" target="_blank">
                 Dossier de banc

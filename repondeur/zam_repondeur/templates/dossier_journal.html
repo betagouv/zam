@@ -1,9 +1,7 @@
-{% extends "_base.html" %}
+{% extends "_base_dossier.html" %}
 {% import "macros.html" as macros %}
 
-{% block title %}
-    {{ dossier.titre }} • Zam
-{% endblock %}
+{% block main_class %}box{% endblock %}
 
 {% block header %}
 <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/journal.css') }}">

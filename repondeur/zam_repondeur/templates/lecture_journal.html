@@ -1,9 +1,5 @@
-{% extends "_base.html" %}
+{% extends "_base_lecture.html" %}
 {% import "macros.html" as macros %}
-
-{% block title %}
-    {{ lecture }} • {{ lecture.dossier.titre }} • Zam
-{% endblock %}
 
 {% block header %}
 <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/journal.css') }}">
@@ -35,31 +31,6 @@
     }
 
 </style>
-{% endblock %}
-
-{% block extra_nav %}
-    <li>
-        <a href="{{ request.resource_url(context['tables'], request.user.email) }}">
-            Ma table
-        </a>
-    </li>
-    <li>
-        <a href="{{ request.resource_url(context, 'amendements') }}">
-            Index
-        </a>
-    </li>
-    <li>
-        <a href="{{ request.resource_url(context, 'options') }}">
-            Options avancées
-        </a>
-    </li>
-    {% if lecture.displayable %}
-        <li>
-            <a href="{{ request.resource_url(context['articles']) }}" target="_blank">
-                Dossier de banc
-            </a>
-        </li>
-    {% endif %}
 {% endblock %}
 
 {% block body %}

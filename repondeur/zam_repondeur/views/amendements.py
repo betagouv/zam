@@ -44,6 +44,7 @@ class AmendementEdit:
         return {
             "amendement": self.amendement,
             "amendements": self.amendements,
+            "lecture_resource": self.context.lecture_resource,
             "avis": AVIS,
             "table": self.amendement.user_table,
             "is_on_my_table": self.is_on_my_table,
@@ -140,6 +141,7 @@ class AmendementEdit:
 def amendement_journal(context: AmendementResource, request: Request) -> Dict[str, Any]:
     return {
         "lecture": context.lecture_resource.model(),
+        "lecture_resource": context.lecture_resource,
         "amendement": context.model(),
         "today": date.today(),
         "back_url": request.resource_url(context, "amendement_edit"),

@@ -145,28 +145,29 @@
 {% endblock %}
 
 {% block extra_nav %}
+    <li>→</li>
     <li>
-        <a href="{{ my_table_url }}">
-            Ma table
+        <a href="{{ request.resource_url(lecture_resource.dossier_resource) }}" title="{{ amendement.lecture.dossier.titre }}">
+            Dossier
+        </a>
+    </li>
+    <li>→</li>
+    <li>
+        <a href="{{ request.resource_url(lecture_resource['amendements']) }}" title="{{ amendement.lecture }}">
+            Lecture
+        </a>
+    </li>
+    <li>→</li>
+    <li class="separator selected">
+        <a href="{{ request.resource_url(context, 'amendement_edit') }}">
+            Amendement nº&nbsp;{{ amendement }}
         </a>
     </li>
     <li>
-        <a href="{{ request.resource_url(context.lecture_resource, 'amendements') }}">
-            Index
+        <a href="{{ request.resource_url(context, 'journal') }}">
+            Journal
         </a>
     </li>
-    <li>
-        <a href="{{ request.resource_url(context.lecture_resource, 'options') }}">
-            Options avancées
-        </a>
-    </li>
-    {% if amendement.is_displayable %}
-        <li>
-            <a href="{{ request.resource_url(context.lecture_resource, 'articles', amendement.article.url_key, 'reponses', anchor=amendement.slug) }}" target="_blank">
-                Dossier de banc
-            </a>
-        </li>
-    {% endif %}
 {% endblock %}
 
 {% block body %}

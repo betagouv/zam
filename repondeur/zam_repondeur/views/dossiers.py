@@ -141,6 +141,7 @@ class DossierView(DossierViewBase):
     def get(self) -> Response:
         return {
             "dossier": self.dossier,
+            "current_tab": "dossier",
             "lectures": sorted(self.dossier.lectures),
             "allowed_to_delete": self.request.has_permission("delete", self.context),
         }
@@ -162,7 +163,11 @@ class DossierView(DossierViewBase):
 class DossierInviteForm(DossierViewBase):
     @view_config(request_method="GET", renderer="dossier_invite.html")
     def get(self) -> dict:
-        return {"dossier": self.dossier, "team": self.dossier.team}
+        return {
+            "dossier": self.dossier,
+            "team": self.dossier.team,
+            "current_tab": "invite",
+        }
 
     @view_config(request_method="POST")
     def post(self) -> Response:
@@ -277,7 +282,7 @@ Bonne journée !
 @view_config(context=DossierResource, name="journal", renderer="dossier_journal.html")
 def lecture_journal(context: DossierResource, request: Request) -> Response:
     dossier = context.model()
-    return {"dossier": dossier, "today": date.today()}
+    return {"dossier": dossier, "today": date.today(), "current_tab": "journal"}
 
 
 @view_config(context=DossierResource, name="manual_refresh")

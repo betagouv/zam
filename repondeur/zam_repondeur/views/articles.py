@@ -51,6 +51,8 @@ class ArticleEdit:
         return {
             "article": self.article,
             "lecture": lecture,
+            "lecture_resource": self.context.lecture_resource,
+            "current_tab": "article",
             "back_url": self.back_url(),
         }
 
@@ -103,6 +105,7 @@ class ArticleEdit:
 def article_journal(context: ArticleResource, request: Request) -> Dict[str, Any]:
     return {
         "lecture": context.lecture_resource.model(),
+        "lecture_resource": context.lecture_resource,
         "article": context.model(),
         "today": date.today(),
         "back_url": request.resource_url(context),

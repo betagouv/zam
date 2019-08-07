@@ -65,6 +65,15 @@ class TestLoginPage:
             Bonne journée !"""
         )
 
+    def test_user_can_ask_for_a_token_with_an_whitelisted_domain_name(
+        self, app, mailer
+    ):
+        resp = app.post("/identification", {"email": "listeblanche@exemple.fr"})
+        resp = resp.maybe_follow()
+
+        assert "Vous devriez recevoir un lien dans les minutes" in resp.text
+        assert len(mailer.outbox) == 1
+
     @pytest.mark.parametrize("missing_email", ["", " "])
     def test_user_cannot_ask_for_a_token_with_a_missing_email(self, app, missing_email):
         resp = app.post("/identification", {"email": missing_email})
@@ -101,7 +110,7 @@ class TestLoginPage:
         assert resp.status_code == 302
         assert resp.location == "https://zam.test/identification"
         resp = resp.follow()
-        assert "Cette adresse de courriel n’est pas en .gouv.fr." in resp.text
+        assert "Cette adresse de courriel n’est pas acceptée." in resp.text
 
     def test_successful_auth_token_request_is_logged(self, app, caplog):
         caplog.set_level(logging.INFO)

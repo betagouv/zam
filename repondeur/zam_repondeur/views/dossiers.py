@@ -223,7 +223,9 @@ class DossierInviteForm(DossierViewBase):
         email_list = emails.split("\n")  # TODO: very naive.
         for email in email_list:
             email = User.normalize_email(email)
-            if User.validate_email(email) and User.validate_email_domain(email):
+            if User.validate_email(email) and User.validate_email_domain(
+                email, self.request.registry.settings
+            ):
                 yield email
 
     def _send_new_users_invitations(self, users: List[User]) -> int:

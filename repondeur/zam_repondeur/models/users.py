@@ -1,6 +1,8 @@
 from datetime import datetime
-from typing import Any, List, Optional, TYPE_CHECKING
+from fnmatch import fnmatchcase
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
+from paste.deploy.converters import aslist
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, Text, func
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy_utils import EmailType
@@ -89,8 +91,11 @@ class User(Base):
         return email != "" and "@" in email
 
     @staticmethod
-    def validate_email_domain(email: str) -> bool:
-        return email.endswith(".gouv.fr")
+    def validate_email_domain(email: str, settings: Dict[str, str]) -> bool:
+        return any(
+            fnmatchcase(email, pattern)
+            for pattern in aslist(settings["zam.auth_user_patterns"])
+        )
 
     @staticmethod
     def normalize_name(name: str) -> str:

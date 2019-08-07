@@ -169,6 +169,29 @@ def test_post_form_not_gouv(app, user_david, dossier_plfss2018):
     assert dossier_plfss2018.events == []
 
 
+def test_post_form_whitelisted(app, user_david, dossier_plfss2018):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(dossier_plfss2018)
+        assert len(dossier_plfss2018.team.users) == 1
+        assert dossier_plfss2018.events == []
+
+    resp = app.get("/dossiers/plfss-2018/invite", user=user_david)
+    assert resp.status_code == 200
+
+    form = resp.forms[0]
+    form["emails"] = "listeblanche@exemple.fr"
+
+    resp = form.submit()
+    assert resp.status_code == 302
+
+    resp = resp.follow()
+    assert resp.status_code == 200
+
+    assert "Invitation envoyée avec succès." in resp.text
+
+
 def test_post_form_multiple_invites(app, user_david, dossier_plfss2018, mailer):
     from zam_repondeur.models import DBSession, Dossier
 

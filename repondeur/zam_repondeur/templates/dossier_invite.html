@@ -11,27 +11,6 @@
         en saisissant leur adresse courriel.
         </big>
     </p>
-    <details open>
-        <summary>Personnes déjà invitées</summary>
-        <ul>
-        {% for user in team.users %}
-            {% if user.name %}
-                <li>{{ user }}</li>
-            {% endif %}
-        {% endfor %}
-        </ul>
-    </details>
-    <details open>
-        <summary>Personnes en cours d’invitation</summary>
-        <ul>
-        {% for user in team.users %}
-            {% if not user.name %}
-                <li>{{ user.email }}</li>
-            {% endif %}
-        {% endfor %}
-        </ul>
-    </details>
-
     <form
         method="post"
         action="{{ request.resource_url(context, 'invite') }}"
@@ -47,6 +26,14 @@
             <input type="submit" name="save" value="Inviter" class="button primary">
         </div>
     </form>
+    <details>
+        <summary>Personnes déjà invitées</summary>
+        <ul>
+        {% for user in team.users %}
+            <li>{{ user }}</li>
+        {% endfor %}
+        </ul>
+    </details>
 {% endblock %}
 
 {% block scripts %}

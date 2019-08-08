@@ -67,6 +67,8 @@ class Root(Resource):
         (Allow, Authenticated, "view"),
         (Allow, "group:admins", "delete"),
         (Deny, Everyone, "delete"),
+        (Allow, "group:admins", "refresh_dossier"),
+        (Deny, Everyone, "refresh_dossier"),
     ]
 
     def __init__(self, _request: Request) -> None:

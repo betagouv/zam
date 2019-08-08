@@ -43,14 +43,16 @@
          </symbol>
      </defs>
     </svg>
-    <div class="extra-button">
-        <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh">
-            <button type="submit" name="refresh" class="button">
-                {{ macros.svg_icon("sync") }}
-                Rafraîchir manuellement
-            </button>
-        </form>
-    </div>
+    {% if allowed_to_refresh %}
+        <div class="extra-button">
+            <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh">
+                <button type="submit" name="refresh" class="button">
+                    {{ macros.svg_icon("sync") }}
+                    Rafraîchir manuellement
+                </button>
+            </form>
+        </div>
+    {% endif %}
     <h2>Journal</h2>
     {{ macros.timeline(dossier.events, today) }}
 {% endblock %}

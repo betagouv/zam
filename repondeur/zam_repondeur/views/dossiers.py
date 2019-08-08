@@ -284,7 +284,13 @@ Bonne journée !
 @view_config(context=DossierResource, name="journal", renderer="dossier_journal.html")
 def lecture_journal(context: DossierResource, request: Request) -> Response:
     dossier = context.model()
-    return {"dossier": dossier, "today": date.today(), "current_tab": "journal"}
+    allowed_to_refresh = request.has_permission("refresh_dossier", context)
+    return {
+        "dossier": dossier,
+        "today": date.today(),
+        "current_tab": "journal",
+        "allowed_to_refresh": allowed_to_refresh,
+    }
 
 
 @view_config(context=DossierResource, name="manual_refresh")

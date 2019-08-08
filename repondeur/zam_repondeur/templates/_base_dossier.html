@@ -5,20 +5,3 @@
 {% endblock %}
 
 {% block main_class %}{% endblock %}
-
-{% block extra_nav %}
-    <li>→</li>
-    <li class="separator{% if current_tab == 'dossier' %} selected{% endif %}">
-        <a href="{{ request.resource_url(context) }}" title="{{ dossier.titre }}">
-            Dossier
-        </a>
-    </li>
-    <li{% if current_tab == 'invite' %} class="selected"{% endif %}>
-        <a href="{{ request.resource_url(context, 'invite') }}">Inviter des personnes</a>
-    </li>
-    <li>•</li>
-    <li{% if current_tab == 'journal' %} class="selected"{% endif %}>
-        <a href="{{ request.resource_url(context, 'journal') }}">Journal</a>
-    </li>
-
-{% endblock %}

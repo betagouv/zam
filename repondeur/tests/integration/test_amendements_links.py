@@ -5,6 +5,7 @@ def test_repondeur_does_not_contains_link_to_visionneuse_if_no_avis(
     wsgi_server, driver, lecture_an_url, amendements_an
 ):
     driver.get(f"{lecture_an_url}/amendements/")
+    driver.find_element_by_css_selector(".menu-toggle").click()
     menu_items = [
         item.text for item in driver.find_elements_by_css_selector("nav.main li")
     ]
@@ -21,6 +22,7 @@ def test_repondeur_contains_link_to_visionneuse_if_avis(
         DBSession.add_all(amendements_an)
 
     driver.get(f"{lecture_an_url}/amendements/")
+    driver.find_element_by_css_selector(".menu-toggle").click()
     menu_items = [
         item.text for item in driver.find_elements_by_css_selector("nav.main li")
     ]

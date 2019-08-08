@@ -144,32 +144,6 @@
     </style>
 {% endblock %}
 
-{% block extra_nav %}
-    <li>→</li>
-    <li>
-        <a href="{{ request.resource_url(lecture_resource.dossier_resource) }}" title="{{ amendement.lecture.dossier.titre }}">
-            Dossier
-        </a>
-    </li>
-    <li>→</li>
-    <li>
-        <a href="{{ request.resource_url(lecture_resource['amendements']) }}" title="{{ amendement.lecture }}">
-            Lecture
-        </a>
-    </li>
-    <li>→</li>
-    <li class="separator selected">
-        <a href="{{ request.resource_url(context, 'amendement_edit') }}">
-            Amendement nº&nbsp;{{ amendement }}
-        </a>
-    </li>
-    <li>
-        <a href="{{ request.resource_url(context, 'journal') }}">
-            Journal
-        </a>
-    </li>
-{% endblock %}
-
 {% block body %}
     <section class="content box">
         {% if amendement.batch %}

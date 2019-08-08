@@ -40,19 +40,17 @@ nav.main {
     min-height: calc(24px + 1.4rem);
 }
     nav.main ul {
-        display: flex;
         list-style-type: none;
         margin: 0;
         padding: 8px 0;
     }
         nav.main ul li {
             padding: .2rem;
-            white-space: nowrap;
             margin-left: 1.5rem;
+            line-height: 1.8;
         }
             nav.main ul li a {
                 color: white;
-                padding: .3rem .2rem .1rem .2rem;
                 border-bottom: 2px solid transparent;
             }
             nav.main ul li a:hover {
@@ -75,10 +73,9 @@ nav.main {
         padding: 0 0 0 1.5rem;
         background: no-repeat left 30%/.85rem url("../img/home.svg");
     }
-    nav.main a.account {
-        background: no-repeat right 35%/1.1rem url("../img/compte.svg");
-        padding-left: 0;
-        padding-right: 1.7rem;
+    nav.main .menu-account a.account {
+        background: no-repeat left 35%/1.1rem url("../img/compte.svg");
+        padding-left: 1.7rem;
     }
     nav.main .account-menu-toggle {
         position: relative;
@@ -86,28 +83,24 @@ nav.main {
         nav.main .account-menu-toggle:hover {
             cursor: pointer;
         }
-    nav.main .account-menu {
+    nav.main .menu {
         display: flex;
-        position: absolute;
-        top: calc(20px + 1.4rem);
-        right: 0;
-        min-width: 220px;
         flex-direction: column;
+        position: absolute;
+        top: calc(20px + 2rem);
+        left: 2px;
+        width: 240px;
+        min-height: calc(100vh - 20px - 2rem);
         border: solid 1px white;
         padding: 8px 16px;
         background-color: #3167a6;
     }
-        nav.main .account-menu > * {
-            padding: 0;
-            margin: 0.5rem;
+    nav.main .menu > * {
+        flex: 1;
+    }
+        .menu .menu-account {
+            max-height: 5rem;
         }
-        nav.main .account-menu a {
-            padding: 0;
-        }
-            nav.main .account-menu a.logout {
-                background: no-repeat right 40%/1.1rem url("../img/exit.svg");
-                padding-right: 1.7rem;
-            }
 
 nav.secondary {
     padding: 1.2rem 2rem 1rem 2rem;

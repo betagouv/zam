@@ -62,16 +62,10 @@
     <h1>{{ dossier.titre }}</h1>
 
     {% for lecture in lectures|reverse %}
-        {# We can hardly use groupby here, so let's do that by hand. #}
-        {% if loop.previtem is not defined or (loop.previtem is defined and loop.previtem.chambre != lecture.chambre) %}
-            <h2>{{ lecture.chambre.value }}</h2>
-        {% endif %}
-        {% if loop.previtem is not defined or (loop.previtem is defined and loop.previtem.organe != lecture.organe) %}
-            <h3>» {{ lecture.format_organe() }}</h3>
-        {% endif %}
         <div class="lecture box">
             <div>
-                <h3>{{ lecture.format_num_lecture() }}, {{ lecture.format_texte() }}</h3>
+                <h3>{{ lecture.chambre.value }}, {{ lecture.format_organe() }}</h3>
+                <p>{{ lecture.format_num_lecture() }}, {{ lecture.format_texte() }}</p>
                 {% if lecture.amendements %}
                     <em>{{ lecture.amendements|length }} amendements</em>
                 {% endif %}

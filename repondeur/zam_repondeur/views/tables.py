@@ -38,6 +38,7 @@ class TableView:
         return {
             "lecture": self.lecture,
             "lecture_resource": self.context.lecture_resource,
+            "dossier_resource": self.context.lecture_resource.dossier_resource,
             "current_tab": "table",
             "table": table,
             "all_amendements": table.amendements,

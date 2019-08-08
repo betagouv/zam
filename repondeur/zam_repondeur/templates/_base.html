@@ -13,22 +13,69 @@
 <body>
     <nav class="main">
         {% block nav %}
-            <ul>
+            <ul data-controller="menu">
                 {% if request.user %}
-                    <li><a class="home" href="{{ request.resource_url(request.root['dossiers']) }}" title="Aller à la liste des dossiers">Dossiers</a></li>
-                    {% block extra_nav %}{% endblock %}
-                {% endif %}
-            </ul>
-            <ul data-controller="account-menu">
-                {% if request.user %}
-                    <li class="account-menu-toggle">
-                        <a class="account" data-action="account-menu#toggle click@window->account-menu#dismiss">{{ request.user.name or "" }}</a>
-                        <ul class="account-menu d-none" data-target="account-menu.menu">
-                            {% if request.user.name %}
-                                <li><a href="{{ request.route_url('welcome') }}">Modifier mon nom</a></li>
-                            {% endif %}
-                            <li><a class="logout" href="{{ request.route_url('logout') }}" title="Se déconnecter de Zam">Déconnexion</a></li>
-                        </ul>
+                    <li class="menu-toggle">
+                        <a data-action="menu#toggle click@window->menu#dismiss">Menu</a>
+                        <div class="menu d-none" data-target="menu.menu">
+                            <ul class="menu-breadcrumb">
+                                <li {% if not dossier_resource is defined and not lecture_resource is defined %}
+                                        class="selected"
+                                    {% endif %}><a class="home" href="{{ request.resource_url(request.root['dossiers']) }}" title="Aller à la liste des dossiers">Dossiers</a></li>
+                                {% if dossier_resource is defined %}
+                                    <li {% if not lecture_resource is defined %}
+                                        class="selected"
+                                    {% endif %}>
+                                        <a href="{{ request.resource_url(dossier_resource) }}">{{ dossier_resource.model().titre }}</a>
+                                    </li>
+                                {% endif %}
+                                {% if lecture_resource is defined %}
+                                    <li class="selected">
+                                        <a href="{{ request.resource_url(lecture_resource, 'amendements') }}">{{ lecture_resource.model() }}</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                            <ul class="menu-actions">
+                                {% if lecture_resource is defined %}
+                                    <li{% if current_tab == 'table' %} class="selected"{% endif %}>
+                                        <a href="{{ request.resource_url(lecture_resource['tables'], request.user.email) }}">
+                                            Ma table
+                                        </a>
+                                    </li>
+                                    <li{% if current_tab == 'index' %} class="selected"{% endif %}>
+                                        <a href="{{ request.resource_url(lecture_resource, 'amendements') }}">
+                                            Index
+                                        </a>
+                                    </li>
+                                    <li{% if current_tab == 'journal' %} class="selected"{% endif %}>
+                                        <a href="{{ request.resource_url(lecture_resource, 'journal') }}">
+                                            Journal
+                                        </a>
+                                    </li>
+                                    <li{% if current_tab == 'options' %} class="selected"{% endif %}>
+                                        <a href="{{ request.resource_url(lecture_resource, 'options') }}">
+                                            Options avancées
+                                        </a>
+                                    </li>
+                                    {% if lecture_resource.lecture.displayable %}
+                                        <li>
+                                            <a href="{{ request.resource_url(lecture_resource['articles']) }}" target="_blank">
+                                                Dossier de banc
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                                {% if dossier_resource is defined %}
+                                    <li{% if current_tab == 'invite' %} class="selected"{% endif %}><a href="{{ request.resource_url(dossier_resource, 'invite') }}">Inviter des personnes</a></li>
+                                {% endif %}
+                            </ul>
+                            <ul class="menu-account">
+                                {% if request.user.name %}
+                                    <li><a href="{{ request.route_url('welcome') }}" class="account">{{ request.user.name or "" }}</a></li>
+                                {% endif %}
+                                <li><a class="logout" href="{{ request.route_url('logout') }}" title="Se déconnecter de Zam">Déconnexion</a></li>
+                            </ul>
+                        </div>
                     </li>
                 {% endif %}
             </ul>

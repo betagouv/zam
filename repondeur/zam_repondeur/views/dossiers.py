@@ -141,6 +141,7 @@ class DossierView(DossierViewBase):
     def get(self) -> Response:
         return {
             "dossier": self.dossier,
+            "dossier_resource": self.context,
             "current_tab": "dossier",
             "lectures": sorted(self.dossier.lectures),
             "allowed_to_delete": self.request.has_permission("delete", self.context),
@@ -165,6 +166,8 @@ class DossierInviteForm(DossierViewBase):
     def get(self) -> dict:
         return {
             "dossier": self.dossier,
+            "dossier_resource": self.context,
+            "current_tab": "invite",
             "team": self.dossier.team,
             "current_tab": "invite",
         }
@@ -287,6 +290,7 @@ def lecture_journal(context: DossierResource, request: Request) -> Response:
     allowed_to_refresh = request.has_permission("refresh_dossier", context)
     return {
         "dossier": dossier,
+        "dossier_resource": context,
         "today": date.today(),
         "current_tab": "journal",
         "allowed_to_refresh": allowed_to_refresh,

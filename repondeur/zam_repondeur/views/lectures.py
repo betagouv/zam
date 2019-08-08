@@ -1,6 +1,6 @@
 from datetime import date
 
-from typing import Any, List, Optional, Set, Union
+from typing import Any, List, Optional, Set
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
@@ -22,25 +22,8 @@ from zam_repondeur.models.events.amendement import (
 )
 
 from zam_repondeur.models.users import Team
-from zam_repondeur.resources import (
-    AmendementCollection,
-    LectureCollection,
-    LectureResource,
-)
+from zam_repondeur.resources import AmendementCollection, LectureResource
 from zam_repondeur.tasks.fetch import fetch_articles, fetch_amendements
-
-
-@view_config(context=LectureCollection, renderer="lectures_list.html")
-def lectures_list(
-    context: LectureCollection, request: Request
-) -> Union[Response, dict]:
-
-    lectures = context.models()
-
-    if not lectures:
-        return HTTPFound(request.resource_url(context.parent))
-
-    return {"lectures": lectures}
 
 
 @view_config(context=AmendementCollection, renderer="amendements.html")
@@ -54,6 +37,7 @@ def list_amendements(context: AmendementCollection, request: Request) -> dict:
     )
     return {
         "lecture": lecture,
+        "dossier_resource": lecture_resource.dossier_resource,
         "lecture_resource": lecture_resource,
         "current_tab": "index",
         "all_amendements": lecture.amendements,
@@ -116,6 +100,9 @@ class TransferAmendements:
         )
         return {
             "lecture": self.lecture,
+            "lecture_resource": self.context,
+            "dossier_resource": self.context.dossier_resource,
+            "current_tab": "index",
             "amendements": amendements,
             "amendements_with_table": amendements_with_table,
             "amendements_being_edited": amendements_being_edited,
@@ -182,6 +169,9 @@ class BatchAmendements:
 
         return {
             "lecture": self.lecture,
+            "lecture_resource": self.context,
+            "dossier_resource": self.context.dossier_resource,
+            "current_tab": "table",
             "amendements": amendements,
             "back_url": self.my_table_url,
         }
@@ -343,6 +333,7 @@ def lecture_journal(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
     return {
         "lecture": lecture,
+        "dossier_resource": context.dossier_resource,
         "lecture_resource": context,
         "current_tab": "journal",
         "today": date.today(),
@@ -355,6 +346,7 @@ def lecture_options(context: LectureResource, request: Request) -> Response:
     shared_tables = DBSession.query(SharedTable).filter(SharedTable.lecture == lecture)
     return {
         "lecture": lecture,
+        "dossier_resource": context.dossier_resource,
         "lecture_resource": context,
         "current_tab": "options",
         "shared_tables": shared_tables,

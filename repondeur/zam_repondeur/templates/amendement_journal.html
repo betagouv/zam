@@ -9,32 +9,6 @@
     <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/journal.css') }}">
 {% endblock %}
 
-{% block extra_nav %}
-    <li>→</li>
-    <li>
-        <a href="{{ request.resource_url(lecture_resource.dossier_resource) }}" title="{{ amendement.lecture.dossier.titre }}">
-            Dossier
-        </a>
-    </li>
-    <li>→</li>
-    <li>
-        <a href="{{ request.resource_url(lecture_resource['amendements']) }}" title="{{ amendement.lecture }}">
-            Lecture
-        </a>
-    </li>
-    <li>→</li>
-    <li class="separator">
-        <a href="{{ request.resource_url(context, 'amendement_edit') }}">
-            Amendement nº&nbsp;{{ amendement }}
-        </a>
-    </li>
-    <li class="selected">
-        <a href="{{ request.resource_url(context, 'journal') }}">
-            Journal
-        </a>
-    </li>
-{% endblock %}
-
 {% block body %}
     <a href="{{ back_url }}" class="arrow-left">Retour</a>
     <h1>Journal des modifications</h1>

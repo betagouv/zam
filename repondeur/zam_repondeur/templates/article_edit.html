@@ -5,32 +5,6 @@
     {{ article.lecture }} • {{ article.lecture.dossier.titre }} • Zam
 {% endblock %}
 
-{% block extra_nav %}
-    <li>→</li>
-    <li>
-        <a href="{{ request.resource_url(lecture_resource.dossier_resource) }}" title="{{ lecture.dossier.titre }}">
-            Dossier
-        </a>
-    </li>
-    <li>→</li>
-    <li>
-        <a href="{{ request.resource_url(lecture_resource['amendements']) }}" title="{{ lecture }}">
-            Lecture
-        </a>
-    </li>
-    <li>→</li>
-    <li class="separator selected">
-        <a href="{{ request.resource_url(context) }}" title="{% if article.user_content.title %}{{ article.user_content.title }}{% endif %}">
-            {{ article.format() }}
-        </a>
-    </li>
-    <li>
-        <a href="{{ request.resource_url(context, 'journal') }}">
-            Journal
-        </a>
-    </li>
-{% endblock %}
-
 {% block body %}
     <section class="content box">
         <a href="{{ back_url }}" class="arrow-left">Retour</a>

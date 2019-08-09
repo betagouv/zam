@@ -3,7 +3,7 @@ import sys
 from argparse import ArgumentParser, Namespace
 from typing import Any, Dict, List
 
-from huey import RedisHuey
+from huey import Huey
 from pyramid.paster import bootstrap, setup_logging
 from redis.exceptions import ConnectionError
 
@@ -66,7 +66,7 @@ def parse_args(argv: List[str]) -> Namespace:
     return parser.parse_args(argv)
 
 
-def flush_stale_locks(huey: RedisHuey) -> None:
+def flush_stale_locks(huey: Huey) -> None:
     """
     Flush stale Huey locks
 

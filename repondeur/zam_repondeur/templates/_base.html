@@ -40,11 +40,6 @@
                             </ul>
                             <ul class="menu-actions">
                                 {% if lecture_resource is defined %}
-                                    <li{% if current_tab == 'options' %} class="selected"{% endif %}>
-                                        <a href="{{ request.resource_url(lecture_resource, 'options') }}">
-                                            Options avancées
-                                        </a>
-                                    </li>
                                     {% if lecture_resource.lecture.displayable %}
                                         <li>
                                             <a href="{{ request.resource_url(lecture_resource['articles']) }}" target="_blank">
@@ -52,6 +47,11 @@
                                             </a>
                                         </li>
                                     {% endif %}
+                                    <li{% if current_tab == 'options' %} class="selected"{% endif %}>
+                                        <a href="{{ request.resource_url(lecture_resource, 'options') }}">
+                                            Options avancées
+                                        </a>
+                                    </li>
                                 {% endif %}
                                 {% if dossier_resource is defined %}
                                     <li{% if current_tab == 'invite' %} class="selected"{% endif %}><a href="{{ request.resource_url(dossier_resource, 'invite') }}">Inviter des personnes</a></li>

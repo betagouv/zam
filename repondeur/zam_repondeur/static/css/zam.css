@@ -32,7 +32,7 @@ a {
 nav.main {
     background: #3167a6;
     color: white;
-    padding: 0 2rem;
+    padding: 0 1rem;
     font-size: 1rem;
     display: flex;
     justify-content: space-between;
@@ -46,7 +46,7 @@ nav.main {
     }
         nav.main ul li {
             padding: .2rem;
-            margin-left: 1.5rem;
+            margin-left: .5rem;
             line-height: 1.8;
         }
             nav.main ul li a {
@@ -64,12 +64,14 @@ nav.main {
             nav.main ul li.selected a:hover {
                 text-decoration: none;
             }
-    nav.main ul:first-child li.separator {
-        border-right: 2px solid white;
-        padding-right: 2rem;
-        margin-right: 0.3rem;
+    nav.main > ul {
+        display: flex;
+        flex-direction: row;
     }
-    nav.main .menu-account a.account {
+        nav.main > ul li {
+            margin: 0 1.6rem;
+        }
+    nav.main .menu-actions a.account {
         background: no-repeat left 35%/1.1rem url("../img/compte.svg");
         padding-left: 1.7rem;
     }
@@ -93,28 +95,24 @@ nav.main {
         top: calc(19px + 2rem);
         left: 0;
         width: 300px;
-        min-height: calc(100vh - 20px - 2rem);
+        min-height: calc(100vh - 19px - 2rem);
         border: solid 1px white;
         padding: 8px;
         background-color: #3167a6;
         z-index: 100;
     }
-    nav.main .menu > * {
-        flex: 1;
-    }
-        .menu .menu-breadcrumb li {
-            padding-top: .8rem;
+        nav.main .menu li {
+            padding-top: 1rem;
         }
-            .menu .menu-breadcrumb .menu-dossier {
-                font-size: 1.4rem;
-                line-height: 1.5;
-            }
-        .menu .menu-actions,
-        .menu .menu-account {
+        .menu .menu-breadcrumb {
+            flex: 1;
+        }
+                .menu .menu-breadcrumb .menu-dossier {
+                    font-size: 1.4rem;
+                    line-height: 1.5;
+                }
+        .menu .menu-actions {
             border-top: 1px solid white;
-        }
-        .menu .menu-account {
-            max-height: 5rem;
         }
         .menu .arrow-left {
             padding-left: 1.33rem;

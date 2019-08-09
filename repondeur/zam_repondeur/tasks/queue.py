@@ -27,11 +27,15 @@ class State(Enum):
 
 class TransactionalHuey(Huey):
     """
-    A huey task queue that only queues tasks if the whole transaction succeeds.
+    A huey task queue that tries to play well with transactions
 
-    Also, we wrap tasks to run in their own transaction in the worker
-    (not in immediate mode).
+    - allows enqueing tasks only if the whole transaction succeeds
+    - runs each task inside an individual transaction in workers
     """
+
+    def __init__(self, *, transactional_enqueue: bool = True, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.transactional_enqueue = transactional_enqueue
 
     def enqueue(self, task: Any) -> None:
         logger.debug("Enqueue task %r", task)
@@ -43,14 +47,17 @@ class TransactionalHuey(Huey):
             self.really_enqueue(task)
             return
 
-        # If we're not in immediate mode, schedule the task for execution by a worker
-        # if the transaction succeeds.
-        logger.debug(
-            "Task will be scheduled for execution by a worker"
-            " if the transaction succeeds"
-        )
-        managed_task = ManagedTask(self, task)
-        managed_task.join_transaction()
+        # Schedule the task immediately or when the transaction succeeds
+        if self.transactional_enqueue:
+            logger.debug(
+                "Task will be scheduled for execution by a worker"
+                " if the transaction succeeds"
+            )
+            managed_task = ManagedTask(self, task)
+            managed_task.join_transaction()
+        else:
+            logger.debug("Enqueueing task immediately")
+            self.really_enqueue(task)
 
     def really_enqueue(self, task: Any) -> None:
         super().enqueue(task)

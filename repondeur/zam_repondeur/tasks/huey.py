@@ -13,5 +13,8 @@ def init_huey(settings: dict) -> Huey:
             storage_class=RedisStorage,
             url=settings["zam.tasks.redis_url"],
             immediate=asbool(settings.get("zam.tasks.immediate", "False")),
+            transactional_enqueue=asbool(
+                settings.get("zam.tasks.transactional_enqueue", "True")
+            ),
         )
     return huey

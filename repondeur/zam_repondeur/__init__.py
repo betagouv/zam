@@ -12,7 +12,6 @@ from sqlalchemy import engine_from_config, event
 from zam_repondeur.errors import extract_settings, setup_rollbar_log_handler
 from zam_repondeur.models import DBSession, Base, log_query_with_origin
 from zam_repondeur.resources import Root
-from zam_repondeur.tasks.huey import init_huey
 from zam_repondeur.version import load_version
 
 
@@ -56,8 +55,7 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         config.add_route("error", "/error")
 
         config.include("zam_repondeur.assets")
-
-        init_huey(settings)
+        config.include("zam_repondeur.tasks")
         config.include("zam_repondeur.data")
         config.include("zam_repondeur.users")
         config.include("zam_repondeur.amendements")

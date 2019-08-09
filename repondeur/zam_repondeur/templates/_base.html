@@ -19,19 +19,22 @@
                         <a data-action="menu#toggle click@window->menu#dismiss">Menu</a>
                         <div class="menu d-none" data-target="menu.menu">
                             <ul class="menu-breadcrumb">
-                                <li {% if not dossier_resource is defined and not lecture_resource is defined %}
-                                        class="selected"
-                                    {% endif %}><a class="home" href="{{ request.resource_url(request.root['dossiers']) }}" title="Aller à la liste des dossiers">Dossiers</a></li>
                                 {% if dossier_resource is defined %}
-                                    <li class="menu-dossier{% if not lecture_resource is defined %}
-                                        selected
-                                    {% endif %}">
-                                        <a href="{{ request.resource_url(dossier_resource) }}">{{ dossier_resource.model().titre }}</a>
+                                    <li class="menu-dossier">
+                                        {{ dossier_resource.model().titre }}
                                     </li>
+                                    {% if not lecture_resource is defined %}
+                                        <li>
+                                            <a class="arrow-left" href="{{ request.resource_url(dossier_resource.parent) }}">Liste des dossiers</a>
+                                        </li>
+                                    {% endif %}
                                 {% endif %}
                                 {% if lecture_resource is defined %}
-                                    <li class="selected">
-                                        <a href="{{ request.resource_url(lecture_resource, 'amendements') }}">{{ lecture_resource.model() }}</a>
+                                    <li>
+                                        {{ lecture_resource.model() }}
+                                    </li>
+                                    <li>
+                                        <a class="arrow-left" href="{{ request.resource_url(dossier_resource) }}">Liste des lectures</a>
                                     </li>
                                 {% endif %}
                             </ul>

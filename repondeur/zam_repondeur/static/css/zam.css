@@ -104,6 +104,10 @@ nav.main {
         nav.main .menu li {
             padding-top: 1rem;
         }
+        nav.main .menu .backlink {
+            border-bottom: 1px solid white;
+            padding-bottom: 2rem;
+        }
         .menu .menu-breadcrumb {
             flex: 1;
         }
@@ -111,8 +115,8 @@ nav.main {
                     font-size: 1.4rem;
                     line-height: 1.5;
                 }
-        .menu .menu-actions {
-            border-top: 1px solid white;
+        .menu .menu-actions .user {
+            margin-top: 2rem;
         }
         .menu .arrow-left {
             padding-left: 1.33rem;

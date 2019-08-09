@@ -21,19 +21,21 @@
                             <ul class="menu-breadcrumb">
                                 {% if dossier_resource is defined %}
                                     <li class="menu-dossier">
-                                        {{ dossier_resource.model().titre }}
+                                        <a href="{{ request.resource_url(dossier_resource) }}">{{ dossier_resource.model().titre }}</a>
                                     </li>
                                     {% if not lecture_resource is defined %}
-                                        <li>
+                                        <li class="backlink">
                                             <a class="arrow-left" href="{{ request.resource_url(dossier_resource.parent) }}">Liste des dossiers</a>
                                         </li>
                                     {% endif %}
                                 {% endif %}
                                 {% if lecture_resource is defined %}
                                     <li>
-                                        {{ lecture_resource.model() }}
+                                        <a href="{{ request.resource_url(lecture_resource, 'amendements') }}">
+                                            {{ lecture_resource.model() }}
+                                        </a>
                                     </li>
-                                    <li>
+                                    <li class="backlink">
                                         <a class="arrow-left" href="{{ request.resource_url(dossier_resource) }}">Liste des lectures</a>
                                     </li>
                                 {% endif %}
@@ -57,7 +59,7 @@
                                     <li{% if current_tab == 'invite' %} class="selected"{% endif %}><a href="{{ request.resource_url(dossier_resource, 'invite') }}">Inviter des personnes</a></li>
                                 {% endif %}
                                 {% if request.user.name %}
-                                    <li><a href="{{ request.route_url('welcome') }}" class="account">{{ request.user.name or "" }}</a></li>
+                                    <li class="user"><a href="{{ request.route_url('welcome') }}" class="account">{{ request.user.name or "" }}</a></li>
                                 {% endif %}
                                 <li><a class="logout" href="{{ request.route_url('logout') }}" title="Se déconnecter de Zam">Déconnexion</a></li>
                             </ul>

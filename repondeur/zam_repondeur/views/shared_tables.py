@@ -30,6 +30,7 @@ class SharedTableCollectionView:
         return {
             "lecture": self.lecture,
             "lecture_resource": self.context.lecture_resource,
+            "dossier_resource": self.context.lecture_resource.dossier_resource,
             "current_tab": "options",
         }
 
@@ -72,6 +73,7 @@ class SharedTableResourceView:
         return {
             "lecture": self.lecture,
             "lecture_resource": self.context.lecture_resource,
+            "dossier_resource": self.context.lecture_resource.dossier_resource,
             "shared_table": self.shared_table,
             "current_tab": "options",
         }
@@ -111,6 +113,7 @@ class SharedTableResourceDeleteView:
         return {
             "lecture": self.lecture,
             "lecture_resource": self.context.lecture_resource,
+            "dossier_resource": self.context.lecture_resource.dossier_resource,
             "shared_table": self.shared_table,
             "current_tab": "options",
         }

@@ -83,6 +83,13 @@ nav.main {
         nav.main .account-menu-toggle:hover {
             cursor: pointer;
         }
+    nav.main .menu-toggle {
+        margin-left: 0;
+    }
+        nav.main .menu-toggle > a {
+            background: no-repeat left 0/1.3rem url("../img/menu_icon.svg");
+            padding-left: 1.7rem;
+        }
     nav.main .menu {
         display: flex;
         flex-direction: column;
@@ -92,14 +99,23 @@ nav.main {
         width: 240px;
         min-height: calc(100vh - 20px - 2rem);
         border: solid 1px white;
-        padding: 8px 16px;
+        padding: 8px;
         background-color: #3167a6;
+        z-index: 100;
     }
     nav.main .menu > * {
         flex: 1;
     }
+        .menu .menu-actions,
+        .menu .menu-account {
+            border-top: 2px solid white;
+        }
         .menu .menu-account {
             max-height: 5rem;
+        }
+        .menu .menu-breadcrumb .menu-dossier {
+            font-size: 1.4rem;
+            line-height: 1.5;
         }
 
 nav.secondary {

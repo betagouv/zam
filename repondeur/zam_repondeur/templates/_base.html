@@ -23,9 +23,9 @@
                                         class="selected"
                                     {% endif %}><a class="home" href="{{ request.resource_url(request.root['dossiers']) }}" title="Aller à la liste des dossiers">Dossiers</a></li>
                                 {% if dossier_resource is defined %}
-                                    <li {% if not lecture_resource is defined %}
-                                        class="selected"
-                                    {% endif %}>
+                                    <li class="menu-dossier{% if not lecture_resource is defined %}
+                                        selected
+                                    {% endif %}">
                                         <a href="{{ request.resource_url(dossier_resource) }}">{{ dossier_resource.model().titre }}</a>
                                     </li>
                                 {% endif %}
@@ -66,6 +66,9 @@
                                     {% endif %}
                                 {% endif %}
                                 {% if dossier_resource is defined %}
+                                    {% if not lecture_resource is defined %}
+                                        <li{% if current_tab == 'journal' %} class="selected"{% endif %}><a href="{{ request.resource_url(dossier_resource, 'journal') }}">Journal</a></li>
+                                    {% endif %}
                                     <li{% if current_tab == 'invite' %} class="selected"{% endif %}><a href="{{ request.resource_url(dossier_resource, 'invite') }}">Inviter des personnes</a></li>
                                 {% endif %}
                             </ul>

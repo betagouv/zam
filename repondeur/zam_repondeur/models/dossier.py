@@ -5,9 +5,10 @@ from sqlalchemy import Column, DateTime, Integer, Text, desc
 from sqlalchemy.orm import joinedload, relationship
 
 from .base import Base, DBSession
+from .events.base import LastEventMixin
 
 
-class Dossier(Base):
+class Dossier(Base, LastEventMixin):
     __tablename__ = "dossiers"
 
     pk = Column(Integer, primary_key=True)

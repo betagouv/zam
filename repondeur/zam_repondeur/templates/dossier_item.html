@@ -58,8 +58,22 @@
 </style>
 {% endblock %}
 
+{% block main_class %}box{% endblock %}
+
 {% block body %}
     <h1>{{ dossier.titre }}</h1>
+
+    <div class="last-update">
+        Dernière mise à jour :
+        <a class="underlined" href="{{ request.resource_url(context, 'journal') }}">
+            <time xsi:type="xsd:dateTime"
+                datetime="{{ dossier.last_event_datetime.isoformat() }}"
+                data-controller="timestamp"
+                data-timestamp-modified-at="{{ dossier.last_event_timestamp }}">
+                    {{ dossier.last_event_datetime.strftime("%A %d %B à %I:%M%p") }}
+            </time>
+        </a>
+    </div>
 
     {% for lecture in lectures|reverse %}
         <div class="lecture box">
@@ -72,10 +86,10 @@
             </div>
             <nav>
                 <a href="{{ request.resource_url(context['lectures'][lecture.url_key], 'tables', request.user.email) }}">
-                    Consulter ma table
+                    Ma table
                 </a>
                 <a href="{{ request.resource_url(context['lectures'][lecture.url_key], 'amendements') }}">
-                    Consulter l’index
+                    Voir l’index
                 </a>
             </nav>
         </div>

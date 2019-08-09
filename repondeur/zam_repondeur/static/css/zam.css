@@ -90,8 +90,8 @@ nav.main {
         display: flex;
         flex-direction: column;
         position: absolute;
-        top: calc(20px + 2rem);
-        left: 2px;
+        top: calc(19px + 2rem);
+        left: 0;
         width: 300px;
         min-height: calc(100vh - 20px - 2rem);
         border: solid 1px white;
@@ -111,7 +111,7 @@ nav.main {
             }
         .menu .menu-actions,
         .menu .menu-account {
-            border-top: 2px solid white;
+            border-top: 1px solid white;
         }
         .menu .menu-account {
             max-height: 5rem;

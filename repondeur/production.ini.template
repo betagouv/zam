@@ -4,9 +4,11 @@ pipeline =
     paste_prefix
     repondeur
 
+
 [filter:paste_prefix]
 use = egg:PasteDeploy#prefix
 prefix = /repondeur
+
 
 [filter:rollbar]
 use = egg:rollbar#pyramid
@@ -14,6 +16,7 @@ access_token = $$rollbar_token
 environment = $$environment
 branch = $$branch
 root = %(here)s
+
 
 [app:repondeur]
 use = egg:zam_repondeur
@@ -49,12 +52,21 @@ zam.auth_secret = $$auth_secret
 
 zam.uploads_backup_dir = /srv/repondeur/data/uploads
 
+
+[app:worker]
+use = repondeur
+
+# Enqueue periodic tasks immediately
+zam.tasks.transactional_enqueue = false
+
+
 [server:main]
 use = egg:gunicorn#main
 host = 127.0.0.1
 port = 6543
 workers = $$gunicorn_workers
 timeout = $$gunicorn_timeout
+
 
 [alembic]
 script_location = db_migrations

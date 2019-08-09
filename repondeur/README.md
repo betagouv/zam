@@ -108,7 +108,7 @@ You can now access the web app at http://localhost:6543/
 ### Start the worker for asynchronous tasks
 
 ```
-(zam)$ zam_worker development.ini
+(zam)$ zam_worker development.ini#worker
 ```
 
 ### Development

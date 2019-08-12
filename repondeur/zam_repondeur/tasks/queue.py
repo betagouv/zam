@@ -34,6 +34,12 @@ class TransactionalHuey(Huey):
     """
 
     def __init__(self, *, transactional_enqueue: bool = True, **kwargs: Any) -> None:
+        """
+        The `transactional_enqueue` parameter is kept as True for the webapp as
+        we are in a context where the transaction is tied to the request but
+        in case of a worker, we want the scheduler to issue it immediatly and
+        thus set the parameter to False.
+        """
         super().__init__(**kwargs)
         self.transactional_enqueue = transactional_enqueue
 

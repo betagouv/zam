@@ -28,7 +28,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile.app
-    command: zam_worker development-docker.ini
+    command: zam_worker development-docker.ini#worker
     volumes:
       - ./:/app
     depends_on:

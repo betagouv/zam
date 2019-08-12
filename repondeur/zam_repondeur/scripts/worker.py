@@ -3,12 +3,11 @@ import sys
 from argparse import ArgumentParser, Namespace
 from typing import Any, Dict, List
 
-from huey import RedisHuey
+from huey import Huey
 from pyramid.paster import bootstrap, setup_logging
 from redis.exceptions import ConnectionError
 
 from zam_repondeur.errors import extract_settings, setup_rollbar_log_handler
-from zam_repondeur.tasks.huey import init_huey
 
 
 logger = logging.getLogger(__name__)
@@ -24,19 +23,18 @@ def main(argv: List[str] = sys.argv) -> None:
 
     with bootstrap(args.config_uri, options=options) as env:
         settings = env["registry"].settings
+        request = env["request"]
 
         rollbar_settings = extract_settings(settings, prefix="rollbar.")
         if "access_token" in rollbar_settings and "environment" in rollbar_settings:
             setup_rollbar_log_handler(rollbar_settings)
 
-        start_huey(args.config_uri, options, settings)
+        start_huey(args.config_uri, options, settings, request.huey)
 
 
 def start_huey(
-    config_uri: str, options: Dict[str, str], settings: Dict[str, Any]
+    config_uri: str, options: Dict[str, str], settings: Dict[str, Any], huey: Huey
 ) -> None:
-
-    huey = init_huey(settings)
 
     from zam_repondeur.tasks.fetch import fetch_articles, fetch_amendements  # noqa
     from zam_repondeur.tasks.periodic import update_data, fetch_all_amendements  # noqa
@@ -66,7 +64,7 @@ def parse_args(argv: List[str]) -> Namespace:
     return parser.parse_args(argv)
 
 
-def flush_stale_locks(huey: RedisHuey) -> None:
+def flush_stale_locks(huey: Huey) -> None:
     """
     Flush stale Huey locks
 

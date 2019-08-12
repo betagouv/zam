@@ -30,7 +30,7 @@ a {
 }
 
 nav.main {
-    background: #3167a6;
+    background: #3167a6 no-repeat 98% 50%/1.7rem url("../img/logo_1_0_white_z_only.svg");
     color: white;
     padding: 0 1rem;
     font-size: 1rem;

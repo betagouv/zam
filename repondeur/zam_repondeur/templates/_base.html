@@ -3,6 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Zam{% endblock %}</title>
+
+    {# Generated via https://realfavicongenerator.net/ #}
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ request.static_url('zam_repondeur:static/favicons/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ request.static_url('zam_repondeur:static/favicons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ request.static_url('zam_repondeur:static/favicons/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ request.static_url('zam_repondeur:static/favicons/site.webmanifest') }}">
+    <link rel="mask-icon" href="{{ request.static_url('zam_repondeur:static/favicons/safari-pinned-tab.svg') }}" color="#5bbad5">
+    <link rel="shortcut icon" href="{{ request.static_url('zam_repondeur:static/favicons/favicon.ico') }}">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="{{ request.static_url('zam_repondeur:static/favicons/browserconfig.xml') }}">
+    <meta name="theme-color" content="#ffffff">
+
     <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/css/fonts.css') }}">
     <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/css/zam.css') }}">

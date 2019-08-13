@@ -1,6 +1,7 @@
 from datetime import date
 from typing import Iterator, List, Tuple
 
+from paste.deploy.converters import aslist
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
@@ -90,6 +91,13 @@ class DossierAddForm(DossierCollectionBase):
 
         team = Team.create(name=dossier.slug)
         dossier.team = team
+        admins_emails: List[str] = aslist(
+            self.request.registry.settings.get("zam.auth_admins")
+        )
+        for admin in DBSession.query(User).filter(
+            User.email.in_(admins_emails)  # type: ignore
+        ):
+            admin.teams.append(team)
 
         # The team needs to be fully created before we create Textes.
         DBSession.flush()

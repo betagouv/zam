@@ -42,12 +42,11 @@ class TestPostForm:
             headers=headers,
         ).forms["import-form"]
 
-    def _upload_csv(self, app, filename, user, team=None):
-        headers = {"X-Remote-User": team.name} if team is not None else None
-        form = self._get_upload_form(app, user=user, headers=headers)
+    def _upload_csv(self, app, filename, user):
+        form = self._get_upload_form(app, user=user)
         path = Path(__file__).parent / "sample_data" / filename
         form["reponses"] = Upload("file.csv", path.read_bytes())
-        return form.submit(user=user, headers=headers)
+        return form.submit(user=user)
 
     @pytest.mark.parametrize("filename", TEST_FILES)
     def test_upload_redirects_to_index(self, app, lecture_an_url, filename, user_david):
@@ -194,8 +193,11 @@ class TestPostForm:
         from zam_repondeur.models import DBSession, Amendement, User
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
-        DBSession.add(user_ronan)
-        user_ronan.teams.append(team_zam)
+        with transaction.manager:
+            DBSession.add(user_ronan)
+            user_ronan.teams.append(team_zam)
+            DBSession.add(team_zam)
+            team_zam_users = team_zam.users
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_table is None
@@ -207,11 +209,9 @@ class TestPostForm:
             DBSession.query(User).filter_by(email="melodie@exemple.gouv.fr").first()
         )
         assert user_melodie is None
-        assert "melodie@exemple.gouv.fr" not in {user.email for user in team_zam.users}
+        assert "melodie@exemple.gouv.fr" not in {user.email for user in team_zam_users}
 
-        self._upload_csv(
-            app, "reponses_with_affectation.csv", user=user_ronan, team=team_zam
-        )
+        self._upload_csv(app, "reponses_with_affectation.csv", user=user_ronan)
 
         DBSession.add(team_zam)
         DBSession.refresh(team_zam)

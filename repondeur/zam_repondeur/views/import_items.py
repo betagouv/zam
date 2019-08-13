@@ -5,7 +5,7 @@ from typing import Dict
 from pyramid.request import Request
 
 from zam_repondeur.clean import clean_html
-from zam_repondeur.models import Amendement, Lecture, User, get_one_or_create
+from zam_repondeur.models import Amendement, Lecture, Team, User, get_one_or_create
 from zam_repondeur.models.events.amendement import (
     AmendementTransfere,
     AvisAmendementModifie,
@@ -23,6 +23,7 @@ def import_amendement(
     item: dict,
     counter: Counter,
     previous_reponse: str,
+    team: Team,
 ) -> None:
     try:
         numero = item["num"]

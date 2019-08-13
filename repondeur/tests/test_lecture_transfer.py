@@ -16,7 +16,7 @@ def user_david(user_david):
 
 
 @pytest.fixture
-def user_ronan(user_ronan):
+def user_ronan(user_ronan, team_zam):
     """
     Override fixture so that we commit the user to the database
     """
@@ -24,13 +24,12 @@ def user_ronan(user_ronan):
 
     with transaction.manager:
         DBSession.add(user_ronan)
+        user_ronan.teams.append(team_zam)
 
     return user_ronan
 
 
-def test_lecture_get_transfer_amendements(
-    app, lecture_an, amendements_an, user_david, user_ronan
-):
+def test_lecture_get_transfer_amendements(app, lecture_an, amendements_an, user_david):
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
@@ -50,7 +49,6 @@ def test_lecture_get_transfer_amendements(
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
-        ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
 
 

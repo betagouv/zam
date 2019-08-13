@@ -80,7 +80,7 @@ def settings():
         ),
         "zam.session_secret": "dummy",
         "zam.auth_secret": "dummier",
-        "zam.auth_admin_patterns": ["user@sgg.pm.gouv.fr"],
+        "zam.auth_admins": ["user@sgg.pm.gouv.fr"],
         "zam.auth_user_patterns": ["*@*.gouv.fr", "listeblanche@exemple.fr"],
         # Only wait for 1 second to speed up integration tests.
         "zam.check_for.amendement_stolen_while_editing": 1,

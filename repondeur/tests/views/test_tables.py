@@ -16,7 +16,7 @@ def user_david(user_david):
 
 
 @pytest.fixture
-def user_ronan(user_ronan):
+def user_ronan(user_ronan, team_zam):
     """
     Override fixture so that we commit the user to the database
     """
@@ -24,6 +24,7 @@ def user_ronan(user_ronan):
 
     with transaction.manager:
         DBSession.add(user_ronan)
+        user_ronan.teams.append(team_zam)
 
     return user_ronan
 

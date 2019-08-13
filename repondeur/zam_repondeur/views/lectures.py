@@ -120,7 +120,7 @@ class TransferAmendements:
 
     @property
     def target_users(self) -> List[User]:
-        team: Optional[Team] = self.request.team
+        team: Team = self.context.dossier_resource.dossier.team
         if team is not None:
             return team.everyone_but_me(self.request.user)
         return User.everyone_but_me(self.request.user)

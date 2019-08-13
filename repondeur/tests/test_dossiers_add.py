@@ -65,7 +65,11 @@ def test_get_form_does_not_propose_dossiers_with_teams(
 class TestPostForm:
     @responses.activate
     def test_plfss_2018_an(self, app, user_sgg, dossier_plfss2018):
-        from zam_repondeur.models import Chambre, DBSession, Dossier, Lecture
+        from zam_repondeur.models import Chambre, DBSession, Dossier, Lecture, User
+
+        with transaction.manager:
+            DBSession.add(user_sgg)
+            assert len(user_sgg.teams) == 0
 
         assert not DBSession.query(Lecture).all()
 
@@ -189,9 +193,12 @@ class TestPostForm:
         assert resp.status_code == 200
         assert "Dossier créé avec succès," in resp.text
 
+        user_sgg = DBSession.query(User).filter(User.pk == user_sgg.pk).one()
         dossier_plfss2018 = (
             DBSession.query(Dossier).filter(Dossier.slug == "plfss-2018").one()
         )
+        assert len(user_sgg.teams) == 1
+        assert dossier_plfss2018.team in user_sgg.teams
         assert len(dossier_plfss2018.events) == 1
         assert (
             dossier_plfss2018.events[0].render_summary()

@@ -28,6 +28,13 @@ class TestLoginPage:
         resp = app.get("/identification")
         assert resp.status_code == 200
 
+    def test_unauthentified_user_do_not_have_link_to_dossiers(self, app):
+        resp = app.get("/identification")
+        assert resp.status_code == 200
+        assert (
+            'title="Aller à la liste des dossiers">Dossiers</a></li>' not in resp.text
+        )
+
     @pytest.mark.parametrize(
         "valid_email", ["foo@exemple.gouv.fr", "BAR@EXEMPLE.GOUV.FR"]
     )
@@ -57,6 +64,15 @@ class TestLoginPage:
 
             Bonne journée !"""
         )
+
+    def test_user_can_ask_for_a_token_with_an_whitelisted_domain_name(
+        self, app, mailer
+    ):
+        resp = app.post("/identification", {"email": "listeblanche@exemple.fr"})
+        resp = resp.maybe_follow()
+
+        assert "Vous devriez recevoir un lien dans les minutes" in resp.text
+        assert len(mailer.outbox) == 1
 
     @pytest.mark.parametrize("missing_email", ["", " "])
     def test_user_cannot_ask_for_a_token_with_a_missing_email(self, app, missing_email):
@@ -94,7 +110,7 @@ class TestLoginPage:
         assert resp.status_code == 302
         assert resp.location == "https://zam.test/identification"
         resp = resp.follow()
-        assert "Cette adresse de courriel n’est pas en .gouv.fr." in resp.text
+        assert "Cette adresse de courriel n’est pas acceptée." in resp.text
 
     def test_successful_auth_token_request_is_logged(self, app, caplog):
         caplog.set_level(logging.INFO)
@@ -181,7 +197,7 @@ class TestLoginWithToken:
         assert resp.status_code == 302
         assert (
             resp.location
-            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
+            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Fdossiers%2F"
         )
 
         resp = resp.maybe_follow()
@@ -287,16 +303,20 @@ class TestLogout:
 
 
 class TestAuthenticationRequired:
-    def test_unauthenticated_user_is_redirected_to_login_page(self, app):
-        resp = app.get("/lectures/add")
+    def test_unauthenticated_user_is_redirected_to_login_page(
+        self, app, dossier_plfss2018
+    ):
+        resp = app.get("/dossiers/")
         assert resp.status_code == 302
         assert resp.location == (
             "https://zam.test/identification"
-            "?source=https%3A%2F%2Fzam.test%2Flectures%2Fadd"
+            "?source=https%3A%2F%2Fzam.test%2Fdossiers%2F"
         )
 
-    def test_authenticated_user_is_not_redirected_to_login_page(self, app, user_david):
-        resp = app.get("/lectures/add", user=user_david)
+    def test_authenticated_user_is_not_redirected_to_login_page(
+        self, app, dossier_plfss2018, user_david
+    ):
+        resp = app.get("/dossiers/", user=user_david)
         assert resp.status_code == 200
 
 
@@ -317,7 +337,7 @@ class TestOnboarding:
         assert resp.status_code == 302
         assert (
             resp.location
-            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
+            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Fdossiers%2F"
         )
 
         user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
@@ -348,7 +368,7 @@ class TestOnboarding:
         assert resp.status_code == 302
         assert (
             resp.location
-            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Flectures%2F"
+            == "https://zam.test/bienvenue?source=https%3A%2F%2Fzam.test%2Fdossiers%2F"
         )
 
         user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
@@ -396,7 +416,7 @@ class TestOnboarding:
 
         resp = app.get("/authentification", params={"token": token})
         assert resp.status_code == 302
-        assert resp.location == f"https://zam.test/lectures/"
+        assert resp.location == f"https://zam.test/dossiers/"
 
 
 class TestAuthTokenExpiration:

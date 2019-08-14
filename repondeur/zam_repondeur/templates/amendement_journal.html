@@ -9,31 +9,6 @@
     <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/journal.css') }}">
 {% endblock %}
 
-{% block extra_nav %}
-    <li>
-        <a href="{{ request.resource_url(context.lecture_resource, 'tables', request.user.email) }}">
-            Ma table
-        </a>
-    </li>
-    <li>
-        <a href="{{ request.resource_url(context.lecture_resource, 'amendements') }}">
-            Index
-        </a>
-    </li>
-    <li>
-        <a href="{{ request.resource_url(context.lecture_resource, 'options') }}">
-            Options avancées
-        </a>
-    </li>
-    {% if amendement.is_displayable %}
-        <li>
-            <a href="{{ request.resource_url(context.lecture_resource, 'articles', amendement.article.url_key, 'reponses', anchor=amendement.slug) }}" target="_blank">
-                Dossier de banc
-            </a>
-        </li>
-    {% endif %}
-{% endblock %}
-
 {% block body %}
     <a href="{{ back_url }}" class="arrow-left">Retour</a>
     <h1>Journal des modifications</h1>

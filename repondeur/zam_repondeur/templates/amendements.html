@@ -123,7 +123,7 @@
                 <th></th>
             </tr>
             <tr class="shadow-bottom" data-target="amendements-selection.bottom">
-                <th colspan="7"></th>
+                <th colspan="{% if lecture.has_missions %}8{% else %}7{% endif %}"></th>
             </tr>
         </thead>
         <tbody data-controller="amendements-backlinks" data-target="amendements-filters.tbody">

@@ -3,7 +3,7 @@ from typing import Any, Iterator, List, Optional, Tuple, cast
 from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
-from pyramid.security import Allow, Authenticated, Deny
+from pyramid.security import Allow, Authenticated, Deny, Everyone
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -12,6 +12,7 @@ from zam_repondeur.models import (
     Article,
     Chambre,
     DBSession,
+    Dossier,
     Lecture,
     User,
     UserTable,
@@ -62,13 +63,68 @@ class Resource(dict):
 
 
 class Root(Resource):
-    __acl__ = [(Allow, Authenticated, "view")]
+    __acl__ = [
+        (Allow, Authenticated, "view"),
+        (Allow, "group:admins", "delete"),
+        (Deny, Everyone, "delete"),
+        (Allow, "group:admins", "refresh_dossier"),
+        (Deny, Everyone, "refresh_dossier"),
+    ]
 
     def __init__(self, _request: Request) -> None:
+        self.add_child(DossierCollection(name="dossiers", parent=self))
+
+
+class DossierCollection(Resource):
+    __acl__ = [(Allow, "group:admins", "activate"), (Deny, Everyone, "activate")]
+
+    def models(self, *options: Any) -> List[Dossier]:
+        result: List[Dossier] = DBSession.query(Dossier).options(*options)
+        return result
+
+    def __getitem__(self, key: str) -> Resource:
+        resource = DossierResource(name=key, parent=self)
+        try:
+            resource.model()
+        except ResourceNotFound:
+            raise KeyError
+        return resource
+
+
+class DossierResource(Resource):
+    def __acl__(self) -> List[ACE]:
+        # Only team members and admins can view it.
+        return [
+            (Allow, f"group:admins", "view"),
+            (Allow, f"team:{self.dossier.team.pk}", "view"),
+            (Deny, Authenticated, "view"),
+        ]
+
+    def __init__(self, name: str, parent: Resource) -> None:
+        super().__init__(name=name, parent=parent)
+        self.slug = name
         self.add_child(LectureCollection(name="lectures", parent=self))
+
+    @property
+    def parent(self) -> DossierCollection:
+        return cast(DossierCollection, self.__parent__)
+
+    @reify
+    def dossier(self) -> Dossier:
+        return self.model()
+
+    def model(self) -> Dossier:
+        dossier = Dossier.get(self.slug)
+        if dossier is None:
+            raise ResourceNotFound(self)
+        return dossier
 
 
 class LectureCollection(Resource):
+    @property
+    def parent(self) -> DossierResource:
+        return cast(DossierResource, self.__parent__)
+
     def models(self) -> List[Lecture]:
         return Lecture.all()
 
@@ -95,17 +151,6 @@ class LectureCollection(Resource):
 
 
 class LectureResource(Resource):
-    def __acl__(self) -> List[ACE]:
-        # If the lecture is owned by team, then team members can view it, but not others
-        if self.lecture.owned_by_team is not None:
-            return [
-                (Allow, f"team:{self.lecture.owned_by_team.pk}", "view"),
-                (Deny, Authenticated, "view"),
-            ]
-
-        # If the lecture is not owned by any team, anyone can view it
-        return [(Allow, Authenticated, "view")]
-
     def __init__(
         self,
         name: str,
@@ -126,6 +171,14 @@ class LectureResource(Resource):
         self.add_child(ArticleCollection(name="articles", parent=self))
         self.add_child(TableCollection(name="tables", parent=self))
         self.add_child(SharedTableCollection(name="boites", parent=self))
+
+    @property
+    def parent(self) -> LectureCollection:
+        return cast(LectureCollection, self.__parent__)
+
+    @property
+    def dossier_resource(self) -> DossierResource:
+        return self.parent.parent
 
     @reify
     def lecture(self) -> Lecture:

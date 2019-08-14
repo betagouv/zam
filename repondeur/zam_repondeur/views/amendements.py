@@ -44,6 +44,9 @@ class AmendementEdit:
         return {
             "amendement": self.amendement,
             "amendements": self.amendements,
+            "current_tab": "",
+            "dossier_resource": self.context.lecture_resource.dossier_resource,
+            "lecture_resource": self.context.lecture_resource,
             "avis": AVIS,
             "table": self.amendement.user_table,
             "is_on_my_table": self.is_on_my_table,
@@ -52,7 +55,7 @@ class AmendementEdit:
             "check_url": check_url,
             "my_table_url": self.my_table_url,
             "transfer_url": self.request.resource_url(
-                self.context.parent.parent,
+                self.context.lecture_resource,
                 "transfer_amendements",
                 query={"nums": self.amendement.num, "from_index": 1},
             ),
@@ -105,7 +108,7 @@ class AmendementEdit:
         if "save-and-transfer" in self.request.POST:
             return HTTPFound(
                 location=self.request.resource_url(
-                    self.context.parent.parent,
+                    self.context.lecture_resource,
                     "transfer_amendements",
                     query={
                         "nums": [amendement.num for amendement in self.amendements],
@@ -140,6 +143,9 @@ class AmendementEdit:
 def amendement_journal(context: AmendementResource, request: Request) -> Dict[str, Any]:
     return {
         "lecture": context.lecture_resource.model(),
+        "lecture_resource": context.lecture_resource,
+        "dossier_resource": context.lecture_resource.dossier_resource,
+        "current_tab": "journal",
         "amendement": context.model(),
         "today": date.today(),
         "back_url": request.resource_url(context, "amendement_edit"),

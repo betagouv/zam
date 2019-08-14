@@ -11,33 +11,33 @@ class TestMergeDossiers:
     def test_merge_dossiers_and_empty(self):
         from zam_repondeur.fetch.an.dossiers.models import DossierRef
 
-        dossiers1 = {"a": DossierRef("a", "titre1", "", "", [])}
+        dossiers1 = {"a": DossierRef("a", "titre1", "slug1", "", "", [])}
         assert DossierRef.merge_dossiers(dossiers1, {}) == dossiers1
 
     def test_merge_empty_and_dossiers(self):
         from zam_repondeur.fetch.an.dossiers.models import DossierRef
 
-        dossiers1 = {"a": DossierRef("a", "titre1", "", "", [])}
+        dossiers1 = {"a": DossierRef("a", "titre1", "slug1", "", "", [])}
         assert DossierRef.merge_dossiers({}, dossiers1) == dossiers1
 
     def test_merge_different_dossiers(self):
         from zam_repondeur.fetch.an.dossiers.models import DossierRef
 
-        dossiers1 = {"a": DossierRef("a", "titre1", "", "", [])}
-        dossiers2 = {"b": DossierRef("b", "titre2", "", "", [])}
+        dossiers1 = {"a": DossierRef("a", "titre1", "slug1", "", "", [])}
+        dossiers2 = {"b": DossierRef("b", "titre2", "slug2", "", "", [])}
         assert DossierRef.merge_dossiers(dossiers1, dossiers2) == {
-            "a": DossierRef("a", "titre1", "", "", []),
-            "b": DossierRef("b", "titre2", "", "", []),
+            "a": DossierRef("a", "titre1", "slug1", "", "", []),
+            "b": DossierRef("b", "titre2", "slug2", "", "", []),
         }
 
     def test_merge_different_dossiers_reversed(self):
         from zam_repondeur.fetch.an.dossiers.models import DossierRef
 
-        dossiers1 = {"a": DossierRef("a", "titre1", "", "", [])}
-        dossiers2 = {"b": DossierRef("b", "titre2", "", "", [])}
+        dossiers1 = {"a": DossierRef("a", "titre1", "slug1", "", "", [])}
+        dossiers2 = {"b": DossierRef("b", "titre2", "slug2", "", "", [])}
         assert DossierRef.merge_dossiers(dossiers2, dossiers1) == {
-            "a": DossierRef("a", "titre1", "", "", []),
-            "b": DossierRef("b", "titre2", "", "", []),
+            "a": DossierRef("a", "titre1", "slug1", "", "", []),
+            "b": DossierRef("b", "titre2", "slug2", "", "", []),
         }
 
     def test_merge_identical_dossiers(self):
@@ -53,6 +53,7 @@ class TestMergeDossiers:
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                slug="plfss-2018",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
@@ -98,6 +99,7 @@ class TestMergeDossiers:
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                slug="plfss-2018",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
@@ -123,6 +125,7 @@ class TestMergeDossiers:
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                slug="plfss-2018",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
@@ -166,6 +169,7 @@ class TestMergeDossiers:
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                slug="plfss-2018",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
@@ -218,6 +222,7 @@ class TestMergeBySenatURL:
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                slug="plfss-2018",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
@@ -243,6 +248,7 @@ class TestMergeBySenatURL:
             "ANOTHER": DossierRef(
                 uid="ANOTHER",
                 titre="Sécurité sociale : loi de financement 2018",
+                slug="plfss-2018",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
@@ -286,6 +292,7 @@ class TestMergeBySenatURL:
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                slug="plfss-2018",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
@@ -337,6 +344,7 @@ class TestMergeBySenatURL:
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                slug="plfss-2018",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
@@ -360,6 +368,7 @@ class TestMergeBySenatURL:
             "DLR5L15N36159": DossierRef(
                 uid="DLR5L15N36159",
                 titre="Fonction publique : un Etat au service d'une société de confiance",  # noqa
+                slug="etat-service-societe-confiance",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/etat_service_societe_confiance",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/pjl17-259.html",
                 lectures=[
@@ -385,6 +394,7 @@ class TestMergeBySenatURL:
             "OTHER": DossierRef(
                 uid="OTHER",
                 titre="Sécurité sociale : loi de financement 2018",
+                slug="securite-sociale-loi-financement-2018",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
@@ -423,6 +433,7 @@ class TestMergeBySenatURL:
             "ANOTHER": DossierRef(
                 uid="ANOTHER",
                 titre="Sécurité sociale : loi de financement 2019",
+                slug="securite-sociale-loi-financement-2019",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2019",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2019.html",
                 lectures=[
@@ -451,6 +462,7 @@ class TestMergeBySenatURL:
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                slug="plfss-2018",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
@@ -489,6 +501,7 @@ class TestMergeBySenatURL:
             "DLR5L15N36159": DossierRef(
                 uid="DLR5L15N36159",
                 titre="Fonction publique : un Etat au service d'une société de confiance",  # noqa
+                slug="etat-service-societe-confiance",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/etat_service_societe_confiance",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/pjl17-259.html",
                 lectures=[
@@ -514,6 +527,7 @@ class TestMergeBySenatURL:
             "ANOTHER": DossierRef(
                 uid="ANOTHER",
                 titre="Sécurité sociale : loi de financement 2019",
+                slug="securite-sociale-loi-financement-2019",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2019",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2019.html",
                 lectures=[
@@ -550,6 +564,7 @@ class TestAddDossiers:
         dossier_open_data = DossierRef(
             uid="DLR5L15N36030",
             titre="Titre 1",
+            slug="plfss-2018",
             an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
             senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
             lectures=[
@@ -588,6 +603,7 @@ class TestAddDossiers:
         dossier_scraping = DossierRef(
             uid="pjl17-063",
             titre="Titre 2",
+            slug="financement-securite-sociale-2018",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
             lectures=[
@@ -629,6 +645,7 @@ class TestAddDossiers:
         assert merged == DossierRef(
             uid="DLR5L15N36030",
             titre="Titre 1",
+            slug="plfss-2018",
             an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
             senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
             lectures=[

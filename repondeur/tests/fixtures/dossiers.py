@@ -81,6 +81,7 @@ def mock_dossiers():
             "DLR5L15N36030": DossierRef(
                 uid="DLR5L15N36030",
                 titre="Sécurité sociale : loi de financement 2018",
+                slug="plfss-2018",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2018",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
@@ -107,6 +108,7 @@ def mock_dossiers():
             "DLR5L15N36159": DossierRef(
                 uid="DLR5L15N36159",
                 titre="Fonction publique : un Etat au service d'une société de confiance",  # noqa
+                slug="etat-service-societe-confiance",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/etat_service_societe_confiance",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/pjl17-259.html",
                 lectures=[
@@ -121,6 +123,7 @@ def mock_dossiers():
             "DLR5L15N36892": DossierRef(
                 uid="DLR5L15N36892",
                 titre="Sécurité sociale : loi de financement 2019",
+                slug="plfss-2019",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/plfss_2019",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2019.html",
                 lectures=[
@@ -135,6 +138,7 @@ def mock_dossiers():
             "DLR5L15N37357": DossierRef(
                 uid="DLR5L15N37357",
                 titre="Fonction publique : transformation de la fonction publique",
+                slug="transformation-fonction-publique",
                 an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/transformation_fonction_publique",  # noqa
                 senat_url="http://www.senat.fr/dossier-legislatif/pjl18-532.html",
                 lectures=[

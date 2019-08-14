@@ -5,13 +5,16 @@ import transaction
 
 
 @pytest.fixture
-def dossier_plfss2018(db):
+def dossier_plfss2018(db, team_zam):
     from zam_repondeur.models import Dossier
 
     with transaction.manager:
         dossier = Dossier.create(
-            uid="DLR5L15N36030", titre="Sécurité sociale : loi de financement 2018"
+            uid="DLR5L15N36030",
+            titre="Sécurité sociale : loi de financement 2018",
+            slug="plfss-2018",
         )
+        dossier.team = team_zam
 
     return dossier
 

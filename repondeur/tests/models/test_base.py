@@ -10,10 +10,19 @@ class TestRepr:
         foo = Foo()
         assert repr(foo) == f"<Foo at 0x{id(foo):x}>"
 
+    def test_dossier(self, dossier_plfss2018):
+        expected_repr = (
+            "<Dossier pk=1 slug='plfss-2018'"
+            " titre='Sécurité sociale : loi de financement 2018'"
+            " uid='DLR5L15N36030' team=<Team name='Zam'>>"
+        )
+
+        assert repr(dossier_plfss2018) == expected_repr
+
     def test_lecture(self, lecture_an):
         expected_repr = (
             "<Lecture pk=1 chambre=<Chambre.AN: 'Assemblée nationale'>"
-            " organe='PO717460' partie=None owned_by_team=None>"
+            " organe='PO717460' partie=None>"
         )
         assert repr(lecture_an) == expected_repr
 
@@ -34,12 +43,11 @@ class TestRepr:
         expected_repr = "<Team name='Zam'>"
         assert repr(team_zam) == expected_repr
 
-    def test_user(self, user_david):
-        expected_repr = "<User name='David' email='david@exemple.gouv.fr' teams=[]>"
-        assert repr(user_david) == expected_repr
+    def test_user(self, user_ronan):
+        expected_repr = "<User name='Ronan' email='ronan@exemple.gouv.fr' teams=[]>"
+        assert repr(user_ronan) == expected_repr
 
-    def test_user_with_team(self, team_zam, user_david):
-        user_david.teams.append(team_zam)
+    def test_user_with_team(self, user_david):
         expected_repr = (
             "<User name='David' email='david@exemple.gouv.fr' "
             "teams=[<Team name='Zam'>]>"

@@ -52,12 +52,15 @@ class UserTable(Base):
 
 class SharedTable(Base):
     __tablename__ = "shared_tables"
-    __table_args__ = (Index("ix_shared_tables__lecture_pk", "lecture_pk"),)
+    __table_args__ = (
+        Index("ix_shared_tables__lecture_pk", "lecture_pk"),
+        UniqueConstraint("slug", "lecture_pk"),
+    )
 
     pk: int = Column(Integer, primary_key=True)
 
     titre: str = Column(Text, nullable=False)
-    slug: str = Column(Text, nullable=False, unique=True)
+    slug: str = Column(Text, nullable=False)
 
     lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
     lecture: Lecture = relationship(

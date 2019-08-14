@@ -10,21 +10,24 @@ def test_transfer_amendements_switch_color_on_check_from_inactive_user(
     driver,
     users_repository,  # Useful to reset users' activities.
     amendements_repository,  # Useful to reset amendements' edits.
+    team_zam,
     user_david,
+    user_ronan,
     user_david_table_an,
-    lecture_an,
+    lecture_an_url,
     amendements_an,
 ):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
+        DBSession.add(team_zam)
+        team_zam.users.append(user_ronan)
         DBSession.add(user_david_table_an)
         # We put the amendement on another table.
         user_david_table_an.amendements.append(amendements_an[0])
         DBSession.add_all(amendements_an)
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/transfer_amendements?nums={amendements_an[0].num}")
+    driver.get(f"{lecture_an_url}/transfer_amendements?nums={amendements_an[0].num}")
 
     checkbox = driver.find_element_by_css_selector('input[type="checkbox"]')
     submit_button = driver.find_element_by_css_selector('input[name="submit-to"]')
@@ -53,24 +56,28 @@ def test_transfer_amendements_switch_color_on_check_from_edited_amendement(
     driver,
     users_repository,  # Useful to reset users' activities.
     amendements_repository,  # Useful to reset amendements' edits.
+    team_zam,
     user_david,
+    user_ronan,
     user_david_table_an,
-    lecture_an,
+    user_ronan_table_an,
+    lecture_an_url,
     amendements_an,
 ):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        user_david.record_activity()
-        DBSession.add(user_david_table_an)
+        DBSession.add(team_zam)
+        team_zam.users.append(user_ronan)
+        user_ronan.record_activity()
+        DBSession.add(user_ronan_table_an)
         # We put the amendement on another active user table,
-        user_david_table_an.amendements.append(amendements_an[0])
+        user_ronan_table_an.amendements.append(amendements_an[0])
         # and we start editing it.
         amendements_an[0].start_editing()
         DBSession.add_all(amendements_an)
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
-    driver.get(f"{LECTURE_URL}/transfer_amendements?nums={amendements_an[0].num}")
+    driver.get(f"{lecture_an_url}/transfer_amendements?nums={amendements_an[0].num}")
 
     checkbox = driver.find_element_by_css_selector('input[type="checkbox"]')
     submit_button = driver.find_element_by_css_selector('input[name="submit-to"]')
@@ -99,29 +106,36 @@ def test_transfer_amendements_switch_color_on_check_from_edited_an_unedited_amen
     driver,
     users_repository,  # Useful to reset users' activities.
     amendements_repository,  # Useful to reset amendements' edits.
+    team_zam,
     user_david,
+    user_ronan,
+    user_daniel,
     user_david_table_an,
     user_ronan_table_an,
-    lecture_an,
+    user_daniel_table_an,
+    lecture_an_url,
     amendements_an,
 ):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        user_david.record_activity()
+        DBSession.add(team_zam)
+        team_zam.users.append(user_ronan)
+        team_zam.users.append(user_daniel)
+        user_ronan.record_activity()
         DBSession.add(user_david_table_an)
         DBSession.add(user_ronan_table_an)
+        DBSession.add(user_daniel_table_an)
         # We put the amendement on another active user table,
-        user_david_table_an.amendements.append(amendements_an[0])
+        user_ronan_table_an.amendements.append(amendements_an[0])
         # and we start editing it.
         amendements_an[0].start_editing()
         # We put the amendement on another inactive user table.
-        user_ronan_table_an.amendements.append(amendements_an[1])
+        user_daniel_table_an.amendements.append(amendements_an[1])
         DBSession.add_all(amendements_an)
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     driver.get(
-        f"{LECTURE_URL}/transfer_amendements?"
+        f"{lecture_an_url}/transfer_amendements?"
         f"nums={amendements_an[0].num}&nums={amendements_an[1].num}"
     )
 

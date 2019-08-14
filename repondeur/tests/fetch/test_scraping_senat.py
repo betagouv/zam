@@ -38,6 +38,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="pjl18-404",
             titre="Organisation du système de santé",
+            slug="organisation-systeme-sante",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/pjl18-404.html",
             lectures=[
@@ -78,6 +79,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="pjl18-523",
             titre="Accord France Arménie",
+            slug="accord-france-armenie",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/pjl18-523.html",
             lectures=[
@@ -118,6 +120,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="pjl18-526",
             titre="Accords France-Suisse et France-Luxembourg",
+            slug="accords-france-suisse-france-luxembourg",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/pjl18-526.html",
             lectures=[
@@ -158,6 +161,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="pjl18-532",
             titre="Transformation de la fonction publique",
+            slug="transformation-fonction-publique",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/pjl18-532.html",
             lectures=[
@@ -198,6 +202,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="ppl17-699",
             titre="Instituer un médiateur territorial dans certaines collectivités",
+            slug="instituer-mediateur-territorial-certaines-collectivites",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/ppl17-699.html",
             lectures=[
@@ -238,6 +243,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="ppl18-002",
             titre="Agence nationale de la cohésion des territoires",
+            slug="agence-nationale-cohesion-territoires",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-002.html",
             lectures=[
@@ -310,6 +316,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="ppl18-043",
             titre="Directeur général de l'Agence nationale de la cohésion des territoires",  # noqa
+            slug="directeur-general-agence-nationale-cohesion-territoires",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-043.html",
             lectures=[
@@ -350,6 +357,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="ppl18-229",
             titre="Lutte contre l'habitat insalubre ou dangereux",
+            slug="lutte-contre-habitat-insalubre-ou-dangereux",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-229.html",
             lectures=[
@@ -406,6 +414,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="ppl18-260",
             titre="Accès à l'énergie et lutte contre la précarité énergétique",
+            slug="acces-energie-lutte-contre-precarite-energetique",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-260.html",
             lectures=[
@@ -446,6 +455,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="ppl18-305",
             titre="Création d'un statut de l'élu communal",
+            slug="creation-statut-elu-communal",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-305.html",
             lectures=[
@@ -486,6 +496,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="ppl18-385",
             titre="Clarifier diverses dispositions du droit électoral",
+            slug="clarifier-diverses-dispositions-droit-electoral",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-385.html",
             lectures=[
@@ -526,6 +537,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="ppl18-386",
             titre="Clarifier diverses dispositions du droit électoral",
+            slug="clarifier-diverses-dispositions-droit-electoral",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-386.html",
             lectures=[
@@ -566,6 +578,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="ppl18-436",
             titre="Accès des PME à la commande publique",
+            slug="acces-pme-commande-publique",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-436.html",
             lectures=[
@@ -606,6 +619,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="ppl18-454",
             titre="Exploitation des réseaux radioélectriques mobiles",
+            slug="exploitation-reseaux-radioelectriques-mobiles",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-454.html",
             lectures=[
@@ -630,6 +644,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="ppl18-462",
             titre="Participation des conseillers de Lyon aux élections sénatoriales",
+            slug="participation-conseillers-lyon-elections-senatoriales",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-462.html",
             lectures=[
@@ -670,6 +685,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
         DossierRef(
             uid="ppr18-458",
             titre="Clarifier et actualiser le Règlement du Sénat",
+            slug="clarifier-actualiser-reglement-senat",
             an_url="",
             senat_url="http://www.senat.fr/dossier-legislatif/ppr18-458.html",
             lectures=[
@@ -778,6 +794,7 @@ def test_create_dossier():
     ) == DossierRef(
         uid="pjl18-404",
         titre="Organisation du système de santé",
+        slug="organisation-systeme-sante",
         an_url="",
         senat_url="http://www.senat.fr/dossier-legislatif/pjl18-404.html",
         lectures=[

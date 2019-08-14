@@ -51,9 +51,10 @@ class ArticleEdit:
         return {
             "article": self.article,
             "lecture": lecture,
-            "back_url": self.request.resource_url(
-                self.context.lecture_resource, "amendements"
-            ),
+            "lecture_resource": self.context.lecture_resource,
+            "dossier_resource": self.context.lecture_resource.dossier_resource,
+            "current_tab": "article",
+            "back_url": self.back_url(),
         }
 
     @view_config(request_method="POST")
@@ -83,27 +84,31 @@ class ArticleEdit:
 
         return HTTPFound(location=self.next_url())
 
-    def next_url(self) -> str:
-        amendements = self.context.lecture_resource["amendements"]
-        url_amendements = self.request.resource_url(amendements)
+    def back_url(self) -> str:
+        amendements_collection = self.context.lecture_resource["amendements"]
+        return self.request.resource_url(amendements_collection)
 
+    def next_url(self) -> str:
         next_article = self.article.next_article
         if next_article is None:
-            return url_amendements
+            return self.back_url()
+
         # Skip intersticial articles.
         while next_article.pos:
             next_article = next_article.next_article
             if next_article is None:
-                return url_amendements
+                return self.back_url()
 
-        resource = self.context.lecture_resource["articles"][next_article.url_key]
-        return self.request.resource_url(resource)
+        return self.request.resource_url(self.context.parent[next_article.url_key])
 
 
 @view_config(context=ArticleResource, name="journal", renderer="article_journal.html")
 def article_journal(context: ArticleResource, request: Request) -> Dict[str, Any]:
     return {
         "lecture": context.lecture_resource.model(),
+        "lecture_resource": context.lecture_resource,
+        "dossier_resource": context.lecture_resource.dossier_resource,
+        "current_tab": "article",
         "article": context.model(),
         "today": date.today(),
         "back_url": request.resource_url(context),

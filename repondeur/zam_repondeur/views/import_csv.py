@@ -10,7 +10,7 @@ from pyramid.view import view_config
 
 from zam_repondeur.export.spreadsheet import column_name_to_field
 from zam_repondeur.message import Message
-from zam_repondeur.models import Amendement, Lecture
+from zam_repondeur.models import Amendement, Lecture, Team
 from zam_repondeur.models.events.lecture import ReponsesImportees
 from zam_repondeur.resources import LectureResource
 
@@ -44,6 +44,7 @@ def import_csv(context: LectureResource, request: Request) -> Response:
             amendements={
                 amendement.num: amendement for amendement in lecture.amendements
             },
+            team=context.dossier_resource.dossier.team,
         )
     except CSVError as exc:
         request.session.flash(Message(cls="danger", text=str(exc)))
@@ -80,6 +81,7 @@ def _import_reponses_from_csv_file(
     reponses_file: BinaryIO,
     lecture: Lecture,
     amendements: Dict[int, Amendement],
+    team: Team,
 ) -> Counter:
     previous_reponse = ""
     counter = Counter({"reponses": 0, "reponses_errors": 0})
@@ -95,7 +97,7 @@ def _import_reponses_from_csv_file(
             if column_name is not None
         }
         import_amendement(
-            request, lecture, amendements, item, counter, previous_reponse
+            request, lecture, amendements, item, counter, previous_reponse, team
         )
 
     return counter

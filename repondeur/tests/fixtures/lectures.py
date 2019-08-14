@@ -18,6 +18,11 @@ def lecture_an(db, dossier_plfss2018, texte_plfss2018_an_premiere_lecture):
 
 
 @pytest.fixture
+def lecture_an_url(lecture_an):
+    return f"/dossiers/plfss-2018/lectures/an.15.269.PO717460"
+
+
+@pytest.fixture
 def lecture_senat(db, dossier_plfss2018, texte_plfss2018_senat_premiere_lecture):
     from zam_repondeur.models import Lecture
 

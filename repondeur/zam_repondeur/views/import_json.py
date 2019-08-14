@@ -11,7 +11,7 @@ from sqlalchemy.orm import joinedload
 
 from zam_repondeur.models.events.lecture import ReponsesImporteesJSON
 from zam_repondeur.message import Message
-from zam_repondeur.models import Amendement, Article, Lecture
+from zam_repondeur.models import Amendement, Article, Lecture, Team
 from zam_repondeur.resources import LectureResource
 from .import_items import import_amendement
 
@@ -40,6 +40,7 @@ def import_backup(context: LectureResource, request: Request) -> Response:
                 amendement.num: amendement for amendement in lecture.amendements
             },
             articles={article.sort_key_as_str: article for article in lecture.articles},
+            team=context.dossier_resource.dossier.team,
         )
     except ValueError as exc:
         request.session.flash(Message(cls="danger", text=str(exc)))
@@ -74,6 +75,7 @@ def _import_backup_from_json_file(
     lecture: Lecture,
     amendements: Dict[int, Amendement],
     articles: Dict[int, Article],
+    team: Team,
 ) -> Counter:
     previous_reponse = ""
     counter = Counter(
@@ -83,7 +85,7 @@ def _import_backup_from_json_file(
 
     for item in backup.get("amendements", []):
         import_amendement(
-            request, lecture, amendements, item, counter, previous_reponse
+            request, lecture, amendements, item, counter, previous_reponse, team
         )
 
     for item in backup.get("articles", []):

@@ -5,7 +5,7 @@ from typing import Dict
 from pyramid.request import Request
 
 from zam_repondeur.clean import clean_html
-from zam_repondeur.models import Amendement, Lecture, User, get_one_or_create
+from zam_repondeur.models import Amendement, Lecture, Team, User, get_one_or_create
 from zam_repondeur.models.events.amendement import (
     AmendementTransfere,
     AvisAmendementModifie,
@@ -23,6 +23,7 @@ def import_amendement(
     item: dict,
     counter: Counter,
     previous_reponse: str,
+    team: Team,
 ) -> None:
     try:
         numero = item["num"]
@@ -83,8 +84,8 @@ def transfer_amendement(
     if created:
         affectation_name = User.normalize_name(item["affectation_name"])
         user.name = affectation_name if affectation_name != "" else email
-        if lecture.owned_by_team:
-            user.teams.append(lecture.owned_by_team)
+        if lecture.dossier.team:
+            user.teams.append(lecture.dossier.team)
 
     target_table = user.table_for(lecture)
     old = str(amendement.user_table.user) if amendement.user_table else ""

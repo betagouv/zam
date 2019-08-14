@@ -144,31 +144,6 @@
     </style>
 {% endblock %}
 
-{% block extra_nav %}
-    <li>
-        <a href="{{ my_table_url }}">
-            Ma table
-        </a>
-    </li>
-    <li>
-        <a href="{{ request.resource_url(context.lecture_resource, 'amendements') }}">
-            Index
-        </a>
-    </li>
-    <li>
-        <a href="{{ request.resource_url(context.lecture_resource, 'options') }}">
-            Options avancées
-        </a>
-    </li>
-    {% if amendement.is_displayable %}
-        <li>
-            <a href="{{ request.resource_url(context.lecture_resource, 'articles', amendement.article.url_key, 'reponses', anchor=amendement.slug) }}" target="_blank">
-                Dossier de banc
-            </a>
-        </li>
-    {% endif %}
-{% endblock %}
-
 {% block body %}
     <section class="content box">
         {% if amendement.batch %}

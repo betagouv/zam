@@ -1,0 +1,41 @@
+{% extends "_base_dossier.html" %}
+{% import "macros.html" as macros %}
+
+{% block main_class %}box{% endblock %}
+
+{% block body %}
+    <h1>{{ dossier.titre }}</h1>
+    <p>
+        <big>
+        Vous pouvez inviter des personnes à participer à ce dossier législatif
+        en saisissant leur adresse courriel.
+        </big>
+    </p>
+    <form
+        method="post"
+        action="{{ request.resource_url(context, 'invite') }}"
+        data-controller="dossier-invite">
+        <div class="form-group">
+            <label for="emails">Personnes à inviter <small>(une adresse courriel par ligne)</small></label>
+            <textarea
+                name="emails" class="form-control" rows="10"
+                data-action="paste->dossier-invite#clean"></textarea>
+        </div>
+        <div class="form-group save-buttons">
+            <a href="{{ request.resource_url(context) }}" class="arrow-left">Retour</a>
+            <input type="submit" name="save" value="Inviter" class="button primary">
+        </div>
+    </form>
+    <details>
+        <summary>Personnes déjà invitées</summary>
+        <ul>
+        {% for user in team.users %}
+            <li>{{ user }}</li>
+        {% endfor %}
+        </ul>
+    </details>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ request.static_url('zam_repondeur:static/js/dossiers.js') }}"></script>
+{% endblock %}

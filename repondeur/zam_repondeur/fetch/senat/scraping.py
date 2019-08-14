@@ -16,6 +16,7 @@ from zam_repondeur.fetch.an.dossiers.models import (
     TypeTexte,
 )
 from zam_repondeur.models.organe import ORGANE_SENAT
+from zam_repondeur.slugs import slugify
 
 
 logger = logging.getLogger(__name__)
@@ -68,6 +69,7 @@ def create_dossier(pid: str, rss_url: str) -> DossierRef:
     soup = BeautifulSoup(rss_content, "html5lib")
     prefix = len("Sénat - ")
     title = soup.title.string[prefix:]
+    slug = slugify(title)
     # We cast the bs4 output explicitly to a string because of something
     # related to https://bugs.python.org/issue1757057
     # Once pickled to put in Redis, it would otherwise raise a RecursionError.
@@ -83,7 +85,12 @@ def create_dossier(pid: str, rss_url: str) -> DossierRef:
             prev_texte = lecture.texte
             lectures.append(lecture)
     dossier = DossierRef(
-        uid=pid, titre=title, an_url="", senat_url=senat_url, lectures=lectures
+        uid=pid,
+        titre=title,
+        slug=slug,
+        an_url="",
+        senat_url=senat_url,
+        lectures=lectures,
     )
     return dossier
 

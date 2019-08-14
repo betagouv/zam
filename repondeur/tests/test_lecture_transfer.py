@@ -16,7 +16,7 @@ def user_david(user_david):
 
 
 @pytest.fixture
-def user_ronan(user_ronan):
+def user_ronan(user_ronan, team_zam):
     """
     Override fixture so that we commit the user to the database
     """
@@ -24,15 +24,14 @@ def user_ronan(user_ronan):
 
     with transaction.manager:
         DBSession.add(user_ronan)
+        user_ronan.teams.append(team_zam)
 
     return user_ronan
 
 
-def test_lecture_get_transfer_amendements(
-    app, lecture_an, amendements_an, user_david, user_ronan
-):
+def test_lecture_get_transfer_amendements(app, lecture_an, amendements_an, user_david):
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -50,7 +49,6 @@ def test_lecture_get_transfer_amendements(
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
-        ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
 
 
@@ -58,7 +56,7 @@ def test_lecture_get_transfer_amendements_with_shared_table(
     app, lecture_an, amendements_an, user_david, user_ronan, shared_table_lecture_an
 ):
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -85,7 +83,7 @@ def test_lecture_get_transfer_amendements_from_index(
     app, lecture_an, amendements_an, user_david, user_ronan
 ):
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]], "from_index": 1},
         user=user_david,
     )
@@ -117,7 +115,7 @@ def test_lecture_get_transfer_amendements_from_me(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -152,7 +150,7 @@ def test_lecture_get_transfer_amendements_from_shared_table(
         amendements_an[0].shared_table = shared_table_lecture_an
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -188,7 +186,7 @@ def test_lecture_get_transfer_amendements_including_me(
         user_david_table_an.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": amendements_an},
         user=user_david,
     )
@@ -225,7 +223,7 @@ def test_lecture_get_transfer_amendements_from_me_from_save(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]], "from_save": 1},
         user=user_david,
     )
@@ -261,7 +259,7 @@ def test_lecture_get_transfer_amendements_from_other(
         table_ronan.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -303,7 +301,7 @@ def test_lecture_get_transfer_amendements_from_other_active(
         user_ronan.record_activity()
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -331,7 +329,7 @@ def test_lecture_get_transfer_amendements_from_edited_amendement(
         amendements_an[0].start_editing()
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -359,7 +357,7 @@ def test_lecture_post_transfer_amendements_to_me(
     amdt = amendements_an[0]
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amdt]},
         user=user_david,
     )
@@ -369,9 +367,13 @@ def test_lecture_post_transfer_amendements_to_me(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -400,7 +402,7 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
     amendement = amendements_an[0]
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendement]},
         user=user_david,
     )
@@ -410,9 +412,13 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -440,7 +446,7 @@ def test_lecture_post_transfer_amendements_to_index(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -448,9 +454,13 @@ def test_lecture_post_transfer_amendements_to_index(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -465,7 +475,7 @@ def test_lecture_post_transfer_amendements_to_index(
 
 
 def test_lecture_post_transfer_amendements_to_index_from_index(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an, lecture_an_url, amendements_an, user_david
 ):
     from zam_repondeur.models import DBSession, User, Amendement
 
@@ -475,13 +485,13 @@ def test_lecture_post_transfer_amendements_to_index_from_index(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]], "from_index": 1},
         user=user_david,
     )
     resp = resp.form.submit("submit-index")
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
     table = user_david.table_for(lecture_an)
     assert len(table.amendements) == 0
@@ -507,7 +517,7 @@ def test_lecture_post_transfer_amendements_to_other(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -515,9 +525,13 @@ def test_lecture_post_transfer_amendements_to_other(
     form["target"] = user_ronan.email
     resp = form.submit()
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
     table_david = user_david.table_for(lecture_an)
@@ -532,7 +546,7 @@ def test_lecture_post_transfer_amendements_to_other(
 
 
 def test_lecture_post_transfer_amendements_to_other_from_index(
-    app, lecture_an, amendements_an, user_david, user_ronan
+    app, lecture_an, lecture_an_url, amendements_an, user_david, user_ronan
 ):
     from zam_repondeur.models import DBSession, User
 
@@ -542,7 +556,7 @@ def test_lecture_post_transfer_amendements_to_other_from_index(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]], "from_index": 1},
         user=user_david,
     )
@@ -550,7 +564,7 @@ def test_lecture_post_transfer_amendements_to_other_from_index(
     form["target"] = user_ronan.email
     resp = form.submit()
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
     table_david = user_david.table_for(lecture_an)
     assert len(table_david.amendements) == 0
@@ -569,7 +583,7 @@ def test_lecture_post_transfer_amendements_from_void_to_shared_table(
     from zam_repondeur.models import Amendement
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -579,9 +593,13 @@ def test_lecture_post_transfer_amendements_from_void_to_shared_table(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -607,7 +625,7 @@ def test_lecture_post_transfer_amendements_from_me_to_shared_table(
         table_david.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -617,9 +635,13 @@ def test_lecture_post_transfer_amendements_from_me_to_shared_table(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -645,7 +667,7 @@ def test_lecture_post_transfer_amendements_from_other_to_shared_table(
         table_ronan.amendements.append(amendements_an[0])
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -655,9 +677,13 @@ def test_lecture_post_transfer_amendements_from_other_to_shared_table(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -683,7 +709,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_void(
         amendements_an[0].shared_table = shared_table_lecture_an
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -691,9 +717,13 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_void(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -718,7 +748,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_me(
         amendements_an[0].shared_table = shared_table_lecture_an
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -728,9 +758,13 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_me(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction
@@ -755,7 +789,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_other(
         amendements_an[0].shared_table = shared_table_lecture_an
 
     resp = app.get(
-        "/lectures/an.15.269.PO717460/transfer_amendements",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
         {"nums": [amendements_an[0]]},
         user=user_david,
     )
@@ -765,9 +799,13 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_other(
 
     # We're redirected to our table
     assert resp.status_code == 302
-    assert (
-        resp.location
-        == f"https://zam.test/lectures/an.15.269.PO717460/tables/{user_david.email}"
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
     )
 
     # Reload amendement as it was updated in another transaction

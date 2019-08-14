@@ -1,16 +1,16 @@
 import secrets
 import string
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from more_itertools import ichunked
-from paste.deploy.converters import asbool
+from paste.deploy.converters import asbool, aslist
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.request import Request
 from pyramid.security import Authenticated, Everyone
 
-from zam_repondeur.models import DBSession, Team, User
+from zam_repondeur.models import DBSession, User
 
 
 def includeme(config: Configurator) -> None:
@@ -22,14 +22,12 @@ def includeme(config: Configurator) -> None:
         hashalg="sha512",
         max_age=int(settings["zam.auth_cookie_duration"]),
         secure=asbool(settings["zam.auth_cookie_secure"]),
+        admins=aslist(settings["zam.auth_admins"]),
     )
     config.set_authentication_policy(authn_policy)
 
     # Add a "request.user" property
     config.add_request_method(get_user, "user", reify=True)
-
-    # Add a "request.team" property
-    config.add_request_method(get_team, "team", reify=True)
 
     # We protect access to certain views based on permissions,
     # that are granted to users based on ACLs added to resources
@@ -60,18 +58,11 @@ def get_user(request: Request) -> Optional[User]:
     return None
 
 
-def get_team(request: Request) -> Optional[Team]:
-    team_name = request.environ.get("HTTP_X_REMOTE_USER")
-    if team_name is None:
-        return None
-    team: Optional[Team] = DBSession.query(Team).filter_by(name=team_name).first()
-    if team is None:
-        team = Team.create(name=team_name)
-        DBSession.flush()
-    return team
-
-
 class AuthenticationPolicy(AuthTktAuthenticationPolicy):
+    def __init__(self, secret: str, admins: List[str], **kwargs: Any) -> None:
+        super().__init__(secret, **kwargs)
+        self.admins = admins
+
     def authenticated_userid(self, request: Request) -> Optional[int]:
         """
         Return the authenticated userid or None if no authenticated userid
@@ -100,7 +91,15 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
             principals.append(f"user:{request.user.pk}")
             for team in request.user.teams:
                 principals.append(f"team:{team.pk}")
+            if self.is_admin(request.user):
+                principals.append("group:admins")
+                request.user.is_admin = True
+            else:
+                request.user.is_admin = False
         return principals
+
+    def is_admin(self, user: User) -> bool:
+        return user.email in self.admins
 
 
 def generate_auth_token(length: int = 20, chunk_size: int = 5) -> str:

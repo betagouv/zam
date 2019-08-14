@@ -5,10 +5,10 @@ from urllib.parse import urlparse
 
 from limiter import SlidingWindowLimiter
 from pyramid.decorator import reify
-from pyramid.httpexceptions import HTTPFound, HTTPTooManyRequests
+from pyramid.httpexceptions import HTTPForbidden, HTTPFound, HTTPTooManyRequests
 from pyramid.request import Request
 from pyramid.response import Response
-from pyramid.security import NO_PERMISSION_REQUIRED, remember, forget
+from pyramid.security import ACLDenied, NO_PERMISSION_REQUIRED, remember, forget
 from pyramid.view import forbidden_view_config, view_config, view_defaults
 from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message as MailMessage
@@ -54,7 +54,6 @@ class RateLimiterMixin:
 class UserLogin(RateLimiterMixin):
     def __init__(self, context: Root, request: Request) -> None:
         self.request = request
-        self.context = context
         self.email_limiter = self.make_limiter(action="token_requests", key="email")
         self.ip_limiter = self.make_limiter(action="token_requests", key="ip")
 
@@ -69,7 +68,7 @@ class UserLogin(RateLimiterMixin):
     def next_url(self) -> Any:
         url = self.request.params.get("source")
         if url is None or url == self.request.route_url("login"):
-            url = self.request.resource_url(self.context["lectures"])
+            url = self.request.resource_url(self.request.root["dossiers"])
         return url
 
     @view_config(request_method="POST")
@@ -90,8 +89,8 @@ class UserLogin(RateLimiterMixin):
         if not User.validate_email(email):
             return self.invalid_email(email=email, reason="incorrect_email")
 
-        # Will usually be prevented by the browser (pattern=...)
-        if not User.validate_email_domain(email):
+        # Will NOT be prevented by the browser (pattern=... is clumsy)
+        if not User.validate_email_domain(email, self.request.registry.settings):
             return self.invalid_email(email=email, reason="incorrect_domain")
 
         token = self.create_auth_token(email)
@@ -188,17 +187,8 @@ class Authenticate(RateLimiterMixin):
         email = auth["email"]
         user, created = get_one_or_create(User, email=email)
 
-        # Automatically add user without a team to the authenticated team
-        if not user.teams and self.request.team is not None:
-            user.teams.append(self.request.team)
-
         if created:
             DBSession.flush()  # so that the DB assigns a value to user.pk
-
-        # Prevent from impersonating an existing member of another team
-        if self.request.team and self.request.team not in user.teams:
-            self.request.session["already_in_use"] = True
-            return HTTPFound(location=self.request.route_url("login"))
 
         self.log_successful_login_attempt(email)
 
@@ -219,7 +209,7 @@ class Authenticate(RateLimiterMixin):
     def next_url(self) -> Any:
         url = self.request.params.get("source")
         if url is None or url == self.request.route_url("login"):
-            url = self.request.resource_url(self.context["lectures"])
+            url = self.request.resource_url(self.request.root["dossiers"])
         return url
 
     def log_successful_login_attempt(self, email: str) -> None:
@@ -235,7 +225,6 @@ class Authenticate(RateLimiterMixin):
 class Welcome:
     def __init__(self, context: Root, request: Request) -> None:
         self.request = request
-        self.context = context
 
     @view_config(request_method="GET", renderer="auth/welcome.html")
     def get(self) -> Any:
@@ -250,7 +239,7 @@ class Welcome:
 
         self.request.user.name = User.normalize_name(name)
         next_url = self.request.params.get("source") or self.request.resource_url(
-            self.context["lectures"]
+            self.request.root["dossiers"]
         )
         return HTTPFound(location=next_url)
 
@@ -266,7 +255,7 @@ def logout(request: Request) -> Any:
 
 
 @forbidden_view_config()
-def forbidden_view(request: Request) -> Any:
+def forbidden_view(exception: HTTPForbidden, request: Request) -> Any:
 
     # Redirect unauthenticated users to the login page
     if request.user is None:
@@ -274,11 +263,15 @@ def forbidden_view(request: Request) -> Any:
             location=request.route_url("login", _query={"source": request.url})
         )
 
-    # Redirect authenticated ones to the home page with an error message
-    request.session.flash(
-        Message(
-            cls="warning",
-            text="L’accès à cette lecture est réservé aux personnes autorisées.",
-        )
-    )
-    return HTTPFound(location=request.resource_url(request.root))
+    # Default
+    message = "L’accès à ce dossier est réservé aux personnes autorisées."
+    next_resource = request.root
+
+    if isinstance(exception.result, ACLDenied):
+        acl_denied: ACLDenied = exception.result
+        if acl_denied.permission == "delete":
+            message = "Vous n’êtes pas autorisé à supprimer ce dossier."
+            next_resource = request.context
+
+    request.session.flash(Message(cls="warning", text=message))
+    return HTTPFound(location=request.resource_url(next_resource))

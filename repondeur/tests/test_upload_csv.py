@@ -10,7 +10,9 @@ pytestmark = pytest.mark.usefixtures("lecture_an")
 
 
 def test_get_form(app, user_david):
-    resp = app.get("/lectures/an.15.269.PO717460/options/", user=user_david)
+    resp = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options/", user=user_david
+    )
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -19,7 +21,7 @@ def test_get_form(app, user_david):
     assert resp.forms["import-form"].method == "post"
     assert (
         resp.forms["import-form"].action
-        == "https://zam.test/lectures/an.15.269.PO717460/import_csv"
+        == "https://zam.test/dossiers/plfss-2018/lectures/an.15.269.PO717460/import_csv"
     )
 
     assert list(resp.forms["import-form"].fields.keys()) == ["reponses", "upload"]
@@ -35,24 +37,23 @@ TEST_FILES = ["reponses.csv", "reponses_semicolumns.csv", "reponses_with_bom.csv
 class TestPostForm:
     def _get_upload_form(self, app, user, headers=None):
         return app.get(
-            "/lectures/an.15.269.PO717460/options/", user=user, headers=headers
+            "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options/",
+            user=user,
+            headers=headers,
         ).forms["import-form"]
 
-    def _upload_csv(self, app, filename, user, team=None):
-        headers = {"X-Remote-User": team.name} if team is not None else None
-        form = self._get_upload_form(app, user=user, headers=headers)
+    def _upload_csv(self, app, filename, user):
+        form = self._get_upload_form(app, user=user)
         path = Path(__file__).parent / "sample_data" / filename
         form["reponses"] = Upload("file.csv", path.read_bytes())
-        return form.submit(user=user, headers=headers)
+        return form.submit(user=user)
 
     @pytest.mark.parametrize("filename", TEST_FILES)
-    def test_upload_redirects_to_index(self, app, filename, user_david):
+    def test_upload_redirects_to_index(self, app, lecture_an_url, filename, user_david):
         resp = self._upload_csv(app, filename, user=user_david)
 
         assert resp.status_code == 302
-        assert (
-            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
-        )
+        assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     @pytest.mark.parametrize("filename", TEST_FILES)
     def test_upload_success_message(self, app, filename, user_david):
@@ -193,9 +194,10 @@ class TestPostForm:
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         with transaction.manager:
-            lecture_an.owned_by_team = team_zam
             DBSession.add(user_ronan)
             user_ronan.teams.append(team_zam)
+            DBSession.add(team_zam)
+            team_zam_users = team_zam.users
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_table is None
@@ -207,11 +209,9 @@ class TestPostForm:
             DBSession.query(User).filter_by(email="melodie@exemple.gouv.fr").first()
         )
         assert user_melodie is None
-        assert "melodie@exemple.gouv.fr" not in {user.email for user in team_zam.users}
+        assert "melodie@exemple.gouv.fr" not in {user.email for user in team_zam_users}
 
-        self._upload_csv(
-            app, "reponses_with_affectation.csv", user=user_ronan, team=team_zam
-        )
+        self._upload_csv(app, "reponses_with_affectation.csv", user=user_ronan)
 
         DBSession.add(team_zam)
         DBSession.refresh(team_zam)
@@ -276,7 +276,12 @@ class TestPostForm:
         resp = form.submit()
 
         assert resp.status_code == 302
-        assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/options"
+        assert resp.location == (
+            "https://zam.test"
+            "/dossiers/plfss-2018"
+            "/lectures/an.15.269.PO717460"
+            "/options"
+        )
 
         resp = resp.follow()
 
@@ -284,7 +289,9 @@ class TestPostForm:
         assert "Veuillez d’abord sélectionner un fichier" in resp.text
 
 
-def test_post_form_from_export(app, lecture_an, article1_an, tmpdir, user_david):
+def test_post_form_from_export(
+    app, lecture_an, lecture_an_url, article1_an, tmpdir, user_david
+):
     from zam_repondeur.export.spreadsheet import write_csv
     from zam_repondeur.models import DBSession, Amendement
 
@@ -312,15 +319,15 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir, user_david)
         amendements[0].user_content.avis = None
         amendements[1].user_content.avis = None
 
-    form = app.get("/lectures/an.15.269.PO717460/options/", user=user_david).forms[
-        "import-form"
-    ]
+    form = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options/", user=user_david
+    ).forms["import-form"]
     form["reponses"] = Upload("file.csv", Path(filename).read_bytes())
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     resp = resp.follow()
 

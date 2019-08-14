@@ -1,5 +1,5 @@
 -i https://pypi.org/simple
--e git+https://github.com/regardscitoyens/anpy.git@af18fad01230893ceb9e991d86b1f99647e051d2#egg=anpy
+-e git+https://github.com/regardscitoyens/anpy.git@2ad2f36e3ca3cb6bdbcb6a66a5e7a97792120c56#egg=anpy
 -e git+https://github.com/regardscitoyens/legipy.git@2fa6ff95498f896ea5e8c9a63c1f29b2fa2244ab#egg=legipy
 -e git+https://github.com/regardscitoyens/senapy.git@800b1d1a696a6ac832549c8b6f46c73f3027b9ad#egg=senapy
 -e git+https://github.com/regardscitoyens/the-law-factory-parser.git@c3137ba4d3338f6fff567681048288054a7764c8#egg=tlfp
@@ -68,9 +68,9 @@ requests==2.20.1            # lawfactory_utils, legipy: < 2.21, >= 2.20
 rollbar==0.14.7
 selectolax==0.1.13
 six==1.11.0                 # legipy: < 1.12, >= 1.11
-slugify==0.0.1              # anpy: < 0.1, >= 0.0
 SQLAlchemy==1.3.6
 SQLAlchemy-Utils==0.34.1
+text-unidecode==1.2
 transaction==2.4.0
 translationstring==1.3
 tzlocal==2.0.0

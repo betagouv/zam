@@ -9,11 +9,11 @@ from .helpers import login
 
 
 @pytest.fixture(params=["firefox", "chrome"])
-def driver(request, wsgi_server):
+def driver(request, wsgi_server, user_david):
     factory = driver_factory(request.param)
     with factory() as _driver:
         try:
-            login(_driver, wsgi_server.application_url, "user@exemple.gouv.fr")
+            login(_driver, wsgi_server.application_url, user_david.email)
             yield _driver
         finally:
             _driver.quit()
@@ -98,3 +98,13 @@ class HeadlessChrome(webdriver.Chrome):
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--no-sandbox")
         return chrome_options
+
+
+@pytest.fixture
+def dossier_an_url(wsgi_server, lecture_an):
+    return f"{wsgi_server.application_url}dossiers/{lecture_an.dossier.url_key}"
+
+
+@pytest.fixture
+def lecture_an_url(wsgi_server, lecture_an, dossier_an_url):
+    return f"{dossier_an_url}/lectures/{lecture_an.url_key}"

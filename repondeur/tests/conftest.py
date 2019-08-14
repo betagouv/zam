@@ -12,6 +12,7 @@ from fixtures.lectures import *  # noqa: F401,F403
 from fixtures.essoc2018 import *  # noqa: F401,F403
 from fixtures.plf2018 import *  # noqa: F401,F403
 from fixtures.plfss2018 import *  # noqa: F401,F403
+from fixtures.plfss2019 import *  # noqa: F401,F403
 from fixtures.scraping import *  # noqa: F401,F403
 from fixtures.shared_tables import *  # noqa: F401,F403
 from fixtures.users import *  # noqa: F401,F403
@@ -79,6 +80,8 @@ def settings():
         ),
         "zam.session_secret": "dummy",
         "zam.auth_secret": "dummier",
+        "zam.auth_admins": ["user@sgg.pm.gouv.fr"],
+        "zam.auth_user_patterns": ["*@*.gouv.fr", "listeblanche@exemple.fr"],
         # Only wait for 1 second to speed up integration tests.
         "zam.check_for.amendement_stolen_while_editing": 1,
         "zam.check_for.transfers_from_to_my_table": 1,

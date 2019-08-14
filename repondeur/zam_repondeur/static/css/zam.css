@@ -30,9 +30,9 @@ a {
 }
 
 nav.main {
-    background: #3167a6;
+    background: #3167a6 no-repeat 98% 50%/1.7rem url("../img/logo_1_0_white_z_only.svg");
     color: white;
-    padding: 0 2rem;
+    padding: 0 1rem;
     font-size: 1rem;
     display: flex;
     justify-content: space-between;
@@ -40,19 +40,17 @@ nav.main {
     min-height: calc(24px + 1.4rem);
 }
     nav.main ul {
-        display: flex;
         list-style-type: none;
         margin: 0;
         padding: 8px 0;
     }
         nav.main ul li {
             padding: .2rem;
-            white-space: nowrap;
-            margin-left: 1.5rem;
+            margin-left: .5rem;
+            line-height: 1.8;
         }
             nav.main ul li a {
                 color: white;
-                padding: .3rem .2rem .1rem .2rem;
                 border-bottom: 2px solid transparent;
             }
             nav.main ul li a:hover {
@@ -66,20 +64,16 @@ nav.main {
             nav.main ul li.selected a:hover {
                 text-decoration: none;
             }
-    nav.main ul:first-child li:first-child {
-        border-right: 2px solid white;
-        padding-right: 2rem;
-        margin-right: 0.3rem;
-        margin-left: 0;
+    nav.main > ul {
+        display: flex;
+        flex-direction: row;
     }
-    nav.main a.home {
-        padding: 0 0 0 1.5rem;
-        background: no-repeat left 30%/.85rem url("../img/home.svg");
-    }
-    nav.main a.account {
-        background: no-repeat right 35%/1.1rem url("../img/compte.svg");
-        padding-left: 0;
-        padding-right: 1.7rem;
+        nav.main > ul li {
+            margin: 0 1.6rem;
+        }
+    nav.main .menu-actions a.account {
+        background: no-repeat left 35%/1.1rem url("../img/compte.svg");
+        padding-left: 1.7rem;
     }
     nav.main .account-menu-toggle {
         position: relative;
@@ -87,28 +81,48 @@ nav.main {
         nav.main .account-menu-toggle:hover {
             cursor: pointer;
         }
-    nav.main .account-menu {
-        display: flex;
-        position: absolute;
-        top: calc(20px + 1.4rem);
-        right: 0;
-        min-width: 220px;
-        flex-direction: column;
-        border: solid 1px white;
-        padding: 8px 16px;
-        background-color: #3167a6;
+    nav.main .menu-toggle {
+        margin-left: 0;
     }
-        nav.main .account-menu > * {
-            padding: 0;
-            margin: 0.5rem;
+        nav.main .menu-toggle > a {
+            background: no-repeat left 0/1.3rem url("../img/menu_icon.svg");
+            padding-left: 1.7rem;
         }
-        nav.main .account-menu a {
-            padding: 0;
+    nav.main .menu {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: calc(19px + 2rem);
+        left: 0;
+        width: 300px;
+        min-height: calc(100vh - 19px - 2rem);
+        border: solid 1px white;
+        padding: 8px;
+        background-color: #3167a6;
+        z-index: 100;
+    }
+        nav.main .menu li {
+            padding-top: 1rem;
         }
-            nav.main .account-menu a.logout {
-                background: no-repeat right 40%/1.1rem url("../img/exit.svg");
-                padding-right: 1.7rem;
-            }
+        nav.main .menu .backlink {
+            border-bottom: 1px solid white;
+            padding-bottom: 2rem;
+        }
+        .menu .menu-breadcrumb {
+            flex: 1;
+        }
+                .menu .menu-breadcrumb .menu-dossier {
+                    font-size: 1.4rem;
+                    line-height: 1.5;
+                }
+        .menu .menu-actions .user {
+            margin-top: 2rem;
+        }
+        .menu .arrow-left {
+            padding-left: 1.33rem;
+            background: no-repeat left 40%/.7rem url("../img/big_left_white.svg");
+        }
+
 
 nav.secondary {
     padding: 1.2rem 2rem 1rem 2rem;

@@ -11,14 +11,14 @@
             <p class="error">La saisie d’une adresse de courriel valide est requise.</p>
         {% endif %}
         {% if request.session.pop('incorrect_domain', None) %}
-            <p class="error">Cette adresse de courriel n’est pas en .gouv.fr.</p>
+            <p class="error">Cette adresse de courriel n’est pas acceptée.</p>
         {% endif %}
         {% if request.session.pop('already_in_use', None) %}
             <p class="error">Cette adresse de courriel est déjà utilisée<br>dans une autre équipe.</p>
         {% endif %}
         <label for="email">Votre courriel professionnel (en .gouv.fr)</label>
         <input type="email" name="email" autocomplete="email"
-            required pattern=".+@.+\.[gG][oO][uU][vV]\.[fF][rR]"
+            required
             autocorrect="off" spellcheck="false">
     </fieldset>
     <input type="submit" class="button primary enabled" value="Entrer dans Zam">

@@ -10,16 +10,20 @@ pytestmark = pytest.mark.usefixtures("lecture_an")
 
 
 def test_get_form(app, user_david):
-    resp = app.get("/lectures/an.15.269.PO717460/options/", user=user_david)
+    resp = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options/", user=user_david
+    )
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
     # Check the form
     assert resp.forms["backup-form"].method == "post"
-    assert (
-        resp.forms["backup-form"].action
-        == "https://zam.test/lectures/an.15.269.PO717460/import_backup"
+    assert resp.forms["backup-form"].action == (
+        "https://zam.test"
+        "/dossiers/plfss-2018"
+        "/lectures/an.15.269.PO717460"
+        "/import_backup"
     )
 
     assert list(resp.forms["backup-form"].fields.keys()) == ["backup", "upload"]
@@ -32,7 +36,9 @@ def test_get_form(app, user_david):
 class TestPostForm:
     def _get_upload_form(self, app, user, headers=None):
         return app.get(
-            "/lectures/an.15.269.PO717460/options/", user=user, headers=headers
+            "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options/",
+            user=user,
+            headers=headers,
         ).forms["backup-form"]
 
     def _upload_backup(self, app, filename, user, team=None):
@@ -42,13 +48,11 @@ class TestPostForm:
         form["backup"] = Upload("file.json", path.read_bytes())
         return form.submit(user=user, headers=headers)
 
-    def test_upload_redirects_to_index(self, app, user_david):
+    def test_upload_redirects_to_index(self, app, user_david, lecture_an_url):
         resp = self._upload_backup(app, "backup.json", user_david)
 
         assert resp.status_code == 302
-        assert (
-            resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
-        )
+        assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     def test_upload_success_message(self, app, user_david):
         resp = self._upload_backup(app, "backup.json", user_david).follow()
@@ -143,7 +147,7 @@ class TestPostForm:
         assert CommentsAmendementModifie not in events
 
     def test_upload_backup_with_affectation_to_unknown_user_without_team(
-        self, app, user_ronan
+        self, app, user_david, team_zam
     ):
         from zam_repondeur.models import DBSession, Amendement
         from zam_repondeur.models.events.amendement import AmendementTransfere
@@ -154,12 +158,12 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_table is None
 
-        self._upload_backup(app, "backup_with_affectation.json", user_ronan)
+        self._upload_backup(app, "backup_with_affectation_new.json", user_david)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.user_table.user.email == "david@exemple.gouv.fr"
-        assert amendement.user_table.user.name == "David2"
-        assert amendement.user_table.user.teams == []
+        assert amendement.user_table.user.email == "melodie@exemple.gouv.fr"
+        assert amendement.user_table.user.name == "Mélodie"
+        assert amendement.user_table.user.teams[0].pk == team_zam.pk
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere in events
 
@@ -169,15 +173,10 @@ class TestPostForm:
         assert AmendementTransfere not in events
 
     def test_upload_backup_with_affectation_to_unknown_user_with_team(
-        self, app, lecture_an, user_ronan, team_zam
+        self, app, lecture_an, user_david, team_zam
     ):
         from zam_repondeur.models import DBSession, Amendement, User
         from zam_repondeur.models.events.amendement import AmendementTransfere
-
-        with transaction.manager:
-            lecture_an.owned_by_team = team_zam
-            user_ronan.teams.append(team_zam)
-            DBSession.add(user_ronan)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.user_table is None
@@ -185,34 +184,34 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_table is None
 
-        user_david2 = (
-            DBSession.query(User).filter_by(email="david@exemple.gouv.fr").first()
+        user_melodie = (
+            DBSession.query(User).filter_by(email="melodie@exemple.gouv.fr").first()
         )
-        assert user_david2 is None
-        assert "david@exemple.gouv.fr" not in {user.email for user in team_zam.users}
+        assert user_melodie is None
+        assert "melodie@exemple.gouv.fr" not in {user.email for user in team_zam.users}
 
         self._upload_backup(
-            app, "backup_with_affectation.json", user=user_ronan, team=team_zam
+            app, "backup_with_affectation_new.json", user=user_david, team=team_zam
         )
 
         DBSession.add(team_zam)
         DBSession.refresh(team_zam)
 
         # Check the new user was created
-        user_david2 = (
-            DBSession.query(User).filter_by(email="david@exemple.gouv.fr").first()
+        user_melodie = (
+            DBSession.query(User).filter_by(email="melodie@exemple.gouv.fr").first()
         )
-        assert user_david2 is not None
-        assert user_david2.email == "david@exemple.gouv.fr"
-        assert user_david2.name == "David2"
+        assert user_melodie is not None
+        assert user_melodie.email == "melodie@exemple.gouv.fr"
+        assert user_melodie.name == "Mélodie"
 
         # Check the new user was added to the team
-        assert "david@exemple.gouv.fr" in {user.email for user in team_zam.users}
-        assert user_david2.teams == [team_zam]
+        assert "melodie@exemple.gouv.fr" in {user.email for user in team_zam.users}
+        assert user_melodie.teams == [team_zam]
 
         # Check the amendement is on the new user's table
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.user_table.user is user_david2
+        assert amendement.user_table.user is user_melodie
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere in events
 
@@ -229,20 +228,20 @@ class TestPostForm:
             amendement = (
                 DBSession.query(Amendement).filter(Amendement.num == 666).first()
             )
-            amendement.user_table = user_ronan.table_for(lecture_an)
+            amendement.user_table = user_david.table_for(lecture_an)
 
-        assert amendement.user_table.user.email == "ronan@exemple.gouv.fr"
-        assert amendement.user_table.user.name == "Ronan"
+        assert amendement.user_table.user.email == "david@exemple.gouv.fr"
+        assert amendement.user_table.user.name == "David"
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.user_table is None
 
-        self._upload_backup(app, "backup_with_affectation.json", user_ronan)
+        self._upload_backup(app, "backup_with_affectation_existing.json", user_david)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.user_table.user.email == "david@exemple.gouv.fr"
+        assert amendement.user_table.user.email == "ronan@exemple.gouv.fr"
         assert (
-            amendement.user_table.user.name == "David"
+            amendement.user_table.user.name == "Ronan"
         )  # Should not override the name of an existing user.
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
@@ -280,7 +279,12 @@ class TestPostForm:
         resp = form.submit()
 
         assert resp.status_code == 302
-        assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/options"
+        assert resp.location == (
+            "https://zam.test"
+            "/dossiers/plfss-2018"
+            "/lectures/an.15.269.PO717460"
+            "/options"
+        )
 
         resp = resp.follow()
 
@@ -288,7 +292,9 @@ class TestPostForm:
         assert "Veuillez d’abord sélectionner un fichier" in resp.text
 
 
-def test_post_form_from_export(app, lecture_an, article1_an, tmpdir, user_david):
+def test_post_form_from_export(
+    app, lecture_an, lecture_an_url, article1_an, tmpdir, user_david
+):
     from zam_repondeur.export.json import write_json
     from zam_repondeur.models import DBSession, Amendement, Article
 
@@ -319,15 +325,15 @@ def test_post_form_from_export(app, lecture_an, article1_an, tmpdir, user_david)
         article1_an.user_content.title = ""
         article1_an.user_content.presentation = ""
 
-    form = app.get("/lectures/an.15.269.PO717460/options/", user=user_david).forms[
-        "backup-form"
-    ]
+    form = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options/", user=user_david
+    ).forms["backup-form"]
     form["backup"] = Upload("file.json", Path(filename).read_bytes())
 
     resp = form.submit()
 
     assert resp.status_code == 302
-    assert resp.location == "https://zam.test/lectures/an.15.269.PO717460/amendements/"
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
     resp = resp.follow()
 

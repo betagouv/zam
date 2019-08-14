@@ -26,7 +26,7 @@
         margin-right: 3.5rem;
         width: calc(100% - 7rem);
     }
-    .menu {
+    .amendement-checkbox {
         position: absolute;
         top: 8px;
         right: 12px;
@@ -395,10 +395,8 @@
                                     </div>
                                 </div>
                                 <div class="amendement-card-avis">
-                                    <div class="menu">
-                                        <div class="menu-selector">
-                                            <input type="checkbox" name="amendement-selected" value="{{ amendement.num }}">
-                                        </div>
+                                    <div class="amendement-checkbox">
+                                        <input type="checkbox" name="amendement-selected" value="{{ amendement.num }}">
                                     </div>
                                     <div class="avis">
                                         {{ avis(amendement) }}

@@ -557,6 +557,7 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
     assert dossier == DossierRef(
         uid="DLR5L15N36159",
         titre="Fonction publique : un Etat au service d'une société de confiance",
+        slug="etat-service-societe-confiance",
         an_url="http://www.assemblee-nationale.fr/dyn/15/dossiers/alt/etat_service_societe_confiance",  # noqa
         senat_url="http://www.senat.fr/dossier-legislatif/pjl17-259.html",
         lectures=lectures,

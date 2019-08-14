@@ -7,17 +7,18 @@ from selenium.webdriver.support import expected_conditions as EC
 pytestmark = pytest.mark.flaky(max_runs=5)
 
 
-def test_visionneuse_detail_amendement(wsgi_server, driver, lecture_an, amendements_an):
+def test_visionneuse_detail_amendement(
+    wsgi_server, driver, lecture_an_url, amendements_an
+):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
         amendements_an[0].user_content.avis = "Favorable"
         amendements_an[0].auteur = "M. Content"
         amendements_an[0].groupe = "Les Heureux"
         DBSession.add_all(amendements_an)
 
-    driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
+    driver.get(f"{lecture_an_url}/articles/article.1../reponses#amdt-666")
 
     article = driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")
@@ -32,17 +33,16 @@ def test_visionneuse_detail_amendement(wsgi_server, driver, lecture_an, amendeme
 
 
 def test_visionneuse_detail_amendement_reponse(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an_url, amendements_an
 ):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
         amendements_an[0].user_content.avis = "Favorable"
         amendements_an[0].user_content.reponse = "La réponse"
         DBSession.add_all(amendements_an)
 
-    driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
+    driver.get(f"{lecture_an_url}/articles/article.1../reponses#amdt-666")
 
     article = driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")
@@ -57,17 +57,16 @@ def test_visionneuse_detail_amendement_reponse(
 
 
 def test_visionneuse_detail_amendement_texte(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an_url, amendements_an
 ):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
         amendements_an[0].user_content.avis = "Favorable"
         amendements_an[0].corps = "Le corps"
         DBSession.add_all(amendements_an)
 
-    driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
+    driver.get(f"{lecture_an_url}/articles/article.1../reponses#amdt-666")
 
     article = driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")
@@ -94,18 +93,17 @@ def test_visionneuse_detail_amendement_texte(
 
 
 def test_visionneuse_detail_amendement_reponse_then_texte(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an_url, amendements_an
 ):
     from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     with transaction.manager:
         amendements_an[0].user_content.avis = "Favorable"
         amendements_an[0].user_content.reponse = "La réponse"
         amendements_an[0].user_content.objet = "L’objet"
         DBSession.add_all(amendements_an)
 
-    driver.get(f"{LECTURE_URL}/articles/article.1../reponses#amdt-666")
+    driver.get(f"{lecture_an_url}/articles/article.1../reponses#amdt-666")
 
     article = driver.find_element_by_css_selector("article")
     header = article.find_element_by_css_selector("header")

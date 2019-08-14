@@ -38,6 +38,7 @@ class TableView:
         return {
             "lecture": self.lecture,
             "lecture_resource": self.context.lecture_resource,
+            "dossier_resource": self.context.lecture_resource.dossier_resource,
             "current_tab": "table",
             "table": table,
             "all_amendements": table.amendements,
@@ -108,14 +109,12 @@ class TableView:
             AmendementTransfere.create(self.request, amendement, old, new)
 
         if target != self.request.user.email and self.request.POST.get("from_index"):
-            next_location = self.request.resource_url(
-                self.context.lecture_resource, "amendements"
-            )
+            amendements_collection = self.context.lecture_resource["amendements"]
+            next_location = self.request.resource_url(amendements_collection)
         else:
             table = self.context.model()
-            next_location = self.request.resource_url(
-                self.context.parent, table.user.email
-            )
+            table_resource = self.context.parent[table.user.email]
+            next_location = self.request.resource_url(table_resource)
         return HTTPFound(location=next_location)
 
     def get_target_user_table(self, target: str) -> Optional[UserTable]:
@@ -125,7 +124,10 @@ class TableView:
             target_user = self.request.user
         else:
             target_user = DBSession.query(User).filter(User.email == target).one()
-        if self.request.team and target_user not in self.request.team.users:
+        if (
+            target_user
+            not in self.context.lecture_resource.dossier_resource.dossier.team.users
+        ):
             raise HTTPForbidden("Transfert non autorisé")
         return target_user.table_for(self.lecture)
 

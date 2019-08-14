@@ -5,24 +5,19 @@ from selenium.webdriver.support.ui import Select
 
 
 def test_amendement_edition_start_editing_status(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url, user_david_table_an
 ):
-    from zam_repondeur.models import DBSession, User
+    from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     amendement = amendements_an[0]
     with transaction.manager:
-        user = (
-            DBSession.query(User).filter(User.email == "user@exemple.gouv.fr").first()
-        )
-        table = user.table_for(lecture_an)
-        DBSession.add(table)
-        table.amendements.append(amendement)
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendement)
         DBSession.add(amendement)
 
     assert not amendement.is_being_edited
 
-    driver.get(f"{LECTURE_URL}/amendements/{amendements_an[0].num}/amendement_edit")
+    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit")
     avis = Select(driver.find_element_by_css_selector('select[name="avis"]'))
     avis.select_by_visible_text("Défavorable")
     time.sleep(1)  # Wait for the option to be selected.
@@ -31,24 +26,19 @@ def test_amendement_edition_start_editing_status(
 
 
 def test_amendement_edition_exit_stop_editing_status(
-    wsgi_server, driver, lecture_an, amendements_an
+    wsgi_server, driver, lecture_an, amendements_an, lecture_an_url, user_david_table_an
 ):
-    from zam_repondeur.models import DBSession, User
+    from zam_repondeur.models import DBSession
 
-    LECTURE_URL = f"{wsgi_server.application_url}lectures/{lecture_an.url_key}"
     amendement = amendements_an[0]
     with transaction.manager:
-        user = (
-            DBSession.query(User).filter(User.email == "user@exemple.gouv.fr").first()
-        )
-        table = user.table_for(lecture_an)
-        DBSession.add(table)
-        table.amendements.append(amendement)
+        DBSession.add(user_david_table_an)
+        user_david_table_an.amendements.append(amendement)
         DBSession.add(amendement)
 
     assert not amendement.is_being_edited
 
-    driver.get(f"{LECTURE_URL}/amendements/{amendements_an[0].num}/amendement_edit")
+    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit")
     avis = Select(driver.find_element_by_css_selector('select[name="avis"]'))
     avis.select_by_visible_text("Défavorable")
     time.sleep(1)  # Wait for the option to be selected.

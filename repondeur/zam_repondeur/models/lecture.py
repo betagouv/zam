@@ -12,7 +12,6 @@ from .division import SubDiv
 from .events.base import LastEventMixin
 from .organe import ORGANE_AN, ORGANE_SENAT
 from .texte import Texte
-from .users import Team
 
 # Make these types available to mypy, but avoid circular imports
 if TYPE_CHECKING:
@@ -47,14 +46,19 @@ class Lecture(Base, LastEventMixin):
         Article, back_populates="lecture", cascade="all, delete-orphan"
     )
 
-    owned_by_team_pk = Column(Integer, ForeignKey("teams.pk"), nullable=True)
-    owned_by_team = relationship("Team", backref="lectures")
     dossier_pk = Column(Integer, ForeignKey("dossiers.pk"))
     dossier = relationship("Dossier", back_populates="lectures")
     texte_pk = Column(Integer, ForeignKey("textes.pk"))
     texte: Texte = relationship(Texte, back_populates="lectures")
 
-    __repr_keys__ = ("pk", "chambre", "organe", "partie", "owned_by_team")
+    __repr_keys__ = ("pk", "chambre", "organe", "partie")
+
+    def __lt__(self, other: "Lecture") -> bool:
+        return self.sort_key < other.sort_key
+
+    @property
+    def sort_key(self) -> Tuple[datetime, str, Optional[int]]:
+        return self.texte.date_depot, self.organe, self.partie
 
     def __str__(self) -> str:
         return ", ".join(
@@ -192,7 +196,6 @@ class Lecture(Base, LastEventMixin):
         organe: str,
         dossier: "Dossier",
         partie: Optional[int] = None,
-        owned_by_team: Optional[Team] = None,
     ) -> "Lecture":
         now = datetime.utcnow()
         chambre = texte.chambre
@@ -203,11 +206,39 @@ class Lecture(Base, LastEventMixin):
             organe=organe,
             dossier=dossier,
             partie=partie,
-            owned_by_team=owned_by_team,
             created_at=now,
         )
         DBSession.add(lecture)
         return lecture
+
+    @classmethod
+    def create_from_ref(
+        cls, lecture_ref: Any, dossier: "Dossier", texte: "Texte"
+    ) -> Optional["Lecture"]:
+        chambre = lecture_ref.chambre
+        titre = lecture_ref.titre
+        organe = lecture_ref.organe
+        partie = lecture_ref.partie
+
+        if cls.exists_with_fallback(chambre, texte, partie, organe):
+            return None
+
+        lecture = cls.create(
+            texte=texte, partie=partie, titre=titre, organe=organe, dossier=dossier
+        )
+        return lecture
+
+    @classmethod
+    def exists_with_fallback(
+        cls, chambre: Chambre, texte: Texte, partie: Optional[int], organe: str
+    ) -> bool:
+        if cls.exists(chambre, texte, partie, organe):
+            return True
+        # We might already have a Sénat commission lecture created earlier from
+        # scraping data, and that would not have the organe.
+        if chambre == Chambre.SENAT and organe != ORGANE_SENAT:
+            return cls.exists(chambre, texte, partie, "")
+        return False
 
     @property
     def url_key(self) -> str:

@@ -8,4 +8,4 @@ from zam_repondeur.resources import Root
 
 @view_config(context=Root)
 def home(context: Root, request: Request) -> Response:
-    return HTTPFound(location=request.resource_url(context["lectures"]))
+    return HTTPFound(location=request.resource_url(context["dossiers"]))

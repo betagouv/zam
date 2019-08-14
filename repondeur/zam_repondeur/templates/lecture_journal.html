@@ -1,9 +1,5 @@
-{% extends "_base.html" %}
+{% extends "_base_lecture.html" %}
 {% import "macros.html" as macros %}
-
-{% block title %}
-    {{ lecture }} • {{ lecture.dossier.titre }} • Zam
-{% endblock %}
 
 {% block header %}
 <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/journal.css') }}">
@@ -37,31 +33,6 @@
 </style>
 {% endblock %}
 
-{% block extra_nav %}
-    <li>
-        <a href="{{ request.resource_url(context['tables'], request.user.email) }}">
-            Ma table
-        </a>
-    </li>
-    <li>
-        <a href="{{ request.resource_url(context, 'amendements') }}">
-            Index
-        </a>
-    </li>
-    <li>
-        <a href="{{ request.resource_url(context, 'options') }}">
-            Options avancées
-        </a>
-    </li>
-    {% if lecture.displayable %}
-        <li>
-            <a href="{{ request.resource_url(context['articles']) }}" target="_blank">
-                Dossier de banc
-            </a>
-        </li>
-    {% endif %}
-{% endblock %}
-
 {% block body %}
     <svg aria-hidden="true" style="position: absolute; width: 0; height: 0;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
      <defs>
@@ -74,7 +45,7 @@
         <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh">
             <button type="submit" name="refresh" class="button">
                 {{ macros.svg_icon("sync") }}
-                Rafraichir manuellement
+                Rafraîchir manuellement
             </button>
         </form>
     </div>

@@ -51,7 +51,6 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         config.include("pyramid_default_cors")
         config.include("pyramid_retry")
 
-        config.add_route("choices_lectures", "/choices/dossiers/{uid}/")
         config.add_route("error", "/error")
 
         config.include("zam_repondeur.assets")

@@ -1,6 +1,8 @@
 from datetime import datetime
-from typing import Any, List, Optional, TYPE_CHECKING
+from fnmatch import fnmatchcase
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
+from paste.deploy.converters import aslist
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, Text, func
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy_utils import EmailType
@@ -28,6 +30,9 @@ class Team(Base):
 
     pk: int = Column(Integer, primary_key=True)
     name: str = Column(Text, nullable=False, unique=True)
+
+    dossier_pk = Column(Integer, ForeignKey("dossiers.pk"))
+    dossier = relationship("Dossier", back_populates="team")
     users = relationship(
         "User", secondary="teams2users", backref=backref("teams", lazy="joined")
     )
@@ -86,8 +91,11 @@ class User(Base):
         return email != "" and "@" in email
 
     @staticmethod
-    def validate_email_domain(email: str) -> bool:
-        return email.endswith(".gouv.fr")
+    def validate_email_domain(email: str, settings: Dict[str, str]) -> bool:
+        return any(
+            fnmatchcase(email, pattern)
+            for pattern in aslist(settings["zam.auth_user_patterns"])
+        )
 
     @staticmethod
     def normalize_name(name: str) -> str:
@@ -124,7 +132,3 @@ class User(Base):
     def everyone_but_me(self, me: "User") -> List["User"]:
         users: List["User"] = DBSession.query(User).filter(User.email != me.email).all()
         return users
-
-    @property
-    def can_delete_lecture(self) -> bool:
-        return self.email.endswith("@zam.beta.gouv.fr")

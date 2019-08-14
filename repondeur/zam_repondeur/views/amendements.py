@@ -10,14 +10,14 @@ from zam_repondeur.clean import clean_html
 from zam_repondeur.decorator import reify
 from zam_repondeur.message import Message
 from zam_repondeur.models import AVIS, Batch
-from zam_repondeur.resources import AmendementResource
-from zam_repondeur.utils import add_url_fragment, add_url_params
 from zam_repondeur.models.events.amendement import (
     AvisAmendementModifie,
+    CommentsAmendementModifie,
     ObjetAmendementModifie,
     ReponseAmendementModifiee,
-    CommentsAmendementModifie,
 )
+from zam_repondeur.resources import AmendementResource
+from zam_repondeur.utils import add_url_fragment, add_url_params
 
 
 @view_defaults(

@@ -9,9 +9,9 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from zam_repondeur.message import Message
 from zam_repondeur.models import (
-    DBSession,
     Amendement,
     Batch,
+    DBSession,
     SharedTable,
     User,
     UserTable,

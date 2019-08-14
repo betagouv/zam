@@ -3,7 +3,6 @@ from typing import List
 
 import requests
 
-
 URL = "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv"
 
 

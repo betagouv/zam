@@ -10,7 +10,6 @@ from pyramid.request import Request
 
 from zam_repondeur.models import Amendement, Lecture
 
-
 # NB: dict key order is used for spreadsheet columns order (Python 3.6+)
 FIELDS = {
     "article": "Num article",

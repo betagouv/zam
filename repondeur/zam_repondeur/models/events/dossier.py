@@ -1,11 +1,11 @@
-from typing import Any
 from string import Template
+from typing import Any
 
 from jinja2 import Markup
 from pyramid.request import Request
 
-from .base import Event
 from ..dossier import Dossier
+from .base import Event
 
 
 class DossierEvent(Event):

@@ -1,8 +1,8 @@
 from typing import List
 
 from slugify import slugify
-from sqlalchemy import Column, ForeignKey, Integer, Index, Text, UniqueConstraint
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, ForeignKey, Index, Integer, Text, UniqueConstraint
+from sqlalchemy.orm import backref, relationship
 
 from .amendement import Amendement
 from .base import Base, DBSession

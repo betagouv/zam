@@ -3,19 +3,18 @@ NB: make sure tasks.huey.init_huey() has been called before importing this modul
 """
 import logging
 
-from zam_repondeur.fetch import get_articles, get_amendements
+from zam_repondeur.fetch import get_amendements, get_articles
 from zam_repondeur.fetch.lectures import get_lectures
-from zam_repondeur.tasks.huey import huey
 from zam_repondeur.models import DBSession, Dossier, Lecture
 from zam_repondeur.models.events.dossier import LecturesRecuperees
 from zam_repondeur.models.events.lecture import (
-    ArticlesRecuperes,
-    AmendementsNonTrouves,
     AmendementsAJour,
-    AmendementsRecuperes,
     AmendementsNonRecuperes,
+    AmendementsNonTrouves,
+    AmendementsRecuperes,
+    ArticlesRecuperes,
 )
-
+from zam_repondeur.tasks.huey import huey
 
 logger = logging.getLogger(__name__)
 

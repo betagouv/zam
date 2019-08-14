@@ -4,51 +4,48 @@ from pyramid_retry import mark_error_retryable
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-from .base import Base, DBSession, log_query_with_origin  # noqa
-
-from .amendement import Amendement, Batch, Mission, AVIS  # noqa
+from .amendement import AVIS, Amendement, Batch, Mission  # noqa
 from .article import Article, ArticleUserContent  # noqa
+from .base import Base, DBSession, log_query_with_origin  # noqa
 from .chambre import Chambre  # noqa
 from .dossier import Dossier  # noqa
-from .lecture import Lecture  # noqa
-from .users import Team, User  # noqa
-from .table import SharedTable, UserTable  # noqa
-from .texte import Texte, TypeTexte  # noqa
-
-from .events.base import Event  # noqa
 from .events.amendement import (  # noqa
-    AmendementRectifie,
     AmendementIrrecevable,
+    AmendementRectifie,
     AmendementTransfere,
-    CorpsAmendementModifie,
-    ExposeAmendementModifie,
     AvisAmendementModifie,
-    ObjetAmendementModifie,
-    ReponseAmendementModifiee,
-    CommentsAmendementModifie,
     BatchSet,
     BatchUnset,
+    CommentsAmendementModifie,
+    CorpsAmendementModifie,
+    ExposeAmendementModifie,
+    ObjetAmendementModifie,
+    ReponseAmendementModifiee,
 )
 from .events.article import (  # noqa
     ContenuArticleModifie,
-    TitreArticleModifie,
     PresentationArticleModifiee,
+    TitreArticleModifie,
 )
+from .events.base import Event  # noqa
 from .events.lecture import (  # noqa
-    LectureCreee,
-    ArticlesRecuperes,
+    AmendementsAJour,
+    AmendementsNonRecuperes,
+    AmendementsNonTrouves,
     AmendementsRecuperes,
     AmendementsRecuperesLiasse,
-    AmendementsNonRecuperes,
-    AmendementsAJour,
-    AmendementsNonTrouves,
+    ArticlesRecuperes,
+    LectureCreee,
     ReponsesImportees,
     ReponsesImporteesJSON,
     SharedTableCreee,
     SharedTableRenommee,
     SharedTableSupprimee,
 )
-
+from .lecture import Lecture  # noqa
+from .table import SharedTable, UserTable  # noqa
+from .texte import Texte, TypeTexte  # noqa
+from .users import Team, User  # noqa
 
 mark_error_retryable(IntegrityError)
 

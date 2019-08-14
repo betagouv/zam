@@ -1,10 +1,9 @@
 from typing import Any, Dict, Optional
 
 from pyramid.config import Configurator
-from pyramid.threadlocal import get_current_registry
 from pyramid.registry import Registry
+from pyramid.threadlocal import get_current_registry
 from pyramid_jinja2 import Environment, IJinja2Environment
-
 
 FILTERS_PATH = "zam_repondeur.views.jinja2_filters"
 

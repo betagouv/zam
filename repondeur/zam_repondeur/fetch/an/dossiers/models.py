@@ -1,7 +1,6 @@
 from copy import copy, deepcopy
 from dataclasses import dataclass
 from datetime import date
-
 from typing import Dict, List, Optional, Tuple
 
 from zam_repondeur.models.chambre import Chambre

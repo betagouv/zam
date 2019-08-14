@@ -14,11 +14,10 @@ from zam_repondeur.models import (
     DBSession,
     Dossier,
     Lecture,
+    SharedTable,
     User,
     UserTable,
-    SharedTable,
 )
-
 
 # Access Control Entry (action, principal, permission)
 ACE = Tuple[str, str, str]

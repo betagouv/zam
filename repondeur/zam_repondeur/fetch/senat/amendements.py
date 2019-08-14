@@ -2,10 +2,9 @@ import csv
 import logging
 import re
 from collections import OrderedDict
-
 from http import HTTPStatus
-from urllib.parse import urlparse
 from typing import Dict, Iterable, List, Optional, Tuple
+from urllib.parse import urlparse
 
 import requests
 
@@ -14,11 +13,10 @@ from zam_repondeur.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import parse_subdiv
 from zam_repondeur.fetch.exceptions import NotFound
-from zam_repondeur.fetch.senat.senateurs import fetch_and_parse_senateurs, Senateur
+from zam_repondeur.fetch.senat.senateurs import Senateur, fetch_and_parse_senateurs
 from zam_repondeur.models import Amendement, Lecture, Mission, get_one_or_create
 
 from .derouleur import DiscussionDetails, fetch_and_parse_discussion_details
-
 
 logger = logging.getLogger(__name__)
 

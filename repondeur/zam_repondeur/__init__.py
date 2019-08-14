@@ -10,10 +10,9 @@ from pyramid.view import view_config
 from sqlalchemy import engine_from_config, event
 
 from zam_repondeur.errors import extract_settings, setup_rollbar_log_handler
-from zam_repondeur.models import DBSession, Base, log_query_with_origin
+from zam_repondeur.models import Base, DBSession, log_query_with_origin
 from zam_repondeur.resources import Root
 from zam_repondeur.version import load_version
-
 
 BASE_SETTINGS = {
     "zam.auth_cookie_duration": 7 * 24 * 3600,  # a user stays identified for 7 days

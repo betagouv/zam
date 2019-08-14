@@ -1,13 +1,13 @@
-from typing import Any
 from string import Template
+from typing import Any
 
 from jinja2 import Markup
 from lxml.html.diff import htmldiff  # nosec
 from pyramid.request import Request
 
-from .base import Event
 from ..article import Article
 from ..chambre import Chambre
+from .base import Event
 
 
 class ArticleEvent(Event):

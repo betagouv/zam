@@ -5,7 +5,6 @@ from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
 from zam_repondeur.models import Dossier, Lecture, Texte
 from zam_repondeur.models.events.lecture import LectureCreee
 
-
 logger = logging.getLogger(__name__)
 
 

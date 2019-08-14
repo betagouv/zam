@@ -5,7 +5,6 @@ from pyramid.request import Request
 
 from zam_repondeur.models import Amendement, Lecture
 
-
 EXCLUDED_FIELDS = {"first_identique_num"}
 
 

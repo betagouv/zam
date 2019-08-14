@@ -1,5 +1,5 @@
-from typing import Any, Dict, Tuple
 from datetime import date
+from typing import Any, Dict, Tuple
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
@@ -7,13 +7,13 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.clean import clean_html
+from zam_repondeur.message import Message
 from zam_repondeur.models import Article
 from zam_repondeur.models.article import mult_key
 from zam_repondeur.models.events.article import (
-    TitreArticleModifie,
     PresentationArticleModifiee,
+    TitreArticleModifie,
 )
-from zam_repondeur.message import Message
 from zam_repondeur.resources import ArticleCollection, ArticleResource
 
 

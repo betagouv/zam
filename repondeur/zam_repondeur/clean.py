@@ -3,7 +3,6 @@ from html import unescape
 
 from bleach.sanitizer import Cleaner
 
-
 ALLOWED_TAGS = [
     "div",
     "p",

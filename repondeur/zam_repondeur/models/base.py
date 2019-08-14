@@ -7,7 +7,6 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
 from zope.sqlalchemy import ZopeTransactionExtension
 
-
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
 

@@ -2,7 +2,8 @@ from hashlib import sha256
 from typing import BinaryIO, Dict, cast
 
 from pyramid.config import Configurator
-from pyramid.path import AssetResolver, PkgResourcesAssetDescriptor as AssetDescriptor
+from pyramid.path import AssetResolver
+from pyramid.path import PkgResourcesAssetDescriptor as AssetDescriptor
 from pyramid.request import Request
 from pyramid.static import QueryStringCacheBuster
 

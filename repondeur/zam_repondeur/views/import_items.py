@@ -9,9 +9,9 @@ from zam_repondeur.models import Amendement, Lecture, Team, User, get_one_or_cre
 from zam_repondeur.models.events.amendement import (
     AmendementTransfere,
     AvisAmendementModifie,
+    CommentsAmendementModifie,
     ObjetAmendementModifie,
     ReponseAmendementModifiee,
-    CommentsAmendementModifie,
 )
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 

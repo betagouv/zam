@@ -7,7 +7,6 @@ from pyramid.paster import bootstrap, setup_logging
 
 from zam_repondeur.data import repository
 
-
 logger = logging.getLogger(__name__)
 
 

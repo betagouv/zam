@@ -12,6 +12,7 @@ gitdb2==2.0.5
 GitPython==3.0.1
 hypothesis==4.27.0
 importlib-metadata==0.19
+isort==4.3.21
 mccabe==0.6.1
 mypy==0.720
 mypy-extensions==0.4.1

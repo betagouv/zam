@@ -1,10 +1,9 @@
-import transaction
 from pathlib import Path
 
 import pytest
+import transaction
 from webtest import Upload
 from webtest.forms import File
-
 
 pytestmark = pytest.mark.usefixtures("lecture_an")
 

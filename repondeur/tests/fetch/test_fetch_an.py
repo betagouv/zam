@@ -6,7 +6,6 @@ import responses
 import transaction
 
 from fetch.mock_an import setup_mock_responses
-
 from zam_repondeur.fetch.missions import MissionRef
 
 HERE = Path(__file__)

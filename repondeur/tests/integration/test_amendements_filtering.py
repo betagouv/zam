@@ -1,6 +1,5 @@
-import transaction
-
 import pytest
+import transaction
 from selenium.webdriver.common.keys import Keys
 
 from .helpers import extract_column_text

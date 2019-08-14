@@ -7,9 +7,9 @@ from pyramid.threadlocal import get_current_registry
 from pyramid_mailer import get_mailer
 
 from fixtures.dossiers import *  # noqa: F401,F403
-from fixtures.organes_acteurs import *  # noqa: F401,F403
-from fixtures.lectures import *  # noqa: F401,F403
 from fixtures.essoc2018 import *  # noqa: F401,F403
+from fixtures.lectures import *  # noqa: F401,F403
+from fixtures.organes_acteurs import *  # noqa: F401,F403
 from fixtures.plf2018 import *  # noqa: F401,F403
 from fixtures.plfss2018 import *  # noqa: F401,F403
 from fixtures.plfss2019 import *  # noqa: F401,F403
@@ -17,7 +17,6 @@ from fixtures.scraping import *  # noqa: F401,F403
 from fixtures.shared_tables import *  # noqa: F401,F403
 from fixtures.users import *  # noqa: F401,F403
 from testapp import TestApp as BaseTestApp
-
 from zam_repondeur.auth import generate_auth_token
 from zam_repondeur.users import repository
 

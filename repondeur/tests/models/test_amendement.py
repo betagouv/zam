@@ -1,6 +1,5 @@
-import transaction
-
 import pytest
+import transaction
 from sqlalchemy.exc import IntegrityError
 
 EXAMPLES = [

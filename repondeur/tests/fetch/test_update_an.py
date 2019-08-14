@@ -9,7 +9,6 @@ import responses
 
 from fetch.mock_an import setup_mock_responses
 
-
 # We need data about dossiers, texts and groups
 pytestmark = pytest.mark.usefixtures("data_repository")
 

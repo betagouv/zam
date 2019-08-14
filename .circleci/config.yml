@@ -59,6 +59,11 @@ jobs:
             cd repondeur
             mypy zam_repondeur
       - run:
+          name: Check import order with isort
+          command: |
+            cd repondeur
+            isort -rc .
+      - run:
           name: Check for potential security issues with bandit
           command: |
             cd repondeur

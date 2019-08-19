@@ -14,7 +14,7 @@ DOSSIERS = HERE / "sample_data" / "Dossiers_Legislatifs_XV.json.zip"
 def dossiers_and_textes():
     from zam_repondeur.fetch.an.common import extract_from_zip
     from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
-        get_dossiers_legislatifs_and_textes
+        get_dossiers_legislatifs_and_textes,
     )
 
     with patch(

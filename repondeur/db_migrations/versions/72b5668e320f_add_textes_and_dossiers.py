@@ -11,7 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 
 from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
-    get_dossiers_legislatifs_and_textes
+    get_dossiers_legislatifs_and_textes,
 )
 
 

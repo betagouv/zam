@@ -1,0 +1,59 @@
+{% extends "_base_dossier.html" %}
+{% import "macros.html" as macros %}
+
+{% block main_class %}box{% endblock %}
+
+{% block header %}
+<style type="text/css">
+    .notice {
+        margin: 3rem;
+    }
+    ul {
+        margin: 3rem;
+    }
+        ul li {
+            display: flex;
+            align-items: baseline;
+        }
+            ul li form {
+                margin-left: 2rem;
+            }
+</style>
+{% endblock %}
+
+{% block body %}
+    <h1>{{ dossier.titre }}</h1>
+    <p class="notice danger">
+        <big>
+        Vous vous apprêtez à retirer une personne de ce dossier législatif,
+        elle ne pourra plus accéder à ce dossier. Les avis et réponses déjà
+        soumis par cette personne seront conservés.
+        </big>
+    </p>
+    <ul>
+    {% for user in team.users %}
+        {% if user != current_user %}
+            <li>
+                {{ user }}
+                <form
+                    method="post"
+                    action="{{ request.resource_url(context, 'retrait') }}"
+                    data-controller="dossier-retrait">
+                    <input type="hidden" name="pk" value="{{ user.pk }}">
+                    <div class="form-group save-buttons">
+                        <input
+                            type="submit" name="save" value="Retirer"
+                            class="button danger"
+                            data-action="dossier-retrait#delete">
+                    </div>
+                </form>
+            </li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+    <a href="{{ request.resource_url(context) }}" class="arrow-left">Retour</a>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ request.static_url('zam_repondeur:static/js/dossiers.js') }}"></script>
+{% endblock %}

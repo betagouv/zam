@@ -271,6 +271,9 @@ def forbidden_view(exception: HTTPForbidden, request: Request) -> Any:
         if acl_denied.permission == "delete":
             message = "Vous n’êtes pas autorisé à supprimer ce dossier."
             next_resource = request.context
+        elif acl_denied.permission == "retrait":
+            message = "Vous n’êtes pas autorisé à retirer une personne de ce dossier."
+            next_resource = request.context
 
     request.session.flash(Message(cls="warning", text=message))
     return HTTPFound(location=request.resource_url(next_resource))

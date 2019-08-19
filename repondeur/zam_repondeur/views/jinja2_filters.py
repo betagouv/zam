@@ -1,12 +1,14 @@
 from datetime import date
 from itertools import groupby
-from typing import Iterable, List, Optional, Tuple
+from typing import TYPE_CHECKING, Iterable, List, Optional, Tuple
 
 from jinja2 import Markup, contextfilter
 from jinja2.runtime import Context
 
-from zam_repondeur.models import Amendement, Article, Lecture
-from zam_repondeur.models.events.base import Event
+# Make these types available to mypy, but avoid circular imports
+if TYPE_CHECKING:
+    from zam_repondeur.models import Amendement, Article, Lecture  # noqa
+    from zam_repondeur.models.events.base import Event  # noqa
 
 
 def paragriphy(content: Optional[str]) -> Markup:
@@ -18,7 +20,7 @@ def paragriphy(content: Optional[str]) -> Markup:
 
 
 @contextfilter
-def amendement_matches(context: Context, lecture: Lecture) -> dict:
+def amendement_matches(context: Context, lecture: "Lecture") -> dict:
     resource_context = (
         context["context"].parent if "article" in context else context["context"]
     )
@@ -34,7 +36,7 @@ def amendement_matches(context: Context, lecture: Lecture) -> dict:
     return matches
 
 
-def filter_out_empty_additionals(all_articles: List[Article]) -> List[Article]:
+def filter_out_empty_additionals(all_articles: List["Article"]) -> List["Article"]:
     articles = []
     for article in all_articles:
         if article.pos:
@@ -47,8 +49,8 @@ def filter_out_empty_additionals(all_articles: List[Article]) -> List[Article]:
     return articles
 
 
-def group_by_day(events: List[Event]) -> List[Tuple[date, List[Event]]]:
-    def by_day(event: Event) -> date:
+def group_by_day(events: List["Event"]) -> List[Tuple[date, List["Event"]]]:
+    def by_day(event: "Event") -> date:
         event_date: date = event.created_at.date()
         return event_date
 
@@ -71,5 +73,5 @@ def enumeration(items: List[str]) -> str:
     return ", ".join(str_items[:-1]) + " et " + str_items[-1]
 
 
-def length_including_batches(amendements: Iterable[Amendement]) -> int:
+def length_including_batches(amendements: Iterable["Amendement"]) -> int:
     return sum(len(amdt.batch.amendements) if amdt.batch else 1 for amdt in amendements)

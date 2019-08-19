@@ -59,9 +59,8 @@ def _get_one(model: Any, options: Any = None, **kwargs: Any) -> Tuple[Any, bool]
 
 def _create(model: Any, create_kwargs: Any = None, **kwargs: Any) -> Tuple[Any, bool]:
     kwargs.update(create_kwargs or {})
-    with DBSession.begin_nested():  # unnecessary?
-        created = model.create(**kwargs)
-        DBSession.add(created)
+    created = model.create(**kwargs)
+    DBSession.add(created)
     return created, True
 
 

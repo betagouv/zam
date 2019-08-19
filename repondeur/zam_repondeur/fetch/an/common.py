@@ -1,11 +1,10 @@
 import logging
 from http import HTTPStatus
 from io import BytesIO, TextIOWrapper
-from typing import Generator, IO, Tuple
+from typing import IO, Generator, Tuple
 from zipfile import ZipFile
 
 from zam_repondeur.fetch.http import cached_session
-
 
 logger = logging.getLogger(__name__)
 

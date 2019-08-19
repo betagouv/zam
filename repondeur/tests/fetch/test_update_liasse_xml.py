@@ -5,7 +5,6 @@ from pathlib import Path
 
 import pytest
 
-
 # We need data about dossiers, texts and groups
 pytestmark = pytest.mark.usefixtures("data_repository")
 

@@ -6,9 +6,10 @@ from lxml.html.diff import htmldiff  # nosec
 from pyramid.request import Request
 
 from zam_repondeur.views.jinja2_filters import enumeration
-from .base import Event
+
 from ..amendement import Amendement, Batch
 from ..chambre import Chambre
+from .base import Event
 
 
 class AmendementEvent(Event):

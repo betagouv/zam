@@ -1,13 +1,14 @@
 from datetime import datetime
 from fnmatch import fnmatchcase
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from paste.deploy.converters import aslist
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, Text, func
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import backref, relationship
 from sqlalchemy_utils import EmailType
 
 from zam_repondeur.users import repository as users_repository
+
 from .base import Base, DBSession
 
 # Make these types available to mypy, but avoid circular imports

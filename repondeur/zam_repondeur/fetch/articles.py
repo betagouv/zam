@@ -1,6 +1,5 @@
 import logging
 import string
-
 from functools import partial
 from typing import Any, Callable, Dict, List, Tuple
 
@@ -19,7 +18,6 @@ from zam_repondeur.models.events.article import (
     ContenuArticleModifie,
     TitreArticleModifie,
 )
-
 
 logger = logging.getLogger(__name__)
 

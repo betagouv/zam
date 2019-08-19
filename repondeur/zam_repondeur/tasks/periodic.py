@@ -5,10 +5,9 @@ import logging
 
 from huey import crontab
 
-from zam_repondeur.tasks.huey import huey
 from zam_repondeur.models import DBSession, Team
 from zam_repondeur.tasks.fetch import fetch_lectures
-
+from zam_repondeur.tasks.huey import huey
 
 logger = logging.getLogger(__name__)
 

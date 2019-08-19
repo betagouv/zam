@@ -1,6 +1,6 @@
 from datetime import datetime
-from uuid import uuid4
 from typing import Any, List, Optional, Union
+from uuid import uuid4
 
 from pyramid.request import Request
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String

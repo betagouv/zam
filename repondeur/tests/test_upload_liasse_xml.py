@@ -3,7 +3,6 @@ from pathlib import Path
 import transaction
 from webtest import Upload
 
-
 SAMPLE_DATA = Path(__file__).parent / "sample_data"
 
 

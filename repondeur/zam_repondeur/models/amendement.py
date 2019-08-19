@@ -1,6 +1,7 @@
 import re
 from datetime import date, datetime
 from typing import (
+    TYPE_CHECKING,
     Dict,
     Iterable,
     List,
@@ -9,7 +10,6 @@ from typing import (
     Set,
     Tuple,
     Union,
-    TYPE_CHECKING,
 )
 
 from jinja2.filters import do_striptags
@@ -30,7 +30,6 @@ from zam_repondeur.constants import GROUPS_COLORS
 from zam_repondeur.decorator import reify
 
 from .base import Base, DBSession
-
 
 # Make these types available to mypy, but avoid circular imports
 if TYPE_CHECKING:

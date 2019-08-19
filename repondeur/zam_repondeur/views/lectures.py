@@ -1,5 +1,4 @@
 from datetime import date
-
 from typing import Any, List, Optional, Set
 
 from pyramid.httpexceptions import HTTPFound
@@ -20,10 +19,9 @@ from zam_repondeur.models.events.amendement import (
     ObjetAmendementModifie,
     ReponseAmendementModifiee,
 )
-
 from zam_repondeur.models.users import Team
 from zam_repondeur.resources import AmendementCollection, LectureResource
-from zam_repondeur.tasks.fetch import fetch_articles, fetch_amendements
+from zam_repondeur.tasks.fetch import fetch_amendements, fetch_articles
 
 
 @view_config(context=AmendementCollection, renderer="amendements.html")

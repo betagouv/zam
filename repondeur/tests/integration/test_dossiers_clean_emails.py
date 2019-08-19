@@ -1,7 +1,7 @@
 from textwrap import dedent
 
-import pytest
 import pyperclip
+import pytest
 from selenium.webdriver.common.keys import Keys
 
 

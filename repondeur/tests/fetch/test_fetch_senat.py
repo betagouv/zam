@@ -7,7 +7,6 @@ import pytest
 import responses
 import transaction
 
-
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data" / "senat"
 

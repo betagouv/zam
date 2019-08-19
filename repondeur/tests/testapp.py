@@ -1,10 +1,8 @@
 from pyramid.decorator import reify
 from selectolax.parser import HTMLParser
-from webtest import (
-    TestApp as BaseTestApp,
-    TestRequest as BaseTestRequest,
-    TestResponse as BaseTestResponse,
-)
+from webtest import TestApp as BaseTestApp
+from webtest import TestRequest as BaseTestRequest
+from webtest import TestResponse as BaseTestResponse
 
 
 class TestAmendement:

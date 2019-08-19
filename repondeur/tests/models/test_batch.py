@@ -3,10 +3,9 @@ from itertools import islice
 from random import randint, shuffle
 from typing import Any, Iterable
 
+import pytest
 from hypothesis import given, settings
 from hypothesis.strategies import integers
-
-import pytest
 
 
 @pytest.fixture

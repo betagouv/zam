@@ -9,7 +9,6 @@ from xvfbwrapper import Xvfb
 from zam_repondeur.models import Amendement, Lecture
 from zam_repondeur.templating import render_template
 
-
 # Command-line options for wkhtmltopdf
 # See https://wkhtmltopdf.org/usage/wkhtmltopdf.txt
 PDFKIT_OPTIONS = {

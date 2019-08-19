@@ -10,12 +10,11 @@ from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config
 
-from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml, LectureDoesNotMatch
+from zam_repondeur.fetch.an.liasse_xml import LectureDoesNotMatch, import_liasse_xml
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession
 from zam_repondeur.models.events.lecture import AmendementsRecuperesLiasse
 from zam_repondeur.resources import LectureResource
-
 
 logger = logging.getLogger(__name__)
 

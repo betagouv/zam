@@ -1,4 +1,4 @@
-from subprocess import check_output, CalledProcessError, STDOUT  # nosec
+from subprocess import STDOUT, CalledProcessError, check_output  # nosec
 from typing import List
 
 from pyramid.config import Configurator

@@ -1,7 +1,7 @@
-import pytest
-import transaction
 from time import sleep
 
+import pytest
+import transaction
 
 pytestmark = pytest.mark.flaky(max_runs=5)
 

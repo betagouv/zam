@@ -5,8 +5,8 @@ from typing import Any, Dict, Iterable, Iterator, List, NamedTuple, Optional, Tu
 import requests
 
 from zam_repondeur.models import Amendement, Lecture
-from ..missions import ID_TXT_MISSIONS, MissionRef
 
+from ..missions import ID_TXT_MISSIONS, MissionRef
 
 BASE_URL = "https://www.senat.fr"
 

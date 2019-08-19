@@ -2,9 +2,9 @@ import logging
 import re
 from datetime import date
 from functools import partial
-from typing import Dict, IO, List, Optional, Tuple, cast
+from typing import IO, Dict, List, Optional, Tuple, cast
 
-from defusedxml.lxml import parse, RestrictedElement
+from defusedxml.lxml import RestrictedElement, parse
 from lxml.etree import XMLSyntaxError  # nosec
 
 from zam_repondeur.clean import clean_html
@@ -14,17 +14,16 @@ from zam_repondeur.fetch.an.dossiers.models import DossierRef, LectureRef, Texte
 from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import parse_subdiv
 from zam_repondeur.models import (
-    DBSession,
-    Article,
     Amendement,
+    Article,
     Chambre,
+    DBSession,
     Lecture,
     get_one_or_create,
 )
 from zam_repondeur.models.division import SubDiv
 
 from .division import parse_avant_apres
-
 
 logger = logging.getLogger(__name__)
 

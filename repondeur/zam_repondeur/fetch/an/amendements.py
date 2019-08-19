@@ -12,11 +12,11 @@ from zam_repondeur.fetch.division import parse_subdiv
 from zam_repondeur.fetch.exceptions import FetchError, NotFound
 from zam_repondeur.fetch.http import cached_session
 from zam_repondeur.models import (
-    DBSession,
-    Article,
     Amendement,
-    Mission,
+    Article,
+    DBSession,
     Lecture,
+    Mission,
     get_one_or_create,
 )
 from zam_repondeur.models.division import SubDiv
@@ -24,7 +24,6 @@ from zam_repondeur.templating import render_template
 
 from ..missions import MissionRef
 from .division import parse_avant_apres
-
 
 logger = logging.getLogger(__name__)
 

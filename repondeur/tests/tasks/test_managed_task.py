@@ -2,7 +2,6 @@ from unittest.mock import Mock
 
 import pytest
 import transaction
-
 from redis.exceptions import ConnectionError
 from transaction.interfaces import DoomedTransaction
 

@@ -1,13 +1,12 @@
+import logging
 from enum import Enum
 from functools import wraps
 from typing import Any, Callable, Optional
-import logging
 
-from huey.api import Huey, PeriodicTask, Task, TaskWrapper
-from zope.interface import implementer
-from transaction.interfaces import IDataManager
 import transaction
-
+from huey.api import Huey, PeriodicTask, Task, TaskWrapper
+from transaction.interfaces import IDataManager
+from zope.interface import implementer
 
 logger = logging.getLogger(__name__)
 

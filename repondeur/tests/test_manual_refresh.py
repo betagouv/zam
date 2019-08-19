@@ -1,10 +1,9 @@
 from pathlib import Path
-import transaction
 
 import responses
+import transaction
 
 from fetch.mock_an import setup_mock_responses
-
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "fetch" / "sample_data"

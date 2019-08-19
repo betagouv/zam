@@ -28,7 +28,6 @@ from zam_repondeur.models.events.dossier import (
     InvitationEnvoyee,
 )
 from zam_repondeur.models.events.lecture import LectureCreee
-
 from zam_repondeur.resources import DossierCollection, DossierResource
 from zam_repondeur.tasks.fetch import fetch_amendements, fetch_articles, fetch_lectures
 

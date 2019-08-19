@@ -1,5 +1,5 @@
-from typing import Dict, Iterable
 import csv
+from typing import Dict, Iterable
 
 from .models import Senateur
 

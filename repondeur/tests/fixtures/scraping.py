@@ -3,7 +3,6 @@ from pathlib import Path
 import pytest
 import responses
 
-
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent.parent / "fetch" / "sample_data" / "senat"
 

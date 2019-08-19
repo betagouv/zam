@@ -5,7 +5,6 @@ import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches.file_cache import FileCache
 
-
 HERE = Path(__file__)
 DEFAULT_HTTP_CACHE_DIR = HERE.parent.parent.parent / ".web_cache"
 

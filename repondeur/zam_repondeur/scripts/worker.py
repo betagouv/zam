@@ -9,7 +9,6 @@ from redis.exceptions import ConnectionError
 
 from zam_repondeur.errors import extract_settings, setup_rollbar_log_handler
 
-
 logger = logging.getLogger(__name__)
 
 

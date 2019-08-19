@@ -1,13 +1,13 @@
-from typing import Any
 from string import Template
+from typing import Any
 
 from jinja2 import Markup
 from pyramid.request import Request
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import backref, relationship
 
-from .base import Event
 from ..lecture import Lecture
+from .base import Event
 
 
 class LectureEvent(Event):

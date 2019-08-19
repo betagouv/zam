@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 import transaction
 
-
 # We need data about dossiers, texts and groups
 pytestmark = pytest.mark.usefixtures("data_repository")
 

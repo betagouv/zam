@@ -5,9 +5,9 @@ Revises: d80c1fac4582
 Create Date: 2019-01-15 14:57:08.162415
 
 """
+import sqlalchemy as sa
 from alembic import op
 from sqlalchemy_utils import JSONType, UUIDType
-import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "bf01601790f4"

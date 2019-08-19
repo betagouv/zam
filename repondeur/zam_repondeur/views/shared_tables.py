@@ -1,8 +1,8 @@
-from slugify import slugify
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
+from slugify import slugify
 
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, SharedTable, get_one_or_create
@@ -13,8 +13,8 @@ from zam_repondeur.models.events.lecture import (
 )
 from zam_repondeur.resources import (
     SharedTableCollection,
-    SharedTableResource,
     SharedTableDeleteResource,
+    SharedTableResource,
 )
 
 

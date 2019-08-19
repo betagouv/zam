@@ -8,13 +8,13 @@ Create Date: 2019-07-09 09:38:20.740275
 from http import HTTPStatus
 from io import BytesIO, TextIOWrapper
 from json import load
-from typing import Any, Dict, Generator, IO, List, Tuple
+from typing import IO, Any, Dict, Generator, List, Tuple
 from zipfile import ZipFile
 
-from alembic import op
-from slugify import slugify as _slugify
 import requests
 import sqlalchemy as sa
+from alembic import op
+from slugify import slugify as _slugify
 
 # revision identifiers, used by Alembic.
 revision = "5512bb28668f"

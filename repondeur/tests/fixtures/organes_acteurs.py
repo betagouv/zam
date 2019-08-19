@@ -2,7 +2,6 @@ from unittest.mock import patch
 
 import pytest
 
-
 SAMPLE_ORGANES = {
     "PO420120": {
         "@xsi:type": "OrganeParlementaire_Type",

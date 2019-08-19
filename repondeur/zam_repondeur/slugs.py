@@ -1,6 +1,5 @@
 from slugify import slugify as _slugify
 
-
 STOPWORDS = [
     "a",
     "au",

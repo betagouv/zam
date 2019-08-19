@@ -1,6 +1,6 @@
+import enum
 from datetime import date, datetime
 from typing import Any, Optional, cast
-import enum
 
 from sqlalchemy import Column, Date, DateTime, Enum, Index, Integer
 from sqlalchemy.orm import relationship

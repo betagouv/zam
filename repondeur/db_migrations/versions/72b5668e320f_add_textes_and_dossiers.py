@@ -7,13 +7,12 @@ Create Date: 2019-04-04 14:13:37.173464
 """
 from datetime import datetime
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 
 from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
     get_dossiers_legislatifs_and_textes,
 )
-
 
 LEGISLATURES = [14, 15]
 

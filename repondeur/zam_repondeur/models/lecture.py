@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, List, Optional, Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple
 
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Index, Integer, Text, desc
 from sqlalchemy.orm import joinedload, relationship

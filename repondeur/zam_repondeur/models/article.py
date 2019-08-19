@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from itertools import groupby
-from typing import Iterable, List, Optional, Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable, List, Optional, Tuple
 
 from jinja2.filters import do_striptags
 from sqlalchemy import (
@@ -18,8 +18,8 @@ from sqlalchemy.orm import relationship, validates
 
 from zam_repondeur.decorator import reify
 
-from .base import Base, DBSession
 from .amendement import Amendement, GroupingKey
+from .base import Base, DBSession
 from .division import ADJECTIFS_MULTIPLICATIFS, SubDiv
 
 # Make this type available to mypy, but avoid circular imports

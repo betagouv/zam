@@ -14,7 +14,6 @@ from zam_repondeur.export.spreadsheet import write_xlsx
 from zam_repondeur.models import Batch
 from zam_repondeur.resources import LectureResource
 
-
 DOWNLOAD_FORMATS = {
     "json": (write_json, "application/json"),
     "pdf": (write_pdf, "application/pdf"),

@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pytest
 
-
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data" / "senat"
 

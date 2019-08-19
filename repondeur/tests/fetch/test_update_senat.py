@@ -5,7 +5,6 @@ from pathlib import Path
 
 import responses
 
-
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data" / "senat"
 

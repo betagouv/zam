@@ -9,10 +9,11 @@ from pyramid.response import Response
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload
 
-from zam_repondeur.models.events.lecture import ReponsesImporteesJSON
 from zam_repondeur.message import Message
 from zam_repondeur.models import Amendement, Article, Lecture, Team
+from zam_repondeur.models.events.lecture import ReponsesImporteesJSON
 from zam_repondeur.resources import LectureResource
+
 from .import_items import import_amendement
 
 

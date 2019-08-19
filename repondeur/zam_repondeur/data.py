@@ -6,7 +6,7 @@ from redis import Redis
 from redis_lock import Lock
 
 from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
-    get_dossiers_legislatifs_and_textes
+    get_dossiers_legislatifs_and_textes,
 )
 from zam_repondeur.fetch.an.organes_acteurs import get_organes_acteurs
 from zam_repondeur.fetch.senat.scraping import get_dossiers_senat

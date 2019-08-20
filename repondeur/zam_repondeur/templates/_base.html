@@ -69,6 +69,9 @@
                                 {% endif %}
                                 {% if dossier_resource is defined %}
                                     <li{% if current_tab == 'invite' %} class="selected"{% endif %}><a href="{{ request.resource_url(dossier_resource, 'invite') }}">Inviter des personnes</a></li>
+                                    {% if request.user.is_admin %}
+                                        <li{% if current_tab == 'retrait' %} class="selected"{% endif %}><a href="{{ request.resource_url(dossier_resource, 'retrait') }}">Retirer des personnes</a></li>
+                                    {% endif %}
                                 {% endif %}
                                 {% if request.user.name %}
                                     <li class="user"><a href="{{ request.route_url('welcome') }}" class="account">{{ request.user.name or "" }}</a></li>

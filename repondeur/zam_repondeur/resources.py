@@ -97,6 +97,8 @@ class DossierResource(Resource):
             (Allow, f"group:admins", "view"),
             (Allow, f"team:{self.dossier.team.pk}", "view"),
             (Deny, Authenticated, "view"),
+            (Allow, f"group:admins", "retrait"),
+            (Deny, Authenticated, "retrait"),
         ]
 
     def __init__(self, name: str, parent: Resource) -> None:

@@ -25,6 +25,7 @@ from zam_repondeur.models import (
 from zam_repondeur.models.events.dossier import (
     DossierActive,
     DossierDesactive,
+    DossierRetrait,
     InvitationEnvoyee,
 )
 from zam_repondeur.models.events.lecture import LectureCreee
@@ -174,7 +175,6 @@ class DossierInviteForm(DossierViewBase):
         return {
             "dossier": self.dossier,
             "dossier_resource": self.context,
-            "current_tab": "invite",
             "team": self.dossier.team,
             "current_tab": "invite",
         }
@@ -289,6 +289,35 @@ Bonne journée !
         )
         mailer.send(message)
         return len(users)
+
+
+@view_defaults(context=DossierResource, name="retrait", permission="retrait")
+class DossierRetraitForm(DossierViewBase):
+    @view_config(request_method="GET", renderer="dossier_retrait.html")
+    def get(self) -> dict:
+        return {
+            "dossier": self.dossier,
+            "dossier_resource": self.context,
+            "current_tab": "retrait",
+            "team": self.dossier.team,
+            "current_user": self.request.user,
+        }
+
+    @view_config(request_method="POST")
+    def post(self) -> Response:
+        user_pk: str = self.request.POST.get("pk")
+        user = DBSession.query(User).filter(User.pk == user_pk).one()
+        target = str(user)
+
+        self.dossier.team.users.remove(user)
+
+        DossierRetrait.create(request=self.request, dossier=self.dossier, target=target)
+        self.request.session.flash(
+            Message(
+                cls="success", text=(f"{target} a été retiré·e du dossier avec succès.")
+            )
+        )
+        return HTTPFound(location=self.request.resource_url(self.context))
 
 
 @view_config(context=DossierResource, name="journal", renderer="dossier_journal.html")

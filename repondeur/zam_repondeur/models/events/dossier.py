@@ -73,3 +73,16 @@ class InvitationEnvoyee(DossierEvent):
 
     def apply(self) -> None:
         pass
+
+
+class DossierRetrait(DossierEvent):
+    __mapper_args__ = {"polymorphic_identity": "dossier_retrait"}
+    icon = "document"
+
+    @property
+    def summary_template(self) -> Template:
+        target = self.data["target"]
+        return Template(f"<abbr title='$email'>$user</abbr> a retiré « {target} »")
+
+    def apply(self) -> None:
+        pass

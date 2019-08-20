@@ -36,3 +36,21 @@ application.register(
     }
   }
 )
+
+application.register(
+  'dossier-retrait',
+  class extends Stimulus.Controller {
+    delete(event) {
+      if (
+        window.confirm(
+          'Êtes-vous sûr·e de vouloir retirer cette personne du dossier ? '
+        )
+      ) {
+        return
+      } else {
+        event.preventDefault()
+      }
+    }
+  }
+)
+

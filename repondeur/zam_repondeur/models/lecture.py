@@ -87,11 +87,14 @@ class Lecture(Base, LastEventMixin):
         organes = repository.get_data("an.opendata.organes")
         if self.organe in organes:
             organe_data = organes[self.organe]
-            result = organe_data["libelleAbrege"]
+            result = organe_data["libelle"]
         return self.rewrite_organe(result)
 
     def rewrite_organe(self, label: str) -> str:
-        if label in {"Assemblée", "Sénat"}:
+        if label in {
+            "Assemblée nationale de la 15ème législature",
+            "Sénat ( 5ème République )",
+        }:
             return "Séance publique"
         if label.startswith("Commission"):
             return label

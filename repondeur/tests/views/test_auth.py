@@ -301,6 +301,15 @@ class TestLogout:
         app.get("/deconnexion")
         assert "auth_tkt" not in app.cookies  # the auth cookie is gone
 
+    def test_user_is_redirected_to_explicit_logout_page(self, app):
+        resp = app.get("/deconnexion")
+        assert resp.status_code == 302
+        assert resp.location == "https://zam.test/deconnecte"
+
+        resp = resp.follow()
+        assert resp.status_code == 200
+        assert "Déconnexion de Zam réussie" in resp.text
+
 
 class TestAuthenticationRequired:
     def test_unauthenticated_user_is_redirected_to_login_page(

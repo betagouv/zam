@@ -249,8 +249,21 @@ def logout(request: Request) -> Any:
     Clear the authentication cookie
     """
     headers = forget(request)
-    next_url = request.route_url("login")
+    next_url = request.route_url("logout_confirm")
     return HTTPFound(location=next_url, headers=headers)
+
+
+@view_config(
+    route_name="logout_confirm",
+    context=Root,
+    renderer="auth/logout_confirm.html",
+    permission=NO_PERMISSION_REQUIRED,
+)
+def logout_confirm(context: Root, request: Request) -> dict:
+    """
+    Make the user aware of the deconnexion.
+    """
+    return {}
 
 
 @forbidden_view_config()

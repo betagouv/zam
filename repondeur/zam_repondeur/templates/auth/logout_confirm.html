@@ -1,0 +1,12 @@
+{% extends "auth/_base_auth.html" %}
+
+{% block body %}
+<h1>Déconnexion de Zam réussie</h1>
+<p>
+    Vous avez bien été déconnecté·e de Zam,
+    vous pouvez vous reconnecter via :
+</p>
+<p style="text-align: center;">
+    <a href="{{ request.route_url('login') }}" class="button primary enabled">La page d’identification</a>
+</p>
+{% endblock %}

@@ -42,6 +42,7 @@ def includeme(config: Configurator) -> None:
     config.add_route("email_sent", "/courriel-envoye")
     config.add_route("auth", "/authentification")
     config.add_route("logout", "/deconnexion")
+    config.add_route("logout_confirm", "/deconnecte")
     config.add_route("welcome", "/bienvenue")
 
 

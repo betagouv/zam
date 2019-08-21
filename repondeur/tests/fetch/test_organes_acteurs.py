@@ -31,6 +31,9 @@ def test_get_organes_acteurs(sample_data):
     ):
         organes, acteurs = get_organes_acteurs()
 
+    assert (
+        organes["PO717460"]["libelle"] == "Assemblée nationale de la 15ème législature"
+    )
     assert organes["PO717460"]["libelleAbrege"] == "Assemblée"
     assert organes["PO717460"]["libelleAbrev"] == "AN"
 
@@ -46,6 +49,9 @@ def test_extract_organes(sample_data):
         if filename.startswith("json/organe")
     )
 
+    assert (
+        organes["PO717460"]["libelle"] == "Assemblée nationale de la 15ème législature"
+    )
     assert organes["PO717460"]["libelleAbrege"] == "Assemblée"
     assert organes["PO717460"]["libelleAbrev"] == "AN"
 

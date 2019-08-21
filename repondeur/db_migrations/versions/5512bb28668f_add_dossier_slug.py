@@ -168,14 +168,13 @@ def upgrade():
     op.add_column("dossiers", sa.Column("slug", sa.Text()))
     connection = op.get_bind()
     slugs = get_dossiers_slugs(14, 15)
-    rows = connection.execute("SELECT uid, titre FROM dossiers;")
-    for uid, titre in rows:
+    rows = connection.execute("SELECT pk, uid, titre FROM dossiers;")
+    for pk, uid, titre in rows:
         slug = generate_unique_slug(connection, slugs, uid, titre)
-        print(uid, titre, slug)
         connection.execute(
-            sa.text("UPDATE dossiers SET slug = :slug WHERE uid = :uid ;"),
+            sa.text("UPDATE dossiers SET slug = :slug WHERE pk = :pk ;"),
             slug=slug,
-            uid=uid,
+            pk=pk,
         )
     op.alter_column("dossiers", "slug", nullable=False)
     op.create_index("ix_dossiers__slug", "dossiers", ["slug"], unique=True)

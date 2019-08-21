@@ -92,6 +92,8 @@ def update_lecture_articles(lecture: Lecture, all_article_data: List[dict]) -> b
                 )[0]
             ]
         else:
+            if "titre" not in article_data:
+                continue
             articles = find_or_create_articles(lecture, article_data)
         for article in articles:
             changed |= update_article_contents(article, article_data)

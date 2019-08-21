@@ -6,6 +6,7 @@ from typing import Dict, List, Optional, Set, Tuple, Union
 from urllib.parse import urljoin
 
 import xmltodict
+from requests.exceptions import ConnectionError
 
 from zam_repondeur.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.fetch.division import parse_subdiv
@@ -288,7 +289,10 @@ _ORGANE_PREFIX = {
 
 def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
     logger.info("Récupération de %r", url)
-    resp = cached_session.get(url)
+    try:
+        resp = cached_session.get(url)
+    except ConnectionError:
+        raise NotFound(url)
 
     if resp.status_code == HTTPStatus.NOT_FOUND:
         raise NotFound(url)

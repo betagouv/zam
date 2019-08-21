@@ -13,8 +13,8 @@ def get_lectures(dossier: Dossier) -> bool:
 
     changed = False
 
-    # First fetch data from existing lectures.
-    for lecture in dossier.lectures:
+    # First fetch data from existing lectures, starting with recents.
+    for lecture in reversed(dossier.lectures):
         changed |= fetch_articles.call_local(lecture.pk)
         changed |= fetch_amendements.call_local(lecture.pk)
 
@@ -22,7 +22,7 @@ def get_lectures(dossier: Dossier) -> bool:
     dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
     dossier_ref = dossiers_by_uid[dossier.uid]
 
-    for lecture_ref in dossier_ref.lectures:
+    for lecture_ref in reversed(dossier_ref.lectures):
         texte = Texte.get_or_create_from_ref(lecture_ref.texte, lecture_ref.chambre)
         lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
         if lecture is not None:

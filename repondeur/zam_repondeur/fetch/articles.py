@@ -68,7 +68,10 @@ def get_possible_texte_urls_senat(texte: Texte) -> List[str]:
 
 def parse_first_working_url(urls: List[str]) -> List[dict]:
     for url in urls:
-        articles: List[dict] = parse(url, include_annexes=True)
+        try:
+            articles: List[dict] = parse(url, include_annexes=True)
+        except Exception:
+            articles = []
         if len(articles) > 1:
             return articles
     raise NotFound

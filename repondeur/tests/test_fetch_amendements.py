@@ -465,3 +465,32 @@ def test_fetch_amendements_with_emptiness(app, lecture_an, article1_an, amendeme
     assert created == 0
     assert errored == []
     assert DBSession.query(Amendement).count() == len(amendements_an) == 2
+
+
+def test_fetch_amendements_with_connection_errors(
+    app, lecture_an, article1_an, amendements_an
+):
+    from requests.exceptions import ConnectionError
+    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.models import Amendement, DBSession
+
+    DBSession.add(lecture_an)
+
+    with patch(
+        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+    ) as mock_fetch_discussion_list, patch(
+        "zam_repondeur.fetch.an.amendements.cached_session.get"
+    ) as mock_cached_session_get:
+        mock_fetch_discussion_list.return_value = [
+            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
+        ]
+        mock_cached_session_get.side_effect = ConnectionError
+
+        amendements, created, errored = get_amendements(lecture_an)
+
+    assert amendements == []
+    assert created == 0
+    assert errored == ["6", "7", "9"]
+    assert DBSession.query(Amendement).count() == len(amendements_an) == 2

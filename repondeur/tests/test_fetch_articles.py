@@ -483,6 +483,35 @@ class TestGetArticlesSenat:
         assert amendement.article.content["001"].startswith("La stratégie nationale")
 
     @responses.activate
+    def test_get_articles_missing_data(
+        self, app, dossier_plfss2018, lecture_senat, amendements_senat, article1_an
+    ):
+        from zam_repondeur.fetch.articles import get_articles
+        from zam_repondeur.models import DBSession, Amendement
+
+        responses.add(
+            responses.GET,
+            "https://www.senat.fr/leg/pjl17-063.html",
+            body=(Path(__file__).parent / "sample_data" / "pjl17-701.html").read_text(
+                "utf-8", "ignore"
+            ),
+            status=200,
+        )
+
+        with transaction.manager:
+            DBSession.add(dossier_plfss2018)
+            DBSession.add(lecture_senat)
+            changed = get_articles(lecture_senat)
+
+        assert not changed
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
+        assert amendement.article.content == {}
+
+        # Events should NOT be created
+        assert len(amendement.article.events) == 0
+
+    @responses.activate
     def test_get_articles_tlfp_parse_error(
         self, app, dossier_plfss2018, lecture_senat, amendements_senat, article1_an
     ):

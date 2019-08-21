@@ -59,8 +59,11 @@ def _get_one(model: Any, options: Any = None, **kwargs: Any) -> Tuple[Any, bool]
 
 def _create(model: Any, create_kwargs: Any = None, **kwargs: Any) -> Tuple[Any, bool]:
     kwargs.update(create_kwargs or {})
-    created = model.create(**kwargs)
-    DBSession.add(created)
+    # Useful in the case of PLF 2019's Missions creation for instance,
+    # otherwise they are duplicated during Dossier activation/fetching.
+    with DBSession.begin_nested():
+        created = model.create(**kwargs)
+        DBSession.add(created)
     return created, True
 
 

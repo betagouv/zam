@@ -286,6 +286,7 @@ nav .button:last-child {
 .box h3 {
     font-size: 1.75rem;
     font-weight: 600;
+    max-width: 40rem;
 }
 
 form.box {

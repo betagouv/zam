@@ -171,6 +171,7 @@ def upgrade():
     rows = connection.execute("SELECT uid, titre FROM dossiers;")
     for uid, titre in rows:
         slug = generate_unique_slug(connection, slugs, uid, titre)
+        print(uid, titre, slug)
         connection.execute(
             sa.text("UPDATE dossiers SET slug = :slug WHERE uid = :uid ;"),
             slug=slug,

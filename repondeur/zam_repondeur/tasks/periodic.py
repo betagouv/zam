@@ -27,4 +27,4 @@ def fetch_all_lectures() -> None:
     for team in DBSession.query(Team):
         dossier_pk = team.dossier.pk
         delay = (dossier_pk % 15) * 60  # spread out updates over 15 minutes
-        fetch_lectures.schedule(args=(dossier_pk, huey.settings), delay=delay)
+        fetch_lectures.schedule(args=(dossier_pk,), delay=delay)

@@ -1,5 +1,6 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
+from typing import Dict
 
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
@@ -8,24 +9,32 @@ from zam_repondeur.models.events.lecture import LectureCreee
 
 logger = logging.getLogger(__name__)
 
-NB_OF_DAYS_AFTER_WE_STOP_REFRESHING = 30
+
+def _is_still_pertinent_to_refresh(
+    kind: str, date_depot: date, settings: Dict[str, str]
+) -> bool:
+    return datetime.utcnow().date() - date_depot <= timedelta(
+        days=int(settings.get(f"zam.refresh.{kind}") or 30)
+    )
 
 
-def get_lectures(dossier: Dossier) -> bool:
+def get_lectures(dossier: Dossier, settings: Dict[str, str]) -> bool:
     from zam_repondeur.tasks.fetch import fetch_articles, fetch_amendements  # Circular.
 
     changed = False
 
     # First fetch data from existing lectures, starting with recents.
     for lecture in reversed(dossier.lectures):
-        changed |= fetch_articles.call_local(lecture.pk)
-
         # We cannot access the texte from the lecture without issuing a new query.
         texte = DBSession.query(Texte).get(lecture.texte_pk)
+        date_depot = texte.date_depot
+
+        # Only fetch articles for recent lectures.
+        if _is_still_pertinent_to_refresh("articles", date_depot, settings):
+            changed |= fetch_articles.call_local(lecture.pk)
+
         # Only fetch amendements for recent lectures.
-        if datetime.utcnow().date() - texte.date_depot <= timedelta(
-            days=NB_OF_DAYS_AFTER_WE_STOP_REFRESHING
-        ):
+        if _is_still_pertinent_to_refresh("amendements", date_depot, settings):
             changed |= fetch_amendements.call_local(lecture.pk)
 
     # Then try to create missing lectures.

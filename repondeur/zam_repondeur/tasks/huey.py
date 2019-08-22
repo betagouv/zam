@@ -17,4 +17,5 @@ def init_huey(settings: dict) -> Huey:
                 settings.get("zam.tasks.transactional_enqueue", "True")
             ),
         )
+    huey.settings = settings
     return huey

@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import responses
@@ -14,6 +15,12 @@ def read_sample_data(basename):
 
 
 def test_get_form(app, lecture_an, amendements_an, user_david):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(lecture_an)
+        lecture_an.texte.date_depot = datetime.utcnow().date() - timedelta(days=5)
+
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/journal/", user=user_david
     )
@@ -34,12 +41,25 @@ def test_get_form(app, lecture_an, amendements_an, user_david):
     assert resp.forms["manual-refresh"].fields["refresh"][0].attrs["type"] == "submit"
 
 
+def test_get_form_absent_if_old_texte(app, lecture_an, amendements_an, user_david):
+    resp = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/journal/", user=user_david
+    )
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    assert "manual-refresh" not in resp.forms
+
+
 @responses.activate
 def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_david):
-    from zam_repondeur.models import Amendement, Lecture
+    from zam_repondeur.models import Amendement, DBSession, Lecture
 
     # Initially, we only have one amendement (#135), with a response
     with transaction.manager:
+        DBSession.add(lecture_an)
+        lecture_an.texte.date_depot = datetime.utcnow().date() - timedelta(days=5)
         Amendement.create(lecture=lecture_an, article=article1_an, num=135, position=1)
         assert lecture_an.events == []
 

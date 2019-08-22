@@ -8,7 +8,7 @@ def test_get_shared_tables_empty(app, lecture_an, amendements_an, user_david):
 
     assert resp.status_code == 200
     assert "Test table" not in resp.text
-    assert "Aucune boîte personnalisée n’existe pour l’instant." in resp.text
+    assert "Aucune boîte n’a été créée." in resp.text
 
 
 def test_get_shared_tables_list(
@@ -20,7 +20,7 @@ def test_get_shared_tables_list(
 
     assert resp.status_code == 200
     assert "Test table" in resp.text
-    assert "Aucune boîte personnalisée n’existe pour l’instant." not in resp.text
+    assert "Aucune boîte n’a été créée." not in resp.text
 
 
 def test_get_shared_tables_create_form(app, lecture_an, amendements_an, user_david):

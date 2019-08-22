@@ -1,14 +1,23 @@
 {% extends "_base_dossier.html" %}
 {% import "macros.html" as macros %}
 
+{% block header %}
+    <style type="text/css">
+        label[for="emails"] {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+    </style>
+{% endblock %}
+
 {% block main_class %}box{% endblock %}
 
 {% block body %}
     <h1>{{ dossier.titre }}</h1>
     <p>
         <big>
-        Vous pouvez inviter des personnes à participer à ce dossier législatif
-        en saisissant leur adresse courriel.
+            Renseigner ici les adresses courriel des personnes à inviter sur l’ensemble de l’espace de travail relatif à ce dossier législatif.
         </big>
     </p>
     <form
@@ -16,7 +25,10 @@
         action="{{ request.resource_url(context, 'invite') }}"
         data-controller="dossier-invite">
         <div class="form-group">
-            <label for="emails">Personnes à inviter <small>(une adresse courriel par ligne)</small></label>
+            <label for="emails">
+                Transmettre une invitation à :
+                <small>Passer à la ligne entre chaque adresse courriel.</small>
+            </label>
             <textarea
                 name="emails" class="form-control" rows="10"
                 data-action="paste->dossier-invite#clean"></textarea>
@@ -27,7 +39,7 @@
         </div>
     </form>
     <details>
-        <summary>Personnes déjà invitées</summary>
+        <summary>Invitations déjà transmises</summary>
         <ul>
         {% for user in team.users %}
             <li>{{ user }}</li>

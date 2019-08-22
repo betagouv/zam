@@ -286,7 +286,7 @@ nav .button:last-child {
 .box h3 {
     font-size: 1.75rem;
     font-weight: 600;
-    max-width: 40rem;
+    max-width: 35rem;
 }
 
 form.box {
@@ -372,6 +372,9 @@ path {
     border: 6px solid #c2e0ff;
     padding: 1rem;
 }
+    .notice h3 {
+        max-width: none;
+    }
     .notice form {
         text-align: right;
     }

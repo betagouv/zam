@@ -14,7 +14,12 @@
 
 {% block body %}
     <form id="add-dossier" action="{{ request.path }}" method="POST">
-        <h2>Ajouter un dossier…</h2>
+        <h2>Ajouter un dossier</h2>
+        <p>
+            <big>
+                Choisir ici le dossier législatif à ajouter à Zam. La liste ci-dessous correspond aux dossiers législatifs mis à disposition par les sites Internet du Parlement. Pour sélectionner le dossier recherché, il suffit de le choisir dans la liste déroulante ou de saisir directement dans la barre de recherche un mot correspondant au nom du dossier.
+            </big>
+        </p>
         <div class="form-group">
             <label for="dossier">Dossier législatif</label>
             <select id="select-dossier" name="dossier" class="form-control" placeholder="Choisir un dossier législatif…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
@@ -26,6 +31,7 @@
         </div>
 
         <div class="form-group save-buttons">
+            <a href="{{ request.resource_url(context) }}" class="arrow-left">Retour</a>
             <input type="submit" name="submit" value="Ajouter le dossier" class="button enabled primary" disabled>
         </div>
 

@@ -80,7 +80,7 @@
                 <h3>{{ dossier.titre }}</h3>
                 <nav>
                     <a href="{{ request.resource_url(context[dossier.url_key]) }}">
-                        Voir ce dossier
+                        Accéder à ce dossier
                     </a>
                 </nav>
             </div>
@@ -93,7 +93,7 @@
     <div class="extra-button dossier box">
     {% if allowed_to_activate %}
         <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
-            Activer un dossier
+            Ajouter un dossier
         </a>
     {% else %}
         <p class="contact">

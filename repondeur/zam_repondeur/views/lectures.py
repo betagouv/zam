@@ -335,6 +335,7 @@ def lecture_journal(context: LectureResource, request: Request) -> Response:
         "lecture_resource": context,
         "current_tab": "journal",
         "today": date.today(),
+        "settings": request.registry.settings,
     }
 
 

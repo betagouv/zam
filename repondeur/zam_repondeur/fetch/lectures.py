@@ -1,22 +1,31 @@
 import logging
+from typing import Dict
 
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
-from zam_repondeur.models import Dossier, Lecture, Texte
+from zam_repondeur.models import DBSession, Dossier, Lecture, Texte
 from zam_repondeur.models.events.lecture import LectureCreee
 
 logger = logging.getLogger(__name__)
 
 
-def get_lectures(dossier: Dossier) -> bool:
+def get_lectures(dossier: Dossier, settings: Dict[str, str]) -> bool:
     from zam_repondeur.tasks.fetch import fetch_articles, fetch_amendements  # Circular.
 
     changed = False
 
     # First fetch data from existing lectures, starting with recents.
     for lecture in reversed(dossier.lectures):
-        changed |= fetch_articles.call_local(lecture.pk)
-        changed |= fetch_amendements.call_local(lecture.pk)
+        # Refetch the lecture to apply the FOR UPDATE.
+        lecture = DBSession.query(Lecture).with_for_update().get(lecture.pk)
+
+        # Only fetch articles for recent lectures.
+        if lecture.refreshable_for("articles", settings):
+            changed |= fetch_articles.call_local(lecture.pk)
+
+        # Only fetch amendements for recent lectures.
+        if lecture.refreshable_for("amendements", settings):
+            changed |= fetch_amendements.call_local(lecture.pk)
 
     # Then try to create missing lectures.
     dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()

@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Tuple
+from datetime import datetime, timedelta
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Index, Integer, Text, desc
 from sqlalchemy.orm import joinedload, relationship
@@ -126,6 +126,12 @@ class Lecture(Base, LastEventMixin):
     @property
     def displayable(self) -> bool:
         return any(amd.is_displayable for amd in self.amendements)
+
+    def refreshable_for(self, kind: str, settings: Dict[str, str]) -> bool:
+        return bool(
+            datetime.utcnow().date() - self.texte.date_depot
+            <= timedelta(days=int(settings.get(f"zam.refresh.{kind}") or 30))
+        )
 
     @classmethod
     def all(cls) -> List["Lecture"]:

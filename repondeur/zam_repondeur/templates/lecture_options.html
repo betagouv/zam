@@ -62,33 +62,33 @@
 <div class="box" data-controller="multiple-clicks">
     <div class="flex-line">
         <div>
-            <h3>Exporter un tableau de RIM</h3>
-            <p>au format Excel</p>
+            <h3>Exporter un tableau</h3>
+            <p>au format Excel, pour obtenir un tableau de RIM par exemple.</p>
         </div>
         <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'xlsx'}) }}">
             {{ macros.svg_icon("file-excel") }}
-            Tableau de RIM
+            Tableau
         </a>
     </div>
 
     <div class="flex-line">
         <div>
-            <h3>Exporter un dossier de banc</h3>
-            <p>au format PDF</p>
+            <h3>Exporter un dossier</h3>
+            <p>au format PDF, pour obtenir un dossier complet imprimable.</p>
         </div>
         <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'pdf'}) }}">
             {{ macros.svg_icon("file-pdf") }}
-            Dossier de banc
+            Dossier
         </a>
     </div>
 
     <div class="flex-line">
         <div>
-            <h3>Exporter un fichier JSON</h3>
+            <h3>Exporter un fichier technique structuré</h3>
         </div>
         <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'json'}) }}">
             {{ macros.svg_icon("file-archive") }}
-            Format JSON
+            Fichier technique
         </a>
     </div>
 
@@ -98,8 +98,13 @@
     <section data-target="amendements-options.details">
         <div class="flex-line" data-controller="filename">
             <div>
-                <h3>Importer des réponses</h3>
-                <p>Importer des réponses à partir d’un fichier Excel converti en CSV <a class="underlined" href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses" target="_blank">suivant la spécification dédiée</a>.</p>
+                <h3>Importer des saisies</h3>
+                <p>
+                    L’import de saisies permet, en une seule opération, de remplir les fiches de banc (avis, réponses, objet, etc) de plusieurs amendements, à partir d’un fichier Excel converti en CSV.
+                    <a class="underlined" href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses" target="_blank">
+                        Cliquer ici pour consulter le guide dédié.
+                    </a>.
+                </p>
             </div>
             <form action="{{ request.resource_url(context, 'import_csv') }}" enctype="multipart/form-data" method="post" id="import-form">
                 <div class="custom-file">
@@ -107,7 +112,7 @@
                     <label class="custom-file-label" for="reponses">Fichier CSV</label>
                 </div>
                 <div role="group">
-                    <input type="submit" name="upload" class="button primary enabled centered" value="Importer les réponses">
+                    <input type="submit" name="upload" class="button primary enabled centered" value="Importer">
                 </div>
             </form>
         </div>
@@ -124,15 +129,15 @@
                     <label class="custom-file-label" for="liasse">Fichier XML</label>
                 </div>
                 <div role="group">
-                    <input type="submit" name="upload" class="button primary enabled" value="Importer la liasse">
+                    <input type="submit" name="upload" class="button primary enabled" value="Importer">
                 </div>
             </form>
         </div>
 
         <div class="flex-line" data-controller="filename">
             <div>
-                <h3>Importer un fichier JSON</h3>
-                <p>À partir d’un fichier JSON précédemment exporté (usage avancé).</p>
+                <h3>Importer un fichier technique structuré</h3>
+                <p>L’import d’un JSON permet d’interfacer Zam avec un autre outil.</p>
             </div>
             <form action="{{ request.resource_url(context, 'import_backup') }}" enctype="multipart/form-data" method="post" id="backup-form">
                 <div class="custom-file">
@@ -140,7 +145,7 @@
                     <label class="custom-file-label" for="backup">Fichier JSON</label>
                 </div>
                 <div role="group">
-                    <input type="submit" name="upload" class="button primary enabled centered" value="Importer le fichier JSON">
+                    <input type="submit" name="upload" class="button primary enabled centered" value="Importer">
                 </div>
             </form>
         </div>
@@ -184,10 +189,9 @@
         </table>
     {% else %}
         <p class="flex-line">
-            Aucune boîte personnalisée n’existe pour l’instant.
-            Ces boîtes permettent d’y placer des amendements au même titre
-            que les tables des utilisateur·ice·s.
-            Par exemple « Pré RIM » ou « Validé Cab ».
+            Aucune boîte n’a été créée.
+            Créer une boîte permet de personnaliser l’organisation du travail pour cette lecture
+            (exemples : boîte « validé cabinet », boîte « visa directrice ok »).
         </p>
     {% endif %}
 

@@ -85,6 +85,7 @@
     <div class="flex-line">
         <div>
             <h3>Exporter un fichier technique structuré</h3>
+            <p>au format JSON.</p>
         </div>
         <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'json'}) }}">
             {{ macros.svg_icon("file-archive") }}
@@ -102,7 +103,7 @@
                 <p>
                     L’import de saisies permet, en une seule opération, de remplir les fiches de banc (avis, réponses, objet, etc) de plusieurs amendements, à partir d’un fichier Excel converti en CSV.
                     <a class="underlined" href="https://github.com/betagouv/zam/wiki/Sp%C3%A9cification-import-r%C3%A9ponses" target="_blank">
-                        Cliquer ici pour consulter le guide dédié.
+                        Cliquer ici pour consulter le guide dédié
                     </a>.
                 </p>
             </div>

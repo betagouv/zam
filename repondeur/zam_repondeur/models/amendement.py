@@ -590,7 +590,7 @@ class Amendement(Base):
         if self.shared_table:
             return self.shared_table.titre or ""
         elif self.user_table:
-            return self.user_table.user.name or ""
+            return self.user_table.user.name or self.user_table.user.email
         else:
             return ""
 

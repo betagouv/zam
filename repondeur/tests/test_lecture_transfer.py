@@ -381,6 +381,8 @@ def test_lecture_post_transfer_amendements_to_me(
 
     # The amendement is now on our table
     assert amendement.user_table.user.email == user_david.email
+    assert amendement.shared_table is None
+    assert amendement.table_name == "David"
 
     # An event was added to the amendement
     assert len(amendement.events) == 1
@@ -468,10 +470,12 @@ def test_lecture_post_transfer_amendements_to_index(
 
     # The amendement is now on the index
     assert amendement.user_table is None
+    assert amendement.shared_table is None
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a remis l’amendement dans l’index."
     )
+    assert amendement.table_name == ""
 
 
 def test_lecture_post_transfer_amendements_to_index_from_index(
@@ -612,6 +616,7 @@ def test_lecture_post_transfer_amendements_from_void_to_shared_table(
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a transféré l’amendement à « Test table »."
     )
+    assert amendement.table_name == "Test table"
 
 
 def test_lecture_post_transfer_amendements_from_me_to_shared_table(
@@ -819,3 +824,47 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_other(
         "a transféré l’amendement de « Test table » "
         "à « Ronan (ronan@exemple.gouv.fr) »."
     )
+
+
+def test_lecture_post_transfer_amendements_from_void_to_noname_user(
+    app, lecture_an, amendements_an, user_david, team_zam
+):
+    from zam_repondeur.models import DBSession, Amendement, User
+
+    with transaction.manager:
+        # We simulate an invited user that has never been connected.
+        user_noname = User.create(email="noname@exemple.gouv.fr")
+        user_noname.teams.append(team_zam)
+        DBSession.add(user_noname)
+
+    resp = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
+        {"nums": [amendements_an[0]]},
+        user=user_david,
+    )
+    form = resp.form
+    form["target"] = user_noname.email
+    resp = form.submit("submit-to")
+
+    # We're redirected to our table
+    assert resp.status_code == 302
+    assert resp.location == (
+        (
+            "https://zam.test/"
+            "dossiers/plfss-2018/"
+            "lectures/an.15.269.PO717460/"
+            "tables/david@exemple.gouv.fr/"
+        )
+    )
+
+    # Reload amendement as it was updated in another transaction
+    amendement = Amendement.get(lecture_an, amendements_an[0].num)
+
+    # The amendement is now on the noname user table.
+    assert amendement.user_table.pk == user_noname.pk
+    assert amendement.shared_table is None
+    assert amendement.events[0].render_summary() == (
+        "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+        "a transféré l’amendement à « noname@exemple.gouv.fr »."
+    )
+    assert amendement.table_name == "noname@exemple.gouv.fr"

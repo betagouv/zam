@@ -26,6 +26,78 @@
 
 ### Changements récents
 
+#### 26 août 2019
+
+Nouveau logo.
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-08-26-identification-courriel.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-08-26-identification-courriel.png">
+    </a>
+    <figcaption>
+        Identification par courriel.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-08-26-dossier-legislatif.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-08-26-dossier-legislatif.png">
+    </a>
+    <figcaption>
+        Travail par dossier législatif.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-08-26-menu-contextuel.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-08-26-menu-contextuel.png">
+    </a>
+    <figcaption>
+        Navigation par menu contextuel.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-08-26-invitations-dossiers.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-08-26-invitations-dossiers.png">
+    </a>
+    <figcaption>
+        Invitation à travailler sur un dossier législatif par courriel.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-08-26-boites.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-08-26-boites.png">
+    </a>
+    <figcaption>
+        Personnalisation de l’espace de travail avec des boîtes.
+    </figcaption>
+</figure>
+
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-08-26-transfert-boite.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-08-26-transfert-boite.png">
+    </a>
+    <figcaption>
+        Possibilité de transférer des amendements vers ces boîtes.
+    </figcaption>
+</figure>
+
+
 #### 20 juin 2019
 
 Amélioration de la résilience du système en vérifiant la possibilité

@@ -1,0 +1,48 @@
+---
+- hosts: web_servers
+
+  roles:
+    - role: nginxinc.nginx
+
+  tasks:
+    - name: Ensure directory exists for local self-signed TLS certs
+      file:
+        path: /etc/letsencrypt/live/{{ server_hostname }}
+        state: directory
+
+    - name: Ensure Python setuptools library is installed
+      apt:
+        name: python3-setuptools
+        state: present
+
+    - name: Ensure Python OpenSSL library is installed
+      apt:
+        name: python3-openssl
+        state: present
+
+    - name: Generate an OpenSSL private key
+      openssl_privatekey:
+        path: /etc/letsencrypt/live/{{ server_hostname }}/privkey.pem
+
+    - name: Generate an OpenSSL CSR
+      openssl_csr:
+        path: /etc/ssl/private/{{ server_hostname }}.csr
+        privatekey_path: /etc/letsencrypt/live/{{ server_hostname }}/privkey.pem
+        common_name: "{{ server_hostname }}"
+
+    - name: Generate a self-signed OpenSSL certificate
+      openssl_certificate:
+        path: /etc/letsencrypt/live/{{ server_hostname }}/fullchain.pem
+        privatekey_path: /etc/letsencrypt/live/{{ server_hostname }}/privkey.pem
+        csr_path: /etc/ssl/private/{{ server_hostname }}.csr
+        provider: selfsigned
+
+    - name: Install Nginx site config file
+      template:
+        src: templates/zam.conf.jinja2
+        dest: /etc/nginx/sites-available/zam.conf
+
+  vars:
+    nginx_type: opensource
+    nginx_install_from: os_repository
+    server_hostname: www.127.0.0.1.xip.io

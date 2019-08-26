@@ -1,0 +1,87 @@
+upstream app {
+    server {{ app_host }}:{{ app_port }};
+}
+
+server {
+    listen 80 default_server;
+    server_name {{ web_host }};
+
+    include /etc/nginx/snippets/letsencrypt.conf;
+
+    location / {
+        return 301 https://{{ web_host }}$request_uri;
+    }
+
+    location /nginx_status {
+        stub_status on;
+        access_log off;
+        allow 127.0.0.1;
+        deny all;
+    }
+}
+
+server {
+    listen 443 ssl http2 default_server;
+    listen [::]:443 ssl http2 default_server ipv6only=on;
+    server_name {{ web_host }};
+
+    ssl_certificate {{ ssl_cert }};
+    ssl_certificate_key {{ ssl_key }};
+    ssl_trusted_certificate {{ ssl_cert }};
+    include /etc/nginx/snippets/ssl.conf;
+
+    charset     utf-8;
+
+    client_max_body_size 25M;
+
+    gzip on;
+    gzip_vary on;
+    gzip_types text/html text/css image/svg+xml application/javascript application/json;
+
+    include /etc/nginx/snippets/letsencrypt.conf;
+
+    auth_basic "Restricted";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+
+    # Redirect to repondeur if there is no changelog
+    location = / {
+        alias /srv/zam/;
+        try_files index.html /repondeur/;
+    }
+
+    location / {
+        alias /srv/zam/;
+    }
+
+    location /repondeur/ {
+        proxy_pass http://app/;
+
+        proxy_redirect          off;
+
+        proxy_set_header        Host $http_host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Forwarded-Proto $scheme;
+
+        client_max_body_size    10m;
+        client_body_buffer_size 128k;
+
+        proxy_connect_timeout   {{ web_timeout }}s;
+        proxy_send_timeout      {{ web_timeout }}s;
+        proxy_read_timeout      {{ web_timeout }}s;
+
+        proxy_buffering         off;
+        proxy_temp_file_write_size 128k;
+    }
+
+    location /repondeur/static/ {
+        alias /srv/repondeur/src/repondeur/zam_repondeur/static/;
+        expires 30d;
+        add_header Cache-Control public;
+    }
+
+    location /_stats/ {
+        alias /var/cache/munin/www/;
+    }
+
+}

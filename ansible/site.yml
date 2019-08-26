@@ -1,0 +1,4 @@
+---
+- import_playbook: web.yml
+- import_playbook: app.yml
+- import_playbook: db.yml

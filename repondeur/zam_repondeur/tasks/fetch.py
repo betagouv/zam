@@ -4,6 +4,8 @@ NB: make sure tasks.huey.init_huey() has been called before importing this modul
 import logging
 from typing import Optional
 
+from pyramid.request import Request
+
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch import get_amendements, get_articles
 from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
@@ -99,7 +101,7 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
 
 
 @huey.task()
-def create_missing_lectures(dossier_pk: int) -> None:
+def create_missing_lectures(dossier_pk: int, request: Optional[Request] = None) -> None:
     with huey.lock_task(f"dossier-{dossier_pk}"):
         dossier = DBSession.query(Dossier).get(dossier_pk)
         if dossier is None:
@@ -116,9 +118,11 @@ def create_missing_lectures(dossier_pk: int) -> None:
             lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
             if lecture is not None:
                 changed = True
-                LectureCreee.create(request=None, lecture=lecture)
+                LectureCreee.create(request=request, lecture=lecture)
+                # Required to be able to retrieve the lecture in tasks below.
+                DBSession.flush()
                 fetch_articles(lecture.pk)
                 fetch_amendements(lecture.pk)
 
         if changed:
-            LecturesRecuperees.create(request=None, dossier=dossier)
+            LecturesRecuperees.create(request=request, dossier=dossier)

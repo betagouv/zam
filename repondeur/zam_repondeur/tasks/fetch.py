@@ -47,23 +47,14 @@ def get_lectures(dossier: Dossier, settings: Dict[str, str]) -> None:
 
         # Only fetch articles for recent lectures.
         if lecture.refreshable_for("articles", settings):
-            fetch_articles.call_local(lecture.pk)
+            fetch_articles(lecture.pk)
 
         # Only fetch amendements for recent lectures.
         if lecture.refreshable_for("amendements", settings):
-            fetch_amendements.call_local(lecture.pk)
+            fetch_amendements(lecture.pk)
 
     # Then try to create missing lectures.
-    dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
-    dossier_ref = dossiers_by_uid[dossier.uid]
-
-    for lecture_ref in reversed(dossier_ref.lectures):
-        texte = Texte.get_or_create_from_ref(lecture_ref.texte, lecture_ref.chambre)
-        lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
-        if lecture is not None:
-            LectureCreee.create(request=None, lecture=lecture)
-            fetch_articles.call_local(lecture.pk)
-            fetch_amendements.call_local(lecture.pk)
+    create_missing_lectures(dossier.pk)
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
@@ -109,3 +100,23 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
         if changed:
             AmendementsAJour.create(request=None, lecture=lecture)
         return changed
+
+
+@huey.task()
+def create_missing_lectures(dossier_pk: int) -> None:
+    with huey.lock_task(f"create-missing-lectures-{dossier_pk}"):
+        dossier = DBSession.query(Dossier).get(dossier_pk)
+        if dossier is None:
+            logger.error(f"Dossier {dossier_pk} introuvable")
+            return
+
+        dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
+        dossier_ref = dossiers_by_uid[dossier.uid]
+
+        for lecture_ref in reversed(dossier_ref.lectures):
+            texte = Texte.get_or_create_from_ref(lecture_ref.texte, lecture_ref.chambre)
+            lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
+            if lecture is not None:
+                LectureCreee.create(request=None, lecture=lecture)
+                fetch_articles.call_local(lecture.pk)
+                fetch_amendements.call_local(lecture.pk)

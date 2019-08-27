@@ -199,10 +199,14 @@ class TestPostForm:
         )
         assert len(user_sgg.teams) == 1
         assert dossier_plfss2018.team in user_sgg.teams
-        assert len(dossier_plfss2018.events) == 1
+        assert len(dossier_plfss2018.events) == 2
         assert (
             dossier_plfss2018.events[0].render_summary()
             == "<abbr title='user@sgg.pm.gouv.fr'>SGG user</abbr> a activé le dossier."
+        )
+        assert (
+            dossier_plfss2018.events[1].render_summary()
+            == "De nouvelles lectures ont été récupérées."
         )
 
         lecture = Lecture.get(

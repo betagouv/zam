@@ -10,27 +10,16 @@ from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message as MailMessage
 from sqlalchemy.orm import joinedload
 
-from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
-from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
 from zam_repondeur.message import Message
-from zam_repondeur.models import (
-    DBSession,
-    Dossier,
-    Lecture,
-    Team,
-    Texte,
-    User,
-    get_one_or_create,
-)
+from zam_repondeur.models import DBSession, Dossier, Team, User, get_one_or_create
 from zam_repondeur.models.events.dossier import (
     DossierActive,
     DossierDesactive,
     DossierRetrait,
     InvitationEnvoyee,
 )
-from zam_repondeur.models.events.lecture import LectureCreee
 from zam_repondeur.resources import DossierCollection, DossierResource
-from zam_repondeur.tasks.fetch import fetch_amendements, fetch_articles, update_dossier
+from zam_repondeur.tasks.fetch import create_missing_lectures, update_dossier
 
 
 class DossierCollectionBase:
@@ -99,24 +88,8 @@ class DossierAddForm(DossierCollectionBase):
         ):
             admin.teams.append(team)
 
-        # The team needs to be fully created before we create Textes.
-        DBSession.flush()
-
+        create_missing_lectures(dossier.pk, self.request)
         DossierActive.create(self.request, dossier=dossier)
-
-        dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
-        dossier_ref = dossiers_by_uid[dossier.uid]
-        for lecture_ref in dossier_ref.lectures:
-            texte = Texte.get_or_create_from_ref(lecture_ref.texte, lecture_ref.chambre)
-            lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
-            if lecture is not None:
-                LectureCreee.create(self.request, lecture=lecture)
-
-                # Schedule task to run in worker
-                DBSession.flush()
-
-                fetch_articles(lecture.pk)
-                fetch_amendements(lecture.pk)
 
         self.request.session.flash(
             Message(

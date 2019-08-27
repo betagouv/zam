@@ -62,7 +62,7 @@ jobs:
           name: Check import order with isort
           command: |
             cd repondeur
-            isort -rc .
+            isort --recursive .
       - run:
           name: Check for potential security issues with bandit
           command: |

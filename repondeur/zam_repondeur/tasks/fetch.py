@@ -2,11 +2,12 @@
 NB: make sure tasks.huey.init_huey() has been called before importing this module
 """
 import logging
-from typing import Optional
+from typing import Dict, Optional
 
+from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch import get_amendements, get_articles
-from zam_repondeur.fetch.lectures import get_lectures
-from zam_repondeur.models import DBSession, Dossier, Lecture
+from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
+from zam_repondeur.models import DBSession, Dossier, Lecture, Texte
 from zam_repondeur.models.events.dossier import LecturesRecuperees
 from zam_repondeur.models.events.lecture import (
     AmendementsAJour,
@@ -14,6 +15,7 @@ from zam_repondeur.models.events.lecture import (
     AmendementsNonTrouves,
     AmendementsRecuperes,
     ArticlesRecuperes,
+    LectureCreee,
 )
 from zam_repondeur.tasks.huey import huey
 
@@ -34,6 +36,39 @@ def fetch_lectures(dossier_pk: int) -> None:
         changed: bool = get_lectures(dossier, huey.settings)
         if changed:
             LecturesRecuperees.create(request=None, dossier=dossier)
+
+
+def get_lectures(dossier: Dossier, settings: Dict[str, str]) -> bool:
+
+    changed = False
+
+    # First fetch data from existing lectures, starting with recents.
+    for lecture in reversed(dossier.lectures):
+        # Refetch the lecture to apply the FOR UPDATE.
+        lecture = DBSession.query(Lecture).with_for_update().get(lecture.pk)
+
+        # Only fetch articles for recent lectures.
+        if lecture.refreshable_for("articles", settings):
+            changed |= fetch_articles.call_local(lecture.pk)
+
+        # Only fetch amendements for recent lectures.
+        if lecture.refreshable_for("amendements", settings):
+            changed |= fetch_amendements.call_local(lecture.pk)
+
+    # Then try to create missing lectures.
+    dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
+    dossier_ref = dossiers_by_uid[dossier.uid]
+
+    for lecture_ref in reversed(dossier_ref.lectures):
+        texte = Texte.get_or_create_from_ref(lecture_ref.texte, lecture_ref.chambre)
+        lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
+        if lecture is not None:
+            changed = True
+            LectureCreee.create(request=None, lecture=lecture)
+            fetch_articles.call_local(lecture.pk)
+            fetch_amendements.call_local(lecture.pk)
+
+    return changed
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)

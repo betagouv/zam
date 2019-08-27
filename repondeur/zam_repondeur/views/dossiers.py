@@ -30,7 +30,7 @@ from zam_repondeur.models.events.dossier import (
 )
 from zam_repondeur.models.events.lecture import LectureCreee
 from zam_repondeur.resources import DossierCollection, DossierResource
-from zam_repondeur.tasks.fetch import fetch_amendements, fetch_articles, fetch_lectures
+from zam_repondeur.tasks.fetch import fetch_amendements, fetch_articles, update_dossier
 
 
 class DossierCollectionBase:
@@ -336,7 +336,7 @@ def lecture_journal(context: DossierResource, request: Request) -> Response:
 @view_config(context=DossierResource, name="manual_refresh")
 def manual_refresh(context: DossierResource, request: Request) -> Response:
     dossier = context.dossier
-    fetch_lectures(dossier.pk)
+    update_dossier(dossier.pk)
     request.session.flash(
         Message(cls="success", text="Rafraichissement des lectures en cours.")
     )

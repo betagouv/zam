@@ -56,7 +56,7 @@ class LecturesRecuperees(DossierEvent):
     __mapper_args__ = {"polymorphic_identity": "lectures_recuperees"}
     icon = "document"
 
-    summary_template = Template("Les lectures ont été récupérées.")
+    summary_template = Template("De nouvelles lectures ont été récupérées.")
 
     def apply(self) -> None:
         pass

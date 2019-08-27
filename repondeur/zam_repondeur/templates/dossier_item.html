@@ -70,7 +70,7 @@
                 datetime="{{ dossier.last_event_datetime.isoformat() }}"
                 data-controller="timestamp"
                 data-timestamp-modified-at="{{ dossier.last_event_timestamp }}">
-                    {{ dossier.last_event_datetime.strftime("%A %d %B à %H:%M") }}
+                    {{ dossier.last_event_datetime | human_readable_time }}
             </time>
         </a>
     </div>

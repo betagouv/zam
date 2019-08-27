@@ -28,7 +28,7 @@
             datetime="{{ lecture.last_event_datetime.isoformat() }}"
             data-controller="timestamp"
             data-timestamp-modified-at="{{ lecture.last_event_timestamp }}">
-                {{ lecture.last_event_datetime.strftime("%A %d %B à %I:%M%p") }}
+                {{ lecture.last_event_datetime.strftime("%A %d %B à %H:%M") }}
         </time>
     </a>
 </div>

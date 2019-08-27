@@ -2,6 +2,7 @@ from datetime import date, datetime
 from itertools import groupby
 from typing import TYPE_CHECKING, Iterable, List, Optional, Tuple
 
+import pytz
 from jinja2 import Markup, contextfilter
 from jinja2.runtime import Context
 
@@ -78,4 +79,6 @@ def length_including_batches(amendements: Iterable["Amendement"]) -> int:
 
 
 def human_readable_time(dt: datetime) -> str:
-    return dt.strftime("%A %d %B à %H:%M")
+    local_tz = pytz.timezone("Europe/Paris")
+    local_dt = dt.astimezone(local_tz)
+    return local_dt.strftime("%A %d %B à %H:%M")

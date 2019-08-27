@@ -113,5 +113,5 @@ def create_missing_lectures(dossier_pk: int) -> None:
             lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
             if lecture is not None:
                 LectureCreee.create(request=None, lecture=lecture)
-                fetch_articles.call_local(lecture.pk)
-                fetch_amendements.call_local(lecture.pk)
+                fetch_articles(lecture.pk)
+                fetch_amendements(lecture.pk)

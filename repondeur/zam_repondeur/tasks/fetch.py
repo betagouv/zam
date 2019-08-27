@@ -26,7 +26,7 @@ RETRY_DELAY = 5 * 60  # 5 minutes
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
 def update_dossier(dossier_pk: int) -> None:
-    with huey.lock_task(f"fetch-{dossier_pk}"):
+    with huey.lock_task(f"dossier-{dossier_pk}"):
         dossier = DBSession.query(Dossier).get(dossier_pk)
         if dossier is None:
             logger.error(f"Dossier {dossier_pk} introuvable")
@@ -56,7 +56,7 @@ fetch_lectures = update_dossier  # backwards compatibility
 def fetch_articles(lecture_pk: Optional[int]) -> bool:
     if lecture_pk is None:
         return False
-    with huey.lock_task(f"fetch-{lecture_pk}"):
+    with huey.lock_task(f"lecture-{lecture_pk}"):
         lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
         if lecture is None:
             logger.error(f"Lecture {lecture_pk} introuvable")
@@ -72,7 +72,7 @@ def fetch_articles(lecture_pk: Optional[int]) -> bool:
 def fetch_amendements(lecture_pk: Optional[int]) -> bool:
     if lecture_pk is None:
         return False
-    with huey.lock_task(f"fetch-{lecture_pk}"):
+    with huey.lock_task(f"lecture-{lecture_pk}"):
         lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
         if lecture is None:
             logger.error(f"Lecture {lecture_pk} introuvable")
@@ -99,7 +99,7 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
 
 @huey.task()
 def create_missing_lectures(dossier_pk: int) -> None:
-    with huey.lock_task(f"create-missing-lectures-{dossier_pk}"):
+    with huey.lock_task(f"dossier-{dossier_pk}"):
         dossier = DBSession.query(Dossier).get(dossier_pk)
         if dossier is None:
             logger.error(f"Dossier {dossier_pk} introuvable")

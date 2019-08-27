@@ -2,7 +2,7 @@
 NB: make sure tasks.huey.init_huey() has been called before importing this module
 """
 import logging
-from typing import Dict, Optional
+from typing import Optional
 
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch import get_amendements, get_articles
@@ -32,29 +32,24 @@ def update_dossier(dossier_pk: int) -> None:
             logger.error(f"Dossier {dossier_pk} introuvable")
             return
 
-        get_lectures(dossier, huey.settings)
-
-
-fetch_lectures = update_dossier  # backwards compatibility
-
-
-def get_lectures(dossier: Dossier, settings: Dict[str, str]) -> None:
-
     # First fetch data from existing lectures, starting with recents.
     for lecture in reversed(dossier.lectures):
         # Refetch the lecture to apply the FOR UPDATE.
         lecture = DBSession.query(Lecture).with_for_update().get(lecture.pk)
 
         # Only fetch articles for recent lectures.
-        if lecture.refreshable_for("articles", settings):
+        if lecture.refreshable_for("articles", huey.settings):
             fetch_articles(lecture.pk)
 
         # Only fetch amendements for recent lectures.
-        if lecture.refreshable_for("amendements", settings):
+        if lecture.refreshable_for("amendements", huey.settings):
             fetch_amendements(lecture.pk)
 
     # Then try to create missing lectures.
     create_missing_lectures(dossier.pk)
+
+
+fetch_lectures = update_dossier  # backwards compatibility
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)

@@ -21,6 +21,7 @@
 
 ##### Semestre 2
 
+- projet de loi sur la bioéthique (DGS - ministère des solidarités et de la santé)
 - PLF pour 2020 (DLF - Bercy)
 - PLFSS pour 2020 (DSS - ministère des solidarités et de la santé)
 

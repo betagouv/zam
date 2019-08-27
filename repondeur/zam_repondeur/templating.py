@@ -16,6 +16,7 @@ JINJA2_SETTINGS = {
         "h3_to_h5": f"{FILTERS_PATH}:h3_to_h5",
         "enumeration": f"{FILTERS_PATH}:enumeration",
         "length_including_batches": f"{FILTERS_PATH}:length_including_batches",
+        "human_readable_time": f"{FILTERS_PATH}:human_readable_time",
     },
     "jinja2.undefined": "strict",
 }

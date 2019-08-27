@@ -41,7 +41,7 @@
 {% macro journal_line(is_first, event) %}
     <li>
         <em class="when">
-            {% set readable_timestamp = event.created_at.strftime("%A %d %B à %H:%M") %}
+            {% set readable_timestamp = event.created_at | human_readable_time %}
             <time xsi:type="xsd:dateTime"
                 title="{{ readable_timestamp }}"
                 datetime="{{ event.created_at.isoformat() }}"

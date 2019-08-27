@@ -26,7 +26,7 @@ RETRY_DELAY = 5 * 60  # 5 minutes
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
-def fetch_lectures(dossier_pk: int) -> None:
+def update_dossier(dossier_pk: int) -> None:
     with huey.lock_task(f"fetch-{dossier_pk}"):
         dossier = DBSession.query(Dossier).get(dossier_pk)
         if dossier is None:
@@ -36,6 +36,9 @@ def fetch_lectures(dossier_pk: int) -> None:
         changed: bool = get_lectures(dossier, huey.settings)
         if changed:
             LecturesRecuperees.create(request=None, dossier=dossier)
+
+
+fetch_lectures = update_dossier  # backwards compatibility
 
 
 def get_lectures(dossier: Dossier, settings: Dict[str, str]) -> bool:

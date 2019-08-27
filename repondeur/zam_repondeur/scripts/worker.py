@@ -37,9 +37,10 @@ def start_huey(
     from zam_repondeur.tasks.fetch import (  # noqa
         fetch_articles,
         fetch_amendements,
-        fetch_lectures,
+        update_dossier,
+        fetch_lectures,  # backwards compatibility
     )
-    from zam_repondeur.tasks.periodic import update_data, fetch_all_lectures  # noqa
+    from zam_repondeur.tasks.periodic import update_data, update_all_dossiers  # noqa
 
     try:
         flush_stale_locks(huey)

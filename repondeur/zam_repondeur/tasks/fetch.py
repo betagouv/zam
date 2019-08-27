@@ -8,6 +8,7 @@ from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch import get_amendements, get_articles
 from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
 from zam_repondeur.models import DBSession, Dossier, Lecture, Texte
+from zam_repondeur.models.events.dossier import LecturesRecuperees
 from zam_repondeur.models.events.lecture import (
     AmendementsAJour,
     AmendementsNonRecuperes,
@@ -108,10 +109,16 @@ def create_missing_lectures(dossier_pk: int) -> None:
         dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
         dossier_ref = dossiers_by_uid[dossier.uid]
 
+        changed = False
+
         for lecture_ref in reversed(dossier_ref.lectures):
             texte = Texte.get_or_create_from_ref(lecture_ref.texte, lecture_ref.chambre)
             lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
             if lecture is not None:
+                changed = True
                 LectureCreee.create(request=None, lecture=lecture)
                 fetch_articles(lecture.pk)
                 fetch_amendements(lecture.pk)
+
+        if changed:
+            LecturesRecuperees.create(request=None, dossier=dossier)

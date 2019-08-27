@@ -26,7 +26,7 @@ def test_dossier_lectures_recuperation(app, dossier_plfss2018, user_david):
         assert len(dossier_plfss2018.events) == 1
 
     resp = app.get("/dossiers/plfss-2018/journal", user=user_david)
-    assert first_description_text(resp) == "Les lectures ont été récupérées."
+    assert first_description_text(resp) == "De nouvelles lectures ont été récupérées."
 
 
 def test_dossier_invitation_envoyee(app, dossier_plfss2018, user_david):

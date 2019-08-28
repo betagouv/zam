@@ -56,7 +56,9 @@ fetch_lectures = update_dossier  # backwards compatibility
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
 def fetch_articles(lecture_pk: Optional[int]) -> bool:
     if lecture_pk is None:
+        logger.error(f"fetch_articles: lecture_pk is None")
         return False
+
     with huey.lock_task(f"lecture-{lecture_pk}"):
         lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
         if lecture is None:
@@ -72,7 +74,9 @@ def fetch_articles(lecture_pk: Optional[int]) -> bool:
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
 def fetch_amendements(lecture_pk: Optional[int]) -> bool:
     if lecture_pk is None:
+        logger.error(f"fetch_amendements: lecture_pk is None")
         return False
+
     with huey.lock_task(f"lecture-{lecture_pk}"):
         lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
         if lecture is None:

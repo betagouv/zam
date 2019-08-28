@@ -42,7 +42,7 @@ class SharedTableCollectionView:
         )
         if created:
             SharedTableCreee.create(
-                request=self.request, lecture=self.lecture, titre=titre
+                lecture=self.lecture, titre=titre, request=self.request
             )
             self.request.session.flash(
                 Message(
@@ -85,10 +85,10 @@ class SharedTableResourceView:
         self.shared_table.titre = titre
         self.shared_table.slug = slugify(titre)
         SharedTableRenommee.create(
-            request=self.request,
             lecture=self.lecture,
             old_titre=old_titre,
             new_titre=titre,
+            request=self.request,
         )
         self.request.session.flash(
             Message(cls="success", text=f"Boîte « {titre} » sauvegardée avec succès.")
@@ -123,7 +123,7 @@ class SharedTableResourceDeleteView:
         titre = self.shared_table.titre
         DBSession.delete(self.shared_table)
         SharedTableSupprimee.create(
-            request=self.request, lecture=self.lecture, titre=titre
+            lecture=self.lecture, titre=titre, request=self.request
         )
         self.request.session.flash(
             Message(cls="success", text=f"Boîte « {titre} » supprimée avec succès.")

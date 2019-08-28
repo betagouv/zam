@@ -1,18 +1,21 @@
 from string import Template
-from typing import Any
+from typing import Any, Optional
 
 from jinja2 import Markup
 from pyramid.request import Request
 
 from ..dossier import Dossier
+from ..users import User
 from .base import Event
 
 
 class DossierEvent(Event):
     details_template = Template("")
 
-    def __init__(self, request: Request, dossier: Dossier, **kwargs: Any):
-        super().__init__(request, **kwargs)
+    def __init__(
+        self, dossier: Dossier, request: Optional[Request] = None, **kwargs: Any
+    ):
+        super().__init__(request=request, **kwargs)
         self.dossier = dossier
 
     @property
@@ -36,6 +39,9 @@ class DossierActive(DossierEvent):
         "<abbr title='$email'>$user</abbr> a activé le dossier."
     )
 
+    def __init__(self, dossier: Dossier, request: Request):
+        super().__init__(dossier=dossier, request=request)
+
     def apply(self) -> None:
         pass
 
@@ -48,6 +54,9 @@ class DossierDesactive(DossierEvent):
         "<abbr title='$email'>$user</abbr> a désactivé le dossier."
     )
 
+    def __init__(self, dossier: Dossier, request: Request):
+        super().__init__(dossier=dossier, request=request)
+
     def apply(self) -> None:
         pass
 
@@ -58,6 +67,9 @@ class LecturesRecuperees(DossierEvent):
 
     summary_template = Template("De nouvelles lectures ont été récupérées.")
 
+    def __init__(self, dossier: Dossier, user: User):
+        super().__init__(dossier=dossier, user=user)
+
     def apply(self) -> None:
         pass
 
@@ -65,6 +77,9 @@ class LecturesRecuperees(DossierEvent):
 class InvitationEnvoyee(DossierEvent):
     __mapper_args__ = {"polymorphic_identity": "invitation_envoyee"}
     icon = "document"
+
+    def __init__(self, dossier: Dossier, email: str, request: Request):
+        super().__init__(dossier=dossier, email=email, request=request)
 
     @property
     def summary_template(self) -> Template:
@@ -78,6 +93,9 @@ class InvitationEnvoyee(DossierEvent):
 class DossierRetrait(DossierEvent):
     __mapper_args__ = {"polymorphic_identity": "dossier_retrait"}
     icon = "document"
+
+    def __init__(self, dossier: Dossier, target: str, request: Request):
+        super().__init__(dossier=dossier, target=target, request=request)
 
     @property
     def summary_template(self) -> Template:

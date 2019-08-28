@@ -2,6 +2,7 @@ from datetime import date
 
 import pytest
 import transaction
+from pyramid.testing import DummyRequest
 
 
 @pytest.mark.parametrize(
@@ -20,10 +21,9 @@ def test_group_by_day(app, lecture_an, amendements_an, user_david):
 
     with transaction.manager:
         ReponseAmendementModifiee.create(
-            request=None,
             amendement=amendements_an[0],
             reponse="Réponse",
-            user=user_david,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert group_by_day(amendements_an[0].events) == [
             (date.today(), [amendements_an[0].events[0]])

@@ -1,4 +1,5 @@
 import transaction
+from pyramid.testing import DummyRequest
 
 
 def first_description_text(resp):
@@ -24,7 +25,9 @@ def test_article_journal_title(app, lecture_an, article1_an, user_david):
 
     with transaction.manager:
         TitreArticleModifie.create(
-            request=None, article=article1_an, title="Title", user=user_david
+            article=article1_an,
+            title="Title",
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert len(article1_an.events) == 1
         assert article1_an.events[0].data["old_value"] == ""
@@ -42,7 +45,7 @@ def test_article_journal_title_from_services(app, lecture_an, article1_an, user_
     from zam_repondeur.models.events.article import TitreArticleModifie
 
     with transaction.manager:
-        TitreArticleModifie.create(request=None, article=article1_an, title="Title")
+        TitreArticleModifie.create(article=article1_an, title="Title")
         assert len(article1_an.events) == 1
         assert article1_an.events[0].data["old_value"] == ""
         assert article1_an.events[0].data["new_value"] == "Title"
@@ -63,10 +66,9 @@ def test_article_journal_presentation(app, lecture_an, article1_an, user_david):
 
     with transaction.manager:
         PresentationArticleModifiee.create(
-            request=None,
             article=article1_an,
             presentation="Présentation",
-            user=user_david,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert len(article1_an.events) == 1
         assert article1_an.events[0].data["old_value"] == ""
@@ -84,9 +86,7 @@ def test_article_journal_content(app, lecture_an, article1_an, user_david):
     from zam_repondeur.models.events.article import ContenuArticleModifie
 
     with transaction.manager:
-        ContenuArticleModifie.create(
-            request=None, article=article1_an, content={"Foo": "Bar"}, user=user_david
-        )
+        ContenuArticleModifie.create(article=article1_an, content={"Foo": "Bar"})
         assert len(article1_an.events) == 1
         assert article1_an.events[0].data["old_value"] == {}
         assert article1_an.events[0].data["new_value"] == {"Foo": "Bar"}

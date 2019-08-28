@@ -57,7 +57,7 @@ def import_csv(context: LectureResource, request: Request) -> Response:
                 text=f"{counter['reponses']} réponse(s) chargée(s) avec succès",
             )
         )
-        ReponsesImportees.create(request=request, lecture=lecture)
+        ReponsesImportees.create(lecture=lecture, request=request)
 
     if counter["reponses_errors"]:
         request.session.flash(

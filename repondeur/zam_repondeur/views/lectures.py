@@ -179,7 +179,7 @@ class BatchAmendements:
         # Special case: unbatch (TODO: move to a separate route)
         if len(self.request.POST.getall("nums")) == 1:
             amendement = self.get_amendements_from(self.request.POST)[0]
-            BatchUnset.create(self.request, amendement)
+            BatchUnset.create(amendement=amendement, request=self.request)
             return HTTPFound(location=self.my_table_url)
 
         amendements = list(
@@ -195,12 +195,12 @@ class BatchAmendements:
         to_be_updated: List[Amendement] = []
         for amendement in amendements:
             if amendement.batch:
-                BatchUnset.create(self.request, amendement)
+                BatchUnset.create(amendement=amendement, request=self.request)
             BatchSet.create(
-                self.request,
-                amendement,
-                batch,
+                amendement=amendement,
+                batch=batch,
                 amendements_nums=[amendement.num for amendement in amendements],
+                request=self.request,
             )
             reponse = Reponse.from_amendement(amendement)
             if not reponse.is_empty:
@@ -212,19 +212,27 @@ class BatchAmendements:
             for amendement in to_be_updated:
                 if (amendement.user_content.avis or "") != shared_reponse.avis:
                     AvisAmendementModifie.create(
-                        self.request, amendement, shared_reponse.avis
+                        amendement=amendement,
+                        avis=shared_reponse.avis,
+                        request=self.request,
                     )
                 if (amendement.user_content.objet or "") != shared_reponse.objet:
                     ObjetAmendementModifie.create(
-                        self.request, amendement, shared_reponse.objet
+                        amendement=amendement,
+                        objet=shared_reponse.objet,
+                        request=self.request,
                     )
                 if (amendement.user_content.reponse or "") != shared_reponse.content:
                     ReponseAmendementModifiee.create(
-                        self.request, amendement, shared_reponse.content
+                        amendement=amendement,
+                        reponse=shared_reponse.content,
+                        request=self.request,
                     )
                 if (amendement.user_content.comments or "") != shared_reponse.comments:
                     CommentsAmendementModifie.create(
-                        self.request, amendement, shared_reponse.comments
+                        amendement=amendement,
+                        comments=shared_reponse.comments,
+                        request=self.request,
                     )
 
         return HTTPFound(location=self.my_table_url)

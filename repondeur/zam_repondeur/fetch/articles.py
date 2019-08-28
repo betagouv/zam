@@ -181,7 +181,7 @@ def iterate_over_mults(start: str, end: str) -> List[str]:
 def update_article_contents(article: Article, article_data: dict) -> bool:
     content = article_data.get("alineas")
     if content is not None and content != article.content:
-        ContenuArticleModifie.create(request=None, article=article, content=content)
+        ContenuArticleModifie.create(article=article, content=content)
         return True
     return False
 
@@ -198,9 +198,7 @@ def set_default_article_title(
         else:
             default_title = get_default_title(article_data)
         if default_title:
-            TitreArticleModifie.create(
-                request=None, article=article, title=default_title
-            )
+            TitreArticleModifie.create(article=article, title=default_title)
             return True
     return False
 

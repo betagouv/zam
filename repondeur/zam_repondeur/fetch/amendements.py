@@ -22,9 +22,7 @@ class Source:
     def update_rectif(self, amendement: Amendement, rectif: int) -> bool:
         modified = False
         if rectif != amendement.rectif:
-            AmendementRectifie.create(
-                request=None, amendement=amendement, rectif=rectif
-            )
+            AmendementRectifie.create(amendement=amendement, rectif=rectif)
             modified = True
         return modified
 
@@ -32,13 +30,10 @@ class Source:
         modified = False
         if sort != amendement.sort:
             if "irrecevable" in sort.lower():
-                AmendementIrrecevable.create(
-                    request=None, amendement=amendement, sort=sort
-                )
+                AmendementIrrecevable.create(amendement=amendement, sort=sort)
                 # Put the amendement back to the index?
                 if amendement.user_table is not None:
                     AmendementTransfere.create(
-                        request=None,
                         amendement=amendement,
                         old_value=str(amendement.user_table.user),
                         new_value="",
@@ -52,18 +47,14 @@ class Source:
     def update_corps(self, amendement: Amendement, corps: str) -> bool:
         modified = False
         if corps != amendement.corps:
-            CorpsAmendementModifie.create(
-                request=None, amendement=amendement, corps=corps
-            )
+            CorpsAmendementModifie.create(amendement=amendement, corps=corps)
             modified = True
         return modified
 
     def update_expose(self, amendement: Amendement, expose: str) -> bool:
         modified = False
         if expose != amendement.expose:
-            ExposeAmendementModifie.create(
-                request=None, amendement=amendement, expose=expose
-            )
+            ExposeAmendementModifie.create(amendement=amendement, expose=expose)
             modified = True
         return modified
 

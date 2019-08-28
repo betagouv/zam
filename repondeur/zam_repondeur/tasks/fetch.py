@@ -4,12 +4,10 @@ NB: make sure tasks.huey.init_huey() has been called before importing this modul
 import logging
 from typing import Optional
 
-from pyramid.request import Request
-
 from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
 from zam_repondeur.fetch import get_amendements, get_articles
 from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
-from zam_repondeur.models import DBSession, Dossier, Lecture, Texte
+from zam_repondeur.models import DBSession, Dossier, Lecture, Texte, User
 from zam_repondeur.models.events.dossier import LecturesRecuperees
 from zam_repondeur.models.events.lecture import (
     AmendementsAJour,
@@ -67,7 +65,7 @@ def fetch_articles(lecture_pk: Optional[int]) -> bool:
 
         changed: bool = get_articles(lecture)
         if changed:
-            ArticlesRecuperes.create(request=None, lecture=lecture)
+            ArticlesRecuperes.create(lecture=lecture)
         return changed
 
 
@@ -84,29 +82,33 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
         amendements, created, errored = get_amendements(lecture)
 
         if not amendements:
-            AmendementsNonTrouves.create(request=None, lecture=lecture)
+            AmendementsNonTrouves.create(lecture=lecture)
 
         if created:
-            AmendementsRecuperes.create(request=None, lecture=lecture, count=created)
+            AmendementsRecuperes.create(lecture=lecture, count=created)
 
         if errored:
-            AmendementsNonRecuperes.create(
-                request=None, lecture=lecture, missings=errored
-            )
+            AmendementsNonRecuperes.create(lecture=lecture, missings=errored)
 
         changed = bool(amendements and not (created or errored))
         if changed:
-            AmendementsAJour.create(request=None, lecture=lecture)
+            AmendementsAJour.create(lecture=lecture)
+
         return changed
 
 
 @huey.task()
-def create_missing_lectures(dossier_pk: int, request: Optional[Request] = None) -> None:
+def create_missing_lectures(dossier_pk: int, user_pk: Optional[int] = None) -> None:
     with huey.lock_task(f"dossier-{dossier_pk}"):
         dossier = DBSession.query(Dossier).get(dossier_pk)
         if dossier is None:
             logger.error(f"Dossier {dossier_pk} introuvable")
             return
+
+        if user_pk is not None:
+            user = DBSession.query(User).get(user_pk)
+        else:
+            user = None
 
         dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
         dossier_ref = dossiers_by_uid[dossier.uid]
@@ -118,11 +120,11 @@ def create_missing_lectures(dossier_pk: int, request: Optional[Request] = None) 
             lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
             if lecture is not None:
                 changed = True
-                LectureCreee.create(request=request, lecture=lecture)
+                LectureCreee.create(lecture=lecture, user=user)
                 # Required to be able to retrieve the lecture in tasks below.
                 DBSession.flush()
                 fetch_articles(lecture.pk)
                 fetch_amendements(lecture.pk)
 
         if changed:
-            LecturesRecuperees.create(request=request, dossier=dossier)
+            LecturesRecuperees.create(dossier=dossier, user=user)

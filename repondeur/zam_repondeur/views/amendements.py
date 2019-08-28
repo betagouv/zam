@@ -89,16 +89,24 @@ class AmendementEdit:
 
         for amendement in self.amendements:
             if avis_changed:
-                AvisAmendementModifie.create(self.request, amendement, avis)
+                AvisAmendementModifie.create(
+                    amendement=amendement, avis=avis, request=self.request
+                )
 
             if objet_changed:
-                ObjetAmendementModifie.create(self.request, amendement, objet)
+                ObjetAmendementModifie.create(
+                    amendement=amendement, objet=objet, request=self.request
+                )
 
             if reponse_changed:
-                ReponseAmendementModifiee.create(self.request, amendement, reponse)
+                ReponseAmendementModifiee.create(
+                    amendement=amendement, reponse=reponse, request=self.request
+                )
 
             if comments_changed:
-                CommentsAmendementModifie.create(self.request, amendement, comments)
+                CommentsAmendementModifie.create(
+                    amendement=amendement, comments=comments, request=self.request
+                )
 
             amendement.stop_editing()
 

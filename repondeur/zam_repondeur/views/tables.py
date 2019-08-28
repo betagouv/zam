@@ -106,7 +106,12 @@ class TableView:
                 amendement.user_table = target_user_table
                 amendement.shared_table = None
             amendement.stop_editing()
-            AmendementTransfere.create(self.request, amendement, old, new)
+            AmendementTransfere.create(
+                amendement=amendement,
+                old_value=old,
+                new_value=new,
+                request=self.request,
+            )
 
         if target != self.request.user.email and self.request.POST.get("from_index"):
             amendements_collection = self.context.lecture_resource["amendements"]

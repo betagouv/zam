@@ -73,8 +73,8 @@ def deploy_repondeur(
         app_dir = "/srv/repondeur/src/repondeur"
         venv_dir = "/srv/repondeur/venv"
 
-        # Stop workers to free up some system resources during deployment
-        ctx.sudo("systemctl stop zam_worker", warn=True)
+        # Stop workers (if running) to free up some system resources during deployment
+        stop_worker_service(ctx, warn=True)
 
         create_virtualenv(ctx, venv_dir=venv_dir, user=user)
         install_requirements(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
@@ -94,13 +94,25 @@ def deploy_repondeur(
                 "gunicorn_timeout": ctx.config["request_timeout"],
             },
         )
+
+        # Also stop webapp (if running) to release any locks on the DB
+        stop_webapp_service(ctx, warn=True)
+
         if wipe:
             wipe_db(ctx, dbname=dbname)
         setup_db(ctx, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
         migrate_db(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
         setup_webapp_service(ctx)
         setup_worker_service(ctx)
+
+        # Load data into Redis cache
+        reset_data_locks(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
         load_data(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
+
+        # Start webapp and workers again
+        start_webapp_service(ctx)
+        start_worker_service(ctx)
+
     except Exception as exc:
         rollbar_deploy_update(ctx.config["rollbar_token"], deploy_id, status="failed")
     else:
@@ -174,7 +186,6 @@ def migrate_db(ctx, app_dir, venv_dir, user):
     ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 
-@task
 def setup_webapp_service(ctx):
     # Clean up old service
     ctx.sudo(
@@ -191,15 +202,41 @@ def setup_webapp_service(ctx):
     sudo_put(ctx, "files/zam_webapp.service", "/etc/systemd/system/zam_webapp.service")
     ctx.sudo("systemctl daemon-reload")
     ctx.sudo("systemctl enable zam_webapp")
+
+
+def start_webapp_service(ctx):
+    ctx.sudo("systemctl start zam_webapp")
+
+
+def stop_webapp_service(ctx, warn=False):
+    ctx.sudo("systemctl stop zam_webapp", warn=warn)
+
+
+def restart_webapp_service(ctx):
     ctx.sudo("systemctl restart zam_webapp")
 
 
-@task
 def setup_worker_service(ctx):
     sudo_put(ctx, "files/zam_worker.service", "/etc/systemd/system/zam_worker.service")
     ctx.sudo("systemctl daemon-reload")
     ctx.sudo("systemctl enable zam_worker")
+
+
+def start_worker_service(ctx):
+    ctx.sudo("systemctl start zam_worker")
+
+
+def stop_worker_service(ctx, warn=False):
+    ctx.sudo("systemctl stop zam_worker", warn=warn)
+
+
+def restart_worker_service(ctx):
     ctx.sudo("systemctl restart zam_worker")
+
+
+def reset_data_locks(ctx, app_dir, venv_dir, user):
+    cmd = f"{venv_dir}/bin/zam_reset_data_locks production.ini#repondeur"
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 
 def load_data(ctx, app_dir, venv_dir, user):

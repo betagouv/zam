@@ -48,6 +48,7 @@ setup(
             "zam_worker = zam_repondeur.scripts.worker:main",
             "zam_fetch_amendements = zam_repondeur.scripts.fetch_amendements:main",
             "zam_load_data = zam_repondeur.scripts.load_data:main",
+            "zam_reset_data_locks = zam_repondeur.scripts.reset_data_locks:main",
         ],
     },
 )

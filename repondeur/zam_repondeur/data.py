@@ -3,7 +3,7 @@ from typing import Dict, List
 
 from pyramid.config import Configurator
 from redis import Redis
-from redis_lock import Lock
+from redis_lock import Lock, reset_all
 
 from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
     get_dossiers_legislatifs_and_textes,
@@ -43,6 +43,10 @@ class DataRepository:
         self.legislatures = legislatures
         self.connection = Redis.from_url(redis_url)
         self.initialized = True
+
+    @needs_init
+    def reset_locks(self) -> None:
+        reset_all(self.connection)
 
     @needs_init
     def load_data(self) -> None:

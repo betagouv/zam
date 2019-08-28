@@ -42,8 +42,11 @@ class DataRepository:
     def initialize(self, redis_url: str, legislatures: List[int]) -> None:
         self.legislatures = legislatures
         self.connection = Redis.from_url(redis_url)
-        reset_all(self.connection)
         self.initialized = True
+
+    @needs_init
+    def reset_locks(self) -> None:
+        reset_all(self.connection)
 
     @needs_init
     def load_data(self) -> None:

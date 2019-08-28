@@ -45,6 +45,18 @@ class TransactionalHuey(Huey):
     def enqueue(self, task: Any) -> None:
         logger.debug("Enqueue task %r", task)
 
+        # Schedule the task when the transaction succeeds or immediately
+        if self.transactional_enqueue:
+            logger.debug(
+                "Task will be scheduled for execution by a worker"
+                " if the transaction succeeds"
+            )
+            self.enqueue_on_transaction_commit(task)
+        else:
+            logger.debug("Enqueueing task immediately")
+            self.really_enqueue(task)
+
+    def enqueue_on_transaction_commit(self, task: Any) -> None:
         # If we're in immediate mode (typically during tests), then we run the task now
         # (in the current transaction).
         if self.immediate:
@@ -52,17 +64,8 @@ class TransactionalHuey(Huey):
             self.really_enqueue(task)
             return
 
-        # Schedule the task immediately or when the transaction succeeds
-        if self.transactional_enqueue:
-            logger.debug(
-                "Task will be scheduled for execution by a worker"
-                " if the transaction succeeds"
-            )
-            managed_task = ManagedTask(self, task)
-            managed_task.join_transaction()
-        else:
-            logger.debug("Enqueueing task immediately")
-            self.really_enqueue(task)
+        managed_task = ManagedTask(self, task)
+        managed_task.join_transaction()
 
     def really_enqueue(self, task: Any) -> None:
         super().enqueue(task)

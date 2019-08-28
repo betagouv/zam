@@ -186,7 +186,9 @@ class AmendementUserContent(Base):
     reponse: Optional[str] = Column(Text, nullable=True)
     comments: Optional[str] = Column(Text, nullable=True)
 
-    amendement_pk: int = Column(Integer, ForeignKey("amendements.pk"), nullable=False)
+    amendement_pk: int = Column(
+        Integer, ForeignKey("amendements.pk", ondelete="cascade"), nullable=False
+    )
     amendement: "Amendement" = relationship("Amendement", back_populates="user_content")
 
     __repr_keys__ = ("pk", "amendement_pk", "avis")
@@ -285,7 +287,7 @@ class Amendement(Base):
         post_update=True,
     )
 
-    lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"))
+    lecture_pk: int = Column(Integer, ForeignKey("lectures.pk", ondelete="cascade"))
     lecture: "Lecture" = relationship("Lecture", back_populates="amendements")
 
     article_pk: int = Column(Integer, ForeignKey("articles.pk"))
@@ -315,12 +317,14 @@ class Amendement(Base):
         uselist=False,
         lazy="joined",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     events = relationship(
         "Event",
         order_by="Event.created_at.desc()",
         cascade="all, delete-orphan",
+        passive_deletes=True,
         backref="amendement",
     )
 

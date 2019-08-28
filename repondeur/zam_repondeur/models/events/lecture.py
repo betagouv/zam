@@ -12,9 +12,15 @@ from .base import Event
 
 
 class LectureEvent(Event):
-    lecture_pk = Column(Integer, ForeignKey("lectures.pk"))
+    lecture_pk = Column(Integer, ForeignKey("lectures.pk", ondelete="cascade"))
     lecture = relationship(
-        Lecture, backref=backref("events", order_by="Event.created_at.desc()")
+        Lecture,
+        backref=backref(
+            "events",
+            order_by="Event.created_at.desc()",
+            cascade="all, delete-orphan",
+            passive_deletes=True,
+        ),
     )
 
     details_template = Template("")

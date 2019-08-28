@@ -1,12 +1,16 @@
 import enum
 from datetime import date, datetime
-from typing import Any, Optional, cast
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import Column, Date, DateTime, Enum, Index, Integer
 from sqlalchemy.orm import relationship
 
 from .base import Base, DBSession
 from .chambre import Chambre
+
+# Make these types available to mypy, but avoid circular imports
+if TYPE_CHECKING:
+    from zam_repondeur.fetch.an.dossiers.models import TexteRef  # noqa
 
 
 class TypeTexte(enum.Enum):
@@ -119,19 +123,21 @@ class Texte(Base):
         return texte
 
     @classmethod
-    def get_or_create_from_ref(cls, texte_ref: Any, chambre: Chambre) -> "Texte":
-        from zam_repondeur.models import get_one_or_create  # Circular.
-
+    def get_or_create_from_ref(cls, texte_ref: "TexteRef", chambre: Chambre) -> "Texte":
         if texte_ref.date_depot is None:
             raise RuntimeError("Cannot create LectureRef for Texte with no date_depot")
 
-        texte, _ = get_one_or_create(
-            Texte,
-            type_=texte_ref.type_,
-            chambre=chambre,
-            legislature=texte_ref.legislature,
-            session=texte_ref.session,
-            numero=texte_ref.numero,
-            date_depot=texte_ref.date_depot,
+        texte = cls.get(
+            chambre, str(texte_ref.session or texte_ref.legislature), texte_ref.numero
         )
-        return cast(Texte, texte)
+        if not texte:
+            texte = cls.create(
+                texte_ref.type_,
+                chambre,
+                texte_ref.numero,
+                texte_ref.date_depot,
+                texte_ref.session,
+                texte_ref.legislature,
+            )
+
+        return texte

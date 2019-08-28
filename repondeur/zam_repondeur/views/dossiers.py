@@ -311,7 +311,7 @@ def lecture_journal(context: DossierResource, request: Request) -> Response:
 @view_config(context=DossierResource, name="manual_refresh")
 def manual_refresh(context: DossierResource, request: Request) -> Response:
     dossier = context.dossier
-    update_dossier(dossier.pk)
+    update_dossier(dossier.pk, force=True)
     request.session.flash(
         Message(cls="success", text="Rafraichissement des lectures en cours.")
     )

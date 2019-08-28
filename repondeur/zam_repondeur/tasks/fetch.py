@@ -26,7 +26,7 @@ RETRY_DELAY = 5 * 60  # 5 minutes
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
-def update_dossier(dossier_pk: int) -> None:
+def update_dossier(dossier_pk: int, force: bool = False) -> None:
     with huey.lock_task(f"dossier-{dossier_pk}"):
         dossier = DBSession.query(Dossier).get(dossier_pk)
         if dossier is None:
@@ -38,12 +38,12 @@ def update_dossier(dossier_pk: int) -> None:
         # Refetch the lecture to apply the FOR UPDATE.
         lecture = DBSession.query(Lecture).with_for_update().get(lecture.pk)
 
-        # Only fetch articles for recent lectures.
-        if lecture.refreshable_for("articles", huey.settings):
+        # Auto fetch articles only for recent lectures.
+        if force or lecture.refreshable_for("articles", huey.settings):
             fetch_articles(lecture.pk)
 
         # Only fetch amendements for recent lectures.
-        if lecture.refreshable_for("amendements", huey.settings):
+        if force or lecture.refreshable_for("amendements", huey.settings):
             fetch_amendements(lecture.pk)
 
     # Then try to create missing lectures.

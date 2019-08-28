@@ -125,10 +125,13 @@ def create_missing_lectures(dossier_pk: int, user_pk: Optional[int] = None) -> N
             if lecture is not None:
                 changed = True
                 LectureCreee.create(lecture=lecture, user=user)
-                # Required to be able to retrieve the lecture in tasks below.
+
+                # Make sure the lecture gets its primary key.
                 DBSession.flush()
-                fetch_articles(lecture.pk)
-                fetch_amendements(lecture.pk)
+
+                # Enqueue tasks to fetch articles and amendements.
+                huey.enqueue_on_transaction_commit(fetch_articles.s(lecture.pk))
+                huey.enqueue_on_transaction_commit(fetch_amendements.s(lecture.pk))
 
         if changed:
             LecturesRecuperees.create(dossier=dossier, user=user)

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional
 from uuid import uuid4
 
 from pyramid.request import Request
@@ -33,7 +33,10 @@ class Event(Base):
     meta = Column(JSONType, nullable=True)
 
     def __init__(
-        self, request: Request, meta: Union[dict, None] = None, **kwargs: Any
+        self,
+        request: Optional[Request] = None,
+        meta: Optional[dict] = None,
+        **kwargs: Any
     ) -> None:
         if self.meta is None:
             self.meta = {}

@@ -1,4 +1,5 @@
 import transaction
+from pyramid.testing import DummyRequest
 
 
 def first_description_text(resp):
@@ -9,7 +10,10 @@ def test_dossier_activation(app, dossier_plfss2018, user_david):
     from zam_repondeur.models.events.dossier import DossierActive
 
     with transaction.manager:
-        DossierActive.create(request=None, dossier=dossier_plfss2018, user=user_david)
+        DossierActive.create(
+            dossier=dossier_plfss2018,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
+        )
         assert len(dossier_plfss2018.events) == 1
 
     resp = app.get("/dossiers/plfss-2018/journal", user=user_david)
@@ -20,9 +24,7 @@ def test_dossier_lectures_recuperation(app, dossier_plfss2018, user_david):
     from zam_repondeur.models.events.dossier import LecturesRecuperees
 
     with transaction.manager:
-        LecturesRecuperees.create(
-            request=None, dossier=dossier_plfss2018, user=user_david
-        )
+        LecturesRecuperees.create(dossier=dossier_plfss2018, user=user_david)
         assert len(dossier_plfss2018.events) == 1
 
     resp = app.get("/dossiers/plfss-2018/journal", user=user_david)
@@ -34,10 +36,9 @@ def test_dossier_invitation_envoyee(app, dossier_plfss2018, user_david):
 
     with transaction.manager:
         InvitationEnvoyee.create(
-            request=None,
             dossier=dossier_plfss2018,
-            user=user_david,
             email="foo@exemple.gouv.fr",
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert len(dossier_plfss2018.events) == 1
 

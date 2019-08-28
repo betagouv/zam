@@ -1,4 +1,5 @@
 import transaction
+from pyramid.testing import DummyRequest
 
 
 def first_description_text(resp):
@@ -24,10 +25,9 @@ def test_amendement_journal_avis(app, lecture_an_url, amendements_an, user_david
 
     with transaction.manager:
         AvisAmendementModifie.create(
-            request=None,
             amendement=amendements_an[0],
             avis="Favorable",
-            user=user_david,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert len(amendements_an[0].events) == 1
         assert amendements_an[0].events[0].data["old_value"] == ""
@@ -44,16 +44,14 @@ def test_amendement_journal_avis_with_existing_avis(
 
     with transaction.manager:
         AvisAmendementModifie.create(
-            request=None,
             amendement=amendements_an[0],
             avis="Favorable",
-            user=user_david,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         AvisAmendementModifie.create(
-            request=None,
             amendement=amendements_an[0],
             avis="Défavorable",
-            user=user_david,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert len(amendements_an[0].events) == 2
         assert amendements_an[0].events[0].data["old_value"] == "Favorable"
@@ -71,7 +69,9 @@ def test_amendement_journal_objet(app, lecture_an_url, amendements_an, user_davi
 
     with transaction.manager:
         ObjetAmendementModifie.create(
-            request=None, amendement=amendements_an[0], objet="Objet", user=user_david
+            amendement=amendements_an[0],
+            objet="Objet",
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert len(amendements_an[0].events) == 1
         assert amendements_an[0].events[0].data["old_value"] == ""
@@ -87,10 +87,9 @@ def test_amendement_journal_reponse(app, lecture_an_url, amendements_an, user_da
 
     with transaction.manager:
         ReponseAmendementModifiee.create(
-            request=None,
             amendement=amendements_an[0],
             reponse="Réponse",
-            user=user_david,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert len(amendements_an[0].events) == 1
         assert amendements_an[0].events[0].data["old_value"] == ""
@@ -106,10 +105,9 @@ def test_amendement_journal_comments(app, lecture_an_url, amendements_an, user_d
 
     with transaction.manager:
         CommentsAmendementModifie.create(
-            request=None,
             amendement=amendements_an[0],
             comments="Un commentaire",
-            user=user_david,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert len(amendements_an[0].events) == 1
         assert amendements_an[0].events[0].data["old_value"] == ""
@@ -127,11 +125,10 @@ def test_amendement_journal_affectation(
 
     with transaction.manager:
         AmendementTransfere.create(
-            request=None,
             amendement=amendements_an[0],
             old_value=str(user_david),
             new_value=str(user_ronan),
-            user=user_david,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert len(amendements_an[0].events) == 1
         assert (
@@ -157,11 +154,10 @@ def test_amendement_journal_affectation_by_other(
 
     with transaction.manager:
         AmendementTransfere.create(
-            request=None,
             amendement=amendements_an[0],
             old_value=str(user_ronan),
             new_value=str(user_daniel),
-            user=user_david,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert len(amendements_an[0].events) == 1
         assert (
@@ -187,11 +183,10 @@ def test_amendement_journal_affectation_taken(
 
     with transaction.manager:
         AmendementTransfere.create(
-            request=None,
             amendement=amendements_an[0],
             old_value="",
             new_value=str(user_david),
-            user=user_david,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert len(amendements_an[0].events) == 1
         assert amendements_an[0].events[0].data["old_value"] == ""
@@ -211,11 +206,10 @@ def test_amendement_journal_affectation_taken_by_other(
 
     with transaction.manager:
         AmendementTransfere.create(
-            request=None,
             amendement=amendements_an[0],
             old_value="",
             new_value=str(user_david),
-            user=user_ronan,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_ronan),
         )
         assert len(amendements_an[0].events) == 1
         assert amendements_an[0].events[0].data["old_value"] == ""
@@ -238,11 +232,10 @@ def test_amendement_journal_affectation_released(
 
     with transaction.manager:
         AmendementTransfere.create(
-            request=None,
             amendement=amendements_an[0],
             old_value=str(user_david),
             new_value="",
-            user=user_david,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
         )
         assert len(amendements_an[0].events) == 1
         assert (
@@ -262,11 +255,10 @@ def test_amendement_journal_affectation_released_by_other(
 
     with transaction.manager:
         AmendementTransfere.create(
-            request=None,
             amendement=amendements_an[0],
             old_value=str(user_david),
             new_value="",
-            user=user_ronan,
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_ronan),
         )
         assert len(amendements_an[0].events) == 1
         assert (

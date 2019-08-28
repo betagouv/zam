@@ -1,5 +1,5 @@
 from string import Template
-from typing import Any
+from typing import Any, Optional
 
 from jinja2 import Markup
 from lxml.html.diff import htmldiff  # nosec
@@ -11,8 +11,10 @@ from .base import Event
 
 
 class ArticleEvent(Event):
-    def __init__(self, request: Request, article: Article, **kwargs: Any):
-        super().__init__(request, **kwargs)
+    def __init__(
+        self, article: Article, request: Optional[Request] = None, **kwargs: Any
+    ):
+        super().__init__(request=request, **kwargs)
         self.article = article
 
     @property
@@ -52,15 +54,9 @@ class ContenuArticleModifie(ArticleEvent):
             f"Le contenu de l’article a été modifié par les services {de_qui}."
         )
 
-    def __init__(
-        self, request: Request, article: Article, content: dict, **kwargs: Any
-    ) -> None:
+    def __init__(self, article: Article, content: dict) -> None:
         super().__init__(
-            request,
-            article,
-            old_value=article.content or {},
-            new_value=content,
-            **kwargs,
+            article=article, old_value=article.content or {}, new_value=content
         )
 
     def apply(self) -> None:
@@ -94,14 +90,13 @@ class TitreArticleModifie(ArticleEvent):
         )
 
     def __init__(
-        self, request: Request, article: Article, title: str, **kwargs: Any
+        self, article: Article, title: str, request: Optional[Request] = None
     ) -> None:
         super().__init__(
-            request=request,
             article=article,
             old_value=article.user_content.title,
             new_value=title,
-            **kwargs,
+            request=request,
         )
 
     def apply(self) -> None:
@@ -120,15 +115,12 @@ class PresentationArticleModifiee(ArticleEvent):
             f"<abbr title='$email'>$user</abbr> a {action} la présentation."
         )
 
-    def __init__(
-        self, request: Request, article: Article, presentation: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, article: Article, presentation: str, request: Request) -> None:
         super().__init__(
-            request=request,
             article=article,
             old_value=article.user_content.presentation,
             new_value=presentation,
-            **kwargs,
+            request=request,
         )
 
     def apply(self) -> None:

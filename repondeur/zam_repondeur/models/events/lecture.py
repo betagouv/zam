@@ -1,5 +1,5 @@
 from string import Template
-from typing import Any
+from typing import Any, List, Optional
 
 from jinja2 import Markup
 from pyramid.request import Request
@@ -7,6 +7,7 @@ from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import backref, relationship
 
 from ..lecture import Lecture
+from ..users import User
 from .base import Event
 
 
@@ -18,8 +19,10 @@ class LectureEvent(Event):
 
     details_template = Template("")
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any):
-        super().__init__(request, **kwargs)
+    def __init__(
+        self, lecture: Lecture, request: Optional[Request] = None, **kwargs: Any
+    ):
+        super().__init__(request=request, **kwargs)
         self.lecture = lecture
 
     @property
@@ -41,8 +44,8 @@ class LectureCreee(LectureEvent):
 
     summary_template = Template("<abbr title='$email'>$user</abbr> a créé la lecture.")
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
-        super().__init__(request, lecture, **kwargs)
+    def __init__(self, lecture: Lecture, user: User) -> None:
+        super().__init__(lecture=lecture, user=user)
 
     def apply(self) -> None:
         pass
@@ -54,8 +57,8 @@ class ArticlesRecuperes(LectureEvent):
 
     summary_template = Template("Le contenu des articles a été récupéré.")
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
-        super().__init__(request, lecture, **kwargs)
+    def __init__(self, lecture: Lecture) -> None:
+        super().__init__(lecture=lecture)
 
     def apply(self) -> None:
         pass
@@ -74,8 +77,8 @@ class AmendementsRecuperes(LectureEvent):
             message = f"{count} nouveaux amendements récupérés."
         return Template(message)
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
-        super().__init__(request, lecture, **kwargs)
+    def __init__(self, lecture: Lecture, count: int) -> None:
+        super().__init__(lecture=lecture, count=count)
 
     def apply(self) -> None:
         pass
@@ -95,8 +98,8 @@ class AmendementsRecuperesLiasse(LectureEvent):
             message = f"{count} nouveaux amendements récupérés."
         return Template(f"{base} : {message}")
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
-        super().__init__(request, lecture, **kwargs)
+    def __init__(self, lecture: Lecture, count: int, request: Request) -> None:
+        super().__init__(lecture=lecture, count=count, request=request)
 
     def apply(self) -> None:
         pass
@@ -111,8 +114,8 @@ class AmendementsNonRecuperes(LectureEvent):
         missings = ", ".join(self.data["missings"])
         return Template(f"Les amendements {missings} n’ont pu être récupérés.")
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
-        super().__init__(request, lecture, **kwargs)
+    def __init__(self, lecture: Lecture, missings: List[str]) -> None:
+        super().__init__(lecture=lecture, missings=missings)
 
     def apply(self) -> None:
         pass
@@ -124,8 +127,8 @@ class AmendementsAJour(LectureEvent):
 
     summary_template = Template("Les amendements étaient à jour.")
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
-        super().__init__(request, lecture, **kwargs)
+    def __init__(self, lecture: Lecture) -> None:
+        super().__init__(lecture=lecture)
 
     def apply(self) -> None:
         pass
@@ -137,8 +140,8 @@ class AmendementsNonTrouves(LectureEvent):
 
     summary_template = Template("Les amendements n’ont pas été trouvés.")
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
-        super().__init__(request, lecture, **kwargs)
+    def __init__(self, lecture: Lecture) -> None:
+        super().__init__(lecture=lecture)
 
     def apply(self) -> None:
         pass
@@ -152,8 +155,8 @@ class ReponsesImportees(LectureEvent):
         "<abbr title='$email'>$user</abbr> a importé des réponses d’un fichier CSV."
     )
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
-        super().__init__(request, lecture, **kwargs)
+    def __init__(self, lecture: Lecture, request: Request) -> None:
+        super().__init__(lecture=lecture, request=request)
 
     def apply(self) -> None:
         pass
@@ -167,8 +170,8 @@ class ReponsesImporteesJSON(LectureEvent):
         "<abbr title='$email'>$user</abbr> a importé des réponses d’un fichier JSON."
     )
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
-        super().__init__(request, lecture, **kwargs)
+    def __init__(self, lecture: Lecture, request: Request) -> None:
+        super().__init__(lecture=lecture, request=request)
 
     def apply(self) -> None:
         pass
@@ -185,8 +188,8 @@ class SharedTableCreee(LectureEvent):
             f"<abbr title='$email'>$user</abbr> a créé la boîte « {titre} »"
         )
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
-        super().__init__(request, lecture, **kwargs)
+    def __init__(self, lecture: Lecture, titre: str, request: Request) -> None:
+        super().__init__(lecture=lecture, titre=titre, request=request)
 
     def apply(self) -> None:
         pass
@@ -205,8 +208,12 @@ class SharedTableRenommee(LectureEvent):
             f"« {old_titre} » en « {new_titre} »"
         )
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
-        super().__init__(request, lecture, **kwargs)
+    def __init__(
+        self, lecture: Lecture, old_titre: str, new_titre: str, request: Request
+    ) -> None:
+        super().__init__(
+            lecture=lecture, old_titre=old_titre, new_titre=new_titre, request=request
+        )
 
     def apply(self) -> None:
         pass
@@ -223,8 +230,8 @@ class SharedTableSupprimee(LectureEvent):
             f"<abbr title='$email'>$user</abbr> a supprimé la boîte « {titre} »"
         )
 
-    def __init__(self, request: Request, lecture: Lecture, **kwargs: Any) -> None:
-        super().__init__(request, lecture, **kwargs)
+    def __init__(self, lecture: Lecture, titre: str, request: Request) -> None:
+        super().__init__(lecture=lecture, titre=titre, request=request)
 
     def apply(self) -> None:
         pass

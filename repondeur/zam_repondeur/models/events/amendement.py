@@ -1,5 +1,5 @@
 from string import Template
-from typing import Any
+from typing import Any, List, Optional
 
 from jinja2 import Markup
 from lxml.html.diff import htmldiff  # nosec
@@ -17,8 +17,10 @@ class AmendementEvent(Event):
 
     summary_template = Template("<abbr title='$email'>$user</abbr>")
 
-    def __init__(self, request: Request, amendement: Amendement, **kwargs: Any):
-        super().__init__(request, **kwargs)
+    def __init__(
+        self, amendement: Amendement, request: Optional[Request] = None, **kwargs: Any
+    ):
+        super().__init__(request=request, **kwargs)
         self.amendement = amendement
 
     @property
@@ -47,11 +49,9 @@ class AmendementRectifie(AmendementEvent):
 
     summary_template = Template("L’amendement a été rectifié.")
 
-    def __init__(
-        self, request: Request, amendement: Amendement, rectif: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, amendement: Amendement, rectif: str) -> None:
         super().__init__(
-            request, amendement, old_value=amendement.rectif, new_value=rectif, **kwargs
+            amendement=amendement, old_value=amendement.rectif, new_value=rectif
         )
 
     def apply(self) -> None:
@@ -79,11 +79,9 @@ class AmendementIrrecevable(AmendementEvent):
             f"L’amendement a été déclaré irrecevable par les services {de_qui}."
         )
 
-    def __init__(
-        self, request: Request, amendement: Amendement, sort: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, amendement: Amendement, sort: str) -> None:
         super().__init__(
-            request, amendement, old_value=amendement.sort, new_value=sort, **kwargs
+            amendement=amendement, old_value=amendement.sort, new_value=sort
         )
 
     def apply(self) -> None:
@@ -145,14 +143,16 @@ class AmendementTransfere(AmendementEvent):
 
     def __init__(
         self,
-        request: Request,
         amendement: Amendement,
         old_value: str,
         new_value: str,
-        **kwargs: Any,
+        request: Optional[Request] = None,
     ) -> None:
         super().__init__(
-            request, amendement, old_value=old_value, new_value=new_value, **kwargs
+            amendement=amendement,
+            old_value=old_value,
+            new_value=new_value,
+            request=request,
         )
 
     def apply(self) -> None:
@@ -167,15 +167,9 @@ class CorpsAmendementModifie(AmendementEvent):
 
     icon = "edit"
 
-    def __init__(
-        self, request: Request, amendement: Amendement, corps: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, amendement: Amendement, corps: str) -> None:
         super().__init__(
-            request,
-            amendement,
-            old_value=amendement.corps or "",
-            new_value=corps,
-            **kwargs,
+            amendement=amendement, old_value=amendement.corps or "", new_value=corps
         )
 
     @property
@@ -191,15 +185,9 @@ class ExposeAmendementModifie(AmendementEvent):
     __mapper_args__ = {"polymorphic_identity": "expose_amendement_modifie"}
     icon = "edit"
 
-    def __init__(
-        self, request: Request, amendement: Amendement, expose: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, amendement: Amendement, expose: str) -> None:
         super().__init__(
-            request,
-            amendement,
-            old_value=amendement.expose or "",
-            new_value=expose,
-            **kwargs,
+            amendement=amendement, old_value=amendement.expose or "", new_value=expose
         )
 
     @property
@@ -217,14 +205,13 @@ class AvisAmendementModifie(AmendementEvent):
     icon = "edit"
 
     def __init__(
-        self, request: Request, amendement: Amendement, avis: str, **kwargs: Any
+        self, amendement: Amendement, avis: str, request: Optional[Request] = None
     ) -> None:
         super().__init__(
-            request,
-            amendement,
+            amendement=amendement,
             old_value=amendement.user_content.avis or "",
             new_value=avis,
-            **kwargs,
+            request=request,
         )
 
     def apply(self) -> None:
@@ -251,14 +238,13 @@ class ObjetAmendementModifie(AmendementEvent):
     icon = "edit"
 
     def __init__(
-        self, request: Request, amendement: Amendement, objet: str, **kwargs: Any
+        self, amendement: Amendement, objet: str, request: Optional[Request] = None
     ) -> None:
         super().__init__(
-            request,
-            amendement,
+            amendement=amendement,
             old_value=amendement.user_content.objet or "",
             new_value=objet,
-            **kwargs,
+            request=request,
         )
 
     @property
@@ -276,14 +262,13 @@ class ReponseAmendementModifiee(AmendementEvent):
     icon = "edit"
 
     def __init__(
-        self, request: Request, amendement: Amendement, reponse: str, **kwargs: Any
+        self, amendement: Amendement, reponse: str, request: Optional[Request] = None
     ) -> None:
         super().__init__(
-            request,
-            amendement,
+            amendement=amendement,
             old_value=amendement.user_content.reponse or "",
             new_value=reponse,
-            **kwargs,
+            request=request,
         )
 
     @property
@@ -301,14 +286,13 @@ class CommentsAmendementModifie(AmendementEvent):
     icon = "edit"
 
     def __init__(
-        self, request: Request, amendement: Amendement, comments: str, **kwargs: Any
+        self, amendement: Amendement, comments: str, request: Optional[Request] = None
     ) -> None:
         super().__init__(
-            request,
-            amendement,
+            amendement=amendement,
             old_value=amendement.user_content.comments or "",
             new_value=comments,
-            **kwargs,
+            request=request,
         )
 
     @property
@@ -326,21 +310,26 @@ class BatchSet(AmendementEvent):
     icon = "edit"
 
     def __init__(
-        self, request: Request, amendement: Amendement, batch: Batch, **kwargs: Any
+        self,
+        amendement: Amendement,
+        batch: Batch,
+        amendements_nums: List[int],
+        request: Request,
     ) -> None:
         self.request = request
-        amendements_nums = [
+        others = [
             amendement_num
-            for amendement_num in kwargs["amendements_nums"]
+            for amendement_num in amendements_nums
             if int(amendement_num) != amendement.num
         ]
-        kwargs["amendements_nums"] = amendements_nums
-        super().__init__(request, amendement, **kwargs)
+        super().__init__(
+            amendement=amendement, amendements_nums=others, request=request
+        )
         self.batch = batch
 
     def apply(self) -> None:
         if self.amendement.batch:
-            BatchUnset.create(self.request, self.amendement)
+            BatchUnset.create(amendement=self.amendement, request=self.request)
         self.amendement.batch = self.batch
 
     def render_details(self) -> str:
@@ -363,9 +352,9 @@ class BatchUnset(AmendementEvent):
 
     icon = "edit"
 
-    def __init__(self, request: Request, amendement: Amendement, **kwargs: Any) -> None:
+    def __init__(self, amendement: Amendement, request: Request) -> None:
         self.request = request
-        super().__init__(request, amendement, **kwargs)
+        super().__init__(amendement=amendement, request=request)
 
     def apply(self) -> None:
         batch = self.amendement.batch
@@ -379,7 +368,7 @@ class BatchUnset(AmendementEvent):
 
         # Avoid lonely amendement in a batch.
         if len(others) == 1:
-            self.create(self.request, others[0])
+            self.create(amendement=others[0], request=self.request)
 
     def render_details(self) -> str:
         return ""

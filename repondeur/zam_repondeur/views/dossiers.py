@@ -88,8 +88,10 @@ class DossierAddForm(DossierCollectionBase):
         ):
             admin.teams.append(team)
 
-        create_missing_lectures(dossier.pk, self.request)
-        DossierActive.create(self.request, dossier=dossier)
+        # Enqueue task to asynchronously add the lectures
+        create_missing_lectures(dossier_pk=dossier.pk, user_pk=self.request.user.pk)
+
+        DossierActive.create(dossier=dossier, request=self.request)
 
         self.request.session.flash(
             Message(
@@ -134,7 +136,7 @@ class DossierView(DossierViewBase):
         for lecture in self.dossier.lectures:
             DBSession.delete(lecture)
         DBSession.flush()
-        DossierDesactive.create(self.request, dossier=self.dossier)
+        DossierDesactive.create(dossier=self.dossier, request=self.request)
         self.request.session.flash(
             Message(cls="success", text="Dossier supprimé avec succès.")
         )
@@ -166,7 +168,7 @@ class DossierInviteForm(DossierViewBase):
 
         for user in new_users + existing_users:
             InvitationEnvoyee.create(
-                request=self.request, dossier=self.dossier, email=user.email
+                dossier=self.dossier, email=user.email, request=self.request
             )
 
         if invitations_sent:
@@ -284,7 +286,7 @@ class DossierRetraitForm(DossierViewBase):
 
         self.dossier.team.users.remove(user)
 
-        DossierRetrait.create(request=self.request, dossier=self.dossier, target=target)
+        DossierRetrait.create(dossier=self.dossier, target=target, request=self.request)
         self.request.session.flash(
             Message(
                 cls="success", text=(f"{target} a été retiré·e du dossier avec succès.")

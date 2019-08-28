@@ -55,7 +55,7 @@ def import_backup(context: LectureResource, request: Request) -> Response:
         elif counter["articles"]:
             message = f"{counter['articles']} article(s) chargé(s) avec succès"
         request.session.flash(Message(cls="success", text=message))
-        ReponsesImporteesJSON.create(request, lecture)
+        ReponsesImporteesJSON.create(lecture=lecture, request=request)
 
     if counter["reponses_errors"] or counter["articles_errors"]:
         message = "Le fichier de sauvegarde n’a pas pu être chargé"

@@ -49,20 +49,26 @@ def import_amendement(
 
     avis = normalize_avis(avis)
     if avis != (amendement.user_content.avis or ""):
-        AvisAmendementModifie.create(request, amendement, avis)
+        AvisAmendementModifie.create(amendement=amendement, avis=avis, request=request)
 
     objet = clean_html(objet)
     if objet != (amendement.user_content.objet or ""):
-        ObjetAmendementModifie.create(request, amendement, objet)
+        ObjetAmendementModifie.create(
+            amendement=amendement, objet=objet, request=request
+        )
 
     reponse = clean_html(normalize_reponse(reponse, previous_reponse))
     if reponse != (amendement.user_content.reponse or ""):
-        ReponseAmendementModifiee.create(request, amendement, reponse)
+        ReponseAmendementModifiee.create(
+            amendement=amendement, reponse=reponse, request=request
+        )
 
     if "comments" in item:
         comments = clean_html(item["comments"])
         if comments != (amendement.user_content.comments or ""):
-            CommentsAmendementModifie.create(request, amendement, comments)
+            CommentsAmendementModifie.create(
+                amendement=amendement, comments=comments, request=request
+            )
 
     if "affectation_email" in item and item["affectation_email"]:
         transfer_amendement(request, lecture, amendement, item)
@@ -93,4 +99,6 @@ def transfer_amendement(
     if amendement.user_table is target_table:
         return
     amendement.user_table = target_table
-    AmendementTransfere.create(request, amendement, old, new)
+    AmendementTransfere.create(
+        amendement=amendement, old_value=old, new_value=new, request=request
+    )

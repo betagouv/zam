@@ -23,9 +23,14 @@ class UserTable(Base):
     user_pk: int = Column(Integer, ForeignKey("users.pk"), nullable=False)
     user: User = relationship(User, back_populates="tables")
 
-    lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
+    lecture_pk: int = Column(
+        Integer, ForeignKey("lectures.pk", ondelete="cascade"), nullable=False
+    )
     lecture: Lecture = relationship(
-        Lecture, backref=backref("user_tables", cascade="all, delete-orphan")
+        Lecture,
+        backref=backref(
+            "user_tables", cascade="all, delete-orphan", passive_deletes=True
+        ),
     )
 
     amendements = relationship(
@@ -62,9 +67,14 @@ class SharedTable(Base):
     titre: str = Column(Text, nullable=False)
     slug: str = Column(Text, nullable=False)
 
-    lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
+    lecture_pk: int = Column(
+        Integer, ForeignKey("lectures.pk", ondelete="cascade"), nullable=False
+    )
     lecture: Lecture = relationship(
-        Lecture, backref=backref("shared_tables", cascade="all, delete-orphan")
+        Lecture,
+        backref=backref(
+            "shared_tables", cascade="all, delete-orphan", passive_deletes=True
+        ),
     )
 
     amendements = relationship(

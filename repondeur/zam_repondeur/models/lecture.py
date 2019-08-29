@@ -41,9 +41,13 @@ class Lecture(Base, LastEventMixin):
         order_by=(Amendement.position, Amendement.num),
         back_populates="lecture",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
     articles = relationship(
-        Article, back_populates="lecture", cascade="all, delete-orphan"
+        Article,
+        back_populates="lecture",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     dossier_pk = Column(Integer, ForeignKey("dossiers.pk"))

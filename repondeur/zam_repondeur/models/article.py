@@ -64,7 +64,9 @@ class ArticleUserContent(Base):
     title: Optional[str] = Column(Text, nullable=True)
     presentation: Optional[str] = Column(Text, nullable=True)
 
-    article_pk: int = Column(Integer, ForeignKey("articles.pk"), nullable=False)
+    article_pk: int = Column(
+        Integer, ForeignKey("articles.pk", ondelete="cascade"), nullable=False
+    )
     article: "Article" = relationship("Article", back_populates="user_content")
 
 
@@ -78,7 +80,9 @@ class Article(Base):
     pk: int = Column(Integer, primary_key=True)
     created_at: datetime = Column(DateTime, nullable=False)
 
-    lecture_pk: int = Column(Integer, ForeignKey("lectures.pk"), nullable=False)
+    lecture_pk: int = Column(
+        Integer, ForeignKey("lectures.pk", ondelete="cascade"), nullable=False
+    )
     lecture: "Lecture" = relationship("Lecture", back_populates="articles")
     type: str = Column(Text, nullable=False, default="")
     num: str = Column(Text, nullable=False, default="")
@@ -98,12 +102,14 @@ class Article(Base):
         uselist=False,
         lazy="joined",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     events = relationship(
         "Event",
         order_by="Event.created_at.desc()",
         cascade="all, delete-orphan",
+        passive_deletes=True,
         backref="article",
     )
 

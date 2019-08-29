@@ -179,6 +179,9 @@ class Mission(Base):
 
 class AmendementUserContent(Base):
     __tablename__ = "amendement_user_contents"
+    __table_args__ = (
+        Index("ix_amendement_user_contents__amendement_pk", "amendement_pk"),
+    )
 
     pk: int = Column(Integer, primary_key=True)
     avis: Optional[str] = Column(Text, nullable=True)
@@ -247,6 +250,7 @@ class Amendement(Base):
     __tablename__ = "amendements"
     __table_args__ = (
         Index("ix_amendements__lecture_pk", "lecture_pk"),
+        Index("ix_amendements__parent_pk", "parent_pk"),
         UniqueConstraint("num", "lecture_pk"),
         UniqueConstraint("position", "lecture_pk"),
     )

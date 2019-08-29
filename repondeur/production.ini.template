@@ -50,13 +50,13 @@ zam.session_secret = $$session_secret
 
 zam.auth_secret = $$auth_secret
 zam.auth_admins =
-    melodie.dahi@sgg.pm.gouv.fr
+    melodie.dahi@beta.gouv.fr
     david.larlet@beta.gouv.fr
     ronan.amicel@beta.gouv.fr
     raphael.pierquin@beta.gouv.fr
 zam.auth_user_patterns =
     *@*.gouv.fr
-    melodie.dahi@beta.gouv.fr
+    melodie.dahi@sgg.pm.gouv.fr
     david@larlet.fr
 
 zam.uploads_backup_dir = /srv/repondeur/data/uploads

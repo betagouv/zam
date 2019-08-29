@@ -3,7 +3,7 @@ from typing import Any, List, Optional
 from uuid import uuid4
 
 from pyramid.request import Request
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import JSONType, UUIDType
 
@@ -13,6 +13,7 @@ from ..users import User
 
 class Event(Base):
     __tablename__ = "events"
+    __table_args__ = (Index("ix_events__amendement_pk", "amendement_pk"),)
 
     # We use single-table inheritance, with polymorphism based on this column
     # see: https://docs.sqlalchemy.org/en/latest/orm/extensions/declarative/inheritance.html#single-table-inheritance  # noqa

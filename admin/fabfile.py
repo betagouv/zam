@@ -5,7 +5,7 @@ from tasks.system import *
 
 
 @task
-def bootstrap(ctx, hostname="", os_storage_url="", os_auth_token=""):
+def bootstrap(ctx, hostname="", user="", os_storage_url="", os_auth_token=""):
     if hostname:
         set_hostname(ctx, hostname)
     else:
@@ -17,8 +17,11 @@ def bootstrap(ctx, hostname="", os_storage_url="", os_auth_token=""):
     http(ctx, ssl=False)
 
     # Add password if not set
-    if not ctx.sudo("grep -q demozam /etc/nginx/.htpasswd", warn=True).ok:
-        basicauth(ctx)
+    if (
+        user != ""
+        and not ctx.sudo(f"grep -q {user} /etc/nginx/.htpasswd", warn=True).ok
+    ):
+        basicauth(ctx, user)
 
     # We need DNS to be configured before we can set up SSL
     if ctx.host == hostname:

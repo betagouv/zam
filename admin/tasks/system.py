@@ -94,6 +94,8 @@ def http(ctx, ssl=False):
             ssl_cert = "/etc/nginx/self-signed.crt"
             ssl_key = "/etc/nginx/self-signed.key"
 
+        htpasswd_exists = ctx.sudo(f"[ -f /etc/nginx/.htpasswd ]", warn=True).ok
+
         with template_local_file(
             "files/nginx/https.conf.template",
             "files/nginx/https.conf",
@@ -102,6 +104,7 @@ def http(ctx, ssl=False):
                 "timeout": ctx.config["request_timeout"],
                 "ssl_cert": ssl_cert,
                 "ssl_key": ssl_key,
+                "basic_auth_mode": '"Restricted"' if htpasswd_exists else "off",
             },
         ):
             sudo_put(

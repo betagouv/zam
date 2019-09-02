@@ -87,6 +87,7 @@ nav.main {
         nav.main .menu-toggle > a {
             background: no-repeat left 0/1.3rem url("../img/menu_icon.svg");
             padding-left: 1.7rem;
+            cursor: pointer;
         }
     nav.main .menu {
         display: flex;

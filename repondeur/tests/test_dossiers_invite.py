@@ -169,8 +169,9 @@ def test_post_form_not_gouv(app, user_david, dossier_plfss2018):
     assert resp.status_code == 200
 
     assert (
-        "Aucune invitation n’a été envoyée, veuillez vérifier "
-        "les adresses de courriel qui doivent être en .gouv.fr"
+        "Aucune invitation n’a été envoyée, soit l’adresse courriel "
+        "saisie a déjà été destinataire d’une invitation, "
+        "soit il s’agit d’une adresse courriel non autorisée."
     ) in resp.text
 
     dossier_plfss2018 = (

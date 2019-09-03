@@ -232,8 +232,8 @@ def test_post_form_multiple_invites(app, user_david, dossier_plfss2018, mailer):
         "« foo@exemple.gouv.fr »"
     )
 
-    assert len(mailer.outbox) == 1
-    assert mailer.outbox[0].recipients == ["foo@exemple.gouv.fr", "bar@exemple.gouv.fr"]
+    assert len(mailer.outbox) == 2
+    assert mailer.outbox[0].recipients == ["foo@exemple.gouv.fr"]
     assert (
         mailer.outbox[0].subject
         == "Invitation à rejoindre un dossier législatif sur Zam"
@@ -251,9 +251,29 @@ def test_post_form_multiple_invites(app, user_david, dossier_plfss2018, mailer):
 
         Bonne journée !"""
     )
+    assert mailer.outbox[1].recipients == ["bar@exemple.gouv.fr"]
+    assert (
+        mailer.outbox[1].subject
+        == "Invitation à rejoindre un dossier législatif sur Zam"
+    )
+    assert mailer.outbox[1].body == dedent(
+        """\
+        Bonjour,
+
+        Vous venez d’être invité·e à rejoindre Zam
+        pour participer au dossier législatif suivant :
+        Sécurité sociale : loi de financement 2018
+
+        Veuillez vous connecter à Zam pour y accéder :
+        https://zam.test/identification
+
+        Bonne journée !"""
+    )
 
 
-def test_post_form_multiple_invites_one_not_gouv(app, user_david, dossier_plfss2018):
+def test_post_form_multiple_invites_one_not_gouv(
+    app, user_david, dossier_plfss2018, mailer
+):
     from zam_repondeur.models import DBSession, Dossier
 
     with transaction.manager:
@@ -288,3 +308,5 @@ def test_post_form_multiple_invites_one_not_gouv(app, user_david, dossier_plfss2
         "<abbr title='david@exemple.gouv.fr'>David</abbr> a invité "
         "« foo@exemple.gouv.fr »"
     )
+
+    assert len(mailer.outbox) == 1

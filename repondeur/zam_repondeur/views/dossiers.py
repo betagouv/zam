@@ -230,13 +230,14 @@ Veuillez vous connecter à Zam pour y accéder :
 
 Bonne journée !
             """
-        message = MailMessage(
-            subject=subject,
-            sender="contact@zam.beta.gouv.fr",
-            recipients=[user.email for user in users],  # Is that a privacy issue?
-            body=body.strip(),
-        )
-        mailer.send(message)
+        for user in users:
+            message = MailMessage(
+                subject=subject,
+                sender="contact@zam.beta.gouv.fr",
+                recipients=[user.email],
+                body=body.strip(),
+            )
+            mailer.send(message)
         return len(users)
 
     def _send_existing_users_invitations(self, users: List[User]) -> int:
@@ -256,12 +257,13 @@ Vous pouvez y accéder via l’adresse suivante :
 
 Bonne journée !
             """
-        message = MailMessage(
-            subject=subject,
-            sender="contact@zam.beta.gouv.fr",
-            recipients=[user.email for user in users],  # Is that a privacy issue?
-            body=body.strip(),
-        )
+        for user in users:
+            message = MailMessage(
+                subject=subject,
+                sender="contact@zam.beta.gouv.fr",
+                recipients=[user.email],
+                body=body.strip(),
+            )
         mailer.send(message)
         return len(users)
 

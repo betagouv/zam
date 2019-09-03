@@ -11,7 +11,7 @@ import transaction
 from pyramid.paster import bootstrap, setup_logging
 
 from zam_repondeur.models import DBSession
-from zam_repondeur.models.users import AllowedEmailPattern
+from zam_repondeur.models.users import AllowedEmailPattern, User
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +32,8 @@ def main(argv: List[str] = sys.argv) -> None:
             list_patterns()
         elif args.command == "remove":
             remove_pattern(pattern=args.pattern)
+        elif args.command == "check":
+            check_email(email=args.email)
         else:
             sys.exit(1)
 
@@ -58,6 +60,11 @@ def parse_args(argv: List[str]) -> Namespace:
     parser_remove.add_argument(
         "pattern", help=AllowedEmailPattern.pattern.doc  # type: ignore
     )
+
+    parser_check = subparsers.add_parser(
+        "check", help="check email address against whitelist"
+    )
+    parser_check.add_argument("email")
 
     args = parser.parse_args(argv)
 
@@ -93,3 +100,11 @@ def remove_pattern(pattern: str) -> None:
             print(f"Pattern {pattern} not found", file=sys.stderr)
             sys.exit(1)
         DBSession.delete(instance)
+
+
+def check_email(email: str) -> None:
+    normalized_email = User.normalize_email(email)
+    if User.email_is_allowed(normalized_email):
+        print(f"{normalized_email} is allowed by whitelist")
+    else:
+        print(f"{normalized_email} is not allowed by whitelist")

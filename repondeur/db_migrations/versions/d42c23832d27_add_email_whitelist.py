@@ -23,6 +23,7 @@ def upgrade():
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
         ),
         sa.Column("pattern", sa.Text(), nullable=False),
+        sa.Column("comment", sa.Text(), nullable=True),
         sa.PrimaryKeyConstraint("pk"),
         sa.UniqueConstraint("pattern", name=op.f("allowed_email_patterns_pattern_key")),
     )

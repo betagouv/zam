@@ -76,8 +76,8 @@ def test_post_form(app, user_david, dossier_plfss2018, mailer):
         pour participer au dossier législatif suivant :
         Sécurité sociale : loi de financement 2018
 
-        Veuillez vous connecter à Zam pour y accéder :
-        https://zam.test/identification
+        Vous pouvez y accéder via l’adresse suivante :
+        https://zam.test/dossiers/plfss-2018/
 
         Bonne journée !"""
     )
@@ -250,8 +250,8 @@ def test_post_form_multiple_invites(app, user_david, dossier_plfss2018, mailer):
         pour participer au dossier législatif suivant :
         Sécurité sociale : loi de financement 2018
 
-        Veuillez vous connecter à Zam pour y accéder :
-        https://zam.test/identification
+        Vous pouvez y accéder via l’adresse suivante :
+        https://zam.test/dossiers/plfss-2018/
 
         Bonne journée !"""
     )
@@ -270,8 +270,8 @@ def test_post_form_multiple_invites(app, user_david, dossier_plfss2018, mailer):
         pour participer au dossier législatif suivant :
         Sécurité sociale : loi de financement 2018
 
-        Veuillez vous connecter à Zam pour y accéder :
-        https://zam.test/identification
+        Vous pouvez y accéder via l’adresse suivante :
+        https://zam.test/dossiers/plfss-2018/
 
         Bonne journée !"""
     )

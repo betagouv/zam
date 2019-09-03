@@ -117,6 +117,7 @@ class UserLogin(RateLimiterMixin):
 
     def send_auth_token_email(self, token: str, email: str) -> None:
         url = self.request.route_url("auth", _query={"token": token})
+        url_dossiers = self.request.resource_url(self.request.root["dossiers"])
         mailer = get_mailer(self.request)
         message = MailMessage(
             subject="Se connecter à Zam",
@@ -127,6 +128,12 @@ Bonjour,
 
 Pour vous connecter à Zam, veuillez cliquer sur l’adresse suivante :
 {url}
+
+Ce lien contient un code personnel à usage unique,
+valable 5 minutes, pour vous authentifier sur Zam.
+
+Une fois connecté·e, vous pourrez directement accéder aux dossiers :
+{url_dossiers}
 
 Bonne journée !
             """.strip(),

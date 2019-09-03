@@ -234,9 +234,10 @@ Bonne journée !
         for user in users:
             message = MailMessage(
                 subject=subject,
-                sender=self.request.user.email,
+                sender="contact@zam.beta.gouv.fr",
                 recipients=[user.email],
                 body=body.strip(),
+                extra_headers={"reply-to": self.request.user.email},
             )
             mailer.send(message)
         return len(users)
@@ -262,9 +263,10 @@ Bonne journée !
         for user in users:
             message = MailMessage(
                 subject=subject,
-                sender=self.request.user.email,
+                sender="contact@zam.beta.gouv.fr",
                 recipients=[user.email],
                 body=body.strip(),
+                extra_headers={"reply-to": self.request.user.email},
             )
         mailer.send(message)
         return len(users)

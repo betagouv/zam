@@ -20,6 +20,11 @@ from tools import (
 )
 
 
+app_dir = "/srv/repondeur/src/repondeur"
+venv_dir = "/srv/repondeur/venv"
+user = "repondeur"
+
+
 @task
 def deploy_changelog(ctx, source="../CHANGELOG.md"):
     content = commonmark(Path(source).read_text())
@@ -59,8 +64,6 @@ def deploy_repondeur(
     )
 
     try:
-
-        user = "repondeur"
         install_locale(ctx, "fr_FR.utf8")
         create_user(ctx, name=user, home_dir="/srv/repondeur")
         clone_repo(
@@ -70,8 +73,6 @@ def deploy_repondeur(
             path="/srv/repondeur/src",
             user=user,
         )
-        app_dir = "/srv/repondeur/src/repondeur"
-        venv_dir = "/srv/repondeur/venv"
 
         # Stop workers (if running) to free up some system resources during deployment
         stop_worker_service(ctx, warn=True)
@@ -241,6 +242,18 @@ def reset_data_locks(ctx, app_dir, venv_dir, user):
 
 def load_data(ctx, app_dir, venv_dir, user):
     cmd = f"{venv_dir}/bin/zam_load_data production.ini#repondeur"
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+
+
+@task
+def whitelist_list(ctx):
+    cmd = f"{venv_dir}/bin/zam_whitelist production.ini#repondeur list"
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+
+
+@task
+def whitelist_add(ctx, pattern):
+    cmd = f"{venv_dir}/bin/zam_whitelist production.ini#repondeur add {pattern}"
     ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 

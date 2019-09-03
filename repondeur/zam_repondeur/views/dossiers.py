@@ -217,7 +217,7 @@ class DossierInviteForm(DossierViewBase):
         # TODO: async?
         mailer = get_mailer(self.request)
         subject = "Invitation à rejoindre un dossier législatif sur Zam"
-        url = self.request.route_url("login")
+        url = self.request.resource_url(self.request.context)
         body = f"""
 Bonjour,
 
@@ -226,7 +226,7 @@ par {self.request.user}
 pour participer au dossier législatif suivant :
 {self.dossier.titre}
 
-Veuillez vous connecter à Zam pour y accéder :
+Vous pouvez y accéder via l’adresse suivante :
 {url}
 
 Bonne journée !

@@ -88,7 +88,7 @@ class User(Base):
         return email.strip().lower()
 
     @staticmethod
-    def validate_email(email: str) -> bool:
+    def email_is_well_formed(email: str) -> bool:
         return email != "" and "@" in email
 
     @staticmethod

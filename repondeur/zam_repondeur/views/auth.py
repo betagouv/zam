@@ -85,7 +85,7 @@ class UserLogin(RateLimiterMixin):
             return self.invalid_email(email=email, reason="missing_email")
 
         # Will usually be prevented by the browser (type=email)
-        if not User.validate_email(email):
+        if not User.email_is_well_formed(email):
             return self.invalid_email(email=email, reason="incorrect_email")
 
         # Will NOT be prevented by the browser (pattern=... is clumsy)

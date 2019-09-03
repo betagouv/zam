@@ -82,7 +82,7 @@ def transfer_amendement(
 ) -> None:
     email = User.normalize_email(item["affectation_email"])
 
-    if not User.validate_email(email):
+    if not User.email_is_well_formed(email):
         logging.warning("Invalid email address %r", email)
         return
 

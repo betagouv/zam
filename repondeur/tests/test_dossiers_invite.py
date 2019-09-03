@@ -1,6 +1,15 @@
 from textwrap import dedent
 
+import pytest
 import transaction
+
+
+@pytest.fixture(autouse=True)
+def extra_whitelist(db):
+    from zam_repondeur.models.users import AllowedEmailPattern
+
+    with transaction.manager:
+        AllowedEmailPattern.create(pattern="liste.blanche@exemple.fr")
 
 
 def test_get_form(app, user_david, dossier_plfss2018):
@@ -183,7 +192,7 @@ def test_post_form_whitelisted(app, user_david, dossier_plfss2018):
     assert resp.status_code == 200
 
     form = resp.forms[0]
-    form["emails"] = "listeblanche@exemple.fr"
+    form["emails"] = "liste.blanche@exemple.fr"
 
     resp = form.submit()
     assert resp.status_code == 302

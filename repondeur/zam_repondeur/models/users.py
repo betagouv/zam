@@ -1,8 +1,7 @@
 from datetime import datetime
 from fnmatch import fnmatchcase
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, List, Optional
 
-from paste.deploy.converters import aslist
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, Text, func
 from sqlalchemy.orm import backref, relationship
 from sqlalchemy_utils import EmailType
@@ -92,11 +91,9 @@ class User(Base):
         return email != "" and "@" in email
 
     @staticmethod
-    def email_is_allowed(email: str, settings: Dict[str, str]) -> bool:
-        return any(
-            fnmatchcase(email, pattern)
-            for pattern in aslist(settings["zam.auth_user_patterns"])
-        )
+    def email_is_allowed(email: str) -> bool:
+        patterns = DBSession.query(AllowedEmailPattern).all()
+        return any(pattern.is_allowed(email) for pattern in patterns)
 
     @staticmethod
     def normalize_name(name: str) -> str:
@@ -153,6 +150,12 @@ class AllowedEmailPattern(Base):
         unique=True,
         doc="A glob-style pattern that matches allowed email addresses",
     )
+
+    @classmethod
+    def create(cls, pattern: str) -> "AllowedEmailPattern":
+        instance = cls(pattern=pattern)
+        DBSession.add(instance)
+        return instance
 
     def is_allowed(self, email: str) -> bool:
         """

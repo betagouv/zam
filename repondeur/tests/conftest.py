@@ -80,7 +80,6 @@ def settings():
         "zam.session_secret": "dummy",
         "zam.auth_secret": "dummier",
         "zam.auth_admins": ["user@sgg.pm.gouv.fr"],
-        "zam.auth_user_patterns": ["*@*.gouv.fr", "listeblanche@exemple.fr"],
         # Only wait for 1 second to speed up integration tests.
         "zam.check_for.amendement_stolen_while_editing": 1,
         "zam.check_for.transfers_from_to_my_table": 1,
@@ -152,8 +151,18 @@ def amendements_repository():
     repository.clear_data()
 
 
+@pytest.fixture()
+def whitelist(db):
+    from zam_repondeur.models.users import AllowedEmailPattern
+
+    with transaction.manager:
+        AllowedEmailPattern.create(pattern="*@*.gouv.fr")
+
+
 @pytest.fixture
-def app(wsgi_app, db, data_repository, users_repository, amendements_repository):
+def app(
+    wsgi_app, db, whitelist, data_repository, users_repository, amendements_repository
+):
     yield TestApp(
         wsgi_app,
         extra_environ={

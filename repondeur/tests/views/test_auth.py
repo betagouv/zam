@@ -23,6 +23,15 @@ def auth_token(email):
     repository.delete_auth_token(token)
 
 
+@pytest.fixture(autouse=True)
+def extra_whitelist(db):
+    from zam_repondeur.models.users import AllowedEmailPattern
+
+    with transaction.manager:
+        AllowedEmailPattern.create(pattern="*@liste-blanche.fr")
+        AllowedEmailPattern.create(pattern="liste.blanche@exemple.fr")
+
+
 class TestLoginPage:
     def test_unauthentified_user_can_view_login_page(self, app):
         resp = app.get("/identification")
@@ -71,10 +80,17 @@ class TestLoginPage:
             Bonne journée !"""
         )
 
-    def test_user_can_ask_for_a_token_with_an_whitelisted_domain_name(
+    def test_user_can_ask_for_a_token_with_a_whitelisted_domain(self, app, mailer):
+        resp = app.post("/identification", {"email": "quelquun@liste-blanche.fr"})
+        resp = resp.maybe_follow()
+
+        assert "Vous devriez recevoir un lien dans les minutes" in resp.text
+        assert len(mailer.outbox) == 1
+
+    def test_user_can_ask_for_a_token_with_a_whitelisted_email_address(
         self, app, mailer
     ):
-        resp = app.post("/identification", {"email": "listeblanche@exemple.fr"})
+        resp = app.post("/identification", {"email": "liste.blanche@exemple.fr"})
         resp = resp.maybe_follow()
 
         assert "Vous devriez recevoir un lien dans les minutes" in resp.text
@@ -108,7 +124,7 @@ class TestLoginPage:
             "fs0c131y@exemple.gouv.fr@example.com",
         ],
     )
-    def test_user_cannot_ask_for_a_token_with_an_invalid_domain_name(
+    def test_user_cannot_ask_for_a_token_if_email_is_not_whitelisted(
         self, app, notgouvfr_email
     ):
         resp = app.post("/identification", {"email": notgouvfr_email})

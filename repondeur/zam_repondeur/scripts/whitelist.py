@@ -4,7 +4,8 @@ Add an allowed pattern to the email authentication whitelist
 import logging
 import sys
 from argparse import ArgumentParser, Namespace
-from typing import List
+from operator import attrgetter
+from typing import List, Optional
 
 import transaction
 from pyramid.paster import bootstrap, setup_logging
@@ -26,7 +27,7 @@ def main(argv: List[str] = sys.argv) -> None:
 
     with bootstrap(args.config_uri, options={"app": "zam_load_data"}):
         if args.command == "add":
-            add_pattern(args.pattern)
+            add_pattern(pattern=args.pattern, comment=args.comment)
         elif args.command == "list":
             list_patterns()
         else:
@@ -41,7 +42,10 @@ def parse_args(argv: List[str]) -> Namespace:
 
     parser_add = subparsers.add_parser("add", help="add pattern to the email whitelist")
     parser_add.add_argument(
-        "pattern", help="a glob-style pattern matching allowed addresses"
+        "pattern", help=AllowedEmailPattern.pattern.doc  # type: ignore
+    )
+    parser_add.add_argument(
+        "--comment", help=AllowedEmailPattern.comment.doc  # type: ignore
     )
 
     subparsers.add_parser("list", help="list patterns in email whitelist")
@@ -55,11 +59,17 @@ def parse_args(argv: List[str]) -> Namespace:
     return args
 
 
-def add_pattern(pattern: str) -> None:
+def add_pattern(pattern: str, comment: Optional[str]) -> None:
     with transaction.manager:
-        AllowedEmailPattern.create(pattern=pattern)
+        instance = (
+            DBSession.query(AllowedEmailPattern).filter_by(pattern=pattern).first()
+        )
+        if instance is not None:
+            print(f"Pattern {pattern} already exists", file=sys.stderr)
+            sys.exit(1)
+        AllowedEmailPattern.create(pattern=pattern, comment=comment)
 
 
 def list_patterns() -> None:
-    for pattern in sorted(p.pattern for p in DBSession.query(AllowedEmailPattern)):
-        print(pattern)
+    for p in sorted(DBSession.query(AllowedEmailPattern), key=attrgetter("created_at")):
+        print(p.created_at.isoformat(" ")[:19], p.pattern, p.comment or "", sep="\t")

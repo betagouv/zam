@@ -1,4 +1,5 @@
 from pathlib import Path
+from shlex import quote
 from uuid import uuid4
 
 import requests
@@ -109,7 +110,11 @@ def deploy_repondeur(
 
         # Initialize email whitelist
         if not whitelist_list(ctx):
-            whitelist_add(ctx, DEFAULT_EMAIL_WHITELIST_PATTERN)
+            whitelist_add(
+                ctx,
+                pattern=DEFAULT_EMAIL_WHITELIST_PATTERN,
+                comment="Default allowed email pattern",
+            )
 
         setup_webapp_service(ctx)
         setup_worker_service(ctx)
@@ -261,8 +266,10 @@ def whitelist_list(ctx):
 
 
 @task
-def whitelist_add(ctx, pattern):
+def whitelist_add(ctx, pattern, comment=None):
     cmd = f"{venv_dir}/bin/zam_whitelist production.ini#repondeur add {pattern}"
+    if comment is not None:
+        cmd += " --comment " + quote(comment)
     ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 

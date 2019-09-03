@@ -150,10 +150,17 @@ class AllowedEmailPattern(Base):
         unique=True,
         doc="A glob-style pattern that matches allowed email addresses",
     )
+    comment: str = Column(
+        Text,
+        nullable=True,
+        doc="A user-defined comment to keep track of why we added this pattern",
+    )
 
     @classmethod
-    def create(cls, pattern: str) -> "AllowedEmailPattern":
-        instance = cls(pattern=pattern)
+    def create(
+        cls, pattern: str, comment: Optional[str] = None
+    ) -> "AllowedEmailPattern":
+        instance = cls(pattern=pattern, comment=comment)
         DBSession.add(instance)
         return instance
 

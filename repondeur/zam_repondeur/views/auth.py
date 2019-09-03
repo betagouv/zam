@@ -175,6 +175,9 @@ class Authenticate(RateLimiterMixin):
         if self.ip_limiter.exceeded(self.request.remote_addr):
             return HTTPTooManyRequests()
 
+        if self.request.unauthenticated_userid:
+            return HTTPFound(location=self.next_url)
+
         token = self.request.params.get("token")
         auth = repository.get_auth_token_data(token)
         if auth is None:

@@ -273,6 +273,12 @@ def whitelist_add(ctx, pattern, comment=None):
     ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 
+@task
+def whitelist_remove(ctx, pattern):
+    cmd = f"{venv_dir}/bin/zam_whitelist production.ini#repondeur remove {pattern}"
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+
+
 def rollbar_deploy_start(ctx, branch, environment, comment):
     local_username = ctx.local("whoami").stdout
     revision = ctx.local(f'git log -n 1 --pretty=format:"%H" origin/{branch}').stdout

@@ -30,6 +30,8 @@ def main(argv: List[str] = sys.argv) -> None:
             add_pattern(pattern=args.pattern, comment=args.comment)
         elif args.command == "list":
             list_patterns()
+        elif args.command == "remove":
+            remove_pattern(pattern=args.pattern)
         else:
             sys.exit(1)
 
@@ -49,6 +51,13 @@ def parse_args(argv: List[str]) -> Namespace:
     )
 
     subparsers.add_parser("list", help="list patterns in email whitelist")
+
+    parser_remove = subparsers.add_parser(
+        "remove", help="remove pattern from the email whitelist"
+    )
+    parser_remove.add_argument(
+        "pattern", help=AllowedEmailPattern.pattern.doc  # type: ignore
+    )
 
     args = parser.parse_args(argv)
 
@@ -73,3 +82,14 @@ def add_pattern(pattern: str, comment: Optional[str]) -> None:
 def list_patterns() -> None:
     for p in sorted(DBSession.query(AllowedEmailPattern), key=attrgetter("created_at")):
         print(p.created_at.isoformat(" ")[:19], p.pattern, p.comment or "", sep="\t")
+
+
+def remove_pattern(pattern: str) -> None:
+    with transaction.manager:
+        instance = (
+            DBSession.query(AllowedEmailPattern).filter_by(pattern=pattern).first()
+        )
+        if instance is None:
+            print(f"Pattern {pattern} not found", file=sys.stderr)
+            sys.exit(1)
+        DBSession.delete(instance)

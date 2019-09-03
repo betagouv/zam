@@ -20,6 +20,8 @@ application.register(
   'dossier-invite',
   class extends Stimulus.Controller {
     clean(event) {
+      const initial = event.target.value.trim()
+
       /* https://stackoverflow.com/a/52078216 */
       const reg = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
       const paste = (event.clipboardData || window.clipboardData).getData(
@@ -35,7 +37,7 @@ application.register(
       if (!emails.length) {
         emails = [paste]
       }
-      event.target.value = emails.join('\n')
+      event.target.value = `${initial}\n${emails.join('\n')}`.trim()
       event.preventDefault()
     }
   }

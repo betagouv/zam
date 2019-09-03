@@ -54,10 +54,6 @@ zam.auth_admins =
     david.larlet@beta.gouv.fr
     ronan.amicel@beta.gouv.fr
     raphael.pierquin@beta.gouv.fr
-zam.auth_user_patterns =
-    *@*.gouv.fr
-    melodie.dahi@sgg.pm.gouv.fr
-    david@larlet.fr
 
 zam.uploads_backup_dir = /srv/repondeur/data/uploads
 

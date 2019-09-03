@@ -183,8 +183,9 @@ class DossierInviteForm(DossierViewBase):
                 Message(
                     cls="warning",
                     text=(
-                        "Aucune invitation n’a été envoyée, veuillez vérifier "
-                        "les adresses de courriel qui doivent être en .gouv.fr"
+                        "Aucune invitation n’a été envoyée, soit l’adresse courriel "
+                        "saisie a déjà été destinataire d’une invitation, "
+                        "soit il s’agit d’une adresse courriel non autorisée."
                     ),
                 )
             )

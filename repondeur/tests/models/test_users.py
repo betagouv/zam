@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+import pytest
 from freezegun import freeze_time
 
 
@@ -36,3 +37,35 @@ class TestUserTeamRelationship:
         team_zam = DBSession.query(Team).first()
         user_david.teams.remove(team_zam)
         assert DBSession.query(User).first().teams == []
+
+
+class TestAllowedEmailPattern:
+    @pytest.mark.parametrize(
+        "pattern,email",
+        [
+            ("*", "test@example.org"),
+            ("*@example.org", "test@example.org"),
+            ("*@example.org", "john.doe@example.org"),
+            ("john.doe@example.org", "john.doe@example.org"),
+        ],
+    )
+    def test_pattern_allows_email(self, pattern, email):
+        from zam_repondeur.models.users import AllowedEmailPattern
+
+        p = AllowedEmailPattern(pattern=pattern)
+        assert p.is_allowed(email)
+
+    @pytest.mark.parametrize(
+        "pattern,email",
+        [
+            ("", "test@example.org"),
+            ("*@example.org", "test@otherdomain.org"),
+            ("*@example.org", "test@subdomain.example.org"),
+            ("john.doe@example.org", "someone.else@example.org"),
+        ],
+    )
+    def test_pattern_does_not_allow_email(self, pattern, email):
+        from zam_repondeur.models.users import AllowedEmailPattern
+
+        p = AllowedEmailPattern(pattern=pattern)
+        assert not p.is_allowed(email)

@@ -133,3 +133,29 @@ class User(Base):
     def everyone_but_me(self, me: "User") -> List["User"]:
         users: List["User"] = DBSession.query(User).filter(User.email != me.email).all()
         return users
+
+
+class AllowedEmailPattern(Base):
+    """
+    Only e-mail addresses that match one of these patterns are allowed to use the app
+    """
+
+    __tablename__ = "allowed_email_patterns"
+
+    pk: int = Column(Integer, primary_key=True)
+    created_at: datetime = Column(
+        DateTime, nullable=False, default=datetime.utcnow, server_default=func.now()
+    )
+
+    pattern: str = Column(
+        Text,
+        nullable=False,
+        unique=True,
+        doc="A glob-style pattern that matches allowed email addresses",
+    )
+
+    def is_allowed(self, email: str) -> bool:
+        """
+        Check if an e-mail address is allowed by this pattern
+        """
+        return fnmatchcase(email, self.pattern)

@@ -20,6 +20,9 @@ from tools import (
 )
 
 
+DEFAULT_EMAIL_WHITELIST_PATTERN = "*@*.gouv.fr"
+
+
 app_dir = "/srv/repondeur/src/repondeur"
 venv_dir = "/srv/repondeur/venv"
 user = "repondeur"
@@ -103,6 +106,11 @@ def deploy_repondeur(
             wipe_db(ctx, dbname=dbname)
         setup_db(ctx, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
         migrate_db(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
+
+        # Initialize email whitelist
+        if not whitelist_list(ctx):
+            whitelist_add(ctx, DEFAULT_EMAIL_WHITELIST_PATTERN)
+
         setup_webapp_service(ctx)
         setup_worker_service(ctx)
 
@@ -248,7 +256,8 @@ def load_data(ctx, app_dir, venv_dir, user):
 @task
 def whitelist_list(ctx):
     cmd = f"{venv_dir}/bin/zam_whitelist production.ini#repondeur list"
-    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    res = ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    return res.stdout
 
 
 @task

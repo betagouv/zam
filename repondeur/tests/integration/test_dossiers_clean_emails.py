@@ -52,6 +52,8 @@ from selenium.webdriver.common.keys import Keys
                 baz.qux@pm.gouv.fr"""
             ),
         ),
+        # Unique email
+        ("foo.bar@sgg.pm.gouv.fr", "foo.bar@sgg.pm.gouv.fr"),
     ],
 )
 def test_dossier_paste_emails(wsgi_server, driver, dossier_an_url, initial, expected):

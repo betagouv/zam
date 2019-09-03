@@ -89,7 +89,7 @@ class UserLogin(RateLimiterMixin):
             return self.invalid_email(email=email, reason="incorrect_email")
 
         # Will NOT be prevented by the browser (pattern=... is clumsy)
-        if not User.validate_email_domain(email, self.request.registry.settings):
+        if not User.email_is_allowed(email, self.request.registry.settings):
             return self.invalid_email(email=email, reason="incorrect_domain")
 
         token = self.create_auth_token(email)

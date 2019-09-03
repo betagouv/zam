@@ -1,4 +1,5 @@
 from datetime import date
+from email.utils import formataddr
 from typing import Iterator, List, Tuple
 
 from paste.deploy.converters import aslist
@@ -216,6 +217,7 @@ class DossierInviteForm(DossierViewBase):
     def _send_new_users_invitations(self, users: List[User]) -> int:
         # TODO: async?
         mailer = get_mailer(self.request)
+        reply_to = formataddr((self.request.user.name, self.request.user.email))
         subject = "Invitation à rejoindre un dossier législatif sur Zam"
         url = self.request.resource_url(self.request.context)
         body = f"""
@@ -237,7 +239,7 @@ Bonne journée !
                 sender="contact@zam.beta.gouv.fr",
                 recipients=[user.email],
                 body=body.strip(),
-                extra_headers={"reply-to": self.request.user.email},
+                extra_headers={"reply-to": reply_to},
             )
             mailer.send(message)
         return len(users)
@@ -245,6 +247,7 @@ Bonne journée !
     def _send_existing_users_invitations(self, users: List[User]) -> int:
         # TODO: async?
         mailer = get_mailer(self.request)
+        reply_to = formataddr((self.request.user.name, self.request.user.email))
         subject = "Invitation à participer à un dossier législatif sur Zam"
         url = self.request.resource_url(self.request.context)
         body = f"""
@@ -266,7 +269,7 @@ Bonne journée !
                 sender="contact@zam.beta.gouv.fr",
                 recipients=[user.email],
                 body=body.strip(),
-                extra_headers={"reply-to": self.request.user.email},
+                extra_headers={"reply-to": reply_to},
             )
         mailer.send(message)
         return len(users)

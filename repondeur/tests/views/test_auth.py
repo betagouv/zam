@@ -214,7 +214,7 @@ class TestLoginWithToken:
         caplog.set_level(logging.INFO)
         app.get("/authentification", params={"token": auth_token})
         assert (
-            "INFO Successful authentication by 'david@exemple.gouv.fr' from 127.0.0.1"  # noqa
+            "INFO Successful authentication by 'david@exemple.gouv.fr' from 127.0.0.1"
             in caplog.text
         )
 
@@ -229,14 +229,29 @@ class TestLoginWithToken:
 
         assert "Le lien est invalide ou a expiré" in resp.text
 
-    def test_failed_authentication_attempt_is_logged(self, app, auth_token, caplog):
+    def test_user_can_access_with_old_auth_token_if_already_logged(
+        self, app, user_david
+    ):
+
+        resp = app.get(
+            "/authentification", params={"token": "BADTOKEN"}, user=user_david
+        )
+
+        assert resp.status_code == 302
+        assert resp.location == "https://zam.test/dossiers/"
+
+        resp = resp.maybe_follow()
+
+        assert "Le lien est invalide ou a expiré" not in resp.text
+
+    def test_failed_authentication_attempt_is_logged(self, app, caplog):
         app.get("/authentification", params={"token": "BADTOKEN"})
         assert (
             "WARNING Failed authentication attempt with token 'BADTOKEN' from 127.0.0.1"  # noqa
             in caplog.text
         )
 
-    def test_authentication_attempts_from_same_ip_are_throttled(self, app, auth_token):
+    def test_authentication_attempts_from_same_ip_are_throttled(self, app):
         # We do a number of requests from the same IP
         for n in range(10):
             resp = app.get("/authentification", params={"token": f"BADTOKEN{n + 1}"})

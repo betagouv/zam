@@ -92,7 +92,7 @@ class User(Base):
         return email != "" and "@" in email
 
     @staticmethod
-    def validate_email_domain(email: str, settings: Dict[str, str]) -> bool:
+    def email_is_allowed(email: str, settings: Dict[str, str]) -> bool:
         return any(
             fnmatchcase(email, pattern)
             for pattern in aslist(settings["zam.auth_user_patterns"])

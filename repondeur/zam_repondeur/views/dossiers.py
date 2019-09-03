@@ -222,6 +222,7 @@ class DossierInviteForm(DossierViewBase):
 Bonjour,
 
 Vous venez d’être invité·e à rejoindre Zam
+par {self.request.user}
 pour participer au dossier législatif suivant :
 {self.dossier.titre}
 
@@ -233,7 +234,7 @@ Bonne journée !
         for user in users:
             message = MailMessage(
                 subject=subject,
-                sender="contact@zam.beta.gouv.fr",
+                sender=self.request.user.email,
                 recipients=[user.email],
                 body=body.strip(),
             )
@@ -248,7 +249,8 @@ Bonne journée !
         body = f"""
 Bonjour,
 
-Vous venez d’être invité·e à participer
+Vous venez d’être invité·e
+par {self.request.user} à participer
 au dossier législatif suivant sur Zam :
 {self.dossier.titre}
 
@@ -260,7 +262,7 @@ Bonne journée !
         for user in users:
             message = MailMessage(
                 subject=subject,
-                sender="contact@zam.beta.gouv.fr",
+                sender=self.request.user.email,
                 recipients=[user.email],
                 body=body.strip(),
             )

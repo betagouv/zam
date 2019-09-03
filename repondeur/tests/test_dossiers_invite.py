@@ -236,7 +236,7 @@ def test_post_form_multiple_invites(app, user_david, dossier_plfss2018, mailer):
 
     assert len(mailer.outbox) == 2
     assert mailer.outbox[0].sender == "contact@zam.beta.gouv.fr"
-    assert mailer.outbox[0].extra_headers["reply-to"] == "david@exemple.gouv.fr"
+    assert mailer.outbox[0].extra_headers["reply-to"] == "David <david@exemple.gouv.fr>"
     assert mailer.outbox[0].recipients == ["foo@exemple.gouv.fr"]
     assert (
         mailer.outbox[0].subject
@@ -258,7 +258,7 @@ def test_post_form_multiple_invites(app, user_david, dossier_plfss2018, mailer):
     )
     assert mailer.outbox[1].recipients == ["bar@exemple.gouv.fr"]
     assert mailer.outbox[1].sender == "contact@zam.beta.gouv.fr"
-    assert mailer.outbox[1].extra_headers["reply-to"] == "david@exemple.gouv.fr"
+    assert mailer.outbox[1].extra_headers["reply-to"] == "David <david@exemple.gouv.fr>"
     assert (
         mailer.outbox[1].subject
         == "Invitation à rejoindre un dossier législatif sur Zam"

@@ -72,6 +72,7 @@ def test_post_form(app, user_david, dossier_plfss2018, mailer):
         Bonjour,
 
         Vous venez d’être invité·e à rejoindre Zam
+        par David (david@exemple.gouv.fr)
         pour participer au dossier législatif suivant :
         Sécurité sociale : loi de financement 2018
 
@@ -126,7 +127,8 @@ def test_post_form_existing_user(
         """\
         Bonjour,
 
-        Vous venez d’être invité·e à participer
+        Vous venez d’être invité·e
+        par David (david@exemple.gouv.fr) à participer
         au dossier législatif suivant sur Zam :
         Sécurité sociale : loi de financement 2018
 
@@ -233,6 +235,7 @@ def test_post_form_multiple_invites(app, user_david, dossier_plfss2018, mailer):
     )
 
     assert len(mailer.outbox) == 2
+    assert mailer.outbox[0].sender == "david@exemple.gouv.fr"
     assert mailer.outbox[0].recipients == ["foo@exemple.gouv.fr"]
     assert (
         mailer.outbox[0].subject
@@ -243,6 +246,7 @@ def test_post_form_multiple_invites(app, user_david, dossier_plfss2018, mailer):
         Bonjour,
 
         Vous venez d’être invité·e à rejoindre Zam
+        par David (david@exemple.gouv.fr)
         pour participer au dossier législatif suivant :
         Sécurité sociale : loi de financement 2018
 
@@ -252,6 +256,7 @@ def test_post_form_multiple_invites(app, user_david, dossier_plfss2018, mailer):
         Bonne journée !"""
     )
     assert mailer.outbox[1].recipients == ["bar@exemple.gouv.fr"]
+    assert mailer.outbox[1].sender == "david@exemple.gouv.fr"
     assert (
         mailer.outbox[1].subject
         == "Invitation à rejoindre un dossier législatif sur Zam"
@@ -261,6 +266,7 @@ def test_post_form_multiple_invites(app, user_david, dossier_plfss2018, mailer):
         Bonjour,
 
         Vous venez d’être invité·e à rejoindre Zam
+        par David (david@exemple.gouv.fr)
         pour participer au dossier législatif suivant :
         Sécurité sociale : loi de financement 2018
 

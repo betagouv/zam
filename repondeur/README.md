@@ -97,6 +97,12 @@ up-to-date lectures.
 (zam)$ zam_load_data development.ini
 ```
 
+### Allow some e-mail addresses to sign in
+
+```
+(zam)$ zam_whitelist development.ini add "*@*.gouv.fr"
+```
+
 ### Start the web app
 
 ```

@@ -55,6 +55,9 @@ zam.auth_admins =
     ronan.amicel@beta.gouv.fr
     raphael.pierquin@beta.gouv.fr
 
+zam.refresh.amendements = 60
+zam.refresh.articles = 60
+
 zam.uploads_backup_dir = /srv/repondeur/data/uploads
 
 

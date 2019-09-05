@@ -28,11 +28,15 @@ application.register(
       const paste = (event.clipboardData || window.clipboardData).getData(
         'text'
       )
+
       const separators = [';', ',', '\n']
       let emails = []
       separators.forEach(separator => {
         if (paste.includes(separator)) {
-          emails = paste.split(separator).map(line => line && line.match(reg))
+          emails = paste
+            .split(separator)
+            .map(line => line && line.match(reg))
+            .filter(s => s)
         }
       })
       if (!emails.length) {

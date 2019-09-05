@@ -55,7 +55,9 @@ class UsersRepository:
     @needs_init
     def set_auth_token(self, email: str, token: str) -> None:
         key = self._auth_key(token)
-        expires_at = self.now() + timedelta(seconds=self.auth_token_duration)
+        expires_at = self.to_timestamp(
+            self.now() + timedelta(seconds=self.auth_token_duration)
+        )
         pipe = self.connection.pipeline()
         try:
             pipe.watch(key)  # detect race condition with other thread/process
@@ -63,9 +65,7 @@ class UsersRepository:
                 pipe.unwatch()
                 raise TokenAlreadyExists
             pipe.multi()  # start transaction
-            pipe.hmset(
-                key, {"email": email, "expires_at": self.to_timestamp(expires_at)}
-            )
+            pipe.hmset(key, {"email": email, "expires_at": expires_at})
             pipe.expireat(key, expires_at)
             pipe.execute()  # execute transaction atomically
         except WatchError:
@@ -105,8 +105,8 @@ class UsersRepository:
         return datetime(1970, 1, 1, tzinfo=timezone.utc) + timedelta(seconds=timestamp)
 
     @staticmethod
-    def to_timestamp(dt: datetime) -> float:
-        return (dt - datetime(1970, 1, 1, tzinfo=timezone.utc)).total_seconds()
+    def to_timestamp(dt: datetime) -> int:
+        return int((dt - datetime(1970, 1, 1, tzinfo=timezone.utc)).total_seconds())
 
 
 repository = UsersRepository()

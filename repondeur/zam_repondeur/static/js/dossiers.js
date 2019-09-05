@@ -45,7 +45,7 @@ application.register(
 
       // Flatten and trim emails.
       emails = emails.reduce((a, b) => a.concat(b), [])
-      const result = emails.map(email => email.trim()).join('\n')
+      const result = emails.map(email => email.trim() + '\n').join('')
 
       // Insert at cursor position, or overwrite selected text,
       // then position cursor after the pasted content.

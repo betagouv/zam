@@ -43,27 +43,14 @@ application.register(
       emails = emails.reduce((a, b) => a.concat(b), [])
       const result = emails.map(email => email.trim()).join('\n')
 
-      // Deal with cursor not at the end (and potentially selected text).
-      const selectedText = textarea.value.substring(
+      // Insert at cursor position, or overwrite selected text,
+      // then position cursor after the pasted content.
+      textarea.setRangeText(
+        result,
         textarea.selectionStart,
-        textarea.selectionEnd
+        textarea.selectionEnd,
+        'end'
       )
-      if (!selectedText) {
-        textarea.value =
-          textarea.value.substring(0, textarea.selectionStart) +
-          '\n' +
-          result +
-          '\n' +
-          textarea.value.substring(textarea.selectionEnd, textarea.value.length)
-      } else {
-        textarea.value = textarea.value.replace(selectedText, result)
-      }
-
-      // Remove remaining empty lines.
-      textarea.value = textarea.value
-        .split('\n')
-        .filter(line => line.trim())
-        .join('\n')
 
       event.preventDefault()
     }

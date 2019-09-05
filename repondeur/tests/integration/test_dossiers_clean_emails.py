@@ -1,3 +1,4 @@
+import platform
 from textwrap import dedent
 
 import pyperclip
@@ -63,8 +64,10 @@ def test_dossier_paste_emails(wsgi_server, driver, dossier_an_url, copied, expec
     emails_textarea = driver.find_element_by_css_selector('[name="emails"]')
     assert emails_textarea.is_displayed()
     pyperclip.copy(copied)
-    emails_textarea.send_keys(Keys.CONTROL, "v")
-    emails_textarea.send_keys(Keys.COMMAND, "v")  # MacOS.
+    if platform.system() == "Darwin":
+        emails_textarea.send_keys(Keys.COMMAND, "v")  # MacOS.
+    else:
+        emails_textarea.send_keys(Keys.CONTROL, "v")
     assert emails_textarea.get_attribute("value") == expected
 
 
@@ -123,6 +126,8 @@ def test_dossier_paste_emails_with_existing_content(
     assert emails_textarea.is_displayed()
     emails_textarea.send_keys(initial)
     pyperclip.copy(copied)
-    emails_textarea.send_keys(Keys.CONTROL, "v")
-    emails_textarea.send_keys(Keys.COMMAND, "v")  # MacOS.
+    if platform.system() == "Darwin":
+        emails_textarea.send_keys(Keys.COMMAND, "v")  # MacOS.
+    else:
+        emails_textarea.send_keys(Keys.CONTROL, "v")
     assert emails_textarea.get_attribute("value") == expected

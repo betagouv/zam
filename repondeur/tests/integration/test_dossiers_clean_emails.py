@@ -19,7 +19,8 @@ from selenium.webdriver.common.keys import Keys
             dedent(
                 """\
                 foo.bar@sgg.pm.gouv.fr
-                baz.qux@pm.gouv.fr"""
+                baz.qux@pm.gouv.fr
+                """
             ),
         ),
         # Outlook
@@ -28,7 +29,8 @@ from selenium.webdriver.common.keys import Keys
             dedent(
                 """\
                 foo.bar@sgg.pm.gouv.fr
-                baz.qux@pm.gouv.fr"""
+                baz.qux@pm.gouv.fr
+                """
             ),
         ),
         # Mixed (one email has no associated name)
@@ -41,7 +43,8 @@ from selenium.webdriver.common.keys import Keys
                 """\
                 foo.bar@sgg.pm.gouv.fr
                 baz.qux@pm.gouv.fr
-                quux.quuz@pm.gouv.fr"""
+                quux.quuz@pm.gouv.fr
+                """
             ),
         ),
         # Classic comma
@@ -50,11 +53,12 @@ from selenium.webdriver.common.keys import Keys
             dedent(
                 """\
                 foo.bar@sgg.pm.gouv.fr
-                baz.qux@pm.gouv.fr"""
+                baz.qux@pm.gouv.fr
+                """
             ),
         ),
         # Unique email
-        ("foo.bar@sgg.pm.gouv.fr", "foo.bar@sgg.pm.gouv.fr"),
+        ("foo.bar@sgg.pm.gouv.fr", "foo.bar@sgg.pm.gouv.fr\n"),
     ],
 )
 def test_dossier_paste_emails(wsgi_server, driver, dossier_an_url, copied, expected):
@@ -74,7 +78,7 @@ def test_dossier_paste_emails(wsgi_server, driver, dossier_an_url, copied, expec
 @pytest.mark.parametrize(
     "initial,copied,expected",
     [
-        # Initial with newline
+        # Paste multiple email addresses
         (
             "quux.quuz@pm.gouv.fr\n",
             dedent(
@@ -86,32 +90,19 @@ def test_dossier_paste_emails(wsgi_server, driver, dossier_an_url, copied, expec
                 """\
                 quux.quuz@pm.gouv.fr
                 foo.bar@sgg.pm.gouv.fr
-                baz.qux@pm.gouv.fr"""
+                baz.qux@pm.gouv.fr
+                """
             ),
         ),
-        # Initial without newline
+        # Paste one email address
         (
-            "quux.quuz@pm.gouv.fr",
-            dedent(
-                """\
-                foo.bar@sgg.pm.gouv.fr
-                baz.qux@pm.gouv.fr"""
-            ),
-            dedent(
-                """\
-                quux.quuz@pm.gouv.fr
-                foo.bar@sgg.pm.gouv.fr
-                baz.qux@pm.gouv.fr"""
-            ),
-        ),
-        # Unique email
-        (
-            "foo.bar@sgg.pm.gouv.fr",
+            "foo.bar@sgg.pm.gouv.fr\n",
             "baz.qux@pm.gouv.fr",
             dedent(
                 """\
                 foo.bar@sgg.pm.gouv.fr
-                baz.qux@pm.gouv.fr"""
+                baz.qux@pm.gouv.fr
+                """
             ),
         ),
     ],

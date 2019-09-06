@@ -54,7 +54,6 @@ class DataRepository:
         organes, acteurs = get_organes_acteurs()
         dossiers_senat = get_dossiers_senat()
         with Lock(self.connection, "data"):
-            self.connection.delete("dossiers", "organes", "acteurs")  # remove old keys
             self.connection.set("an.opendata.dossiers", pickle.dumps(dossiers))
             self.connection.set("an.opendata.textes", pickle.dumps(textes))
             self.connection.set("an.opendata.organes", pickle.dumps(organes))

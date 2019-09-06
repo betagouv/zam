@@ -242,6 +242,7 @@ def test_parse_article_additionnel(text, type_, num, mult, pos):
             "quinquies",
             "après",
         ),
+        ("Article 56 bis İ", "article", "56", "bis I", ""),
     ],
 )
 def test_parse_subdiv(text, type_, num, mult, pos):

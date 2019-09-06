@@ -38,7 +38,6 @@ def start_huey(
         fetch_articles,
         fetch_amendements,
         update_dossier,
-        fetch_lectures,  # backwards compatibility
     )
     from zam_repondeur.tasks.periodic import update_data, update_all_dossiers  # noqa
 

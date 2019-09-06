@@ -50,9 +50,6 @@ def update_dossier(dossier_pk: int, force: bool = False) -> None:
     create_missing_lectures(dossier.pk)
 
 
-fetch_lectures = update_dossier  # backwards compatibility
-
-
 @huey.task(retries=3, retry_delay=RETRY_DELAY)
 def fetch_articles(lecture_pk: Optional[int]) -> bool:
     if lecture_pk is None:

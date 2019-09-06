@@ -7,15 +7,15 @@ from zam_repondeur.slugs import slugify
 
 from ...dates import parse_date
 from ..common import extract_from_remote_zip, roman
-from .models import DossierRef, LectureRef, TexteRef, TypeTexte
+from .models import DossierRef, DossierRefsByUID, LectureRef, TexteRef, TypeTexte
 
 logger = logging.getLogger(__name__)
 
 
 def get_dossiers_legislatifs_and_textes(
     *legislatures: int
-) -> Tuple[Dict[str, DossierRef], Dict[str, TexteRef]]:
-    all_dossiers: Dict[str, DossierRef] = {}
+) -> Tuple[DossierRefsByUID, Dict[str, TexteRef]]:
+    all_dossiers: DossierRefsByUID = {}
     all_textes: Dict[str, TexteRef] = {}
     for legislature in legislatures:
         dossiers, textes = _get_dossiers_legislatifs_and_textes(legislature)
@@ -26,7 +26,7 @@ def get_dossiers_legislatifs_and_textes(
 
 def _get_dossiers_legislatifs_and_textes(
     legislature: int
-) -> Tuple[Dict[str, DossierRef], Dict[str, TexteRef]]:
+) -> Tuple[DossierRefsByUID, Dict[str, TexteRef]]:
     # As of June 20th, 2019 the Assemblée Nationale website updated the way
     # their opendata zip content is splitted, without changing old
     # legislatures. Hence we have to keep two ways to parse their content
@@ -109,9 +109,7 @@ def legislature_texte(item: dict) -> Optional[int]:
     return int(legislature)
 
 
-def parse_dossiers(
-    dossiers: list, textes: Dict[str, TexteRef]
-) -> Dict[str, DossierRef]:
+def parse_dossiers(dossiers: list, textes: Dict[str, TexteRef]) -> DossierRefsByUID:
     dossier_dicts = (
         item["dossierParlementaire"] for item in dossiers if isinstance(item, dict)
     )

@@ -8,6 +8,7 @@ https://parsy.readthedocs.io/en/latest/overview.html
 
 """
 import logging
+import unicodedata
 from typing import Any, List, Optional
 
 from parsy import ParseError, regex, seq, string, string_from, whitespace
@@ -26,6 +27,12 @@ def case_insensitive_string_from(*expected_strings: str) -> Any:
     return string_from(*expected_strings, transform=lambda s: s.lower())
 
 
+def remove_accents(s: str) -> str:
+    return "".join(
+        c for c in unicodedata.normalize("NFD", s) if not unicodedata.combining(c)
+    )
+
+
 # Numéro
 
 CHIFFRES_ARABES = case_insensitive_string_from("1e", "1er", "1ère").result("1") | regex(
@@ -34,7 +41,7 @@ CHIFFRES_ARABES = case_insensitive_string_from("1e", "1er", "1ère").result("1")
 
 CHIFFRES_ROMAINS = case_insensitive_string("Ier") | regex(r"[IVXLCDM]+")
 
-LETTRES = regex(r"[A-Z]+")
+LETTRES_CAPITALES = regex(r"[A-Zİ]+").map(remove_accents)  # allow dotted capital i
 
 NUMERO = (
     string("liminaire").result("0")
@@ -42,12 +49,12 @@ NUMERO = (
     | string("PRÉLIMINAIRE")
     | CHIFFRES_ARABES
     | CHIFFRES_ROMAINS
-    | LETTRES
+    | LETTRES_CAPITALES
 )
 
 MULTIPLICATIF = string_from(*ADJECTIFS_MULTIPLICATIFS)
 
-ADDITIONNEL = regex(r"[A-Z]+")  # alias "andouillette" (AAAAA)
+ADDITIONNEL = LETTRES_CAPITALES  # alias "andouillette" (AAAAA)
 
 MULT_ADD = (
     seq(MULTIPLICATIF << whitespace.optional(), ADDITIONNEL).map(" ".join)

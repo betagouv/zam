@@ -13,7 +13,7 @@ class Dossier(Base, LastEventMixin):
 
     pk = Column(Integer, primary_key=True)
 
-    uid = Column(Text, nullable=False)  # the Assemblée Nationale UID
+    uid = Column(Text, nullable=False, unique=True)  # the Assemblée Nationale UID
     titre = Column(Text, nullable=False)  # TODO: make it unique?
     slug: str = Column(Text, nullable=False, unique=True)
 

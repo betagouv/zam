@@ -53,6 +53,15 @@ class Dossier(Base, LastEventMixin):
     @classmethod
     def create(cls, uid: str, titre: str, slug: str) -> "Dossier":
         now = datetime.utcnow()
+        base_slug = slug
+        counter = 1
+        while True:
+            if counter > 1:
+                slug = f"{base_slug}-{counter}"
+            existing = DBSession.query(cls).filter_by(slug=slug).first()
+            if existing is None:
+                break
+            counter += 1
         dossier = cls(uid=uid, titre=titre, slug=slug, created_at=now, modified_at=now)
         DBSession.add(dossier)
         return dossier

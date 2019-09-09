@@ -36,6 +36,7 @@ nav.main {
     font-size: 1rem;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
     min-height: calc(24px + 1.4rem);
 }
@@ -123,6 +124,13 @@ nav.main {
             padding-left: 1.33rem;
             background: no-repeat left 40%/.7rem url("../img/big_left_white.svg");
         }
+    nav.main .badge {
+        margin-right: calc(2% + 2rem);
+        font-size: 16px;
+        border: 1px solid white;
+        text-transform: uppercase;
+    }
+
 
 
 nav.secondary {

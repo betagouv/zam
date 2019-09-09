@@ -95,6 +95,9 @@
                 {% endif %}
             </ul>
         {% endblock %}
+        {% if request.registry.settings.get("zam.menu_badge") %}
+        <div class="badge">{{ request.registry.settings.get("zam.menu_badge") }}</div>
+        {% endif %}
     </nav>
 
     <main role="main" class="{% block main_class %}box{% endblock %}">

@@ -62,6 +62,7 @@ def deploy_repondeur(
 
     hostname = ctx.run("hostname").stdout.strip()
     environment = hostname.split(".", 1)[0]
+    menu_badge = environment[4:] if environment.startswith("zam-") else ""
 
     deploy_id = rollbar_deploy_start(
         ctx, branch, environment, comment=f"[{branch}] {message}"
@@ -97,6 +98,7 @@ def deploy_repondeur(
                 "rollbar_token": ctx.config["rollbar_token"],
                 "gunicorn_workers": gunicorn_workers,
                 "gunicorn_timeout": ctx.config["request_timeout"],
+                "menu_badge": menu_badge,
             },
         )
 
@@ -158,7 +160,6 @@ def install_requirements(ctx, app_dir, venv_dir, user):
     ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 
-@task
 def setup_config(ctx, app_dir, user, context):
     with template_local_file(
         "../repondeur/production.ini.template", "../repondeur/production.ini", context

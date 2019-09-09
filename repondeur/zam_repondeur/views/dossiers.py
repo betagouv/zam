@@ -45,6 +45,7 @@ class DossierList(DossierCollectionBase):
             "allowed_to_activate": self.request.has_permission(
                 "activate", self.context
             ),
+            "current_tab": "dossiers",
         }
 
 
@@ -53,7 +54,7 @@ class DossierAddForm(DossierCollectionBase):
     @view_config(request_method="GET", renderer="dossiers_add.html")
     def get(self) -> dict:
         available_dossiers = [dossier for dossier in self.dossiers if not dossier.team]
-        return {"available_dossiers": available_dossiers}
+        return {"available_dossiers": available_dossiers, "current_tab": "dossiers"}
 
     @view_config(request_method="POST")
     def post(self) -> Response:

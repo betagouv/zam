@@ -8,6 +8,7 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
 from zam_repondeur.models import (
+    AllowedEmailPattern,
     Amendement,
     Article,
     Chambre,
@@ -68,10 +69,56 @@ class Root(Resource):
         (Deny, Everyone, "delete"),
         (Allow, "group:admins", "refresh_dossier"),
         (Deny, Everyone, "refresh_dossier"),
+        (Allow, "group:admins", "manage_whitelist"),
+        (Deny, Everyone, "manage_whitelist"),
     ]
 
     def __init__(self, _request: Request) -> None:
+        self.add_child(WhitelistCollection(name="whitelist", parent=self))
         self.add_child(DossierCollection(name="dossiers", parent=self))
+
+
+class WhitelistCollection(Resource):
+    __acl__ = [(Allow, "group:admins", "manage"), (Deny, Everyone, "manage")]
+
+    def models(self, *options: Any) -> List[Dossier]:
+        result: List[AllowedEmailPattern] = DBSession.query(
+            AllowedEmailPattern
+        ).options(*options)
+        return result
+
+    def __getitem__(self, key: str) -> Resource:
+        resource = WhitelistResource(name=key, parent=self)
+        try:
+            resource.model()
+        except ResourceNotFound:
+            raise KeyError
+        return resource
+
+
+class WhitelistResource(Resource):
+    def __acl__(self) -> List[ACE]:
+        return [(Allow, f"group:admins", "view"), (Deny, Authenticated, "view")]
+
+    def __init__(self, name: str, parent: Resource) -> None:
+        super().__init__(name=name, parent=parent)
+        self.pk = name
+
+    @property
+    def parent(self) -> WhitelistCollection:
+        return cast(WhitelistCollection, self.__parent__)
+
+    def model(self) -> AllowedEmailPattern:
+        if self.pk == "add":
+            raise KeyError
+
+        email_pattern: AllowedEmailPattern = (
+            DBSession.query(AllowedEmailPattern).filter_by(pk=self.pk).first()
+        )
+        if email_pattern is None:
+            raise ResourceNotFound(self)
+
+        return email_pattern
 
 
 class DossierCollection(Resource):

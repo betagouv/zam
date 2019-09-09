@@ -156,6 +156,10 @@ class AllowedEmailPattern(Base):
         doc="A user-defined comment to keep track of why we added this pattern",
     )
 
+    def __str__(self) -> str:
+        comment = f" ({self.comment})" if self.comment else ""
+        return f"{self.pattern}{comment}"
+
     @classmethod
     def create(
         cls, pattern: str, comment: Optional[str] = None

@@ -23,6 +23,10 @@ from tools import (
 
 DEFAULT_EMAIL_WHITELIST_PATTERN = "*@*.gouv.fr"
 
+BADGE_COLORS = {
+    "demo": "#b5bd68",
+    "test": "#de935f",
+}
 
 app_dir = "/srv/repondeur/src/repondeur"
 venv_dir = "/srv/repondeur/venv"
@@ -62,7 +66,8 @@ def deploy_repondeur(
 
     hostname = ctx.run("hostname").stdout.strip()
     environment = hostname.split(".", 1)[0]
-    menu_badge = environment[4:] if environment.startswith("zam-") else ""
+    menu_badge_label = environment[4:] if environment.startswith("zam-") else ""
+    menu_badge_color = BADGE_COLORS.get(menu_badge_label, "#999999")
 
     deploy_id = rollbar_deploy_start(
         ctx, branch, environment, comment=f"[{branch}] {message}"
@@ -98,7 +103,8 @@ def deploy_repondeur(
                 "rollbar_token": ctx.config["rollbar_token"],
                 "gunicorn_workers": gunicorn_workers,
                 "gunicorn_timeout": ctx.config["request_timeout"],
-                "menu_badge": menu_badge,
+                "menu_badge_label": menu_badge_label,
+                "menu_badge_color": menu_badge_color,
             },
         )
 

@@ -95,8 +95,8 @@
                 {% endif %}
             </ul>
         {% endblock %}
-        {% if request.registry.settings.get("zam.menu_badge") %}
-        <div class="badge">{{ request.registry.settings.get("zam.menu_badge") }}</div>
+        {% if request.registry.settings.get('zam.menu_badge_label') %}
+        <div class="badge" style="background-color: {{ request.registry.settings.get('zam.menu_badge_color', '#aaaaaa') }};">{{ request.registry.settings.get('zam.menu_badge_label') }}</div>
         {% endif %}
     </nav>
 

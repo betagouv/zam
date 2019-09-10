@@ -61,7 +61,8 @@ zam.refresh.articles = 60
 zam.uploads_backup_dir = /srv/repondeur/data/uploads
 
 # Add badge in menu bar to identify environment
-zam.menu_badge = $$menu_badge
+zam.menu_badge_label = $$menu_badge_label
+zam.menu_badge_color = $$menu_badge_color
 
 
 [app:worker]

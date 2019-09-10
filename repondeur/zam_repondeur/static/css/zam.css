@@ -127,7 +127,6 @@ nav.main {
     nav.main .badge {
         margin-right: calc(2% + 2rem);
         font-size: 16px;
-        border: 1px solid white;
         text-transform: uppercase;
     }
 

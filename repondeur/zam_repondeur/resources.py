@@ -87,39 +87,6 @@ class WhitelistCollection(Resource):
         ).options(*options)
         return result
 
-    def __getitem__(self, key: str) -> Resource:
-        resource = WhitelistResource(name=key, parent=self)
-        try:
-            resource.model()
-        except ResourceNotFound:
-            raise KeyError
-        return resource
-
-
-class WhitelistResource(Resource):
-    def __acl__(self) -> List[ACE]:
-        return [(Allow, f"group:admins", "view"), (Deny, Authenticated, "view")]
-
-    def __init__(self, name: str, parent: Resource) -> None:
-        super().__init__(name=name, parent=parent)
-        self.pk = name
-
-    @property
-    def parent(self) -> WhitelistCollection:
-        return cast(WhitelistCollection, self.__parent__)
-
-    def model(self) -> AllowedEmailPattern:
-        if self.pk == "add":
-            raise KeyError
-
-        email_pattern: AllowedEmailPattern = (
-            DBSession.query(AllowedEmailPattern).filter_by(pk=self.pk).first()
-        )
-        if email_pattern is None:
-            raise ResourceNotFound(self)
-
-        return email_pattern
-
 
 class DossierCollection(Resource):
     __acl__ = [(Allow, "group:admins", "activate"), (Deny, Everyone, "activate")]

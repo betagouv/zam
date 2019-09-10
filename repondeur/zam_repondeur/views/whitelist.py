@@ -21,6 +21,9 @@ class WhitelistList(WhitelistCollectionBase):
         email_patterns = self.context.models()
         return {"email_patterns": email_patterns, "current_tab": "whitelist"}
 
+
+@view_defaults(context=WhitelistCollection, permission="manage")
+class WhitelistRemove(WhitelistCollectionBase):
     @view_config(request_method="POST")
     def post(self) -> Response:
         email_pattern_pk = self.request.POST["pk"]

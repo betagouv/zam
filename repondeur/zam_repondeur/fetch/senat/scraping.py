@@ -21,7 +21,7 @@ from zam_repondeur.slugs import slugify
 logger = logging.getLogger(__name__)
 
 
-BASE_URL_SENAT = "http://www.senat.fr"
+BASE_URL_SENAT = "https://www.senat.fr"
 TEXTES_RECENTS_URL = f"{BASE_URL_SENAT}/dossiers-legislatifs/textes-recents.html"
 
 

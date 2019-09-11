@@ -354,7 +354,7 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
     with transaction.manager:
         amendements_an[0].user_content.avis = "Favorable"
         amendements_an[0].user_content.objet = "Quelque chose"
-        amendements_an[0].user_content.reponse = "Bla bla bla"
+        amendements_an[0].user_content.reponse = "<p>Bla bla bla</p>"
         amendements_an[0].user_content.comments = "Lorem ipsum"
         DBSession.add_all(amendements_an)
 
@@ -380,6 +380,10 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
     # Both amendements should have the same avis
     assert amendement_666.user_content.avis == "Favorable"
     assert amendement_999.user_content.avis == "Favorable"
+
+    # Both amendements should keep their html content
+    assert amendement_666.user_content.reponse == "<p>Bla bla bla</p>"
+    assert amendement_999.user_content.reponse == "<p>Bla bla bla</p>"
 
     # An event was added to the second one
     assert len(amendement_999.events) == 5

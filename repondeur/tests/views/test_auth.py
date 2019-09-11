@@ -446,6 +446,18 @@ class TestOnboarding:
         user = DBSession.query(User).filter_by(email=user_david.email).first()
         assert user.name == "Something Else"
 
+    def test_admin_with_name_can_edit_it(self, app, user_sgg):
+        from zam_repondeur.models import DBSession, User
+
+        resp = app.get("/bienvenue", user=user_sgg)
+        assert resp.status_code == 200
+        assert resp.form["name"].value == "SGG user"
+        resp.form["name"] = " Something Else  "
+        resp.form.submit()
+
+        user = DBSession.query(User).filter_by(email=user_sgg.email).first()
+        assert user.name == "Something Else"
+
     def test_user_with_a_name_skips_the_welcome_page(self, app, user_david):
         from zam_repondeur.auth import generate_auth_token
         from zam_repondeur.models import DBSession

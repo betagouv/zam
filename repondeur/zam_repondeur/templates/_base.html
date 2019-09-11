@@ -75,7 +75,7 @@
                                         <li{% if current_tab == 'retrait' %} class="selected"{% endif %}><a href="{{ request.resource_url(dossier_resource, 'retrait') }}">Retirer l’accès au dossier</a></li>
                                     {% endif %}
                                 {% endif %}
-                                {% if request.user.is_admin %}
+                                {% if request.user.is_admin and current_tab is defined %}
                                     <li{% if current_tab == 'whitelist' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root, 'whitelist') }}">Gestion des accès</a></li>
                                 {% endif %}
                                 {% if request.user.name %}

@@ -129,17 +129,17 @@ class Reponse(NamedTuple):
         return cls(
             avis=amendement.user_content.avis or "",
             objet=(
-                do_striptags(amendement.user_content.objet)  # type: ignore
+                amendement.user_content.objet.strip()
                 if amendement.user_content.objet
                 else ""
             ),
             content=(
-                do_striptags(amendement.user_content.reponse)  # type: ignore
+                amendement.user_content.reponse.strip()
                 if amendement.user_content.reponse
                 else ""
             ),
             comments=(
-                do_striptags(amendement.user_content.comments)  # type: ignore
+                amendement.user_content.comments.strip()
                 if amendement.user_content.comments
                 else ""
             ),

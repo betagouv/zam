@@ -112,7 +112,11 @@ def create_missing_lectures(dossier_pk: int, user_pk: Optional[int] = None) -> N
             user = None
 
         dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
-        dossier_ref = dossiers_by_uid[dossier.uid]
+        try:
+            dossier_ref = dossiers_by_uid[dossier.uid]
+        except KeyError:
+            logger.warning(f"Missing key for dossier {dossier.uid}")
+            return
 
         changed = False
 

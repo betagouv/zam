@@ -189,7 +189,11 @@ def gen_lectures(
         else:
             raise NotImplementedError
 
-        texte = textes[result.texte]
+        try:
+            texte = textes[result.texte]
+        except KeyError:
+            logger.warning(f"Missing key for texte {result.texte}")
+            continue
 
         # The 1st "lecture" of the "projet de loi de finances" (PLF) has two parts
         parties: List[Optional[int]] = [

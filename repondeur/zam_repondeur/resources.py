@@ -375,7 +375,10 @@ class SharedTableResource(Resource):
         try:
             shared_table: SharedTable = (
                 DBSession.query(SharedTable)
-                .filter(SharedTable.slug == self.__name__)
+                .filter(
+                    SharedTable.slug == self.__name__,
+                    SharedTable.lecture == self.lecture_resource.model(),
+                )
                 .one()
             )
         except NoResultFound:

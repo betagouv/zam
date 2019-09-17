@@ -161,6 +161,23 @@ def test_post_shared_tables_edit_form(
     )
 
 
+def test_get_shared_tables_edit_form_with_existing_same_name_shared_table(
+    app, lecture_an, amendements_an, user_david, shared_table_lecture_an, lecture_senat
+):
+    from zam_repondeur.models import DBSession, SharedTable
+
+    with transaction.manager:
+        SharedTable.create(titre="Test table", lecture=lecture_senat)
+        DBSession.add(user_david)
+
+    resp = app.get(
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",
+        user=user_david,
+    )
+    assert resp.status_code == 200
+    assert "Test table" in resp.text
+
+
 def test_get_shared_tables_delete_form(
     app, lecture_an, amendements_an, user_david, shared_table_lecture_an
 ):

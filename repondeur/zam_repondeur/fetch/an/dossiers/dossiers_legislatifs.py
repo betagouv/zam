@@ -219,31 +219,48 @@ class WalkResult(NamedTuple):
 
 
 def walk_actes(acte: dict) -> Iterator[WalkResult]:
-    current_texte = None
+    texte_depose = None
+    texte_commission = None
 
     def _walk_actes(acte: dict) -> Iterator[WalkResult]:
-        nonlocal current_texte
+        nonlocal texte_depose, texte_commission
 
         code = acte["codeActe"]
         premiere_lecture = code.startswith("AN1") or code.startswith("SN1")
         phase = code.split("-", 1)[1] if "-" in code else ""
 
-        if phase in {"COM-FOND", "COM-AVIS", "DEBATS"}:
-            if current_texte is not None:
-                yield WalkResult(
-                    phase=phase,
-                    organe=acte["organeRef"],
-                    texte_examine=current_texte,
-                    premiere_lecture=premiere_lecture,
+        if phase in {"COM-FOND", "COM-AVIS"}:
+            texte_examine = texte_depose
+        elif phase == "DEBATS":
+            texte_examine = texte_commission
+            if texte_commission is None:
+                logger.warning(
+                    "Pas de rapport de la commission saisie au fond, "
+                    "examen du texte déposé"
                 )
-            else:
-                logger.warning(f"Could not match a text for {acte['uid']}")
+                texte_examine = texte_depose
+        else:
+            texte_examine = None
 
-        for key in ["texteAssocie", "texteAdopte"]:
-            if key in acte and acte[key] is not None:
-                uid = acte[key]
-                if uid[:4] in {"PRJL", "PION"}:
-                    current_texte = uid
+        if texte_examine is not None:
+            yield WalkResult(
+                phase=phase,
+                organe=acte["organeRef"],
+                texte_examine=texte_examine,
+                premiere_lecture=premiere_lecture,
+            )
+
+        # Texte déposé
+        if phase == "DEPOT":
+            texte_depose = acte["texteAssocie"]
+            texte_commission = None
+
+        # Texte adopté en commission (ou "null" si aucun amendement n'est adopté)
+        if phase == "COM-FOND-RAPPORT":
+            if acte["texteAdopte"] is not None:
+                texte_commission = acte["texteAdopte"]
+            else:
+                texte_commission = texte_depose
 
         for sous_acte in extract_actes(acte):
             yield from _walk_actes(sous_acte)

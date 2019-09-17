@@ -22,6 +22,7 @@
 ##### Semestre 2
 
 - projet de loi sur la bioéthique (DGS - ministère des solidarités et de la santé)
+- projet de loi relatif à l'engagement dans la vie locale et à la proximité de l'action publique (DGCL - ministère chargé des collectivités territoriales)
 - PLF pour 2020 (DLF - Bercy)
 - PLFSS pour 2020 (DSS - ministère des solidarités et de la santé)
 

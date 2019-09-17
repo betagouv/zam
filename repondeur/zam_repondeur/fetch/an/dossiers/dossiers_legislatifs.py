@@ -190,9 +190,9 @@ def gen_lectures(
             raise NotImplementedError
 
         try:
-            texte = textes[result.texte]
+            texte = textes[result.texte_examine]
         except KeyError:
-            logger.warning(f"Missing key for texte {result.texte}")
+            logger.warning(f"Missing key for texte {result.texte_examine}")
             continue
 
         # The 1st "lecture" of the "projet de loi de finances" (PLF) has two parts
@@ -214,7 +214,7 @@ def gen_lectures(
 class WalkResult(NamedTuple):
     phase: str
     organe: str
-    texte: str
+    texte_examine: str
     premiere_lecture: bool
 
 
@@ -233,7 +233,7 @@ def walk_actes(acte: dict) -> Iterator[WalkResult]:
                 yield WalkResult(
                     phase=phase,
                     organe=acte["organeRef"],
-                    texte=current_texte,
+                    texte_examine=current_texte,
                     premiere_lecture=premiere_lecture,
                 )
             else:

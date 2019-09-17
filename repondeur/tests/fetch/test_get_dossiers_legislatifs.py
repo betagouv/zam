@@ -621,13 +621,13 @@ def test_walk_actes(dossier_essoc, textes):
         WalkResult(
             phase="COM-FOND",
             organe="PO744107",
-            texte="PRJLANR5L15B0424",
+            texte_examine="PRJLANR5L15B0424",
             premiere_lecture=True,
         ),
         WalkResult(
             phase="DEBATS",
             organe="PO717460",
-            texte="PRJLANR5L15BTC0575",
+            texte_examine="PRJLANR5L15BTC0575",
             premiere_lecture=True,
         ),
     ]

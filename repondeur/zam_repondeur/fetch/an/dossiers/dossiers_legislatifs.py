@@ -153,7 +153,7 @@ def parse_dossier(dossier: dict, textes: Dict[str, TexteRef]) -> DossierRef:
     lectures = [
         lecture
         for acte in top_level_actes(dossier)
-        for lecture in gen_lectures(acte, textes, is_plf)
+        for lecture in gen_lectures(acte, textes, uid, is_plf)
     ]
     return DossierRef(
         uid=uid,
@@ -176,9 +176,9 @@ def top_level_actes(dossier: dict) -> Iterator[dict]:
 
 
 def gen_lectures(
-    acte: dict, textes: Dict[str, TexteRef], is_plf: bool = False
+    acte: dict, textes: Dict[str, TexteRef], dossier_uid: str, is_plf: bool = False
 ) -> Iterator[LectureRef]:
-    for result in walk_actes(acte):
+    for result in walk_actes(acte, dossier_uid):
         chambre, titre = TOP_LEVEL_ACTES[acte["codeActe"]]
         if result.phase == "COM-FOND":
             titre += " – Commission saisie au fond"
@@ -218,7 +218,7 @@ class WalkResult(NamedTuple):
     premiere_lecture: bool
 
 
-def walk_actes(acte: dict) -> Iterator[WalkResult]:
+def walk_actes(acte: dict, dossier_uid: str) -> Iterator[WalkResult]:
     texte_depose = None
     texte_commission = None
 
@@ -235,8 +235,8 @@ def walk_actes(acte: dict) -> Iterator[WalkResult]:
             texte_examine = texte_commission
             if texte_commission is None:
                 logger.warning(
-                    "Pas de rapport de la commission saisie au fond, "
-                    "examen du texte déposé"
+                    f"{dossier_uid}->{acte['uid']}: pas de rapport de la commission"
+                    " saisie au fond, examen du texte déposé"
                 )
                 texte_examine = texte_depose
         else:

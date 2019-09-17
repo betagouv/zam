@@ -591,7 +591,7 @@ class TestGenLectures:
 
         acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
 
-        lectures = list(gen_lectures(acte, textes))
+        lectures = list(gen_lectures(acte, textes, "DLR5L15N36159"))
 
         assert len(lectures) == 2
         assert "Commission saisie au fond" in lectures[0].titre
@@ -602,7 +602,7 @@ class TestGenLectures:
 
         acte = dossier_pacte_ferroviaire["actesLegislatifs"]["acteLegislatif"][0]
 
-        lectures = list(gen_lectures(acte, textes))
+        lectures = list(gen_lectures(acte, textes, "DLR5L15N36159"))
 
         assert len(lectures) == 3
         assert "Commission saisie au fond" in lectures[0].titre
@@ -617,7 +617,7 @@ def test_walk_actes(dossier_essoc, textes):
     )
 
     acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
-    assert list(walk_actes(acte)) == [
+    assert list(walk_actes(acte, "DLR5L15N36159")) == [
         WalkResult(
             phase="COM-FOND",
             organe="PO744107",

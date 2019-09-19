@@ -12,10 +12,11 @@ def test_get_list_empty(app, dossier_plfss2018, user_david):
 
 @pytest.fixture
 def lecture_commission(db, dossier_plfss2018, texte_plfss2018_an_premiere_lecture):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_plfss2018_an_premiere_lecture,
             titre="Numéro lecture – Titre lecture",
             organe="PO420120",
@@ -36,10 +37,11 @@ def test_get_list_not_empty(app, lecture_an, lecture_commission, user_david):
 
 
 def test_get_list_reverse_datetime_order(app, lecture_an, user_david):
-    from zam_repondeur.models import DBSession, Lecture
+    from zam_repondeur.models import DBSession, Lecture, Phase
 
     with transaction.manager:
         lecture2 = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=lecture_an.texte,
             titre="Numéro lecture 2 – Titre lecture 2",
             organe=lecture_an.organe,

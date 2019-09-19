@@ -39,10 +39,11 @@ def texte_essoc2018_an_premier_lecture_commission_fond(db):
 def lecture_essoc2018_an_premier_lecture_commission_fond(
     db, texte_essoc2018_an_premier_lecture_commission_fond, dossier_essoc2018
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_essoc2018_an_premier_lecture_commission_fond,
             titre="Première lecture – Commission saisie au fond",
             organe="PO744107",
@@ -72,10 +73,11 @@ def texte_essoc2018_an_premiere_lecture_seance_publique(db):
 def lecture_essoc2018_an_premiere_lecture_seance_publique(
     db, texte_essoc2018_an_premiere_lecture_seance_publique, dossier_essoc2018
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_essoc2018_an_premiere_lecture_seance_publique,
             titre="Première lecture – Séance publique",
             organe="PO717460",
@@ -105,10 +107,11 @@ def texte_essoc2018_senat_premiere_lecture_commission_fond(db):
 def lecture_essoc2018_senat_premiere_lecture_commission_fond(
     db, texte_essoc2018_senat_premiere_lecture_commission_fond, dossier_essoc2018
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_essoc2018_senat_premiere_lecture_commission_fond,
             titre="Première lecture – Commission saisie au fond",
             organe="PO748821",
@@ -138,10 +141,11 @@ def texte_essoc2018_senat_premiere_lecture_seance_publique(db):
 def lecture_essoc2018_senat_premiere_lecture_seance_publique(
     db, texte_essoc2018_senat_premiere_lecture_seance_publique, dossier_essoc2018
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_essoc2018_senat_premiere_lecture_seance_publique,
             titre="Première lecture – Séance publique",
             organe="PO78718",
@@ -171,10 +175,11 @@ def texte_essoc2018_an_nouvelle_lecture_commission_fond(db):
 def lecture_essoc2018_an_nouvelle_lecture_commission_fond(
     db, texte_essoc2018_an_nouvelle_lecture_commission_fond, dossier_essoc2018
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.NOUVELLE_LECTURE,
             texte=texte_essoc2018_an_nouvelle_lecture_commission_fond,
             titre="Nouvelle lecture – Commission saisie au fond",
             organe="PO744107",
@@ -204,10 +209,11 @@ def texte_essoc2018_an_nouvelle_lecture_seance_publique(db):
 def lecture_essoc2018_an_nouvelle_lecture_seance_publique(
     db, texte_essoc2018_an_nouvelle_lecture_seance_publique, dossier_essoc2018
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.NOUVELLE_LECTURE,
             texte=texte_essoc2018_an_nouvelle_lecture_seance_publique,
             titre="Nouvelle lecture – Séance publique",
             organe="PO717460",

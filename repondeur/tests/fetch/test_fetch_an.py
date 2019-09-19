@@ -164,11 +164,12 @@ class TestFetchAndParseAll:
     def test_sous_amendements(
         self, app, source, dossier_plfss2018, texte_plfss2018_an_premiere_lecture
     ):
-        from zam_repondeur.models import DBSession, Lecture
+        from zam_repondeur.models import DBSession, Lecture, Phase
 
         with transaction.manager:
             texte_plfss2018_an_premiere_lecture.numero = 911
             lecture = Lecture.create(
+                phase=Phase.PREMIERE_LECTURE,
                 texte=texte_plfss2018_an_premiere_lecture,
                 titre="Titre lecture",
                 organe="PO717460",

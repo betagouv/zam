@@ -4,10 +4,11 @@ import transaction
 
 @pytest.fixture
 def lecture_an(db, dossier_plfss2018, texte_plfss2018_an_premiere_lecture):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_plfss2018_an_premiere_lecture,
             titre="Numéro lecture – Titre lecture",
             organe="PO717460",
@@ -24,10 +25,11 @@ def lecture_an_url(lecture_an):
 
 @pytest.fixture
 def lecture_senat(db, dossier_plfss2018, texte_plfss2018_senat_premiere_lecture):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_plfss2018_senat_premiere_lecture,
             titre="Numéro lecture – Titre lecture sénat",
             organe="PO78718",

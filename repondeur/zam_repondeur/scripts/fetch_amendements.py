@@ -80,6 +80,7 @@ def fetch_amendements_for_dossier(
             ),
         )
         lecture = Lecture.create(
+            phase=lecture_ref.phase,
             dossier=dossier,
             texte=texte,
             partie=lecture_ref.partie,

@@ -32,13 +32,22 @@ class Lecture(Base, LastEventMixin):
     )
 
     pk = Column(Integer, primary_key=True)
+    created_at: datetime = Column(DateTime)
+
+    dossier_pk = Column(Integer, ForeignKey("dossiers.pk"))
+    dossier = relationship("Dossier", back_populates="lectures")
+
+    texte_pk = Column(Integer, ForeignKey("textes.pk"))
+    texte: Texte = relationship(Texte, back_populates="lectures")
+
+    partie = Column(Integer, nullable=True)  # only for PLF
 
     phase: Phase = Column(Enum(Phase), nullable=False)
     chambre = Column(Enum(Chambre))
-    partie = Column(Integer, nullable=True)  # only for PLF
     organe = Column(Text)
+
     titre = Column(Text)
-    created_at: datetime = Column(DateTime)
+
     amendements = relationship(
         Amendement,
         order_by=(Amendement.position, Amendement.num),
@@ -46,17 +55,13 @@ class Lecture(Base, LastEventMixin):
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
+
     articles = relationship(
         Article,
         back_populates="lecture",
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
-
-    dossier_pk = Column(Integer, ForeignKey("dossiers.pk"))
-    dossier = relationship("Dossier", back_populates="lectures")
-    texte_pk = Column(Integer, ForeignKey("textes.pk"))
-    texte: Texte = relationship(Texte, back_populates="lectures")
 
     __repr_keys__ = ("pk", "chambre", "organe", "partie")
 

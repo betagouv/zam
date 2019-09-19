@@ -16,6 +16,7 @@ from zam_repondeur.fetch.an.dossiers.models import (
     TypeTexte,
 )
 from zam_repondeur.models.organe import ORGANE_SENAT
+from zam_repondeur.models.phase import Phase
 from zam_repondeur.slugs import slugify
 
 logger = logging.getLogger(__name__)
@@ -102,6 +103,14 @@ def download_rss(url: str) -> str:
     return resp.text
 
 
+_PHASES = {
+    "Première lecture": Phase.PREMIERE_LECTURE,
+    "Deuxième lecture": Phase.DEUXIEME_LECTURE,
+    "Nouvelle lecture": Phase.NOUVELLE_LECTURE,
+    "Lecture définitive": Phase.LECTURE_DEFINITIVE,
+}
+
+
 def create_lecture(
     pid: str, entry: element.Tag, prev_texte: Optional[TexteRef] = None
 ) -> Optional[LectureRef]:
@@ -117,7 +126,7 @@ def create_lecture(
     if re.search(r"Texte (adopté|modifié) par le Sénat", summary):
         return None
 
-    num_lecture = summary.split(" - ", 1)[0]
+    phase = summary.split(" - ", 1)[0]
     texte = create_texte(pid, entry)
 
     mo = re.search(r"Texte (résultat des travaux )?de la commission", summary)
@@ -133,9 +142,15 @@ def create_lecture(
         examen = "Commissions"
         organe = ""
 
-    titre = f"{num_lecture} – {examen}"
+    titre = f"{phase} – {examen}"
 
-    return LectureRef(chambre=Chambre.SENAT, titre=titre, organe=organe, texte=texte)
+    return LectureRef(
+        chambre=Chambre.SENAT,
+        phase=_PHASES.get(phase, Phase.INCONNUE),
+        titre=titre,
+        organe=organe,
+        texte=texte,
+    )
 
 
 def create_texte(pid: str, entry: element.Tag) -> TexteRef:

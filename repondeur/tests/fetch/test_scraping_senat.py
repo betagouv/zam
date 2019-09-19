@@ -11,6 +11,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
     )
     from zam_repondeur.fetch.senat.scraping import get_dossiers_senat
     from zam_repondeur.models.chambre import Chambre
+    from zam_repondeur.models.phase import Phase
 
     dossiers = get_dossiers_senat()
 
@@ -43,6 +44,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/pjl18-404.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -59,6 +61,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -84,6 +87,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/pjl18-523.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -100,6 +104,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -125,6 +130,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/pjl18-526.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -141,6 +147,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -166,6 +173,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/pjl18-532.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -182,6 +190,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -207,6 +216,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl17-699.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -223,6 +233,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -248,6 +259,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-002.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -264,6 +276,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -280,6 +293,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.NOUVELLE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Nouvelle lecture – Commissions",
                     texte=TexteRef(
@@ -296,6 +310,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.NOUVELLE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Nouvelle lecture – Séance publique",
                     texte=TexteRef(
@@ -321,6 +336,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-043.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -337,6 +353,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -362,6 +379,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-229.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -378,6 +396,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -394,6 +413,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -419,6 +439,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-260.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -435,6 +456,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -460,6 +482,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-305.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -476,6 +499,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -501,6 +525,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-385.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -517,6 +542,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -542,6 +568,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-386.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -558,6 +585,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -583,6 +611,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-436.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -599,6 +628,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -624,6 +654,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-454.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -649,6 +680,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppl18-462.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -665,6 +697,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -690,6 +723,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
             senat_url="http://www.senat.fr/dossier-legislatif/ppr18-458.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -706,6 +740,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
                     partie=None,
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -788,6 +823,7 @@ def test_create_dossier():
     )
     from zam_repondeur.fetch.senat.scraping import create_dossier
     from zam_repondeur.models.chambre import Chambre
+    from zam_repondeur.models.phase import Phase
 
     assert create_dossier(
         "pjl18-404", "/dossier-legislatif/rss/doslegpjl18-404.xml"
@@ -799,6 +835,7 @@ def test_create_dossier():
         senat_url="http://www.senat.fr/dossier-legislatif/pjl18-404.html",
         lectures=[
             LectureRef(
+                phase=Phase.PREMIERE_LECTURE,
                 chambre=Chambre.SENAT,
                 titre="Première lecture – Commissions",
                 texte=TexteRef(
@@ -815,6 +852,7 @@ def test_create_dossier():
                 partie=None,
             ),
             LectureRef(
+                phase=Phase.PREMIERE_LECTURE,
                 chambre=Chambre.SENAT,
                 titre="Première lecture – Séance publique",
                 texte=TexteRef(

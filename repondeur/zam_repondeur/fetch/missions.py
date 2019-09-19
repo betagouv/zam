@@ -1,5 +1,5 @@
 import logging
-from typing import NamedTuple
+from typing import Dict, List, NamedTuple, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +11,15 @@ class MissionRef(NamedTuple):
 
 # Special case for PLF 2019
 # cf. http://www.senat.fr/ordre-du-jour/files/Calendrier_budgetaire_PLF2019.pdf
-ID_TXT_MISSIONS = {
+
+Session = str
+Texte = int
+Partie = Optional[int]
+IdTxt = int
+
+ID_TXT_MISSIONS: Dict[
+    Session, Dict[Texte, Dict[Partie, List[Tuple[IdTxt, MissionRef]]]]
+] = {
     "2018-2019": {
         146: {
             1: [(103393, MissionRef(titre="", titre_court=""))],

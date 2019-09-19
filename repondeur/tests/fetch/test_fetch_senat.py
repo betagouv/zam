@@ -45,10 +45,11 @@ def texte_plf(db):
 
 @pytest.fixture
 def lecture_plf_1re_partie(dossier_plf, texte_plf):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         return Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_plf,
             partie=1,
             titre="Numéro lecture – Titre lecture sénat",
@@ -59,10 +60,11 @@ def lecture_plf_1re_partie(dossier_plf, texte_plf):
 
 @pytest.fixture
 def lecture_plf_2e_partie(dossier_plf, texte_plf):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         return Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_plf,
             partie=2,
             titre="Numéro lecture – Titre lecture sénat",
@@ -509,7 +511,7 @@ def test_fetch_all_buggy_csv(lecture_senat, filename):
 @responses.activate
 def test_fetch_all_commission(dossier_plfss2018):
     from zam_repondeur.fetch.senat.amendements import _fetch_all
-    from zam_repondeur.models import Lecture, Texte, TypeTexte, Chambre
+    from zam_repondeur.models import Chambre, Lecture, Phase, Texte, TypeTexte
 
     with transaction.manager:
         texte = Texte.create(
@@ -520,6 +522,7 @@ def test_fetch_all_commission(dossier_plfss2018):
             date_depot=date(2017, 1, 1),
         )
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte,
             titre="Numéro lecture – Titre lecture sénat",
             organe="PO78718",
@@ -584,7 +587,14 @@ def test_fetch_all_not_found(lecture_senat):
 @responses.activate
 def test_fetch_discussion_details(dossier_plfss2018):
     from zam_repondeur.fetch.senat.derouleur import _fetch_discussion_details
-    from zam_repondeur.models import DBSession, Lecture, Texte, TypeTexte, Chambre
+    from zam_repondeur.models import (
+        Chambre,
+        DBSession,
+        Lecture,
+        Phase,
+        Texte,
+        TypeTexte,
+    )
 
     with transaction.manager:
         texte = Texte.create(
@@ -595,6 +605,7 @@ def test_fetch_discussion_details(dossier_plfss2018):
             date_depot=date(2017, 1, 1),
         )
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte,
             titre="Numéro lecture – Titre lecture sénat",
             organe="PO744107",
@@ -736,9 +747,10 @@ def test_derouleur_urls_and_mission_refs(lecture_senat):
 def test_derouleur_urls_and_mission_refs_plf2019_1re_partie(dossier_plf, texte_plf):
     from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_mission_refs
     from zam_repondeur.fetch.missions import MissionRef
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     lecture = Lecture.create(
+        phase=Phase.PREMIERE_LECTURE,
         texte=texte_plf,
         partie=1,
         titre="Première lecture – Séance publique (1re partie)",
@@ -757,9 +769,10 @@ def test_derouleur_urls_and_mission_refs_plf2019_1re_partie(dossier_plf, texte_p
 def test_derouleur_urls_and_mission_refs_plf2019_2e_partie(dossier_plf, texte_plf):
     from zam_repondeur.fetch.senat.derouleur import derouleur_urls_and_mission_refs
     from zam_repondeur.fetch.missions import MissionRef
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     lecture = Lecture.create(
+        phase=Phase.PREMIERE_LECTURE,
         texte=texte_plf,
         partie=2,
         titre="Première lecture – Séance publique (2e partie)",

@@ -11,6 +11,7 @@ from .chambre import Chambre
 from .division import SubDiv
 from .events.base import LastEventMixin
 from .organe import ORGANE_AN, ORGANE_SENAT
+from .phase import Phase
 from .texte import Texte
 
 # Make these types available to mypy, but avoid circular imports
@@ -31,6 +32,8 @@ class Lecture(Base, LastEventMixin):
     )
 
     pk = Column(Integer, primary_key=True)
+
+    phase: Phase = Column(Enum(Phase), nullable=False)
     chambre = Column(Enum(Chambre))
     partie = Column(Integer, nullable=True)  # only for PLF
     organe = Column(Text)
@@ -204,6 +207,7 @@ class Lecture(Base, LastEventMixin):
     @classmethod
     def create(
         cls,
+        phase: Phase,
         texte: "Texte",
         titre: str,
         organe: str,
@@ -213,6 +217,7 @@ class Lecture(Base, LastEventMixin):
         now = datetime.utcnow()
         chambre = texte.chambre
         lecture = cls(
+            phase=phase,
             chambre=chambre,
             texte=texte,
             titre=titre,
@@ -228,6 +233,7 @@ class Lecture(Base, LastEventMixin):
     def create_from_ref(
         cls, lecture_ref: Any, dossier: "Dossier", texte: "Texte"
     ) -> Optional["Lecture"]:
+        phase = lecture_ref.phase
         chambre = lecture_ref.chambre
         titre = lecture_ref.titre
         organe = lecture_ref.organe
@@ -237,7 +243,12 @@ class Lecture(Base, LastEventMixin):
             return None
 
         lecture = cls.create(
-            texte=texte, partie=partie, titre=titre, organe=organe, dossier=dossier
+            phase=phase,
+            texte=texte,
+            partie=partie,
+            titre=titre,
+            organe=organe,
+            dossier=dossier,
         )
         return lecture
 

@@ -162,10 +162,11 @@ def test_import_liasse_second_part(
     app, dossier_essoc2018, texte_essoc2018_an_nouvelle_lecture_commission_fond
 ):
     from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml, LectureDoesNotMatch
-    from zam_repondeur.models import DBSession, Lecture
+    from zam_repondeur.models import DBSession, Lecture, Phase
 
     with transaction.manager:
         part1 = Lecture.create(
+            phase=Phase.NOUVELLE_LECTURE,
             texte=texte_essoc2018_an_nouvelle_lecture_commission_fond,
             partie=1,
             titre="Nouvelle lecture – Titre lecture",
@@ -173,6 +174,7 @@ def test_import_liasse_second_part(
             dossier=dossier_essoc2018,
         )
         part2 = Lecture.create(
+            phase=Phase.NOUVELLE_LECTURE,
             texte=texte_essoc2018_an_nouvelle_lecture_commission_fond,
             partie=2,
             titre="Nouvelle lecture – Titre lecture",

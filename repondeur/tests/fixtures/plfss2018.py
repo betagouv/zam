@@ -39,10 +39,11 @@ def texte_plfss2018_an_premiere_lecture(db):
 def lecture_plfss2018_an_premiere_lecture_commission_fond(
     db, dossier_plfss2018, texte_plfss2018_an_premiere_lecture
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_plfss2018_an_premiere_lecture,
             titre="Première lecture – Commission saisie au fond",
             organe="PO420120",
@@ -56,10 +57,11 @@ def lecture_plfss2018_an_premiere_lecture_commission_fond(
 def lecture_plfss2018_an_premiere_lecture_commission_avis(
     db, dossier_plfss2018, texte_plfss2018_an_premiere_lecture
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_plfss2018_an_premiere_lecture,
             titre="Première lecture – Commission saisie pour avis",
             organe="PO59048",
@@ -73,10 +75,11 @@ def lecture_plfss2018_an_premiere_lecture_commission_avis(
 def lecture_plfss2018_an_premiere_lecture_seance_publique(
     db, dossier_plfss2018, texte_plfss2018_an_premiere_lecture
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_plfss2018_an_premiere_lecture,
             titre="Première lecture – Séance publique",
             organe="PO717460",
@@ -106,10 +109,11 @@ def texte_plfss2018_senat_premiere_lecture(db):
 def lecture_plfss2018_senat_premiere_lecture_commission_fond(
     db, dossier_plfss2018, texte_plfss2018_senat_premiere_lecture
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_plfss2018_senat_premiere_lecture,
             titre="Première lecture – Commission saisie au fond",
             organe="PO211493",
@@ -123,10 +127,11 @@ def lecture_plfss2018_senat_premiere_lecture_commission_fond(
 def lecture_plfss2018_senat_premiere_lecture_commission_avis(
     db, dossier_plfss2018, texte_plfss2018_senat_premiere_lecture
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_plfss2018_senat_premiere_lecture,
             titre="Première lecture – Commission saisie pour avis",
             organe="PO211494",
@@ -140,10 +145,11 @@ def lecture_plfss2018_senat_premiere_lecture_commission_avis(
 def lecture_plfss2018_senat_premiere_lecture_seance_publique(
     db, dossier_plfss2018, texte_plfss2018_senat_premiere_lecture
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
             texte=texte_plfss2018_senat_premiere_lecture,
             titre="Première lecture – Séance publique",
             organe="PO78718",
@@ -173,10 +179,11 @@ def texte_plfss2018_an_nouvelle_lecture(db):
 def lecture_plfss2018_an_nouvelle_lecture_commission_fond(
     db, dossier_plfss2018, texte_plfss2018_an_nouvelle_lecture
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.NOUVELLE_LECTURE,
             texte=texte_plfss2018_an_nouvelle_lecture,
             titre="Nouvelle lecture – Commission saisie au fond",
             organe="PO420120",
@@ -190,10 +197,11 @@ def lecture_plfss2018_an_nouvelle_lecture_commission_fond(
 def lecture_plfss2018_an_nouvelle_lecture_seance_publique(
     db, dossier_plfss2018, texte_plfss2018_an_nouvelle_lecture
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.NOUVELLE_LECTURE,
             texte=texte_plfss2018_an_nouvelle_lecture,
             titre="Nouvelle lecture – Séance publique",
             organe="PO717460",
@@ -223,10 +231,11 @@ def texte_plfss2018_senat_nouvelle_lecture(db):
 def lecture_plfss2018_senat_nouvelle_lecture_commission_fond(
     db, dossier_plfss2018, texte_plfss2018_senat_nouvelle_lecture
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.NOUVELLE_LECTURE,
             texte=texte_plfss2018_senat_nouvelle_lecture,
             titre="Nouvelle lecture – Commission saisie au fond",
             organe="PO211493",
@@ -240,10 +249,11 @@ def lecture_plfss2018_senat_nouvelle_lecture_commission_fond(
 def lecture_plfss2018_senat_nouvelle_lecture_seance_publique(
     db, dossier_plfss2018, texte_plfss2018_senat_nouvelle_lecture
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.NOUVELLE_LECTURE,
             texte=texte_plfss2018_senat_nouvelle_lecture,
             titre="Nouvelle lecture – Séance publique",
             organe="PO78718",
@@ -273,10 +283,11 @@ def texte_plfss2018_an_lecture_definitive(db):
 def lecture_plfss2018_an_lecture_definitive_commission_fond(
     db, dossier_plfss2018, texte_plfss2018_an_lecture_definitive
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.LECTURE_DÉFINITIVE,
             texte=texte_plfss2018_an_lecture_definitive,
             titre="Lecture définitive – Commission saisie au fond",
             organe="PO420120",
@@ -290,10 +301,11 @@ def lecture_plfss2018_an_lecture_definitive_commission_fond(
 def lecture_plfss2018_an_lecture_definitive_seance_publique(
     db, dossier_plfss2018, texte_plfss2018_an_lecture_definitive
 ):
-    from zam_repondeur.models import Lecture
+    from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
+            phase=Phase.LECTURE_DÉFINITIVE,
             texte=texte_plfss2018_an_lecture_definitive,
             titre="Lecture définitive – Séance publique",
             organe="PO717460",

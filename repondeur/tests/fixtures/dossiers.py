@@ -13,6 +13,7 @@ def mock_dossiers():
         TypeTexte,
     )
     from zam_repondeur.models.chambre import Chambre
+    from zam_repondeur.models.phase import Phase
 
     with patch("zam_repondeur.data.get_dossiers_legislatifs_and_textes") as m_dossiers:
         textes = {
@@ -88,18 +89,21 @@ def mock_dossiers():
                     LectureRef(
                         chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
+                        phase=Phase.PREMIERE_LECTURE,
                         texte=textes["PRJLANR5L15B0269"],
                         organe="PO717460",  # séance publique
                     ),
                     LectureRef(
                         chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
+                        phase=Phase.PREMIERE_LECTURE,
                         texte=textes["PRJLSNR5S299B0063"],
                         organe="PO78718",  # séance publique
                     ),
                     LectureRef(
                         chambre=Chambre.SENAT,
                         titre="Première lecture – Commission saisie au fond",
+                        phase=Phase.PREMIERE_LECTURE,
                         texte=textes["PRJLSNR5S299B0063"],
                         organe="PO211493",
                     ),
@@ -114,6 +118,7 @@ def mock_dossiers():
                 lectures=[
                     LectureRef(
                         chambre=Chambre.AN,
+                        phase=Phase.NOUVELLE_LECTURE,
                         titre="Nouvelle lecture – Titre lecture",
                         texte=textes["PRJLANR5L15B0806"],
                         organe="PO744107",  # commission spéciale
@@ -130,6 +135,7 @@ def mock_dossiers():
                     LectureRef(
                         chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
+                        phase=Phase.PREMIERE_LECTURE,
                         texte=textes["PRJLSNR5S319B0106"],
                         organe="PO78718",  # séance publique
                     )
@@ -145,6 +151,7 @@ def mock_dossiers():
                     LectureRef(
                         chambre=Chambre.AN,
                         titre="Première lecture – Commission saisie au fond",
+                        phase=Phase.PREMIERE_LECTURE,
                         texte=textes["PRJLANR5L15B1802"],
                         organe="PO59051",
                         partie=None,
@@ -152,6 +159,7 @@ def mock_dossiers():
                     LectureRef(
                         chambre=Chambre.AN,
                         titre="Première lecture – Séance publique",
+                        phase=Phase.PREMIERE_LECTURE,
                         texte=textes["PRJLANR5L15BTC1924"],
                         organe="PO717460",
                         partie=None,
@@ -160,6 +168,7 @@ def mock_dossiers():
                     # LectureRef(
                     #     chambre=Chambre.SENAT,
                     #     titre="Première lecture – Commission saisie au fond",
+                    #     phase=Phase.PREMIERE_LECTURE,
                     #     texte=TexteRef(
                     #         uid="PRJLSNR5S319B0532",
                     #         type_=TypeTexte.PROJET,

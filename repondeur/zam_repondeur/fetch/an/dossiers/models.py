@@ -5,6 +5,7 @@ from typing import Dict, List, Optional, Tuple
 
 from zam_repondeur.models.chambre import Chambre
 from zam_repondeur.models.organe import ORGANE_SENAT
+from zam_repondeur.models.phase import Phase
 from zam_repondeur.models.texte import TypeTexte
 
 
@@ -35,6 +36,7 @@ class TexteRef:
 @dataclass
 class LectureRef:
     chambre: Chambre
+    phase: Phase
     titre: str
     texte: TexteRef
     organe: str

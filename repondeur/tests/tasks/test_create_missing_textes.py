@@ -23,7 +23,7 @@ class TestCreateMissingtexte:
             LectureRef,
             TexteRef,
         )
-        from zam_repondeur.models import Chambre, DBSession, Texte, TypeTexte
+        from zam_repondeur.models import Chambre, DBSession, Phase, Texte, TypeTexte
         from zam_repondeur.tasks.periodic import create_missing_textes
 
         assert (
@@ -43,6 +43,7 @@ class TestCreateMissingtexte:
                     senat_url="",
                     lectures=[
                         LectureRef(
+                            phase=Phase.PREMIERE_LECTURE,
                             chambre=Chambre.AN,
                             titre="bla bla",
                             organe="PO717460",
@@ -77,7 +78,7 @@ class TestCreateMissingtexte:
             LectureRef,
             TexteRef,
         )
-        from zam_repondeur.models import Chambre, DBSession, Texte, TypeTexte
+        from zam_repondeur.models import Chambre, DBSession, Phase, Texte, TypeTexte
         from zam_repondeur.tasks.periodic import create_missing_textes
 
         create_missing_textes(
@@ -90,6 +91,7 @@ class TestCreateMissingtexte:
                     senat_url="",
                     lectures=[
                         LectureRef(
+                            phase=Phase.PREMIERE_LECTURE,
                             chambre=Chambre.AN,
                             titre="bla bla",
                             organe="PO717460",

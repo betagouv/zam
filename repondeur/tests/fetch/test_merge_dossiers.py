@@ -48,6 +48,7 @@ class TestMergeDossiers:
             TypeTexte,
         )
         from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
 
         dossiers1 = {
             "DLR5L15N36030": DossierRef(
@@ -58,6 +59,7 @@ class TestMergeDossiers:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -94,6 +96,7 @@ class TestMergeDossiers:
             TypeTexte,
         )
         from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
 
         dossiers1 = {
             "DLR5L15N36030": DossierRef(
@@ -104,6 +107,7 @@ class TestMergeDossiers:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -130,6 +134,7 @@ class TestMergeDossiers:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -145,6 +150,7 @@ class TestMergeDossiers:
                         organe="PO717460",
                     ),
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -174,6 +180,7 @@ class TestMergeDossiers:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -189,6 +196,7 @@ class TestMergeDossiers:
                         organe="PO717460",  # séance publique
                     ),
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -217,6 +225,7 @@ class TestMergeBySenatURL:
             TypeTexte,
         )
         from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
 
         dossiers1 = {
             "DLR5L15N36030": DossierRef(
@@ -227,6 +236,7 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -253,6 +263,7 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -268,6 +279,7 @@ class TestMergeBySenatURL:
                         organe="PO717460",
                     ),
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -297,6 +309,7 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -312,6 +325,7 @@ class TestMergeBySenatURL:
                         organe="PO717460",
                     ),
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -339,6 +353,7 @@ class TestMergeBySenatURL:
             TypeTexte,
         )
         from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
 
         dossiers1 = {
             "DLR5L15N36030": DossierRef(
@@ -349,6 +364,7 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -373,6 +389,7 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/pjl17-259.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.AN,
                         titre="Nouvelle lecture – Titre lecture",
                         texte=TexteRef(
@@ -399,6 +416,7 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -414,6 +432,7 @@ class TestMergeBySenatURL:
                         organe="PO717460",
                     ),
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -438,6 +457,7 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2019.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -467,6 +487,7 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.AN,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -482,6 +503,7 @@ class TestMergeBySenatURL:
                         organe="PO717460",
                     ),
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -506,6 +528,7 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/pjl17-259.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.AN,
                         titre="Nouvelle lecture – Titre lecture",
                         texte=TexteRef(
@@ -532,6 +555,7 @@ class TestMergeBySenatURL:
                 senat_url="http://www.senat.fr/dossier-legislatif/plfss2019.html",
                 lectures=[
                     LectureRef(
+                        phase=Phase.PREMIERE_LECTURE,
                         chambre=Chambre.SENAT,
                         titre="Première lecture – Titre lecture",
                         texte=TexteRef(
@@ -560,6 +584,7 @@ class TestAddDossiers:
             TypeTexte,
         )
         from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
 
         dossier_open_data = DossierRef(
             uid="DLR5L15N36030",
@@ -569,6 +594,7 @@ class TestAddDossiers:
             senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commission saisie au fond",
                     texte=TexteRef(
@@ -584,6 +610,7 @@ class TestAddDossiers:
                     organe="PO211493",  # known exact organe
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -608,6 +635,7 @@ class TestAddDossiers:
             senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commissions",
                     texte=TexteRef(
@@ -623,6 +651,7 @@ class TestAddDossiers:
                     organe="",  # unknown exact organe
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(
@@ -650,6 +679,7 @@ class TestAddDossiers:
             senat_url="http://www.senat.fr/dossier-legislatif/plfss2018.html",
             lectures=[
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Commission saisie au fond",
                     texte=TexteRef(
@@ -665,6 +695,7 @@ class TestAddDossiers:
                     organe="PO211493",  # known exact organe
                 ),
                 LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
                     chambre=Chambre.SENAT,
                     titre="Première lecture – Séance publique",
                     texte=TexteRef(

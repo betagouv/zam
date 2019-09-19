@@ -43,6 +43,7 @@ from .events.lecture import (  # noqa
     SharedTableSupprimee,
 )
 from .lecture import Lecture  # noqa
+from .phase import Phase  # noqa
 from .table import SharedTable, UserTable  # noqa
 from .texte import Texte, TypeTexte  # noqa
 from .users import AllowedEmailPattern, Team, User  # noqa

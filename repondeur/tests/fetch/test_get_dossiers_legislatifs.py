@@ -50,6 +50,7 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
     from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
     from zam_repondeur.fetch.an.dossiers.models import LectureRef, TexteRef, TypeTexte
     from zam_repondeur.models.chambre import Chambre
+    from zam_repondeur.models.phase import Phase
 
     dossier = parse_dossier(dossier_plfss_2018, textes)
 
@@ -107,72 +108,84 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
     )
     assert dossier.lectures == [
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie au fond",
             texte=texte_269,
             organe="PO420120",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_269,
             organe="PO59048",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Séance publique",
             texte=texte_269,
             organe="PO717460",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.SENAT,
             titre="Première lecture – Commission saisie au fond",
             texte=texte_63,
             organe="PO211493",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.SENAT,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_63,
             organe="PO211494",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.SENAT,
             titre="Première lecture – Séance publique",
             texte=texte_63,
             organe="PO78718",
         ),
         LectureRef(
+            phase=Phase.NOUVELLE_LECTURE,
             chambre=Chambre.AN,
             titre="Nouvelle lecture – Commission saisie au fond",
             texte=texte_387,
             organe="PO420120",
         ),
         LectureRef(
+            phase=Phase.NOUVELLE_LECTURE,
             chambre=Chambre.AN,
             titre="Nouvelle lecture – Séance publique",
             texte=texte_387,
             organe="PO717460",
         ),
         LectureRef(
+            phase=Phase.NOUVELLE_LECTURE,
             chambre=Chambre.SENAT,
             titre="Nouvelle lecture – Commission saisie au fond",
             texte=texte_121,
             organe="PO211493",
         ),
         LectureRef(
+            phase=Phase.NOUVELLE_LECTURE,
             chambre=Chambre.SENAT,
             titre="Nouvelle lecture – Séance publique",
             texte=texte_121,
             organe="PO78718",
         ),
         LectureRef(
+            phase=Phase.LECTURE_DEFINITIVE,
             chambre=Chambre.AN,
             titre="Lecture définitive – Commission saisie au fond",
             texte=texte_434,
             organe="PO420120",
         ),
         LectureRef(
+            phase=Phase.LECTURE_DEFINITIVE,
             chambre=Chambre.AN,
             titre="Lecture définitive – Séance publique",
             texte=texte_434,
@@ -191,6 +204,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
     from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
     from zam_repondeur.fetch.an.dossiers.models import LectureRef, TexteRef, TypeTexte
     from zam_repondeur.models.chambre import Chambre
+    from zam_repondeur.models.phase import Phase
 
     dossier = parse_dossier(dossier_plf_2018, textes)
 
@@ -248,6 +262,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
     )
     assert dossier.lectures == [
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie au fond",
             texte=texte_235,
@@ -255,6 +270,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO59048",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie au fond",
             texte=texte_235,
@@ -262,6 +278,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO59048",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -269,6 +286,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO420120",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -276,6 +294,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO420120",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -283,6 +302,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO419604",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -290,6 +310,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO419604",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -297,6 +318,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO419610",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -304,6 +326,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO419610",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -311,6 +334,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO59047",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -318,6 +342,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO59047",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -325,6 +350,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO59046",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -332,6 +358,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO59046",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -339,6 +366,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO59051",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -346,6 +374,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO59051",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -353,6 +382,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO419865",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie pour avis",
             texte=texte_235,
@@ -360,6 +390,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO419865",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Séance publique",
             texte=texte_235,
@@ -367,6 +398,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO717460",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.AN,
             titre="Première lecture – Séance publique",
             texte=texte_235,
@@ -374,6 +406,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO717460",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.SENAT,
             titre="Première lecture – Commission saisie au fond",
             texte=texte_107,
@@ -381,6 +414,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO211494",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.SENAT,
             titre="Première lecture – Commission saisie au fond",
             texte=texte_107,
@@ -388,6 +422,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO211494",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.SENAT,
             titre="Première lecture – Séance publique",
             texte=texte_107,
@@ -395,6 +430,7 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO78718",
         ),
         LectureRef(
+            phase=Phase.PREMIERE_LECTURE,
             chambre=Chambre.SENAT,
             titre="Première lecture – Séance publique",
             texte=texte_107,
@@ -402,36 +438,42 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
             organe="PO78718",
         ),
         LectureRef(
+            phase=Phase.NOUVELLE_LECTURE,
             chambre=Chambre.AN,
             titre="Nouvelle lecture – Commission saisie au fond",
             texte=texte_485,
             organe="PO59048",
         ),
         LectureRef(
+            phase=Phase.NOUVELLE_LECTURE,
             chambre=Chambre.AN,
             titre="Nouvelle lecture – Séance publique",
             texte=texte_485,
             organe="PO717460",
         ),
         LectureRef(
+            phase=Phase.NOUVELLE_LECTURE,
             chambre=Chambre.SENAT,
             titre="Nouvelle lecture – Commission saisie au fond",
             texte=texte_172,
             organe="PO211494",
         ),
         LectureRef(
+            phase=Phase.NOUVELLE_LECTURE,
             chambre=Chambre.SENAT,
             titre="Nouvelle lecture – Séance publique",
             texte=texte_172,
             organe="PO78718",
         ),
         LectureRef(
+            phase=Phase.LECTURE_DEFINITIVE,
             chambre=Chambre.AN,
             titre="Lecture définitive – Commission saisie au fond",
             texte=texte_506,
             organe="PO59048",
         ),
         LectureRef(
+            phase=Phase.LECTURE_DEFINITIVE,
             chambre=Chambre.AN,
             titre="Lecture définitive – Séance publique",
             texte=texte_506,
@@ -455,11 +497,13 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
         TypeTexte,
     )
     from zam_repondeur.models.chambre import Chambre
+    from zam_repondeur.models.phase import Phase
 
     lectures = [
         LectureRef(
             chambre=Chambre.AN,
             titre="Première lecture – Commission saisie au fond",
+            phase=Phase.PREMIERE_LECTURE,
             texte=TexteRef(
                 uid="PRJLANR5L15B0424",
                 type_=TypeTexte.PROJET,
@@ -475,6 +519,7 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
         LectureRef(
             chambre=Chambre.AN,
             titre="Première lecture – Séance publique",
+            phase=Phase.PREMIERE_LECTURE,
             texte=TexteRef(
                 uid="PRJLANR5L15BTC0575",
                 type_=TypeTexte.PROJET,
@@ -490,6 +535,7 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
         LectureRef(
             chambre=Chambre.SENAT,
             titre="Première lecture – Commission saisie au fond",
+            phase=Phase.PREMIERE_LECTURE,
             texte=TexteRef(
                 uid="PRJLSNR5S299B0259",
                 type_=TypeTexte.PROJET,
@@ -505,6 +551,7 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
         LectureRef(
             chambre=Chambre.SENAT,
             titre="Première lecture – Séance publique",
+            phase=Phase.PREMIERE_LECTURE,
             texte=TexteRef(
                 uid="PRJLSNR5S299BTC0330",
                 type_=TypeTexte.PROJET,
@@ -518,6 +565,7 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
             organe="PO78718",
         ),
         LectureRef(
+            phase=Phase.NOUVELLE_LECTURE,
             chambre=Chambre.AN,
             titre="Nouvelle lecture – Commission saisie au fond",
             texte=TexteRef(
@@ -533,6 +581,7 @@ def test_parse_dossier_essoc(dossier_essoc, textes):
             organe="PO744107",
         ),
         LectureRef(
+            phase=Phase.NOUVELLE_LECTURE,
             chambre=Chambre.AN,
             titre="Nouvelle lecture – Séance publique",
             texte=TexteRef(
@@ -612,22 +661,26 @@ class TestGenLectures:
 
 def test_walk_actes(dossier_essoc, textes):
     from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
+        Chambre,
         walk_actes,
         WalkResult,
     )
+    from zam_repondeur.models.phase import Phase
 
     acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
     assert list(walk_actes(acte, "DLR5L15N36159")) == [
         WalkResult(
-            phase="COM-FOND",
+            chambre=Chambre.AN,
+            phase=Phase.PREMIERE_LECTURE,
+            etape="COM-FOND",
             organe="PO744107",
             texte_examine="PRJLANR5L15B0424",
-            premiere_lecture=True,
         ),
         WalkResult(
-            phase="DEBATS",
+            chambre=Chambre.AN,
+            phase=Phase.PREMIERE_LECTURE,
+            etape="DEBATS",
             organe="PO717460",
             texte_examine="PRJLANR5L15BTC0575",
-            premiere_lecture=True,
         ),
     ]

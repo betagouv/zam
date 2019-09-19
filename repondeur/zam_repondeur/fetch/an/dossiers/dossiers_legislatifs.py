@@ -1,4 +1,5 @@
 import logging
+import re
 from json import load
 from typing import Any, Dict, Iterator, List, NamedTuple, Optional, Tuple
 
@@ -7,7 +8,7 @@ from zam_repondeur.slugs import slugify
 
 from ...dates import parse_date
 from ..common import extract_from_remote_zip, roman
-from .models import DossierRef, DossierRefsByUID, LectureRef, TexteRef, TypeTexte
+from .models import DossierRef, DossierRefsByUID, LectureRef, Phase, TexteRef, TypeTexte
 
 logger = logging.getLogger(__name__)
 
@@ -180,11 +181,11 @@ def gen_lectures(
 ) -> Iterator[LectureRef]:
     for result in walk_actes(acte, dossier_uid):
         chambre, titre = TOP_LEVEL_ACTES[acte["codeActe"]]
-        if result.phase == "COM-FOND":
+        if result.etape == "COM-FOND":
             titre += " – Commission saisie au fond"
-        elif result.phase == "COM-AVIS":
+        elif result.etape == "COM-AVIS":
             titre += " – Commission saisie pour avis"
-        elif result.phase == "DEBATS":
+        elif result.etape == "DEBATS":
             titre += " – Séance publique"
         else:
             raise NotImplementedError
@@ -199,10 +200,11 @@ def gen_lectures(
         parties: List[Optional[int]] = [
             1,
             2,
-        ] if is_plf and result.premiere_lecture else [None]
+        ] if is_plf and result.phase == Phase.PREMIERE_LECTURE else [None]
 
         for partie in parties:
             yield LectureRef(
+                phase=result.phase,
                 chambre=chambre,
                 titre=titre,
                 texte=texte,
@@ -212,10 +214,11 @@ def gen_lectures(
 
 
 class WalkResult(NamedTuple):
-    phase: str
+    chambre: Chambre
+    phase: Phase
+    etape: str
     organe: str
     texte_examine: str
-    premiere_lecture: bool
 
 
 def walk_actes(acte: dict, dossier_uid: str) -> Iterator[WalkResult]:
@@ -225,13 +228,11 @@ def walk_actes(acte: dict, dossier_uid: str) -> Iterator[WalkResult]:
     def _walk_actes(acte: dict) -> Iterator[WalkResult]:
         nonlocal texte_depose, texte_commission
 
-        code = acte["codeActe"]
-        premiere_lecture = code.startswith("AN1") or code.startswith("SN1")
-        phase = code.split("-", 1)[1] if "-" in code else ""
+        chambre, phase, etape = parse_code_acte(acte["codeActe"])
 
-        if phase in {"COM-FOND", "COM-AVIS"}:
+        if etape in {"COM-FOND", "COM-AVIS"}:
             texte_examine = texte_depose
-        elif phase == "DEBATS":
+        elif etape == "DEBATS":
             texte_examine = texte_commission
             if texte_commission is None:
                 logger.warning(
@@ -244,19 +245,20 @@ def walk_actes(acte: dict, dossier_uid: str) -> Iterator[WalkResult]:
 
         if texte_examine is not None:
             yield WalkResult(
+                chambre=chambre,
                 phase=phase,
+                etape=etape,
                 organe=acte["organeRef"],
                 texte_examine=texte_examine,
-                premiere_lecture=premiere_lecture,
             )
 
         # Texte déposé
-        if phase == "DEPOT":
+        if etape == "DEPOT":
             texte_depose = acte["texteAssocie"]
             texte_commission = None
 
         # Texte adopté en commission (ou "null" si aucun amendement n'est adopté)
-        if phase == "COM-FOND-RAPPORT":
+        if etape == "COM-FOND-RAPPORT":
             if acte["texteAdopte"] is not None:
                 texte_commission = acte["texteAdopte"]
             else:
@@ -266,6 +268,31 @@ def walk_actes(acte: dict, dossier_uid: str) -> Iterator[WalkResult]:
             yield from _walk_actes(sous_acte)
 
     yield from _walk_actes(acte)
+
+
+_CHAMBRES = {"AN": Chambre.AN, "SN": Chambre.SENAT}
+
+
+_PHASES = {
+    "1": Phase.PREMIERE_LECTURE,
+    "2": Phase.DEUXIEME_LECTURE,
+    "NLEC": Phase.NOUVELLE_LECTURE,
+    "LDEF": Phase.LECTURE_DEFINITIVE,
+}
+
+
+def parse_code_acte(code_acte: str) -> Tuple[Chambre, Phase, str]:
+    """
+    Phase: 1re lecture, 2e lecture, nouvelle lecture, lecture définitive
+    Étape: commission, séance, publique...
+    """
+    mo = re.match("(?P<chambre>AN|SN)(?P<phase>[A-Z0-9]+)(-(?P<etape>.*))?", code_acte)
+    if mo is None:
+        raise ValueError(f"Could not parse codeActe: {code_acte!r}")
+    chambre = _CHAMBRES[mo.group("chambre")]
+    phase = _PHASES.get(mo.group("phase"), Phase.INCONNUE)
+    etape = mo.group("etape") or ""
+    return chambre, phase, etape
 
 
 def extract_actes(acte: dict) -> List[dict]:

@@ -75,7 +75,7 @@ def _import_backup_from_json_file(
     backup_file: BinaryIO,
     lecture: Lecture,
     amendements: Dict[int, Amendement],
-    articles: Dict[int, Article],
+    articles: Dict[str, Article],
     team: Team,
 ) -> Counter:
     previous_reponse = ""

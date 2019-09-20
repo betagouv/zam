@@ -23,7 +23,6 @@ use = egg:zam_repondeur
 
 pyramid.includes =
     pyramid_mailer
-    rollbar.contrib.pyramid
 
 rollbar.access_token = $$rollbar_token
 rollbar.environment = $$environment

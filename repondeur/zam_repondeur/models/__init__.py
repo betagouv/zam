@@ -74,10 +74,4 @@ def get_one_or_create(
     try:
         return _get_one(model, options, **kwargs)
     except NoResultFound:
-        try:
-            return _create(model, create_kwargs, **kwargs)
-        except IntegrityError:  # Race condition?
-            try:
-                return _get_one(model, options, **kwargs)
-            except NoResultFound:  # Retry to raise the appropriated IntegrityError.
-                return _create(model, create_kwargs, **kwargs)
+        return _create(model, create_kwargs, **kwargs)

@@ -195,6 +195,37 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
 
 
 @pytest.fixture
+def dossier_ecole_de_la_confiance():
+    with open(HERE / "sample_data" / "dossier-DLR5L15N37055.json") as f_:
+        return json.load(f_)["dossierParlementaire"]
+
+
+def test_parse_dossier_ecole_de_la_confiance(dossier_ecole_de_la_confiance, textes):
+    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
+    from zam_repondeur.models.chambre import Chambre
+    from zam_repondeur.models.phase import Phase
+
+    dossier = parse_dossier(dossier_ecole_de_la_confiance, textes)
+
+    assert dossier.uid == "DLR5L15N37055"
+    assert dossier.titre == "Ecole de la confiance"
+
+    lecture = dossier.lectures[2]
+    assert lecture.phase == Phase.PREMIERE_LECTURE
+    assert lecture.chambre == Chambre.SENAT
+    assert lecture.organe == "PO211490"  # commission
+    assert lecture.texte.numero == 323
+    assert lecture.partie is None
+
+    lecture = dossier.lectures[3]
+    assert lecture.phase == Phase.PREMIERE_LECTURE
+    assert lecture.chambre == Chambre.SENAT
+    assert lecture.organe == "PO78718"  # séance publique
+    assert lecture.texte.numero == 474
+    assert lecture.partie is None
+
+
+@pytest.fixture
 def dossier_plf_2018():
     with open(HERE / "sample_data" / "dossier-DLR5L15N35854.json") as f_:
         return json.load(f_)["dossierParlementaire"]

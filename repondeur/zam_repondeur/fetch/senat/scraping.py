@@ -160,9 +160,7 @@ def create_texte(pid: str, entry: element.Tag) -> TexteRef:
         "ppl": TypeTexte.PROPOSITION,
         "pjl": TypeTexte.PROJET,
     }
-    type_legislature = pid.split("-", 1)[0]
-    type_ = type_legislature[:3]
-    legislature = int(type_legislature[-2:])
+    type_ = pid[:3]
     # One day is added considering we have to deal with timezones
     # and we only need the date.
     # E.g.: 2019-05-21T22:00:00Z
@@ -173,7 +171,7 @@ def create_texte(pid: str, entry: element.Tag) -> TexteRef:
         uid=uid,
         type_=type_dict[type_],
         chambre=Chambre.SENAT,
-        legislature=legislature,
+        legislature=None,
         numero=int(numero),
         titre_long="",
         titre_court="",

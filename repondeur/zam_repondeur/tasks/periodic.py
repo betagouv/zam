@@ -2,11 +2,10 @@
 NB: make sure tasks.huey.init_huey() has been called before importing this module
 """
 import logging
+from typing import Set
 
 from huey import crontab
 
-from zam_repondeur.dossiers import get_dossiers_legislatifs_from_cache
-from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
 from zam_repondeur.models import DBSession, Dossier, Team, Texte
 from zam_repondeur.tasks.fetch import update_dossier
 from zam_repondeur.tasks.huey import huey
@@ -17,7 +16,8 @@ logger = logging.getLogger(__name__)
 @huey.periodic_task(crontab(minute="1", hour="*"))
 def update_data() -> None:
     update_data_repository()
-    update_textes_and_dossiers()
+    update_dossiers()
+    update_textes()
 
 
 def update_data_repository() -> None:
@@ -31,33 +31,47 @@ def update_data_repository() -> None:
     logger.info("Data update end")
 
 
-def update_textes_and_dossiers() -> None:
+def update_dossiers() -> None:
     """
-    Update Textes and Dossiers in database based on data in Redis cache
+    Update Dossiers in database based on data in Redis cache
     """
-    logger.info("Textes and dossiers update start")
-    dossiers_by_uid = get_dossiers_legislatifs_from_cache()
-    create_missing_dossiers(dossiers_by_uid)
-    create_missing_textes(dossiers_by_uid)
-    logger.info("Textes and dossiers update end")
+    from zam_repondeur.data import repository
+
+    logger.info("Dossiers update start")
+    dossiers_opendata = set(repository.list_opendata_dossiers())
+    dossiers_scraping = set(repository.list_senat_scraping_dossiers())
+    create_missing_dossiers(dossiers_opendata | dossiers_scraping)
+    logger.info("Dossiers update end")
 
 
-def create_missing_dossiers(dossiers_by_uid: DossierRefsByUID) -> None:
+def create_missing_dossiers(all_dossiers: Set[str]) -> None:
+    from zam_repondeur.data import repository
+
     existing_dossiers = set(t[0] for t in DBSession.query(Dossier.uid))
-    for uid, dossier_ref in dossiers_by_uid.items():
-        if uid not in existing_dossiers:
-            Dossier.create(uid=uid, titre=dossier_ref.titre, slug=dossier_ref.slug)
+    missing_dossiers = all_dossiers - existing_dossiers
+    for uid in missing_dossiers:
+        dossier_ref = repository.get_dossier_ref(uid)
+        Dossier.create(uid=uid, titre=dossier_ref.titre, slug=dossier_ref.slug)
 
 
-def create_missing_textes(dossiers_by_uid: DossierRefsByUID) -> None:
+def update_textes() -> None:
+    """
+    Update Textes in database based on data in Redis cache
+    """
+    from zam_repondeur.data import repository
+
+    logger.info("Textes update start")
+    create_missing_textes(set(repository.list_opendata_textes()))
+    logger.info("Textes  update end")
+
+
+def create_missing_textes(all_textes: Set[str]) -> None:
+    from zam_repondeur.data import repository
+
     existing_textes = set(
         DBSession.query(Texte.chambre, Texte.session, Texte.legislature, Texte.numero)
     )
-    texte_refs = {
-        lecture_ref.texte
-        for dossier_ref in dossiers_by_uid.values()
-        for lecture_ref in dossier_ref.lectures
-    }
+    texte_refs = {repository.get_opendata_texte(uid) for uid in all_textes}
     new_texte_refs = {
         texte_ref
         for texte_ref in texte_refs

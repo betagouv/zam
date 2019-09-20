@@ -9,7 +9,6 @@ from progressist import ProgressBar
 from pyramid.paster import bootstrap, setup_logging
 
 from zam_repondeur.data import repository
-from zam_repondeur.dossiers import get_dossiers_legislatifs_open_data_from_cache
 from zam_repondeur.fetch.amendements import RemoteSource
 from zam_repondeur.fetch.an.dossiers.models import DossierRef
 from zam_repondeur.models import Dossier, Lecture, Texte, get_one_or_create
@@ -45,13 +44,11 @@ def parse_args(argv: List[str]) -> Namespace:
 
 
 def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> None:
-    dossier_refs_dict = get_dossiers_legislatifs_open_data_from_cache()
-    dossier_refs: List[DossierRef] = list(dossier_refs_dict.values())
-    bar = ProgressBar(
-        total=sum(len(dossier_ref.lectures) for dossier_ref in dossier_refs)
-    )
-    random.shuffle(dossier_refs)
-    for dossier_ref in dossier_refs:
+    uids = repository.list_opendata_dossiers()
+    bar = ProgressBar(total=len(uids))
+    random.shuffle(uids)
+    for uid in uids:
+        dossier_ref = repository.get_opendata_dossier(uid)
         fetch_amendements_for_dossier(dossier_ref, chambre, num)
         bar.update(step=len(dossier_ref.lectures))
 

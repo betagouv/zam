@@ -164,10 +164,8 @@ def check_same_lecture(
     if organe is None:
         raise ValueError("Missing organeExamen")
 
-    textes_by_uid = get_textes_open_data_from_cache()
-    try:
-        texte_ref = textes_by_uid[texte_uid]
-    except KeyError:
+    texte_ref = repository.get_opendata_texte(texte_uid)
+    if texte_ref is None:
         raise ValueError("Unknown texte")
 
     if (
@@ -257,19 +255,18 @@ def get_sort(sort: Optional[str], etat: Optional[str]) -> str:
 
 
 def get_auteur_name(uid: str) -> str:
-    acteurs = repository.get_data("an.opendata.acteurs")
-    if uid not in acteurs:
+    acteur = repository.get_opendata_acteur(uid)
+    if acteur is None:
         raise ValueError(f"Unknown auteur {uid}")
-    acteur = acteurs[uid]
     ident: Dict[str, str] = acteur["etatCivil"]["ident"]
     return ident["prenom"] + " " + ident["nom"]
 
 
 def get_groupe_name(uid: str) -> str:
-    organes = repository.get_data("an.opendata.organes")
-    if uid not in organes:
+    groupe = repository.get_opendata_organe(uid)
+    if groupe is None:
         raise ValueError(f"Unknown groupe {uid}")
-    libelle: str = organes[uid]["libelle"]
+    libelle: str = groupe["libelle"]
     return libelle
 
 
@@ -303,8 +300,3 @@ def get_number_from_uid(uid: str) -> int:
     if mo is None:
         raise ValueError(f"Cannot extract amendement number from {uid}") from None
     return int(mo.group("num"))
-
-
-def get_textes_open_data_from_cache() -> Dict[str, TexteRef]:
-    textes: Dict[str, TexteRef] = repository.get_data("an.opendata.textes")
-    return textes

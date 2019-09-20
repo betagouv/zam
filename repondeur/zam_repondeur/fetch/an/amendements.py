@@ -410,15 +410,14 @@ def build_url(lecture: Lecture, numero_prefixe: str = "") -> str:
     return url
 
 
-def get_organe_abrev(organe: str) -> str:
+def get_organe_abrev(organe_uid: str) -> str:
     from zam_repondeur.data import repository
 
-    try:
-        data = repository.get_data("an.opendata.organes")[organe]
-        abrev: str = data["libelleAbrev"]
-        return abrev
-    except KeyError:
+    organe = repository.get_opendata_organe(organe_uid)
+    if organe is None:
         raise OrganeNotFound(organe)
+    abrev: str = organe["libelleAbrev"]
+    return abrev
 
 
 def parse_num_in_liste(num_long: str) -> Tuple[str, int]:
@@ -444,7 +443,6 @@ def get_groupe(raw_auteur: OrderedDict, amendement_num: int) -> str:
     groupe_tribun_id = get_str_or_none(raw_auteur, "groupeTribunId")
     if gouvernemental or (groupe_tribun_id is None):
         return ""
-    groupes = repository.get_data("an.opendata.organes")
     try:
         groupe_tribun_id = f"PO{raw_auteur['groupeTribunId']}"
     except KeyError:
@@ -452,16 +450,16 @@ def get_groupe(raw_auteur: OrderedDict, amendement_num: int) -> str:
             "Unknown groupe %r for amendement %s", groupe_tribun_id, amendement_num
         )
         return ""
-    try:
-        groupe: Dict[str, str] = groupes[groupe_tribun_id]
-    except KeyError:
+    groupe = repository.get_opendata_organe(groupe_tribun_id)
+    if groupe is None:
         logger.error(
             "Unknown groupe tribun %r in groupes for amendement %s",
             groupe_tribun_id,
             amendement_num,
         )
         return ""
-    return groupe["libelle"]
+    libelle: str = groupe["libelle"]
+    return libelle
 
 
 ETATS_OK = {

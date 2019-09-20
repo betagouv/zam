@@ -73,5 +73,5 @@ def get_one_or_create(
 ) -> Tuple[Any, bool]:
     try:
         return _get_one(model, options, **kwargs)
-    except NoResultFound:
+    except (NoResultFound, IntegrityError):
         return _create(model, create_kwargs, **kwargs)

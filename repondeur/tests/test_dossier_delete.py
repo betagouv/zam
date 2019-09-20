@@ -6,9 +6,11 @@ def test_dossier_delete(app, lecture_an, amendements_an, user_sgg, team_zam):
 
     assert Dossier.exists(slug="plfss-2018")
     assert Lecture.exists(
-        chambre=lecture_an.chambre,
+        dossier=lecture_an.dossier,
         texte=lecture_an.texte,
         partie=None,
+        phase=lecture_an.phase,
+        chambre=lecture_an.chambre,
         organe=lecture_an.organe,
     )
     assert DBSession.query(Amendement).count() == 2
@@ -33,9 +35,11 @@ def test_dossier_delete(app, lecture_an, amendements_an, user_sgg, team_zam):
     )
     assert dossier_plfss2018.team is None
     assert not Lecture.exists(
-        chambre=lecture_an.chambre,
+        dossier=lecture_an.dossier,
         texte=lecture_an.texte,
         partie=None,
+        phase=lecture_an.phase,
+        chambre=lecture_an.chambre,
         organe=lecture_an.organe,
     )
     assert DBSession.query(Amendement).count() == 0
@@ -62,9 +66,11 @@ def test_dossier_delete_non_sgg_whitelisted_user(
         team_zam.users.append(user_sgg_not_whitelisted)
 
     assert Lecture.exists(
-        chambre=lecture_an.chambre,
+        dossier=lecture_an.dossier,
         texte=lecture_an.texte,
         partie=None,
+        phase=lecture_an.phase,
+        chambre=lecture_an.chambre,
         organe=lecture_an.organe,
     )
     assert DBSession.query(Amendement).count() == 2
@@ -84,9 +90,11 @@ def test_dossier_delete_non_sgg_whitelisted_user(
     assert "Vous n’êtes pas autorisé à supprimer ce dossier." in resp.text
 
     assert Lecture.exists(
-        chambre=lecture_an.chambre,
+        dossier=lecture_an.dossier,
         texte=lecture_an.texte,
         partie=None,
+        phase=lecture_an.phase,
+        chambre=lecture_an.chambre,
         organe=lecture_an.organe,
     )
     assert DBSession.query(Amendement).count() == 2
@@ -100,9 +108,11 @@ def test_dossier_delete_non_sgg_user(
     assert not user_david.email.endswith("@sgg.pm.gouv.fr")
 
     assert Lecture.exists(
-        chambre=lecture_an.chambre,
+        dossier=lecture_an.dossier,
         texte=lecture_an.texte,
         partie=None,
+        phase=lecture_an.phase,
+        chambre=lecture_an.chambre,
         organe=lecture_an.organe,
     )
     assert DBSession.query(Amendement).count() == 2
@@ -122,9 +132,11 @@ def test_dossier_delete_non_sgg_user(
     assert "Vous n’êtes pas autorisé à supprimer ce dossier." in resp.text
 
     assert Lecture.exists(
-        chambre=lecture_an.chambre,
+        dossier=lecture_an.dossier,
         texte=lecture_an.texte,
         partie=None,
+        phase=lecture_an.phase,
+        chambre=lecture_an.chambre,
         organe=lecture_an.organe,
     )
     assert DBSession.query(Amendement).count() == 2

@@ -103,12 +103,14 @@ class AssembleeNationale(RemoteSource):
                 )
             except NotFound:
                 prefix, num = parse_num_in_liste(numero_prefixe)
-                logger.warning("Could not find amendement %r", num)
+                logger.warning("Could not find amendement %r for %r", num, lecture)
                 errored.append(str(num))
                 continue
             except Exception:
                 prefix, num = parse_num_in_liste(numero_prefixe)
-                logger.exception("Error while fetching amendement %r", num)
+                logger.exception(
+                    "Error while fetching amendement %r for %r", num, lecture
+                )
                 errored.append(str(num))
                 continue
             amendements.append(amendement)

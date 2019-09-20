@@ -59,8 +59,10 @@ def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> None:
 def fetch_amendements_for_dossier(
     dossier_ref: DossierRef, chambre: Optional[str], num: Optional[int]
 ) -> None:
-    dossier = Dossier.create(
-        uid=dossier_ref.uid, titre=dossier_ref.titre, slug=dossier_ref.slug
+    dossier, _ = get_one_or_create(
+        Dossier,
+        uid=dossier_ref.uid,
+        create_kwargs=dict(titre=dossier_ref.titre, slug=dossier_ref.slug),
     )
     for lecture_ref in dossier_ref.lectures:
         texte_ref = lecture_ref.texte
@@ -70,14 +72,12 @@ def fetch_amendements_for_dossier(
             continue
         texte, _ = get_one_or_create(
             Texte,
-            create_kwargs=dict(
-                type_=texte_ref.type_,
-                chambre=texte_ref.chambre,
-                legislature=texte_ref.legislature,
-                session=texte_ref.session,
-                numero=texte_ref.numero,
-                date_depot=texte_ref.date_depot,
-            ),
+            type_=texte_ref.type_,
+            chambre=texte_ref.chambre,
+            legislature=texte_ref.legislature,
+            session=texte_ref.session,
+            numero=texte_ref.numero,
+            date_depot=texte_ref.date_depot,
         )
         lecture = Lecture.create(
             phase=lecture_ref.phase,

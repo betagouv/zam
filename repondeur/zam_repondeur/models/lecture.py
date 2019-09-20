@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Index, Integer, Text, desc
-from sqlalchemy.orm import joinedload, relationship
+from sqlalchemy.orm import Query, joinedload, relationship
 
 from .amendement import Amendement
 from .article import Article
@@ -195,18 +195,23 @@ class Lecture(Base, LastEventMixin):
 
     @classmethod
     def exists(
-        cls, chambre: Chambre, texte: "Texte", partie: Optional[int], organe: str
+        cls,
+        dossier: "Dossier",
+        texte: "Texte",
+        partie: Optional[int],
+        phase: Phase,
+        chambre: Chambre,
+        organe: str,
     ) -> bool:
-        res: bool = DBSession.query(
-            DBSession.query(cls)
-            .filter(
-                cls.chambre == chambre,
-                cls.texte == texte,
-                cls.partie == partie,
-                cls.organe == organe,
-            )
-            .exists()
-        ).scalar()
+        query = cls._query_helper(
+            dossier=dossier,
+            texte=texte,
+            partie=partie,
+            phase=phase,
+            chambre=chambre,
+            organe=organe,
+        )
+        res: bool = DBSession.query(query.exists()).scalar()
         return res
 
     @classmethod
@@ -237,37 +242,77 @@ class Lecture(Base, LastEventMixin):
     @classmethod
     def create_from_ref(
         cls, lecture_ref: Any, dossier: "Dossier", texte: "Texte"
-    ) -> Optional["Lecture"]:
-        phase = lecture_ref.phase
-        chambre = lecture_ref.chambre
-        titre = lecture_ref.titre
-        organe = lecture_ref.organe
-        partie = lecture_ref.partie
-
-        if cls.exists_with_fallback(chambre, texte, partie, organe):
-            return None
-
+    ) -> "Lecture":
         lecture = cls.create(
-            phase=phase,
-            texte=texte,
-            partie=partie,
-            titre=titre,
-            organe=organe,
             dossier=dossier,
+            phase=lecture_ref.phase,
+            organe=lecture_ref.organe,
+            texte=texte,
+            partie=lecture_ref.partie,
+            titre=lecture_ref.titre,
         )
         return lecture
 
     @classmethod
-    def exists_with_fallback(
-        cls, chambre: Chambre, texte: Texte, partie: Optional[int], organe: str
-    ) -> bool:
-        if cls.exists(chambre, texte, partie, organe):
-            return True
-        # We might already have a Sénat commission lecture created earlier from
-        # scraping data, and that would not have the organe.
-        if chambre == Chambre.SENAT and organe != ORGANE_SENAT:
-            return cls.exists(chambre, texte, partie, "")
-        return False
+    def get_from_ref(
+        cls, lecture_ref: Any, dossier: "Dossier", texte: "Texte"
+    ) -> Optional["Lecture"]:
+        """
+        Find an existing Lecture matching a LectureRef
+        """
+
+        lecture: Optional["Lecture"]
+
+        # We don't use the Texte for matching, as the Lecture may have
+        # been created too early, with a temporary one (texte déposé
+        # vs. texte de la commission).
+        query = cls._query_helper(
+            dossier=dossier,
+            partie=lecture_ref.partie,
+            phase=lecture_ref.phase,
+            chambre=lecture_ref.chambre,
+            organe=lecture_ref.organe,
+        )
+        lecture = query.one_or_none()
+        if lecture is not None:
+            return lecture
+
+        # In the case of Sénat commission, also try matching without the organe, as the
+        # Lecture may have been created from scraping data, without this information.
+        if lecture_ref.chambre == Chambre.SENAT and lecture_ref.organe != ORGANE_SENAT:
+            query = cls._query_helper(
+                dossier=dossier,
+                partie=lecture_ref.partie,
+                phase=lecture_ref.phase,
+                chambre=lecture_ref.chambre,
+            )
+            query = query.filter(cls.organe != ORGANE_SENAT)  # NOT séance publique
+            lecture = query.one_or_none()
+            return lecture
+
+        return None
+
+    @classmethod
+    def _query_helper(
+        cls,
+        dossier: "Dossier",
+        partie: Optional[int],
+        phase: Phase,
+        chambre: Chambre,
+        texte: Optional["Texte"] = None,
+        organe: Optional[str] = None,
+    ) -> Query:
+        query = DBSession.query(cls).filter(
+            cls.dossier == dossier,
+            cls.partie == partie,
+            cls.phase == phase,
+            cls.chambre == chambre,
+        )
+        if texte is not None:
+            query = query.filter(cls.texte == texte)
+        if organe is not None:
+            query = query.filter(cls.organe == organe)
+        return query
 
     @property
     def url_key(self) -> str:

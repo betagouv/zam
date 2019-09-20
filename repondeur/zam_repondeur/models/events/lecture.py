@@ -7,6 +7,7 @@ from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import backref, relationship
 
 from ..lecture import Lecture
+from ..texte import Texte
 from ..users import User
 from .base import Event
 
@@ -55,6 +56,28 @@ class LectureCreee(LectureEvent):
 
     def apply(self) -> None:
         pass
+
+
+class TexteMisAJour(LectureEvent):
+    __mapper_args__ = {"polymorphic_identity": "lecture_texte_mis_a_jour"}
+    icon = "document"
+
+    def __init__(self, lecture: Lecture, texte: Texte) -> None:
+        super().__init__(
+            lecture=lecture, old_value=lecture.texte.numero, new_value=texte.numero
+        )
+        self.texte = texte
+
+    @property
+    def summary_template(self) -> Template:
+        old_value = self.data["old_value"]
+        new_value = self.data["new_value"]
+        return Template(
+            f"Le numéro du texte a été mis à jour ({old_value} → {new_value})."
+        )
+
+    def apply(self) -> None:
+        self.lecture.texte = self.texte
 
 
 class ArticlesRecuperes(LectureEvent):

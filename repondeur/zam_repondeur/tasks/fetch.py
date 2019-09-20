@@ -16,6 +16,7 @@ from zam_repondeur.models.events.lecture import (
     AmendementsRecuperes,
     ArticlesRecuperes,
     LectureCreee,
+    TexteMisAJour,
 )
 from zam_repondeur.tasks.huey import huey
 
@@ -121,11 +122,26 @@ def create_missing_lectures(dossier_pk: int, user_pk: Optional[int] = None) -> N
         changed = False
 
         for lecture_ref in reversed(dossier_ref.lectures):
+            lecture_created = False
+            lecture_updated = False
+
             texte = Texte.get_or_create_from_ref(lecture_ref.texte, lecture_ref.chambre)
-            lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
-            if lecture is not None:
-                changed = True
+
+            lecture = Lecture.get_from_ref(lecture_ref, dossier, texte)
+
+            if lecture is not None and lecture.texte is not texte:
+                # We probably created the Lecture before a new Texte was adopted
+                # by the commission. Time to update with the final one!
+                TexteMisAJour.create(lecture=lecture, texte=texte)
+                lecture_updated = True
+
+            if lecture is None:
+                lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
                 LectureCreee.create(lecture=lecture, user=user)
+                lecture_created = True
+
+            if lecture_created or lecture_updated:
+                changed = True
 
                 # Make sure the lecture gets its primary key.
                 DBSession.flush()

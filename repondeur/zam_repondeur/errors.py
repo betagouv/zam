@@ -19,7 +19,7 @@ def includeme(config: Configurator) -> None:
         # Monkey-patch Rollbar error handler function to replace it with ours
         rollbar.contrib.pyramid.handle_error = handle_error
 
-        # Conigure Rollbar integration
+        # Configure Rollbar integration
         config.include("rollbar.contrib.pyramid")
 
         # Also send log entries with level ERROR or higher

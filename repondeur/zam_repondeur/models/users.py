@@ -33,9 +33,7 @@ class Team(Base):
 
     dossier_pk = Column(Integer, ForeignKey("dossiers.pk"))
     dossier = relationship("Dossier", back_populates="team")
-    users = relationship(
-        "User", secondary="teams2users", backref=backref("teams", lazy="joined")
-    )
+    users = relationship("User", secondary="teams2users", backref=backref("teams"))
     created_at: datetime = Column(
         DateTime, nullable=False, default=datetime.utcnow, server_default=func.now()
     )

@@ -319,7 +319,6 @@ class Amendement(Base):
         AmendementUserContent,
         back_populates="amendement",
         uselist=False,
-        lazy="joined",
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
@@ -539,9 +538,10 @@ class Amendement(Base):
             return []
         return sorted(
             amendement
-            for amendement in self.article.amendements
+            for amendement in self.lecture.amendements
             if (
                 amendement.id_identique == self.id_identique
+                and amendement.article is self.article
                 and amendement.num != self.num
                 and not amendement.is_abandoned
             )
@@ -553,8 +553,9 @@ class Amendement(Base):
             return None
         amdt: Amendement = sorted(
             amendement
-            for amendement in self.article.amendements
+            for amendement in self.lecture.amendements
             if amendement.id_identique == self.id_identique
+            and amendement.article is self.article
         )[0]
         return amdt.num
 
@@ -571,10 +572,11 @@ class Amendement(Base):
     def similaires(self) -> List["Amendement"]:
         return sorted(
             amendement
-            for amendement in self.article.amendements
+            for amendement in self.lecture.amendements
             if (
-                amendement.reponse_similaire(self)
+                amendement.article is self.article
                 and amendement.num != self.num
+                and amendement.reponse_similaire(self)
                 and amendement.is_displayable
             )
         )

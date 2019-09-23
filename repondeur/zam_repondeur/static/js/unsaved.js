@@ -31,6 +31,7 @@ class UnsavedChanges extends Stimulus.Controller {
 
   XHROptions() {
     const headers = new Headers({
+      'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json'
     })
     return {

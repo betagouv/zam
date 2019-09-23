@@ -31,7 +31,7 @@ def list_amendements(context: AmendementCollection, request: Request) -> dict:
     """
     lecture_resource = context.parent
     lecture = lecture_resource.model(
-        joinedload("articles"), joinedload("user_tables"), joinedload("shared_tables")
+        joinedload("user_tables"), joinedload("shared_tables")
     )
     return {
         "lecture": lecture,

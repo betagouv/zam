@@ -100,7 +100,6 @@ class Article(Base):
         ArticleUserContent,
         back_populates="article",
         uselist=False,
-        lazy="joined",
         cascade="all, delete-orphan",
         passive_deletes=True,
     )

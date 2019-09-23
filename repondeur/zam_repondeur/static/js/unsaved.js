@@ -29,22 +29,23 @@ class UnsavedChanges extends Stimulus.Controller {
     return this.data.get('dirty') === 'true'
   }
 
-  postStartEditing() {
-    fetch(this.data.get('start-editing-url'), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+  XHROptions() {
+    const headers = new Headers({
+      'Content-Type': 'application/json'
     })
+    return {
+      method: 'POST',
+      credentials: 'include',
+      headers: headers
+    }
+  }
+
+  postStartEditing() {
+    fetch(this.data.get('start-editing-url'), this.XHROptions())
   }
 
   postStopEditing() {
-    fetch(this.data.get('stop-editing-url'), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
+    fetch(this.data.get('stop-editing-url'), this.XHROptions())
   }
 }
 

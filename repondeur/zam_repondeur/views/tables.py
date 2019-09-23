@@ -4,7 +4,7 @@ from pyramid.httpexceptions import HTTPForbidden, HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, load_only, subqueryload
 from sqlalchemy.orm.exc import NoResultFound
 
 from zam_repondeur.message import Message
@@ -25,14 +25,50 @@ class TableView:
     def __init__(self, context: TableResource, request: Request) -> None:
         self.context = context
         self.request = request
-        self.lecture = context.lecture_resource.model()
+        self.lecture = context.lecture_resource.model(
+            subqueryload("amendements").options(
+                subqueryload("article").defer("content"),
+                (
+                    load_only(
+                        "article_pk",
+                        "id_identique",
+                        "num",
+                        "position",
+                        "rectif",
+                        "sort",
+                    )
+                    .joinedload("user_content")
+                    .load_only("avis", "objet", "reponse")
+                ),
+            )
+        )
 
     @view_config(request_method="GET", renderer="table_detail.html")
     def get(self) -> dict:
         table = self.context.model(
-            options=(
-                joinedload("amendements").joinedload("article"),
-                joinedload("amendements").joinedload("mission"),
+            subqueryload("amendements").options(
+                load_only(
+                    "article_pk",
+                    "auteur",
+                    "batch_pk",
+                    "groupe",
+                    "id_identique",
+                    "lecture_pk",
+                    "mission_pk",
+                    "num",
+                    "parent_pk",
+                    "position",
+                    "rectif",
+                    "shared_table_pk",
+                    "sort",
+                    "user_table_pk",
+                ),
+                joinedload("user_content").load_only("avis", "objet", "reponse"),
+                (
+                    subqueryload("batch")
+                    .joinedload("_amendements")
+                    .load_only("num", "rectif")
+                ),
             )
         )
         return {

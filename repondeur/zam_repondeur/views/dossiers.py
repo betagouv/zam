@@ -9,7 +9,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message as MailMessage
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, subqueryload
 
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, Dossier, Team, User, get_one_or_create
@@ -305,8 +305,10 @@ class DossierRetraitForm(DossierViewBase):
 
 
 @view_config(context=DossierResource, name="journal", renderer="dossier_journal.html")
-def lecture_journal(context: DossierResource, request: Request) -> Response:
-    dossier = context.model()
+def dossier_journal(context: DossierResource, request: Request) -> Response:
+    dossier = context.model(
+        subqueryload("events").joinedload("user").load_only("email", "name")
+    )
     allowed_to_refresh = request.has_permission("refresh_dossier", context)
     return {
         "dossier": dossier,

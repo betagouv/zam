@@ -77,6 +77,7 @@
                                 {% endif %}
                                 {% if request.user.is_admin and current_tab is defined %}
                                     <li{% if current_tab == 'whitelist' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root, 'whitelist') }}">Gestion des accès</a></li>
+                                    <li{% if current_tab == 'admins' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root, 'admins') }}">Gestion des administrateur·ice·s</a></li>
                                 {% endif %}
                                 {% if request.user.name %}
                                     <li class="user"><a href="{{ request.route_url('welcome') }}" class="account">{{ request.user.name or "" }}</a></li>

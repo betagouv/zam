@@ -1,0 +1,67 @@
+{% extends "_base.html" %}
+{% import "macros.html" as macros %}
+
+{% block header %}
+<style type="text/css">
+    h2 {
+        text-align: center;
+        margin: 2.5rem 0 1.5rem 0;
+        font-weight: 600;
+    }
+    .save-buttons {
+        justify-content: left;
+    }
+    .extra-button {
+        text-align: center;
+        margin-top: 2rem;
+        display: flex;
+        justify-content: space-around;
+        align-items: baseline;
+    }
+    .box ul {
+        margin: 3rem;
+    }
+        .box ul li {
+            display: flex;
+            align-items: baseline;
+        }
+            .box ul li form {
+                margin-left: 1rem;
+            }
+</style>
+{% endblock %}
+
+{% block body %}
+    <section>
+        <h2>Administrateur·ices</h2>
+        <ul>
+            {% for admin in admins %}
+                <li>
+                    {{ admin }}
+                    <form
+                        method="post"
+                        action="{{ request.resource_url(context) }}"
+                        data-controller="admin">
+                        <input type="hidden" name="user_pk" value="{{ admin.pk }}">
+                        <div class="form-group save-buttons">
+                            <input
+                                type="submit" name="save" value="Retirer"
+                                class="button danger"
+                                data-action="admin#remove">
+                        </div>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+    <div class="extra-button">
+        <a href="{{ request.resource_url(context.parent) }}" class="arrow-left">Retour</a>
+        <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
+            Ajouter une personne
+        </a>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ request.static_url('zam_repondeur:static/js/admins.js') }}"></script>
+{% endblock %}

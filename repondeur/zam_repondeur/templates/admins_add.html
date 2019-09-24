@@ -1,0 +1,39 @@
+{% extends "_base.html" %}
+
+{% block header %}
+<style type="text/css">
+    h2 {
+        text-align: center;
+        margin: 2.5rem 0 1.5rem 0;
+        font-weight: 600;
+    }
+    .form-group {
+        text-align: center;
+        margin: 5rem 0 3rem;
+        font-size: 1.5rem;
+    }
+        .form-group input {
+            margin-left: 1rem;
+        }
+</style>
+{% endblock %}
+
+{% block body %}
+    <form id="add-admins" action="{{ request.path }}" method="POST">
+        <h2>Ajout d’une personne au statut d’administrateur·ice</h2>
+        <div class="form-group">
+            <label for="user_pk">Personnes actuellement inscrites</label>
+            <select name="user_pk" class="form-control">
+                <option value="" selected="selected"></option>
+                {% for user in users %}
+                    <option value="{{ user.pk }}">{{ user }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group save-buttons">
+            <a href="{{ request.resource_url(context) }}" class="arrow-left">Retour</a>
+            <input type="submit" name="submit" value="Ajouter" class="button enabled primary">
+        </div>
+    </form>
+{% endblock %}

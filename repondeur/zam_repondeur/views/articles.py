@@ -5,6 +5,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
+from sqlalchemy.orm import joinedload, lazyload, load_only
 
 from zam_repondeur.clean import clean_html
 from zam_repondeur.message import Message
@@ -34,8 +35,24 @@ def list_articles(context: ArticleCollection, request: Request) -> Dict[str, Any
             Article._ORDER_POS[item.pos or ""],
         )
 
-    articles = sorted(context.models(), key=_sort_key)
-    return {"lecture": context.lecture_resource.model(), "articles": articles}
+    lecture = context.lecture_resource.model(
+        load_only("chambre", "dossier_pk", "organe", "partie", "texte_pk", "titre"),
+        lazyload("articles").options(
+            load_only("lecture_pk", "mult", "num", "pos", "type"),
+            joinedload("user_content").load_only("title"),
+            joinedload("amendements").options(
+                load_only("auteur", "sort"),
+                joinedload("user_content").load_only("avis"),
+            ),
+        ),
+        lazyload("amendements").options(
+            load_only("article_pk", "auteur", "num", "rectif", "sort"),
+            joinedload("user_content").load_only("avis"),
+        ),
+        joinedload("texte").load_only("legislature", "numero"),
+    )
+    articles = sorted(lecture.articles, key=_sort_key)
+    return {"lecture": lecture, "articles": articles}
 
 
 @view_defaults(context=ArticleResource)

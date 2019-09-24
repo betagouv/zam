@@ -6,7 +6,7 @@ from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.request import Request
 from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, load_only, subqueryload
 
 from zam_repondeur.export.json import write_json
 from zam_repondeur.export.pdf import write_pdf, write_pdf_multiple
@@ -24,6 +24,30 @@ DOWNLOAD_FORMATS = {
 }
 
 
+AMDT_OPTIONS = [
+    joinedload("user_content"),
+    joinedload("user_table").joinedload("user").load_only("email", "name"),
+    joinedload("article").options(
+        load_only("lecture_pk", "mult", "num", "pos", "type"),
+        joinedload("user_content"),
+    ),
+]
+
+EXPORT_OPTIONS = [subqueryload("amendements").options(*AMDT_OPTIONS)]
+
+PDF_OPTIONS = [
+    joinedload("dossier").load_only("titre"),
+    subqueryload("articles").options(
+        joinedload("user_content"),
+        subqueryload("amendements").options(
+            subqueryload("children"),
+            joinedload("user_content").defer("comments"),
+            *AMDT_OPTIONS,
+        ),
+    ),
+]
+
+
 @view_config(context=LectureResource, name="download_amendements")
 def download_amendements(context: LectureResource, request: Request) -> Response:
 
@@ -32,11 +56,9 @@ def download_amendements(context: LectureResource, request: Request) -> Response
         raise HTTPBadRequest(f'Invalid value "{fmt}" for "format" param')
 
     if fmt == "pdf":
-        options = [
-            joinedload("articles").joinedload("amendements").joinedload("children")
-        ]
+        options = PDF_OPTIONS
     else:
-        options = [joinedload("articles")]
+        options = EXPORT_OPTIONS
 
     lecture = context.model(*options)
 
@@ -61,9 +83,7 @@ def download_amendements(context: LectureResource, request: Request) -> Response
 @view_config(context=LectureResource, name="export_pdf")
 def export_pdf(context: LectureResource, request: Request) -> Response:
 
-    lecture = context.model(
-        joinedload("articles").joinedload("amendements").joinedload("children")
-    )
+    lecture = context.model(*PDF_OPTIONS)
 
     try:
         nums: List[int] = [int(num) for num in request.params.getall("nums")]

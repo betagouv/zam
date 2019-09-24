@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 import transaction
 
@@ -40,7 +42,9 @@ def user_sgg(db):
     from zam_repondeur.models import User
 
     with transaction.manager:
-        return User.create(name="SGG user", email="user@sgg.pm.gouv.fr")
+        return User.create(
+            name="SGG user", email="user@sgg.pm.gouv.fr", admin_at=datetime.utcnow()
+        )
 
 
 @pytest.fixture

@@ -3,7 +3,7 @@ import string
 from typing import Any, List, Optional
 
 from more_itertools import ichunked
-from paste.deploy.converters import asbool, aslist
+from paste.deploy.converters import asbool
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
@@ -23,7 +23,6 @@ def includeme(config: Configurator) -> None:
         hashalg="sha512",
         max_age=int(settings["zam.auth_cookie_duration"]),
         secure=asbool(settings["zam.auth_cookie_secure"]),
-        admins=aslist(settings["zam.auth_admins"]),
     )
     config.set_authentication_policy(authn_policy)
 
@@ -64,9 +63,8 @@ def get_user(request: Request) -> Optional[User]:
 
 
 class AuthenticationPolicy(AuthTktAuthenticationPolicy):
-    def __init__(self, secret: str, admins: List[str], **kwargs: Any) -> None:
+    def __init__(self, secret: str, **kwargs: Any) -> None:
         super().__init__(secret, **kwargs)
-        self.admins = admins
 
     def authenticated_userid(self, request: Request) -> Optional[int]:
         """
@@ -96,15 +94,9 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
             principals.append(f"user:{request.user.pk}")
             for team in request.user.teams:
                 principals.append(f"team:{team.pk}")
-            if self.is_admin(request.user):
+            if request.user.is_admin:
                 principals.append("group:admins")
-                request.user.is_admin = True
-            else:
-                request.user.is_admin = False
         return principals
-
-    def is_admin(self, user: User) -> bool:
-        return user.email in self.admins
 
 
 def generate_auth_token(length: int = 20, chunk_size: int = 5) -> str:

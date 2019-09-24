@@ -24,7 +24,7 @@ class Event(Base):
     created_at: datetime = Column(DateTime, nullable=False, default=datetime.utcnow)
 
     user_pk = Column(Integer, ForeignKey("users.pk"), nullable=True)
-    user = relationship(User)
+    user = relationship(User, backref="events")
 
     amendement_pk = Column(
         Integer, ForeignKey("amendements.pk", ondelete="cascade"), nullable=True

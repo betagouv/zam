@@ -58,6 +58,15 @@ class TestAdminAdd:
         )
         assert DBSession.query(User).filter(User.admin_at.isnot(None)).count() == 2
 
+        with transaction.manager:
+            DBSession.add(user_sgg)
+            assert len(user_sgg.events) == 1
+            assert user_sgg.events[0].render_summary() == (
+                "<abbr title='user@sgg.pm.gouv.fr'>SGG user</abbr> a ajouté "
+                "<abbr title='david@exemple.gouv.fr'>David (david@exemple.gouv.fr)"
+                "</abbr> à la liste des administrateur·ice·s."
+            )
+
     def test_not_possible_to_regular_user(self, app, user_sgg, user_david):
         from zam_repondeur.models import User, DBSession
 
@@ -97,6 +106,15 @@ class TestAdminDelete:
 
         assert len(resp.parser.css(".box ul li")) == 1
         assert DBSession.query(User).filter(User.admin_at.isnot(None)).count() == 1
+
+        with transaction.manager:
+            DBSession.add(user_sgg)
+            assert len(user_sgg.events) == 1
+            assert user_sgg.events[0].render_summary() == (
+                "<abbr title='user@sgg.pm.gouv.fr'>SGG user</abbr> a retiré "
+                "<abbr title='david@exemple.gouv.fr'>David (david@exemple.gouv.fr)"
+                "</abbr> de la liste des administrateur·ice·s."
+            )
 
     def test_not_possible_to_regular_user(self, app, user_sgg, user_david, user_ronan):
         from zam_repondeur.models import User, DBSession

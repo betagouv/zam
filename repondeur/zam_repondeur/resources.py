@@ -4,7 +4,8 @@ from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
 from pyramid.security import Allow, Authenticated, Deny, Everyone
-from sqlalchemy.orm import joinedload, lazyload, subqueryload
+from sqlalchemy import desc
+from sqlalchemy.orm import Query, joinedload, lazyload, subqueryload
 from sqlalchemy.orm.exc import NoResultFound
 
 from zam_repondeur.models import (
@@ -19,6 +20,7 @@ from zam_repondeur.models import (
     User,
     UserTable,
 )
+from zam_repondeur.models.events.admin import AdminEvent
 
 # Access Control Entry (action, principal, permission)
 ACE = Tuple[str, str, str]
@@ -92,11 +94,14 @@ class WhitelistCollection(Resource):
 class AdminsCollection(Resource):
     __acl__ = [(Allow, "group:admins", "manage"), (Deny, Everyone, "manage")]
 
-    def models(self, *options: Any) -> List[User]:
+    def models(self) -> List[User]:
         result: List[User] = DBSession.query(User).filter(
             User.admin_at.isnot(None)  # type: ignore
         )
         return result
+
+    def events(self) -> Query:
+        return DBSession.query(AdminEvent).order_by(desc(AdminEvent.created_at))
 
 
 class DossierCollection(Resource):

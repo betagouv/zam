@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any, List, Optional, Set
+from typing import Any, List, Optional, Set, Tuple
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
@@ -137,11 +137,13 @@ class TransferAmendements:
         }
 
     @property
-    def target_users(self) -> List[User]:
-        team: Team = self.context.dossier_resource.dossier.team
+    def target_users(self) -> List[Tuple[str, str]]:
+        team: Team = self.lecture.dossier.team
         if team is not None:
-            return team.everyone_but_me(self.request.user)
-        return User.everyone_but_me(self.request.user)
+            users = team.everyone_but_me(self.request.user)
+        else:
+            users = User.everyone_but_me(self.request.user)
+        return [(user.email, str(user)) for user in users]
 
     def target_tables(
         self, amendements_with_shared_table: List[Amendement]

@@ -273,8 +273,8 @@
                 {% endif %}
                 {% if users %}
                     <optgroup label="Tables">
-                        {% for user in users %}
-                            <option value="{{ user.email }}">{{ user }}</option>
+                        {% for email, display_name in users %}
+                            <option value="{{ email }}">{{ display_name }}</option>
                         {% endfor %}
                     </optgroup>
                 {% endif %}

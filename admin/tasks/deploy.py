@@ -23,10 +23,7 @@ from tools import (
 
 DEFAULT_EMAIL_WHITELIST_PATTERN = "*@*.gouv.fr"
 
-BADGE_COLORS = {
-    "demo": "#b5bd68",
-    "test": "#de935f",
-}
+BADGE_COLORS = {"demo": "#b5bd68", "test": "#de935f"}
 
 app_dir = "/srv/repondeur/src/repondeur"
 venv_dir = "/srv/repondeur/venv"
@@ -289,6 +286,25 @@ def whitelist_remove(ctx, pattern):
 @task
 def whitelist_check(ctx, email):
     cmd = f"{venv_dir}/bin/zam_whitelist production.ini#repondeur check {email}"
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+
+
+@task
+def admin_list(ctx):
+    cmd = f"{venv_dir}/bin/zam_admin production.ini#repondeur list"
+    res = ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    return res.stdout
+
+
+@task
+def admin_set(ctx, email):
+    cmd = f"{venv_dir}/bin/zam_admin production.ini#repondeur set {email}"
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+
+
+@task
+def admin_unset(ctx, email):
+    cmd = f"{venv_dir}/bin/zam_admin production.ini#repondeur unset {email}"
     ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 

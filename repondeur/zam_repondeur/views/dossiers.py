@@ -81,7 +81,9 @@ class DossierAddForm(DossierCollectionBase):
 
         team = Team.create(name=dossier.slug)
         dossier.team = team
-        for admin in DBSession.query(User).filter(User.admin_at.isnot(None)):
+        for admin in DBSession.query(User).filter(
+            User.admin_at.isnot(None)  # type: ignore
+        ):
             admin.teams.append(team)
 
         # Enqueue task to asynchronously add the lectures

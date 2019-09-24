@@ -2,7 +2,6 @@ from datetime import date
 from email.utils import formataddr
 from typing import Iterator, List, Tuple
 
-from paste.deploy.converters import aslist
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
@@ -82,12 +81,7 @@ class DossierAddForm(DossierCollectionBase):
 
         team = Team.create(name=dossier.slug)
         dossier.team = team
-        admins_emails: List[str] = aslist(
-            self.request.registry.settings.get("zam.auth_admins")
-        )
-        for admin in DBSession.query(User).filter(
-            User.email.in_(admins_emails)  # type: ignore
-        ):
+        for admin in DBSession.query(User).filter(User.admin_at.isnot(None)):
             admin.teams.append(team)
 
         # Enqueue task to asynchronously add the lectures

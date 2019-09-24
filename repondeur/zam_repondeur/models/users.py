@@ -65,6 +65,7 @@ class User(Base):
         DateTime, nullable=False, default=datetime.utcnow, server_default=func.now()
     )
     last_login_at: Optional[datetime] = Column(DateTime)
+    admin_at: Optional[datetime] = Column(DateTime)
 
     tables = relationship("UserTable", back_populates="user")
 
@@ -75,8 +76,10 @@ class User(Base):
             return self.email
 
     @classmethod
-    def create(cls, email: str, name: Optional[str] = None) -> "User":
-        user = cls(email=email, name=name)
+    def create(
+        cls, email: str, name: Optional[str] = None, admin_at: Optional[DateTime] = None
+    ) -> "User":
+        user = cls(email=email, name=name, admin_at=admin_at)
         DBSession.add(user)
         return user
 
@@ -99,6 +102,10 @@ class User(Base):
 
     def default_name(self) -> str:
         return self.email.split("@")[0].replace(".", " ").title()
+
+    @property
+    def is_admin(self) -> bool:
+        return bool(self.admin_at)
 
     @property
     def last_activity(self) -> Optional[datetime]:

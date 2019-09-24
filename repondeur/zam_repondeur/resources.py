@@ -269,11 +269,6 @@ class ArticleCollection(Resource):
     def lecture_resource(self) -> LectureResource:
         return self.parent
 
-    def models(self) -> List[Article]:
-        lecture: Lecture = self.lecture_resource.model(joinedload("articles"))
-        articles: List[Article] = lecture.articles
-        return articles
-
 
 class ArticleResource(Resource):
     def __init__(

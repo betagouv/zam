@@ -4,7 +4,7 @@ from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
 from pyramid.security import Allow, Authenticated, Deny, Everyone
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, lazyload, subqueryload
 from sqlalchemy.orm.exc import NoResultFound
 
 from zam_repondeur.models import (
@@ -126,10 +126,15 @@ class DossierResource(Resource):
 
     @reify
     def dossier(self) -> Dossier:
-        return self.model()
+        return self.model(
+            subqueryload("events").load_only("created_at"),
+            lazyload("lectures").options(
+                joinedload("texte"), lazyload("amendements").load_only("pk")
+            ),
+        )
 
-    def model(self) -> Dossier:
-        dossier = Dossier.get(self.slug)
+    def model(self, *options: Any) -> Dossier:
+        dossier = Dossier.get(self.slug, *options)
         if dossier is None:
             raise ResourceNotFound(self)
         return dossier

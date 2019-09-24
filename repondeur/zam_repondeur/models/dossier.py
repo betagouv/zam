@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from sqlalchemy import Column, DateTime, Integer, Text, desc
 from sqlalchemy.orm import joinedload, relationship
@@ -67,8 +67,10 @@ class Dossier(Base, LastEventMixin):
         return dossier
 
     @classmethod
-    def get(cls, slug: str) -> Optional["Dossier"]:
-        res: Optional["Dossier"] = DBSession.query(cls).filter(cls.slug == slug).first()
+    def get(cls, slug: str, *options: Any) -> Optional["Dossier"]:
+        res: Optional["Dossier"] = DBSession.query(cls).filter(
+            cls.slug == slug
+        ).options(*options).first()
         return res
 
     @classmethod

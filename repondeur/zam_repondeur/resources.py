@@ -75,16 +75,27 @@ class Root(Resource):
 
     def __init__(self, _request: Request) -> None:
         self.add_child(WhitelistCollection(name="whitelist", parent=self))
+        self.add_child(AdminsCollection(name="admins", parent=self))
         self.add_child(DossierCollection(name="dossiers", parent=self))
 
 
 class WhitelistCollection(Resource):
     __acl__ = [(Allow, "group:admins", "manage"), (Deny, Everyone, "manage")]
 
-    def models(self, *options: Any) -> List[Dossier]:
+    def models(self, *options: Any) -> List[AllowedEmailPattern]:
         result: List[AllowedEmailPattern] = DBSession.query(
             AllowedEmailPattern
         ).options(*options)
+        return result
+
+
+class AdminsCollection(Resource):
+    __acl__ = [(Allow, "group:admins", "manage"), (Deny, Everyone, "manage")]
+
+    def models(self, *options: Any) -> List[User]:
+        result: List[User] = DBSession.query(User).filter(
+            User.admin_at.isnot(None)  # type: ignore
+        )
         return result
 
 

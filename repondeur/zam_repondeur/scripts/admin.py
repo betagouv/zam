@@ -4,7 +4,6 @@ Deal with admin statuses.
 import logging
 import sys
 from argparse import ArgumentParser, Namespace
-from datetime import datetime
 from operator import attrgetter
 from typing import List
 
@@ -12,6 +11,7 @@ import transaction
 from pyramid.paster import bootstrap, setup_logging
 
 from zam_repondeur.models import DBSession
+from zam_repondeur.models.events.admin import AdminGrant, AdminRevoke
 from zam_repondeur.models.users import User
 
 logger = logging.getLogger(__name__)
@@ -73,7 +73,7 @@ def grant_admin(email: str) -> None:
         if user.is_admin:
             print(f"User {user} has already admin privileges", file=sys.stderr)
             sys.exit(1)
-        user.admin_at = datetime.utcnow()
+        AdminGrant.create(target=user)
 
 
 def list_admins() -> None:
@@ -93,4 +93,4 @@ def revoke_admin(email: str) -> None:
         if not user.is_admin:
             print(f"User {user} has no admin privileges", file=sys.stderr)
             sys.exit(1)
-        user.admin_at = None
+        AdminRevoke.create(target=user)

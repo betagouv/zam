@@ -6,11 +6,11 @@ def first_description_text(resp):
     return resp.parser.css_first(".timeline li .what").text().strip()
 
 
-def test_admin_set(app, user_sgg, user_david):
-    from zam_repondeur.models.events.admin import AdminSet
+def test_admin_grant(app, user_sgg, user_david):
+    from zam_repondeur.models.events.admin import AdminGrant
 
     with transaction.manager:
-        AdminSet.create(
+        AdminGrant.create(
             target=user_david,
             request=DummyRequest(remote_addr="127.0.0.1", user=user_sgg),
         )
@@ -22,11 +22,11 @@ def test_admin_set(app, user_sgg, user_david):
     )
 
 
-def test_admin_unset(app, user_sgg, user_david):
-    from zam_repondeur.models.events.admin import AdminUnset
+def test_admin_revoke(app, user_sgg, user_david):
+    from zam_repondeur.models.events.admin import AdminRevoke
 
     with transaction.manager:
-        AdminUnset.create(
+        AdminRevoke.create(
             target=user_david,
             request=DummyRequest(remote_addr="127.0.0.1", user=user_sgg),
         )

@@ -7,7 +7,7 @@ from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, User
-from zam_repondeur.models.events.admin import AdminSet, AdminUnset
+from zam_repondeur.models.events.admin import AdminGrant, AdminRevoke
 from zam_repondeur.resources import AdminsCollection
 
 
@@ -50,7 +50,7 @@ class AdminsRemove(AdminsCollectionBase):
             return HTTPFound(location=self.request.resource_url(self.context))
         user = DBSession.query(User).filter_by(pk=user_pk).first()
         user.admin_at = None
-        AdminUnset(target=user, request=self.request)
+        AdminRevoke(target=user, request=self.request)
         self.request.session.flash(
             Message(
                 cls="success", text=("Droits d’administration retirés avec succès.")
@@ -71,7 +71,7 @@ class AdminsAddForm(AdminsCollectionBase):
         user_pk = self.request.POST["user_pk"]
         user = DBSession.query(User).filter_by(pk=user_pk).first()
         user.admin_at = datetime.utcnow()
-        AdminSet(target=user, request=self.request)
+        AdminGrant(target=user, request=self.request)
         self.request.session.flash(
             Message(
                 cls="success", text=("Droits d’administration ajoutés avec succès.")

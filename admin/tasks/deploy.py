@@ -297,14 +297,14 @@ def admin_list(ctx):
 
 
 @task
-def admin_set(ctx, email):
-    cmd = f"{venv_dir}/bin/zam_admin production.ini#repondeur set {email}"
+def admin_grant(ctx, email):
+    cmd = f"{venv_dir}/bin/zam_admin production.ini#repondeur grant {email}"
     ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 
 @task
-def admin_unset(ctx, email):
-    cmd = f"{venv_dir}/bin/zam_admin production.ini#repondeur unset {email}"
+def admin_revoke(ctx, email):
+    cmd = f"{venv_dir}/bin/zam_admin production.ini#repondeur revoke {email}"
     ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 

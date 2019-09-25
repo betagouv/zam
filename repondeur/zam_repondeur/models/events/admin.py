@@ -35,8 +35,8 @@ class AdminEvent(Event):
         pass
 
 
-class AdminSet(AdminEvent):
-    __mapper_args__ = {"polymorphic_identity": "admin_set"}
+class AdminGrant(AdminEvent):
+    __mapper_args__ = {"polymorphic_identity": "admin_grant"}
     icon = "edit"
 
     summary_template = Template(
@@ -46,8 +46,8 @@ class AdminSet(AdminEvent):
     )
 
 
-class AdminUnset(AdminEvent):
-    __mapper_args__ = {"polymorphic_identity": "admin_unset"}
+class AdminRevoke(AdminEvent):
+    __mapper_args__ = {"polymorphic_identity": "admin_revoke"}
     icon = "edit"
 
     summary_template = Template(

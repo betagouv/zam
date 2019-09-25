@@ -1,5 +1,5 @@
 """
-Add an allowed pattern to the email authentication whitelist
+Deal with admin statuses.
 """
 import logging
 import sys
@@ -27,12 +27,12 @@ def main(argv: List[str] = sys.argv) -> None:
     logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
     with bootstrap(args.config_uri, options={"app": "zam_load_data"}):
-        if args.command == "set":
-            set_admin(email=args.email)
+        if args.command == "grant":
+            grant_admin(email=args.email)
         elif args.command == "list":
             list_admins()
-        elif args.command == "unset":
-            unset_admin(email=args.email)
+        elif args.command == "revoke":
+            revoke_admin(email=args.email)
         else:
             sys.exit(1)
 
@@ -43,13 +43,17 @@ def parse_args(argv: List[str]) -> Namespace:
 
     subparsers = parser.add_subparsers(dest="command", metavar="command")
 
-    parser_set = subparsers.add_parser("set", help="set user email as an admin")
-    parser_set.add_argument("email")
+    parser_grant = subparsers.add_parser(
+        "grant", help="grant admin privileges to a user email"
+    )
+    parser_grant.add_argument("email")
 
     subparsers.add_parser("list", help="list admin users")
 
-    parser_unset = subparsers.add_parser("unset", help="unset user email from an admin")
-    parser_unset.add_argument("email")
+    parser_revoke = subparsers.add_parser(
+        "revoke", help="revoke admin privileges to a user email"
+    )
+    parser_revoke.add_argument("email")
 
     args = parser.parse_args(argv)
 
@@ -60,33 +64,33 @@ def parse_args(argv: List[str]) -> Namespace:
     return args
 
 
-def set_admin(email: str) -> None:
+def grant_admin(email: str) -> None:
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         if not user:
             print(f"Email {email} is not registered", file=sys.stderr)
             sys.exit(1)
         if user.is_admin:
-            print(f"User {user} is already an admin", file=sys.stderr)
+            print(f"User {user} has already admin privileges", file=sys.stderr)
             sys.exit(1)
         user.admin_at = datetime.utcnow()
 
 
 def list_admins() -> None:
-    for u in sorted(
+    for user in sorted(
         DBSession.query(User).filter(User.admin_at.isnot(None)),  # type: ignore
-        key=attrgetter("created_at"),
+        key=attrgetter("admin_at"),
     ):
-        print(u, u.admin_at, sep="\t")
+        print(user, user.admin_at, sep="\t")
 
 
-def unset_admin(email: str) -> None:
+def revoke_admin(email: str) -> None:
     with transaction.manager:
         user = DBSession.query(User).filter(User.email == email).first()
         if not user:
             print(f"Email {email} is not registered", file=sys.stderr)
             sys.exit(1)
         if not user.is_admin:
-            print(f"User {user} is not an admin", file=sys.stderr)
+            print(f"User {user} has no admin privileges", file=sys.stderr)
             sys.exit(1)
         user.admin_at = None

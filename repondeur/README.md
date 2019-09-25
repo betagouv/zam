@@ -97,10 +97,10 @@ up-to-date lectures.
 (zam)$ zam_load_data development.ini
 ```
 
-### Allow a user to be an administrator
+### Grant administrator privileges to a user
 
 ```
-(zam)$ zam_admin development.ini set "foo@bar.gouv.fr"
+(zam)$ zam_admin development.ini grant "foo@bar.gouv.fr"
 ```
 
 ### Allow some e-mail addresses to sign in

@@ -49,8 +49,7 @@ class AdminsRemove(AdminsCollectionBase):
             self.request.session.flash(Message(cls="warning", text=message))
             return HTTPFound(location=self.request.resource_url(self.context))
         user = DBSession.query(User).filter_by(pk=user_pk).first()
-        user.admin_at = None
-        AdminRevoke(target=user, request=self.request)
+        AdminRevoke.create(target=user, request=self.request)
         self.request.session.flash(
             Message(
                 cls="success", text=("Droits d’administration retirés avec succès.")
@@ -70,8 +69,7 @@ class AdminsAddForm(AdminsCollectionBase):
     def post(self) -> Response:
         user_pk = self.request.POST["user_pk"]
         user = DBSession.query(User).filter_by(pk=user_pk).first()
-        user.admin_at = datetime.utcnow()
-        AdminGrant(target=user, request=self.request)
+        AdminGrant.create(target=user, request=self.request)
         self.request.session.flash(
             Message(
                 cls="success", text=("Droits d’administration ajoutés avec succès.")

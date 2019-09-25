@@ -34,6 +34,21 @@
 {% block body %}
     <section>
         <h2>Adresses autorisées</h2>
+
+        {% if last_event_datetime %}
+            <div class="last-update">
+                Dernière mise à jour :
+                <a class="underlined" href="{{ request.resource_url(context, 'journal') }}">
+                    <time xsi:type="xsd:dateTime"
+                        datetime="{{ last_event_datetime.isoformat() }}"
+                        data-controller="timestamp"
+                        data-timestamp-modified-at="{{ last_event_timestamp }}">
+                            {{ last_event_datetime | human_readable_time }}
+                    </time>
+                </a>
+            </div>
+        {% endif %}
+
         <ul>
             {% for email_pattern in email_patterns %}
                 <li>

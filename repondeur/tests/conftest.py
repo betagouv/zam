@@ -157,7 +157,9 @@ def whitelist(db):
     from zam_repondeur.models.users import AllowedEmailPattern
 
     with transaction.manager:
-        AllowedEmailPattern.create(pattern="*@*.gouv.fr")
+        allowed_email_pattern = AllowedEmailPattern.create(pattern="*@*.gouv.fr")
+
+    return allowed_email_pattern
 
 
 @pytest.fixture

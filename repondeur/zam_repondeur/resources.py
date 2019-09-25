@@ -21,6 +21,7 @@ from zam_repondeur.models import (
     UserTable,
 )
 from zam_repondeur.models.events.admin import AdminEvent
+from zam_repondeur.models.events.whitelist import WhitelistEvent
 
 # Access Control Entry (action, principal, permission)
 ACE = Tuple[str, str, str]
@@ -89,6 +90,9 @@ class WhitelistCollection(Resource):
             AllowedEmailPattern
         ).options(*options)
         return result
+
+    def events(self) -> Query:
+        return DBSession.query(WhitelistEvent).order_by(desc(WhitelistEvent.created_at))
 
 
 class AdminsCollection(Resource):

@@ -1,3 +1,6 @@
+import transaction
+
+
 class TestWhitelistList:
     def test_only_accessible_to_admin(self, app, user_sgg):
         from zam_repondeur.models import AllowedEmailPattern, DBSession
@@ -44,6 +47,14 @@ class TestWhitelistAdd:
         assert resp.parser.css(".box ul li")[1].text().strip() == "foo@example.com"
         assert DBSession.query(AllowedEmailPattern).count() == 2
 
+        with transaction.manager:
+            DBSession.add(user_sgg)
+            assert len(user_sgg.events) == 1
+            assert user_sgg.events[0].render_summary() == (
+                "<abbr title='user@sgg.pm.gouv.fr'>SGG user</abbr> a ajouté "
+                "foo@example.com à la liste blanche."
+            )
+
     def test_not_possible_to_regular_user(self, app, user_david):
         from zam_repondeur.models import AllowedEmailPattern, DBSession
 
@@ -82,6 +93,14 @@ class TestWhitelistDelete:
 
         assert len(resp.parser.css(".box ul li")) == 0
         assert DBSession.query(AllowedEmailPattern).count() == 0
+
+        with transaction.manager:
+            DBSession.add(user_sgg)
+            assert len(user_sgg.events) == 1
+            assert user_sgg.events[0].render_summary() == (
+                "<abbr title='user@sgg.pm.gouv.fr'>SGG user</abbr> a retiré "
+                "*@*.gouv.fr de la liste blanche."
+            )
 
     def test_not_possible_to_regular_user(self, app, user_david):
         from zam_repondeur.models import AllowedEmailPattern, DBSession

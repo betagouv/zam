@@ -11,6 +11,7 @@ import transaction
 from pyramid.paster import bootstrap, setup_logging
 
 from zam_repondeur.models import DBSession
+from zam_repondeur.models.events.whitelist import WhitelistAdd, WhitelistRemove
 from zam_repondeur.models.users import AllowedEmailPattern, User
 
 logger = logging.getLogger(__name__)
@@ -77,13 +78,13 @@ def parse_args(argv: List[str]) -> Namespace:
 
 def add_pattern(pattern: str, comment: Optional[str]) -> None:
     with transaction.manager:
-        instance = (
+        allowed_email_pattern = (
             DBSession.query(AllowedEmailPattern).filter_by(pattern=pattern).first()
         )
-        if instance is not None:
+        if allowed_email_pattern is not None:
             print(f"Pattern {pattern} already exists", file=sys.stderr)
             sys.exit(1)
-        AllowedEmailPattern.create(pattern=pattern, comment=comment)
+        WhitelistAdd.create(email_pattern=pattern, comment=comment)
 
 
 def list_patterns() -> None:
@@ -93,13 +94,13 @@ def list_patterns() -> None:
 
 def remove_pattern(pattern: str) -> None:
     with transaction.manager:
-        instance = (
+        allowed_email_pattern = (
             DBSession.query(AllowedEmailPattern).filter_by(pattern=pattern).first()
         )
-        if instance is None:
+        if allowed_email_pattern is None:
             print(f"Pattern {pattern} not found", file=sys.stderr)
             sys.exit(1)
-        DBSession.delete(instance)
+        WhitelistRemove.create(allowed_email_pattern=allowed_email_pattern)
 
 
 def check_email(email: str) -> None:

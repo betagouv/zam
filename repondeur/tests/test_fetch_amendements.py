@@ -494,3 +494,127 @@ def test_fetch_amendements_with_connection_errors(
     assert created == 0
     assert errored == ["6", "7", "9"]
     assert DBSession.query(Amendement).count() == len(amendements_an) == 2
+
+
+def test_fetch_update_amendements_an_with_batch_preserve_batch(
+    app, lecture_an, article1_an, amendements_an_batch
+):
+    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.models import Amendement, DBSession
+
+    assert amendements_an_batch[0].batch.nums == [666, 999]
+
+    with transaction.manager, patch(
+        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+    ) as mock_fetch_discussion_list, patch(
+        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+    ) as mock_retrieve_amendement:
+        DBSession.add(lecture_an)
+        mock_fetch_discussion_list.return_value = [
+            {"@numero": "666", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "999", "@discussionCommune": "", "@discussionIdentique": ""},
+        ]
+
+        def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.fetch.exceptions import NotFound
+
+            if numero_prefixe not in {"666", "999"}:
+                raise NotFound
+
+            return {
+                "division": {
+                    "titre": "Article 1",
+                    "type": "ARTICLE",
+                    "avantApres": "",
+                    "divisionRattache": "ARTICLE 1",
+                },
+                "numero": numero_prefixe,
+                "numeroLong": numero_prefixe,
+                "auteur": {
+                    "tribunId": "642788",
+                    "groupeTribunId": "730964",
+                    "estGouvernement": "0",
+                    "nom": "Véran",
+                    "prenom": "Olivier",
+                },
+                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
+                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                "etat": "AC",
+                "retireAvantPublication": "0",
+            }
+
+        mock_retrieve_amendement.side_effect = dynamic_return_value
+
+        amendements, created, errored = get_amendements(lecture_an)
+
+    assert [amendement.num for amendement in amendements] == [666, 999]
+    assert created == 0
+    assert errored == []
+
+    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == 666).one()
+    assert amendement_666.batch.nums == [666, 999]
+
+
+def test_fetch_update_amendements_an_with_batch_and_changing_article(
+    app, lecture_an, article1_an, amendements_an_batch
+):
+    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.models import Amendement, DBSession
+
+    assert amendements_an_batch[0].batch.nums == [666, 999]
+
+    with transaction.manager, patch(
+        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+    ) as mock_fetch_discussion_list, patch(
+        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+    ) as mock_retrieve_amendement:
+        DBSession.add(lecture_an)
+        mock_fetch_discussion_list.return_value = [
+            {"@numero": "666", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "999", "@discussionCommune": "", "@discussionIdentique": ""},
+        ]
+
+        def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.fetch.exceptions import NotFound
+
+            if numero_prefixe not in {"666", "999"}:
+                raise NotFound
+
+            return {
+                "division": {
+                    "titre": "Article 1",
+                    "type": "ARTICLE",
+                    "avantApres": "avant",
+                    "divisionRattache": "ARTICLE 1",
+                },
+                "numero": numero_prefixe,
+                "numeroLong": numero_prefixe,
+                "auteur": {
+                    "tribunId": "642788",
+                    "groupeTribunId": "730964",
+                    "estGouvernement": "0",
+                    "nom": "Véran",
+                    "prenom": "Olivier",
+                },
+                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
+                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                "etat": "AC",
+                "retireAvantPublication": "0",
+            }
+
+        mock_retrieve_amendement.side_effect = dynamic_return_value
+
+        amendements, created, errored = get_amendements(lecture_an)
+
+    assert [amendement.num for amendement in amendements] == [666, 999]
+    assert created == 0
+    assert errored == []
+
+    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == 666).one()
+    assert amendement_666.batch is None
+    amendement_999 = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    assert amendement_999.batch is None

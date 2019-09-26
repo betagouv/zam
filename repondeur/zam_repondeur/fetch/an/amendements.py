@@ -21,6 +21,7 @@ from zam_repondeur.models import (
     get_one_or_create,
 )
 from zam_repondeur.models.division import SubDiv
+from zam_repondeur.models.events.amendement import BatchUnset
 from zam_repondeur.templating import render_template
 
 from ..missions import MissionRef
@@ -181,7 +182,7 @@ class AssembleeNationale(RemoteSource):
     def _create_or_update_amendement(
         self,
         lecture: Lecture,
-        article: Optional[Article],
+        article: Article,
         parent: Optional[Amendement],
         amend: OrderedDict,
         position: Optional[int],
@@ -194,6 +195,9 @@ class AssembleeNationale(RemoteSource):
             lecture=lecture,
             num=int(amend["numero"]),
         )
+
+        if not created and amendement.batch and amendement.article.pk != article.pk:
+            BatchUnset.create(amendement=amendement, request=None)
 
         raw_auteur = amend.get("auteur")
         if not raw_auteur:

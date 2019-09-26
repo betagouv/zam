@@ -58,7 +58,7 @@ def test_column_filtering_by_value(
         user_ronan_table_an.amendements.append(amendements_an[0])
         user_david_table_an.amendements.append(amendements_an[1])
         amendement = Amendement.create(
-            lecture=lecture_an, article=article7bis_an, num=777
+            lecture=lecture_an, article=article7bis_an, num=777, position=3
         )
         user_daniel_table_an.amendements.append(amendement)
 
@@ -198,7 +198,7 @@ def test_column_filtering_by_value_with_batches(
         user_ronan_table_an.amendements.append(amendements_an[0])
         user_david_table_an.amendements.append(amendements_an[1])
         amendement = Amendement.create(
-            lecture=lecture_an, article=article7bis_an, num=777
+            lecture=lecture_an, article=article7bis_an, num=777, position=3
         )
         user_daniel_table_an.amendements.append(amendement)
 
@@ -260,6 +260,7 @@ def test_column_filtering_by_checkbox(
             lecture=lecture_an,
             article=article7bis_an,
             num=777,
+            position=3,
             auteur="LE GOUVERNEMENT",
         )
         user_david_table_an.amendements.append(amendement)
@@ -349,6 +350,7 @@ def test_column_filtering_by_value_for_missions(
             lecture=lecture_plf2018_an_premiere_lecture_seance_publique_2,
             article=article7bis_an,
             num=222,
+            position=3,
             mission=mission,
         )
         DBSession.add(amendement)

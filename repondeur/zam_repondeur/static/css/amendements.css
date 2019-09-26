@@ -150,3 +150,8 @@ span.avis.abandoned_before_seance {
 td form {
     display: inline-block;
 }
+tr.limit-derouleur {
+    text-align: center;
+    background-color: #ffc107;
+    font-style: italic;
+}

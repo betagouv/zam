@@ -129,6 +129,23 @@
         <tbody data-controller="amendements-backlinks" data-target="amendements-filters.tbody">
         {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
         {% for amendement in collapsed_amendements | sort %}
+            {% if loop.previtem is defined and loop.previtem.position and not amendement.position %}
+                <tr class="limit-derouleur"
+                    {# Empty data attributes to avoid messing up with filters. #}
+                    data-article=""
+                    data-mission=""
+                    data-order=""
+                    data-amendement=""
+                    data-table=""
+                    data-emptytable=""
+                    data-gouvernemental=""
+                    data-abandoned-before-seance=""
+                    >
+                    <td colspan="{% if lecture.has_missions %}8{% else %}7{% endif %}">
+                        Les amendements en-deçà de cette ligne ne sont pas (encore) présents dans le dérouleur.
+                    </td>
+                </tr>
+            {% endif %}
             <tr data-article="
                     {%- if amendement.is_abandoned_before_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }}

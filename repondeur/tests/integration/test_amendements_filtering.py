@@ -21,6 +21,36 @@ def test_filters_are_ineffective_without_amendements(
     assert not thead.find_element_by_css_selector("tr.filters").is_displayed()
 
 
+def test_number_of_amendements_is_displayed(
+    wsgi_server, driver, lecture_an_url, amendements_an
+):
+    driver.get(f"{lecture_an_url}/amendements/")
+    trs = driver.find_elements_by_css_selector("tbody tr")
+    assert len(trs) == 2
+    counter = driver.find_element_by_css_selector(
+        'span[data-target="amendements-filters.count"]'
+    )
+    assert counter.text == "2 amendements"
+
+
+def test_number_of_amendements_is_displayed_with_limit_derouleur(
+    wsgi_server, driver, lecture_an_url, amendements_an
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        amendements_an[0].position = None
+        DBSession.add(amendements_an[0])
+
+    driver.get(f"{lecture_an_url}/amendements/")
+    trs = driver.find_elements_by_css_selector("tbody tr")
+    assert len(trs) == 3
+    counter = driver.find_element_by_css_selector(
+        'span[data-target="amendements-filters.count"]'
+    )
+    assert counter.text == "2 amendements"
+
+
 @pytest.mark.parametrize(
     "column_index,input_text,kind,initial,filtered",
     [

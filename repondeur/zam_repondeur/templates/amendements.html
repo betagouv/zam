@@ -129,7 +129,7 @@
         <tbody data-controller="amendements-backlinks" data-target="amendements-filters.tbody">
         {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
         {% for amendement in collapsed_amendements | sort %}
-            {% if loop.previtem is defined and loop.previtem.position and not amendement.position %}
+            {% if loop.previtem is defined and loop.previtem.position and loop.previtem.is_displayable and not amendement.position %}
                 <tr class="limit-derouleur"
                     {# Empty data attributes to avoid messing up with filters. #}
                     data-article=""

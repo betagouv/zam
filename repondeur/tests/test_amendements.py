@@ -145,6 +145,27 @@ def test_get_amendements_order_with_missing_position(
     ]
 
 
+def test_get_amendements_order_with_abandoned_next_do_not_display_limit_derouleur(
+    app, lecture_an_url, amendements_an, user_david
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        amendements_an[0].sort = "irrecevable"
+        for amendement in amendements_an:
+            amendement.user_content.avis = "Favorable"
+        DBSession.add_all(amendements_an)
+
+    resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
+
+    assert resp.status_code == 200
+    assert "Dossier de banc" in resp.text
+    headers_rows_length = 3
+    assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
+        headers_rows_length:
+    ] == ["Art. 1 999 Voir", "Art. 1 666 Irr. Voir"]
+
+
 def test_get_amendements_not_found_bad_format(app, user_david):
     resp = app.get(
         "/dossiers/loi-finances-2018/lectures/senat.2017-2018.1/amendements/",

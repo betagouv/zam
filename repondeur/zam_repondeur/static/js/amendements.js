@@ -236,7 +236,7 @@ class AmendementsFilters extends Stimulus.Controller {
   updateCount() {
     const initial = parseInt(this.data.get('initial-count'))
     const visibleRows = this.tbodyTarget.querySelectorAll(
-      'tr:not([class^=hidden])'
+      'tr:not([class^=hidden]):not([class=limit-derouleur])'
     )
     if (!visibleRows.length) {
       this.countTarget.innerHTML = `Aucun amendement (${initial} au total)`

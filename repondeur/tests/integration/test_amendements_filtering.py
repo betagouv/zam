@@ -40,7 +40,9 @@ def test_number_of_amendements_is_displayed_with_limit_derouleur(
 
     with transaction.manager:
         amendements_an[0].position = None
-        DBSession.add(amendements_an[0])
+        for amendement in amendements_an:
+            amendement.user_content.avis = "Favorable"
+        DBSession.add_all(amendements_an)
 
     driver.get(f"{lecture_an_url}/amendements/")
     trs = driver.find_elements_by_css_selector("tbody tr")

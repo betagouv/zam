@@ -202,7 +202,7 @@ class AssembleeNationale(RemoteSource):
         raw_auteur = amend.get("auteur")
         if not raw_auteur:
             logger.warning("Unknown auteur for amendement %s", amend["numero"])
-            matricule, groupe, auteur = "", "", ""
+            matricule, groupe, auteur = "", "Non trouvé", "Non trouvé"
         else:
             matricule = raw_auteur["tribunId"]
             groupe = get_groupe(raw_auteur, amendement.num)
@@ -452,10 +452,10 @@ def get_groupe(raw_auteur: OrderedDict, amendement_num: int) -> str:
     try:
         groupe_tribun_id = f"PO{raw_auteur['groupeTribunId']}"
     except KeyError:
-        logger.error(
+        logger.warning(
             "Unknown groupe %r for amendement %s", groupe_tribun_id, amendement_num
         )
-        return ""
+        return "Non trouvé"
     groupe = repository.get_opendata_organe(groupe_tribun_id)
     if groupe is None:
         logger.error(

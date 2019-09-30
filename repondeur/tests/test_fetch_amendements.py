@@ -412,8 +412,8 @@ def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, c
     amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
     # Check that the missing auteur key leads to empty strings
     assert amendement_9.matricule == ""
-    assert amendement_9.groupe == ""
-    assert amendement_9.auteur == ""
+    assert amendement_9.groupe == "Non trouvé"
+    assert amendement_9.auteur == "Non trouvé"
 
 
 def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendements_an):

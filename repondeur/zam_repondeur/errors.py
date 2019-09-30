@@ -7,7 +7,6 @@ from pyramid.config import Configurator
 from rollbar.contrib.pyramid import EXCEPTION_BLACKLIST, EXCEPTION_WHITELIST
 from rollbar.logger import RollbarHandler
 
-
 logger = logging.getLogger(__name__)
 
 

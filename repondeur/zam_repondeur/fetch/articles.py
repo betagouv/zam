@@ -3,7 +3,7 @@ import string
 from functools import partial
 from typing import Any, Callable, Dict, List, Tuple
 
-from tlfp.tools.parse_texte import parse
+from tlfp.tools.parse_texte import TextParsingFailedException, parse
 
 from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.models import (
@@ -70,7 +70,7 @@ def parse_first_working_url(urls: List[str]) -> List[dict]:
     for url in urls:
         try:
             articles: List[dict] = parse(url, include_annexes=True)
-        except Exception:
+        except TextParsingFailedException:
             articles = []
         if len(articles) > 1:
             return articles

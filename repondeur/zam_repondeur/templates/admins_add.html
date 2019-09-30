@@ -1,6 +1,8 @@
 {% extends "_base.html" %}
 
 {% block header %}
+<link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.css') }}">
+<link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.bootstrap3.css') }}">
 <style type="text/css">
     h2 {
         text-align: center;
@@ -8,7 +10,6 @@
         font-weight: 600;
     }
     .form-group {
-        text-align: center;
         margin: 5rem 0 3rem;
         font-size: 1.5rem;
     }
@@ -24,7 +25,7 @@
         <div class="form-group">
             <label for="user_pk">Personnes actuellement inscrites</label>
             <select name="user_pk" class="form-control">
-                <option value="" selected="selected"></option>
+                <option value="" selected></option>
                 {% for user in users %}
                     <option value="{{ user.pk }}">{{ user }}</option>
                 {% endfor %}
@@ -36,4 +37,12 @@
             <input type="submit" name="submit" value="Ajouter" class="button enabled primary">
         </div>
     </form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ request.static_url('zam_repondeur:static/jquery/jquery-1.12.4.min.js') }}"></script>
+<script src="{{ request.static_url('zam_repondeur:static/selectize/js/standalone/selectize.min.js') }}"></script>
+<script type="text/javascript">
+    ;(_ => $('[name="user_pk"]').selectize())()
+</script>
 {% endblock %}

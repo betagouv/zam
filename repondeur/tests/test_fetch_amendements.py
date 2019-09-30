@@ -410,10 +410,184 @@ def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, c
         )
 
     amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
-    # Check that the missing auteur key leads to empty strings
+    # Check that the missing auteur key leads to explicit strings
     assert amendement_9.matricule == ""
     assert amendement_9.groupe == "Non trouvé"
     assert amendement_9.auteur == "Non trouvé"
+
+
+def test_fetch_amendements_an_without_group_tribun_id(
+    app, lecture_an, article1_an, caplog
+):
+    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.models import Amendement, DBSession
+
+    amendement_6 = Amendement.create(
+        lecture=lecture_an, article=article1_an, num=6, position=1
+    )
+    DBSession.add(amendement_6)
+
+    amendement_9 = Amendement.create(
+        lecture=lecture_an,
+        article=article1_an,
+        num=9,
+        position=2,
+        avis="Favorable",
+        objet="Objet",
+        reponse="Réponse",
+    )
+    DBSession.add(amendement_9)
+
+    with patch(
+        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+    ) as mock_fetch_discussion_list, patch(
+        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+    ) as mock_retrieve_amendement:
+        mock_fetch_discussion_list.return_value = [
+            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
+        ]
+
+        def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.fetch.exceptions import NotFound
+
+            if numero_prefixe not in {"6", "7", "9"}:
+                raise NotFound
+
+            return {
+                "division": {
+                    "titre": "Article 1",
+                    "type": "ARTICLE",
+                    "avantApres": "",
+                    "divisionRattache": "ARTICLE 1",
+                },
+                "numero": numero_prefixe,
+                "numeroLong": numero_prefixe,
+                "auteur": {
+                    "tribunId": "642788",
+                    # Sort of empty groupeTribunId
+                    "groupeTribunId": OrderedDict({"@xsi:nil": "true"}),
+                    "estGouvernement": "0",
+                    "nom": "Véran",
+                    "prenom": "Olivier",
+                },
+                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
+                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                "etat": "AC",
+                "retireAvantPublication": "0",
+            }
+
+        mock_retrieve_amendement.side_effect = dynamic_return_value
+
+        amendements, created, errored = get_amendements(lecture_an)
+
+    assert [amendement.num for amendement in amendements] == [6, 7, 9]
+    assert created == 1
+    assert errored == []
+
+    for num in [6, 7, 9]:
+        assert any(
+            record.levelname == "WARNING"
+            and record.message.startswith(f"Groupe not found for amendement {num}")
+            for record in caplog.records
+        )
+
+    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
+    # Check that the empty group key leads to explicit strings
+    assert amendement_9.matricule == "642788"
+    assert amendement_9.groupe == "Non trouvé"
+    assert amendement_9.auteur == "Véran Olivier"
+
+
+def test_fetch_amendements_an_with_unknown_group_tribun_id(
+    app, lecture_an, article1_an, caplog
+):
+    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.models import Amendement, DBSession
+
+    amendement_6 = Amendement.create(
+        lecture=lecture_an, article=article1_an, num=6, position=1
+    )
+    DBSession.add(amendement_6)
+
+    amendement_9 = Amendement.create(
+        lecture=lecture_an,
+        article=article1_an,
+        num=9,
+        position=2,
+        avis="Favorable",
+        objet="Objet",
+        reponse="Réponse",
+    )
+    DBSession.add(amendement_9)
+
+    with patch(
+        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+    ) as mock_fetch_discussion_list, patch(
+        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+    ) as mock_retrieve_amendement:
+        mock_fetch_discussion_list.return_value = [
+            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
+            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
+        ]
+
+        def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.fetch.exceptions import NotFound
+
+            if numero_prefixe not in {"6", "7", "9"}:
+                raise NotFound
+
+            return {
+                "division": {
+                    "titre": "Article 1",
+                    "type": "ARTICLE",
+                    "avantApres": "",
+                    "divisionRattache": "ARTICLE 1",
+                },
+                "numero": numero_prefixe,
+                "numeroLong": numero_prefixe,
+                "auteur": {
+                    "tribunId": "642788",
+                    # Unknown groupeTribunId
+                    "groupeTribunId": "Unknown",
+                    "estGouvernement": "0",
+                    "nom": "Véran",
+                    "prenom": "Olivier",
+                },
+                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
+                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                "etat": "AC",
+                "retireAvantPublication": "0",
+            }
+
+        mock_retrieve_amendement.side_effect = dynamic_return_value
+
+        amendements, created, errored = get_amendements(lecture_an)
+
+    assert [amendement.num for amendement in amendements] == [6, 7, 9]
+    assert created == 1
+    assert errored == []
+
+    for num in [6, 7, 9]:
+        assert any(
+            record.levelname == "WARNING"
+            and record.message.startswith(
+                f"Unknown groupe tribun 'POUnknown' in groupes for amendement {num}"
+            )
+            for record in caplog.records
+        )
+
+    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
+    # Check that the wrong group key leads to explicit strings
+    assert amendement_9.matricule == "642788"
+    assert amendement_9.groupe == "Non trouvé"
+    assert amendement_9.auteur == "Véran Olivier"
 
 
 def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendements_an):

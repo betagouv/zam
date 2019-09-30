@@ -446,24 +446,23 @@ def get_groupe(raw_auteur: OrderedDict, amendement_num: int) -> str:
     from zam_repondeur.data import repository
 
     gouvernemental = bool(int(raw_auteur["estGouvernement"]))
-    groupe_tribun_id = get_str_or_none(raw_auteur, "groupeTribunId")
-    if gouvernemental or (groupe_tribun_id is None):
+    if gouvernemental:
         return ""
-    try:
-        groupe_tribun_id = f"PO{raw_auteur['groupeTribunId']}"
-    except KeyError:
-        logger.warning(
-            "Unknown groupe %r for amendement %s", groupe_tribun_id, amendement_num
-        )
+
+    groupe_tribun_id = get_str_or_none(raw_auteur, "groupeTribunId")
+    if groupe_tribun_id is None:
+        logger.warning("Groupe not found for amendement %s", amendement_num)
         return "Non trouvé"
-    groupe = repository.get_opendata_organe(groupe_tribun_id)
+
+    groupe = repository.get_opendata_organe(f"PO{groupe_tribun_id}")
     if groupe is None:
         logger.warning(
-            "Unknown groupe tribun %r in groupes for amendement %s",
+            "Unknown groupe tribun 'PO%s' in groupes for amendement %s",
             groupe_tribun_id,
             amendement_num,
         )
         return "Non trouvé"
+
     libelle: str = groupe["libelle"]
     return libelle
 

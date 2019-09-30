@@ -458,12 +458,12 @@ def get_groupe(raw_auteur: OrderedDict, amendement_num: int) -> str:
         return "Non trouvé"
     groupe = repository.get_opendata_organe(groupe_tribun_id)
     if groupe is None:
-        logger.error(
+        logger.warning(
             "Unknown groupe tribun %r in groupes for amendement %s",
             groupe_tribun_id,
             amendement_num,
         )
-        return ""
+        return "Non trouvé"
     libelle: str = groupe["libelle"]
     return libelle
 

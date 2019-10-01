@@ -71,13 +71,13 @@ def import_amendement(
             )
 
     if "affectation_email" in item and item["affectation_email"]:
-        transfer_amendement(request, lecture, amendement, item)
+        _transfer_amendement_on_import(request, lecture, amendement, item)
 
     previous_reponse = reponse
     counter["reponses"] += 1
 
 
-def transfer_amendement(
+def _transfer_amendement_on_import(
     request: Request, lecture: Lecture, amendement: Amendement, item: dict
 ) -> None:
     email = User.normalize_email(item["affectation_email"])

@@ -292,7 +292,7 @@ def test_post_form_from_export(
     app, lecture_an, lecture_an_url, article1_an, tmpdir, user_david
 ):
     from zam_repondeur.models import DBSession, Amendement
-    from zam_repondeur.services.import_export.csv import write_csv
+    from zam_repondeur.services.import_export.csv import export_csv
 
     filename = str(tmpdir.join("test.csv"))
 
@@ -310,7 +310,7 @@ def test_post_form_from_export(
             )
             for position, num in enumerate((333, 777), 1)
         ]
-        counter = write_csv(lecture_an, filename, request={})
+        counter = export_csv(lecture_an, filename, request={})
 
     assert counter["amendements"] == 2
 

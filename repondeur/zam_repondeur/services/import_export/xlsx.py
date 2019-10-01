@@ -14,13 +14,13 @@ DARK_BLUE = Color(rgb="00182848")
 WHITE = Color(rgb="00FFFFFF")
 
 
-def write_xlsx(lecture: Lecture, filename: str, request: Request) -> Counter:
+def export_xlsx(lecture: Lecture, filename: str, request: Request) -> Counter:
     wb = Workbook()
     ws = wb.active
     ws.title = "Amendements"
 
     _write_xslsx_header_row(ws)
-    counter = _write_xlsx_data_rows(ws, sorted(lecture.amendements))
+    counter = _export_xlsx_data_rows(ws, sorted(lecture.amendements))
     wb.save(filename)
     return counter
 
@@ -33,7 +33,7 @@ def _write_xslsx_header_row(ws: Worksheet) -> None:
         cell.font = Font(color=WHITE, sz=8)
 
 
-def _write_xlsx_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> Counter:
+def _export_xlsx_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> Counter:
     counter = Counter({"amendements": 0})
     for amend in amendements:
         amend_dict = {

@@ -37,7 +37,7 @@ class CSVError(Exception):
     pass
 
 
-def _import_reponses_from_csv_file(
+def import_csv(
     request: Request,
     reponses_file: BinaryIO,
     lecture: Lecture,

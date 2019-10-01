@@ -15,3 +15,7 @@ class Chambre(enum.Enum):
 
     def __str__(self) -> str:
         return self.name.lower()
+
+    @property
+    def short_name(self) -> str:
+        return "AN" if self == Chambre.AN else "Sénat"

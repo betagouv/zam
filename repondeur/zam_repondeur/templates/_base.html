@@ -46,7 +46,7 @@
                                 {% if lecture_resource is defined %}
                                     <li>
                                         <a href="{{ request.resource_url(lecture_resource, 'amendements') }}">
-                                            {{ lecture_resource.model() }}
+                                            {{ lecture_resource.model().short_name }}
                                         </a>
                                     </li>
                                     <li class="backlink">

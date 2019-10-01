@@ -61,6 +61,8 @@
 {% block main_class %}{% endblock %}
 
 {% block body %}
+    {% for phase, lectures in lectures|group_by('phase') %}
+    <h2>{{ phase.short_name }}</h2>
     {% for lecture in lectures %}
         <div class="lecture box">
             <div>
@@ -79,5 +81,6 @@
                 </a>
             </nav>
         </div>
+    {% endfor %}
     {% endfor %}
 {% endblock %}

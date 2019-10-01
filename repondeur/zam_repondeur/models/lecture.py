@@ -127,6 +127,13 @@ class Lecture(Base, LastEventMixin):
         return f"texte nº\u00a0{self.texte.numero}{partie}"
 
     @property
+    def short_name(self) -> str:
+        chambre = self.chambre.short_name
+        phase = self.phase.short_name
+        organe = "commission" if self.is_commission else "séance publique"
+        return f"{chambre}, {phase}, {organe}"
+
+    @property
     def is_commission(self) -> bool:
         return self.organe not in {ORGANE_AN, ORGANE_SENAT}
 

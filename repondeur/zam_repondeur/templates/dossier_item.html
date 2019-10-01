@@ -75,7 +75,9 @@
         </a>
     </div>
 
-    {% for lecture in lectures|reverse %}
+    {% for phase, lectures in lectures|reverse|groupby('phase') %}
+        <h2>{{ phase.short_name }}</h2>
+        {% for lecture in lectures %}
         <div class="lecture box">
             <div>
                 <h3>{{ lecture.chambre.value }}, {{ lecture.format_organe() }}</h3>
@@ -93,6 +95,7 @@
                 </a>
             </nav>
         </div>
+        {% endfor %}
     {% endfor %}
 
     {% if allowed_to_delete %}

@@ -292,7 +292,7 @@ def test_post_form_from_export(
     app, lecture_an, lecture_an_url, article1_an, tmpdir, user_david
 ):
     from zam_repondeur.models import DBSession, Amendement
-    from zam_repondeur.services.import_export.spreadsheet import write_csv
+    from zam_repondeur.services.import_export.csv import write_csv
 
     filename = str(tmpdir.join("test.csv"))
 

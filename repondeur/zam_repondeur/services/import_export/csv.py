@@ -33,7 +33,7 @@ def export_csv(lecture: Lecture, filename: str, request: Request) -> Counter:
     return counter
 
 
-class CSVError(Exception):
+class CSVImportError(Exception):
     pass
 
 
@@ -68,14 +68,14 @@ def _guess_csv_delimiter(text_file: TextIO) -> str:
     try:
         sample = text_file.readline()
     except UnicodeDecodeError:
-        raise CSVError("Le fichier n’est pas encodé en UTF-8")
+        raise CSVImportError("Le fichier n’est pas encodé en UTF-8")
     except Exception:
-        raise CSVError("Le format du fichier n’est pas reconnu")
+        raise CSVImportError("Le format du fichier n’est pas reconnu")
 
     try:
         dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
     except csv.Error:
-        raise CSVError(
+        raise CSVImportError(
             "Le fichier CSV n’utilise pas un délimiteur reconnu "
             "(virgule, point-virgule ou tabulation)"
         )

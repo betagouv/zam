@@ -6,7 +6,7 @@ from pyramid.view import view_config
 from zam_repondeur.message import Message
 from zam_repondeur.models.events.lecture import ReponsesImportees
 from zam_repondeur.resources import LectureResource
-from zam_repondeur.services.import_export.csv import CSVError, import_csv
+from zam_repondeur.services.import_export.csv import CSVImportError, import_csv
 
 
 @view_config(context=LectureResource, name="import_csv", request_method="POST")
@@ -34,7 +34,7 @@ def upload_csv(context: LectureResource, request: Request) -> Response:
             },
             team=context.dossier_resource.dossier.team,
         )
-    except CSVError as exc:
+    except CSVImportError as exc:
         request.session.flash(Message(cls="danger", text=str(exc)))
         return HTTPFound(location=next_url)
 

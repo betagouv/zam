@@ -8,11 +8,11 @@ from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload, load_only, subqueryload
 
-from zam_repondeur.export.json import write_json
 from zam_repondeur.export.pdf import write_pdf, write_pdf_multiple
 from zam_repondeur.export.spreadsheet import write_xlsx
 from zam_repondeur.models import Batch
 from zam_repondeur.resources import LectureResource
+from zam_repondeur.services.import_export.json import write_json
 
 DOWNLOAD_FORMATS = {
     "json": (write_json, "application/json"),

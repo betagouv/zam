@@ -5,8 +5,8 @@ import ujson as json
 def test_write_json(
     lecture_senat, article1_senat, article1av_senat, article7bis_senat, tmpdir
 ):
-    from zam_repondeur.export.json import write_json
     from zam_repondeur.models import Amendement
+    from zam_repondeur.services.import_export.json import write_json
 
     filename = str(tmpdir.join("test.json"))
 
@@ -134,8 +134,8 @@ def test_write_json(
 
 
 def test_write_json_full(lecture_senat, article1_senat, tmpdir):
-    from zam_repondeur.export.json import write_json
     from zam_repondeur.models import Amendement
+    from zam_repondeur.services.import_export.json import write_json
 
     filename = str(tmpdir.join("test.json"))
 
@@ -205,8 +205,8 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
 def test_write_with_affectation(
     lecture_senat, article1_senat, tmpdir, user_david_table_senat
 ):
-    from zam_repondeur.export.json import write_json
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.import_export.json import write_json
 
     filename = str(tmpdir.join("test.json"))
 
@@ -242,8 +242,8 @@ def test_write_with_affectation(
 def test_write_json_sous_amendement(
     lecture_senat, article1_senat, article1av_senat, article7bis_senat, tmpdir
 ):
-    from zam_repondeur.export.json import write_json
     from zam_repondeur.models import Amendement
+    from zam_repondeur.services.import_export.json import write_json
 
     filename = str(tmpdir.join("test.json"))
 
@@ -353,8 +353,8 @@ def test_write_json_sous_amendement(
 
 class TestAmendementsHaveSessionOrLegislature:
     def test_an_amendements_have_legislature(self, lecture_an, amendements_an, tmpdir):
-        from zam_repondeur.export.json import write_json
         from zam_repondeur.models import DBSession
+        from zam_repondeur.services.import_export.json import write_json
 
         DBSession.add(lecture_an)
 
@@ -372,8 +372,8 @@ class TestAmendementsHaveSessionOrLegislature:
     def test_senat_amendements_have_session(
         self, lecture_senat, amendements_senat, tmpdir
     ):
-        from zam_repondeur.export.json import write_json
         from zam_repondeur.models import DBSession
+        from zam_repondeur.services.import_export.json import write_json
 
         DBSession.add(lecture_senat)
 

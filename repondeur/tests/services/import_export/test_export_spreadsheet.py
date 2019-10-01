@@ -4,7 +4,7 @@ from pathlib import Path
 
 def test_export_csv_columns(lecture_an, article1_an, tmpdir):
     from zam_repondeur.models import DBSession, Amendement
-    from zam_repondeur.services.import_export.csv import write_csv
+    from zam_repondeur.services.import_export.csv import export_csv
 
     filename = str(tmpdir.join("test.csv"))
 
@@ -21,7 +21,7 @@ def test_export_csv_columns(lecture_an, article1_an, tmpdir):
     DBSession.add(amendement)
     DBSession.add(lecture_an)
 
-    counter = write_csv(lecture_an, filename, request={})
+    counter = export_csv(lecture_an, filename, request={})
 
     assert counter["amendements"] == 1
 
@@ -54,7 +54,7 @@ def test_export_excel_columns(lecture_an, article1_an, tmpdir):
     from openpyxl import load_workbook
 
     from zam_repondeur.models import DBSession, Amendement
-    from zam_repondeur.services.import_export.xlsx import write_xlsx
+    from zam_repondeur.services.import_export.xlsx import export_xlsx
 
     filename = str(tmpdir.join("test.xlsx"))
 
@@ -71,7 +71,7 @@ def test_export_excel_columns(lecture_an, article1_an, tmpdir):
     DBSession.add(amendement)
     DBSession.add(lecture_an)
 
-    counter = write_xlsx(lecture_an, filename, request={})
+    counter = export_xlsx(lecture_an, filename, request={})
 
     assert counter["amendements"] == 1
 
@@ -104,7 +104,7 @@ def test_export_excel_columns(lecture_an, article1_an, tmpdir):
 
 def test_export_csv_with_parent(lecture_an, article1_an, tmpdir):
     from zam_repondeur.models import DBSession, Amendement
-    from zam_repondeur.services.import_export.csv import write_csv
+    from zam_repondeur.services.import_export.csv import export_csv
 
     filename = str(tmpdir.join("test.csv"))
 
@@ -125,7 +125,7 @@ def test_export_csv_with_parent(lecture_an, article1_an, tmpdir):
     DBSession.add_all(amendements)
     DBSession.add(lecture_an)
 
-    counter = write_csv(lecture_an, filename, request={})
+    counter = export_csv(lecture_an, filename, request={})
 
     assert counter["amendements"] == 2
 
@@ -139,7 +139,7 @@ def test_export_csv_with_parent(lecture_an, article1_an, tmpdir):
 
 def test_export_csv_with_auteur(lecture_an, article1_an, tmpdir):
     from zam_repondeur.models import DBSession, Amendement
-    from zam_repondeur.services.import_export.csv import write_csv
+    from zam_repondeur.services.import_export.csv import export_csv
 
     filename = str(tmpdir.join("test.csv"))
 
@@ -160,7 +160,7 @@ def test_export_csv_with_auteur(lecture_an, article1_an, tmpdir):
     DBSession.add_all(amendements)
     DBSession.add(lecture_an)
 
-    counter = write_csv(lecture_an, filename, request={})
+    counter = export_csv(lecture_an, filename, request={})
 
     assert counter["amendements"] == 2
 
@@ -174,7 +174,7 @@ def test_export_csv_with_auteur(lecture_an, article1_an, tmpdir):
 
 def test_export_csv_with_gouvernemental(lecture_an, article1_an, tmpdir):
     from zam_repondeur.models import DBSession, Amendement
-    from zam_repondeur.services.import_export.csv import write_csv
+    from zam_repondeur.services.import_export.csv import export_csv
 
     filename = str(tmpdir.join("test.csv"))
 
@@ -195,7 +195,7 @@ def test_export_csv_with_gouvernemental(lecture_an, article1_an, tmpdir):
     DBSession.add_all(amendements)
     DBSession.add(lecture_an)
 
-    counter = write_csv(lecture_an, filename, request={})
+    counter = export_csv(lecture_an, filename, request={})
 
     assert counter["amendements"] == 2
 
@@ -209,7 +209,7 @@ def test_export_csv_with_gouvernemental(lecture_an, article1_an, tmpdir):
 
 def test_export_csv_with_identique(lecture_an, article1_an, tmpdir):
     from zam_repondeur.models import DBSession, Amendement
-    from zam_repondeur.services.import_export.csv import write_csv
+    from zam_repondeur.services.import_export.csv import export_csv
 
     filename = str(tmpdir.join("test.csv"))
 
@@ -231,7 +231,7 @@ def test_export_csv_with_identique(lecture_an, article1_an, tmpdir):
     DBSession.add_all(amendements)
     DBSession.add(lecture_an)
 
-    counter = write_csv(lecture_an, filename, request={})
+    counter = export_csv(lecture_an, filename, request={})
 
     assert counter["amendements"] == 3
 

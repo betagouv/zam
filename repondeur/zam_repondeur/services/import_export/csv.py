@@ -8,7 +8,7 @@ from zam_repondeur.models import Lecture
 from .spreadsheet import FIELDS, HEADERS, export_amendement_for_spreadsheet
 
 
-def write_csv(lecture: Lecture, filename: str, request: Request) -> Counter:
+def export_csv(lecture: Lecture, filename: str, request: Request) -> Counter:
     counter = Counter({"amendements": 0})
     with open(filename, "w", encoding="utf-8-sig") as file_:
         file_.write(";".join(HEADERS) + "\n")

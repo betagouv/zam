@@ -10,11 +10,11 @@ pytestmark = pytest.mark.usefixtures("data_repository")
 
 
 def open_liasse(filename):
-    return (Path(__file__).parent.parent / "sample_data" / filename).open(mode="rb")
+    return (Path(__file__).parent / "sample_data" / filename).open(mode="rb")
 
 
 def test_article_changed(lecture_essoc2018_an_nouvelle_lecture_commission_fond):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+    from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 
     # Let's import amendements
     amendements, _ = import_liasse_xml(
@@ -32,7 +32,7 @@ def test_article_changed(lecture_essoc2018_an_nouvelle_lecture_commission_fond):
 
 
 def test_add_parent_amendement(lecture_essoc2018_an_nouvelle_lecture_commission_fond):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+    from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 
     # Let's import amendements without a parent
     amendements, _ = import_liasse_xml(
@@ -52,7 +52,7 @@ def test_add_parent_amendement(lecture_essoc2018_an_nouvelle_lecture_commission_
 def test_remove_parent_amendement(
     lecture_essoc2018_an_nouvelle_lecture_commission_fond
 ):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+    from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 
     # Let's import amendements with a parent
     amendements, _ = import_liasse_xml(

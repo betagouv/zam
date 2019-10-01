@@ -229,6 +229,7 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
                     "tribunId": "642788",
                     "groupeTribunId": "730964",
                     "estGouvernement": "0",
+                    "estRapporteur": "0",
                     "nom": "Véran",
                     "prenom": "Olivier",
                 },
@@ -313,6 +314,7 @@ def test_fetch_amendements_an_with_mission(app, lecture_an, article1_an):
                     "tribunId": "642788",
                     "groupeTribunId": "730964",
                     "estGouvernement": "0",
+                    "estRapporteur": "0",
                     "nom": "Véran",
                     "prenom": "Olivier",
                 },
@@ -410,7 +412,7 @@ def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, c
         )
 
     amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
-    # Check that the missing auteur key leads to explicit strings
+    # Check that the missing auteur key leads to an explicit string
     assert amendement_9.matricule == ""
     assert amendement_9.groupe == "Non trouvé"
     assert amendement_9.auteur == "Non trouvé"
@@ -469,6 +471,7 @@ def test_fetch_amendements_an_without_group_tribun_id(
                     # Sort of empty groupeTribunId
                     "groupeTribunId": OrderedDict({"@xsi:nil": "true"}),
                     "estGouvernement": "0",
+                    "estRapporteur": "0",
                     "nom": "Véran",
                     "prenom": "Olivier",
                 },
@@ -491,14 +494,16 @@ def test_fetch_amendements_an_without_group_tribun_id(
     for num in [6, 7, 9]:
         assert any(
             record.levelname == "WARNING"
-            and record.message.startswith(f"Groupe not found for amendement {num}")
+            and record.message.startswith(
+                f"Missing groupeTribunId value for amendement {num}"
+            )
             for record in caplog.records
         )
 
     amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
-    # Check that the empty group key leads to explicit strings
+    # Check that the empty group key leads to an explicit string
     assert amendement_9.matricule == "642788"
-    assert amendement_9.groupe == "Non trouvé"
+    assert amendement_9.groupe == "Non précisé"
     assert amendement_9.auteur == "Véran Olivier"
 
 
@@ -555,6 +560,7 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
                     # Unknown groupeTribunId
                     "groupeTribunId": "Unknown",
                     "estGouvernement": "0",
+                    "estRapporteur": "0",
                     "nom": "Véran",
                     "prenom": "Olivier",
                 },
@@ -584,7 +590,7 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
         )
 
     amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
-    # Check that the wrong group key leads to explicit strings
+    # Check that the wrong group key leads to an explicit string
     assert amendement_9.matricule == "642788"
     assert amendement_9.groupe == "Non trouvé"
     assert amendement_9.auteur == "Véran Olivier"
@@ -708,6 +714,7 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
                     "tribunId": "642788",
                     "groupeTribunId": "730964",
                     "estGouvernement": "0",
+                    "estRapporteur": "0",
                     "nom": "Véran",
                     "prenom": "Olivier",
                 },
@@ -769,6 +776,7 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
                     "tribunId": "642788",
                     "groupeTribunId": "730964",
                     "estGouvernement": "0",
+                    "estRapporteur": "0",
                     "nom": "Véran",
                     "prenom": "Olivier",
                 },

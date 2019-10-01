@@ -446,7 +446,7 @@ class TestFetchAmendement:
 
         assert amendement.gouvernemental is False
         assert amendement.auteur == "Bapt Gérard"
-        assert amendement.groupe == "Non trouvé"
+        assert amendement.groupe == ""  # amendement déposé par le rapporteur
 
     @responses.activate
     def test_fetch_amendement_with_mission_cp_ae_identical(self, lecture_an, source):

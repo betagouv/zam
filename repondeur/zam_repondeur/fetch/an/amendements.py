@@ -446,13 +446,14 @@ def get_groupe(raw_auteur: OrderedDict, amendement_num: int) -> str:
     from zam_repondeur.data import repository
 
     gouvernemental = bool(int(raw_auteur["estGouvernement"]))
-    if gouvernemental:
+    rapporteur = bool(int(raw_auteur["estRapporteur"]))
+    if gouvernemental or rapporteur:
         return ""
 
     groupe_tribun_id = get_str_or_none(raw_auteur, "groupeTribunId")
     if groupe_tribun_id is None:
-        logger.warning("Groupe not found for amendement %s", amendement_num)
-        return "Non trouvé"
+        logger.warning("Missing groupeTribunId value for amendement %s", amendement_num)
+        return "Non précisé"
 
     groupe = repository.get_opendata_organe(f"PO{groupe_tribun_id}")
     if groupe is None:

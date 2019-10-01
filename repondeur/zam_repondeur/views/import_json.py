@@ -1,8 +1,3 @@
-import logging
-from collections import Counter
-from typing import BinaryIO, Dict
-
-import ujson as json
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
@@ -10,10 +5,9 @@ from pyramid.view import view_config
 from sqlalchemy.orm import joinedload
 
 from zam_repondeur.message import Message
-from zam_repondeur.models import Amendement, Article, Lecture, Team
 from zam_repondeur.models.events.lecture import ReponsesImporteesJSON
 from zam_repondeur.resources import LectureResource
-from zam_repondeur.services.import_export.common import import_amendement
+from zam_repondeur.services.import_export.json import _import_backup_from_json_file
 
 
 @view_config(context=LectureResource, name="import_backup", request_method="POST")
@@ -67,44 +61,3 @@ def import_backup(context: LectureResource, request: Request) -> Response:
         request.session.flash(Message(cls="warning", text=message))
 
     return HTTPFound(location=next_url)
-
-
-def _import_backup_from_json_file(
-    request: Request,
-    backup_file: BinaryIO,
-    lecture: Lecture,
-    amendements: Dict[int, Amendement],
-    articles: Dict[str, Article],
-    team: Team,
-) -> Counter:
-    previous_reponse = ""
-    counter = Counter(
-        {"reponses": 0, "articles": 0, "reponses_errors": 0, "articles_errors": 0}
-    )
-    backup = json.loads(backup_file.read().decode("utf-8-sig"))
-
-    for item in backup.get("amendements", []):
-        import_amendement(
-            request, lecture, amendements, item, counter, previous_reponse, team
-        )
-
-    for item in backup.get("articles", []):
-        try:
-            sort_key_as_str = item["sort_key_as_str"]
-        except KeyError:
-            counter["articles_errors"] += 1
-            continue
-
-        article = articles.get(sort_key_as_str)
-        if not article:
-            logging.warning("Could not find article %r", item)
-            counter["articles_errors"] += 1
-            continue
-
-        if "title" in item:
-            article.user_content.title = item["title"]
-        if "presentation" in item:
-            article.user_content.presentation = item["presentation"]
-        counter["articles"] += 1
-
-    return counter

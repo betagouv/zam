@@ -1,6 +1,7 @@
 import logging
 import re
 from collections import OrderedDict
+from enum import Enum
 from http import HTTPStatus
 from typing import Dict, List, Optional, Set, Tuple, Union
 from urllib.parse import urljoin
@@ -505,27 +506,46 @@ def get_rectif(amendement: OrderedDict) -> int:
 
 
 def get_corps(amendement: OrderedDict) -> str:
-    if "listeProgrammesAmdt" in amendement:
-        programmes = amendement["listeProgrammesAmdt"]["programmeAmdt"]
-        ae = [
-            (programme["aEPositifFormat"], programme["aENegatifFormat"])
-            for programme in programmes
-        ]
-        cp = [
-            (programme["cPPositifFormat"], programme["cPNegatifFormat"])
-            for programme in programmes
-        ]
-        return render_template(
-            "mission_table.html",
-            context={
-                "amendement": amendement,
-                "programmes": programmes,
-                "cp_only": all((plus, moins) == ("0", "0") for plus, moins in ae),
-                "ae_only": all((plus, moins) == ("0", "0") for plus, moins in cp),
-                "ae_cp_different": ae != cp,
-            },
+    if "listeProgrammesAmdt" not in amendement:
+        return unjustify(get_str_or_none(amendement, "dispositif") or "")
+
+    programmes = amendement["listeProgrammesAmdt"]["programmeAmdt"]
+
+    class Balance(Enum):
+        POS = "Positif"
+        NEG = "Negatif"
+
+    class OldBalance(Enum):
+        POS = "SupplementairesOuvertes"
+        NEG = "Annulees"
+
+    balance = Balance if "aEPositifFormat" in programmes[0] else OldBalance
+
+    ae = [
+        (
+            programme[f"aE{balance.POS.value}Format"],
+            programme[f"aE{balance.NEG.value}Format"],
         )
-    return unjustify(get_str_or_none(amendement, "dispositif") or "")
+        for programme in programmes
+    ]
+    cp = [
+        (
+            programme[f"cP{balance.POS.value}Format"],
+            programme[f"cP{balance.NEG.value}Format"],
+        )
+        for programme in programmes
+    ]
+    return render_template(
+        "mission_table.html",
+        context={
+            "amendement": amendement,
+            "programmes": programmes,
+            "balance": balance,
+            "cp_only": all((plus, moins) == ("0", "0") for plus, moins in ae),
+            "ae_only": all((plus, moins) == ("0", "0") for plus, moins in cp),
+            "ae_cp_different": ae != cp,
+        },
+    )
 
 
 def get_mission_ref(amendement: OrderedDict) -> Optional[MissionRef]:

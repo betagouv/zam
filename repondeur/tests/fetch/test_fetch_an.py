@@ -510,6 +510,67 @@ class TestFetchAmendement:
         )
 
     @responses.activate
+    def test_fetch_amendement_with_mission_cp_ae_old(self, lecture_an, source):
+        from zam_repondeur.fetch.an.amendements import build_url
+
+        responses.add(
+            responses.GET,
+            build_url(lecture_an, 319),
+            body=read_sample_data("an/2024/319.xml"),
+            status=200,
+        )
+
+        amendement, created = source.fetch_amendement(
+            lecture=lecture_an, numero_prefixe="319", position=1
+        )
+
+        assert amendement.mission.titre == "Mission « Action extérieure de l'État »"
+        assert amendement.mission.titre_court == "Action extérieure de l'État"
+
+        assert_html_looks_like(
+            amendement.corps,
+            """
+            <p>Modifier ainsi les autorisations d’engagement et les crédits de paiement :</p>
+            <table class="credits">
+                <caption>(en euros)</caption>
+                <thead>
+                    <tr>
+                        <th>Programmes</th>
+                        <th>+</th>
+                        <th>-</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>Action de la France en Europe et dans le monde</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Diplomatie culturelle et d'influence</td>
+                            <td>0</td>
+                            <td>-50&#160;000</td>
+                        </tr>
+                        <tr>
+                            <td>Français à l'étranger et affaires consulaires</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                    <tr>
+                        <td>Totaux</td>
+                        <td>0</td>
+                        <td>-50&#160;000</td>
+                    </tr>
+                    <tr>
+                        <td>Solde</td>
+                        <td colspan="2">+50&#160;000</td>
+                    </tr>
+                </tbody>
+            </table>
+            """,  # noqa
+        )
+
+    @responses.activate
     def test_fetch_amendement_with_mission_cp_ae_different(self, lecture_an, source):
         from zam_repondeur.fetch.an.amendements import build_url
 

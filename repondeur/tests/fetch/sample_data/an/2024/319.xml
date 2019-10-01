@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendement>
+    <numero>319</numero>
+    <numeroLong>319</numeroLong>
+    <numeroParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amendementEtendu>0</amendementEtendu>
+    <etat>DI</etat>
+    <missionVisee>Mission « Action extérieure de l'État »</missionVisee>
+    <dispositif xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <exposeSommaire><![CDATA[<p style="text-align: justify;">R&#233;imputation de cr&#233;dits.</p>]]></exposeSommaire>
+    <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <listeDesSignataires> le Gouvernement</listeDesSignataires>
+    <listeDesTribunCosignataires xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <libelleSeance>null;</libelleSeance>
+    <sortEnSeance>Adopté</sortEnSeance>
+    <dateDepot>19/06/2014</dateDepot>
+    <datePublication>20/06/2014</datePublication>
+    <dateSaisieSort>25/06/2014</dateSaisieSort>
+    <article99>0</article99>
+    <triAmendement>naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabe</triAmendement>
+    <codeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <refCodeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <urlPDF>/14/amendements/2024/AN/319.pdf</urlPDF>
+    <dateDepotAffiche>19 juin 2014 </dateDepotAffiche>
+    <division>
+        <divisionDesignation>ART. 4</divisionDesignation>
+        <type>ANNEXE</type>
+        <avantApres>A</avantApres>
+        <titre>ÉTAT B</titre>
+        <divisionRattache>ARTICLE 4</divisionRattache>
+        <articleAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlDivisionTexteVise>/14/textes/2024.asp#D_ETAT_B</urlDivisionTexteVise>
+        <divisionAdditionnelle xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </division>
+    <examen>
+        <examenId>3906</examenId>
+        <organeSaisi>Séance publique</organeSaisi>
+        <typeSaisie>En séance</typeSaisie>
+        <idOrganeProprietaire>644420</idOrganeProprietaire>
+    </examen>
+    <texte>
+        <titre>POUR 2014</titre>
+        <titreCourt>PLFR POUR 2014</titreCourt>
+        <numBibard>2024</numBibard>
+        <numsBibardsDesPropositions></numsBibardsDesPropositions>
+        <etapeTexte>1ère lecture (1ère assemblée saisie)</etapeTexte>
+        <numeroLegislature>14</numeroLegislature>
+        <mentionSecondeDeliberation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <numeroPartiePLF xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <idDossier>33224</idDossier>
+        <libelleDossier>Budget : loi de finances rectificative 2014</libelleDossier>
+        <urlDossierWeb>http://www.assemblee-nationale.fr/14/dossiers/collectif_budgetaire_2014.asp</urlDossierWeb>
+    </texte>
+    <seance>
+        <legisId>18572</legisId>
+        <legisIdperiode>293</legisIdperiode>
+        <numero>249</numero>
+        <debut>25/06/2014 21:30</debut>
+        <fin xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <urlcr>/14/cri/2013-2014/20140249.asp</urlcr>
+        <quantieme>Deuxième</quantieme>
+    </seance>
+    <alinea xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <auteur>
+        <tribunId>GVT</tribunId>
+        <civilite xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <nom xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <prenom xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <estGouvernement>1</estGouvernement>
+        <estRapporteur>0</estRapporteur>
+        <groupeTribunId xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </auteur>
+    <cosignataires/>
+    <auteurParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <amdtDejaMisADiscute>1</amdtDejaMisADiscute>
+    <typeRectification xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <causeDeRetrait xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <listeProgrammesAmdt>
+        <programmeAmdt>
+            <id>12807</id>
+            <libelleProgrammeAmdt>Action de la France en Europe et dans le monde</libelleProgrammeAmdt>
+            <programmeAmdtNouveau>false</programmeAmdtNouveau>
+            <listeLigneCreditsAmdt/>
+            <programmeAmdtSupprimee>false</programmeAmdtSupprimee>
+            <aESupplementairesOuvertesFormat>0</aESupplementairesOuvertesFormat>
+            <aEAnnuleesFormat>0</aEAnnuleesFormat>
+            <cPSupplementairesOuvertesFormat>0</cPSupplementairesOuvertesFormat>
+            <cPAnnuleesFormat>0</cPAnnuleesFormat>
+        </programmeAmdt>
+        <programmeAmdt>
+            <id>12808</id>
+            <libelleProgrammeAmdt>Diplomatie culturelle et d'influence</libelleProgrammeAmdt>
+            <programmeAmdtNouveau>false</programmeAmdtNouveau>
+            <listeLigneCreditsAmdt/>
+            <programmeAmdtSupprimee>false</programmeAmdtSupprimee>
+            <aESupplementairesOuvertesFormat>0</aESupplementairesOuvertesFormat>
+            <aEAnnuleesFormat>-50&amp;#160;000</aEAnnuleesFormat>
+            <cPSupplementairesOuvertesFormat>0</cPSupplementairesOuvertesFormat>
+            <cPAnnuleesFormat>-50&amp;#160;000</cPAnnuleesFormat>
+        </programmeAmdt>
+        <programmeAmdt>
+            <id>12809</id>
+            <libelleProgrammeAmdt>Français à l'étranger et affaires consulaires</libelleProgrammeAmdt>
+            <programmeAmdtNouveau>false</programmeAmdtNouveau>
+            <listeLigneCreditsAmdt/>
+            <programmeAmdtSupprimee>false</programmeAmdtSupprimee>
+            <aESupplementairesOuvertesFormat>0</aESupplementairesOuvertesFormat>
+            <aEAnnuleesFormat>0</aEAnnuleesFormat>
+            <cPSupplementairesOuvertesFormat>0</cPSupplementairesOuvertesFormat>
+            <cPAnnuleesFormat>0</cPAnnuleesFormat>
+        </programmeAmdt>
+    </listeProgrammesAmdt>
+    <soldeAEFormat>+50&amp;#160;000</soldeAEFormat>
+    <soldeCPFormat>+50&amp;#160;000</soldeCPFormat>
+    <estMasque>0</estMasque>
+    <retireAvantPublication>0</retireAvantPublication>
+    <afficherEnRecevabilite>false</afficherEnRecevabilite>
+    <isLiasseRapporteur>false</isLiasseRapporteur>
+    <isMarqueDeRevisionVisible>false</isMarqueDeRevisionVisible>
+    <isPlfrMode>true</isPlfrMode>
+    <isPlfMode>false</isPlfMode>
+    <totalAESupplementairesOuvertesFormat>0</totalAESupplementairesOuvertesFormat>
+    <totalAEAnnuleesFormat>-50&amp;#160;000</totalAEAnnuleesFormat>
+    <totalCPSupplementairesOuvertesFormat>0</totalCPSupplementairesOuvertesFormat>
+    <totalCPAnnuleesFormat>-50&amp;#160;000</totalCPAnnuleesFormat>
+</amendement>

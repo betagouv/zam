@@ -3,7 +3,7 @@ workflows:
   version: 2
   all:
     jobs:
-      - repondeur:
+      - run-tests:
           filters:
             branches:
               ignore:
@@ -11,7 +11,7 @@ workflows:
                 - /rebase-pull-request-.*/
                 - /cherry-pick-rebase-pull-request-.*/
 jobs:
-  repondeur:
+  run-tests:
     docker:
       - image: circleci/python:3.6-stretch-browsers
         environment:

@@ -1,7 +1,7 @@
 version: 2
 workflows:
   version: 2
-  all:
+  on-push:
     jobs:
       - run-tests:
           filters:

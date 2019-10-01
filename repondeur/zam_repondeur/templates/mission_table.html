@@ -1,4 +1,4 @@
-{% macro render_table(amendement, programmes, type_credits) -%}
+{% macro render_table(amendement, programmes, balance, type_credits) -%}
 <table class="credits">
     <caption>(en euros)</caption>
     <thead>
@@ -13,14 +13,14 @@
             {% set nouveau = programme.programmeAmdtNouveau == "true" %}
             <tr>
                 <td>{{ programme.libelleProgrammeAmdt }}{% if nouveau %} (ligne nouvelle){% endif %}</td>
-                <td>{{ programme[type_credits + "PositifFormat"]|safe }}</td>
-                <td>{{ programme[type_credits + "NegatifFormat"]|safe }}</td>
+                <td>{{ programme[type_credits + balance.POS.value + "Format"]|safe }}</td>
+                <td>{{ programme[type_credits + balance.NEG.value + "Format"]|safe }}</td>
             </tr>
         {%- endfor %}
         <tr>
             <td>Totaux</td>
-            <td>{{ amendement["total" + type_credits.upper() + "PositifFormat"]|safe }}</td>
-            <td>{{ amendement["total" + type_credits.upper() + "NegatifFormat"]|safe }}</td>
+            <td>{{ amendement["total" + type_credits.upper() + balance.POS.value + "Format"]|safe }}</td>
+            <td>{{ amendement["total" + type_credits.upper() + balance.NEG.value + "Format"]|safe }}</td>
         </tr>
         <tr>
             <td>Solde</td>
@@ -32,16 +32,16 @@
 
 {%- if cp_only -%}
 <p>Modifier ainsi les crédits de paiement :</p>
-{{ render_table(amendement, programmes, "cP") }}
+{{ render_table(amendement, programmes, balance, "cP") }}
 {% elif ae_only -%}
 <p>Modifier ainsi les autorisations d’engagement :</p>
-{{ render_table(amendement, programmes, "aE") }}
+{{ render_table(amendement, programmes, balance, "aE") }}
 {% elif ae_cp_different -%}
 <p>I. Modifier ainsi les autorisations d’engagement :</p>
-{{ render_table(amendement, programmes, "aE") }}
+{{ render_table(amendement, programmes, balance, "aE") }}
 <p>II. Modifier ainsi les crédits de paiement :</p>
-{{ render_table(amendement, programmes, "cP") }}
+{{ render_table(amendement, programmes, balance, "cP") }}
 {% else -%}
 <p>Modifier ainsi les autorisations d’engagement et les crédits de paiement :</p>
-{{ render_table(amendement, programmes, "aE") }}
+{{ render_table(amendement, programmes, balance, "aE") }}
 {% endif %}

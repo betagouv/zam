@@ -8,12 +8,12 @@ from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config
 
-from zam_repondeur.export.spreadsheet import column_name_to_field
 from zam_repondeur.message import Message
 from zam_repondeur.models import Amendement, Lecture, Team
 from zam_repondeur.models.events.lecture import ReponsesImportees
 from zam_repondeur.resources import LectureResource
 from zam_repondeur.services.import_export.common import import_amendement
+from zam_repondeur.services.import_export.spreadsheet import column_name_to_field
 
 
 class CSVError(Exception):

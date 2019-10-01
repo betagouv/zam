@@ -10,6 +10,7 @@ from lxml.etree import XMLSyntaxError  # nosec
 from zam_repondeur.clean import clean_html
 from zam_repondeur.data import repository
 from zam_repondeur.dossiers import get_dossiers_legislatifs_open_data_from_cache
+from zam_repondeur.fetch.an.division import parse_avant_apres
 from zam_repondeur.fetch.an.dossiers.models import DossierRef, LectureRef, TexteRef
 from zam_repondeur.fetch.dates import parse_date
 from zam_repondeur.fetch.division import parse_subdiv
@@ -22,8 +23,6 @@ from zam_repondeur.models import (
     get_one_or_create,
 )
 from zam_repondeur.models.division import SubDiv
-
-from .division import parse_avant_apres
 
 logger = logging.getLogger(__name__)
 

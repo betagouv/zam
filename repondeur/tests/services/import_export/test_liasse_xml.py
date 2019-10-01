@@ -9,12 +9,12 @@ pytestmark = pytest.mark.usefixtures("data_repository")
 
 
 def open_liasse(filename):
-    return (Path(__file__).parent.parent / "sample_data" / filename).open(mode="rb")
+    return (Path(__file__).parent / "sample_data" / filename).open(mode="rb")
 
 
 def test_import_liasse_xml(lecture_essoc2018_an_nouvelle_lecture_commission_fond):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
     from zam_repondeur.models import Amendement
+    from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 
     amendements, errors = import_liasse_xml(
         open_liasse("liasse.xml"), lecture_essoc2018_an_nouvelle_lecture_commission_fond
@@ -34,7 +34,7 @@ def test_import_liasse_xml(lecture_essoc2018_an_nouvelle_lecture_commission_fond
 def test_import_liasse_xml_article_additionnel(
     lecture_essoc2018_an_nouvelle_lecture_commission_fond
 ):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+    from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 
     amendements, errors = import_liasse_xml(
         open_liasse("liasse_apres.xml"),
@@ -50,7 +50,7 @@ def test_import_liasse_xml_article_additionnel(
 def test_import_same_liasse_xml_again_preserve_response(
     lecture_essoc2018_an_nouvelle_lecture_commission_fond
 ):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+    from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 
     # Let's import amendements
     amendements, _ = import_liasse_xml(
@@ -78,8 +78,8 @@ def test_import_same_liasse_xml_again_preserve_response(
 def test_import_smaller_liasse_xml_preserves_responses(
     lecture_essoc2018_an_nouvelle_lecture_commission_fond
 ):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 
     # Let's import amendements
     amendements, _ = import_liasse_xml(
@@ -117,7 +117,7 @@ def test_import_smaller_liasse_xml_preserves_responses(
 def test_import_liasse_xml_with_unknown_parent(
     lecture_essoc2018_an_nouvelle_lecture_commission_fond
 ):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+    from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 
     # Let's import a liasse with only a child amendement
     amendements, errors = import_liasse_xml(
@@ -135,7 +135,7 @@ def test_import_liasse_xml_with_unknown_parent(
 def test_import_liasse_xml_with_known_but_missing_parent(
     lecture_essoc2018_an_nouvelle_lecture_commission_fond
 ):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml
+    from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 
     # Let's import the parent amendement
     amendements, errors = import_liasse_xml(
@@ -161,8 +161,11 @@ def test_import_liasse_xml_with_known_but_missing_parent(
 def test_import_liasse_second_part(
     app, dossier_essoc2018, texte_essoc2018_an_nouvelle_lecture_commission_fond
 ):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml, LectureDoesNotMatch
     from zam_repondeur.models import DBSession, Lecture, Phase
+    from zam_repondeur.services.import_export.liasse_xml import (
+        import_liasse_xml,
+        LectureDoesNotMatch,
+    )
 
     with transaction.manager:
         part1 = Lecture.create(
@@ -197,14 +200,20 @@ def test_import_liasse_second_part(
 
 
 def test_import_liasse_xml_lecture_is_not_an(lecture_senat):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml, BadChambre
+    from zam_repondeur.services.import_export.liasse_xml import (
+        import_liasse_xml,
+        BadChambre,
+    )
 
     with pytest.raises(BadChambre):
         import_liasse_xml(open_liasse("liasse.xml"), lecture_senat)
 
 
 def test_import_liasse_xml_lecture_does_not_match(lecture_an):
-    from zam_repondeur.fetch.an.liasse_xml import import_liasse_xml, LectureDoesNotMatch
+    from zam_repondeur.services.import_export.liasse_xml import (
+        import_liasse_xml,
+        LectureDoesNotMatch,
+    )
 
     with pytest.raises(LectureDoesNotMatch):
         import_liasse_xml(open_liasse("liasse.xml"), lecture_an)

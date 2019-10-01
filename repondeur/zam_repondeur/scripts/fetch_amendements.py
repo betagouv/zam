@@ -30,9 +30,12 @@ def main(argv: List[str] = sys.argv) -> None:
         repository.load_data()
 
         try:
-            fetch_amendements(args.chambre, args.num)
+            success = fetch_amendements(args.chambre, args.num)
+            if success:
+                sys.exit(0)
         finally:
             transaction.abort()
+    sys.exit(1)
 
 
 def parse_args(argv: List[str]) -> Namespace:
@@ -43,19 +46,23 @@ def parse_args(argv: List[str]) -> Namespace:
     return parser.parse_args(argv)
 
 
-def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> None:
+def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> bool:
+    success = True
     uids = repository.list_opendata_dossiers()
     bar = ProgressBar(total=len(uids))
     random.shuffle(uids)
     for uid in uids:
         dossier_ref = repository.get_opendata_dossier(uid)
-        fetch_amendements_for_dossier(dossier_ref, chambre, num)
+        if not fetch_amendements_for_dossier(dossier_ref, chambre, num):
+            success = False
         bar.update(step=len(dossier_ref.lectures))
+    return success
 
 
 def fetch_amendements_for_dossier(
     dossier_ref: DossierRef, chambre: Optional[str], num: Optional[int]
-) -> None:
+) -> bool:
+    success = True
     dossier, _ = get_one_or_create(
         Dossier,
         uid=dossier_ref.uid,
@@ -84,13 +91,17 @@ def fetch_amendements_for_dossier(
             organe=lecture_ref.organe,
             titre=lecture_ref.titre,
         )
-        fetch_amendements_for_lecture(lecture)
+        if not fetch_amendements_for_lecture(lecture):
+            success = False
+    return success
 
 
-def fetch_amendements_for_lecture(lecture: Lecture) -> None:
+def fetch_amendements_for_lecture(lecture: Lecture) -> bool:
     chambre = lecture.texte.chambre
     source: RemoteSource = RemoteSource.get_remote_source_for_chambre(chambre)
     try:
-        source.fetch(lecture)
+        result = source.fetch(lecture)
+        return not result.errored
     except Exception:
         logger.exception(f"Error while fetching {lecture}")
+        return False

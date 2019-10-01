@@ -18,7 +18,7 @@ PDFKIT_OPTIONS = {
 }
 
 
-STATIC_PATH = Path(__file__).parent.parent / "static"
+STATIC_PATH = Path(__file__).parent.parent.parent / "static"
 PDF_CSS = str(STATIC_PATH / "css" / "print.css")
 
 

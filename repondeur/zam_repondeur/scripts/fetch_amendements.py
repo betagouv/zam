@@ -63,7 +63,7 @@ def fetch_amendements_for_dossier(
     )
     for lecture_ref in dossier_ref.lectures:
         texte_ref = lecture_ref.texte
-        if chambre is not None and texte_ref.chambre.value != chambre:
+        if chambre is not None and texte_ref.chambre.name.lower() != chambre:
             continue
         if num is not None and texte_ref.numero != num:
             continue

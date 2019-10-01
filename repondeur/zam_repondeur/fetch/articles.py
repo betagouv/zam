@@ -71,6 +71,10 @@ def parse_first_working_url(urls: List[str]) -> List[dict]:
         try:
             articles: List[dict] = parse(url, include_annexes=True)
         except TextParsingFailedException:
+            logger.exception("Scraping of URL %s failed during text parsing", url)
+            articles = []
+        except Exception:
+            logger.exception("Scraping of URL %s failed in an unexpected way", url)
             articles = []
         if len(articles) > 1:
             return articles

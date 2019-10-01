@@ -2,11 +2,11 @@ import transaction
 import ujson as json
 
 
-def test_write_json(
+def test_export_json(
     lecture_senat, article1_senat, article1av_senat, article7bis_senat, tmpdir
 ):
     from zam_repondeur.models import Amendement
-    from zam_repondeur.services.import_export.json import write_json
+    from zam_repondeur.services.import_export.json import export_json
 
     filename = str(tmpdir.join("test.json"))
 
@@ -73,7 +73,7 @@ def test_write_json(
             corps="corge",
             expose="grault",
         )
-        counter = write_json(lecture_senat, filename, request={})
+        counter = export_json(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig") as f_:
         backup = json.loads(f_.read())
@@ -133,9 +133,9 @@ def test_write_json(
     ]
 
 
-def test_write_json_full(lecture_senat, article1_senat, tmpdir):
+def test_export_json_full(lecture_senat, article1_senat, tmpdir):
     from zam_repondeur.models import Amendement
-    from zam_repondeur.services.import_export.json import write_json
+    from zam_repondeur.services.import_export.json import export_json
 
     filename = str(tmpdir.join("test.json"))
 
@@ -158,7 +158,7 @@ def test_write_json_full(lecture_senat, article1_senat, tmpdir):
             reponse="<p>La réponse</p>",
             comments="<strong>Lisez-moi</strong>",
         )
-        counter = write_json(lecture_senat, filename, request={})
+        counter = export_json(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig") as f_:
         backup = json.loads(f_.read())
@@ -206,7 +206,7 @@ def test_write_with_affectation(
     lecture_senat, article1_senat, tmpdir, user_david_table_senat
 ):
     from zam_repondeur.models import Amendement, DBSession
-    from zam_repondeur.services.import_export.json import write_json
+    from zam_repondeur.services.import_export.json import export_json
 
     filename = str(tmpdir.join("test.json"))
 
@@ -226,7 +226,7 @@ def test_write_with_affectation(
         )
         user_david_table_senat.amendements.append(amendement)
 
-        counter = write_json(lecture_senat, filename, request={})
+        counter = export_json(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig") as f_:
         backup = json.loads(f_.read())
@@ -239,11 +239,11 @@ def test_write_with_affectation(
     assert amendements[0]["affectation_name"] == "David"
 
 
-def test_write_json_sous_amendement(
+def test_export_json_sous_amendement(
     lecture_senat, article1_senat, article1av_senat, article7bis_senat, tmpdir
 ):
     from zam_repondeur.models import Amendement
-    from zam_repondeur.services.import_export.json import write_json
+    from zam_repondeur.services.import_export.json import export_json
 
     filename = str(tmpdir.join("test.json"))
 
@@ -307,7 +307,7 @@ def test_write_json_sous_amendement(
             corps="corge",
             expose="grault",
         )
-        counter = write_json(lecture_senat, filename, request={})
+        counter = export_json(lecture_senat, filename, request={})
 
     with open(filename, "r", encoding="utf-8-sig") as f_:
         backup = json.loads(f_.read())
@@ -354,13 +354,13 @@ def test_write_json_sous_amendement(
 class TestAmendementsHaveSessionOrLegislature:
     def test_an_amendements_have_legislature(self, lecture_an, amendements_an, tmpdir):
         from zam_repondeur.models import DBSession
-        from zam_repondeur.services.import_export.json import write_json
+        from zam_repondeur.services.import_export.json import export_json
 
         DBSession.add(lecture_an)
 
         filename = str(tmpdir.join("test.json"))
 
-        write_json(lecture_an, filename, request={})
+        export_json(lecture_an, filename, request={})
 
         with open(filename, "r", encoding="utf-8-sig") as f_:
             export = json.loads(f_.read())
@@ -373,13 +373,13 @@ class TestAmendementsHaveSessionOrLegislature:
         self, lecture_senat, amendements_senat, tmpdir
     ):
         from zam_repondeur.models import DBSession
-        from zam_repondeur.services.import_export.json import write_json
+        from zam_repondeur.services.import_export.json import export_json
 
         DBSession.add(lecture_senat)
 
         filename = str(tmpdir.join("test.json"))
 
-        write_json(lecture_senat, filename, request={})
+        export_json(lecture_senat, filename, request={})
 
         with open(filename, "r", encoding="utf-8-sig") as f_:
             export = json.loads(f_.read())

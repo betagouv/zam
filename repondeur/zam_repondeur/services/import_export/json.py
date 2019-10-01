@@ -8,7 +8,7 @@ from zam_repondeur.models import Amendement, Lecture
 EXCLUDED_FIELDS = {"first_identique_num"}
 
 
-def write_json(lecture: Lecture, filename: str, request: Request) -> Counter:
+def export_json(lecture: Lecture, filename: str, request: Request) -> Counter:
     counter = Counter({"amendements": 0, "articles": 0})
     with open(filename, "w", encoding="utf-8-sig") as file_:
         amendements = []

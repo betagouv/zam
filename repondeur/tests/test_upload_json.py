@@ -295,7 +295,7 @@ def test_post_form_from_export(
     app, lecture_an, lecture_an_url, article1_an, tmpdir, user_david
 ):
     from zam_repondeur.models import DBSession, Amendement, Article
-    from zam_repondeur.services.import_export.json import write_json
+    from zam_repondeur.services.import_export.json import export_json
 
     filename = str(tmpdir.join("test.json"))
 
@@ -315,7 +315,7 @@ def test_post_form_from_export(
             )
             for position, num in enumerate((333, 777), 1)
         ]
-        counter = write_json(lecture_an, filename, request={})
+        counter = export_json(lecture_an, filename, request={})
 
     assert counter["amendements"] == 2
     assert counter["articles"] == 1

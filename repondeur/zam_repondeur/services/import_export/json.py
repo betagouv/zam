@@ -9,7 +9,7 @@ from zam_repondeur.models import Amendement, Article, Lecture, Team
 from zam_repondeur.services.import_export.common import import_amendement
 
 
-def _import_backup_from_json_file(
+def import_json(
     request: Request,
     backup_file: BinaryIO,
     lecture: Lecture,

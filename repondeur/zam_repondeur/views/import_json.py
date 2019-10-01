@@ -7,11 +7,11 @@ from sqlalchemy.orm import joinedload
 from zam_repondeur.message import Message
 from zam_repondeur.models.events.lecture import ReponsesImporteesJSON
 from zam_repondeur.resources import LectureResource
-from zam_repondeur.services.import_export.json import _import_backup_from_json_file
+from zam_repondeur.services.import_export.json import import_json
 
 
 @view_config(context=LectureResource, name="import_backup", request_method="POST")
-def import_backup(context: LectureResource, request: Request) -> Response:
+def upload_json(context: LectureResource, request: Request) -> Response:
 
     lecture = context.model(joinedload("articles"))
 
@@ -26,7 +26,7 @@ def import_backup(context: LectureResource, request: Request) -> Response:
         return HTTPFound(location=request.resource_url(context, "options"))
 
     try:
-        counter = _import_backup_from_json_file(
+        counter = import_json(
             request=request,
             backup_file=request.POST["backup"].file,
             lecture=lecture,

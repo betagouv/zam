@@ -19,8 +19,8 @@ def _cartouche_to_list(response_node):
 def test_generate_pdf_without_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import Amendement
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
         lecture=lecture_senat,
@@ -98,8 +98,8 @@ def test_generate_pdf_without_responses(
 def test_generate_pdf_with_amendement_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import Amendement
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
         lecture=lecture_senat,
@@ -182,8 +182,8 @@ def test_generate_pdf_with_amendement_responses(
 def test_generate_pdf_with_amendement_content(
     app, lecture_senat, article1_senat, amendements_senat
 ):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import DBSession
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
@@ -224,8 +224,8 @@ def test_generate_pdf_with_amendement_content(
 def test_generate_pdf_with_amendement_content_factor_authors_groups(
     app, lecture_senat, article1_senat, amendements_senat
 ):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import DBSession
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
@@ -279,8 +279,8 @@ def test_generate_pdf_with_amendement_content_factor_authors_groups(
 def test_generate_pdf_with_amendement_content_factor_only_groups(
     app, lecture_senat, article1_senat, amendements_senat
 ):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import DBSession
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
@@ -334,8 +334,8 @@ def test_generate_pdf_with_amendement_content_factor_only_groups(
 def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
     app, lecture_senat, article1_senat, amendements_senat
 ):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
@@ -441,8 +441,8 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
 def test_generate_pdf_with_amendement_content_gouvernemental(
     app, lecture_senat, article1_senat, amendements_senat
 ):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import DBSession
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "LE GOUVERNEMENT"
@@ -474,8 +474,8 @@ def test_generate_pdf_with_amendement_content_gouvernemental(
 def test_generate_pdf_with_amendement_and_sous_amendement_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import Amendement
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
         lecture=lecture_senat,
@@ -561,8 +561,8 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
 def test_generate_pdf_with_additional_article_amendements_having_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import Amendement
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
         lecture=lecture_senat,
@@ -646,8 +646,8 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
 
 
 def test_generate_pdf_amendement_without_responses(app, lecture_senat, article1_senat):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import Amendement
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
         lecture=lecture_senat,
@@ -674,8 +674,8 @@ def test_generate_pdf_amendement_without_responses(app, lecture_senat, article1_
 
 
 def test_generate_pdf_amendement_with_responses(app, lecture_senat, article1_senat):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import Amendement
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
         lecture=lecture_senat,
@@ -705,8 +705,8 @@ def test_generate_pdf_amendement_with_responses(app, lecture_senat, article1_sen
 def test_generate_pdf_amendement_with_content(
     app, lecture_senat, article1_senat, amendements_senat
 ):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import DBSession
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement_6666 = amendements_senat[0]
     amendement_6666.auteur = "M. JEAN"
@@ -745,8 +745,8 @@ def test_generate_pdf_amendement_with_content(
 def test_generate_pdf_amendement_with_similaire(
     app, lecture_senat, article1_senat, amendements_senat
 ):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import DBSession
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement_6666, amendement_9999 = amendements_senat
     amendement_6666.auteur = "M. JEAN"
@@ -815,8 +815,8 @@ def another_amendements_an_batch(lecture_an, article1_an):
 def test_generate_pdf_amendement_with_batches(
     app, lecture_an, amendements_an_batch, another_amendements_an_batch
 ):
-    from zam_repondeur.export.pdf import generate_html_for_pdf
     from zam_repondeur.models import DBSession
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement_666, amendement_999 = amendements_an_batch
     amendement_666.auteur = "M. JEAN"

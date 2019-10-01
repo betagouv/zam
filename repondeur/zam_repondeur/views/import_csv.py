@@ -6,14 +6,11 @@ from pyramid.view import view_config
 from zam_repondeur.message import Message
 from zam_repondeur.models.events.lecture import ReponsesImportees
 from zam_repondeur.resources import LectureResource
-from zam_repondeur.services.import_export.csv import (
-    CSVError,
-    _import_reponses_from_csv_file,
-)
+from zam_repondeur.services.import_export.csv import CSVError, import_csv
 
 
 @view_config(context=LectureResource, name="import_csv", request_method="POST")
-def import_csv(context: LectureResource, request: Request) -> Response:
+def upload_csv(context: LectureResource, request: Request) -> Response:
 
     lecture = context.model()
 
@@ -28,7 +25,7 @@ def import_csv(context: LectureResource, request: Request) -> Response:
         return HTTPFound(location=request.resource_url(context, "options"))
 
     try:
-        counter = _import_reponses_from_csv_file(
+        counter = import_csv(
             request=request,
             reponses_file=request.POST["reponses"].file,
             lecture=lecture,

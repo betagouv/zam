@@ -5,8 +5,8 @@ from pyramid.view import view_config
 from redis.exceptions import ConnectionError
 from sqlalchemy.exc import OperationalError
 
-from zam_repondeur.data import repository
 from zam_repondeur.models import DBSession
+from zam_repondeur.services.data import repository
 from zam_repondeur.tasks.huey import huey
 
 

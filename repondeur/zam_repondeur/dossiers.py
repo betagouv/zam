@@ -1,7 +1,7 @@
 from functools import reduce
 
-from zam_repondeur.data import repository
 from zam_repondeur.fetch.an.dossiers.models import DossierRef, DossierRefsByUID
+from zam_repondeur.services.data import repository
 
 
 def get_dossiers_legislatifs_from_cache() -> DossierRefsByUID:

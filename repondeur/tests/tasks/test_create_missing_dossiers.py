@@ -10,7 +10,7 @@ def existing_dossier(db):
 
 class TestCreateMissingDossier:
     def test_new_dossier_is_added(self):
-        from zam_repondeur.data import repository
+        from zam_repondeur.services.data import repository
         from zam_repondeur.fetch.an.dossiers.models import DossierRef
         from zam_repondeur.models import DBSession, Dossier
         from zam_repondeur.tasks.periodic import create_missing_dossiers
@@ -37,7 +37,7 @@ class TestCreateMissingDossier:
         assert dossier.slug == "titre-nouveau"
 
     def test_existing_dossier_is_not_modified(self):
-        from zam_repondeur.data import repository
+        from zam_repondeur.services.data import repository
         from zam_repondeur.fetch.an.dossiers.models import DossierRef
         from zam_repondeur.models import DBSession, Dossier
         from zam_repondeur.tasks.periodic import create_missing_dossiers
@@ -61,7 +61,7 @@ class TestCreateMissingDossier:
         assert dossier.slug == "titre-initial"
 
     def test_new_dossier_with_identical_slug_gets_a_suffix(self):
-        from zam_repondeur.data import repository
+        from zam_repondeur.services.data import repository
         from zam_repondeur.fetch.an.dossiers.models import DossierRef
         from zam_repondeur.models import DBSession, Dossier
         from zam_repondeur.tasks.periodic import create_missing_dossiers

@@ -12,13 +12,12 @@ from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
 from zam_repondeur.fetch.an.dossiers.models import DossierRef, TexteRef
 from zam_repondeur.fetch.an.organes_acteurs import get_organes_acteurs
 from zam_repondeur.fetch.senat.scraping import get_dossiers_senat
-
-from .initialize import needs_init
+from zam_repondeur.initialize import needs_init
 
 
 def includeme(config: Configurator) -> None:
     """
-    Called automatically via config.include("zam_repondeur.data")
+    Called automatically via config.include("zam_repondeur.services.data")
     """
     init_repository(config.registry.settings)
 

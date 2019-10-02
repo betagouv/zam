@@ -125,7 +125,7 @@ def run_each_test_in_a_fresh_new_transaction():
 
 @pytest.fixture(scope="session")
 def data_repository():
-    from zam_repondeur.data import repository
+    from zam_repondeur.services.data import repository
 
     repository.load_data()
 

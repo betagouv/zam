@@ -93,7 +93,7 @@ class Lecture(Base, LastEventMixin):
             return f"session {self.texte.session_str}"
 
     def format_organe(self) -> str:
-        from zam_repondeur.data import repository  # avoid circular imports
+        from zam_repondeur.services.data import repository  # avoid circular imports
 
         result: str = self.organe
         organe_data = repository.get_opendata_organe(self.organe)

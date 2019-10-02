@@ -10,7 +10,7 @@ from datetime import datetime
 import sqlalchemy as sa
 from alembic import op
 
-from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
+from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
     get_dossiers_legislatifs_and_textes,
 )
 

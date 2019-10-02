@@ -517,7 +517,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_with_mission_cp_ae_old(self, lecture_an, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
             responses.GET,

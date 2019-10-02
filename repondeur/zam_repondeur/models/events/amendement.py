@@ -7,7 +7,8 @@ from pyramid.request import Request
 
 from zam_repondeur.views.jinja2_filters import enumeration
 
-from ..amendement import Amendement, Batch
+from ..amendement import Amendement
+from ..batch import Batch
 from ..chambre import Chambre
 from .base import Event
 

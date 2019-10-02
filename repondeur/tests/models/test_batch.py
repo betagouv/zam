@@ -22,12 +22,12 @@ def amendements(db, lecture_an, article1_an):
 
 class TestCollapsedBatches:
     def test_unbatched_amendements_are_left_alone(self, amendements):
-        from zam_repondeur.models.amendement import Batch
+        from zam_repondeur.models.batch import Batch
 
         assert [a.num for a in Batch.collapsed_batches(amendements)] == [1, 2, 3, 4]
 
     def test_batched_amendements_are_grouped(self, amendements):
-        from zam_repondeur.models.amendement import Batch
+        from zam_repondeur.models.batch import Batch
 
         amendements[0].batch = amendements[2].batch = Batch.create()
         assert [a.num for a in Batch.collapsed_batches(amendements)] == [1, 2, 4]
@@ -35,12 +35,12 @@ class TestCollapsedBatches:
 
 class TestExpandedBatches:
     def test_unbatched_amendements_are_left_alone(self, amendements):
-        from zam_repondeur.models.amendement import Batch
+        from zam_repondeur.models.batch import Batch
 
         assert [a.num for a in Batch.expanded_batches(amendements)] == [1, 2, 3, 4]
 
     def test_batched_amendements_are_expanded(self, amendements):
-        from zam_repondeur.models.amendement import Batch
+        from zam_repondeur.models.batch import Batch
 
         amendements[0].batch = amendements[2].batch = Batch.create()
         assert {
@@ -66,7 +66,7 @@ def partition(
 @given(integers(min_value=2, max_value=27))
 @settings(deadline=timedelta(milliseconds=500))
 def test_reversibility(lecture_an, article1_an, nb_amendements):
-    from zam_repondeur.models.amendement import Amendement, Batch
+    from zam_repondeur.models import Amendement, Batch
 
     amendements = [
         Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)

@@ -55,7 +55,7 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
 
         config.include("zam_repondeur.assets")
         config.include("zam_repondeur.tasks")
-        config.include("zam_repondeur.data")
+        config.include("zam_repondeur.services.data")
         config.include("zam_repondeur.users")
         config.include("zam_repondeur.amendements")
         load_version(config)

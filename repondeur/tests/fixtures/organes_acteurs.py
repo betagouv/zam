@@ -1179,6 +1179,6 @@ SAMPLE_ACTEURS = {
 
 @pytest.yield_fixture(scope="session", autouse=True)
 def mock_organes_acteurs():
-    with patch("zam_repondeur.data.get_organes_acteurs") as m_organes:
+    with patch("zam_repondeur.services.data.get_organes_acteurs") as m_organes:
         m_organes.return_value = (SAMPLE_ORGANES, SAMPLE_ACTEURS)
         yield

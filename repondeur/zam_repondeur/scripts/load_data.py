@@ -5,7 +5,7 @@ from typing import List
 
 from pyramid.paster import bootstrap, setup_logging
 
-from zam_repondeur.data import repository
+from zam_repondeur.services.data import repository
 
 logger = logging.getLogger(__name__)
 

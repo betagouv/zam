@@ -18,7 +18,7 @@ def existing_texte(db):
 
 class TestCreateMissingtexte:
     def test_new_texte_is_added(self):
-        from zam_repondeur.data import repository
+        from zam_repondeur.services.data import repository
         from zam_repondeur.fetch.an.dossiers.models import TexteRef
         from zam_repondeur.models import Chambre, DBSession, Texte, TypeTexte
         from zam_repondeur.tasks.periodic import create_missing_textes
@@ -54,7 +54,7 @@ class TestCreateMissingtexte:
         assert texte.date_depot == date(2019, 9, 6)
 
     def test_existing_texte_is_not_modified(self):
-        from zam_repondeur.data import repository
+        from zam_repondeur.services.data import repository
         from zam_repondeur.fetch.an.dossiers.models import TexteRef
         from zam_repondeur.models import Chambre, DBSession, Texte, TypeTexte
         from zam_repondeur.tasks.periodic import create_missing_textes

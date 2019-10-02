@@ -417,7 +417,7 @@ def build_url(lecture: Lecture, numero_prefixe: str = "") -> str:
 
 
 def get_organe_abrev(organe_uid: str) -> str:
-    from zam_repondeur.data import repository
+    from zam_repondeur.services.data import repository
 
     organe = repository.get_opendata_organe(organe_uid)
     if organe is None:
@@ -443,7 +443,7 @@ def get_auteur(raw_auteur: OrderedDict) -> str:
 
 
 def get_groupe(raw_auteur: OrderedDict, amendement_num: int) -> str:
-    from zam_repondeur.data import repository
+    from zam_repondeur.services.data import repository
 
     gouvernemental = bool(int(raw_auteur["estGouvernement"]))
     rapporteur = bool(int(raw_auteur["estRapporteur"]))

@@ -24,7 +24,7 @@ def update_data_repository() -> None:
     """
     Fetch AN open data, scrape Sénat dossiers, and put everything in Redis cache
     """
-    from zam_repondeur.data import repository
+    from zam_repondeur.services.data import repository
 
     logger.info("Data update start")
     repository.load_data()
@@ -35,7 +35,7 @@ def update_dossiers() -> None:
     """
     Update Dossiers in database based on data in Redis cache
     """
-    from zam_repondeur.data import repository
+    from zam_repondeur.services.data import repository
 
     logger.info("Dossiers update start")
     dossiers_opendata = set(repository.list_opendata_dossiers())
@@ -45,7 +45,7 @@ def update_dossiers() -> None:
 
 
 def create_missing_dossiers(all_dossiers: Set[str]) -> None:
-    from zam_repondeur.data import repository
+    from zam_repondeur.services.data import repository
 
     existing_dossiers = set(t[0] for t in DBSession.query(Dossier.uid))
     missing_dossiers = all_dossiers - existing_dossiers
@@ -58,7 +58,7 @@ def update_textes() -> None:
     """
     Update Textes in database based on data in Redis cache
     """
-    from zam_repondeur.data import repository
+    from zam_repondeur.services.data import repository
 
     logger.info("Textes update start")
     create_missing_textes(set(repository.list_opendata_textes()))
@@ -66,7 +66,7 @@ def update_textes() -> None:
 
 
 def create_missing_textes(all_textes: Set[str]) -> None:
-    from zam_repondeur.data import repository
+    from zam_repondeur.services.data import repository
 
     existing_textes = set(
         DBSession.query(Texte.chambre, Texte.session, Texte.legislature, Texte.numero)

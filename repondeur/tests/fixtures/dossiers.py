@@ -15,7 +15,9 @@ def mock_dossiers():
     from zam_repondeur.models.chambre import Chambre
     from zam_repondeur.models.phase import Phase
 
-    with patch("zam_repondeur.data.get_dossiers_legislatifs_and_textes") as m_dossiers:
+    with patch(
+        "zam_repondeur.services.data.get_dossiers_legislatifs_and_textes"
+    ) as m_dossiers:
         textes = {
             "PRJLANR5L15B0269": TexteRef(
                 uid="PRJLANR5L15B0269",

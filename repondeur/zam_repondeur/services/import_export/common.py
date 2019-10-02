@@ -4,7 +4,6 @@ from typing import Dict
 
 from pyramid.request import Request
 
-from zam_repondeur.clean import clean_html
 from zam_repondeur.models import Amendement, Lecture, Team, User, get_one_or_create
 from zam_repondeur.models.events.amendement import (
     AmendementTransfere,
@@ -13,6 +12,7 @@ from zam_repondeur.models.events.amendement import (
     ObjetAmendementModifie,
     ReponseAmendementModifiee,
 )
+from zam_repondeur.services.clean import clean_html
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
 
 

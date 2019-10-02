@@ -84,7 +84,9 @@ def test_generate_pdf_without_responses(
     )
 
     parser = HTMLParser(
-        generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
+        generate_html_for_pdf(
+            DummyRequest(), "print/all.html", {"lecture": lecture_senat}
+        )
     )
 
     assert parser.css_first("h1").text() == "Sécurité sociale : loi de financement 2018"
@@ -164,7 +166,9 @@ def test_generate_pdf_with_amendement_responses(
     )
 
     parser = HTMLParser(
-        generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
+        generate_html_for_pdf(
+            DummyRequest(), "print/all.html", {"lecture": lecture_senat}
+        )
     )
 
     assert (
@@ -194,7 +198,9 @@ def test_generate_pdf_with_amendement_content(
     DBSession.add(amendement_6666)
 
     parser = HTMLParser(
-        generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
+        generate_html_for_pdf(
+            DummyRequest(), "print/all.html", {"lecture": lecture_senat}
+        )
     )
 
     assert (
@@ -244,7 +250,9 @@ def test_generate_pdf_with_amendement_content_factor_authors_groups(
     DBSession.add(amendement_9999)
 
     parser = HTMLParser(
-        generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
+        generate_html_for_pdf(
+            DummyRequest(), "print/all.html", {"lecture": lecture_senat}
+        )
     )
 
     assert (
@@ -299,7 +307,9 @@ def test_generate_pdf_with_amendement_content_factor_only_groups(
     DBSession.add(amendement_9999)
 
     parser = HTMLParser(
-        generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
+        generate_html_for_pdf(
+            DummyRequest(), "print/all.html", {"lecture": lecture_senat}
+        )
     )
 
     assert (
@@ -402,7 +412,9 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
     )
 
     parser = HTMLParser(
-        generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
+        generate_html_for_pdf(
+            DummyRequest(), "print/all.html", {"lecture": lecture_senat}
+        )
     )
 
     assert (
@@ -450,7 +462,9 @@ def test_generate_pdf_with_amendement_content_gouvernemental(
     DBSession.add(amendement_6666)
 
     parser = HTMLParser(
-        generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
+        generate_html_for_pdf(
+            DummyRequest(), "print/all.html", {"lecture": lecture_senat}
+        )
     )
 
     assert (
@@ -541,7 +555,9 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
     )
 
     parser = HTMLParser(
-        generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
+        generate_html_for_pdf(
+            DummyRequest(), "print/all.html", {"lecture": lecture_senat}
+        )
     )
 
     assert (
@@ -628,7 +644,9 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
     )
 
     parser = HTMLParser(
-        generate_html_for_pdf(DummyRequest(), "print.html", {"lecture": lecture_senat})
+        generate_html_for_pdf(
+            DummyRequest(), "print/all.html", {"lecture": lecture_senat}
+        )
     )
 
     assert (
@@ -666,7 +684,7 @@ def test_generate_pdf_amendement_without_responses(app, lecture_senat, article1_
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print_multiple.html", {"amendements": [amendement]}
+            DummyRequest(), "print/multiple.html", {"amendements": [amendement]}
         )
     )
 
@@ -695,7 +713,7 @@ def test_generate_pdf_amendement_with_responses(app, lecture_senat, article1_sen
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print_multiple.html", {"amendements": [amendement]}
+            DummyRequest(), "print/multiple.html", {"amendements": [amendement]}
         )
     )
 
@@ -718,7 +736,7 @@ def test_generate_pdf_amendement_with_content(
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print_multiple.html", {"amendements": [amendement_6666]}
+            DummyRequest(), "print/multiple.html", {"amendements": [amendement_6666]}
         )
     )
 
@@ -767,7 +785,7 @@ def test_generate_pdf_amendement_with_similaire(
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print_multiple.html", {"amendements": [amendement_6666]}
+            DummyRequest(), "print/multiple.html", {"amendements": [amendement_6666]}
         )
     )
 
@@ -852,7 +870,7 @@ def test_generate_pdf_amendement_with_batches(
     parser = HTMLParser(
         generate_html_for_pdf(
             DummyRequest(),
-            "print_multiple.html",
+            "print/multiple.html",
             {"amendements": [amendement_666, amendement_555]},
         )
     )

@@ -25,9 +25,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import backref, relationship
 
-from zam_repondeur.amendements import repository as amendements_repository
 from zam_repondeur.constants import GROUPS_COLORS
 from zam_repondeur.decorator import reify
+from zam_repondeur.services.amendements import repository as amendements_repository
 
 from .base import Base, DBSession
 

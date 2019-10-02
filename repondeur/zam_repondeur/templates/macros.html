@@ -75,27 +75,6 @@
     </svg>
 {% endmacro %}
 
-{% macro multiple_amendements_title(amendements) %}
-    {% set amendement = amendements[0] %}
-    {% set parent = amendement.parent %}
-    {% set length = amendements|length %}
-    Amendement{% if length > 1 %}s{% endif %}
-    {% if length > 5 -%}
-        {{ amendements[0] }},
-        {{ amendements[1] }},
-        …,
-        {{ amendements[-3] }},
-        {{ amendements[-2] }} et
-        {{ amendements[-1] }}
-        ({{ length }} au total)
-    {%- else -%}
-        {% for amendement in amendements -%}
-            {{ amendement }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-        {%- endfor %}
-    {%- endif -%}
-    {% if parent %} (sous-amendement au {{ parent }}){% endif %}
-{% endmacro %}
-
 {% macro numero_amendement(amendement) %}
     {% if amendement.batch %}
         N<sup>os</sup>&nbsp;

@@ -6,7 +6,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, Text, func
 from sqlalchemy.orm import backref, relationship
 from sqlalchemy_utils import EmailType
 
-from zam_repondeur.users import repository as users_repository
+from zam_repondeur.services.users import repository as users_repository
 
 from .base import Base, DBSession
 

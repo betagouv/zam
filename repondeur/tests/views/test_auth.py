@@ -15,7 +15,7 @@ def email():
 
 @pytest.fixture
 def auth_token(email):
-    from zam_repondeur.users import repository
+    from zam_repondeur.services.users import repository
 
     token = "FOOBA-RBAZQ-UXQUU-XQUUZ"
     repository.set_auth_token(email, token)
@@ -320,7 +320,7 @@ class TestLoginWithToken:
             assert cookie.get_nonstandard_attr("SameSite") == "Lax"
 
     def test_auth_token_is_deleted_after_use(self, app, auth_token):
-        from zam_repondeur.users import repository
+        from zam_repondeur.services.users import repository
 
         assert repository.get_auth_token_data(auth_token) is not None  # token is here
 
@@ -370,7 +370,7 @@ class TestOnboarding:
     def test_new_user_must_enter_their_name_on_the_welcome_page(self, app):
         from zam_repondeur.auth import generate_auth_token
         from zam_repondeur.models import DBSession, User
-        from zam_repondeur.users import repository
+        from zam_repondeur.services.users import repository
 
         user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
         assert user is None
@@ -401,7 +401,7 @@ class TestOnboarding:
     def test_new_user_without_name_get_an_error(self, app):
         from zam_repondeur.auth import generate_auth_token
         from zam_repondeur.models import DBSession, User
-        from zam_repondeur.users import repository
+        from zam_repondeur.services.users import repository
 
         user = DBSession.query(User).filter_by(email="jane.doe@exemple.gouv.fr").first()
         assert user is None
@@ -461,7 +461,7 @@ class TestOnboarding:
     def test_user_with_a_name_skips_the_welcome_page(self, app, user_david):
         from zam_repondeur.auth import generate_auth_token
         from zam_repondeur.models import DBSession
-        from zam_repondeur.users import repository
+        from zam_repondeur.services.users import repository
 
         with transaction.manager:
             DBSession.add(user_david)
@@ -479,12 +479,12 @@ class TestOnboarding:
 
 class TestAuthTokenExpiration:
     def test_can_get_auth_token_before_expiration(self, auth_token):
-        from zam_repondeur.users import repository
+        from zam_repondeur.services.users import repository
 
         assert repository.get_auth_token_data(auth_token) is not None
 
     def test_cannot_get_auth_token_after_expiration(self, settings, auth_token):
-        from zam_repondeur.users import repository
+        from zam_repondeur.services.users import repository
 
         initial_time = datetime.now(tz=timezone.utc)
         expiration_delay = int(settings["zam.users.auth_token_duration"])

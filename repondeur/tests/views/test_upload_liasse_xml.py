@@ -3,7 +3,8 @@ from pathlib import Path
 import transaction
 from webtest import Upload
 
-SAMPLE_DATA = Path(__file__).parent / "sample_data"
+HERE = Path(__file__)
+SAMPLE_DATA = HERE.parent.parent / "services" / "import_export" / "sample_data"
 
 
 def test_get_form(

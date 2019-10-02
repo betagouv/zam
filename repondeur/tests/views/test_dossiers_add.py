@@ -7,11 +7,16 @@ import transaction
 from webtest.forms import Select
 
 HERE = Path(__file__)
-SAMPLE_DATA_DIR = HERE.parent / "fetch" / "sample_data"
+SAMPLE_DATA_DIR = HERE.parent.parent / "sample_data"
+FETCH_SAMPLE_DATA_DIR = HERE.parent.parent / "fetch" / "sample_data"
 
 
 def read_sample_data(basename):
-    return (SAMPLE_DATA_DIR / basename).read_text()
+    return (FETCH_SAMPLE_DATA_DIR / basename).read_text()
+
+
+def read_sample_data_bytes(basename):
+    return (FETCH_SAMPLE_DATA_DIR / basename).read_bytes()
 
 
 def test_get_form(app, user_sgg, dossier_plfss2018):
@@ -119,18 +124,14 @@ class TestPostForm:
         responses.add(
             responses.GET,
             "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
-            body=(HERE.parent / "sample_data" / "pl0269.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pl0269.html").read_text("utf-8", "ignore"),
             status=200,
         )
 
         responses.add(
             responses.GET,
             "https://www.senat.fr/leg/pjl17-063.html",
-            body=(HERE.parent / "sample_data" / "pjl17-063.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pjl17-063.html").read_text("utf-8", "ignore"),
             status=200,
         )
         responses.add(
@@ -139,27 +140,13 @@ class TestPostForm:
                 "https://www.senat.fr"
                 "/amendements/2017-2018/63/jeu_complet_2017-2018_63.csv"
             ),
-            body=(
-                HERE.parent
-                / "fetch"
-                / "sample_data"
-                / "senat"
-                / "jeu_complet_2017-2018_63.csv"
-            ).read_bytes(),
+            body=read_sample_data_bytes("senat/jeu_complet_2017-2018_63.csv"),
             status=200,
         )
         responses.add(
             responses.GET,
             "https://www.senat.fr/enseance/2017-2018/63/liste_discussion.json",
-            json=json.loads(
-                (
-                    HERE.parent
-                    / "fetch"
-                    / "sample_data"
-                    / "senat"
-                    / "liste_discussion_63.json"
-                ).read_bytes()
-            ),
+            json=json.loads(read_sample_data_bytes("senat/liste_discussion_63.json")),
             status=200,
         )
         responses.add(
@@ -170,9 +157,7 @@ class TestPostForm:
         responses.add(
             responses.GET,
             "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
-            body=(
-                HERE.parent / "fetch" / "sample_data" / "senat" / "ODSEN_GENERAL.csv"
-            ).read_bytes(),
+            body=(FETCH_SAMPLE_DATA_DIR / "senat" / "ODSEN_GENERAL.csv").read_bytes(),
             status=200,
         )
 
@@ -260,11 +245,7 @@ class TestPostForm:
             responses.GET,
             "https://www.senat.fr/amendements/2018-2019/106/jeu_complet_2018-2019_106.csv",  # noqa
             body=(
-                HERE.parent
-                / "fetch"
-                / "sample_data"
-                / "senat"
-                / "jeu_complet_2018-2019_106.csv"
+                FETCH_SAMPLE_DATA_DIR / "senat" / "jeu_complet_2018-2019_106.csv"
             ).read_bytes(),
             status=200,
         )
@@ -272,28 +253,20 @@ class TestPostForm:
             responses.GET,
             "https://www.senat.fr/enseance/2018-2019/106/liste_discussion.json",
             body=(
-                HERE.parent
-                / "fetch"
-                / "sample_data"
-                / "senat"
-                / "liste_discussion_106.json"
+                FETCH_SAMPLE_DATA_DIR / "senat" / "liste_discussion_106.json"
             ).read_bytes(),
             status=200,
         )
         responses.add(
             responses.GET,
             "https://www.senat.fr/leg/pjl18-106.html",
-            body=(HERE.parent / "sample_data" / "pjl18-106.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pjl18-106.html").read_text("utf-8", "ignore"),
             status=200,
         )
         responses.add(
             responses.GET,
             "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
-            body=(
-                HERE.parent / "fetch" / "sample_data" / "senat" / "ODSEN_GENERAL.csv"
-            ).read_bytes(),
+            body=(FETCH_SAMPLE_DATA_DIR / "senat" / "ODSEN_GENERAL.csv").read_bytes(),
             status=200,
         )
 

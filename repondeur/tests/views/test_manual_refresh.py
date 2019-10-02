@@ -7,11 +7,12 @@ import transaction
 from fetch.mock_an import setup_mock_responses
 
 HERE = Path(__file__)
-SAMPLE_DATA_DIR = HERE.parent / "fetch" / "sample_data"
+SAMPLE_DATA_DIR = HERE.parent.parent / "sample_data"
+FETCH_SAMPLE_DATA_DIR = HERE.parent.parent / "fetch" / "sample_data"
 
 
 def read_sample_data(basename):
-    return (SAMPLE_DATA_DIR / basename).read_text()
+    return (FETCH_SAMPLE_DATA_DIR / basename).read_text()
 
 
 def test_get_form(app, lecture_an, amendements_an, user_david):
@@ -78,9 +79,7 @@ def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_david):
         mock_resp.add(
             responses.GET,
             "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
-            body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pl0269.html").read_text("utf-8", "ignore"),
             status=200,
         )
 

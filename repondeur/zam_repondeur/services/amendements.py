@@ -4,12 +4,12 @@ from typing import Optional
 from pyramid.config import Configurator
 from redis import Redis
 
-from .initialize import needs_init
+from zam_repondeur.initialize import needs_init
 
 
 def includeme(config: Configurator) -> None:
     """
-    Called automatically via config.include("zam_repondeur.amendements")
+    Called automatically via config.include("zam_repondeur.services.amendements")
     """
     repository.initialize(
         redis_url=config.registry.settings["zam.amendements.redis_url"]

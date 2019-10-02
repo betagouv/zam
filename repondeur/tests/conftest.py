@@ -143,7 +143,7 @@ def users_repository():
 
 @pytest.fixture
 def amendements_repository():
-    from zam_repondeur.amendements import repository
+    from zam_repondeur.services.amendements import repository
 
     repository.clear_data()
 

@@ -4,9 +4,10 @@ from pyramid_retry import mark_error_retryable
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-from .amendement import AVIS, Amendement, Batch, Mission  # noqa
+from .amendement import AVIS, Amendement, Mission  # noqa
 from .article import Article, ArticleUserContent  # noqa
 from .base import Base, DBSession, log_query_with_origin  # noqa
+from .batch import Batch  # noqa
 from .chambre import Chambre  # noqa
 from .dossier import Dossier  # noqa
 from .events.amendement import (  # noqa

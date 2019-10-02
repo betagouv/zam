@@ -1,9 +1,8 @@
 import logging
 import re
 from collections import OrderedDict
-from enum import Enum
 from http import HTTPStatus
-from typing import Dict, List, Optional, Set, Tuple, Union
+from typing import Dict, List, NamedTuple, Optional, Set, Tuple, Union
 from urllib.parse import urljoin
 
 import xmltodict
@@ -506,46 +505,73 @@ def get_rectif(amendement: OrderedDict) -> int:
 
 
 def get_corps(amendement: OrderedDict) -> str:
-    if "listeProgrammesAmdt" not in amendement:
+    if "listeProgrammesAmdt" in amendement:
+        return render_credits_tables(amendement)
+    else:
         return unjustify(get_str_or_none(amendement, "dispositif") or "")
 
-    programmes = amendement["listeProgrammesAmdt"]["programmeAmdt"]
 
-    class Balance(Enum):
-        POS = "Positif"
-        NEG = "Negatif"
-
-    class OldBalance(Enum):
-        POS = "SupplementairesOuvertes"
-        NEG = "Annulees"
-
-    balance = Balance if "aEPositifFormat" in programmes[0] else OldBalance
-
-    ae = [
-        (
-            programme[f"aE{balance.POS.value}Format"],
-            programme[f"aE{balance.NEG.value}Format"],
-        )
-        for programme in programmes
-    ]
-    cp = [
-        (
-            programme[f"cP{balance.POS.value}Format"],
-            programme[f"cP{balance.NEG.value}Format"],
-        )
-        for programme in programmes
-    ]
+def render_credits_tables(amendement: OrderedDict) -> str:
+    ae = _extract_credits_table(amendement, type_credits="aE")
+    cp = _extract_credits_table(amendement, type_credits="cP")
     return render_template(
         "mission_table.html",
         context={
-            "amendement": amendement,
-            "programmes": programmes,
-            "balance": balance,
-            "cp_only": all((plus, moins) == ("0", "0") for plus, moins in ae),
-            "ae_only": all((plus, moins) == ("0", "0") for plus, moins in cp),
+            "ae": ae,
+            "cp": cp,
+            "cp_only": all((p.pos, p.neg) == ("0", "0") for p in ae.programmes),
+            "ae_only": all((p.pos, p.neg) == ("0", "0") for p in cp.programmes),
             "ae_cp_different": ae != cp,
         },
     )
+
+
+class LigneCredits(NamedTuple):
+    libelle: str
+    pos: str
+    neg: str
+
+
+class TableauCredits(NamedTuple):
+    programmes: List[LigneCredits]
+    totaux: LigneCredits
+    solde: str
+
+
+def _extract_credits_table(
+    amendement: OrderedDict, type_credits: str
+) -> TableauCredits:
+    programmes = amendement["listeProgrammesAmdt"]["programmeAmdt"]
+
+    new_format = "aEPositifFormat" in programmes[0]
+    if new_format:
+        pos_key, neg_key = "Positif", "Negatif"
+    else:
+        pos_key, neg_key = "SupplementairesOuvertes", "Annulees"
+
+    return TableauCredits(
+        programmes=[
+            LigneCredits(
+                libelle=_extract_libelle(programme),
+                pos=programme[type_credits + pos_key + "Format"],
+                neg=programme[type_credits + neg_key + "Format"],
+            )
+            for programme in programmes
+        ],
+        totaux=LigneCredits(
+            libelle="Totaux",
+            pos=amendement["total" + type_credits.upper() + pos_key + "Format"],
+            neg=amendement["total" + type_credits.upper() + neg_key + "Format"],
+        ),
+        solde=amendement["solde" + type_credits.upper() + "Format"],
+    )
+
+
+def _extract_libelle(programme: OrderedDict) -> str:
+    libelle: str = programme["libelleProgrammeAmdt"]
+    if programme["programmeAmdtNouveau"] == "true":
+        libelle += " (ligne nouvelle)"
+    return libelle
 
 
 def get_mission_ref(amendement: OrderedDict) -> Optional[MissionRef]:

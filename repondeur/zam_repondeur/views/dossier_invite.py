@@ -12,7 +12,7 @@ from zam_repondeur.models import DBSession, Team, User, get_one_or_create
 from zam_repondeur.models.events.dossier import DossierRetrait, InvitationEnvoyee
 from zam_repondeur.resources import DossierResource
 
-from .dossiers import DossierViewBase
+from .dossier import DossierViewBase
 
 
 @view_defaults(context=DossierResource, name="invite")

@@ -19,7 +19,7 @@ def test_position_changed(lecture_senat):
     The discussion order of amendements may change
     """
 
-    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
     responses.add(
@@ -73,7 +73,7 @@ def test_abandoned_before_seance(lecture_senat):
     will be removed from the "liste_discussion"
     """
 
-    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
     responses.add(
@@ -126,7 +126,7 @@ def test_article_changed(lecture_senat):
     The targeted article may change
     """
 
-    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
     responses.add(
@@ -185,7 +185,7 @@ def test_add_parent_amendement(lecture_senat):
     The targeted article may change
     """
 
-    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
     responses.add(
@@ -238,7 +238,7 @@ def test_remove_parent_amendement(lecture_senat):
     The targeted article may change
     """
 
-    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
     responses.add(

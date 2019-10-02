@@ -23,7 +23,7 @@ def read_sample_data(basename):
 
 @pytest.fixture
 def source():
-    from zam_repondeur.fetch.an.amendements import AssembleeNationale
+    from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
 
     return AssembleeNationale()
 

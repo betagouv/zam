@@ -4,7 +4,7 @@ from io import BytesIO, TextIOWrapper
 from typing import IO, Generator, Tuple
 from zipfile import ZipFile
 
-from zam_repondeur.fetch.http import cached_session
+from zam_repondeur.services.fetch.http import cached_session
 
 logger = logging.getLogger(__name__)
 

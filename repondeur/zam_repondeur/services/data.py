@@ -1,18 +1,19 @@
 import json
 import pickle  # nosec
+from io import BytesIO
 from typing import Any, Dict, List, Optional
 
 from pyramid.config import Configurator
 from redis import Redis
 from redis_lock import Lock, reset_all
 
-from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
+from zam_repondeur.initialize import needs_init
+from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
     get_dossiers_legislatifs_and_textes,
 )
-from zam_repondeur.fetch.an.dossiers.models import DossierRef, TexteRef
-from zam_repondeur.fetch.an.organes_acteurs import get_organes_acteurs
-from zam_repondeur.fetch.senat.scraping import get_dossiers_senat
-from zam_repondeur.initialize import needs_init
+from zam_repondeur.services.fetch.an.dossiers.models import DossierRef, TexteRef
+from zam_repondeur.services.fetch.an.organes_acteurs import get_organes_acteurs
+from zam_repondeur.services.fetch.senat.scraping import get_dossiers_senat
 
 
 def includeme(config: Configurator) -> None:
@@ -27,6 +28,13 @@ def init_repository(settings: Dict[str, str]) -> None:
         redis_url=settings["zam.data.redis_url"],
         legislatures=[int(legi) for legi in settings["zam.legislatures"].split(",")],
     )
+
+
+class BackwardsCompatibleUnpickler(pickle.Unpickler):
+    def find_class(self, module: str, name: str) -> Any:
+        if module.startswith("zam_repondeur.fetch."):
+            module = "zam_repondeur.services.fetch." + module[20:]
+        return super().find_class(module, name)
 
 
 class DataRepository:
@@ -167,7 +175,8 @@ class DataRepository:
         raw_bytes = self._get_raw_data(key)
         if raw_bytes is None:
             return None
-        return pickle.loads(raw_bytes)  # nosec (not arbitrary data)
+        unpickler = BackwardsCompatibleUnpickler(BytesIO(raw_bytes))
+        return unpickler.load()
 
     @needs_init
     def _set_json_data(self, key: str, value: Any) -> None:

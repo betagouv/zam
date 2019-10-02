@@ -5,7 +5,7 @@ import pytest
 
 def test_parse_from_csv(lecture_senat):
 
-    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
     amend = {
@@ -48,7 +48,7 @@ def test_parse_from_csv(lecture_senat):
 
 def test_parse_from_csv_unparsable_article(lecture_senat):
 
-    from zam_repondeur.fetch.senat.amendements import Senat
+    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
     amend = {
@@ -82,24 +82,24 @@ def test_parse_from_csv_unparsable_article(lecture_senat):
 
 class TestExtractMatricule:
     def test_empty_url(self):
-        from zam_repondeur.fetch.senat.amendements import extract_matricule
+        from zam_repondeur.services.fetch.senat.amendements import extract_matricule
 
         assert extract_matricule("") is None
 
     def test_malformed_url(self):
-        from zam_repondeur.fetch.senat.amendements import extract_matricule
+        from zam_repondeur.services.fetch.senat.amendements import extract_matricule
 
         with pytest.raises(ValueError):
             extract_matricule("$amd.getUrlAuteur()")
 
     def test_csv_format(self):
-        from zam_repondeur.fetch.senat.amendements import extract_matricule
+        from zam_repondeur.services.fetch.senat.amendements import extract_matricule
 
         url = "//www.senat.fr/senfic/frassa_christophe_andre08018u.html"
         assert extract_matricule(url) == "08018U"
 
     def test_json_format(self):
-        from zam_repondeur.fetch.senat.amendements import extract_matricule
+        from zam_repondeur.services.fetch.senat.amendements import extract_matricule
 
         url = "bocquet_eric11040e.html"
         assert extract_matricule(url) == "11040E"
@@ -107,8 +107,10 @@ class TestExtractMatricule:
 
 class TestParseDiscussionDetails:
     def test_parse_basic_data(self):
-        from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
-        from zam_repondeur.fetch.missions import MissionRef
+        from zam_repondeur.services.fetch.senat.derouleur import (
+            parse_discussion_details,
+        )
+        from zam_repondeur.services.fetch.missions import MissionRef
 
         amend = {
             "idAmendement": "1104289",
@@ -140,8 +142,10 @@ class TestParseDiscussionDetails:
         assert details.parent_num is None
 
     def test_discussion_commune(self):
-        from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
-        from zam_repondeur.fetch.missions import MissionRef
+        from zam_repondeur.services.fetch.senat.derouleur import (
+            parse_discussion_details,
+        )
+        from zam_repondeur.services.fetch.missions import MissionRef
 
         amend = {
             "idAmendement": "1110174",
@@ -170,8 +174,10 @@ class TestParseDiscussionDetails:
         assert details.id_discussion_commune == 110541
 
     def test_not_discussion_commune(self):
-        from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
-        from zam_repondeur.fetch.missions import MissionRef
+        from zam_repondeur.services.fetch.senat.derouleur import (
+            parse_discussion_details,
+        )
+        from zam_repondeur.services.fetch.missions import MissionRef
 
         amend = {
             "idAmendement": "1103376",
@@ -200,8 +206,10 @@ class TestParseDiscussionDetails:
         assert details.id_discussion_commune is None
 
     def test_parse_sous_amendement(self):
-        from zam_repondeur.fetch.senat.derouleur import parse_discussion_details
-        from zam_repondeur.fetch.missions import MissionRef
+        from zam_repondeur.services.fetch.senat.derouleur import (
+            parse_discussion_details,
+        )
+        from zam_repondeur.services.fetch.missions import MissionRef
 
         amend1 = {
             "idAmendement": "1104289",

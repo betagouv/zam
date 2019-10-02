@@ -11,7 +11,7 @@ SAMPLE_DATA_DIR = HERE.parent / "sample_data" / "senat"
     [("89017R", "Adnot", "NI"), ("08015R", "Laurent", "Les Républicains")],
 )
 def test_parse(matricule, nom, groupe):
-    from zam_repondeur.fetch.senat.senateurs.parse import parse_senateurs
+    from zam_repondeur.services.fetch.senat.senateurs.parse import parse_senateurs
 
     filename = SAMPLE_DATA_DIR / "ODSEN_GENERAL.csv"
     with filename.open("r", encoding="cp1252") as file_:

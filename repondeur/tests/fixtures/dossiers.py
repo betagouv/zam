@@ -6,7 +6,7 @@ import pytest
 
 @pytest.yield_fixture(scope="session", autouse=True)
 def mock_dossiers():
-    from zam_repondeur.fetch.an.dossiers.models import (
+    from zam_repondeur.services.fetch.an.dossiers.models import (
         DossierRef,
         LectureRef,
         TexteRef,

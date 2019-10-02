@@ -7,10 +7,6 @@ from typing import IO, Dict, List, Optional, Tuple, cast
 from defusedxml.lxml import RestrictedElement, parse
 from lxml.etree import XMLSyntaxError  # nosec
 
-from zam_repondeur.fetch.an.division import parse_avant_apres
-from zam_repondeur.fetch.an.dossiers.models import DossierRef, LectureRef, TexteRef
-from zam_repondeur.fetch.dates import parse_date
-from zam_repondeur.fetch.division import parse_subdiv
 from zam_repondeur.models import (
     Amendement,
     Article,
@@ -25,6 +21,14 @@ from zam_repondeur.services.data import repository
 from zam_repondeur.services.dossiers import (
     get_dossiers_legislatifs_open_data_from_cache,
 )
+from zam_repondeur.services.fetch.an.division import parse_avant_apres
+from zam_repondeur.services.fetch.an.dossiers.models import (
+    DossierRef,
+    LectureRef,
+    TexteRef,
+)
+from zam_repondeur.services.fetch.dates import parse_date
+from zam_repondeur.services.fetch.division import parse_subdiv
 
 logger = logging.getLogger(__name__)
 

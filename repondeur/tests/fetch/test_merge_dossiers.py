@@ -4,24 +4,24 @@ from datetime import date
 
 class TestMergeDossiers:
     def test_merge_empty_dossiers(self):
-        from zam_repondeur.fetch.an.dossiers.models import DossierRef
+        from zam_repondeur.services.fetch.an.dossiers.models import DossierRef
 
         assert DossierRef.merge_dossiers({}, {}) == {}
 
     def test_merge_dossiers_and_empty(self):
-        from zam_repondeur.fetch.an.dossiers.models import DossierRef
+        from zam_repondeur.services.fetch.an.dossiers.models import DossierRef
 
         dossiers1 = {"a": DossierRef("a", "titre1", "slug1", "", "", [])}
         assert DossierRef.merge_dossiers(dossiers1, {}) == dossiers1
 
     def test_merge_empty_and_dossiers(self):
-        from zam_repondeur.fetch.an.dossiers.models import DossierRef
+        from zam_repondeur.services.fetch.an.dossiers.models import DossierRef
 
         dossiers1 = {"a": DossierRef("a", "titre1", "slug1", "", "", [])}
         assert DossierRef.merge_dossiers({}, dossiers1) == dossiers1
 
     def test_merge_different_dossiers(self):
-        from zam_repondeur.fetch.an.dossiers.models import DossierRef
+        from zam_repondeur.services.fetch.an.dossiers.models import DossierRef
 
         dossiers1 = {"a": DossierRef("a", "titre1", "slug1", "", "", [])}
         dossiers2 = {"b": DossierRef("b", "titre2", "slug2", "", "", [])}
@@ -31,7 +31,7 @@ class TestMergeDossiers:
         }
 
     def test_merge_different_dossiers_reversed(self):
-        from zam_repondeur.fetch.an.dossiers.models import DossierRef
+        from zam_repondeur.services.fetch.an.dossiers.models import DossierRef
 
         dossiers1 = {"a": DossierRef("a", "titre1", "slug1", "", "", [])}
         dossiers2 = {"b": DossierRef("b", "titre2", "slug2", "", "", [])}
@@ -41,7 +41,7 @@ class TestMergeDossiers:
         }
 
     def test_merge_identical_dossiers(self):
-        from zam_repondeur.fetch.an.dossiers.models import (
+        from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
             TexteRef,
@@ -89,7 +89,7 @@ class TestMergeDossiers:
         assert dossiers2 == {}
 
     def test_merge_dossiers_with_additional_lecture(self):
-        from zam_repondeur.fetch.an.dossiers.models import (
+        from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
             TexteRef,
@@ -218,7 +218,7 @@ class TestMergeDossiers:
 
 class TestMergeBySenatURL:
     def test_merge_dossiers_by_senat_url_with_additional_lecture(self):
-        from zam_repondeur.fetch.an.dossiers.models import (
+        from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
             TexteRef,
@@ -346,7 +346,7 @@ class TestMergeBySenatURL:
         assert result2 == {}
 
     def test_merge_dossiers_by_senat_url_more_complex(self):
-        from zam_repondeur.fetch.an.dossiers.models import (
+        from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
             TexteRef,
@@ -577,7 +577,7 @@ class TestMergeBySenatURL:
 
 class TestAddDossiers:
     def test_senat_commission_lecture(self):
-        from zam_repondeur.fetch.an.dossiers.models import (
+        from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
             TexteRef,

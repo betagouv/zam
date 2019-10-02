@@ -7,7 +7,7 @@ import responses
 @contextmanager
 def setup_mock_responses(lecture, liste, amendements):
 
-    from zam_repondeur.fetch.an.amendements import build_url
+    from zam_repondeur.services.fetch.an.amendements import build_url
 
     with responses.RequestsMock(assert_all_requests_are_fired=False) as mock_resp:
 

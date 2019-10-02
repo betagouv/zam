@@ -3,13 +3,13 @@ from operator import attrgetter
 
 
 def test_get_dossiers_senat(mock_scraping_senat):
-    from zam_repondeur.fetch.an.dossiers.models import (
+    from zam_repondeur.services.fetch.an.dossiers.models import (
         DossierRef,
         LectureRef,
         TexteRef,
         TypeTexte,
     )
-    from zam_repondeur.fetch.senat.scraping import get_dossiers_senat
+    from zam_repondeur.services.fetch.senat.scraping import get_dossiers_senat
     from zam_repondeur.models.chambre import Chambre
     from zam_repondeur.models.phase import Phase
 
@@ -762,7 +762,7 @@ def test_get_dossiers_senat(mock_scraping_senat):
 
 
 def test_extract_recent_urls():
-    from zam_repondeur.fetch.senat.scraping import (
+    from zam_repondeur.services.fetch.senat.scraping import (
         download_textes_recents,
         extract_recent_urls,
     )
@@ -788,7 +788,7 @@ def test_extract_recent_urls():
 
 
 def test_convert_to_rss_urls():
-    from zam_repondeur.fetch.senat.scraping import (
+    from zam_repondeur.services.fetch.senat.scraping import (
         download_textes_recents,
         extract_recent_urls,
         convert_to_rss_urls,
@@ -815,13 +815,13 @@ def test_convert_to_rss_urls():
 
 
 def test_create_dossier():
-    from zam_repondeur.fetch.an.dossiers.models import (
+    from zam_repondeur.services.fetch.an.dossiers.models import (
         DossierRef,
         LectureRef,
         TexteRef,
         TypeTexte,
     )
-    from zam_repondeur.fetch.senat.scraping import create_dossier
+    from zam_repondeur.services.fetch.senat.scraping import create_dossier
     from zam_repondeur.models.chambre import Chambre
     from zam_repondeur.models.phase import Phase
 

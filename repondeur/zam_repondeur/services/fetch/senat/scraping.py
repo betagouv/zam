@@ -7,7 +7,9 @@ from typing import Dict, Optional, Set
 import requests
 from bs4 import BeautifulSoup, element
 
-from zam_repondeur.fetch.an.dossiers.models import (
+from zam_repondeur.models.organe import ORGANE_SENAT
+from zam_repondeur.models.phase import Phase
+from zam_repondeur.services.fetch.an.dossiers.models import (
     Chambre,
     DossierRef,
     DossierRefsByUID,
@@ -15,8 +17,6 @@ from zam_repondeur.fetch.an.dossiers.models import (
     TexteRef,
     TypeTexte,
 )
-from zam_repondeur.models.organe import ORGANE_SENAT
-from zam_repondeur.models.phase import Phase
 from zam_repondeur.slugs import slugify
 
 logger = logging.getLogger(__name__)

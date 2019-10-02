@@ -11,7 +11,7 @@ ORGANES_ACTEURS = HERE / "sample_data" / "AMO30_subset.json.zip"
 
 @pytest.fixture(scope="session")
 def sample_data():
-    from zam_repondeur.fetch.an.common import extract_from_zip
+    from zam_repondeur.services.fetch.an.common import extract_from_zip
 
     with open(ORGANES_ACTEURS, "rb") as f_:
         data = {
@@ -23,10 +23,10 @@ def sample_data():
 
 
 def test_get_organes_acteurs(sample_data):
-    from zam_repondeur.fetch.an.organes_acteurs import get_organes_acteurs
+    from zam_repondeur.services.fetch.an.organes_acteurs import get_organes_acteurs
 
     with patch(
-        "zam_repondeur.fetch.an.organes_acteurs.fetch_organes_acteurs",
+        "zam_repondeur.services.fetch.an.organes_acteurs.fetch_organes_acteurs",
         return_value=sample_data,
     ):
         organes, acteurs = get_organes_acteurs()
@@ -41,7 +41,7 @@ def test_get_organes_acteurs(sample_data):
 
 
 def test_extract_organes(sample_data):
-    from zam_repondeur.fetch.an.organes_acteurs import extract_organes
+    from zam_repondeur.services.fetch.an.organes_acteurs import extract_organes
 
     organes = extract_organes(
         dict_["organe"]
@@ -57,7 +57,7 @@ def test_extract_organes(sample_data):
 
 
 def test_extract_acteurs(sample_data):
-    from zam_repondeur.fetch.an.organes_acteurs import extract_acteurs
+    from zam_repondeur.services.fetch.an.organes_acteurs import extract_acteurs
 
     acteurs = extract_acteurs(
         dict_["acteur"]

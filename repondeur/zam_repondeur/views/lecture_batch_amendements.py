@@ -76,7 +76,7 @@ class BatchAmendements:
                 amendements_nums=[amendement.num for amendement in amendements],
                 request=self.request,
             )
-            reponse = Reponse.from_amendement(amendement)
+            reponse = amendement.user_content.as_tuple()
             if not reponse.is_empty:
                 shared_reponse = reponse
             else:
@@ -145,7 +145,7 @@ class BatchAmendements:
     def check_amendements_have_all_same_reponse_or_empty(
         self, amendements: List[Amendement]
     ) -> None:
-        reponses = (Reponse.from_amendement(amendement) for amendement in amendements)
+        reponses = (amendement.user_content.as_tuple() for amendement in amendements)
         non_empty_reponses = (reponse for reponse in reponses if not reponse.is_empty)
 
         if len(set(non_empty_reponses)) <= 1:  # all the same (1) or all empty (0)

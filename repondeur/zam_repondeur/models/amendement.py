@@ -61,27 +61,6 @@ class Reponse(NamedTuple):
     content: str
     comments: str
 
-    @classmethod
-    def from_amendement(cls, amendement: "Amendement") -> "Reponse":
-        return cls(
-            avis=amendement.user_content.avis or "",
-            objet=(
-                amendement.user_content.objet.strip()
-                if amendement.user_content.objet
-                else ""
-            ),
-            content=(
-                amendement.user_content.reponse.strip()
-                if amendement.user_content.reponse
-                else ""
-            ),
-            comments=(
-                amendement.user_content.comments.strip()
-                if amendement.user_content.comments
-                else ""
-            ),
-        )
-
     @property
     def is_empty(self) -> bool:
         return (
@@ -157,6 +136,14 @@ class AmendementUserContent(Base):
             and do_striptags(self.objet) == do_striptags(other.objet)  # type: ignore
             and do_striptags(self.reponse)  # type: ignore
             == do_striptags(other.reponse)  # type: ignore
+        )
+
+    def as_tuple(self) -> Reponse:
+        return Reponse(
+            avis=self.avis or "",
+            objet=(self.objet.strip() if self.objet else ""),
+            content=(self.reponse.strip() if self.reponse else ""),
+            comments=(self.comments.strip() if self.comments else ""),
         )
 
 

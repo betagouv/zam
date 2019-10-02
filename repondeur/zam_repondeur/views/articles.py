@@ -7,7 +7,6 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.orm import joinedload, lazyload, load_only
 
-from zam_repondeur.clean import clean_html
 from zam_repondeur.message import Message
 from zam_repondeur.models import Article
 from zam_repondeur.models.article import mult_key
@@ -16,6 +15,7 @@ from zam_repondeur.models.events.article import (
     TitreArticleModifie,
 )
 from zam_repondeur.resources import ArticleCollection, ArticleResource
+from zam_repondeur.services.clean import clean_html
 
 
 @view_config(context=ArticleCollection, renderer="articles_list.html")

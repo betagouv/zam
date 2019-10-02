@@ -6,7 +6,6 @@ from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
-from zam_repondeur.clean import clean_html
 from zam_repondeur.decorator import reify
 from zam_repondeur.message import Message
 from zam_repondeur.models import AVIS, Batch
@@ -17,6 +16,7 @@ from zam_repondeur.models.events.amendement import (
     ReponseAmendementModifiee,
 )
 from zam_repondeur.resources import AmendementResource
+from zam_repondeur.services.clean import clean_html
 from zam_repondeur.utils import add_url_fragment, add_url_params
 
 

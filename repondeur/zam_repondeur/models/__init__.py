@@ -4,7 +4,7 @@ from pyramid_retry import mark_error_retryable
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-from .amendement import AVIS, Amendement, Mission  # noqa
+from .amendement import AVIS, Amendement  # noqa
 from .article import Article, ArticleUserContent  # noqa
 from .base import Base, DBSession, log_query_with_origin  # noqa
 from .batch import Batch  # noqa
@@ -44,6 +44,7 @@ from .events.lecture import (  # noqa
     SharedTableSupprimee,
 )
 from .lecture import Lecture  # noqa
+from .mission import Mission  # noqa
 from .phase import Phase  # noqa
 from .table import SharedTable, UserTable  # noqa
 from .texte import Texte, TypeTexte  # noqa

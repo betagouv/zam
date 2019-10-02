@@ -35,6 +35,7 @@ from .batch import Batch
 if TYPE_CHECKING:
     from .article import Article  # noqa
     from .lecture import Lecture  # noqa
+    from .mission import Mission  # noqa
     from .table import SharedTable, UserTable  # noqa
 
 
@@ -89,28 +90,6 @@ class Reponse(NamedTuple):
             and self.content == ""
             and self.comments == ""
         )
-
-
-class Mission(Base):
-    __tablename__ = "missions"
-
-    pk: int = Column(Integer, primary_key=True)
-    titre: Optional[str] = Column(Text, nullable=True)
-    titre_court: Optional[str] = Column(Text, nullable=True)
-
-    amendements: List["Amendement"] = relationship(
-        "Amendement", back_populates="mission", cascade="all, delete-orphan"
-    )
-
-    __repr_keys__ = ("pk", "titre", "titre_court")
-
-    @classmethod
-    def create(
-        cls, titre: Optional[str] = None, titre_court: Optional[str] = None
-    ) -> "Mission":
-        mission = cls(titre=titre, titre_court=titre_court)
-        DBSession.add(mission)
-        return mission
 
 
 class AmendementUserContent(Base):

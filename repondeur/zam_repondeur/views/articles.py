@@ -1,58 +1,18 @@
 from datetime import date
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
-from sqlalchemy.orm import joinedload, lazyload, load_only
 
 from zam_repondeur.message import Message
-from zam_repondeur.models import Article
-from zam_repondeur.models.article import mult_key
 from zam_repondeur.models.events.article import (
     PresentationArticleModifiee,
     TitreArticleModifie,
 )
-from zam_repondeur.resources import ArticleCollection, ArticleResource
+from zam_repondeur.resources import ArticleResource
 from zam_repondeur.services.clean import clean_html
-
-
-@view_config(context=ArticleCollection, renderer="articles_list.html")
-def list_articles(context: ArticleCollection, request: Request) -> Dict[str, Any]:
-    def _sort_key(item: Article) -> Tuple[int, str, Tuple[int, str], int]:
-        """Custom sort: we want link related to `Titre` to be at the very end.
-
-        This is because it is the correct order in the derouleur and thus
-        it is discussed at the end of the seance.
-        """
-        return (
-            Article._ORDER_TYPE[""]
-            if item.type == "titre"
-            else Article._ORDER_TYPE[item.type or ""],
-            str(item.num or "").zfill(3),
-            mult_key(item.mult or ""),
-            Article._ORDER_POS[item.pos or ""],
-        )
-
-    lecture = context.lecture_resource.model(
-        load_only("chambre", "dossier_pk", "organe", "partie", "texte_pk", "titre"),
-        lazyload("articles").options(
-            load_only("lecture_pk", "mult", "num", "pos", "type"),
-            joinedload("user_content").load_only("title"),
-            joinedload("amendements").options(
-                load_only("auteur", "sort"),
-                joinedload("user_content").load_only("avis"),
-            ),
-        ),
-        lazyload("amendements").options(
-            load_only("article_pk", "auteur", "num", "rectif", "sort"),
-            joinedload("user_content").load_only("avis"),
-        ),
-        joinedload("texte").load_only("legislature", "numero"),
-    )
-    articles = sorted(lecture.articles, key=_sort_key)
-    return {"lecture": lecture, "articles": articles}
 
 
 @view_defaults(context=ArticleResource)

@@ -1,6 +1,8 @@
 version: 2
+
 workflows:
   version: 2
+
   on-push:
     jobs:
       - run-tests:
@@ -10,7 +12,22 @@ workflows:
                 # ignore branches created by autorebase https://github.com/tibdex/autorebase
                 - /rebase-pull-request-.*/
                 - /cherry-pick-rebase-pull-request-.*/
+
+  nightly:
+    triggers:
+      - schedule:
+          # run every day at 14:53 UTC (for testing, will move to nightly hours later)
+          cron: "53 14 * * *"
+          filters:
+            branches:
+              only:
+                - master
+                - ci-periodic-fetch
+    jobs:
+      - fetch-amendements
+
 jobs:
+
   run-tests:
     docker:
       - image: circleci/python:3.6-stretch-browsers
@@ -78,3 +95,40 @@ jobs:
             pytest -p no:sugar -vv --junitxml=test-reports/junit.xml --cov=zam_repondeur tests/
       - store_test_results:
           path: repondeur/test-reports
+
+  fetch-amendements:
+    docker:
+      - image: circleci/python:3.6-stretch
+      - image: circleci/postgres:10.6-alpine-ram
+      - image: redis
+    steps:
+      - checkout
+      - run:
+          name: Setup french locale
+          command: |
+            echo 'fr_FR.UTF-8 UTF-8' | sudo tee -a /etc/locale.gen
+            echo 'LANG="fr_FR.UTF-8"' | sudo tee /etc/default/locale
+            sudo dpkg-reconfigure --frontend=noninteractive locales
+            sudo update-locale LANG=fr_FR.UTF-8
+      - run:
+          name: Check versions
+          command: |
+            python --version
+            pip --version
+      - run:
+          name: Install Python deps
+          command: |
+            cd repondeur
+            sudo pip install --no-use-pep517 -r requirements.txt -e . --log pip.log
+            ! grep ERROR pip.log
+      - run:
+          name: Initialize database
+          command: |
+            cd repondeur
+            alembic --config=circleci.ini upgrade head
+      - run:
+          name: Fetch amendements
+          command: |
+            cd repondeur
+            zam_fetch_amendements circleci.ini
+          no_output_timeout: 30m

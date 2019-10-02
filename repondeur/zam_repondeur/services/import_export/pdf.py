@@ -37,7 +37,7 @@ def generate_html_for_pdf(request: Request, template_name: str, context: dict) -
 
 
 def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:
-    content = generate_html_for_pdf(request, "print.html", {"lecture": lecture})
+    content = generate_html_for_pdf(request, "print/all.html", {"lecture": lecture})
     with xvfb_if_supported():
         pdfkit.from_string(content, filename, options=PDFKIT_OPTIONS, css=PDF_CSS)
 
@@ -46,7 +46,7 @@ def write_pdf_multiple(
     lecture: Lecture, amendements: Iterable[Amendement], filename: str, request: Request
 ) -> None:
     content = generate_html_for_pdf(
-        request, "print_multiple.html", {"amendements": amendements}
+        request, "print/multiple.html", {"amendements": amendements}
     )
     with xvfb_if_supported():
         pdfkit.from_string(content, filename, options=PDFKIT_OPTIONS, css=PDF_CSS)

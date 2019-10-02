@@ -9,7 +9,7 @@ from webob.multidict import MultiDict
 
 from zam_repondeur.message import Message
 from zam_repondeur.models import Amendement, Batch
-from zam_repondeur.models.amendement import Reponse
+from zam_repondeur.models.amendement import ReponseTuple
 from zam_repondeur.models.events.amendement import (
     AvisAmendementModifie,
     BatchSet,
@@ -65,7 +65,7 @@ class BatchAmendements:
         self.check_amendements_are_all_from_same_article(amendements)
 
         batch = Batch.create()
-        shared_reponse: Optional[Reponse] = None
+        shared_reponse: Optional[ReponseTuple] = None
         to_be_updated: List[Amendement] = []
         for amendement in amendements:
             if amendement.batch:

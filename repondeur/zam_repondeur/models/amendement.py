@@ -55,7 +55,7 @@ AVIS = [
 GroupingKey = Tuple[str, str, str, str]
 
 
-class Reponse(NamedTuple):
+class ReponseTuple(NamedTuple):
     avis: str
     objet: str
     content: str
@@ -138,8 +138,8 @@ class AmendementUserContent(Base):
             == do_striptags(other.reponse)  # type: ignore
         )
 
-    def as_tuple(self) -> Reponse:
-        return Reponse(
+    def as_tuple(self) -> ReponseTuple:
+        return ReponseTuple(
             avis=self.avis or "",
             objet=(self.objet.strip() if self.objet else ""),
             content=(self.reponse.strip() if self.reponse else ""),

@@ -5,7 +5,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
-from sqlalchemy.orm import joinedload, load_only, subqueryload
+from sqlalchemy.orm import joinedload
 from webob.multidict import MultiDict
 
 from zam_repondeur.message import Message
@@ -20,48 +20,8 @@ from zam_repondeur.models.events.amendement import (
     ReponseAmendementModifiee,
 )
 from zam_repondeur.models.users import Team
-from zam_repondeur.resources import AmendementCollection, LectureResource
+from zam_repondeur.resources import LectureResource
 from zam_repondeur.tasks.fetch import fetch_amendements, fetch_articles
-
-
-@view_config(context=AmendementCollection, renderer="amendements.html")
-def list_amendements(context: AmendementCollection, request: Request) -> dict:
-    """
-    The index
-    """
-    lecture_resource = context.parent
-    lecture = lecture_resource.model(
-        subqueryload("articles").defer("content"),
-        subqueryload("amendements").options(
-            load_only(
-                "article_pk",
-                "auteur",
-                "batch_pk",
-                "id_identique",
-                "lecture_pk",
-                "num",
-                "parent_pk",
-                "position",
-                "rectif",
-                "shared_table_pk",
-                "sort",
-                "user_table_pk",
-            ),
-            joinedload("user_content").load_only("avis", "objet", "reponse"),
-            subqueryload("batch").joinedload("_amendements").load_only("num", "rectif"),
-            subqueryload("shared_table").load_only("titre"),
-            subqueryload("user_table").joinedload("user").load_only("email", "name"),
-        ),
-    )
-    return {
-        "lecture": lecture,
-        "dossier_resource": lecture_resource.dossier_resource,
-        "lecture_resource": lecture_resource,
-        "current_tab": "index",
-        "all_amendements": lecture.amendements,
-        "collapsed_amendements": Batch.collapsed_batches(lecture.amendements),
-        "articles": lecture.articles,
-    }
 
 
 @view_defaults(

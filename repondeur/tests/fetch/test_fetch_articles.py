@@ -5,6 +5,8 @@ import pytest
 import responses
 import transaction
 
+SAMPLE_DATA_DIR = Path(__file__).parent.parent / "sample_data"
+
 
 class TestGetPossibleUrls:
     def test_assemblee_nationale_pjl(self, texte_plfss2018_an_premiere_lecture):
@@ -71,9 +73,7 @@ class TestGetArticlesAN:
         responses.add(
             responses.GET,
             "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
-            body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pl0269.html").read_text("utf-8", "ignore"),
             status=200,
         )
 
@@ -116,7 +116,7 @@ class TestGetArticlesAN:
         responses.add(
             responses.GET,
             "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
-            body=(Path(__file__).parent / "sample_data" / "pl0387.html")
+            body=(SAMPLE_DATA_DIR / "pl0387.html")
             .read_text("latin-1")
             .encode("latin-1"),
             status=200,
@@ -147,9 +147,7 @@ class TestGetArticlesAN:
         responses.add(
             responses.GET,
             "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
-            body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pl0269.html").read_text("utf-8", "ignore"),
             status=200,
         )
 
@@ -196,7 +194,7 @@ class TestGetArticlesAN:
         responses.add(
             responses.GET,
             "http://www.assemblee-nationale.fr/15/ta-commission/r1056-a0.asp",
-            body=(Path(__file__).parent / "sample_data" / "r1056-a0.html")
+            body=(SAMPLE_DATA_DIR / "r1056-a0.html")
             .read_text("latin-1")
             .encode("latin-1"),
             status=200,
@@ -229,9 +227,7 @@ class TestGetArticlesAN:
         responses.add(
             responses.GET,
             "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
-            body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pl0269.html").read_text("utf-8", "ignore"),
             status=200,
         )
 
@@ -268,9 +264,7 @@ class TestGetArticlesAN:
         responses.add(
             responses.GET,
             "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
-            body=(Path(__file__).parent / "sample_data" / "pl0269.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pl0269.html").read_text("utf-8", "ignore"),
             status=200,
         )
 
@@ -318,9 +312,7 @@ class TestGetArticlesAN:
         responses.add(
             responses.GET,
             "http://www.assemblee-nationale.fr/15/ta-commission/r0575-a0.asp",
-            body=(Path(__file__).parent / "sample_data" / "r0575-a0.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "r0575-a0.html").read_text("utf-8", "ignore"),
             status=200,
         )
 
@@ -380,9 +372,7 @@ class TestGetArticlesSenat:
         responses.add(
             responses.GET,
             "https://www.senat.fr/leg/pjl17-063.html",
-            body=(Path(__file__).parent / "sample_data" / "pjl17-063.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pjl17-063.html").read_text("utf-8", "ignore"),
             status=200,
         )
 
@@ -432,9 +422,7 @@ class TestGetArticlesSenat:
         responses.add(
             responses.GET,
             "https://www.senat.fr/leg/pjl17-063.html",
-            body=(Path(__file__).parent / "sample_data" / "pjl17-063.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pjl17-063.html").read_text("utf-8", "ignore"),
             status=200,
         )
 
@@ -466,9 +454,7 @@ class TestGetArticlesSenat:
         responses.add(
             responses.GET,
             "https://www.senat.fr/leg/pjl17-063.html",
-            body=(Path(__file__).parent / "sample_data" / "pjl17-659.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pjl17-659.html").read_text("utf-8", "ignore"),
             status=200,
         )
 
@@ -492,9 +478,7 @@ class TestGetArticlesSenat:
         responses.add(
             responses.GET,
             "https://www.senat.fr/leg/pjl17-063.html",
-            body=(Path(__file__).parent / "sample_data" / "pjl17-701.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pjl17-701.html").read_text("utf-8", "ignore"),
             status=200,
         )
 
@@ -521,9 +505,7 @@ class TestGetArticlesSenat:
         responses.add(
             responses.GET,
             "https://www.senat.fr/leg/pjl17-063.html",
-            body=(Path(__file__).parent / "sample_data" / "pjl18-218.html").read_text(
-                "utf-8", "ignore"
-            ),
+            body=(SAMPLE_DATA_DIR / "pjl18-218.html").read_text("utf-8", "ignore"),
             status=200,
         )
 

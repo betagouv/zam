@@ -8,10 +8,10 @@ from fetch.mock_an import setup_mock_responses
 
 
 def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements_senat):
-    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
-    from zam_repondeur.fetch.missions import MissionRef
-    from zam_repondeur.fetch.senat.senateurs.models import Senateur
+    from zam_repondeur.services.fetch.missions import MissionRef
+    from zam_repondeur.services.fetch.senat.senateurs.models import Senateur
 
     # Add a response to one of the amendements
     with transaction.manager:
@@ -27,11 +27,11 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
 
     # Update amendements
     with patch(
-        "zam_repondeur.fetch.senat.amendements._fetch_all"
+        "zam_repondeur.services.fetch.senat.amendements._fetch_all"
     ) as mock_fetch_all, patch(
-        "zam_repondeur.fetch.senat.derouleur._fetch_discussion_details"
+        "zam_repondeur.services.fetch.senat.derouleur._fetch_discussion_details"
     ) as mock_fetch_discussion_details, patch(
-        "zam_repondeur.fetch.senat.amendements.fetch_and_parse_senateurs"
+        "zam_repondeur.services.fetch.senat.amendements.fetch_and_parse_senateurs"
     ) as mock_fetch_and_parse_senateurs:
         mock_fetch_all.return_value = (
             {
@@ -184,7 +184,7 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
 
 
 def test_fetch_amendements_an(app, lecture_an, article1_an):
-    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     Amendement.create(lecture=lecture_an, article=article1_an, num=6, position=1)
@@ -200,9 +200,9 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
     )
 
     with patch(
-        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+        "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = [
             {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
@@ -211,7 +211,7 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
-            from zam_repondeur.fetch.exceptions import NotFound
+            from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
@@ -269,7 +269,7 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
 
 
 def test_fetch_amendements_an_with_mission(app, lecture_an, article1_an):
-    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     Amendement.create(lecture=lecture_an, article=article1_an, num=6, position=1)
@@ -285,9 +285,9 @@ def test_fetch_amendements_an_with_mission(app, lecture_an, article1_an):
     )
 
     with patch(
-        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+        "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = [
             {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
@@ -296,7 +296,7 @@ def test_fetch_amendements_an_with_mission(app, lecture_an, article1_an):
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
-            from zam_repondeur.fetch.exceptions import NotFound
+            from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
@@ -342,7 +342,7 @@ def test_fetch_amendements_an_with_mission(app, lecture_an, article1_an):
 
 
 def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, caplog):
-    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     amendement_6 = Amendement.create(
@@ -362,9 +362,9 @@ def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, c
     DBSession.add(amendement_9)
 
     with patch(
-        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+        "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = [
             {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
@@ -373,7 +373,7 @@ def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, c
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
-            from zam_repondeur.fetch.exceptions import NotFound
+            from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
@@ -421,7 +421,7 @@ def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, c
 def test_fetch_amendements_an_without_group_tribun_id(
     app, lecture_an, article1_an, caplog
 ):
-    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     amendement_6 = Amendement.create(
@@ -441,9 +441,9 @@ def test_fetch_amendements_an_without_group_tribun_id(
     DBSession.add(amendement_9)
 
     with patch(
-        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+        "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = [
             {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
@@ -452,7 +452,7 @@ def test_fetch_amendements_an_without_group_tribun_id(
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
-            from zam_repondeur.fetch.exceptions import NotFound
+            from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
@@ -510,7 +510,7 @@ def test_fetch_amendements_an_without_group_tribun_id(
 def test_fetch_amendements_an_with_unknown_group_tribun_id(
     app, lecture_an, article1_an, caplog
 ):
-    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     amendement_6 = Amendement.create(
@@ -530,9 +530,9 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
     DBSession.add(amendement_9)
 
     with patch(
-        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+        "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = [
             {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
@@ -541,7 +541,7 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
-            from zam_repondeur.fetch.exceptions import NotFound
+            from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
@@ -597,16 +597,16 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
 
 
 def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendements_an):
-    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
-    from zam_repondeur.fetch.exceptions import NotFound
+    from zam_repondeur.services.fetch.exceptions import NotFound
 
     DBSession.add(lecture_an)
 
     with patch(
-        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+        "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = [
             {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
@@ -624,7 +624,7 @@ def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendement
 
 
 def test_fetch_amendements_with_emptiness(app, lecture_an, article1_an, amendements_an):
-    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add(lecture_an)
@@ -651,15 +651,15 @@ def test_fetch_amendements_with_connection_errors(
     app, lecture_an, article1_an, amendements_an
 ):
     from requests.exceptions import ConnectionError
-    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add(lecture_an)
 
     with patch(
-        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+        "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.fetch.an.amendements.cached_session.get"
+        "zam_repondeur.services.fetch.an.amendements.cached_session.get"
     ) as mock_cached_session_get:
         mock_fetch_discussion_list.return_value = [
             {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
@@ -679,15 +679,15 @@ def test_fetch_amendements_with_connection_errors(
 def test_fetch_update_amendements_an_with_batch_preserve_batch(
     app, lecture_an, article1_an, amendements_an_batch
 ):
-    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     assert amendements_an_batch[0].batch.nums == [666, 999]
 
     with transaction.manager, patch(
-        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+        "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         DBSession.add(lecture_an)
         mock_fetch_discussion_list.return_value = [
@@ -696,7 +696,7 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
-            from zam_repondeur.fetch.exceptions import NotFound
+            from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"666", "999"}:
                 raise NotFound
@@ -741,15 +741,15 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
 def test_fetch_update_amendements_an_with_batch_and_changing_article(
     app, lecture_an, article1_an, amendements_an_batch
 ):
-    from zam_repondeur.fetch import get_amendements
+    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     assert amendements_an_batch[0].batch.nums == [666, 999]
 
     with transaction.manager, patch(
-        "zam_repondeur.fetch.an.amendements.fetch_discussion_list"
+        "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         DBSession.add(lecture_an)
         mock_fetch_discussion_list.return_value = [
@@ -758,7 +758,7 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
-            from zam_repondeur.fetch.exceptions import NotFound
+            from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"666", "999"}:
                 raise NotFound

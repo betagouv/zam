@@ -6,7 +6,7 @@ import responses
 import transaction
 
 from fetch.mock_an import setup_mock_responses
-from zam_repondeur.fetch.missions import MissionRef
+from zam_repondeur.services.fetch.missions import MissionRef
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data"
@@ -22,7 +22,7 @@ def read_sample_data(basename):
 
 @pytest.fixture
 def source():
-    from zam_repondeur.fetch.an.amendements import AssembleeNationale
+    from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
 
     return AssembleeNationale()
 
@@ -246,7 +246,10 @@ class TestFetchAndParseAll:
 class TestFetchDiscussionList:
     @responses.activate
     def test_simple_amendements(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import build_url, fetch_discussion_list
+        from zam_repondeur.services.fetch.an.amendements import (
+            build_url,
+            fetch_discussion_list,
+        )
 
         responses.add(
             responses.GET,
@@ -279,7 +282,10 @@ class TestFetchDiscussionList:
 
     @responses.activate
     def test_only_one_amendement(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import build_url, fetch_discussion_list
+        from zam_repondeur.services.fetch.an.amendements import (
+            build_url,
+            fetch_discussion_list,
+        )
 
         responses.add(
             responses.GET,
@@ -330,7 +336,7 @@ class TestFetchDiscussionList:
 
     @responses.activate
     def test_list_not_found(self, lecture_an, app):
-        from zam_repondeur.fetch.an.amendements import (
+        from zam_repondeur.services.fetch.an.amendements import (
             build_url,
             fetch_discussion_list,
             NotFound,
@@ -345,7 +351,7 @@ class TestFetchDiscussionList:
 class TestFetchAmendement:
     @responses.activate
     def test_simple_amendement(self, lecture_an, app, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
         from zam_repondeur.models.events.amendement import (
             CorpsAmendementModifie,
             ExposeAmendementModifie,
@@ -413,7 +419,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_gouvernement(self, lecture_an, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
             responses.GET,
@@ -431,7 +437,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_commission(self, lecture_an, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
             responses.GET,
@@ -450,7 +456,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_with_mission_cp_ae_identical(self, lecture_an, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
             responses.GET,
@@ -572,7 +578,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_with_mission_cp_ae_different(self, lecture_an, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
             responses.GET,
@@ -699,7 +705,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_with_mission_cp_only(self, lecture_an, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
             responses.GET,
@@ -764,7 +770,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_sous_amendement(self, lecture_an, app, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
             responses.GET,
@@ -793,7 +799,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_sort_nil(self, lecture_an, app, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
             responses.GET,
@@ -810,7 +816,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_apres(self, lecture_an, app, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
             responses.GET,
@@ -830,7 +836,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_not_found(self, lecture_an, app, source):
-        from zam_repondeur.fetch.an.amendements import NotFound, build_url
+        from zam_repondeur.services.fetch.an.amendements import NotFound, build_url
 
         responses.add(responses.GET, build_url(lecture_an, 177), status=404)
 
@@ -841,7 +847,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_content_empty(self, lecture_an, app, source):
-        from zam_repondeur.fetch.an.amendements import NotFound, build_url
+        from zam_repondeur.services.fetch.an.amendements import NotFound, build_url
 
         responses.add(responses.GET, build_url(lecture_an, 177), status=200, body="")
 
@@ -854,7 +860,7 @@ class TestFetchAmendement:
 class TestFetchAmendementAgain:
     @responses.activate
     def test_response_is_preserved(self, lecture_an, app, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
             responses.GET,
@@ -888,7 +894,7 @@ class TestFetchAmendementAgain:
 
     @responses.activate
     def test_sort_turn_irrecevable(self, lecture_an, app, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
         from zam_repondeur.models.events.amendement import AmendementIrrecevable
 
         sample_data = read_sample_data("an/269/177.xml")
@@ -932,7 +938,7 @@ class TestFetchAmendementAgain:
     def test_sort_turn_irrecevable_transfers_to_index(
         self, lecture_an, app, source, user_david, user_david_table_an
     ):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
         from zam_repondeur.models import DBSession
         from zam_repondeur.models.events.amendement import (
             AmendementIrrecevable,
@@ -998,7 +1004,7 @@ class TestFetchAmendementAgain:
 
     @responses.activate
     def test_article_has_changed(self, lecture_an, app, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
             responses.GET,
@@ -1022,7 +1028,7 @@ class TestFetchAmendementAgain:
 
     @responses.activate
     def test_parent_has_changed(self, lecture_an, app, source):
-        from zam_repondeur.fetch.an.amendements import build_url
+        from zam_repondeur.services.fetch.an.amendements import build_url
         from zam_repondeur.models import DBSession
 
         responses.add(
@@ -1099,7 +1105,7 @@ class TestFetchAmendementAgain:
     ],
 )
 def test_parse_division(division, type_, num, mult, pos):
-    from zam_repondeur.fetch.an.amendements import parse_division
+    from zam_repondeur.services.fetch.an.amendements import parse_division
 
     assert parse_division(division) == (type_, num, mult, pos)
 
@@ -1109,7 +1115,7 @@ def test_parse_division(division, type_, num, mult, pos):
     [("208", 0), ("CD208", 0), ("CD208 (Rect)", 1), ("CD208 (2ème Rect)", 2)],
 )
 def test_parse_numero_long_with_rect(text, expected):
-    from zam_repondeur.fetch.an.amendements import parse_numero_long_with_rect
+    from zam_repondeur.services.fetch.an.amendements import parse_numero_long_with_rect
 
     assert parse_numero_long_with_rect(text) == expected
 
@@ -1131,6 +1137,6 @@ def test_parse_numero_long_with_rect(text, expected):
     ],
 )
 def test_parse_mission_visee(text, expected):
-    from zam_repondeur.fetch.an.amendements import parse_mission_visee
+    from zam_repondeur.services.fetch.an.amendements import parse_mission_visee
 
     assert parse_mission_visee(text) == expected

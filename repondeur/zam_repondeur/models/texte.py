@@ -10,7 +10,7 @@ from .chambre import Chambre
 
 # Make these types available to mypy, but avoid circular imports
 if TYPE_CHECKING:
-    from zam_repondeur.fetch.an.dossiers.models import TexteRef  # noqa
+    from zam_repondeur.services.fetch.an.dossiers.models import TexteRef  # noqa
 
 
 class TypeTexte(enum.Enum):

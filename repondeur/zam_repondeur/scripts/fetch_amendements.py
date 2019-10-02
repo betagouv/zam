@@ -8,10 +8,10 @@ import transaction
 from progressist import ProgressBar
 from pyramid.paster import bootstrap, setup_logging
 
-from zam_repondeur.fetch.amendements import RemoteSource
-from zam_repondeur.fetch.an.dossiers.models import DossierRef
 from zam_repondeur.models import Dossier, Lecture, Texte, get_one_or_create
 from zam_repondeur.services.data import repository
+from zam_repondeur.services.fetch.amendements import RemoteSource
+from zam_repondeur.services.fetch.an.dossiers.models import DossierRef
 
 logger = logging.getLogger(__name__)
 

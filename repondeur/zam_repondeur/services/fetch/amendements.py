@@ -80,8 +80,8 @@ class RemoteSource(Source):
 
     @classmethod
     def get_remote_source_for_chambre(cls, chambre: Chambre) -> "RemoteSource":
-        from zam_repondeur.fetch.an.amendements import AssembleeNationale
-        from zam_repondeur.fetch.senat.amendements import Senat
+        from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
+        from zam_repondeur.services.fetch.senat.amendements import Senat
 
         if chambre == Chambre.AN:
             return AssembleeNationale()

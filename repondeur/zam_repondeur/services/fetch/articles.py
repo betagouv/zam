@@ -5,7 +5,6 @@ from typing import Any, Callable, Dict, List, Tuple
 
 from tlfp.tools.parse_texte import TextParsingFailedException, parse
 
-from zam_repondeur.fetch.exceptions import NotFound
 from zam_repondeur.models import (
     Article,
     Chambre,
@@ -18,6 +17,7 @@ from zam_repondeur.models.events.article import (
     ContenuArticleModifie,
     TitreArticleModifie,
 )
+from zam_repondeur.services.fetch.exceptions import NotFound
 
 logger = logging.getLogger(__name__)
 

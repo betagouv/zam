@@ -12,13 +12,14 @@ DOSSIERS = HERE / "sample_data" / "Dossiers_Legislatifs_XV.json.zip"
 
 @pytest.fixture(scope="module")
 def dossiers_and_textes():
-    from zam_repondeur.fetch.an.common import extract_from_zip
-    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
+    from zam_repondeur.services.fetch.an.common import extract_from_zip
+    from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
         get_dossiers_legislatifs_and_textes,
     )
 
     with patch(
-        "zam_repondeur.fetch.an.dossiers.dossiers_legislatifs.extract_from_remote_zip"
+        "zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs"
+        ".extract_from_remote_zip"
     ) as extract:
         extract.return_value = extract_from_zip(open(DOSSIERS, "rb"))
         dossiers_by_uid, textes_by_uid = get_dossiers_legislatifs_and_textes(15)
@@ -47,8 +48,14 @@ def dossier_plfss_2018():
 
 
 def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
-    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
-    from zam_repondeur.fetch.an.dossiers.models import LectureRef, TexteRef, TypeTexte
+    from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
+        parse_dossier,
+    )
+    from zam_repondeur.services.fetch.an.dossiers.models import (
+        LectureRef,
+        TexteRef,
+        TypeTexte,
+    )
     from zam_repondeur.models.chambre import Chambre
     from zam_repondeur.models.phase import Phase
 
@@ -201,7 +208,9 @@ def dossier_ecole_de_la_confiance():
 
 
 def test_parse_dossier_ecole_de_la_confiance(dossier_ecole_de_la_confiance, textes):
-    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
+    from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
+        parse_dossier,
+    )
     from zam_repondeur.models.chambre import Chambre
     from zam_repondeur.models.phase import Phase
 
@@ -232,8 +241,14 @@ def dossier_plf_2018():
 
 
 def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
-    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
-    from zam_repondeur.fetch.an.dossiers.models import LectureRef, TexteRef, TypeTexte
+    from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
+        parse_dossier,
+    )
+    from zam_repondeur.services.fetch.an.dossiers.models import (
+        LectureRef,
+        TexteRef,
+        TypeTexte,
+    )
     from zam_repondeur.models.chambre import Chambre
     from zam_repondeur.models.phase import Phase
 
@@ -520,8 +535,10 @@ def dossier_essoc():
 
 
 def test_parse_dossier_essoc(dossier_essoc, textes):
-    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
-    from zam_repondeur.fetch.an.dossiers.models import (
+    from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
+        parse_dossier,
+    )
+    from zam_repondeur.services.fetch.an.dossiers.models import (
         LectureRef,
         DossierRef,
         TexteRef,
@@ -651,7 +668,9 @@ def dossier_pacte_ferroviaire():
 
 
 def test_dossier_pacte_ferroviaire(dossier_pacte_ferroviaire, textes):
-    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import parse_dossier
+    from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
+        parse_dossier,
+    )
 
     dossier = parse_dossier(dossier_pacte_ferroviaire, textes)
 
@@ -660,14 +679,18 @@ def test_dossier_pacte_ferroviaire(dossier_pacte_ferroviaire, textes):
 
 
 def test_extract_actes(dossier_essoc):
-    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import extract_actes
+    from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
+        extract_actes,
+    )
 
     assert len(extract_actes(dossier_essoc)) == 4
 
 
 class TestGenLectures:
     def test_gen_lectures_essoc(self, dossier_essoc, textes):
-        from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import gen_lectures
+        from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
+            gen_lectures,
+        )
 
         acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
 
@@ -678,7 +701,9 @@ class TestGenLectures:
         assert "Séance publique" in lectures[1].titre
 
     def test_gen_lectures_pacte_ferroviaire(self, dossier_pacte_ferroviaire, textes):
-        from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import gen_lectures
+        from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
+            gen_lectures,
+        )
 
         acte = dossier_pacte_ferroviaire["actesLegislatifs"]["acteLegislatif"][0]
 
@@ -691,7 +716,7 @@ class TestGenLectures:
 
 
 def test_walk_actes(dossier_essoc, textes):
-    from zam_repondeur.fetch.an.dossiers.dossiers_legislatifs import (
+    from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
         Chambre,
         walk_actes,
         WalkResult,

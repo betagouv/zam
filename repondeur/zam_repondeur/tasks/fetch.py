@@ -4,8 +4,6 @@ NB: make sure tasks.huey.init_huey() has been called before importing this modul
 import logging
 from typing import Optional
 
-from zam_repondeur.fetch import get_amendements, get_articles
-from zam_repondeur.fetch.an.dossiers.models import DossierRefsByUID
 from zam_repondeur.models import DBSession, Dossier, Lecture, Texte, User
 from zam_repondeur.models.events.dossier import LecturesRecuperees
 from zam_repondeur.models.events.lecture import (
@@ -18,6 +16,8 @@ from zam_repondeur.models.events.lecture import (
     TexteMisAJour,
 )
 from zam_repondeur.services.dossiers import get_dossiers_legislatifs_from_cache
+from zam_repondeur.services.fetch import get_amendements, get_articles
+from zam_repondeur.services.fetch.an.dossiers.models import DossierRefsByUID
 from zam_repondeur.tasks.huey import huey
 
 logger = logging.getLogger(__name__)

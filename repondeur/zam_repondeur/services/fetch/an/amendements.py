@@ -8,10 +8,6 @@ from urllib.parse import urljoin
 import xmltodict
 from requests.exceptions import ConnectionError
 
-from zam_repondeur.fetch.amendements import FetchResult, RemoteSource
-from zam_repondeur.fetch.division import parse_subdiv
-from zam_repondeur.fetch.exceptions import FetchError, NotFound
-from zam_repondeur.fetch.http import cached_session
 from zam_repondeur.models import (
     Amendement,
     Article,
@@ -22,6 +18,10 @@ from zam_repondeur.models import (
 )
 from zam_repondeur.models.division import SubDiv
 from zam_repondeur.models.events.amendement import BatchUnset
+from zam_repondeur.services.fetch.amendements import FetchResult, RemoteSource
+from zam_repondeur.services.fetch.division import parse_subdiv
+from zam_repondeur.services.fetch.exceptions import FetchError, NotFound
+from zam_repondeur.services.fetch.http import cached_session
 from zam_repondeur.templating import render_template
 
 from ..missions import MissionRef

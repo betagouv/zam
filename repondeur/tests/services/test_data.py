@@ -8,7 +8,7 @@ def test_list_opendata_dossiers(app):
 
 def test_get_opendata_dossier(app):
     from zam_repondeur.services.data import repository
-    from zam_repondeur.fetch.an.dossiers.models import DossierRef
+    from zam_repondeur.services.fetch.an.dossiers.models import DossierRef
 
     dossier_ref = repository.get_opendata_dossier("DLR5L15N36030")
 
@@ -17,7 +17,7 @@ def test_get_opendata_dossier(app):
 
 def test_get_opendata_texte(app):
     from zam_repondeur.services.data import repository
-    from zam_repondeur.fetch.an.dossiers.models import TexteRef
+    from zam_repondeur.services.fetch.an.dossiers.models import TexteRef
 
     texte_ref = repository.get_opendata_texte("PRJLANR5L15B0269")
 
@@ -42,7 +42,7 @@ def test_get_opendata_acteur(app):
 
 def test_get_senat_scraping_dossier(app):
     from zam_repondeur.services.data import repository
-    from zam_repondeur.fetch.an.dossiers.models import DossierRef
+    from zam_repondeur.services.fetch.an.dossiers.models import DossierRef
 
     dossier_ref = repository.get_senat_scraping_dossier("ppl18-454")
 

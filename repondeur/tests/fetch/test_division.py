@@ -21,14 +21,14 @@ from zam_repondeur.models.division import SubDiv
     ],
 )
 def test_numero(text, num):
-    from zam_repondeur.fetch.division import NUMERO
+    from zam_repondeur.services.fetch.division import NUMERO
 
     assert NUMERO.parse(text) == num
 
 
 @pytest.mark.parametrize("text,mult", [("bis", "bis"), ("tricies", "tricies")])
 def test_multiplicatif(text, mult):
-    from zam_repondeur.fetch.division import MULTIPLICATIF
+    from zam_repondeur.services.fetch.division import MULTIPLICATIF
 
     assert MULTIPLICATIF.parse(text) == mult
 
@@ -37,7 +37,7 @@ def test_multiplicatif(text, mult):
     "text,mult", [("bis", "bis"), ("AAA", "AAA"), ("bis AAA", "bis AAA")]
 )
 def test_mult_add(text, mult):
-    from zam_repondeur.fetch.division import MULT_ADD
+    from zam_repondeur.services.fetch.division import MULT_ADD
 
     assert MULT_ADD.parse(text) == mult
 
@@ -50,7 +50,7 @@ def test_mult_add(text, mult):
     ],
 )
 def test_intervalle(text, subdiv):
-    from zam_repondeur.fetch.division import INTERVALLE
+    from zam_repondeur.services.fetch.division import INTERVALLE
 
     assert INTERVALLE.parse(text) == subdiv
 
@@ -90,7 +90,7 @@ def test_intervalle(text, subdiv):
     ],
 )
 def test_parse_article(text, type_, num, mult, pos):
-    from zam_repondeur.fetch.division import ARTICLE_UNIQUE
+    from zam_repondeur.services.fetch.division import ARTICLE_UNIQUE
 
     assert ARTICLE_UNIQUE.parse(text) == SubDiv(type_, num, mult, pos)
 
@@ -140,7 +140,7 @@ def test_parse_article(text, type_, num, mult, pos):
     ],
 )
 def test_parse_article_additionnel(text, type_, num, mult, pos):
-    from zam_repondeur.fetch.division import ARTICLE_ADDITIONNEL
+    from zam_repondeur.services.fetch.division import ARTICLE_ADDITIONNEL
 
     assert ARTICLE_ADDITIONNEL.parse(text) == SubDiv(type_, num, mult, pos)
 
@@ -246,13 +246,13 @@ def test_parse_article_additionnel(text, type_, num, mult, pos):
     ],
 )
 def test_parse_subdiv(text, type_, num, mult, pos):
-    from zam_repondeur.fetch.division import DIVISION
+    from zam_repondeur.services.fetch.division import DIVISION
 
     assert DIVISION.parse(text) == SubDiv(type_, num, mult, pos)
 
 
 def test_parse_subdiv_art_add_av_texte_title(texte_plfss2018_an_premiere_lecture):
-    from zam_repondeur.fetch.division import parse_subdiv
+    from zam_repondeur.services.fetch.division import parse_subdiv
 
     subdiv = parse_subdiv(
         "art. add. avant PROJET DE LOI de financement de la sécurité sociale pour 2018",
@@ -262,7 +262,7 @@ def test_parse_subdiv_art_add_av_texte_title(texte_plfss2018_an_premiere_lecture
 
 
 def test_parse_subdiv_error(texte_plfss2018_an_premiere_lecture):
-    from zam_repondeur.fetch.division import parse_subdiv
+    from zam_repondeur.services.fetch.division import parse_subdiv
 
     subdiv = parse_subdiv(
         "this is unparsable garbage", texte=texte_plfss2018_an_premiere_lecture

@@ -17,7 +17,7 @@ from zam_repondeur.auth import generate_auth_token
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, User, get_one_or_create
 from zam_repondeur.resources import Root
-from zam_repondeur.users import TokenAlreadyExists, repository
+from zam_repondeur.services.users import TokenAlreadyExists, repository
 
 logger = logging.getLogger(__name__)
 

@@ -45,7 +45,7 @@ class TestApp(BaseTestApp):
 
     def user_login(self, email, headers=None):
         from zam_repondeur.auth import generate_auth_token
-        from zam_repondeur.users import repository
+        from zam_repondeur.services.users import repository
 
         token = generate_auth_token()
         repository.set_auth_token(email, token)
@@ -132,7 +132,7 @@ def data_repository():
 
 @pytest.fixture
 def users_repository():
-    from zam_repondeur.users import repository
+    from zam_repondeur.services.users import repository
 
     repository.clear_data()
 
@@ -202,7 +202,7 @@ def clear_rate_limiting_counters():
     """
     This prevents throttling caused by the many logins from automatic tests
     """
-    from zam_repondeur.users import repository
+    from zam_repondeur.services.users import repository
 
     redis = repository.connection
     keys = redis.keys("rate-limiter:*")

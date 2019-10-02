@@ -2,7 +2,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 
 from zam_repondeur.auth import generate_auth_token
-from zam_repondeur.users import repository
+from zam_repondeur.services.users import repository
 
 
 def find_header_by_index(index, headers):

@@ -5,12 +5,12 @@ from pyramid.config import Configurator
 from redis import Redis
 from redis.exceptions import WatchError
 
-from .initialize import needs_init
+from zam_repondeur.initialize import needs_init
 
 
 def includeme(config: Configurator) -> None:
     """
-    Called automatically via config.include("zam_repondeur.users")
+    Called automatically via config.include("zam_repondeur.services.users")
     """
     repository.initialize(
         redis_url=config.registry.settings["zam.users.redis_url"],

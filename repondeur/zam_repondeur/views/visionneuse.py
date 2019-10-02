@@ -10,7 +10,7 @@ from zam_repondeur.models.article import mult_key
 from zam_repondeur.resources import ArticleCollection, ArticleResource
 
 
-@view_config(context=ArticleCollection, renderer="articles_list.html")
+@view_config(context=ArticleCollection, renderer="visionneuse/articles.html")
 def list_articles(context: ArticleCollection, request: Request) -> Dict[str, Any]:
     def _sort_key(item: Article) -> Tuple[int, str, Tuple[int, str], int]:
         """Custom sort: we want link related to `Titre` to be at the very end.
@@ -47,7 +47,9 @@ def list_articles(context: ArticleCollection, request: Request) -> Dict[str, Any
     return {"lecture": lecture, "articles": articles}
 
 
-@view_config(context=ArticleResource, name="reponses", renderer="visionneuse.html")
+@view_config(
+    context=ArticleResource, name="reponses", renderer="visionneuse/reponses.html"
+)
 def list_reponses(context: ArticleResource, request: Request) -> Response:
     article = context.model(
         lazyload("amendements").options(

@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Dict, Optional, Set
 
-import requests
 from bs4 import BeautifulSoup, element
 
 from zam_repondeur.models.organe import ORGANE_SENAT
@@ -17,6 +16,7 @@ from zam_repondeur.services.fetch.an.dossiers.models import (
     TexteRef,
     TypeTexte,
 )
+from zam_repondeur.services.fetch.http import cached_session
 from zam_repondeur.slugs import slugify
 
 logger = logging.getLogger(__name__)
@@ -37,11 +37,12 @@ def get_dossiers_senat() -> DossierRefsByUID:
 
 
 def download_textes_recents() -> str:
-    resp = requests.get(TEXTES_RECENTS_URL)
+    resp = cached_session.get(TEXTES_RECENTS_URL)
     if resp.status_code != HTTPStatus.OK:
         raise RuntimeError("Failed to download textes recents from senat.fr")
 
-    return resp.text
+    content: str = resp.text
+    return content
 
 
 def extract_recent_urls(html: str) -> Set[str]:
@@ -96,11 +97,12 @@ def create_dossier(pid: str, rss_url: str) -> DossierRef:
 
 
 def download_rss(url: str) -> str:
-    resp = requests.get(f"{BASE_URL_SENAT}{url}")
+    resp = cached_session.get(f"{BASE_URL_SENAT}{url}")
     if resp.status_code != HTTPStatus.OK:
         raise RuntimeError(f"Failed to download RSS url: {url}")
 
-    return resp.text
+    content: str = resp.text
+    return content
 
 
 _PHASES = {

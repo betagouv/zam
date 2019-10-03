@@ -130,5 +130,5 @@ jobs:
           name: Fetch amendements
           command: |
             cd repondeur
-            zam_fetch_amendements circleci.ini
+            zam_fetch_amendements circleci.ini --verbose
           no_output_timeout: 30m

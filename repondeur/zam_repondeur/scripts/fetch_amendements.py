@@ -40,7 +40,7 @@ def main(argv: List[str] = sys.argv) -> None:
         logger.info("")
 
         try:
-            success = fetch_amendements(args.chambre, args.num_texte)
+            success = fetch_amendements(args.chambre, args.num_texte, args.limit)
             if success:
                 sys.exit(0)
         finally:
@@ -53,17 +53,20 @@ def parse_args(argv: List[str]) -> Namespace:
     parser.add_argument("config_uri")
     parser.add_argument("--chambre", choices=["an", "senat"], required=False)
     parser.add_argument("--num-texte", type=int, required=False)
+    parser.add_argument("--limit", type=int, required=False)
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--debug", action="store_true")
     return parser.parse_args(argv)
 
 
-def fetch_amendements(chambre: Optional[str], num_texte: Optional[int]) -> bool:
+def fetch_amendements(
+    chambre: Optional[str], num_texte: Optional[int], limit: Optional[int]
+) -> bool:
     success = True
     uids = repository.list_opendata_dossiers()
-    bar = ProgressBar(total=len(uids))
-    random.shuffle(uids)
-    for uid in uids:
+    nb_to_fetch = limit or len(uids)
+    bar = ProgressBar(total=nb_to_fetch)
+    for uid in random.sample(uids, nb_to_fetch):
         dossier_ref = repository.get_opendata_dossier(uid)
         if dossier_ref.lectures:
             logger.info("=" * 80)

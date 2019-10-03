@@ -22,12 +22,22 @@ def main(argv: List[str] = sys.argv) -> None:
 
     setup_logging(args.config_uri)
 
-    logging.getLogger().setLevel(logging.WARNING)
-    logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
+    log_level = logging.WARNING
+    if args.verbose:
+        log_level = logging.INFO
+    if args.debug:
+        log_level = logging.DEBUG
+
+    logging.getLogger().setLevel(log_level)
+    logging.getLogger("urllib3.connectionpool").setLevel(log_level)
 
     with bootstrap(args.config_uri, options={"app": "zam_fetch_amendements"}):
 
+        logger.info("=" * 80)
+        logger.info("Refreshing data in Redis cache")
+        logger.info("=" * 80)
         repository.load_data()
+        logger.info("")
 
         try:
             success = fetch_amendements(args.chambre, args.num)
@@ -43,6 +53,8 @@ def parse_args(argv: List[str]) -> Namespace:
     parser.add_argument("config_uri")
     parser.add_argument("--chambre", choices=["an", "senat"], required=False)
     parser.add_argument("--num", type=int, required=False)
+    parser.add_argument("--verbose", action="store_true")
+    parser.add_argument("--debug", action="store_true")
     return parser.parse_args(argv)
 
 
@@ -53,8 +65,14 @@ def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> bool:
     random.shuffle(uids)
     for uid in uids:
         dossier_ref = repository.get_opendata_dossier(uid)
-        if not fetch_amendements_for_dossier(dossier_ref, chambre, num):
-            success = False
+        if dossier_ref.lectures:
+            logger.info("=" * 80)
+            logger.info("%s (%s)", dossier_ref.titre, dossier_ref.uid)
+            logger.info("%s", dossier_ref.an_url)
+            logger.info("=" * 80)
+            if not fetch_amendements_for_dossier(dossier_ref, chambre, num):
+                success = False
+            logger.info("")
         bar.update(step=len(dossier_ref.lectures))
     return success
 
@@ -74,6 +92,7 @@ def fetch_amendements_for_dossier(
             continue
         if num is not None and texte_ref.numero != num:
             continue
+        logger.info("\t" + "-" * 80)
         texte, _ = get_one_or_create(
             Texte,
             type_=texte_ref.type_,

@@ -57,7 +57,12 @@ class AssembleeNationale(RemoteSource):
     def fetch(self, lecture: Lecture) -> FetchResult:
         result = FetchResult([], 0, [])
 
-        logger.info("Récupération des amendements sur %r", lecture)
+        logger.info(
+            "Récupération des amendements sur %r / %r / %r",
+            lecture.texte,
+            lecture,
+            lecture.dossier,
+        )
 
         try:
             discussion_items = fetch_discussion_list(lecture)
@@ -170,7 +175,6 @@ class AssembleeNationale(RemoteSource):
         """
         Récupère un amendement depuis son numéro.
         """
-        logger.info("Récupération de l'amendement %r", numero_prefixe)
         amend = _retrieve_amendement(lecture, numero_prefixe)
         article = _get_article(lecture, amend["division"])
         parent = _get_parent(lecture, article, amend)

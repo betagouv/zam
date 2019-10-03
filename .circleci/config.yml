@@ -130,5 +130,6 @@ jobs:
           name: Fetch amendements
           command: |
             cd repondeur
-            zam_fetch_amendements circleci.ini --verbose
+            zam_fetch_amendements circleci.ini --chambre=senat --verbose
+            zam_fetch_amendements circleci.ini --chambre=an --limit=1000 --verbose
           no_output_timeout: 30m

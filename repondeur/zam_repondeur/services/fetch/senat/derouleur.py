@@ -2,9 +2,8 @@ import logging
 from http import HTTPStatus
 from typing import Any, Dict, Iterable, Iterator, List, NamedTuple, Optional, Tuple
 
-import requests
-
 from zam_repondeur.models import Amendement, Lecture
+from zam_repondeur.services.fetch.http import cached_session
 
 from ..missions import ID_TXT_MISSIONS, MissionRef
 
@@ -35,7 +34,7 @@ def _fetch_discussion_details(lecture: Lecture) -> Iterator[Tuple[Any, MissionRe
     NB : les amendements jugés irrecevables ne sont pas inclus.
     """
     for url, mission_ref in derouleur_urls_and_mission_refs(lecture):
-        resp = requests.get(url)
+        resp = cached_session.get(url)
         if resp.status_code == HTTPStatus.NOT_FOUND:  # 404
             logger.warning(f"Could not fetch {url}")
             continue

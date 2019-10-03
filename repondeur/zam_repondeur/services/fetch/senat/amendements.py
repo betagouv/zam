@@ -6,14 +6,13 @@ from http import HTTPStatus
 from typing import Dict, Iterable, List, Optional, Tuple
 from urllib.parse import urlparse
 
-import requests
-
 from zam_repondeur.models import Amendement, Lecture, Mission, get_one_or_create
 from zam_repondeur.services.clean import clean_html
 from zam_repondeur.services.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.services.fetch.dates import parse_date
 from zam_repondeur.services.fetch.division import parse_subdiv
 from zam_repondeur.services.fetch.exceptions import NotFound
+from zam_repondeur.services.fetch.http import cached_session
 from zam_repondeur.services.fetch.senat.senateurs import (
     Senateur,
     fetch_and_parse_senateurs,
@@ -192,7 +191,7 @@ def _fetch_all(lecture: Lecture) -> List[OrderedDict]:
     ]
 
     for url in urls:
-        resp = requests.get(url)
+        resp = cached_session.get(url)
         if resp.status_code != HTTPStatus.NOT_FOUND:
             break
 

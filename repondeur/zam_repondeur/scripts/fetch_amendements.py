@@ -40,7 +40,7 @@ def main(argv: List[str] = sys.argv) -> None:
         logger.info("")
 
         try:
-            success = fetch_amendements(args.chambre, args.num)
+            success = fetch_amendements(args.chambre, args.num_texte)
             if success:
                 sys.exit(0)
         finally:
@@ -52,13 +52,13 @@ def parse_args(argv: List[str]) -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("config_uri")
     parser.add_argument("--chambre", choices=["an", "senat"], required=False)
-    parser.add_argument("--num", type=int, required=False)
+    parser.add_argument("--num-texte", type=int, required=False)
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--debug", action="store_true")
     return parser.parse_args(argv)
 
 
-def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> bool:
+def fetch_amendements(chambre: Optional[str], num_texte: Optional[int]) -> bool:
     success = True
     uids = repository.list_opendata_dossiers()
     bar = ProgressBar(total=len(uids))
@@ -70,7 +70,7 @@ def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> bool:
             logger.info("%s (%s)", dossier_ref.titre, dossier_ref.uid)
             logger.info("%s", dossier_ref.an_url)
             logger.info("=" * 80)
-            if not fetch_amendements_for_dossier(dossier_ref, chambre, num):
+            if not fetch_amendements_for_dossier(dossier_ref, chambre, num_texte):
                 success = False
             logger.info("")
         bar.update(step=len(dossier_ref.lectures))
@@ -78,7 +78,7 @@ def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> bool:
 
 
 def fetch_amendements_for_dossier(
-    dossier_ref: DossierRef, chambre: Optional[str], num: Optional[int]
+    dossier_ref: DossierRef, chambre: Optional[str], num_texte: Optional[int]
 ) -> bool:
     success = True
     dossier, _ = get_one_or_create(
@@ -90,7 +90,7 @@ def fetch_amendements_for_dossier(
         texte_ref = lecture_ref.texte
         if chambre is not None and texte_ref.chambre.name.lower() != chambre:
             continue
-        if num is not None and texte_ref.numero != num:
+        if num_texte is not None and texte_ref.numero != num_texte:
             continue
         logger.info("\t" + "-" * 80)
         texte, _ = get_one_or_create(

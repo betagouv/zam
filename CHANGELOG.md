@@ -28,6 +28,56 @@
 
 ### Changements récents
 
+#### 4 octobre 2019
+
+Amélioration des performances générales.
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-10-04-journal-admins.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-10-04-journal-admins.png">
+    </a>
+    <figcaption>
+        Journal des modifications pour la gestion des administrateur·ice·s et de la liste blanche.
+    </figcaption>
+</figure>
+
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-10-04-gestion-admins.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-10-04-gestion-admins.png">
+    </a>
+    <figcaption>
+        Gestion des administrateur·ice·s.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-10-04-gestion-liste-blanche.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-10-04-gestion-liste-blanche.png">
+    </a>
+    <figcaption>
+        Gestion de la liste blanche.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-10-04-limite-derouleur.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-10-04-limite-derouleur.png">
+    </a>
+    <figcaption>
+        Ajout d’une séparation explicite pour l’ordre du dérouleur.
+    </figcaption>
+</figure>
+
+
 #### 26 août 2019
 
 Nouveau logo.

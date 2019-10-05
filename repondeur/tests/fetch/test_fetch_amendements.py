@@ -11,7 +11,6 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
     from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.fetch.missions import MissionRef
-    from zam_repondeur.services.fetch.senat.senateurs.models import Senateur
 
     # Add a response to one of the amendements
     with transaction.manager:
@@ -30,9 +29,7 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
         "zam_repondeur.services.fetch.senat.amendements._fetch_all"
     ) as mock_fetch_all, patch(
         "zam_repondeur.services.fetch.senat.derouleur._fetch_discussion_details"
-    ) as mock_fetch_discussion_details, patch(
-        "zam_repondeur.services.fetch.senat.amendements.fetch_and_parse_senateurs"
-    ) as mock_fetch_and_parse_senateurs:
+    ) as mock_fetch_discussion_details:
         mock_fetch_all.return_value = (
             {
                 "Numéro ": "6666",
@@ -151,15 +148,6 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
                 MissionRef(titre="", titre_court=""),
             )
         ]
-        mock_fetch_and_parse_senateurs.return_value = {
-            "01034P": Senateur(
-                matricule="01034P",
-                qualite="M.",
-                nom="Vanlerenberghe",
-                prenom="Jean-Marie",
-                groupe="UC",
-            )
-        }
 
         DBSession.add(lecture_senat)
 

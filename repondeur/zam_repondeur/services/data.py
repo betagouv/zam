@@ -14,6 +14,10 @@ from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
 from zam_repondeur.services.fetch.an.dossiers.models import DossierRef, TexteRef
 from zam_repondeur.services.fetch.an.organes_acteurs import get_organes_acteurs
 from zam_repondeur.services.fetch.senat.scraping import get_dossiers_senat
+from zam_repondeur.services.fetch.senat.senateurs import (
+    Senateur,
+    fetch_and_parse_senateurs,
+)
 
 
 def includeme(config: Configurator) -> None:
@@ -62,6 +66,7 @@ class DataRepository:
         self._load_opendata_organes_acteurs()
         self._load_opendata_dossiers_textes()
         self._load_scraping_senat_dossiers()
+        self._load_senateurs_groupes()
 
     def _load_opendata_organes_acteurs(self) -> None:
         organes, acteurs = get_organes_acteurs()
@@ -88,6 +93,12 @@ class DataRepository:
                 self._set_pickled_data(
                     self._key_for_senat_scraping_dossier(uid), dossier_ref
                 )
+
+    def _load_senateurs_groupes(self) -> None:
+        senateurs_by_matricule = fetch_and_parse_senateurs()
+        with Lock(self.connection, "data"):
+            for matricule, senateur in senateurs_by_matricule.items():
+                self._set_pickled_data(self._key_for_senateur(matricule), senateur)
 
     def set_opendata_dossier_ref(self, dossier_ref: DossierRef) -> None:
         key = self._key_for_opendata_dossier(dossier_ref.uid)
@@ -116,6 +127,10 @@ class DataRepository:
     @staticmethod
     def _key_for_senat_scraping_dossier(uid: str) -> str:
         return f"senat.scraping.dossiers.{uid}"
+
+    @staticmethod
+    def _key_for_senateur(matricule: str) -> str:
+        return f"senateur.{matricule}"
 
     @needs_init
     def get_opendata_organe(self, uid: str) -> dict:
@@ -165,6 +180,12 @@ class DataRepository:
     @needs_init
     def get_dossier_ref(self, uid: str) -> DossierRef:
         return self.get_opendata_dossier(uid) or self.get_senat_scraping_dossier(uid)
+
+    @needs_init
+    def get_senateur(self, matricule: str) -> Senateur:
+        key = self._key_for_senateur(matricule)
+        senateur: Senateur = self._get_pickled_data(key)
+        return senateur
 
     @needs_init
     def _set_pickled_data(self, key: str, value: Any) -> None:

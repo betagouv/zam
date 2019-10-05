@@ -1,7 +1,9 @@
 import os
 from contextlib import contextmanager
+from pathlib import Path
 
 import pytest
+import responses
 import transaction
 from pyramid.threadlocal import get_current_registry
 from pyramid_mailer import get_mailer
@@ -17,6 +19,8 @@ from fixtures.scraping import *  # noqa: F401,F403
 from fixtures.shared_tables import *  # noqa: F401,F403
 from fixtures.users import *  # noqa: F401,F403
 from testapp import TestApp as BaseTestApp
+
+HERE = Path(__file__)
 
 
 class TestApp(BaseTestApp):
@@ -124,9 +128,30 @@ def run_each_test_in_a_fresh_new_transaction():
 
 
 @pytest.fixture(scope="session")
+@responses.activate
 def data_repository():
     from zam_repondeur.services.data import repository
 
+    SENAT_SAMPLE_DATA_DIR = HERE.parent / "fetch" / "sample_data" / "senat"
+    responses.add(
+        responses.GET,
+        "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
+        body=(SENAT_SAMPLE_DATA_DIR / "ODSEN_GENERAL.csv").read_bytes(),
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        "https://www.senat.fr/dossiers-legislatifs/textes-recents.html",
+        body=(SENAT_SAMPLE_DATA_DIR / "textes-recents.html").read_bytes(),
+        status=200,
+    )
+    for path in SENAT_SAMPLE_DATA_DIR.glob("dosleg*.xml"):
+        responses.add(
+            responses.GET,
+            f"https://www.senat.fr/dossier-legislatif/rss/{path.name}",
+            body=path.read_bytes(),
+            status=200,
+        )
     repository.load_data()
 
 

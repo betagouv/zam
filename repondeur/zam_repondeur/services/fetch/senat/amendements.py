@@ -3,20 +3,17 @@ import logging
 import re
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Iterable, List, Optional, Tuple
 from urllib.parse import urlparse
 
 from zam_repondeur.models import Amendement, Lecture, Mission, get_one_or_create
 from zam_repondeur.services.clean import clean_html
+from zam_repondeur.services.data import repository
 from zam_repondeur.services.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.services.fetch.dates import parse_date
 from zam_repondeur.services.fetch.division import parse_subdiv
 from zam_repondeur.services.fetch.exceptions import NotFound
 from zam_repondeur.services.fetch.http import cached_session
-from zam_repondeur.services.fetch.senat.senateurs import (
-    Senateur,
-    fetch_and_parse_senateurs,
-)
 
 from .derouleur import DiscussionDetails, fetch_and_parse_discussion_details
 
@@ -101,10 +98,7 @@ class Senat(RemoteSource):
         if len(discussion_details) == 0:
             logger.info("Aucun amendement soumis à la discussion pour l'instant!")
         self._enrich_discussion_details(amendements, discussion_details, lecture)
-
-        logger.info("Récupération de la liste des sénateurs…")
-        senateurs_by_matricule = fetch_and_parse_senateurs()
-        self._enrich_groupe_parlementaire(amendements, senateurs_by_matricule)
+        self._enrich_groupe_parlementaire(amendements)
 
         return _sort(amendements)
 
@@ -156,20 +150,16 @@ class Senat(RemoteSource):
             mission=mission,
         )
 
-    def _enrich_groupe_parlementaire(
-        self,
-        amendements: Iterable[Amendement],
-        senateurs_by_matricule: Dict[str, Senateur],
-    ) -> None:
+    def _enrich_groupe_parlementaire(self, amendements: Iterable[Amendement]) -> None:
         """
         Enrichir les amendements avec le groupe parlementaire de l'auteur
         """
         for amendement in amendements:
-            amendement.groupe = (
-                senateurs_by_matricule[amendement.matricule].groupe
-                if amendement.matricule is not None
-                else ""
-            )
+            amendement.groupe = ""
+            if amendement.matricule is not None:
+                senateur = repository.get_senateur(amendement.matricule)
+                if senateur:
+                    amendement.groupe = senateur.groupe
 
 
 def parse_partie(numero: str) -> Optional[int]:

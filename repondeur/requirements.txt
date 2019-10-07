@@ -1,9 +1,7 @@
 -i https://pypi.org/simple
--e git+https://github.com/regardscitoyens/anpy.git@e62899af8af434a9d57a5ab0f4be51d14af1b7dc#egg=anpy
--e git+https://github.com/regardscitoyens/legipy.git@2fa6ff95498f896ea5e8c9a63c1f29b2fa2244ab#egg=legipy
--e git+https://github.com/regardscitoyens/senapy.git@800b1d1a696a6ac832549c8b6f46c73f3027b9ad#egg=senapy
 -e git+https://github.com/regardscitoyens/the-law-factory-parser.git@57284bc0d8e246d42f203a6c0707af1b75710c73#egg=tlfp
 alembic==1.2.1
+anpy==0.1.22
 asn1crypto==1.1.0          # cryptography: >= 0.21.0
 attrs==19.1.0               # anpy: < 19.2, >= 19.1
 beautifulsoup4==4.6.3       # lawfactory_utils, legipy: < 4.7, >= 4.6
@@ -29,6 +27,7 @@ inscriptis==0.0.4.1.1
 jdcal==1.4.1
 jinja2==2.10.3
 lawfactory_utils==0.1.7     # anpy, senapy, the-law-factory-parser
+legipy==0.1.2
 lockfile==0.12.2
 lxml==4.2.6                 # lawfactory_utils: < 4.3, >= 4.2
 Mako==1.1.0
@@ -67,6 +66,7 @@ regex==2019.08.19            # dateparser
 requests==2.20.1            # lawfactory_utils, legipy: < 2.21, >= 2.20
 rollbar==0.14.7
 selectolax==0.2.1
+senapy==0.2.15
 six==1.11.0                 # legipy: < 1.12, >= 1.11
 SQLAlchemy==1.3.10
 SQLAlchemy-Utils==0.34.2

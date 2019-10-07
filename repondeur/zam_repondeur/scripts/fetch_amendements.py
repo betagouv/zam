@@ -66,7 +66,7 @@ def fetch_amendements(
     uids = repository.list_opendata_dossiers()
     nb_to_fetch = limit or len(uids)
     bar = ProgressBar(total=nb_to_fetch)
-    for uid in random.sample(uids, nb_to_fetch):
+    for uid in bar.iter(random.sample(uids, nb_to_fetch)):
         dossier_ref = repository.get_opendata_dossier(uid)
         if dossier_ref.lectures:
             logger.info("=" * 80)
@@ -76,7 +76,6 @@ def fetch_amendements(
             if not fetch_amendements_for_dossier(dossier_ref, chambre, num_texte):
                 success = False
             logger.info("")
-        bar.update(step=len(dossier_ref.lectures))
     return success
 
 

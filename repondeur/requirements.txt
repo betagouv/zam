@@ -27,7 +27,7 @@ hupper==1.8.1
 idna==2.7
 inscriptis==0.0.4.1.1
 jdcal==1.4.1
-jinja2==2.10.1
+jinja2==2.10.3
 lawfactory_utils==0.1.7     # anpy, senapy, the-law-factory-parser
 lockfile==0.12.2
 lxml==4.2.6                 # lawfactory_utils: < 4.3, >= 4.2

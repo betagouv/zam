@@ -69,3 +69,19 @@ class TestAllowedEmailPattern:
 
         p = AllowedEmailPattern(pattern=pattern)
         assert not p.is_allowed(email)
+
+
+class TestEmailWellFormed:
+    @pytest.mark.parametrize("email", ["test@exemple.gouv.fr"])
+    def test_email_is_well_formed(self, email):
+        from zam_repondeur.models.users import User
+
+        assert User.email_is_well_formed(email)
+
+    @pytest.mark.parametrize(
+        "email", ["", "testexemple.gouv.fr", "nótäscíî@exemple.gouv.fr"]
+    )
+    def test_email_is_not_well_formed(self, email):
+        from zam_repondeur.models.users import User
+
+        assert not User.email_is_well_formed(email)

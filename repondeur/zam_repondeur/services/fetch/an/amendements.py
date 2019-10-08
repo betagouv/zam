@@ -129,7 +129,10 @@ class AssembleeNationale(RemoteSource):
         created = 0
         errored: List[str] = []
 
-        max_num_seen = max(discussion_nums) if discussion_nums else 0
+        max_num_in_liste = max(discussion_nums, default=0)
+        max_num_in_lecture = max((amdt.num for amdt in lecture.amendements), default=0)
+        max_num_seen = max(max_num_in_liste, max_num_in_lecture)
+
         numero = 0
 
         while numero < (max_num_seen + MAX_404):

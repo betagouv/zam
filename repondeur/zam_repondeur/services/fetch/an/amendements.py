@@ -42,6 +42,10 @@ PATTERN_AMENDEMENT = (
     "{texte}{suffixe}/{organe_abrev}/{numero_prefixe}.xml"
 )
 
+# When trying to discover amendements published but not yet included in the list,
+# we can't try all possible numbers, so we'll stop after a string of 404s
+MAX_404 = 30
+
 
 class OrganeNotFound(Exception):
     def __init__(self, organe: str) -> None:
@@ -128,8 +132,7 @@ class AssembleeNationale(RemoteSource):
         max_num_seen = max(discussion_nums) if discussion_nums else 0
         numero = 0
 
-        # We can't try all possible numbers, so we'll stop after a string of 404s
-        while numero < (max_num_seen + 20):
+        while numero < (max_num_seen + MAX_404):
             numero += 1
             if numero in discussion_nums:
                 continue

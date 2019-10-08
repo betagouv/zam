@@ -89,7 +89,7 @@ class User(Base):
 
     @staticmethod
     def email_is_well_formed(email: str) -> bool:
-        return email != "" and "@" in email
+        return email != "" and "@" in email and is_ascii(email)
 
     @staticmethod
     def email_is_allowed(email: str) -> bool:
@@ -178,3 +178,12 @@ class AllowedEmailPattern(Base):
         Check if an e-mail address is allowed by this pattern
         """
         return fnmatchcase(email, self.pattern)
+
+
+def is_ascii(s: str) -> bool:
+    try:
+        s.encode("ascii")
+    except UnicodeEncodeError:
+        return False
+    else:
+        return True

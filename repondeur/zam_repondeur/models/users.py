@@ -1,6 +1,6 @@
 from datetime import datetime
 from fnmatch import fnmatchcase
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, Any, Iterable, List, Optional
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table, Text, func
 from sqlalchemy.orm import backref, relationship
@@ -47,6 +47,13 @@ class Team(Base):
     @staticmethod
     def normalize_name(name: str) -> str:
         return name.strip()
+
+    def is_member(self, user: "User") -> bool:
+        return user in self.users
+
+    def add_members(self, users: Iterable["User"]) -> None:
+        for user in users:
+            self.users.append(user)
 
     def everyone_but_me(self, me: "User") -> List["User"]:
         return [user for user in self.users if user is not me]

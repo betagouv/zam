@@ -1,6 +1,7 @@
 from email.utils import formataddr
-from typing import Iterator, List, Tuple
+from typing import Iterable, Iterator, List, Tuple
 
+from more_itertools import partition, unique_everseen
 from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
@@ -11,6 +12,7 @@ from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, Team, User, get_one_or_create
 from zam_repondeur.models.events.dossier import DossierRetrait, InvitationEnvoyee
 from zam_repondeur.resources import DossierResource
+from zam_repondeur.views.jinja2_filters import enumeration
 
 from .dossier import DossierViewBase
 
@@ -28,17 +30,30 @@ class DossierInviteForm(DossierViewBase):
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        emails: str = self.request.POST.get("emails")
 
-        new_users, existing_users = self._add_emails_to_team(emails, self.dossier.team)
+        # Only consider well formed addresses from allowed domains
+        emails = self._extract_emails(self.request.POST.get("emails"))
+        bad_emails, clean_emails = self._clean_emails(emails)
+
+        # Create user accounts if needed
+        new_users, existing_users = self._find_or_create_users(clean_emails)
+
+        team = self.dossier.team
+
+        # Users that already have a Zam account, but are not yet members
+        new_members, existing_members = self._identify_members(existing_users, team)
+
+        users_to_invite = new_users + new_members
+
+        team.add_members(users_to_invite)
 
         invitations_sent = 0
         if new_users:
             invitations_sent += self._send_new_users_invitations(new_users)
-        if existing_users:
-            invitations_sent += self._send_existing_users_invitations(existing_users)
+        if new_members:
+            invitations_sent += self._send_existing_users_invitations(new_members)
 
-        for user in new_users + existing_users:
+        for user in users_to_invite:
             InvitationEnvoyee.create(
                 dossier=self.dossier, email=user.email, request=self.request
             )
@@ -48,41 +63,73 @@ class DossierInviteForm(DossierViewBase):
                 message = "Invitations envoyées avec succès."
             else:
                 message = "Invitation envoyée avec succès."
-            self.request.session.flash(Message(cls="success", text=message))
+            cls = "success"
         else:
-            self.request.session.flash(
-                Message(
-                    cls="warning",
-                    text=(
-                        "Aucune invitation n’a été envoyée, soit l’adresse courriel "
-                        "saisie a déjà été destinataire d’une invitation, "
-                        "soit il s’agit d’une adresse courriel non autorisée."
-                    ),
+            message = "Aucune invitation n’a été envoyée."
+            cls = "warning"
+
+        if existing_members:
+            existing_emails = [user.email for user in existing_members]
+            message += "<br><br>"
+            if len(existing_emails) > 1:
+                message += (
+                    f"Les adresses courriel {enumeration(existing_emails)} "
+                    "avaient déjà été invitées au dossier précédemment."
                 )
-            )
+            else:
+                message += (
+                    f"L’adresse courriel {existing_emails[0]} "
+                    "avait déjà été invitée au dossier précédemment."
+                )
+
+        if bad_emails:
+            message += "<br><br>"
+            if len(bad_emails) > 1:
+                message += (
+                    f"Les adresses courriel {enumeration(bad_emails)} "
+                    "sont mal formées ou non autorisées et n’ont pas été invitées."
+                )
+            else:
+                message += (
+                    f"L’adresse courriel {bad_emails[0]} "
+                    "est mal formée ou non autorisée et n’a pas été invitée."
+                )
+
+        self.request.session.flash(Message(cls=cls, text=message))
+
         return HTTPFound(location=self.request.resource_url(self.context))
 
-    def _add_emails_to_team(
-        self, emails: str, team: Team
-    ) -> Tuple[List[User], List[User]]:
+    def _extract_emails(self, text: str) -> Iterator[str]:
+        emails = (line.strip() for line in text.split("\n"))  # TODO: very naive.
+        non_empty_emails = (email for email in emails if email != "")
+        unique_emails: Iterator[str] = unique_everseen(non_empty_emails)
+        return unique_emails
+
+    def _clean_emails(self, emails: Iterable[str]) -> Tuple[List[str], List[str]]:
+        normalized_emails = (User.normalize_email(email) for email in emails)
+        bad_emails, clean_emails = partition(self._is_email_valid, normalized_emails)
+        return list(bad_emails), list(clean_emails)
+
+    @staticmethod
+    def _is_email_valid(email: str) -> bool:
+        return User.email_is_well_formed(email) and User.email_is_allowed(email)
+
+    def _find_or_create_users(self, emails: List[str]) -> Tuple[List[User], List[User]]:
         new_users = []
         existing_users = []
-        for email in self._cleaned_emails(emails):
+        for email in emails:
             user, created = get_one_or_create(User, email=email)
             if created:
                 new_users.append(user)
-                team.users.append(user)
-            elif user not in team.users:
+            else:
                 existing_users.append(user)
-                team.users.append(user)
         return new_users, existing_users
 
-    def _cleaned_emails(self, emails: str) -> Iterator[str]:
-        email_list = emails.split("\n")  # TODO: very naive.
-        for email in email_list:
-            email = User.normalize_email(email)
-            if User.email_is_well_formed(email) and User.email_is_allowed(email):
-                yield email
+    def _identify_members(
+        self, users: List[User], team: Team
+    ) -> Tuple[List[User], List[User]]:
+        not_members, members = partition(team.is_member, users)
+        return list(not_members), list(members)
 
     def _send_new_users_invitations(self, users: List[User]) -> int:
         # TODO: async?

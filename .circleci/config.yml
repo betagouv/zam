@@ -36,7 +36,7 @@ jobs:
           name: Install Python deps
           command: |
             cd repondeur
-            sudo pip install --no-use-pep517 -r requirements.txt -r requirements-dev.txt -e . --log pip.log
+            sudo pip install --no-use-pep517 --progress-bar off -r requirements.txt -r requirements-dev.txt -e . --log pip.log
             ! grep ERROR pip.log
       - run:
           name: Check Python deps conflicts

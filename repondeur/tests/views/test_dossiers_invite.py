@@ -148,7 +148,10 @@ def test_post_form_existing_user(
     )
 
 
-def test_post_form_not_gouv(app, user_david, dossier_plfss2018):
+@pytest.mark.parametrize(
+    "email", ["foo@exemple.notgouv.fr", "nótasçii@exemple.gouv.fr"]
+)
+def test_post_form_invalid_address(app, user_david, dossier_plfss2018, email):
     from zam_repondeur.models import DBSession, Dossier
 
     with transaction.manager:
@@ -160,7 +163,7 @@ def test_post_form_not_gouv(app, user_david, dossier_plfss2018):
     assert resp.status_code == 200
 
     form = resp.forms[0]
-    form["emails"] = "foo@exemple.notgouv.fr"
+    form["emails"] = email
 
     resp = form.submit()
     assert resp.status_code == 302
@@ -168,10 +171,11 @@ def test_post_form_not_gouv(app, user_david, dossier_plfss2018):
     resp = resp.follow()
     assert resp.status_code == 200
 
+    assert "Aucune invitation n’a été envoyée." in resp.text
+
     assert (
-        "Aucune invitation n’a été envoyée, soit l’adresse courriel "
-        "saisie a déjà été destinataire d’une invitation, "
-        "soit il s’agit d’une adresse courriel non autorisée."
+        f"L’adresse courriel {email} "
+        "est mal formée ou non autorisée et n’a pas été invitée."
     ) in resp.text
 
     dossier_plfss2018 = (
@@ -179,6 +183,32 @@ def test_post_form_not_gouv(app, user_david, dossier_plfss2018):
     )
     assert len(dossier_plfss2018.team.users) == 1
     assert dossier_plfss2018.events == []
+
+
+def test_post_form_already_invited(app, user_david, dossier_plfss2018):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        DBSession.add(dossier_plfss2018)
+        assert len(dossier_plfss2018.team.users) == 1
+        assert dossier_plfss2018.events == []
+
+    for _ in range(2):
+        resp = app.get("/dossiers/plfss-2018/invite", user=user_david)
+        assert resp.status_code == 200
+
+        form = resp.forms[0]
+        form["emails"] = "foo@exemple.gouv.fr"
+
+        resp = form.submit().maybe_follow()
+        assert resp.status_code == 200
+
+    assert "Aucune invitation n’a été envoyée." in resp.text
+
+    assert (
+        f"L’adresse courriel foo@exemple.gouv.fr "
+        "avait déjà été invitée au dossier précédemment."
+    ) in resp.text
 
 
 def test_post_form_whitelisted(app, user_david, dossier_plfss2018):
@@ -317,6 +347,11 @@ def test_post_form_multiple_invites_one_not_gouv(
     assert resp.status_code == 200
 
     assert "Invitation envoyée avec succès." in resp.text
+
+    assert (
+        f"L’adresse courriel bar@exemple.notgouv.fr "
+        "est mal formée ou non autorisée et n’a pas été invitée."
+    ) in resp.text
 
     dossier_plfss2018 = (
         DBSession.query(Dossier).filter(Dossier.pk == dossier_plfss2018.pk).one()

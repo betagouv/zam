@@ -185,6 +185,40 @@ def test_post_form_invalid_address(app, user_david, dossier_plfss2018, email):
     assert dossier_plfss2018.events == []
 
 
+def test_post_form_xss_address(app, user_david, dossier_plfss2018):
+    from zam_repondeur.models import DBSession, Dossier
+
+    with transaction.manager:
+        DBSession.add(dossier_plfss2018)
+        assert len(dossier_plfss2018.team.users) == 1
+        assert dossier_plfss2018.events == []
+
+    resp = app.get("/dossiers/plfss-2018/invite", user=user_david)
+    assert resp.status_code == 200
+
+    form = resp.forms[0]
+    form["emails"] = "<script>alert('xss')</script>"
+
+    resp = form.submit()
+    assert resp.status_code == 302
+
+    resp = resp.follow()
+    assert resp.status_code == 200
+
+    assert "Aucune invitation n’a été envoyée." in resp.text
+
+    assert (
+        "L’adresse courriel &lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt; "
+        "est mal formée ou non autorisée et n’a pas été invitée."
+    ) in resp.text
+
+    dossier_plfss2018 = (
+        DBSession.query(Dossier).filter(Dossier.pk == dossier_plfss2018.pk).one()
+    )
+    assert len(dossier_plfss2018.team.users) == 1
+    assert dossier_plfss2018.events == []
+
+
 def test_post_form_already_invited(app, user_david, dossier_plfss2018):
     from zam_repondeur.models import DBSession
 

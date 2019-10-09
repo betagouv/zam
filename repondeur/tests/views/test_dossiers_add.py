@@ -471,7 +471,7 @@ class TestPostForm:
             organe="PO78718",
         )
         assert lecture.chambre == Chambre.SENAT
-        assert lecture.titre == "Première lecture – Titre lecture"
+        assert lecture.titre == "Première lecture – Séance publique"
         assert lecture.dossier.titre == "Sécurité sociale : loi de financement 2019"
         result = (
             "Sénat, session 2018-2019, Séance publique, Première lecture, texte nº 106"

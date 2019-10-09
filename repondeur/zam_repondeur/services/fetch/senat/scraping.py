@@ -146,16 +146,16 @@ def create_lecture(
 
     mo = re.search(r"Texte (résultat des travaux )?de la commission", summary)
     if mo is not None:
-        examen = "Séance publique"
-        organe = ORGANE_SENAT
+        examen = "Commissions"
+        organe = ""
         if mo.group(1):
             if prev_texte is None:
                 logger.warning("Expected a prev_texte")
                 return None
             texte = prev_texte
     else:
-        examen = "Commissions"
-        organe = ""
+        examen = "Séance publique"
+        organe = ORGANE_SENAT
 
     titre = f"{phase} – {examen}"
 

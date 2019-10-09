@@ -1,10 +1,8 @@
-from copy import copy, deepcopy
 from dataclasses import dataclass
 from datetime import date
 from typing import Dict, List, Optional, Tuple
 
 from zam_repondeur.models.chambre import Chambre
-from zam_repondeur.models.organe import ORGANE_SENAT
 from zam_repondeur.models.phase import Phase
 from zam_repondeur.models.texte import TypeTexte
 

@@ -83,10 +83,12 @@ class DataRepository(Repository):
     def _load_scraping_senat_dossiers(self) -> None:
         dossiers_senat = get_dossiers_senat()
         with Lock(self.connection, "data"):
-            for uid, dossier_ref in dossiers_senat.items():
-                self._set_pickled_data(
-                    self._key_for_senat_scraping_dossier(uid), dossier_ref
-                )
+            for dossier_ref in dossiers_senat.values():
+                self.set_senat_scraping_dossier(dossier_ref)
+
+    def set_senat_scraping_dossier(self, dossier_ref: DossierRef) -> None:
+        key = self._key_for_senat_scraping_dossier(dossier_ref.senat_dossier_id)
+        self._set_pickled_data(key, dossier_ref)
 
     def _load_senateurs_groupes(self) -> None:
         senateurs_by_matricule = fetch_and_parse_senateurs()

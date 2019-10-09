@@ -1,10 +1,8 @@
-from copy import copy, deepcopy
 from dataclasses import dataclass
 from datetime import date
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 from zam_repondeur.models.chambre import Chambre
-from zam_repondeur.models.organe import ORGANE_SENAT
 from zam_repondeur.models.phase import Phase
 from zam_repondeur.models.texte import TypeTexte
 
@@ -58,28 +56,6 @@ class LectureRef:
             [self.chambre.value, self.titre, f"Texte Nº {self.texte.numero}{partie}"]
         )
 
-    def overrides(self, other: "LectureRef") -> bool:
-        if self.cmp_key == other.cmp_key:
-            return True
-        return (
-            self.texte.chambre == Chambre.SENAT
-            and self.organe != ORGANE_SENAT
-            and other.organe == ""
-        )
-
-    @property
-    def cmp_key(
-        self,
-    ) -> Tuple[Chambre, str, Optional[int], Optional[int], int, Optional[int]]:
-        return (
-            self.chambre,
-            self.organe,
-            self.texte.legislature,
-            self.texte.session,
-            self.texte.numero,
-            self.partie,
-        )
-
 
 MIN_DATE = date(1900, 1, 1)
 
@@ -93,56 +69,16 @@ class DossierRef:
     titre: str
     slug: str
     an_url: str
-    senat_url: str
+    senat_url: Optional[str]
     lectures: List[LectureRef]
 
-    @classmethod
-    def merge_dossiers(
-        cls, dossiers: DossierRefsByUID, others: DossierRefsByUID
-    ) -> DossierRefsByUID:
-        dossiers, others = cls.merge_by("senat_url", dossiers, others)
-        return {
-            uid: (
-                dossiers.get(uid, DossierRef(uid, "", "", "", "", []))
-                + others.get(uid, DossierRef(uid, "", "", "", "", []))
-            )
-            for uid in dossiers.keys() | others.keys()
-        }
-
-    @classmethod
-    def merge_by(
-        cls, key: str, dossiers: DossierRefsByUID, others: DossierRefsByUID
-    ) -> Tuple[DossierRefsByUID, DossierRefsByUID]:
-        if not others:
-            return dossiers, others
-
-        to_be_merged = [
-            (uid, dossier, uid_other, dossier_other)
-            for uid, dossier in dossiers.items()
-            for uid_other, dossier_other in others.items()
-            if getattr(dossier, key) == getattr(dossier_other, key) != ""
-        ]
-        for uid, dossier, uid_other, dossier_other in to_be_merged:
-            dossiers[uid] = dossier + dossier_other
-            del others[uid_other]
-
-        return dossiers, others
-
-    def __add__(self, other: "DossierRef") -> "DossierRef":
-        if not isinstance(other, DossierRef):
-            raise NotImplementedError
-        return DossierRef(
-            uid=self.uid,
-            titre=self.titre or other.titre,
-            slug=self.slug or other.slug,
-            an_url=self.an_url or other.an_url,
-            senat_url=self.senat_url or other.senat_url,
-            lectures=self._merge_lectures(other.lectures),
-        )
-
-    def _merge_lectures(self, other_lectures: List[LectureRef]) -> List[LectureRef]:
-        return deepcopy(self.lectures) + [
-            copy(other)
-            for other in other_lectures
-            if not any(lecture.overrides(other) for lecture in self.lectures)
-        ]
+    @property
+    def senat_dossier_id(self) -> Optional[str]:
+        """
+        "http://www.senat.fr/dossier-legislatif/pjl18-677.html" -> "pjl18-677"
+        """
+        if self.senat_url is None:
+            return None
+        last_part = self.senat_url.split("/")[-1]
+        suffix = len(".html")
+        return last_part[:-suffix]

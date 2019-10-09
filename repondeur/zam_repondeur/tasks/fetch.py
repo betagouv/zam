@@ -4,7 +4,7 @@ NB: make sure tasks.huey.init_huey() has been called before importing this modul
 import logging
 from typing import Optional
 
-from zam_repondeur.models import DBSession, Dossier, Lecture, Texte, User
+from zam_repondeur.models import Chambre, DBSession, Dossier, Lecture, Texte, User
 from zam_repondeur.models.events.dossier import LecturesRecuperees
 from zam_repondeur.models.events.lecture import (
     AmendementsAJour,
@@ -15,10 +15,11 @@ from zam_repondeur.models.events.lecture import (
     LectureCreee,
     TexteMisAJour,
 )
-from zam_repondeur.services.dossiers import get_dossiers_legislatifs_from_cache
+from zam_repondeur.services.data import repository
 from zam_repondeur.services.fetch import get_articles
 from zam_repondeur.services.fetch.amendements import RemoteSource
-from zam_repondeur.services.fetch.an.dossiers.models import DossierRefsByUID
+from zam_repondeur.services.fetch.an.dossiers.models import DossierRef, LectureRef
+from zam_repondeur.services.fetch.senat.scraping import scrape_dossier
 from zam_repondeur.tasks.huey import huey
 
 logger = logging.getLogger(__name__)
@@ -129,44 +130,107 @@ def create_missing_lectures(dossier_pk: int, user_pk: Optional[int] = None) -> N
         else:
             user = None
 
-        dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
-        try:
-            dossier_ref = dossiers_by_uid[dossier.uid]
-        except KeyError:
-            logger.warning(f"Missing key for dossier {dossier.uid}")
-            return
-
         changed = False
-
-        for lecture_ref in reversed(dossier_ref.lectures):
-            lecture_created = False
-            lecture_updated = False
-
-            texte = Texte.get_or_create_from_ref(lecture_ref.texte, lecture_ref.chambre)
-
-            lecture = Lecture.get_from_ref(lecture_ref, dossier, texte)
-
-            if lecture is not None and lecture.texte is not texte:
-                # We probably created the Lecture before a new Texte was adopted
-                # by the commission. Time to update with the final one!
-                if False:  # HACK
-                    TexteMisAJour.create(lecture=lecture, texte=texte)
-                    lecture_updated = True
-
-            if lecture is None:
-                lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
-                LectureCreee.create(lecture=lecture, user=user)
-                lecture_created = True
-
-            if lecture_created or lecture_updated:
-                changed = True
-
-                # Make sure the lecture gets its primary key.
-                DBSession.flush()
-
-                # Enqueue tasks to fetch articles and amendements.
-                huey.enqueue_on_transaction_commit(fetch_articles.s(lecture.pk))
-                huey.enqueue_on_transaction_commit(fetch_amendements.s(lecture.pk))
+        changed |= create_missing_lectures_an(dossier, user)
+        changed |= create_missing_lectures_senat(dossier, user)
 
         if changed:
             LecturesRecuperees.create(dossier=dossier, user=user)
+
+
+def create_missing_lectures_an(dossier: Dossier, user: Optional[User]) -> bool:
+    dossier_ref_open_data = repository.get_dossier_ref(dossier.uid)
+    # FIXME: error handling
+
+    changed = False
+    for lecture_ref in dossier_ref_open_data.lectures:
+        if lecture_ref.chambre == Chambre.AN:
+            changed |= do_something(dossier, lecture_ref, user)
+    return changed
+
+
+def create_missing_lectures_senat(dossier: Dossier, user: Optional[User]) -> bool:
+    # Start with the information in AN Open Data, which may be incomplete
+    dossier_ref_open_data = repository.get_dossier_ref(dossier.uid)
+
+    dossier_id = dossier_ref_open_data.senat_dossier_id
+    if dossier_id is None:
+        return False
+
+    assert dossier_ref_open_data.senat_url is not None  # mypy hint
+
+    # From there, get fresh data from the Sénat web site
+    dossier_ref_senat = get_senat_dossier_ref_from_cache_or_scrape(
+        dossier_id=dossier_id, webpage_url=dossier_ref_open_data.senat_url
+    )
+
+    changed = False
+    for lecture_ref in dossier_ref_senat.lectures:
+        if lecture_ref.chambre == Chambre.SENAT:
+            logger.info(lecture_ref)
+            changed |= do_something(dossier, lecture_ref, user)
+    return changed
+
+
+def get_senat_dossier_ref_from_cache_or_scrape(
+    dossier_id: str, webpage_url: str
+) -> DossierRef:
+    """
+    Get dossier from the Redis cache (if recent) or scrape it
+    """
+    dossier_ref_senat = repository.get_senat_scraping_dossier(dossier_id)
+    if dossier_ref_senat is None:
+        dossier_ref_senat = scrape_dossier(dossier_id)
+    return dossier_ref_senat
+
+
+def do_something(
+    dossier: Dossier, lecture_ref: LectureRef, user: Optional[User]
+) -> bool:
+    changed = False
+
+    lecture_created = False
+    lecture_updated = False
+
+    texte = Texte.get_or_create_from_ref(lecture_ref.texte, lecture_ref.chambre)
+
+    lecture = Lecture.get_from_ref(lecture_ref, dossier, texte)
+
+    if lecture is not None and lecture.texte is not texte:
+        # We probably created the Lecture before a new Texte was adopted
+        # by the commission. Time to update with the final one!
+        TexteMisAJour.create(lecture=lecture, texte=texte)
+        lecture_updated = True
+
+    if lecture is None:
+        lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)
+        LectureCreee.create(lecture=lecture, user=user)
+        lecture_created = True
+
+    if lecture_created or lecture_updated:
+        changed = True
+
+        # Make sure the lecture gets its primary key.
+        DBSession.flush()
+
+        # Enqueue tasks to fetch articles and amendements.
+        huey.enqueue_on_transaction_commit(fetch_articles.s(lecture.pk))
+        huey.enqueue_on_transaction_commit(fetch_amendements.s(lecture.pk))
+
+    return changed
+
+
+# dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
+# try:
+#     dossier_ref = dossiers_by_uid[dossier.uid]
+# except KeyError:
+#     logger.warning(f"Missing key for dossier {dossier.uid}")
+#     return
+
+# changed = False
+
+# lecture_refs = list(reversed(dossier_ref.lectures))
+# from pprint import pformat
+
+# logger.info(pformat(lecture_refs))
+# for lecture_ref in lecture_refs:

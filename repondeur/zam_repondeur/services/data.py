@@ -87,6 +87,8 @@ class DataRepository(Repository):
                 self.set_senat_scraping_dossier(dossier_ref)
 
     def set_senat_scraping_dossier(self, dossier_ref: DossierRef) -> None:
+        if dossier_ref.senat_dossier_id is None:
+            return
         key = self._key_for_senat_scraping_dossier(dossier_ref.senat_dossier_id)
         self._set_pickled_data(key, dossier_ref)
 

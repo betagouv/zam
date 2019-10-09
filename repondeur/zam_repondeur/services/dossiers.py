@@ -1,15 +1,5 @@
-from functools import reduce
-
 from zam_repondeur.services.data import repository
-from zam_repondeur.services.fetch.an.dossiers.models import DossierRef, DossierRefsByUID
-
-
-def get_dossiers_legislatifs_from_cache() -> DossierRefsByUID:
-    dossiers = [
-        get_dossiers_legislatifs_open_data_from_cache(),
-        get_dossiers_legislatifs_scraping_senat_from_cache(),
-    ]
-    return reduce(DossierRef.merge_dossiers, dossiers, {})
+from zam_repondeur.services.fetch.an.dossiers.models import DossierRefsByUID
 
 
 def get_dossiers_legislatifs_open_data_from_cache() -> DossierRefsByUID:

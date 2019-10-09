@@ -298,6 +298,12 @@ class TestPostForm:
 
         responses.add(
             responses.GET,
+            "https://www.senat.fr/dossier-legislatif/rss/doslegplfss2018.xml",
+            body=(SAMPLE_DATA_DIR / "doslegplfss2018.xml").read_bytes(),
+            status=200,
+        )
+        responses.add(
+            responses.GET,
             "https://www.senat.fr/leg/pjl17-063.html",
             body=(SAMPLE_DATA_DIR / "pjl17-063.html").read_text("utf-8", "ignore"),
             status=200,
@@ -423,6 +429,12 @@ class TestPostForm:
             body=(
                 FETCH_SAMPLE_DATA_DIR / "senat" / "liste_discussion_106.json"
             ).read_bytes(),
+            status=200,
+        )
+        responses.add(
+            responses.GET,
+            "https://www.senat.fr/dossier-legislatif/rss/doslegplfss2019.xml",
+            body=(SAMPLE_DATA_DIR / "doslegplfss2019.xml").read_bytes(),
             status=200,
         )
         responses.add(

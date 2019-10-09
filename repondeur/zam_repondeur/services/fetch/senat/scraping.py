@@ -31,7 +31,8 @@ def get_dossiers_senat() -> DossierRefsByUID:
     webpages_urls = extract_recent_urls(html)
     pids_rss = convert_to_rss_urls(webpages_urls)
     dossier_refs_by_uid = {
-        pid: create_dossier(pid, rss_url) for pid, rss_url in pids_rss.items()
+        dossier_id: create_dossier(dossier_id, rss_url)
+        for dossier_id, rss_url in pids_rss.items()
     }
     return dossier_refs_by_uid
 
@@ -56,17 +57,27 @@ def extract_recent_urls(html: str) -> Set[str]:
     }
 
 
+def scrape_dossier(dossier_id: str) -> DossierRef:
+    rss_url = build_rss_url(dossier_id)
+    return create_dossier(dossier_id, rss_url)
+
+
 def convert_to_rss_urls(webpages_urls: Set[str]) -> Dict[str, str]:
-    pids_rss = {}
-    for webpage_url in webpages_urls:
-        prefix = len("/dossier-legislatif/")
-        suffix = len(".html")
-        pid = webpage_url[prefix:-suffix]
-        pids_rss[pid] = f"/dossier-legislatif/rss/dosleg{pid}.xml"
-    return pids_rss
+    dossier_ids = (extract_dossier_id(url) for url in webpages_urls)
+    return {dossier_id: build_rss_url(dossier_id) for dossier_id in dossier_ids}
 
 
-def create_dossier(pid: str, rss_url: str) -> DossierRef:
+def extract_dossier_id(webpage_url: str) -> str:
+    prefix = len("/dossier-legislatif/")
+    suffix = len(".html")
+    return webpage_url[prefix:-suffix]
+
+
+def build_rss_url(dossier_id: str) -> str:
+    return f"/dossier-legislatif/rss/dosleg{dossier_id}.xml"
+
+
+def create_dossier(dossier_id: str, rss_url: str) -> DossierRef:
     rss_content = download_rss(rss_url)
     soup = BeautifulSoup(rss_content, "html5lib")
     prefix = len("Sénat - ")
@@ -82,12 +93,12 @@ def create_dossier(pid: str, rss_url: str) -> DossierRef:
     lectures = []
     entries = sorted(soup.select("entry"), key=lambda e: e.created.string)
     for entry in entries:
-        lecture = create_lecture(pid, entry, prev_texte=prev_texte)
+        lecture = create_lecture(dossier_id, entry, prev_texte=prev_texte)
         if lecture is not None:
             prev_texte = lecture.texte
             lectures.append(lecture)
     dossier = DossierRef(
-        uid=pid,
+        uid=dossier_id,
         titre=title,
         slug=slug,
         an_url="",
@@ -116,7 +127,7 @@ _PHASES = {
 
 
 def create_lecture(
-    pid: str, entry: element.Tag, prev_texte: Optional[TexteRef] = None
+    dossier_id: str, entry: element.Tag, prev_texte: Optional[TexteRef] = None
 ) -> Optional[LectureRef]:
     title = entry.title.string
     if not title.startswith("Texte "):
@@ -131,7 +142,7 @@ def create_lecture(
         return None
 
     phase = summary.split(" - ", 1)[0]
-    texte = create_texte(pid, entry)
+    texte = create_texte(dossier_id, entry)
 
     mo = re.search(r"Texte (résultat des travaux )?de la commission", summary)
     if mo is not None:
@@ -157,15 +168,15 @@ def create_lecture(
     )
 
 
-def create_texte(pid: str, entry: element.Tag) -> TexteRef:
+def create_texte(dossier_id: str, entry: element.Tag) -> TexteRef:
     numero = entry.title.string.split(" n° ", 1)[1]
     type_dict = {
         "ppr": TypeTexte.PROPOSITION,
         "ppl": TypeTexte.PROPOSITION,
         "pjl": TypeTexte.PROJET,
-        "plf": TypeTexte.PROJET,
+        "plf": TypeTexte.PROJET,  # plfss
     }
-    type_ = pid[:3]
+    type_ = dossier_id[:3]
     # One day is added considering we have to deal with timezones
     # and we only need the date.
     # E.g.: 2019-05-21T22:00:00Z
@@ -185,10 +196,17 @@ def create_texte(pid: str, entry: element.Tag) -> TexteRef:
 
 
 def guess_chambre(entry: element.Tag) -> Optional[Chambre]:
+    # if "1408" in entry.title.string:
+    #     import pdb
+
+    #     pdb.set_trace()
     if entry.id.string.startswith(BASE_URL_SENAT):
         return Chambre.SENAT
 
     if re.search(r"^http://www2?\.assemblee-nationale\.fr", entry.id.string):
+        return Chambre.AN
+
+    if "Texte transmis à l'Assemblée nationale" in entry.summary.string:
         return Chambre.AN
 
     if entry.summary.string.startswith("Commission mixte paritaire"):

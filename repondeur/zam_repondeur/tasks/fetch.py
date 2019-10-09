@@ -145,7 +145,7 @@ def create_missing_lectures_an(dossier: Dossier, user: Optional[User]) -> bool:
     changed = False
     for lecture_ref in dossier_ref_open_data.lectures:
         if lecture_ref.chambre == Chambre.AN:
-            changed |= do_something(dossier, lecture_ref, user)
+            changed |= create_or_update_lecture(dossier, lecture_ref, user)
     return changed
 
 
@@ -167,8 +167,7 @@ def create_missing_lectures_senat(dossier: Dossier, user: Optional[User]) -> boo
     changed = False
     for lecture_ref in dossier_ref_senat.lectures:
         if lecture_ref.chambre == Chambre.SENAT:
-            logger.info(lecture_ref)
-            changed |= do_something(dossier, lecture_ref, user)
+            changed |= create_or_update_lecture(dossier, lecture_ref, user)
     return changed
 
 
@@ -184,7 +183,7 @@ def get_senat_dossier_ref_from_cache_or_scrape(
     return dossier_ref_senat
 
 
-def do_something(
+def create_or_update_lecture(
     dossier: Dossier, lecture_ref: LectureRef, user: Optional[User]
 ) -> bool:
     changed = False

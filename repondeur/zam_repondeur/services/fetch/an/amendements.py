@@ -38,6 +38,10 @@ PATTERN_LISTE = (
     "/eloi/{legislature}/amendements/{texte}{suffixe}/{organe_abrev}/liste.xml"
 )
 PATTERN_AMENDEMENT = (
+    "/dyn/{legislature}/amendements/"
+    "{texte}{suffixe}/{organe_abrev}/{numero_prefixe}.xml"
+)
+PATTERN_AMENDEMENT_FALLBACK = (
     "/{legislature}/xml/amendements/"
     "{texte}{suffixe}/{organe_abrev}/{numero_prefixe}.xml"
 )
@@ -351,7 +355,11 @@ def fetch_discussion_list(lecture: Lecture) -> List[OrderedDict]:
 
 def _retrieve_amendement(lecture: Lecture, numero_prefixe: str) -> OrderedDict:
     url = build_url(lecture, numero_prefixe)
-    content = _retrieve_content(url)
+    try:
+        content = _retrieve_content(url)
+    except NotFound:
+        url = build_url(lecture, numero_prefixe, fallback=True)
+        content = _retrieve_content(url)
     return content["amendement"]
 
 
@@ -387,7 +395,9 @@ def _get_parent(
     return parent
 
 
-def build_url(lecture: Lecture, numero_prefixe: str = "") -> str:
+def build_url(
+    lecture: Lecture, numero_prefixe: str = "", fallback: bool = False
+) -> str:
 
     legislature = lecture.texte.legislature
     texte = f"{lecture.texte.numero:04}"
@@ -403,21 +413,17 @@ def build_url(lecture: Lecture, numero_prefixe: str = "") -> str:
     organe_abrev = get_organe_abrev(lecture.organe)
 
     if numero_prefixe:
-        path = PATTERN_AMENDEMENT.format(
-            legislature=legislature,
-            texte=texte,
-            suffixe=suffixe,
-            organe_abrev=organe_abrev,
-            numero_prefixe=numero_prefixe,
-        )
+        pattern = PATTERN_AMENDEMENT_FALLBACK if fallback else PATTERN_AMENDEMENT
     else:
-        path = PATTERN_LISTE.format(
-            legislature=legislature,
-            texte=texte,
-            suffixe=suffixe,
-            organe_abrev=organe_abrev,
-        )
+        pattern = PATTERN_LISTE
 
+    path = pattern.format(
+        legislature=legislature,
+        texte=texte,
+        suffixe=suffixe,
+        organe_abrev=organe_abrev,
+        numero_prefixe=numero_prefixe,
+    )
     url: str = urljoin(BASE_URL, path)
     return url
 

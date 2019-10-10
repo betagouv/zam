@@ -132,8 +132,9 @@ def create_missing_lectures(dossier_pk: int, user_pk: Optional[int] = None) -> N
             if lecture is not None and lecture.texte is not texte:
                 # We probably created the Lecture before a new Texte was adopted
                 # by the commission. Time to update with the final one!
-                TexteMisAJour.create(lecture=lecture, texte=texte)
-                lecture_updated = True
+                if False:  # HACK
+                    TexteMisAJour.create(lecture=lecture, texte=texte)
+                    lecture_updated = True
 
             if lecture is None:
                 lecture = Lecture.create_from_ref(lecture_ref, dossier, texte)

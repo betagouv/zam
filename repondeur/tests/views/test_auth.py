@@ -50,13 +50,15 @@ class TestLoginPage:
     def test_an_email_with_a_token_is_sent_if_address_is_valid(
         self, app, mailer, valid_email
     ):
+        resp = app.get("/identification")
+        form = resp.form
+        form["email"] = valid_email
 
         with patch(
             "zam_repondeur.views.auth.generate_auth_token"
         ) as mock_generate_auth_token:
             mock_generate_auth_token.return_value = "FOOBA-RBAZQ-UXQUU-XQUUZ"
-
-            resp = app.post("/identification", {"email": valid_email})
+            resp = form.submit()
 
         resp = resp.maybe_follow()
 
@@ -81,7 +83,9 @@ class TestLoginPage:
         )
 
     def test_user_can_ask_for_a_token_with_a_whitelisted_domain(self, app, mailer):
-        resp = app.post("/identification", {"email": "quelquun@liste-blanche.fr"})
+        resp = app.get("/identification")
+        resp.form["email"] = "quelquun@liste-blanche.fr"
+        resp = resp.form.submit()
         resp = resp.maybe_follow()
 
         assert "Vous devriez recevoir un lien dans les minutes" in resp.text
@@ -90,7 +94,9 @@ class TestLoginPage:
     def test_user_can_ask_for_a_token_with_a_whitelisted_email_address(
         self, app, mailer
     ):
-        resp = app.post("/identification", {"email": "liste.blanche@exemple.fr"})
+        resp = app.get("/identification")
+        resp.form["email"] = "liste.blanche@exemple.fr"
+        resp = resp.form.submit()
         resp = resp.maybe_follow()
 
         assert "Vous devriez recevoir un lien dans les minutes" in resp.text
@@ -98,7 +104,9 @@ class TestLoginPage:
 
     @pytest.mark.parametrize("missing_email", ["", " "])
     def test_user_cannot_ask_for_a_token_with_a_missing_email(self, app, missing_email):
-        resp = app.post("/identification", {"email": missing_email})
+        resp = app.get("/identification")
+        resp.form["email"] = missing_email
+        resp = resp.form.submit()
 
         assert resp.status_code == 302
         assert resp.location == "https://zam.test/identification"
@@ -109,7 +117,9 @@ class TestLoginPage:
     def test_user_cannot_ask_for_a_token_with_an_invalid_email(
         self, app, incorrect_email
     ):
-        resp = app.post("/identification", {"email": incorrect_email})
+        resp = app.get("/identification")
+        resp.form["email"] = incorrect_email
+        resp = resp.form.submit()
 
         assert resp.status_code == 302
         assert resp.location == "https://zam.test/identification"
@@ -127,16 +137,38 @@ class TestLoginPage:
     def test_user_cannot_ask_for_a_token_if_email_is_not_whitelisted(
         self, app, notgouvfr_email
     ):
-        resp = app.post("/identification", {"email": notgouvfr_email})
+        resp = app.get("/identification")
+        resp.form["email"] = notgouvfr_email
+        resp = resp.form.submit()
 
         assert resp.status_code == 302
         assert resp.location == "https://zam.test/identification"
         resp = resp.follow()
         assert "Cette adresse de courriel n’est pas acceptée." in resp.text
 
+    def test_user_cannot_ask_for_a_token_if_csrf_token_is_missing(self, app):
+        resp = app.post(
+            "/identification", {"email": "foo@exemple.gouv.fr"}, expect_errors=True
+        )
+
+        assert resp.status_code == 400
+        assert resp.text.startswith("400 Bad CSRF Origin")
+
+    def test_user_cannot_ask_for_a_token_if_csrf_token_is_wrong(self, app):
+        resp = app.post(
+            "/identification",
+            {"email": "foo@exemple.gouv.fr", "token": "WRONG"},
+            expect_errors=True,
+        )
+
+        assert resp.status_code == 400
+        assert resp.text.startswith("400 Bad CSRF Origin")
+
     def test_successful_auth_token_request_is_logged(self, app, caplog):
         caplog.set_level(logging.INFO)
-        app.post("/identification", {"email": "foo@exemple.gouv.fr"})
+        resp = app.get("/identification")
+        resp.form["email"] = "foo@exemple.gouv.fr"
+        resp = resp.form.submit()
         assert (
             "INFO Successful token request by 'foo@exemple.gouv.fr' from 127.0.0.1"  # noqa
             in caplog.text
@@ -145,7 +177,9 @@ class TestLoginPage:
     @pytest.mark.parametrize("email", ["", "foo", "jane.doe@example.com"])
     def test_failed_auth_token_request_is_logged(self, app, caplog, email):
         caplog.set_level(logging.WARNING)
-        app.post("/identification", {"email": email})
+        resp = app.get("/identification")
+        resp.form["email"] = email
+        resp = resp.form.submit()
         assert (
             f"WARNING Failed token request by '{email}' from 127.0.0.1"  # noqa
             in caplog.text
@@ -155,59 +189,67 @@ class TestLoginPage:
         # We do a number of requests for the same email address (from different IPs)
         # We can to a number of requests from different IPs without being throttled
         for n in range(5):
-            resp = app.post(
-                "/identification",
-                {"email": "spam@exemple.gouv.fr"},
-                extra_environ={"REMOTE_ADDR": f"127.0.0.{n + 1}"},
-            )
+            resp = app.get("/identification")
+            resp.form["email"] = "spam@exemple.gouv.fr"
+            resp = resp.form.submit(extra_environ={"REMOTE_ADDR": f"127.0.0.{n + 1}"})
+
             assert 200 <= resp.status_code < 400
 
         # Oops, now we're being throttled
-        resp = app.post(
-            "/identification", {"email": "spam@exemple.gouv.fr"}, expect_errors=True
-        )
+        resp = app.get("/identification")
+        resp.form["email"] = "spam@exemple.gouv.fr"
+        resp = resp.form.submit(expect_errors=True)
+
         assert resp.status_code == 429  # Too Many Requests
 
         initial_time = datetime.now(tz=timezone.utc)
 
         # If we wait 50 seconds we're still throttled
         with freeze_time(initial_time + timedelta(seconds=50)):
-            resp = app.post(
-                "/identification", {"email": "spam@exemple.gouv.fr"}, expect_errors=True
-            )
+            resp = app.get("/identification")
+            resp.form["email"] = "spam@exemple.gouv.fr"
+            resp = resp.form.submit(expect_errors=True)
+
             assert resp.status_code == 429  # Too Many Requests
 
         # If we wait 1 minute (sliding window) we can do a request again
         with freeze_time(initial_time + timedelta(seconds=60 + 0.01)):
-            resp = app.post("/identification", {"email": f"spam@exemple.gouv.fr"})
+            resp = app.get("/identification")
+            resp.form["email"] = "spam@exemple.gouv.fr"
+            resp = resp.form.submit()
+
             assert 200 <= resp.status_code < 400
 
     def test_many_token_requests_from_the_same_ip_get_throttled(self, app):
         # We do a number of requests from the same IP (for different email addresses)
         for n in range(10):
-            resp = app.post("/identification", {"email": f"{n + 1}@exemple.gouv.fr"})
+            resp = app.get("/identification")
+            resp.form["email"] = f"{n + 1}@exemple.gouv.fr"
+            resp = resp.form.submit(expect_errors=True)
+
             assert 200 <= resp.status_code < 400
 
         # Oops, now we're being throttled
-        resp = app.post(
-            "/identification", {"email": f"oops@exemple.gouv.fr"}, expect_errors=True
-        )
+        resp = app.get("/identification")
+        resp.form["email"] = "oops@exemple.gouv.fr"
+        resp = resp.form.submit(expect_errors=True)
         assert resp.status_code == 429  # Too Many Requests
 
         initial_time = datetime.now(tz=timezone.utc)
 
         # If we wait 50 seconds we're still throttled
         with freeze_time(initial_time + timedelta(seconds=50)):
-            resp = app.post(
-                "/identification",
-                {"email": f"oops@exemple.gouv.fr"},
-                expect_errors=True,
-            )
+            resp = app.get("/identification")
+            resp.form["email"] = "oops@exemple.gouv.fr"
+            resp = resp.form.submit(expect_errors=True)
             assert resp.status_code == 429  # Too Many Requests
 
         # If we wait 1 minute (sliding window) we can do a request again
         with freeze_time(initial_time + timedelta(seconds=60 + 0.01)):
-            resp = app.post("/identification", {"email": f"again@exemple.gouv.fr"})
+            resp = app.get("/identification")
+            resp.form["email"] = "oops@exemple.gouv.fr"
+            resp = resp.form.submit()
+
             assert 200 <= resp.status_code < 400
 
 

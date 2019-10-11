@@ -31,6 +31,7 @@ server {
 
     ssl_session_timeout 1d;
     ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
+    ssl_session_tickets off;
 
     include /etc/nginx/snippets/ssl.conf;
 

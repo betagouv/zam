@@ -28,6 +28,10 @@ server {
     ssl_certificate $$ssl_cert;
     ssl_certificate_key $$ssl_key;
     ssl_trusted_certificate $$ssl_cert;
+
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
+
     include /etc/nginx/snippets/ssl.conf;
 
     charset     utf-8;

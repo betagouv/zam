@@ -54,7 +54,11 @@ def wsgi_server(
 ):
     from zam_repondeur import make_app
 
-    settings = {**settings, "zam.auth_cookie_secure": False}
+    settings = {
+        **settings,
+        "zam.auth_cookie_secure": False,
+        "zam.auth_cookie_http_only": False,
+    }
     wsgi_app = make_app(None, **settings)
     server = StopableWSGIServer.create(wsgi_app)
     server.settings = settings

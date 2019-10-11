@@ -33,7 +33,9 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
     settings = {**BASE_SETTINGS, **settings}
 
     session_factory = SignedCookieSessionFactory(
-        secret=settings["zam.session_secret"], serializer=JSONSerializer()
+        secret=settings["zam.session_secret"],
+        serializer=JSONSerializer(),
+        secure=asbool(settings["zam.auth_cookie_secure"]),
     )
 
     with Configurator(

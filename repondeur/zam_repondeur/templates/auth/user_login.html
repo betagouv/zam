@@ -16,6 +16,7 @@
         {% if request.session.pop('already_in_use', None) %}
             <p class="error">Cette adresse de courriel est déjà utilisée<br>dans une autre équipe.</p>
         {% endif %}
+        <input type="hidden" name="csrf_token" value="{{ get_csrf_token() }}">
         <label for="email">Votre courriel professionnel (en .gouv.fr)</label>
         <input type="email" name="email" autocomplete="email"
             required

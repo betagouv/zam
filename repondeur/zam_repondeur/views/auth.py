@@ -70,7 +70,7 @@ class UserLogin(RateLimiterMixin):
             url = self.request.resource_url(self.request.root["dossiers"])
         return url
 
-    @view_config(request_method="POST")
+    @view_config(request_method="POST", require_csrf=True)
     def post(self) -> Any:
         if self.ip_limiter.exceeded(self.request.remote_addr):
             return HTTPTooManyRequests()

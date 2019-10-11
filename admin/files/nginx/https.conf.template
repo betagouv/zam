@@ -79,12 +79,14 @@ server {
 
         proxy_buffering         off;
         proxy_temp_file_write_size 128k;
+
+        add_header "Cache-Control" "no-store";
     }
 
     location /repondeur/static/ {
         alias /srv/repondeur/src/repondeur/zam_repondeur/static/;
         expires 30d;
-        add_header Cache-Control public;
+        add_header "Cache-Control" "public";
     }
 
     location /_stats/ {

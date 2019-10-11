@@ -40,6 +40,9 @@ server {
 
     include /etc/nginx/snippets/letsencrypt.conf;
 
+    # https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#xcto
+    add_header "X-Content-Type-Options" "nosniff";
+
     auth_basic $$basic_auth_mode;
     auth_basic_user_file /etc/nginx/.htpasswd;
 

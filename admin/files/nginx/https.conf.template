@@ -42,6 +42,8 @@ server {
 
     # https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#xcto
     add_header "X-Content-Type-Options" "nosniff";
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+    add_header "X-XSS-Protection" "1; mode=block";
 
     auth_basic $$basic_auth_mode;
     auth_basic_user_file /etc/nginx/.htpasswd;

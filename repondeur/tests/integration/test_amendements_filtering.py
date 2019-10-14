@@ -360,7 +360,7 @@ def test_column_filtering_by_value_for_missions(
     initial,
     filtered,
 ):
-    from zam_repondeur.models import Amendement, Article, Mission, DBSession
+    from zam_repondeur.models import Amendement, Article, DBSession
 
     LECTURE_URL = (
         f"{wsgi_server.application_url}"
@@ -369,9 +369,6 @@ def test_column_filtering_by_value_for_missions(
         f"lectures/{lecture_plf2018_an_premiere_lecture_seance_publique_2.url_key}"
     )
     with transaction.manager:
-        mission = Mission.create(
-            titre="Mission Action extérieure de l'État", titre_court="Action ext."
-        )
         article7bis_an = Article.create(
             lecture=lecture_plf2018_an_premiere_lecture_seance_publique_2,
             type="article",
@@ -383,7 +380,8 @@ def test_column_filtering_by_value_for_missions(
             article=article7bis_an,
             num=222,
             position=3,
-            mission=mission,
+            mission_titre="Mission Action extérieure de l'État",
+            mission_titre_court="Action ext.",
         )
         DBSession.add(amendement)
 

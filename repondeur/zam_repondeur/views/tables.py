@@ -54,7 +54,7 @@ class TableView:
                     "groupe",
                     "id_identique",
                     "lecture_pk",
-                    "mission_pk",
+                    "mission_titre",
                     "num",
                     "parent_pk",
                     "position",

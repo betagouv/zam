@@ -469,8 +469,8 @@ class TestFetchAmendement:
             lecture=lecture_an, numero_prefixe="494", position=1
         )
 
-        assert amendement.mission.titre == "Mission « Outre-mer »"
-        assert amendement.mission.titre_court == "Outre-mer"
+        assert amendement.mission_titre == "Mission « Outre-mer »"
+        assert amendement.mission_titre_court == "Outre-mer"
 
         assert_html_looks_like(
             amendement.corps,
@@ -530,8 +530,8 @@ class TestFetchAmendement:
             lecture=lecture_an, numero_prefixe="319", position=1
         )
 
-        assert amendement.mission.titre == "Mission « Action extérieure de l'État »"
-        assert amendement.mission.titre_court == "Action extérieure de l'État"
+        assert amendement.mission_titre == "Mission « Action extérieure de l'État »"
+        assert amendement.mission_titre_court == "Action extérieure de l'État"
 
         assert_html_looks_like(
             amendement.corps,
@@ -591,8 +591,8 @@ class TestFetchAmendement:
             lecture=lecture_an, numero_prefixe="1463", position=1
         )
 
-        assert amendement.mission.titre == "Mission « Cohésion des territoires »"
-        assert amendement.mission.titre_court == "Cohésion des territoires"
+        assert amendement.mission_titre == "Mission « Cohésion des territoires »"
+        assert amendement.mission_titre_court == "Cohésion des territoires"
         assert_html_looks_like(
             amendement.corps,
             """
@@ -718,8 +718,8 @@ class TestFetchAmendement:
             lecture=lecture_an, numero_prefixe="398", position=1
         )
 
-        assert amendement.mission.titre == "Mission « Investissements d'avenir »"
-        assert amendement.mission.titre_court == "Investissements d'avenir"
+        assert amendement.mission_titre == "Mission « Investissements d'avenir »"
+        assert amendement.mission_titre_court == "Investissements d'avenir"
         assert_html_looks_like(
             amendement.corps,
             """

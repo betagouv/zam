@@ -323,7 +323,7 @@
                                {{ amendement.article.type }}
                            {%- endif -%}
                        "
-                       data-mission="{{ amendement.mission and amendement.mission.pk or '' }}"
+                       data-mission="{{ amendement.mission_titre or '' }}"
                        data-order="{{ loop.index }}"
                        data-amendement="
                            {%- if amendement.batch -%}
@@ -347,8 +347,8 @@
                                         {% else %}
                                             <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article" target="_blank">{{ amendement.article.format() }}</a>
                                         {% endif %}
-                                        {% if amendement.mission %}
-                                            - {{ amendement.mission.titre }}
+                                        {% if amendement.mission_titre %}
+                                            - {{ amendement.mission_titre }}
                                         {% endif %}
                                         –
 

@@ -16,7 +16,6 @@ from zam_repondeur.version import load_version
 BASE_SETTINGS = {
     "zam.auth_cookie_duration": 7 * 24 * 3600,  # a user stays identified for 7 days
     "zam.auth_cookie_secure": True,  # disable for local HTTP access in development
-    "zam.auth_cookie_http_only": True,  # disable for local HTTP access in development
     "zam.legislatures": "14,15",
     "huey.workers": (cpu_count() * 2) + 1,
     # Intervals in seconds for notifications checks:
@@ -37,7 +36,7 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         secret=settings["zam.session_secret"],
         serializer=JSONSerializer(),
         secure=asbool(settings["zam.auth_cookie_secure"]),
-        httponly=asbool(settings["zam.auth_cookie_http_only"]),
+        httponly=True,
     )
 
     with Configurator(

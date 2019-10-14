@@ -29,10 +29,6 @@ server {
     ssl_certificate_key $$ssl_key;
     ssl_trusted_certificate $$ssl_cert;
 
-    ssl_session_timeout 1d;
-    ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
-    ssl_session_tickets off;
-
     include /etc/nginx/snippets/ssl.conf;
 
     charset     utf-8;
@@ -44,15 +40,6 @@ server {
     gzip_types text/html text/css image/svg+xml application/javascript application/json;
 
     include /etc/nginx/snippets/letsencrypt.conf;
-
-    # https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#xcto
-    add_header "X-Content-Type-Options" "nosniff";
-    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
-    add_header "X-XSS-Protection" "1; mode=block";
-    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Pragma
-    add_header "Pragma" "no-cache";
-    # HSTS
-    add_header "Strict-Transport-Security" "max-age=63072000" always;
 
     auth_basic $$basic_auth_mode;
     auth_basic_user_file /etc/nginx/.htpasswd;
@@ -88,6 +75,7 @@ server {
         proxy_temp_file_write_size 128k;
 
         add_header "Cache-Control" "no-store";
+        add_header "Pragma" "no-cache";
     }
 
     location /repondeur/static/ {
@@ -98,6 +86,8 @@ server {
 
     location /_stats/ {
         alias /var/cache/munin/www/;
+        add_header "Cache-Control" "no-store";
+        add_header "Pragma" "no-cache";
     }
 
 }

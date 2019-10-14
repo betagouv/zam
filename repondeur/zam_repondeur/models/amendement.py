@@ -36,7 +36,6 @@ from .division import ADJECTIFS_MULTIPLICATIFS
 if TYPE_CHECKING:
     from .article import Article  # noqa
     from .lecture import Lecture  # noqa
-    from .mission import Mission  # noqa
     from .table import SharedTable, UserTable  # noqa
 
 
@@ -169,6 +168,8 @@ class Amendement(Base):
     groupe: Optional[str] = Column(Text, nullable=True)
     date_depot: Optional[date] = Column(Date, nullable=True)
     sort: Optional[str] = Column(Text, nullable=True)
+    mission_titre: Optional[str] = Column(Text, nullable=True)
+    mission_titre_court: Optional[str] = Column(Text, nullable=True)
 
     # Ordre et regroupement lors de la discussion.
     position: Optional[int] = Column(Integer, nullable=True)
@@ -199,9 +200,6 @@ class Amendement(Base):
 
     article_pk: int = Column(Integer, ForeignKey("articles.pk"))
     article: "Article" = relationship("Article", back_populates="amendements")
-
-    mission_pk: int = Column(Integer, ForeignKey("missions.pk"), nullable=True)
-    mission: "Optional[Mission]" = relationship("Mission", back_populates="amendements")
 
     user_table_pk: int = Column(Integer, ForeignKey("user_tables.pk"), nullable=True)
     user_table: "Optional[UserTable]" = relationship(
@@ -264,7 +262,8 @@ class Amendement(Base):
         alinea: Optional[str] = None,
         parent: Optional["Amendement"] = None,
         batch: Optional[Batch] = None,
-        mission: Optional["Mission"] = None,
+        mission_titre: Optional[str] = None,
+        mission_titre_court: Optional[str] = None,
         avis: Optional[str] = None,
         objet: Optional[str] = None,
         reponse: Optional[str] = None,
@@ -290,7 +289,8 @@ class Amendement(Base):
             alinea=alinea,
             parent=parent,
             batch=batch,
-            mission=mission,
+            mission_titre=mission_titre,
+            mission_titre_court=mission_titre_court,
             created_at=now,
         )
         user_content = AmendementUserContent(

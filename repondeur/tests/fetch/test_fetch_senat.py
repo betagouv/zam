@@ -127,7 +127,7 @@ def test_aspire_senat(app, lecture_senat):
     assert amendement.article.pos == "après"
     assert amendement.parent is None
     # Missions are not set if not PLF
-    assert amendement.mission is None
+    assert amendement.mission_titre is None
 
     events = sorted(amendement.events, key=attrgetter("created_at"), reverse=True)
 
@@ -361,7 +361,7 @@ def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie):
     assert len(amendements) == 1005
 
     # Missions are not set on first part
-    assert amendements[0].mission is None
+    assert amendements[0].mission_titre is None
 
 
 @responses.activate
@@ -427,16 +427,16 @@ def test_aspire_senat_plf2019_2e_partie(app, lecture_plf_2e_partie):
 
     # Missions are filled
     assert (
-        amendements[0].mission.titre
+        amendements[0].mission_titre
         == "Budget annexe - Contrôle et exploitation aériens"
     )
     assert (
-        amendements[1].mission.titre
+        amendements[1].mission_titre
         == "Budget annexe - Contrôle et exploitation aériens"
     )
-    assert amendements[0].mission.titre_court == "Contrôle et exploitation aériens"
-    assert amendements[1].mission.titre_court == "Contrôle et exploitation aériens"
-    assert amendements[2].mission is None
+    assert amendements[0].mission_titre_court == "Contrôle et exploitation aériens"
+    assert amendements[1].mission_titre_court == "Contrôle et exploitation aériens"
+    assert amendements[2].mission_titre is None
 
 
 @responses.activate

@@ -6,7 +6,7 @@ from http import HTTPStatus
 from typing import Iterable, List, Optional, Tuple
 from urllib.parse import urlparse
 
-from zam_repondeur.models import Amendement, Lecture, Mission, get_one_or_create
+from zam_repondeur.models import Amendement, Lecture
 from zam_repondeur.services.clean import clean_html
 from zam_repondeur.services.data import repository
 from zam_repondeur.services.fetch.amendements import FetchResult, RemoteSource
@@ -134,20 +134,14 @@ class Senat(RemoteSource):
             parent = None
 
         mission_ref = discussion_details.mission_ref
-        if mission_ref:
-            mission, _ = get_one_or_create(
-                Mission, titre=mission_ref.titre, titre_court=mission_ref.titre_court
-            )
-        else:
-            mission = None
-
         self.update_attributes(
             amendement,
             position=discussion_details.position,
             id_discussion_commune=discussion_details.id_discussion_commune,
             id_identique=discussion_details.id_identique,
             parent=parent,
-            mission=mission,
+            mission_titre=mission_ref.titre if mission_ref else None,
+            mission_titre_court=mission_ref.titre_court if mission_ref else None,
         )
 
     def _enrich_groupe_parlementaire(self, amendements: Iterable[Amendement]) -> None:

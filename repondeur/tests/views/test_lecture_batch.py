@@ -216,10 +216,10 @@ def test_lecture_get_batch_amendements_different_mission(
     user_david,
     david_has_two_amendements,
 ):
-    from zam_repondeur.models import DBSession, Mission
+    from zam_repondeur.models import DBSession
 
     with transaction.manager:
-        amendements_an[0].mission = Mission(titre="test")
+        amendements_an[0].mission_titre = "test"
         DBSession.add_all(amendements_an)
 
     resp = app.get(

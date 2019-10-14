@@ -13,7 +13,6 @@ from zam_repondeur.models import (
     Article,
     DBSession,
     Lecture,
-    Mission,
     get_one_or_create,
 )
 from zam_repondeur.models.division import SubDiv
@@ -219,13 +218,6 @@ class AssembleeNationale(RemoteSource):
             auteur = get_auteur(raw_auteur)
 
         mission_ref = get_mission_ref(amend)
-        if mission_ref is not None:
-            mission, _ = get_one_or_create(
-                Mission, titre=mission_ref.titre, titre_court=mission_ref.titre_court
-            )
-        else:
-            mission = None
-
         modified = False
         modified |= self.update_rectif(amendement, get_rectif(amend))
         modified |= self.update_corps(amendement, get_corps(amend))
@@ -243,7 +235,8 @@ class AssembleeNationale(RemoteSource):
             matricule=matricule,
             groupe=groupe,
             auteur=auteur,
-            mission=mission,
+            mission_titre=mission_ref.titre if mission_ref else None,
+            mission_titre_court=mission_ref.titre_court if mission_ref else None,
         )
 
         DBSession.flush()  # make sure foreign keys are updated

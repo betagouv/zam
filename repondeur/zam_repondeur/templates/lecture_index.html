@@ -156,7 +156,7 @@
                     {%- endif -%}
                 "
                 {% if lecture.has_missions %}
-                    data-mission="{{ amendement.mission and amendement.mission.titre_court.lower() }}"
+                    data-mission="{{ amendement.mission_titre_court and amendement.mission_titre_court.lower() or '' }}"
                 {% endif %}
                 data-order="{{ loop.index }}"
                 data-amendement="
@@ -201,9 +201,9 @@
                 </td>
                 {% if lecture.has_missions %}
                     <td class="mission">
-                        {% if amendement.mission %}
-                            <abbr title="{{ amendement.mission.titre }}">
-                                {{ amendement.mission.titre_court }}
+                        {% if amendement.mission_titre %}
+                            <abbr title="{{ amendement.mission_titre }}">
+                                {{ amendement.mission_titre_court }}
                             </abbr>
                         {% endif %}
                     </td>

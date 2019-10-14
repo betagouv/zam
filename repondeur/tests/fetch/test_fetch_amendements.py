@@ -325,8 +325,8 @@ def test_fetch_amendements_an_with_mission(app, lecture_an, article1_an):
 
     amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
     # Check that the mission is created
-    assert amendement_9.mission.titre == "Mission « Outre-mer »"
-    assert amendement_9.mission.titre_court == "Outre-mer"
+    assert amendement_9.mission_titre == "Mission « Outre-mer »"
+    assert amendement_9.mission_titre_court == "Outre-mer"
 
 
 def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, caplog):

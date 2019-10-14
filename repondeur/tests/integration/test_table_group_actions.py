@@ -119,15 +119,20 @@ def test_batch_amendements_is_hidden_when_selected_amendements_have_different_mi
     user_david,
     user_david_table_an,
 ):
-    from zam_repondeur.models import Amendement, DBSession, Mission
+    from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
-        mission1 = Mission.create(titre="Mission 1")
-        amendements_an[0].mission = amendements_an[1].mission = mission1
+        mission1_titre = "Mission 1"
+        amendements_an[0].mission_titre = amendements_an[
+            1
+        ].mission_titre = mission1_titre
 
-        mission2 = Mission.create(titre="Mission 2")
+        mission2_titre = "Mission 2"
         amendement = Amendement.create(
-            lecture=lecture_an, article=article1_an, mission=mission2, num=777
+            lecture=lecture_an,
+            article=article1_an,
+            mission_titre=mission2_titre,
+            num=777,
         )
 
         DBSession.add(user_david_table_an)

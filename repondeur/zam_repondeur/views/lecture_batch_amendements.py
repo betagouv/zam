@@ -178,9 +178,9 @@ class BatchAmendements:
     def check_amendements_are_all_from_same_mission(
         self, amendements: List[Amendement]
     ) -> None:
-        first_mission = amendements[0].mission
+        first_mission_titre = amendements[0].mission_titre
         are_all_from_same_mission = all(
-            amdt.mission is first_mission for amdt in amendements
+            amdt.mission_titre is first_mission_titre for amdt in amendements
         )
         if are_all_from_same_mission:
             return

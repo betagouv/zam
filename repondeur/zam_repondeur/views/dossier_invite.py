@@ -218,4 +218,4 @@ class DossierRetraitForm(DossierViewBase):
                 cls="success", text=(f"{target} a été retiré·e du dossier avec succès.")
             )
         )
-        return HTTPFound(location=self.request.resource_url(self.context))
+        return HTTPFound(location=self.request.resource_url(self.context, "retrait"))

@@ -72,6 +72,7 @@ def test_post_form(app, user_sgg, user_david, dossier_plfss2018, mailer):
     form = resp.forms[0]
     resp = form.submit()
     assert resp.status_code == 302
+    assert resp.location == "https://zam.test/dossiers/plfss-2018/retrait"
 
     resp = resp.follow()
     assert resp.status_code == 200

@@ -23,7 +23,7 @@ def includeme(config: Configurator) -> None:
         hashalg="sha512",
         max_age=int(settings["zam.auth_cookie_duration"]),
         secure=asbool(settings["zam.auth_cookie_secure"]),
-        http_only=asbool(settings["zam.auth_cookie_http_only"]),
+        http_only=True,
     )
     config.set_authentication_policy(authn_policy)
 

@@ -634,6 +634,7 @@ def test_lecture_post_batch_unset_amendement(
     app, lecture_an, amendements_an, user_david, david_has_two_amendements
 ):
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.models.events.amendement import BatchUnset
 
     DBSession.add_all(amendements_an)
     assert not amendements_an[0].batch
@@ -685,11 +686,13 @@ def test_lecture_post_batch_unset_amendement(
 
     # An event was added to both amendements
     assert len(amendement_666.events) == 2
+    assert isinstance(amendement_666.events[0], BatchUnset)
     assert amendement_666.events[0].render_summary() == (
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a sorti cet amendement du lot dans lequel il était."
     )
     assert len(amendement_999.events) == 2
+    assert isinstance(amendement_999.events[0], BatchUnset)
     assert amendement_999.events[0].render_summary() == (
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a sorti cet amendement du lot dans lequel il était."

@@ -144,18 +144,21 @@ def create_lecture(
     phase = summary.split(" - ", 1)[0]
     texte = create_texte(dossier_id, entry)
 
+    # The logic below might be counter-intuitive, remember that we are checking
+    # data from a feed so if the item is related to the texte of a commission,
+    # it is the following séance publique related to that texte.
     mo = re.search(r"Texte (résultat des travaux )?de la commission", summary)
     if mo is not None:
-        examen = "Commissions"
-        organe = ""
+        examen = "Séance publique"
+        organe = ORGANE_SENAT
         if mo.group(1):
             if prev_texte is None:
                 logger.warning("Expected a prev_texte")
                 return None
             texte = prev_texte
     else:
-        examen = "Séance publique"
-        organe = ORGANE_SENAT
+        examen = "Commissions"
+        organe = ""
 
     titre = f"{phase} – {examen}"
 

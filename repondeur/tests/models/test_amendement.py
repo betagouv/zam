@@ -12,6 +12,9 @@ EXAMPLES = [
     ("42 rect.", 42, 1, "42 rect."),
     ("42 rect. bis", 42, 2, "42 rect. bis"),
     ("42 rect. ter", 42, 3, "42 rect. ter"),
+    ("42 rect. nonies", 42, 9, "42 rect. nonies"),
+    ("42 rect. novies", 42, 9, "42 rect. nonies"),
+    ("42 rect. undecies", 42, 11, "42 rect. undecies"),
 ]
 
 

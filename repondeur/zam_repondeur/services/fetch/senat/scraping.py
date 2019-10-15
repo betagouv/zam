@@ -155,8 +155,12 @@ def create_lecture(
                 return None
             texte = prev_texte
     else:
-        examen = "Commissions"
-        organe = ""
+        if "Texte transmis au Sénat le" in summary:
+            examen = "Séance publique"
+            organe = ORGANE_SENAT
+        else:
+            examen = "Commissions"
+            organe = ""
 
     titre = f"{phase} – {examen}"
 

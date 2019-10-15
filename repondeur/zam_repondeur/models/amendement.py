@@ -30,6 +30,7 @@ from zam_repondeur.services.amendements import repository as amendements_reposit
 
 from .base import Base, DBSession
 from .batch import Batch
+from .division import ADJECTIFS_MULTIPLICATIFS
 
 # Make these types available to mypy, but avoid circular imports
 if TYPE_CHECKING:
@@ -353,9 +354,27 @@ class Amendement(Base):
         8: "octies",
         9: "nonies",
         10: "decies",
+        11: "undecies",
+        12: "duodecies",
+        13: "terdecies",
+        14: "quaterdecies",
+        15: "quindecies",
+        16: "sexdecies",
+        17: "septdecies",
+        18: "octodecies",
+        19: "novodecies",
+        20: "vicies",
+        21: "unvicies",
+        22: "duovicies",
+        23: "tervicies",
+        24: "quatervicies",
+        25: "quinvicies",
+        26: "sexvicies",
+        27: "septvicies",
+        28: "duodetrecies",
+        29: "undetricies",
+        30: "tricies",
     }
-
-    _SUFFIX_TO_RECTIF = {suffix: rectif for rectif, suffix in _RECTIF_TO_SUFFIX.items()}
 
     _NUM_RE = re.compile(
         r"""
@@ -382,8 +401,8 @@ class Amendement(Base):
             if suffix is None:
                 rectif = 1
             else:
-                if suffix in Amendement._SUFFIX_TO_RECTIF:
-                    rectif = Amendement._SUFFIX_TO_RECTIF[suffix]
+                if suffix in ADJECTIFS_MULTIPLICATIFS:
+                    rectif = ADJECTIFS_MULTIPLICATIFS[suffix]
                 else:
                     raise ValueError(f"Cannot parse amendement number '{text}'")
         return (num, rectif)

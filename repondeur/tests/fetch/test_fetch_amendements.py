@@ -731,6 +731,7 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
 ):
     from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.models.events.amendement import BatchUnset
 
     assert amendements_an_batch[0].batch.nums == [666, 999]
 
@@ -784,7 +785,11 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
     assert created == 0
     assert errored == []
 
-    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == 666).one()
-    assert amendement_666.batch is None
-    amendement_999 = DBSession.query(Amendement).filter(Amendement.num == 999).one()
-    assert amendement_999.batch is None
+    for num in [666, 999]:
+        amendement = DBSession.query(Amendement).filter(Amendement.num == num).one()
+        assert amendement.batch is None
+
+        event = next(e for e in amendement.events if isinstance(e, BatchUnset))
+        assert event.render_summary() == (
+            "Cet amendement a été sorti du lot dans lequel il était."
+        )

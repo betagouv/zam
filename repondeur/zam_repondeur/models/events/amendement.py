@@ -375,6 +375,8 @@ class BatchUnset(AmendementEvent):
         return ""
 
     def render_summary(self) -> str:
+        if self.user is None:
+            return Markup("Cet amendement a été sorti du lot dans lequel il était.")
         return Markup(
             f"<abbr title='{self.user.email}'>{self.user.name}</abbr> a sorti "
             "cet amendement du lot dans lequel il était."

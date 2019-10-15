@@ -1,5 +1,5 @@
 #!/bin/bash
 
-certbot -c /srv/zam/certbot.ini renew
+certbot -c /etc/letsencrypt/certbot.ini renew
 
 systemctl reload nginx

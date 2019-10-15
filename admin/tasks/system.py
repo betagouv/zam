@@ -1,162 +1,118 @@
-from shlex import quote
-
 from fabric.tasks import task
 
-from tools import create_user, debconf, install_packages, sudo_put, template_local_file
+from tools import template_local_file
+from tools.command import command
+from tools.file import append, sed, sudo_put
+from tools.firewalld import install_firewall
+from tools.munin import (
+    add_munin_repository,
+    install_munin_node,
+    munin_node_service_name,
+)
+from tools.ntp import install_ntp, ntp_service_name
+from tools.package import (
+    install_package,
+    install_packages,
+    install_package_updates,
+    update_package_cache,
+)
+from tools.system import SystemSpecificCommand
+from tools.systemd import (
+    enable_service,
+    is_service_started,
+    restart_service,
+    start_service,
+)
 
 
-@task
+def setup_common(ctx, hostname="", munin_server_ip=None):
+    if hostname:
+        set_hostname(ctx, hostname)
+    install_updates(ctx)
+    install_firewall(ctx)
+    setup_unattended_security_upgrades(ctx, admins=ctx.config.get("admins", []))
+    setup_ntp(ctx)
+    setup_munin_node(ctx, munin_server_ip=munin_server_ip)
+
+
 def set_hostname(ctx, hostname):
     ctx.sudo(f"hostname {hostname}")
-    ctx.sudo(f"echo {hostname} | sudo tee /etc/hostname")
+    ctx.sudo(f"echo {hostname} | sudo tee /etc/hostname", hide=True)
 
 
-@task
-def system(ctx):
-    ctx.sudo(
-        "curl -L -O https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb"
-    )
-    install_packages(
-        ctx,
-        "git",
-        "locales",
-        "nginx",
-        "python3",
-        "python3-pip",
-        "python3-venv",
-        "python3-swiftclient",
-        "python3-wheel",
-        "redis-server",
-        "./wkhtmltox_0.12.5-1.bionic_amd64.deb",
-        "xvfb",
-    )
-    ctx.sudo("mkdir -p /srv/zam")
-    ctx.sudo("mkdir -p /srv/zam/letsencrypt/.well-known/acme-challenge")
-    create_user(ctx, "zam", "/srv/zam/")
-    ctx.sudo("chown zam:users /srv/zam/")
-    ctx.sudo("chsh -s /bin/bash zam")
-    setup_postgres(ctx)
-    setup_smtp_server(ctx)
-    setup_unattended_upgrades(ctx)
+@command
+def install_updates(ctx):
+    """Install package updates"""
+    update_package_cache(ctx)
+    install_package_updates(ctx)
 
 
-@task
-def setup_postgres(ctx):
-    install_packages(ctx, "postgresql")
-    sudo_put(
-        ctx,
-        "files/postgres.conf",
-        "/etc/postgresql/10/main/conf.d/zam.conf",
-        chown="postgres",
-    )
-    ctx.sudo("systemctl reload postgresql@10-main")
-
-
-@task
-def setup_smtp_server(ctx):
-    hostname = ctx.run("hostname").stdout.strip()
-    debconf(ctx, "postfix", "postfix/main_mailer_type", "string", "Internet Site")
-    debconf(ctx, "postfix", "postfix/mailname", "string", hostname)
-    install_packages(ctx, "postfix")
-
-
-@task
-def setup_unattended_upgrades(ctx):
-    install_packages(ctx, "unattended-upgrades", "bsd-mailx")
-    admins = ctx.config.get("admins", [])
-    with template_local_file(
-        "files/unattended-upgrades.conf.template",
-        "files/unattended-upgrades.conf",
-        {"email": ",".join(admins)},
-    ):
-        sudo_put(
-            ctx,
-            "files/unattended-upgrades.conf",
-            "/etc/apt/apt.conf.d/50unattended-upgrades",
-        )
-
-
-@task
-def http(ctx, ssl=False):
-    sudo_put(
-        ctx,
-        "files/letsencrypt/letsencrypt.conf",
-        "/etc/nginx/snippets/letsencrypt.conf",
-    )
-    sudo_put(ctx, "files/nginx/ssl.conf", "/etc/nginx/snippets/ssl.conf")
-
-    hostname = ctx.run("hostname").stdout.strip()
-
-    if ssl:
-        ssl_cert = f"/etc/letsencrypt/live/{hostname}/fullchain.pem"
-        ssl_key = f"/etc/letsencrypt/live/{hostname}/privkey.pem"
-        if not ctx.sudo(f"[ -f {quote(ssl_cert)} ]", warn=True).ok:
-            ssl_cert = "/etc/nginx/self-signed.crt"
-            ssl_key = "/etc/nginx/self-signed.key"
-
-        htpasswd_exists = ctx.sudo(f"[ -f /etc/nginx/.htpasswd ]", warn=True).ok
-
+class SetupUnattendedSecurityUpgrades(SystemSpecificCommand):
+    def debian(self, ctx, admins):
+        install_packages(ctx, "unattended-upgrades", "bsd-mailx")
         with template_local_file(
-            "files/nginx/https.conf.template",
-            "files/nginx/https.conf",
-            {
-                "host": hostname,
-                "timeout": ctx.config["request_timeout"],
-                "ssl_cert": ssl_cert,
-                "ssl_key": ssl_key,
-                "basic_auth_mode": '"Restricted"' if htpasswd_exists else "off",
-            },
+            "files/unattended-upgrades.conf.template",
+            "files/unattended-upgrades.conf",
+            {"email": ",".join(admins)},
         ):
             sudo_put(
-                ctx, "files/nginx/https.conf", "/etc/nginx/sites-available/default"
+                ctx,
+                "files/unattended-upgrades.conf",
+                "/etc/apt/apt.conf.d/50unattended-upgrades",
             )
-    else:
-        # Before letsencrypt.
-        with template_local_file(
-            "files/nginx/http.conf.template",
-            "files/nginx/http.conf",
-            {"host": hostname},
-        ):
-            sudo_put(ctx, "files/nginx/http.conf", "/etc/nginx/sites-available/default")
-    ctx.sudo("systemctl restart nginx")
+
+    def redhat(self, ctx, admins):
+        install_package(ctx, "yum-cron")
+        sed(
+            ctx,
+            filename="/etc/yum/yum-cron.conf",
+            match=r"^update_cmd\s*=.*$",
+            replace="update_cmd = security",
+        )
+        sed(
+            ctx,
+            filename="/etc/yum/yum-cron.conf",
+            match=r"^apply_updates\s*=.*$",
+            replace="apply_updates = yes",
+        )
+        email_to = ",".join(admins)
+        sed(
+            ctx,
+            filename="/etc/yum/yum-cron.conf",
+            match=r"^email_to\s*=.*$",
+            replace=f"apply_updates = {email_to}",
+        )
+        enable_service(ctx, "yum-cron")
+        restart_service(ctx, "yum-cron")
 
 
-@task
-def basicauth(ctx, user="demozam"):
-    install_packages(ctx, "apache2-utils")
-    # Will prompt for password.
-    ctx.sudo(f"touch /etc/nginx/.htpasswd")
-    ctx.sudo(f"htpasswd /etc/nginx/.htpasswd {user}")
+setup_unattended_security_upgrades = SetupUnattendedSecurityUpgrades()
 
 
-@task
-def letsencrypt(ctx):
-    ctx.sudo("add-apt-repository ppa:certbot/certbot")
-    install_packages(ctx, "certbot", "software-properties-common")
-    hostname = ctx.run("hostname").stdout.strip()
-    with template_local_file(
-        "files/letsencrypt/certbot.ini.template",
-        "files/letsencrypt/certbot.ini",
-        {"host": hostname},
-    ):
-        sudo_put(ctx, "files/letsencrypt/certbot.ini", "/srv/zam/certbot.ini")
-    sudo_put(ctx, "files/letsencrypt/ssl-renew", "/etc/cron.weekly/ssl-renew")
-    ctx.sudo("chmod +x /etc/cron.weekly/ssl-renew")
-    ctx.sudo("certbot certonly -c /srv/zam/certbot.ini --non-interactive --agree-tos")
+def setup_ntp(ctx):
+    install_ntp(ctx)
+
+    service_name = ntp_service_name(ctx)
+    enable_service(ctx, service_name)
+    start_service(ctx, service_name)
 
 
-@task
-def setup_self_signed_cert(ctx):
-    hostname = ctx.run("hostname").stdout.strip()
-    ctx.sudo(
-        "openssl req -x509 -newkey rsa:4096"
-        " -keyout /etc/nginx/self-signed.key"
-        " -out /etc/nginx/self-signed.crt"
-        " -days 365"
-        " -sha256"
-        " -nodes"
-        f" -subj '/C=FR/OU=Zam/CN={hostname}'"
-    )
+@command
+def setup_munin_node(ctx, munin_server_ip=None):
+    """Setup Munin node"""
+    add_munin_repository(ctx)
+    install_munin_node(ctx)
+    changed = False
+    if munin_server_ip is not None:
+        for line in [
+            "allow ^" + munin_server_ip.replace(".", r"\.") + "$",
+            "allow ^::ffff::" + munin_server_ip.replace(".", r"\.") + "$",
+        ]:
+            changed |= append(ctx, filename="/etc/munin/munin-node.conf", line=line)
+    service_name = munin_node_service_name(ctx)
+    enable_service(ctx, service_name)
+    if changed or not is_service_started(ctx, service_name):
+        restart_service(ctx, service_name)
 
 
 @task

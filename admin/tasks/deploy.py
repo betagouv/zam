@@ -6,101 +6,108 @@ import requests
 from commonmark import commonmark
 from fabric.tasks import task
 
-from tools import (
-    clone_repo,
-    cpu_count,
-    create_directory,
-    create_postgres_user,
-    create_postgres_database,
-    create_user,
-    install_locale,
-    run_as_postgres,
-    sudo_put,
-    template_local_file,
-    timestamp,
-)
-
+from tools import template_local_file
+from tools.file import create_directory, sudo_put
+from tools.git import clone_or_update_repo
+from tools.redis import redis_service_name
+from tools.run import sudo_in_dir
+from tools.system import cpu_count
+from tools.systemd import is_service_started, start_service, stop_service
 
 DEFAULT_EMAIL_WHITELIST_PATTERN = "*@*.gouv.fr"
 
 BADGE_COLORS = {"demo": "#b5bd68", "test": "#de935f"}
 
-app_dir = "/srv/repondeur/src/repondeur"
-venv_dir = "/srv/repondeur/venv"
-user = "repondeur"
+USER = "zam"
+app_dir = "/srv/zam/src/repondeur"
+venv_dir = "/srv/zam/venv"
 
 
 @task
 def deploy_changelog(ctx, source="../CHANGELOG.md"):
     content = commonmark(Path(source).read_text())
     with template_local_file("index.html.template", "index.html", {"content": content}):
-        sudo_put(ctx, "index.html", "/srv/zam/index.html", chown="zam")
+        sudo_put(ctx, "index.html", "/srv/zam/index.html", chown=USER)
 
 
 @task
-def deploy_repondeur(
+def deploy_app(
     ctx,
+    public_name,
     branch="master",
     message="",
     session_secret="",
     auth_secret="",
-    wipe=False,
+    listen_address="127.0.0.1",
+    db_host_ip="localhost",
     dbname="zam",
     dbuser="zam",
     dbpassword="iloveamendements",
+    notify_rollbar=True,
+    environment=None,
 ):
+    print("=== Deploying app ===")
+
     if not session_secret:
         session_secret = retrieve_secret_from_config(ctx, "session_secret")
     if not session_secret:
         session_secret = uuid4()
-        print(f"Initializing session_secret to {session_secret}")
+        print(f"--- Initializing session_secret to {session_secret} ---")
 
     if not auth_secret:
         auth_secret = retrieve_secret_from_config(ctx, "auth_secret")
     if not auth_secret:
         auth_secret = uuid4()
-        print(f"Initializing auth_secret to {auth_secret}")
+        print(f"--- Initializing auth_secret to {auth_secret} ---")
 
-    hostname = ctx.run("hostname").stdout.strip()
-    environment = hostname.split(".", 1)[0]
+    if environment is None:
+        environment = public_name.split(".", 1)[0]
     menu_badge_label = environment[4:] if environment.startswith("zam-") else ""
     menu_badge_color = BADGE_COLORS.get(menu_badge_label, "#999999")
 
-    deploy_id = rollbar_deploy_start(
-        ctx, branch, environment, comment=f"[{branch}] {message}"
-    )
+    if notify_rollbar:
+        deploy_id = rollbar_deploy_start(
+            ctx, branch, environment, comment=f"[{branch}] {message}"
+        )
 
     try:
-        install_locale(ctx, "fr_FR.utf8")
-        create_user(ctx, name=user, home_dir="/srv/repondeur")
-        clone_repo(
+        print("--- Cloning or updating git repository ---")
+        clone_or_update_repo(
             ctx,
             repo="https://github.com/betagouv/zam.git",
             branch=branch,
-            path="/srv/repondeur/src",
-            user=user,
+            parent_dir="/srv/zam",
+            name="src",
+            user=USER,
         )
 
         # Stop workers (if running) to free up some system resources during deployment
-        stop_worker_service(ctx, warn=True)
+        if is_service_started(ctx, "zam_worker"):
+            stop_service(ctx, "zam_worker")
 
-        create_virtualenv(ctx, venv_dir=venv_dir, user=user)
-        install_requirements(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
+        print("--- Creating Python venv ---")
+        create_virtualenv(ctx, venv_dir=venv_dir, user=USER)
 
-        create_directory(ctx, "/var/cache/zam/http", owner=user)
+        print("--- Installing Python dependencies ---")
+        install_requirements(ctx, app_dir=app_dir, venv_dir=venv_dir, user=USER)
 
+        create_directory(ctx, "/var/cache/zam/http", owner=USER)
+
+        print("--- Generating app config file ---")
+        db_url = f"postgres://{dbuser}:{dbpassword}@{db_host_ip}:5432/{dbname}"
         gunicorn_workers = (cpu_count(ctx) * 2) + 1
         setup_config(
             ctx,
             app_dir=app_dir,
-            user=user,
+            user=USER,
             context={
-                "db_url": f"postgres://{dbuser}:{dbpassword}@localhost:5432/{dbname}",
+                "db_url": db_url,
                 "environment": environment,
                 "branch": branch,
                 "session_secret": session_secret,
                 "auth_secret": auth_secret,
                 "rollbar_token": ctx.config["rollbar_token"],
+                "listen_address": listen_address,
                 "gunicorn_workers": gunicorn_workers,
                 "gunicorn_timeout": ctx.config["request_timeout"],
                 "menu_badge_label": menu_badge_label,
@@ -109,48 +116,55 @@ def deploy_repondeur(
         )
 
         # Also stop webapp (if running) to release any locks on the DB
-        stop_webapp_service(ctx, warn=True)
+        if is_service_started(ctx, "zam_webapp"):
+            stop_service(ctx, "zam_webapp")
 
-        if wipe:
-            wipe_db(ctx, dbname=dbname)
-        setup_db(ctx, dbname=dbname, dbuser=dbuser, dbpassword=dbpassword)
-        migrate_db(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
+        print("--- Applying database migrations ---")
+        migrate_db(ctx, app_dir=app_dir, venv_dir=venv_dir)
 
         # Initialize email whitelist
         if not whitelist_list(ctx):
+            print("--- Initializing e-mail whitelist ---")
             whitelist_add(
                 ctx,
                 pattern=DEFAULT_EMAIL_WHITELIST_PATTERN,
                 comment="Default allowed email pattern",
             )
 
+        print("--- Configuring systemd service for web app ---")
         setup_webapp_service(ctx)
+
+        print("--- Configuring systemd service for workers ---")
         setup_worker_service(ctx)
 
-        reset_data_locks(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
-
-        # Load data into Redis cache
-        load_data(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
+        print("--- Loading data into Redis cache ---")
+        reset_data_locks(ctx, app_dir=app_dir, venv_dir=venv_dir, user=USER)
+        load_data(ctx, app_dir=app_dir, venv_dir=venv_dir, user=USER)
 
         # Update dossiers
         update_dossiers(ctx)
 
-        # Start webapp and workers again
-        start_webapp_service(ctx)
-        start_worker_service(ctx)
+        start_service(ctx, "zam_webapp")
 
-    except Exception as exc:
-        rollbar_deploy_update(ctx.config["rollbar_token"], deploy_id, status="failed")
+        start_service(ctx, "zam_worker")
+
+    except Exception:
+        if notify_rollbar:
+            rollbar_deploy_update(
+                ctx.config["rollbar_token"], deploy_id, status="failed"
+            )
     else:
-        rollbar_deploy_update(
-            ctx.config["rollbar_token"], deploy_id, status="succeeded"
-        )
+        if notify_rollbar:
+            rollbar_deploy_update(
+                ctx.config["rollbar_token"], deploy_id, status="succeeded"
+            )
 
 
 def retrieve_secret_from_config(ctx, name):
-    secret = ctx.run(
-        f'grep "zam.{name}" /srv/repondeur/src/repondeur/production.ini | cut -d" " -f3',  # noqa
+    secret = ctx.sudo(
+        f'grep "zam.{name}" /srv/zam/src/repondeur/production.ini | cut -d" " -f3',  # noqa
         hide=True,
+        user="zam",
     ).stdout.strip()
     return secret
 
@@ -167,7 +181,7 @@ def install_requirements(ctx, app_dir, venv_dir, user):
         "-r requirements-prod.txt "
         "--no-use-pep517 -e ."
     )
-    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    sudo_in_dir(ctx, cmd, directory=app_dir, user=USER)
 
 
 def setup_config(ctx, app_dir, user, context):
@@ -180,105 +194,64 @@ def setup_config(ctx, app_dir, user, context):
 
 
 @task
-def wipe_db(ctx, dbname):
-    backup_db(ctx, dbname)
-    # Will be restarted later in `deploy_repondeur`.
-    ctx.sudo("systemctl stop zam_webapp")
-    ctx.sudo("systemctl stop zam_worker")
-    run_as_postgres(ctx, f"dropdb {dbname}")
-
-
-@task
-def backup_db(ctx, dbname="zam"):
-    create_directory(ctx, "/var/backups/zam", owner="postgres")
-    backup_filename = f"/var/backups/zam/postgres-dump-{timestamp()}.sql"
-    run_as_postgres(
-        ctx,
-        f"pg_dump --dbname={dbname} --create --encoding=UTF8 --file={backup_filename}",
-    )
-
-
-@task
-def setup_db(ctx, dbname, dbuser, dbpassword, encoding="UTF8", locale="en_US.UTF8"):
-    create_postgres_user(ctx, dbuser, dbpassword)
-    create_postgres_database(ctx, dbname, dbuser, encoding, locale)
-
-
-@task
-def migrate_db(ctx, app_dir, venv_dir, user):
-    create_directory(ctx, "/var/lib/zam", owner=user)
+def migrate_db(ctx, app_dir, venv_dir):
+    create_directory(ctx, "/var/lib/zam", owner=USER)
     cmd = f"{venv_dir}/bin/alembic -c production.ini upgrade head"
-    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    sudo_in_dir(ctx, cmd, directory=app_dir, user=USER)
 
 
 def setup_webapp_service(ctx):
-    # Clean up old service
-    ctx.sudo(
-        " && ".join(
-            [
-                "[ -f /etc/systemd/system/repondeur.service ]",
-                "systemctl stop repondeur",
-                "systemctl disable repondeur",
-                "rm -f /etc/systemd/system/repondeur.service",
-            ]
+    with template_local_file(
+        "files/zam_webapp.service.template",
+        "files/zam_webapp.service",
+        {"redis_service": redis_service_name(ctx)},
+    ):
+        sudo_put(
+            ctx,
+            "files/zam_webapp.service",
+            "/etc/systemd/system/zam_webapp.service",
+            chown="root",
         )
-        + " || exit 0"
-    )
-    sudo_put(ctx, "files/zam_webapp.service", "/etc/systemd/system/zam_webapp.service")
     ctx.sudo("systemctl daemon-reload")
-    ctx.sudo("systemctl enable zam_webapp")
-
-
-def start_webapp_service(ctx):
-    ctx.sudo("systemctl start zam_webapp")
-
-
-def stop_webapp_service(ctx, warn=False):
-    ctx.sudo("systemctl stop zam_webapp", warn=warn)
-
-
-def restart_webapp_service(ctx):
-    ctx.sudo("systemctl restart zam_webapp")
+    ctx.sudo("systemctl enable zam_webapp.service")
 
 
 def setup_worker_service(ctx):
-    sudo_put(ctx, "files/zam_worker.service", "/etc/systemd/system/zam_worker.service")
+    with template_local_file(
+        "files/zam_worker.service.template",
+        "files/zam_worker.service",
+        {"redis_service": redis_service_name(ctx)},
+    ):
+        sudo_put(
+            ctx,
+            "files/zam_worker.service",
+            "/etc/systemd/system/zam_worker.service",
+            chown="root",
+        )
     ctx.sudo("systemctl daemon-reload")
-    ctx.sudo("systemctl enable zam_worker")
-
-
-def start_worker_service(ctx):
-    ctx.sudo("systemctl start zam_worker")
-
-
-def stop_worker_service(ctx, warn=False):
-    ctx.sudo("systemctl stop zam_worker", warn=warn)
-
-
-def restart_worker_service(ctx):
-    ctx.sudo("systemctl restart zam_worker")
+    ctx.sudo("systemctl enable zam_worker.service")
 
 
 def reset_data_locks(ctx, app_dir, venv_dir, user):
     cmd = f"{venv_dir}/bin/zam_reset_data_locks production.ini#repondeur"
-    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    sudo_in_dir(ctx, cmd, directory=app_dir, user=USER)
 
 
 def load_data(ctx, app_dir, venv_dir, user):
     cmd = f"{venv_dir}/bin/zam_load_data production.ini#repondeur"
-    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    sudo_in_dir(ctx, cmd, directory=app_dir, user=USER)
 
 
 @task
 def update_dossiers(ctx):
     cmd = f"{venv_dir}/bin/zam_update_dossiers production.ini#repondeur"
-    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=USER)
 
 
 @task
 def whitelist_list(ctx):
     cmd = f"{venv_dir}/bin/zam_whitelist production.ini#repondeur list"
-    res = ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    res = sudo_in_dir(ctx, cmd, directory=app_dir, user=USER)
     return res.stdout
 
 
@@ -287,38 +260,38 @@ def whitelist_add(ctx, pattern, comment=None):
     cmd = f"{venv_dir}/bin/zam_whitelist production.ini#repondeur add {pattern}"
     if comment is not None:
         cmd += " --comment " + quote(comment)
-    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    sudo_in_dir(ctx, cmd, directory=app_dir, user=USER)
 
 
 @task
 def whitelist_remove(ctx, pattern):
     cmd = f"{venv_dir}/bin/zam_whitelist production.ini#repondeur remove {pattern}"
-    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    sudo_in_dir(ctx, cmd, directory=app_dir, user=USER)
 
 
 @task
 def whitelist_check(ctx, email):
     cmd = f"{venv_dir}/bin/zam_whitelist production.ini#repondeur check {email}"
-    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    sudo_in_dir(ctx, cmd, directory=app_dir, user=USER)
 
 
 @task
-def admin_list(ctx):
+def admin_list(ctx, **kwargs):
     cmd = f"{venv_dir}/bin/zam_admin production.ini#repondeur list"
-    res = ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    res = sudo_in_dir(ctx, cmd, directory=app_dir, user=USER, **kwargs)
     return res.stdout
 
 
 @task
 def admin_grant(ctx, email):
     cmd = f"{venv_dir}/bin/zam_admin production.ini#repondeur grant {email}"
-    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    sudo_in_dir(ctx, cmd, directory=app_dir, user=USER)
 
 
 @task
 def admin_revoke(ctx, email):
     cmd = f"{venv_dir}/bin/zam_admin production.ini#repondeur revoke {email}"
-    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+    sudo_in_dir(ctx, cmd, directory=app_dir, user=USER)
 
 
 def rollbar_deploy_start(ctx, branch, environment, comment):

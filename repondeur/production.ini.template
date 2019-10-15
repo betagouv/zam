@@ -74,7 +74,7 @@ zam.tasks.transactional_enqueue = false
 
 [server:main]
 use = egg:gunicorn#main
-host = 127.0.0.1
+host = $$listen_address
 port = 6543
 workers = $$gunicorn_workers
 timeout = $$gunicorn_timeout

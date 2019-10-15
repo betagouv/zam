@@ -1,0 +1,14 @@
+[Unit]
+Description=Zam Web Application
+Requires=$$redis_service
+After=network.target $$redis_service
+
+[Service]
+Type=simple
+User=zam
+WorkingDirectory=/srv/zam/src/repondeur/
+ExecStart=/srv/zam/venv/bin/gunicorn --paste production.ini --paste-global app=zam_webapp
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

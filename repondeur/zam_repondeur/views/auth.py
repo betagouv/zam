@@ -130,7 +130,7 @@ Pour vous connecter à Zam, veuillez cliquer sur l’adresse suivante :
 {url}
 
 Ce lien contient un code personnel à usage unique,
-valable 5 minutes, pour vous authentifier sur Zam.
+valable 10 minutes, pour vous authentifier sur Zam.
 
 Une fois connecté·e, vous pourrez directement accéder aux dossiers :
 {url_dossiers}

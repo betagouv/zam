@@ -74,7 +74,7 @@ class TestLoginPage:
             https://zam.test/authentification?token=FOOBA-RBAZQ-UXQUU-XQUUZ
 
             Ce lien contient un code personnel à usage unique,
-            valable 5 minutes, pour vous authentifier sur Zam.
+            valable 10 minutes, pour vous authentifier sur Zam.
 
             Une fois connecté·e, vous pourrez directement accéder aux dossiers :
             https://zam.test/dossiers/

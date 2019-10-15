@@ -3,7 +3,7 @@
 alembic==1.2.1
 anpy==0.1.22
 asn1crypto==1.1.0          # cryptography: >= 0.21.0
-attrs==19.1.0               # anpy: < 19.2, >= 19.1
+attrs==19.3.0               # anpy: < 19.2, >= 19.1
 beautifulsoup4==4.6.3       # lawfactory_utils, legipy: < 4.7, >= 4.6
 bleach==3.1.0
 CacheControl==0.12.5

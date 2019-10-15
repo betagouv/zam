@@ -16,29 +16,22 @@ depends_on = None
 
 
 def upgrade():
-    op.drop_table("missions")
     op.add_column("amendements", sa.Column("mission_titre", sa.Text(), nullable=True))
     op.add_column(
         "amendements", sa.Column("mission_titre_court", sa.Text(), nullable=True)
     )
+    op.execute(
+        """
+        UPDATE amendements
+        SET mission_titre=missions.titre, mission_titre_court=missions.titre_court
+        FROM missions
+        WHERE missions.pk = amendements.mission_pk;
+    """
+    )
     op.drop_constraint("amendements_mission_pk_fkey", "amendements", type_="foreignkey")
     op.drop_column("amendements", "mission_pk")
+    op.drop_table("missions")
 
 
 def downgrade():
-    op.add_column(
-        "amendements",
-        sa.Column("mission_pk", sa.INTEGER(), autoincrement=False, nullable=True),
-    )
-    op.create_foreign_key(
-        "amendements_mission_pk_fkey", "amendements", "missions", ["mission_pk"], ["pk"]
-    )
-    op.drop_column("amendements", "mission_titre_court")
-    op.drop_column("amendements", "mission_titre")
-    op.create_table(
-        "missions",
-        sa.Column("pk", sa.INTEGER(), autoincrement=True, nullable=False),
-        sa.Column("titre", sa.TEXT(), autoincrement=False, nullable=True),
-        sa.Column("titre_court", sa.TEXT(), autoincrement=False, nullable=True),
-        sa.PrimaryKeyConstraint("pk", name="missions_pkey"),
-    )
+    raise NotImplementedError

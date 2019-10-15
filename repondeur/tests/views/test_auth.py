@@ -73,6 +73,10 @@ class TestLoginPage:
             Pour vous connecter à Zam, veuillez cliquer sur l’adresse suivante :
             https://zam.test/authentification?token=FOOBA-RBAZQ-UXQUU-XQUUZ
 
+            Notez que Zam ne fonctionne pas sous Internet Explorer,
+            aussi il est conseillé de copier-coller cette adresse
+            dans un navigateur moderne comme Firefox ou Chrome.
+
             Ce lien contient un code personnel à usage unique,
             valable 10 minutes, pour vous authentifier sur Zam.
 

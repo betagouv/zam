@@ -153,6 +153,12 @@ class TestPostForm:
             body=(FETCH_SAMPLE_DATA_DIR / "senat" / "ODSEN_GENERAL.csv").read_bytes(),
             status=200,
         )
+        responses.add(
+            responses.GET,
+            "https://www.senat.fr/dossier-legislatif/rss/doslegplfss2018.xml",
+            body=(SAMPLE_DATA_DIR / "doslegplfss2018.xml").read_bytes(),
+            status=200,
+        )
 
         with transaction.manager:
             dossier_plfss2018.team = None
@@ -471,7 +477,7 @@ class TestPostForm:
             organe="PO78718",
         )
         assert lecture.chambre == Chambre.SENAT
-        assert lecture.titre == "Première lecture – Titre lecture"
+        assert lecture.titre == "Première lecture – Séance publique"
         assert lecture.dossier.titre == "Sécurité sociale : loi de financement 2019"
         result = (
             "Sénat, session 2018-2019, Séance publique, Première lecture, texte nº 106"

@@ -157,11 +157,13 @@ def create_missing_lectures_senat(dossier: Dossier, user: Optional[User]) -> boo
     if dossier_id is None:
         return False
 
-    assert dossier_ref_open_data.senat_url is not None  # mypy hint
+    senat_url = dossier_ref_open_data.senat_url
+    if not senat_url:
+        return False
 
     # From there, get fresh data from the Sénat web site
     dossier_ref_senat = get_senat_dossier_ref_from_cache_or_scrape(
-        dossier_id=dossier_id, webpage_url=dossier_ref_open_data.senat_url
+        dossier_id=dossier_id, webpage_url=senat_url
     )
 
     changed = False

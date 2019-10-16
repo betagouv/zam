@@ -203,10 +203,6 @@ def create_texte(dossier_id: str, entry: element.Tag) -> TexteRef:
 
 
 def guess_chambre(entry: element.Tag) -> Optional[Chambre]:
-    # if "1408" in entry.title.string:
-    #     import pdb
-
-    #     pdb.set_trace()
     if entry.id.string.startswith(BASE_URL_SENAT):
         return Chambre.SENAT
 

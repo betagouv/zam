@@ -68,6 +68,14 @@ class AdminsAddForm(AdminsCollectionBase):
     @view_config(request_method="POST")
     def post(self) -> Response:
         user_pk = self.request.POST["user_pk"]
+        if not user_pk:
+            self.request.session.flash(
+                Message(
+                    cls="warning",
+                    text="Veuillez saisir une personne dans le menu déroulant.",
+                )
+            )
+            return HTTPFound(location=self.request.resource_url(self.context, "add"))
         user = DBSession.query(User).filter_by(pk=user_pk).first()
         AdminGrant.create(target=user, request=self.request)
         self.request.session.flash(

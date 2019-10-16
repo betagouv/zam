@@ -24,7 +24,7 @@
         <h2>Ajout d’une personne au statut d’administrateur·ice</h2>
         <div class="form-group">
             <label for="user_pk">Personnes actuellement inscrites</label>
-            <select name="user_pk" class="form-control">
+            <select name="user_pk" class="form-control" required>
                 <option value="" selected></option>
                 {% for user in users %}
                     <option value="{{ user.pk }}">{{ user }}</option>

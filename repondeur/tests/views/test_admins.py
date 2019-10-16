@@ -67,6 +67,25 @@ class TestAdminAdd:
                 "</abbr> à la liste des administrateur·ice·s."
             )
 
+    def test_submit_empty(self, app, user_sgg, user_david):
+        from zam_repondeur.models import User, DBSession
+
+        assert DBSession.query(User).filter(User.admin_at.isnot(None)).count() == 1
+        resp = app.get("/admins/add", user=user_sgg)
+
+        form = resp.form
+        form["user_pk"] = ""
+        resp = form.submit()
+
+        assert resp.status_code == 302
+        assert resp.location == "https://zam.test/admins/add"
+
+        resp = resp.follow()
+
+        assert resp.status_code == 200
+        assert resp.content_type == "text/html"
+        assert "Veuillez saisir une personne dans le menu déroulant." in resp.text
+
     def test_not_possible_to_regular_user(self, app, user_sgg, user_david):
         from zam_repondeur.models import User, DBSession
 

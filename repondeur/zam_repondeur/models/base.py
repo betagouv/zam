@@ -54,6 +54,8 @@ def log_query_with_origin(
     for frame in inspect.stack()[1:]:
         if frame.filename.startswith(PROJECT_ROOT):
             print(f"File {frame.filename}:{frame.lineno} in {frame.function}")
+            if not frame.code_context:
+                break
             for line in frame.code_context:
                 print(line)
             break

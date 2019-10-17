@@ -48,7 +48,7 @@ def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> None:
     bar = ProgressBar(total=len(uids))
     random.shuffle(uids)
     for uid in uids:
-        dossier_ref = repository.get_opendata_dossier(uid)
+        dossier_ref = repository.get_opendata_dossier_ref(uid)
         fetch_amendements_for_dossier(dossier_ref, chambre, num)
         bar.update(step=len(dossier_ref.lectures))
 

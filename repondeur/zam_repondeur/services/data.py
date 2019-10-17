@@ -13,7 +13,7 @@ from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
 )
 from zam_repondeur.services.fetch.an.dossiers.models import DossierRef, TexteRef
 from zam_repondeur.services.fetch.an.organes_acteurs import get_organes_acteurs
-from zam_repondeur.services.fetch.senat.scraping import get_dossiers_senat
+from zam_repondeur.services.fetch.senat.scraping import get_dossier_refs_senat
 from zam_repondeur.services.fetch.senat.senateurs import (
     Senateur,
     fetch_and_parse_senateurs,
@@ -81,9 +81,9 @@ class DataRepository(Repository):
                 self.set_opendata_texte_ref(texte_ref)
 
     def _load_scraping_senat_dossiers(self) -> None:
-        dossiers_senat = get_dossiers_senat()
+        dossier_refs = get_dossier_refs_senat()
         with Lock(self.connection, "data"):
-            for dossier_ref in dossiers_senat.values():
+            for dossier_ref in dossier_refs.values():
                 self.set_senat_scraping_dossier(dossier_ref)
 
     def set_senat_scraping_dossier(self, dossier_ref: DossierRef) -> None:
@@ -143,7 +143,7 @@ class DataRepository(Repository):
         return acteur
 
     @needs_init
-    def get_opendata_dossier(self, uid: str) -> DossierRef:
+    def get_opendata_dossier_ref(self, uid: str) -> DossierRef:
         key = self._key_for_opendata_dossier(uid)
         dossier_ref: DossierRef = self._get_pickled_data(key)
         return dossier_ref
@@ -170,14 +170,16 @@ class DataRepository(Repository):
         return texte_ref
 
     @needs_init
-    def get_senat_scraping_dossier(self, uid: str) -> DossierRef:
+    def get_senat_scraping_dossier_ref(self, uid: str) -> DossierRef:
         key = self._key_for_senat_scraping_dossier(uid)
         dossier_ref: DossierRef = self._get_pickled_data(key)
         return dossier_ref
 
     @needs_init
     def get_dossier_ref(self, uid: str) -> DossierRef:
-        return self.get_opendata_dossier(uid) or self.get_senat_scraping_dossier(uid)
+        return self.get_opendata_dossier_ref(
+            uid
+        ) or self.get_senat_scraping_dossier_ref(uid)
 
     @needs_init
     def get_senateur(self, matricule: str) -> Senateur:

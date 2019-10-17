@@ -2,18 +2,18 @@ import datetime
 from operator import attrgetter
 
 
-def test_get_dossiers_senat(mock_scraping_senat):
+def test_get_dossier_refs_senat(mock_scraping_senat):
     from zam_repondeur.services.fetch.an.dossiers.models import (
         DossierRef,
         LectureRef,
         TexteRef,
         TypeTexte,
     )
-    from zam_repondeur.services.fetch.senat.scraping import get_dossiers_senat
+    from zam_repondeur.services.fetch.senat.scraping import get_dossier_refs_senat
     from zam_repondeur.models.chambre import Chambre
     from zam_repondeur.models.phase import Phase
 
-    dossiers = get_dossiers_senat()
+    dossiers = get_dossier_refs_senat()
 
     assert set(dossiers.keys()) == {
         "ppl18-462",

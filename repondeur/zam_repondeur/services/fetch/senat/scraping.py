@@ -2,12 +2,11 @@ import logging
 import re
 from datetime import datetime, timedelta
 from http import HTTPStatus
-from typing import Dict, Iterable, Iterator, Optional, Set
+from typing import Dict, Iterable, Iterator, List, Optional, Set
 from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup, element
 
-from zam_repondeur.models.organe import ORGANE_SENAT
 from zam_repondeur.models.phase import ALL_PHASES, Phase
 from zam_repondeur.services.fetch.an.dossiers.models import (
     Chambre,
@@ -27,12 +26,12 @@ BASE_URL_SENAT = "https://www.senat.fr"
 TEXTES_RECENTS_URL = f"{BASE_URL_SENAT}/dossiers-legislatifs/textes-recents.html"
 
 
-def get_dossiers_senat() -> DossierRefsByUID:
+def get_dossier_refs_senat() -> DossierRefsByUID:
     html = download_textes_recents()
     webpages_urls = extract_recent_urls(html)
     pids_rss = convert_to_rss_urls(webpages_urls)
     dossier_refs_by_uid = {
-        dossier_id: create_dossier(dossier_id, rss_url)
+        dossier_id: create_dossier_ref(dossier_id, rss_url)
         for dossier_id, rss_url in pids_rss.items()
     }
     return dossier_refs_by_uid
@@ -58,9 +57,9 @@ def extract_recent_urls(html: str) -> Set[str]:
     }
 
 
-def scrape_dossier(dossier_id: str) -> DossierRef:
+def scrape_dossier_ref(dossier_id: str) -> DossierRef:
     rss_url = build_rss_url(dossier_id)
-    return create_dossier(dossier_id, rss_url)
+    return create_dossier_ref(dossier_id, rss_url)
 
 
 def convert_to_rss_urls(webpages_urls: Set[str]) -> Dict[str, str]:
@@ -78,7 +77,7 @@ def build_rss_url(dossier_id: str) -> str:
     return f"/dossier-legislatif/rss/dosleg{dossier_id}.xml"
 
 
-def create_dossier(dossier_id: str, rss_url: str) -> DossierRef:
+def create_dossier_ref(dossier_id: str, rss_url: str) -> DossierRef:
     rss_content = download_rss(rss_url)
     soup = BeautifulSoup(rss_content, "html5lib")
     prefix = len("Sénat - ")
@@ -89,23 +88,22 @@ def create_dossier(dossier_id: str, rss_url: str) -> DossierRef:
     # Once pickled to put in Redis, it would otherwise raise a RecursionError.
     senat_url = str(soup.id.string)
     senat_url = canonical_senat_url(senat_url)
-    current_texte: Optional[TexteRef] = None
-    lectures = []
+    lecture_refs: List[LectureRef] = []
     entries = sorted(soup.select("entry"), key=lambda e: e.created.string)
     senat_entries = [
         entry for entry in entries if guess_chambre(entry) == Chambre.SENAT
     ]
-    textes = extract_textes(dossier_id, senat_entries)
-    lectures = list(extract_lectures(dossier_id, senat_entries, textes))
-    dossier = DossierRef(
+    texte_refs = extract_texte_refs(dossier_id, senat_entries)
+    lecture_refs = list(extract_lecture_refs(dossier_id, senat_entries, texte_refs))
+    dossier_ref = DossierRef(
         uid=dossier_id,
         titre=title,
         slug=slug,
         an_url="",
         senat_url=senat_url,
-        lectures=lectures,
+        lectures=lecture_refs,
     )
-    return dossier
+    return dossier_ref
 
 
 def canonical_senat_url(url: str) -> str:
@@ -124,52 +122,58 @@ def download_rss(url: str) -> str:
     return content
 
 
-def extract_textes(
+def extract_texte_refs(
     dossier_id: str, entries: Iterable[element.Tag]
 ) -> Dict[int, TexteRef]:
     textes: Dict[int, TexteRef] = {}
     for entry in entries:
         if entry.title.string.startswith("Texte "):
-            texte = create_texte(dossier_id, entry)
+            texte = create_texte_ref(dossier_id, entry)
             textes[texte.numero] = texte
     return textes
 
 
-def extract_lectures(
+def extract_lecture_refs(
     dossier_id: str, entries: Iterable[element.Tag], textes: Dict[int, TexteRef]
 ) -> Iterator[LectureRef]:
     for phase in ALL_PHASES:
         lecture_commission = find_examen_commission(phase, entries, textes)
-        if lecture_commission is not None:
+        if lecture_commission:
             yield lecture_commission
-        texte_initial = lecture_commission.texte
-        texte_commission = find_texte_commission(entries)
+        texte_initial = lecture_commission.texte if lecture_commission else None
+        texte_commission = find_texte_commission(phase, entries, textes)
         texte_examine = texte_commission or texte_initial
+        if not texte_examine:
+            continue
         lecture_seance_publique = find_examen_seance_publique(
-            phase, entries, texte_examine
+            phase, entries, textes, texte_examine
         )
         if lecture_seance_publique is not None:
             yield lecture_seance_publique
 
 
-def find_texte_commission(entries: Iterable[element.Tag]) -> Optional[TexteRef]:
+def find_texte_commission(
+    phase: Phase, entries: Iterable[element.Tag], textes: Dict[int, TexteRef]
+) -> Optional[TexteRef]:
     for entry in entries:
         if extract_phase(entry) != phase:
             continue
         if is_texte_initial(entry.summary.string):
             continue
-        title = entry.title.string
-        mo = re.search(r"Texte n°\s*(\d+)", title)
-        if mo is None:
+
+        num_texte = extract_texte_num(
+            entry.title.string, regexp=r"Texte de la commission n°\s*(\d+)"
+        )
+        if not num_texte:
             continue
 
-        num_texte = int(mo.group(1))
         return textes[num_texte]
+    return None
 
 
 def find_examen_commission(
     phase: Phase, entries: Iterable[element.Tag], textes: Dict[int, TexteRef]
-) -> Optional[LectureRef]:
+) -> LectureRef:
     for entry in entries:
         if not entry.title.string.startswith("Texte n°"):
             continue
@@ -180,12 +184,10 @@ def find_examen_commission(
         if not is_texte_initial(entry.summary.string):
             continue
 
-        title = entry.title.string
-        mo = re.search(r"Texte n°\s*(\d+)", title)
-        if mo is None:
+        num_texte = extract_texte_num(entry.title.string)
+        if not num_texte:
             continue
 
-        num_texte = int(mo.group(1))
         texte = textes[num_texte]
 
         return LectureRef(
@@ -195,6 +197,7 @@ def find_examen_commission(
             organe="",
             texte=texte,
         )
+    return None
 
 
 def find_examen_seance_publique(
@@ -212,6 +215,8 @@ def find_examen_seance_publique(
             organe="PO78718",
             texte=texte_examine,
         )
+    else:
+        return lecture
 
 
 def find_amendements_seance_publique(
@@ -221,12 +226,12 @@ def find_amendements_seance_publique(
         if extract_phase(entry) != phase:
             continue
 
-        title = entry.title.string
-        mo = re.search(r"Amendements déposés sur le texte n°\s*(\d+)", title)
-        if mo is None:
+        num_texte = extract_texte_num(
+            entry.title.string, regexp=r"Amendements déposés sur le texte n°\s*(\d+)"
+        )
+        if not num_texte:
             continue
 
-        num_texte = int(mo.group(1))
         texte = textes[num_texte]
 
         return LectureRef(
@@ -236,6 +241,15 @@ def find_amendements_seance_publique(
             organe="PO78718",
             texte=texte,
         )
+    return None
+
+
+def extract_texte_num(title: str, regexp: str = r"Texte n°\s*(\d+)") -> int:
+    mo = re.search(regexp, title)
+    if mo is None:
+        return 0
+
+    return int(mo.group(1))
 
 
 def extract_phase(entry: element.Tag) -> Optional[Phase]:
@@ -259,15 +273,16 @@ _PHASE_TO_STR = {
 }
 
 
-def is_texte_initial(summary: str) -> str:
+def is_texte_initial(summary: str) -> bool:
     if re.search("(transmis|déposé) au Sénat le", summary):
         return True
     if re.search(r"Texte (résultat des travaux )?de la commission", summary):
         return False
-    raise ValueError("Not sure if texte initial or commission")
+    logger.warning(f"Not sure if texte initial or commission: {summary}")
+    return False
 
 
-def create_texte(dossier_id: str, entry: element.Tag) -> TexteRef:
+def create_texte_ref(dossier_id: str, entry: element.Tag) -> TexteRef:
     numero = entry.title.string.split(" n° ", 1)[1]
     type_dict = {
         "ppr": TypeTexte.PROPOSITION,

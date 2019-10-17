@@ -19,7 +19,7 @@ from zam_repondeur.services.data import repository
 from zam_repondeur.services.fetch import get_articles
 from zam_repondeur.services.fetch.amendements import RemoteSource
 from zam_repondeur.services.fetch.an.dossiers.models import DossierRef, LectureRef
-from zam_repondeur.services.fetch.senat.scraping import scrape_dossier
+from zam_repondeur.services.fetch.senat.scraping import scrape_dossier_ref
 from zam_repondeur.tasks.huey import huey
 
 logger = logging.getLogger(__name__)
@@ -179,9 +179,9 @@ def get_senat_dossier_ref_from_cache_or_scrape(
     """
     Get dossier from the Redis cache (if recent) or scrape it
     """
-    dossier_ref_senat = repository.get_senat_scraping_dossier(dossier_id)
+    dossier_ref_senat = repository.get_senat_scraping_dossier_ref(dossier_id)
     if dossier_ref_senat is None:
-        dossier_ref_senat = scrape_dossier(dossier_id)
+        dossier_ref_senat = scrape_dossier_ref(dossier_id)
     return dossier_ref_senat
 
 

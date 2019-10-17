@@ -5,7 +5,7 @@ from typing import Any, Sequence
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
-from zope.sqlalchemy import ZopeTransactionEvents
+from zope.sqlalchemy import register
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
@@ -26,10 +26,10 @@ class _Base:
 
 DBSession = scoped_session(
     sessionmaker(
-        expire_on_commit=False,  # allow access to object attributes after commit
-        extension=ZopeTransactionEvents(),  # attach to the transaction manager
+        expire_on_commit=False  # allow access to object attributes after commit
     )
 )
+register(DBSession)
 
 metadata = MetaData(
     # Use an explicit naming convention to help Alembic autogenerate

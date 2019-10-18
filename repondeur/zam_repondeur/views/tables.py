@@ -31,6 +31,7 @@ class TableView:
                 (
                     load_only(
                         "article_pk",
+                        "auteur",
                         "id_identique",
                         "num",
                         "position",

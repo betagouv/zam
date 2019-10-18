@@ -76,13 +76,13 @@
 {% endmacro %}
 
 {% macro numero_amendement(amendement) %}
-    {% if amendement.batch %}
+    {% if amendement.location.batch %}
         N<sup>os</sup>&nbsp;
-        {%- for amdt in amendement.batch.amendements[:-1] -%}
+        {%- for amdt in amendement.location.batch.amendements[:-1] -%}
             {{ link_amendement(amdt) }}
             {%- if not loop.last %}, {% endif %}
         {%- endfor %}
-        et {{ link_amendement(amendement.batch.amendements[-1]) }}
+        et {{ link_amendement(amendement.location.batch.amendements[-1]) }}
     {% else %}
         Nº&nbsp;{{ link_amendement(amendement) }}
     {% endif %}

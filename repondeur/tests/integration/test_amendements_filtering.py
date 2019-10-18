@@ -87,12 +87,12 @@ def test_column_filtering_by_value(
         DBSession.add(user_david_table_an)
         DBSession.add(user_daniel_table_an)
 
-        user_ronan_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
+        user_ronan_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
             lecture=lecture_an, article=article7bis_an, num=777, position=3
         )
-        user_daniel_table_an.amendements.append(amendement)
+        user_daniel_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/amendements/")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
@@ -155,8 +155,8 @@ def test_column_filtering_by_value_with_shared_tables(
         DBSession.add(user_david_table_an)
         DBSession.add(shared_table_lecture_an)
 
-        user_david_table_an.amendements.append(amendements_an[0])
-        shared_table_lecture_an.amendements.append(amendements_an[1])
+        user_david_table_an.add_amendement(amendements_an[0])
+        shared_table_lecture_an.add_amendement(amendements_an[1])
 
     driver.get(f"{lecture_an_url}/amendements")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
@@ -224,15 +224,15 @@ def test_column_filtering_by_value_with_batches(
         DBSession.add(user_daniel_table_an)
 
         batch = Batch.create()
-        amendements_an[0].batch = batch
-        amendements_an[1].batch = batch
+        amendements_an[0].location.batch = batch
+        amendements_an[1].location.batch = batch
 
-        user_ronan_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
+        user_ronan_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
             lecture=lecture_an, article=article7bis_an, num=777, position=3
         )
-        user_daniel_table_an.amendements.append(amendement)
+        user_daniel_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/amendements/")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
@@ -295,7 +295,7 @@ def test_column_filtering_by_checkbox(
             position=3,
             auteur="LE GOUVERNEMENT",
         )
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/amendements/")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")

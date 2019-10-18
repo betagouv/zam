@@ -968,9 +968,9 @@ class TestFetchAmendementAgain:
 
         # Put it on a user table
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendement1)
+        user_david_table_an.add_amendement(amendement1)
         assert user_david_table_an.amendements == [amendement1]
-        assert amendement1.user_table == user_david_table_an
+        assert amendement1.location.user_table == user_david_table_an
 
         # Now fetch the same amendement again (now irrecevable)
         amendement2, created = source.fetch_amendement(
@@ -999,7 +999,7 @@ class TestFetchAmendementAgain:
         )
 
         # And the amendement is now on the index
-        assert amendement2.user_table is None
+        assert amendement2.location.user_table is None
         assert user_david_table_an.amendements == []
 
     @responses.activate

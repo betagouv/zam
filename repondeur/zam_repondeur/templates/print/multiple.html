@@ -8,8 +8,8 @@
   <main>
     {% for amendement in amendements %}
         {{ macros.response_page([amendement] + amendement.similaires) }}
-        {% if amendement.batch %}
-            {% set amdts = amendement.batch.amendements %}
+        {% if amendement.location.batch %}
+            {% set amdts = amendement.location.batch.amendements %}
         {% else %}
             {% set amdts = [amendement] %}
         {% endif %}

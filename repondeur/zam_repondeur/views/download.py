@@ -26,7 +26,9 @@ DOWNLOAD_FORMATS = {
 
 AMDT_OPTIONS = [
     joinedload("user_content"),
-    joinedload("user_table").joinedload("user").load_only("email", "name"),
+    subqueryload("location").options(
+        joinedload("user_table").joinedload("user").load_only("email", "name")
+    ),
     joinedload("article").options(
         load_only("lecture_pk", "mult", "num", "pos", "type"),
         joinedload("user_content"),

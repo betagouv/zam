@@ -149,8 +149,8 @@ def amendements_an_batch(amendements_an):
 
     with transaction.manager:
         batch = Batch.create()
-        amendements_an[0].batch = batch
-        amendements_an[1].batch = batch
+        amendements_an[0].location.batch = batch
+        amendements_an[1].location.batch = batch
         DBSession.add_all(amendements_an)
 
     return amendements_an

@@ -23,7 +23,7 @@ def test_transfer_amendements_switch_color_on_check_from_inactive_user(
         team_zam.users.append(user_ronan)
         DBSession.add(user_david_table_an)
         # We put the amendement on another table.
-        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[0])
         DBSession.add_all(amendements_an)
 
     driver.get(f"{lecture_an_url}/transfer_amendements?nums={amendements_an[0].num}")
@@ -71,7 +71,7 @@ def test_transfer_amendements_switch_color_on_check_from_edited_amendement(
         user_ronan.record_activity()
         DBSession.add(user_ronan_table_an)
         # We put the amendement on another active user table,
-        user_ronan_table_an.amendements.append(amendements_an[0])
+        user_ronan_table_an.add_amendement(amendements_an[0])
         # and we start editing it.
         amendements_an[0].start_editing()
         DBSession.add_all(amendements_an)
@@ -126,11 +126,11 @@ def test_transfer_amendements_switch_color_on_check_from_edited_an_unedited_amen
         DBSession.add(user_ronan_table_an)
         DBSession.add(user_daniel_table_an)
         # We put the amendement on another active user table,
-        user_ronan_table_an.amendements.append(amendements_an[0])
+        user_ronan_table_an.add_amendement(amendements_an[0])
         # and we start editing it.
         amendements_an[0].start_editing()
         # We put the amendement on another inactive user table.
-        user_daniel_table_an.amendements.append(amendements_an[1])
+        user_daniel_table_an.add_amendement(amendements_an[1])
         DBSession.add_all(amendements_an)
 
     driver.get(

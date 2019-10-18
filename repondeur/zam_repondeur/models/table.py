@@ -4,7 +4,7 @@ from slugify import slugify
 from sqlalchemy import Column, ForeignKey, Index, Integer, Text, UniqueConstraint
 from sqlalchemy.orm import backref, relationship
 
-from .amendement import Amendement
+from .amendement import Amendement, AmendementLocation
 from .base import Base, DBSession
 from .lecture import Lecture
 from .users import User
@@ -33,10 +33,8 @@ class UserTable(Base):
         ),
     )
 
-    amendements = relationship(
-        Amendement,
-        order_by=(Amendement.position, Amendement.num),
-        back_populates="user_table",
+    amendements_locations = relationship(
+        AmendementLocation, back_populates="user_table"
     )
 
     __repr_keys__ = ("pk", "user_pk", "lecture_pk")
@@ -49,6 +47,13 @@ class UserTable(Base):
         table = cls(user=user, lecture=lecture)
         DBSession.add(table)
         return table
+
+    @property
+    def amendements(self) -> List[Amendement]:
+        return sorted(location.amendement for location in self.amendements_locations)
+
+    def add_amendement(self, amendement: Amendement) -> None:
+        self.amendements_locations.append(amendement.location)
 
     @property
     def amendements_as_string(self) -> str:
@@ -77,10 +82,8 @@ class SharedTable(Base):
         ),
     )
 
-    amendements = relationship(
-        Amendement,
-        order_by=(Amendement.position, Amendement.num),
-        back_populates="shared_table",
+    amendements_locations = relationship(
+        AmendementLocation, back_populates="shared_table"
     )
 
     __repr_keys__ = ("pk", "titre", "slug", "lecture_pk")
@@ -100,3 +103,10 @@ class SharedTable(Base):
             SharedTable.slug != table.slug, SharedTable.lecture == lecture
         ).all()
         return shared_tables
+
+    @property
+    def amendements(self) -> List[Amendement]:
+        return sorted(location.amendement for location in self.amendements_locations)
+
+    def add_amendement(self, amendement: Amendement) -> None:
+        self.amendements_locations.append(amendement.location)

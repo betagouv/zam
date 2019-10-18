@@ -89,7 +89,7 @@
             .corps table.credits tr:last-child td:last-child {
                 text-align: center;
             }
-        {% if amendement.batch %}
+        {% if amendement.location.batch %}
             .box,
             .box.edit {
                 padding: 0;
@@ -146,11 +146,11 @@
 
 {% block body %}
     <section class="content box">
-        {% if amendement.batch %}
+        {% if amendement.location.batch %}
             <div class="batch">
                 <p>
                     Afficher le n°
-                    {% for amdt in amendement.batch.amendements %}
+                    {% for amdt in amendement.location.batch.amendements %}
                         {% if amdt.num == amendement.num %}
                             <span class="current">{{ amendement.num }}</span>
                         {% else %}
@@ -237,12 +237,12 @@
         {% if is_on_my_table %}
             {{ form(amendement) }}
         {% else %}
-            <div class="notice {% if amendement.user_table %}{% if amendement.is_being_edited %}danger{% else %}warning{% endif %}{% endif %}">
+            <div class="notice {% if amendement.location.user_table %}{% if amendement.is_being_edited %}danger{% else %}warning{% endif %}{% endif %}">
                 <p>
                     Pour pouvoir éditer cet amendement, il doit se trouver sur votre table.
                 </p>
-                {% if amendement.user_table %}
-                    {% set amendement_user = amendement.user_table.user %}
+                {% if amendement.location.user_table %}
+                    {% set amendement_user = amendement.location.user_table.user %}
                     {% if amendement.is_being_edited %}
                         <p>
                             Cet amendement est <strong>en cours d’édition par
@@ -327,7 +327,7 @@
 
 {% macro form(amendement) %}
 
-    {% if amendement.batch %}
+    {% if amendement.location.batch %}
         <div class="batch">
             <p>La réponse saisie ci-dessous est commune à tous les amendements du lot.</p>
         </div>

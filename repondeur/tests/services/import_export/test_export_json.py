@@ -224,7 +224,7 @@ def test_write_with_affectation(
             corps="<p>L'article 1 est supprimé.</p>",
             expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
         )
-        user_david_table_senat.amendements.append(amendement)
+        user_david_table_senat.add_amendement(amendement)
 
         counter = export_json(lecture_senat, filename, request={})
 

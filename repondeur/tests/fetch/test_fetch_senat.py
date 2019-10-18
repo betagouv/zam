@@ -290,9 +290,9 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
 
     # Put it on a user table
     DBSession.add(user_david_table_an)
-    user_david_table_an.amendements.append(amendement)
+    user_david_table_an.add_amendement(amendement)
     assert user_david_table_an.amendements == [amendement]
-    assert amendement.user_table == user_david_table_an
+    assert amendement.location.user_table == user_david_table_an
 
     # Now fetch the same amendement again (now irrecevable)
     amendements, created, errored = source.fetch(lecture_senat)
@@ -315,7 +315,7 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
     )
 
     # The amendement is now on the index
-    assert amendement.user_table is None
+    assert amendement.location.user_table is None
     assert user_david_table_an.amendements == []
 
 

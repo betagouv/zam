@@ -68,7 +68,7 @@ class BatchAmendements:
         shared_reponse: Optional[ReponseTuple] = None
         to_be_updated: List[Amendement] = []
         for amendement in amendements:
-            if amendement.batch:
+            if amendement.location.batch:
                 BatchUnset.create(amendement=amendement, request=self.request)
             BatchSet.create(
                 amendement=amendement,
@@ -127,8 +127,8 @@ class BatchAmendements:
         self, amendements: List[Amendement]
     ) -> None:
         are_all_on_my_table = all(
-            amendement.user_table.user == self.request.user
-            if amendement.user_table
+            amendement.location.user_table.user == self.request.user
+            if amendement.location.user_table
             else False
             for amendement in amendements
         )

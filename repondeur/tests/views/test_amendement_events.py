@@ -16,7 +16,7 @@ def test_post_amendement_init_form_events(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendement)
 
     resp = app.get(
         f"{lecture_an_url}/amendements/{amendement.num}/amendement_edit",
@@ -115,7 +115,7 @@ def test_post_amendement_edit_form_events(
         amendement.user_content.objet = "Un objet assez passable"
         amendement.user_content.reponse = "Des réponses <strong>très</strong> bonnes"
         amendement.user_content.comments = "Avec"
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendement)
 
     resp = app.get(
         f"{lecture_an_url}/amendements/{amendement.num}/amendement_edit",
@@ -207,7 +207,7 @@ def test_post_amendement_edit_form_events_empty(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendement)
 
     resp = app.get(
         f"{lecture_an_url}/amendements/{amendement.num}/amendement_edit",

@@ -143,15 +143,15 @@
                         {% endtrans %}
                     </p>
                     <ul class="amendements" data-target="transfers.amendementsWithTableActive">
-                        {% for amendement in amendements_being_edited|sort(attribute="user_table") %}
-                            {% set amendement_user = amendement.user_table.user %}
+                        {% for amendement in amendements_being_edited|sort(attribute="location.user_table") %}
+                            {% set amendement_user = amendement.location.user_table.user %}
                             <li>
                                 <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}"  data-action="transfers#check">
                                 <label for="amendement-{{ amendement.num }}">
                                     {{ macros.numero_amendement(amendement)}}
                                      —
                                     {% if amendement_user == request.user %}
-                                        {% if amendement.batch %}
+                                        {% if amendement.location.batch %}
                                             Ces amendements sont sur votre table
                                         {% else %}
                                             Cet amendement est sur votre table
@@ -175,15 +175,15 @@
                         {% endtrans %}
                     </p>
                     <ul class="amendements" data-target="transfers.amendementsWithTableInactive">
-                        {% for amendement in amendements_not_being_edited|sort(attribute="user_table") %}
-                            {% set amendement_user = amendement.user_table.user %}
+                        {% for amendement in amendements_not_being_edited|sort(attribute="location.user_table") %}
+                            {% set amendement_user = amendement.location.user_table.user %}
                             <li>
                                 <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked data-action="transfers#check">
                                 <label for="amendement-{{ amendement.num }}">
                                     {{ macros.numero_amendement(amendement)}}
                                      —
                                     {% if amendement_user == request.user %}
-                                        {% if amendement.batch %}
+                                        {% if amendement.location.batch %}
                                             Ces amendements sont sur votre table
                                         {% else %}
                                             Cet amendement est sur votre table
@@ -214,10 +214,10 @@
                             <label for="amendement-{{ amendement.num }}">
                                 {{ macros.numero_amendement(amendement)}}
                                  —
-                                {% if amendement.batch %}
-                                    Ces amendements sont dans la boîte « {{ amendement.shared_table.titre }} »
+                                {% if amendement.location.batch %}
+                                    Ces amendements sont dans la boîte « {{ amendement.location.shared_table.titre }} »
                                 {% else %}
-                                    Cet amendement est dans la boîte « {{ amendement.shared_table.titre }} »
+                                    Cet amendement est dans la boîte « {{ amendement.location.shared_table.titre }} »
                                 {% endif %}
                             </label>
                         </li>
@@ -241,7 +241,7 @@
                             <label for="amendement-{{ amendement.num }}">
                                 {{ macros.numero_amendement(amendement)}}
                                  —
-                                {% if amendement.batch %}
+                                {% if amendement.location.batch %}
                                     Ces amendements sont sur l’index
                                 {% else %}
                                     Cet amendement est sur l’index

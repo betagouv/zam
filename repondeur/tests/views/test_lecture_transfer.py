@@ -112,7 +112,7 @@ def test_lecture_get_transfer_amendements_from_me(
     with transaction.manager:
         DBSession.add(amendements_an[0])
         table_david = user_david.table_for(lecture_an)
-        table_david.amendements.append(amendements_an[0])
+        table_david.add_amendement(amendements_an[0])
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -147,7 +147,7 @@ def test_lecture_get_transfer_amendements_from_shared_table(
 
     with transaction.manager:
         DBSession.add(amendements_an[0])
-        amendements_an[0].shared_table = shared_table_lecture_an
+        amendements_an[0].location.shared_table = shared_table_lecture_an
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -183,7 +183,7 @@ def test_lecture_get_transfer_amendements_including_me(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[0])
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -220,7 +220,7 @@ def test_lecture_get_transfer_amendements_from_me_from_save(
     with transaction.manager:
         DBSession.add(amendements_an[0])
         table_david = user_david.table_for(lecture_an)
-        table_david.amendements.append(amendements_an[0])
+        table_david.add_amendement(amendements_an[0])
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -256,7 +256,7 @@ def test_lecture_get_transfer_amendements_from_other(
     with transaction.manager:
         DBSession.add(amendements_an[0])
         table_ronan = user_ronan.table_for(lecture_an)
-        table_ronan.amendements.append(amendements_an[0])
+        table_ronan.add_amendement(amendements_an[0])
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -297,7 +297,7 @@ def test_lecture_get_transfer_amendements_from_other_active(
     with transaction.manager:
         DBSession.add(amendements_an[0])
         table_ronan = user_ronan.table_for(lecture_an)
-        table_ronan.amendements.append(amendements_an[0])
+        table_ronan.add_amendement(amendements_an[0])
         user_ronan.record_activity()
 
     resp = app.get(
@@ -325,7 +325,7 @@ def test_lecture_get_transfer_amendements_from_edited_amendement(
     with transaction.manager:
         DBSession.add(amendements_an[0])
         table_ronan = user_ronan.table_for(lecture_an)
-        table_ronan.amendements.append(amendements_an[0])
+        table_ronan.add_amendement(amendements_an[0])
         amendements_an[0].start_editing()
 
     resp = app.get(
@@ -380,8 +380,8 @@ def test_lecture_post_transfer_amendements_to_me(
     amendement = Amendement.get(lecture_an, amendements_an[0].num)
 
     # The amendement is now on our table
-    assert amendement.user_table.user.email == user_david.email
-    assert amendement.shared_table is None
+    assert amendement.location.user_table.user.email == user_david.email
+    assert amendement.location.shared_table is None
     assert amendement.table_name == "David"
 
     # An event was added to the amendement
@@ -427,7 +427,7 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
     amendement = Amendement.get(lecture_an, amendements_an[0].num)
 
     # The amendement is now on our table
-    assert amendement.user_table.user.email == user_david.email
+    assert amendement.location.user_table.user.email == user_david.email
 
     # An event was added to the amendement
     assert len(amendement.events) == 1
@@ -445,7 +445,7 @@ def test_lecture_post_transfer_amendements_to_index(
     with transaction.manager:
         DBSession.add(amendements_an[0])
         table_david = user_david.table_for(lecture_an)
-        table_david.amendements.append(amendements_an[0])
+        table_david.add_amendement(amendements_an[0])
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -469,8 +469,8 @@ def test_lecture_post_transfer_amendements_to_index(
     amendement = Amendement.get(lecture_an, amendements_an[0].num)
 
     # The amendement is now on the index
-    assert amendement.user_table is None
-    assert amendement.shared_table is None
+    assert amendement.location.user_table is None
+    assert amendement.location.shared_table is None
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a remis l’amendement dans l’index."
@@ -486,7 +486,7 @@ def test_lecture_post_transfer_amendements_to_index_from_index(
     with transaction.manager:
         DBSession.add(amendements_an[0])
         table_david = user_david.table_for(lecture_an)
-        table_david.amendements.append(amendements_an[0])
+        table_david.add_amendement(amendements_an[0])
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -518,7 +518,7 @@ def test_lecture_post_transfer_amendements_to_other(
     with transaction.manager:
         DBSession.add(amendements_an[0])
         table_david = user_david.table_for(lecture_an)
-        table_david.amendements.append(amendements_an[0])
+        table_david.add_amendement(amendements_an[0])
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -557,7 +557,7 @@ def test_lecture_post_transfer_amendements_to_other_from_index(
     with transaction.manager:
         DBSession.add(amendements_an[0])
         table_david = user_david.table_for(lecture_an)
-        table_david.amendements.append(amendements_an[0])
+        table_david.add_amendement(amendements_an[0])
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -610,8 +610,8 @@ def test_lecture_post_transfer_amendements_from_void_to_shared_table(
     amendement = Amendement.get(lecture_an, amendements_an[0].num)
 
     # The amendement is now on the shared table.
-    assert amendement.user_table is None
-    assert amendement.shared_table.pk == shared_table_lecture_an.pk
+    assert amendement.location.user_table is None
+    assert amendement.location.shared_table.pk == shared_table_lecture_an.pk
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a transféré l’amendement à « Test table »."
@@ -627,7 +627,7 @@ def test_lecture_post_transfer_amendements_from_me_to_shared_table(
     with transaction.manager:
         DBSession.add(amendements_an[0])
         table_david = user_david.table_for(lecture_an)
-        table_david.amendements.append(amendements_an[0])
+        table_david.add_amendement(amendements_an[0])
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -653,8 +653,8 @@ def test_lecture_post_transfer_amendements_from_me_to_shared_table(
     amendement = Amendement.get(lecture_an, amendements_an[0].num)
 
     # The amendement is now on the shared table.
-    assert amendement.user_table is None
-    assert amendement.shared_table.pk == shared_table_lecture_an.pk
+    assert amendement.location.user_table is None
+    assert amendement.location.shared_table.pk == shared_table_lecture_an.pk
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a transféré l’amendement à « Test table »."
@@ -669,7 +669,7 @@ def test_lecture_post_transfer_amendements_from_other_to_shared_table(
     with transaction.manager:
         DBSession.add(amendements_an[0])
         table_ronan = user_ronan.table_for(lecture_an)
-        table_ronan.amendements.append(amendements_an[0])
+        table_ronan.add_amendement(amendements_an[0])
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -695,8 +695,8 @@ def test_lecture_post_transfer_amendements_from_other_to_shared_table(
     amendement = Amendement.get(lecture_an, amendements_an[0].num)
 
     # The amendement is now on the shared table.
-    assert amendement.user_table is None
-    assert amendement.shared_table.pk == shared_table_lecture_an.pk
+    assert amendement.location.user_table is None
+    assert amendement.location.shared_table.pk == shared_table_lecture_an.pk
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a transféré l’amendement de « Ronan (ronan@exemple.gouv.fr) » "
@@ -711,7 +711,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_void(
 
     with transaction.manager:
         DBSession.add(amendements_an[0])
-        amendements_an[0].shared_table = shared_table_lecture_an
+        amendements_an[0].location.shared_table = shared_table_lecture_an
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -735,8 +735,8 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_void(
     amendement = Amendement.get(lecture_an, amendements_an[0].num)
 
     # The amendement is now on the index.
-    assert amendement.user_table is None
-    assert amendement.shared_table is None
+    assert amendement.location.user_table is None
+    assert amendement.location.shared_table is None
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a remis l’amendement de « Test table » dans l’index."
@@ -750,7 +750,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_me(
 
     with transaction.manager:
         DBSession.add(amendements_an[0])
-        amendements_an[0].shared_table = shared_table_lecture_an
+        amendements_an[0].location.shared_table = shared_table_lecture_an
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -776,8 +776,8 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_me(
     amendement = Amendement.get(lecture_an, amendements_an[0].num)
 
     # The amendement is now on our table.
-    assert amendement.user_table.user.email == user_david.email
-    assert amendement.shared_table is None
+    assert amendement.location.user_table.user.email == user_david.email
+    assert amendement.location.shared_table is None
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a transféré l’amendement de « Test table » à lui/elle-même."
@@ -791,7 +791,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_other(
 
     with transaction.manager:
         DBSession.add(amendements_an[0])
-        amendements_an[0].shared_table = shared_table_lecture_an
+        amendements_an[0].location.shared_table = shared_table_lecture_an
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
@@ -817,8 +817,8 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_other(
     amendement = Amendement.get(lecture_an, amendements_an[0].num)
 
     # The amendement is now on their table.
-    assert amendement.user_table.user.email == user_ronan.email
-    assert amendement.shared_table is None
+    assert amendement.location.user_table.user.email == user_ronan.email
+    assert amendement.location.shared_table is None
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a transféré l’amendement de « Test table » "
@@ -861,8 +861,8 @@ def test_lecture_post_transfer_amendements_from_void_to_noname_user(
     amendement = Amendement.get(lecture_an, amendements_an[0].num)
 
     # The amendement is now on the noname user table.
-    assert amendement.user_table.pk == user_noname.pk
-    assert amendement.shared_table is None
+    assert amendement.location.user_table.pk == user_noname.pk
+    assert amendement.location.shared_table is None
     assert amendement.events[0].render_summary() == (
         "<abbr title='david@exemple.gouv.fr'>David</abbr> "
         "a transféré l’amendement à « noname@exemple.gouv.fr »."

@@ -9,7 +9,7 @@ def test_amendement_start_editing(
     amendement = amendements_an[1]
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendement)
 
     assert not amendement.is_being_edited
 
@@ -32,7 +32,7 @@ def test_amendement_stop_editing(
     amendement = amendements_an[1]
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendement)
 
     assert not amendement.is_being_edited
 

@@ -106,7 +106,7 @@ def test_get_shared_tables_edit_form_has_disabled_delete_link_if_amendement(
 
     with transaction.manager:
         DBSession.add(shared_table_lecture_an)
-        shared_table_lecture_an.amendements.append(amendements_an[0])
+        shared_table_lecture_an.add_amendement(amendements_an[0])
 
     resp = app.get(
         f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",

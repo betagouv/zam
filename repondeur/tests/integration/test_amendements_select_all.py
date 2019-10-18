@@ -65,12 +65,12 @@ def test_select_all_checks_only_visible_amendements(
         DBSession.add(user_david_table_an)
         DBSession.add(user_daniel_table_an)
 
-        user_ronan_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
+        user_ronan_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
             lecture=lecture_an, article=article7bis_an, num=777
         )
-        user_daniel_table_an.amendements.append(amendement)
+        user_daniel_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/amendements/")
     input_field = driver.find_element_by_css_selector(

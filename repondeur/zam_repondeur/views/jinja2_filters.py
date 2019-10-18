@@ -75,7 +75,10 @@ def enumeration(items: List[str]) -> str:
 
 
 def length_including_batches(amendements: Iterable["Amendement"]) -> int:
-    return sum(len(amdt.batch.amendements) if amdt.batch else 1 for amdt in amendements)
+    return sum(
+        len(amdt.location.batch.amendements) if amdt.location.batch else 1
+        for amdt in amendements
+    )
 
 
 def human_readable_time(dt: datetime) -> str:

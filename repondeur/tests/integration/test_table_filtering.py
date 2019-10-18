@@ -18,7 +18,7 @@ def test_filters_are_hidden_by_default(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[0])
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     thead = driver.find_element_by_css_selector("thead")
@@ -38,7 +38,7 @@ def test_filters_are_opened_by_click(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[0])
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     driver.find_element_by_link_text("Filtrer").click()
@@ -112,12 +112,12 @@ def test_column_filtering_by_value(
     with transaction.manager:
         DBSession.add(user_david_table_an)
         DBSession.add_all(amendements_an)
-        user_david_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
+        user_david_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
             lecture=lecture_an, article=article7bis_an, num=777
         )
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
@@ -178,15 +178,15 @@ def test_column_filtering_by_value_with_batches(
         DBSession.add_all(amendements_an)
 
         batch = Batch.create()
-        amendements_an[0].batch = batch
-        amendements_an[1].batch = batch
+        amendements_an[0].location.batch = batch
+        amendements_an[1].location.batch = batch
 
-        user_david_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
+        user_david_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
             lecture=lecture_an, article=article7bis_an, num=777
         )
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
@@ -233,15 +233,15 @@ def test_column_filtering_by_checkbox(
         DBSession.add(user_david_table_an)
         DBSession.add_all(amendements_an)
 
-        user_david_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
+        user_david_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
             lecture=lecture_an,
             article=article7bis_an,
             num=777,
             auteur="LE GOUVERNEMENT",
         )
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")

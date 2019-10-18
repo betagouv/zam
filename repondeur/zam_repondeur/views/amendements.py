@@ -34,8 +34,8 @@ class AmendementEdit:
             self.request.user.email
         ]
         self.is_on_my_table = (
-            self.amendement.user_table
-            and self.amendement.user_table.user == self.request.user
+            self.amendement.location.user_table
+            and self.amendement.location.user_table.user == self.request.user
         )
 
     @view_config(request_method="GET")
@@ -48,7 +48,7 @@ class AmendementEdit:
             "dossier_resource": self.context.lecture_resource.dossier_resource,
             "lecture_resource": self.context.lecture_resource,
             "avis": AVIS,
-            "table": self.amendement.user_table,
+            "table": self.amendement.location.user_table,
             "is_on_my_table": self.is_on_my_table,
             "back_url": self.back_url,
             "submit_url": self.submit_url,
@@ -79,10 +79,10 @@ class AmendementEdit:
                 "Les modifications n’ont PAS été enregistrées "
                 "car l’amendement n’est plus sur votre table."
             )
-            if self.amendement.user_table:
+            if self.amendement.location.user_table:
                 message += (
                     f" Il est actuellement sur la table de "
-                    f"{self.amendement.user_table.user}."
+                    f"{self.amendement.location.user_table.user}."
                 )
             self.request.session.flash(Message(cls="danger", text=message))
             return HTTPFound(location=self.my_table_url)

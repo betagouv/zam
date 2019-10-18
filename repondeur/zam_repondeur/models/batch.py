@@ -7,7 +7,7 @@ from .base import Base, DBSession
 
 # Make these types available to mypy, but avoid circular imports
 if TYPE_CHECKING:
-    from .amendement import Amendement  # noqa
+    from .amendement import Amendement, AmendementLocation  # noqa
 
 
 class Batch(Base):
@@ -15,13 +15,13 @@ class Batch(Base):
 
     pk: int = Column(Integer, primary_key=True)
 
-    _amendements = relationship("Amendement", back_populates="batch")
+    amendements_locations = relationship("AmendementLocation", back_populates="batch")
 
     __repr_keys__ = ("pk",)
 
     @property
     def amendements(self) -> List["Amendement"]:
-        return sorted(self._amendements)
+        return sorted(location.amendement for location in self.amendements_locations)
 
     @property
     def nums(self) -> List[int]:
@@ -50,10 +50,10 @@ class Batch(Base):
         ) -> Iterable["Amendement"]:
             seen_batches: Set[Batch] = set()
             for amendement in amendements:
-                if amendement.batch:
-                    if amendement.batch in seen_batches:
+                if amendement.location.batch:
+                    if amendement.location.batch in seen_batches:
                         continue
-                    seen_batches.add(amendement.batch)
+                    seen_batches.add(amendement.location.batch)
                 yield amendement
 
         return list(_collapsed_batches(amendements))
@@ -64,8 +64,8 @@ class Batch(Base):
         Expand list of amendements to include those in batches
         """
         for amendement in amendements:
-            if amendement.batch:
-                yield from amendement.batch.amendements
+            if amendement.location.batch:
+                yield from amendement.location.batch.amendements
             else:
                 yield amendement
 

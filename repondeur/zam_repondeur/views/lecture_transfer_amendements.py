@@ -35,15 +35,15 @@ class TransferAmendements:
         amendements_without_table = []
         amendements_with_shared_table = []
         for amendement in amendements:
-            if amendement.user_table:
+            if amendement.location.user_table:
                 if (
                     amendement.is_being_edited
-                    and not amendement.user_table.user == self.request.user
+                    and not amendement.location.user_table.user == self.request.user
                 ):
                     amendements_being_edited.append(amendement)
                 else:
                     amendements_not_being_edited.append(amendement)
-            elif amendement.shared_table:
+            elif amendement.location.shared_table:
                 amendements_with_shared_table.append(amendement)
             else:
                 amendements_without_table.append(amendement)
@@ -56,7 +56,7 @@ class TransferAmendements:
             amendements_without_table
             or amendements_with_shared_table
             or not all(
-                amendement.user_table is my_table
+                amendement.location.user_table is my_table
                 for amendement in amendements_with_table
             )
         )
@@ -93,9 +93,9 @@ class TransferAmendements:
         self, amendements_with_shared_table: List[Amendement]
     ) -> List[SharedTable]:
         shared_tables: Set[SharedTable] = set(
-            amendement.shared_table
+            amendement.location.shared_table
             for amendement in amendements_with_shared_table
-            if amendement.shared_table
+            if amendement.location.shared_table
         )
         if len(shared_tables) == 1:
             return SharedTable.all_but_me(list(shared_tables)[0], self.lecture)

@@ -160,8 +160,8 @@
                 {% endif %}
                 data-order="{{ loop.index }}"
                 data-amendement="
-                {%- if amendement.batch -%}
-                    {{ amendement.batch.nums|join(',') }}
+                {%- if amendement.location.batch -%}
+                    {{ amendement.location.batch.nums|join(',') }}
                 {%- else -%}
                     {{ amendement.num }}
                 {%- endif -%}
@@ -229,8 +229,8 @@
                     "
                     {% endif -%}
                 >
-                    {% if amendement.batch %}
-                        {{ amendement.batch.amendements|join(', ', attribute='num_disp') }}
+                    {% if amendement.location.batch %}
+                        {{ amendement.location.batch.amendements|join(', ', attribute='num_disp') }}
                     {% else %}
                         {{ amendement.num_disp }}
                     {% endif %}
@@ -256,7 +256,7 @@
                         YYY {# Keep almost at the end. #}
                     {%- endif -%}">
                     {% if amendement.table_name %}
-                        {% if amendement.shared_table %}
+                        {% if amendement.location.shared_table %}
                             {{ macros.svg_icon("box") }}
                         {% endif %}
                         {{ amendement.table_name }}

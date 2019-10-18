@@ -29,7 +29,7 @@ class TestCollapsedBatches:
     def test_batched_amendements_are_grouped(self, amendements):
         from zam_repondeur.models.batch import Batch
 
-        amendements[0].batch = amendements[2].batch = Batch.create()
+        amendements[0].location.batch = amendements[2].location.batch = Batch.create()
         assert [a.num for a in Batch.collapsed_batches(amendements)] == [1, 2, 4]
 
 
@@ -42,7 +42,7 @@ class TestExpandedBatches:
     def test_batched_amendements_are_expanded(self, amendements):
         from zam_repondeur.models.batch import Batch
 
-        amendements[0].batch = amendements[2].batch = Batch.create()
+        amendements[0].location.batch = amendements[2].location.batch = Batch.create()
         assert {
             a.num
             for a in Batch.expanded_batches(

@@ -23,7 +23,7 @@ def david_has_one_amendement(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[0])
 
     assert len(user_david.table_for(lecture_an).amendements) == 1
 
@@ -36,8 +36,8 @@ def david_has_two_amendements(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
+        user_david_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
 
     assert len(user_david.table_for(lecture_an).amendements) == 2
 
@@ -246,8 +246,8 @@ def test_lecture_post_batch_set_amendements(
     from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add_all(amendements_an)
-    assert not amendements_an[0].batch
-    assert not amendements_an[1].batch
+    assert not amendements_an[0].location.batch
+    assert not amendements_an[1].location.batch
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
@@ -271,9 +271,9 @@ def test_lecture_post_batch_set_amendements(
     amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
 
     # Both amendements are in the same batch
-    assert amendement_666.batch.pk == 1
-    assert amendement_999.batch.pk == 1
-    assert amendement_666.batch.amendements == [amendement_666, amendement_999]
+    assert amendement_666.location.batch.pk == 1
+    assert amendement_999.location.batch.pk == 1
+    assert amendement_666.location.batch.amendements == [amendement_666, amendement_999]
 
     # An event was added to both amendements
     assert len(amendement_666.events) == 1
@@ -294,8 +294,8 @@ def test_lecture_post_batch_set_amendements_not_all_on_table(
     from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add_all(amendements_an)
-    assert not amendements_an[0].batch
-    assert not amendements_an[1].batch
+    assert not amendements_an[0].location.batch
+    assert not amendements_an[1].location.batch
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
@@ -306,7 +306,7 @@ def test_lecture_post_batch_set_amendements_not_all_on_table(
 
     # Let's remove an amendement from the table before submission.
     with transaction.manager:
-        amendements_an[0].user_table = None
+        amendements_an[0].location.user_table = None
         DBSession.add(amendements_an[0])
 
     resp = form.submit("submit-to")
@@ -330,8 +330,8 @@ def test_lecture_post_batch_set_amendements_not_all_on_table(
     amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
 
     # No amendement has any batch set.
-    assert not amendement_666.batch
-    assert not amendement_999.batch
+    assert not amendement_666.location.batch
+    assert not amendement_999.location.batch
 
 
 def test_lecture_post_batch_set_amendements_only_one_reponse(
@@ -340,8 +340,8 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
     from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add_all(amendements_an)
-    assert not amendements_an[0].batch
-    assert not amendements_an[1].batch
+    assert not amendements_an[0].location.batch
+    assert not amendements_an[1].location.batch
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
@@ -374,8 +374,8 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
     amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
 
     # Both amendements are in the same batch
-    assert amendement_666.batch.pk == 1
-    assert amendement_999.batch.pk == 1
+    assert amendement_666.location.batch.pk == 1
+    assert amendement_999.location.batch.pk == 1
 
     # Both amendements should have the same avis
     assert amendement_666.user_content.avis == "Favorable"
@@ -448,8 +448,8 @@ def test_lecture_post_batch_set_amendements_same_reponses(
     from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add_all(amendements_an)
-    assert not amendements_an[0].batch
-    assert not amendements_an[1].batch
+    assert not amendements_an[0].location.batch
+    assert not amendements_an[1].location.batch
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
@@ -480,8 +480,8 @@ def test_lecture_post_batch_set_amendements_same_reponses(
     amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
 
     # Both amendements are in the same batch
-    assert amendement_666.batch.pk == 1
-    assert amendement_999.batch.pk == 1
+    assert amendement_666.location.batch.pk == 1
+    assert amendement_999.location.batch.pk == 1
 
 
 def test_lecture_post_batch_set_amendements_different_reponses(
@@ -490,8 +490,8 @@ def test_lecture_post_batch_set_amendements_different_reponses(
     from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add_all(amendements_an)
-    assert not amendements_an[0].batch
-    assert not amendements_an[1].batch
+    assert not amendements_an[0].location.batch
+    assert not amendements_an[1].location.batch
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
@@ -527,8 +527,8 @@ def test_lecture_post_batch_set_amendements_different_reponses(
     amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
 
     # No amendement has any batch set.
-    assert not amendement_666.batch
-    assert not amendement_999.batch
+    assert not amendement_666.location.batch
+    assert not amendement_999.location.batch
 
 
 def test_lecture_post_batch_set_amendements_same_reponses_different_comments(
@@ -537,8 +537,8 @@ def test_lecture_post_batch_set_amendements_same_reponses_different_comments(
     from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add_all(amendements_an)
-    assert not amendements_an[0].batch
-    assert not amendements_an[1].batch
+    assert not amendements_an[0].location.batch
+    assert not amendements_an[1].location.batch
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
@@ -575,8 +575,8 @@ def test_lecture_post_batch_set_amendements_same_reponses_different_comments(
     amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
 
     # No amendement has any batch set.
-    assert not amendement_666.batch
-    assert not amendement_999.batch
+    assert not amendement_666.location.batch
+    assert not amendement_999.location.batch
 
 
 def test_lecture_post_batch_set_amendements_different_articles(
@@ -590,8 +590,8 @@ def test_lecture_post_batch_set_amendements_different_articles(
     from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add_all(amendements_an)
-    assert not amendements_an[0].batch
-    assert not amendements_an[1].batch
+    assert not amendements_an[0].location.batch
+    assert not amendements_an[1].location.batch
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
@@ -626,8 +626,8 @@ def test_lecture_post_batch_set_amendements_different_articles(
     amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
 
     # No amendement has any batch set.
-    assert not amendement_666.batch
-    assert not amendement_999.batch
+    assert not amendement_666.location.batch
+    assert not amendement_999.location.batch
 
 
 def test_lecture_post_batch_unset_amendement(
@@ -637,8 +637,8 @@ def test_lecture_post_batch_unset_amendement(
     from zam_repondeur.models.events.amendement import BatchUnset
 
     DBSession.add_all(amendements_an)
-    assert not amendements_an[0].batch
-    assert not amendements_an[1].batch
+    assert not amendements_an[0].location.batch
+    assert not amendements_an[1].location.batch
 
     # First we associate two amendements
     resp = app.get(
@@ -654,9 +654,9 @@ def test_lecture_post_batch_unset_amendement(
     amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
 
     # Both amendements are in the same batch
-    assert amendement_666.batch.pk == 1
-    assert amendement_999.batch.pk == 1
-    assert amendement_666.batch.amendements == [amendement_666, amendement_999]
+    assert amendement_666.location.batch.pk == 1
+    assert amendement_999.location.batch.pk == 1
+    assert amendement_666.location.batch.amendements == [amendement_666, amendement_999]
 
     # Then we deassociate just one
     resp = app.get(
@@ -681,8 +681,8 @@ def test_lecture_post_batch_unset_amendement(
     amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
 
     # Both amendements are now without any batch
-    assert not amendement_666.batch
-    assert not amendement_999.batch
+    assert not amendement_666.location.batch
+    assert not amendement_999.location.batch
 
     # An event was added to both amendements
     assert len(amendement_666.events) == 2
@@ -711,15 +711,15 @@ def test_lecture_post_batch_reset_amendement(
     from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add_all(amendements_an)
-    assert not amendements_an[0].batch
-    assert not amendements_an[1].batch
+    assert not amendements_an[0].location.batch
+    assert not amendements_an[1].location.batch
 
     with transaction.manager:
         amendement_777 = Amendement.create(
             lecture=lecture_an, article=article1_an, num=777
         )
-        user_david_table_an.amendements.append(amendement_777)
-        assert not amendement_777.batch
+        user_david_table_an.add_amendement(amendement_777)
+        assert not amendement_777.location.batch
 
     # First we associate two amendements
     resp = app.get(
@@ -735,9 +735,9 @@ def test_lecture_post_batch_reset_amendement(
     amendement_999 = Amendement.get(lecture_an, amendements_an[1].num)
 
     # Both amendements are in the same batch
-    assert amendement_666.batch.pk == 1
-    assert amendement_999.batch.pk == 1
-    assert amendement_666.batch.amendements == [amendement_666, amendement_999]
+    assert amendement_666.location.batch.pk == 1
+    assert amendement_999.location.batch.pk == 1
+    assert amendement_666.location.batch.amendements == [amendement_666, amendement_999]
 
     # Then we re-associate two others (containing the first one)
     resp = app.get(
@@ -763,10 +763,10 @@ def test_lecture_post_batch_reset_amendement(
     amendement_777 = Amendement.get(lecture_an, 777)
 
     # A new batch is created and 999 is also included.
-    assert amendement_666.batch.pk == 2
-    assert amendement_999.batch.pk == 2
-    assert amendement_777.batch.pk == 2
-    assert amendement_666.batch.amendements == [
+    assert amendement_666.location.batch.pk == 2
+    assert amendement_999.location.batch.pk == 2
+    assert amendement_777.location.batch.pk == 2
+    assert amendement_666.location.batch.amendements == [
         amendement_666,
         amendement_999,
         amendement_777,

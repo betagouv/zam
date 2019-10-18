@@ -46,29 +46,33 @@ class TableView:
     @view_config(request_method="GET", renderer="table_detail.html")
     def get(self) -> dict:
         table = self.context.model(
-            subqueryload("amendements").options(
-                load_only(
-                    "article_pk",
-                    "auteur",
-                    "batch_pk",
-                    "groupe",
-                    "id_identique",
-                    "lecture_pk",
-                    "mission_titre",
-                    "num",
-                    "parent_pk",
-                    "position",
-                    "rectif",
-                    "shared_table_pk",
-                    "sort",
-                    "user_table_pk",
-                ),
-                joinedload("user_content").load_only("avis", "objet", "reponse"),
-                (
-                    subqueryload("batch")
-                    .joinedload("_amendements")
-                    .load_only("num", "rectif")
-                ),
+            subqueryload("amendements_locations").options(
+                subqueryload("amendement").options(
+                    load_only(
+                        "article_pk",
+                        "auteur",
+                        "groupe",
+                        "id_identique",
+                        "lecture_pk",
+                        "mission_titre",
+                        "num",
+                        "parent_pk",
+                        "position",
+                        "rectif",
+                        "sort",
+                    ),
+                    joinedload("user_content").load_only("avis", "objet", "reponse"),
+                    subqueryload("location").options(
+                        subqueryload("batch")
+                        .joinedload("amendements_locations")
+                        .joinedload("amendement")
+                        .load_only("num", "rectif"),
+                        subqueryload("shared_table").load_only("titre"),
+                        subqueryload("user_table")
+                        .joinedload("user")
+                        .load_only("email", "name"),
+                    ),
+                )
             )
         )
         return {
@@ -123,24 +127,24 @@ class TableView:
         )
 
         for amendement in Batch.expanded_batches(amendements):
-            if amendement.shared_table:
-                old = amendement.shared_table.titre
-            elif amendement.user_table:
-                old = str(amendement.user_table.user)  # Contains email.
+            if amendement.location.shared_table:
+                old = amendement.location.shared_table.titre
+            elif amendement.location.user_table:
+                old = str(amendement.location.user_table.user)  # Contains email.
             else:
                 old = ""
             if target_shared_table:
-                if target and amendement.shared_table is target_shared_table:
+                if target and amendement.location.shared_table is target_shared_table:
                     continue
                 new = target_shared_table.titre
-                amendement.shared_table = target_shared_table
-                amendement.user_table = None
+                amendement.location.shared_table = target_shared_table
+                amendement.location.user_table = None
             else:
-                if target and amendement.user_table is target_user_table:
+                if target and amendement.location.user_table is target_user_table:
                     continue
                 new = str(target_user_table.user) if target_user_table else ""
-                amendement.user_table = target_user_table
-                amendement.shared_table = None
+                amendement.location.user_table = target_user_table
+                amendement.location.shared_table = None
             amendement.stop_editing()
             AmendementTransfere.create(
                 amendement=amendement,

@@ -94,11 +94,15 @@ def _transfer_amendement_on_import(
             user.teams.append(lecture.dossier.team)
 
     target_table = user.table_for(lecture)
-    old = str(amendement.user_table.user) if amendement.user_table else ""
+    old = (
+        str(amendement.location.user_table.user)
+        if amendement.location.user_table
+        else ""
+    )
     new = str(target_table.user) if target_table else ""
-    if amendement.user_table is target_table:
+    if amendement.location.user_table is target_table:
         return
-    amendement.user_table = target_table
+    amendement.location.user_table = target_table
     AmendementTransfere.create(
         amendement=amendement, old_value=old, new_value=new, request=request
     )

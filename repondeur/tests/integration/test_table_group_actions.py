@@ -19,7 +19,7 @@ def test_group_actions_not_visible_by_default(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[0])
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     group_actions = driver.find_element_by_css_selector(".groupActions")
@@ -41,7 +41,7 @@ def test_group_actions_are_visible_by_selection(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[0])
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     driver.find_element_by_css_selector('[name="amendement-selected"]').click()
@@ -64,8 +64,8 @@ def test_batch_amendements_are_visible_with_at_least_two_selections(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
+        user_david_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
@@ -94,9 +94,9 @@ def test_batch_amendements_is_hidden_when_selected_amendements_have_different_ar
             lecture=lecture_an, article=article7bis_an, num=777
         )
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
+        user_david_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
@@ -136,9 +136,9 @@ def test_batch_amendements_is_hidden_when_selected_amendements_have_different_mi
         )
 
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
+        user_david_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
@@ -164,7 +164,7 @@ def test_group_actions_are_made_invisible_by_unselection(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[0])
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     driver.find_element_by_css_selector('[name="amendement-selected"]').click()
@@ -188,8 +188,8 @@ def test_group_actions_button_urls_change_with_selection(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
+        user_david_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     find = driver.find_element_by_css_selector
@@ -247,8 +247,8 @@ def test_group_actions_button_urls_change_on_the_fly(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
+        user_david_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
     find = driver.find_element_by_css_selector

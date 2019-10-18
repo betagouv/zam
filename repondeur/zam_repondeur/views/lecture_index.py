@@ -18,21 +18,25 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
             load_only(
                 "article_pk",
                 "auteur",
-                "batch_pk",
                 "id_identique",
                 "lecture_pk",
                 "num",
                 "parent_pk",
                 "position",
                 "rectif",
-                "shared_table_pk",
                 "sort",
-                "user_table_pk",
             ),
             joinedload("user_content").load_only("avis", "objet", "reponse"),
-            subqueryload("batch").joinedload("_amendements").load_only("num", "rectif"),
-            subqueryload("shared_table").load_only("titre"),
-            subqueryload("user_table").joinedload("user").load_only("email", "name"),
+            subqueryload("location").options(
+                subqueryload("batch")
+                .joinedload("amendements_locations")
+                .joinedload("amendement")
+                .load_only("num", "rectif"),
+                subqueryload("shared_table").load_only("titre"),
+                subqueryload("user_table")
+                .joinedload("user")
+                .load_only("email", "name"),
+            ),
         ),
     )
     return {

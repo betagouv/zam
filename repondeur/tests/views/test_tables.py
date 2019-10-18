@@ -47,7 +47,7 @@ def david_has_one_amendement(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[0])
 
     assert len(user_david.table_for(lecture_an).amendements) == 1
 
@@ -60,15 +60,15 @@ def david_has_two_amendements(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
+        user_david_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
 
     assert len(user_david.table_for(lecture_an).amendements) == 2
 
 
 def assert_amendements_are_on_table_for(amendements, user):
     for amendement in amendements:
-        assert amendement.user_table.user.email == user.email
+        assert amendement.location.user_table.user.email == user.email
 
 
 def assert_amendement_is_on_table_for(amendement, user):
@@ -77,7 +77,7 @@ def assert_amendement_is_on_table_for(amendement, user):
 
 def assert_amendements_are_on_the_index(amendements):
     for amendement in amendements:
-        assert amendement.user_table is None
+        assert amendement.location.user_table is None
 
 
 def assert_amendement_is_on_the_index(amendement):

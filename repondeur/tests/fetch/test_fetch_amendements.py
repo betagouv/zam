@@ -670,7 +670,7 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
     from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
-    assert amendements_an_batch[0].batch.nums == [666, 999]
+    assert amendements_an_batch[0].location.batch.nums == [666, 999]
 
     with transaction.manager, patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
@@ -723,7 +723,7 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
     assert errored == []
 
     amendement_666 = DBSession.query(Amendement).filter(Amendement.num == 666).one()
-    assert amendement_666.batch.nums == [666, 999]
+    assert amendement_666.location.batch.nums == [666, 999]
 
 
 def test_fetch_update_amendements_an_with_batch_and_changing_article(
@@ -733,7 +733,7 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import BatchUnset
 
-    assert amendements_an_batch[0].batch.nums == [666, 999]
+    assert amendements_an_batch[0].location.batch.nums == [666, 999]
 
     with transaction.manager, patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
@@ -787,7 +787,7 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
 
     for num in [666, 999]:
         amendement = DBSession.query(Amendement).filter(Amendement.num == num).one()
-        assert amendement.batch is None
+        assert amendement.location.batch is None
 
         event = next(e for e in amendement.events if isinstance(e, BatchUnset))
         assert event.render_summary() == (

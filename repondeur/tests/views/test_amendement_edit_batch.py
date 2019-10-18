@@ -11,7 +11,7 @@ def test_get_amendement_edit_form(
         DBSession.add(user_david_table_an)
         amendement.expose = "<p>Bla bla bla</p>"
         amendement.corps = "<p>Supprimer cet article.</p>"
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendement)
 
     resp = app.get(
         f"{lecture_an_url}/amendements/{amendement.num}/amendement_edit",
@@ -139,7 +139,7 @@ def test_transfer_amendement_from_edit_form_given_activity(
     with transaction.manager:
         DBSession.add(user_ronan)
         table_ronan = user_ronan.table_for(lecture_an)
-        table_ronan.amendements.append(amdt)
+        table_ronan.add_amendement(amdt)
     resp = app.get(
         f"{lecture_an_url}/amendements/{amdt.num}/amendement_edit", user=user_david
     )
@@ -186,7 +186,7 @@ def test_post_amendement_edit_form_save_batch(
     amendement = amendements_an_batch[1]
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendement)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.user_content.avis is None
@@ -247,8 +247,8 @@ def test_post_amendement_edit_form_reset_editing_state(
     amendement_666, amendement_999 = amendements_an_batch
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendement_666)
-        user_david_table_an.amendements.append(amendement_999)
+        user_david_table_an.add_amendement(amendement_666)
+        user_david_table_an.add_amendement(amendement_999)
 
     amendement_666.start_editing()
     assert amendement_666.is_being_edited
@@ -283,7 +283,7 @@ def test_post_amendement_edit_form_switch_table(
     amendement_999 = amendements_an_batch[1]
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendement_999)
+        user_david_table_an.add_amendement(amendement_999)
 
     resp = app.get(f"{lecture_an_url}/amendements/999/amendement_edit", user=user_david)
     form = resp.forms["edit-amendement"]
@@ -295,7 +295,7 @@ def test_post_amendement_edit_form_switch_table(
     # Table switch just before submitting the form.
     with transaction.manager:
         DBSession.add(user_ronan_table_an)
-        user_ronan_table_an.amendements.append(amendement_999)
+        user_ronan_table_an.add_amendement(amendement_999)
 
     resp = form.submit("save")
 
@@ -335,7 +335,7 @@ def test_post_amendement_edit_form_and_transfer(
     amendement = amendements_an_batch[1]
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendement)
+        user_david_table_an.add_amendement(amendement)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
     assert amendement.user_content.avis is None
@@ -406,7 +406,7 @@ def test_post_amendement_edit_form_creates_event_only_if_modified(
         amendement_666.user_content.avis = "Favorable"
         amendement_666.user_content.objet = "Un objet très pertinent"
         amendement_666.user_content.reponse = "Une réponse très appropriée"
-        user_david_table_an.amendements.append(amendement_666)
+        user_david_table_an.add_amendement(amendement_666)
 
     # Let's post the response edit form, but with unchanged values
     resp = app.get(f"{lecture_an_url}/amendements/666/amendement_edit", user=user_david)

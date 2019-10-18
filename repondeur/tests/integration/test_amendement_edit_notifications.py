@@ -13,7 +13,7 @@ def test_amendement_edit_notification_on_amendement_transfer(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[0])
         DBSession.add_all(amendements_an)
 
     driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit")
@@ -22,7 +22,7 @@ def test_amendement_edit_notification_on_amendement_transfer(
     assert not status.text
 
     with transaction.manager:
-        amendements_an[0].user_table = None
+        amendements_an[0].location.user_table = None
         DBSession.add_all(amendements_an)
 
     sleep(wsgi_server.settings["zam.check_for.amendement_stolen_while_editing"])

@@ -326,8 +326,8 @@
                        data-mission="{{ amendement.mission_titre or '' }}"
                        data-order="{{ loop.index }}"
                        data-amendement="
-                           {%- if amendement.batch -%}
-                               {{ amendement.batch.nums|join(',') }}
+                           {%- if amendement.location.batch -%}
+                               {{ amendement.location.batch.nums|join(',') }}
                            {%- else -%}
                                {{ amendement.num }}
                            {%- endif -%}
@@ -336,7 +336,7 @@
                         <td colspan="4">
                             <div class="box amendement-card
                                 {% if amendement.slug == highlighted_amdt %}highlighted{% endif %}
-                                {% if amendement.batch %}amendement-batch{% endif %}
+                                {% if amendement.location.batch %}amendement-batch{% endif %}
                                 ">
                                 <div class="amendement-card-infos">
                                     <div class="entete">
@@ -353,8 +353,8 @@
                                         –
 
                                         {# Numéro(s) #}
-                                        {% if amendement.batch %}
-                                            N<sup>os</sup>&nbsp;<span class="numero">{{ amendement.batch.nums|enumeration }}</span>
+                                        {% if amendement.location.batch %}
+                                            N<sup>os</sup>&nbsp;<span class="numero">{{ amendement.location.batch.nums|enumeration }}</span>
                                         {% else %}
                                             Nº&nbsp;<span class="numero">{{ amendement }}</span>
                                         {% endif %}
@@ -382,8 +382,8 @@
                                         {% if amendement.gouvernemental %}
                                             Le gouvernement
                                         {% else %}
-                                            {% if amendement.batch %}
-                                                {{ amendement.batch.groupes | join(', ') }}
+                                            {% if amendement.location.batch %}
+                                                {{ amendement.location.batch.groupes | join(', ') }}
                                             {% else %}
                                                 {% if amendement.groupe %}
                                                     {{ amendement.groupe }} ({{ amendement.auteur }})

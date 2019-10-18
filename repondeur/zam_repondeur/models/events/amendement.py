@@ -329,9 +329,9 @@ class BatchSet(AmendementEvent):
         self.batch = batch
 
     def apply(self) -> None:
-        if self.amendement.batch:
+        if self.amendement.location.batch:
             BatchUnset.create(amendement=self.amendement, request=self.request)
-        self.amendement.batch = self.batch
+        self.amendement.location.batch = self.batch
 
     def render_details(self) -> str:
         return ""
@@ -358,14 +358,14 @@ class BatchUnset(AmendementEvent):
         super().__init__(amendement=amendement, request=request)
 
     def apply(self) -> None:
-        batch = self.amendement.batch
+        batch = self.amendement.location.batch
         if batch is None:
             return
 
         others = [amdt for amdt in batch.amendements if amdt is not self.amendement]
 
         # Remove amendement from batch.
-        self.amendement.batch = None
+        self.amendement.location.batch = None
 
         # Avoid lonely amendement in a batch.
         if len(others) == 1:

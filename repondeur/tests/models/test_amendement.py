@@ -61,15 +61,15 @@ def test_amendement_batches(amendements_an):
 
     a, b = DBSession.query(Amendement).all()
 
-    assert a.batch is None
-    assert b.batch is None
+    assert a.location.batch is None
+    assert b.location.batch is None
 
     batch = Batch.create()
-    a.batch = batch
-    b.batch = batch
+    a.location.batch = batch
+    b.location.batch = batch
 
     a, b = DBSession.query(Amendement).all()
-    assert a.batch == b.batch == batch
+    assert a.location.batch == b.location.batch == batch
 
 
 def test_amendement_unicity(amendements_an, article1av_an):
@@ -279,7 +279,7 @@ class TestAmendementEdition:
 
         with transaction.manager:
             DBSession.add(user_david_table_an)
-            user_david_table_an.amendements.append(amendements_an[0])
+            user_david_table_an.add_amendement(amendements_an[0])
         amendements_an[0].start_editing()
         assert amendements_an[0].is_being_edited
 
@@ -290,7 +290,7 @@ class TestAmendementEdition:
 
         with transaction.manager:
             DBSession.add(user_david_table_an)
-            user_david_table_an.amendements.append(amendements_an[0])
+            user_david_table_an.add_amendement(amendements_an[0])
         amendements_an[0].start_editing()
         assert amendements_an[0].is_being_edited
         amendements_an[0].stop_editing()

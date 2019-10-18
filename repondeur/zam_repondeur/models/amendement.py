@@ -74,7 +74,9 @@ class ReponseTuple(NamedTuple):
 class AmendementUserContent(Base):
     __tablename__ = "amendement_user_contents"
     __table_args__ = (
-        Index("ix_amendement_user_contents__amendement_pk", "amendement_pk"),
+        Index(
+            "ix_amendement_user_contents__amendement_pk", "amendement_pk", unique=True
+        ),
     )
 
     pk: int = Column(Integer, primary_key=True)
@@ -147,6 +149,34 @@ class AmendementUserContent(Base):
         )
 
 
+class AmendementLocation(Base):
+    __tablename__ = "amendement_location"
+    __table_args__ = (
+        Index("ix_amendement_location__amendement_pk", "amendement_pk", unique=True),
+    )
+
+    pk: int = Column(Integer, primary_key=True)
+    amendement_pk: int = Column(
+        Integer, ForeignKey("amendements.pk", ondelete="cascade"), nullable=False
+    )
+    amendement: "Amendement" = relationship("Amendement", back_populates="location")
+
+    user_table_pk: int = Column(Integer, ForeignKey("user_tables.pk"), nullable=True)
+    user_table: "Optional[UserTable]" = relationship(
+        "UserTable", back_populates="amendements_locations"
+    )
+    shared_table_pk: int = Column(
+        Integer, ForeignKey("shared_tables.pk"), nullable=True
+    )
+    shared_table: "Optional[SharedTable]" = relationship(
+        "SharedTable", back_populates="amendements_locations"
+    )
+    batch_pk: int = Column(Integer, ForeignKey("batches.pk"), nullable=True)
+    batch: Optional[Batch] = relationship(Batch, back_populates="amendements_locations")
+
+    __repr_keys__ = ("pk", "amendement_pk")
+
+
 class Amendement(Base):
     VERY_BIG_NUMBER = 999_999_999
     __tablename__ = "amendements"
@@ -201,21 +231,13 @@ class Amendement(Base):
     article_pk: int = Column(Integer, ForeignKey("articles.pk"))
     article: "Article" = relationship("Article", back_populates="amendements")
 
-    user_table_pk: int = Column(Integer, ForeignKey("user_tables.pk"), nullable=True)
-    user_table: "Optional[UserTable]" = relationship(
-        "UserTable", back_populates="amendements"
+    location: AmendementLocation = relationship(  # technically it's Optional
+        AmendementLocation,
+        back_populates="amendement",
+        uselist=False,
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
-
-    shared_table_pk: int = Column(
-        Integer, ForeignKey("shared_tables.pk"), nullable=True
-    )
-    shared_table: "Optional[SharedTable]" = relationship(
-        "SharedTable", back_populates="amendements"
-    )
-
-    batch_pk: int = Column(Integer, ForeignKey("batches.pk"), nullable=True)
-    batch: Optional[Batch] = relationship(Batch, back_populates="_amendements")
-
     user_content: AmendementUserContent = relationship(  # technically it's Optional
         AmendementUserContent,
         back_populates="amendement",
@@ -288,11 +310,11 @@ class Amendement(Base):
             resume=resume,
             alinea=alinea,
             parent=parent,
-            batch=batch,
             mission_titre=mission_titre,
             mission_titre_court=mission_titre_court,
             created_at=now,
         )
+        location = AmendementLocation(amendement=amendement, batch=batch)
         user_content = AmendementUserContent(
             amendement=amendement,
             avis=avis,
@@ -300,6 +322,7 @@ class Amendement(Base):
             reponse=reponse,
             comments=comments,
         )
+        DBSession.add(location)
         DBSession.add(user_content)
         return amendement
 
@@ -486,7 +509,11 @@ class Amendement(Base):
             amendement
             for amendement in self.all_identiques
             if amendement.is_displayable
-            and (amendement not in self.batch.amendements if self.batch else True)
+            and (
+                amendement not in self.location.batch.amendements
+                if self.location.batch
+                else True
+            )
         ]
 
     @property
@@ -518,10 +545,13 @@ class Amendement(Base):
 
     @property
     def table_name(self) -> str:
-        if self.shared_table:
-            return self.shared_table.titre or ""
-        elif self.user_table:
-            return self.user_table.user.name or self.user_table.user.email
+        if self.location.shared_table:
+            return self.location.shared_table.titre or ""
+        elif self.location.user_table:
+            return (
+                self.location.user_table.user.name
+                or self.location.user_table.user.email
+            )
         else:
             return ""
 
@@ -530,9 +560,9 @@ class Amendement(Base):
         return bool(amendements_repository.get_last_activity_time(self.pk))
 
     def start_editing(self) -> None:
-        if not self.user_table:
+        if not self.location.user_table:
             return
-        amendements_repository.start_editing(self.pk, self.user_table.user.pk)
+        amendements_repository.start_editing(self.pk, self.location.user_table.user.pk)
 
     def stop_editing(self) -> None:
         amendements_repository.stop_editing(self.pk)
@@ -568,7 +598,11 @@ class Amendement(Base):
             "first_identique_num": self.first_identique_num or "",
             "alinea": self.alinea or "",
             "date_depot": self.date_depot or "",
-            "affectation_email": self.user_table and self.user_table.user.email or "",
-            "affectation_name": self.user_table and self.user_table.user.name or "",
+            "affectation_email": self.location.user_table
+            and self.location.user_table.user.email
+            or "",
+            "affectation_name": self.location.user_table
+            and self.location.user_table.user.name
+            or "",
         }
         return result

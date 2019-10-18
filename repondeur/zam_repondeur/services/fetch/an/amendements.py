@@ -205,7 +205,11 @@ class AssembleeNationale(RemoteSource):
             num=int(amend["numero"]),
         )
 
-        if not created and amendement.batch and amendement.article.pk != article.pk:
+        if (
+            not created
+            and amendement.location.batch
+            and amendement.article.pk != article.pk
+        ):
             BatchUnset.create(amendement=amendement, request=None)
 
         raw_auteur = amend.get("auteur")

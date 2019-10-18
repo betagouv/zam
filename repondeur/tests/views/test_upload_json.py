@@ -152,22 +152,22 @@ class TestPostForm:
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.user_table is None
+        assert amendement.location.user_table is None
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-        assert amendement.user_table is None
+        assert amendement.location.user_table is None
 
         self._upload_backup(app, "backup_with_affectation_new.json", user_david)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.user_table.user.email == "melodie@exemple.gouv.fr"
-        assert amendement.user_table.user.name == "Mélodie"
-        assert amendement.user_table.user.teams[0].pk == team_zam.pk
+        assert amendement.location.user_table.user.email == "melodie@exemple.gouv.fr"
+        assert amendement.location.user_table.user.name == "Mélodie"
+        assert amendement.location.user_table.user.teams[0].pk == team_zam.pk
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere in events
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-        assert amendement.user_table is None
+        assert amendement.location.user_table is None
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere not in events
 
@@ -178,10 +178,10 @@ class TestPostForm:
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.user_table is None
+        assert amendement.location.user_table is None
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-        assert amendement.user_table is None
+        assert amendement.location.user_table is None
 
         user_melodie = (
             DBSession.query(User).filter_by(email="melodie@exemple.gouv.fr").first()
@@ -210,12 +210,12 @@ class TestPostForm:
 
         # Check the amendement is on the new user's table
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.user_table.user is user_melodie
+        assert amendement.location.user_table.user is user_melodie
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere in events
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-        assert amendement.user_table is None
+        assert amendement.location.user_table is None
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere not in events
 
@@ -227,24 +227,24 @@ class TestPostForm:
             amendement = (
                 DBSession.query(Amendement).filter(Amendement.num == 666).first()
             )
-            amendement.user_table = user_david.table_for(lecture_an)
+            amendement.location.user_table = user_david.table_for(lecture_an)
 
-        assert amendement.user_table.user.email == "david@exemple.gouv.fr"
-        assert amendement.user_table.user.name == "David"
+        assert amendement.location.user_table.user.email == "david@exemple.gouv.fr"
+        assert amendement.location.user_table.user.name == "David"
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-        assert amendement.user_table is None
+        assert amendement.location.user_table is None
 
         self._upload_backup(app, "backup_with_affectation_existing.json", user_david)
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
-        assert amendement.user_table.user.email == "ronan@exemple.gouv.fr"
+        assert amendement.location.user_table.user.email == "ronan@exemple.gouv.fr"
         assert (
-            amendement.user_table.user.name == "Ronan"
+            amendement.location.user_table.user.name == "Ronan"
         )  # Should not override the name of an existing user.
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
-        assert amendement.user_table is None
+        assert amendement.location.user_table is None
 
     def test_upload_backup_with_articles(self, app, user_david):
         from zam_repondeur.models import DBSession, Amendement

@@ -10,8 +10,8 @@ def test_amendement_start_editing(
     amendement_999 = amendements_an_batch[1]
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendement_666)
-        user_david_table_an.amendements.append(amendement_999)
+        user_david_table_an.add_amendement(amendement_666)
+        user_david_table_an.add_amendement(amendement_999)
 
     assert not amendement_666.is_being_edited
     assert not amendement_999.is_being_edited
@@ -38,8 +38,8 @@ def test_amendement_stop_editing(
     amendement_999 = amendements_an_batch[1]
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendement_666)
-        user_david_table_an.amendements.append(amendement_999)
+        user_david_table_an.add_amendement(amendement_666)
+        user_david_table_an.add_amendement(amendement_999)
 
     assert not amendement_666.is_being_edited
     assert not amendement_999.is_being_edited

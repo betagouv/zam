@@ -14,8 +14,8 @@ def test_create_batch_from_table(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an[0])
-        user_david_table_an.amendements.append(amendements_an[1])
+        user_david_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}/")
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
@@ -33,7 +33,7 @@ def test_create_batch_from_table(
 
     with transaction.manager:
         amendements = DBSession.query(Amendement).all()
-        assert amendements[0].batch.pk == amendements[1].batch.pk == 1
+        assert amendements[0].location.batch.pk == amendements[1].location.batch.pk == 1
 
 
 def test_dissociate_batch_from_amendement_edit(
@@ -49,8 +49,8 @@ def test_dissociate_batch_from_amendement_edit(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an_batch[0])
-        user_david_table_an.amendements.append(amendements_an_batch[1])
+        user_david_table_an.add_amendement(amendements_an_batch[0])
+        user_david_table_an.add_amendement(amendements_an_batch[1])
 
     driver.get(
         f"{lecture_an_url}/amendements/{amendements_an_batch[0]}/amendement_edit"
@@ -61,8 +61,8 @@ def test_dissociate_batch_from_amendement_edit(
 
     with transaction.manager:
         amendements = DBSession.query(Amendement).all()
-        assert amendements[0].batch is None
-        assert amendements[1].batch is None
+        assert amendements[0].location.batch is None
+        assert amendements[1].location.batch is None
 
 
 def test_transfer_batch_from_table(
@@ -78,8 +78,8 @@ def test_transfer_batch_from_table(
 
     with transaction.manager:
         DBSession.add(user_david_table_an)
-        user_david_table_an.amendements.append(amendements_an_batch[0])
-        user_david_table_an.amendements.append(amendements_an_batch[1])
+        user_david_table_an.add_amendement(amendements_an_batch[0])
+        user_david_table_an.add_amendement(amendements_an_batch[0])
 
     driver.get(f"{lecture_an_url}/tables/{user_david.email}/")
     checkbox = driver.find_element_by_css_selector('[name="amendement-selected"]')

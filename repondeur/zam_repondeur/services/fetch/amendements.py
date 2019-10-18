@@ -32,13 +32,13 @@ class Source:
             if "irrecevable" in sort.lower():
                 AmendementIrrecevable.create(amendement=amendement, sort=sort)
                 # Put the amendement back to the index?
-                if amendement.user_table is not None:
+                if amendement.location.user_table is not None:
                     AmendementTransfere.create(
                         amendement=amendement,
-                        old_value=str(amendement.user_table.user),
+                        old_value=str(amendement.location.user_table.user),
                         new_value="",
                     )
-                    amendement.user_table = None
+                    amendement.location.user_table = None
             else:
                 amendement.sort = sort
             modified = True

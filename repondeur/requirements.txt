@@ -27,7 +27,7 @@ jdcal==1.4.1
 Jinja2==2.10.3
 lawfactory-utils==0.1.7     # anpy, senapy, the-law-factory-parser
 legipy==0.1.2
-lockfile==0.12.2
+lockfile==0.12.2            # cachecontrol[filecache]
 lxml==4.2.6                 # lawfactory_utils: < 4.3, >= 4.2
 Mako==1.1.0
 MarkupSafe==1.1.1

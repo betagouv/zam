@@ -49,13 +49,19 @@ class LectureCreee(LectureEvent):
     __mapper_args__ = {"polymorphic_identity": "lecture_creee"}
     icon = "document"
 
-    summary_template = Template("<abbr title='$email'>$user</abbr> a créé la lecture.")
-
     def __init__(self, lecture: Lecture, user: User) -> None:
         super().__init__(lecture=lecture, user=user)
 
     def apply(self) -> None:
         pass
+
+    def render_summary(self) -> str:
+        if self.user is None:
+            return Markup("La lecture a été créée.")
+        return Markup(
+            f"<abbr title='{self.user.email}'>{self.user.name}</abbr>"
+            " a créé la lecture."
+        )
 
 
 class TexteMisAJour(LectureEvent):

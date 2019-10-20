@@ -168,7 +168,7 @@
                     <tr>
                         <td>
                             {{ shared_table.titre }}
-                            {% set amendements_nb=shared_table.amendements|count %}
+                            {% set amendements_nb=shared_table.nb_amendements %}
                             {% if amendements_nb %}
                                 {% if amendements_nb == 1 %}
                                     (1 amendement)

@@ -1,8 +1,19 @@
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
-from sqlalchemy import Column, DateTime, Enum, ForeignKey, Index, Integer, Text, desc
-from sqlalchemy.orm import Query, joinedload, relationship
+from sqlalchemy import (
+    Column,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Index,
+    Integer,
+    Text,
+    desc,
+    func,
+    select,
+)
+from sqlalchemy.orm import Query, column_property, joinedload, relationship
 
 from .amendement import Amendement
 from .article import Article
@@ -54,6 +65,12 @@ class Lecture(Base, LastEventMixin):
         back_populates="lecture",
         cascade="all, delete-orphan",
         passive_deletes=True,
+    )
+
+    nb_amendements = column_property(
+        select([func.count(Amendement.pk)])
+        .where(Amendement.lecture_pk == pk)
+        .correlate_except(Amendement)
     )
 
     articles: List[Article] = relationship(

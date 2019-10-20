@@ -587,11 +587,11 @@ class Amendement(Base):
             "first_identique_num": self.first_identique_num or "",
             "alinea": self.alinea or "",
             "date_depot": self.date_depot or "",
-            "affectation_email": self.location.user_table
-            and self.location.user_table.user.email
-            or "",
-            "affectation_name": self.location.user_table
-            and self.location.user_table.user.name
-            or "",
+            "affectation_email": (
+                self.location.user_table and self.location.user_table.user.email or ""
+            ),
+            "affectation_name": (
+                self.location.user_table and self.location.user_table.user.name or ""
+            ),
         }
         return result

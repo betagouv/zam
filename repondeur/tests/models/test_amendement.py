@@ -89,184 +89,176 @@ def test_amendement_unicity(amendements_an, article1av_an):
     assert "constraint" in error_info.value._message()
 
 
-def test_amendement_displayable_identiques(amendements_an):
-    from zam_repondeur.models import Amendement, DBSession
+class TestDisplayableIdentiques:
+    def test_without_batch(self, amendements_an):
+        from zam_repondeur.models import Amendement, DBSession
 
-    amendement_666, amendement_999 = DBSession.query(Amendement).all()
+        assert amendements_an[0].displayable_identiques == []
+        assert amendements_an[1].displayable_identiques == []
 
-    assert amendement_666.displayable_identiques == []
-    assert amendement_999.displayable_identiques == []
+        with transaction.manager:
+            DBSession.add_all(amendements_an)
+            amendements_an[0].id_identique = 41
+            amendements_an[1].id_identique = 41
+            amendements_an[0].id_discussion_commune = 42
+            amendements_an[1].id_discussion_commune = 42
+            amendements_an[0].user_content.avis = "Sagesse"
+            amendements_an[1].user_content.avis = "Sagesse"
 
-    amendement_666.id_identique = 41
-    amendement_999.id_identique = 41
-    amendement_666.id_discussion_commune = 42
-    amendement_999.id_discussion_commune = 42
-    amendement_666.user_content.avis = "Sagesse"
-    amendement_999.user_content.avis = "Sagesse"
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
 
-    assert amendement_666.displayable_identiques == [amendement_999]
-    assert amendement_999.displayable_identiques == [amendement_666]
+        assert amendement_666.displayable_identiques == [amendement_999]
+        assert amendement_999.displayable_identiques == [amendement_666]
 
+    def test_with_batch(self, amendements_an_batch):
+        from zam_repondeur.models import Amendement, DBSession
 
-def test_amendement_displayable_identiques_with_batch(amendements_an_batch):
-    from zam_repondeur.models import Amendement, DBSession
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
 
-    amendement_666, amendement_999 = DBSession.query(Amendement).all()
+        assert amendement_666.displayable_identiques == []
+        assert amendement_999.displayable_identiques == []
 
-    assert amendement_666.displayable_identiques == []
-    assert amendement_999.displayable_identiques == []
+        with transaction.manager:
+            DBSession.add_all(amendements_an_batch)
+            amendement_666.id_identique = 41
+            amendement_999.id_identique = 41
+            amendement_666.id_discussion_commune = 42
+            amendement_999.id_discussion_commune = 42
+            amendement_666.user_content.avis = "Sagesse"
+            amendement_999.user_content.avis = "Sagesse"
 
-    amendement_666.id_identique = 41
-    amendement_999.id_identique = 41
-    amendement_666.id_discussion_commune = 42
-    amendement_999.id_discussion_commune = 42
-    amendement_666.user_content.avis = "Sagesse"
-    amendement_999.user_content.avis = "Sagesse"
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
 
-    assert amendement_666.displayable_identiques == []
-    assert amendement_999.displayable_identiques == []
-
-
-def test_amendement_displayable_identiques_are_similaires(amendements_an):
-    from zam_repondeur.models import Amendement, DBSession
-
-    amendement_666, amendement_999 = DBSession.query(Amendement).all()
-
-    assert amendement_666.displayable_identiques == []
-    assert amendement_999.displayable_identiques == []
-
-    amendement_666.id_identique = 41
-    amendement_999.id_identique = 41
-    amendement_666.id_discussion_commune = 42
-    amendement_999.id_discussion_commune = 42
-    amendement_666.user_content.avis = "Favorable"
-    amendement_999.user_content.avis = "Favorable"
-
-    assert amendement_666.displayable_identiques == [amendement_999]
-    assert amendement_999.displayable_identiques == [amendement_666]
-    assert amendement_666.displayable_identiques_are_similaires
-    assert amendement_999.displayable_identiques_are_similaires
+        assert amendement_666.displayable_identiques == []
+        assert amendement_999.displayable_identiques == []
 
 
-def test_amendement_displayable_identiques_are_similaires_reponses(amendements_an):
-    from zam_repondeur.models import Amendement, DBSession
+class TestDisplayableIdentiquesAreSimilaire:
+    def test_same_avis_and_no_reponse(self, amendements_an):
+        from zam_repondeur.models import Amendement, DBSession
 
-    amendement_666, amendement_999 = DBSession.query(Amendement).all()
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
 
-    assert amendement_666.displayable_identiques == []
-    assert amendement_999.displayable_identiques == []
+        assert amendement_666.displayable_identiques == []
+        assert amendement_999.displayable_identiques == []
 
-    amendement_666.id_identique = 41
-    amendement_999.id_identique = 41
-    amendement_666.id_discussion_commune = 42
-    amendement_999.id_discussion_commune = 42
-    amendement_666.user_content.avis = "Favorable"
-    amendement_999.user_content.avis = "Favorable"
-    amendement_666.user_content.reponse = "Une réponse"
-    amendement_999.user_content.reponse = "Une réponse"
+        with transaction.manager:
+            DBSession.add_all(amendements_an)
+            amendement_666.id_identique = 41
+            amendement_999.id_identique = 41
+            amendement_666.id_discussion_commune = 42
+            amendement_999.id_discussion_commune = 42
+            amendement_666.user_content.avis = "Favorable"
+            amendement_999.user_content.avis = "Favorable"
 
-    assert amendement_666.displayable_identiques == [amendement_999]
-    assert amendement_999.displayable_identiques == [amendement_666]
-    assert amendement_666.displayable_identiques_are_similaires
-    assert amendement_999.displayable_identiques_are_similaires
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
 
+        assert amendement_666.displayable_identiques == [amendement_999]
+        assert amendement_999.displayable_identiques == [amendement_666]
+        assert amendement_666.displayable_identiques_are_similaires
+        assert amendement_999.displayable_identiques_are_similaires
 
-def test_amendement_displayable_identiques_are_similaires_reponses_with_spaces(
-    amendements_an
-):
-    from zam_repondeur.models import Amendement, DBSession
+    def test_same_avis_and_same_reponse(self, amendements_an):
+        from zam_repondeur.models import Amendement, DBSession
 
-    amendement_666, amendement_999 = DBSession.query(Amendement).all()
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
 
-    assert amendement_666.displayable_identiques == []
-    assert amendement_999.displayable_identiques == []
+        assert amendement_666.displayable_identiques == []
+        assert amendement_999.displayable_identiques == []
 
-    amendement_666.id_identique = 41
-    amendement_999.id_identique = 41
-    amendement_666.id_discussion_commune = 42
-    amendement_999.id_discussion_commune = 42
-    amendement_666.user_content.avis = "Favorable"
-    amendement_999.user_content.avis = "Favorable"
-    amendement_666.user_content.reponse = "Une réponse"
-    amendement_999.user_content.reponse = """
-    Une
- réponse"""
+        with transaction.manager:
+            DBSession.add_all(amendements_an)
+            amendement_666.id_identique = 41
+            amendement_999.id_identique = 41
+            amendement_666.id_discussion_commune = 42
+            amendement_999.id_discussion_commune = 42
+            amendement_666.user_content.avis = "Favorable"
+            amendement_999.user_content.avis = "Favorable"
+            amendement_666.user_content.reponse = "Une réponse"
+            amendement_999.user_content.reponse = "Une réponse"
 
-    assert amendement_666.displayable_identiques == [amendement_999]
-    assert amendement_999.displayable_identiques == [amendement_666]
-    assert amendement_666.displayable_identiques_are_similaires
-    assert amendement_999.displayable_identiques_are_similaires
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
 
+        assert amendement_666.displayable_identiques == [amendement_999]
+        assert amendement_999.displayable_identiques == [amendement_666]
+        assert amendement_666.displayable_identiques_are_similaires
+        assert amendement_999.displayable_identiques_are_similaires
 
-def test_amendement_displayable_identiques_are_similaires_reponses_with_tags(
-    amendements_an
-):
-    from zam_repondeur.models import Amendement, DBSession
+    def test_same_avis_and_same_reponse_with_spaces(self, amendements_an):
+        from zam_repondeur.models import Amendement, DBSession
 
-    amendement_666, amendement_999 = DBSession.query(Amendement).all()
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
 
-    assert amendement_666.displayable_identiques == []
-    assert amendement_999.displayable_identiques == []
+        assert amendement_666.displayable_identiques == []
+        assert amendement_999.displayable_identiques == []
 
-    amendement_666.id_identique = 41
-    amendement_999.id_identique = 41
-    amendement_666.id_discussion_commune = 42
-    amendement_999.id_discussion_commune = 42
-    amendement_666.user_content.avis = "Favorable"
-    amendement_999.user_content.avis = "Favorable"
-    amendement_666.user_content.reponse = "Une réponse"
-    amendement_999.user_content.reponse = """
-    <p>Une
- réponse</p>"""
+        with transaction.manager:
+            DBSession.add_all(amendements_an)
+            amendement_666.id_identique = 41
+            amendement_999.id_identique = 41
+            amendement_666.id_discussion_commune = 42
+            amendement_999.id_discussion_commune = 42
+            amendement_666.user_content.avis = "Favorable"
+            amendement_999.user_content.avis = "Favorable"
+            amendement_666.user_content.reponse = "Une réponse"
+            amendement_999.user_content.reponse = "  Une réponse   " ""
 
-    assert amendement_666.displayable_identiques == [amendement_999]
-    assert amendement_999.displayable_identiques == [amendement_666]
-    assert amendement_666.displayable_identiques_are_similaires
-    assert amendement_999.displayable_identiques_are_similaires
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
 
+        assert amendement_666.displayable_identiques == [amendement_999]
+        assert amendement_999.displayable_identiques == [amendement_666]
+        assert amendement_666.displayable_identiques_are_similaires
+        assert amendement_999.displayable_identiques_are_similaires
 
-def test_amendement_displayable_identiques_are_not_similaires(amendements_an):
-    from zam_repondeur.models import Amendement, DBSession
+    def test_different_avis(self, amendements_an):
+        from zam_repondeur.models import Amendement, DBSession
 
-    amendement_666, amendement_999 = DBSession.query(Amendement).all()
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
 
-    assert amendement_666.displayable_identiques == []
-    assert amendement_999.displayable_identiques == []
+        assert amendement_666.displayable_identiques == []
+        assert amendement_999.displayable_identiques == []
 
-    amendement_666.id_identique = 41
-    amendement_999.id_identique = 41
-    amendement_666.id_discussion_commune = 42
-    amendement_999.id_discussion_commune = 42
-    amendement_666.user_content.avis = "Favorable"
-    amendement_999.user_content.avis = "Défavorable"
+        with transaction.manager:
+            DBSession.add_all(amendements_an)
+            amendement_666.id_identique = 41
+            amendement_999.id_identique = 41
+            amendement_666.id_discussion_commune = 42
+            amendement_999.id_discussion_commune = 42
+            amendement_666.user_content.avis = "Favorable"
+            amendement_999.user_content.avis = "Défavorable"
 
-    assert amendement_666.displayable_identiques == [amendement_999]
-    assert amendement_999.displayable_identiques == [amendement_666]
-    assert not amendement_666.displayable_identiques_are_similaires
-    assert not amendement_999.displayable_identiques_are_similaires
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
 
+        assert amendement_666.displayable_identiques == [amendement_999]
+        assert amendement_999.displayable_identiques == [amendement_666]
+        assert not amendement_666.displayable_identiques_are_similaires
+        assert not amendement_999.displayable_identiques_are_similaires
 
-def test_amendement_displayable_identiques_are_not_similaires_reponses(amendements_an):
-    from zam_repondeur.models import Amendement, DBSession
+    def test_different_reponse(self, amendements_an):
+        from zam_repondeur.models import Amendement, DBSession
 
-    amendement_666, amendement_999 = DBSession.query(Amendement).all()
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
 
-    assert amendement_666.displayable_identiques == []
-    assert amendement_999.displayable_identiques == []
+        assert amendement_666.displayable_identiques == []
+        assert amendement_999.displayable_identiques == []
 
-    amendement_666.id_identique = 41
-    amendement_999.id_identique = 41
-    amendement_666.id_discussion_commune = 42
-    amendement_999.id_discussion_commune = 42
-    amendement_666.user_content.avis = "Favorable"
-    amendement_999.user_content.avis = "Favorable"
-    amendement_666.user_content.reponse = "Une réponse"
-    amendement_999.user_content.reponse = "Une autre réponse"
+        with transaction.manager:
+            DBSession.add_all(amendements_an)
+            amendement_666.id_identique = 41
+            amendement_999.id_identique = 41
+            amendement_666.id_discussion_commune = 42
+            amendement_999.id_discussion_commune = 42
+            amendement_666.user_content.avis = "Favorable"
+            amendement_999.user_content.avis = "Favorable"
+            amendement_666.user_content.reponse = "Une réponse"
+            amendement_999.user_content.reponse = "Une autre réponse"
 
-    assert amendement_666.displayable_identiques == [amendement_999]
-    assert amendement_999.displayable_identiques == [amendement_666]
-    assert not amendement_666.displayable_identiques_are_similaires
-    assert not amendement_999.displayable_identiques_are_similaires
+        amendement_666, amendement_999 = DBSession.query(Amendement).all()
+
+        assert amendement_666.displayable_identiques == [amendement_999]
+        assert amendement_999.displayable_identiques == [amendement_666]
+        assert not amendement_666.displayable_identiques_are_similaires
+        assert not amendement_999.displayable_identiques_are_similaires
 
 
 @pytest.mark.usefixtures("amendements_repository")

@@ -26,7 +26,7 @@ DOWNLOAD_FORMATS = {
 
 AMDT_OPTIONS = [
     joinedload("user_content"),
-    subqueryload("location").options(
+    joinedload("location").options(
         joinedload("user_table").joinedload("user").load_only("email", "name")
     ),
     joinedload("article").options(
@@ -35,7 +35,10 @@ AMDT_OPTIONS = [
     ),
 ]
 
-EXPORT_OPTIONS = [subqueryload("amendements").options(*AMDT_OPTIONS)]
+EXPORT_OPTIONS = [
+    subqueryload("amendements").options(*AMDT_OPTIONS),
+    subqueryload("articles").joinedload("user_content"),
+]
 
 PDF_OPTIONS = [
     joinedload("dossier").load_only("titre"),

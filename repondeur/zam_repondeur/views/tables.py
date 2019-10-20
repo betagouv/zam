@@ -26,29 +26,17 @@ class TableView:
         self.context = context
         self.request = request
         self.lecture = context.lecture_resource.model(
-            subqueryload("amendements").options(
-                subqueryload("article").defer("content"),
-                (
-                    load_only(
-                        "article_pk",
-                        "auteur",
-                        "id_identique",
-                        "num",
-                        "position",
-                        "rectif",
-                        "sort",
-                    )
-                    .joinedload("user_content")
-                    .load_only("avis", "objet", "reponse")
-                ),
-            )
+            subqueryload("amendements")
+            .joinedload("user_content")
+            .load_only("avis", "objet", "reponse_hash")
         )
 
     @view_config(request_method="GET", renderer="table_detail.html")
     def get(self) -> dict:
         table = self.context.model(
             subqueryload("amendements_locations").options(
-                subqueryload("amendement").options(
+                load_only("amendement_pk"),
+                joinedload("amendement").options(
                     load_only(
                         "article_pk",
                         "auteur",
@@ -62,18 +50,22 @@ class TableView:
                         "rectif",
                         "sort",
                     ),
-                    joinedload("user_content").load_only("avis", "objet", "reponse"),
-                    subqueryload("location").options(
+                    joinedload("user_content").load_only(
+                        "avis", "objet", "reponse_hash"
+                    ),
+                    joinedload("location").options(
+                        load_only("batch_pk"),
                         subqueryload("batch")
                         .joinedload("amendements_locations")
-                        .joinedload("amendement")
-                        .load_only("num", "rectif"),
-                        subqueryload("shared_table").load_only("titre"),
-                        subqueryload("user_table")
-                        .joinedload("user")
-                        .load_only("email", "name"),
+                        .options(
+                            load_only("amendement_pk"),
+                            joinedload("amendement").load_only("num", "rectif"),
+                        ),
                     ),
-                )
+                    joinedload("article").load_only(
+                        "lecture_pk", "type", "num", "mult", "pos"
+                    ),
+                ),
             )
         )
         return {

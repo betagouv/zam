@@ -4,7 +4,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config
-from sqlalchemy.orm import noload
+from sqlalchemy.orm import load_only, noload
 
 from zam_repondeur.message import Message
 from zam_repondeur.models import DBSession, SharedTable
@@ -42,8 +42,12 @@ def lecture_journal(context: LectureResource, request: Request) -> Response:
 
 @view_config(context=LectureResource, name="options", renderer="lecture_options.html")
 def lecture_options(context: LectureResource, request: Request) -> Response:
-    lecture = context.model()
-    shared_tables = DBSession.query(SharedTable).filter(SharedTable.lecture == lecture)
+    lecture = context.model(noload("amendements"))
+    shared_tables = (
+        DBSession.query(SharedTable)
+        .filter(SharedTable.lecture_pk == lecture.pk)
+        .options(load_only("lecture_pk", "nb_amendements", "slug", "titre"))
+    ).all()
     return {
         "lecture": lecture,
         "dossier_resource": context.dossier_resource,

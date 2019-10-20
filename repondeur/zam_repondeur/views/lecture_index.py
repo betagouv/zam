@@ -20,6 +20,8 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
                 "auteur",
                 "id_identique",
                 "lecture_pk",
+                "mission_titre",
+                "mission_titre_court",
                 "num",
                 "parent_pk",
                 "position",

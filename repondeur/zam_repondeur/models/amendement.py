@@ -320,7 +320,7 @@ class Amendement(Base):
             return NotImplemented
         return self.sort_key < other.sort_key
 
-    @property
+    @reify
     def sort_key(self) -> Tuple[bool, int, "Article", int]:
         return (
             self.is_abandoned,
@@ -423,13 +423,13 @@ class Amendement(Base):
     def gouvernemental(self) -> bool:
         return self.auteur == "LE GOUVERNEMENT"
 
-    @property
+    @reify
     def is_withdrawn(self) -> bool:
         if not self.sort:
             return False
         return "retiré" in self.sort.lower()
 
-    @property
+    @reify
     def is_irrecevable(self) -> bool:
         if not self.sort:
             return False
@@ -441,17 +441,17 @@ class Amendement(Base):
             return False
         return self.is_irrecevable or self.is_withdrawn
 
-    @property
+    @reify
     def is_abandoned_during_seance(self) -> bool:
         if not self.sort:
             return False
         return self.sort.lower() == "tombé" or self.is_withdrawn
 
-    @property
+    @reify
     def is_abandoned(self) -> bool:
         return self.is_abandoned_before_seance or self.is_abandoned_during_seance
 
-    @property
+    @reify
     def is_displayable(self) -> bool:
         return (
             bool(self.user_content.avis) or self.gouvernemental

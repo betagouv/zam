@@ -292,13 +292,13 @@
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         ZZZ {# Keep at the end. #}
-                    {%- elif amendement.user_content.reponse -%}
+                    {%- elif amendement.user_content.has_reponse -%}
                         AAA
                     {%- else -%}
                         YYY {# Keep almost at the end. #}
                     {%- endif -%}"
                     class="centered">
-                    {% if amendement.user_content.reponse %}
+                    {% if amendement.user_content.has_reponse %}
                         {{ macros.svg_icon("check") }}
                     {% endif %}
                     {% if amendement.identique %}

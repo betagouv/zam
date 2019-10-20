@@ -1,8 +1,17 @@
 from typing import List
 
 from slugify import slugify
-from sqlalchemy import Column, ForeignKey, Index, Integer, Text, UniqueConstraint
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy import (
+    Column,
+    ForeignKey,
+    Index,
+    Integer,
+    Text,
+    UniqueConstraint,
+    func,
+    select,
+)
+from sqlalchemy.orm import backref, column_property, relationship
 
 from .amendement import Amendement, AmendementLocation
 from .base import Base, DBSession
@@ -87,6 +96,12 @@ class SharedTable(Base):
     )
 
     __repr_keys__ = ("pk", "titre", "slug", "lecture_pk")
+
+    nb_amendements = column_property(
+        select([func.count(AmendementLocation.pk)])
+        .where(AmendementLocation.shared_table_pk == pk)
+        .correlate_except(AmendementLocation)
+    )
 
     @classmethod
     def create(cls, titre: str, lecture: Lecture) -> "SharedTable":

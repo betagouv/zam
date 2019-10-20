@@ -80,8 +80,8 @@
             <div>
                 <h3>{{ lecture.chambre.value }}, {{ lecture.format_organe() }}</h3>
                 <p>{{ lecture.format_num_lecture() }}, {{ lecture.format_texte() }}</p>
-                {% if lecture.amendements %}
-                    <em>{{ lecture.amendements|length }} amendements</em>
+                {% if lecture.nb_amendements %}
+                    <em>{{ lecture.nb_amendements }} amendements</em>
                 {% endif %}
             </div>
             <nav>

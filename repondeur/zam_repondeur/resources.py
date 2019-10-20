@@ -1,6 +1,5 @@
 from typing import Any, Iterator, List, Optional, Tuple, cast
 
-from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
 from pyramid.security import Allow, Authenticated, Deny, Everyone
@@ -8,6 +7,7 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Query, joinedload, lazyload, subqueryload
 from sqlalchemy.orm.exc import NoResultFound
 
+from zam_repondeur.decorator import reify
 from zam_repondeur.models import (
     AllowedEmailPattern,
     Amendement,

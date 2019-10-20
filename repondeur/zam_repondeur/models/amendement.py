@@ -7,11 +7,11 @@ from typing import (
     List,
     NamedTuple,
     Optional,
+    Set,
     Tuple,
     Union,
 )
 
-from jinja2.filters import do_striptags
 from sqlalchemy import (
     Column,
     Date,
@@ -21,6 +21,7 @@ from sqlalchemy import (
     Integer,
     Text,
     UniqueConstraint,
+    case,
     func,
 )
 from sqlalchemy.orm import backref, column_property, relationship
@@ -120,14 +121,17 @@ class AmendementUserContent(Base):
 
     def similaire(self, other: "AmendementUserContent") -> bool:
         """
-        Same answer (with maybe some markup differences)
+        Same answer (with maybe some whitespace differences)
         """
-        return (
-            self.avis == other.avis
-            and do_striptags(self.objet) == do_striptags(other.objet)  # type: ignore
-            and do_striptags(self.reponse)  # type: ignore
-            == do_striptags(other.reponse)  # type: ignore
+        return self.reponse_hash == other.reponse_hash
+
+    reponse_hash: str = column_property(
+        func.md5(
+            case([(avis.is_(None), "")], else_=avis)  # type: ignore
+            + case([(objet.is_(None), "")], else_=func.trim(objet))  # type: ignore
+            + case([(reponse.is_(None), "")], else_=func.trim(reponse))  # type: ignore
         )
+    )
 
     def as_tuple(self) -> ReponseTuple:
         return ReponseTuple(
@@ -467,63 +471,53 @@ class Amendement(Base):
 
     @property
     def all_identiques(self) -> List["Amendement"]:
-        if self.id_identique is None:
-            return []
-        return sorted(
-            amendement
-            for amendement in self.lecture.amendements
-            if (
-                amendement.id_identique == self.id_identique
-                and amendement.article is self.article
-                and amendement.num != self.num
-                and not amendement.is_abandoned
-            )
+        return sorted(self._set_of_all_identiques)
+
+    @property
+    def _set_of_all_identiques(self) -> Set["Amendement"]:
+        return (
+            self.lecture.identiques_map[self.num]
+            - self.lecture.abandoned_amendements
+            - {self}
         )
 
     @property
     def first_identique_num(self) -> Optional[int]:
         if self.id_identique is None:
             return None
-        amdt: Amendement = sorted(
-            amendement
-            for amendement in self.lecture.amendements
-            if amendement.id_identique == self.id_identique
-            and amendement.article is self.article
-        )[0]
-        return amdt.num
+        return next(amdt.num for amdt in sorted(self.lecture.identiques_map[self.num]))
+
+    @property
+    def _set_of_displayable_identiques(self) -> Set["Amendement"]:
+        return (
+            self._set_of_all_identiques
+            - self.lecture.not_displayable_amendements
+            - set(self.location.batch.amendements if self.location.batch else [])
+        )
 
     @property
     def displayable_identiques(self) -> List["Amendement"]:
-        return [
-            amendement
-            for amendement in self.all_identiques
-            if amendement.is_displayable
-            and (
-                amendement not in self.location.batch.amendements
-                if self.location.batch
-                else True
-            )
-        ]
+        return list(self._set_of_displayable_identiques)
 
     @property
     def similaires(self) -> List["Amendement"]:
-        return sorted(
-            amendement
-            for amendement in self.lecture.amendements
-            if (
-                amendement.article is self.article
-                and amendement.num != self.num
-                and amendement.reponse_similaire(self)
-                and amendement.is_displayable
-            )
-        )
+        return sorted(self._set_of_similaires)
+
+    @property
+    def _set_of_similaires(self) -> Set["Amendement"]:
+        similaires = self.lecture.similaires_map[self.num]
+        return {
+            amdt
+            for amdt in similaires
+            if (amdt.num != self.num and amdt.is_displayable)
+        }
 
     def reponse_similaire(self, other: "Amendement") -> bool:
         return self.user_content.similaire(other.user_content)
 
     @property
     def displayable_identiques_are_similaires(self) -> bool:
-        return self.displayable_identiques == self.similaires
+        return self._set_of_displayable_identiques == self._set_of_similaires
 
     def grouped_displayable_children(
         self

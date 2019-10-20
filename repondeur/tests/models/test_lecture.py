@@ -1,4 +1,5 @@
 import pytest
+import transaction
 
 # We need data about dossiers, texts and groups
 pytestmark = pytest.mark.usefixtures("data_repository")
@@ -78,3 +79,76 @@ class TestLectureToStr:
             "texte nº\u00a063"
         )
         assert str(lecture) == result
+
+
+class TestIdentiquesMap:
+    def test_empty(self, lecture_an):
+        from zam_repondeur.models import DBSession
+
+        DBSession.add(lecture_an)
+        assert lecture_an.identiques_map == {}
+
+    def test_no_identiques(self, lecture_an, amendements_an):
+        amdt_666, amdt_999 = amendements_an
+        assert lecture_an.identiques_map == {666: {amdt_666}, 999: {amdt_999}}
+
+    def test_identiques(self, lecture_an, amendements_an):
+        amdt_666, amdt_999 = amendements_an
+        amdt_666.id_identique = amdt_999.id_identique = 1234
+        assert lecture_an.identiques_map == {
+            666: {amdt_666, amdt_999},
+            999: {amdt_666, amdt_999},
+        }
+
+
+class TestSimilairesMap:
+    def test_empty(self, lecture_an):
+        from zam_repondeur.models import DBSession
+
+        DBSession.add(lecture_an)
+        assert lecture_an.similaires_map == {}
+
+    def test_no_reponses(self, lecture_an, amendements_an):
+        from zam_repondeur.models import DBSession
+
+        DBSession.add(lecture_an)
+        amdt_666, amdt_999 = amendements_an
+        assert lecture_an.similaires_map == {
+            666: {amdt_666, amdt_999},
+            999: {amdt_666, amdt_999},
+        }
+
+    def test_same_reponses(self, lecture_an, amendements_an):
+        from zam_repondeur.models import DBSession, Amendement, Lecture
+
+        with transaction.manager:
+            amendements_an[0].user_content.reponse = "bla bla"
+            amendements_an[1].user_content.reponse = "bla bla"
+            DBSession.add_all(amendements_an)
+
+        lecture_an = DBSession.query(Lecture).one()
+        amdt_666 = DBSession.query(Amendement).filter_by(num=666).one()
+        amdt_999 = DBSession.query(Amendement).filter_by(num=999).one()
+
+        assert amdt_666.user_content.reponse_hash == amdt_999.user_content.reponse_hash
+
+        assert lecture_an.similaires_map == {
+            666: {amdt_666, amdt_999},
+            999: {amdt_666, amdt_999},
+        }
+
+    def test_different_reponses(self, lecture_an, amendements_an):
+        from zam_repondeur.models import DBSession, Amendement, Lecture
+
+        with transaction.manager:
+            amendements_an[0].user_content.reponse = "bla bla"
+            amendements_an[1].user_content.reponse = "bli bli"
+            DBSession.add_all(amendements_an)
+
+        lecture_an = DBSession.query(Lecture).one()
+        amdt_666 = DBSession.query(Amendement).filter_by(num=666).one()
+        amdt_999 = DBSession.query(Amendement).filter_by(num=999).one()
+
+        assert amdt_666.user_content.reponse_hash != amdt_999.user_content.reponse_hash
+
+        assert lecture_an.similaires_map == {666: {amdt_666}, 999: {amdt_999}}

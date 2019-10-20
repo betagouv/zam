@@ -295,3 +295,107 @@ class TestAmendementEdition:
         assert amendements_an[0].is_being_edited
         amendements_an[0].stop_editing()
         assert not amendements_an[0].is_being_edited
+
+
+class TestHasObjet:
+    def test_non_empty_objet(self, amendements_an):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            DBSession.add(amendements_an[0])
+            amendements_an[0].user_content.objet = "bla bla"
+
+        DBSession.add(amendements_an[0])
+        assert amendements_an[0].user_content.has_objet
+
+    def test_empty_objet(self, amendements_an):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            DBSession.add(amendements_an[0])
+            amendements_an[0].user_content.objet = ""
+
+        DBSession.add(amendements_an[0])
+        assert not amendements_an[0].user_content.has_objet
+
+    def test_whitespace_objet(self, amendements_an):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            DBSession.add(amendements_an[0])
+            amendements_an[0].user_content.objet = "    "
+
+        DBSession.add(amendements_an[0])
+        assert not amendements_an[0].user_content.has_objet
+
+    def test_empty_paragraph_objet(self, amendements_an):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            DBSession.add(amendements_an[0])
+            amendements_an[0].user_content.objet = "<p></p>"
+
+        DBSession.add(amendements_an[0])
+        assert not amendements_an[0].user_content.has_objet
+
+    def test_null_objet(self, amendements_an):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            DBSession.add(amendements_an[0])
+            amendements_an[0].user_content.objet = None
+
+        DBSession.add(amendements_an[0])
+        assert not amendements_an[0].user_content.has_objet
+
+
+class TestHasReponse:
+    def test_non_empty_reponse(self, amendements_an):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            DBSession.add(amendements_an[0])
+            amendements_an[0].user_content.reponse = "bla bla"
+
+        DBSession.add(amendements_an[0])
+        assert amendements_an[0].user_content.has_reponse
+
+    def test_empty_reponse(self, amendements_an):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            DBSession.add(amendements_an[0])
+            amendements_an[0].user_content.reponse = ""
+
+        DBSession.add(amendements_an[0])
+        assert not amendements_an[0].user_content.has_reponse
+
+    def test_whitespace_reponse(self, amendements_an):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            DBSession.add(amendements_an[0])
+            amendements_an[0].user_content.reponse = "    "
+
+        DBSession.add(amendements_an[0])
+        assert not amendements_an[0].user_content.has_reponse
+
+    def test_empty_paragraph_reponse(self, amendements_an):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            DBSession.add(amendements_an[0])
+            amendements_an[0].user_content.reponse = "<p></p>"
+
+        DBSession.add(amendements_an[0])
+        assert not amendements_an[0].user_content.has_reponse
+
+    def test_null_reponse(self, amendements_an):
+        from zam_repondeur.models import DBSession
+
+        with transaction.manager:
+            DBSession.add(amendements_an[0])
+            amendements_an[0].user_content.reponse = None
+
+        DBSession.add(amendements_an[0])
+        assert not amendements_an[0].user_content.has_reponse

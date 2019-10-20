@@ -21,8 +21,9 @@ from sqlalchemy import (
     Integer,
     Text,
     UniqueConstraint,
+    func,
 )
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import backref, column_property, relationship
 
 from zam_repondeur.constants import GROUPS_COLORS
 from zam_repondeur.decorator import reify
@@ -101,21 +102,9 @@ class AmendementUserContent(Base):
             and not self.has_reponse
         )
 
-    @property
-    def has_objet(self) -> bool:
-        return (
-            self.objet is not None
-            and self.objet.strip() != ""
-            and self.objet != "<p></p>"
-        )
+    has_objet: bool = column_property(func.trim(objet).notin_(["", "<p></p>"]))
 
-    @property
-    def has_reponse(self) -> bool:
-        return (
-            self.reponse is not None
-            and self.reponse.strip() != ""
-            and self.reponse != "<p></p>"
-        )
+    has_reponse: bool = column_property(func.trim(reponse).notin_(["", "<p></p>"]))
 
     @property
     def favorable(self) -> bool:

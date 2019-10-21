@@ -3,9 +3,7 @@ import transaction
 
 
 def _text_from_node(node, selector):
-    return " ".join(
-        part.strip() for part in node.css_first(selector).text().strip().split("\n")
-    )
+    return " ".join(node.css_first(selector).text().strip().split())
 
 
 def test_reponses_empty(app, lecture_an, amendements_an, user_david):
@@ -134,7 +132,7 @@ def test_reponses_authors_not_grouping(app, lecture_an, amendements_an, user_dav
 
     assert (
         _text_from_node(test_amendement_666.node, "header .authors")
-        == "M. JEAN (Les Indépendants ), M. CLAUDE (Les Mécontents)"
+        == "M. JEAN (Les Indépendants ), M. CLAUDE (Les Mécontents )"
     )
 
 

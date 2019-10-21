@@ -39,8 +39,7 @@
             <div class="last-update">
                 Dernière mise à jour :
                 <a class="underlined" href="{{ request.resource_url(context, 'journal') }}">
-                    <time xsi:type="xsd:dateTime"
-                        datetime="{{ last_event_datetime.isoformat() }}"
+                    <time datetime="{{ last_event_datetime.isoformat(timespec='milliseconds') }}"
                         data-controller="timestamp"
                         data-timestamp-modified-at="{{ last_event_timestamp }}">
                             {{ last_event_datetime | human_readable_time }}

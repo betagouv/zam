@@ -24,7 +24,7 @@ def test_visionneuse_detail_amendement(
     assert header.find_element_by_css_selector("h2").text == "Amendement 666"
     assert (
         header.find_element_by_css_selector(".authors").text
-        == "M. Content (Les Heureux)"
+        == "M. Content (Les Heureux )"
     )
     assert header.find_element_by_css_selector("p .avis").text == "Favorable"
     assert not article.find_element_by_css_selector(".reponse-detail").is_displayed()

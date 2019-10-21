@@ -104,12 +104,10 @@
                     <span class="author">
                       {{ auteur }}{% if loop.revindex == 2 %} et {%- else -%}{% if not loop.last %}, {% endif %}{%- endif -%}
                     </span>
-                  {%- endfor %}
-                  {% if groupe -%}
-                    ({{ groupe }}
-                    {%- if amdts_groupe[0].couleur_groupe != "#ffffff" %}
+                  {%- endfor -%}
+                  {% if groupe %} ({{ groupe }} {% if amdts_groupe[0].couleur_groupe != "#ffffff" -%}
                       <span class="group-color" style="background-color: {{ amdts_groupe[0].couleur_groupe }};"></span>
-                    {%- endif -%})
+                    {%- endif %})
                   {%- endif %}{% if not loop.last %}, {% endif %}
                 {%- endfor %}
               </p>
@@ -212,8 +210,7 @@
     {% set amendement = amendements[0] %}
     {% set parent = amendement.parent %}
     {% set length = amendements|length %}
-    Amendement{% if length > 1 %}s{% endif %}
-    {% if length > 5 -%}
+    Amendement{% if length > 1 %}s{% endif %} {% if length > 5 %}
         {{ amendements[0] }},
         {{ amendements[1] }},
         …,
@@ -221,11 +218,11 @@
         {{ amendements[-2] }} et
         {{ amendements[-1] }}
         ({{ length }} au total)
-    {%- else -%}
-        {% for amendement in amendements -%}
+    {% else %}
+        {% for amendement in amendements %}
             {{ amendement }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-        {%- endfor %}
-    {%- endif -%}
+        {% endfor %}
+    {% endif %}
     {% if parent %} (sous-amendement au {{ parent }}){% endif %}
 {% endmacro %}
 

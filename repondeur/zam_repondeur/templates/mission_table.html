@@ -9,13 +9,13 @@
         </tr>
     </thead>
     <tbody>
-        {%- for programme in tableau.programmes %}
+        {% for programme in tableau.programmes %}
             <tr>
                 <td>{{ programme.libelle }}</td>
                 <td>{{ programme.pos|safe }}</td>
                 <td>{{ programme.neg|safe }}</td>
             </tr>
-        {%- endfor %}
+        {% endfor %}
         <tr>
             <td>Totaux</td>
             <td>{{ tableau.totaux.pos|safe }}</td>

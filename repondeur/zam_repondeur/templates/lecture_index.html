@@ -139,8 +139,7 @@
                     data-table=""
                     data-emptytable=""
                     data-gouvernemental=""
-                    data-abandoned-before-seance=""
-                    >
+                    data-abandoned-before-seance="">
                     <td colspan="{% if lecture.has_missions %}8{% else %}7{% endif %}">
                         Les amendements en-deçà de cette ligne ne sont pas (encore) présents dans le dérouleur.
                     </td>
@@ -180,11 +179,10 @@
                 data-emptytable="{{ 1 if not amendement.table_name and not amendement.is_abandoned else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 data-abandoned-before-seance="{{ 1 if amendement.is_abandoned_before_seance else 0 }}"
-                id="{{ amendement.slug }}"
-                {% if amendement.slug == highlighted_amdt %}
+                {% if amendement.slug == highlighted_amdt -%}
                 class="highlighted"
-                {% endif %}
-            >
+                {%- endif %}
+                id="{{ amendement.slug }}">
                 <td>
                     <input type="checkbox" name="amendement-selected" value="{{ amendement.num }}">
                 </td>
@@ -208,27 +206,20 @@
                         {% endif %}
                     </td>
                 {% endif %}
-                <td data-sortkey="
+                {% set all_identiques = amendement.all_identiques %}
+                {# Given that all_identiques excludes itself, we can use it
+                    directly as a boolean to avoid a lonely identique: #}
+                <td {% if amendement.identique and not amendement.is_abandoned and all_identiques -%}
+                    {% set is_first = loop.previtem is not defined or loop.previtem not in all_identiques %}
+                    {% set is_last = loop.nextitem is not defined or loop.nextitem not in all_identiques %}
+                    class="identique {%- if is_first %} first{% endif %}{% if is_last %} last{% endif %}"
+                    {%- endif %}
+                    data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
                         {{ amendement.VERY_BIG_NUMBER }} {# Keep at the end. #}
                     {%- else -%}
                         {{ amendement.num }}
-                    {%- endif -%}"
-                    {% set all_identiques = amendement.all_identiques %}
-                    {# Given that all_identiques excludes itself,
-                        we can use it directly as a boolean to avoid
-                        a lonely identique: #}
-                    {%- if amendement.identique and not amendement.is_abandoned and all_identiques %}
-                    class="identique
-                        {% if loop.previtem is not defined or loop.previtem not in all_identiques %}
-                            first
-                        {% endif %}
-                        {% if loop.nextitem is not defined or loop.nextitem not in all_identiques %}
-                            last
-                        {% endif %}
-                    "
-                    {% endif -%}
-                >
+                    {%- endif -%}">
                     {% if amendement.location.batch %}
                         {{ amendement.location.batch.amendements|join(', ', attribute='num_disp') }}
                     {% else %}
@@ -249,11 +240,11 @@
                 </td>
                 <td data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
-                        ZZZ {# Keep at the end. #}
+                        ZZZ{# Keep at the end. #}
                     {%- elif amendement.table_name -%}
                         {{ amendement.table_name }}
                     {%- else -%}
-                        YYY {# Keep almost at the end. #}
+                        YYY{# Keep almost at the end. #}
                     {%- endif -%}">
                     {% if amendement.table_name %}
                         {% if amendement.location.shared_table %}
@@ -262,42 +253,37 @@
                         {{ amendement.table_name }}
                     {% endif %}
                 </td>
-                <td
-                    {% if not amendement.gouvernemental and not amendement.user_content.avis %}
-                        class="centered input-required"
-                    {% else %}
-                        class="centered"
-                    {% endif %}
+                <td class="centered {% if not amendement.gouvernemental and not amendement.user_content.avis %}input-required{% endif %}"
                     data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
-                        ZZZ {# Keep at the end. #}
+                        ZZZ{# Keep at the end. #}
                     {%- elif amendement.gouvernemental -%}
                         Présentation
                     {%- elif amendement.user_content.avis -%}
                         {{ amendement.user_content.avis }}
                     {%- else -%}
                         Aucun
-                    {%- endif -%}"
-                >
-                    <nobr>
-                        {% if amendement.is_abandoned_before_seance %}
-                            {# No check #}
-                        {% elif amendement.gouvernemental %}
+                    {%- endif -%}">
+                    {% if amendement.is_abandoned_before_seance %}
+                        {# No check #}
+                    {% elif amendement.gouvernemental %}
+                        <nobr>
                             <abbr title="Présentation">{{ macros.svg_icon("check") }}</abbr>
-                        {% elif amendement.user_content.avis %}
+                        </nobr>
+                    {% elif amendement.user_content.avis %}
+                        <nobr>
                             <abbr title="{{ amendement.user_content.avis }}">{{ macros.svg_icon("check") }}</abbr>
-                        {% endif %}
-                    </nobr>
+                        </nobr>
+                    {% endif %}
                 </td>
-                <td data-sortkey="
+                <td class="centered" data-sortkey="
                     {%- if amendement.is_abandoned_before_seance -%}
-                        ZZZ {# Keep at the end. #}
+                        ZZZ{# Keep at the end. #}
                     {%- elif amendement.user_content.has_reponse -%}
                         AAA
                     {%- else -%}
-                        YYY {# Keep almost at the end. #}
-                    {%- endif -%}"
-                    class="centered">
+                        YYY{# Keep almost at the end. #}
+                    {%- endif -%}">
                     {% if amendement.user_content.has_reponse %}
                         {{ macros.svg_icon("check") }}
                     {% endif %}

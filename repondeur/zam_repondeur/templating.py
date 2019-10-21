@@ -19,6 +19,8 @@ JINJA2_SETTINGS = {
         "human_readable_time": f"{FILTERS_PATH}:human_readable_time",
     },
     "jinja2.undefined": "strict",
+    "jinja2.trim_blocks": "true",
+    "jinja2.lstrip_blocks": "true",
 }
 
 

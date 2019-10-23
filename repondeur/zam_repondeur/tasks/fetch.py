@@ -36,8 +36,6 @@ def update_dossier(dossier_pk: int, force: bool = False) -> None:
 
         # First fetch data from existing lectures, starting with recents.
         for lecture in reversed(dossier.lectures):
-            # Refetch the lecture to apply the FOR UPDATE.
-            lecture = DBSession.query(Lecture).with_for_update().get(lecture.pk)
 
             # Auto fetch articles only for recent lectures.
             if force or lecture.refreshable_for("articles", huey.settings):

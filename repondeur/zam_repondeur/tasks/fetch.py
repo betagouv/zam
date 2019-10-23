@@ -34,21 +34,21 @@ def update_dossier(dossier_pk: int, force: bool = False) -> None:
             logger.error(f"Dossier {dossier_pk} introuvable")
             return
 
-    # First fetch data from existing lectures, starting with recents.
-    for lecture in reversed(dossier.lectures):
-        # Refetch the lecture to apply the FOR UPDATE.
-        lecture = DBSession.query(Lecture).with_for_update().get(lecture.pk)
+        # First fetch data from existing lectures, starting with recents.
+        for lecture in reversed(dossier.lectures):
+            # Refetch the lecture to apply the FOR UPDATE.
+            lecture = DBSession.query(Lecture).with_for_update().get(lecture.pk)
 
-        # Auto fetch articles only for recent lectures.
-        if force or lecture.refreshable_for("articles", huey.settings):
-            fetch_articles(lecture.pk)
+            # Auto fetch articles only for recent lectures.
+            if force or lecture.refreshable_for("articles", huey.settings):
+                fetch_articles(lecture.pk)
 
-        # Only fetch amendements for recent lectures.
-        if force or lecture.refreshable_for("amendements", huey.settings):
-            fetch_amendements(lecture.pk)
+            # Only fetch amendements for recent lectures.
+            if force or lecture.refreshable_for("amendements", huey.settings):
+                fetch_amendements(lecture.pk)
 
-    # Then try to create missing lectures.
-    create_missing_lectures(dossier.pk)
+        # Then try to create missing lectures.
+        create_missing_lectures(dossier.pk)
 
 
 @huey.task(retries=3, retry_delay=RETRY_DELAY)

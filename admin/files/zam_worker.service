@@ -11,5 +11,15 @@ ExecStart=/srv/repondeur/venv/bin/zam_worker production.ini#worker
 Restart=on-failure
 CPUWeight=1
 
+# Send SIGINT to the main process (instead of default SIGTERM) for graceful shutdown.
+# This gives started tasks some time to finish, and avoids leaving stale locks behind
+# if we interrupt them at the wrong time.
+# https://huey.readthedocs.io/en/latest/consumer.html#consumer-shutdown
+KillSignal=SIGINT
+KillMode=process
+
+# Send SIGKILL after this timeout if the worker did not stop successfully.
+TimeoutStopSec=10min
+
 [Install]
 WantedBy=multi-user.target

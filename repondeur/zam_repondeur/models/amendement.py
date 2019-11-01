@@ -520,7 +520,7 @@ class Amendement(Base):
         return self._set_of_displayable_identiques == self._set_of_similaires
 
     def grouped_displayable_children(
-        self
+        self,
     ) -> Iterable[Tuple[GroupingKey, List["Amendement"]]]:
         return self.article.group_amendements(
             amdt for amdt in self.children if amdt.is_displayable

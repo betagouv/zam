@@ -69,7 +69,7 @@ class LectureRef:
 
     @property
     def cmp_key(
-        self
+        self,
     ) -> Tuple[Chambre, str, Optional[int], Optional[int], int, Optional[int]]:
         return (
             self.chambre,

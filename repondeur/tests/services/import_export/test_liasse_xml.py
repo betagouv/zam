@@ -32,7 +32,7 @@ def test_import_liasse_xml(lecture_essoc2018_an_nouvelle_lecture_commission_fond
 
 
 def test_import_liasse_xml_article_additionnel(
-    lecture_essoc2018_an_nouvelle_lecture_commission_fond
+    lecture_essoc2018_an_nouvelle_lecture_commission_fond,
 ):
     from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 
@@ -48,7 +48,7 @@ def test_import_liasse_xml_article_additionnel(
 
 
 def test_import_same_liasse_xml_again_preserve_response(
-    lecture_essoc2018_an_nouvelle_lecture_commission_fond
+    lecture_essoc2018_an_nouvelle_lecture_commission_fond,
 ):
     from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 
@@ -76,7 +76,7 @@ def test_import_same_liasse_xml_again_preserve_response(
 
 
 def test_import_smaller_liasse_xml_preserves_responses(
-    lecture_essoc2018_an_nouvelle_lecture_commission_fond
+    lecture_essoc2018_an_nouvelle_lecture_commission_fond,
 ):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
@@ -115,7 +115,7 @@ def test_import_smaller_liasse_xml_preserves_responses(
 
 
 def test_import_liasse_xml_with_unknown_parent(
-    lecture_essoc2018_an_nouvelle_lecture_commission_fond
+    lecture_essoc2018_an_nouvelle_lecture_commission_fond,
 ):
     from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 
@@ -133,7 +133,7 @@ def test_import_liasse_xml_with_unknown_parent(
 
 
 def test_import_liasse_xml_with_known_but_missing_parent(
-    lecture_essoc2018_an_nouvelle_lecture_commission_fond
+    lecture_essoc2018_an_nouvelle_lecture_commission_fond,
 ):
     from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 

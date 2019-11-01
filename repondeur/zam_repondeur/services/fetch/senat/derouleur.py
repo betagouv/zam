@@ -70,7 +70,7 @@ def _parse_derouleur_data(
 
 
 def derouleur_urls_and_mission_refs(
-    lecture: Lecture
+    lecture: Lecture,
 ) -> Iterator[Tuple[str, MissionRef]]:
     assert lecture.texte.session_str is not None  # nosec (mypy hint)
     id_txt_missions = (

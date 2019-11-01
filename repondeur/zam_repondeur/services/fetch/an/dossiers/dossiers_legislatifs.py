@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_dossiers_legislatifs_and_textes(
-    *legislatures: int
+    *legislatures: int,
 ) -> Tuple[DossierRefsByUID, Dict[str, TexteRef]]:
     all_dossiers: DossierRefsByUID = {}
     all_textes: Dict[str, TexteRef] = {}
@@ -26,7 +26,7 @@ def get_dossiers_legislatifs_and_textes(
 
 
 def _get_dossiers_legislatifs_and_textes(
-    legislature: int
+    legislature: int,
 ) -> Tuple[DossierRefsByUID, Dict[str, TexteRef]]:
     # As of June 20th, 2019 the Assemblée Nationale website updated the way
     # their opendata zip content is splitted, without changing old

@@ -50,7 +50,7 @@ def test_add_parent_amendement(lecture_essoc2018_an_nouvelle_lecture_commission_
 
 
 def test_remove_parent_amendement(
-    lecture_essoc2018_an_nouvelle_lecture_commission_fond
+    lecture_essoc2018_an_nouvelle_lecture_commission_fond,
 ):
     from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
 

@@ -297,14 +297,14 @@ class Article(Base):
         return f"{self.type}.{self.num}.{self.mult}.{self.pos}"
 
     def grouped_displayable_amendements(
-        self
+        self,
     ) -> Iterable[Tuple[GroupingKey, List[Amendement]]]:
         return self.group_amendements(
             amdt for amdt in self.amendements if amdt.is_displayable
         )
 
     def grouped_displayable_top_level_amendements(
-        self
+        self,
     ) -> Iterable[Tuple[GroupingKey, List[Amendement]]]:
         return self.group_amendements(
             amdt

@@ -46,7 +46,7 @@ class Batch(Base):
         """
 
         def _collapsed_batches(
-            amendements: Iterable["Amendement"]
+            amendements: Iterable["Amendement"],
         ) -> Iterable["Amendement"]:
             seen_batches: Set[Batch] = set()
             for amendement in amendements:

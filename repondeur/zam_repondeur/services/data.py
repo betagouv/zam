@@ -4,10 +4,10 @@ from io import BytesIO
 from typing import Any, Dict, List, Optional
 
 from pyramid.config import Configurator
-from redis import Redis
 from redis_lock import Lock, reset_all
 
 from zam_repondeur.initialize import needs_init
+from zam_repondeur.services import Repository
 from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
     get_dossiers_legislatifs_and_textes,
 )
@@ -28,10 +28,10 @@ def includeme(config: Configurator) -> None:
 
 
 def init_repository(settings: Dict[str, str]) -> None:
-    repository.initialize(
-        redis_url=settings["zam.data.redis_url"],
-        legislatures=[int(legi) for legi in settings["zam.legislatures"].split(",")],
-    )
+    repository.initialize(redis_url=settings["zam.data.redis_url"],)
+    repository.legislatures = [
+        int(legi) for legi in settings["zam.legislatures"].split(",")
+    ]
 
 
 class BackwardsCompatibleUnpickler(pickle.Unpickler):
@@ -41,7 +41,7 @@ class BackwardsCompatibleUnpickler(pickle.Unpickler):
         return super().find_class(module, name)
 
 
-class DataRepository:
+class DataRepository(Repository):
     """
     Store and access global data in Redis
 
@@ -49,13 +49,7 @@ class DataRepository:
     with regular read accesses (e.g. when fetching amendements).
     """
 
-    def __init__(self) -> None:
-        self.initialized = True
-
-    def initialize(self, redis_url: str, legislatures: List[int]) -> None:
-        self.legislatures = legislatures
-        self.connection = Redis.from_url(redis_url)
-        self.initialized = True
+    legislatures: List[int] = []
 
     @needs_init
     def reset_locks(self) -> None:

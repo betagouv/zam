@@ -42,14 +42,16 @@
      </defs>
     </svg>
     {% if lecture.refreshable_for("articles", settings) or lecture.refreshable_for("amendements", settings) %}
-        <div class="extra-button">
-            <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh">
-                <button type="submit" name="refresh" class="button">
-                    {{ macros.svg_icon("sync") }}
-                    Rafraîchir manuellement
-                </button>
-            </form>
-        </div>
+        {% if not lecture.get_fetch_progress() %}
+            <div class="extra-button">
+                <form method="post" action="{{ request.resource_url(context, 'manual_refresh') }}" id="manual-refresh">
+                    <button type="submit" name="refresh" class="button">
+                        {{ macros.svg_icon("sync") }}
+                        Rafraîchir manuellement
+                    </button>
+                </form>
+            </div>
+        {% endif %}
     {% endif %}
     <h2>Journal</h2>
     {{ macros.timeline(lecture.events, today) }}

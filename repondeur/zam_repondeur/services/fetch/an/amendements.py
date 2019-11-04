@@ -80,6 +80,7 @@ class AssembleeNationale(RemoteSource):
             result += self._fetch_amendements_discussed(
                 lecture, discussion_items, dry_run=dry_run
             )
+            lecture.reset_fetch_progress()
 
             if not dry_run:
                 result += self._fetch_amendements_other(
@@ -104,6 +105,7 @@ class AssembleeNationale(RemoteSource):
         amendements: List[Amendement] = []
         created = 0
         errored: List[str] = []
+        total = len(discussion_items) + MAX_404
 
         for position, item in enumerate(discussion_items, start=1):
             numero_prefixe = item["@numero"]
@@ -137,6 +139,7 @@ class AssembleeNationale(RemoteSource):
                 errored.append(str(num))
                 continue
             amendements.append(amendement)
+            lecture.set_fetch_progress(position, total)
             created += int(created_)
         return FetchResult(amendements, created, errored)
 

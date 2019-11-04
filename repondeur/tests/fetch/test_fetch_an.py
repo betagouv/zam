@@ -1,6 +1,7 @@
 from datetime import date
 from pathlib import Path
 from textwrap import dedent
+from unittest.mock import call, patch
 
 import pytest
 import responses
@@ -82,6 +83,45 @@ class TestFetchAndParseAll:
         assert amendements[4].id_discussion_commune is None
         assert amendements[4].id_identique == 20439
 
+        assert created == 5
+        assert errored == []
+
+    @responses.activate
+    def test_simple_amendements_progress_status(self, lecture_an, app, source):
+        from zam_repondeur.models import DBSession
+
+        DBSession.add(lecture_an)
+
+        # No progress status by default.
+        assert lecture_an.get_fetch_progress() == {}
+
+        with setup_mock_responses(
+            lecture=lecture_an,
+            liste=read_sample_data("an/269/liste.xml"),
+            amendements=(
+                ("177", read_sample_data("an/269/177.xml")),
+                ("270", read_sample_data("an/269/270.xml")),
+                ("723", read_sample_data("an/269/723.xml")),
+                ("135", read_sample_data("an/269/135.xml")),
+                ("192", read_sample_data("an/269/192.xml")),
+            ),
+        ), patch(
+            "zam_repondeur.services.progress.ProgressRepository.set_fetch_progress"
+        ) as mocked_set_fetch_progress:
+            amendements, created, errored = source.fetch(lecture=lecture_an)
+            # The progress is set for each amendement during the fetch.
+            assert mocked_set_fetch_progress.call_args_list == [
+                call("1", 1, 35),
+                call("1", 2, 35),
+                call("1", 3, 35),
+                call("1", 4, 35),
+                call("1", 5, 35),
+            ]
+
+        # Once the fetch is complete, the progress status is back to empty.
+        assert lecture_an.get_fetch_progress() == {}
+
+        assert len(amendements) == 5
         assert created == 5
         assert errored == []
 

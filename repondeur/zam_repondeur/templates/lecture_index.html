@@ -21,7 +21,10 @@
 <h2 class="subtitle">{{ lecture.dossier.titre }}</h2>
 <p class="subtitle">{{ lecture }}</p>
 
-<div class="last-update">
+<div class="last-update"
+    data-controller="progress"
+    data-progress-check-url="{{ progress_url }}"
+    data-progress-check-interval="{{ request.registry.settings['zam.progress.lecture_refresh'] }}">
     Dernière mise à jour :
     <a class="underlined" href="{{ request.resource_url(context.parent, 'journal') }}">
         <time datetime="{{ lecture.last_event_datetime.isoformat(timespec='milliseconds') }}"
@@ -350,4 +353,5 @@
     {% if all_amendements %}
         <script>;(() => application.register('amendements-filters', AmendementsFilters))()</script>
     {% endif %}
+    <script src="{{ request.static_url('zam_repondeur:static/js/progress.js') }}"></script>
 {% endblock %}

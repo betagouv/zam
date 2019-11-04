@@ -82,6 +82,12 @@ def settings(tmp_path_factory):
         "zam.amendements.redis_url": os.environ.get(
             "ZAM_TEST_AMENDEMENTS_REDIS_URL", "redis://localhost:6379/13"
         ),
+        "zam.progress.redis_url": os.environ.get(
+            "ZAM_TEST_PROGRESS_REDIS_URL", "redis://localhost:6379/14"
+        ),
+        "zam.progress.max_duration": os.environ.get(
+            "ZAM_TEST_PROGRESS_MAX_DURATION", "1"  # minutes.
+        ),
         "zam.session_secret": "dummy",
         "zam.auth_secret": "dummier",
         "zam.auth_admins": ["user@sgg.pm.gouv.fr"],
@@ -180,6 +186,17 @@ def amendements_repository():
     repository.clear_data()
 
 
+@pytest.fixture
+def progress_repository():
+    from zam_repondeur.services.progress import repository
+
+    repository.clear_data()
+
+    yield
+
+    repository.clear_data()
+
+
 @pytest.fixture()
 def whitelist(db):
     from zam_repondeur.models.users import AllowedEmailPattern
@@ -192,7 +209,13 @@ def whitelist(db):
 
 @pytest.fixture
 def app(
-    wsgi_app, db, whitelist, data_repository, users_repository, amendements_repository
+    wsgi_app,
+    db,
+    whitelist,
+    data_repository,
+    users_repository,
+    amendements_repository,
+    progress_repository,
 ):
     yield TestApp(
         wsgi_app,

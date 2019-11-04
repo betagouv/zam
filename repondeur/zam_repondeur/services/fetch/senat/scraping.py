@@ -163,6 +163,7 @@ def create_texte(pid: str, entry: element.Tag) -> TexteRef:
         "ppr": TypeTexte.PROPOSITION,
         "ppl": TypeTexte.PROPOSITION,
         "pjl": TypeTexte.PROJET,
+        "plf": TypeTexte.PROJET,
     }
     type_ = pid[:3]
     # One day is added considering we have to deal with timezones

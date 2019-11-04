@@ -1,5 +1,3 @@
-import os
-from pathlib import Path
 from typing import Optional
 
 import requests
@@ -9,9 +7,6 @@ from pyramid.config import Configurator
 from pyramid.registry import Registry
 from pyramid.threadlocal import get_current_registry
 from zope.interface import Interface
-
-HERE = Path(__file__)
-DEFAULT_HTTP_CACHE_DIR = HERE.parent.parent.parent / ".web_cache"
 
 
 class IHTTPSession(Interface):
@@ -23,7 +18,7 @@ def includeme(config: Configurator) -> None:
     Called automatically via config.include("zam_repondeur.services.fetch.http")
     """
     session = requests.session()
-    http_cache_dir = os.environ.get("ZAM_HTTP_CACHE_DIR", DEFAULT_HTTP_CACHE_DIR)
+    http_cache_dir = config.registry.settings["zam.http_cache_dir"]
     cached_session = CacheControl(session, cache=FileCache(http_cache_dir))
     config.registry.registerUtility(component=cached_session, provided=IHTTPSession)
 

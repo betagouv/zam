@@ -86,6 +86,9 @@ def deploy_repondeur(
 
         create_virtualenv(ctx, venv_dir=venv_dir, user=user)
         install_requirements(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
+
+        create_directory(ctx, "/var/cache/zam/http", owner=user)
+
         gunicorn_workers = (cpu_count(ctx) * 2) + 1
         setup_config(
             ctx,

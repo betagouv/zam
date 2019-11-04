@@ -4,7 +4,7 @@ from io import BytesIO, TextIOWrapper
 from typing import IO, Generator, Tuple
 from zipfile import ZipFile
 
-from zam_repondeur.services.fetch.http import cached_session
+from zam_repondeur.services.fetch.http import get_http_session
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,8 @@ def roman(n: int) -> str:
 
 
 def extract_from_remote_zip(url: str) -> Generator[Tuple[str, IO[str]], None, None]:
-    response = cached_session.get(url)
+    http_session = get_http_session()
+    response = http_session.get(url)
 
     if response.status_code not in (HTTPStatus.OK, HTTPStatus.NOT_MODIFIED):
         message = f"Unexpected status code {response.status_code} while fetching {url}"

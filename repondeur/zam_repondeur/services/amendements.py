@@ -2,9 +2,9 @@ from datetime import datetime
 from typing import Optional
 
 from pyramid.config import Configurator
-from redis import Redis
 
 from zam_repondeur.initialize import needs_init
+from zam_repondeur.services import Repository
 
 
 def includeme(config: Configurator) -> None:
@@ -16,17 +16,10 @@ def includeme(config: Configurator) -> None:
     )
 
 
-class AmendementsRepository:
+class AmendementsRepository(Repository):
     """
     Store and access global amendements in Redis
     """
-
-    def __init__(self) -> None:
-        self.initialized = True
-
-    def initialize(self, redis_url: str) -> None:
-        self.connection = Redis.from_url(redis_url)
-        self.initialized = True
 
     @needs_init
     def clear_data(self) -> None:

@@ -1,20 +1,20 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from typing import Dict, Optional
 
 from pyramid.config import Configurator
-from redis import Redis
 from redis.exceptions import WatchError
 
 from zam_repondeur.initialize import needs_init
+from zam_repondeur.services import Repository
 
 
 def includeme(config: Configurator) -> None:
     """
     Called automatically via config.include("zam_repondeur.services.users")
     """
-    repository.initialize(
-        redis_url=config.registry.settings["zam.users.redis_url"],
-        auth_token_duration=config.registry.settings["zam.users.auth_token_duration"],
+    repository.initialize(redis_url=config.registry.settings["zam.users.redis_url"],)
+    repository.auth_token_duration = int(
+        config.registry.settings["zam.users.auth_token_duration"]
     )
 
 
@@ -22,18 +22,12 @@ class TokenAlreadyExists(Exception):
     pass
 
 
-class UsersRepository:
+class UsersRepository(Repository):
     """
     Store and access global users in Redis
     """
 
-    def __init__(self) -> None:
-        self.initialized = True
-
-    def initialize(self, redis_url: str, auth_token_duration: str) -> None:
-        self.connection = Redis.from_url(redis_url)
-        self.auth_token_duration = int(auth_token_duration)
-        self.initialized = True
+    auth_token_duration = 0
 
     @needs_init
     def clear_data(self) -> None:
@@ -95,18 +89,6 @@ class UsersRepository:
     @staticmethod
     def _auth_key(token: str) -> str:
         return f"auth-{token}"
-
-    @staticmethod
-    def now() -> datetime:
-        return datetime.now(tz=timezone.utc)
-
-    @staticmethod
-    def from_timestamp(timestamp: float) -> datetime:
-        return datetime(1970, 1, 1, tzinfo=timezone.utc) + timedelta(seconds=timestamp)
-
-    @staticmethod
-    def to_timestamp(dt: datetime) -> int:
-        return int((dt - datetime(1970, 1, 1, tzinfo=timezone.utc)).total_seconds())
 
 
 repository = UsersRepository()

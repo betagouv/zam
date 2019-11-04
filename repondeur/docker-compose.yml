@@ -23,6 +23,8 @@ services:
       ZAM_TEST_DATA_REDIS_URL: redis://redis:6379/11
       ZAM_TEST_USERS_REDIS_URL: redis://redis:6379/12
       ZAM_TEST_AMENDEMENTS_REDIS_URL: redis://redis:6379/13
+      ZAM_TEST_PROGRESS_REDIS_URL: redis://redis:6379/14
+      ZAM_TEST_PROGRESS_MAX_DURATION: 30
 
   worker:
     build:

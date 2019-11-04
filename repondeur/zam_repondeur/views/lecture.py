@@ -17,6 +17,9 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
     fetch_amendements(lecture.pk)
     fetch_articles(lecture.pk)
+    # The progress is initialized even if the task is async for early feedback
+    # to users and ability to disable the refresh button.
+    lecture.set_fetch_progress(1, len(lecture.amendements))
     request.session.flash(
         Message(
             cls="success",
@@ -55,3 +58,9 @@ def lecture_options(context: LectureResource, request: Request) -> Response:
         "current_tab": "options",
         "shared_tables": shared_tables,
     }
+
+
+@view_config(context=LectureResource, name="progress_status", renderer="json")
+def progress_status(context: LectureResource, request: Request) -> dict:
+    lecture = context.model(noload("amendements"))
+    return lecture.get_fetch_progress() or {}

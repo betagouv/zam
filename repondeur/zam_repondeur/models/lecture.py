@@ -417,3 +417,18 @@ class Lecture(Base, LastEventMixin):
             for amdt in identiques:
                 res[amdt.num] = identiques
         return res
+
+    def set_fetch_progress(self, current: int, total: int) -> None:
+        from zam_repondeur.services.progress import repository  # avoid circular imports
+
+        return repository.set_fetch_progress(str(self.pk), current, total)
+
+    def reset_fetch_progress(self) -> None:
+        from zam_repondeur.services.progress import repository  # avoid circular imports
+
+        return repository.reset_fetch_progress(str(self.pk))
+
+    def get_fetch_progress(self) -> Optional[Dict[str, int]]:
+        from zam_repondeur.services.progress import repository  # avoid circular imports
+
+        return repository.get_fetch_progress(str(self.pk))

@@ -180,7 +180,7 @@ class BatchAmendements:
     ) -> None:
         first_mission_titre = amendements[0].mission_titre
         are_all_from_same_mission = all(
-            amdt.mission_titre is first_mission_titre for amdt in amendements
+            amdt.mission_titre == first_mission_titre for amdt in amendements
         )
         if are_all_from_same_mission:
             return

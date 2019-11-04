@@ -57,8 +57,8 @@ zam.refresh.articles = 365
 
 # Minutes
 zam.http_cache_duration = 15
-zam.http_cache_dir = /var/cache/zam/http
-zam.uploads_backup_dir = /srv/repondeur/data/uploads
+zam.http_cache_dir = $$http_cache_dir
+zam.uploads_backup_dir = $$uploads_backup_dir
 
 # Add badge in menu bar to identify environment
 zam.menu_badge_label = $$menu_badge_label

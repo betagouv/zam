@@ -7,7 +7,7 @@ from commonmark import commonmark
 from fabric.tasks import task
 
 from tools import template_local_file
-from tools.file import create_directory, sudo_put
+from tools.file import create_directory, is_directory, sudo_put
 from tools.git import clone_or_update_repo
 from tools.redis import redis_service_name
 from tools.run import sudo_in_dir
@@ -45,6 +45,8 @@ def deploy_app(
     dbpassword="iloveamendements",
     notify_rollbar=True,
     environment=None,
+    http_cache_dir="/var/cache/zam/http",
+    uploads_backup_dir="/var/backups/zam/uploads",
 ):
     print("=== Deploying app ===")
 
@@ -91,7 +93,11 @@ def deploy_app(
         print("--- Installing Python dependencies ---")
         install_requirements(ctx, app_dir=app_dir, venv_dir=venv_dir, user=USER)
 
-        create_directory(ctx, "/var/cache/zam/http", owner=USER)
+        if not is_directory(ctx, http_cache_dir):
+            create_directory(ctx, http_cache_dir, owner=USER)
+
+        if not is_directory(ctx, uploads_backup_dir):
+            create_directory(ctx, uploads_backup_dir, owner=USER)
 
         print("--- Generating app config file ---")
         db_url = f"postgres://{dbuser}:{dbpassword}@{db_host_ip}:5432/{dbname}"
@@ -112,6 +118,8 @@ def deploy_app(
                 "gunicorn_timeout": ctx.config["request_timeout"],
                 "menu_badge_label": menu_badge_label,
                 "menu_badge_color": menu_badge_color,
+                "http_cache_dir": http_cache_dir,
+                "uploads_backup_dir": uploads_backup_dir,
             },
         )
 

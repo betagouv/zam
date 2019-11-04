@@ -647,14 +647,14 @@ def test_fetch_amendements_with_connection_errors(
     with patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.services.fetch.an.amendements.cached_session.get"
-    ) as mock_cached_session_get:
+        "zam_repondeur.services.fetch.an.amendements.get_http_session"
+    ) as mock_http_session:
         mock_fetch_discussion_list.return_value = [
             {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
             {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
             {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
         ]
-        mock_cached_session_get.side_effect = ConnectionError
+        mock_http_session.return_value.get.side_effect = ConnectionError
 
         amendements, created, errored = get_amendements(lecture_an)
 

@@ -20,7 +20,7 @@ from zam_repondeur.models.events.amendement import BatchUnset
 from zam_repondeur.services.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.services.fetch.division import parse_subdiv
 from zam_repondeur.services.fetch.exceptions import FetchError, NotFound
-from zam_repondeur.services.fetch.http import cached_session
+from zam_repondeur.services.fetch.http import get_http_session
 from zam_repondeur.templating import render_template
 
 from ..missions import MissionRef
@@ -302,8 +302,9 @@ _ORGANE_PREFIX = {
 
 def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
     logger.info("Récupération de %r", url)
+    http_session = get_http_session()
     try:
-        resp = cached_session.get(url)
+        resp = http_session.get(url)
     except ConnectionError:
         raise NotFound(url)
 

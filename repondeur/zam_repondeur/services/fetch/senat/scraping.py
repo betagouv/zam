@@ -16,7 +16,7 @@ from zam_repondeur.services.fetch.an.dossiers.models import (
     TexteRef,
     TypeTexte,
 )
-from zam_repondeur.services.fetch.http import cached_session
+from zam_repondeur.services.fetch.http import get_http_session
 from zam_repondeur.slugs import slugify
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,8 @@ def get_dossiers_senat() -> DossierRefsByUID:
 
 
 def download_textes_recents() -> str:
-    resp = cached_session.get(TEXTES_RECENTS_URL)
+    http_session = get_http_session()
+    resp = http_session.get(TEXTES_RECENTS_URL)
     if resp.status_code != HTTPStatus.OK:
         raise RuntimeError("Failed to download textes recents from senat.fr")
 
@@ -97,7 +98,8 @@ def create_dossier(pid: str, rss_url: str) -> DossierRef:
 
 
 def download_rss(url: str) -> str:
-    resp = cached_session.get(f"{BASE_URL_SENAT}{url}")
+    http_session = get_http_session()
+    resp = http_session.get(f"{BASE_URL_SENAT}{url}")
     if resp.status_code != HTTPStatus.OK:
         raise RuntimeError(f"Failed to download RSS url: {url}")
 

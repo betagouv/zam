@@ -61,6 +61,7 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         config.include("zam_repondeur.services.data")
         config.include("zam_repondeur.services.users")
         config.include("zam_repondeur.services.amendements")
+        config.include("zam_repondeur.services.fetch.http")
         load_version(config)
 
         config.scan()

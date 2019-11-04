@@ -208,6 +208,30 @@ def test_lecture_get_batch_amendements_different_articles(
     ) in resp.text
 
 
+def test_lecture_get_batch_amendements_same_mission(
+    app,
+    lecture_an,
+    article7bis_an,
+    amendements_an,
+    user_david,
+    david_has_two_amendements,
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        amendements_an[0].mission_titre = "test"
+        amendements_an[1].mission_titre = "test"
+        DBSession.add_all(amendements_an)
+
+    resp = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
+        {"nums": amendements_an},
+        user=user_david,
+    )
+
+    assert resp.status_code == 200
+
+
 def test_lecture_get_batch_amendements_different_mission(
     app,
     lecture_an,

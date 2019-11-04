@@ -58,7 +58,7 @@ class TestApp(BaseTestApp):
 
 
 @pytest.fixture(scope="session")
-def settings():
+def settings(tmp_path_factory):
     return {
         "pyramid.debug_authorization": True,
         "pyramid.includes": "pyramid_mailer.testing",
@@ -88,6 +88,7 @@ def settings():
         # Only wait for 1 second to speed up integration tests.
         "zam.check_for.amendement_stolen_while_editing": 1,
         "zam.check_for.transfers_from_to_my_table": 1,
+        "zam.http_cache_dir": str(tmp_path_factory.mktemp(".web_cache")),
     }
 
 

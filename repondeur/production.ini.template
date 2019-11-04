@@ -52,6 +52,7 @@ zam.auth_secret = $$auth_secret
 zam.refresh.amendements = 90
 zam.refresh.articles = 90
 
+zam.http_cache_dir = /var/cache/zam/http
 zam.uploads_backup_dir = /srv/repondeur/data/uploads
 
 # Add badge in menu bar to identify environment

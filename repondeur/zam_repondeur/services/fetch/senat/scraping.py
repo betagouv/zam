@@ -74,7 +74,7 @@ def extract_dossier_id(webpage_url: str) -> str:
 
 
 def build_rss_url(dossier_id: str) -> str:
-    return f"/dossier-legislatif/rss/dosleg{dossier_id}.xml"
+    return urljoin(BASE_URL_SENAT, f"/dossier-legislatif/rss/dosleg{dossier_id}.xml")
 
 
 def create_dossier_ref(dossier_id: str, rss_url: str) -> DossierRef:
@@ -113,8 +113,7 @@ def canonical_senat_url(url: str) -> str:
 
 def download_rss(url: str) -> str:
     http_session = get_http_session()
-    absolute_url = urljoin(BASE_URL_SENAT, url)
-    resp = http_session.get(absolute_url)
+    resp = http_session.get(url)
     if resp.status_code != HTTPStatus.OK:
         raise RuntimeError(f"Failed to download RSS url: {url}")
 

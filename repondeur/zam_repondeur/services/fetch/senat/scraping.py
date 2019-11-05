@@ -145,11 +145,7 @@ def extract_lecture_refs(
         texte_examine = texte_commission or texte_initial
         if not texte_examine:
             continue
-        lecture_seance_publique = find_examen_seance_publique(
-            phase, entries, textes, texte_examine
-        )
-        if lecture_seance_publique is not None:
-            yield lecture_seance_publique
+        yield from find_examens_seance_publique(phase, entries, textes, texte_examine)
 
 
 def find_texte_commission(
@@ -200,28 +196,30 @@ def find_examen_commission(
     return None
 
 
-def find_examen_seance_publique(
+def find_examens_seance_publique(
     phase: Phase,
     entries: Iterable[element.Tag],
     textes: Dict[int, TexteRef],
     texte_examine: TexteRef,
-) -> Optional[LectureRef]:
-    lecture = find_amendements_seance_publique(phase, entries, textes)
-    if lecture is None:
-        return LectureRef(
+) -> List[LectureRef]:
+    lecture_refs = list(find_amendements_seance_publique(phase, entries, textes))
+    if lecture_refs:
+        return lecture_refs
+    # default: séance publique will look at initial texte
+    return [
+        LectureRef(
             chambre=Chambre.SENAT,
             phase=phase,
             titre=f"{_PHASE_TO_STR[phase]} – Séance publique",
             organe="PO78718",
             texte=texte_examine,
         )
-    else:
-        return lecture
+    ]
 
 
 def find_amendements_seance_publique(
     phase: Phase, entries: Iterable[element.Tag], textes: Dict[int, TexteRef]
-) -> Optional[LectureRef]:
+) -> Iterator[LectureRef]:
     for entry in entries:
         if extract_phase(entry) != phase:
             continue
@@ -234,14 +232,13 @@ def find_amendements_seance_publique(
 
         texte = textes[num_texte]
 
-        return LectureRef(
+        yield LectureRef(
             chambre=Chambre.SENAT,
             phase=phase,
             titre=f"{_PHASE_TO_STR[phase]} – Séance publique",
             organe="PO78718",
             texte=texte,
         )
-    return None
 
 
 def extract_texte_num(title: str, regexp: str = r"Texte n°\s*(\d+)") -> int:

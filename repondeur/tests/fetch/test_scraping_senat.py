@@ -542,8 +542,6 @@ class TestCreateDossierRef:
         - one on the initial texte
         - one on the new texte voted by the commission the 2nd time
 
-        TODO: include both séance publique 1re lectures.
-
         There are actually 2 commission lectures on the same initial texte,
         but with different URLs for amendements:
         - http://www.senat.fr/amendements/commissions/2018-2019/10229/liste_depot.html
@@ -602,6 +600,23 @@ class TestCreateDossierRef:
                         titre_long="",
                         titre_court="",
                         date_depot=datetime.date(2018, 12, 20),
+                    ),
+                    organe="PO78718",
+                    partie=None,
+                ),
+                LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
+                    chambre=Chambre.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="PPLSENAT2019X536",
+                        type_=TypeTexte.PROPOSITION,
+                        chambre=Chambre.SENAT,
+                        legislature=None,
+                        numero=536,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 5, 29),
                     ),
                     organe="PO78718",
                     partie=None,

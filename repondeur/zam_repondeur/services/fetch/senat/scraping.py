@@ -2,7 +2,7 @@ import logging
 import re
 from datetime import datetime, timedelta
 from http import HTTPStatus
-from typing import Dict, Iterable, Iterator, List, Optional, Set
+from typing import Dict, Iterable, Iterator, List, Optional, Set, Tuple
 from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup, element
@@ -78,11 +78,27 @@ def build_rss_url(dossier_id: str) -> str:
 
 
 def create_dossier_ref(dossier_id: str, rss_url: str) -> DossierRef:
+    title, senat_url, lecture_refs = extract_from_rss(dossier_id, rss_url)
+    dossier_ref = DossierRef(
+        uid=dossier_id,
+        titre=title,
+        slug=slugify(title),
+        an_url="",
+        senat_url=senat_url,
+        lectures=lecture_refs,
+    )
+    return dossier_ref
+
+
+def extract_from_rss(
+    dossier_id: str, rss_url: str
+) -> Tuple[str, str, List[LectureRef]]:
     rss_content = download_rss(rss_url)
     soup = BeautifulSoup(rss_content, "html5lib")
+
     prefix = len("Sénat - ")
     title = soup.title.string[prefix:]
-    slug = slugify(title)
+
     # We cast the bs4 output explicitly to a string because of something
     # related to https://bugs.python.org/issue1757057
     # Once pickled to put in Redis, it would otherwise raise a RecursionError.
@@ -95,15 +111,7 @@ def create_dossier_ref(dossier_id: str, rss_url: str) -> DossierRef:
     ]
     texte_refs = extract_texte_refs(dossier_id, senat_entries)
     lecture_refs = list(extract_lecture_refs(dossier_id, senat_entries, texte_refs))
-    dossier_ref = DossierRef(
-        uid=dossier_id,
-        titre=title,
-        slug=slug,
-        an_url="",
-        senat_url=senat_url,
-        lectures=lecture_refs,
-    )
-    return dossier_ref
+    return title, senat_url, lecture_refs
 
 
 def canonical_senat_url(url: str) -> str:

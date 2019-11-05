@@ -812,18 +812,18 @@ def test_convert_to_rss_urls():
     }
 
 
-def test_create_dossier():
+def test_create_dossier_ref():
     from zam_repondeur.services.fetch.an.dossiers.models import (
         DossierRef,
         LectureRef,
         TexteRef,
         TypeTexte,
     )
-    from zam_repondeur.services.fetch.senat.scraping import create_dossier
+    from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
     from zam_repondeur.models.chambre import Chambre
     from zam_repondeur.models.phase import Phase
 
-    assert create_dossier(
+    assert create_dossier_ref(
         "pjl18-404", "/dossier-legislatif/rss/doslegpjl18-404.xml"
     ) == DossierRef(
         uid="pjl18-404",

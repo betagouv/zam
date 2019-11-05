@@ -6,11 +6,11 @@ def test_list_opendata_dossiers(app):
     assert "DLR5L15N36030" in dossiers
 
 
-def test_get_opendata_dossier(app):
+def test_get_opendata_dossier_ref(app):
     from zam_repondeur.services.data import repository
     from zam_repondeur.services.fetch.an.dossiers.models import DossierRef
 
-    dossier_ref = repository.get_opendata_dossier("DLR5L15N36030")
+    dossier_ref = repository.get_opendata_dossier_ref("DLR5L15N36030")
 
     assert isinstance(dossier_ref, DossierRef)
 
@@ -40,10 +40,10 @@ def test_get_opendata_acteur(app):
     assert isinstance(acteur, dict)
 
 
-def test_get_senat_scraping_dossier(app):
+def test_get_senat_scraping_dossier_ref(app):
     from zam_repondeur.services.data import repository
     from zam_repondeur.services.fetch.an.dossiers.models import DossierRef
 
-    dossier_ref = repository.get_senat_scraping_dossier("ppl18-454")
+    dossier_ref = repository.get_senat_scraping_dossier_ref("ppl18-454")
 
     assert isinstance(dossier_ref, DossierRef)

@@ -29,11 +29,8 @@ TEXTES_RECENTS_URL = f"{BASE_URL_SENAT}/dossiers-legislatifs/textes-recents.html
 def get_dossier_refs_senat() -> DossierRefsByUID:
     html = download_textes_recents()
     webpages_urls = extract_recent_urls(html)
-    pids_rss = convert_to_rss_urls(webpages_urls)
-    dossier_refs = (
-        create_dossier_ref(dossier_id, rss_url)
-        for dossier_id, rss_url in pids_rss.items()
-    )
+    dossier_ids = (extract_dossier_id(webpage_url) for webpage_url in webpages_urls)
+    dossier_refs = (create_dossier_ref(dossier_id) for dossier_id in dossier_ids)
     dossier_refs_by_uid = {dossier_ref.uid: dossier_ref for dossier_ref in dossier_refs}
     return dossier_refs_by_uid
 
@@ -58,11 +55,6 @@ def extract_recent_urls(html: str) -> Set[str]:
     }
 
 
-def scrape_dossier_ref(dossier_id: str) -> DossierRef:
-    rss_url = build_rss_url(dossier_id)
-    return create_dossier_ref(dossier_id, rss_url)
-
-
 def convert_to_rss_urls(webpages_urls: Set[str]) -> Dict[str, str]:
     dossier_ids = (extract_dossier_id(url) for url in webpages_urls)
     return {dossier_id: build_rss_url(dossier_id) for dossier_id in dossier_ids}
@@ -78,7 +70,8 @@ def build_rss_url(dossier_id: str) -> str:
     return urljoin(BASE_URL_SENAT, f"/dossier-legislatif/rss/dosleg{dossier_id}.xml")
 
 
-def create_dossier_ref(dossier_id: str, rss_url: str) -> DossierRef:
+def create_dossier_ref(dossier_id: str) -> DossierRef:
+    rss_url = build_rss_url(dossier_id)
     title, senat_url, lecture_refs = extract_from_rss(dossier_id, rss_url)
     dossier_ref = DossierRef(
         uid=dossier_id,

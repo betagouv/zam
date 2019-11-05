@@ -94,9 +94,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "pjl18-404", "/dossier-legislatif/rss/doslegpjl18-404.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("pjl18-404") == DossierRef(
             uid="pjl18-404",
             titre="Organisation du système de santé",
             slug="organisation-systeme-sante",
@@ -154,9 +152,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "pjl18-523", "/dossier-legislatif/rss/doslegpjl18-523.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("pjl18-523") == DossierRef(
             uid="pjl18-523",
             titre="Accord France Arménie",
             slug="accord-france-armenie",
@@ -214,9 +210,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "pjl18-526", "/dossier-legislatif/rss/doslegpjl18-526.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("pjl18-526") == DossierRef(
             uid="pjl18-526",
             titre="Accords France-Suisse et France-Luxembourg",
             slug="accords-france-suisse-france-luxembourg",
@@ -274,9 +268,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "pjl18-532", "/dossier-legislatif/rss/doslegpjl18-532.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("pjl18-532") == DossierRef(
             uid="pjl18-532",
             titre="Transformation de la fonction publique",
             slug="transformation-fonction-publique",
@@ -334,9 +326,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "ppl17-699", "/dossier-legislatif/rss/doslegppl17-699.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("ppl17-699") == DossierRef(
             uid="ppl17-699",
             titre="Instituer un médiateur territorial dans certaines collectivités",
             slug="instituer-mediateur-territorial-certaines-collectivites",
@@ -394,9 +384,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "ppl18-002", "/dossier-legislatif/rss/doslegppl18-002.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("ppl18-002") == DossierRef(
             uid="ppl18-002",
             titre="Agence nationale de la cohésion des territoires",
             slug="agence-nationale-cohesion-territoires",
@@ -488,9 +476,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "ppl18-043", "/dossier-legislatif/rss/doslegppl18-043.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("ppl18-043") == DossierRef(
             uid="ppl18-043",
             titre="Directeur général de l'Agence nationale de la cohésion des territoires",  # noqa
             slug="directeur-general-agence-nationale-cohesion-territoires",
@@ -561,9 +547,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "ppl18-229", "/dossier-legislatif/rss/doslegppl18-229.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("ppl18-229") == DossierRef(
             uid="ppl18-229",
             titre="Lutte contre l'habitat insalubre ou dangereux",
             slug="lutte-contre-habitat-insalubre-ou-dangereux",
@@ -638,9 +622,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "ppl18-260", "/dossier-legislatif/rss/doslegppl18-260.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("ppl18-260") == DossierRef(
             uid="ppl18-260",
             titre="Accès à l'énergie et lutte contre la précarité énergétique",
             slug="acces-energie-lutte-contre-precarite-energetique",
@@ -698,9 +680,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "ppl18-305", "/dossier-legislatif/rss/doslegppl18-305.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("ppl18-305") == DossierRef(
             uid="ppl18-305",
             titre="Création d'un statut de l'élu communal",
             slug="creation-statut-elu-communal",
@@ -758,9 +738,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "ppl18-385", "/dossier-legislatif/rss/doslegppl18-385.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("ppl18-385") == DossierRef(
             uid="ppl18-385",
             titre="Clarifier diverses dispositions du droit électoral",
             slug="clarifier-diverses-dispositions-droit-electoral",
@@ -818,9 +796,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "ppl18-386", "/dossier-legislatif/rss/doslegppl18-386.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("ppl18-386") == DossierRef(
             uid="ppl18-386",
             titre="Clarifier diverses dispositions du droit électoral",
             slug="clarifier-diverses-dispositions-droit-electoral",
@@ -878,9 +854,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "ppl18-436", "/dossier-legislatif/rss/doslegppl18-436.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("ppl18-436") == DossierRef(
             uid="ppl18-436",
             titre="Accès des PME à la commande publique",
             slug="acces-pme-commande-publique",
@@ -938,9 +912,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "ppl18-454", "/dossier-legislatif/rss/doslegppl18-454.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("ppl18-454") == DossierRef(
             uid="ppl18-454",
             titre="Exploitation des réseaux radioélectriques mobiles",
             slug="exploitation-reseaux-radioelectriques-mobiles",
@@ -998,9 +970,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "ppl18-462", "/dossier-legislatif/rss/doslegppl18-462.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("ppl18-462") == DossierRef(
             uid="ppl18-462",
             titre="Participation des conseillers de Lyon aux élections sénatoriales",
             slug="participation-conseillers-lyon-elections-senatoriales",
@@ -1058,9 +1028,7 @@ class TestCreateDossierRef:
         from zam_repondeur.models.chambre import Chambre
         from zam_repondeur.models.phase import Phase
 
-        assert create_dossier_ref(
-            "ppr18-458", "/dossier-legislatif/rss/doslegppr18-458.xml"
-        ) == DossierRef(
+        assert create_dossier_ref("ppr18-458") == DossierRef(
             uid="ppr18-458",
             titre="Clarifier et actualiser le Règlement du Sénat",
             slug="clarifier-actualiser-reglement-senat",

@@ -173,7 +173,7 @@ def find_texte_commission(
 
 def find_examen_commission(
     phase: Phase, entries: Iterable[element.Tag], textes: Dict[int, TexteRef]
-) -> LectureRef:
+) -> Optional[LectureRef]:
     for entry in entries:
         if not entry.title.string.startswith("Texte n°"):
             continue

@@ -55,11 +55,6 @@ def extract_recent_urls(html: str) -> Set[str]:
     }
 
 
-def convert_to_rss_urls(webpages_urls: Set[str]) -> Dict[str, str]:
-    dossier_ids = (extract_dossier_id(url) for url in webpages_urls)
-    return {dossier_id: build_rss_url(dossier_id) for dossier_id in dossier_ids}
-
-
 def extract_dossier_id(webpage_url: str) -> str:
     prefix = len("/dossier-legislatif/")
     suffix = len(".html")

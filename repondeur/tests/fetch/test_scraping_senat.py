@@ -52,30 +52,35 @@ def test_extract_recent_urls():
     }
 
 
-def test_convert_to_rss_urls():
+def test_convert_to_rss_url():
     from zam_repondeur.services.fetch.senat.scraping import (
+        build_rss_url,
         download_textes_recents,
+        extract_dossier_id,
         extract_recent_urls,
-        convert_to_rss_urls,
     )
 
-    assert convert_to_rss_urls(extract_recent_urls(download_textes_recents())) == {
-        "pjl18-404": "https://www.senat.fr//dossier-legislatif/rss/doslegpjl18-404.xml",
-        "pjl18-523": "https://www.senat.fr//dossier-legislatif/rss/doslegpjl18-523.xml",
-        "pjl18-526": "https://www.senat.fr//dossier-legislatif/rss/doslegpjl18-526.xml",
-        "pjl18-532": "https://www.senat.fr//dossier-legislatif/rss/doslegpjl18-532.xml",
-        "ppl17-699": "https://www.senat.fr//dossier-legislatif/rss/doslegppl17-699.xml",
-        "ppl18-002": "https://www.senat.fr//dossier-legislatif/rss/doslegppl18-002.xml",
-        "ppl18-043": "https://www.senat.fr//dossier-legislatif/rss/doslegppl18-043.xml",
-        "ppl18-229": "https://www.senat.fr//dossier-legislatif/rss/doslegppl18-229.xml",
-        "ppl18-260": "https://www.senat.fr//dossier-legislatif/rss/doslegppl18-260.xml",
-        "ppl18-305": "https://www.senat.fr//dossier-legislatif/rss/doslegppl18-305.xml",
-        "ppl18-385": "https://www.senat.fr//dossier-legislatif/rss/doslegppl18-385.xml",
-        "ppl18-386": "https://www.senat.fr//dossier-legislatif/rss/doslegppl18-386.xml",
-        "ppl18-436": "https://www.senat.fr//dossier-legislatif/rss/doslegppl18-436.xml",
-        "ppl18-454": "https://www.senat.fr//dossier-legislatif/rss/doslegppl18-454.xml",
-        "ppl18-462": "https://www.senat.fr//dossier-legislatif/rss/doslegppl18-462.xml",
-        "ppr18-458": "https://www.senat.fr//dossier-legislatif/rss/doslegppr18-458.xml",
+    webpages_urls = extract_recent_urls(download_textes_recents())
+    dossier_ids = (extract_dossier_id(url) for url in webpages_urls)
+    rss_urls = {dossier_id: build_rss_url(dossier_id) for dossier_id in dossier_ids}
+
+    assert rss_urls == {
+        "pjl18-404": "https://www.senat.fr/dossier-legislatif/rss/doslegpjl18-404.xml",
+        "pjl18-523": "https://www.senat.fr/dossier-legislatif/rss/doslegpjl18-523.xml",
+        "pjl18-526": "https://www.senat.fr/dossier-legislatif/rss/doslegpjl18-526.xml",
+        "pjl18-532": "https://www.senat.fr/dossier-legislatif/rss/doslegpjl18-532.xml",
+        "ppl17-699": "https://www.senat.fr/dossier-legislatif/rss/doslegppl17-699.xml",
+        "ppl18-002": "https://www.senat.fr/dossier-legislatif/rss/doslegppl18-002.xml",
+        "ppl18-043": "https://www.senat.fr/dossier-legislatif/rss/doslegppl18-043.xml",
+        "ppl18-229": "https://www.senat.fr/dossier-legislatif/rss/doslegppl18-229.xml",
+        "ppl18-260": "https://www.senat.fr/dossier-legislatif/rss/doslegppl18-260.xml",
+        "ppl18-305": "https://www.senat.fr/dossier-legislatif/rss/doslegppl18-305.xml",
+        "ppl18-385": "https://www.senat.fr/dossier-legislatif/rss/doslegppl18-385.xml",
+        "ppl18-386": "https://www.senat.fr/dossier-legislatif/rss/doslegppl18-386.xml",
+        "ppl18-436": "https://www.senat.fr/dossier-legislatif/rss/doslegppl18-436.xml",
+        "ppl18-454": "https://www.senat.fr/dossier-legislatif/rss/doslegppl18-454.xml",
+        "ppl18-462": "https://www.senat.fr/dossier-legislatif/rss/doslegppl18-462.xml",
+        "ppr18-458": "https://www.senat.fr/dossier-legislatif/rss/doslegppr18-458.xml",
     }
 
 

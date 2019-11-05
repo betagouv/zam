@@ -61,38 +61,36 @@ def extract_dossier_id(webpage_url: str) -> str:
     return webpage_url[prefix:-suffix]
 
 
+def build_webpage_url(dossier_id: str) -> str:
+    return urljoin(BASE_URL_SENAT, f"/dossier-legislatif/{dossier_id}.html")
+
+
 def build_rss_url(dossier_id: str) -> str:
     return urljoin(BASE_URL_SENAT, f"/dossier-legislatif/rss/dosleg{dossier_id}.xml")
 
 
 def create_dossier_ref(dossier_id: str) -> DossierRef:
+    webpage_url = build_webpage_url(dossier_id)
     rss_url = build_rss_url(dossier_id)
-    title, senat_url, lecture_refs = extract_from_rss(dossier_id, rss_url)
+    title, lecture_refs = extract_from_rss(dossier_id, rss_url)
     dossier_ref = DossierRef(
         uid=dossier_id,
         titre=title,
         slug=slugify(title),
         an_url="",
-        senat_url=senat_url,
+        senat_url=webpage_url,
         lectures=lecture_refs,
     )
     return dossier_ref
 
 
-def extract_from_rss(
-    dossier_id: str, rss_url: str
-) -> Tuple[str, str, List[LectureRef]]:
+def extract_from_rss(dossier_id: str, rss_url: str) -> Tuple[str, List[LectureRef]]:
     rss_content = download_rss(rss_url)
     soup = BeautifulSoup(rss_content, "html5lib")
 
     prefix = len("Sénat - ")
     title = soup.title.string[prefix:]
 
-    # We cast the bs4 output explicitly to a string because of something
-    # related to https://bugs.python.org/issue1757057
-    # Once pickled to put in Redis, it would otherwise raise a RecursionError.
-    senat_url = str(soup.id.string)
-    senat_url = canonical_senat_url(senat_url)
     lecture_refs: List[LectureRef] = []
     entries = sorted(soup.select("entry"), key=lambda e: e.created.string)
     senat_entries = [
@@ -100,7 +98,7 @@ def extract_from_rss(
     ]
     texte_refs = extract_texte_refs(dossier_id, senat_entries)
     lecture_refs = list(extract_lecture_refs(dossier_id, senat_entries, texte_refs))
-    return title, senat_url, lecture_refs
+    return title, lecture_refs
 
 
 def canonical_senat_url(url: str) -> str:

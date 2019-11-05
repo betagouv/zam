@@ -104,7 +104,7 @@ class TestCreateDossierRef:
             titre="Organisation du système de santé",
             slug="organisation-systeme-sante",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/pjl18-404.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/pjl18-404.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -162,7 +162,7 @@ class TestCreateDossierRef:
             titre="Accord France Arménie",
             slug="accord-france-armenie",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/pjl18-523.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/pjl18-523.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -220,7 +220,7 @@ class TestCreateDossierRef:
             titre="Accords France-Suisse et France-Luxembourg",
             slug="accords-france-suisse-france-luxembourg",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/pjl18-526.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/pjl18-526.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -278,7 +278,7 @@ class TestCreateDossierRef:
             titre="Transformation de la fonction publique",
             slug="transformation-fonction-publique",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/pjl18-532.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/pjl18-532.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -336,7 +336,7 @@ class TestCreateDossierRef:
             titre="Instituer un médiateur territorial dans certaines collectivités",
             slug="instituer-mediateur-territorial-certaines-collectivites",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/ppl17-699.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/ppl17-699.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -394,7 +394,7 @@ class TestCreateDossierRef:
             titre="Agence nationale de la cohésion des territoires",
             slug="agence-nationale-cohesion-territoires",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-002.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/ppl18-002.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -486,7 +486,7 @@ class TestCreateDossierRef:
             titre="Directeur général de l'Agence nationale de la cohésion des territoires",  # noqa
             slug="directeur-general-agence-nationale-cohesion-territoires",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-043.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/ppl18-043.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -557,7 +557,7 @@ class TestCreateDossierRef:
             titre="Lutte contre l'habitat insalubre ou dangereux",
             slug="lutte-contre-habitat-insalubre-ou-dangereux",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-229.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/ppl18-229.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -632,7 +632,7 @@ class TestCreateDossierRef:
             titre="Accès à l'énergie et lutte contre la précarité énergétique",
             slug="acces-energie-lutte-contre-precarite-energetique",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-260.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/ppl18-260.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -690,7 +690,7 @@ class TestCreateDossierRef:
             titre="Création d'un statut de l'élu communal",
             slug="creation-statut-elu-communal",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-305.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/ppl18-305.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -748,7 +748,7 @@ class TestCreateDossierRef:
             titre="Clarifier diverses dispositions du droit électoral",
             slug="clarifier-diverses-dispositions-droit-electoral",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-385.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/ppl18-385.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -806,7 +806,7 @@ class TestCreateDossierRef:
             titre="Clarifier diverses dispositions du droit électoral",
             slug="clarifier-diverses-dispositions-droit-electoral",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-386.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/ppl18-386.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -864,7 +864,7 @@ class TestCreateDossierRef:
             titre="Accès des PME à la commande publique",
             slug="acces-pme-commande-publique",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-436.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/ppl18-436.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -922,7 +922,7 @@ class TestCreateDossierRef:
             titre="Exploitation des réseaux radioélectriques mobiles",
             slug="exploitation-reseaux-radioelectriques-mobiles",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-454.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/ppl18-454.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -980,7 +980,7 @@ class TestCreateDossierRef:
             titre="Participation des conseillers de Lyon aux élections sénatoriales",
             slug="participation-conseillers-lyon-elections-senatoriales",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/ppl18-462.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/ppl18-462.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,
@@ -1038,7 +1038,7 @@ class TestCreateDossierRef:
             titre="Clarifier et actualiser le Règlement du Sénat",
             slug="clarifier-actualiser-reglement-senat",
             an_url="",
-            senat_url="http://www.senat.fr/dossier-legislatif/ppr18-458.html",
+            senat_url="https://www.senat.fr/dossier-legislatif/ppr18-458.html",
             lectures=[
                 LectureRef(
                     phase=Phase.PREMIERE_LECTURE,

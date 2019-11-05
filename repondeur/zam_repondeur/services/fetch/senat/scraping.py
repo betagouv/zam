@@ -30,10 +30,11 @@ def get_dossier_refs_senat() -> DossierRefsByUID:
     html = download_textes_recents()
     webpages_urls = extract_recent_urls(html)
     pids_rss = convert_to_rss_urls(webpages_urls)
-    dossier_refs_by_uid = {
-        dossier_id: create_dossier_ref(dossier_id, rss_url)
+    dossier_refs = (
+        create_dossier_ref(dossier_id, rss_url)
         for dossier_id, rss_url in pids_rss.items()
-    }
+    )
+    dossier_refs_by_uid = {dossier_ref.uid: dossier_ref for dossier_ref in dossier_refs}
     return dossier_refs_by_uid
 
 

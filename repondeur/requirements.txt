@@ -76,7 +76,7 @@ translationstring==1.3
 tzlocal==2.0.0
 ujson==1.35
 urllib3[secure]==1.24.2      # legipy: < 1.25, >= 1.24
-venusian==2.0.0
+venusian==3.0.0
 webencodings==0.5.1
 WebOb==1.8.5
 xmltodict==0.11.0            # anpy: < 0.12, >= 0.11

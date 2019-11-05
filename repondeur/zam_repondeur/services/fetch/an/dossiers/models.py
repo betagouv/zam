@@ -72,6 +72,23 @@ class DossierRef:
     senat_url: Optional[str]
     lectures: List[LectureRef]
 
+    def matches(self, other: "DossierRef") -> bool:
+        if self.an_url and self.normalized_an_url == other.normalized_an_url:
+            return True
+        if self.senat_url and self.normalized_senat_url == other.normalized_senat_url:
+            return True
+        return False
+
+    @property
+    def normalized_an_url(self) -> str:
+        return self.an_url.replace("/dossiers/alt/", "/dossiers/")
+
+    @property
+    def normalized_senat_url(self) -> Optional[str]:
+        if self.senat_url is None:
+            return None
+        return self.senat_url.replace("http://", "https://")
+
     @property
     def senat_dossier_id(self) -> Optional[str]:
         """

@@ -75,7 +75,9 @@ class DataRepository(Repository):
         dossiers, textes = get_dossiers_legislatifs_and_textes(*self.legislatures)
         with Lock(self.connection, "data"):
             for dossier_ref in dossiers.values():
-                self.set_opendata_dossier_ref(dossier_ref)
+                self.set_opendata_dossier_ref_by_uid(dossier_ref)
+                self.set_opendata_dossier_ref_by_an_url(dossier_ref)
+                self.set_opendata_dossier_ref_by_senat_url(dossier_ref)
 
             for texte_ref in textes.values():
                 self.set_opendata_texte_ref(texte_ref)
@@ -87,10 +89,8 @@ class DataRepository(Repository):
                 self.set_senat_scraping_dossier(dossier_ref)
 
     def set_senat_scraping_dossier(self, dossier_ref: DossierRef) -> None:
-        if dossier_ref.senat_dossier_id is None:
-            return
-        key = self._key_for_senat_scraping_dossier(dossier_ref.senat_dossier_id)
-        self._set_pickled_data(key, dossier_ref)
+        self.set_senat_scraping_dossier_ref_by_id(dossier_ref)
+        self.set_senat_scraping_dossier_ref_by_an_url(dossier_ref)
 
     def _load_senateurs_groupes(self) -> None:
         senateurs_by_matricule = fetch_and_parse_senateurs()
@@ -98,17 +98,48 @@ class DataRepository(Repository):
             for matricule, senateur in senateurs_by_matricule.items():
                 self._set_pickled_data(self._key_for_senateur(matricule), senateur)
 
-    def set_opendata_dossier_ref(self, dossier_ref: DossierRef) -> None:
+    def set_opendata_dossier_ref_by_uid(self, dossier_ref: DossierRef) -> None:
         key = self._key_for_opendata_dossier(dossier_ref.uid)
         self._set_pickled_data(key, dossier_ref)
+
+    def set_opendata_dossier_ref_by_an_url(self, dossier_ref: DossierRef) -> None:
+        an_url = dossier_ref.normalized_an_url
+        if an_url:
+            key = self._key_for_opendata_dossier_by_an_url(an_url)
+            self._set_pickled_data(key, dossier_ref)
+
+    def set_opendata_dossier_ref_by_senat_url(self, dossier_ref: DossierRef) -> None:
+        senat_url = dossier_ref.normalized_senat_url
+        if senat_url:
+            key = self._key_for_opendata_dossier_by_senat_url(senat_url)
+            self._set_pickled_data(key, dossier_ref)
 
     def set_opendata_texte_ref(self, texte_ref: TexteRef) -> None:
         key = self._key_for_opendata_texte(texte_ref.uid)
         self._set_pickled_data(key, texte_ref)
 
+    def set_senat_scraping_dossier_ref_by_id(self, dossier_ref: DossierRef) -> None:
+        if dossier_ref.senat_dossier_id:
+            key = self._key_for_senat_scraping_dossier(dossier_ref.senat_dossier_id)
+            self._set_pickled_data(key, dossier_ref)
+
+    def set_senat_scraping_dossier_ref_by_an_url(self, dossier_ref: DossierRef) -> None:
+        an_url = dossier_ref.normalized_an_url
+        if an_url:
+            key = self._key_for_senat_scraping_dossier_by_an_url(an_url)
+            self._set_pickled_data(key, dossier_ref)
+
     @staticmethod
     def _key_for_opendata_dossier(uid: str) -> str:
         return f"an.opendata.dossiers.{uid}"
+
+    @staticmethod
+    def _key_for_opendata_dossier_by_an_url(an_url: str) -> str:
+        return f"an.opendata.dossiers_by_an_url.{an_url}"
+
+    @staticmethod
+    def _key_for_opendata_dossier_by_senat_url(senat_url: str) -> str:
+        return f"an.opendata.dossiers_by_senat_url.{senat_url}"
 
     @staticmethod
     def _key_for_opendata_texte(uid: str) -> str:
@@ -125,6 +156,10 @@ class DataRepository(Repository):
     @staticmethod
     def _key_for_senat_scraping_dossier(uid: str) -> str:
         return f"senat.scraping.dossiers.{uid}"
+
+    @staticmethod
+    def _key_for_senat_scraping_dossier_by_an_url(an_url: str) -> str:
+        return f"senat.scraping.dossiers_by_an_url.{an_url}"
 
     @staticmethod
     def _key_for_senateur(matricule: str) -> str:
@@ -145,6 +180,20 @@ class DataRepository(Repository):
     @needs_init
     def get_opendata_dossier_ref(self, uid: str) -> DossierRef:
         key = self._key_for_opendata_dossier(uid)
+        dossier_ref: DossierRef = self._get_pickled_data(key)
+        return dossier_ref
+
+    @needs_init
+    def get_opendata_dossier_ref_by_an_url(self, an_url: str) -> Optional[DossierRef]:
+        key = self._key_for_opendata_dossier_by_an_url(an_url)
+        dossier_ref: DossierRef = self._get_pickled_data(key)
+        return dossier_ref
+
+    @needs_init
+    def get_opendata_dossier_ref_by_senat_url(
+        self, senat_url: str
+    ) -> Optional[DossierRef]:
+        key = self._key_for_opendata_dossier(senat_url)
         dossier_ref: DossierRef = self._get_pickled_data(key)
         return dossier_ref
 
@@ -172,6 +221,14 @@ class DataRepository(Repository):
     @needs_init
     def get_senat_scraping_dossier_ref(self, uid: str) -> DossierRef:
         key = self._key_for_senat_scraping_dossier(uid)
+        dossier_ref: DossierRef = self._get_pickled_data(key)
+        return dossier_ref
+
+    @needs_init
+    def get_senat_scraping_dossier_ref_by_an_url(
+        self, an_url: str
+    ) -> Optional[DossierRef]:
+        key = self._key_for_senat_scraping_dossier_by_an_url(an_url)
         dossier_ref: DossierRef = self._get_pickled_data(key)
         return dossier_ref
 

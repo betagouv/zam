@@ -90,8 +90,8 @@ class Lecture(Base, LastEventMixin):
         return self.sort_key < other.sort_key
 
     @property
-    def sort_key(self) -> Tuple[datetime, str, Optional[int]]:
-        return self.texte.date_depot, self.organe, self.partie
+    def sort_key(self) -> Tuple[datetime, str, int]:
+        return self.texte.date_depot, self.organe, self.partie or 0
 
     def __str__(self) -> str:
         return ", ".join(

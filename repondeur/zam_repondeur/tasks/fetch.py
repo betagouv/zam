@@ -139,38 +139,67 @@ def create_missing_lectures(dossier_pk: int, user_pk: Optional[int] = None) -> N
 
 
 def create_missing_lectures_an(dossier: Dossier, user: Optional[User]) -> bool:
-    dossier_ref_open_data = repository.get_dossier_ref(dossier.uid)
     # FIXME: error handling
 
+    dossier_ref_an: Optional[DossierRef]
+
+    if dossier.uid.startswith("DL"):  # AN UID
+        dossier_ref_an = repository.get_dossier_ref(dossier.uid)
+    else:  # Sénat ID
+        dossier_ref_senat = repository.get_senat_scraping_dossier_ref(dossier.uid)
+        dossier_ref_an = find_matching_dossier_ref_an(dossier_ref_senat)
+
     changed = False
-    for lecture_ref in dossier_ref_open_data.lectures:
-        if lecture_ref.chambre == Chambre.AN:
-            changed |= create_or_update_lecture(dossier, lecture_ref, user)
+    if dossier_ref_an:
+        for lecture_ref in dossier_ref_an.lectures:
+            if lecture_ref.chambre == Chambre.AN:
+                changed |= create_or_update_lecture(dossier, lecture_ref, user)
     return changed
+
+
+def find_matching_dossier_ref_an(dossier_ref_senat: DossierRef) -> Optional[DossierRef]:
+    # The Sénat dossier_ref usually includes the AN webpage URL, so we try to find
+    # an indexed AN dossier_ref with the same AN URL
+    an_url = dossier_ref_senat.normalized_an_url
+    if an_url:
+        dossier_ref = repository.get_opendata_dossier_ref_by_an_url(an_url)
+        if dossier_ref:
+            return dossier_ref
+
+    # As a fallback, try to find an indexed AN dossier_ref with the same Sénat URL
+    senat_url = dossier_ref_senat.normalized_senat_url
+    if senat_url:
+        dossier_ref = repository.get_opendata_dossier_ref_by_senat_url(senat_url)
+        if dossier_ref:
+            return dossier_ref
+
+    return None
 
 
 def create_missing_lectures_senat(dossier: Dossier, user: Optional[User]) -> bool:
-    # Start with the information in AN Open Data, which may be incomplete
-    dossier_ref_open_data = repository.get_dossier_ref(dossier.uid)
-
-    dossier_id = dossier_ref_open_data.senat_dossier_id
-    if dossier_id is None:
-        return False
-
-    senat_url = dossier_ref_open_data.senat_url
-    if not senat_url:
-        return False
-
-    # From there, get fresh data from the Sénat web site
-    dossier_ref_senat = get_senat_dossier_ref_from_cache_or_scrape(
-        dossier_id=dossier_id, webpage_url=senat_url
-    )
-
+    dossier_ref_an = repository.get_dossier_ref(dossier.uid)
+    dossier_ref_senat = find_matching_dossier_ref_senat(dossier_ref_an)
     changed = False
-    for lecture_ref in dossier_ref_senat.lectures:
-        if lecture_ref.chambre == Chambre.SENAT:
-            changed |= create_or_update_lecture(dossier, lecture_ref, user)
+    if dossier_ref_senat is not None:
+        for lecture_ref in dossier_ref_senat.lectures:
+            if lecture_ref.chambre == Chambre.SENAT:
+                changed |= create_or_update_lecture(dossier, lecture_ref, user)
     return changed
+
+
+def find_matching_dossier_ref_senat(dossier_ref_an: DossierRef) -> Optional[DossierRef]:
+    # The AN dossier_ref usually includes the Sénat webpage URL, so we try this first
+    senat_url = dossier_ref_an.senat_url
+    dossier_id = dossier_ref_an.senat_dossier_id
+    if senat_url and dossier_id:
+        return get_senat_dossier_ref_from_cache_or_scrape(
+            dossier_id=dossier_id, webpage_url=senat_url
+        )
+
+    # As a fall back, we index the Sénat dossier_refs by AN webpage URL, so if
+    # the information is available in that direction, we can still find it
+    an_url = dossier_ref_an.normalized_an_url
+    return repository.get_senat_scraping_dossier_ref_by_an_url(an_url)
 
 
 def get_senat_dossier_ref_from_cache_or_scrape(

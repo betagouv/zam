@@ -436,7 +436,7 @@ def test_generate_pdf_with_amendement_content_factor_many_authors_groups(
         "Article",
         "Art. 1",
         "Amendements",
-        "6666, 9999, …, 57, 72 et 83 (6 au total)",
+        "6666, 9999, 42, 57, 72 et 83",
         "Auteurs",
         "M. DUPONT, M. DURAND, M. JEAN et M. MARTIN",
         "Groupes",

@@ -49,8 +49,8 @@ zam.session_secret = $$session_secret
 
 zam.auth_secret = $$auth_secret
 
-zam.refresh.amendements = 90
-zam.refresh.articles = 90
+zam.refresh.amendements = 365
+zam.refresh.articles = 365
 
 zam.http_cache_dir = /var/cache/zam/http
 zam.uploads_backup_dir = /srv/repondeur/data/uploads

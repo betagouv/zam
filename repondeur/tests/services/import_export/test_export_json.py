@@ -114,6 +114,7 @@ def test_export_json(
         "article_order": "6|001|01|__________|1",
         "affectation_email": "",
         "affectation_name": "",
+        "affectation_box": "",
     }
     assert [amdt["article_order"] for amdt in amendements] == [
         "6|001|01|__________|1",
@@ -199,6 +200,7 @@ def test_export_json_full(lecture_senat, article1_senat, tmpdir):
         "article_order": "6|001|01|__________|1",
         "affectation_email": "",
         "affectation_name": "",
+        "affectation_box": "",
     }
 
 
@@ -237,6 +239,43 @@ def test_write_with_affectation(
     assert counter["articles"] == len(articles) == 1
     assert amendements[0]["affectation_email"] == "david@exemple.gouv.fr"
     assert amendements[0]["affectation_name"] == "David"
+
+
+def test_write_with_affectation_box(
+    lecture_senat, article1_senat, tmpdir, user_david_table_senat
+):
+    from zam_repondeur.models import Amendement, DBSession, SharedTable
+    from zam_repondeur.services.import_export.json import export_json
+
+    filename = str(tmpdir.join("test.json"))
+
+    with transaction.manager:
+        DBSession.add(user_david_table_senat)
+        amendement = Amendement.create(
+            lecture=lecture_senat,
+            article=article1_senat,
+            alinea="",
+            num=42,
+            rectif=1,
+            auteur="M. DUPONT",
+            groupe="RDSE",
+            matricule="000000",
+            corps="<p>L'article 1 est supprimé.</p>",
+            expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        )
+        shared_table = SharedTable.create(titre="Test", lecture=lecture_senat)
+        shared_table.add_amendement(amendement)
+
+        counter = export_json(lecture_senat, filename, request={})
+
+    with open(filename, "r", encoding="utf-8-sig") as f_:
+        backup = json.loads(f_.read())
+        amendements = backup["amendements"]
+        articles = backup["articles"]
+
+    assert counter["amendements"] == len(amendements) == 1
+    assert counter["articles"] == len(articles) == 1
+    assert amendements[0]["affectation_box"] == "Test"
 
 
 def test_export_json_sous_amendement(
@@ -348,6 +387,7 @@ def test_export_json_sous_amendement(
         "gouvernemental": False,
         "affectation_email": "",
         "affectation_name": "",
+        "affectation_box": "",
     }
 
 

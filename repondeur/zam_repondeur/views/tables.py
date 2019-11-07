@@ -120,12 +120,7 @@ class TableView:
         )
 
         for amendement in Batch.expanded_batches(amendements):
-            if amendement.location.shared_table:
-                old = amendement.location.shared_table.titre
-            elif amendement.location.user_table:
-                old = str(amendement.location.user_table.user)  # Contains email.
-            else:
-                old = ""
+            old = amendement.table_name_with_email
             if target_shared_table:
                 if target and amendement.location.shared_table is target_shared_table:
                     continue

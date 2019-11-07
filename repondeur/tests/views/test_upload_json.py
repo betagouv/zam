@@ -246,6 +246,165 @@ class TestPostForm:
         amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
         assert amendement.location.user_table is None
 
+    def test_upload_affectation_box_new(self, app, lecture_an, user_david):
+        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models.events.amendement import AmendementTransfere
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.location.shared_table is None
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.location.shared_table is None
+
+        self._upload_backup(app, "backup_with_affectation_box.json", user_david)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.location.shared_table.titre == "PréRIM"
+
+        # A transfer event has been created
+        assert any(
+            isinstance(event, AmendementTransfere) for event in amendement.events
+        )
+        transfer_event = next(
+            event
+            for event in amendement.events
+            if isinstance(event, AmendementTransfere)
+        )
+        assert str(transfer_event.user) == "David (david@exemple.gouv.fr)"
+        assert transfer_event.data["old_value"] == ""
+        assert transfer_event.data["new_value"] == "PréRIM"
+        assert transfer_event.render_summary() == (
+            "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+            "a transféré l’amendement à « PréRIM »."
+        )
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.location.shared_table is None
+
+    def test_upload_affectation_box_existing_not_updated(
+        self, app, lecture_an, user_david
+    ):
+        from zam_repondeur.models import DBSession, Amendement, SharedTable
+        from zam_repondeur.models.events.amendement import AmendementTransfere
+
+        with transaction.manager:
+            DBSession.add_all([user_david])
+            amendement = (
+                DBSession.query(Amendement).filter(Amendement.num == 666).first()
+            )
+            shared_table = SharedTable.create(lecture=lecture_an, titre="PréRIM")
+            shared_table.add_amendement(amendement)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.location.shared_table.titre == "PréRIM"
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.location.shared_table is None
+
+        self._upload_backup(app, "backup_with_affectation_box.json", user_david)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.location.shared_table.titre == "PréRIM"
+
+        # No transfer event has been created
+        assert not any(
+            event
+            for event in amendement.events
+            if isinstance(event, AmendementTransfere)
+        )
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.location.shared_table is None
+
+    def test_upload_affectation_box_existing_updated(self, app, lecture_an, user_david):
+        from zam_repondeur.models import DBSession, Amendement, SharedTable
+        from zam_repondeur.models.events.amendement import AmendementTransfere
+
+        with transaction.manager:
+            DBSession.add_all([user_david])
+            amendement = (
+                DBSession.query(Amendement).filter(Amendement.num == 666).first()
+            )
+            shared_table = SharedTable.create(lecture=lecture_an, titre="Initial")
+            shared_table.add_amendement(amendement)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.location.shared_table.titre == "Initial"
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.location.shared_table is None
+
+        self._upload_backup(app, "backup_with_affectation_box.json", user_david)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.location.shared_table.titre == "PréRIM"
+
+        # A transfer event has been created
+        assert any(
+            isinstance(event, AmendementTransfere) for event in amendement.events
+        )
+        transfer_event = next(
+            event
+            for event in amendement.events
+            if isinstance(event, AmendementTransfere)
+        )
+        assert str(transfer_event.user) == "David (david@exemple.gouv.fr)"
+        assert transfer_event.data["old_value"] == "Initial"
+        assert transfer_event.data["new_value"] == "PréRIM"
+        assert transfer_event.render_summary() == (
+            "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+            "a transféré l’amendement de « Initial » à « PréRIM »."
+        )
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.location.shared_table is None
+
+    def test_upload_affectation_box_from_user(
+        self, app, lecture_an, user_david, user_ronan
+    ):
+        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models.events.amendement import AmendementTransfere
+
+        with transaction.manager:
+            DBSession.add_all([user_david, user_ronan])
+            amendement = (
+                DBSession.query(Amendement).filter(Amendement.num == 666).first()
+            )
+            amendement.location.user_table = user_ronan.table_for(lecture_an)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.location.shared_table is None
+        assert amendement.location.user_table is not None
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.location.shared_table is None
+
+        self._upload_backup(app, "backup_with_affectation_box.json", user_david)
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        assert amendement.location.shared_table.titre == "PréRIM"
+
+        # A transfer event has been created
+        assert any(
+            isinstance(event, AmendementTransfere) for event in amendement.events
+        )
+        transfer_event = next(
+            event
+            for event in amendement.events
+            if isinstance(event, AmendementTransfere)
+        )
+        assert str(transfer_event.user) == "David (david@exemple.gouv.fr)"
+        assert transfer_event.data["old_value"] == "Ronan (ronan@exemple.gouv.fr)"
+        assert transfer_event.data["new_value"] == "PréRIM"
+        assert transfer_event.render_summary() == (
+            "<abbr title='david@exemple.gouv.fr'>David</abbr> "
+            "a transféré l’amendement de « Ronan (ronan@exemple.gouv.fr) » "
+            "à « PréRIM »."
+        )
+
+        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        assert amendement.location.shared_table is None
+
     def test_upload_backup_with_articles(self, app, user_david):
         from zam_repondeur.models import DBSession, Amendement
 

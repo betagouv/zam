@@ -539,6 +539,15 @@ class Amendement(Base):
             return ""
 
     @property
+    def table_name_with_email(self) -> str:
+        if self.location.shared_table:
+            return self.location.shared_table.titre or ""
+        elif self.location.user_table:
+            return str(self.location.user_table.user)  # Contains email.
+        else:
+            return ""
+
+    @property
     def is_being_edited(self) -> bool:
         return bool(amendements_repository.get_last_activity_time(self.pk))
 
@@ -586,6 +595,9 @@ class Amendement(Base):
             ),
             "affectation_name": (
                 self.location.user_table and self.location.user_table.user.name or ""
+            ),
+            "affectation_box": (
+                self.location.shared_table and self.location.shared_table.titre or ""
             ),
         }
         return result

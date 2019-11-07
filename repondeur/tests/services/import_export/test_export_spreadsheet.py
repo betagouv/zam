@@ -46,6 +46,7 @@ def test_export_csv_columns(lecture_an, article1_an, tmpdir):
             "Commentaires",
             "Affectation (email)",
             "Affectation (nom)",
+            "Affectation (boite)",
             "Sort",
         ]
 
@@ -98,6 +99,7 @@ def test_export_excel_columns(lecture_an, article1_an, tmpdir):
         "Commentaires",
         "Affectation (email)",
         "Affectation (nom)",
+        "Affectation (boite)",
         "Sort",
     ]
 

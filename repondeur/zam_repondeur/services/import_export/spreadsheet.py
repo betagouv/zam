@@ -23,6 +23,7 @@ FIELDS = {
     "comments": "Commentaires",
     "affectation_email": "Affectation (email)",
     "affectation_name": "Affectation (nom)",
+    "affectation_box": "Affectation (boite)",
     "sort": "Sort",
 }
 

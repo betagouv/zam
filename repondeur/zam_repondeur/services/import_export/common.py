@@ -4,7 +4,14 @@ from typing import Dict
 
 from pyramid.request import Request
 
-from zam_repondeur.models import Amendement, Lecture, Team, User, get_one_or_create
+from zam_repondeur.models import (
+    Amendement,
+    Lecture,
+    SharedTable,
+    Team,
+    User,
+    get_one_or_create,
+)
 from zam_repondeur.models.events.amendement import (
     AmendementTransfere,
     AvisAmendementModifie,
@@ -70,14 +77,40 @@ def import_amendement(
                 amendement=amendement, comments=comments, request=request
             )
 
+    # Order matters, if there is a box *and* an email, the amendement will be
+    # transfered to the box then to the user who has precedence.
+    if "affectation_box" in item and item["affectation_box"]:
+        _transfer_to_box_amendement_on_import(request, lecture, amendement, item)
+
     if "affectation_email" in item and item["affectation_email"]:
-        _transfer_amendement_on_import(request, lecture, amendement, item)
+        _transfer_to_user_amendement_on_import(request, lecture, amendement, item)
 
     previous_reponse = reponse
     counter["reponses"] += 1
 
 
-def _transfer_amendement_on_import(
+def _transfer_to_box_amendement_on_import(
+    request: Request, lecture: Lecture, amendement: Amendement, item: dict
+) -> None:
+    shared_table, created = get_one_or_create(
+        SharedTable, titre=item["affectation_box"], lecture=lecture
+    )
+
+    if amendement.location.shared_table is shared_table:
+        return
+
+    old = amendement.table_name_with_email
+    new = shared_table.titre
+
+    amendement.location.shared_table = shared_table
+    amendement.location.user_table = None
+
+    AmendementTransfere.create(
+        amendement=amendement, old_value=old, new_value=new, request=request
+    )
+
+
+def _transfer_to_user_amendement_on_import(
     request: Request, lecture: Lecture, amendement: Amendement, item: dict
 ) -> None:
     email = User.normalize_email(item["affectation_email"])
@@ -93,16 +126,16 @@ def _transfer_amendement_on_import(
         if lecture.dossier.team:
             user.teams.append(lecture.dossier.team)
 
-    target_table = user.table_for(lecture)
-    old = (
-        str(amendement.location.user_table.user)
-        if amendement.location.user_table
-        else ""
-    )
-    new = str(target_table.user) if target_table else ""
-    if amendement.location.user_table is target_table:
+    user_table = user.table_for(lecture)
+    if amendement.location.user_table is user_table:
         return
-    amendement.location.user_table = target_table
+
+    old = amendement.table_name_with_email
+    new = str(user)
+
+    amendement.location.user_table = user_table
+    amendement.location.shared_table = None
+
     AmendementTransfere.create(
         amendement=amendement, old_value=old, new_value=new, request=request
     )

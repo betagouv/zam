@@ -62,19 +62,9 @@
           <tr>
             <td>Amendement{% if multiple %}s{% endif %}</td>
             <td>
-              {% if amendements|length > 5 -%}
-                {{ amendements[0] }},
-                {{ amendements[1] }},
-                …,
-                {{ amendements[-3] }},
-                {{ amendements[-2] }} et
-                {{ amendements[-1] }}
-                ({{ amendements|length }} au total)
-              {%- else -%}
-                {% for amendement in amendements -%}
-                  {{ amendement.num_disp }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                {%- endfor %}
-              {%- endif %}
+              {% for amendement in amendements -%}
+                {{ amendement.num_disp }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+              {%- endfor %}
             </td>
           </tr>
         {% endif %}

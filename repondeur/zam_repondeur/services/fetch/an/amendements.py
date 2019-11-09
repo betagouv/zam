@@ -552,6 +552,8 @@ def _extract_credits_table(
     amendement: OrderedDict, type_credits: str
 ) -> TableauCredits:
     programmes = amendement["listeProgrammesAmdt"]["programmeAmdt"]
+    if not isinstance(programmes, list):
+        programmes = [programmes]
 
     new_format = "aEPositifFormat" in programmes[0]
     if new_format:

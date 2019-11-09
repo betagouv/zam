@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 import requests
 from cachecontrol import CacheControl
@@ -23,7 +23,12 @@ def includeme(config: Configurator) -> None:
     config.registry.registerUtility(component=cached_session, provided=IHTTPSession)
 
 
-def get_http_session(registry: Optional[Registry] = None) -> CacheControl:
+def get_http_session(
+    registry: Optional[Registry] = None,
+) -> Union[requests.Session, CacheControl]:
     if registry is None:
         registry = get_current_registry()
-    return registry.queryUtility(IHTTPSession)
+    cached_session = registry.queryUtility(IHTTPSession)
+    if cached_session is None:
+        return requests.session()  # fallback if cached session was not initialized
+    return cached_session

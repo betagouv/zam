@@ -2,7 +2,7 @@ import logging
 import re
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import Dict, List, NamedTuple, Optional, Set, Tuple, Union
+from typing import Dict, List, NamedTuple, Optional, Set, Tuple
 from urllib.parse import urljoin
 
 import xmltodict
@@ -300,7 +300,9 @@ _ORGANE_PREFIX = {
 }
 
 
-def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
+def _retrieve_content(
+    url: str, force_list: Optional[Tuple[str]] = None
+) -> Dict[str, OrderedDict]:
     logger.info("Récupération de %r", url)
     http_session = get_http_session()
     try:
@@ -325,8 +327,11 @@ def _retrieve_content(url: str) -> Dict[str, OrderedDict]:
     if resp.status_code >= 400:
         raise FetchError(url, resp)
 
-    result: OrderedDict = xmltodict.parse(resp.content)
+    result: OrderedDict = xmltodict.parse(resp.content, force_list=force_list)
     return result
+
+
+_FORCE_LIST_KEYS_LISTE = ("amendement",)
 
 
 def fetch_discussion_list(lecture: Lecture) -> List[OrderedDict]:
@@ -336,25 +341,25 @@ def fetch_discussion_list(lecture: Lecture) -> List[OrderedDict]:
     Les amendements irrecevables ou encore en traitement ne sont pas inclus.
     """
     url = build_url(lecture)
-    content = _retrieve_content(url)
+    content = _retrieve_content(url, force_list=_FORCE_LIST_KEYS_LISTE)
 
     try:
-        # If there is only 1 amendement, xmltodict does not return a list :(
-        discussed_amendements: Union[OrderedDict, List[OrderedDict]] = (
+        discussed_amendements: List[OrderedDict] = (
             content["amdtsParOrdreDeDiscussion"]["amendements"]["amendement"]
         )
     except TypeError:
         return []
 
-    if isinstance(discussed_amendements, OrderedDict):
-        return [discussed_amendements]
     return discussed_amendements
+
+
+_FORCE_LIST_KEYS_AMENDEMENT = ("programmeAmdt",)
 
 
 def _retrieve_amendement(lecture: Lecture, numero_prefixe: str) -> OrderedDict:
     url = build_url(lecture, numero_prefixe)
     try:
-        content = _retrieve_content(url)
+        content = _retrieve_content(url, force_list=_FORCE_LIST_KEYS_AMENDEMENT)
     except NotFound:
         url = build_url(lecture, numero_prefixe, fallback=True)
         content = _retrieve_content(url)
@@ -552,8 +557,6 @@ def _extract_credits_table(
     amendement: OrderedDict, type_credits: str
 ) -> TableauCredits:
     programmes = amendement["listeProgrammesAmdt"]["programmeAmdt"]
-    if not isinstance(programmes, list):
-        programmes = [programmes]
 
     new_format = "aEPositifFormat" in programmes[0]
     if new_format:

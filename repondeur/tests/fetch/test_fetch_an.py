@@ -1,3 +1,4 @@
+from datetime import date
 from pathlib import Path
 from textwrap import dedent
 
@@ -762,6 +763,88 @@ class TestFetchAmendement:
                     <tr>
                         <td>Solde</td>
                         <td colspan="2">0</td>
+                    </tr>
+                </tbody>
+            </table>
+            """,  # noqa
+        )
+
+    @pytest.fixture
+    def lecture_plf_2019(self, db):
+        from zam_repondeur.models import (
+            Chambre,
+            Dossier,
+            Lecture,
+            Phase,
+            Texte,
+            TypeTexte,
+        )
+
+        dossier = Dossier.create(
+            uid="DLR5L15N36733",
+            titre="Budget : loi de finances 2019",
+            slug="loi-finances-2019",
+        )
+        texte = Texte.create(
+            type_=TypeTexte.PROJET,
+            chambre=Chambre.AN,
+            legislature=15,
+            numero=1490,
+            date_depot=date(2018, 12, 12),
+        )
+        lecture = Lecture.create(
+            phase=Phase.NOUVELLE_LECTURE,
+            texte=texte,
+            titre="Nouvelle lecture – Séance publique",
+            organe="PO717460",
+            dossier=dossier,
+        )
+        return lecture
+
+    @responses.activate
+    def test_fetch_amendement_with_single_programme(self, lecture_plf_2019, source):
+        from zam_repondeur.services.fetch.an.amendements import build_url
+
+        responses.add(
+            responses.GET,
+            build_url(lecture_plf_2019, 193),
+            body=read_sample_data("an/1490/193.xml"),
+            status=200,
+        )
+
+        amendement, created = source.fetch_amendement(
+            lecture=lecture_plf_2019, numero_prefixe="193", position=1
+        )
+
+        assert amendement.mission_titre == "Mission « Sécurités »"
+        assert amendement.mission_titre_court == "Sécurités"
+        assert_html_looks_like(
+            amendement.corps,
+            """
+            <p>Modifier ainsi les autorisations d’engagement et les crédits de paiement :</p>
+            <table class="credits">
+                <caption>(en euros)</caption>
+                <thead>
+                    <tr>
+                        <th>Programmes</th>
+                        <th>+</th>
+                        <th>-</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>Nouvelle ligne de programme (ligne nouvelle)</td>
+                            <td>7&nbsp;000&nbsp;000</td>
+                            <td>0</td>
+                        </tr>
+                    <tr>
+                        <td>Totaux</td>
+                        <td>7&nbsp;000&nbsp;000</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Solde</td>
+                        <td colspan="2">7&nbsp;000&nbsp;000</td>
                     </tr>
                 </tbody>
             </table>

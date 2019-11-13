@@ -88,6 +88,8 @@ def settings(tmp_path_factory):
         # Only wait for 1 second to speed up integration tests.
         "zam.check_for.amendement_stolen_while_editing": 1,
         "zam.check_for.transfers_from_to_my_table": 1,
+        # Minutes
+        "zam.http_cache_duration": 0,
         "zam.http_cache_dir": str(tmp_path_factory.mktemp(".web_cache")),
     }
 

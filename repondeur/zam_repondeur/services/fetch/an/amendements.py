@@ -57,7 +57,7 @@ class OrganeNotFound(Exception):
 
 
 class AssembleeNationale(RemoteSource):
-    def fetch(self, lecture: Lecture) -> FetchResult:
+    def fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
         result = FetchResult([], 0, [])
 
         logger.info("Récupération des amendements sur %r", lecture)
@@ -67,17 +67,21 @@ class AssembleeNationale(RemoteSource):
             if not discussion_items:
                 logger.warning("Could not find amendements from %r", lecture)
 
-            reset_amendements_positions(lecture, discussion_items)
+            if not dry_run:
+                reset_amendements_positions(lecture, discussion_items)
 
-            result += self._fetch_amendements_discussed(lecture, discussion_items)
-
-            result += self._fetch_amendements_other(
-                lecture=lecture,
-                discussion_nums={
-                    parse_num_in_liste(d["@numero"])[1] for d in discussion_items
-                },
-                prefix=find_prefix(discussion_items, lecture),
+            result += self._fetch_amendements_discussed(
+                lecture, discussion_items, dry_run=dry_run
             )
+
+            if not dry_run:
+                result += self._fetch_amendements_other(
+                    lecture=lecture,
+                    discussion_nums={
+                        parse_num_in_liste(d["@numero"])[1] for d in discussion_items
+                    },
+                    prefix=find_prefix(discussion_items, lecture),
+                )
 
             return result
 
@@ -85,7 +89,10 @@ class AssembleeNationale(RemoteSource):
             return FetchResult([], 0, [])
 
     def _fetch_amendements_discussed(
-        self, lecture: Lecture, discussion_items: List[OrderedDict]
+        self,
+        lecture: Lecture,
+        discussion_items: List[OrderedDict],
+        dry_run: bool = False,
     ) -> FetchResult:
         amendements: List[Amendement] = []
         created = 0
@@ -108,6 +115,7 @@ class AssembleeNationale(RemoteSource):
                     position=position,
                     id_discussion_commune=id_discussion_commune,
                     id_identique=id_identique,
+                    dry_run=dry_run,
                 )
             except NotFound:
                 prefix, num = parse_num_in_liste(numero_prefixe)
@@ -169,12 +177,16 @@ class AssembleeNationale(RemoteSource):
         position: Optional[int],
         id_discussion_commune: Optional[int] = None,
         id_identique: Optional[int] = None,
+        dry_run: bool = False,
     ) -> Tuple[Amendement, bool]:
         """
         Récupère un amendement depuis son numéro.
         """
         logger.info("Récupération de l'amendement %r", numero_prefixe)
         amend = _retrieve_amendement(lecture, numero_prefixe)
+        if dry_run:
+            return Amendement(), False  # Dummy.
+
         article = _get_article(lecture, amend["division"])
         parent = _get_parent(lecture, article, amend)
         amendement, created = self._create_or_update_amendement(

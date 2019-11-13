@@ -75,7 +75,7 @@ class FetchResult(NamedTuple):
 
 
 class RemoteSource(Source):
-    def fetch(self, lecture: Lecture) -> FetchResult:
+    def fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
         raise NotImplementedError
 
     @classmethod
@@ -90,6 +90,6 @@ class RemoteSource(Source):
         raise NotImplementedError
 
 
-def get_amendements(lecture: Lecture) -> FetchResult:
+def get_amendements(lecture: Lecture, dry_run: bool = False) -> FetchResult:
     source = RemoteSource.get_remote_source_for_chambre(lecture.chambre)
-    return source.fetch(lecture)
+    return source.fetch(lecture, dry_run=dry_run)

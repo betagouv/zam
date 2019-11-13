@@ -24,7 +24,7 @@ BASE_URL = "https://www.senat.fr"
 
 
 class Senat(RemoteSource):
-    def fetch(self, lecture: Lecture) -> FetchResult:
+    def fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
         logger.info("Récupération des amendements déposés sur %r", lecture)
         created = 0
         amendements: List[Amendement] = []
@@ -36,7 +36,9 @@ class Senat(RemoteSource):
             amendement.position = None
 
         try:
-            amendements_created = self._fetch_and_parse_all(lecture=lecture)
+            amendements_created = self._fetch_and_parse_all(
+                lecture=lecture, dry_run=dry_run
+            )
         except NotFound:
             return FetchResult(amendements, created, [])
 
@@ -55,10 +57,12 @@ class Senat(RemoteSource):
 
         return FetchResult(processed_amendements, created, [])
 
-    def _fetch_and_parse_all(self, lecture: Lecture) -> List[Tuple[Amendement, bool]]:
+    def _fetch_and_parse_all(
+        self, lecture: Lecture, dry_run: bool = False
+    ) -> List[Tuple[Amendement, bool]]:
         return [
             self.parse_from_csv(row, lecture)
-            for row in _fetch_all(lecture)
+            for row in _fetch_all(lecture, dry_run)
             if lecture.partie == parse_partie(row["Numéro "])
         ]
 
@@ -164,7 +168,7 @@ def parse_partie(numero: str) -> Optional[int]:
     return None
 
 
-def _fetch_all(lecture: Lecture) -> List[OrderedDict]:
+def _fetch_all(lecture: Lecture, dry_run: bool = False) -> List[OrderedDict]:
     """
     Récupère tous les amendements, dans l'ordre de dépôt
     """
@@ -182,6 +186,9 @@ def _fetch_all(lecture: Lecture) -> List[OrderedDict]:
 
     if resp.status_code == HTTPStatus.NOT_FOUND:
         raise NotFound(url)
+
+    if dry_run:
+        return []
 
     text = resp.content.decode("cp1252")
     lines = [_filter_line(line) for line in text.splitlines()[1:]]

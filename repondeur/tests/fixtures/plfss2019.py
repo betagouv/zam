@@ -8,7 +8,7 @@ def dossier_plfss2019(db):
 
     with transaction.manager:
         dossier = Dossier.create(
-            uid="DLR5L15N36892",
+            an_id="DLR5L15N36892",
             titre="Sécurité sociale : loi de financement 2019",
             slug="plfss-2019",
         )

@@ -14,7 +14,7 @@ class TestRepr:
         expected_repr = (
             "<Dossier pk=1 slug='plfss-2018'"
             " titre='Sécurité sociale : loi de financement 2018'"
-            " uid='DLR5L15N36030' team=<Team name='Zam'>>"
+            " an_id='DLR5L15N36030' senat_id=None team=<Team name='Zam'>>"
         )
 
         assert repr(dossier_plfss2018) == expected_repr

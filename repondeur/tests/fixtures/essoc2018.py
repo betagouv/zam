@@ -10,7 +10,7 @@ def dossier_essoc2018(db, team_zam):
 
     with transaction.manager:
         dossier = Dossier.create(
-            uid="DLR5L15N36159",
+            an_id="DLR5L15N36159",
             titre="Fonction publique : un Etat au service d'une société de confiance",
             slug="etat-service-societe-confiance",
         )

@@ -7,7 +7,11 @@ from typing import Set
 from huey import crontab
 
 from zam_repondeur.models import DBSession, Dossier, Team, Texte
-from zam_repondeur.tasks.fetch import update_dossier
+from zam_repondeur.tasks.fetch import (
+    find_matching_dossier_ref_an,
+    find_matching_dossier_ref_senat,
+    update_dossier,
+)
 from zam_repondeur.tasks.huey import huey
 
 logger = logging.getLogger(__name__)
@@ -35,23 +39,86 @@ def update_dossiers() -> None:
     """
     Update Dossiers in database based on data in Redis cache
     """
-    from zam_repondeur.services.data import repository
-
     logger.info("Dossiers update start")
-    dossiers_opendata = set(repository.list_opendata_dossiers())
-    dossiers_scraping = set(repository.list_senat_scraping_dossiers())
-    create_missing_dossiers(dossiers_opendata | dossiers_scraping)
+    create_missing_dossiers_an()
+    create_missing_dossiers_senat()
     logger.info("Dossiers update end")
 
 
-def create_missing_dossiers(all_dossiers: Set[str]) -> None:
+def create_missing_dossiers_an() -> None:
+    """
+    Create new dossiers based on dossier_refs in AN open data
+    """
     from zam_repondeur.services.data import repository
 
-    existing_dossiers = set(t[0] for t in DBSession.query(Dossier.uid))
-    missing_dossiers = all_dossiers - existing_dossiers
-    for uid in missing_dossiers:
-        dossier_ref = repository.get_dossier_ref(uid)
-        Dossier.create(uid=uid, titre=dossier_ref.titre, slug=dossier_ref.slug)
+    known_an_ids = set(repository.list_opendata_dossiers())
+    existing_an_ids = set(
+        t[0] for t in DBSession.query(Dossier.an_id).filter(Dossier.an_id.__ne__(None))
+    )
+    existing_senat_ids = set(
+        t[0]
+        for t in DBSession.query(Dossier.senat_id).filter(Dossier.senat_id.__ne__(None))
+    )
+    missing_an_ids = known_an_ids - existing_an_ids
+
+    for an_id in missing_an_ids:
+
+        dossier_ref_an = repository.get_opendata_dossier_ref(an_id)
+        if dossier_ref_an is None:
+            continue
+
+        # Check that we have not already created from the Sénat dossier_ref
+        dossier_ref_senat = find_matching_dossier_ref_senat(dossier_ref_an)
+        if dossier_ref_senat:
+            if dossier_ref_senat.uid in existing_senat_ids:
+                continue
+
+        senat_id = dossier_ref_senat.uid if dossier_ref_senat else None
+
+        Dossier.create(
+            an_id=an_id,
+            senat_id=senat_id,
+            titre=dossier_ref_an.titre,
+            slug=dossier_ref_an.slug,
+        )
+
+
+def create_missing_dossiers_senat() -> None:
+    """
+    Create new dossiers based on dossier_refs scraped from Sénat web site
+    """
+    from zam_repondeur.services.data import repository
+
+    known_senat_ids = set(repository.list_senat_scraping_dossiers())
+    existing_senat_ids = set(
+        t[0]
+        for t in DBSession.query(Dossier.senat_id).filter(Dossier.senat_id.__ne__(None))
+    )
+    existing_an_ids = set(
+        t[0] for t in DBSession.query(Dossier.an_id).filter(Dossier.an_id.__ne__(None))
+    )
+    missing_senat_ids = known_senat_ids - existing_senat_ids
+
+    for senat_id in missing_senat_ids:
+
+        dossier_ref_senat = repository.get_senat_scraping_dossier_ref(senat_id)
+        if dossier_ref_senat is None:
+            continue
+
+        # Check that we have not already created from the AN dossier_ref
+        dossier_ref_an = find_matching_dossier_ref_an(dossier_ref_senat)
+        if dossier_ref_an:
+            if dossier_ref_an.uid in existing_an_ids:
+                continue
+
+        an_id = dossier_ref_an.uid if dossier_ref_an else None
+
+        Dossier.create(
+            an_id=an_id,
+            senat_id=senat_id,
+            titre=dossier_ref_senat.titre,
+            slug=dossier_ref_senat.slug,
+        )
 
 
 def update_textes() -> None:

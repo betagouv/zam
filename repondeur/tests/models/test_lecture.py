@@ -37,7 +37,7 @@ class TestLectureToStr:
         )
 
         dossier = Dossier.create(
-            uid="DLR5L14N33494",
+            an_id="DLR5L14N33494",
             titre="Questions sociales et santé : modernisation de notre système de santé",  # noqa
             slug="sante",
         )

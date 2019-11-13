@@ -21,7 +21,7 @@ def dossier_plf_2019(db):
 
     with transaction.manager:
         dossier = Dossier.create(
-            uid="DLR5L15N36733",
+            an_id="DLR5L15N36733",
             titre="Budget : loi de finances 2019",
             slug="loi-finances-2019",
         )
@@ -35,7 +35,7 @@ def dossier_plf_2020(db):
 
     with transaction.manager:
         dossier = Dossier.create(
-            uid="DLR5L15N37615",
+            an_id="DLR5L15N37615",
             titre="Budget : loi de finances 2020",
             slug="loi-finances-2020",
         )
@@ -603,7 +603,7 @@ def test_fetch_all_commission(db):
 
     with transaction.manager:
         dossier = Dossier.create(
-            uid="pjl17-583",
+            senat_id="pjl17-583",
             titre="Liberté de choisir son avenir professionnel",
             slug="liberte-choisir-avenir-professionnel",
         )

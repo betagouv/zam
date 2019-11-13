@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, List, Optional
 
-from sqlalchemy import Column, DateTime, Integer, Text, desc
+from sqlalchemy import CheckConstraint, Column, DateTime, Integer, Text, desc
 from sqlalchemy.orm import joinedload, relationship
 
 from .base import Base, DBSession
@@ -10,10 +10,13 @@ from .events.base import LastEventMixin
 
 class Dossier(Base, LastEventMixin):
     __tablename__ = "dossiers"
+    __table_args__ = (CheckConstraint("an_id IS NOT NULL OR senat_id IS NOT NULL"),)
 
     pk = Column(Integer, primary_key=True)
 
-    uid = Column(Text, nullable=False, unique=True)  # the Assemblée Nationale UID
+    an_id = Column(Text, nullable=True, unique=True)
+    senat_id = Column(Text, nullable=True, unique=True)
+
     titre = Column(Text, nullable=False)  # TODO: make it unique?
     slug: str = Column(Text, nullable=False, unique=True)
 
@@ -34,7 +37,7 @@ class Dossier(Base, LastEventMixin):
         backref="dossier",
     )
 
-    __repr_keys__ = ("pk", "slug", "titre", "uid", "team")
+    __repr_keys__ = ("pk", "slug", "titre", "an_id", "senat_id", "team")
 
     @property
     def url_key(self) -> str:
@@ -51,7 +54,15 @@ class Dossier(Base, LastEventMixin):
         return dossiers
 
     @classmethod
-    def create(cls, uid: str, titre: str, slug: str) -> "Dossier":
+    def create(
+        cls,
+        titre: str,
+        slug: str,
+        an_id: Optional[str] = None,
+        senat_id: Optional[str] = None,
+    ) -> "Dossier":
+        if an_id is None and senat_id is None:
+            raise ValueError("You must provide at least one of 'an_id' and 'senat_id'")
         now = datetime.utcnow()
         base_slug = slug
         counter = 1
@@ -62,7 +73,14 @@ class Dossier(Base, LastEventMixin):
             if existing is None:
                 break
             counter += 1
-        dossier = cls(uid=uid, titre=titre, slug=slug, created_at=now, modified_at=now)
+        dossier = cls(
+            an_id=an_id,
+            senat_id=senat_id,
+            titre=titre,
+            slug=slug,
+            created_at=now,
+            modified_at=now,
+        )
         DBSession.add(dossier)
         return dossier
 

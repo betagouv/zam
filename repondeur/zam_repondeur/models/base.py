@@ -36,6 +36,7 @@ metadata = MetaData(
     naming_convention={
         "fk": "%(table_name)s_%(column_0_name)s_fkey",
         "uq": "%(table_name)s_%(column_0_N_name)s_key",
+        "ck": "ck_%(table_name)s_%(column_0_N_name)s",
     }
 )
 

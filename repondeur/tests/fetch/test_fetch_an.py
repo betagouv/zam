@@ -821,7 +821,7 @@ class TestFetchAmendement:
         )
 
         dossier = Dossier.create(
-            uid="DLR5L15N36733",
+            an_id="DLR5L15N36733",
             titre="Budget : loi de finances 2019",
             slug="loi-finances-2019",
         )

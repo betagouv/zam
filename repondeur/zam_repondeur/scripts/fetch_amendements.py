@@ -44,11 +44,11 @@ def parse_args(argv: List[str]) -> Namespace:
 
 
 def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> None:
-    uids = repository.list_opendata_dossiers()
-    bar = ProgressBar(total=len(uids))
-    random.shuffle(uids)
-    for uid in uids:
-        dossier_ref = repository.get_opendata_dossier_ref(uid)
+    an_ids = repository.list_opendata_dossiers()
+    bar = ProgressBar(total=len(an_ids))
+    random.shuffle(an_ids)
+    for an_id in an_ids:
+        dossier_ref = repository.get_opendata_dossier_ref(an_id)
         fetch_amendements_for_dossier(dossier_ref, chambre, num)
         bar.update(step=len(dossier_ref.lectures))
 
@@ -58,7 +58,7 @@ def fetch_amendements_for_dossier(
 ) -> None:
     dossier, _ = get_one_or_create(
         Dossier,
-        uid=dossier_ref.uid,
+        an_id=dossier_ref.uid,
         create_kwargs=dict(titre=dossier_ref.titre, slug=dossier_ref.slug),
     )
     for lecture_ref in dossier_ref.lectures:

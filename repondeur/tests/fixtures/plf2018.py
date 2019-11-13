@@ -10,7 +10,7 @@ def dossier_plf2018(db, team_zam):
 
     with transaction.manager:
         dossier = Dossier.create(
-            uid="DLR5L15N35854",
+            an_id="DLR5L15N35854",
             titre="Budget : loi de finances 2018",
             slug="loi-finances-2018",
         )

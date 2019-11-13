@@ -10,7 +10,7 @@ def dossier_plfss2018(db, team_zam):
 
     with transaction.manager:
         dossier = Dossier.create(
-            uid="DLR5L15N36030",
+            an_id="DLR5L15N36030",
             titre="Sécurité sociale : loi de financement 2018",
             slug="plfss-2018",
         )

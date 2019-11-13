@@ -143,10 +143,10 @@ def create_missing_lectures_an(dossier: Dossier, user: Optional[User]) -> bool:
 
     dossier_ref_an: Optional[DossierRef]
 
-    if dossier.uid.startswith("DL"):  # AN UID
-        dossier_ref_an = repository.get_dossier_ref(dossier.uid)
-    else:  # Sénat ID
-        dossier_ref_senat = repository.get_senat_scraping_dossier_ref(dossier.uid)
+    if dossier.an_id:
+        dossier_ref_an = repository.get_opendata_dossier_ref(dossier.an_id)
+    else:
+        dossier_ref_senat = repository.get_senat_scraping_dossier_ref(dossier.senat_id)
         dossier_ref_an = find_matching_dossier_ref_an(dossier_ref_senat)
 
     changed = False
@@ -177,8 +177,14 @@ def find_matching_dossier_ref_an(dossier_ref_senat: DossierRef) -> Optional[Doss
 
 
 def create_missing_lectures_senat(dossier: Dossier, user: Optional[User]) -> bool:
-    dossier_ref_an = repository.get_dossier_ref(dossier.uid)
-    dossier_ref_senat = find_matching_dossier_ref_senat(dossier_ref_an)
+    dossier_ref_senat: Optional[DossierRef]
+
+    if dossier.senat_id:
+        dossier_ref_senat = repository.get_senat_scraping_dossier_ref(dossier.senat_id)
+    else:
+        dossier_ref_an = repository.get_opendata_dossier_ref(dossier.an_id)
+        dossier_ref_senat = find_matching_dossier_ref_senat(dossier_ref_an)
+
     changed = False
     if dossier_ref_senat is not None:
         for lecture_ref in dossier_ref_senat.lectures:
@@ -248,19 +254,3 @@ def create_or_update_lecture(
         huey.enqueue_on_transaction_commit(fetch_amendements.s(lecture.pk))
 
     return changed
-
-
-# dossiers_by_uid: DossierRefsByUID = get_dossiers_legislatifs_from_cache()
-# try:
-#     dossier_ref = dossiers_by_uid[dossier.uid]
-# except KeyError:
-#     logger.warning(f"Missing key for dossier {dossier.uid}")
-#     return
-
-# changed = False
-
-# lecture_refs = list(reversed(dossier_ref.lectures))
-# from pprint import pformat
-
-# logger.info(pformat(lecture_refs))
-# for lecture_ref in lecture_refs:

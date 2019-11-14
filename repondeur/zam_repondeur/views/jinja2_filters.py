@@ -82,6 +82,13 @@ def length_including_batches(amendements: Iterable["Amendement"]) -> int:
 
 
 def human_readable_time(dt: datetime) -> str:
+    return _local_time(dt).strftime("%Hh%M")
+
+
+def human_readable_date_and_time(dt: datetime) -> str:
+    return _local_time(dt).strftime("%A %d %B %Y à %H:%M:%S")
+
+
+def _local_time(dt: datetime) -> datetime:
     local_tz = pytz.timezone("Europe/Paris")
-    local_dt = dt.astimezone(local_tz)
-    return local_dt.strftime("%A %d %B à %H:%M")
+    return dt.astimezone(local_tz)

@@ -54,6 +54,10 @@
     padding: 1.5rem 1rem;
     min-width: 10rem;
 }
+.when {
+    text-align: right;
+    padding-right: 3rem;
+}
 .when time {
     text-decoration: underline dotted;
 }

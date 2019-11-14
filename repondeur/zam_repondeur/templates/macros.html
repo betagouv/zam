@@ -41,12 +41,10 @@
 {% macro journal_line(is_first, event) %}
     <li>
         <em class="when">
-            {% set readable_timestamp = event.created_at | human_readable_time %}
-            <time title="{{ readable_timestamp }}"
+            <time title="{{ event.created_at | human_readable_date_and_time }}"
                 datetime="{{ event.created_at.isoformat(timespec='milliseconds') }}"
-                data-controller="timestamp"
-                data-timestamp-modified-at="{{ event.created_at_timestamp }}">
-                    {{ readable_timestamp }}
+                >
+                    {{ event.created_at | human_readable_time }}
             </time>
         </em>
         <span class="icon">

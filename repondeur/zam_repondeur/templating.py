@@ -17,6 +17,7 @@ JINJA2_SETTINGS = {
         "enumeration": f"{FILTERS_PATH}:enumeration",
         "length_including_batches": f"{FILTERS_PATH}:length_including_batches",
         "human_readable_time": f"{FILTERS_PATH}:human_readable_time",
+        "human_readable_date_and_time": f"{FILTERS_PATH}:human_readable_date_and_time",
     },
     "jinja2.undefined": "strict",
     "jinja2.trim_blocks": "true",

@@ -24,7 +24,13 @@ BASE_URL = "https://www.senat.fr"
 
 
 class Senat(RemoteSource):
-    def fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
+    def prepare(self, lecture: Lecture) -> None:
+        self._fetch(lecture, dry_run=True)
+
+    def fetch(self, lecture: Lecture) -> FetchResult:
+        return self._fetch(lecture)
+
+    def _fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
         logger.info("Récupération des amendements déposés sur %r", lecture)
         created = 0
         amendements: List[Amendement] = []

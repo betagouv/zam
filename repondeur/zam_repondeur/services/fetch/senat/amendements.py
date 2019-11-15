@@ -25,7 +25,8 @@ BASE_URL = "https://www.senat.fr"
 
 class Senat(RemoteSource):
     def prepare(self, lecture: Lecture) -> None:
-        self._fetch(lecture, dry_run=True)
+        if self.prefetching_enabled:
+            self._fetch(lecture, dry_run=True)
 
     def fetch(self, lecture: Lecture) -> FetchResult:
         return self._fetch(lecture)

@@ -81,7 +81,12 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             logger.error(f"Lecture {lecture_pk} introuvable")
             return False
 
-        source = RemoteSource.get_remote_source_for_chambre(lecture.chambre)
+        # This allows disabling the prefetching in tests.
+        prefetching_enabled = int(huey.settings["zam.http_cache_duration"]) > 0
+
+        source = RemoteSource.get_remote_source_for_chambre(
+            chambre=lecture.chambre, prefetching_enabled=prefetching_enabled
+        )
 
         # Prefetch URLs into the requests cached session.
         source.prepare(lecture)

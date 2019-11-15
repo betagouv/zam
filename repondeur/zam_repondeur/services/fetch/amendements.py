@@ -75,6 +75,9 @@ class FetchResult(NamedTuple):
 
 
 class RemoteSource(Source):
+    def __init__(self, prefetching_enabled: bool = True):
+        self.prefetching_enabled = prefetching_enabled
+
     def prepare(self, lecture: Lecture) -> None:
         pass
 
@@ -82,12 +85,14 @@ class RemoteSource(Source):
         raise NotImplementedError
 
     @classmethod
-    def get_remote_source_for_chambre(cls, chambre: Chambre) -> "RemoteSource":
+    def get_remote_source_for_chambre(
+        cls, chambre: Chambre, prefetching_enabled: bool = True
+    ) -> "RemoteSource":
         from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
         from zam_repondeur.services.fetch.senat.amendements import Senat
 
         if chambre == Chambre.AN:
-            return AssembleeNationale()
+            return AssembleeNationale(prefetching_enabled=prefetching_enabled)
         if chambre == Chambre.SENAT:
-            return Senat()
+            return Senat(prefetching_enabled=prefetching_enabled)
         raise NotImplementedError

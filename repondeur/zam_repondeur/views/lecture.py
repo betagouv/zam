@@ -21,7 +21,7 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
     # The total is doubled because we need to handle the dry_run.
     lecture.set_fetch_progress(1, len(lecture.amendements) * 2)
     request.session.flash(
-        Message(cls="success", text="Rafraichissement des amendements en cours.")
+        Message(cls="success", text="Rafraîchissement des amendements en cours.")
     )
     amendements_collection = context["amendements"]
     return HTTPFound(location=request.resource_url(amendements_collection))

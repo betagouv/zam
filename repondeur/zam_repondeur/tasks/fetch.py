@@ -16,7 +16,8 @@ from zam_repondeur.models.events.lecture import (
     TexteMisAJour,
 )
 from zam_repondeur.services.dossiers import get_dossiers_legislatifs_from_cache
-from zam_repondeur.services.fetch import get_amendements, get_articles
+from zam_repondeur.services.fetch import get_articles
+from zam_repondeur.services.fetch.amendements import RemoteSource
 from zam_repondeur.services.fetch.an.dossiers.models import DossierRefsByUID
 from zam_repondeur.tasks.huey import huey
 
@@ -81,7 +82,9 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             logger.error(f"Lecture {lecture_pk} introuvable")
             return False
 
-        amendements, created, errored = get_amendements(lecture, dry_run=True)
+        source = RemoteSource.get_remote_source_for_chambre(lecture.chambre)
+
+        amendements, created, errored = source.fetch(lecture, dry_run=True)
 
         # Then perform a locked run to actually update data,
         # the idea is to minimize the duration of the lock of the lecture.
@@ -90,7 +93,7 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             logger.error(f"Lecture {lecture_pk} introuvable")
             return False
 
-        amendements, created, errored = get_amendements(lecture)
+        amendements, created, errored = source.fetch(lecture)
 
         if not amendements:
             AmendementsNonTrouves.create(lecture=lecture)

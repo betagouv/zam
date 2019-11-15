@@ -2,13 +2,22 @@ from collections import OrderedDict
 from textwrap import dedent
 from unittest.mock import patch
 
+import pytest
 import transaction
 
 from fetch.mock_an import setup_mock_responses
 
 
-def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements_senat):
-    from zam_repondeur.services.fetch import get_amendements
+@pytest.fixture(scope="module")
+def source_senat():
+    from zam_repondeur.services.fetch.senat.amendements import Senat
+
+    return Senat()
+
+
+def test_fetch_amendements_senat(
+    app, source_senat, lecture_senat, article1_senat, amendements_senat
+):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.fetch.missions import MissionRef
 
@@ -151,7 +160,7 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
 
         DBSession.add(lecture_senat)
 
-        amendements, created, errored = get_amendements(lecture_senat)
+        amendements, created, errored = source_senat.fetch(lecture_senat)
 
     assert [amendement.num for amendement in amendements] == [6666, 7777, 9999]
     assert created == 1
@@ -171,8 +180,14 @@ def test_fetch_amendements_senat(app, lecture_senat, article1_senat, amendements
     assert amendement.position == 2
 
 
-def test_fetch_amendements_an(app, lecture_an, article1_an):
-    from zam_repondeur.services.fetch import get_amendements
+@pytest.fixture(scope="module")
+def source_an():
+    from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
+
+    return AssembleeNationale()
+
+
+def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
     from zam_repondeur.models import Amendement, DBSession
 
     Amendement.create(lecture=lecture_an, article=article1_an, num=6, position=1)
@@ -231,7 +246,7 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
-        amendements, created, errored = get_amendements(lecture_an)
+        amendements, created, errored = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in amendements] == [6, 7, 9]
     assert created == 1
@@ -256,8 +271,7 @@ def test_fetch_amendements_an(app, lecture_an, article1_an):
     assert amendement_7.position == 2
 
 
-def test_fetch_amendements_an_with_mission(app, lecture_an, article1_an):
-    from zam_repondeur.services.fetch import get_amendements
+def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_an):
     from zam_repondeur.models import Amendement, DBSession
 
     Amendement.create(lecture=lecture_an, article=article1_an, num=6, position=1)
@@ -317,7 +331,7 @@ def test_fetch_amendements_an_with_mission(app, lecture_an, article1_an):
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
-        amendements, created, errored = get_amendements(lecture_an)
+        amendements, created, errored = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in amendements] == [6, 7, 9]
     assert created == 1
@@ -329,8 +343,9 @@ def test_fetch_amendements_an_with_mission(app, lecture_an, article1_an):
     assert amendement_9.mission_titre_court == "Outre-mer"
 
 
-def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, caplog):
-    from zam_repondeur.services.fetch import get_amendements
+def test_fetch_amendements_an_without_auteur_key(
+    app, source_an, lecture_an, article1_an, caplog
+):
     from zam_repondeur.models import Amendement, DBSession
 
     amendement_6 = Amendement.create(
@@ -386,7 +401,7 @@ def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, c
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
-        amendements, created, errored = get_amendements(lecture_an)
+        amendements, created, errored = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in amendements] == [6, 7, 9]
     assert created == 1
@@ -407,9 +422,8 @@ def test_fetch_amendements_an_without_auteur_key(app, lecture_an, article1_an, c
 
 
 def test_fetch_amendements_an_without_group_tribun_id(
-    app, lecture_an, article1_an, caplog
+    app, source_an, lecture_an, article1_an, caplog
 ):
-    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     amendement_6 = Amendement.create(
@@ -473,7 +487,7 @@ def test_fetch_amendements_an_without_group_tribun_id(
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
-        amendements, created, errored = get_amendements(lecture_an)
+        amendements, created, errored = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in amendements] == [6, 7, 9]
     assert created == 1
@@ -496,9 +510,8 @@ def test_fetch_amendements_an_without_group_tribun_id(
 
 
 def test_fetch_amendements_an_with_unknown_group_tribun_id(
-    app, lecture_an, article1_an, caplog
+    app, source_an, lecture_an, article1_an, caplog
 ):
-    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     amendement_6 = Amendement.create(
@@ -562,7 +575,7 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
-        amendements, created, errored = get_amendements(lecture_an)
+        amendements, created, errored = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in amendements] == [6, 7, 9]
     assert created == 1
@@ -584,8 +597,9 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
     assert amendement_9.auteur == "Véran Olivier"
 
 
-def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendements_an):
-    from zam_repondeur.services.fetch import get_amendements
+def test_fetch_amendements_with_errored(
+    app, source_an, lecture_an, article1_an, amendements_an
+):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.fetch.exceptions import NotFound
 
@@ -603,7 +617,7 @@ def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendement
         ]
         mock_retrieve_amendement.side_effect = NotFound
 
-        amendements, created, errored = get_amendements(lecture_an)
+        amendements, created, errored = source_an.fetch(lecture_an)
 
     assert amendements == []
     assert created == 0
@@ -611,8 +625,9 @@ def test_fetch_amendements_with_errored(app, lecture_an, article1_an, amendement
     assert DBSession.query(Amendement).count() == len(amendements_an) == 2
 
 
-def test_fetch_amendements_with_emptiness(app, lecture_an, article1_an, amendements_an):
-    from zam_repondeur.services.fetch import get_amendements
+def test_fetch_amendements_with_emptiness(
+    app, source_an, lecture_an, article1_an, amendements_an
+):
     from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add(lecture_an)
@@ -627,7 +642,7 @@ def test_fetch_amendements_with_emptiness(app, lecture_an, article1_an, amendeme
         ),
         amendements=(),
     ):
-        amendements, created, errored = get_amendements(lecture_an)
+        amendements, created, errored = source_an.fetch(lecture_an)
 
     assert amendements == []
     assert created == 0
@@ -636,10 +651,9 @@ def test_fetch_amendements_with_emptiness(app, lecture_an, article1_an, amendeme
 
 
 def test_fetch_amendements_with_connection_errors(
-    app, lecture_an, article1_an, amendements_an
+    app, source_an, lecture_an, article1_an, amendements_an
 ):
     from requests.exceptions import ConnectionError
-    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add(lecture_an)
@@ -656,7 +670,7 @@ def test_fetch_amendements_with_connection_errors(
         ]
         mock_http_session.return_value.get.side_effect = ConnectionError
 
-        amendements, created, errored = get_amendements(lecture_an)
+        amendements, created, errored = source_an.fetch(lecture_an)
 
     assert amendements == []
     assert created == 0
@@ -665,9 +679,8 @@ def test_fetch_amendements_with_connection_errors(
 
 
 def test_fetch_update_amendements_an_with_batch_preserve_batch(
-    app, lecture_an, article1_an, amendements_an_batch
+    app, source_an, lecture_an, article1_an, amendements_an_batch
 ):
-    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
 
     assert amendements_an_batch[0].location.batch.nums == [666, 999]
@@ -716,7 +729,7 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
-        amendements, created, errored = get_amendements(lecture_an)
+        amendements, created, errored = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in amendements] == [666, 999]
     assert created == 0
@@ -727,9 +740,8 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
 
 
 def test_fetch_update_amendements_an_with_batch_and_changing_article(
-    app, lecture_an, article1_an, amendements_an_batch
+    app, source_an, lecture_an, article1_an, amendements_an_batch
 ):
-    from zam_repondeur.services.fetch import get_amendements
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import BatchUnset
 
@@ -779,7 +791,7 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
-        amendements, created, errored = get_amendements(lecture_an)
+        amendements, created, errored = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in amendements] == [666, 999]
     assert created == 0

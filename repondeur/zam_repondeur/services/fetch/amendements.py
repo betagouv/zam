@@ -75,7 +75,10 @@ class FetchResult(NamedTuple):
 
 
 class RemoteSource(Source):
-    def fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
+    def prepare(self, lecture: Lecture) -> None:
+        pass
+
+    def fetch(self, lecture: Lecture) -> FetchResult:
         raise NotImplementedError
 
     @classmethod

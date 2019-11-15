@@ -57,7 +57,13 @@ class OrganeNotFound(Exception):
 
 
 class AssembleeNationale(RemoteSource):
-    def fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
+    def prepare(self, lecture: Lecture) -> None:
+        self._fetch(lecture, dry_run=True)
+
+    def fetch(self, lecture: Lecture) -> FetchResult:
+        return self._fetch(lecture)
+
+    def _fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
         result = FetchResult([], 0, [])
 
         logger.info("Récupération des amendements sur %r", lecture)

@@ -28,7 +28,7 @@ def includeme(config: Configurator) -> None:
 
 
 def init_repository(settings: Dict[str, str]) -> None:
-    repository.initialize(redis_url=settings["zam.data.redis_url"],)
+    repository.initialize(redis_url=settings["zam.data.redis_url"])
     repository.legislatures = [
         int(legi) for legi in settings["zam.legislatures"].split(",")
     ]

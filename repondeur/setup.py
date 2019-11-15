@@ -52,6 +52,7 @@ setup(
             "zam_reset_data_locks = zam_repondeur.scripts.reset_data_locks:main",
             "zam_whitelist = zam_repondeur.scripts.whitelist:main",
             "zam_admin = zam_repondeur.scripts.admin:main",
+            "zam_queue = zam_repondeur.scripts.queue:main",
         ],
     },
 )

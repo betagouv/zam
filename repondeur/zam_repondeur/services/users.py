@@ -12,7 +12,7 @@ def includeme(config: Configurator) -> None:
     """
     Called automatically via config.include("zam_repondeur.services.users")
     """
-    repository.initialize(redis_url=config.registry.settings["zam.users.redis_url"],)
+    repository.initialize(redis_url=config.registry.settings["zam.users.redis_url"])
     repository.auth_token_duration = int(
         config.registry.settings["zam.users.auth_token_duration"]
     )

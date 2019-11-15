@@ -108,7 +108,7 @@ def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_david):
     assert "Rafraichissement des amendements et des articles en cours." in resp.text
 
     # Default progress status for dummy progress bar is set.
-    assert lecture_an.get_fetch_progress() == {"current": 1, "total": 5}
+    assert lecture_an.get_fetch_progress() == {"current": 1, "total": 10}
 
     # If we fetch again the journal, the refresh button is not present anymore.
     resp = app.get(

@@ -19,7 +19,8 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
     fetch_articles(lecture.pk)
     # The progress is initialized even if the task is async for early feedback
     # to users and ability to disable the refresh button.
-    lecture.set_fetch_progress(1, len(lecture.amendements))
+    # The total is doubled because we need to handle the dry_run.
+    lecture.set_fetch_progress(1, len(lecture.amendements) * 2)
     request.session.flash(
         Message(
             cls="success",

@@ -77,14 +77,7 @@ def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_david):
             ("135", read_sample_data("an/269/135.xml")),
             ("192", read_sample_data("an/269/192.xml")),
         ),
-    ) as mock_resp:
-
-        mock_resp.add(
-            responses.GET,
-            "http://www.assemblee-nationale.fr/15/projets/pl0269.asp",
-            body=(SAMPLE_DATA_DIR / "pl0269.html").read_text("utf-8", "ignore"),
-            status=200,
-        )
+    ):
 
         # Then we ask for a refresh
         form = app.get(
@@ -102,10 +95,9 @@ def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_david):
     lecture_an = Lecture.get_by_pk(lecture_an.pk)  # refresh object
 
     events = lecture_an.events
-    assert len(events) == 2
-    assert events[0].render_summary() == "Le contenu des articles a été récupéré."
-    assert events[1].render_summary() == "4 nouveaux amendements récupérés."
-    assert "Rafraichissement des amendements et des articles en cours." in resp.text
+    assert len(events) == 1
+    assert events[0].render_summary() == "4 nouveaux amendements récupérés."
+    assert "Rafraichissement des amendements en cours." in resp.text
 
     # Default progress status for dummy progress bar is set.
     assert lecture_an.get_fetch_progress() == {"current": 1, "total": 10}

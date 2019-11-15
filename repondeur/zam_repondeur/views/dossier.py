@@ -65,6 +65,6 @@ def manual_refresh(context: DossierResource, request: Request) -> Response:
     dossier = context.dossier
     update_dossier(dossier.pk, force=True)
     request.session.flash(
-        Message(cls="success", text="Rafraichissement des lectures en cours.")
+        Message(cls="success", text="Rafraîchissement des lectures en cours.")
     )
     return HTTPFound(location=request.resource_url(context))

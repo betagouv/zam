@@ -97,7 +97,7 @@ def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_david):
     events = lecture_an.events
     assert len(events) == 1
     assert events[0].render_summary() == "4 nouveaux amendements récupérés."
-    assert "Rafraichissement des amendements en cours." in resp.text
+    assert "Rafraîchissement des amendements en cours." in resp.text
 
     # Default progress status for dummy progress bar is set.
     assert lecture_an.get_fetch_progress() == {"current": 1, "total": 10}

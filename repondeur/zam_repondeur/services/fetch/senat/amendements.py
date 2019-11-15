@@ -14,6 +14,7 @@ from zam_repondeur.services.fetch.dates import parse_date
 from zam_repondeur.services.fetch.division import parse_subdiv
 from zam_repondeur.services.fetch.exceptions import NotFound
 from zam_repondeur.services.fetch.http import get_http_session
+from zam_repondeur.utils import Timer
 
 from .derouleur import DiscussionDetails, fetch_and_parse_discussion_details
 
@@ -26,13 +27,19 @@ BASE_URL = "https://www.senat.fr"
 class Senat(RemoteSource):
     def prepare(self, lecture: Lecture) -> None:
         if self.prefetching_enabled:
-            self._fetch(lecture, dry_run=True)
+            logger.info("Préchargement des amendements de %r", lecture)
+            with Timer() as timer:
+                self._fetch(lecture, dry_run=True)
+            logger.info("Temps de préchargement : %.1fs", timer.elapsed())
 
     def fetch(self, lecture: Lecture) -> FetchResult:
-        return self._fetch(lecture)
+        logger.info("Récupération des amendements de %r", lecture)
+        with Timer() as timer:
+            res = self._fetch(lecture)
+        logger.info("Temps de récupération : %.1fs", timer.elapsed())
+        return res
 
     def _fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
-        logger.info("Récupération des amendements déposés sur %r", lecture)
         created = 0
         amendements: List[Amendement] = []
 

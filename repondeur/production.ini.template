@@ -56,7 +56,7 @@ zam.refresh.amendements = 365
 zam.refresh.articles = 365
 
 # Minutes
-zam.http_cache_duration = 30
+zam.http_cache_duration = 15
 zam.http_cache_dir = /var/cache/zam/http
 zam.uploads_backup_dir = /srv/repondeur/data/uploads
 

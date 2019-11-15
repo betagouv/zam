@@ -22,6 +22,7 @@ from zam_repondeur.services.fetch.division import parse_subdiv
 from zam_repondeur.services.fetch.exceptions import FetchError, NotFound
 from zam_repondeur.services.fetch.http import get_http_session
 from zam_repondeur.templating import render_template
+from zam_repondeur.utils import Timer
 
 from ..missions import MissionRef
 from .division import parse_avant_apres
@@ -59,15 +60,20 @@ class OrganeNotFound(Exception):
 class AssembleeNationale(RemoteSource):
     def prepare(self, lecture: Lecture) -> None:
         if self.prefetching_enabled:
-            self._fetch(lecture, dry_run=True)
+            logger.info("Préchargement des amendements de %r", lecture)
+            with Timer() as timer:
+                self._fetch(lecture, dry_run=True)
+            logger.info("Temps de préchargement : %.1fs", timer.elapsed())
 
     def fetch(self, lecture: Lecture) -> FetchResult:
-        return self._fetch(lecture)
+        logger.info("Récupération des amendements de %r", lecture)
+        with Timer() as timer:
+            res = self._fetch(lecture)
+        logger.info("Temps de récupération : %.1fs", timer.elapsed())
+        return res
 
     def _fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
         result = FetchResult([], 0, [])
-
-        logger.info("Récupération des amendements sur %r", lecture)
 
         try:
             discussion_items = fetch_discussion_list(lecture)

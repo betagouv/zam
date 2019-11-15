@@ -1,3 +1,5 @@
+import time
+from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from webob.multidict import MultiDict
@@ -47,3 +49,18 @@ def add_url_params(url: str, **extra_params: str) -> str:
     query_dict.update(**extra_params)
     query = urlencode(query_dict)
     return urlunparse((scheme, netloc, path, params, query, fragment))
+
+
+class Timer:
+    enter_time: float = 0.0
+    exit_time: float = 0.0
+
+    def __enter__(self) -> "Timer":
+        self.enter_time = time.monotonic()
+        return self
+
+    def __exit__(self, exc_type: Any, exc_value: Any, tb: Any) -> None:
+        self.exit_time = time.monotonic()
+
+    def elapsed(self) -> float:
+        return self.exit_time - self.enter_time

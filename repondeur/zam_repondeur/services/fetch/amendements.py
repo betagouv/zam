@@ -88,8 +88,3 @@ class RemoteSource(Source):
         if chambre == Chambre.SENAT:
             return Senat()
         raise NotImplementedError
-
-
-def get_amendements(lecture: Lecture, dry_run: bool = False) -> FetchResult:
-    source = RemoteSource.get_remote_source_for_chambre(lecture.chambre)
-    return source.fetch(lecture, dry_run=dry_run)

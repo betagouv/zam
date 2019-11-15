@@ -11,7 +11,7 @@ def includeme(config: Configurator) -> None:
     """
     Called automatically via config.include("zam_repondeur.services.progress")
     """
-    repository.initialize(redis_url=config.registry.settings["zam.progress.redis_url"],)
+    repository.initialize(redis_url=config.registry.settings["zam.progress.redis_url"])
     repository.max_duration = int(config.registry.settings["zam.progress.max_duration"])
 
 

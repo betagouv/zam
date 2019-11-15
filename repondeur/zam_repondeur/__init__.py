@@ -81,9 +81,12 @@ def error(request: Request) -> None:
 
 def setup_database(config: Configurator, settings: dict) -> None:
 
+    # Make sure the SQLAlchemy connection pool is large enough for worker threads
+    pool_size = max(5, settings["huey.workers"])
+
     config.include("pyramid_tm")
 
-    engine = engine_from_config(settings, "sqlalchemy.")
+    engine = engine_from_config(settings, "sqlalchemy.", pool_size=pool_size)
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
 

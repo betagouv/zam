@@ -71,30 +71,30 @@ class AssembleeNationale(RemoteSource):
 
         try:
             discussion_items = fetch_discussion_list(lecture)
-            if not discussion_items:
-                logger.warning("Could not find amendements from %r", lecture)
-
-            if not dry_run:
-                reset_amendements_positions(lecture, discussion_items)
-
-            result += self._fetch_amendements_discussed(
-                lecture, discussion_items, dry_run=dry_run
-            )
-            lecture.reset_fetch_progress()
-
-            if not dry_run:
-                result += self._fetch_amendements_other(
-                    lecture=lecture,
-                    discussion_nums={
-                        parse_num_in_liste(d["@numero"])[1] for d in discussion_items
-                    },
-                    prefix=find_prefix(discussion_items, lecture),
-                )
-
-            return result
-
         except NotFound:
             return FetchResult([], 0, [])
+
+        if not discussion_items:
+            logger.warning("Could not find amendements from %r", lecture)
+
+        if not dry_run:
+            reset_amendements_positions(lecture, discussion_items)
+
+        result += self._fetch_amendements_discussed(
+            lecture, discussion_items, dry_run=dry_run
+        )
+        lecture.reset_fetch_progress()
+
+        if not dry_run:
+            result += self._fetch_amendements_other(
+                lecture=lecture,
+                discussion_nums={
+                    parse_num_in_liste(d["@numero"])[1] for d in discussion_items
+                },
+                prefix=find_prefix(discussion_items, lecture),
+            )
+
+        return result
 
     def _fetch_amendements_discussed(
         self,

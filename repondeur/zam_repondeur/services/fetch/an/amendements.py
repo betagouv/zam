@@ -2,12 +2,13 @@ import logging
 import re
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import Dict, List, NamedTuple, Optional, Set, Tuple
+from typing import Any, Dict, List, NamedTuple, Optional, Set, Tuple
 from urllib.parse import urljoin
 
 import xmltodict
 from requests.exceptions import ConnectionError
 
+from zam_repondeur.decorator import reify
 from zam_repondeur.models import (
     Amendement,
     Article,
@@ -207,17 +208,17 @@ class AssembleeNationale(RemoteSource):
         Récupère un amendement depuis son numéro.
         """
         logger.info("Récupération de l'amendement %r", numero_prefixe)
-        amend = _retrieve_amendement(lecture, numero_prefixe)
+        amend_data = _retrieve_amendement(lecture, numero_prefixe)
         if dry_run:
             return Amendement(), False  # Dummy.
 
-        article = _get_article(lecture, amend["division"])
-        parent = _get_parent(lecture, article, amend)
+        article = _get_article(lecture, amend_data)
+        parent = _get_parent(lecture, article, amend_data)
         amendement, created = self._create_or_update_amendement(
             lecture,
             article,
             parent,
-            amend,
+            amend_data,
             position,
             id_discussion_commune,
             id_identique,
@@ -229,16 +230,19 @@ class AssembleeNationale(RemoteSource):
         lecture: Lecture,
         article: Article,
         parent: Optional[Amendement],
-        amend: OrderedDict,
+        amend_data: "ANAmendementData",
         position: Optional[int],
         id_discussion_commune: Optional[int],
         id_identique: Optional[int],
     ) -> Tuple[Amendement, bool]:
+
+        num = amend_data.get_num()
+
         amendement, created = get_one_or_create(
             Amendement,
             create_kwargs={"article": article, "parent": parent},
             lecture=lecture,
-            num=int(amend["numero"]),
+            num=num,
         )
 
         if (
@@ -248,23 +252,25 @@ class AssembleeNationale(RemoteSource):
         ):
             BatchUnset.create(amendement=amendement, request=None)
 
-        raw_auteur = amend.get("auteur")
-        if not raw_auteur:
-            logger.warning("Unknown auteur for amendement %s", amend["numero"])
-            matricule, groupe, auteur = "", "Non trouvé", "Non trouvé"
-        else:
-            matricule = raw_auteur["tribunId"]
-            groupe = get_groupe(raw_auteur, amendement.num)
-            auteur = get_auteur(raw_auteur)
+        rectif = amend_data.get_rectif()
 
-        mission_ref = get_mission_ref(amend)
+        matricule = amend_data.get_matricule()
+        groupe = amend_data.get_groupe()
+        auteur = amend_data.get_auteur()
+
+        mission_ref = amend_data.get_mission_ref()
+        mission_titre = mission_ref.titre if mission_ref else None
+        mission_titre_court = mission_ref.titre_court if mission_ref else None
+
+        corps = amend_data.get_corps()
+        expose = amend_data.get_expose()
+        sort = amend_data.get_sort()
+
         modified = False
-        modified |= self.update_rectif(amendement, get_rectif(amend))
-        modified |= self.update_corps(amendement, get_corps(amend))
-        modified |= self.update_expose(
-            amendement, unjustify(get_str_or_none(amend, "exposeSommaire") or "")
-        )
-        modified |= self.update_sort(amendement, get_sort(amend))
+        modified |= self.update_rectif(amendement, rectif)
+        modified |= self.update_corps(amendement, corps)
+        modified |= self.update_expose(amendement, expose)
+        modified |= self.update_sort(amendement, sort)
         modified |= self.update_attributes(
             amendement,
             article=article,
@@ -275,8 +281,8 @@ class AssembleeNationale(RemoteSource):
             matricule=matricule,
             groupe=groupe,
             auteur=auteur,
-            mission_titre=mission_ref.titre if mission_ref else None,
-            mission_titre_court=mission_ref.titre_court if mission_ref else None,
+            mission_titre=mission_titre,
+            mission_titre_court=mission_titre_court,
         )
 
         DBSession.flush()  # make sure foreign keys are updated
@@ -392,18 +398,18 @@ def fetch_discussion_list(lecture: Lecture) -> List[OrderedDict]:
 _FORCE_LIST_KEYS_AMENDEMENT = ("programmeAmdt",)
 
 
-def _retrieve_amendement(lecture: Lecture, numero_prefixe: str) -> OrderedDict:
+def _retrieve_amendement(lecture: Lecture, numero_prefixe: str) -> "ANAmendementData":
     url = build_url(lecture, numero_prefixe)
     try:
         content = _retrieve_content(url, force_list=_FORCE_LIST_KEYS_AMENDEMENT)
     except NotFound:
         url = build_url(lecture, numero_prefixe, fallback=True)
         content = _retrieve_content(url)
-    return content["amendement"]
+    return ANAmendementData(content)
 
 
-def _get_article(lecture: Lecture, division: dict) -> Article:
-    subdiv = parse_division(division)
+def _get_article(lecture: Lecture, amend_data: "ANAmendementData") -> Article:
+    subdiv = amend_data.get_division()
     article: Article
     created: bool
     article, created = get_one_or_create(
@@ -418,9 +424,9 @@ def _get_article(lecture: Lecture, division: dict) -> Article:
 
 
 def _get_parent(
-    lecture: Lecture, article: Article, amend: OrderedDict
+    lecture: Lecture, article: Article, amend_data: "ANAmendementData"
 ) -> Optional[Amendement]:
-    parent_num, parent_rectif = Amendement.parse_num(get_parent_raw_num(amend))
+    parent_num, parent_rectif = Amendement.parse_num(amend_data.get_parent_raw_num())
     parent: Optional[Amendement]
     if parent_num:
         parent, created = get_one_or_create(
@@ -487,96 +493,6 @@ def parse_num_in_liste(num_long: str) -> Tuple[str, int]:
 _RE_NUM = re.compile(r"(?P<acronyme>[A-Z]*)(?P<num>\d+)")
 
 
-def get_auteur(raw_auteur: OrderedDict) -> str:
-    if int(raw_auteur["estGouvernement"]):
-        return "LE GOUVERNEMENT"
-    return f"{raw_auteur['nom']} {raw_auteur['prenom']}"
-
-
-def get_groupe(raw_auteur: OrderedDict, amendement_num: int) -> str:
-    from zam_repondeur.services.data import repository
-
-    gouvernemental = bool(int(raw_auteur["estGouvernement"]))
-    rapporteur = bool(int(raw_auteur["estRapporteur"]))
-    if gouvernemental or rapporteur:
-        return ""
-
-    groupe_tribun_id = get_str_or_none(raw_auteur, "groupeTribunId")
-    if groupe_tribun_id is None:
-        logger.warning("Missing groupeTribunId value for amendement %s", amendement_num)
-        return "Non précisé"
-
-    groupe = repository.get_opendata_organe(f"PO{groupe_tribun_id}")
-    if groupe is None:
-        logger.warning(
-            "Unknown groupe tribun 'PO%s' in groupes for amendement %s",
-            groupe_tribun_id,
-            amendement_num,
-        )
-        return "Non trouvé"
-
-    libelle: str = groupe["libelle"]
-    return libelle
-
-
-ETATS_OK = {
-    "AT",  # à traiter
-    "T",  # traité
-    "ER",  # en recevabilité
-    "R",  # recevable
-    "AC",  # à discuter
-    "DI",  # discuté
-}
-
-
-def get_sort(amendement: OrderedDict) -> str:
-    sort = get_str_or_none(amendement, "sortEnSeance")
-    if sort is not None:
-        return sort.lower()
-    if (
-        amendement["retireAvantPublication"] == "1"
-        or amendement.get("retireApresPublication", "0") == "1"
-    ):
-        return "Retiré"
-    etat = get_str_or_none(amendement, "etat")
-    if etat not in ETATS_OK:
-        return "Irrecevable"
-    return ""
-
-
-def get_parent_raw_num(amendement: OrderedDict) -> str:
-    return get_str_or_none(amendement, "numeroParent") or ""
-
-
-def get_rectif(amendement: OrderedDict) -> int:
-    numero_long = get_str_or_none(amendement, "numeroLong")
-    if numero_long is None:
-        return 0
-    return parse_numero_long_with_rect(numero_long)
-
-
-def get_corps(amendement: OrderedDict) -> str:
-    if "listeProgrammesAmdt" in amendement:
-        return render_credits_tables(amendement)
-    else:
-        return unjustify(get_str_or_none(amendement, "dispositif") or "")
-
-
-def render_credits_tables(amendement: OrderedDict) -> str:
-    ae = _extract_credits_table(amendement, type_credits="aE")
-    cp = _extract_credits_table(amendement, type_credits="cP")
-    return render_template(
-        "mission_table.html",
-        context={
-            "ae": ae,
-            "cp": cp,
-            "cp_only": all((p.pos, p.neg) == ("0", "0") for p in ae.programmes),
-            "ae_only": all((p.pos, p.neg) == ("0", "0") for p in cp.programmes),
-            "ae_cp_different": ae != cp,
-        },
-    )
-
-
 class LigneCredits(NamedTuple):
     libelle: str
     pos: str
@@ -589,98 +505,217 @@ class TableauCredits(NamedTuple):
     solde: str
 
 
-def _extract_credits_table(
-    amendement: OrderedDict, type_credits: str
-) -> TableauCredits:
-    programmes = amendement["listeProgrammesAmdt"]["programmeAmdt"]
+class ANAmendementData:
+    """
+    Data extaction for Assemblée Nationale amendement
+    """
 
-    new_format = "aEPositifFormat" in programmes[0]
-    if new_format:
-        pos_key, neg_key = "Positif", "Negatif"
-    else:
-        pos_key, neg_key = "SupplementairesOuvertes", "Annulees"
+    def __init__(self, content: dict):
+        self.amend = content["amendement"]
 
-    return TableauCredits(
-        programmes=[
-            LigneCredits(
-                libelle=_extract_libelle(programme),
-                pos=programme[type_credits + pos_key + "Format"],
-                neg=programme[type_credits + neg_key + "Format"],
-            )
-            for programme in programmes
-        ],
-        totaux=LigneCredits(
-            libelle="Totaux",
-            pos=amendement["total" + type_credits.upper() + pos_key + "Format"],
-            neg=amendement["total" + type_credits.upper() + neg_key + "Format"],
-        ),
-        solde=amendement["solde" + type_credits.upper() + "Format"],
+    def get_num(self) -> int:
+        return int(self.amend["numero"])
+
+    def get_rectif(self) -> int:
+        numero_long = self._get_str_or_none("numeroLong")
+        if numero_long is None:
+            return 0
+        return self.parse_numero_long_with_rect(numero_long)
+
+    @classmethod
+    def parse_numero_long_with_rect(cls, text: str) -> int:
+        mo = cls._RE_NUM_LONG.match(text)
+        if mo is not None and mo.group("rect"):
+            return int(mo.group("rect_mult") or 1)
+        return 0
+
+    _RE_NUM_LONG = re.compile(
+        r"""
+        (?P<prefix>[A-Z]*)
+        (?P<num>\d+)
+        (?P<rect>\s\((?:(?P<rect_mult>\d+)\w+\s)?Rect\))?
+        """,
+        re.VERBOSE,
     )
 
+    def get_parent_raw_num(self) -> str:
+        return self._get_str_or_none("numeroParent") or ""
 
-def _extract_libelle(programme: OrderedDict) -> str:
-    libelle: str = programme["libelleProgrammeAmdt"]
-    if programme["programmeAmdtNouveau"] == "true":
-        libelle += " (ligne nouvelle)"
-    return libelle
+    def get_division(self) -> SubDiv:
+        division: Optional[Any] = self.amend["division"]
+        if not isinstance(division, dict):
+            raise ValueError("Invalid division key")
+        if division["type"] == "TITRE":
+            return SubDiv("titre", "", "", "")
+        if division["type"] == "ARTICLE":
+            subdiv = parse_subdiv(division["titre"])
+        else:
+            subdiv = parse_subdiv(division["divisionRattache"])
+        if division["avantApres"]:
+            pos = parse_avant_apres(division["avantApres"])
+            subdiv = subdiv._replace(pos=pos)
+        return subdiv
 
+    @reify
+    def raw_auteur(self) -> Optional[dict]:
+        raw_auteur: Optional[Any] = self.amend.get("auteur")
+        if raw_auteur is None:
+            logger.warning("Unknown auteur for amendement %s", self.get_num())
+            return None
+        if not isinstance(raw_auteur, dict):
+            raise ValueError("Invalid type for auteur key")
+        return raw_auteur
 
-def get_mission_ref(amendement: OrderedDict) -> Optional[MissionRef]:
-    if "missionVisee" not in amendement:
-        return None
-    mission_visee = get_str_or_none(amendement, "missionVisee")
-    if mission_visee is None:
-        return None
-    return parse_mission_visee(mission_visee)
+    def get_matricule(self) -> str:
+        if self.raw_auteur is None:
+            return ""
+        return self.raw_auteur.get("tribunId", "")
 
+    def get_auteur(self) -> str:
+        if self.raw_auteur is None:
+            return "Non trouvé"
+        if self.raw_auteur.get("estGouvernement", "") == "1":
+            return "LE GOUVERNEMENT"
+        nom = self.raw_auteur.get("nom", "")
+        prenom = self.raw_auteur.get("prenom", "")
+        return f"{nom} {prenom}"
 
-RE_NUM_LONG = re.compile(
-    r"""
-    (?P<prefix>[A-Z]*)
-    (?P<num>\d+)
-    (?P<rect>\s\((?:(?P<rect_mult>\d+)\w+\s)?Rect\))?
-    """,
-    re.VERBOSE,
-)
+    def get_groupe(self) -> str:
+        from zam_repondeur.services.data import repository
 
+        if self.raw_auteur is None:
+            return "Non trouvé"
 
-def parse_numero_long_with_rect(text: str) -> int:
-    mo = RE_NUM_LONG.match(text)
-    if mo is not None and mo.group("rect"):
-        return int(mo.group("rect_mult") or 1)
-    return 0
+        gouvernemental = bool(int(self.raw_auteur["estGouvernement"]))
+        rapporteur = bool(int(self.raw_auteur["estRapporteur"]))
+        if gouvernemental or rapporteur:
+            return ""
 
+        groupe_tribun_id = self._get_str_or_none(
+            "groupeTribunId", dict_=self.raw_auteur
+        )
+        if groupe_tribun_id is None:
+            logger.warning(
+                "Missing groupeTribunId value for amendement %s", self.get_num()
+            )
+            return "Non précisé"
 
-RE_MISSION_VISEE = re.compile(r"""(Mission )?« (?P<titre_court>.*) »""")
+        groupe = repository.get_opendata_organe(f"PO{groupe_tribun_id}")
+        if groupe is None:
+            logger.warning(
+                "Unknown groupe tribun 'PO%s' in groupes for amendement %s",
+                groupe_tribun_id,
+                self.get_num(),
+            )
+            return "Non trouvé"
 
+        libelle: str = groupe["libelle"]
+        return libelle
 
-def parse_mission_visee(mission_visee: str) -> MissionRef:
-    mo = RE_MISSION_VISEE.match(mission_visee)
-    titre_court = mo.group("titre_court") if mo is not None else mission_visee
-    return MissionRef(titre=mission_visee, titre_court=titre_court)
+    def get_corps(self) -> str:
+        if "listeProgrammesAmdt" in self.amend:
+            return self.render_credits_tables()
+        else:
+            return self._unjustify(self._get_str_or_none("dispositif") or "")
 
+    def get_expose(self) -> str:
+        return self._unjustify(self._get_str_or_none("exposeSommaire") or "")
 
-def get_str_or_none(amendement: OrderedDict, key: str) -> Optional[str]:
-    value = amendement[key]
-    if isinstance(value, str):
-        return value
-    if isinstance(value, OrderedDict) and value.get("@xsi:nil") == "true":
-        return None
-    raise ValueError(f"Unexpected value {value!r} for key {key!r}")
+    def render_credits_tables(self) -> str:
+        ae = self._extract_credits_table(type_credits="aE")
+        cp = self._extract_credits_table(type_credits="cP")
+        return render_template(
+            "mission_table.html",
+            context={
+                "ae": ae,
+                "cp": cp,
+                "cp_only": all((p.pos, p.neg) == ("0", "0") for p in ae.programmes),
+                "ae_only": all((p.pos, p.neg) == ("0", "0") for p in cp.programmes),
+                "ae_cp_different": ae != cp,
+            },
+        )
 
+    def _extract_credits_table(self, type_credits: str) -> TableauCredits:
+        programmes = self.amend["listeProgrammesAmdt"]["programmeAmdt"]
 
-def unjustify(content: str) -> str:
-    return content.replace(' style="text-align: justify;"', "")
+        new_format = "aEPositifFormat" in programmes[0]
+        if new_format:
+            pos_key, neg_key = "Positif", "Negatif"
+        else:
+            pos_key, neg_key = "SupplementairesOuvertes", "Annulees"
 
+        return TableauCredits(
+            programmes=[
+                LigneCredits(
+                    libelle=self._extract_libelle(programme),
+                    pos=programme[type_credits + pos_key + "Format"],
+                    neg=programme[type_credits + neg_key + "Format"],
+                )
+                for programme in programmes
+            ],
+            totaux=LigneCredits(
+                libelle="Totaux",
+                pos=self.amend["total" + type_credits.upper() + pos_key + "Format"],
+                neg=self.amend["total" + type_credits.upper() + neg_key + "Format"],
+            ),
+            solde=self.amend["solde" + type_credits.upper() + "Format"],
+        )
 
-def parse_division(division: dict) -> SubDiv:
-    if division["type"] == "TITRE":
-        return SubDiv("titre", "", "", "")
-    if division["type"] == "ARTICLE":
-        subdiv = parse_subdiv(division["titre"])
-    else:
-        subdiv = parse_subdiv(division["divisionRattache"])
-    if division["avantApres"]:
-        pos = parse_avant_apres(division["avantApres"])
-        subdiv = subdiv._replace(pos=pos)
-    return subdiv
+    def _extract_libelle(self, programme: OrderedDict) -> str:
+        libelle: str = programme["libelleProgrammeAmdt"]
+        if programme["programmeAmdtNouveau"] == "true":
+            libelle += " (ligne nouvelle)"
+        return libelle
+
+    def get_sort(self) -> str:
+        sort = self._get_str_or_none("sortEnSeance")
+        if sort is not None:
+            return sort.lower()
+        if (
+            self.amend["retireAvantPublication"] == "1"
+            or self.amend.get("retireApresPublication", "0") == "1"
+        ):
+            return "Retiré"
+        etat = self._get_str_or_none("etat")
+        if etat not in self._ETATS_OK:
+            return "Irrecevable"
+        return ""
+
+    _ETATS_OK = {
+        "AT",  # à traiter
+        "T",  # traité
+        "ER",  # en recevabilité
+        "R",  # recevable
+        "AC",  # à discuter
+        "DI",  # discuté
+    }
+
+    def get_mission_ref(self) -> Optional[MissionRef]:
+        if "missionVisee" not in self.amend:
+            return None
+        mission_visee = self._get_str_or_none("missionVisee")
+        if mission_visee is None:
+            return None
+        return self.parse_mission_visee(mission_visee)
+
+    @classmethod
+    def parse_mission_visee(cls, mission_visee: str) -> MissionRef:
+        mo = cls._RE_MISSION_VISEE.match(mission_visee)
+        titre_court = mo.group("titre_court") if mo is not None else mission_visee
+        return MissionRef(titre=mission_visee, titre_court=titre_court)
+
+    _RE_MISSION_VISEE = re.compile(r"""(Mission )?« (?P<titre_court>.*) »""")
+
+    def _get_str_or_none(self, key: str, dict_: Optional[dict] = None) -> Optional[str]:
+        if dict_ is None:
+            dict_ = self.amend
+        value = dict_[key]
+        if isinstance(value, str):
+            return value
+        if isinstance(value, dict) and value.get("@xsi:nil") == "true":
+            return None
+        raise ValueError(f"Unexpected value {value!r} for key {key!r}")
+
+    @staticmethod
+    def _unjustify(content: str) -> str:
+        return content.replace(' style="text-align: justify;"', "")

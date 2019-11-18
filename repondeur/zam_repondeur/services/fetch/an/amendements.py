@@ -58,6 +58,10 @@ class OrganeNotFound(Exception):
         self.organe = organe
 
 
+class Changes:
+    pass
+
+
 class AssembleeNationale(RemoteSource):
     def prepare(self, lecture: Lecture) -> None:
         if self.prefetching_enabled:
@@ -69,9 +73,16 @@ class AssembleeNationale(RemoteSource):
     def fetch(self, lecture: Lecture) -> FetchResult:
         logger.info("Récupération des amendements de %r", lecture)
         with Timer() as timer:
-            res = self._fetch(lecture)
+            changes = self._collect(lecture)
+            res = self._apply(lecture, changes)
         logger.info("Temps de récupération : %.1fs", timer.elapsed())
         return res
+
+    def _collect(self, lecture: Lecture) -> Changes:
+        pass
+
+    def _apply(self, lecture: Lecture, changes: Changes) -> FetchResult:
+        return self._fetch(lecture)
 
     def _fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
         result = FetchResult.create()

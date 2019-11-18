@@ -9,6 +9,7 @@ application.register(
     initialize() {
       this.initial = this.element.innerHTML
       if (this.url) {
+        this.check()
         setInterval(() => {
           this.check()
         }, 1000 * this.data.get('checkInterval'))
@@ -59,7 +60,7 @@ application.register(
       const timeElement = this.element.querySelector('time')
       timeElement.dataset.timestampModifiedAt = Date.now()
       const refreshButton =
-        ' <a class="button primary enabled" href=".">Actualiser&nbsp;?</a>'
+        ' • <a class="button button-sm primary enabled" href="">Actualiser</a>'
       if (!this.initial.endsWith(refreshButton)) {
         this.element.insertAdjacentHTML('beforeend', refreshButton)
         this.initial = this.element.innerHTML

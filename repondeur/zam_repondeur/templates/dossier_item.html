@@ -43,6 +43,17 @@
     .lecture .details {
         line-height: 1.2;
     }
+    .lecture.box.notice {
+        visibility: visible;
+        opacity: 1;
+        transition: visibility 0s, opacity 0.5s linear, height 0.5s linear;
+        margin-top: 1rem;
+    }
+    .lecture.box.notice.v-hidden {
+        visibility: hidden;
+        opacity: 0;
+        height: 0;
+    }
     .extra-button {
         margin-top: 1rem;
         justify-content: center;
@@ -63,15 +74,29 @@
 {% block body %}
     <h1>{{ dossier.titre }}</h1>
 
-    <div class="last-update">
-        Dernière mise à jour :
-        <a class="underlined" href="{{ request.resource_url(context, 'journal') }}">
+    <div data-controller="dossier-help">
+        <div class="last-update">
+            Dernière mise à jour :
             <time datetime="{{ dossier.last_event_datetime.isoformat(timespec='milliseconds') }}"
                 data-controller="timestamp"
                 data-timestamp-modified-at="{{ dossier.last_event_timestamp }}">
                     {{ dossier.last_event_datetime | human_readable_time }}
             </time>
-        </a>
+            <br>
+            <a class="underlined" href="{{ request.resource_url(context, 'journal') }}">
+                Journal
+            </a>
+            • <a href="#dossier-help" data-action="dossier-help#toggle">Un problème ?</a>
+        </div>
+
+        <div class="lecture box notice" id="dossier-help" data-target="dossier-help.content">
+            <div>
+                <a class="close-help" data-action="dossier-help#toggle" href="">×</a>
+                <h3>Votre lecture n’apparait pas ?</h3>
+                <p>Veuillez vous assurer qu’elle est présente sur le site de l’Assemblée Nationale ou du Sénat sur la page du dossier législatif.</p>
+                <p>Si cela vous semble anormalement long, veuillez <a href="https://github.com/betagouv/zam/wiki/R%C3%A9solution-de-probl%C3%A8mes">consulter la page d’aide dédiée</a> et/ou <a href="mailto:contact@zam.beta.gouv.fr">contacter l’équipe de développement</a> pour solliciter de l’aide.</p>
+            </div>
+        </div>
     </div>
 
     {% for lecture in lectures|reverse %}

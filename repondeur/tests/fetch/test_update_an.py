@@ -599,14 +599,16 @@ def test_rectif(lecture_an, source):
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 2
-    assert len(amendement.events) == 3
-    assert isinstance(amendement.events[0], AmendementRectifie)
+
+    event = next(e for e in amendement.events if isinstance(e, AmendementRectifie))
+    assert event.data["old_value"] == 0
+    assert event.data["new_value"] == 2
 
 
 @responses.activate
 def test_rectif_with_nil(lecture_an, source):
     from zam_repondeur.models import DBSession, Amendement
-    from zam_repondeur.models.events.amendement import ExposeAmendementModifie
+    from zam_repondeur.models.events.amendement import AmendementRectifie
 
     DBSession.add(lecture_an)
 
@@ -699,6 +701,6 @@ def test_rectif_with_nil(lecture_an, source):
     assert errored == []
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 0
-    # No dedicated AmendementRectifie event created.
-    assert len(amendement.events) == 2
-    assert isinstance(amendement.events[0], ExposeAmendementModifie)
+
+    with pytest.raises(StopIteration):
+        next(e for e in amendement.events if isinstance(e, AmendementRectifie))

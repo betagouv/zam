@@ -393,10 +393,6 @@ class TestFetchAmendement:
     @responses.activate
     def test_simple_amendement(self, lecture_an, app, source):
         from zam_repondeur.services.fetch.an.amendements import build_url
-        from zam_repondeur.models.events.amendement import (
-            CorpsAmendementModifie,
-            ExposeAmendementModifie,
-        )
 
         responses.add(
             responses.GET,
@@ -408,6 +404,8 @@ class TestFetchAmendement:
         amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="177", position=1
         )
+
+        assert created
 
         assert amendement.lecture == lecture_an
         assert amendement.num == 177
@@ -439,24 +437,7 @@ class TestFetchAmendement:
         assert amendement.user_content.objet is None
         assert amendement.user_content.reponse is None
 
-        assert len(amendement.events) == 2
-        assert isinstance(amendement.events[0], ExposeAmendementModifie)
-        assert amendement.events[0].created_at is not None
-        assert amendement.events[0].user is None
-        assert amendement.events[0].data["old_value"] == ""
-        assert amendement.events[0].data["new_value"].startswith("<p>Amendement")
-        assert amendement.events[0].render_summary() == (
-            "L’exposé de l’amendement a été initialisé."
-        )
-
-        assert isinstance(amendement.events[1], CorpsAmendementModifie)
-        assert amendement.events[1].created_at is not None
-        assert amendement.events[1].user is None
-        assert amendement.events[1].data["old_value"] == ""
-        assert amendement.events[1].data["new_value"].startswith("<p>Supprimer")
-        assert amendement.events[1].render_summary() == (
-            "Le corps de l’amendement a été initialisé."
-        )
+        assert len(amendement.events) == 0
 
     @responses.activate
     def test_fetch_amendement_gouvernement(self, lecture_an, source):
@@ -1046,13 +1027,14 @@ class TestFetchAmendementAgain:
         )
 
         # An irrecevable event has been created
-        assert len(amendement1.events) == 3
-        assert isinstance(amendement1.events[0], AmendementIrrecevable)
-        assert amendement1.events[0].created_at is not None
-        assert amendement1.events[0].user is None
-        assert amendement1.events[0].data["old_value"] == "rejeté"
-        assert amendement1.events[0].data["new_value"] == "irrecevable"
-        assert amendement1.events[0].render_summary() == (
+        event = next(
+            e for e in amendement1.events if isinstance(e, AmendementIrrecevable)
+        )
+        assert event.created_at is not None
+        assert event.user is None
+        assert event.data["old_value"] == "rejeté"
+        assert event.data["new_value"] == "irrecevable"
+        assert event.render_summary() == (
             "L’amendement a été déclaré irrecevable par les services "
             "de l’Asssemblée nationale."
         )

@@ -11,7 +11,8 @@ from zam_repondeur.models.events.amendement import (
 
 
 class Source:
-    def update_attributes(self, amendement: Amendement, **values: Any) -> bool:
+    @staticmethod
+    def update_attributes(amendement: Amendement, **values: Any) -> bool:
         modified = False
         for name, value in values.items():
             if getattr(amendement, name) != value:
@@ -19,14 +20,16 @@ class Source:
                 modified = True
         return modified
 
-    def update_rectif(self, amendement: Amendement, rectif: int) -> bool:
+    @staticmethod
+    def update_rectif(amendement: Amendement, rectif: int) -> bool:
         modified = False
         if rectif != amendement.rectif:
             AmendementRectifie.create(amendement=amendement, rectif=rectif)
             modified = True
         return modified
 
-    def update_sort(self, amendement: Amendement, sort: str) -> bool:
+    @staticmethod
+    def update_sort(amendement: Amendement, sort: str) -> bool:
         modified = False
         if sort != amendement.sort:
             if "irrecevable" in sort.lower():
@@ -44,14 +47,16 @@ class Source:
             modified = True
         return modified
 
-    def update_corps(self, amendement: Amendement, corps: str) -> bool:
+    @staticmethod
+    def update_corps(amendement: Amendement, corps: str) -> bool:
         modified = False
         if corps != amendement.corps:
             CorpsAmendementModifie.create(amendement=amendement, corps=corps)
             modified = True
         return modified
 
-    def update_expose(self, amendement: Amendement, expose: str) -> bool:
+    @staticmethod
+    def update_expose(amendement: Amendement, expose: str) -> bool:
         modified = False
         if expose != amendement.expose:
             ExposeAmendementModifie.create(amendement=amendement, expose=expose)

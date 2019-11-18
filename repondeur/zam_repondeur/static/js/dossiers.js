@@ -77,3 +77,21 @@ application.register(
     }
   }
 )
+
+application.register(
+  'dossier-help',
+  class extends Stimulus.Controller {
+    static get targets() {
+      return ['content']
+    }
+
+    connect() {
+      this.contentTarget.classList.add("v-hidden")
+    }
+
+    toggle(event) {
+      this.contentTarget.classList.toggle("v-hidden")
+      event.preventDefault()
+    }
+  }
+)

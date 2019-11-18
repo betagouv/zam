@@ -155,3 +155,26 @@ tr.limit-derouleur {
     background-color: #ffc107;
     font-style: italic;
 }
+
+.button-sm {
+    font-size: .9rem;
+    min-width: 1rem;
+    padding: 0.4rem 1rem 0.2rem 1rem;
+}
+.button-sm.enabled:hover {
+    font-size: .9rem;
+    min-width: 1rem;
+    padding: 0.4rem 1rem 0.2rem 1rem;
+}
+#amendement-help.box.notice {
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 0s, opacity 0.5s linear, height 0.5s linear;
+    margin-top: 1rem;
+    margin-bottom: 0;
+}
+#amendement-help.box.notice.v-hidden {
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+}

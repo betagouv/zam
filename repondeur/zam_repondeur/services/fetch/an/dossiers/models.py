@@ -96,16 +96,6 @@ class DossierRef:
     senat_url: str
     lectures: List[LectureRef]
 
-    @property
-    def most_recent_texte_date(self) -> Tuple[date, str]:
-        return (
-            max(
-                (lecture.texte.date_depot or MIN_DATE for lecture in self.lectures),
-                default=MIN_DATE,
-            ),
-            self.uid,
-        )
-
     @classmethod
     def merge_dossiers(
         cls, dossiers: DossierRefsByUID, others: DossierRefsByUID

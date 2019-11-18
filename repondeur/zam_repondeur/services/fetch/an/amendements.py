@@ -63,13 +63,6 @@ class Changes:
 
 
 class AssembleeNationale(RemoteSource):
-    def prepare(self, lecture: Lecture) -> None:
-        if self.prefetching_enabled:
-            logger.info("Préchargement des amendements de %r", lecture)
-            with Timer() as timer:
-                self._fetch(lecture, dry_run=True)
-            logger.info("Temps de préchargement : %.1fs", timer.elapsed())
-
     def fetch(self, lecture: Lecture) -> FetchResult:
         logger.info("Récupération des amendements de %r", lecture)
         with Timer() as timer:
@@ -84,7 +77,7 @@ class AssembleeNationale(RemoteSource):
     def _apply(self, lecture: Lecture, changes: Changes) -> FetchResult:
         return self._fetch(lecture)
 
-    def _fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
+    def _fetch(self, lecture: Lecture) -> FetchResult:
         result = FetchResult.create()
 
         try:
@@ -95,28 +88,21 @@ class AssembleeNationale(RemoteSource):
         if not derouleur.discussion_items:
             logger.warning("Could not find amendements from %r", lecture)
 
-        if not dry_run:
-            reset_amendements_positions(lecture, derouleur.discussion_items)
+        reset_amendements_positions(lecture, derouleur.discussion_items)
 
-        result += self._fetch_amendements_discussed(
-            lecture, derouleur.discussion_items, dry_run=dry_run
-        )
+        result += self._fetch_amendements_discussed(lecture, derouleur.discussion_items)
         lecture.reset_fetch_progress()
 
-        if not dry_run:
-            result += self._fetch_amendements_other(
-                lecture=lecture,
-                discussion_nums=derouleur.discussion_nums,
-                prefix=derouleur.find_prefix(),
-            )
+        result += self._fetch_amendements_other(
+            lecture=lecture,
+            discussion_nums=derouleur.discussion_nums,
+            prefix=derouleur.find_prefix(),
+        )
 
         return result
 
     def _fetch_amendements_discussed(
-        self,
-        lecture: Lecture,
-        discussion_items: List[OrderedDict],
-        dry_run: bool = False,
+        self, lecture: Lecture, discussion_items: List[OrderedDict],
     ) -> FetchResult:
         amendements: List[Amendement] = []
         created = 0
@@ -140,7 +126,6 @@ class AssembleeNationale(RemoteSource):
                     position=position,
                     id_discussion_commune=id_discussion_commune,
                     id_identique=id_identique,
-                    dry_run=dry_run,
                 )
             except NotFound:
                 prefix, num = ANDerouleurData.parse_num_in_liste(numero_prefixe)
@@ -155,17 +140,13 @@ class AssembleeNationale(RemoteSource):
                 errored.append(str(num))
                 continue
             amendements.append(amendement)
-            self._set_fetch_progress(lecture, position, total, dry_run)
+            self._set_fetch_progress(lecture, position, total)
             created += int(created_)
         return FetchResult.create(amendements, created, errored)
 
-    def _set_fetch_progress(
-        self, lecture: Lecture, position: int, total: int, dry_run: bool
-    ) -> None:
-        current = position if dry_run else total + position
-        # Dry run + real run + _fetch_amendements_other
-        total = total + total + MAX_404
-        lecture.set_fetch_progress(current, total)
+    def _set_fetch_progress(self, lecture: Lecture, position: int, total: int) -> None:
+        total = total + MAX_404
+        lecture.set_fetch_progress(position, total)
 
     def _fetch_amendements_other(
         self, lecture: Lecture, discussion_nums: Set[int], prefix: str
@@ -211,15 +192,12 @@ class AssembleeNationale(RemoteSource):
         position: Optional[int],
         id_discussion_commune: Optional[int] = None,
         id_identique: Optional[int] = None,
-        dry_run: bool = False,
     ) -> Tuple[Amendement, bool]:
         """
         Récupère un amendement depuis son numéro.
         """
         logger.info("Récupération de l'amendement %r", numero_prefixe)
         amend_data = _retrieve_amendement(lecture, numero_prefixe)
-        if dry_run:
-            return Amendement(), False  # Dummy.
 
         article = _get_article(lecture, amend_data)
         parent = _get_parent(lecture, article, amend_data)

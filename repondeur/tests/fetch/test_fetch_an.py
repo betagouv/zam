@@ -111,11 +111,11 @@ class TestFetchAndParseAll:
             amendements, created, errored = source.fetch(lecture=lecture_an)
             # The progress is set for each amendement during the fetch.
             assert mocked_set_fetch_progress.call_args_list == [
-                call("1", 6, 40),
-                call("1", 7, 40),
-                call("1", 8, 40),
-                call("1", 9, 40),
-                call("1", 10, 40),
+                call("1", 1, 35),
+                call("1", 2, 35),
+                call("1", 3, 35),
+                call("1", 4, 35),
+                call("1", 5, 35),
             ]
 
         # Once the fetch is complete, the progress status is back to empty.

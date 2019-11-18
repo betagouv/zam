@@ -74,12 +74,12 @@ class AssembleeNationale(RemoteSource):
         return res
 
     def _fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
-        result = FetchResult([], 0, [])
+        result = FetchResult.create()
 
         try:
             derouleur = fetch_discussion_list(lecture)
         except NotFound:
-            return FetchResult([], 0, [])
+            return result
 
         if not derouleur.discussion_items:
             logger.warning("Could not find amendements from %r", lecture)
@@ -146,7 +146,7 @@ class AssembleeNationale(RemoteSource):
             amendements.append(amendement)
             self._set_fetch_progress(lecture, position, total, dry_run)
             created += int(created_)
-        return FetchResult(amendements, created, errored)
+        return FetchResult.create(amendements, created, errored)
 
     def _set_fetch_progress(
         self, lecture: Lecture, position: int, total: int, dry_run: bool
@@ -191,7 +191,7 @@ class AssembleeNationale(RemoteSource):
             created += int(created_)
             if numero > max_num_seen:
                 max_num_seen = numero
-        return FetchResult(amendements, created, errored)
+        return FetchResult.create(amendements, created, errored)
 
     def fetch_amendement(
         self,

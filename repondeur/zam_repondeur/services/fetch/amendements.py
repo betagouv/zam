@@ -69,6 +69,15 @@ class FetchResult(NamedTuple):
     created: int
     errored: List[str]
 
+    @classmethod
+    def create(
+        cls,
+        amendements: List[Amendement] = [],
+        created: int = 0,
+        errored: List[str] = [],
+    ) -> "FetchResult":
+        return cls(amendements=amendements, created=created, errored=errored)
+
     def __add__(self: "FetchResult", other: object) -> "FetchResult":
         if not isinstance(other, FetchResult):
             raise TypeError

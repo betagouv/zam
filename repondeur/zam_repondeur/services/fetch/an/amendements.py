@@ -77,28 +77,26 @@ class AssembleeNationale(RemoteSource):
         result = FetchResult([], 0, [])
 
         try:
-            discussion_items = fetch_discussion_list(lecture)
+            derouleur = fetch_discussion_list(lecture)
         except NotFound:
             return FetchResult([], 0, [])
 
-        if not discussion_items:
+        if not derouleur.discussion_items:
             logger.warning("Could not find amendements from %r", lecture)
 
         if not dry_run:
-            reset_amendements_positions(lecture, discussion_items)
+            reset_amendements_positions(lecture, derouleur.discussion_items)
 
         result += self._fetch_amendements_discussed(
-            lecture, discussion_items, dry_run=dry_run
+            lecture, derouleur.discussion_items, dry_run=dry_run
         )
         lecture.reset_fetch_progress()
 
         if not dry_run:
             result += self._fetch_amendements_other(
                 lecture=lecture,
-                discussion_nums={
-                    parse_num_in_liste(d["@numero"])[1] for d in discussion_items
-                },
-                prefix=find_prefix(discussion_items, lecture),
+                discussion_nums=derouleur.discussion_nums,
+                prefix=derouleur.find_prefix(),
             )
 
         return result
@@ -134,12 +132,12 @@ class AssembleeNationale(RemoteSource):
                     dry_run=dry_run,
                 )
             except NotFound:
-                prefix, num = parse_num_in_liste(numero_prefixe)
+                prefix, num = ANDerouleurData.parse_num_in_liste(numero_prefixe)
                 logger.warning("Could not find amendement %r for %r", num, lecture)
                 errored.append(str(num))
                 continue
             except Exception:
-                prefix, num = parse_num_in_liste(numero_prefixe)
+                prefix, num = ANDerouleurData.parse_num_in_liste(numero_prefixe)
                 logger.exception(
                     "Error while fetching amendement %r for %r", num, lecture
                 )
@@ -301,7 +299,7 @@ def reset_amendements_positions(
     }
 
     new_order = {
-        parse_num_in_liste(item["@numero"])[1]: index
+        ANDerouleurData.parse_num_in_liste(item["@numero"])[1]: index
         for index, item in enumerate(discussion_items, start=1)
     }
 
@@ -315,14 +313,6 @@ def reset_amendements_positions(
         if amdt.num not in new_order:  # removed
             logger.info("Amendement %s retiré de la discussion", amdt.num)
     DBSession.flush()
-
-
-def find_prefix(discussion_items: List[OrderedDict], lecture: Lecture) -> str:
-    if discussion_items:
-        numero_prefixe = discussion_items[0]["@numero"]
-        prefix, _ = parse_num_in_liste(numero_prefixe)
-        return prefix
-    return get_organe_prefix(lecture.organe)
 
 
 def get_organe_prefix(organe: str) -> str:
@@ -376,7 +366,7 @@ def _retrieve_content(
 _FORCE_LIST_KEYS_LISTE = ("amendement",)
 
 
-def fetch_discussion_list(lecture: Lecture) -> List[OrderedDict]:
+def fetch_discussion_list(lecture: Lecture) -> "ANDerouleurData":
     """
     Récupère la liste ordonnée des amendements soumis à la discussion.
 
@@ -384,15 +374,7 @@ def fetch_discussion_list(lecture: Lecture) -> List[OrderedDict]:
     """
     url = build_url(lecture)
     content = _retrieve_content(url, force_list=_FORCE_LIST_KEYS_LISTE)
-
-    try:
-        discussed_amendements: List[OrderedDict] = (
-            content["amdtsParOrdreDeDiscussion"]["amendements"]["amendement"]
-        )
-    except TypeError:
-        return []
-
-    return discussed_amendements
+    return ANDerouleurData(lecture, content)
 
 
 _FORCE_LIST_KEYS_AMENDEMENT = ("programmeAmdt",)
@@ -473,6 +455,46 @@ def build_url(
     return url
 
 
+class ANDerouleurData:
+    """
+    Data extaction for Assemblée Nationale dérouleur
+    """
+
+    def __init__(self, lecture: Lecture, content: dict):
+        self.lecture = lecture
+        self.content = content
+
+    @reify
+    def discussion_items(self) -> List[OrderedDict]:
+        try:
+            items: List[OrderedDict] = (
+                self.content["amdtsParOrdreDeDiscussion"]["amendements"]["amendement"]
+            )
+            return items
+        except TypeError:
+            return []
+
+    def find_prefix(self) -> str:
+        if self.discussion_items:
+            numero_prefixe = self.discussion_items[0]["@numero"]
+            prefix, _ = self.parse_num_in_liste(numero_prefixe)
+            return prefix
+        return get_organe_prefix(self.lecture.organe)
+
+    @property
+    def discussion_nums(self) -> Set[int]:
+        return {self.parse_num_in_liste(d["@numero"])[1] for d in self.discussion_items}
+
+    @classmethod
+    def parse_num_in_liste(cls, num_long: str) -> Tuple[str, int]:
+        mo = cls._RE_NUM.match(num_long)
+        if mo is None:
+            raise ValueError(f"Cannot parse amendement number {num_long!r}")
+        return mo.group("acronyme"), int(mo.group("num"))
+
+    _RE_NUM = re.compile(r"(?P<acronyme>[A-Z]*)(?P<num>\d+)")
+
+
 def get_organe_abrev(organe_uid: str) -> str:
     from zam_repondeur.services.data import repository
 
@@ -481,16 +503,6 @@ def get_organe_abrev(organe_uid: str) -> str:
         raise OrganeNotFound(organe)
     abrev: str = organe["libelleAbrev"]
     return abrev
-
-
-def parse_num_in_liste(num_long: str) -> Tuple[str, int]:
-    mo = _RE_NUM.match(num_long)
-    if mo is None:
-        raise ValueError(f"Cannot parse amendement number {num_long!r}")
-    return mo.group("acronyme"), int(mo.group("num"))
-
-
-_RE_NUM = re.compile(r"(?P<acronyme>[A-Z]*)(?P<num>\d+)")
 
 
 class LigneCredits(NamedTuple):

@@ -189,6 +189,7 @@ def source_an():
 
 def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
     Amendement.create(lecture=lecture_an, article=article1_an, num=6, position=1)
 
@@ -207,11 +208,32 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
     ) as mock_fetch_discussion_list, patch(
         "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
-        mock_fetch_discussion_list.return_value = [
-            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
-        ]
+        mock_fetch_discussion_list.return_value = ANDerouleurData(
+            lecture_an,
+            {
+                "amdtsParOrdreDeDiscussion": {
+                    "amendements": {
+                        "amendement": [
+                            {
+                                "@numero": "6",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "7",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "9",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                        ]
+                    }
+                }
+            },
+        )
 
         def dynamic_return_value(lecture, numero_prefixe):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
@@ -278,6 +300,7 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
 
 def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_an):
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
     Amendement.create(lecture=lecture_an, article=article1_an, num=6, position=1)
 
@@ -296,11 +319,32 @@ def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_
     ) as mock_fetch_discussion_list, patch(
         "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
-        mock_fetch_discussion_list.return_value = [
-            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
-        ]
+        mock_fetch_discussion_list.return_value = ANDerouleurData(
+            lecture_an,
+            {
+                "amdtsParOrdreDeDiscussion": {
+                    "amendements": {
+                        "amendement": [
+                            {
+                                "@numero": "6",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "7",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "9",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                        ]
+                    }
+                }
+            },
+        )
 
         def dynamic_return_value(lecture, numero_prefixe):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
@@ -357,6 +401,7 @@ def test_fetch_amendements_an_without_auteur_key(
     app, source_an, lecture_an, article1_an, caplog
 ):
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
     amendement_6 = Amendement.create(
         lecture=lecture_an, article=article1_an, num=6, position=1
@@ -379,11 +424,32 @@ def test_fetch_amendements_an_without_auteur_key(
     ) as mock_fetch_discussion_list, patch(
         "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
-        mock_fetch_discussion_list.return_value = [
-            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
-        ]
+        mock_fetch_discussion_list.return_value = ANDerouleurData(
+            lecture_an,
+            {
+                "amdtsParOrdreDeDiscussion": {
+                    "amendements": {
+                        "amendement": [
+                            {
+                                "@numero": "6",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "7",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "9",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                        ]
+                    }
+                }
+            },
+        )
 
         def dynamic_return_value(lecture, numero_prefixe):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
@@ -440,6 +506,7 @@ def test_fetch_amendements_an_without_group_tribun_id(
     app, source_an, lecture_an, article1_an, caplog
 ):
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
     amendement_6 = Amendement.create(
         lecture=lecture_an, article=article1_an, num=6, position=1
@@ -462,11 +529,32 @@ def test_fetch_amendements_an_without_group_tribun_id(
     ) as mock_fetch_discussion_list, patch(
         "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
-        mock_fetch_discussion_list.return_value = [
-            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
-        ]
+        mock_fetch_discussion_list.return_value = ANDerouleurData(
+            lecture_an,
+            {
+                "amdtsParOrdreDeDiscussion": {
+                    "amendements": {
+                        "amendement": [
+                            {
+                                "@numero": "6",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "7",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "9",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                        ]
+                    }
+                }
+            },
+        )
 
         def dynamic_return_value(lecture, numero_prefixe):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
@@ -533,6 +621,7 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
     app, source_an, lecture_an, article1_an, caplog
 ):
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
     amendement_6 = Amendement.create(
         lecture=lecture_an, article=article1_an, num=6, position=1
@@ -555,11 +644,32 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
     ) as mock_fetch_discussion_list, patch(
         "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
-        mock_fetch_discussion_list.return_value = [
-            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
-        ]
+        mock_fetch_discussion_list.return_value = ANDerouleurData(
+            lecture_an,
+            {
+                "amdtsParOrdreDeDiscussion": {
+                    "amendements": {
+                        "amendement": [
+                            {
+                                "@numero": "6",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "7",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "9",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                        ]
+                    }
+                }
+            },
+        )
 
         def dynamic_return_value(lecture, numero_prefixe):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
@@ -626,6 +736,7 @@ def test_fetch_amendements_with_errored(
     app, source_an, lecture_an, article1_an, amendements_an
 ):
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
     from zam_repondeur.services.fetch.exceptions import NotFound
 
     DBSession.add(lecture_an)
@@ -635,11 +746,32 @@ def test_fetch_amendements_with_errored(
     ) as mock_fetch_discussion_list, patch(
         "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
-        mock_fetch_discussion_list.return_value = [
-            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
-        ]
+        mock_fetch_discussion_list.return_value = ANDerouleurData(
+            lecture_an,
+            {
+                "amdtsParOrdreDeDiscussion": {
+                    "amendements": {
+                        "amendement": [
+                            {
+                                "@numero": "6",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "7",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "9",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                        ]
+                    }
+                }
+            },
+        )
         mock_retrieve_amendement.side_effect = NotFound
 
         amendements, created, errored = source_an.fetch(lecture_an)
@@ -680,6 +812,7 @@ def test_fetch_amendements_with_connection_errors(
 ):
     from requests.exceptions import ConnectionError
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
     DBSession.add(lecture_an)
 
@@ -688,11 +821,32 @@ def test_fetch_amendements_with_connection_errors(
     ) as mock_fetch_discussion_list, patch(
         "zam_repondeur.services.fetch.an.amendements.get_http_session"
     ) as mock_http_session:
-        mock_fetch_discussion_list.return_value = [
-            {"@numero": "6", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "7", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "9", "@discussionCommune": "", "@discussionIdentique": ""},
-        ]
+        mock_fetch_discussion_list.return_value = ANDerouleurData(
+            lecture_an,
+            {
+                "amdtsParOrdreDeDiscussion": {
+                    "amendements": {
+                        "amendement": [
+                            {
+                                "@numero": "6",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "7",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "9",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                        ]
+                    }
+                }
+            },
+        )
         mock_http_session.return_value.get.side_effect = ConnectionError
 
         amendements, created, errored = source_an.fetch(lecture_an)
@@ -707,6 +861,7 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
     app, source_an, lecture_an, article1_an, amendements_an_batch
 ):
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
     assert amendements_an_batch[0].location.batch.nums == [666, 999]
 
@@ -716,10 +871,27 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
         "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         DBSession.add(lecture_an)
-        mock_fetch_discussion_list.return_value = [
-            {"@numero": "666", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "999", "@discussionCommune": "", "@discussionIdentique": ""},
-        ]
+        mock_fetch_discussion_list.return_value = ANDerouleurData(
+            lecture_an,
+            {
+                "amdtsParOrdreDeDiscussion": {
+                    "amendements": {
+                        "amendement": [
+                            {
+                                "@numero": "666",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "999",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                        ]
+                    }
+                }
+            },
+        )
 
         def dynamic_return_value(lecture, numero_prefixe):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
@@ -774,6 +946,7 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
 ):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import BatchUnset
+    from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
     assert amendements_an_batch[0].location.batch.nums == [666, 999]
 
@@ -783,10 +956,27 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
         "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
     ) as mock_retrieve_amendement:
         DBSession.add(lecture_an)
-        mock_fetch_discussion_list.return_value = [
-            {"@numero": "666", "@discussionCommune": "", "@discussionIdentique": ""},
-            {"@numero": "999", "@discussionCommune": "", "@discussionIdentique": ""},
-        ]
+        mock_fetch_discussion_list.return_value = ANDerouleurData(
+            lecture_an,
+            {
+                "amdtsParOrdreDeDiscussion": {
+                    "amendements": {
+                        "amendement": [
+                            {
+                                "@numero": "666",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                            {
+                                "@numero": "999",
+                                "@discussionCommune": "",
+                                "@discussionIdentique": "",
+                            },
+                        ]
+                    }
+                }
+            },
+        )
 
         def dynamic_return_value(lecture, numero_prefixe):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData

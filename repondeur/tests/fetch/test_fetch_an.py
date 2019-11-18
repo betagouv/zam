@@ -299,10 +299,10 @@ class TestFetchDiscussionList:
             status=200,
         )
 
-        items = fetch_discussion_list(lecture=lecture_an)
+        derouleur = fetch_discussion_list(lecture=lecture_an)
 
-        assert len(items) == 5
-        assert items[0] == {
+        assert len(derouleur.discussion_items) == 5
+        assert derouleur.discussion_items[0] == {
             "@alineaLabel": "S",
             "@auteurGroupe": "Les Républicains",
             "@auteurLabel": "M. DOOR",
@@ -353,10 +353,10 @@ class TestFetchDiscussionList:
             status=200,
         )
 
-        items = fetch_discussion_list(lecture=lecture_an)
+        derouleur = fetch_discussion_list(lecture=lecture_an)
 
-        assert isinstance(items, list)
-        assert items[0] == {
+        assert isinstance(derouleur.discussion_items, list)
+        assert derouleur.discussion_items[0] == {
             "@alineaLabel": "S",
             "@auteurGroupe": "Les Républicains",
             "@auteurLabel": "M. DOOR",

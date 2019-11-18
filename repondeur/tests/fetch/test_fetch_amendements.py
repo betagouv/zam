@@ -214,35 +214,40 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
 
-            return {
-                "division": {
-                    "titre": "Article 1",
-                    "type": "ARTICLE",
-                    "avantApres": "",
-                    "divisionRattache": "ARTICLE 1",
-                },
-                "numero": numero_prefixe,
-                "numeroLong": numero_prefixe,
-                "auteur": {
-                    "tribunId": "642788",
-                    "groupeTribunId": "730964",
-                    "estGouvernement": "0",
-                    "estRapporteur": "0",
-                    "nom": "Véran",
-                    "prenom": "Olivier",
-                },
-                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
-                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
-                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
-                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
-                "etat": "AC",
-                "retireAvantPublication": "0",
-            }
+            return ANAmendementData(
+                {
+                    "amendement": {
+                        "division": {
+                            "titre": "Article 1",
+                            "type": "ARTICLE",
+                            "avantApres": "",
+                            "divisionRattache": "ARTICLE 1",
+                        },
+                        "numero": numero_prefixe,
+                        "numeroLong": numero_prefixe,
+                        "auteur": {
+                            "tribunId": "642788",
+                            "groupeTribunId": "730964",
+                            "estGouvernement": "0",
+                            "estRapporteur": "0",
+                            "nom": "Véran",
+                            "prenom": "Olivier",
+                        },
+                        "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                        "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",  # noqa
+                        "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                        "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                        "etat": "AC",
+                        "retireAvantPublication": "0",
+                    }
+                }
+            )
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
@@ -298,36 +303,41 @@ def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
 
-            return {
-                "division": {
-                    "titre": "Article 1",
-                    "type": "ARTICLE",
-                    "avantApres": "",
-                    "divisionRattache": "ARTICLE 1",
-                },
-                "numero": numero_prefixe,
-                "numeroLong": numero_prefixe,
-                "auteur": {
-                    "tribunId": "642788",
-                    "groupeTribunId": "730964",
-                    "estGouvernement": "0",
-                    "estRapporteur": "0",
-                    "nom": "Véran",
-                    "prenom": "Olivier",
-                },
-                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
-                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
-                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
-                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
-                "etat": "AC",
-                "retireAvantPublication": "0",
-                "missionVisee": "Mission « Outre-mer »",
-            }
+            return ANAmendementData(
+                {
+                    "amendement": {
+                        "division": {
+                            "titre": "Article 1",
+                            "type": "ARTICLE",
+                            "avantApres": "",
+                            "divisionRattache": "ARTICLE 1",
+                        },
+                        "numero": numero_prefixe,
+                        "numeroLong": numero_prefixe,
+                        "auteur": {
+                            "tribunId": "642788",
+                            "groupeTribunId": "730964",
+                            "estGouvernement": "0",
+                            "estRapporteur": "0",
+                            "nom": "Véran",
+                            "prenom": "Olivier",
+                        },
+                        "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                        "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",  # noqa
+                        "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                        "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                        "etat": "AC",
+                        "retireAvantPublication": "0",
+                        "missionVisee": "Mission « Outre-mer »",
+                    }
+                }
+            )
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
@@ -376,28 +386,33 @@ def test_fetch_amendements_an_without_auteur_key(
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
 
-            return {
-                "division": {
-                    "titre": "Article 1",
-                    "type": "ARTICLE",
-                    "avantApres": "",
-                    "divisionRattache": "ARTICLE 1",
-                },
-                "numero": numero_prefixe,
-                "numeroLong": numero_prefixe,
-                # No auteur key.
-                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
-                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
-                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
-                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
-                "etat": "AC",
-                "retireAvantPublication": "0",
-            }
+            return ANAmendementData(
+                {
+                    "amendement": {
+                        "division": {
+                            "titre": "Article 1",
+                            "type": "ARTICLE",
+                            "avantApres": "",
+                            "divisionRattache": "ARTICLE 1",
+                        },
+                        "numero": numero_prefixe,
+                        "numeroLong": numero_prefixe,
+                        # No auteur key.
+                        "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                        "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",  # noqa
+                        "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                        "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                        "etat": "AC",
+                        "retireAvantPublication": "0",
+                    }
+                }
+            )
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
@@ -454,36 +469,41 @@ def test_fetch_amendements_an_without_group_tribun_id(
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
 
-            return {
-                "division": {
-                    "titre": "Article 1",
-                    "type": "ARTICLE",
-                    "avantApres": "",
-                    "divisionRattache": "ARTICLE 1",
-                },
-                "numero": numero_prefixe,
-                "numeroLong": numero_prefixe,
-                "auteur": {
-                    "tribunId": "642788",
-                    # Sort of empty groupeTribunId
-                    "groupeTribunId": OrderedDict({"@xsi:nil": "true"}),
-                    "estGouvernement": "0",
-                    "estRapporteur": "0",
-                    "nom": "Véran",
-                    "prenom": "Olivier",
-                },
-                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
-                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
-                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
-                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
-                "etat": "AC",
-                "retireAvantPublication": "0",
-            }
+            return ANAmendementData(
+                {
+                    "amendement": {
+                        "division": {
+                            "titre": "Article 1",
+                            "type": "ARTICLE",
+                            "avantApres": "",
+                            "divisionRattache": "ARTICLE 1",
+                        },
+                        "numero": numero_prefixe,
+                        "numeroLong": numero_prefixe,
+                        "auteur": {
+                            "tribunId": "642788",
+                            # Sort of empty groupeTribunId
+                            "groupeTribunId": OrderedDict({"@xsi:nil": "true"}),
+                            "estGouvernement": "0",
+                            "estRapporteur": "0",
+                            "nom": "Véran",
+                            "prenom": "Olivier",
+                        },
+                        "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                        "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",  # noqa
+                        "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                        "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                        "etat": "AC",
+                        "retireAvantPublication": "0",
+                    }
+                }
+            )
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
@@ -542,36 +562,41 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
 
-            return {
-                "division": {
-                    "titre": "Article 1",
-                    "type": "ARTICLE",
-                    "avantApres": "",
-                    "divisionRattache": "ARTICLE 1",
-                },
-                "numero": numero_prefixe,
-                "numeroLong": numero_prefixe,
-                "auteur": {
-                    "tribunId": "642788",
-                    # Unknown groupeTribunId
-                    "groupeTribunId": "Unknown",
-                    "estGouvernement": "0",
-                    "estRapporteur": "0",
-                    "nom": "Véran",
-                    "prenom": "Olivier",
-                },
-                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
-                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
-                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
-                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
-                "etat": "AC",
-                "retireAvantPublication": "0",
-            }
+            return ANAmendementData(
+                {
+                    "amendement": {
+                        "division": {
+                            "titre": "Article 1",
+                            "type": "ARTICLE",
+                            "avantApres": "",
+                            "divisionRattache": "ARTICLE 1",
+                        },
+                        "numero": numero_prefixe,
+                        "numeroLong": numero_prefixe,
+                        "auteur": {
+                            "tribunId": "642788",
+                            # Unknown groupeTribunId
+                            "groupeTribunId": "Unknown",
+                            "estGouvernement": "0",
+                            "estRapporteur": "0",
+                            "nom": "Véran",
+                            "prenom": "Olivier",
+                        },
+                        "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                        "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",  # noqa
+                        "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                        "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                        "etat": "AC",
+                        "retireAvantPublication": "0",
+                    }
+                }
+            )
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
@@ -697,35 +722,40 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"666", "999"}:
                 raise NotFound
 
-            return {
-                "division": {
-                    "titre": "Article 1",
-                    "type": "ARTICLE",
-                    "avantApres": "",
-                    "divisionRattache": "ARTICLE 1",
-                },
-                "numero": numero_prefixe,
-                "numeroLong": numero_prefixe,
-                "auteur": {
-                    "tribunId": "642788",
-                    "groupeTribunId": "730964",
-                    "estGouvernement": "0",
-                    "estRapporteur": "0",
-                    "nom": "Véran",
-                    "prenom": "Olivier",
-                },
-                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
-                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
-                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
-                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
-                "etat": "AC",
-                "retireAvantPublication": "0",
-            }
+            return ANAmendementData(
+                {
+                    "amendement": {
+                        "division": {
+                            "titre": "Article 1",
+                            "type": "ARTICLE",
+                            "avantApres": "",
+                            "divisionRattache": "ARTICLE 1",
+                        },
+                        "numero": numero_prefixe,
+                        "numeroLong": numero_prefixe,
+                        "auteur": {
+                            "tribunId": "642788",
+                            "groupeTribunId": "730964",
+                            "estGouvernement": "0",
+                            "estRapporteur": "0",
+                            "nom": "Véran",
+                            "prenom": "Olivier",
+                        },
+                        "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                        "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",  # noqa
+                        "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                        "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                        "etat": "AC",
+                        "retireAvantPublication": "0",
+                    }
+                }
+            )
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 
@@ -759,35 +789,40 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
         ]
 
         def dynamic_return_value(lecture, numero_prefixe):
+            from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
 
             if numero_prefixe not in {"666", "999"}:
                 raise NotFound
 
-            return {
-                "division": {
-                    "titre": "Article 1",
-                    "type": "ARTICLE",
-                    "avantApres": "avant",
-                    "divisionRattache": "ARTICLE 1",
-                },
-                "numero": numero_prefixe,
-                "numeroLong": numero_prefixe,
-                "auteur": {
-                    "tribunId": "642788",
-                    "groupeTribunId": "730964",
-                    "estGouvernement": "0",
-                    "estRapporteur": "0",
-                    "nom": "Véran",
-                    "prenom": "Olivier",
-                },
-                "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
-                "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",
-                "numeroParent": OrderedDict({"@xsi:nil": "true"}),
-                "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
-                "etat": "AC",
-                "retireAvantPublication": "0",
-            }
+            return ANAmendementData(
+                {
+                    "amendement": {
+                        "division": {
+                            "titre": "Article 1",
+                            "type": "ARTICLE",
+                            "avantApres": "avant",
+                            "divisionRattache": "ARTICLE 1",
+                        },
+                        "numero": numero_prefixe,
+                        "numeroLong": numero_prefixe,
+                        "auteur": {
+                            "tribunId": "642788",
+                            "groupeTribunId": "730964",
+                            "estGouvernement": "0",
+                            "estRapporteur": "0",
+                            "nom": "Véran",
+                            "prenom": "Olivier",
+                        },
+                        "exposeSommaire": "<p>Amendement r&#233;dactionnel.</p>",
+                        "dispositif": "<p>&#192; l&#8217;alin&#233;a&#160;8, substituer</p>",  # noqa
+                        "numeroParent": OrderedDict({"@xsi:nil": "true"}),
+                        "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
+                        "etat": "AC",
+                        "retireAvantPublication": "0",
+                    }
+                }
+            )
 
         mock_retrieve_amendement.side_effect = dynamic_return_value
 

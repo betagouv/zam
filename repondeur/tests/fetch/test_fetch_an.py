@@ -1227,10 +1227,11 @@ class TestFetchAmendementAgain:
         )
     ],
 )
-def test_parse_division(division, type_, num, mult, pos):
-    from zam_repondeur.services.fetch.an.amendements import parse_division
+def test_get_division(division, type_, num, mult, pos):
+    from zam_repondeur.services.fetch.an.amendements import ANAmendementData
 
-    assert parse_division(division) == (type_, num, mult, pos)
+    amend_data = ANAmendementData({"amendement": {"division": division}})
+    assert amend_data.get_division() == (type_, num, mult, pos)
 
 
 @pytest.mark.parametrize(
@@ -1238,9 +1239,9 @@ def test_parse_division(division, type_, num, mult, pos):
     [("208", 0), ("CD208", 0), ("CD208 (Rect)", 1), ("CD208 (2ème Rect)", 2)],
 )
 def test_parse_numero_long_with_rect(text, expected):
-    from zam_repondeur.services.fetch.an.amendements import parse_numero_long_with_rect
+    from zam_repondeur.services.fetch.an.amendements import ANAmendementData
 
-    assert parse_numero_long_with_rect(text) == expected
+    assert ANAmendementData.parse_numero_long_with_rect(text) == expected
 
 
 @pytest.mark.parametrize(
@@ -1260,6 +1261,6 @@ def test_parse_numero_long_with_rect(text, expected):
     ],
 )
 def test_parse_mission_visee(text, expected):
-    from zam_repondeur.services.fetch.an.amendements import parse_mission_visee
+    from zam_repondeur.services.fetch.an.amendements import ANAmendementData
 
-    assert parse_mission_visee(text) == expected
+    assert ANAmendementData.parse_mission_visee(text) == expected

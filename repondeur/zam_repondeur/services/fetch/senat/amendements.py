@@ -91,12 +91,11 @@ class Senat(RemoteSource):
         num, rectif = Amendement.parse_num(row["Numéro "])
         amendement, created = lecture.find_or_create_amendement(num, article)
 
-        modified = False
-        modified |= self.update_rectif(amendement, rectif)
-        modified |= self.update_corps(amendement, clean_html(row["Dispositif "]))
-        modified |= self.update_expose(amendement, clean_html(row["Objet "]))
-        modified |= self.update_sort(amendement, row["Sort "])
-        modified |= self.update_attributes(
+        self.update_rectif(amendement, rectif)
+        self.update_corps(amendement, clean_html(row["Dispositif "]))
+        self.update_expose(amendement, clean_html(row["Objet "]))
+        self.update_sort(amendement, row["Sort "])
+        self.update_attributes(
             amendement,
             article=article,
             alinea=row["Alinéa"].strip(),

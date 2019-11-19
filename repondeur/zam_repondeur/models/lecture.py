@@ -25,7 +25,7 @@ from .base import Base, DBSession
 from .chambre import Chambre
 from .division import SubDiv
 from .events.base import LastEventMixin
-from .organe import ORGANE_AN, ORGANE_SENAT
+from .organe import ORGANE_SENAT, ORGANES_SEANCE_PUBLIQUE
 from .phase import Phase
 from .texte import Texte
 
@@ -124,6 +124,7 @@ class Lecture(Base, LastEventMixin):
 
     def rewrite_organe(self, label: str) -> str:
         if label in {
+            "Assemblée nationale de la 14ème législature",
             "Assemblée nationale de la 15ème législature",
             "Sénat ( 5ème République )",
         }:
@@ -149,7 +150,7 @@ class Lecture(Base, LastEventMixin):
 
     @property
     def is_commission(self) -> bool:
-        return self.organe not in {ORGANE_AN, ORGANE_SENAT}
+        return self.organe not in ORGANES_SEANCE_PUBLIQUE
 
     @property
     def has_missions(self) -> bool:

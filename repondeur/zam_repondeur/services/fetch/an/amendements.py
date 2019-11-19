@@ -81,9 +81,11 @@ class AssembleeNationale(RemoteSource):
 
         position_changes = derouleur.updated_amendement_positions()
 
-        actions, errored = self._collect_amendements_discussed(lecture, derouleur)
+        actions, unchanged, errored = self._collect_amendements_discussed(
+            lecture, derouleur
+        )
 
-        other_actions, other_failed_nums = self._collect_amendements_other(
+        other_actions, other_unchanged, other_errored = self._collect_amendements_other(
             lecture=lecture,
             discussion_nums=derouleur.discussion_nums,
             prefix=derouleur.find_prefix(),
@@ -92,13 +94,15 @@ class AssembleeNationale(RemoteSource):
         return CollectedChanges.create(
             position_changes=position_changes,
             actions=actions + other_actions,
-            errored=errored + other_failed_nums,
+            unchanged=unchanged + other_unchanged,
+            errored=errored + other_errored,
         )
 
     def _collect_amendements_discussed(
         self, lecture: Lecture, derouleur: "ANDerouleurData"
-    ) -> Tuple[List[Action], List[str]]:
+    ) -> Tuple[List[Action], List[int], List[str]]:
         actions: List[Action] = []
+        unchanged: List[int] = []
         errored: List[str] = []
 
         total = len(derouleur.discussion_items)
@@ -123,6 +127,10 @@ class AssembleeNationale(RemoteSource):
                 )
                 if action is not None:
                     actions.append(action)
+                else:
+                    if amendement is None:
+                        raise ValueError("Invalid amendement return value")
+                    unchanged.append(amendement.num)
             except NotFound:
                 prefix, num = ANDerouleurData.parse_num_in_liste(numero_prefixe)
                 logger.warning("Could not find amendement %r for %r", num, lecture)
@@ -136,12 +144,13 @@ class AssembleeNationale(RemoteSource):
                 errored.append(str(num))
                 continue
             self._set_fetch_progress(lecture, position, total)
-        return actions, errored
+        return actions, unchanged, errored
 
     def _collect_amendements_other(
         self, lecture: Lecture, discussion_nums: Set[int], prefix: str
-    ) -> Tuple[List[Action], List[str]]:
+    ) -> Tuple[List[Action], List[int], List[str]]:
         actions: List[Action] = []
+        unchanged: List[int] = []
         errored: List[str] = []
 
         max_num_in_liste = max(discussion_nums, default=0)
@@ -164,6 +173,10 @@ class AssembleeNationale(RemoteSource):
                 )
                 if action is not None:
                     actions.append(action)
+                else:
+                    if amendement is None:
+                        raise ValueError("Invalid amendement return value")
+                    unchanged.append(amendement.num)
             except NotFound:
                 continue
             except Exception:
@@ -172,7 +185,7 @@ class AssembleeNationale(RemoteSource):
                 continue
             if numero > max_num_seen:
                 max_num_seen = numero
-        return actions, errored
+        return actions, unchanged, errored
 
     def _collect_amendement(
         self,
@@ -299,7 +312,14 @@ class AssembleeNationale(RemoteSource):
         lecture.set_fetch_progress(position, total)
 
     def apply_changes(self, lecture: Lecture, changes: CollectedChanges) -> FetchResult:
-        result = FetchResult.create(errored=changes.errored)
+        unchanged_amendements = [
+            amdt
+            for amdt in (lecture.find_amendement(num) for num in changes.unchanged)
+            if amdt is not None
+        ]
+        result = FetchResult.create(
+            amendements=unchanged_amendements, errored=changes.errored
+        )
 
         # Build amendement -> position map
         moved_amendements = {

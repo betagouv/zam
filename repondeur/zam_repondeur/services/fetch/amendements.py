@@ -93,6 +93,7 @@ class CollectedChanges(NamedTuple):
     derouleur_fetch_success: bool
     position_changes: Dict[int, Optional[int]]
     actions: List["Action"]
+    unchanged: List[int]
     errored: List[str]
 
     @classmethod
@@ -101,15 +102,20 @@ class CollectedChanges(NamedTuple):
         derouleur_fetch_success: bool = True,
         position_changes: Optional[Dict[int, Optional[int]]] = None,
         actions: Optional[List["Action"]] = None,
+        unchanged: Optional[List[int]] = None,
         errored: Optional[List[str]] = None,
     ) -> "CollectedChanges":
         if position_changes is None:
             position_changes = {}
         if actions is None:
             actions = []
+        if unchanged is None:
+            unchanged = []
         if errored is None:
             errored = []
-        return cls(derouleur_fetch_success, position_changes, actions, errored)
+        return cls(
+            derouleur_fetch_success, position_changes, actions, unchanged, errored
+        )
 
 
 class Action(ABC):

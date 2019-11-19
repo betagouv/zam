@@ -235,16 +235,14 @@ class AssembleeNationale(RemoteSource):
         """
         logger.info("Récupération de l'amendement %r", numero_prefixe)
         amend_data = _retrieve_amendement(lecture, numero_prefixe)
-        article = _get_article(lecture, amend_data)
         amendement, action = self.inspect_amendement(
-            lecture, article, amend_data, position, id_discussion_commune, id_identique
+            lecture, amend_data, position, id_discussion_commune, id_identique
         )
         return amendement, action
 
     def inspect_amendement(
         self,
         lecture: Lecture,
-        article: Article,
         amend_data: "ANAmendementData",
         position: Optional[int],
         id_discussion_commune: Optional[int],
@@ -255,6 +253,8 @@ class AssembleeNationale(RemoteSource):
 
         num = amend_data.get_num()
         rectif = amend_data.get_rectif()
+
+        subdiv = amend_data.get_division()
 
         matricule = amend_data.get_matricule()
         groupe = amend_data.get_groupe()
@@ -274,7 +274,7 @@ class AssembleeNationale(RemoteSource):
 
         if amendement is None:
             action = CreateAmendement(
-                article=article,
+                subdiv=subdiv,
                 parent_num_raw=parent_num_raw,
                 num=num,
                 rectif=rectif,
@@ -296,7 +296,7 @@ class AssembleeNationale(RemoteSource):
 
         modified = any(
             [
-                article != amendement.article,
+                (amendement.article is None or subdiv != amendement.article.subdiv),
                 parent_num_raw != old_parent_num_raw,
                 rectif != amendement.rectif,
                 corps != amendement.corps,
@@ -317,7 +317,7 @@ class AssembleeNationale(RemoteSource):
         if modified:
             action = UpdateAmendement(
                 amendement_num=amendement.num,
-                article=article,
+                subdiv=subdiv,
                 parent_num_raw=parent_num_raw,
                 rectif=rectif,
                 position=position,
@@ -457,21 +457,6 @@ def _build_amendement_url(
     return build_url(lecture, numero_prefixe, fallback)
 
 
-def _get_article(lecture: Lecture, amend_data: "ANAmendementData") -> Article:
-    subdiv = amend_data.get_division()
-    article: Article
-    created: bool
-    article, created = get_one_or_create(
-        Article,
-        lecture=lecture,
-        type=subdiv.type_,
-        num=subdiv.num,
-        mult=subdiv.mult,
-        pos=subdiv.pos,
-    )
-    return article
-
-
 def build_url(
     lecture: Lecture, numero_prefixe: str = "", fallback: bool = False
 ) -> str:
@@ -586,7 +571,7 @@ class Action(ABC):
 class CreateOrUpdateAmendement(Action):
     def __init__(
         self,
-        article: Article,
+        subdiv: SubDiv,
         parent_num_raw: str,
         rectif: int,
         position: Optional[int],
@@ -601,7 +586,7 @@ class CreateOrUpdateAmendement(Action):
         expose: str,
         sort: str,
     ):
-        self.article = article
+        self.subdiv = subdiv
         self.parent_num_raw = parent_num_raw
         self.rectif = rectif
         self.position = position
@@ -616,14 +601,27 @@ class CreateOrUpdateAmendement(Action):
         self.expose = expose
         self.sort = sort
 
-    def _get_parent(self, lecture: Lecture) -> Optional[Amendement]:
+    def _get_article(self, lecture: Lecture) -> Article:
+        article: Article
+        created: bool
+        article, created = get_one_or_create(
+            Article,
+            lecture=lecture,
+            type=self.subdiv.type_,
+            num=self.subdiv.num,
+            mult=self.subdiv.mult,
+            pos=self.subdiv.pos,
+        )
+        return article
+
+    def _get_parent(self, lecture: Lecture, article: Article) -> Optional[Amendement]:
         parent_num, parent_rectif = Amendement.parse_num(self.parent_num_raw)
         if not parent_num:
             return None
         parent: Optional[Amendement]
         parent, _ = get_one_or_create(
             Amendement,
-            create_kwargs={"article": self.article, "rectif": parent_rectif},
+            create_kwargs={"article": article, "rectif": parent_rectif},
             lecture=lecture,
             num=parent_num,
         )
@@ -639,10 +637,12 @@ class CreateAmendement(CreateOrUpdateAmendement):
         return f"<CreateAmendement(num={self.num})>"
 
     def apply(self, lecture: Lecture) -> FetchResult:
-        parent = self._get_parent(lecture)
+        article = self._get_article(lecture)
+        parent = self._get_parent(lecture, article)
+
         amendement = Amendement.create(
             lecture=lecture,
-            article=self.article,
+            article=article,
             parent=parent,
             position=self.position,
             num=self.num,
@@ -675,9 +675,10 @@ class UpdateAmendement(CreateOrUpdateAmendement):
         if amendement is None:
             return FetchResult.create(errored=[str(self.amendement_num)])
 
-        parent = self._get_parent(lecture)
+        article = self._get_article(lecture)
+        parent = self._get_parent(lecture, article)
 
-        if amendement.location.batch and amendement.article.pk != self.article.pk:
+        if amendement.location.batch and amendement.article.pk != article.pk:
             BatchUnset.create(amendement=amendement, request=None)
 
         Source.update_rectif(amendement, self.rectif)
@@ -686,7 +687,7 @@ class UpdateAmendement(CreateOrUpdateAmendement):
         Source.update_sort(amendement, self.sort)
         Source.update_attributes(
             amendement,
-            article=self.article,
+            article=article,
             parent=parent,
             position=self.position,
             id_discussion_commune=self.id_discussion_commune,

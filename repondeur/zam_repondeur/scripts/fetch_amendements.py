@@ -12,6 +12,7 @@ from zam_repondeur.models import Dossier, Lecture, Texte, get_one_or_create
 from zam_repondeur.services.data import repository
 from zam_repondeur.services.fetch.amendements import RemoteSource
 from zam_repondeur.services.fetch.an.dossiers.models import DossierRef
+from zam_repondeur.utils import Timer
 
 logger = logging.getLogger(__name__)
 
@@ -22,15 +23,20 @@ def main(argv: List[str] = sys.argv) -> None:
 
     setup_logging(args.config_uri)
 
-    logging.getLogger().setLevel(logging.WARNING)
-    logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
+    log_level = logging.WARNING
+    if args.verbose:
+        log_level = logging.INFO
+    if args.debug:
+        log_level = logging.DEBUG
+    logging.getLogger().setLevel(log_level)
+    logging.getLogger("urllib3.connectionpool").setLevel(log_level)
 
     with bootstrap(args.config_uri, options={"app": "zam_fetch_amendements"}):
 
         repository.load_data()
 
         try:
-            fetch_amendements(args.chambre, args.num)
+            fetch_amendements(args.chambre, args.num, args.progress)
         finally:
             transaction.abort()
 
@@ -39,18 +45,25 @@ def parse_args(argv: List[str]) -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("config_uri")
     parser.add_argument("--chambre", choices=["an", "senat"], required=False)
-    parser.add_argument("--num", type=int, required=False)
+    parser.add_argument("--num", type=int, required=False, help="N° de texte")
+    parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("-d", "--debug", action="store_true")
+    parser.add_argument("--no-progress", dest="progress", action="store_false")
     return parser.parse_args(argv)
 
 
-def fetch_amendements(chambre: Optional[str], num: Optional[int]) -> None:
+def fetch_amendements(
+    chambre: Optional[str], num: Optional[int], progress: bool
+) -> None:
     an_ids = repository.list_opendata_dossiers()
-    bar = ProgressBar(total=len(an_ids))
+    if progress:
+        bar = ProgressBar(total=len(an_ids))
     random.shuffle(an_ids)
     for an_id in an_ids:
         dossier_ref = repository.get_opendata_dossier_ref(an_id)
         fetch_amendements_for_dossier(dossier_ref, chambre, num)
-        bar.update(step=len(dossier_ref.lectures))
+        if progress:
+            bar.update(step=len(dossier_ref.lectures))
 
 
 def fetch_amendements_for_dossier(
@@ -91,6 +104,21 @@ def fetch_amendements_for_lecture(lecture: Lecture) -> None:
     chambre = lecture.texte.chambre
     source: RemoteSource = RemoteSource.get_remote_source_for_chambre(chambre)
     try:
-        source.fetch(lecture)
+        with Timer() as prepare_timer:
+            source.prepare(lecture)
+        logger.info("Time to prepare: %.1fs", prepare_timer.elapsed())
+
+        with Timer() as collect_timer:
+            changes = source.collect_changes(lecture)
+        logger.info("Time to collect: %.1fs", collect_timer.elapsed())
+
+        with Timer() as apply_timer:
+            source.apply_changes(lecture, changes)
+        logger.info("Time to apply: %.1fs", apply_timer.elapsed())
+
+        logger.info(
+            "Total time: %.1fs",
+            sum(t.elapsed() for t in (prepare_timer, collect_timer, apply_timer)),
+        )
     except Exception:
         logger.exception(f"Error while fetching {lecture}")

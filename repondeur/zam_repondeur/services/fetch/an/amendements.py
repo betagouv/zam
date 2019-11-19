@@ -91,21 +91,18 @@ class AssembleeNationale(RemoteSource):
     def fetch(self, lecture: Lecture) -> FetchResult:
         logger.info("Récupération des amendements de %r", lecture)
 
-        try:
-            with Timer() as collect_timer:
-                changes = self._collect(lecture)
-            logger.info("Time to collect: %.1fs", collect_timer.elapsed())
+        with Timer() as collect_timer:
+            changes = self._collect(lecture)
+        logger.info("Time to collect: %.1fs", collect_timer.elapsed())
 
-            with Timer() as apply_timer:
-                res = self._apply(lecture, changes)
-            logger.info("Time to apply: %.1fs", apply_timer.elapsed())
+        with Timer() as apply_timer:
+            res = self._apply(lecture, changes)
+        logger.info("Time to apply: %.1fs", apply_timer.elapsed())
 
-            logger.info(
-                "Total time: %.1fs", collect_timer.elapsed() + apply_timer.elapsed()
-            )
-            return res
-        finally:
-            lecture.reset_fetch_progress()
+        logger.info(
+            "Total time: %.1fs", collect_timer.elapsed() + apply_timer.elapsed()
+        )
+        return res
 
     def fetch_amendement(
         self, lecture: Lecture, numero_prefixe: str, position: Optional[int]
@@ -372,6 +369,8 @@ class AssembleeNationale(RemoteSource):
                 amendement.position = position
 
         DBSession.flush()
+
+        lecture.reset_fetch_progress()
 
         return result
 

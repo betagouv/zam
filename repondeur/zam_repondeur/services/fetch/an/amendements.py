@@ -316,7 +316,7 @@ class AssembleeNationale(RemoteSource):
         )
         if modified:
             action = UpdateAmendement(
-                amendement=amendement,
+                amendement_num=amendement.num,
                 article=article,
                 parent_num_raw=parent_num_raw,
                 rectif=rectif,
@@ -663,28 +663,29 @@ class CreateAmendement(CreateOrUpdateAmendement):
 
 
 class UpdateAmendement(CreateOrUpdateAmendement):
-    def __init__(self, amendement: Amendement, **kwargs: Any):
+    def __init__(self, amendement_num: int, **kwargs: Any):
         super().__init__(**kwargs)
-        self.amendement = amendement
+        self.amendement_num = amendement_num
 
     def __repr__(self) -> str:
-        return f"<UpdateAmendement(num={self.amendement.num})>"
+        return f"<UpdateAmendement(num={self.amendement_num})>"
 
     def apply(self, lecture: Lecture) -> FetchResult:
+        amendement = lecture.find_amendement(self.amendement_num)
+        if amendement is None:
+            return FetchResult.create(errored=[str(self.amendement_num)])
+
         parent = self._get_parent(lecture)
 
-        if (
-            self.amendement.location.batch
-            and self.amendement.article.pk != self.article.pk
-        ):
-            BatchUnset.create(amendement=self.amendement, request=None)
+        if amendement.location.batch and amendement.article.pk != self.article.pk:
+            BatchUnset.create(amendement=amendement, request=None)
 
-        Source.update_rectif(self.amendement, self.rectif)
-        Source.update_corps(self.amendement, self.corps)
-        Source.update_expose(self.amendement, self.expose)
-        Source.update_sort(self.amendement, self.sort)
+        Source.update_rectif(amendement, self.rectif)
+        Source.update_corps(amendement, self.corps)
+        Source.update_expose(amendement, self.expose)
+        Source.update_sort(amendement, self.sort)
         Source.update_attributes(
-            self.amendement,
+            amendement,
             article=self.article,
             parent=parent,
             position=self.position,
@@ -697,7 +698,7 @@ class UpdateAmendement(CreateOrUpdateAmendement):
             mission_titre_court=self.mission_titre_court,
         )
 
-        return FetchResult.create(amendements=[self.amendement])
+        return FetchResult.create(amendements=[amendement])
 
 
 class LigneCredits(NamedTuple):

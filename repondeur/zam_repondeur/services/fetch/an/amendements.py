@@ -66,7 +66,7 @@ class CollectedChanges(NamedTuple):
     """
 
     list_fetch_success: bool
-    position_changes: Dict[Amendement, Optional[int]]
+    position_changes: Dict[int, Optional[int]]
     actions: List["Action"]
     errored: List[str]
 
@@ -74,7 +74,7 @@ class CollectedChanges(NamedTuple):
     def create(
         cls,
         list_fetch_success: bool = True,
-        position_changes: Optional[Dict[Amendement, Optional[int]]] = None,
+        position_changes: Optional[Dict[int, Optional[int]]] = None,
         actions: Optional[List["Action"]] = None,
         errored: Optional[List[str]] = None,
     ) -> "CollectedChanges":
@@ -351,10 +351,17 @@ class AssembleeNationale(RemoteSource):
     def _apply(self, lecture: Lecture, changes: CollectedChanges) -> FetchResult:
         result = FetchResult.create(errored=changes.errored)
 
-        # Reset amendement positions
-        for amendement in changes.position_changes:
-            amendement.position = None
+        # Build amendement -> position map
+        moved_amendements = {
+            amendement: changes.position_changes[amendement.num]
+            for amendement in lecture.amendements
+            if amendement.num in changes.position_changes
+        }
 
+        # Reset positions first, so that we never have two with the same position
+        # (which would trigger an integrity error due to the unique constraint)
+        for amendement in moved_amendements:
+            amendement.position = None
         DBSession.flush()
 
         # Create or update amendements
@@ -362,7 +369,7 @@ class AssembleeNationale(RemoteSource):
             result += action.apply()
 
         # Apply new amendement positions
-        for amendement, position in changes.position_changes.items():
+        for amendement, position in moved_amendements.items():
             if amendement.position != position:
                 amendement.position = position
 
@@ -566,7 +573,7 @@ class ANDerouleurData:
 
     _RE_NUM = re.compile(r"(?P<acronyme>[A-Z]*)(?P<num>\d+)")
 
-    def updated_amendement_positions(self) -> Dict[Amendement, Optional[int]]:
+    def updated_amendement_positions(self) -> Dict[int, Optional[int]]:
 
         amendements = [amdt for amdt in self.lecture.amendements]
 
@@ -583,7 +590,7 @@ class ANDerouleurData:
                 raise ValueError
 
         return {
-            amdt: new_order.get(amdt.num)
+            amdt.num: new_order.get(amdt.num)
             for amdt in amendements
             if new_order.get(amdt.num) != current_order[amdt.num]
         }

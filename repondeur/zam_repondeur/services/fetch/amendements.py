@@ -12,25 +12,18 @@ from zam_repondeur.models.events.amendement import (
 
 class Source:
     @staticmethod
-    def update_attributes(amendement: Amendement, **values: Any) -> bool:
-        modified = False
+    def update_attributes(amendement: Amendement, **values: Any) -> None:
         for name, value in values.items():
             if getattr(amendement, name) != value:
                 setattr(amendement, name, value)
-                modified = True
-        return modified
 
     @staticmethod
-    def update_rectif(amendement: Amendement, rectif: int) -> bool:
-        modified = False
+    def update_rectif(amendement: Amendement, rectif: int) -> None:
         if rectif != amendement.rectif:
             AmendementRectifie.create(amendement=amendement, rectif=rectif)
-            modified = True
-        return modified
 
     @staticmethod
-    def update_sort(amendement: Amendement, sort: str) -> bool:
-        modified = False
+    def update_sort(amendement: Amendement, sort: str) -> None:
         if sort != amendement.sort:
             if "irrecevable" in sort.lower():
                 AmendementIrrecevable.create(amendement=amendement, sort=sort)
@@ -44,24 +37,16 @@ class Source:
                     amendement.location.user_table = None
             else:
                 amendement.sort = sort
-            modified = True
-        return modified
 
     @staticmethod
-    def update_corps(amendement: Amendement, corps: str) -> bool:
-        modified = False
+    def update_corps(amendement: Amendement, corps: str) -> None:
         if corps != amendement.corps:
             CorpsAmendementModifie.create(amendement=amendement, corps=corps)
-            modified = True
-        return modified
 
     @staticmethod
-    def update_expose(amendement: Amendement, expose: str) -> bool:
-        modified = False
+    def update_expose(amendement: Amendement, expose: str) -> None:
         if expose != amendement.expose:
             ExposeAmendementModifie.create(amendement=amendement, expose=expose)
-            modified = True
-        return modified
 
 
 class FetchResult(NamedTuple):

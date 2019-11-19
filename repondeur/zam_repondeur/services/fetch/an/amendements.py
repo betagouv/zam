@@ -700,12 +700,11 @@ class UpdateAmendement(CreateOrUpdateAmendement):
         ):
             BatchUnset.create(amendement=self.amendement, request=None)
 
-        modified = False
-        modified |= Source.update_rectif(self.amendement, self.rectif)
-        modified |= Source.update_corps(self.amendement, self.corps)
-        modified |= Source.update_expose(self.amendement, self.expose)
-        modified |= Source.update_sort(self.amendement, self.sort)
-        modified |= Source.update_attributes(
+        Source.update_rectif(self.amendement, self.rectif)
+        Source.update_corps(self.amendement, self.corps)
+        Source.update_expose(self.amendement, self.expose)
+        Source.update_sort(self.amendement, self.sort)
+        Source.update_attributes(
             self.amendement,
             article=self.article,
             parent=self._get_parent(),

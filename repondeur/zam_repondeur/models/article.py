@@ -120,13 +120,19 @@ class Article(Base):
     def validate_pos(self, key: str, pos: str) -> str:
         return validate(key, pos, ALLOWED_POS)
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Article):
+            return NotImplemented
+        if self.lecture != other.lecture:
+            raise ValueError
+        return self.subdiv == other.subdiv
+
+    @property
+    def subdiv(self) -> SubDiv:
+        return SubDiv(type_=self.type, num=self.num, mult=self.mult, pos=self.pos)
+
     def matches(self, subdiv: SubDiv) -> bool:
-        return (
-            self.type == subdiv.type_
-            and self.num == subdiv.num
-            and self.mult == subdiv.mult
-            and self.pos == subdiv.pos
-        )
+        return self.subdiv == subdiv
 
     __repr_keys__ = ("pk", "lecture_pk", "type", "num", "mult", "pos")
 
@@ -164,18 +170,6 @@ class Article(Base):
     @property
     def is_erreur(self) -> bool:
         return self.type == "erreur"
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Article):
-            return NotImplemented
-        if self.lecture != other.lecture:
-            raise ValueError
-        return bool(
-            (self.type == other.type)
-            and (self.num == other.num)
-            and (self.mult == other.mult)
-            and (self.pos == other.pos)
-        )
 
     _ORDER_TYPE = {
         "titre": 1,

@@ -24,7 +24,6 @@ from zam_repondeur.services.fetch.division import parse_subdiv
 from zam_repondeur.services.fetch.exceptions import FetchError, NotFound
 from zam_repondeur.services.fetch.http import get_http_session
 from zam_repondeur.templating import render_template
-from zam_repondeur.utils import Timer
 
 from ..missions import MissionRef
 from .division import parse_avant_apres
@@ -60,22 +59,6 @@ class OrganeNotFound(Exception):
 
 
 class AssembleeNationale(RemoteSource):
-    def fetch(self, lecture: Lecture) -> FetchResult:
-        logger.info("Récupération des amendements de %r", lecture)
-
-        with Timer() as collect_timer:
-            changes = self._collect(lecture)
-        logger.info("Time to collect: %.1fs", collect_timer.elapsed())
-
-        with Timer() as apply_timer:
-            res = self._apply(lecture, changes)
-        logger.info("Time to apply: %.1fs", apply_timer.elapsed())
-
-        logger.info(
-            "Total time: %.1fs", collect_timer.elapsed() + apply_timer.elapsed()
-        )
-        return res
-
     def fetch_amendement(
         self, lecture: Lecture, numero_prefixe: str, position: Optional[int]
     ) -> Tuple[Optional[Amendement], bool]:
@@ -87,7 +70,7 @@ class AssembleeNationale(RemoteSource):
             amendement = result.amendements[0]
         return amendement, created
 
-    def _collect(self, lecture: Lecture) -> CollectedChanges:
+    def collect_changes(self, lecture: Lecture) -> CollectedChanges:
         try:
             derouleur = fetch_discussion_list(lecture)
         except NotFound:
@@ -315,7 +298,7 @@ class AssembleeNationale(RemoteSource):
         total = total + MAX_404
         lecture.set_fetch_progress(position, total)
 
-    def _apply(self, lecture: Lecture, changes: CollectedChanges) -> FetchResult:
+    def apply_changes(self, lecture: Lecture, changes: CollectedChanges) -> FetchResult:
         result = FetchResult.create(errored=changes.errored)
 
         # Build amendement -> position map

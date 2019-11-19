@@ -10,7 +10,11 @@ from urllib.parse import urlparse
 from zam_repondeur.models import Amendement, Chambre, Lecture
 from zam_repondeur.services.clean import clean_html
 from zam_repondeur.services.data import repository
-from zam_repondeur.services.fetch.amendements import FetchResult, RemoteSource
+from zam_repondeur.services.fetch.amendements import (
+    CollectedChanges,
+    FetchResult,
+    RemoteSource,
+)
 from zam_repondeur.services.fetch.dates import parse_date
 from zam_repondeur.services.fetch.division import parse_subdiv
 from zam_repondeur.services.fetch.exceptions import NotFound
@@ -35,12 +39,13 @@ class Senat(RemoteSource):
                 self._fetch(lecture, dry_run=True)
             logger.info("Temps de préchargement : %.1fs", timer.elapsed())
 
-    def fetch(self, lecture: Lecture) -> FetchResult:
-        logger.info("Récupération des amendements de %r", lecture)
-        with Timer() as timer:
-            res = self._fetch(lecture)
-        logger.info("Temps de récupération : %.1fs", timer.elapsed())
-        return res
+    def collect_changes(self, lecture: Lecture) -> CollectedChanges:
+        # TODO: split into separate collect_changes/apply_changes like AN
+        return CollectedChanges.create()
+
+    def apply_changes(self, lecture: Lecture, changes: CollectedChanges) -> FetchResult:
+        # TODO: split into separate collect_changes/apply_changes like AN
+        return self._fetch(lecture)
 
     def _fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
         created = 0

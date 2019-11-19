@@ -92,8 +92,10 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             chambre=lecture.chambre, prefetching_enabled=prefetching_enabled
         )
 
-        # Prefetch URLs into the requests cached session.
-        source.prepare(lecture)
+        # Allow prefetching of URLs into the requests cached session.
+        with Timer() as prepare_timer:
+            source.prepare(lecture)
+        logger.info("Time to prepare: %.1fs", prepare_timer.elapsed())
 
         # Then perform the actual update,the idea is to minimize the duration
         # of the locks on the lecture and on the updated amendements.
@@ -102,16 +104,20 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             logger.error(f"Lecture {lecture_pk} introuvable")
             return False
 
+        # Collect data about new and updated amendements.
         with Timer() as collect_timer:
             changes = source.collect_changes(lecture)
         logger.info("Time to collect: %.1fs", collect_timer.elapsed())
 
+        # Then apply the actual changes,the idea is to minimize the duration
+        # of the locks on the lecture and on the updated amendements.
         with Timer() as apply_timer:
             amendements, created, errored = source.apply_changes(lecture, changes)
         logger.info("Time to apply: %.1fs", apply_timer.elapsed())
 
         logger.info(
-            "Total time: %.1fs", collect_timer.elapsed() + apply_timer.elapsed()
+            "Total time: %.1fs",
+            sum(t.elapsed() for t in (prepare_timer, collect_timer, apply_timer)),
         )
 
         if not amendements:

@@ -65,7 +65,7 @@ class CollectedChanges(NamedTuple):
     Changes found by the collect phase
     """
 
-    list_fetch_success: bool
+    derouleur_fetch_success: bool
     position_changes: Dict[int, Optional[int]]
     actions: List["Action"]
     errored: List[str]
@@ -73,7 +73,7 @@ class CollectedChanges(NamedTuple):
     @classmethod
     def create(
         cls,
-        list_fetch_success: bool = True,
+        derouleur_fetch_success: bool = True,
         position_changes: Optional[Dict[int, Optional[int]]] = None,
         actions: Optional[List["Action"]] = None,
         errored: Optional[List[str]] = None,
@@ -84,7 +84,7 @@ class CollectedChanges(NamedTuple):
             actions = []
         if errored is None:
             errored = []
-        return cls(list_fetch_success, position_changes, actions, errored)
+        return cls(derouleur_fetch_success, position_changes, actions, errored)
 
 
 class AssembleeNationale(RemoteSource):
@@ -119,7 +119,7 @@ class AssembleeNationale(RemoteSource):
         try:
             derouleur = fetch_discussion_list(lecture)
         except NotFound:
-            return CollectedChanges.create(list_fetch_success=False)
+            return CollectedChanges.create(derouleur_fetch_success=False)
 
         if not derouleur.discussion_items:
             logger.warning("Could not find amendements from %r", lecture)

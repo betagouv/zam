@@ -21,6 +21,7 @@ from zam_repondeur.services.fetch.amendements import RemoteSource
 from zam_repondeur.services.fetch.an.dossiers.models import DossierRef, LectureRef
 from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
 from zam_repondeur.tasks.huey import huey
+from zam_repondeur.utils import Timer
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +83,8 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             logger.error(f"Lecture {lecture_pk} introuvable")
             return False
 
+        logger.info("Récupération des amendements de %r", lecture)
+
         # This allows disabling the prefetching in tests.
         prefetching_enabled = int(huey.settings["zam.http_cache_duration"]) > 0
 
@@ -99,7 +102,17 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             logger.error(f"Lecture {lecture_pk} introuvable")
             return False
 
-        amendements, created, errored = source.fetch(lecture)
+        with Timer() as collect_timer:
+            changes = source.collect_changes(lecture)
+        logger.info("Time to collect: %.1fs", collect_timer.elapsed())
+
+        with Timer() as apply_timer:
+            amendements, created, errored = source.apply_changes(lecture, changes)
+        logger.info("Time to apply: %.1fs", apply_timer.elapsed())
+
+        logger.info(
+            "Total time: %.1fs", collect_timer.elapsed() + apply_timer.elapsed()
+        )
 
         if not amendements:
             AmendementsNonTrouves.create(lecture=lecture)

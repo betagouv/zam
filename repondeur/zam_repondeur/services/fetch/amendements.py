@@ -18,7 +18,6 @@ from zam_repondeur.models.events.amendement import (
     CorpsAmendementModifie,
     ExposeAmendementModifie,
 )
-from zam_repondeur.utils import Timer
 
 logger = logging.getLogger(__name__)
 
@@ -261,20 +260,8 @@ class RemoteSource(Source):
         pass
 
     def fetch(self, lecture: Lecture) -> FetchResult:
-        logger.info("Récupération des amendements de %r", lecture)
-
-        with Timer() as collect_timer:
-            changes = self.collect_changes(lecture)
-        logger.info("Time to collect: %.1fs", collect_timer.elapsed())
-
-        with Timer() as apply_timer:
-            res = self.apply_changes(lecture, changes)
-        logger.info("Time to apply: %.1fs", apply_timer.elapsed())
-
-        logger.info(
-            "Total time: %.1fs", collect_timer.elapsed() + apply_timer.elapsed()
-        )
-        return res
+        changes = self.collect_changes(lecture)
+        return self.apply_changes(lecture, changes)
 
     def collect_changes(self, lecture: Lecture) -> CollectedChanges:
         raise NotImplementedError()

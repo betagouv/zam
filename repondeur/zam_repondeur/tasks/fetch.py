@@ -4,6 +4,8 @@ NB: make sure tasks.huey.init_huey() has been called before importing this modul
 import logging
 from typing import Optional
 
+import transaction
+
 from zam_repondeur.models import Chambre, DBSession, Dossier, Lecture, Texte, User
 from zam_repondeur.models.events.dossier import LecturesRecuperees
 from zam_repondeur.models.events.lecture import (
@@ -97,20 +99,31 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             source.prepare(lecture)
         logger.info("Time to prepare: %.1fs", prepare_timer.elapsed())
 
-        # Then perform the actual update,the idea is to minimize the duration
-        # of the locks on the lecture and on the updated amendements.
-        lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
-        if lecture is None:
-            logger.error(f"Lecture {lecture_pk} introuvable")
-            return False
-
         # Collect data about new and updated amendements.
         with Timer() as collect_timer:
             changes = source.collect_changes(lecture)
         logger.info("Time to collect: %.1fs", collect_timer.elapsed())
 
-        # Then apply the actual changes,the idea is to minimize the duration
-        # of the locks on the lecture and on the updated amendements.
+        # Then apply the actual changes in a fresh transaction, in order to minimize
+        # the duration of database locks (if we hold locks too long, we could have
+        # synchronization issues with the webapp, causing unwanted delays for users
+        # on some interactive operations).
+
+        # But during tests we want everything to run in a single transaction that
+        # we can roll back at the end.
+        if not huey.immediate:
+            if DBSession.dirty:
+                from pprint import pformat
+
+                logger.warning("DIRTY: %r", pformat(DBSession.dirty))
+            transaction.commit()
+            DBSession.expire_all()
+
+        lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
+        if lecture is None:
+            logger.error(f"Lecture {lecture_pk} introuvable")
+            return False
+
         with Timer() as apply_timer:
             amendements, created, errored = source.apply_changes(lecture, changes)
         logger.info("Time to apply: %.1fs", apply_timer.elapsed())
@@ -119,6 +132,10 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             "Total time: %.1fs",
             sum(t.elapsed() for t in (prepare_timer, collect_timer, apply_timer)),
         )
+
+        # New transaction here
+        DBSession.expire_all()
+        lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
 
         if not amendements:
             AmendementsNonTrouves.create(lecture=lecture)

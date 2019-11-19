@@ -113,7 +113,7 @@ class AssembleeNationale(RemoteSource):
         amendement, action = self._collect_amendement(lecture, numero_prefixe, position)
         created = isinstance(action, CreateAmendement)
         if action is not None:
-            result = action.apply()
+            result = action.apply(lecture)
             DBSession.flush()
             amendement = result.amendements[0]
         return amendement, created
@@ -274,7 +274,6 @@ class AssembleeNationale(RemoteSource):
 
         if amendement is None:
             action = CreateAmendement(
-                lecture=lecture,
                 article=article,
                 parent_num_raw=parent_num_raw,
                 num=num,
@@ -318,7 +317,6 @@ class AssembleeNationale(RemoteSource):
         if modified:
             action = UpdateAmendement(
                 amendement=amendement,
-                lecture=lecture,
                 article=article,
                 parent_num_raw=parent_num_raw,
                 rectif=rectif,
@@ -366,7 +364,7 @@ class AssembleeNationale(RemoteSource):
 
         # Create or update amendements
         for action in changes.actions:
-            result += action.apply()
+            result += action.apply(lecture)
 
         # Apply new amendement positions
         for amendement, position in moved_amendements.items():
@@ -581,14 +579,13 @@ def get_organe_abrev(organe_uid: str) -> str:
 
 class Action(ABC):
     @abstractmethod
-    def apply(self) -> FetchResult:
+    def apply(self, lecture: Lecture) -> FetchResult:
         pass
 
 
 class CreateOrUpdateAmendement(Action):
     def __init__(
         self,
-        lecture: Lecture,
         article: Article,
         parent_num_raw: str,
         rectif: int,
@@ -604,7 +601,6 @@ class CreateOrUpdateAmendement(Action):
         expose: str,
         sort: str,
     ):
-        self.lecture = lecture
         self.article = article
         self.parent_num_raw = parent_num_raw
         self.rectif = rectif
@@ -620,7 +616,7 @@ class CreateOrUpdateAmendement(Action):
         self.expose = expose
         self.sort = sort
 
-    def _get_parent(self) -> Optional[Amendement]:
+    def _get_parent(self, lecture: Lecture) -> Optional[Amendement]:
         parent_num, parent_rectif = Amendement.parse_num(self.parent_num_raw)
         if not parent_num:
             return None
@@ -628,7 +624,7 @@ class CreateOrUpdateAmendement(Action):
         parent, _ = get_one_or_create(
             Amendement,
             create_kwargs={"article": self.article, "rectif": parent_rectif},
-            lecture=self.lecture,
+            lecture=lecture,
             num=parent_num,
         )
         return parent
@@ -642,11 +638,12 @@ class CreateAmendement(CreateOrUpdateAmendement):
     def __repr__(self) -> str:
         return f"<CreateAmendement(num={self.num})>"
 
-    def apply(self) -> FetchResult:
+    def apply(self, lecture: Lecture) -> FetchResult:
+        parent = self._get_parent(lecture)
         amendement = Amendement.create(
-            lecture=self.lecture,
+            lecture=lecture,
             article=self.article,
-            parent=self._get_parent(),
+            parent=parent,
             position=self.position,
             num=self.num,
             rectif=self.rectif,
@@ -673,7 +670,9 @@ class UpdateAmendement(CreateOrUpdateAmendement):
     def __repr__(self) -> str:
         return f"<UpdateAmendement(num={self.amendement.num})>"
 
-    def apply(self) -> FetchResult:
+    def apply(self, lecture: Lecture) -> FetchResult:
+        parent = self._get_parent(lecture)
+
         if (
             self.amendement.location.batch
             and self.amendement.article.pk != self.article.pk
@@ -687,7 +686,7 @@ class UpdateAmendement(CreateOrUpdateAmendement):
         Source.update_attributes(
             self.amendement,
             article=self.article,
-            parent=self._get_parent(),
+            parent=parent,
             position=self.position,
             id_discussion_commune=self.id_discussion_commune,
             id_identique=self.id_identique,

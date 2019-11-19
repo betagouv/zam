@@ -1,3 +1,5 @@
+from datetime import date
+
 import pytest
 import transaction
 
@@ -6,7 +8,7 @@ pytestmark = pytest.mark.usefixtures("data_repository")
 
 
 class TestLectureToStr:
-    def test_an_seance_publique(
+    def test_an_seance_publique_15e_legislature(
         self, dossier_plfss2018, texte_plfss2018_an_premiere_lecture
     ):
         from zam_repondeur.models import Lecture, Phase
@@ -21,6 +23,41 @@ class TestLectureToStr:
         result = (
             "Assemblée nationale, 15e législature, Séance publique, Première lecture, "
             "texte nº\u00a0269"
+        )
+        assert str(lecture) == result
+
+    def test_an_seance_publique_14e_legislature(self, db):
+        from zam_repondeur.models import (
+            Chambre,
+            Dossier,
+            Lecture,
+            Phase,
+            Texte,
+            TypeTexte,
+        )
+
+        dossier = Dossier.create(
+            uid="DLR5L14N33494",
+            titre="Questions sociales et santé : modernisation de notre système de santé",  # noqa
+            slug="sante",
+        )
+        texte = Texte.create(
+            type_=TypeTexte.PROJET,
+            chambre=Chambre.AN,
+            legislature=14,
+            numero=2302,
+            date_depot=date(2014, 10, 15),
+        )
+        lecture = Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
+            dossier=dossier,
+            texte=texte,
+            titre="Première lecture – Titre lecture",
+            organe="PO644420",
+        )
+        result = (
+            "Assemblée nationale, 14e législature, Séance publique, Première lecture, "
+            "texte nº\u00a02302"
         )
         assert str(lecture) == result
 

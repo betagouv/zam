@@ -378,33 +378,6 @@ class AssembleeNationale(RemoteSource):
         return result
 
 
-def reset_amendements_positions(
-    lecture: Lecture, discussion_items: List[OrderedDict]
-) -> None:
-
-    current_order = {
-        amdt.num: amdt.position
-        for amdt in lecture.amendements
-        if amdt.position is not None
-    }
-
-    new_order = {
-        ANDerouleurData.parse_num_in_liste(item["@numero"])[1]: index
-        for index, item in enumerate(discussion_items, start=1)
-    }
-
-    # Reset position for all amendements that moved,
-    # so that we don't break the UNIQUE INDEX constraint later
-    for amdt in lecture.amendements:
-        if amdt.num not in current_order:
-            continue
-        if new_order.get(amdt.num) != current_order[amdt.num]:
-            amdt.position = None
-        if amdt.num not in new_order:  # removed
-            logger.info("Amendement %s retiré de la discussion", amdt.num)
-    DBSession.flush()
-
-
 def get_organe_prefix(organe: str) -> str:
     abrev = get_organe_abrev(organe)
     return _ORGANE_PREFIX.get(abrev, "")

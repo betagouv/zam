@@ -7,7 +7,6 @@ from urllib.parse import urljoin
 
 import xmltodict
 from requests.exceptions import ConnectionError
-from sqlalchemy.orm.exc import NoResultFound
 
 from zam_repondeur.decorator import reify
 from zam_repondeur.models import Amendement, DBSession, Lecture
@@ -233,7 +232,7 @@ class AssembleeNationale(RemoteSource):
         expose = amend_data.get_expose()
         sort = amend_data.get_sort()
 
-        amendement = self.find_existing_amendement(lecture, num)
+        amendement = lecture.find_amendement(num)
 
         action: Optional[Action] = None
 
@@ -298,14 +297,6 @@ class AssembleeNationale(RemoteSource):
                 sort=sort,
             )
         return amendement, action
-
-    def find_existing_amendement(
-        self, lecture: Lecture, num: int
-    ) -> Optional[Amendement]:
-        try:
-            return Amendement.get(lecture=lecture, num=num)
-        except NoResultFound:
-            return None
 
     def _set_fetch_progress(self, lecture: Lecture, position: int, total: int) -> None:
         total = total + MAX_404

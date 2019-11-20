@@ -392,6 +392,7 @@ class TestFetchDiscussionList:
 class TestFetchAmendement:
     @responses.activate
     def test_simple_amendement(self, lecture_an, app, source):
+        from zam_repondeur.models import DBSession
         from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
@@ -400,6 +401,8 @@ class TestFetchAmendement:
             body=read_sample_data("an/269/177.xml"),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="177", position=1
@@ -441,6 +444,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_gouvernement(self, lecture_an, source):
+        from zam_repondeur.models import DBSession
         from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
@@ -449,6 +453,8 @@ class TestFetchAmendement:
             body=read_sample_data("an/269/723.xml"),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="723", position=1
@@ -459,6 +465,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_commission(self, lecture_an, source):
+        from zam_repondeur.models import DBSession
         from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
@@ -467,6 +474,8 @@ class TestFetchAmendement:
             body=read_sample_data("an/269/135.xml"),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="135", position=1
@@ -478,6 +487,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_with_mission_cp_ae_identical(self, lecture_an, source):
+        from zam_repondeur.models import DBSession
         from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
@@ -486,6 +496,8 @@ class TestFetchAmendement:
             body=read_sample_data("an/1255/494.xml"),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="494", position=1
@@ -539,6 +551,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_with_mission_cp_ae_old(self, lecture_an, source):
+        from zam_repondeur.models import DBSession
         from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
@@ -547,6 +560,8 @@ class TestFetchAmendement:
             body=read_sample_data("an/2024/319.xml"),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="319", position=1
@@ -600,6 +615,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_with_mission_cp_ae_different(self, lecture_an, source):
+        from zam_repondeur.models import DBSession
         from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
@@ -608,6 +624,8 @@ class TestFetchAmendement:
             body=read_sample_data("an/1255/1463.xml"),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="1463", position=1
@@ -727,6 +745,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_with_mission_cp_only(self, lecture_an, source):
+        from zam_repondeur.models import DBSession
         from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
@@ -735,6 +754,8 @@ class TestFetchAmendement:
             body=read_sample_data("an/1255/398.xml"),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="398", position=1
@@ -874,6 +895,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_sous_amendement(self, lecture_an, app, source):
+        from zam_repondeur.models import DBSession
         from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
@@ -890,6 +912,8 @@ class TestFetchAmendement:
             status=200,
         )
 
+        DBSession.add(lecture_an)
+
         amendement1, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="155", position=1
         )
@@ -903,6 +927,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_sort_nil(self, lecture_an, app, source):
+        from zam_repondeur.models import DBSession
         from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
@@ -912,6 +937,8 @@ class TestFetchAmendement:
             status=200,
         )
 
+        DBSession.add(lecture_an)
+
         amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="38", position=1
         )
@@ -920,6 +947,7 @@ class TestFetchAmendement:
 
     @responses.activate
     def test_fetch_amendement_apres(self, lecture_an, app, source):
+        from zam_repondeur.models import DBSession
         from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
@@ -928,6 +956,8 @@ class TestFetchAmendement:
             body=read_sample_data("an/269/192.xml"),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="192", position=1
@@ -964,6 +994,7 @@ class TestFetchAmendement:
 class TestFetchAmendementAgain:
     @responses.activate
     def test_response_is_preserved(self, lecture_an, app, source):
+        from zam_repondeur.models import DBSession
         from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
@@ -972,6 +1003,8 @@ class TestFetchAmendementAgain:
             body=read_sample_data("an/269/177.xml"),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         # Let's fetch a new amendement
         amendement1, created = source.fetch_amendement(
@@ -998,8 +1031,9 @@ class TestFetchAmendementAgain:
 
     @responses.activate
     def test_sort_turn_irrecevable(self, lecture_an, app, source):
-        from zam_repondeur.services.fetch.an.amendements import build_url
+        from zam_repondeur.models import DBSession
         from zam_repondeur.models.events.amendement import AmendementIrrecevable
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         sample_data = read_sample_data("an/269/177.xml")
         responses.add(
@@ -1016,6 +1050,8 @@ class TestFetchAmendementAgain:
             ),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         # Let's fetch a new amendement
         amendement1, created = source.fetch_amendement(
@@ -1043,12 +1079,12 @@ class TestFetchAmendementAgain:
     def test_sort_turn_irrecevable_transfers_to_index(
         self, lecture_an, app, source, user_david, user_david_table_an
     ):
-        from zam_repondeur.services.fetch.an.amendements import build_url
         from zam_repondeur.models import DBSession
         from zam_repondeur.models.events.amendement import (
             AmendementIrrecevable,
             AmendementTransfere,
         )
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         sample_data = read_sample_data("an/269/177.xml")
         responses.add(
@@ -1065,6 +1101,8 @@ class TestFetchAmendementAgain:
             ),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         # Let's fetch a new amendement
         amendement1, created = source.fetch_amendement(
@@ -1109,6 +1147,7 @@ class TestFetchAmendementAgain:
 
     @responses.activate
     def test_article_has_changed(self, lecture_an, app, source):
+        from zam_repondeur.models import DBSession
         from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
@@ -1117,6 +1156,8 @@ class TestFetchAmendementAgain:
             body=read_sample_data("an/269/177.xml"),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         amendement1, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="177", position=1
@@ -1133,8 +1174,8 @@ class TestFetchAmendementAgain:
 
     @responses.activate
     def test_parent_has_changed(self, lecture_an, app, source):
-        from zam_repondeur.services.fetch.an.amendements import build_url
         from zam_repondeur.models import DBSession
+        from zam_repondeur.services.fetch.an.amendements import build_url
 
         responses.add(
             responses.GET,
@@ -1149,6 +1190,8 @@ class TestFetchAmendementAgain:
             body=read_sample_data("an/269/941.xml"),
             status=200,
         )
+
+        DBSession.add(lecture_an)
 
         parent1, created = source.fetch_amendement(
             lecture=lecture_an, numero_prefixe="155", position=1

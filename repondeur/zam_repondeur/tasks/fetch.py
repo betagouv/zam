@@ -129,10 +129,6 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             sum(t.elapsed() for t in (prepare_timer, collect_timer, apply_timer)),
         )
 
-        # New transaction here
-        DBSession.expire_all()
-        lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
-
         if not amendements:
             AmendementsNonTrouves.create(lecture=lecture)
 

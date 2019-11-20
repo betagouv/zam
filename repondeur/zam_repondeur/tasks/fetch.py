@@ -112,10 +112,6 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
         # But during tests we want everything to run in a single transaction that
         # we can roll back at the end.
         if not huey.immediate:
-            if DBSession.dirty:
-                from pprint import pformat
-
-                logger.warning("DIRTY: %r", pformat(DBSession.dirty))
             transaction.commit()
             DBSession.expire_all()
 

@@ -605,3 +605,7 @@ abbr.status,
         border-color: #797676;
         color: #797676;
     }
+
+.selectr-selected {
+    height: 3rem;
+}

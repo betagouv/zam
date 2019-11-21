@@ -63,6 +63,7 @@ class Senat(RemoteSource):
         processed_amendements = list(
             self._process_amendements(amendements=amendements, lecture=lecture)
         )
+        lecture.reset_fetch_progress()
 
         # Log amendements no longer discussed
         for amdt in lecture.amendements:

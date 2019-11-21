@@ -1,6 +1,7 @@
 import csv
 import logging
 import re
+import sys
 from collections import OrderedDict
 from http import HTTPStatus
 from typing import Iterable, List, Optional, Tuple
@@ -20,8 +21,10 @@ from .derouleur import DiscussionDetails, fetch_and_parse_discussion_details
 
 logger = logging.getLogger(__name__)
 
-
 BASE_URL = "https://www.senat.fr"
+# To deal with potentially very long lines in the CSV file (like 166k chars).
+# https://www.senat.fr/amendements/2019-2020/139/jeu_complet_2019-2020_139.csv
+csv.field_size_limit(sys.maxsize)
 
 
 class Senat(RemoteSource):

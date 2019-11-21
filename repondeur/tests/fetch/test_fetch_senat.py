@@ -502,7 +502,11 @@ def test_fetch_all_with_dry_run(lecture_senat):
 
 @pytest.mark.parametrize(
     "filename",
-    ["jeu_complet_2018-2019_106.csv", "jeu_complet_commission_2013-2014_310.csv"],
+    [
+        "jeu_complet_2018-2019_106.csv",
+        "jeu_complet_commission_2013-2014_310.csv",
+        "jeu_complet_2019-2020_139.csv",
+    ],
 )
 @responses.activate
 def test_fetch_all_buggy_csv(lecture_senat, filename):

@@ -1,8 +1,7 @@
 {% extends "_base.html" %}
 
 {% block header %}
-<link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.css') }}">
-<link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectize/css/selectize.bootstrap3.css') }}">
+<link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/selectr-2.4.13/selectr.min.css') }}">
 <style type="text/css">
     h2 {
         text-align: center;
@@ -40,9 +39,14 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ request.static_url('zam_repondeur:static/jquery/jquery-1.12.4.min.js') }}"></script>
-<script src="{{ request.static_url('zam_repondeur:static/selectize/js/standalone/selectize.min.js') }}"></script>
+<script src="{{ request.static_url('zam_repondeur:static/selectr-2.4.13/selectr.min.js') }}"></script>
 <script type="text/javascript">
-    ;(_ => $('[name="user_pk"]').selectize())()
+    document.addEventListener("DOMContentLoaded", () => {
+        new Selectr('[name="user_pk"]', {
+            messages: {
+                noResults: "Aucun résultat ne correspond à votre recherche.",
+            }
+        })
+    })
 </script>
 {% endblock %}

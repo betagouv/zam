@@ -51,3 +51,13 @@ def clean_html(html: str) -> str:
 
     sanitized: str = _THREAD_LOCALS.cleaner.clean(text)
     return sanitized.strip()
+
+
+def clean_all_html(html: str) -> str:
+    text = unescape(html)  # decode HTML entities
+
+    if not hasattr(_THREAD_LOCALS, "cleaner_all"):
+        _THREAD_LOCALS.cleaner_all = Cleaner(tags=[], attributes={}, strip=True)
+
+    sanitized: str = _THREAD_LOCALS.cleaner_all.clean(text)
+    return sanitized.strip()

@@ -12,7 +12,7 @@ from zam_repondeur.models.events.article import (
     TitreArticleModifie,
 )
 from zam_repondeur.resources import ArticleResource
-from zam_repondeur.services.clean import clean_html
+from zam_repondeur.services.clean import clean_all_html, clean_html
 
 
 @view_defaults(context=ArticleResource)
@@ -38,7 +38,7 @@ class ArticleEdit:
     def post(self) -> Response:
         changed = False
 
-        new_title = self.request.POST["title"]
+        new_title = clean_all_html(self.request.POST["title"])
         if new_title != self.article.user_content.title:
             TitreArticleModifie.create(
                 article=self.article, title=new_title, request=self.request

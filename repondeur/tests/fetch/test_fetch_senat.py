@@ -16,7 +16,7 @@ def read_sample_data(basename):
 
 
 @pytest.fixture
-def dossier_plf(db):
+def dossier_plf_2019(db):
     from zam_repondeur.models import Dossier
 
     with transaction.manager:
@@ -30,7 +30,21 @@ def dossier_plf(db):
 
 
 @pytest.fixture
-def texte_plf(db):
+def dossier_plf_2020(db):
+    from zam_repondeur.models import Dossier
+
+    with transaction.manager:
+        dossier = Dossier.create(
+            uid="DLR5L15N37615",
+            titre="Budget : loi de finances 2020",
+            slug="loi-finances-2020",
+        )
+
+    return dossier
+
+
+@pytest.fixture
+def texte_plf_2019(db):
     from zam_repondeur.models import Texte, TypeTexte, Chambre
 
     with transaction.manager:
@@ -44,32 +58,46 @@ def texte_plf(db):
 
 
 @pytest.fixture
-def lecture_plf_1re_partie(dossier_plf, texte_plf):
-    from zam_repondeur.models import Lecture, Phase
+def texte_plf_2020(db):
+    from zam_repondeur.models import Texte, TypeTexte, Chambre
 
     with transaction.manager:
-        return Lecture.create(
-            phase=Phase.PREMIERE_LECTURE,
-            texte=texte_plf,
-            partie=1,
-            titre="Numéro lecture – Titre lecture sénat",
-            organe="PO78718",
-            dossier=dossier_plf,
+        return Texte.create(
+            type_=TypeTexte.PROJET,
+            chambre=Chambre.SENAT,
+            session=2019,
+            numero=139,
+            date_depot=date(2019, 11, 21),
         )
 
 
 @pytest.fixture
-def lecture_plf_2e_partie(dossier_plf, texte_plf):
+def lecture_plf_1re_partie(dossier_plf_2019, texte_plf_2019):
     from zam_repondeur.models import Lecture, Phase
 
     with transaction.manager:
         return Lecture.create(
             phase=Phase.PREMIERE_LECTURE,
-            texte=texte_plf,
+            texte=texte_plf_2019,
+            partie=1,
+            titre="Numéro lecture – Titre lecture sénat",
+            organe="PO78718",
+            dossier=dossier_plf_2019,
+        )
+
+
+@pytest.fixture
+def lecture_plf_2e_partie(dossier_plf_2019, texte_plf_2019):
+    from zam_repondeur.models import Lecture, Phase
+
+    with transaction.manager:
+        return Lecture.create(
+            phase=Phase.PREMIERE_LECTURE,
+            texte=texte_plf_2019,
             partie=2,
             titre="Numéro lecture – Titre lecture sénat",
             organe="PO78718",
-            dossier=dossier_plf,
+            dossier=dossier_plf_2019,
         )
 
 
@@ -784,7 +812,9 @@ def test_derouleur_urls_and_mission_refs(lecture_senat):
     ]
 
 
-def test_derouleur_urls_and_mission_refs_plf2019_1re_partie(dossier_plf, texte_plf):
+def test_derouleur_urls_and_mission_refs_plf2019_1re_partie(
+    dossier_plf_2019, texte_plf_2019
+):
     from zam_repondeur.services.fetch.senat.derouleur import (
         derouleur_urls_and_mission_refs,
     )
@@ -793,11 +823,11 @@ def test_derouleur_urls_and_mission_refs_plf2019_1re_partie(dossier_plf, texte_p
 
     lecture = Lecture.create(
         phase=Phase.PREMIERE_LECTURE,
-        texte=texte_plf,
+        texte=texte_plf_2019,
         partie=1,
         titre="Première lecture – Séance publique (1re partie)",
         organe="PO78718",
-        dossier=dossier_plf,
+        dossier=dossier_plf_2019,
     )
 
     assert list(derouleur_urls_and_mission_refs(lecture)) == [
@@ -808,7 +838,9 @@ def test_derouleur_urls_and_mission_refs_plf2019_1re_partie(dossier_plf, texte_p
     ]
 
 
-def test_derouleur_urls_and_mission_refs_plf2019_2e_partie(dossier_plf, texte_plf):
+def test_derouleur_urls_and_mission_refs_plf2020_1re_partie(
+    dossier_plf_2020, texte_plf_2020
+):
     from zam_repondeur.services.fetch.senat.derouleur import (
         derouleur_urls_and_mission_refs,
     )
@@ -817,11 +849,37 @@ def test_derouleur_urls_and_mission_refs_plf2019_2e_partie(dossier_plf, texte_pl
 
     lecture = Lecture.create(
         phase=Phase.PREMIERE_LECTURE,
-        texte=texte_plf,
+        texte=texte_plf_2020,
+        partie=1,
+        titre="Première lecture – Séance publique (1re partie)",
+        organe="PO78718",
+        dossier=dossier_plf_2020,
+    )
+
+    assert list(derouleur_urls_and_mission_refs(lecture)) == [
+        (
+            "https://www.senat.fr/enseance/2019-2020/139/liste_discussion_103929.json",
+            MissionRef(titre="", titre_court=""),
+        )
+    ]
+
+
+def test_derouleur_urls_and_mission_refs_plf2019_2e_partie(
+    dossier_plf_2019, texte_plf_2019
+):
+    from zam_repondeur.services.fetch.senat.derouleur import (
+        derouleur_urls_and_mission_refs,
+    )
+    from zam_repondeur.services.fetch.missions import MissionRef
+    from zam_repondeur.models import Lecture, Phase
+
+    lecture = Lecture.create(
+        phase=Phase.PREMIERE_LECTURE,
+        texte=texte_plf_2019,
         partie=2,
         titre="Première lecture – Séance publique (2e partie)",
         organe="PO78718",
-        dossier=dossier_plf,
+        dossier=dossier_plf_2019,
     )
 
     urls = list(derouleur_urls_and_mission_refs(lecture))
@@ -842,6 +900,43 @@ def test_derouleur_urls_and_mission_refs_plf2019_2e_partie(dossier_plf, texte_pl
     assert urls[-1] == (
         "https://www.senat.fr/enseance/2018-2019/146/liste_discussion_103394.json",
         MissionRef(titre="", titre_court=""),
+    )
+
+
+def test_derouleur_urls_and_mission_refs_plf2020_2e_partie(
+    dossier_plf_2020, texte_plf_2020
+):
+    from zam_repondeur.services.fetch.senat.derouleur import (
+        derouleur_urls_and_mission_refs,
+    )
+    from zam_repondeur.services.fetch.missions import MissionRef
+    from zam_repondeur.models import Lecture, Phase
+
+    lecture = Lecture.create(
+        phase=Phase.PREMIERE_LECTURE,
+        texte=texte_plf_2020,
+        partie=2,
+        titre="Première lecture – Séance publique (2e partie)",
+        organe="PO78718",
+        dossier=dossier_plf_2020,
+    )
+
+    urls = list(derouleur_urls_and_mission_refs(lecture))
+    assert len(urls) == 50
+    assert urls[0] == (
+        "https://www.senat.fr/enseance/2019-2020/139/liste_discussion_103930.json",
+        MissionRef(titre="", titre_court=""),
+    )
+    assert urls[1] == (
+        "https://www.senat.fr/enseance/2019-2020/139/liste_discussion_103931.json",
+        MissionRef(
+            titre="Budget annexe - Contrôle et exploitation aériens",
+            titre_court="Contrôle et exploitation aériens",
+        ),
+    )
+    assert urls[-1] == (
+        "https://www.senat.fr/enseance/2019-2020/139/liste_discussion_103979.json",
+        MissionRef(titre="Mission Travail et emploi", titre_court="Trav. emploi"),
     )
 
 

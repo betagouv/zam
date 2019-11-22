@@ -20,7 +20,315 @@ IdTxt = int
 ID_TXT_MISSIONS: Dict[
     Session, Dict[Texte, Dict[Partie, List[Tuple[IdTxt, MissionRef]]]]
 ] = {
-    "2019-2020": {139: {1: [(103929, MissionRef(titre="", titre_court=""))]}},
+    "2019-2020": {
+        139: {
+            1: [(103929, MissionRef(titre="", titre_court=""))],
+            2: [
+                # Articles non rattachés.
+                (103930, MissionRef(titre="", titre_court="")),
+                # Budgets annexes.
+                (
+                    103931,
+                    MissionRef(
+                        titre="Budget annexe - Contrôle et exploitation aériens",
+                        titre_court="Contrôle et exploitation aériens",
+                    ),
+                ),
+                (
+                    103932,
+                    MissionRef(
+                        titre="Budget annexe - Publications officielles et information administrative",  # noqa
+                        titre_court="Publications officielles et information administrative",  # noqa
+                    ),
+                ),
+                # Comptes spéciaux.
+                (
+                    103933,
+                    MissionRef(
+                        titre="Compte spécial - Accords monétaires internationaux",
+                        titre_court="Accords monétaires internationaux",
+                    ),
+                ),
+                (
+                    103934,
+                    MissionRef(
+                        titre="Compte spécial - Avances à divers services de l'État ou organismes gérant des services publics",  # noqa
+                        titre_court="Avances à divers services de l'État ou organismes gérant des services publics",  # noqa
+                    ),
+                ),
+                (
+                    103935,
+                    MissionRef(
+                        titre="Compte spécial - Avances à l'audiovisuel public",
+                        titre_court="Avances à l'audiovisuel public",
+                    ),
+                ),
+                (
+                    103936,
+                    MissionRef(
+                        titre="Compte spécial - Avances aux collectivités territoriales",  # noqa
+                        titre_court="Avances aux collectivités territoriales",
+                    ),
+                ),
+                (
+                    103937,
+                    MissionRef(
+                        titre="Compte spécial - Contrôle de la circulation et du stationnement routiers",  # noqa
+                        titre_court="Contrôle de la circulation et du stationnement routiers",  # noqa
+                    ),
+                ),
+                (
+                    103938,
+                    MissionRef(
+                        titre="Compte spécial - Développement agricole et rural",
+                        titre_court="Développement agricole et rural",
+                    ),
+                ),
+                (
+                    103939,
+                    MissionRef(
+                        titre="Compte spécial - Financement des aides aux collectivités pour l'électrification rurale",  # noqa
+                        titre_court="Financement des aides aux collectivités pour l'électrification rurale",  # noqa
+                    ),
+                ),
+                (
+                    103940,
+                    MissionRef(
+                        titre="Compte spécial - Gestion du patrimoine immobilier de l'État",  # noqa
+                        titre_court="Gestion du patrimoine immobilier de l'État",
+                    ),
+                ),
+                (
+                    103941,
+                    MissionRef(
+                        titre="Compte spécial - Participation de la France au désendettement de la Grèce",  # noqa
+                        titre_court="Participation de la France au désendettement de la Grèce",  # noqa
+                    ),
+                ),
+                (
+                    103942,
+                    MissionRef(
+                        titre="Compte spécial - Participations financières de l'État",
+                        titre_court="Participations financières de l'État",
+                    ),
+                ),
+                (
+                    103943,
+                    MissionRef(
+                        titre="Compte spécial - Pensions", titre_court="Pensions"
+                    ),
+                ),
+                (
+                    103944,
+                    MissionRef(
+                        titre="Compte spécial - Prêts à des États étrangers",
+                        titre_court="Prêts à des États étrangers",
+                    ),
+                ),
+                (
+                    103945,
+                    MissionRef(
+                        titre="Compte spécial - Prêts et avances à des particuliers ou à des organismes privés",  # noqa
+                        titre_court="Prêts et avances à des particuliers ou à des organismes privés",  # noqa
+                    ),
+                ),
+                (
+                    103946,
+                    MissionRef(
+                        titre="Compte spécial - Services nationaux de transport conventionnés de voyageurs",  # noqa
+                        titre_court="Services nationaux de transport conventionnés de voyageurs",  # noqa
+                    ),
+                ),
+                (
+                    103947,
+                    MissionRef(
+                        titre="Compte spécial - Transition énergétique",
+                        titre_court="Transition énergétique",
+                    ),
+                ),
+                # Missions classiques.
+                (
+                    103948,
+                    MissionRef(
+                        titre="Mission Action et transformation publiques",
+                        titre_court="Action transfo.",
+                    ),
+                ),
+                (
+                    103949,
+                    MissionRef(
+                        titre="Mission Action extérieure de l'État",
+                        titre_court="Action ext.",
+                    ),
+                ),
+                (
+                    103950,
+                    MissionRef(
+                        titre="Mission Administration générale et territoriale de l'État",  # noqa
+                        titre_court="Administration",
+                    ),
+                ),
+                (
+                    103951,
+                    MissionRef(
+                        titre="Mission Agriculture, alimentation, forêt et affaires rurales",  # noqa
+                        titre_court="Agri. alim.",
+                    ),
+                ),
+                (
+                    103952,
+                    MissionRef(
+                        titre="Mission Aide publique au développement",
+                        titre_court="APD",
+                    ),
+                ),
+                (
+                    103953,
+                    MissionRef(
+                        titre="Mission Anciens combattants, mémoire et liens avec la nation",  # noqa
+                        titre_court="Anciens combattants",
+                    ),
+                ),
+                (
+                    103954,
+                    MissionRef(
+                        titre="Mission Cohésion des territoires",
+                        titre_court="Cohésion terr.",
+                    ),
+                ),
+                (
+                    103955,
+                    MissionRef(
+                        titre="Mission Conseil et contrôle de l'État",
+                        titre_court="Conseil et contr.",
+                    ),
+                ),
+                (
+                    103956,
+                    MissionRef(
+                        titre="Mission Crédits non répartis", titre_court="Crédits NR"
+                    ),
+                ),
+                (103957, MissionRef(titre="Mission Culture", titre_court="Culture")),
+                (103958, MissionRef(titre="Mission Défense", titre_court="Défense")),
+                (
+                    103959,
+                    MissionRef(
+                        titre="Mission Direction de l'action du Gouvernement",
+                        titre_court="Action Gouv.",
+                    ),
+                ),
+                (
+                    103960,
+                    MissionRef(
+                        titre="Mission Écologie, développement et mobilité durables",
+                        titre_court="Écologie",
+                    ),
+                ),
+                (103961, MissionRef(titre="Mission Économie", titre_court="Économie")),
+                (
+                    103962,
+                    MissionRef(
+                        titre="Mission Engagements financiers de l'État",
+                        titre_court="Engagements",
+                    ),
+                ),
+                (
+                    103963,
+                    MissionRef(
+                        titre="Mission Enseignement scolaire",
+                        titre_court="Enseignement sco.",
+                    ),
+                ),
+                (
+                    103964,
+                    MissionRef(
+                        titre="Mission Gestion des finances publiques et des ressources humaines",  # noqa
+                        titre_court="Fi. pub. et RH",
+                    ),
+                ),
+                (
+                    103965,
+                    MissionRef(
+                        titre="Mission Immigration, asile et intégration",
+                        titre_court="Immigration",
+                    ),
+                ),
+                (
+                    103966,
+                    MissionRef(
+                        titre="Mission Investissements d'avenir",
+                        titre_court="Invest. avenir",
+                    ),
+                ),
+                (103967, MissionRef(titre="Mission Justice", titre_court="Justice")),
+                (
+                    103968,
+                    MissionRef(
+                        titre="Mission Médias, livre et industries culturelles",
+                        titre_court="Médias, livre",
+                    ),
+                ),
+                (103969, MissionRef(titre="Mission Outre-mer", titre_court="")),
+                (
+                    103970,
+                    MissionRef(
+                        titre="Mission Pouvoirs publics", titre_court="Pouv. pub."
+                    ),
+                ),
+                (
+                    103971,
+                    MissionRef(
+                        titre="Mission Recherche et enseignement supérieur",
+                        titre_court="Rech. et ens. sup.",
+                    ),
+                ),
+                (
+                    103972,
+                    MissionRef(
+                        titre="Mission Régimes sociaux et de retraite",
+                        titre_court="Régimes soc.",
+                    ),
+                ),
+                (
+                    103973,
+                    MissionRef(
+                        titre="Mission Relations avec les collectivités territoriales",
+                        titre_court="Relations C.T.",
+                    ),
+                ),
+                (
+                    103974,
+                    MissionRef(
+                        titre="Mission Remboursements et dégrèvements",
+                        titre_court="Remboursements",
+                    ),
+                ),
+                (103975, MissionRef(titre="Mission Santé", titre_court="Santé")),
+                (103976, MissionRef(titre="Mission Sécurités", titre_court="Sécu.")),
+                (
+                    103977,
+                    MissionRef(
+                        titre="Mission Solidarité, insertion et égalité des chances",
+                        titre_court="Solidarité",
+                    ),
+                ),
+                (
+                    103978,
+                    MissionRef(
+                        titre="Mission Sport, jeunesse et vie associative",
+                        titre_court="Sport jeun. asso.",
+                    ),
+                ),
+                (
+                    103979,
+                    MissionRef(
+                        titre="Mission Travail et emploi", titre_court="Trav. emploi"
+                    ),
+                ),
+            ],
+        }
+    },
     "2018-2019": {
         146: {
             1: [(103393, MissionRef(titre="", titre_court=""))],

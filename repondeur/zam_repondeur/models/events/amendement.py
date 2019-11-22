@@ -5,6 +5,7 @@ from jinja2 import Markup
 from lxml.html.diff import htmldiff  # nosec
 from pyramid.request import Request
 
+from zam_repondeur.services.clean import clean_html
 from zam_repondeur.views.jinja2_filters import enumeration
 
 from ..amendement import Amendement
@@ -39,7 +40,11 @@ class AmendementEvent(Event):
 
     def render_details(self) -> str:
         return Markup(
-            htmldiff(self.template_vars["old_value"], self.template_vars["new_value"])
+            clean_html(
+                htmldiff(
+                    self.template_vars["old_value"], self.template_vars["new_value"]
+                )
+            )
         )
 
 

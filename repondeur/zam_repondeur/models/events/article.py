@@ -5,6 +5,8 @@ from jinja2 import Markup
 from lxml.html.diff import htmldiff  # nosec
 from pyramid.request import Request
 
+from zam_repondeur.services.clean import clean_html
+
 from ..article import Article
 from ..chambre import Chambre
 from .base import Event
@@ -32,7 +34,11 @@ class ArticleEvent(Event):
 
     def render_details(self) -> str:
         return Markup(
-            htmldiff(self.template_vars["old_value"], self.template_vars["new_value"])
+            clean_html(
+                htmldiff(
+                    self.template_vars["old_value"], self.template_vars["new_value"]
+                )
+            )
         )
 
 

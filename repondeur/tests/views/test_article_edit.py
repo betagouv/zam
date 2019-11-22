@@ -48,6 +48,31 @@ def test_post_article_edit_form_title(app, lecture_an_url, amendements_an, user_
     assert len(amendement.article.events) == 1
 
 
+def test_post_article_edit_form_title_cleaned(
+    app, lecture_an_url, amendements_an, user_david
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    assert amendement.article.user_content.title == ""
+
+    resp = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/article.1../",
+        user=user_david,
+    )
+    form = resp.forms["edit-article"]
+    form["title"] = "<p><script>Titre article</script></p>"
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
+
+    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    assert amendement.article.user_content.title == "Titre article"
+
+    assert len(amendement.article.events) == 1
+
+
 def test_post_article_edit_form_title_redirect_next(
     app, lecture_an, amendements_an, user_david
 ):

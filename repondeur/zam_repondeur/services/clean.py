@@ -22,6 +22,9 @@ ALLOWED_TAGS = [
     "tbody",
     "tr",
     "td",
+    # Useful to be able to clean diffs in journals.
+    "ins",
+    "del",
 ]
 
 ALLOWED_ATTRIBUTES = {

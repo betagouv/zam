@@ -82,6 +82,29 @@ def test_amendement_journal_objet(app, lecture_an_url, amendements_an, user_davi
     assert first_details_text(resp) == "Objet"
 
 
+def test_amendement_journal_objet_clean(
+    app, lecture_an_url, amendements_an, user_david
+):
+    from zam_repondeur.models.events.amendement import ObjetAmendementModifie
+
+    with transaction.manager:
+        ObjetAmendementModifie.create(
+            amendement=amendements_an[0],
+            objet="<script>Objet</script>",
+            request=DummyRequest(remote_addr="127.0.0.1", user=user_david),
+        )
+        assert len(amendements_an[0].events) == 1
+        assert amendements_an[0].events[0].data["old_value"] == ""
+        assert amendements_an[0].events[0].data["new_value"] == "<script>Objet</script>"
+
+    resp = app.get(f"{lecture_an_url}/amendements/666/journal", user=user_david)
+    assert first_summary_text(resp) == "David a ajouté l’objet."
+    assert (
+        resp.parser.css_first(".timeline li details p").html
+        == "<p><ins>Objet</ins> <del></del></p>"
+    )
+
+
 def test_amendement_journal_reponse(app, lecture_an_url, amendements_an, user_david):
     from zam_repondeur.models.events.amendement import ReponseAmendementModifiee
 

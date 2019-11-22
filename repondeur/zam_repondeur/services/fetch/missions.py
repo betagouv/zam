@@ -20,6 +20,7 @@ IdTxt = int
 ID_TXT_MISSIONS: Dict[
     Session, Dict[Texte, Dict[Partie, List[Tuple[IdTxt, MissionRef]]]]
 ] = {
+    "2019-2020": {139: {1: [(103929, MissionRef(titre="", titre_court=""))]}},
     "2018-2019": {
         146: {
             1: [(103393, MissionRef(titre="", titre_court=""))],
@@ -342,5 +343,5 @@ ID_TXT_MISSIONS: Dict[
                 (103394, MissionRef(titre="", titre_court="")),
             ],
         }
-    }
+    },
 }

@@ -7,7 +7,7 @@ from http import HTTPStatus
 from typing import Iterable, List, Optional, Tuple
 from urllib.parse import urlparse
 
-from zam_repondeur.models import Amendement, Lecture
+from zam_repondeur.models import Amendement, Chambre, Lecture
 from zam_repondeur.services.clean import clean_html
 from zam_repondeur.services.data import repository
 from zam_repondeur.services.fetch.amendements import FetchResult, RemoteSource
@@ -190,18 +190,10 @@ def _fetch_all(lecture: Lecture, dry_run: bool = False) -> List[OrderedDict]:
     """
     Récupère tous les amendements, dans l'ordre de dépôt
     """
-    # Fallback to commissions.
-    urls = [
-        f"{BASE_URL}/amendements/{lecture.texte.session_str}/{lecture.texte.numero}/jeu_complet_{lecture.texte.session_str}_{lecture.texte.numero}.csv",  # noqa
-        f"{BASE_URL}/amendements/commissions/{lecture.texte.session_str}/{lecture.texte.numero}/jeu_complet_commission_{lecture.texte.session_str}_{lecture.texte.numero}.csv",  # noqa
-    ]
 
     http_session = get_http_session()
-    for url in urls:
-        resp = http_session.get(url)
-        if resp.status_code != HTTPStatus.NOT_FOUND:
-            break
-
+    url = _build_amendements_url(lecture)
+    resp = http_session.get(url)
     if resp.status_code == HTTPStatus.NOT_FOUND:
         raise NotFound(url)
 
@@ -213,6 +205,19 @@ def _fetch_all(lecture: Lecture, dry_run: bool = False) -> List[OrderedDict]:
     reader = csv.DictReader(lines, delimiter="\t")
     items = list(reader)
     return items
+
+
+def _build_amendements_url(lecture: Lecture) -> str:
+    if lecture.chambre != Chambre.SENAT:
+        raise ValueError(f"Invalid chambre {lecture.chambre}")
+    texte = lecture.texte
+    if lecture.is_commission:
+        path = f"/amendements/commissions/{texte.session_str}/{texte.numero}/"
+        filename = f"jeu_complet_commission_{texte.session_str}_{texte.numero}.csv"
+    else:
+        path = f"/amendements/{texte.session_str}/{texte.numero}/"
+        filename = f"jeu_complet_{texte.session_str}_{texte.numero}.csv"
+    return BASE_URL + path + filename
 
 
 def _filter_line(line: str) -> str:

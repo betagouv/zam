@@ -236,6 +236,12 @@
                         {% elif amendement.is_irrecevable %}
                             <abbr class="status grey" title="Irrecevable">Irr.</abbr>
                         {% endif %}
+                    {% elif amendement.is_abandoned_during_seance %}
+                        {% if amendement.is_withdrawn %}
+                            <abbr class="status grey" title="Retiré">Ret.</abbr>
+                        {% elif amendement.is_tombé %}
+                            <abbr class="status grey" title="Tombé">Tombé</abbr>
+                        {% endif %}
                     {% elif amendement.gouvernemental %}
                         <abbr class="status blue" title="Gouvernemental">Gouv.</abbr>
                     {% endif %}

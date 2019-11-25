@@ -101,6 +101,34 @@ def lecture_plf_2e_partie(dossier_plf_2019, texte_plf_2019):
         )
 
 
+class TestBuildAmendementsURL:
+    def test_seance_publique(
+        self, lecture_plf2018_senat_premiere_lecture_seance_publique_1
+    ):
+        from zam_repondeur.services.fetch.senat.amendements import (
+            _build_amendements_url,
+        )
+
+        assert _build_amendements_url(
+            lecture_plf2018_senat_premiere_lecture_seance_publique_1
+        ) == (
+            "https://www.senat.fr/amendements/2017-2018/107/"
+            "jeu_complet_2017-2018_107.csv"
+        )
+
+    def test_commission(self, lecture_plf2018_senat_premiere_lecture_commission_fond_1):
+        from zam_repondeur.services.fetch.senat.amendements import (
+            _build_amendements_url,
+        )
+
+        assert _build_amendements_url(
+            lecture_plf2018_senat_premiere_lecture_commission_fond_1
+        ) == (
+            "https://www.senat.fr/amendements/commissions/2017-2018/107/"
+            "jeu_complet_commission_2017-2018_107.csv"
+        )
+
+
 @responses.activate
 def test_aspire_senat(app, lecture_senat):
     from zam_repondeur.services.fetch.senat.amendements import Senat
@@ -569,33 +597,32 @@ def test_fetch_all_buggy_csv(lecture_senat, filename):
 
 
 @responses.activate
-def test_fetch_all_commission(dossier_plfss2018):
+def test_fetch_all_commission(db):
     from zam_repondeur.services.fetch.senat.amendements import _fetch_all
-    from zam_repondeur.models import Chambre, Lecture, Phase, Texte, TypeTexte
+    from zam_repondeur.models import Chambre, Dossier, Lecture, Phase, Texte, TypeTexte
 
     with transaction.manager:
+        dossier = Dossier.create(
+            uid="pjl17-583",
+            titre="Liberté de choisir son avenir professionnel",
+            slug="liberte-choisir-avenir-professionnel",
+        )
         texte = Texte.create(
             type_=TypeTexte.PROJET,
             chambre=Chambre.SENAT,
             session=2017,
             numero=583,
-            date_depot=date(2017, 1, 1),
+            date_depot=date(2018, 6, 20),
         )
         lecture = Lecture.create(
             phase=Phase.PREMIERE_LECTURE,
             texte=texte,
-            titre="Numéro lecture – Titre lecture sénat",
-            organe="PO78718",
-            dossier=dossier_plfss2018,
+            titre="Première lecture – Commissions",
+            organe=None,
+            dossier=dossier,
         )
 
     sample_data = read_sample_data("jeu_complet_commission_2017-2018_583.csv")
-
-    responses.add(
-        responses.GET,
-        "https://www.senat.fr/amendements/2017-2018/583/jeu_complet_2017-2018_583.csv",
-        status=404,
-    )
 
     responses.add(
         responses.GET,

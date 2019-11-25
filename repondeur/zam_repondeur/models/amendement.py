@@ -434,6 +434,12 @@ class Amendement(Base):
         return "retiré" in self.sort.lower()
 
     @reify
+    def is_tombé(self) -> bool:
+        if not self.sort:
+            return False
+        return self.sort.lower() == "tombé"
+
+    @reify
     def is_irrecevable(self) -> bool:
         if not self.sort:
             return False
@@ -449,7 +455,7 @@ class Amendement(Base):
     def is_abandoned_during_seance(self) -> bool:
         if not self.sort:
             return False
-        return self.sort.lower() == "tombé" or self.is_withdrawn
+        return self.is_tombé or self.is_withdrawn
 
     @reify
     def is_abandoned(self) -> bool:

@@ -43,13 +43,14 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
             ),
         ),
     )
+    all_amendements = sorted(lecture.amendements)
     return {
         "lecture": lecture,
         "dossier_resource": lecture_resource.dossier_resource,
         "lecture_resource": lecture_resource,
         "current_tab": "index",
-        "all_amendements": lecture.amendements,
-        "collapsed_amendements": Batch.collapsed_batches(lecture.amendements),
+        "all_amendements": all_amendements,
+        "collapsed_amendements": Batch.collapsed_batches(all_amendements),
         "articles": lecture.articles,
         "progress_url": request.resource_url(lecture_resource, "progress_status"),
     }

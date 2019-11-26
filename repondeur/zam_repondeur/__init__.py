@@ -56,7 +56,6 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         config.include("pyramid_retry")
 
         config.add_route("error", "/error")
-        config.add_route("monitoring", "/monitoring")
 
         config.include("zam_repondeur.assets")
         config.include("zam_repondeur.tasks")

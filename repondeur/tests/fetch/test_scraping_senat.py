@@ -1168,3 +1168,95 @@ class TestCreateDossierRef:
                 ),
             ],
         )
+
+    def test_plfss2020(self):
+        """
+        Projet de loi de financement de la sécurité sociale 2020 (27/11)
+        """
+        from zam_repondeur.services.fetch.an.dossiers.models import (
+            DossierRef,
+            LectureRef,
+            TexteRef,
+            TypeTexte,
+        )
+        from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
+
+        assert create_dossier_ref("plfss2020") == DossierRef(
+            uid="plfss2020",
+            titre="Financement de la sécurité sociale pour 2020",
+            slug="financement-securite-sociale-2020",
+            an_url="",
+            senat_url="https://www.senat.fr/dossier-legislatif/plfss2020.html",
+            lectures=[
+                LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
+                    chambre=Chambre.SENAT,
+                    titre="Première lecture – Commissions",
+                    texte=TexteRef(
+                        uid="PLFSENAT2019X98",
+                        type_=TypeTexte.PROJET,
+                        chambre=Chambre.SENAT,
+                        legislature=None,
+                        numero=98,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 11, 4),
+                    ),
+                    organe="",
+                    partie=None,
+                ),
+                LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
+                    chambre=Chambre.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="PLFSENAT2019X98",
+                        type_=TypeTexte.PROJET,
+                        chambre=Chambre.SENAT,
+                        legislature=None,
+                        numero=98,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 11, 4),
+                    ),
+                    organe="PO78718",
+                    partie=None,
+                ),
+                LectureRef(
+                    chambre=Chambre.SENAT,
+                    phase=Phase.NOUVELLE_LECTURE,
+                    titre="Nouvelle lecture – Commissions",
+                    texte=TexteRef(
+                        uid="PLFSENAT2019X151",
+                        type_=TypeTexte.PROJET,
+                        chambre=Chambre.SENAT,
+                        legislature=None,
+                        numero=151,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 11, 27),
+                    ),
+                    organe="",
+                    partie=None,
+                ),
+                LectureRef(
+                    chambre=Chambre.SENAT,
+                    phase=Phase.NOUVELLE_LECTURE,
+                    titre="Nouvelle lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="PLFSENAT2019X151",
+                        type_=TypeTexte.PROJET,
+                        chambre=Chambre.SENAT,
+                        legislature=None,
+                        numero=151,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 11, 27),
+                    ),
+                    organe="PO78718",
+                    partie=None,
+                ),
+            ],
+        )

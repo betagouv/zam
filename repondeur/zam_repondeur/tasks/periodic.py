@@ -51,14 +51,9 @@ def create_missing_dossiers_an() -> None:
     """
     from zam_repondeur.services.data import repository
 
-    known_an_ids = set(repository.list_opendata_dossiers())
-    existing_an_ids = set(
-        t[0] for t in DBSession.query(Dossier.an_id).filter(Dossier.an_id.__ne__(None))
-    )
-    existing_senat_ids = set(
-        t[0]
-        for t in DBSession.query(Dossier.senat_id).filter(Dossier.senat_id.__ne__(None))
-    )
+    known_an_ids = _known_an_ids()
+    existing_an_ids = _existing_an_ids()
+    existing_senat_ids = _existing_senat_ids()
     missing_an_ids = known_an_ids - existing_an_ids
 
     for an_id in missing_an_ids:
@@ -89,14 +84,9 @@ def create_missing_dossiers_senat() -> None:
     """
     from zam_repondeur.services.data import repository
 
-    known_senat_ids = set(repository.list_senat_scraping_dossiers())
-    existing_senat_ids = set(
-        t[0]
-        for t in DBSession.query(Dossier.senat_id).filter(Dossier.senat_id.__ne__(None))
-    )
-    existing_an_ids = set(
-        t[0] for t in DBSession.query(Dossier.an_id).filter(Dossier.an_id.__ne__(None))
-    )
+    known_senat_ids = _known_senat_ids()
+    existing_senat_ids = _existing_senat_ids()
+    existing_an_ids = _existing_an_ids()
     missing_senat_ids = known_senat_ids - existing_senat_ids
 
     for senat_id in missing_senat_ids:
@@ -119,6 +109,31 @@ def create_missing_dossiers_senat() -> None:
             titre=dossier_ref_senat.titre,
             slug=dossier_ref_senat.slug,
         )
+
+
+def _known_an_ids() -> Set[str]:
+    from zam_repondeur.services.data import repository
+
+    return set(repository.list_opendata_dossiers())
+
+
+def _known_senat_ids() -> Set[str]:
+    from zam_repondeur.services.data import repository
+
+    return set(repository.list_senat_scraping_dossiers())
+
+
+def _existing_an_ids() -> Set[str]:
+    return set(
+        t[0] for t in DBSession.query(Dossier.an_id).filter(Dossier.an_id.__ne__(None))
+    )
+
+
+def _existing_senat_ids() -> Set[str]:
+    return set(
+        t[0]
+        for t in DBSession.query(Dossier.senat_id).filter(Dossier.senat_id.__ne__(None))
+    )
 
 
 def update_textes() -> None:

@@ -198,9 +198,7 @@ def find_matching_dossier_ref_senat(dossier_ref_an: DossierRef) -> Optional[Doss
     senat_url = dossier_ref_an.senat_url
     dossier_id = dossier_ref_an.senat_dossier_id
     if senat_url and dossier_id:
-        return get_senat_dossier_ref_from_cache_or_scrape(
-            dossier_id=dossier_id, webpage_url=senat_url
-        )
+        return get_senat_dossier_ref_from_cache_or_scrape(dossier_id=dossier_id)
 
     # As a fall back, we index the Sénat dossier_refs by AN webpage URL, so if
     # the information is available in that direction, we can still find it
@@ -208,9 +206,7 @@ def find_matching_dossier_ref_senat(dossier_ref_an: DossierRef) -> Optional[Doss
     return repository.get_senat_scraping_dossier_ref_by_an_url(an_url)
 
 
-def get_senat_dossier_ref_from_cache_or_scrape(
-    dossier_id: str, webpage_url: str
-) -> DossierRef:
+def get_senat_dossier_ref_from_cache_or_scrape(dossier_id: str) -> DossierRef:
     """
     Get dossier from the Redis cache (if recent) or scrape it
     """

@@ -83,8 +83,18 @@ class DataRepository(Repository):
     def _load_scraping_senat_dossiers(self) -> None:
         dossier_refs = get_dossier_refs_senat()
         with Lock(self.connection, "data"):
+            self._clear_scraping_senat_dossiers()
             for dossier_ref in dossier_refs.values():
                 self.set_senat_scraping_dossier_ref(dossier_ref)
+
+    def _clear_scraping_senat_dossiers(self) -> None:
+        for pattern in [
+            self._key_for_senat_scraping_dossier("*"),
+            self._key_for_senat_scraping_dossier_by_an_url("*"),
+        ]:
+            keys = self.connection.keys(pattern)
+            if keys:
+                self.connection.delete(*keys)
 
     def set_senat_scraping_dossier_ref(
         self, dossier_ref: DossierRef, ttl: int = 2 * 3600

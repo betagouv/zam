@@ -180,7 +180,9 @@ def create_missing_lectures_senat(dossier: Dossier, user: Optional[User]) -> boo
     dossier_ref_senat: Optional[DossierRef]
 
     if dossier.senat_id:
-        dossier_ref_senat = repository.get_senat_scraping_dossier_ref(dossier.senat_id)
+        dossier_ref_senat = get_senat_dossier_ref_from_cache_or_scrape(
+            dossier_id=dossier.senat_id
+        )
     else:
         dossier_ref_an = repository.get_opendata_dossier_ref(dossier.an_id)
         dossier_ref_senat = find_matching_dossier_ref_senat(dossier_ref_an)

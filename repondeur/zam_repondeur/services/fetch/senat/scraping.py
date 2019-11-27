@@ -324,10 +324,12 @@ def create_texte_ref(dossier_id: str, entry: element.Tag) -> TexteRef:
 
 
 def guess_chambre(entry: element.Tag) -> Optional[Chambre]:
-    if entry.id.string.startswith(BASE_URL_SENAT):
+    entry_id = entry.id.string or ""
+
+    if entry_id.startswith(BASE_URL_SENAT):
         return Chambre.SENAT
 
-    if re.search(r"^http://www2?\.assemblee-nationale\.fr", entry.id.string):
+    if re.search(r"^http://www2?\.assemblee-nationale\.fr", entry_id):
         return Chambre.AN
 
     if "Texte transmis à l'Assemblée nationale" in entry.summary.string:

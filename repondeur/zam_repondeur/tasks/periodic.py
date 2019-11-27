@@ -255,7 +255,7 @@ def create_missing_textes(all_textes: Set[str]) -> None:
 # Keep it last as it takes time and will add up with the growing number of dossiers.
 @huey.periodic_task(crontab(minute="10", hour="*"))
 def update_all_dossiers() -> None:
-    for team in DBSession.query(Team):
-        dossier_pk = team.dossier.pk
+    for team in DBSession.query(Team).filter(Team.dossier_pk.isnot(None)):
+        dossier_pk = team.dossier_pk
         delay = (dossier_pk % 15) * 60  # spread out updates over 15 minutes
         update_dossier.schedule(args=(dossier_pk,), delay=delay)

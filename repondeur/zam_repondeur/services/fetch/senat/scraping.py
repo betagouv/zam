@@ -131,15 +131,26 @@ def extract_lecture_refs(
     dossier_id: str, entries: Iterable[element.Tag], textes: Dict[int, TexteRef]
 ) -> Iterator[LectureRef]:
     for phase in ALL_PHASES:
-        lecture_commission = find_examen_commission(phase, entries, textes)
-        if lecture_commission:
-            yield lecture_commission
+        parties = _list_parties(dossier_id, phase)
+        for partie in parties:
+            lecture_commission = find_examen_commission(phase, entries, textes, partie)
+            if lecture_commission:
+                yield lecture_commission
         texte_initial = lecture_commission.texte if lecture_commission else None
         texte_commission = find_texte_commission(phase, entries, textes)
         texte_examine = texte_commission or texte_initial
         if not texte_examine:
             continue
-        yield from find_examens_seance_publique(phase, entries, textes, texte_examine)
+        for partie in parties:
+            yield from find_examens_seance_publique(
+                phase, entries, textes, texte_examine, partie
+            )
+
+
+def _list_parties(dossier_id: str, phase: Phase) -> List[Optional[int]]:
+    if dossier_id.startswith("pjlf") and phase == Phase.PREMIERE_LECTURE:
+        return [1, 2]
+    return [None]
 
 
 def find_texte_commission(
@@ -162,7 +173,10 @@ def find_texte_commission(
 
 
 def find_examen_commission(
-    phase: Phase, entries: Iterable[element.Tag], textes: Dict[int, TexteRef]
+    phase: Phase,
+    entries: Iterable[element.Tag],
+    textes: Dict[int, TexteRef],
+    partie: Optional[int],
 ) -> Optional[LectureRef]:
     for entry in entries:
         if not entry.title.string.startswith("Texte n°"):
@@ -186,6 +200,7 @@ def find_examen_commission(
             titre=f"{_PHASE_TO_STR[phase]} – Commissions",
             organe="",
             texte=texte,
+            partie=partie,
         )
     return None
 
@@ -195,8 +210,11 @@ def find_examens_seance_publique(
     entries: Iterable[element.Tag],
     textes: Dict[int, TexteRef],
     texte_examine: TexteRef,
+    partie: Optional[int],
 ) -> List[LectureRef]:
-    lecture_refs = list(find_amendements_seance_publique(phase, entries, textes))
+    lecture_refs = list(
+        find_amendements_seance_publique(phase, entries, textes, partie)
+    )
     if lecture_refs:
         return lecture_refs
     # default: séance publique will look at initial texte
@@ -207,12 +225,16 @@ def find_examens_seance_publique(
             titre=f"{_PHASE_TO_STR[phase]} – Séance publique",
             organe="PO78718",
             texte=texte_examine,
+            partie=partie,
         )
     ]
 
 
 def find_amendements_seance_publique(
-    phase: Phase, entries: Iterable[element.Tag], textes: Dict[int, TexteRef]
+    phase: Phase,
+    entries: Iterable[element.Tag],
+    textes: Dict[int, TexteRef],
+    partie: Optional[int],
 ) -> Iterator[LectureRef]:
     for entry in entries:
         if extract_phase(entry) != phase:
@@ -232,6 +254,7 @@ def find_amendements_seance_publique(
             titre=f"{_PHASE_TO_STR[phase]} – Séance publique",
             organe="PO78718",
             texte=texte,
+            partie=partie,
         )
 
 

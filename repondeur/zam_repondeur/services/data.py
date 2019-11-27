@@ -86,9 +86,11 @@ class DataRepository(Repository):
             for dossier_ref in dossier_refs.values():
                 self.set_senat_scraping_dossier_ref(dossier_ref)
 
-    def set_senat_scraping_dossier_ref(self, dossier_ref: DossierRef) -> None:
-        self.set_senat_scraping_dossier_ref_ref_by_id(dossier_ref)
-        self.set_senat_scraping_dossier_ref_ref_by_an_url(dossier_ref)
+    def set_senat_scraping_dossier_ref(
+        self, dossier_ref: DossierRef, ttl: int = 2 * 3600
+    ) -> None:
+        self.set_senat_scraping_dossier_ref_ref_by_id(dossier_ref, ttl=ttl)
+        self.set_senat_scraping_dossier_ref_ref_by_an_url(dossier_ref, ttl=ttl)
 
     def _load_senateurs_groupes(self) -> None:
         senateurs_by_matricule = fetch_and_parse_senateurs()
@@ -121,18 +123,20 @@ class DataRepository(Repository):
         key = self._key_for_opendata_texte(texte_ref.uid)
         self._set_pickled_data(key, texte_ref)
 
-    def set_senat_scraping_dossier_ref_ref_by_id(self, dossier_ref: DossierRef) -> None:
+    def set_senat_scraping_dossier_ref_ref_by_id(
+        self, dossier_ref: DossierRef, ttl: int
+    ) -> None:
         if dossier_ref.senat_dossier_id:
             key = self._key_for_senat_scraping_dossier(dossier_ref.senat_dossier_id)
-            self._set_pickled_data(key, dossier_ref)
+            self._set_pickled_data(key, dossier_ref, ttl)
 
     def set_senat_scraping_dossier_ref_ref_by_an_url(
-        self, dossier_ref: DossierRef
+        self, dossier_ref: DossierRef, ttl: int
     ) -> None:
         an_url = dossier_ref.normalized_an_url
         if an_url:
             key = self._key_for_senat_scraping_dossier_by_an_url(an_url)
-            self._set_pickled_data(key, dossier_ref)
+            self._set_pickled_data(key, dossier_ref, ttl)
 
     @staticmethod
     def _key_for_opendata_dossier(uid: str) -> str:
@@ -244,8 +248,10 @@ class DataRepository(Repository):
         return senateur
 
     @needs_init
-    def _set_pickled_data(self, key: str, value: Any) -> None:
-        self.connection.set(key, pickle.dumps(value))
+    def _set_pickled_data(
+        self, key: str, value: Any, ttl: Optional[int] = None
+    ) -> None:
+        self.connection.set(key, pickle.dumps(value), ex=ttl)
 
     @needs_init
     def _get_pickled_data(self, key: str) -> Any:

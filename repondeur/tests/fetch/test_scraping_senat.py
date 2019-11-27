@@ -1076,3 +1076,95 @@ class TestCreateDossierRef:
                 ),
             ],
         )
+
+    def test_pjlf2020(self):
+        """
+        Projet de loi de finances 2020 (27/11)
+        """
+        from zam_repondeur.services.fetch.an.dossiers.models import (
+            DossierRef,
+            LectureRef,
+            TexteRef,
+            TypeTexte,
+        )
+        from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
+
+        assert create_dossier_ref("pjlf2020") == DossierRef(
+            uid="pjlf2020",
+            titre="Budget 2020",
+            slug="budget-2020",
+            an_url="",
+            senat_url="https://www.senat.fr/dossier-legislatif/pjlf2020.html",
+            lectures=[
+                LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
+                    chambre=Chambre.SENAT,
+                    titre="Première lecture – Commissions",
+                    texte=TexteRef(
+                        uid="PJLSENAT2019X139",
+                        type_=TypeTexte.PROJET,
+                        chambre=Chambre.SENAT,
+                        legislature=None,
+                        numero=139,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 11, 21),
+                    ),
+                    organe="",
+                    partie=1,
+                ),
+                LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
+                    chambre=Chambre.SENAT,
+                    titre="Première lecture – Commissions",
+                    texte=TexteRef(
+                        uid="PJLSENAT2019X139",
+                        type_=TypeTexte.PROJET,
+                        chambre=Chambre.SENAT,
+                        legislature=None,
+                        numero=139,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 11, 21),
+                    ),
+                    organe="",
+                    partie=2,
+                ),
+                LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
+                    chambre=Chambre.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="PJLSENAT2019X139",
+                        type_=TypeTexte.PROJET,
+                        chambre=Chambre.SENAT,
+                        legislature=None,
+                        numero=139,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 11, 21),
+                    ),
+                    organe="PO78718",
+                    partie=1,
+                ),
+                LectureRef(
+                    phase=Phase.PREMIERE_LECTURE,
+                    chambre=Chambre.SENAT,
+                    titre="Première lecture – Séance publique",
+                    texte=TexteRef(
+                        uid="PJLSENAT2019X139",
+                        type_=TypeTexte.PROJET,
+                        chambre=Chambre.SENAT,
+                        legislature=None,
+                        numero=139,
+                        titre_long="",
+                        titre_court="",
+                        date_depot=datetime.date(2019, 11, 21),
+                    ),
+                    organe="PO78718",
+                    partie=2,
+                ),
+            ],
+        )

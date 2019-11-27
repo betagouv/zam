@@ -53,6 +53,7 @@ setup(
             "zam_whitelist = zam_repondeur.scripts.whitelist:main",
             "zam_admin = zam_repondeur.scripts.admin:main",
             "zam_queue = zam_repondeur.scripts.queue:main",
+            "zam_update_dossiers = zam_repondeur.scripts.update_dossiers:main",
         ],
     },
 )

@@ -127,9 +127,13 @@ def deploy_repondeur(
         setup_webapp_service(ctx)
         setup_worker_service(ctx)
 
-        # Load data into Redis cache
         reset_data_locks(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
+
+        # Load data into Redis cache
         load_data(ctx, app_dir=app_dir, venv_dir=venv_dir, user=user)
+
+        # Update dossiers
+        update_dossiers(ctx)
 
         # Start webapp and workers again
         start_webapp_service(ctx)
@@ -262,6 +266,12 @@ def reset_data_locks(ctx, app_dir, venv_dir, user):
 
 def load_data(ctx, app_dir, venv_dir, user):
     cmd = f"{venv_dir}/bin/zam_load_data production.ini#repondeur"
+    ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
+
+
+@task
+def update_dossiers(ctx):
+    cmd = f"{venv_dir}/bin/zam_update_dossiers production.ini#repondeur"
     ctx.sudo(f'bash -c "cd {app_dir} && {cmd}"', user=user)
 
 

@@ -13,8 +13,16 @@
     text-align: center;
     background: white;
     font-size: 1.2rem;
-    border: 1px solid black;
+    border: 5px solid black;
     box-shadow: 0 4px 6px 0 rgba(0,0,0,0.50);
+  }
+  [role="status"].notification-success p {
+    border-color: #62B600;
+  }
+  [role="status"].notification-danger p,
+  [role="status"].notification-error p,
+  [role="status"].notification-warning p {
+    border-color: #D0021B;
   }
   [role="status"] .button,
   [role="status"] .button:hover {

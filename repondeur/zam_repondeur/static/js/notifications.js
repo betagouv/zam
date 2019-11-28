@@ -50,7 +50,7 @@ class Notifications extends Stimulus.Controller {
       result = `<span class="${this.kind}-notification"></span> ${this.message}`
     }
     this.element.querySelector('div').innerHTML = `<p>${result}</p>`
-    this.element.classList.remove('d-none')
+    this.element.classList.replace('d-none', `notification-${this.kind}`)
   }
 
   check() {
@@ -77,10 +77,10 @@ class Notifications extends Stimulus.Controller {
   }
 
   reset() {
+    this.element.classList.replace(`notification-${this.kind}`, 'd-none')
     this.message = ''
     this.kind = ''
     this.element.querySelector('div').innerHTML = ''
-    this.element.classList.add('d-none')
   }
 
   close(event) {

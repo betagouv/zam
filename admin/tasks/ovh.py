@@ -21,6 +21,7 @@ def bootstrap_ovh(
     private_app_ip,
     public_db_ip,
     private_db_ip,
+    dbpassword,
     environment="zam-sec",
     branch="master",
     contact_email=None,
@@ -38,6 +39,7 @@ def bootstrap_ovh(
         private_web_ip=private_web_ip,
         private_app_ip=private_app_ip,
         private_db_ip=private_db_ip,
+        dbpassword=dbpassword,
     )
     _bootstrap_ovh_app(
         Connection(host=f"centos@{public_app_ip}", config=ctx.config),
@@ -47,6 +49,7 @@ def bootstrap_ovh(
         private_db_ip=private_db_ip,
         environment=environment,
         branch=branch,
+        dbpassword=dbpassword,
     )
 
 
@@ -64,18 +67,26 @@ def _bootstrap_ovh_web(
     )
 
 
-def _bootstrap_ovh_db(ctx, private_web_ip, private_app_ip, private_db_ip):
+def _bootstrap_ovh_db(ctx, private_web_ip, private_app_ip, private_db_ip, dbpassword):
     _setup_private_network_interface(ctx, private_db_ip)
     bootstrap_db(
         ctx,
         app_host_ip=private_app_ip,
         web_host_ip=private_web_ip,
         firewall_zone="internal",
+        dbpassword=dbpassword,
     )
 
 
 def _bootstrap_ovh_app(
-    ctx, public_name, private_web_ip, private_app_ip, private_db_ip, environment, branch
+    ctx,
+    public_name,
+    private_web_ip,
+    private_app_ip,
+    private_db_ip,
+    environment,
+    branch,
+    dbpassword,
 ):
     _setup_private_network_interface(ctx, private_app_ip)
     bootstrap_app(ctx, web_host_ip=private_web_ip, firewall_zone="internal")
@@ -87,6 +98,7 @@ def _bootstrap_ovh_app(
         environment=environment,
         branch=branch,
         notify_rollbar=False,  # FIXME
+        dbpassword=dbpassword,
     )
 
 

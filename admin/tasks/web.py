@@ -22,6 +22,7 @@ from tools.munin import (
     munin_graphs_path,
 )
 from tools.nginx import add_nginx_repository, install_nginx
+from tools.package import install_package
 from tools.selinux import is_selinux_enabled, set_selinux_bool
 from tools.systemd import (
     enable_service,
@@ -188,6 +189,12 @@ def setup_final_nginx_config(
 
     sudo_put_if_modified(ctx, "files/nginx/ssl.conf", "/etc/nginx/snippets/ssl.conf")
 
+    munin_htpasswd_path = "/etc/nginx/.htpasswd-stats"
+    if not is_file(ctx, munin_htpasswd_path):
+        install_package(ctx, "httpd-tools")
+        ctx.sudo(f"touch {munin_htpasswd_path}")
+        ctx.sudo(f"htpasswd {munin_htpasswd_path} stats")  # will prompt for password.
+
     with template_local_file(
         "files/nginx/https.conf.template",
         "files/nginx/https.conf",
@@ -199,6 +206,7 @@ def setup_final_nginx_config(
             "ssl_redir_port": ssl_redir_port,
             "app_host_ip": app_host_ip,
             "munin_graphs_path": munin_graphs_path(ctx),
+            "munin_htpasswd_path": munin_htpasswd_path,
             "extra_config": extra_config,
         },
     ):

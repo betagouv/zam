@@ -82,6 +82,8 @@ server {
     # }
 
     location /_stats/ {
+        auth_basic "Monitoring";
+        auth_basic_user_file $${munin_htpasswd_path};
         alias $$munin_graphs_path/;
         add_header "Cache-Control" "no-store";
         add_header "Pragma" "no-cache";

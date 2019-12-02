@@ -22,13 +22,24 @@ def set_interface_zone(ctx, interface, zone):
     ctx.sudo(f"firewall-cmd --change-interface={quote(interface)} --zone={quote(zone)}")
 
 
-def open_ports(ctx, *ports, protocol="tcp", zone="public"):
+def add_ports(ctx, *ports, protocol="tcp", zone="public"):
     for port in ports:
         ctx.sudo(f"firewall-cmd --permanent --zone={zone} --add-port={port}/{protocol}")
     ctx.sudo(f"firewall-cmd --reload")
 
 
-open_port = open_ports
+add_port = add_ports
+
+
+def remove_ports(ctx, *ports, protocol="tcp", zone="public"):
+    for port in ports:
+        ctx.sudo(
+            f"firewall-cmd --permanent --zone={zone} --remove-port={port}/{protocol}"
+        )
+    ctx.sudo(f"firewall-cmd --reload")
+
+
+remove_port = remove_ports
 
 
 def add_services(ctx, *services, zone="public"):

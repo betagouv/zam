@@ -3,7 +3,13 @@ from fabric import task
 from tasks.system import setup_common
 from tools.command import command
 from tools.file import sudo_put
-from tools.firewalld import add_service, enable_firewall, open_port, start_firewall
+from tools.firewalld import (
+    add_service,
+    enable_firewall,
+    add_port,
+    remove_port,
+    start_firewall,
+)
 from tools.locale import install_locale
 from tools.munin import enable_munin_plugin
 from tools.package import install_packages, is_package_installed
@@ -22,7 +28,9 @@ def bootstrap_app(ctx, hostname="", web_host_ip=None, firewall_zone="public"):
     enable_firewall(ctx)
     start_firewall(ctx)
     add_service(ctx, "munin-node", zone=firewall_zone)  # port 4949
-    open_port(ctx, 6543, zone=firewall_zone)  # zam webapp
+    if firewall_zone != "public":
+        remove_port(ctx, 6543, zone="public")
+    add_port(ctx, 6543, zone=firewall_zone)  # zam webapp
 
     setup_dedicated_user(ctx)
     setup_git(ctx)

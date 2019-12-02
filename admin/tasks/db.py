@@ -6,7 +6,7 @@ from tasks.system import setup_common
 from tools import timestamp
 from tools.command import command
 from tools.file import append, create_directory, is_directory, sudo_put_if_modified
-from tools.firewalld import add_service, enable_firewall, start_firewall
+from tools.firewalld import add_service, enable_firewall, remove_service, start_firewall
 from tools.postgres import (
     add_postgres_repository,
     create_postgres_database,
@@ -45,6 +45,8 @@ def bootstrap_db(
     enable_firewall(ctx)
     start_firewall(ctx)
     add_service(ctx, "munin-node", zone=firewall_zone)  # port 4949
+    if firewall_zone != "public":
+        remove_service(ctx, "postgresql", zone="public")
     add_service(ctx, "postgresql", zone=firewall_zone)  # port 5432
 
     setup_postgres(ctx, app_host_ip=app_host_ip)

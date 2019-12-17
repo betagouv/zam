@@ -35,39 +35,41 @@ jobs:
       - run:
           name: Install Python deps
           command: |
+            python -m venv ~/venv
             cd repondeur
-            sudo pip install --no-use-pep517 --progress-bar off -r requirements.txt -r requirements-dev.txt -e . --log pip.log
+            ~/venv/bin/pip install --upgrade pip
+            ~/venv/bin/pip install --no-use-pep517 --progress-bar off -r requirements.txt -r requirements-dev.txt -e . --log pip.log
             ! grep ERROR pip.log
       - run:
           name: Check Python deps conflicts
           command: |
             cd repondeur
-            python -c "from paste.deploy.loadwsgi import appconfig ; appconfig('config:development.ini', relative_to='.', global_conf={'app': 'test'})"
+            ~/venv/bin/python -c "from paste.deploy.loadwsgi import appconfig ; appconfig('config:development.ini', relative_to='.', global_conf={'app': 'test'})"
       - run:
           name: Check formatting with black
           command: |
             cd repondeur
-            black --check .
+            ~/venv/bin/black --check .
       - run:
           name: Check coding style with flake8
           command: |
             cd repondeur
-            flake8
+            ~/venv/bin/flake8
       - run:
           name: Check type annotations with mypy
           command: |
             cd repondeur
-            mypy zam_repondeur
+            ~/venv/bin/mypy zam_repondeur
       - run:
           name: Check import order with isort
           command: |
             cd repondeur
-            isort --recursive --check-only .
+            ~/venv/bin/isort --recursive --check-only .
       - run:
           name: Check for potential security issues with bandit
           command: |
             cd repondeur
-            bandit -r zam_repondeur
+            ~/venv/bin/bandit -r zam_repondeur
       - run:
           name: Run tests
           command: |
@@ -75,6 +77,6 @@ jobs:
             sudo sed --in-place '/fr_FR.UTF-8/s/^#//' /etc/locale.gen
             sudo locale-gen fr_FR.UTF-8
             mkdir -p test-reports
-            pytest -p no:sugar -vv --junitxml=test-reports/junit.xml --cov=zam_repondeur tests/
+            ~/venv/bin/pytest -p no:sugar -vv --junitxml=test-reports/junit.xml --cov=zam_repondeur tests/
       - store_test_results:
           path: repondeur/test-reports

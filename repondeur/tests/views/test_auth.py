@@ -117,7 +117,14 @@ class TestLoginPage:
         resp = resp.follow()
         assert "La saisie d’une adresse de courriel est requise." in resp.text
 
-    @pytest.mark.parametrize("incorrect_email", ["foo"])
+    @pytest.mark.parametrize(
+        "incorrect_email",
+        [
+            "foo",
+            "fs0c131y@exemple.gouv.fr@example.com",
+            "fs0c131y@example.com@exemple.gouv.fr",
+        ],
+    )
     def test_user_cannot_ask_for_a_token_with_an_invalid_email(
         self, app, incorrect_email
     ):
@@ -131,12 +138,7 @@ class TestLoginPage:
         assert "La saisie d’une adresse de courriel valide est requise." in resp.text
 
     @pytest.mark.parametrize(
-        "notgouvfr_email",
-        [
-            "jane.doe@example.com",
-            "john@notgouv.fr",
-            "fs0c131y@exemple.gouv.fr@example.com",
-        ],
+        "notgouvfr_email", ["jane.doe@example.com", "john@notgouv.fr"],
     )
     def test_user_cannot_ask_for_a_token_if_email_is_not_whitelisted(
         self, app, notgouvfr_email

@@ -96,7 +96,9 @@ class User(Base):
 
     @staticmethod
     def email_is_well_formed(email: str) -> bool:
-        return email != "" and "@" in email and is_ascii(email)
+        return (
+            email != "" and "@" in email and email.count("@") == 1 and is_ascii(email)
+        )
 
     @staticmethod
     def email_is_allowed(email: str) -> bool:

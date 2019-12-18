@@ -28,6 +28,64 @@
 
 ### Changements récents
 
+#### 18 décembre 2019
+
+Amélioration de la sécurité :
+
+* Réduction des attaques potentielles de type Cross Site Scripting (XSS).
+* Limitation des informations techniques transmises à un éventuel attaquant.
+* Meilleur filtrage des adresses pouvant se connecter à l’outil.
+* Mise à jour de dépendances JavaScript obsolètes.
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-12-18-barre-progression.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-12-18-barre-progression.png">
+    </a>
+    <figcaption>
+        Ajout d’une barre faisant état de la progression de la récupération des amendements.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-12-18-aide-details.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-12-18-aide-details.png">
+    </a>
+    <figcaption>
+        Affichage d’une aide plus détaillée en cas d’absence de lecture ou d’amendements.
+    </figcaption>
+</figure>
+
+---
+
+<figure>
+    <a href="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-12-18-heures-journal.png">
+        <img src="https://raw.githubusercontent.com/betagouv/zam/master/changelog_images/2019-12-18-heures-journal.png">
+    </a>
+    <figcaption>
+        Affichage des heures explicites d’évènements dans le journal.
+    </figcaption>
+</figure>
+
+---
+
+Améliorations diverses :
+
+* Réduction des temps de blocage lors d’un rafraîchissement de lecture.
+* Mise à jour des dossiers/lectures du Sénat de manière plus rapide.
+* Correctif de l’ordre des amendements afin de respecter celui du dérouleur.
+* Correctif relatif à la source des données issues du Sénat.
+* Prise en compte des amendements très très longs issus du Sénat.
+* Prise en charge des boîtes lors de l’import/export.
+* Réhabilitation du bouton de plein écran lors de la saisie.
+* Impression de l’intégralité des numéros d’amendements identiques.
+* Meilleure prise en charge des missions pour le PLF.
+* Nombreuses améliorations de performances.
+
+
 #### 4 octobre 2019
 
 Amélioration des performances générales.

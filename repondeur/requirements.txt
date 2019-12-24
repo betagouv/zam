@@ -4,7 +4,7 @@ anpy==0.1.22                # tlfp
 attrs==19.1.0               # anpy: < 19.2, >= 19.1
 beautifulsoup4==4.6.3       # lawfactory_utils, legipy: < 4.7, >= 4.6
 bleach==3.1.0
-CacheControl==0.12.5
+CacheControl==0.12.6
 certifi==2019.11.28
 cffi==1.13.2                # cryptography: != 1.11.3, >= 1.7
 chardet==3.0.4

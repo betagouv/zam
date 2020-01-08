@@ -1,6 +1,7 @@
 from fabric.tasks import task
 
-from tools import sudo_put, template_local_file
+from tools import template_local_file
+from tools.file import sudo_put
 
 
 @task

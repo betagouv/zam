@@ -1,15 +1,15 @@
 [Unit]
 Description=Zam Worker for asynchronous tasks
-Requires=postgresql.service redis-server.service
-After=network.target postgresql.service redis-server.service
+Requires=$$redis_service
+After=network.target $$redis_service
 
 [Service]
 Type=simple
-User=repondeur
-WorkingDirectory=/srv/repondeur/src/repondeur/
-ExecStart=/srv/repondeur/venv/bin/zam_worker production.ini#worker
+User=zam
+WorkingDirectory=/srv/zam/src/repondeur/
+ExecStart=/srv/zam/venv/bin/zam_worker production.ini#worker
 Restart=on-failure
-CPUWeight=1
+#CPUWeight=1
 
 # Send SIGINT to the main process (instead of default SIGTERM) for graceful shutdown.
 # This gives started tasks some time to finish, and avoids leaving stale locks behind

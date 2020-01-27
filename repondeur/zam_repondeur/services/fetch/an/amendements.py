@@ -522,7 +522,7 @@ def get_organe_abrev(organe_uid: str) -> str:
 
     organe = repository.get_opendata_organe(organe_uid)
     if organe is None:
-        raise OrganeNotFound(organe)
+        raise OrganeNotFound(organe_uid)
     abrev: str = organe["libelleAbrev"]
     return abrev
 

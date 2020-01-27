@@ -284,6 +284,28 @@ class TestFetchAndParseAll:
         assert errored == ["270"]
 
 
+class TestGetOrganeAbrev:
+    def test_an(self):
+        from zam_repondeur.services.fetch.an.amendements import get_organe_abrev
+
+        assert get_organe_abrev("PO717460") == "AN"
+
+    def test_commission(self):
+        from zam_repondeur.services.fetch.an.amendements import get_organe_abrev
+
+        assert get_organe_abrev("PO420120") == "CION-SOC"
+
+    def test_organe_not_found(self):
+        from zam_repondeur.services.fetch.an.amendements import (
+            OrganeNotFound,
+            get_organe_abrev,
+        )
+
+        with pytest.raises(OrganeNotFound) as exc_info:
+            get_organe_abrev("foo")
+        assert str(exc_info.value) == "Organe foo not found in data"
+
+
 class TestFetchDiscussionList:
     @responses.activate
     def test_simple_amendements(self, lecture_an, app):

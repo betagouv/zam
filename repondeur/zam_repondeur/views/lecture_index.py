@@ -28,9 +28,7 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
                 "rectif",
                 "sort",
             ),
-            joinedload("user_content").load_only(
-                "avis", "has_reponse", "objet", "reponse_hash"
-            ),
+            joinedload("user_content").load_only("objet", "reponse_hash"),
             joinedload("location").options(
                 subqueryload("batch")
                 .joinedload("amendements_locations")

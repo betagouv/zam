@@ -38,7 +38,7 @@ def test_column_filtering_changes_edit_url_on_the_fly(
     )
     input_field.send_keys("666")
     assert driver.current_url == f"{lecture_an_url}/amendements/?amendement=666"
-    see_td = driver.find_element_by_css_selector("td:nth-child(7)")
+    see_td = driver.find_element_by_css_selector("td:nth-child(5)")
     see_link = see_td.find_element_by_css_selector("a")
     assert (
         see_link.get_attribute("href")

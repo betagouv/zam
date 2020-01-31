@@ -194,7 +194,7 @@ def test_get_amendements_columns_default(
         node.text().strip().split()
         for node in resp.parser.css("thead tr.filters th")
         if node.text().strip().split()
-    ] == [["Article"], ["Nº", "Gouv."], ["Table/boîte", "Vide"], ["Avis"], ["Réponse"]]
+    ] == [["Article"], ["Nº", "Gouv."], ["Table/boîte", "Vide"]]
 
 
 def test_get_amendements_columns_missions_for_plf2(
@@ -210,14 +210,7 @@ def test_get_amendements_columns_missions_for_plf2(
         node.text().strip().split()
         for node in resp.parser.css("thead tr.filters th")
         if node.text().strip().split()
-    ] == [
-        ["Article"],
-        ["Mission"],
-        ["Nº", "Gouv."],
-        ["Table/boîte", "Vide"],
-        ["Avis"],
-        ["Réponse"],
-    ]
+    ] == [["Article"], ["Mission"], ["Nº", "Gouv."], ["Table/boîte", "Vide"]]
 
 
 def test_get_amendements_missions_title_for_plf2(

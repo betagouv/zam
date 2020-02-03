@@ -58,6 +58,10 @@ class OrganeNotFound(Exception):
 
 
 class AssembleeNationale(RemoteSource):
+    def __init__(self, prefetching_enabled: bool = True, max_404=MAX_404):
+        super().__init__(prefetching_enabled=prefetching_enabled)
+        self.max_404 = max_404
+
     def fetch_amendement(
         self, lecture: Lecture, numero_prefixe: str, position: Optional[int]
     ) -> Tuple[Optional[Amendement], bool]:
@@ -158,7 +162,7 @@ class AssembleeNationale(RemoteSource):
 
         numero = 0
 
-        while numero < (max_num_seen + MAX_404):
+        while numero < (max_num_seen + self.max_404):
             numero += 1
             if numero in discussion_nums:
                 continue
@@ -299,7 +303,7 @@ class AssembleeNationale(RemoteSource):
         return amendement, action
 
     def _set_fetch_progress(self, lecture: Lecture, position: int, total: int) -> None:
-        total = total + MAX_404
+        total = total + self.max_404
         lecture.set_fetch_progress(position, total)
 
     def apply_changes(self, lecture: Lecture, changes: CollectedChanges) -> FetchResult:

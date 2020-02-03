@@ -48,7 +48,7 @@ PATTERN_AMENDEMENT_FALLBACK = (
 
 # When trying to discover amendements published but not yet included in the list,
 # we can't try all possible numbers, so we'll stop after a string of 404s
-MAX_404 = 30
+MAX_404 = 180
 
 
 class OrganeNotFound(Exception):

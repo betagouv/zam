@@ -91,7 +91,8 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
     lecture = context.model(*PDF_OPTIONS)
 
     try:
-        nums: List[int] = [int(num) for num in request.params.getall("nums")]
+        params = request.params.getall("n") or request.params.getall("nums")  # compat
+        nums: List[int] = [int(num) for num in params]
     except ValueError:
         raise HTTPBadRequest()
 

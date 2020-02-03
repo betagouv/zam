@@ -91,7 +91,7 @@ class TableView:
         """
         Transfer amendement(s) from this table to another one, or back to the index
         """
-        nums: List[int] = self.request.POST.getall("nums")
+        nums: List[str] = self.get_nums()
         if "submit-index" in self.request.POST:
             target = ""
         elif "submit-table" in self.request.POST:
@@ -108,7 +108,7 @@ class TableView:
                     location=self.request.resource_url(
                         self.context.lecture_resource,
                         "transfer_amendements",
-                        query={"nums": nums},
+                        query={"n": nums},
                     )
                 )
 
@@ -149,6 +149,11 @@ class TableView:
             table_resource = self.context.parent[table.user.email]
             next_location = self.request.resource_url(table_resource)
         return HTTPFound(location=next_location)
+
+    def get_nums(self) -> List[str]:
+        params = self.request.POST
+        nums: List[str] = params.getall("n") or params.getall("nums")  # compatibility
+        return nums
 
     def get_target_user_table(self, target: str) -> Optional[UserTable]:
         if not target or "@" not in target:

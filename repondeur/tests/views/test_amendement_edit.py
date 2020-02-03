@@ -367,7 +367,7 @@ def test_post_amendement_edit_form_and_transfer(
         "/dossiers/plfss-2018"
         "/lectures/an.15.269.PO717460"
         "/transfer_amendements"
-        "?nums=999&from_save=1&"
+        "?n=999&from_save=1&"
         "back=https%3A%2F%2Fzam.test"
         "%2Fdossiers%2Fplfss-2018"
         "%2Flectures%2Fan.15.269.PO717460"

@@ -111,9 +111,9 @@ application.register(
 
     changeURLGivenChecks(target, checkeds) {
       const url = new URL(target.getAttribute('href'))
-      url.searchParams.delete('nums')
+      url.searchParams.delete('n')
       checkeds.forEach(checked => {
-        url.searchParams.append('nums', checked.value)
+        url.searchParams.append('n', checked.value)
       })
       target.setAttribute('href', url.toString())
     }

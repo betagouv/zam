@@ -57,7 +57,7 @@ class AmendementEdit:
             "transfer_url": self.request.resource_url(
                 self.context.lecture_resource,
                 "transfer_amendements",
-                query={"nums": self.amendement.num, "from_index": 1},
+                query={"n": self.amendement.num, "from_index": 1},
             ),
             "reponses": self.amendement.article.grouped_displayable_amendements(),
         }
@@ -119,7 +119,7 @@ class AmendementEdit:
                     self.context.lecture_resource,
                     "transfer_amendements",
                     query={
-                        "nums": [amendement.num for amendement in self.amendements],
+                        "n": [amendement.num for amendement in self.amendements],
                         "from_save": 1,
                         "back": self.back_url,
                     },

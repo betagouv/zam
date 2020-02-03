@@ -26,7 +26,7 @@ def test_create_batch_from_table(
     batch_amendements = driver.find_element_by_css_selector("#batch-amendements")
     assert batch_amendements.is_displayed()
     batch_amendements.click()
-    assert driver.current_url == f"{lecture_an_url}/batch_amendements?nums=666&nums=999"
+    assert driver.current_url == f"{lecture_an_url}/batch_amendements?n=666&n=999"
     submit_button = driver.find_element_by_css_selector('input[type="submit"]')
     submit_button.click()
     assert driver.current_url == f"{lecture_an_url}/tables/{user_david.email}/"
@@ -90,7 +90,7 @@ def test_transfer_batch_from_table(
     assert transfer_amendements.is_displayed()
     transfer_amendements.click()
     assert driver.current_url == (
-        f"{lecture_an_url}/transfer_amendements?nums=666"
+        f"{lecture_an_url}/transfer_amendements?n=666"
         f"&back=%2Fdossiers%2F{lecture_an.dossier.url_key}"
         "%2Flectures%2Fan.15.269.PO717460%2Ftables%2Fdavid%40exemple.gouv.fr%2F"
     )

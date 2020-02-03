@@ -40,33 +40,33 @@ def test_group_actions_button_urls_change_with_selection(
 
     assert (
         find("#transfer-amendements").get_attribute("href")
-        == f"{lecture_an_url}/transfer_amendements?from_index=1&nums=666"
+        == f"{lecture_an_url}/transfer_amendements?from_index=1&n=666"
     )
     assert (
         find("#export-pdf").get_attribute("href")
-        == f"{lecture_an_url}/export_pdf?nums=666"
+        == f"{lecture_an_url}/export_pdf?n=666"
     )
 
     checkboxes[1].click()
 
     assert (
         find("#transfer-amendements").get_attribute("href")
-        == f"{lecture_an_url}/transfer_amendements?from_index=1&nums=666&nums=999"
+        == f"{lecture_an_url}/transfer_amendements?from_index=1&n=666&n=999"
     )
     assert (
         find("#export-pdf").get_attribute("href")
-        == f"{lecture_an_url}/export_pdf?nums=666&nums=999"
+        == f"{lecture_an_url}/export_pdf?n=666&n=999"
     )
 
     checkboxes[0].click()
 
     assert (
         find("#transfer-amendements").get_attribute("href")
-        == f"{lecture_an_url}/transfer_amendements?from_index=1&nums=999"
+        == f"{lecture_an_url}/transfer_amendements?from_index=1&n=999"
     )
     assert (
         find("#export-pdf").get_attribute("href")
-        == f"{lecture_an_url}/export_pdf?nums=999"
+        == f"{lecture_an_url}/export_pdf?n=999"
     )
 
     checkboxes[1].click()
@@ -96,12 +96,12 @@ def test_group_actions_button_urls_change_on_the_fly(
     transfer_link = find("#transfer-amendements")
     assert (
         transfer_link.get_attribute("href")
-        == f"{lecture_an_url}/transfer_amendements?from_index=1&nums=666"
+        == f"{lecture_an_url}/transfer_amendements?from_index=1&n=666"
     )
 
     transfer_link.click()
     assert driver.current_url == (
-        f"{lecture_an_url}/transfer_amendements?from_index=1&nums=666&"
+        f"{lecture_an_url}/transfer_amendements?from_index=1&n=666&"
         f"back=%2Fdossiers%2F{lecture_an.dossier.url_key}"
         f"%2Flectures%2F{lecture_an.url_key}%2Famendements%2F%3Farticle%3D1"
     )

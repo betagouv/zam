@@ -18,8 +18,13 @@ class TransferAmendements:
         self.context = context
         self.request = request
         self.from_index = bool(request.GET.get("from_index"))
-        self.amendements_nums: list = self.request.GET.getall("nums")
+        self.amendements_nums: List[str] = self.get_nums()
         self.lecture = self.context.model()  # PERFS: do not joinedload("amendements").
+
+    def get_nums(self) -> List[str]:
+        params = self.request.GET
+        nums: List[str] = params.getall("n") or params.getall("nums")  # compatibility
+        return nums
 
     @view_config(request_method="GET")
     def get(self) -> dict:

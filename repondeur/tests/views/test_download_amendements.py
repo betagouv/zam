@@ -39,7 +39,7 @@ def test_download_bad_format(app, lecture_an, user_david):
 
 def test_download_multiple_amendements(app, lecture_an, amendements_an, user_david):
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf?nums=666&nums=999",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf?n=666&n=999",
         user=user_david,
     )
     assert resp.status_code == 200
@@ -54,7 +54,7 @@ def test_download_multiple_amendements_same_batch(
     app, lecture_an, amendements_an_batch, user_david
 ):
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf?nums=666",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf?n=666",
         user=user_david,
     )
     assert resp.status_code == 200

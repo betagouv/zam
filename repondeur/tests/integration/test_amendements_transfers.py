@@ -26,7 +26,7 @@ def test_transfer_amendements_switch_color_on_check_from_inactive_user(
         user_david_table_an.add_amendement(amendements_an[0])
         DBSession.add_all(amendements_an)
 
-    driver.get(f"{lecture_an_url}/transfer_amendements?nums={amendements_an[0].num}")
+    driver.get(f"{lecture_an_url}/transfer_amendements?n={amendements_an[0].num}")
 
     checkbox = driver.find_element_by_css_selector('input[type="checkbox"]')
     submit_button = driver.find_element_by_css_selector('input[name="submit-to"]')
@@ -76,7 +76,7 @@ def test_transfer_amendements_switch_color_on_check_from_edited_amendement(
         amendements_an[0].start_editing()
         DBSession.add_all(amendements_an)
 
-    driver.get(f"{lecture_an_url}/transfer_amendements?nums={amendements_an[0].num}")
+    driver.get(f"{lecture_an_url}/transfer_amendements?n={amendements_an[0].num}")
 
     checkbox = driver.find_element_by_css_selector('input[type="checkbox"]')
     submit_button = driver.find_element_by_css_selector('input[name="submit-to"]')
@@ -135,7 +135,7 @@ def test_transfer_amendements_switch_color_on_check_from_edited_an_unedited_amen
 
     driver.get(
         f"{lecture_an_url}/transfer_amendements?"
-        f"nums={amendements_an[0].num}&nums={amendements_an[1].num}"
+        f"n={amendements_an[0].num}&n={amendements_an[1].num}"
     )
 
     checkbox_active, checkbox_inactive = driver.find_elements_by_css_selector(

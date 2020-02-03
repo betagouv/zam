@@ -129,7 +129,7 @@
         data-controller="transfers">
         {% if from_save %}
             {% set amendement = amendements_with_table[0] %}
-            <input type="hidden" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}">
+            <input type="hidden" name="n" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}">
         {% else %}
             {% if amendements_being_edited %}
                 <div class="notice danger">
@@ -146,7 +146,7 @@
                         {% for amendement in amendements_being_edited|sort(attribute="location.user_table") %}
                             {% set amendement_user = amendement.location.user_table.user %}
                             <li>
-                                <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}"  data-action="transfers#check">
+                                <input type="checkbox" name="n" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}"  data-action="transfers#check">
                                 <label for="amendement-{{ amendement.num }}">
                                     {{ macros.numero_amendement(amendement)}}
                                      —
@@ -178,7 +178,7 @@
                         {% for amendement in amendements_not_being_edited|sort(attribute="location.user_table") %}
                             {% set amendement_user = amendement.location.user_table.user %}
                             <li>
-                                <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked data-action="transfers#check">
+                                <input type="checkbox" name="n" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked data-action="transfers#check">
                                 <label for="amendement-{{ amendement.num }}">
                                     {{ macros.numero_amendement(amendement)}}
                                      —
@@ -210,7 +210,7 @@
                 <ul class="amendements">
                     {% for amendement in amendements_with_shared_table %}
                         <li>
-                            <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked>
+                            <input type="checkbox" name="n" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked>
                             <label for="amendement-{{ amendement.num }}">
                                 {{ macros.numero_amendement(amendement)}}
                                  —
@@ -237,7 +237,7 @@
                 <ul class="amendements">
                     {% for amendement in amendements_without_table %}
                         <li>
-                            <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked>
+                            <input type="checkbox" name="n" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked>
                             <label for="amendement-{{ amendement.num }}">
                                 {{ macros.numero_amendement(amendement)}}
                                  —

@@ -47,7 +47,7 @@ def test_lecture_get_batch_amendements(
 ):
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
 
@@ -56,9 +56,9 @@ def test_lecture_get_batch_amendements(
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["nums", "submit-to"]
-    assert resp.form.fields["nums"][0].value == "666"
-    assert resp.form.fields["nums"][1].value == "999"
+    assert list(resp.form.fields.keys()) == ["n", "submit-to"]
+    assert resp.form.fields["n"][0].value == "666"
+    assert resp.form.fields["n"][1].value == "999"
 
 
 def test_lecture_get_batch_amendements_not_all_on_table(
@@ -66,7 +66,7 @@ def test_lecture_get_batch_amendements_not_all_on_table(
 ):
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
 
@@ -93,7 +93,7 @@ def test_lecture_get_batch_amendements_only_one_reponse(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
 
@@ -112,7 +112,7 @@ def test_lecture_get_batch_amendements_same_reponses(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
 
@@ -131,7 +131,7 @@ def test_lecture_get_batch_amendements_different_reponses(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
 
@@ -160,7 +160,7 @@ def test_lecture_get_batch_amendements_same_reponses_different_comments(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
 
@@ -192,7 +192,7 @@ def test_lecture_get_batch_amendements_different_articles(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
 
@@ -225,7 +225,7 @@ def test_lecture_get_batch_amendements_same_mission(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
 
@@ -248,7 +248,7 @@ def test_lecture_get_batch_amendements_different_mission(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
 
@@ -275,7 +275,7 @@ def test_lecture_post_batch_set_amendements(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
     form = resp.form
@@ -323,7 +323,7 @@ def test_lecture_post_batch_set_amendements_not_all_on_table(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
     form = resp.form
@@ -369,7 +369,7 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
     form = resp.form
@@ -436,7 +436,7 @@ def test_lecture_post_batch_set_amendements_update_all_user_content(
     DBSession.add_all(amendements_an)
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
     form = resp.form
@@ -477,7 +477,7 @@ def test_lecture_post_batch_set_amendements_same_reponses(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
     form = resp.form
@@ -519,7 +519,7 @@ def test_lecture_post_batch_set_amendements_different_reponses(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
     form = resp.form
@@ -566,7 +566,7 @@ def test_lecture_post_batch_set_amendements_same_reponses_different_comments(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
     form = resp.form
@@ -619,7 +619,7 @@ def test_lecture_post_batch_set_amendements_different_articles(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
     form = resp.form
@@ -667,7 +667,7 @@ def test_lecture_post_batch_unset_amendement(
     # First we associate two amendements
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
     form = resp.form
@@ -685,7 +685,7 @@ def test_lecture_post_batch_unset_amendement(
     # Then we deassociate just one
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendement_666},
+        {"n": amendement_666},
         user=user_david,
     )
     form = resp.form
@@ -748,7 +748,7 @@ def test_lecture_post_batch_reset_amendement(
     # First we associate two amendements
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
     form = resp.form
@@ -766,7 +766,7 @@ def test_lecture_post_batch_reset_amendement(
     # Then we re-associate two others (containing the first one)
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/batch_amendements",
-        {"nums": [amendement_666, amendement_777]},
+        {"n": [amendement_666, amendement_777]},
         user=user_david,
     )
     form = resp.form

@@ -92,13 +92,13 @@ def test_select_all_change_transfer_url(
     transfer_amendements = driver.find_element_by_css_selector("#transfer-amendements")
     assert (
         transfer_amendements.get_attribute("href")
-        == f"{lecture_an_url}/transfer_amendements?nums=666&nums=999"
+        == f"{lecture_an_url}/transfer_amendements?n=666&n=999"
     )
 
 
 @pytest.mark.parametrize(
     "column_index,input_text,expected_nums",
-    [("1", "1", "nums=666&nums=999"), ("2", "777", "nums=777")],
+    [("1", "1", "n=666&n=999"), ("2", "777", "n=777")],
 )
 def test_select_all_checks_only_visible_amendements(
     wsgi_server,

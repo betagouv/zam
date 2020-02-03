@@ -32,7 +32,7 @@ def user_ronan(user_ronan, team_zam):
 def test_lecture_get_transfer_amendements(app, lecture_an, amendements_an, user_david):
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
 
@@ -44,8 +44,8 @@ def test_lecture_get_transfer_amendements(app, lecture_an, amendements_an, user_
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["nums", "target", "submit-to"]
-    assert resp.form.fields["nums"][0].value == "666"
+    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to"]
+    assert resp.form.fields["n"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
@@ -57,7 +57,7 @@ def test_lecture_get_transfer_amendements_with_shared_table(
 ):
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
 
@@ -69,8 +69,8 @@ def test_lecture_get_transfer_amendements_with_shared_table(
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["nums", "target", "submit-to"]
-    assert resp.form.fields["nums"][0].value == "666"
+    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to"]
+    assert resp.form.fields["n"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
@@ -84,18 +84,13 @@ def test_lecture_get_transfer_amendements_from_index(
 ):
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]], "from_index": 1},
+        {"n": [amendements_an[0]], "from_index": 1},
         user=user_david,
     )
     assert resp.status_code == 200
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == [
-        "nums",
-        "from_index",
-        "target",
-        "submit-to",
-    ]
-    assert resp.form.fields["nums"][0].value == "666"
+    assert list(resp.form.fields.keys()) == ["n", "from_index", "target", "submit-to"]
+    assert resp.form.fields["n"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
@@ -116,7 +111,7 @@ def test_lecture_get_transfer_amendements_from_me(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     assert resp.status_code == 200
@@ -127,13 +122,8 @@ def test_lecture_get_transfer_amendements_from_me(
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == [
-        "nums",
-        "target",
-        "submit-to",
-        "submit-index",
-    ]
-    assert resp.form.fields["nums"][0].value == "666"
+    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
+    assert resp.form.fields["n"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
         ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
@@ -151,7 +141,7 @@ def test_lecture_get_transfer_amendements_from_shared_table(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     assert resp.status_code == 200
@@ -162,13 +152,8 @@ def test_lecture_get_transfer_amendements_from_shared_table(
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == [
-        "nums",
-        "target",
-        "submit-to",
-        "submit-index",
-    ]
-    assert resp.form.fields["nums"][0].value == "666"
+    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
+    assert resp.form.fields["n"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
@@ -187,7 +172,7 @@ def test_lecture_get_transfer_amendements_including_me(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": amendements_an},
+        {"n": amendements_an},
         user=user_david,
     )
     assert resp.status_code == 200
@@ -198,13 +183,8 @@ def test_lecture_get_transfer_amendements_including_me(
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == [
-        "nums",
-        "target",
-        "submit-to",
-        "submit-index",
-    ]
-    assert resp.form.fields["nums"][0].value == "666"
+    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
+    assert resp.form.fields["n"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
@@ -224,7 +204,7 @@ def test_lecture_get_transfer_amendements_from_me_from_save(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]], "from_save": 1},
+        {"n": [amendements_an[0]], "from_save": 1},
         user=user_david,
     )
     assert resp.status_code == 200
@@ -235,13 +215,8 @@ def test_lecture_get_transfer_amendements_from_me_from_save(
     assert resp.parser.css_first('input[type="hidden"]').attributes["value"] == "666"
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == [
-        "nums",
-        "target",
-        "submit-to",
-        "submit-index",
-    ]
-    assert resp.form.fields["nums"][0].value == "666"
+    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
+    assert resp.form.fields["n"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
         ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
@@ -260,7 +235,7 @@ def test_lecture_get_transfer_amendements_from_other(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     assert resp.status_code == 200
@@ -275,13 +250,8 @@ def test_lecture_get_transfer_amendements_from_other(
     )
 
     assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == [
-        "nums",
-        "target",
-        "submit-to",
-        "submit-index",
-    ]
-    assert resp.form.fields["nums"][0].value == "666"
+    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
+    assert resp.form.fields["n"][0].value == "666"
     assert resp.form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
@@ -302,7 +272,7 @@ def test_lecture_get_transfer_amendements_from_other_active(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     assert resp.status_code == 200
@@ -330,7 +300,7 @@ def test_lecture_get_transfer_amendements_from_edited_amendement(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     assert resp.status_code == 200
@@ -358,7 +328,7 @@ def test_lecture_post_transfer_amendements_to_me(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amdt]},
+        {"n": [amdt]},
         user=user_david,
     )
     form = resp.form
@@ -405,7 +375,7 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendement]},
+        {"n": [amendement]},
         user=user_david,
     )
     form = resp.form
@@ -449,7 +419,7 @@ def test_lecture_post_transfer_amendements_to_index(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     resp = resp.form.submit("submit-index")
@@ -490,7 +460,7 @@ def test_lecture_post_transfer_amendements_to_index_from_index(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]], "from_index": 1},
+        {"n": [amendements_an[0]], "from_index": 1},
         user=user_david,
     )
     resp = resp.form.submit("submit-index")
@@ -522,7 +492,7 @@ def test_lecture_post_transfer_amendements_to_other(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     form = resp.form
@@ -561,7 +531,7 @@ def test_lecture_post_transfer_amendements_to_other_from_index(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]], "from_index": 1},
+        {"n": [amendements_an[0]], "from_index": 1},
         user=user_david,
     )
     form = resp.form
@@ -588,7 +558,7 @@ def test_lecture_post_transfer_amendements_from_void_to_shared_table(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     form = resp.form
@@ -631,7 +601,7 @@ def test_lecture_post_transfer_amendements_from_me_to_shared_table(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     form = resp.form
@@ -673,7 +643,7 @@ def test_lecture_post_transfer_amendements_from_other_to_shared_table(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     form = resp.form
@@ -715,7 +685,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_void(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     resp = resp.form.submit("submit-index")
@@ -754,7 +724,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_me(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     form = resp.form
@@ -795,7 +765,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_other(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     form = resp.form
@@ -839,7 +809,7 @@ def test_lecture_post_transfer_amendements_from_void_to_noname_user(
 
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/transfer_amendements",
-        {"nums": [amendements_an[0]]},
+        {"n": [amendements_an[0]]},
         user=user_david,
     )
     form = resp.form

@@ -160,7 +160,7 @@
                 </p>
                 {% if is_on_my_table %}
                 <form method="post" action="{{ request.resource_url(context.lecture_resource, 'batch_amendements') }}">
-                    <input type="hidden" name="nums" value="{{ amendement.num }}">
+                    <input type="hidden" name="n" value="{{ amendement.num }}">
                     <input type="submit" class="button" value="Retirer du lot">
                 </form>
                 {% endif %}
@@ -251,7 +251,7 @@
                             Si vous transférez cet amendement, <strong>ses modifications ne seront pas enregistrées</strong>.
                         </p>
                         <form id="transfer" action="{{ my_table_url }}" method="POST">
-                            <input type="hidden" name="nums" value="{{ amendement.num }}">
+                            <input type="hidden" name="n" value="{{ amendement.num }}">
                             <a href="{{ transfer_url }}" class="button danger">Transférer à…</a>
                             <input type="submit" name="submit-table" class="button enabled danger" value="Forcer le transfert sur ma table">
                         </form>
@@ -262,14 +262,14 @@
                             </strong>.
                         </p>
                         <form id="transfer" action="{{ my_table_url }}" method="POST">
-                            <input type="hidden" name="nums" value="{{ amendement.num }}">
+                            <input type="hidden" name="n" value="{{ amendement.num }}">
                             <a href="{{ transfer_url }}" class="button warning">Transférer à…</a>
                             <input type="submit" name="submit-table" class="button enabled warning" value="Transférer sur ma table">
                         </form>
                     {% endif %}
                 {% else %}
                     <form id="transfer" action="{{ my_table_url }}" method="POST">
-                        <input type="hidden" name="nums" value="{{ amendement.num }}">
+                        <input type="hidden" name="n" value="{{ amendement.num }}">
                         <a href="{{ transfer_url }}" class="button primary">Transférer à…</a>
                         <input type="submit" name="submit-table" class="button primary enabled" value="Transférer sur ma table">
                     </form>

@@ -204,7 +204,7 @@ def test_group_actions_button_urls_change_with_selection(
     for action in ["transfer-amendements", "export-pdf"]:
         assert (
             find("#" + action).get_attribute("href")
-            == f"{lecture_an_url}/{action.replace('-', '_')}?nums=666"
+            == f"{lecture_an_url}/{action.replace('-', '_')}?n=666"
         )
 
     checkboxes[1].click()
@@ -212,7 +212,7 @@ def test_group_actions_button_urls_change_with_selection(
     for action in ["transfer-amendements", "export-pdf"]:
         assert (
             find("#" + action).get_attribute("href")
-            == f"{lecture_an_url}/{action.replace('-', '_')}?nums=666&nums=999"
+            == f"{lecture_an_url}/{action.replace('-', '_')}?n=666&n=999"
         )
 
     checkboxes[0].click()
@@ -220,7 +220,7 @@ def test_group_actions_button_urls_change_with_selection(
     for action in ["transfer-amendements", "export-pdf"]:
         assert (
             find("#" + action).get_attribute("href")
-            == f"{lecture_an_url}/{action.replace('-', '_')}?nums=999"
+            == f"{lecture_an_url}/{action.replace('-', '_')}?n=999"
         )
 
     checkboxes[1].click()
@@ -264,12 +264,12 @@ def test_group_actions_button_urls_change_on_the_fly(
     transfer_link = find("#transfer-amendements")
     assert (
         transfer_link.get_attribute("href")
-        == f"{lecture_an_url}/transfer_amendements?nums=666"
+        == f"{lecture_an_url}/transfer_amendements?n=666"
     )
 
     transfer_link.click()
     assert driver.current_url == (
-        f"{lecture_an_url}/transfer_amendements?nums=666&"
+        f"{lecture_an_url}/transfer_amendements?n=666&"
         f"back=%2Fdossiers%2F{lecture_an.dossier.url_key}"
         f"%2Flectures%2F{lecture_an.url_key}%2Ftables%2Fdavid%40exemple.gouv.fr"
         f"%3Farticle%3D1"

@@ -131,7 +131,7 @@ def test_tables_grab_amendement(
     # We're redirected to our table
     resp = app.post(
         f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
-        {"nums": [amendements_an[0].num], "submit-table": True},
+        {"n": [amendements_an[0].num], "submit-table": True},
         user=user_david,
     )
 
@@ -166,7 +166,7 @@ def test_tables_grab_amendements(
 
     resp = app.post(
         f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
-        {"nums": [amdt.num for amdt in amendements_an], "submit-table": True},
+        {"n": [amdt.num for amdt in amendements_an], "submit-table": True},
         user=user_david,
     )
 
@@ -203,7 +203,7 @@ def test_tables_release_amendement(
 
     resp = app.post(
         f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
-        {"nums": [amendements_an[0].num], "submit-index": True},
+        {"n": [amendements_an[0].num], "submit-index": True},
         user=user_david,
     )
 
@@ -236,7 +236,7 @@ def test_tables_release_amendements(
 
     resp = app.post(
         f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
-        {"nums": [amendements_an[0].num, amendements_an[1].num], "submit-index": True},
+        {"n": [amendements_an[0].num, amendements_an[1].num], "submit-index": True},
         user=user_david,
     )
 
@@ -284,7 +284,7 @@ class TestTransfer:
 
         resp = app.post(
             f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
-            {"nums": [amendements_an[0].num], "target": user_ronan.email},
+            {"n": [amendements_an[0].num], "target": user_ronan.email},
             user=user_david,
         )
 
@@ -315,7 +315,7 @@ class TestTransfer:
         email = user_david.email
         resp = app.post(
             f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
-            {"nums": [amendements_an[0].num], "submit-table": True},
+            {"n": [amendements_an[0].num], "submit-table": True},
             user=user_david,
         )
 
@@ -342,7 +342,7 @@ class TestTransfer:
         email = user_david.email
         resp = app.post(
             f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
-            {"nums": [amendements_an[0].num], "target": ""},
+            {"n": [amendements_an[0].num], "target": ""},
             user=user_david,
         )
 
@@ -353,7 +353,7 @@ class TestTransfer:
                 "https://zam.test"
                 "/dossiers/plfss-2018"
                 "/lectures/an.15.269.PO717460"
-                "/transfer_amendements?nums=666"
+                "/transfer_amendements?n=666"
             )
         )
 
@@ -380,7 +380,7 @@ class TestTransfer:
         resp = app.post(
             f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
             {
-                "nums": [amendements_an[0].num, amendements_an[1].num],
+                "n": [amendements_an[0].num, amendements_an[1].num],
                 "target": user_ronan.email,
             },
             user=user_david,
@@ -426,7 +426,7 @@ def test_tables_steal_amendement(
     email = user_ronan.email
     resp = app.post(
         f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
-        {"nums": [amendements_an[0].num], "submit-table": True},
+        {"n": [amendements_an[0].num], "submit-table": True},
         user=user_ronan,
     )
 
@@ -473,7 +473,7 @@ def test_tables_steal_amendement_resets_editing_status(
     email = user_ronan.email
     app.post(
         f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
-        {"nums": [amendements_an[0].num], "submit-table": True},
+        {"n": [amendements_an[0].num], "submit-table": True},
         user=user_ronan,
     )
 
@@ -503,7 +503,7 @@ def test_tables_steal_amendements(
     # Transfer amendements to ronan's table (stealing them from david)
     resp = app.post(
         f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/tables/{email}",
-        {"nums": [amendements_an[0].num, amendements_an[1].num], "submit-table": True},
+        {"n": [amendements_an[0].num, amendements_an[1].num], "submit-table": True},
         user=user_ronan,
     )
 

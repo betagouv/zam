@@ -51,7 +51,7 @@ class BatchAmendements:
     @view_config(request_method="POST")
     def post(self) -> Response:
         # Special case: unbatch (TODO: move to a separate route)
-        if len(self.request.POST.getall("nums")) == 1:
+        if len(self.get_nums(self.request.POST)) == 1:
             amendement = self.get_amendements_from(self.request.POST)[0]
             BatchUnset.create(amendement=amendement, request=self.request)
             return HTTPFound(location=self.my_table_url)
@@ -120,8 +120,12 @@ class BatchAmendements:
         return [
             amendement
             for amendement in self.lecture.amendements
-            if str(amendement.num) in source.getall("nums")
+            if str(amendement.num) in self.get_nums(source)
         ]
+
+    def get_nums(self, source: MultiDict) -> List[str]:
+        nums: List[str] = source.getall("n") or source.getall("nums")  # compatibility
+        return nums
 
     def check_amendements_are_all_on_my_table(
         self, amendements: List[Amendement]

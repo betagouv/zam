@@ -116,7 +116,7 @@
             <ul class="amendements">
                 {% for amendement in amendements %}
                     <li>
-                        <input type="checkbox" name="nums" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked>
+                        <input type="checkbox" name="n" value="{{ amendement.num }}" id="amendement-{{ amendement.num }}" checked>
                         <label for="amendement-{{ amendement.num }}">
                             {{ macros.numero_amendement(amendement) }}
                         </label>

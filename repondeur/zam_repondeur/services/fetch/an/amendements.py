@@ -61,6 +61,16 @@ class OrganeNotFound(Exception):
         self.organe = organe
 
 
+class ProgressBar:
+    def __init__(self, lecture: Lecture, start_index: int, total: int):
+        self.lecture = lecture
+        self.start_index = start_index
+        self.total = total
+
+    def advance(self, offset: int) -> None:
+        self.lecture.set_fetch_progress(self.start_index + offset + 1, self.total)
+
+
 class AssembleeNationale(RemoteSource):
     def __init__(self, settings: Dict[str, Any], prefetching_enabled: bool = True):
         super().__init__(settings=settings, prefetching_enabled=prefetching_enabled)
@@ -104,8 +114,17 @@ class AssembleeNationale(RemoteSource):
             )
         )
 
+        progress_bar = ProgressBar(
+            lecture=lecture,
+            start_index=start_index,
+            total=max(1, len(derouleur.numeros) // self.batch_size) * self.batch_size,
+        )
+
         actions, unchanged, errored, nb_404 = self._collect_amendements(
-            lecture=lecture, derouleur=derouleur, numeros_prefixes=numeros_prefixes,
+            lecture=lecture,
+            derouleur=derouleur,
+            numeros_prefixes=numeros_prefixes,
+            progress_bar=progress_bar,
         )
 
         # Should we trigger a next batch, or give up?
@@ -155,16 +174,15 @@ class AssembleeNationale(RemoteSource):
         lecture: Lecture,
         derouleur: "ANDerouleurData",
         numeros_prefixes: List[str],
+        progress_bar: ProgressBar,
     ) -> Tuple[List[Action], List[int], List[str], int]:
         actions: List[Action] = []
         unchanged: List[int] = []
         errored: List[str] = []
         nb_404 = 0
 
-        total = len(numeros_prefixes)
-
-        for index, numero_prefixe in enumerate(numeros_prefixes, start=1):
-            self._set_fetch_progress(lecture, index, total)
+        for offset, numero_prefixe in enumerate(numeros_prefixes):
+            progress_bar.advance(offset)
             try:
                 amendement, action = self._collect_amendement(
                     lecture=lecture,
@@ -304,9 +322,6 @@ class AssembleeNationale(RemoteSource):
                 sort=sort,
             )
         return amendement, action
-
-    def _set_fetch_progress(self, lecture: Lecture, position: int, total: int) -> None:
-        lecture.set_fetch_progress(position, total)
 
     def apply_changes(self, lecture: Lecture, changes: CollectedChanges) -> FetchResult:
         unchanged_amendements = [

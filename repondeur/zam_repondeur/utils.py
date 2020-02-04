@@ -52,15 +52,21 @@ def add_url_params(url: str, **extra_params: str) -> str:
 
 
 class Timer:
-    enter_time: float = 0.0
-    exit_time: float = 0.0
+    start_time: float = 0.0
+    stop_time: float = 0.0
+
+    def start(self) -> None:
+        self.start_time = time.monotonic()
+
+    def stop(self) -> None:
+        self.stop_time = time.monotonic()
 
     def __enter__(self) -> "Timer":
-        self.enter_time = time.monotonic()
+        self.start()
         return self
 
     def __exit__(self, exc_type: Any, exc_value: Any, tb: Any) -> None:
-        self.exit_time = time.monotonic()
+        self.stop()
 
     def elapsed(self) -> float:
-        return self.exit_time - self.enter_time
+        return self.stop_time - self.start_time

@@ -2,7 +2,7 @@ import logging
 import random
 import sys
 from argparse import ArgumentParser, Namespace
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 import transaction
 from progressist import ProgressBar
@@ -31,12 +31,13 @@ def main(argv: List[str] = sys.argv) -> None:
     logging.getLogger().setLevel(log_level)
     logging.getLogger("urllib3.connectionpool").setLevel(log_level)
 
-    with bootstrap(args.config_uri, options={"app": "zam_fetch_amendements"}):
+    with bootstrap(args.config_uri, options={"app": "zam_fetch_amendements"}) as env:
+        settings = env["registry"].settings
 
         repository.load_data()
 
         try:
-            fetch_amendements(args.chambre, args.num, args.progress)
+            fetch_amendements(args.chambre, args.num, args.progress, settings)
         finally:
             transaction.abort()
 
@@ -53,7 +54,7 @@ def parse_args(argv: List[str]) -> Namespace:
 
 
 def fetch_amendements(
-    chambre: Optional[str], num: Optional[int], progress: bool
+    chambre: Optional[str], num: Optional[int], progress: bool, settings: Dict[str, Any]
 ) -> None:
     an_ids = repository.list_opendata_dossiers()
     if progress:
@@ -61,13 +62,16 @@ def fetch_amendements(
     random.shuffle(an_ids)
     for an_id in an_ids:
         dossier_ref = repository.get_opendata_dossier_ref(an_id)
-        fetch_amendements_for_dossier(dossier_ref, chambre, num)
+        fetch_amendements_for_dossier(dossier_ref, chambre, num, settings)
         if progress:
             bar.update(step=len(dossier_ref.lectures))
 
 
 def fetch_amendements_for_dossier(
-    dossier_ref: DossierRef, chambre: Optional[str], num: Optional[int]
+    dossier_ref: DossierRef,
+    chambre: Optional[str],
+    num: Optional[int],
+    settings: Dict[str, Any],
 ) -> None:
     dossier, _ = get_one_or_create(
         Dossier,
@@ -97,12 +101,14 @@ def fetch_amendements_for_dossier(
             organe=lecture_ref.organe,
             titre=lecture_ref.titre,
         )
-        fetch_amendements_for_lecture(lecture)
+        fetch_amendements_for_lecture(lecture, settings)
 
 
-def fetch_amendements_for_lecture(lecture: Lecture) -> None:
+def fetch_amendements_for_lecture(lecture: Lecture, settings: Dict[str, Any]) -> None:
     chambre = lecture.texte.chambre
-    source: RemoteSource = RemoteSource.get_remote_source_for_chambre(chambre)
+    source: RemoteSource = RemoteSource.get_remote_source_for_chambre(
+        chambre=chambre, settings=settings
+    )
     try:
         with Timer() as prepare_timer:
             source.prepare(lecture)

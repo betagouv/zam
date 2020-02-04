@@ -58,9 +58,9 @@ class OrganeNotFound(Exception):
 
 
 class AssembleeNationale(RemoteSource):
-    def __init__(self, prefetching_enabled: bool = True, max_404=MAX_404):
-        super().__init__(prefetching_enabled=prefetching_enabled)
-        self.max_404 = max_404
+    def __init__(self, settings: Dict[str, Any], prefetching_enabled: bool = True):
+        super().__init__(settings=settings, prefetching_enabled=prefetching_enabled)
+        self.max_404 = int(settings.get("zam.fetch.an.max_404", MAX_404))
 
     def fetch_amendement(
         self, lecture: Lecture, numero_prefixe: str, position: Optional[int]

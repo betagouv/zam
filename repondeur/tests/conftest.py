@@ -97,6 +97,7 @@ def settings(tmp_path_factory):
         # Minutes
         "zam.http_cache_duration": 0,
         "zam.http_cache_dir": str(tmp_path_factory.mktemp(".web_cache")),
+        "zam.fetch.an.max_404": "1",
     }
 
 

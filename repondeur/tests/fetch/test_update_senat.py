@@ -14,7 +14,7 @@ def read_sample_data(basename):
 
 
 @responses.activate
-def test_position_changed(lecture_senat):
+def test_position_changed(lecture_senat, settings):
     """
     The discussion order of amendements may change
     """
@@ -49,7 +49,7 @@ def test_position_changed(lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    source = Senat()
+    source = Senat(settings=settings)
 
     source.fetch(lecture_senat)
 
@@ -67,7 +67,7 @@ def test_position_changed(lecture_senat):
 
 
 @responses.activate
-def test_abandoned_before_seance(lecture_senat):
+def test_abandoned_before_seance(lecture_senat, settings):
     """
     An amendement that is either withdrawn by its author or declared invalid
     will be removed from the "liste_discussion"
@@ -103,7 +103,7 @@ def test_abandoned_before_seance(lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    source = Senat()
+    source = Senat(settings=settings)
 
     source.fetch(lecture_senat)
 
@@ -121,7 +121,7 @@ def test_abandoned_before_seance(lecture_senat):
 
 
 @responses.activate
-def test_article_changed(lecture_senat):
+def test_article_changed(lecture_senat, settings):
     """
     The targeted article may change
     """
@@ -162,7 +162,7 @@ def test_article_changed(lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    source = Senat()
+    source = Senat(settings=settings)
 
     source.fetch(lecture_senat)
 
@@ -180,7 +180,7 @@ def test_article_changed(lecture_senat):
 
 
 @responses.activate
-def test_add_parent_amendement(lecture_senat):
+def test_add_parent_amendement(lecture_senat, settings):
     """
     The targeted article may change
     """
@@ -215,7 +215,7 @@ def test_add_parent_amendement(lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    source = Senat()
+    source = Senat(settings=settings)
 
     source.fetch(lecture_senat)
 
@@ -233,7 +233,7 @@ def test_add_parent_amendement(lecture_senat):
 
 
 @responses.activate
-def test_remove_parent_amendement(lecture_senat):
+def test_remove_parent_amendement(lecture_senat, settings):
     """
     The targeted article may change
     """
@@ -268,7 +268,7 @@ def test_remove_parent_amendement(lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    source = Senat()
+    source = Senat(settings=settings)
 
     source.fetch(lecture_senat)
 

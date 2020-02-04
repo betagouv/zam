@@ -9,10 +9,10 @@ from fetch.mock_an import setup_mock_responses
 
 
 @pytest.fixture(scope="module")
-def source_senat():
+def source_senat(settings):
     from zam_repondeur.services.fetch.senat.amendements import Senat
 
-    return Senat()
+    return Senat(settings=settings)
 
 
 def test_fetch_amendements_senat(
@@ -181,10 +181,10 @@ def test_fetch_amendements_senat(
 
 
 @pytest.fixture(scope="module")
-def source_an():
+def source_an(settings):
     from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
 
-    return AssembleeNationale()
+    return AssembleeNationale(settings=settings)
 
 
 def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):

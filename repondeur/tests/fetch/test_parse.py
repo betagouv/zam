@@ -3,7 +3,7 @@ from datetime import date
 import pytest
 
 
-def test_parse_from_csv(lecture_senat):
+def test_parse_from_csv(lecture_senat, settings):
 
     from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
@@ -25,7 +25,7 @@ def test_parse_from_csv(lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    source = Senat()
+    source = Senat(settings=settings)
     amendement, created = source.parse_from_csv(amend, lecture_senat)
 
     assert created
@@ -46,7 +46,7 @@ def test_parse_from_csv(lecture_senat):
     assert str(amendement.article) == "Après art. 7"
 
 
-def test_parse_from_csv_unparsable_article(lecture_senat):
+def test_parse_from_csv_unparsable_article(lecture_senat, settings):
 
     from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
@@ -68,7 +68,7 @@ def test_parse_from_csv_unparsable_article(lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    source = Senat()
+    source = Senat(settings=settings)
     amendement, created = source.parse_from_csv(amend, lecture_senat)
 
     assert created

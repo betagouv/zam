@@ -23,10 +23,10 @@ def read_sample_data(basename):
 
 
 @pytest.fixture
-def source():
+def source(settings):
     from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
 
-    return AssembleeNationale()
+    return AssembleeNationale(settings={"zam.fetch.an.max_404": "20"})
 
 
 def assert_html_looks_like(value, expected):
@@ -87,7 +87,9 @@ class TestFetchAndParseAll:
         assert errored == []
 
     @responses.activate
-    def test_simple_amendements_progress_status(self, lecture_an, app, source):
+    def test_simple_amendements_progress_status(
+        self, lecture_an, app, source, settings
+    ):
         from zam_repondeur.models import DBSession
 
         DBSession.add(lecture_an)
@@ -111,11 +113,11 @@ class TestFetchAndParseAll:
             amendements, created, errored = source.fetch(lecture=lecture_an)
             # The progress is set for each amendement during the fetch.
             assert mocked_set_fetch_progress.call_args_list == [
-                call("1", 1, 35),
-                call("1", 2, 35),
-                call("1", 3, 35),
-                call("1", 4, 35),
-                call("1", 5, 35),
+                call("1", 1, 5 + source.max_404),
+                call("1", 2, 5 + source.max_404),
+                call("1", 3, 5 + source.max_404),
+                call("1", 4, 5 + source.max_404),
+                call("1", 5, 5 + source.max_404),
             ]
 
         # Once the fetch is complete, the progress status is back to empty.

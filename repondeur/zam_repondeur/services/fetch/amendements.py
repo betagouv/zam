@@ -259,7 +259,7 @@ class UpdateAmendement(CreateOrUpdateAmendement):
 
 
 class RemoteSource(Source):
-    def __init__(self, prefetching_enabled: bool = True):
+    def __init__(self, settings: Dict[str, Any], prefetching_enabled: bool = True):
         self.prefetching_enabled = prefetching_enabled
 
     def prepare(self, lecture: Lecture) -> None:
@@ -277,13 +277,18 @@ class RemoteSource(Source):
 
     @classmethod
     def get_remote_source_for_chambre(
-        cls, chambre: Chambre, prefetching_enabled: bool = True
+        cls,
+        chambre: Chambre,
+        settings: Dict[str, Any],
+        prefetching_enabled: bool = True,
     ) -> "RemoteSource":
         from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
         from zam_repondeur.services.fetch.senat.amendements import Senat
 
         if chambre == Chambre.AN:
-            return AssembleeNationale(prefetching_enabled=prefetching_enabled)
+            return AssembleeNationale(
+                settings=settings, prefetching_enabled=prefetching_enabled
+            )
         if chambre == Chambre.SENAT:
-            return Senat(prefetching_enabled=prefetching_enabled)
+            return Senat(settings=settings, prefetching_enabled=prefetching_enabled)
         raise NotImplementedError

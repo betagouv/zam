@@ -22,10 +22,10 @@ def read_sample_data(basename):
 
 
 @pytest.fixture
-def source():
+def source(settings):
     from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
 
-    return AssembleeNationale()
+    return AssembleeNationale(settings=settings)
 
 
 @responses.activate

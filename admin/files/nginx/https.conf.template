@@ -35,6 +35,10 @@ server {
 
     client_max_body_size 25M;
 
+    # Allow URLs with long query strings (for batch/transfer/print)
+    large_client_header_buffers 8 64k;
+    http2_max_field_size 64k;
+
     gzip on;
     gzip_vary on;
     gzip_types text/html text/css image/svg+xml application/javascript application/json;

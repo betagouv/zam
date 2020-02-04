@@ -66,6 +66,10 @@ class FetchResult(NamedTuple):
     created: int
     errored: List[str]
 
+    @property
+    def changed(self) -> bool:
+        return bool(self.amendements and not (self.created or self.errored))
+
     @classmethod
     def create(
         cls,

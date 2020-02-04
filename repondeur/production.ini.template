@@ -79,6 +79,10 @@ port = 6543
 workers = $$gunicorn_workers
 timeout = $$gunicorn_timeout
 
+# Don't limit size of URLs (nginx will filter really large ones upstream)
+# https://docs.gunicorn.org/en/stable/settings.html#limit-request-line
+limit_request_line = 0
+
 
 [alembic]
 script_location = db_migrations

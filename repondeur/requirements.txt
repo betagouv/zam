@@ -59,7 +59,7 @@ python-redis-lock==3.5.0
 python-slugify==4.0.0
 python-throttle==0.2.0
 pytz==2019.3
-redis==3.3.11
+redis==3.4.1
 regex==2020.1.8            # dateparser
 repoze.sendmail==4.4.1      # pyramid-mailer
 requests==2.20.1            # lawfactory_utils, legipy: < 2.21, >= 2.20

@@ -19,7 +19,7 @@ from zam_repondeur.models.events.lecture import (
 )
 from zam_repondeur.services.data import repository
 from zam_repondeur.services.fetch import get_articles
-from zam_repondeur.services.fetch.amendements import RemoteSource
+from zam_repondeur.services.fetch.amendements import FetchResult, RemoteSource
 from zam_repondeur.services.fetch.an.dossiers.models import DossierRef, LectureRef
 from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
 from zam_repondeur.tasks.huey import huey
@@ -85,6 +85,9 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             logger.error(f"Lecture {lecture_pk} introuvable")
             return False
 
+        total_timer = Timer()
+        total_timer.start()
+
         logger.info("Récupération des amendements de %r", lecture)
 
         # This allows disabling the prefetching in tests.
@@ -101,51 +104,75 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             source.prepare(lecture)
         logger.info("Time to prepare: %.1fs", prepare_timer.elapsed())
 
-        # Collect data about new and updated amendements.
-        with Timer() as collect_timer:
-            changes = source.collect_changes(lecture)
-        logger.info("Time to collect: %.1fs", collect_timer.elapsed())
+        cumulated_result = FetchResult.create()
 
-        # Then apply the actual changes in a fresh transaction, in order to minimize
-        # the duration of database locks (if we hold locks too long, we could have
-        # synchronization issues with the webapp, causing unwanted delays for users
-        # on some interactive operations).
+        nb_batches = 1
+        start_index = 0
 
-        # But during tests we want everything to run in a single transaction that
-        # we can roll back at the end.
-        if not huey.immediate:
-            transaction.commit()
-            DBSession.expire_all()
+        while True:
 
-        lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
-        if lecture is None:
-            logger.error(f"Lecture {lecture_pk} introuvable")
-            return False
+            logger.info("Starting to collect batch #%d", nb_batches)
 
-        with Timer() as apply_timer:
-            fetch_result = source.apply_changes(lecture, changes)
-        logger.info("Time to apply: %.1fs", apply_timer.elapsed())
+            # Collect data about new and updated amendements.
+            with Timer() as collect_timer:
+                changes = source.collect_changes(
+                    lecture=lecture, start_index=start_index
+                )
+            logger.info("Time to collect batch: %.1fs", collect_timer.elapsed())
 
-        logger.info(
-            "Total time: %.1fs",
-            sum(t.elapsed() for t in (prepare_timer, collect_timer, apply_timer)),
-        )
+            # Then apply the actual changes in a fresh transaction, in order to minimize
+            # the duration of database locks (if we hold locks too long, we could have
+            # synchronization issues with the webapp, causing unwanted delays for users
+            # on some interactive operations).
 
-        if not fetch_result.amendements:
-            AmendementsNonTrouves.create(lecture=lecture)
+            # But during tests we want everything to run in a single transaction that
+            # we can roll back at the end.
+            if not huey.immediate:
+                transaction.commit()
+                DBSession.expire_all()
 
-        if fetch_result.created:
-            AmendementsRecuperes.create(lecture=lecture, count=fetch_result.created)
+            lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
+            if lecture is None:
+                logger.error(f"Lecture {lecture_pk} introuvable")
+                return False
 
-        if fetch_result.errored:
-            AmendementsNonRecuperes.create(
-                lecture=lecture, missings=fetch_result.errored
+            with Timer() as apply_timer:
+                batch_result = source.apply_changes(lecture, changes)
+            logger.info("Time to apply batch: %.1fs", apply_timer.elapsed())
+
+            logger.info(
+                "Total batch time: %.1fs",
+                sum(t.elapsed() for t in (prepare_timer, collect_timer, apply_timer)),
             )
 
-        if fetch_result.changed:
+            if batch_result.created:
+                AmendementsRecuperes.create(lecture=lecture, count=batch_result.created)
+
+            if batch_result.errored:
+                AmendementsNonRecuperes.create(
+                    lecture=lecture, missings=batch_result.errored
+                )
+
+            cumulated_result += batch_result
+            if batch_result.next_start_index is None:
+                break
+
+            start_index = batch_result.next_start_index
+
+            nb_batches += 1
+
+        total_timer.stop()
+        logger.info(
+            "Total time for %d batches: %.1fs", nb_batches, total_timer.elapsed()
+        )
+
+        if not cumulated_result.amendements:
+            AmendementsNonTrouves.create(lecture=lecture)
+
+        if cumulated_result.changed:
             AmendementsAJour.create(lecture=lecture)
 
-        return fetch_result.changed
+        return cumulated_result.changed
 
 
 @huey.task()

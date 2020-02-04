@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 import responses
 import transaction
+from more_itertools import first_true
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data" / "senat"
@@ -170,13 +171,13 @@ def test_aspire_senat(app, lecture_senat, settings):
 
     source = Senat(settings=settings)
 
-    amendements, created, errored = source.fetch(lecture_senat)
+    result = source.fetch(lecture_senat)
 
     # All amendements are fetched
-    assert len(amendements) == 595
+    assert len(result.amendements) == 595
 
     # Check details of #1
-    amendement = [amendement for amendement in amendements if amendement.num == 1][0]
+    amendement = first_true(result.amendements, pred=lambda amdt: amdt.num == 1)
     assert amendement.num == 1
     assert amendement.rectif == 1
     assert amendement.article.num == "7"
@@ -211,7 +212,7 @@ def test_aspire_senat(app, lecture_senat, settings):
 
     # Check that #596 has a parent
     sous_amendement = [
-        amendement for amendement in amendements if amendement.num == 596
+        amendement for amendement in result.amendements if amendement.num == 596
     ][0]
     assert sous_amendement.parent.num == 229
     assert sous_amendement.parent.rectif == 1
@@ -266,12 +267,16 @@ def test_aspire_senat_again_with_irrecevable(app, lecture_senat, settings):
 
     source = Senat(settings=settings)
 
-    amendements, created, errored = source.fetch(lecture_senat)
-    amendement = [amendement for amendement in amendements if amendement.num == 1][0]
+    result = source.fetch(lecture_senat)
+    amendement = [
+        amendement for amendement in result.amendements if amendement.num == 1
+    ][0]
     assert len(amendement.events) == 3
 
-    amendements, created, errored = source.fetch(lecture_senat)
-    amendement = [amendement for amendement in amendements if amendement.num == 1][0]
+    result = source.fetch(lecture_senat)
+    amendement = [
+        amendement for amendement in result.amendements if amendement.num == 1
+    ][0]
     assert len(amendement.events) == 4
 
     assert isinstance(amendement.events[3], AmendementIrrecevable)
@@ -340,8 +345,10 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
     source = Senat(settings=settings)
 
     # Let's fetch a new amendement
-    amendements, created, errored = source.fetch(lecture_senat)
-    amendement = [amendement for amendement in amendements if amendement.num == 1][0]
+    result = source.fetch(lecture_senat)
+    amendement = [
+        amendement for amendement in result.amendements if amendement.num == 1
+    ][0]
     assert len(amendement.events) == 3
 
     # Put it on a user table
@@ -351,8 +358,10 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
     assert amendement.location.user_table == user_david_table_an
 
     # Now fetch the same amendement again (now irrecevable)
-    amendements, created, errored = source.fetch(lecture_senat)
-    amendement = [amendement for amendement in amendements if amendement.num == 1][0]
+    result = source.fetch(lecture_senat)
+    amendement = [
+        amendement for amendement in result.amendements if amendement.num == 1
+    ][0]
     assert len(amendement.events) == 5  # two more
 
     # An irrecevable event has been created
@@ -411,13 +420,13 @@ def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie, settings):
 
     source = Senat(settings=settings)
 
-    amendements, created, errored = source.fetch(lecture_plf_1re_partie)
+    result = source.fetch(lecture_plf_1re_partie)
 
     # All amendements from part 1 are fetched
-    assert len(amendements) == 1005
+    assert len(result.amendements) == 1005
 
     # Missions are not set on first part
-    assert amendements[0].mission_titre is None
+    assert result.amendements[0].mission_titre is None
 
 
 @responses.activate
@@ -472,27 +481,33 @@ def test_aspire_senat_plf2019_2e_partie(app, lecture_plf_2e_partie, settings):
 
     source = Senat(settings=settings)
 
-    amendements, created, errored = source.fetch(lecture_plf_2e_partie)
+    result = source.fetch(lecture_plf_2e_partie)
 
     # All amendements from part 2 are fetched
-    assert len(amendements) == 35
+    assert len(result.amendements) == 35
 
     # Positions are unique
-    positions = [amdt.position for amdt in amendements if amdt.position is not None]
+    positions = [
+        amdt.position for amdt in result.amendements if amdt.position is not None
+    ]
     assert len(set(positions)) == len(positions) == 12
 
     # Missions are filled
     assert (
-        amendements[0].mission_titre
+        result.amendements[0].mission_titre
         == "Budget annexe - Contrôle et exploitation aériens"
     )
     assert (
-        amendements[1].mission_titre
+        result.amendements[1].mission_titre
         == "Budget annexe - Contrôle et exploitation aériens"
     )
-    assert amendements[0].mission_titre_court == "Contrôle et exploitation aériens"
-    assert amendements[1].mission_titre_court == "Contrôle et exploitation aériens"
-    assert amendements[2].mission_titre is None
+    assert (
+        result.amendements[0].mission_titre_court == "Contrôle et exploitation aériens"
+    )
+    assert (
+        result.amendements[1].mission_titre_court == "Contrôle et exploitation aériens"
+    )
+    assert result.amendements[2].mission_titre is None
 
 
 @responses.activate

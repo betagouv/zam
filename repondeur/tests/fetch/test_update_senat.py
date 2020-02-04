@@ -14,12 +14,11 @@ def read_sample_data(basename):
 
 
 @responses.activate
-def test_position_changed(lecture_senat, settings):
+def test_position_changed(lecture_senat, source_senat):
     """
     The discussion order of amendements may change
     """
 
-    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
     responses.add(
@@ -49,16 +48,14 @@ def test_position_changed(lecture_senat, settings):
 
     DBSession.add(lecture_senat)
 
-    source = Senat(settings=settings)
-
-    source.fetch(lecture_senat)
+    source_senat.fetch(lecture_senat)
 
     assert {amdt.num: amdt.position for amdt in lecture_senat.amendements} == {
         31: 1,
         443: 2,
     }
 
-    source.fetch(lecture_senat)
+    source_senat.fetch(lecture_senat)
 
     assert {amdt.num: amdt.position for amdt in lecture_senat.amendements} == {
         31: 2,
@@ -67,13 +64,12 @@ def test_position_changed(lecture_senat, settings):
 
 
 @responses.activate
-def test_abandoned_before_seance(lecture_senat, settings):
+def test_abandoned_before_seance(lecture_senat, source_senat):
     """
     An amendement that is either withdrawn by its author or declared invalid
     will be removed from the "liste_discussion"
     """
 
-    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
     responses.add(
@@ -103,16 +99,14 @@ def test_abandoned_before_seance(lecture_senat, settings):
 
     DBSession.add(lecture_senat)
 
-    source = Senat(settings=settings)
-
-    source.fetch(lecture_senat)
+    source_senat.fetch(lecture_senat)
 
     assert {amdt.num: amdt.position for amdt in lecture_senat.amendements} == {
         31: 1,
         443: 2,
     }
 
-    source.fetch(lecture_senat)
+    source_senat.fetch(lecture_senat)
 
     assert {amdt.num: amdt.position for amdt in lecture_senat.amendements} == {
         31: 1,
@@ -121,12 +115,11 @@ def test_abandoned_before_seance(lecture_senat, settings):
 
 
 @responses.activate
-def test_article_changed(lecture_senat, settings):
+def test_article_changed(lecture_senat, source_senat):
     """
     The targeted article may change
     """
 
-    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
     responses.add(
@@ -162,16 +155,14 @@ def test_article_changed(lecture_senat, settings):
 
     DBSession.add(lecture_senat)
 
-    source = Senat(settings=settings)
-
-    source.fetch(lecture_senat)
+    source_senat.fetch(lecture_senat)
 
     assert {amdt.num: str(amdt.article) for amdt in lecture_senat.amendements} == {
         31: "Art. 3",
         443: "Art. 4",
     }
 
-    source.fetch(lecture_senat)
+    source_senat.fetch(lecture_senat)
 
     assert {amdt.num: str(amdt.article) for amdt in lecture_senat.amendements} == {
         31: "Art. 3",
@@ -180,12 +171,11 @@ def test_article_changed(lecture_senat, settings):
 
 
 @responses.activate
-def test_add_parent_amendement(lecture_senat, settings):
+def test_add_parent_amendement(lecture_senat, source_senat):
     """
     The targeted article may change
     """
 
-    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
     responses.add(
@@ -215,16 +205,14 @@ def test_add_parent_amendement(lecture_senat, settings):
 
     DBSession.add(lecture_senat)
 
-    source = Senat(settings=settings)
-
-    source.fetch(lecture_senat)
+    source_senat.fetch(lecture_senat)
 
     assert {
         amdt.num: amdt.parent.num if amdt.parent else None
         for amdt in lecture_senat.amendements
     } == {31: None, 443: None}
 
-    source.fetch(lecture_senat)
+    source_senat.fetch(lecture_senat)
 
     assert {
         amdt.num: amdt.parent.num if amdt.parent else None
@@ -233,12 +221,11 @@ def test_add_parent_amendement(lecture_senat, settings):
 
 
 @responses.activate
-def test_remove_parent_amendement(lecture_senat, settings):
+def test_remove_parent_amendement(lecture_senat, source_senat):
     """
     The targeted article may change
     """
 
-    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
     responses.add(
@@ -268,16 +255,14 @@ def test_remove_parent_amendement(lecture_senat, settings):
 
     DBSession.add(lecture_senat)
 
-    source = Senat(settings=settings)
-
-    source.fetch(lecture_senat)
+    source_senat.fetch(lecture_senat)
 
     assert {
         amdt.num: amdt.parent.num if amdt.parent else None
         for amdt in lecture_senat.amendements
     } == {31: None, 443: 31}
 
-    source.fetch(lecture_senat)
+    source_senat.fetch(lecture_senat)
 
     assert {
         amdt.num: amdt.parent.num if amdt.parent else None

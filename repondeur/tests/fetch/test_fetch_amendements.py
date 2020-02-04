@@ -2,17 +2,9 @@ from collections import OrderedDict
 from textwrap import dedent
 from unittest.mock import patch
 
-import pytest
 import transaction
 
 from fetch.mock_an import setup_mock_responses
-
-
-@pytest.fixture(scope="module")
-def source_senat(settings):
-    from zam_repondeur.services.fetch.senat.amendements import Senat
-
-    return Senat(settings=settings)
 
 
 def test_fetch_amendements_senat(
@@ -178,13 +170,6 @@ def test_fetch_amendements_senat(
     # Check that the position is set for the new amendement
     amendement = DBSession.query(Amendement).filter(Amendement.num == 7777).one()
     assert amendement.position == 2
-
-
-@pytest.fixture(scope="module")
-def source_an(settings):
-    from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
-
-    return AssembleeNationale(settings=settings)
 
 
 def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):

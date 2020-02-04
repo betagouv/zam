@@ -689,9 +689,10 @@ def test_rectif_with_nil(lecture_an, source_an):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        amendements, created, errored = source_an.fetch(lecture=lecture_an)
+        result = source_an.fetch(lecture=lecture_an)
 
-    assert errored == []
+    assert result.errored == []
+
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 0
 

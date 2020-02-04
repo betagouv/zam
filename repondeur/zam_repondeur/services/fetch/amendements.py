@@ -65,6 +65,7 @@ class FetchResult(NamedTuple):
     amendements: List[Amendement]
     created: int
     errored: List[str]
+    next_start_index: Optional[int]
 
     @property
     def changed(self) -> bool:
@@ -76,16 +77,27 @@ class FetchResult(NamedTuple):
         amendements: List[Amendement] = [],
         created: int = 0,
         errored: List[str] = [],
+        next_start_index: Optional[int] = None,
     ) -> "FetchResult":
-        return cls(amendements=amendements, created=created, errored=errored)
+        return cls(
+            amendements=amendements,
+            created=created,
+            errored=errored,
+            next_start_index=next_start_index,
+        )
 
     def __add__(self: "FetchResult", other: object) -> "FetchResult":
         if not isinstance(other, FetchResult):
             raise TypeError
+        if other.next_start_index is None:
+            next_start_index = self.next_start_index
+        else:
+            next_start_index = other.next_start_index
         return FetchResult(
             amendements=self.amendements + other.amendements,
             created=self.created + other.created,
             errored=self.errored + other.errored,
+            next_start_index=next_start_index,
         )
 
 
@@ -99,6 +111,7 @@ class CollectedChanges(NamedTuple):
     actions: List["Action"]
     unchanged: List[int]
     errored: List[str]
+    next_start_index: Optional[int]
 
     @classmethod
     def create(
@@ -108,6 +121,7 @@ class CollectedChanges(NamedTuple):
         actions: Optional[List["Action"]] = None,
         unchanged: Optional[List[int]] = None,
         errored: Optional[List[str]] = None,
+        next_start_index: Optional[int] = None,
     ) -> "CollectedChanges":
         if position_changes is None:
             position_changes = {}
@@ -118,7 +132,12 @@ class CollectedChanges(NamedTuple):
         if errored is None:
             errored = []
         return cls(
-            derouleur_fetch_success, position_changes, actions, unchanged, errored
+            derouleur_fetch_success,
+            position_changes,
+            actions,
+            unchanged,
+            errored,
+            next_start_index,
         )
 
 
@@ -269,11 +288,13 @@ class RemoteSource(Source):
     def prepare(self, lecture: Lecture) -> None:
         pass
 
-    def fetch(self, lecture: Lecture) -> FetchResult:
-        changes = self.collect_changes(lecture)
+    def fetch(self, lecture: Lecture, start_index: int = 0) -> FetchResult:
+        changes = self.collect_changes(lecture, start_index=start_index)
         return self.apply_changes(lecture, changes)
 
-    def collect_changes(self, lecture: Lecture) -> CollectedChanges:
+    def collect_changes(
+        self, lecture: Lecture, start_index: int = 0
+    ) -> CollectedChanges:
         raise NotImplementedError()
 
     def apply_changes(self, lecture: Lecture, changes: CollectedChanges) -> FetchResult:

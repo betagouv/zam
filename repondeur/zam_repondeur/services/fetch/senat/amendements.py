@@ -39,7 +39,9 @@ class Senat(RemoteSource):
                 self._fetch(lecture, dry_run=True)
             logger.info("Temps de préchargement : %.1fs", timer.elapsed())
 
-    def collect_changes(self, lecture: Lecture) -> CollectedChanges:
+    def collect_changes(
+        self, lecture: Lecture, start_index: int = 0
+    ) -> CollectedChanges:
         # TODO: split into separate collect_changes/apply_changes like AN
         return CollectedChanges.create()
 

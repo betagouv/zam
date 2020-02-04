@@ -26,7 +26,9 @@ def read_sample_data(basename):
 def source(settings):
     from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
 
-    return AssembleeNationale(settings={"zam.fetch.an.max_404": "20"})
+    return AssembleeNationale(
+        settings={"zam.fetch.an.batch_size": "25", "zam.fetch.an.max_404": "20"}
+    )
 
 
 def assert_html_looks_like(value, expected):
@@ -54,37 +56,37 @@ class TestFetchAndParseAll:
                 ("192", read_sample_data("an/269/192.xml")),
             ),
         ):
-            amendements, created, errored = source.fetch(lecture=lecture_an)
+            result = source.fetch(lecture=lecture_an)
 
-        assert len(amendements) == 5
+        assert len(result.amendements) == 5
 
-        assert amendements[0].num == 177
-        assert amendements[0].position == 1
-        assert amendements[0].id_discussion_commune is None
-        assert amendements[0].id_identique == 20386
+        assert result.amendements[0].num == 177
+        assert result.amendements[0].position == 1
+        assert result.amendements[0].id_discussion_commune is None
+        assert result.amendements[0].id_identique == 20386
 
-        assert amendements[1].num == 270
-        assert amendements[1].position == 2
-        assert amendements[1].id_discussion_commune is None
-        assert amendements[1].id_identique == 20386
+        assert result.amendements[1].num == 270
+        assert result.amendements[1].position == 2
+        assert result.amendements[1].id_discussion_commune is None
+        assert result.amendements[1].id_identique == 20386
 
-        assert amendements[2].num == 723
-        assert amendements[2].position == 3
-        assert amendements[2].id_discussion_commune is None
-        assert amendements[2].id_identique is None
+        assert result.amendements[2].num == 723
+        assert result.amendements[2].position == 3
+        assert result.amendements[2].id_discussion_commune is None
+        assert result.amendements[2].id_identique is None
 
-        assert amendements[3].num == 135
-        assert amendements[3].position == 4
-        assert amendements[3].id_discussion_commune is None
-        assert amendements[3].id_identique is None
+        assert result.amendements[3].num == 135
+        assert result.amendements[3].position == 4
+        assert result.amendements[3].id_discussion_commune is None
+        assert result.amendements[3].id_identique is None
 
-        assert amendements[4].num == 192
-        assert amendements[4].position == 5
-        assert amendements[4].id_discussion_commune is None
-        assert amendements[4].id_identique == 20439
+        assert result.amendements[4].num == 192
+        assert result.amendements[4].position == 5
+        assert result.amendements[4].id_discussion_commune is None
+        assert result.amendements[4].id_identique == 20439
 
-        assert created == 5
-        assert errored == []
+        assert result.created == 5
+        assert result.errored == []
 
     @responses.activate
     def test_simple_amendements_progress_status(
@@ -110,26 +112,23 @@ class TestFetchAndParseAll:
         ), patch(
             "zam_repondeur.services.progress.ProgressRepository.set_fetch_progress"
         ) as mocked_set_fetch_progress:
-            amendements, created, errored = source.fetch(lecture=lecture_an)
+            result = source.fetch(lecture=lecture_an)
             # The progress is set for each amendement during the fetch.
             assert mocked_set_fetch_progress.call_args_list == [
-                call("1", 1, 5 + source.max_404),
-                call("1", 2, 5 + source.max_404),
-                call("1", 3, 5 + source.max_404),
-                call("1", 4, 5 + source.max_404),
-                call("1", 5, 5 + source.max_404),
+                call("1", i, source.batch_size) for i in range(1, source.batch_size + 1)
             ]
 
         # Once the fetch is complete, the progress status is back to empty.
         assert lecture_an.get_fetch_progress() == {}
 
-        assert len(amendements) == 5
-        assert created == 5
-        assert errored == []
+        assert len(result.amendements) == 5
+        assert result.created == 5
+        assert result.errored == []
 
     @responses.activate
     def test_fetch_amendements_not_in_discussion_list(self, lecture_an, app, source):
         from zam_repondeur.models import DBSession
+        from zam_repondeur.services.fetch.amendements import FetchResult
 
         DBSession.add(lecture_an)
 
@@ -159,22 +158,29 @@ class TestFetchAndParseAll:
                 ("192", read_sample_data("an/269/192.xml")),
             ),
         ):
-            amendements, created, errored = source.fetch(lecture=lecture_an)
+            result = FetchResult.create(next_start_index=0)
+            while True:
+                batch_result = source.fetch(
+                    lecture=lecture_an, start_index=result.next_start_index
+                )
+                result += batch_result
+                if batch_result.next_start_index is None:
+                    break
 
-        assert len(amendements) == 2
+        assert len(result.amendements) == 2
 
-        assert amendements[0].num == 177
-        assert amendements[0].position == 1
-        assert amendements[0].id_discussion_commune is None
-        assert amendements[0].id_identique == 20386
+        assert result.amendements[0].num == 177
+        assert result.amendements[0].position == 1
+        assert result.amendements[0].id_discussion_commune is None
+        assert result.amendements[0].id_identique == 20386
 
-        assert amendements[1].num == 192
-        assert amendements[1].position is None
-        assert amendements[1].id_discussion_commune is None
-        assert amendements[1].id_identique is None
+        assert result.amendements[1].num == 192
+        assert result.amendements[1].position is None
+        assert result.amendements[1].id_discussion_commune is None
+        assert result.amendements[1].id_identique is None
 
-        assert created == 2
-        assert errored == []
+        assert result.created == 2
+        assert result.errored == []
 
     @responses.activate
     def test_commission(self, lecture_an, app, source):
@@ -190,18 +196,18 @@ class TestFetchAndParseAll:
                 ("AS2", read_sample_data("an/1408-CION-SOC/AS2.xml")),
             ),
         ):
-            amendements, created, errored = source.fetch(lecture=lecture_an)
+            result = source.fetch(lecture=lecture_an)
 
-        assert len(amendements) == 2
+        assert len(result.amendements) == 2
 
-        assert amendements[0].num == 1
-        assert amendements[0].position == 1
+        assert result.amendements[0].num == 1
+        assert result.amendements[0].position == 1
 
-        assert amendements[1].num == 2
-        assert amendements[1].position is None
+        assert result.amendements[1].num == 2
+        assert result.amendements[1].position is None
 
-        assert created == 2
-        assert errored == []
+        assert result.created == 2
+        assert result.errored == []
 
     @responses.activate
     def test_sous_amendements(
@@ -230,31 +236,31 @@ class TestFetchAndParseAll:
                 ("3", read_sample_data("an/911/3.xml")),
             ),
         ):
-            amendements, created, errored = source.fetch(lecture=lecture)
+            result = source.fetch(lecture=lecture)
 
-        assert len(amendements) == 3
+        assert len(result.amendements) == 3
 
-        assert amendements[0].num == 1
-        assert amendements[0].position == 1
-        assert amendements[0].id_discussion_commune == 3448
-        assert amendements[0].id_identique == 8496
+        assert result.amendements[0].num == 1
+        assert result.amendements[0].position == 1
+        assert result.amendements[0].id_discussion_commune == 3448
+        assert result.amendements[0].id_identique == 8496
 
-        assert amendements[1].num == 2
-        assert amendements[1].position == 2
-        assert amendements[1].id_discussion_commune is None
-        assert amendements[1].id_identique is None
+        assert result.amendements[1].num == 2
+        assert result.amendements[1].position == 2
+        assert result.amendements[1].id_discussion_commune is None
+        assert result.amendements[1].id_identique is None
 
-        assert amendements[2].num == 3
-        assert amendements[2].position == 3
-        assert amendements[2].id_discussion_commune is None
-        assert amendements[1].id_identique is None
+        assert result.amendements[2].num == 3
+        assert result.amendements[2].position == 3
+        assert result.amendements[2].id_discussion_commune is None
+        assert result.amendements[1].id_identique is None
 
-        for amendement in amendements[1:]:
-            assert amendement.parent is amendements[0]
-            assert amendement.parent_pk == amendements[0].pk
+        for amendement in result.amendements[1:]:
+            assert amendement.parent is result.amendements[0]
+            assert amendement.parent_pk == result.amendements[0].pk
 
-        assert created == 3
-        assert errored == []
+        assert result.created == 3
+        assert result.errored == []
 
     @responses.activate
     def test_with_404(self, lecture_an, app, source):
@@ -273,17 +279,17 @@ class TestFetchAndParseAll:
                 ("192", read_sample_data("an/269/192.xml")),
             ),
         ):
-            amendements, created, errored = source.fetch(lecture=lecture_an)
+            result = source.fetch(lecture=lecture_an)
 
-        assert len(amendements) == 4
-        assert amendements[0].num == 177
-        assert amendements[1].num == 723
-        assert amendements[2].num == 135
-        assert amendements[3].num == 192
+        assert len(result.amendements) == 4
+        assert result.amendements[0].num == 177
+        assert result.amendements[1].num == 723
+        assert result.amendements[2].num == 135
+        assert result.amendements[3].num == 192
 
-        assert [amdt.position for amdt in amendements] == [1, 3, 4, 5]
-        assert created == 4
-        assert errored == ["270"]
+        assert [amdt.position for amdt in result.amendements] == [1, 3, 4, 5]
+        assert result.created == 4
+        assert result.errored == ["270"]
 
 
 class TestGetOrganeAbrev:
@@ -1247,6 +1253,137 @@ class TestFetchAmendementAgain:
 
         assert child2.parent_pk == parent2.pk
         assert child2.parent is parent2
+
+
+def test_amendements_to_collect(lecture_an, source):
+    from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
+
+    derouleur = ANDerouleurData(
+        lecture=lecture_an,
+        content={
+            "amdtsParOrdreDeDiscussion": {
+                "amendements": {
+                    "amendement": [
+                        {
+                            "@numero": "2",
+                            "@discussionCommune": "1234",
+                            "@discussionIdentique": "5678",
+                        }
+                    ]
+                }
+            }
+        },
+    )
+
+    prefixed_nums = source._amendements_to_collect(derouleur)
+
+    assert next(prefixed_nums) == "2"  # listed first
+    assert next(prefixed_nums) == "1"  # then discovery
+    assert next(prefixed_nums) == "3"  # then discovery
+
+
+class TestBatching:
+    @responses.activate
+    def test_no_amendements_stop(self, lecture_an, source):
+        from zam_repondeur.models import DBSession
+
+        DBSession.add(lecture_an)
+
+        source.batch_size = 5
+        source.max_404 = 5
+
+        with setup_mock_responses(
+            lecture=lecture_an,
+            liste=dedent(
+                """\
+                <?xml version="1.0" encoding="UTF-8"?>
+                <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
+                  legislature="14"  titre="PLFSS 2017"
+                   type="projet de loi de financement de la sécurité sociale">
+                  <amendements>
+                  </amendements>
+                </amdtsParOrdreDeDiscussion>
+                """
+            ),
+            amendements=[],
+        ):
+            changes = source.collect_changes(lecture_an)
+
+        assert changes.next_start_index is None
+
+    @responses.activate
+    def test_one_amendement_stop(self, lecture_an, source):
+        from zam_repondeur.models import DBSession
+
+        DBSession.add(lecture_an)
+
+        source.batch_size = 5
+        source.max_404 = 4
+
+        with setup_mock_responses(
+            lecture=lecture_an,
+            liste=dedent(
+                """\
+                <?xml version="1.0" encoding="UTF-8"?>
+                <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
+                  legislature="14"  titre="PLFSS 2017"
+                   type="projet de loi de financement de la sécurité sociale">
+                  <amendements>
+                    <amendement place="Article 3" numero="1" sort="Rejeté"
+                        parentNumero="" auteurLabel="M. DOOR"
+                        auteurLabelFull="M. DOOR Jean-Pierre"
+                        auteurGroupe="Les Républicains" alineaLabel="S" missionLabel=""
+                        discussionCommune="" discussionCommuneAmdtPositon=""
+                        discussionCommuneSsAmdtPositon="" discussionIdentique="20386"
+                        discussionIdentiqueAmdtPositon="debut"
+                        discussionIdentiqueSsAmdtPositon="" position="001/772" />
+                  </amendements>
+                </amdtsParOrdreDeDiscussion>
+                """
+            ),
+            amendements=[("1", read_sample_data("an/269/177.xml"))],
+        ):
+            changes = source.collect_changes(lecture_an)
+
+        assert changes.next_start_index is None
+
+    @responses.activate
+    def test_one_amendement_go_on(self, lecture_an, source):
+        from zam_repondeur.models import DBSession
+
+        DBSession.add(lecture_an)
+
+        source.batch_size = 5
+        source.max_404 = 5
+
+        with setup_mock_responses(
+            lecture=lecture_an,
+            liste=dedent(
+                """\
+                <?xml version="1.0" encoding="UTF-8"?>
+                <amdtsParOrdreDeDiscussion  bibard="4072"  bibardSuffixe=""  organe="AN"
+                  legislature="14"  titre="PLFSS 2017"
+                   type="projet de loi de financement de la sécurité sociale">
+                  <amendements>
+                    <amendement place="Article 3" numero="1" sort="Rejeté"
+                        parentNumero="" auteurLabel="M. DOOR"
+                        auteurLabelFull="M. DOOR Jean-Pierre"
+                        auteurGroupe="Les Républicains" alineaLabel="S" missionLabel=""
+                        discussionCommune="" discussionCommuneAmdtPositon=""
+                        discussionCommuneSsAmdtPositon="" discussionIdentique="20386"
+                        discussionIdentiqueAmdtPositon="debut"
+                        discussionIdentiqueSsAmdtPositon="" position="001/772" />
+                  </amendements>
+                </amdtsParOrdreDeDiscussion>
+                """
+            ),
+            amendements=[("1", read_sample_data("an/269/177.xml"))],
+        ):
+            changes = source.collect_changes(lecture_an)
+            assert changes.next_start_index == 5
+
+            changes = source.collect_changes(lecture_an, start_index=5)
+            assert changes.next_start_index is None
 
 
 @pytest.mark.parametrize(

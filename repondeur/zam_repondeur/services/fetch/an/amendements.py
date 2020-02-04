@@ -2,7 +2,8 @@ import logging
 import re
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import Any, Dict, List, NamedTuple, Optional, Set, Tuple
+from itertools import chain, count, islice
+from typing import Any, Dict, Iterator, List, NamedTuple, Optional, Set, Tuple
 from urllib.parse import urljoin
 
 import xmltodict
@@ -46,6 +47,9 @@ PATTERN_AMENDEMENT_FALLBACK = (
     "{texte}{suffixe}/{organe_abrev}/{numero_prefixe}.xml"
 )
 
+# Don't try to fetch all amendements at once (which is long when there are thousands)
+BATCH_SIZE = 250
+
 # When trying to discover amendements published but not yet included in the list,
 # we can't try all possible numbers, so we'll stop after a string of 404s
 MAX_404 = 180
@@ -60,7 +64,13 @@ class OrganeNotFound(Exception):
 class AssembleeNationale(RemoteSource):
     def __init__(self, settings: Dict[str, Any], prefetching_enabled: bool = True):
         super().__init__(settings=settings, prefetching_enabled=prefetching_enabled)
+        self.batch_size = int(settings.get("zam.fetch.an.batch_size", BATCH_SIZE))
         self.max_404 = int(settings.get("zam.fetch.an.max_404", MAX_404))
+        if self.max_404 > self.batch_size:
+            raise ValueError(
+                f"zam.fetch.an.max_404 ({self.max_404}) cannot be higher "
+                f"than zam.fetch.an.batch_size ({self.batch_size})"
+            )
 
     def fetch_amendement(
         self, lecture: Lecture, numero_prefixe: str, position: Optional[int]
@@ -73,7 +83,9 @@ class AssembleeNationale(RemoteSource):
             amendement = result.amendements[0]
         return amendement, created
 
-    def collect_changes(self, lecture: Lecture) -> CollectedChanges:
+    def collect_changes(
+        self, lecture: Lecture, start_index: int = 0
+    ) -> CollectedChanges:
         try:
             derouleur = fetch_discussion_list(lecture)
         except NotFound:
@@ -84,49 +96,84 @@ class AssembleeNationale(RemoteSource):
 
         position_changes = derouleur.updated_amendement_positions()
 
-        actions, unchanged, errored = self._collect_amendements_discussed(
-            lecture, derouleur
+        numeros_prefixes: List[str] = list(
+            islice(
+                self._amendements_to_collect(derouleur),
+                start_index,
+                start_index + self.batch_size,
+            )
         )
 
-        other_actions, other_unchanged, other_errored = self._collect_amendements_other(
-            lecture=lecture,
-            discussion_nums=derouleur.discussion_nums,
-            prefix=derouleur.find_prefix(),
+        actions, unchanged, errored, nb_404 = self._collect_amendements(
+            lecture=lecture, derouleur=derouleur, numeros_prefixes=numeros_prefixes,
         )
+
+        # Should we trigger a next batch, or give up?
+        #
+        # We stop when:
+        # - we tried collecting all amendements up to the max number in derouleur
+        # - we received a number of 404 responses while trying to discover unlisted ones
+        max_index = start_index + self.batch_size - 1
+        discovery_covered_known_range = (max_index + 1) >= max(
+            derouleur.numeros, default=0
+        )
+        give_up_unlisted_discovery = nb_404 >= self.max_404
+
+        next_start_index: Optional[int]
+        if discovery_covered_known_range and give_up_unlisted_discovery:
+            next_start_index = None
+        else:
+            next_start_index = start_index + self.batch_size
 
         return CollectedChanges.create(
             position_changes=position_changes,
-            actions=actions + other_actions,
-            unchanged=unchanged + other_unchanged,
-            errored=errored + other_errored,
+            actions=actions,
+            unchanged=unchanged,
+            errored=errored,
+            next_start_index=next_start_index,
         )
 
-    def _collect_amendements_discussed(
-        self, lecture: Lecture, derouleur: "ANDerouleurData"
-    ) -> Tuple[List[Action], List[int], List[str]]:
+    def _amendements_to_collect(self, derouleur: "ANDerouleurData") -> Iterator[str]:
+        listed = self._listed_amendements(derouleur)
+        unlisted = self._unlisted_amendements(derouleur)
+        return chain(listed, unlisted)
+
+    def _listed_amendements(self, derouleur: "ANDerouleurData") -> Iterator[str]:
+        return (item["@numero"] for item in derouleur.discussion_items)
+
+    def _unlisted_amendements(self, derouleur: "ANDerouleurData") -> Iterator[str]:
+        prefix = derouleur.find_prefix()
+        listed = derouleur.numeros
+
+        all_nums = count(1)
+        filtered = (num for num in all_nums if num not in listed)
+        prefixed = (f"{prefix}{num}" for num in filtered)
+        return prefixed
+
+    def _collect_amendements(
+        self,
+        lecture: Lecture,
+        derouleur: "ANDerouleurData",
+        numeros_prefixes: List[str],
+    ) -> Tuple[List[Action], List[int], List[str], int]:
         actions: List[Action] = []
         unchanged: List[int] = []
         errored: List[str] = []
+        nb_404 = 0
 
-        total = len(derouleur.discussion_items)
+        total = len(numeros_prefixes)
 
-        for position, item in enumerate(derouleur.discussion_items, start=1):
-            numero_prefixe = item["@numero"]
-            id_discussion_commune = (
-                int(item["@discussionCommune"]) if item["@discussionCommune"] else None
-            )
-            id_identique = (
-                int(item["@discussionIdentique"])
-                if item["@discussionIdentique"]
-                else None
-            )
+        for index, numero_prefixe in enumerate(numeros_prefixes, start=1):
+            self._set_fetch_progress(lecture, index, total)
             try:
                 amendement, action = self._collect_amendement(
                     lecture=lecture,
                     numero_prefixe=numero_prefixe,
-                    position=position,
-                    id_discussion_commune=id_discussion_commune,
-                    id_identique=id_identique,
+                    position=derouleur.position.get(numero_prefixe),
+                    id_discussion_commune=derouleur.id_discussion_commune.get(
+                        numero_prefixe
+                    ),
+                    id_identique=derouleur.id_identique.get(numero_prefixe),
                 )
                 if action is not None:
                     actions.append(action)
@@ -135,60 +182,16 @@ class AssembleeNationale(RemoteSource):
                         raise ValueError("Invalid amendement return value")
                     unchanged.append(amendement.num)
             except NotFound:
-                prefix, num = ANDerouleurData.parse_num_in_liste(numero_prefixe)
-                logger.warning("Could not find amendement %r for %r", num, lecture)
-                errored.append(str(num))
+                logger.debug("Amendement %s not found", numero_prefixe)
+                if numero_prefixe in derouleur.numeros_prefixes:
+                    errored.append(numero_prefixe)
+                nb_404 += 1
                 continue
             except Exception:
-                prefix, num = ANDerouleurData.parse_num_in_liste(numero_prefixe)
-                logger.exception(
-                    "Error while fetching amendement %r for %r", num, lecture
-                )
-                errored.append(str(num))
+                logger.exception("Error while fetching amendement %r", numero_prefixe)
+                errored.append(numero_prefixe)
                 continue
-            self._set_fetch_progress(lecture, position, total)
-        return actions, unchanged, errored
-
-    def _collect_amendements_other(
-        self, lecture: Lecture, discussion_nums: Set[int], prefix: str
-    ) -> Tuple[List[Action], List[int], List[str]]:
-        actions: List[Action] = []
-        unchanged: List[int] = []
-        errored: List[str] = []
-
-        max_num_in_liste = max(discussion_nums, default=0)
-        max_num_in_lecture = max((amdt.num for amdt in lecture.amendements), default=0)
-        max_num_seen = max(max_num_in_liste, max_num_in_lecture)
-
-        numero = 0
-
-        while numero < (max_num_seen + self.max_404):
-            numero += 1
-            if numero in discussion_nums:
-                continue
-            try:
-                amendement, action = self._collect_amendement(
-                    lecture=lecture,
-                    numero_prefixe=f"{prefix}{numero}",
-                    position=None,
-                    id_discussion_commune=None,
-                    id_identique=None,
-                )
-                if action is not None:
-                    actions.append(action)
-                else:
-                    if amendement is None:
-                        raise ValueError("Invalid amendement return value")
-                    unchanged.append(amendement.num)
-            except NotFound:
-                continue
-            except Exception:
-                logger.exception("Error while fetching amendement %r", numero)
-                errored.append(str(numero))
-                continue
-            if numero > max_num_seen:
-                max_num_seen = numero
-        return actions, unchanged, errored
+        return actions, unchanged, errored, nb_404
 
     def _collect_amendement(
         self,
@@ -303,7 +306,6 @@ class AssembleeNationale(RemoteSource):
         return amendement, action
 
     def _set_fetch_progress(self, lecture: Lecture, position: int, total: int) -> None:
-        total = total + self.max_404
         lecture.set_fetch_progress(position, total)
 
     def apply_changes(self, lecture: Lecture, changes: CollectedChanges) -> FetchResult:
@@ -313,7 +315,9 @@ class AssembleeNationale(RemoteSource):
             if amdt is not None
         ]
         result = FetchResult.create(
-            amendements=unchanged_amendements, errored=changes.errored
+            amendements=unchanged_amendements,
+            errored=changes.errored,
+            next_start_index=changes.next_start_index,
         )
 
         # Build amendement -> position map
@@ -461,22 +465,55 @@ def build_url(
 
 class ANDerouleurData:
     """
-    Data extaction for Assemblée Nationale dérouleur
+    Data extraction for Assemblée Nationale dérouleur
     """
 
     def __init__(self, lecture: Lecture, content: dict):
         self.lecture = lecture
-        self.content = content
+        self.discussion_items = self._discussion_items(content)
+        self.position = self._position(self.discussion_items)
+        self.id_discussion_commune = self._id_discussion_commune(self.discussion_items)
+        self.id_identique = self._id_identique(self.discussion_items)
 
-    @reify
-    def discussion_items(self) -> List[OrderedDict]:
+    def _discussion_items(self, content: dict) -> List[OrderedDict]:
         try:
             items: List[OrderedDict] = (
-                self.content["amdtsParOrdreDeDiscussion"]["amendements"]["amendement"]
+                content["amdtsParOrdreDeDiscussion"]["amendements"]["amendement"]
             )
             return items
         except TypeError:
             return []
+
+    def _position(self, discussion_items: List[OrderedDict]) -> Dict[str, int]:
+        return {
+            item["@numero"]: position
+            for position, item in enumerate(discussion_items, start=1)
+        }
+
+    def _id_discussion_commune(
+        self, discussion_items: List[OrderedDict]
+    ) -> Dict[str, Optional[int]]:
+        return {
+            item["@numero"]: (
+                int(item["@discussionCommune"]) if item["@discussionCommune"] else None
+            )
+            for item in discussion_items
+        }
+
+    def _id_identique(
+        self, discussion_items: List[OrderedDict]
+    ) -> Dict[str, Optional[int]]:
+        return {
+            item["@numero"]: (
+                int(item["@discussionIdentique"])
+                if item["@discussionIdentique"]
+                else None
+            )
+            for item in discussion_items
+        }
+
+    def batch(self, start: int, size: int) -> List[OrderedDict]:
+        return self.discussion_items[start : start + size]
 
     def find_prefix(self) -> str:
         if self.discussion_items:
@@ -486,8 +523,12 @@ class ANDerouleurData:
         return get_organe_prefix(self.lecture.organe)
 
     @property
-    def discussion_nums(self) -> Set[int]:
+    def numeros(self) -> Set[int]:
         return {self.parse_num_in_liste(d["@numero"])[1] for d in self.discussion_items}
+
+    @property
+    def numeros_prefixes(self) -> Set[str]:
+        return set(self.position)
 
     @classmethod
     def parse_num_in_liste(cls, num_long: str) -> Tuple[str, int]:

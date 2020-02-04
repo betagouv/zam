@@ -80,7 +80,7 @@ class AssembleeNationale(RemoteSource):
             return CollectedChanges.create(derouleur_fetch_success=False)
 
         if not derouleur.discussion_items:
-            logger.warning("Could not find amendements from %r", lecture)
+            logger.warning("Empty amendement list for %r", lecture)
 
         position_changes = derouleur.updated_amendement_positions()
 

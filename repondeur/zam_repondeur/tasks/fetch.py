@@ -123,7 +123,7 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             return False
 
         with Timer() as apply_timer:
-            amendements, created, errored = source.apply_changes(lecture, changes)
+            fetch_result = source.apply_changes(lecture, changes)
         logger.info("Time to apply: %.1fs", apply_timer.elapsed())
 
         logger.info(
@@ -131,20 +131,21 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             sum(t.elapsed() for t in (prepare_timer, collect_timer, apply_timer)),
         )
 
-        if not amendements:
+        if not fetch_result.amendements:
             AmendementsNonTrouves.create(lecture=lecture)
 
-        if created:
-            AmendementsRecuperes.create(lecture=lecture, count=created)
+        if fetch_result.created:
+            AmendementsRecuperes.create(lecture=lecture, count=fetch_result.created)
 
-        if errored:
-            AmendementsNonRecuperes.create(lecture=lecture, missings=errored)
+        if fetch_result.errored:
+            AmendementsNonRecuperes.create(
+                lecture=lecture, missings=fetch_result.errored
+            )
 
-        changed = bool(amendements and not (created or errored))
-        if changed:
+        if fetch_result.changed:
             AmendementsAJour.create(lecture=lecture)
 
-        return changed
+        return fetch_result.changed
 
 
 @huey.task()

@@ -21,15 +21,8 @@ def read_sample_data(basename):
     return (SAMPLE_DATA_DIR / basename).read_text()
 
 
-@pytest.fixture
-def source(settings):
-    from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
-
-    return AssembleeNationale(settings=settings)
-
-
 @responses.activate
-def test_position_changed(lecture_an, source):
+def test_position_changed(lecture_an, source_an):
     """
     The discussion order of amendements may change
     """
@@ -71,7 +64,7 @@ def test_position_changed(lecture_an, source):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
     assert [amdt.position for amdt in lecture_an.amendements] == [1, 2]
@@ -110,14 +103,14 @@ def test_position_changed(lecture_an, source):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
     assert [amdt.position for amdt in lecture_an.amendements] == [2, 1]
 
 
 @responses.activate
-def test_abandoned_before_seance(lecture_an, source):
+def test_abandoned_before_seance(lecture_an, source_an):
     """
     An amendement that is either withdrawn by its author or declared invalid
     will be removed from the list
@@ -160,7 +153,7 @@ def test_abandoned_before_seance(lecture_an, source):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
     assert [amdt.position for amdt in lecture_an.amendements] == [1, 2]
@@ -191,14 +184,14 @@ def test_abandoned_before_seance(lecture_an, source):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
     assert [amdt.position for amdt in lecture_an.amendements] == [None, 1]
 
 
 @responses.activate
-def test_article_changed(lecture_an, source):
+def test_article_changed(lecture_an, source_an):
     """
     The targeted article may change
     """
@@ -241,7 +234,7 @@ def test_article_changed(lecture_an, source):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert str(amendement.article) == "Art. 3"
@@ -307,14 +300,14 @@ def test_article_changed(lecture_an, source):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert str(amendement.article) == "Art. 4"
 
 
 @responses.activate
-def test_add_parent_amendement(lecture_an, source):
+def test_add_parent_amendement(lecture_an, source_an):
     """
     A standalone amendement can become a « sous-amendement »
     """
@@ -357,7 +350,7 @@ def test_add_parent_amendement(lecture_an, source):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
     assert amendement.parent is None
@@ -403,7 +396,7 @@ def test_add_parent_amendement(lecture_an, source):
             ),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
     assert amendement.parent is not None
@@ -411,7 +404,7 @@ def test_add_parent_amendement(lecture_an, source):
 
 
 @responses.activate
-def test_remove_parent_amendement(lecture_an, source):
+def test_remove_parent_amendement(lecture_an, source_an):
     """
     A « sous-amendement » can become a standalone one
     """
@@ -460,7 +453,7 @@ def test_remove_parent_amendement(lecture_an, source):
             ),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
     assert amendement.parent is not None
@@ -501,14 +494,14 @@ def test_remove_parent_amendement(lecture_an, source):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
     assert amendement.parent is None
 
 
 @responses.activate
-def test_rectif(lecture_an, source):
+def test_rectif(lecture_an, source_an):
     from zam_repondeur.models import DBSession, Amendement
     from zam_repondeur.models.events.amendement import AmendementRectifie
 
@@ -549,7 +542,7 @@ def test_rectif(lecture_an, source):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 0
@@ -595,7 +588,7 @@ def test_rectif(lecture_an, source):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 2
@@ -606,7 +599,7 @@ def test_rectif(lecture_an, source):
 
 
 @responses.activate
-def test_rectif_with_nil(lecture_an, source):
+def test_rectif_with_nil(lecture_an, source_an):
     from zam_repondeur.models import DBSession, Amendement
     from zam_repondeur.models.events.amendement import AmendementRectifie
 
@@ -647,7 +640,7 @@ def test_rectif_with_nil(lecture_an, source):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        source.fetch(lecture=lecture_an)
+        source_an.fetch(lecture=lecture_an)
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 0
@@ -696,7 +689,7 @@ def test_rectif_with_nil(lecture_an, source):
             ("270", read_sample_data("an/269/270.xml")),
         ),
     ):
-        amendements, created, errored = source.fetch(lecture=lecture_an)
+        amendements, created, errored = source_an.fetch(lecture=lecture_an)
 
     assert errored == []
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()

@@ -114,13 +114,17 @@ class AssembleeNationale(RemoteSource):
             )
         )
 
+        max_num_in_liste = max(derouleur.numeros, default=0)
+        max_num_in_lecture = max((amdt.num for amdt in lecture.amendements), default=0)
+        max_num_seen = max(max_num_in_liste, max_num_in_lecture)
+
         progress_bar = ProgressBar(
             lecture=lecture,
             start_index=start_index,
             total=max(1, len(derouleur.numeros) // self.batch_size) * self.batch_size,
         )
 
-        actions, unchanged, errored, nb_404 = self._collect_amendements(
+        actions, unchanged, errored, consecutive_404s = self._collect_amendements(
             lecture=lecture,
             derouleur=derouleur,
             numeros_prefixes=numeros_prefixes,
@@ -133,10 +137,8 @@ class AssembleeNationale(RemoteSource):
         # - we tried collecting all amendements up to the max number in derouleur
         # - we received a number of 404 responses while trying to discover unlisted ones
         max_index = start_index + self.batch_size - 1
-        discovery_covered_known_range = (max_index + 1) >= max(
-            derouleur.numeros, default=0
-        )
-        give_up_unlisted_discovery = nb_404 >= self.max_404
+        discovery_covered_known_range = (max_index + 1) >= max_num_seen
+        give_up_unlisted_discovery = consecutive_404s >= self.max_404
 
         next_start_index: Optional[int]
         if discovery_covered_known_range and give_up_unlisted_discovery:
@@ -179,7 +181,7 @@ class AssembleeNationale(RemoteSource):
         actions: List[Action] = []
         unchanged: List[int] = []
         errored: List[str] = []
-        nb_404 = 0
+        consecutive_404s = 0
 
         for offset, numero_prefixe in enumerate(numeros_prefixes):
             progress_bar.advance(offset)
@@ -199,17 +201,18 @@ class AssembleeNationale(RemoteSource):
                     if amendement is None:
                         raise ValueError("Invalid amendement return value")
                     unchanged.append(amendement.num)
+                consecutive_404s = 0
             except NotFound:
                 logger.debug("Amendement %s not found", numero_prefixe)
                 if numero_prefixe in derouleur.numeros_prefixes:
                     errored.append(numero_prefixe)
-                nb_404 += 1
+                consecutive_404s += 1
                 continue
             except Exception:
                 logger.exception("Error while fetching amendement %r", numero_prefixe)
                 errored.append(numero_prefixe)
                 continue
-        return actions, unchanged, errored, nb_404
+        return actions, unchanged, errored, consecutive_404s
 
     def _collect_amendement(
         self,

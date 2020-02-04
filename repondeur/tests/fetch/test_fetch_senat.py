@@ -130,7 +130,7 @@ class TestBuildAmendementsURL:
 
 
 @responses.activate
-def test_aspire_senat(app, lecture_senat):
+def test_aspire_senat(app, lecture_senat, settings):
     from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
     from zam_repondeur.models.events.amendement import (
@@ -168,7 +168,7 @@ def test_aspire_senat(app, lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    source = Senat()
+    source = Senat(settings=settings)
 
     amendements, created, errored = source.fetch(lecture_senat)
 
@@ -218,7 +218,7 @@ def test_aspire_senat(app, lecture_senat):
 
 
 @responses.activate
-def test_aspire_senat_again_with_irrecevable(app, lecture_senat):
+def test_aspire_senat_again_with_irrecevable(app, lecture_senat, settings):
     from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
     from zam_repondeur.models.events.amendement import AmendementIrrecevable
@@ -264,7 +264,7 @@ def test_aspire_senat_again_with_irrecevable(app, lecture_senat):
 
     DBSession.add(lecture_senat)
 
-    source = Senat()
+    source = Senat(settings=settings)
 
     amendements, created, errored = source.fetch(lecture_senat)
     amendement = [amendement for amendement in amendements if amendement.num == 1][0]
@@ -287,7 +287,7 @@ def test_aspire_senat_again_with_irrecevable(app, lecture_senat):
 
 @responses.activate
 def test_aspire_senat_again_with_irrecevable_transfers_to_index(
-    app, lecture_senat, user_david_table_an
+    app, lecture_senat, user_david_table_an, settings
 ):
     from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
@@ -337,7 +337,7 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
 
     DBSession.add(lecture_senat)
 
-    source = Senat()
+    source = Senat(settings=settings)
 
     # Let's fetch a new amendement
     amendements, created, errored = source.fetch(lecture_senat)
@@ -376,7 +376,7 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
 
 
 @responses.activate
-def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie):
+def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie, settings):
     from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
@@ -409,7 +409,7 @@ def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie):
 
     DBSession.add(lecture_plf_1re_partie)
 
-    source = Senat()
+    source = Senat(settings=settings)
 
     amendements, created, errored = source.fetch(lecture_plf_1re_partie)
 
@@ -421,7 +421,7 @@ def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie):
 
 
 @responses.activate
-def test_aspire_senat_plf2019_2e_partie(app, lecture_plf_2e_partie):
+def test_aspire_senat_plf2019_2e_partie(app, lecture_plf_2e_partie, settings):
     from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
 
@@ -470,7 +470,7 @@ def test_aspire_senat_plf2019_2e_partie(app, lecture_plf_2e_partie):
 
     DBSession.add(lecture_plf_2e_partie)
 
-    source = Senat()
+    source = Senat(settings=settings)
 
     amendements, created, errored = source.fetch(lecture_plf_2e_partie)
 

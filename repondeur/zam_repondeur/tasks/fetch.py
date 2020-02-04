@@ -91,7 +91,9 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
         prefetching_enabled = int(huey.settings["zam.http_cache_duration"]) > 0
 
         source = RemoteSource.get_remote_source_for_chambre(
-            chambre=lecture.chambre, prefetching_enabled=prefetching_enabled
+            chambre=lecture.chambre,
+            settings=huey.settings,
+            prefetching_enabled=prefetching_enabled,
         )
 
         # Allow prefetching of URLs into the requests cached session.

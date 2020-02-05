@@ -43,5 +43,5 @@ toml==0.10.0
 typed-ast==1.4.1
 waitress==1.4.3
 wcwidth==0.1.8
-WebTest==2.0.33
+WebTest==2.0.34
 zipp==2.1.0

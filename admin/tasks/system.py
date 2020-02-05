@@ -43,13 +43,27 @@ def system(ctx):
 @task
 def setup_postgres(ctx):
     install_packages(ctx, "postgresql")
-    sudo_put(
-        ctx,
+    shared_buffers = total_memory(ctx) // 4  # 25% total RAM
+    with template_local_file(
+        "files/postgres.conf.template",
         "files/postgres.conf",
-        "/etc/postgresql/10/main/conf.d/zam.conf",
-        chown="postgres",
-    )
+        {"shared_buffers": shared_buffers},
+    ):
+        sudo_put(
+            ctx,
+            "files/postgres.conf",
+            "/etc/postgresql/10/main/conf.d/zam.conf",
+            chown="postgres",
+        )
     ctx.sudo("systemctl reload postgresql@10-main")
+
+
+def total_memory(ctx):
+    """
+    Return server's total memory in MB
+    """
+    mem_total = int(ctx.run("awk '/MemTotal/ {print $2}' /proc/meminfo").stdout.strip())
+    return mem_total // 1024
 
 
 @task

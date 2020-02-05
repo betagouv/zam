@@ -15,6 +15,14 @@ from zam_repondeur.tasks.fetch import fetch_amendements
 @view_config(context=LectureResource, name="manual_refresh")
 def manual_refresh(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
+    amendements_collection = context["amendements"]
+    if lecture.get_fetch_progress():
+        request.session.flash(
+            Message(
+                cls="warning", text="Rafraîchissement des amendements déjà en cours."
+            )
+        )
+        return HTTPFound(location=request.resource_url(amendements_collection))
     fetch_amendements(lecture.pk)
     # The progress is initialized even if the task is async for early feedback
     # to users and ability to disable the refresh button.
@@ -24,7 +32,6 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
     request.session.flash(
         Message(cls="success", text="Rafraîchissement des amendements en cours.")
     )
-    amendements_collection = context["amendements"]
     return HTTPFound(location=request.resource_url(amendements_collection))
 
 

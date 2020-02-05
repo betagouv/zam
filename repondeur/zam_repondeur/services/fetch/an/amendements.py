@@ -1,4 +1,5 @@
 import logging
+import math
 import re
 from collections import OrderedDict
 from http import HTTPStatus
@@ -68,7 +69,8 @@ class ProgressBar:
         self.total = total
 
     def advance(self, offset: int) -> None:
-        self.lecture.set_fetch_progress(self.start_index + offset + 1, self.total)
+        progress = self.start_index + offset + 1
+        self.lecture.set_fetch_progress(progress, max(progress, self.total))
 
 
 class AssembleeNationale(RemoteSource):
@@ -118,10 +120,12 @@ class AssembleeNationale(RemoteSource):
         max_num_in_lecture = max((amdt.num for amdt in lecture.amendements), default=0)
         max_num_seen = max(max_num_in_liste, max_num_in_lecture)
 
+        expected_max_index = max_num_seen + self.max_404
+
         progress_bar = ProgressBar(
             lecture=lecture,
             start_index=start_index,
-            total=max(1, len(derouleur.numeros) // self.batch_size) * self.batch_size,
+            total=round_up(expected_max_index, self.batch_size),
         )
 
         actions, unchanged, errored, consecutive_404s = self._collect_amendements(
@@ -365,6 +369,13 @@ class AssembleeNationale(RemoteSource):
         lecture.reset_fetch_progress()
 
         return result
+
+
+def round_up(n: int, m: int) -> int:
+    """
+    Round N up to the next multiple of M
+    """
+    return int(math.ceil(n / m)) * m
 
 
 def get_organe_prefix(organe: str) -> str:

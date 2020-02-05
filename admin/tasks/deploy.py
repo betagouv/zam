@@ -89,7 +89,6 @@ def deploy_repondeur(
 
         create_directory(ctx, "/var/cache/zam/http", owner=user)
 
-        gunicorn_workers = (cpu_count(ctx) * 2) + 1
         setup_config(
             ctx,
             app_dir=app_dir,
@@ -101,8 +100,6 @@ def deploy_repondeur(
                 "session_secret": session_secret,
                 "auth_secret": auth_secret,
                 "rollbar_token": ctx.config["rollbar_token"],
-                "gunicorn_workers": gunicorn_workers,
-                "gunicorn_timeout": ctx.config["request_timeout"],
                 "menu_badge_label": menu_badge_label,
                 "menu_badge_color": menu_badge_color,
             },
@@ -224,7 +221,17 @@ def setup_webapp_service(ctx):
         )
         + " || exit 0"
     )
-    sudo_put(ctx, "files/zam_webapp.service", "/etc/systemd/system/zam_webapp.service")
+    with template_local_file(
+        "files/zam_webapp.service.template",
+        "files/zam_webapp.service",
+        {
+            "gunicorn_workers": (cpu_count(ctx) * 2) + 1,
+            "gunicorn_timeout": ctx.config["request_timeout"],
+        },
+    ):
+        sudo_put(
+            ctx, "files/zam_webapp.service", "/etc/systemd/system/zam_webapp.service"
+        )
     ctx.sudo("systemctl daemon-reload")
     ctx.sudo("systemctl enable zam_webapp")
 

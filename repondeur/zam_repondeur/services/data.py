@@ -52,6 +52,10 @@ class DataRepository(Repository):
     legislatures: List[int] = []
 
     @needs_init
+    def clear_data(self) -> None:
+        self.connection.flushdb()
+
+    @needs_init
     def reset_locks(self) -> None:
         reset_all(self.connection)
 

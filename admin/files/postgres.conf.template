@@ -1,0 +1,10 @@
+# Performance tuning
+# https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server
+shared_buffers = $${shared_buffers}MB
+work_mem = 16MB
+
+# Log transactions blocked on a lock
+log_lock_waits = on
+
+# Log slow queries
+log_min_duration_statement = 250ms

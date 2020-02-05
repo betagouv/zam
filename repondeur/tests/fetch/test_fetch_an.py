@@ -115,7 +115,7 @@ class TestFetchAndParseAll:
             result = source.fetch(lecture=lecture_an)
             # The progress is set for each amendement during the fetch.
             assert mocked_set_fetch_progress.call_args_list == [
-                call("1", i, source.batch_size) for i in range(1, source.batch_size + 1)
+                call("1", i + 1, 750) for i in range(source.batch_size)
             ]
 
         # Once the fetch is complete, the progress status is back to empty.
@@ -148,7 +148,7 @@ class TestFetchAndParseAll:
                         discussionCommune="" discussionCommuneAmdtPositon=""
                         discussionCommuneSsAmdtPositon="" discussionIdentique="20386"
                         discussionIdentiqueAmdtPositon="debut"
-                        discussionIdentiqueSsAmdtPositon="" position="001/772" />
+                        discussionIdentiqueSsAmdtPositon="" position="1/1" />
                   </amendements>
                 </amdtsParOrdreDeDiscussion>
                 """
@@ -318,6 +318,7 @@ class TestFetchDiscussionList:
     @responses.activate
     def test_simple_amendements(self, lecture_an, app):
         from zam_repondeur.services.fetch.an.amendements import (
+            ANDerouleurItem,
             build_url,
             fetch_discussion_list,
         )
@@ -331,29 +332,19 @@ class TestFetchDiscussionList:
 
         derouleur = fetch_discussion_list(lecture=lecture_an)
 
-        assert len(derouleur.discussion_items) == 5
-        assert derouleur.discussion_items[0] == {
-            "@alineaLabel": "S",
-            "@auteurGroupe": "Les Républicains",
-            "@auteurLabel": "M. DOOR",
-            "@auteurLabelFull": "M. DOOR Jean-Pierre",
-            "@discussionCommune": "",
-            "@discussionCommuneAmdtPositon": "",
-            "@discussionCommuneSsAmdtPositon": "",
-            "@discussionIdentique": "20386",
-            "@discussionIdentiqueAmdtPositon": "debut",
-            "@discussionIdentiqueSsAmdtPositon": "",
-            "@missionLabel": "",
-            "@numero": "177",
-            "@parentNumero": "",
-            "@place": "Article 3",
-            "@position": "001/772",
-            "@sort": "Rejeté",
-        }
+        assert len(derouleur.items) == 5
+        assert derouleur.items["177"] == ANDerouleurItem(
+            prefixe="",
+            numero=177,
+            id_discussion_commune=None,
+            id_identique=20386,
+            position=1,
+        )
 
     @responses.activate
     def test_only_one_amendement(self, lecture_an, app):
         from zam_repondeur.services.fetch.an.amendements import (
+            ANDerouleurItem,
             build_url,
             fetch_discussion_list,
         )
@@ -375,7 +366,7 @@ class TestFetchDiscussionList:
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/1"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -385,25 +376,13 @@ class TestFetchDiscussionList:
 
         derouleur = fetch_discussion_list(lecture=lecture_an)
 
-        assert isinstance(derouleur.discussion_items, list)
-        assert derouleur.discussion_items[0] == {
-            "@alineaLabel": "S",
-            "@auteurGroupe": "Les Républicains",
-            "@auteurLabel": "M. DOOR",
-            "@auteurLabelFull": "M. DOOR Jean-Pierre",
-            "@discussionCommune": "",
-            "@discussionCommuneAmdtPositon": "",
-            "@discussionCommuneSsAmdtPositon": "",
-            "@discussionIdentique": "20386",
-            "@discussionIdentiqueAmdtPositon": "debut",
-            "@discussionIdentiqueSsAmdtPositon": "",
-            "@missionLabel": "",
-            "@numero": "177",
-            "@parentNumero": "",
-            "@place": "Article 3",
-            "@position": "001/772",
-            "@sort": "Rejeté",
-        }
+        assert derouleur.items["177"] == ANDerouleurItem(
+            prefixe="",
+            numero=177,
+            id_discussion_commune=None,
+            id_identique=20386,
+            position=1,
+        )
 
     @responses.activate
     def test_list_not_found(self, lecture_an, app):
@@ -1268,6 +1247,7 @@ def test_amendements_to_collect(lecture_an, source):
                             "@numero": "2",
                             "@discussionCommune": "1234",
                             "@discussionIdentique": "5678",
+                            "@position": "1/1",
                         }
                     ]
                 }
@@ -1336,7 +1316,7 @@ class TestBatching:
                         discussionCommune="" discussionCommuneAmdtPositon=""
                         discussionCommuneSsAmdtPositon="" discussionIdentique="20386"
                         discussionIdentiqueAmdtPositon="debut"
-                        discussionIdentiqueSsAmdtPositon="" position="001/772" />
+                        discussionIdentiqueSsAmdtPositon="" position="1/1" />
                   </amendements>
                 </amdtsParOrdreDeDiscussion>
                 """
@@ -1372,7 +1352,7 @@ class TestBatching:
                         discussionCommune="" discussionCommuneAmdtPositon=""
                         discussionCommuneSsAmdtPositon="" discussionIdentique="20386"
                         discussionIdentiqueAmdtPositon="debut"
-                        discussionIdentiqueSsAmdtPositon="" position="001/772" />
+                        discussionIdentiqueSsAmdtPositon="" position="1/1" />
                   </amendements>
                 </amdtsParOrdreDeDiscussion>
                 """

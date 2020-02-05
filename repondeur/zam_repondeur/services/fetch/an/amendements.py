@@ -8,7 +8,8 @@ from typing import Any, Dict, Iterator, List, NamedTuple, Optional, Set, Tuple
 from urllib.parse import urljoin
 
 import xmltodict
-from requests.exceptions import ConnectionError
+from more_itertools import first
+from requests.exceptions import ConnectionError as RequestsConnectionError
 
 from zam_repondeur.decorator import reify
 from zam_repondeur.models import Amendement, DBSession, Lecture
@@ -103,7 +104,7 @@ class AssembleeNationale(RemoteSource):
         except NotFound:
             return CollectedChanges.create(derouleur_fetch_success=False)
 
-        if not derouleur.discussion_items:
+        if not derouleur.items:
             logger.warning("Empty amendement list for %r", lecture)
 
         position_changes = derouleur.updated_amendement_positions()
@@ -164,7 +165,7 @@ class AssembleeNationale(RemoteSource):
         return chain(listed, unlisted)
 
     def _listed_amendements(self, derouleur: "ANDerouleurData") -> Iterator[str]:
-        return (item["@numero"] for item in derouleur.discussion_items)
+        return (item.numero_prefixe for item in derouleur.items.values())
 
     def _unlisted_amendements(self, derouleur: "ANDerouleurData") -> Iterator[str]:
         prefix = derouleur.find_prefix()
@@ -190,14 +191,13 @@ class AssembleeNationale(RemoteSource):
         for offset, numero_prefixe in enumerate(numeros_prefixes):
             progress_bar.advance(offset)
             try:
+                item = derouleur.items.get(numero_prefixe)
                 amendement, action = self._collect_amendement(
                     lecture=lecture,
                     numero_prefixe=numero_prefixe,
-                    position=derouleur.position.get(numero_prefixe),
-                    id_discussion_commune=derouleur.id_discussion_commune.get(
-                        numero_prefixe
-                    ),
-                    id_identique=derouleur.id_identique.get(numero_prefixe),
+                    position=item.position if item else None,
+                    id_discussion_commune=item.id_discussion_commune if item else None,
+                    id_identique=item.id_identique if item else None,
                 )
                 if action is not None:
                     actions.append(action)
@@ -402,7 +402,7 @@ def _retrieve_content(
     http_session = get_http_session()
     try:
         resp = http_session.get(url)
-    except ConnectionError:
+    except RequestsConnectionError:
         raise NotFound(url)
 
     if resp.status_code == HTTPStatus.NOT_FOUND:
@@ -492,6 +492,45 @@ def build_url(
     return url
 
 
+class ANDerouleurItem(NamedTuple):
+    prefixe: str
+    numero: int
+    id_discussion_commune: Optional[int]
+    id_identique: Optional[int]
+    position: int
+
+    @property
+    def numero_prefixe(self) -> str:
+        return self.prefixe + str(self.numero)
+
+    @classmethod
+    def parse(cls, item: dict) -> "ANDerouleurItem":
+        prefixe, numero = cls.parse_num_in_liste(item["@numero"])
+        return cls(
+            prefixe=prefixe,
+            numero=numero,
+            id_discussion_commune=(
+                int(item["@discussionCommune"]) if item["@discussionCommune"] else None
+            ),
+            id_identique=(
+                int(item["@discussionIdentique"])
+                if item["@discussionIdentique"]
+                else None
+            ),
+            position=int(item["@position"].split("/")[0]),
+        )
+
+    @classmethod
+    def parse_num_in_liste(cls, num_long: str) -> Tuple[str, int]:
+        mo = _RE_NUM.match(num_long)
+        if mo is None:
+            raise ValueError(f"Cannot parse amendement number {num_long!r}")
+        return mo.group("acronyme"), int(mo.group("num"))
+
+
+_RE_NUM = re.compile(r"(?P<acronyme>[A-Z]*)(?P<num>\d+)")
+
+
 class ANDerouleurData:
     """
     Data extraction for Assemblée Nationale dérouleur
@@ -499,74 +538,36 @@ class ANDerouleurData:
 
     def __init__(self, lecture: Lecture, content: dict):
         self.lecture = lecture
-        self.discussion_items = self._discussion_items(content)
-        self.position = self._position(self.discussion_items)
-        self.id_discussion_commune = self._id_discussion_commune(self.discussion_items)
-        self.id_identique = self._id_identique(self.discussion_items)
+        self.items = {item.numero_prefixe: item for item in self._parse_items(content)}
 
-    def _discussion_items(self, content: dict) -> List[OrderedDict]:
+    def _parse_items(self, content: dict) -> List[ANDerouleurItem]:
         try:
-            items: List[OrderedDict] = (
-                content["amdtsParOrdreDeDiscussion"]["amendements"]["amendement"]
-            )
+            items: List[ANDerouleurItem] = [
+                ANDerouleurItem.parse(item)
+                for item in content["amdtsParOrdreDeDiscussion"]["amendements"][
+                    "amendement"
+                ]
+            ]
             return items
         except TypeError:
             return []
 
-    def _position(self, discussion_items: List[OrderedDict]) -> Dict[str, int]:
-        return {
-            item["@numero"]: position
-            for position, item in enumerate(discussion_items, start=1)
-        }
-
-    def _id_discussion_commune(
-        self, discussion_items: List[OrderedDict]
-    ) -> Dict[str, Optional[int]]:
-        return {
-            item["@numero"]: (
-                int(item["@discussionCommune"]) if item["@discussionCommune"] else None
-            )
-            for item in discussion_items
-        }
-
-    def _id_identique(
-        self, discussion_items: List[OrderedDict]
-    ) -> Dict[str, Optional[int]]:
-        return {
-            item["@numero"]: (
-                int(item["@discussionIdentique"])
-                if item["@discussionIdentique"]
-                else None
-            )
-            for item in discussion_items
-        }
-
-    def batch(self, start: int, size: int) -> List[OrderedDict]:
-        return self.discussion_items[start : start + size]
+    def batch(self, start: int, size: int) -> List[ANDerouleurItem]:
+        return list(islice(self.items.values(), start, start + size))
 
     def find_prefix(self) -> str:
-        if self.discussion_items:
-            numero_prefixe = self.discussion_items[0]["@numero"]
-            prefix, _ = self.parse_num_in_liste(numero_prefixe)
-            return prefix
+        if self.items:
+            item = first(self.items.values())
+            return item.prefixe
         return get_organe_prefix(self.lecture.organe)
 
     @property
     def numeros(self) -> Set[int]:
-        return {self.parse_num_in_liste(d["@numero"])[1] for d in self.discussion_items}
+        return {item.numero for item in self.items.values()}
 
     @property
     def numeros_prefixes(self) -> Set[str]:
-        return set(self.position)
-
-    @classmethod
-    def parse_num_in_liste(cls, num_long: str) -> Tuple[str, int]:
-        mo = cls._RE_NUM.match(num_long)
-        if mo is None:
-            raise ValueError(f"Cannot parse amendement number {num_long!r}")
-        return mo.group("acronyme"), int(mo.group("num"))
-
-    _RE_NUM = re.compile(r"(?P<acronyme>[A-Z]*)(?P<num>\d+)")
+        return {item.numero_prefixe for item in self.items.values()}
 
     def updated_amendement_positions(self) -> Dict[int, Optional[int]]:
 
@@ -574,10 +575,7 @@ class ANDerouleurData:
 
         current_order = {amdt.num: amdt.position for amdt in amendements}
 
-        new_order = {
-            self.parse_num_in_liste(item["@numero"])[1]: index
-            for index, item in enumerate(self.discussion_items, start=1)
-        }
+        new_order = {item.numero: item.position for item in self.items.values()}
 
         for amdt in amendements:
             if amdt.num not in current_order:

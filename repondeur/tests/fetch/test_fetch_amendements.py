@@ -203,16 +203,19 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "3/3",
                             },
                         ]
                     }
@@ -314,16 +317,19 @@ def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "3/3",
                             },
                         ]
                     }
@@ -419,16 +425,19 @@ def test_fetch_amendements_an_without_auteur_key(
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "3/3",
                             },
                         ]
                     }
@@ -524,16 +533,19 @@ def test_fetch_amendements_an_without_group_tribun_id(
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "3/3",
                             },
                         ]
                     }
@@ -639,16 +651,19 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "3/3",
                             },
                         ]
                     }
@@ -741,16 +756,19 @@ def test_fetch_amendements_with_errored(
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "3/3",
                             },
                         ]
                     }
@@ -816,16 +834,19 @@ def test_fetch_amendements_with_connection_errors(
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "3/3",
                             },
                         ]
                     }
@@ -866,11 +887,13 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
                                 "@numero": "666",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "1/2",
                             },
                             {
                                 "@numero": "999",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "2/2",
                             },
                         ]
                     }
@@ -951,11 +974,13 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
                                 "@numero": "666",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "1/2",
                             },
                             {
                                 "@numero": "999",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
+                                "@position": "2/2",
                             },
                         ]
                     }

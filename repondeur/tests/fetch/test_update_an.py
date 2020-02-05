@@ -46,7 +46,7 @@ def test_position_changed(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="270"  sort="Rejeté"
                     parentNumero=""  auteurLabel="M. ACCOYER"
                     auteurLabelFull="M. ACCOYER Bernard"
@@ -54,7 +54,7 @@ def test_position_changed(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -85,7 +85,7 @@ def test_position_changed(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="177"  sort="Rejeté"
                     parentNumero=""  auteurLabel="M. DOOR"
                     auteurLabelFull="M. DOOR Jean-Pierre"
@@ -93,7 +93,7 @@ def test_position_changed(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -135,7 +135,7 @@ def test_abandoned_before_seance(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="270"  sort="Rejeté"
                     parentNumero=""  auteurLabel="M. ACCOYER"
                     auteurLabelFull="M. ACCOYER Bernard"
@@ -143,7 +143,7 @@ def test_abandoned_before_seance(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -174,7 +174,7 @@ def test_abandoned_before_seance(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/1"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -216,7 +216,7 @@ def test_article_changed(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="270"  sort="Rejeté"
                     parentNumero=""  auteurLabel="M. ACCOYER"
                     auteurLabelFull="M. ACCOYER Bernard"
@@ -224,7 +224,7 @@ def test_article_changed(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -256,7 +256,7 @@ def test_article_changed(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="270"  sort="Rejeté"
                     parentNumero=""  auteurLabel="M. ACCOYER"
                     auteurLabelFull="M. ACCOYER Bernard"
@@ -264,7 +264,7 @@ def test_article_changed(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -332,7 +332,7 @@ def test_add_parent_amendement(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="270"  sort="Rejeté"
                     parentNumero=""  auteurLabel="M. ACCOYER"
                     auteurLabelFull="M. ACCOYER Bernard"
@@ -340,7 +340,7 @@ def test_add_parent_amendement(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -372,7 +372,7 @@ def test_add_parent_amendement(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="270"  sort="Rejeté"
                     parentNumero="177"  auteurLabel="M. ACCOYER"
                     auteurLabelFull="M. ACCOYER Bernard"
@@ -380,7 +380,7 @@ def test_add_parent_amendement(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -429,7 +429,7 @@ def test_remove_parent_amendement(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="270"  sort="Rejeté"
                     parentNumero="177"  auteurLabel="M. ACCOYER"
                     auteurLabelFull="M. ACCOYER Bernard"
@@ -437,7 +437,7 @@ def test_remove_parent_amendement(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -476,7 +476,7 @@ def test_remove_parent_amendement(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="270"  sort="Rejeté"
                     parentNumero=""  auteurLabel="M. ACCOYER"
                     auteurLabelFull="M. ACCOYER Bernard"
@@ -484,7 +484,7 @@ def test_remove_parent_amendement(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -524,7 +524,7 @@ def test_rectif(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="270"  sort="Rejeté"
                     parentNumero=""  auteurLabel="M. ACCOYER"
                     auteurLabelFull="M. ACCOYER Bernard"
@@ -532,7 +532,7 @@ def test_rectif(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -564,7 +564,7 @@ def test_rectif(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="270"  sort="Rejeté"
                     parentNumero=""  auteurLabel="M. ACCOYER"
                     auteurLabelFull="M. ACCOYER Bernard"
@@ -572,7 +572,7 @@ def test_rectif(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -622,7 +622,7 @@ def test_rectif_with_nil(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="270"  sort="Rejeté"
                     parentNumero=""  auteurLabel="M. ACCOYER"
                     auteurLabelFull="M. ACCOYER Bernard"
@@ -630,7 +630,7 @@ def test_rectif_with_nil(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """
@@ -662,7 +662,7 @@ def test_rectif_with_nil(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="debut"
-                    discussionIdentiqueSsAmdtPositon=""  position="001/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="1/2"  />
                 <amendement  place="Article 3"  numero="270"  sort="Rejeté"
                     parentNumero=""  auteurLabel="M. ACCOYER"
                     auteurLabelFull="M. ACCOYER Bernard"
@@ -670,7 +670,7 @@ def test_rectif_with_nil(lecture_an, source_an):
                     discussionCommune=""  discussionCommuneAmdtPositon=""
                     discussionCommuneSsAmdtPositon=""  discussionIdentique="20386"
                     discussionIdentiqueAmdtPositon="milieu"
-                    discussionIdentiqueSsAmdtPositon=""  position="002/772"  />
+                    discussionIdentiqueSsAmdtPositon=""  position="2/2"  />
               </amendements>
             </amdtsParOrdreDeDiscussion>
             """

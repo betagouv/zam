@@ -2,7 +2,7 @@ from pyramid.request import Request
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload, load_only, subqueryload
 
-from zam_repondeur.models import Batch
+from zam_repondeur.models import Amendement, Article, Batch, DBSession
 from zam_repondeur.resources import AmendementCollection
 
 
@@ -12,9 +12,21 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
     The index lists all amendements in a lecture
     """
     lecture_resource = context.parent
-    lecture = lecture_resource.model(
-        subqueryload("articles").defer("content"),
-        subqueryload("amendements").options(
+    article_param = request.params.get("article", "article.1..")
+    article_type, article_num, article_mult, article_pos = article_param.split(".")
+    lecture = lecture_resource.model(subqueryload("articles").defer("content"))
+    amendements = (
+        DBSession.query(Amendement)
+        .join(Article)
+        .filter(
+            Article.pk == Amendement.article_pk,
+            Amendement.lecture == lecture,
+            Article.type == article_type,
+            Article.num == article_num,
+            Article.mult == article_mult,
+            Article.pos == article_pos,
+        )
+        .options(
             load_only(
                 "article_pk",
                 "auteur",
@@ -41,16 +53,19 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
                 .joinedload("user")
                 .load_only("email", "name"),
             ),
-        ),
+        )
     )
-    all_amendements = sorted(lecture.amendements)
+    amendements = sorted(amendements)
+    total_count_amendements = lecture.nb_amendements
     return {
         "lecture": lecture,
         "dossier_resource": lecture_resource.dossier_resource,
         "lecture_resource": lecture_resource,
         "current_tab": "index",
-        "all_amendements": all_amendements,
-        "collapsed_amendements": Batch.collapsed_batches(all_amendements),
+        "total_count_amendements": total_count_amendements,
+        "article_count_amendements": len(amendements),
+        "collapsed_amendements": Batch.collapsed_batches(amendements),
         "articles": lecture.articles,
+        "article_param": article_param,
         "progress_url": request.resource_url(lecture_resource, "progress_status"),
     }

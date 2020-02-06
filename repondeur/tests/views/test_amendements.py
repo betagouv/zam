@@ -13,7 +13,9 @@ def test_no_amendements(app, lecture_an_url, user_david):
 
     assert resp.status_code == 200
     assert "Dossier de banc" not in resp.text
-    assert "Les amendements ne sont pas encore disponibles." in resp.text
+    assert (
+        "Les amendements ne sont pas encore disponibles pour cet article." in resp.text
+    )
 
 
 def test_get_amendements_with_avis(app, lecture_an_url, amendements_an, user_david):
@@ -66,26 +68,6 @@ def test_get_amendements_order_default(app, lecture_an_url, amendements_an, user
     assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
         headers_rows_length:
     ] == ["Art. 1 666 Voir", "Art. 1 999 Voir"]
-
-
-def test_get_amendements_order_fallback_article(
-    app, lecture_an_url, amendements_an, user_david, article7bis_an
-):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        for amendement in amendements_an:
-            amendement.position = None
-        amendements_an[0].article = article7bis_an
-        DBSession.add_all(amendements_an)
-
-    resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
-
-    assert resp.status_code == 200
-    assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(3)")] == [
-        "999",
-        "666",
-    ]
 
 
 def test_get_amendements_order_abandoned_last(
@@ -194,7 +176,47 @@ def test_get_amendements_columns_default(
         node.text().strip().split()
         for node in resp.parser.css("thead tr.filters th")
         if node.text().strip().split()
-    ] == [["Article"], ["Nº", "Gouv."], ["Table/boîte", "Vide"], ["Avis"], ["Réponse"]]
+    ] == [
+        ["Art.", "1"],
+        ["Nº", "Gouv."],
+        ["Table/boîte", "Vide"],
+        ["Avis"],
+        ["Réponse"],
+    ]
+    options = resp.parser.css("thead tr.filters th select option")
+    assert "selected" in options[0].attributes
+
+
+def test_get_amendements_columns_not_default_article(
+    app, lecture_an_url, amendements_an, article7bis_an, user_david
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        amendements_an[0].article = article7bis_an
+        DBSession.add_all(amendements_an)
+
+    resp = app.get(
+        f"{lecture_an_url}/amendements/",
+        params={"article": "article.7.bis."},
+        user=user_david,
+    )
+
+    assert resp.status_code == 200
+    assert [
+        node.text().strip().split()
+        for node in resp.parser.css("thead tr.filters th")
+        if node.text().strip().split()
+    ] == [
+        ["Art.", "1", "Art.", "7", "bis"],
+        ["Nº", "Gouv."],
+        ["Table/boîte", "Vide"],
+        ["Avis"],
+        ["Réponse"],
+    ]
+    options = resp.parser.css("thead tr.filters th select option")
+    assert "selected" not in options[0].attributes
+    assert "selected" in options[1].attributes
 
 
 def test_get_amendements_columns_missions_for_plf2(
@@ -211,7 +233,7 @@ def test_get_amendements_columns_missions_for_plf2(
         for node in resp.parser.css("thead tr.filters th")
         if node.text().strip().split()
     ] == [
-        ["Article"],
+        ["Art.", "1"],
         ["Mission"],
         ["Nº", "Gouv."],
         ["Table/boîte", "Vide"],

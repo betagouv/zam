@@ -36,29 +36,28 @@
         <a class="underlined" href="{{ request.resource_url(context.parent, 'journal') }}">
             Journal
         </a>
-        {% if all_amendements %}
-            • <a href="#amendement-help" data-action="amendement-help#toggle">Un problème ?</a>
-        {% endif %}
+        • <a href="#amendement-help" data-action="amendement-help#toggle">Un problème ?</a>
     </div>
 
-    {% if all_amendements %}
-        <div class="box notice" id="amendement-help" data-target="amendement-help.content">
-            <a class="close-help" data-action="amendement-help#toggle" href="">×</a>
-            <h3>Vos amendements n’apparaissent pas ? Ou sont mal ordonnés ?</h3>
-            <p>S’ils ne sont pas encore publiés sur le site Internet de l’Assemblée nationale / du Sénat, tout va bien, veuillez patienter.</p>
-            <p>S’ils sont publiés sur le site, c’est un indicateur qu’ils arrivent bientôt sur Zam ! En effet, il est possible que les amendements soient publiés sur le site Internet (ou sur l’intranet parlementaire notamment ELOI) mais qu’ils ne soient pas encore disponibles pour Zam, en particulier lorsqu’il s’agit d’une lecture Assemblée nationale.</p>
-            <p>Si cela vous semble anormalement long, veuillez <a href="https://github.com/betagouv/zam/wiki/R%C3%A9solution-de-probl%C3%A8mes">consulter la page d’aide dédiée</a> et/ou <a href="mailto:contact@zam.beta.gouv.fr">contacter l’équipe de développement</a> pour solliciter de l’aide.</p>
-        </div>
-    {% endif %}
+    <div class="box notice" id="amendement-help" data-target="amendement-help.content">
+        <a class="close-help" data-action="amendement-help#toggle" href="">×</a>
+        <h3>Vos amendements n’apparaissent pas ? Ou sont mal ordonnés ?</h3>
+        <p>S’ils ne sont pas encore publiés sur le site Internet de l’Assemblée nationale / du Sénat, tout va bien, veuillez patienter.</p>
+        <p>S’ils sont publiés sur le site, c’est un indicateur qu’ils arrivent bientôt sur Zam ! En effet, il est possible que les amendements soient publiés sur le site Internet (ou sur l’intranet parlementaire notamment ELOI) mais qu’ils ne soient pas encore disponibles pour Zam, en particulier lorsqu’il s’agit d’une lecture Assemblée nationale.</p>
+        <p>Si cela vous semble anormalement long, veuillez <a href="https://github.com/betagouv/zam/wiki/R%C3%A9solution-de-probl%C3%A8mes">consulter la page d’aide dédiée</a> et/ou <a href="mailto:contact@zam.beta.gouv.fr">contacter l’équipe de développement</a> pour solliciter de l’aide.</p>
+    </div>
 </div>
 
-{% set count = all_amendements|length %}
 <div class="content"
     data-controller="amendements-filters"
-    data-amendements-filters-initial-count="{{ count }}">
+    data-amendements-filters-initial-total-count="{{ total_count_amendements }}"
+    data-amendements-filters-initial-article-count="{{ article_count_amendements }}">
     <div class="options">
         <a href="">{# Keep the empty link for consistency with flexbox and user table. #}</a>
-        <span data-target="amendements-filters.count">{{ count }} amendements</span>
+        <span data-target="amendements-filters.count">
+            {{ article_count_amendements }} amendements pour cet article •
+            {{ total_count_amendements }} amendements au total
+        </span>
     </div>
 
     <table class="table"
@@ -66,7 +65,7 @@
         data-target="amendements-filters.table">
         <thead class="box sticky">
             <tr class="groupActions d-none"
-                data-controller="amendements-backlinks">
+                data-controller="backlinks">
                 <th colspan="2">
                     Actions groupées :
                 </th>
@@ -74,7 +73,7 @@
                     <a id="transfer-amendements"
                         href="{{ request.resource_url(context.parent, 'transfer_amendements', query={'from_index': 1}) }}"
                         class="button primary"
-                        data-action="amendements-backlinks#update">
+                        data-action="backlinks#update">
                         Transférer
                     </a>
                 </th>
@@ -83,18 +82,20 @@
                 </th>
                 <th></th>
             </tr>
-            <tr class="filters {% if not all_amendements %}d-none{% endif %}"
+            <tr class="filters"
                 data-target="amendements-filters.row amendements-selection.filters">
                 <th>
                     <input type="checkbox" name="select-all"
                         data-action="amendements-selection#selectAll">
                 </th>
                 <th class="article-header">
-                    Article
-                    <input type="text" class="form-control form-control-sm"
-                        autocomplete="off" autocorrect="off"
-                        data-action="keyup->amendements-filters#filterArticle"
-                        data-target="amendements-filters.articleInput">
+                    <select
+                        data-action="amendements-filters#filterArticle"
+                        data-target="amendements-filters.articleSelect">
+                    {% for article in articles|sort %}
+                        <option value="{{ article.url_key }}" {% if article.url_key == article_param %}selected{% endif %}>{{ article }}</option>
+                    {% endfor %}
+                    </select>
                 </th>
                 {% if lecture.has_missions %}
                     <th class="mission-header">
@@ -145,7 +146,7 @@
                 <th colspan="{% if lecture.has_missions %}8{% else %}7{% endif %}"></th>
             </tr>
         </thead>
-        <tbody data-controller="amendements-backlinks" data-target="amendements-filters.tbody">
+        <tbody data-controller="backlinks" data-target="amendements-filters.tbody">
         {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
         {% for amendement in collapsed_amendements | sort %}
             {% if loop.previtem is defined and loop.previtem.position and loop.previtem.is_displayable and not amendement.position %}
@@ -328,7 +329,7 @@
                 <td>
                     <a class="arrow-right"
                         href="{{ request.resource_url(context[amendement.num_str], 'amendement_edit') }}"
-                        data-action="amendements-backlinks#update">
+                        data-action="backlinks#update">
                         Voir
                     </a>
                 </td>
@@ -336,9 +337,13 @@
         {% endfor %}
         </tbody>
     </table>
-    {% if not all_amendements %}
+    <div class="notice centered loading d-none"
+        data-target="amendements-filters.loading">
+        <h3>Amendements en cours de chargement…</h3>
+    </div>
+    {% if not total_count_amendements %}
         <div class="notice">
-            <h3>Les amendements ne sont pas encore disponibles.</h3>
+            <h3>Les amendements ne sont pas encore disponibles pour cet article.</h3>
             <p>S’ils ne sont pas encore publiés sur le site Internet de l’Assemblée nationale / du Sénat, tout va bien, veuillez patienter.</p>
             <p>S’ils sont publiés sur le site, c’est un indicateur qu’ils arrivent bientôt sur Zam ! En effet, il est possible que les amendements soient publiés sur le site Internet (ou sur l’intranet parlementaire notamment ELOI) mais qu’ils ne soient pas encore disponibles pour Zam, en particulier lorsqu’il s’agit d’une lecture Assemblée nationale.</p>
             <p>Si cela vous semble anormalement long, veuillez <a href="https://github.com/betagouv/zam/wiki/R%C3%A9solution-de-probl%C3%A8mes">consulter la page d’aide dédiée</a> et/ou <a href="mailto:contact@zam.beta.gouv.fr">contacter l’équipe de développement</a> pour solliciter de l’aide.</p>
@@ -371,9 +376,7 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="{{ request.static_url('zam_repondeur:static/js/backlinks.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
-    {% if all_amendements %}
-        <script>;(() => application.register('amendements-filters', AmendementsFilters))()</script>
-    {% endif %}
     <script src="{{ request.static_url('zam_repondeur:static/js/progress.js') }}"></script>
 {% endblock %}

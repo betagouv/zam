@@ -38,14 +38,14 @@ def test_select_all_change_transfer_url(
 
 @pytest.mark.parametrize(
     "column_index,input_text,expected_nums",
-    [("2", "1", "n=666&n=999"), ("3", "777", "n=777"), ("4", "Da", "n=999&n=777")],
+    [("3", "777", "n=777"), ("4", "Da", "n=999&n=777")],
 )
 def test_select_all_checks_only_visible_amendements(
     wsgi_server,
     driver,
     lecture_an,
     lecture_an_url,
-    article7bis_an,
+    article1_an,
     amendements_an,
     user_david_table_an,
     user_ronan_table_an,
@@ -63,9 +63,7 @@ def test_select_all_checks_only_visible_amendements(
 
         user_ronan_table_an.add_amendement(amendements_an[0])
         user_david_table_an.add_amendement(amendements_an[1])
-        amendement = Amendement.create(
-            lecture=lecture_an, article=article7bis_an, num=777
-        )
+        amendement = Amendement.create(lecture=lecture_an, article=article1_an, num=777)
         user_daniel_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/amendements/")

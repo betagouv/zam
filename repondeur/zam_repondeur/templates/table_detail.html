@@ -236,25 +236,25 @@
     <h1 data-controller="table-anchor">Ma table</h1>
     {% set count = all_amendements|length %}
     <div class="content"
-        data-controller="amendements-filters"
-        data-amendements-filters-initial-count="{{ count }}">
+        data-controller="table-filters"
+        data-table-filters-initial-count="{{ count }}">
         {% if count %}
             <div class="options">
                 <a class="toggle" href="#"
-                    data-action="amendements-filters#toggle"
-                    data-target="amendements-filters.link">
+                    data-action="table-filters#toggle"
+                    data-target="table-filters.link">
                     Filtrer
                 </a>
-                <span data-target="amendements-filters.count">{{ count }} amendements</span>
+                <span data-target="table-filters.count">{{ count }} amendements</span>
             </div>
         {% endif %}
 
         <table class="table"
-            data-controller="amendements-selection"
-            data-target="amendements-filters.table">
+            data-controller="table-selection"
+            data-target="table-filters.table">
             <thead class="sticky">
                 <tr class="groupActions d-none"
-                    data-controller="amendements-backlinks">
+                    data-controller="backlinks">
                     <th>
                         Actions groupées :
                     </th>
@@ -262,7 +262,7 @@
                         <a id="transfer-amendements"
                             href="{{ request.resource_url(context.lecture_resource, 'transfer_amendements') }}"
                             class="button primary"
-                            data-action="amendements-backlinks#update">
+                            data-action="backlinks#update">
                             Transférer
                         </a>
                     </th>
@@ -274,25 +274,25 @@
                     </th>
                 </tr>
                 <tr class="filters d-none"
-                    data-target="amendements-filters.row amendements-selection.filters">
+                    data-target="table-filters.row table-selection.filters">
                     <th>
                         <label for="article">Article </label>
                         <input id="article" type="text" class="form-control form-control-sm"
                             autocomplete="off" autocorrect="off"
-                            data-action="keyup->amendements-filters#filterArticle"
-                            data-target="amendements-filters.articleInput">
+                            data-action="keyup->table-filters#filterArticle"
+                            data-target="table-filters.articleInput">
                     </th>
                     <th>
                         <label for="numero">Nº </label>
                         <input id="numero" type="text" class="form-control form-control-sm"
                             autocomplete="off" autocorrect="off"
-                            data-action="keyup->amendements-filters#filterAmendement"
-                            data-target="amendements-filters.amendementInput">
+                            data-action="keyup->table-filters#filterAmendement"
+                            data-target="table-filters.amendementInput">
                         <input type="checkbox" id="gouvernemental"
-                            data-action="amendements-filters#filterGouvernemental"
-                            data-target="amendements-filters.gouvernementalCheckbox">
+                            data-action="table-filters#filterGouvernemental"
+                            data-target="table-filters.gouvernementalCheckbox">
                         <label for="gouvernemental"
-                            data-target="amendements-filters.gouvernementalLabel">
+                            data-target="table-filters.gouvernementalLabel">
                             <abbr class="status blue" title="Afficher seulement les amendements gouvernementaux">Gouv.</abbr>
                         </label>
                     </th>
@@ -301,16 +301,16 @@
                     </th>
                     <th>
                         <input id="select-all" type="checkbox" name="select-all"
-                            data-action="amendements-selection#selectAll">
+                            data-action="table-selection#selectAll">
                         <label for="select-all">Tous</label>
                     </th>
                 </tr>
                 <tr class="shadow-bottom d-none"
-                    data-target="amendements-selection.bottom amendements-filters.bottom">
+                    data-target="table-selection.bottom table-filters.bottom">
                     <th colspan="4"></th>
                 </tr>
             </thead>
-            <tbody data-controller="amendements-backlinks" data-target="amendements-filters.tbody">
+            <tbody data-controller="backlinks" data-target="table-filters.tbody">
                 {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
                 {% for amendement in collapsed_amendements %}
                     <tr id="{{ amendement.slug }}"
@@ -430,10 +430,10 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="{{ request.static_url('zam_repondeur:static/js/backlinks.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/js/table.js') }}"></script>
-    <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
     {% if all_amendements %}
-        <script>;(() => application.register('amendements-filters', AmendementsFilters))()</script>
+        <script>;(() => application.register('table-filters', TableFilters))()</script>
     {% endif %}
     <script>;(() => application.register('notifications-with-diff', NotificationsWithDiff))()</script>
 {% endblock %}

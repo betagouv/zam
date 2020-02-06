@@ -194,13 +194,17 @@ class AssembleeNationale(RemoteSource):
             progress_bar.advance(offset)
             try:
                 item = derouleur.items.get(numero_prefixe)
-                amendement, action = self._collect_amendement(
+
+                logger.info("Récupération de l'amendement %r", numero_prefixe)
+                amend_data = _retrieve_amendement(lecture, numero_prefixe)
+                amendement, action = self.inspect_amendement(
                     lecture=lecture,
-                    numero_prefixe=numero_prefixe,
+                    amend_data=amend_data,
                     position=item.position if item else None,
                     id_discussion_commune=item.id_discussion_commune if item else None,
                     id_identique=item.id_identique if item else None,
                 )
+
                 if action is not None:
                     actions.append(action)
                 else:

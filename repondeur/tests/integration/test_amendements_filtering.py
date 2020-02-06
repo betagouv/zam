@@ -13,12 +13,10 @@ def test_filters_are_visible_by_default(
     assert thead.find_element_by_css_selector("tr.filters").is_displayed()
 
 
-def test_filters_are_ineffective_without_amendements(
-    wsgi_server, driver, lecture_an_url
-):
+def test_filters_are_always_visible(wsgi_server, driver, lecture_an_url):
     driver.get(f"{lecture_an_url}/amendements/")
     thead = driver.find_element_by_css_selector("thead")
-    assert not thead.find_element_by_css_selector("tr.filters").is_displayed()
+    assert thead.find_element_by_css_selector("tr.filters").is_displayed()
 
 
 def test_number_of_amendements_is_displayed(
@@ -30,7 +28,7 @@ def test_number_of_amendements_is_displayed(
     counter = driver.find_element_by_css_selector(
         'span[data-target="amendements-filters.count"]'
     )
-    assert counter.text == "2 amendements"
+    assert counter.text == "2 amendements pour cet article • 2 amendements au total"
 
 
 def test_number_of_amendements_is_displayed_with_limit_derouleur(
@@ -50,16 +48,12 @@ def test_number_of_amendements_is_displayed_with_limit_derouleur(
     counter = driver.find_element_by_css_selector(
         'span[data-target="amendements-filters.count"]'
     )
-    assert counter.text == "2 amendements"
+    assert counter.text == "2 amendements pour cet article • 2 amendements au total"
 
 
 @pytest.mark.parametrize(
     "column_index,input_text,kind,initial,filtered",
     [
-        ("2", "1", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], ["Art. 1", "Art. 1"]),
-        ("2", "7", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], []),
-        ("2", "7 b", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], ["Art. 7 bis"]),
-        ("2", "7 bis", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], ["Art. 7 bis"]),
         ("3", "777", "amendement", ["666", "999", "777"], ["777"]),
         ("4", "Da", "table", ["Ronan", "David", "Daniel"], ["David", "Daniel"]),
     ],
@@ -69,7 +63,7 @@ def test_column_filtering_by_value(
     driver,
     lecture_an,
     lecture_an_url,
-    article7bis_an,
+    article1_an,
     amendements_an,
     user_david_table_an,
     user_ronan_table_an,
@@ -90,7 +84,7 @@ def test_column_filtering_by_value(
         user_ronan_table_an.add_amendement(amendements_an[0])
         user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
-            lecture=lecture_an, article=article7bis_an, num=777, position=3
+            lecture=lecture_an, article=article1_an, num=777, position=3
         )
         user_daniel_table_an.add_amendement(amendement)
 
@@ -139,7 +133,7 @@ def test_column_filtering_by_value_with_shared_tables(
     driver,
     lecture_an,
     lecture_an_url,
-    article7bis_an,
+    article1_an,
     amendements_an,
     user_david_table_an,
     shared_table_lecture_an,
@@ -194,7 +188,6 @@ def test_column_filtering_by_value_with_shared_tables(
 @pytest.mark.parametrize(
     "column_index,input_text,kind,initial,filtered",
     [
-        ("2", "1", "article", ["Art. 1", "Art. 7 bis"], ["Art. 1"]),
         ("3", "666", "amendement", ["666, 999", "777"], ["666, 999"]),
         ("3", "999", "amendement", ["666, 999", "777"], ["666, 999"]),
         ("3", "777", "amendement", ["666, 999", "777"], ["777"]),
@@ -205,7 +198,7 @@ def test_column_filtering_by_value_with_batches(
     driver,
     lecture_an,
     lecture_an_url,
-    article7bis_an,
+    article1_an,
     amendements_an,
     user_david_table_an,
     user_ronan_table_an,
@@ -230,7 +223,7 @@ def test_column_filtering_by_value_with_batches(
         user_ronan_table_an.add_amendement(amendements_an[0])
         user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
-            lecture=lecture_an, article=article7bis_an, num=777, position=3
+            lecture=lecture_an, article=article1_an, num=777, position=3
         )
         user_daniel_table_an.add_amendement(amendement)
 
@@ -276,7 +269,7 @@ def test_column_filtering_by_checkbox(
     driver,
     lecture_an,
     lecture_an_url,
-    article7bis_an,
+    article1_an,
     amendements_an,
     user_david_table_an,
     column_index,
@@ -290,7 +283,7 @@ def test_column_filtering_by_checkbox(
         DBSession.add(user_david_table_an)
         amendement = Amendement.create(
             lecture=lecture_an,
-            article=article7bis_an,
+            article=article1_an,
             num=777,
             position=3,
             auteur="LE GOUVERNEMENT",
@@ -345,7 +338,6 @@ def test_column_filtering_by_checkbox(
             ["Action ext."],
         ),
         # Check other filters are still working.
-        ("2", "1", "article", ["Art. 1", "Art. 1", "Art. 7 bis"], ["Art. 1", "Art. 1"]),
         ("4", "222", "amendement", ["111", "333", "222"], ["222"]),
     ],
 )
@@ -353,6 +345,7 @@ def test_column_filtering_by_value_for_missions(
     wsgi_server,
     driver,
     lecture_plf2018_an_premiere_lecture_seance_publique_2,
+    article1_plf2018_an_premiere_lecture_seance_publique_2,
     amendements_plf2018_an_premiere_lecture_seance_publique_2,
     column_index,
     input_text,
@@ -360,7 +353,7 @@ def test_column_filtering_by_value_for_missions(
     initial,
     filtered,
 ):
-    from zam_repondeur.models import Amendement, Article, DBSession
+    from zam_repondeur.models import Amendement, DBSession
 
     LECTURE_URL = (
         f"{wsgi_server.application_url}"
@@ -369,15 +362,9 @@ def test_column_filtering_by_value_for_missions(
         f"lectures/{lecture_plf2018_an_premiere_lecture_seance_publique_2.url_key}"
     )
     with transaction.manager:
-        article7bis_an = Article.create(
-            lecture=lecture_plf2018_an_premiere_lecture_seance_publique_2,
-            type="article",
-            num="7",
-            mult="bis",
-        )
         amendement = Amendement.create(
             lecture=lecture_plf2018_an_premiere_lecture_seance_publique_2,
-            article=article7bis_an,
+            article=article1_plf2018_an_premiere_lecture_seance_publique_2,
             num=222,
             position=3,
             mission_titre="Mission Action extérieure de l'État",

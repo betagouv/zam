@@ -87,8 +87,8 @@ def test_group_actions_button_urls_change_on_the_fly(
     find = driver.find_element_by_css_selector
 
     # Set a filter on the article
-    input_field = find(f"thead tr.filters th:nth-child(2) input")
-    input_field.send_keys("1")
+    input_field = find(f"thead tr.filters th:nth-child(3) input")
+    input_field.send_keys("666")
     # Select the first amendement
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')
     checkboxes[0].click()
@@ -103,5 +103,5 @@ def test_group_actions_button_urls_change_on_the_fly(
     assert driver.current_url == (
         f"{lecture_an_url}/transfer_amendements?from_index=1&n=666&"
         f"back=%2Fdossiers%2F{lecture_an.dossier.url_key}"
-        f"%2Flectures%2F{lecture_an.url_key}%2Famendements%2F%3Farticle%3D1"
+        f"%2Flectures%2F{lecture_an.url_key}%2Famendements%2F%3Famendement%3D666"
     )

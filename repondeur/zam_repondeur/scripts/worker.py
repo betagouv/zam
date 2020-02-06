@@ -4,6 +4,7 @@ from argparse import ArgumentParser, Namespace
 from typing import Any, Dict, List
 
 from huey import Huey
+from huey.constants import WORKER_PROCESS
 from pyramid.paster import bootstrap, setup_logging
 from redis.exceptions import ConnectionError
 
@@ -52,7 +53,7 @@ def start_huey(
         bootstrap(config_uri, options=options)
 
     consumer = huey.create_consumer(
-        worker_type="thread",
+        worker_type=WORKER_PROCESS,
         workers=int(settings["huey.workers"]),
         max_delay=5.0,
         flush_locks=True,

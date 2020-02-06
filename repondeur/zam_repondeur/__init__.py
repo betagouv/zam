@@ -17,7 +17,7 @@ BASE_SETTINGS = {
     "zam.auth_cookie_duration": 7 * 24 * 3600,  # a user stays identified for 7 days
     "zam.auth_cookie_secure": True,  # disable for local HTTP access in development
     "zam.legislatures": "14,15",
-    "huey.workers": (cpu_count() * 2) + 1,
+    "huey.workers": (cpu_count() // 2) + 1,
     # Intervals in seconds for notifications checks:
     # Keep it low: potential data loss for the user.
     "zam.check_for.amendement_stolen_while_editing": 30,

@@ -219,6 +219,190 @@
     {% endif %}
 {% endmacro %}
 
+{% macro render_table(count) %}
+    <div class="options">
+        <a class="toggle" href="#"
+            data-action="table-filters#toggle"
+            data-target="table-filters.link">
+            Filtrer
+        </a>
+        <span data-target="table-filters.count">{{ count }} amendements</span>
+    </div>
+    <table class="table"
+        data-controller="table-selection"
+        data-target="table-filters.table">
+        <thead class="sticky">
+            <tr class="groupActions d-none"
+                data-controller="backlinks">
+                <th>
+                    Actions groupées :
+                </th>
+                <th>
+                    <a id="transfer-amendements"
+                        href="{{ request.resource_url(context.lecture_resource, 'transfer_amendements') }}"
+                        class="button primary"
+                        data-action="backlinks#update">
+                        Transférer
+                    </a>
+                </th>
+                <th>
+                    <a id="export-pdf" href="{{ request.resource_url(context.lecture_resource, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
+                </th>
+                <th>
+                    <a id="batch-amendements" href="{{ request.resource_url(context.lecture_resource, 'batch_amendements') }}" class="button primary">Créer un lot</a>
+                </th>
+            </tr>
+            <tr class="filters d-none"
+                data-target="table-filters.row table-selection.filters">
+                <th>
+                    <label for="article">Article </label>
+                    <input id="article" type="text" class="form-control form-control-sm"
+                        autocomplete="off" autocorrect="off"
+                        data-action="keyup->table-filters#filterArticle"
+                        data-target="table-filters.articleInput">
+                </th>
+                <th>
+                    <label for="numero">Nº </label>
+                    <input id="numero" type="text" class="form-control form-control-sm"
+                        autocomplete="off" autocorrect="off"
+                        data-action="keyup->table-filters#filterAmendement"
+                        data-target="table-filters.amendementInput">
+                    <input type="checkbox" id="gouvernemental"
+                        data-action="table-filters#filterGouvernemental"
+                        data-target="table-filters.gouvernementalCheckbox">
+                    <label for="gouvernemental"
+                        data-target="table-filters.gouvernementalLabel">
+                        <abbr class="status blue" title="Afficher seulement les amendements gouvernementaux">Gouv.</abbr>
+                    </label>
+                </th>
+                <th>
+                    {# Required to match group actions number of rows. #}
+                </th>
+                <th>
+                    <input id="select-all" type="checkbox" name="select-all"
+                        data-action="table-selection#selectAll">
+                    <label for="select-all">Tous</label>
+                </th>
+            </tr>
+            <tr class="shadow-bottom d-none"
+                data-target="table-selection.bottom table-filters.bottom">
+                <th colspan="4"></th>
+            </tr>
+        </thead>
+        <tbody data-controller="backlinks" data-target="table-filters.tbody">
+            {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
+            {% for amendement in collapsed_amendements %}
+                <tr id="{{ amendement.slug }}"
+                    data-article="
+                       {%- if amendement.is_abandoned_before_seance -%}
+                           {{ amendement.VERY_BIG_NUMBER }}
+                       {%- elif amendement.article.type == 'article' -%}
+                           {{ amendement.article.num }} {{ amendement.article.mult }}
+                       {%- else -%}
+                           {{ amendement.article.type }}
+                       {%- endif -%}
+                   "
+                   data-mission="{{ amendement.mission_titre or '' }}"
+                   data-order="{{ loop.index }}"
+                   data-amendement="
+                       {%- if amendement.location.batch -%}
+                           {{ amendement.location.batch.nums|join(',') }}
+                       {%- else -%}
+                           {{ amendement.num }}
+                       {%- endif -%}
+                    "
+                    data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}">
+                    <td colspan="4">
+                        <div class="box amendement-card
+                            {% if amendement.slug == highlighted_amdt %}highlighted{% endif %}
+                            {% if amendement.location.batch %}amendement-batch{% endif %}
+                            ">
+                            <div class="amendement-card-infos">
+                                <div class="entete">
+                                    {% if amendement.article.is_erreur %}
+                                        <span class="article">⚠️ Erreur de récupération de l’article</span>
+                                    {% elif amendement.article.pos %}
+                                        <span class="article">{{ amendement.article.format() }}</span>
+                                    {% else %}
+                                        <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article" target="_blank">{{ amendement.article.format() }}</a>
+                                    {% endif %}
+                                    {% if amendement.mission_titre %}
+                                        - {{ amendement.mission_titre }}
+                                    {% endif %}
+                                    –
+
+                                    {# Numéro(s) #}
+                                    {% if amendement.location.batch %}
+                                        N<sup>os</sup>&nbsp;<span class="numero">{{ amendement.location.batch.nums|enumeration }}</span>
+                                    {% else %}
+                                        Nº&nbsp;<span class="numero">{{ amendement }}</span>
+                                    {% endif %}
+
+                                    {% if amendement.identique %}
+                                        {{ macros.svg_icon("identique") }}
+                                        {% set identiques = amendement.identiques %}
+                                        {% if not amendement.all_displayable_identiques_have_same_response() and identiques %}
+                                            <span class="warning" title="{% if identiques|length > 1 -%}
+                                                Les amendements identiques {% for amdt in identiques -%}
+                                                {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
+                                                {%- endfor %} n’ont pas des réponses similaires
+                                            {%- else -%}
+                                                L’amendement identique {{ identiques[0] }} n’a pas une réponse similaire
+                                            {%- endif %}">⚠️</span>
+                                        {% endif %}
+                                    {% endif %}
+                                    {{ macros.status(amendement) }}
+                                </div>
+                                <div class="objet">
+                                    {{ amendement.user_content.objet | paragriphy }}
+                                </div>
+                                <div class="auteur">
+                                    {{ macros.svg_icon("person") }}
+                                    {% if amendement.gouvernemental %}
+                                        Le gouvernement
+                                    {% else %}
+                                        {% if amendement.location.batch %}
+                                            {{ amendement.location.batch.groupes | join(', ') }}
+                                        {% else %}
+                                            {% if amendement.groupe %}
+                                                {{ amendement.groupe }} ({{ amendement.auteur }})
+                                            {% else %}
+                                                {{ amendement.auteur }}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="amendement-card-avis">
+                                <div class="amendement-checkbox">
+                                    <input type="checkbox" name="amendement-selected" value="{{ amendement.num }}">
+                                </div>
+                                <div class="avis">
+                                    {{ avis(amendement) }}
+                                    {{ edit_button(amendement) }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% macro render_empty() %}
+    <div class="notice">
+        {% if is_owner %}
+            <h3>Il n’y a rien sur la table !</h3>
+            <nav>
+                <a href="{{ index_url }}">Retourner à l’index</a>
+            </nav>
+        {% else %}
+            <p>Il n’y a aucun amendement sur cette table pour l’instant.</p>
+        {% endif %}
+    </div>
+{% endmacro %}
+
 {% block body %}
     <svg aria-hidden="true" style="position: absolute; width: 0; height: 0;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <defs>
@@ -239,187 +423,10 @@
         data-controller="table-filters"
         data-table-filters-initial-count="{{ count }}">
         {% if count %}
-            <div class="options">
-                <a class="toggle" href="#"
-                    data-action="table-filters#toggle"
-                    data-target="table-filters.link">
-                    Filtrer
-                </a>
-                <span data-target="table-filters.count">{{ count }} amendements</span>
-            </div>
+            {{ render_table(count) }}
+        {% else %}
+            {{ render_empty() }}
         {% endif %}
-
-        <table class="table"
-            data-controller="table-selection"
-            data-target="table-filters.table">
-            <thead class="sticky">
-                <tr class="groupActions d-none"
-                    data-controller="backlinks">
-                    <th>
-                        Actions groupées :
-                    </th>
-                    <th>
-                        <a id="transfer-amendements"
-                            href="{{ request.resource_url(context.lecture_resource, 'transfer_amendements') }}"
-                            class="button primary"
-                            data-action="backlinks#update">
-                            Transférer
-                        </a>
-                    </th>
-                    <th>
-                        <a id="export-pdf" href="{{ request.resource_url(context.lecture_resource, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
-                    </th>
-                    <th>
-                        <a id="batch-amendements" href="{{ request.resource_url(context.lecture_resource, 'batch_amendements') }}" class="button primary">Créer un lot</a>
-                    </th>
-                </tr>
-                <tr class="filters d-none"
-                    data-target="table-filters.row table-selection.filters">
-                    <th>
-                        <label for="article">Article </label>
-                        <input id="article" type="text" class="form-control form-control-sm"
-                            autocomplete="off" autocorrect="off"
-                            data-action="keyup->table-filters#filterArticle"
-                            data-target="table-filters.articleInput">
-                    </th>
-                    <th>
-                        <label for="numero">Nº </label>
-                        <input id="numero" type="text" class="form-control form-control-sm"
-                            autocomplete="off" autocorrect="off"
-                            data-action="keyup->table-filters#filterAmendement"
-                            data-target="table-filters.amendementInput">
-                        <input type="checkbox" id="gouvernemental"
-                            data-action="table-filters#filterGouvernemental"
-                            data-target="table-filters.gouvernementalCheckbox">
-                        <label for="gouvernemental"
-                            data-target="table-filters.gouvernementalLabel">
-                            <abbr class="status blue" title="Afficher seulement les amendements gouvernementaux">Gouv.</abbr>
-                        </label>
-                    </th>
-                    <th>
-                        {# Required to match group actions number of rows. #}
-                    </th>
-                    <th>
-                        <input id="select-all" type="checkbox" name="select-all"
-                            data-action="table-selection#selectAll">
-                        <label for="select-all">Tous</label>
-                    </th>
-                </tr>
-                <tr class="shadow-bottom d-none"
-                    data-target="table-selection.bottom table-filters.bottom">
-                    <th colspan="4"></th>
-                </tr>
-            </thead>
-            <tbody data-controller="backlinks" data-target="table-filters.tbody">
-                {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
-                {% for amendement in collapsed_amendements %}
-                    <tr id="{{ amendement.slug }}"
-                        data-article="
-                           {%- if amendement.is_abandoned_before_seance -%}
-                               {{ amendement.VERY_BIG_NUMBER }}
-                           {%- elif amendement.article.type == 'article' -%}
-                               {{ amendement.article.num }} {{ amendement.article.mult }}
-                           {%- else -%}
-                               {{ amendement.article.type }}
-                           {%- endif -%}
-                       "
-                       data-mission="{{ amendement.mission_titre or '' }}"
-                       data-order="{{ loop.index }}"
-                       data-amendement="
-                           {%- if amendement.location.batch -%}
-                               {{ amendement.location.batch.nums|join(',') }}
-                           {%- else -%}
-                               {{ amendement.num }}
-                           {%- endif -%}
-                        "
-                        data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}">
-                        <td colspan="4">
-                            <div class="box amendement-card
-                                {% if amendement.slug == highlighted_amdt %}highlighted{% endif %}
-                                {% if amendement.location.batch %}amendement-batch{% endif %}
-                                ">
-                                <div class="amendement-card-infos">
-                                    <div class="entete">
-                                        {% if amendement.article.is_erreur %}
-                                            <span class="article">⚠️ Erreur de récupération de l’article</span>
-                                        {% elif amendement.article.pos %}
-                                            <span class="article">{{ amendement.article.format() }}</span>
-                                        {% else %}
-                                            <a href="{{ request.resource_url(context.lecture_resource['articles'][amendement.article.url_key]) }}" class="article" target="_blank">{{ amendement.article.format() }}</a>
-                                        {% endif %}
-                                        {% if amendement.mission_titre %}
-                                            - {{ amendement.mission_titre }}
-                                        {% endif %}
-                                        –
-
-                                        {# Numéro(s) #}
-                                        {% if amendement.location.batch %}
-                                            N<sup>os</sup>&nbsp;<span class="numero">{{ amendement.location.batch.nums|enumeration }}</span>
-                                        {% else %}
-                                            Nº&nbsp;<span class="numero">{{ amendement }}</span>
-                                        {% endif %}
-
-                                        {% if amendement.identique %}
-                                            {{ macros.svg_icon("identique") }}
-                                            {% set identiques = amendement.identiques %}
-                                            {% if not amendement.all_displayable_identiques_have_same_response() and identiques %}
-                                                <span class="warning" title="{% if identiques|length > 1 -%}
-                                                    Les amendements identiques {% for amdt in identiques -%}
-                                                    {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-                                                    {%- endfor %} n’ont pas des réponses similaires
-                                                {%- else -%}
-                                                    L’amendement identique {{ identiques[0] }} n’a pas une réponse similaire
-                                                {%- endif %}">⚠️</span>
-                                            {% endif %}
-                                        {% endif %}
-                                        {{ macros.status(amendement) }}
-                                    </div>
-                                    <div class="objet">
-                                        {{ amendement.user_content.objet | paragriphy }}
-                                    </div>
-                                    <div class="auteur">
-                                        {{ macros.svg_icon("person") }}
-                                        {% if amendement.gouvernemental %}
-                                            Le gouvernement
-                                        {% else %}
-                                            {% if amendement.location.batch %}
-                                                {{ amendement.location.batch.groupes | join(', ') }}
-                                            {% else %}
-                                                {% if amendement.groupe %}
-                                                    {{ amendement.groupe }} ({{ amendement.auteur }})
-                                                {% else %}
-                                                    {{ amendement.auteur }}
-                                                {% endif %}
-                                            {% endif %}
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="amendement-card-avis">
-                                    <div class="amendement-checkbox">
-                                        <input type="checkbox" name="amendement-selected" value="{{ amendement.num }}">
-                                    </div>
-                                    <div class="avis">
-                                        {{ avis(amendement) }}
-                                        {{ edit_button(amendement) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                {% else %}
-                    <div class="notice">
-                        {% if is_owner %}
-                            <h3>Il n’y a rien sur la table !</h3>
-                            <nav>
-                                <a href="{{ index_url }}">Retourner à l’index</a>
-                            </nav>
-                        {% else %}
-                            <p>Il n’y a aucun amendement sur cette table pour l’instant.</p>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
 {% endblock %}
 
@@ -432,7 +439,7 @@
 {% block scripts %}
     <script src="{{ request.static_url('zam_repondeur:static/js/backlinks.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/js/table.js') }}"></script>
-    {% if all_amendements %}
+    {% if all_amendements|length %}
         <script>;(() => application.register('table-filters', TableFilters))()</script>
     {% endif %}
     <script>;(() => application.register('notifications-with-diff', NotificationsWithDiff))()</script>

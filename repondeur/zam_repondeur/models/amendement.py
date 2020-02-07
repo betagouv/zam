@@ -610,4 +610,5 @@ class Amendement(Base):
 
 
 class AmendementList(list):
-    pass
+    def __init__(self, amendements: Iterable[Amendement]):
+        super().__init__(sorted(amendements))

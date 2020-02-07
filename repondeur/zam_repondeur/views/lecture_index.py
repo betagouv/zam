@@ -55,7 +55,7 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
             ),
         )
     )
-    amendements = AmendementList(sorted(amendements))
+    amendements = AmendementList(amendements)
     total_count_amendements = lecture.nb_amendements
     return {
         "lecture": lecture,

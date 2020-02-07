@@ -8,7 +8,7 @@ from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.decorator import reify
 from zam_repondeur.message import Message
-from zam_repondeur.models import AVIS, Batch
+from zam_repondeur.models import AmendementList, AVIS, Batch
 from zam_repondeur.models.events.amendement import (
     AvisAmendementModifie,
     CommentsAmendementModifie,
@@ -44,6 +44,7 @@ class AmendementEdit:
         return {
             "amendement": self.amendement,
             "amendements": self.amendements,
+            "identiques": self.lecture.all_amendements.all_identiques(self.amendement),
             "current_tab": "",
             "dossier_resource": self.context.lecture_resource.dossier_resource,
             "lecture_resource": self.context.lecture_resource,

@@ -361,7 +361,7 @@
 
                                         {% if amendement.identique %}
                                             {{ macros.svg_icon("identique") }}
-                                            {% set identiques = amendement.displayable_identiques %}
+                                            {% set identiques = lecture.all_amendements.displayable_identiques(amendement) %}
                                             {% if not amendement.displayable_identiques_are_similaires and identiques %}
                                                 <span class="warning" title="{% if identiques|length > 1 -%}
                                                     Les amendements identiques {% for amdt in identiques -%}

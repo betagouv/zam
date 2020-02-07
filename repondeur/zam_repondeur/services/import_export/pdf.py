@@ -6,7 +6,7 @@ import pdfkit
 from pyramid.request import Request
 from xvfbwrapper import Xvfb
 
-from zam_repondeur.models import Amendement, Lecture
+from zam_repondeur.models import Amendement, AmendementList, Lecture
 from zam_repondeur.templating import render_template
 
 # Command-line options for wkhtmltopdf
@@ -43,10 +43,16 @@ def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:
 
 
 def write_pdf_multiple(
-    lecture: Lecture, amendements: Iterable[Amendement], filename: str, request: Request
+    lecture: Lecture,
+    amendements: Iterable[Amendement],
+    filename: str,
+    request: Request,
 ) -> None:
+    all_amendements: AmendementList = lecture.all_amendements
     content = generate_html_for_pdf(
-        request, "print/multiple.html", {"amendements": amendements}
+        request,
+        "print/multiple.html",
+        {"amendements": amendements, "all_amendements": all_amendements},
     )
     with xvfb_if_supported():
         pdfkit.from_string(content, filename, options=PDFKIT_OPTIONS, css=PDF_CSS)

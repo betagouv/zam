@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
-from itertools import groupby
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Set, Tuple
-from uuid import uuid4
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple
 
 from sqlalchemy import (
     Column,
@@ -19,7 +17,7 @@ from sqlalchemy.orm import Query, column_property, joinedload, relationship
 
 from zam_repondeur.decorator import reify
 
-from .amendement import Amendement
+from .amendement import Amendement, AmendementList
 from .article import Article
 from .base import Base, DBSession
 from .chambre import Chambre
@@ -396,24 +394,8 @@ class Lecture(Base, LastEventMixin):
         return {amdt for amdt in self.amendements if amdt.is_abandoned}
 
     @reify
-    def not_displayable_amendements(self) -> Set[Amendement]:
-        return {amdt for amdt in self.amendements if not amdt.is_displayable}
-
-    @reify
-    def identiques_map(self) -> Dict[int, Set[Amendement]]:
-        return self._build_map(key=lambda amdt: amdt.id_identique or uuid4().int)
-
-    @reify
-    def similaires_map(self) -> Dict[int, Set[Amendement]]:
-        return self._build_map(key=lambda amdt: amdt.user_content.reponse_hash or "")
-
-    def _build_map(self, key: Callable) -> Dict[int, Set[Amendement]]:
-        res = {}
-        for _, g in groupby(sorted(self.amendements, key=key), key=key):
-            identiques = set(g)
-            for amdt in identiques:
-                res[amdt.num] = identiques
-        return res
+    def all_amendements(self) -> AmendementList:
+        return AmendementList(self.amendements)
 
     def set_fetch_progress(self, current: int, total: int) -> None:
         from zam_repondeur.services.progress import repository  # avoid circular imports

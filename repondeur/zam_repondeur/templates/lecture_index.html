@@ -226,7 +226,7 @@
                         {% endif %}
                     </td>
                 {% endif %}
-                {% set all_identiques = amendement.all_identiques %}
+                {% set all_identiques = lecture.all_amendements.all_identiques(amendement) %}
                 {# Given that all_identiques excludes itself, we can use it
                     directly as a boolean to avoid a lonely identique: #}
                 <td {% if amendement.identique and not amendement.is_abandoned and all_identiques -%}
@@ -314,8 +314,8 @@
                         {{ macros.svg_icon("check") }}
                     {% endif %}
                     {% if amendement.identique %}
-                        {% set identiques = amendement.displayable_identiques %}
-                        {% if not amendement.displayable_identiques_are_similaires and identiques %}
+                        {% set identiques = lecture.all_amendements.displayable_identiques(amendement) %}
+                        {% if not amendements.displayable_identiques_are_similaires(amendement) and identiques %}
                             <span title="{% if identiques|length > 1 -%}
                                 Les amendements identiques {% for amdt in identiques -%}
                                 {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}

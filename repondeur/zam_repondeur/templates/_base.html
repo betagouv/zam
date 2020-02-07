@@ -56,13 +56,11 @@
                             </ul>
                             <ul class="menu-actions">
                                 {% if lecture_resource is defined %}
-                                    {% if lecture_resource.lecture.displayable %}
-                                        <li>
-                                            <a href="{{ request.resource_url(lecture_resource['articles']) }}" target="_blank">
-                                                Dossier de banc
-                                            </a>
-                                        </li>
-                                    {% endif %}
+                                    <li>
+                                        <a href="{{ request.resource_url(lecture_resource['articles']) }}" target="_blank">
+                                            Dossier de banc
+                                        </a>
+                                    </li>
                                     <li{% if current_tab == 'options' %} class="selected"{% endif %}>
                                         <a href="{{ request.resource_url(lecture_resource, 'options') }}">
                                             Options avancées

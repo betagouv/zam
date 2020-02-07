@@ -156,10 +156,6 @@ class Lecture(Base, LastEventMixin):
     def has_missions(self) -> bool:
         return bool(self.partie and self.partie == 2)
 
-    @property
-    def displayable(self) -> bool:
-        return any(amd.is_displayable for amd in self.amendements)
-
     def refreshable_for(self, kind: str, settings: Dict[str, str]) -> bool:
         return bool(
             datetime.utcnow().date() - self.texte.date_depot

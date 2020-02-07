@@ -5,47 +5,15 @@ def test_get_amendements(app, lecture_an_url, amendements_an, user_david):
     resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
 
     assert resp.status_code == 200
-    assert "Dossier de banc" not in resp.text
 
 
 def test_no_amendements(app, lecture_an_url, user_david):
     resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
 
     assert resp.status_code == 200
-    assert "Dossier de banc" not in resp.text
     assert (
         "Les amendements ne sont pas encore disponibles pour cet article." in resp.text
     )
-
-
-def test_get_amendements_with_avis(app, lecture_an_url, amendements_an, user_david):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        amendement = amendements_an[0]
-        amendement.user_content.avis = "Favorable"
-        DBSession.add(amendement)
-
-    resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
-
-    assert resp.status_code == 200
-    assert "Dossier de banc" in resp.text
-
-
-def test_get_amendements_with_gouvernemental(
-    app, lecture_an_url, amendements_an, user_david
-):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        amendement = amendements_an[0]
-        amendement.auteur = "LE GOUVERNEMENT"
-        DBSession.add(amendement)
-
-    resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
-
-    assert resp.status_code == 200
-    assert "Dossier de banc" in resp.text
 
 
 def test_get_amendements_order_default(app, lecture_an_url, amendements_an, user_david):
@@ -59,7 +27,6 @@ def test_get_amendements_order_default(app, lecture_an_url, amendements_an, user
     resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
 
     assert resp.status_code == 200
-    assert "Dossier de banc" in resp.text
     assert [node.text().strip() for node in resp.parser.css("tr td:nth-child(3)")] == [
         "666",
         "999",
@@ -85,7 +52,6 @@ def test_get_amendements_order_abandoned_last(
     resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
 
     assert resp.status_code == 200
-    assert "Dossier de banc" in resp.text
     headers_rows_length = 3
     assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
         headers_rows_length:
@@ -113,7 +79,6 @@ def test_get_amendements_order_with_missing_position(
     resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
 
     assert resp.status_code == 200
-    assert "Dossier de banc" in resp.text
     headers_rows_length = 3
     assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
         headers_rows_length:
@@ -141,7 +106,6 @@ def test_get_amendements_order_with_abandoned_next_do_not_display_limit_derouleu
     resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
 
     assert resp.status_code == 200
-    assert "Dossier de banc" in resp.text
     headers_rows_length = 3
     assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
         headers_rows_length:

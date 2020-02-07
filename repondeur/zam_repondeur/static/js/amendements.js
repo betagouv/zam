@@ -150,7 +150,9 @@ application.register(
         'gouvernementalLabel',
         'tableInput',
         'emptytableCheckbox',
-        'emptytableLabel'
+        'emptytableLabel',
+        'emptyavisCheckbox',
+        'emptyavisLabel'
       ]
     }
 
@@ -194,6 +196,15 @@ application.register(
           .querySelector('abbr')
           .classList.add('selected')
         this.filterByEmptytable(emptytableFilter)
+      }
+      const emptyavisFilter = this.getURLParam('emptyavis')
+      if (emptyavisFilter !== '') {
+        this.toggle()
+        this.emptyavisCheckboxTarget.checked = true
+        this.emptyavisLabelTarget
+          .querySelector('abbr')
+          .classList.add('selected')
+        this.filterByEmptyavis(emptyavisFilter)
       }
       this.updateCount()
     }
@@ -306,6 +317,17 @@ application.register(
       this.updateCount()
     }
 
+    filterEmptyavis(event) {
+      const checked = event.target.checked
+      const value = checked ? '1' : ''
+      this.emptyavisLabelTarget
+        .querySelector('abbr')
+        .classList.toggle('selected', checked)
+      this.filterByEmptyavis(value)
+      this.setURLParam('emptyavis', value)
+      this.updateCount()
+    }
+
     filterByArticle(value) {
       this.filterColumn('hidden-article', line => {
         if (!value) {
@@ -367,6 +389,16 @@ application.register(
         return line.dataset.emptytable.trim() === value
       })
       this.tableTarget.classList.toggle('filtered-emptytable', value)
+    }
+
+    filterByEmptyavis(value) {
+      this.filterColumn('hidden-emptyavis', line => {
+        if (!value) {
+          return true
+        }
+        return line.dataset.emptyavis.trim() === value
+      })
+      this.tableTarget.classList.toggle('filtered-emptyavis', value)
     }
 
     filterColumn(className, shouldShow) {

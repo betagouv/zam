@@ -97,6 +97,8 @@ table.filtered-amendement td.identique:after,
 table.filtered-amendement td.identique.first.last:after,
 table.filtered-emptytable td.identique:after,
 table.filtered-emptytable td.identique.first.last:after,
+table.filtered-emptyavis td.identique:after,
+table.filtered-emptyavis td.identique.first.last:after,
 table.filtered-status td.identique:after,
 table.filtered-status td.identique.first.last:after {
     top: calc(50% - 3px);

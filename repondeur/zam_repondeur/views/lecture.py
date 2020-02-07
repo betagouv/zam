@@ -12,7 +12,9 @@ from zam_repondeur.resources import LectureResource
 from zam_repondeur.tasks.fetch import fetch_amendements
 
 
-@view_config(context=LectureResource, name="manual_refresh")
+@view_config(
+    context=LectureResource, name="manual_refresh", permission="refresh_lecture"
+)
 def manual_refresh(context: LectureResource, request: Request) -> Response:
     lecture = context.model()
     amendements_collection = context["amendements"]
@@ -38,13 +40,20 @@ def manual_refresh(context: LectureResource, request: Request) -> Response:
 @view_config(context=LectureResource, name="journal", renderer="lecture_journal.html")
 def lecture_journal(context: LectureResource, request: Request) -> Response:
     lecture = context.model(noload("amendements"))
+    settings = request.registry.settings
+    refreshable = lecture.refreshable_for(
+        "articles", settings
+    ) or lecture.refreshable_for("amendements", settings)
+    can_refresh = request.has_permission("refresh_lecture", context)
+    refreshing = lecture.get_fetch_progress()
+    allowed_to_refresh = refreshable and can_refresh and not refreshing
     return {
         "lecture": lecture,
         "dossier_resource": context.dossier_resource,
         "lecture_resource": context,
         "current_tab": "journal",
         "today": date.today(),
-        "settings": request.registry.settings,
+        "allowed_to_refresh": allowed_to_refresh,
     }
 
 

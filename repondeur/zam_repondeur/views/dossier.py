@@ -60,7 +60,9 @@ def dossier_journal(context: DossierResource, request: Request) -> Response:
     }
 
 
-@view_config(context=DossierResource, name="manual_refresh")
+@view_config(
+    context=DossierResource, name="manual_refresh", permission="refresh_dossier"
+)
 def manual_refresh(context: DossierResource, request: Request) -> Response:
     dossier = context.dossier
     update_dossier(dossier.pk, force=True)

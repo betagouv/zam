@@ -15,7 +15,7 @@ def read_sample_data(basename):
     return (FETCH_SAMPLE_DATA_DIR / basename).read_text()
 
 
-def test_get_form(app, lecture_an, amendements_an, user_david):
+def test_get_form(app, lecture_an, amendements_an, user_sgg):
     from zam_repondeur.models import DBSession
 
     with transaction.manager:
@@ -23,7 +23,7 @@ def test_get_form(app, lecture_an, amendements_an, user_david):
         lecture_an.texte.date_depot = datetime.utcnow().date() - timedelta(days=5)
 
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/journal/", user=user_david
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/journal/", user=user_sgg
     )
 
     assert resp.status_code == 200
@@ -42,6 +42,17 @@ def test_get_form(app, lecture_an, amendements_an, user_david):
     assert resp.forms["manual-refresh"].fields["refresh"][0].attrs["type"] == "submit"
 
 
+def test_get_form_absent_if_not_admin(app, lecture_an, amendements_an, user_david):
+    resp = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/journal/", user=user_david
+    )
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    assert "manual-refresh" not in resp.forms
+
+
 def test_get_form_absent_if_old_texte(app, lecture_an, amendements_an, user_david):
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/journal/", user=user_david
@@ -54,7 +65,7 @@ def test_get_form_absent_if_old_texte(app, lecture_an, amendements_an, user_davi
 
 
 @responses.activate
-def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_david):
+def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_sgg):
     from zam_repondeur.models import Amendement, DBSession, Lecture
 
     # Initially, we only have one amendement (#135), with a response
@@ -81,7 +92,7 @@ def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_david):
 
         # Then we ask for a refresh
         form = app.get(
-            "/dossiers/plfss-2018/lectures/an.15.269.PO717460/journal/", user=user_david
+            "/dossiers/plfss-2018/lectures/an.15.269.PO717460/journal/", user=user_sgg
         ).forms["manual-refresh"]
         resp = form.submit()
 
@@ -104,7 +115,7 @@ def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_david):
 
     # If we fetch again the journal, the refresh button is not present anymore.
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/journal/", user=user_david
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/journal/", user=user_sgg
     )
     assert resp.status_code == 200
     assert "manual-refresh" not in resp.forms

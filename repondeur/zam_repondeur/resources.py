@@ -72,6 +72,8 @@ class Root(Resource):
         (Deny, Everyone, "delete"),
         (Allow, "group:admins", "refresh_dossier"),
         (Deny, Everyone, "refresh_dossier"),
+        (Allow, "group:admins", "refresh_lecture"),
+        (Deny, Everyone, "refresh_lecture"),
         (Allow, "group:admins", "manage_whitelist"),
         (Deny, Everyone, "manage_whitelist"),
     ]

@@ -90,13 +90,11 @@
             Options avancées
         </a>
     </li>
-    {% if lecture.displayable %}
-        <li>
-            <a href="{{ request.resource_url(context, 'articles') }}" target="_blank">
-                Dossier de banc
-            </a>
-        </li>
-    {% endif %}
+    <li>
+        <a href="{{ request.resource_url(context, 'articles') }}" target="_blank">
+            Dossier de banc
+        </a>
+    </li>
 {% endblock %}
 
 {% block body %}

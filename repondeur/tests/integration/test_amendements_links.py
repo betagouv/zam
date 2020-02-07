@@ -1,26 +1,6 @@
-import transaction
-
-
-def test_repondeur_does_not_contains_link_to_visionneuse_if_no_avis(
+def test_repondeur_does_not_contains_link_to_visionneuse(
     wsgi_server, driver, lecture_an_url, amendements_an
 ):
-    driver.get(f"{lecture_an_url}/amendements/")
-    driver.find_element_by_css_selector(".menu-toggle").click()
-    menu_items = [
-        item.text for item in driver.find_elements_by_css_selector("nav.main li")
-    ]
-    assert "Dossier de banc" not in menu_items
-
-
-def test_repondeur_contains_link_to_visionneuse_if_avis(
-    wsgi_server, driver, lecture_an_url, amendements_an
-):
-    from zam_repondeur.models import DBSession
-
-    with transaction.manager:
-        amendements_an[0].user_content.avis = "Favorable"
-        DBSession.add_all(amendements_an)
-
     driver.get(f"{lecture_an_url}/amendements/")
     driver.find_element_by_css_selector(".menu-toggle").click()
     menu_items = [

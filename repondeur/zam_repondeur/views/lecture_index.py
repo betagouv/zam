@@ -2,7 +2,7 @@ from pyramid.request import Request
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload, load_only, subqueryload
 
-from zam_repondeur.models import Amendement, Article, Batch, DBSession
+from zam_repondeur.models import Amendement, AmendementList, Article, Batch, DBSession
 from zam_repondeur.resources import AmendementCollection
 
 
@@ -55,7 +55,7 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
             ),
         )
     )
-    amendements = sorted(amendements)
+    amendements = AmendementList(sorted(amendements))
     total_count_amendements = lecture.nb_amendements
     return {
         "lecture": lecture,

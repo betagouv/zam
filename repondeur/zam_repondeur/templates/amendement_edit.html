@@ -343,7 +343,7 @@
     <form id="edit-amendement"
           action="{{ submit_url }}"
           method="POST"
-          data-controller="unsaved-changes"
+          data-controller="unsaved-changes amendement"
           data-action="beforeunload@window->unsaved-changes#beforeUnload unload@window->unsaved-changes#unload"
           data-unsaved-changes-dirty="false"
           data-unsaved-changes-start-editing-url="{{ request.resource_url(context, 'start_editing') }}"
@@ -353,7 +353,7 @@
         {% if not amendement.gouvernemental %}
         <div class="form-group">
             <label for="avis">Position du gouvernement</label>
-            <select name="avis" class="form-control" data-action="unsaved-changes#setDirty">
+            <select name="avis" class="form-control" data-target="amendement.avis" data-action="unsaved-changes#setDirty">
                 <option value="">Choisir dans la liste…</option>
                 {% for value in avis %}
                     <option value="{{ value }}" {%- if amendement.user_content.avis == value %} selected{% endif %}>{{ value }}</option>
@@ -377,7 +377,7 @@
                     Présentation de l’amendement
                 {% endif %}
             </label>
-            <textarea name="reponse" class="form-control editable" style="height: 600px;">{{ amendement.user_content.reponse or "" | safe }}</textarea>
+            <textarea name="reponse" data-target="amendement.reponse" class="form-control editable" style="height: 600px;">{{ amendement.user_content.reponse or "" | safe }}</textarea>
         </div>
 
         <div class="form-group">
@@ -386,9 +386,9 @@
         </div>
 
         <div class="form-group save-buttons">
-            <input type="submit" name="save-and-transfer" value="Enregistrer et transférer" class="button enabled primary" data-action="unsaved-changes#allowFormSubmission">
+            <input type="submit" name="save-and-transfer" value="Enregistrer et transférer" class="button enabled primary" data-action="unsaved-changes#allowFormSubmission amendement#checkEmptyAvis">
             <a href="{{ back_url }}" class="arrow-left">Retour</a>
-            <input type="submit" name="save" value="Enregistrer" class="button primary" data-action="unsaved-changes#allowFormSubmission">
+            <input type="submit" name="save" value="Enregistrer" class="button primary" data-action="unsaved-changes#allowFormSubmission amendement#checkEmptyAvis">
         </div>
 
     </form>
@@ -406,6 +406,12 @@
 
 {% block extra_scripts %}
     {% if is_on_my_table %}
-        <script>;(() => application.register('notifications-with-diff-unique', NotificationsWithDiffUnique))()</script>
+        <script src="{{ request.static_url('zam_repondeur:static/js/amendement.js') }}"></script>
+        <script>
+            ;(() => {
+                application.register('notifications-with-diff-unique', NotificationsWithDiffUnique)
+                application.register('amendement', Amendement)
+            })()
+        </script>
     {% endif %}
 {% endblock %}

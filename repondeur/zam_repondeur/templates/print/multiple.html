@@ -7,7 +7,7 @@
 <body>
   <main>
     {% for amendement in amendements %}
-        {{ macros.response_page([amendement] + amendement.similaires) }}
+        {{ macros.response_page([amendement] + all_amendements.similaires(amendement)) }}
         {% if amendement.location.batch %}
             {% set amdts = amendement.location.batch.amendements %}
         {% else %}

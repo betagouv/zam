@@ -64,6 +64,7 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
         "current_tab": "index",
         "total_count_amendements": total_count_amendements,
         "article_count_amendements": len(amendements),
+        "amendements": amendements,
         "collapsed_amendements": Batch.collapsed_batches(amendements),
         "articles": lecture.articles,
         "article_param": article_param,

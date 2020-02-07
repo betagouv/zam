@@ -19,7 +19,7 @@ def _cartouche_to_list(response_node):
 def test_generate_pdf_without_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.models import Amendement, AmendementList
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
@@ -100,7 +100,7 @@ def test_generate_pdf_without_responses(
 def test_generate_pdf_with_amendement_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.models import Amendement, AmendementList
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
@@ -488,7 +488,7 @@ def test_generate_pdf_with_amendement_content_gouvernemental(
 def test_generate_pdf_with_amendement_and_sous_amendement_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.models import Amendement, AmendementList
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
@@ -577,7 +577,7 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
 def test_generate_pdf_with_additional_article_amendements_having_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.models import Amendement, AmendementList
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
@@ -664,7 +664,7 @@ def test_generate_pdf_with_additional_article_amendements_having_responses(
 
 
 def test_generate_pdf_amendement_without_responses(app, lecture_senat, article1_senat):
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.models import Amendement, AmendementList
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
@@ -682,9 +682,13 @@ def test_generate_pdf_amendement_without_responses(app, lecture_senat, article1_
         position=1,
     )
 
+    amdt_list = AmendementList([amendement])
+
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print/multiple.html", {"amendements": [amendement]}
+            DummyRequest(),
+            "print/multiple.html",
+            {"amendements": amdt_list, "all_amendements": amdt_list},
         )
     )
 
@@ -692,7 +696,7 @@ def test_generate_pdf_amendement_without_responses(app, lecture_senat, article1_
 
 
 def test_generate_pdf_amendement_with_responses(app, lecture_senat, article1_senat):
-    from zam_repondeur.models import Amendement
+    from zam_repondeur.models import Amendement, AmendementList
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
@@ -711,9 +715,13 @@ def test_generate_pdf_amendement_with_responses(app, lecture_senat, article1_sen
         avis="Favorable",
     )
 
+    amdt_list = AmendementList([amendement])
+
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print/multiple.html", {"amendements": [amendement]}
+            DummyRequest(),
+            "print/multiple.html",
+            {"amendements": amdt_list, "all_amendements": amdt_list},
         )
     )
 
@@ -723,7 +731,7 @@ def test_generate_pdf_amendement_with_responses(app, lecture_senat, article1_sen
 def test_generate_pdf_amendement_with_content(
     app, lecture_senat, article1_senat, amendements_senat
 ):
-    from zam_repondeur.models import DBSession
+    from zam_repondeur.models import AmendementList, DBSession
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement_6666 = amendements_senat[0]
@@ -733,10 +741,15 @@ def test_generate_pdf_amendement_with_content(
     amendement_6666.user_content.objet = "L’objet"
     amendement_6666.user_content.reponse = "La réponse"
     DBSession.add(amendement_6666)
+    DBSession.flush()
+
+    amdt_list = AmendementList([amendement_6666])
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print/multiple.html", {"amendements": [amendement_6666]}
+            DummyRequest(),
+            "print/multiple.html",
+            {"amendements": amdt_list, "all_amendements": amdt_list},
         )
     )
 
@@ -763,10 +776,11 @@ def test_generate_pdf_amendement_with_content(
 def test_generate_pdf_amendement_with_similaire(
     app, lecture_senat, article1_senat, amendements_senat
 ):
-    from zam_repondeur.models import DBSession
+    from zam_repondeur.models import AmendementList, DBSession
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
-    amendement_6666, amendement_9999 = amendements_senat
+    amendement_6666, amendement_9999 = amdt_list = AmendementList(amendements_senat)
+
     amendement_6666.auteur = "M. JEAN"
     amendement_6666.groupe = "Les Indépendants"
     amendement_6666.user_content.avis = "Favorable"
@@ -780,12 +794,18 @@ def test_generate_pdf_amendement_with_similaire(
     amendement_9999.user_content.reponse = "La réponse"
 
     DBSession.add_all(amendements_senat)
+    DBSession.flush()
 
-    assert amendement_6666.similaires == [amendement_9999]
+    assert amdt_list.similaires(amendement_6666) == [amendement_9999]
 
     parser = HTMLParser(
         generate_html_for_pdf(
-            DummyRequest(), "print/multiple.html", {"amendements": [amendement_6666]}
+            DummyRequest(),
+            "print/multiple.html",
+            {
+                "amendements": AmendementList([amendement_6666]),
+                "all_amendements": amdt_list,
+            },
         )
     )
 
@@ -833,7 +853,7 @@ def another_amendements_an_batch(lecture_an, article1_an):
 def test_generate_pdf_amendement_with_batches(
     app, lecture_an, amendements_an_batch, another_amendements_an_batch
 ):
-    from zam_repondeur.models import DBSession
+    from zam_repondeur.models import AmendementList, DBSession
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement_666, amendement_999 = amendements_an_batch
@@ -862,16 +882,23 @@ def test_generate_pdf_amendement_with_batches(
     amendement_888.user_content.objet = "L’autre objet"
     amendement_888.user_content.reponse = "L’autre réponse"
 
-    DBSession.add_all([amendement_666, amendement_999, amendement_555, amendement_888])
+    amdt_list = AmendementList(
+        [amendement_666, amendement_999, amendement_555, amendement_888]
+    )
+    DBSession.add_all(amdt_list)
+    DBSession.flush()
 
-    assert amendement_666.similaires == [amendement_999]
-    assert amendement_555.similaires == [amendement_888]
+    assert amdt_list.similaires(amendement_666) == [amendement_999]
+    assert amdt_list.similaires(amendement_555) == [amendement_888]
 
     parser = HTMLParser(
         generate_html_for_pdf(
             DummyRequest(),
             "print/multiple.html",
-            {"amendements": [amendement_666, amendement_555]},
+            {
+                "amendements": AmendementList([amendement_666, amendement_555]),
+                "all_amendements": amdt_list,
+            },
         )
     )
 

@@ -1,7 +1,9 @@
 import re
 from datetime import date, datetime
+from itertools import groupby
 from typing import (
     TYPE_CHECKING,
+    Callable,
     Dict,
     Iterable,
     List,
@@ -11,6 +13,7 @@ from typing import (
     Tuple,
     Union,
 )
+from uuid import uuid4
 
 from sqlalchemy import (
     Column,
@@ -476,54 +479,11 @@ class Amendement(Base):
         return self.id_identique is not None
 
     @property
-    def all_identiques(self) -> List["Amendement"]:
-        return sorted(self._set_of_all_identiques)
-
-    @property
-    def _set_of_all_identiques(self) -> Set["Amendement"]:
-        return (
-            self.lecture.identiques_map[self.num]
-            - self.lecture.abandoned_amendements
-            - {self}
-        )
-
-    @property
     def first_identique_num(self) -> Optional[int]:
-        if self.id_identique is None:
-            return None
-        return next(amdt.num for amdt in sorted(self.lecture.identiques_map[self.num]))
-
-    @property
-    def _set_of_displayable_identiques(self) -> Set["Amendement"]:
-        return (
-            self._set_of_all_identiques
-            - self.lecture.not_displayable_amendements
-            - set(self.location.batch.amendements if self.location.batch else [])
-        )
-
-    @property
-    def displayable_identiques(self) -> List["Amendement"]:
-        return list(self._set_of_displayable_identiques)
-
-    @property
-    def similaires(self) -> List["Amendement"]:
-        return sorted(self._set_of_similaires)
-
-    @property
-    def _set_of_similaires(self) -> Set["Amendement"]:
-        similaires = self.lecture.similaires_map[self.num]
-        return {
-            amdt
-            for amdt in similaires
-            if (amdt.num != self.num and amdt.is_displayable)
-        }
+        return self.lecture.all_amendements.first_identique_num(self)
 
     def reponse_similaire(self, other: "Amendement") -> bool:
         return self.user_content.similaire(other.user_content)
-
-    @property
-    def displayable_identiques_are_similaires(self) -> bool:
-        return self._set_of_displayable_identiques == self._set_of_similaires
 
     def grouped_displayable_children(
         self,
@@ -612,3 +572,74 @@ class Amendement(Base):
 class AmendementList(list):
     def __init__(self, amendements: Iterable[Amendement]):
         super().__init__(sorted(amendements))
+
+    def all_identiques(self, amendement: Amendement) -> List[Amendement]:
+        return sorted(self._set_of_all_identiques(amendement))
+
+    def _set_of_all_identiques(self, amendement: Amendement) -> Set[Amendement]:
+        return (
+            self.identiques_map[amendement.num]
+            - self.abandoned_amendements
+            - {amendement}
+        )
+
+    @reify
+    def identiques_map(self) -> Dict[int, Set[Amendement]]:
+        return self._build_map(key=lambda amdt: amdt.id_identique or uuid4().int)
+
+    def _build_map(self, key: Callable) -> Dict[int, Set[Amendement]]:
+        res = {}
+        for _, g in groupby(sorted(self, key=key), key=key):
+            identiques = set(g)
+            for amdt in identiques:
+                res[amdt.num] = identiques
+        return res
+
+    @reify
+    def abandoned_amendements(self) -> Set[Amendement]:
+        return {amdt for amdt in self if amdt.is_abandoned}
+
+    def displayable_identiques_are_similaires(self, amendement: Amendement) -> bool:
+        displayable_identiques = self._set_of_displayable_identiques(amendement)
+        similaires = self._set_of_similaires(amendement)
+        return displayable_identiques == similaires
+
+    def displayable_identiques(self, amendement: Amendement) -> List["Amendement"]:
+        return list(self._set_of_displayable_identiques(amendement))
+
+    def _set_of_displayable_identiques(
+        self, amendement: Amendement
+    ) -> Set["Amendement"]:
+        return (
+            self._set_of_all_identiques(amendement)
+            - self._not_displayable_amendements
+            - set(
+                amendement.location.batch.amendements
+                if amendement.location.batch
+                else []
+            )
+        )
+
+    @reify
+    def _not_displayable_amendements(self) -> Set[Amendement]:
+        return {amdt for amdt in self if not amdt.is_displayable}
+
+    def similaires(self, amendement: Amendement) -> List["Amendement"]:
+        return sorted(self._set_of_similaires(amendement))
+
+    def _set_of_similaires(self, amendement: Amendement) -> Set["Amendement"]:
+        similaires = self.similaires_map[amendement.num]
+        return {
+            other
+            for other in similaires
+            if (other.num != amendement.num and other.is_displayable)
+        }
+
+    @reify
+    def similaires_map(self) -> Dict[int, Set[Amendement]]:
+        return self._build_map(key=lambda amdt: amdt.user_content.reponse_hash or "")
+
+    def first_identique_num(self, amendement: Amendement) -> Optional[int]:
+        if amendement.id_identique is None:
+            return None
+        return next(amdt.num for amdt in sorted(self.identiques_map[amendement.num]))

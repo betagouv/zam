@@ -53,6 +53,12 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
                 .joinedload("user")
                 .load_only("email", "name"),
             ),
+            (
+                subqueryload("identiques")
+                .load_only("num")
+                .joinedload("user_content")
+                .load_only("reponse_hash")
+            ),
         )
     )
     amendements = AmendementList(amendements)

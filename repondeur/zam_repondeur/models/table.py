@@ -13,7 +13,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import backref, column_property, relationship
 
-from .amendement import Amendement, AmendementLocation
+from .amendement import Amendement, AmendementList, AmendementLocation
 from .base import Base, DBSession
 from .lecture import Lecture
 from .users import User
@@ -58,8 +58,10 @@ class UserTable(Base):
         return table
 
     @property
-    def amendements(self) -> List[Amendement]:
-        return sorted(location.amendement for location in self.amendements_locations)
+    def amendements(self) -> AmendementList:
+        return AmendementList(
+            location.amendement for location in self.amendements_locations
+        )
 
     def add_amendement(self, amendement: Amendement) -> None:
         self.amendements_locations.append(amendement.location)

@@ -361,8 +361,8 @@
 
                                         {% if amendement.identique %}
                                             {{ macros.svg_icon("identique") }}
-                                            {% set identiques = lecture.all_amendements.displayable_identiques(amendement) %}
-                                            {% if not amendement.displayable_identiques_are_similaires and identiques %}
+                                            {% set identiques = amendement.identiques %}
+                                            {% if not amendement.all_displayable_identiques_have_same_response() and identiques %}
                                                 <span class="warning" title="{% if identiques|length > 1 -%}
                                                     Les amendements identiques {% for amdt in identiques -%}
                                                     {{ amdt }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}

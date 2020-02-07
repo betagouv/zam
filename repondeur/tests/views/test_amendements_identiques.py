@@ -14,17 +14,17 @@ def test_amendements_not_identiques(app, lecture_an_url, amendements_an, user_da
 
 
 def test_amendements_identiques(app, lecture_an_url, amendements_an, user_david):
-    from zam_repondeur.models import AmendementList, DBSession
+    from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
         DBSession.add_all(amendements_an)
         amendements_an[0].id_identique = 42
         amendements_an[1].id_identique = 42
 
-        amdt_list = AmendementList(amendements_an)
+    amendements_an = DBSession.query(Amendement).all()
 
-        assert amdt_list.all_identiques(amendements_an[0]) == [amendements_an[1]]
-        assert amdt_list.all_identiques(amendements_an[1]) == [amendements_an[0]]
+    assert amendements_an[0].identiques == [amendements_an[1]]
+    assert amendements_an[1].identiques == [amendements_an[0]]
 
     resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
 
@@ -45,20 +45,20 @@ def test_amendements_identiques(app, lecture_an_url, amendements_an, user_david)
 def test_amendements_identiques_with_abandoned(
     app, lecture_an_url, amendements_an, user_david
 ):
-    from zam_repondeur.models import AmendementList, DBSession
+    from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
         DBSession.add_all(amendements_an)
-
         amendements_an[0].id_identique = 42
         amendements_an[1].id_identique = 42
         amendements_an[1].sort = "retiré"
 
-        assert amendements_an[1].is_abandoned
+    amendements_an = DBSession.query(Amendement).all()
 
-        amdt_list = AmendementList(amendements_an)
-        assert amdt_list.all_identiques(amendements_an[0]) == []
-        assert amdt_list.all_identiques(amendements_an[1]) == [amendements_an[0]]
+    assert amendements_an[1].is_abandoned
+
+    assert amendements_an[0].identiques == []
+    assert amendements_an[1].identiques == [amendements_an[0]]
 
     resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
 

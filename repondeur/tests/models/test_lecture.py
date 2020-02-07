@@ -118,29 +118,6 @@ class TestLectureToStr:
         assert str(lecture) == result
 
 
-class TestIdentiquesMap:
-    def test_empty(self, lecture_an):
-        from zam_repondeur.models import DBSession
-
-        DBSession.add(lecture_an)
-        assert lecture_an.all_amendements.identiques_map == {}
-
-    def test_no_identiques(self, lecture_an, amendements_an):
-        amdt_666, amdt_999 = amendements_an
-        assert lecture_an.all_amendements.identiques_map == {
-            666: {amdt_666},
-            999: {amdt_999},
-        }
-
-    def test_identiques(self, lecture_an, amendements_an):
-        amdt_666, amdt_999 = amendements_an
-        amdt_666.id_identique = amdt_999.id_identique = 1234
-        assert lecture_an.all_amendements.identiques_map == {
-            666: {amdt_666, amdt_999},
-            999: {amdt_666, amdt_999},
-        }
-
-
 class TestSimilairesMap:
     def test_empty(self, lecture_an):
         from zam_repondeur.models import DBSession

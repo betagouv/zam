@@ -73,7 +73,7 @@ def test_amendement_batches(amendements_an):
 
 
 def test_amendement_unicity(amendements_an, article1av_an):
-    from zam_repondeur.models import Amendement, AmendementList, DBSession
+    from zam_repondeur.models import Amendement, DBSession
 
     existing = amendements_an[0]
     with transaction.manager, pytest.raises(IntegrityError) as error_info:
@@ -91,12 +91,12 @@ def test_amendement_unicity(amendements_an, article1av_an):
 
 class TestDisplayableIdentiques:
     def test_without_batch(self, amendements_an):
-        from zam_repondeur.models import Amendement, AmendementList, DBSession
+        from zam_repondeur.models import Amendement, DBSession
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
+        amendement_666, amendement_999 = amendements_an
 
-        assert amdt_list.displayable_identiques(amendement_666) == []
-        assert amdt_list.displayable_identiques(amendement_999) == []
+        assert list(amendement_666._displayable_identiques()) == []
+        assert list(amendement_999._displayable_identiques()) == []
 
         with transaction.manager:
             DBSession.add_all(amendements_an)
@@ -109,20 +109,20 @@ class TestDisplayableIdentiques:
 
         amendements_an = DBSession.query(Amendement).all()  # reload
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
+        amendement_666, amendement_999 = amendements_an
 
-        assert amdt_list.displayable_identiques(amendement_666) == [amendement_999]
-        assert amdt_list.displayable_identiques(amendement_999) == [amendement_666]
+        assert list(amendement_666._displayable_identiques()) == [amendement_999]
+        assert list(amendement_999._displayable_identiques()) == [amendement_666]
 
     def test_with_batch(self, amendements_an_batch):
-        from zam_repondeur.models import Amendement, AmendementList, DBSession
+        from zam_repondeur.models import Amendement, DBSession
 
-        amendements_an = DBSession.query(Amendement).all()
+        amendements_an_batch = DBSession.query(Amendement).all()  # reload
+        amendement_666, amendement_999 = amendements_an_batch
+        # DBSession.add_all(amendements_an_batch)
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
-
-        assert amdt_list.displayable_identiques(amendement_666) == []
-        assert amdt_list.displayable_identiques(amendement_999) == []
+        assert list(amendement_666._displayable_identiques()) == []
+        assert list(amendement_999._displayable_identiques()) == []
 
         with transaction.manager:
             DBSession.add_all(amendements_an_batch)
@@ -133,24 +133,23 @@ class TestDisplayableIdentiques:
             amendement_666.user_content.avis = "Sagesse"
             amendement_999.user_content.avis = "Sagesse"
 
-        amendements_an = DBSession.query(Amendement).all()  # reload
+        amendements_an_batch = DBSession.query(Amendement).all()  # reload
+        amendement_666, amendement_999 = amendements_an_batch
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
-
-        assert amdt_list.displayable_identiques(amendement_666) == []
-        assert amdt_list.displayable_identiques(amendement_999) == []
+        assert list(amendement_666._displayable_identiques()) == []
+        assert list(amendement_999._displayable_identiques()) == []
 
 
 class TestDisplayableIdentiquesAreSimilaire:
     def test_same_avis_and_no_reponse(self, amendements_an):
-        from zam_repondeur.models import Amendement, AmendementList, DBSession
+        from zam_repondeur.models import Amendement, DBSession
 
         amendements_an = DBSession.query(Amendement).all()
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
+        amendement_666, amendement_999 = amendements_an
 
-        assert amdt_list.displayable_identiques(amendement_666) == []
-        assert amdt_list.displayable_identiques(amendement_999) == []
+        assert list(amendement_666._displayable_identiques()) == []
+        assert list(amendement_999._displayable_identiques()) == []
 
         with transaction.manager:
             DBSession.add_all(amendements_an)
@@ -163,22 +162,22 @@ class TestDisplayableIdentiquesAreSimilaire:
 
         amendements_an = DBSession.query(Amendement).all()  # reload
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
+        amendement_666, amendement_999 = amendements_an
 
-        assert amdt_list.displayable_identiques(amendement_666) == [amendement_999]
-        assert amdt_list.displayable_identiques(amendement_999) == [amendement_666]
-        assert amdt_list.displayable_identiques_are_similaires(amendement_666)
-        assert amdt_list.displayable_identiques_are_similaires(amendement_999)
+        assert list(amendement_666._displayable_identiques()) == [amendement_999]
+        assert list(amendement_999._displayable_identiques()) == [amendement_666]
+        assert amendement_666.all_displayable_identiques_have_same_response()
+        assert amendement_999.all_displayable_identiques_have_same_response()
 
     def test_same_avis_and_same_reponse(self, amendements_an):
-        from zam_repondeur.models import Amendement, AmendementList, DBSession
+        from zam_repondeur.models import Amendement, DBSession
 
         amendements_an = DBSession.query(Amendement).all()
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
+        amendement_666, amendement_999 = amendements_an
 
-        assert amdt_list.displayable_identiques(amendement_666) == []
-        assert amdt_list.displayable_identiques(amendement_999) == []
+        assert list(amendement_666._displayable_identiques()) == []
+        assert list(amendement_999._displayable_identiques()) == []
 
         with transaction.manager:
             DBSession.add_all(amendements_an)
@@ -193,20 +192,20 @@ class TestDisplayableIdentiquesAreSimilaire:
 
         amendements_an = DBSession.query(Amendement).all()  # reload
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
+        amendement_666, amendement_999 = amendements_an
 
-        assert amdt_list.displayable_identiques(amendement_666) == [amendement_999]
-        assert amdt_list.displayable_identiques(amendement_999) == [amendement_666]
-        assert amdt_list.displayable_identiques_are_similaires(amendement_666)
-        assert amdt_list.displayable_identiques_are_similaires(amendement_999)
+        assert list(amendement_666._displayable_identiques()) == [amendement_999]
+        assert list(amendement_999._displayable_identiques()) == [amendement_666]
+        assert amendement_666.all_displayable_identiques_have_same_response()
+        assert amendement_999.all_displayable_identiques_have_same_response()
 
     def test_same_avis_and_same_reponse_with_spaces(self, amendements_an):
-        from zam_repondeur.models import Amendement, AmendementList, DBSession
+        from zam_repondeur.models import Amendement, DBSession
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
+        amendement_666, amendement_999 = amendements_an
 
-        assert amdt_list.displayable_identiques(amendement_666) == []
-        assert amdt_list.displayable_identiques(amendement_999) == []
+        assert list(amendement_666._displayable_identiques()) == []
+        assert list(amendement_999._displayable_identiques()) == []
 
         with transaction.manager:
             DBSession.add_all(amendements_an)
@@ -221,20 +220,20 @@ class TestDisplayableIdentiquesAreSimilaire:
 
         amendements_an = DBSession.query(Amendement).all()  # reload
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
+        amendement_666, amendement_999 = amendements_an
 
-        assert amdt_list.displayable_identiques(amendement_666) == [amendement_999]
-        assert amdt_list.displayable_identiques(amendement_999) == [amendement_666]
-        assert amdt_list.displayable_identiques_are_similaires(amendement_666)
-        assert amdt_list.displayable_identiques_are_similaires(amendement_999)
+        assert list(amendement_666._displayable_identiques()) == [amendement_999]
+        assert list(amendement_999._displayable_identiques()) == [amendement_666]
+        assert amendement_666.all_displayable_identiques_have_same_response()
+        assert amendement_999.all_displayable_identiques_have_same_response()
 
     def test_different_avis(self, amendements_an):
-        from zam_repondeur.models import Amendement, AmendementList, DBSession
+        from zam_repondeur.models import Amendement, DBSession
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
+        amendement_666, amendement_999 = amendements_an
 
-        assert amdt_list.displayable_identiques(amendement_666) == []
-        assert amdt_list.displayable_identiques(amendement_999) == []
+        assert list(amendement_666._displayable_identiques()) == []
+        assert list(amendement_999._displayable_identiques()) == []
 
         with transaction.manager:
             DBSession.add_all(amendements_an)
@@ -247,20 +246,20 @@ class TestDisplayableIdentiquesAreSimilaire:
 
         amendements_an = DBSession.query(Amendement).all()  # reload
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
+        amendement_666, amendement_999 = amendements_an
 
-        assert amdt_list.displayable_identiques(amendement_666) == [amendement_999]
-        assert amdt_list.displayable_identiques(amendement_999) == [amendement_666]
-        assert not amdt_list.displayable_identiques_are_similaires(amendement_666)
-        assert not amdt_list.displayable_identiques_are_similaires(amendement_999)
+        assert list(amendement_666._displayable_identiques()) == [amendement_999]
+        assert list(amendement_999._displayable_identiques()) == [amendement_666]
+        assert not amendement_666.all_displayable_identiques_have_same_response()
+        assert not amendement_999.all_displayable_identiques_have_same_response()
 
     def test_different_reponse(self, amendements_an):
-        from zam_repondeur.models import Amendement, AmendementList, DBSession
+        from zam_repondeur.models import Amendement, DBSession
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
+        amendement_666, amendement_999 = amendements_an
 
-        assert amdt_list.displayable_identiques(amendement_666) == []
-        assert amdt_list.displayable_identiques(amendement_999) == []
+        assert list(amendement_666._displayable_identiques()) == []
+        assert list(amendement_999._displayable_identiques()) == []
 
         with transaction.manager:
             DBSession.add_all(amendements_an)
@@ -275,12 +274,12 @@ class TestDisplayableIdentiquesAreSimilaire:
 
         amendements_an = DBSession.query(Amendement).all()  # reload
 
-        amendement_666, amendement_999 = amdt_list = AmendementList(amendements_an)
+        amendement_666, amendement_999 = amendements_an
 
-        assert amdt_list.displayable_identiques(amendement_666) == [amendement_999]
-        assert amdt_list.displayable_identiques(amendement_999) == [amendement_666]
-        assert not amdt_list.displayable_identiques_are_similaires(amendement_666)
-        assert not amdt_list.displayable_identiques_are_similaires(amendement_999)
+        assert list(amendement_666._displayable_identiques()) == [amendement_999]
+        assert list(amendement_999._displayable_identiques()) == [amendement_666]
+        assert not amendement_666.all_displayable_identiques_have_same_response()
+        assert not amendement_999.all_displayable_identiques_have_same_response()
 
 
 @pytest.mark.usefixtures("amendements_repository")

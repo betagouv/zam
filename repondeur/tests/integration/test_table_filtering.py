@@ -50,7 +50,8 @@ def test_filters_are_absent_without_amendements(
     wsgi_server, driver, lecture_an_url, user_david
 ):
     driver.get(f"{lecture_an_url}/tables/{user_david.email}")
-    assert not driver.find_element_by_css_selector("thead tr.filters").is_displayed()
+    assert driver.find_elements_by_css_selector("table") == []
+    assert driver.find_element_by_css_selector(".notice").is_displayed()
 
 
 @pytest.mark.parametrize(

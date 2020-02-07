@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from sqlalchemy import (
     Column,
@@ -388,10 +388,6 @@ class Lecture(Base, LastEventMixin):
             amendement = Amendement.create(lecture=self, article=article, num=num)
             created = True
         return amendement, created
-
-    @reify
-    def abandoned_amendements(self) -> Set[Amendement]:
-        return {amdt for amdt in self.amendements if amdt.is_abandoned}
 
     @reify
     def all_amendements(self) -> AmendementList:

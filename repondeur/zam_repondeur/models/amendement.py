@@ -6,6 +6,7 @@ from typing import (
     Callable,
     Dict,
     Iterable,
+    Iterator,
     List,
     NamedTuple,
     Optional,
@@ -13,8 +14,8 @@ from typing import (
     Tuple,
     Union,
 )
-from uuid import uuid4
 
+from more_itertools import first
 from sqlalchemy import (
     Column,
     Date,
@@ -24,10 +25,14 @@ from sqlalchemy import (
     Integer,
     Text,
     UniqueConstraint,
+    and_,
     case,
+    column,
     func,
+    not_,
+    or_,
 )
-from sqlalchemy.orm import backref, column_property, relationship
+from sqlalchemy.orm import backref, column_property, foreign, relationship, remote
 
 from zam_repondeur.constants import GROUPS_COLORS
 from zam_repondeur.decorator import reify
@@ -248,6 +253,27 @@ class Amendement(Base):
         cascade="all, delete-orphan",
         passive_deletes=True,
         backref="amendement",
+    )
+
+    identiques = relationship(
+        "Amendement",
+        primaryjoin=and_(
+            column("id_identique").isnot(None),
+            remote(column("lecture_pk")) == foreign(lecture_pk),
+            remote(column("id_identique")) == foreign(id_identique),
+            remote(column("pk")) != foreign(pk),
+            or_(
+                remote(column("sort")).is_(None),
+                and_(
+                    not_(remote(column("sort")).ilike(r"%irrecevable%")),
+                    not_(remote(column("sort")).ilike(r"%retiré%")),
+                    not_(remote(column("sort")).ilike(r"tombé")),
+                ),
+            ),
+        ),
+        order_by="Amendement.num",
+        viewonly=True,
+        uselist=True,
     )
 
     __repr_keys__ = ("pk", "num", "rectif", "lecture_pk", "article_pk", "parent_pk")
@@ -480,7 +506,26 @@ class Amendement(Base):
 
     @property
     def first_identique_num(self) -> Optional[int]:
-        return self.lecture.all_amendements.first_identique_num(self)
+        if self.id_identique is None:
+            return None
+        smallest_other_num: Optional[int] = first(
+            (amdt.num for amdt in self.identiques), None
+        )
+        if smallest_other_num is None:
+            return self.num
+        return min(self.num, smallest_other_num)
+
+    def all_displayable_identiques_have_same_response(self) -> bool:
+        return all(
+            other.reponse_similaire(self) for other in self._displayable_identiques()
+        )
+
+    def _displayable_identiques(self) -> Iterator["Amendement"]:
+        others = (other for other in self.identiques if other.is_displayable)
+        batch = self.location.batch
+        if batch is not None:
+            others = (other for other in others if other.location.batch != batch)
+        return others
 
     def reponse_similaire(self, other: "Amendement") -> bool:
         return self.user_content.similaire(other.user_content)
@@ -573,57 +618,6 @@ class AmendementList(list):
     def __init__(self, amendements: Iterable[Amendement]):
         super().__init__(sorted(amendements))
 
-    def all_identiques(self, amendement: Amendement) -> List[Amendement]:
-        return sorted(self._set_of_all_identiques(amendement))
-
-    def _set_of_all_identiques(self, amendement: Amendement) -> Set[Amendement]:
-        return (
-            self.identiques_map[amendement.num]
-            - self.abandoned_amendements
-            - {amendement}
-        )
-
-    @reify
-    def identiques_map(self) -> Dict[int, Set[Amendement]]:
-        return self._build_map(key=lambda amdt: amdt.id_identique or uuid4().int)
-
-    def _build_map(self, key: Callable) -> Dict[int, Set[Amendement]]:
-        res = {}
-        for _, g in groupby(sorted(self, key=key), key=key):
-            identiques = set(g)
-            for amdt in identiques:
-                res[amdt.num] = identiques
-        return res
-
-    @reify
-    def abandoned_amendements(self) -> Set[Amendement]:
-        return {amdt for amdt in self if amdt.is_abandoned}
-
-    def displayable_identiques_are_similaires(self, amendement: Amendement) -> bool:
-        displayable_identiques = self._set_of_displayable_identiques(amendement)
-        similaires = self._set_of_similaires(amendement)
-        return displayable_identiques == similaires
-
-    def displayable_identiques(self, amendement: Amendement) -> List["Amendement"]:
-        return list(self._set_of_displayable_identiques(amendement))
-
-    def _set_of_displayable_identiques(
-        self, amendement: Amendement
-    ) -> Set["Amendement"]:
-        return (
-            self._set_of_all_identiques(amendement)
-            - self._not_displayable_amendements
-            - set(
-                amendement.location.batch.amendements
-                if amendement.location.batch
-                else []
-            )
-        )
-
-    @reify
-    def _not_displayable_amendements(self) -> Set[Amendement]:
-        return {amdt for amdt in self if not amdt.is_displayable}
-
     def similaires(self, amendement: Amendement) -> List["Amendement"]:
         return sorted(self._set_of_similaires(amendement))
 
@@ -637,9 +631,12 @@ class AmendementList(list):
 
     @reify
     def similaires_map(self) -> Dict[int, Set[Amendement]]:
-        return self._build_map(key=lambda amdt: amdt.user_content.reponse_hash or "")
+        return self._build_map(key=lambda amdt: amdt.user_content.reponse_hash)
 
-    def first_identique_num(self, amendement: Amendement) -> Optional[int]:
-        if amendement.id_identique is None:
-            return None
-        return next(amdt.num for amdt in sorted(self.identiques_map[amendement.num]))
+    def _build_map(self, key: Callable) -> Dict[int, Set[Amendement]]:
+        res = {}
+        for _, g in groupby(sorted(self, key=key), key=key):
+            identiques = set(g)
+            for amdt in identiques:
+                res[amdt.num] = identiques
+        return res

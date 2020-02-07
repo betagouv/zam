@@ -19,7 +19,7 @@ def _cartouche_to_list(response_node):
 def test_generate_pdf_without_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
-    from zam_repondeur.models import Amendement, AmendementList
+    from zam_repondeur.models import Amendement
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
@@ -100,7 +100,7 @@ def test_generate_pdf_without_responses(
 def test_generate_pdf_with_amendement_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
-    from zam_repondeur.models import Amendement, AmendementList
+    from zam_repondeur.models import Amendement
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
@@ -488,7 +488,7 @@ def test_generate_pdf_with_amendement_content_gouvernemental(
 def test_generate_pdf_with_amendement_and_sous_amendement_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
-    from zam_repondeur.models import Amendement, AmendementList
+    from zam_repondeur.models import Amendement
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(
@@ -577,7 +577,7 @@ def test_generate_pdf_with_amendement_and_sous_amendement_responses(
 def test_generate_pdf_with_additional_article_amendements_having_responses(
     app, lecture_senat, article1_senat, article1av_senat, article7bis_senat
 ):
-    from zam_repondeur.models import Amendement, AmendementList
+    from zam_repondeur.models import Amendement
     from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
 
     amendement = Amendement.create(

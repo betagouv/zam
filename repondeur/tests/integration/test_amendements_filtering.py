@@ -262,6 +262,7 @@ def test_column_filtering_by_value_with_batches(
     [
         ("3", "gouvernemental", ["666", "999", "777 Gouv."], ["777 Gouv."]),
         ("4", "emptytable", ["", "", "David"], ["", ""]),
+        ("5", "emptyavis", ["", "", "#check"], ["", ""]),
     ],
 )
 def test_column_filtering_by_checkbox(
@@ -288,6 +289,7 @@ def test_column_filtering_by_checkbox(
             position=3,
             auteur="LE GOUVERNEMENT",
         )
+        amendement.user_content.avis = "Favorable"
         user_david_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/amendements/")

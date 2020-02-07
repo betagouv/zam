@@ -144,7 +144,7 @@ def test_get_amendements_columns_default(
         ["Art.", "1"],
         ["Nº", "Gouv."],
         ["Table/boîte", "Vide"],
-        ["Avis"],
+        ["Avis", "Vide"],
         ["Réponse"],
     ]
     options = resp.parser.css("thead tr.filters th select option")
@@ -175,7 +175,7 @@ def test_get_amendements_columns_not_default_article(
         ["Art.", "1", "Art.", "7", "bis"],
         ["Nº", "Gouv."],
         ["Table/boîte", "Vide"],
-        ["Avis"],
+        ["Avis", "Vide"],
         ["Réponse"],
     ]
     options = resp.parser.css("thead tr.filters th select option")
@@ -201,7 +201,7 @@ def test_get_amendements_columns_missions_for_plf2(
         ["Mission"],
         ["Nº", "Gouv."],
         ["Table/boîte", "Vide"],
-        ["Avis"],
+        ["Avis", "Vide"],
         ["Réponse"],
     ]
 

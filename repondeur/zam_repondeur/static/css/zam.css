@@ -510,16 +510,19 @@ tr.hidden-amendement,
 tr.hidden-gouvernemental,
 tr.hidden-table,
 tr.hidden-emptytable,
+tr.hidden-emptyavis,
 tr.hidden-avis,
 tr.hidden-reponse {
     display: none;
 }
 input[type="checkbox"]#gouvernemental,
-input[type="checkbox"]#emptytable {
+input[type="checkbox"]#emptytable,
+input[type="checkbox"]#emptyavis {
     display: none;
 }
 label[for="gouvernemental"] abbr,
-label[for="emptytable"] abbr {
+label[for="emptytable"] abbr,
+label[for="emptyavis"] abbr {
     cursor: pointer;
 }
 

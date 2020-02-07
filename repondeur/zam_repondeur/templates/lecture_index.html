@@ -136,6 +136,12 @@
                 </th>
                 <th>
                     Avis
+                    <input type="checkbox" id="emptyavis"
+                        data-action="amendements-filters#filterEmptyavis"
+                        data-target="amendements-filters.emptyavisCheckbox">
+                    <label for="emptyavis"
+                        data-target="amendements-filters.emptyavisLabel">
+                        <abbr class="status blue" title="Filtrer les amendements sans avis">Vide</abbr>
                 </th>
                 <th>
                     Réponse
@@ -158,6 +164,7 @@
                     data-amendement=""
                     data-table=""
                     data-emptytable=""
+                    data-emptyavis=""
                     data-gouvernemental=""
                     data-abandoned-before-seance="">
                     <td colspan="{% if lecture.has_missions %}8{% else %}7{% endif %}">
@@ -197,6 +204,7 @@
                     {%- endif -%}
                 "
                 data-emptytable="{{ 1 if not amendement.table_name and not amendement.is_abandoned else 0 }}"
+                data-emptyavis="{{ 1 if not amendement.user_content.avis else 0 }}"
                 data-gouvernemental="{{ 1 if amendement.gouvernemental else 0 }}"
                 data-abandoned-before-seance="{{ 1 if amendement.is_abandoned_before_seance else 0 }}"
                 {% if amendement.slug == highlighted_amdt -%}

@@ -607,3 +607,7 @@ class Amendement(Base):
             ),
         }
         return result
+
+
+class AmendementList(list):
+    pass

@@ -6,7 +6,6 @@ from pathlib import Path
 import pytest
 import responses
 import transaction
-from more_itertools import first_true
 
 HERE = Path(__file__)
 SAMPLE_DATA_DIR = HERE.parent / "sample_data" / "senat"
@@ -133,7 +132,7 @@ class TestBuildAmendementsURL:
 @responses.activate
 def test_aspire_senat(app, lecture_senat, settings):
     from zam_repondeur.services.fetch.senat.amendements import Senat
-    from zam_repondeur.models import DBSession
+    from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import (
         AmendementRectifie,
         CorpsAmendementModifie,
@@ -177,7 +176,8 @@ def test_aspire_senat(app, lecture_senat, settings):
     assert len(result.amendements) == 595
 
     # Check details of #1
-    amendement = first_true(result.amendements, pred=lambda amdt: amdt.num == 1)
+    assert 1 in result.amendements
+    amendement = Amendement.get(lecture_senat, 1)
     assert amendement.num == 1
     assert amendement.rectif == 1
     assert amendement.article.num == "7"
@@ -211,9 +211,9 @@ def test_aspire_senat(app, lecture_senat, settings):
     assert events[2].render_summary() == "L’amendement a été rectifié."
 
     # Check that #596 has a parent
-    sous_amendement = [
-        amendement for amendement in result.amendements if amendement.num == 596
-    ][0]
+    assert 596 in result.amendements
+    sous_amendement = Amendement.get(lecture_senat, 596)
+    assert sous_amendement.parent is not None
     assert sous_amendement.parent.num == 229
     assert sous_amendement.parent.rectif == 1
 
@@ -221,7 +221,7 @@ def test_aspire_senat(app, lecture_senat, settings):
 @responses.activate
 def test_aspire_senat_again_with_irrecevable(app, lecture_senat, settings):
     from zam_repondeur.services.fetch.senat.amendements import Senat
-    from zam_repondeur.models import DBSession
+    from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import AmendementIrrecevable
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
@@ -268,15 +268,13 @@ def test_aspire_senat_again_with_irrecevable(app, lecture_senat, settings):
     source = Senat(settings=settings)
 
     result = source.fetch(lecture_senat)
-    amendement = [
-        amendement for amendement in result.amendements if amendement.num == 1
-    ][0]
+    assert 1 in result.amendements
+    amendement = Amendement.get(lecture_senat, 1)
     assert len(amendement.events) == 3
 
     result = source.fetch(lecture_senat)
-    amendement = [
-        amendement for amendement in result.amendements if amendement.num == 1
-    ][0]
+    assert 1 in result.amendements
+    amendement = Amendement.get(lecture_senat, 1)
     assert len(amendement.events) == 4
 
     assert isinstance(amendement.events[3], AmendementIrrecevable)
@@ -295,7 +293,7 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
     app, lecture_senat, user_david_table_an, settings
 ):
     from zam_repondeur.services.fetch.senat.amendements import Senat
-    from zam_repondeur.models import DBSession
+    from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import (
         AmendementIrrecevable,
         AmendementTransfere,
@@ -346,9 +344,8 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
 
     # Let's fetch a new amendement
     result = source.fetch(lecture_senat)
-    amendement = [
-        amendement for amendement in result.amendements if amendement.num == 1
-    ][0]
+    assert 1 in result.amendements
+    amendement = Amendement.get(lecture_senat, 1)
     assert len(amendement.events) == 3
 
     # Put it on a user table
@@ -359,9 +356,8 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
 
     # Now fetch the same amendement again (now irrecevable)
     result = source.fetch(lecture_senat)
-    amendement = [
-        amendement for amendement in result.amendements if amendement.num == 1
-    ][0]
+    assert 1 in result.amendements
+    amendement = Amendement.get(lecture_senat, 1)
     assert len(amendement.events) == 5  # two more
 
     # An irrecevable event has been created
@@ -387,7 +383,7 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
 @responses.activate
 def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie, settings):
     from zam_repondeur.services.fetch.senat.amendements import Senat
-    from zam_repondeur.models import DBSession
+    from zam_repondeur.models import Amendement, DBSession
 
     sample_data = read_sample_data("jeu_complet_2018-2019_146.csv")
 
@@ -426,13 +422,14 @@ def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie, settings):
     assert len(result.amendements) == 1005
 
     # Missions are not set on first part
-    assert result.amendements[0].mission_titre is None
+    amendement = Amendement.get(lecture_plf_1re_partie, 1)
+    assert amendement.mission_titre is None
 
 
 @responses.activate
 def test_aspire_senat_plf2019_2e_partie(app, lecture_plf_2e_partie, settings):
     from zam_repondeur.services.fetch.senat.amendements import Senat
-    from zam_repondeur.models import DBSession
+    from zam_repondeur.models import Amendement, DBSession
 
     sample_data = read_sample_data("jeu_complet_2018-2019_146.csv")
 
@@ -486,28 +483,26 @@ def test_aspire_senat_plf2019_2e_partie(app, lecture_plf_2e_partie, settings):
     # All amendements from part 2 are fetched
     assert len(result.amendements) == 35
 
+    amendements = sorted(
+        Amendement.get(lecture_plf_2e_partie, num) for num in result.amendements
+    )
+
     # Positions are unique
-    positions = [
-        amdt.position for amdt in result.amendements if amdt.position is not None
-    ]
+    positions = [amdt.position for amdt in amendements if amdt.position is not None]
     assert len(set(positions)) == len(positions) == 12
 
     # Missions are filled
     assert (
-        result.amendements[0].mission_titre
+        amendements[0].mission_titre
         == "Budget annexe - Contrôle et exploitation aériens"
     )
     assert (
-        result.amendements[1].mission_titre
+        amendements[1].mission_titre
         == "Budget annexe - Contrôle et exploitation aériens"
     )
-    assert (
-        result.amendements[0].mission_titre_court == "Contrôle et exploitation aériens"
-    )
-    assert (
-        result.amendements[1].mission_titre_court == "Contrôle et exploitation aériens"
-    )
-    assert result.amendements[2].mission_titre is None
+    assert amendements[0].mission_titre_court == "Contrôle et exploitation aériens"
+    assert amendements[1].mission_titre_court == "Contrôle et exploitation aériens"
+    assert amendements[2].mission_titre is None
 
 
 @responses.activate

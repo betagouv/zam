@@ -63,7 +63,7 @@ class Source:
 
 
 class FetchResult(NamedTuple):
-    amendements: List[Amendement]
+    amendements: Set[int]
     created: Set[int]
     errored: Set[int]
     next_start_index: Optional[int]
@@ -75,13 +75,13 @@ class FetchResult(NamedTuple):
     @classmethod
     def create(
         cls,
-        amendements: List[Amendement] = [],
+        amendements: Iterable[int] = (),
         created: Iterable[int] = (),
         errored: Iterable[int] = (),
         next_start_index: Optional[int] = None,
     ) -> "FetchResult":
         return cls(
-            amendements=amendements,
+            amendements=set(amendements),
             created=set(created),
             errored=set(errored),
             next_start_index=next_start_index,
@@ -95,7 +95,7 @@ class FetchResult(NamedTuple):
         else:
             next_start_index = other.next_start_index
         return FetchResult(
-            amendements=self.amendements + other.amendements,
+            amendements=self.amendements | other.amendements,
             created=self.created | other.created,
             errored=self.errored | other.errored,
             next_start_index=next_start_index,
@@ -222,7 +222,7 @@ class CreateAmendement(CreateOrUpdateAmendement):
         article = self._get_article(lecture)
         parent = self._get_parent(lecture, article)
 
-        amendement = Amendement.create(
+        Amendement.create(
             lecture=lecture,
             article=article,
             parent=parent,
@@ -242,7 +242,7 @@ class CreateAmendement(CreateOrUpdateAmendement):
             date_depot=self.date_depot,
         )
 
-        return FetchResult.create(amendements=[amendement], created={self.num})
+        return FetchResult.create(amendements={self.num}, created={self.num})
 
 
 class UpdateAmendement(CreateOrUpdateAmendement):
@@ -283,7 +283,7 @@ class UpdateAmendement(CreateOrUpdateAmendement):
             date_depot=self.date_depot,
         )
 
-        return FetchResult.create(amendements=[amendement])
+        return FetchResult.create(amendements={self.amendement_num})
 
 
 class RemoteSource(Source):

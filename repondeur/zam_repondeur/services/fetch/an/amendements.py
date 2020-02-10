@@ -170,12 +170,11 @@ class AssembleeNationale(RemoteSource):
         return (item.numero_prefixe for item in derouleur.items.values())
 
     def _unlisted_amendements(self, derouleur: "ANDerouleurData") -> Iterator[str]:
-        prefix = derouleur.prefixe
         listed = derouleur.numeros
 
         all_nums = count(1)
         filtered = (num for num in all_nums if num not in listed)
-        prefixed = (f"{prefix}{num}" for num in filtered)
+        prefixed = (derouleur.add_prefixe(num) for num in filtered)
         return prefixed
 
     def _collect_amendements(
@@ -576,6 +575,9 @@ class ANDerouleurData:
     @property
     def numeros_prefixes(self) -> Set[str]:
         return {item.numero_prefixe for item in self.items.values()}
+
+    def add_prefixe(self, numero: int) -> str:
+        return f"{self.prefixe}{numero}"
 
     def updated_amendement_positions(self) -> Dict[int, Optional[int]]:
 

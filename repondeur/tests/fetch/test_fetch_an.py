@@ -41,7 +41,7 @@ def assert_html_looks_like(value, expected):
 class TestFetchAndParseAll:
     @responses.activate
     def test_simple_amendements(self, lecture_an, app, source):
-        from zam_repondeur.models import DBSession
+        from zam_repondeur.models import Amendement, DBSession
 
         DBSession.add(lecture_an)
 
@@ -58,32 +58,36 @@ class TestFetchAndParseAll:
         ):
             result = source.fetch(lecture=lecture_an)
 
-        assert len(result.amendements) == 5
+        amendements = sorted(
+            Amendement.get(lecture_an, num) for num in result.amendements
+        )
 
-        assert result.amendements[0].num == 177
-        assert result.amendements[0].position == 1
-        assert result.amendements[0].id_discussion_commune is None
-        assert result.amendements[0].id_identique == 20386
+        assert len(amendements) == 5
 
-        assert result.amendements[1].num == 270
-        assert result.amendements[1].position == 2
-        assert result.amendements[1].id_discussion_commune is None
-        assert result.amendements[1].id_identique == 20386
+        assert amendements[0].num == 177
+        assert amendements[0].position == 1
+        assert amendements[0].id_discussion_commune is None
+        assert amendements[0].id_identique == 20386
 
-        assert result.amendements[2].num == 723
-        assert result.amendements[2].position == 3
-        assert result.amendements[2].id_discussion_commune is None
-        assert result.amendements[2].id_identique is None
+        assert amendements[1].num == 270
+        assert amendements[1].position == 2
+        assert amendements[1].id_discussion_commune is None
+        assert amendements[1].id_identique == 20386
 
-        assert result.amendements[3].num == 135
-        assert result.amendements[3].position == 4
-        assert result.amendements[3].id_discussion_commune is None
-        assert result.amendements[3].id_identique is None
+        assert amendements[2].num == 723
+        assert amendements[2].position == 3
+        assert amendements[2].id_discussion_commune is None
+        assert amendements[2].id_identique is None
 
-        assert result.amendements[4].num == 192
-        assert result.amendements[4].position == 5
-        assert result.amendements[4].id_discussion_commune is None
-        assert result.amendements[4].id_identique == 20439
+        assert amendements[3].num == 135
+        assert amendements[3].position == 4
+        assert amendements[3].id_discussion_commune is None
+        assert amendements[3].id_identique is None
+
+        assert amendements[4].num == 192
+        assert amendements[4].position == 5
+        assert amendements[4].id_discussion_commune is None
+        assert amendements[4].id_identique == 20439
 
         assert result.created == {177, 270, 723, 135, 192}
         assert result.errored == set()
@@ -127,7 +131,7 @@ class TestFetchAndParseAll:
 
     @responses.activate
     def test_fetch_amendements_not_in_discussion_list(self, lecture_an, app, source):
-        from zam_repondeur.models import DBSession
+        from zam_repondeur.models import Amendement, DBSession
         from zam_repondeur.services.fetch.amendements import FetchResult
 
         DBSession.add(lecture_an)
@@ -167,24 +171,28 @@ class TestFetchAndParseAll:
                 if batch_result.next_start_index is None:
                     break
 
-        assert len(result.amendements) == 2
+        amendements = sorted(
+            Amendement.get(lecture_an, num) for num in result.amendements
+        )
 
-        assert result.amendements[0].num == 177
-        assert result.amendements[0].position == 1
-        assert result.amendements[0].id_discussion_commune is None
-        assert result.amendements[0].id_identique == 20386
+        assert len(amendements) == 2
 
-        assert result.amendements[1].num == 192
-        assert result.amendements[1].position is None
-        assert result.amendements[1].id_discussion_commune is None
-        assert result.amendements[1].id_identique is None
+        assert amendements[0].num == 177
+        assert amendements[0].position == 1
+        assert amendements[0].id_discussion_commune is None
+        assert amendements[0].id_identique == 20386
+
+        assert amendements[1].num == 192
+        assert amendements[1].position is None
+        assert amendements[1].id_discussion_commune is None
+        assert amendements[1].id_identique is None
 
         assert result.created == {177, 192}
         assert result.errored == set()
 
     @responses.activate
     def test_commission(self, lecture_an, app, source):
-        from zam_repondeur.models import DBSession
+        from zam_repondeur.models import Amendement, DBSession
 
         DBSession.add(lecture_an)
 
@@ -198,13 +206,17 @@ class TestFetchAndParseAll:
         ):
             result = source.fetch(lecture=lecture_an)
 
-        assert len(result.amendements) == 2
+        amendements = sorted(
+            Amendement.get(lecture_an, num) for num in result.amendements
+        )
 
-        assert result.amendements[0].num == 1
-        assert result.amendements[0].position == 1
+        assert len(amendements) == 2
 
-        assert result.amendements[1].num == 2
-        assert result.amendements[1].position is None
+        assert amendements[0].num == 2
+        assert amendements[0].position is None
+
+        assert amendements[1].num == 1
+        assert amendements[1].position == 1
 
         assert result.created == {1, 2}
         assert result.errored == set()
@@ -213,7 +225,7 @@ class TestFetchAndParseAll:
     def test_sous_amendements(
         self, app, source, dossier_plfss2018, texte_plfss2018_an_premiere_lecture
     ):
-        from zam_repondeur.models import DBSession, Lecture, Phase
+        from zam_repondeur.models import Amendement, DBSession, Lecture, Phase
 
         with transaction.manager:
             texte_plfss2018_an_premiere_lecture.numero = 911
@@ -238,33 +250,35 @@ class TestFetchAndParseAll:
         ):
             result = source.fetch(lecture=lecture)
 
-        assert len(result.amendements) == 3
+        amendements = sorted(Amendement.get(lecture, num) for num in result.amendements)
 
-        assert result.amendements[0].num == 1
-        assert result.amendements[0].position == 1
-        assert result.amendements[0].id_discussion_commune == 3448
-        assert result.amendements[0].id_identique == 8496
+        assert len(amendements) == 3
 
-        assert result.amendements[1].num == 2
-        assert result.amendements[1].position == 2
-        assert result.amendements[1].id_discussion_commune is None
-        assert result.amendements[1].id_identique is None
+        assert amendements[0].num == 1
+        assert amendements[0].position == 1
+        assert amendements[0].id_discussion_commune == 3448
+        assert amendements[0].id_identique == 8496
 
-        assert result.amendements[2].num == 3
-        assert result.amendements[2].position == 3
-        assert result.amendements[2].id_discussion_commune is None
-        assert result.amendements[1].id_identique is None
+        assert amendements[1].num == 2
+        assert amendements[1].position == 2
+        assert amendements[1].id_discussion_commune is None
+        assert amendements[1].id_identique is None
 
-        for amendement in result.amendements[1:]:
-            assert amendement.parent is result.amendements[0]
-            assert amendement.parent_pk == result.amendements[0].pk
+        assert amendements[2].num == 3
+        assert amendements[2].position == 3
+        assert amendements[2].id_discussion_commune is None
+        assert amendements[1].id_identique is None
+
+        for amendement in amendements[1:]:
+            assert amendement.parent is amendements[0]
+            assert amendement.parent_pk == amendements[0].pk
 
         assert result.created == {1, 2, 3}
         assert result.errored == set()
 
     @responses.activate
     def test_with_404(self, lecture_an, app, source):
-        from zam_repondeur.models import DBSession
+        from zam_repondeur.models import Amendement, DBSession
 
         DBSession.add(lecture_an)
 
@@ -281,13 +295,17 @@ class TestFetchAndParseAll:
         ):
             result = source.fetch(lecture=lecture_an)
 
-        assert len(result.amendements) == 4
-        assert result.amendements[0].num == 177
-        assert result.amendements[1].num == 723
-        assert result.amendements[2].num == 135
-        assert result.amendements[3].num == 192
+        amendements = sorted(
+            Amendement.get(lecture_an, num) for num in result.amendements
+        )
 
-        assert [amdt.position for amdt in result.amendements] == [1, 3, 4, 5]
+        assert len(amendements) == 4
+        assert amendements[0].num == 177
+        assert amendements[1].num == 723
+        assert amendements[2].num == 135
+        assert amendements[3].num == 192
+
+        assert [amdt.position for amdt in amendements] == [1, 3, 4, 5]
         assert result.created == {177, 723, 135, 192}
         assert result.errored == {270}
 

@@ -183,10 +183,10 @@ class AssembleeNationale(RemoteSource):
         derouleur: "ANDerouleurData",
         numeros_prefixes: List[str],
         progress_bar: ProgressBar,
-    ) -> Tuple[List[Action], List[int], List[str], int]:
+    ) -> Tuple[List[Action], List[int], Set[int], int]:
         actions: List[Action] = []
         unchanged: List[int] = []
-        errored: List[str] = []
+        errored: Set[int] = set()
         consecutive_404s = 0
 
         for offset, numero_prefixe in enumerate(numeros_prefixes):
@@ -210,12 +210,12 @@ class AssembleeNationale(RemoteSource):
             except NotFound:
                 logger.debug("Amendement %s not found", numero_prefixe)
                 if numero_prefixe in derouleur.numeros_prefixes:
-                    errored.append(numero_prefixe)
+                    errored.add(derouleur.remove_prefixe(numero_prefixe))
                 consecutive_404s += 1
                 continue
             except Exception:
                 logger.exception("Error while fetching amendement %r", numero_prefixe)
-                errored.append(numero_prefixe)
+                errored.add(derouleur.remove_prefixe(numero_prefixe))
                 continue
         return actions, unchanged, errored, consecutive_404s
 
@@ -578,6 +578,11 @@ class ANDerouleurData:
 
     def add_prefixe(self, numero: int) -> str:
         return f"{self.prefixe}{numero}"
+
+    def remove_prefixe(self, numero_prefixe: str) -> int:
+        if not numero_prefixe.startswith(self.prefixe):
+            raise ValueError(f"{numero_prefixe!r} does not start with {self.prefixe!r}")
+        return int(numero_prefixe[len(self.prefixe) :])
 
     def updated_amendement_positions(self) -> Dict[int, Optional[int]]:
 

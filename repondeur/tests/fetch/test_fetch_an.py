@@ -85,8 +85,8 @@ class TestFetchAndParseAll:
         assert result.amendements[4].id_discussion_commune is None
         assert result.amendements[4].id_identique == 20439
 
-        assert result.created == 5
-        assert result.errored == []
+        assert result.created == {177, 270, 723, 135, 192}
+        assert result.errored == set()
 
     @responses.activate
     def test_simple_amendements_progress_status(
@@ -122,8 +122,8 @@ class TestFetchAndParseAll:
         assert lecture_an.get_fetch_progress() == {}
 
         assert len(result.amendements) == 5
-        assert result.created == 5
-        assert result.errored == []
+        assert result.created == {177, 270, 723, 135, 192}
+        assert result.errored == set()
 
     @responses.activate
     def test_fetch_amendements_not_in_discussion_list(self, lecture_an, app, source):
@@ -179,8 +179,8 @@ class TestFetchAndParseAll:
         assert result.amendements[1].id_discussion_commune is None
         assert result.amendements[1].id_identique is None
 
-        assert result.created == 2
-        assert result.errored == []
+        assert result.created == {177, 192}
+        assert result.errored == set()
 
     @responses.activate
     def test_commission(self, lecture_an, app, source):
@@ -206,8 +206,8 @@ class TestFetchAndParseAll:
         assert result.amendements[1].num == 2
         assert result.amendements[1].position is None
 
-        assert result.created == 2
-        assert result.errored == []
+        assert result.created == {1, 2}
+        assert result.errored == set()
 
     @responses.activate
     def test_sous_amendements(
@@ -259,8 +259,8 @@ class TestFetchAndParseAll:
             assert amendement.parent is result.amendements[0]
             assert amendement.parent_pk == result.amendements[0].pk
 
-        assert result.created == 3
-        assert result.errored == []
+        assert result.created == {1, 2, 3}
+        assert result.errored == set()
 
     @responses.activate
     def test_with_404(self, lecture_an, app, source):
@@ -288,8 +288,8 @@ class TestFetchAndParseAll:
         assert result.amendements[3].num == 192
 
         assert [amdt.position for amdt in result.amendements] == [1, 3, 4, 5]
-        assert result.created == 4
-        assert result.errored == ["270"]
+        assert result.created == {177, 723, 135, 192}
+        assert result.errored == {270}
 
 
 class TestGetOrganeAbrev:

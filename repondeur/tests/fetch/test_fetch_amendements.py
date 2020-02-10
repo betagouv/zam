@@ -155,8 +155,8 @@ def test_fetch_amendements_senat(
         result = source_senat.fetch(lecture_senat)
 
     assert [amendement.num for amendement in result.amendements] == [6666, 7777, 9999]
-    assert result.created == 1
-    assert result.errored == []
+    assert result.created == {7777}
+    assert result.errored == set()
 
     # Check that the response was preserved on the updated amendement
     amendement = DBSession.query(Amendement).filter(Amendement.num == 9999).one()
@@ -265,8 +265,8 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
         result = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in result.amendements] == [6, 7, 9]
-    assert result.created == 1
-    assert result.errored == []
+    assert result.created == {7}
+    assert result.errored == set()
 
     amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
     # Check that the response was preserved on the updated amendement
@@ -381,8 +381,8 @@ def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_
         result = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in result.amendements] == [6, 7, 9]
-    assert result.created == 1
-    assert result.errored == []
+    assert result.created == {7}
+    assert result.errored == set()
 
     amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
     # Check that the mission is created
@@ -482,8 +482,8 @@ def test_fetch_amendements_an_without_auteur_key(
         result = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in result.amendements] == [6, 7, 9]
-    assert result.created == 1
-    assert result.errored == []
+    assert result.created == {7}
+    assert result.errored == set()
 
     for num in [6, 7, 9]:
         assert any(
@@ -599,8 +599,8 @@ def test_fetch_amendements_an_without_group_tribun_id(
         result = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in result.amendements] == [6, 7, 9]
-    assert result.created == 1
-    assert result.errored == []
+    assert result.created == {7}
+    assert result.errored == set()
 
     for num in [6, 7, 9]:
         assert any(
@@ -718,8 +718,8 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
         result = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in result.amendements] == [6, 7, 9]
-    assert result.created == 1
-    assert result.errored == []
+    assert result.created == {7}
+    assert result.errored == set()
 
     for num in [6, 7, 9]:
         assert any(
@@ -785,8 +785,8 @@ def test_fetch_amendements_with_errored(
         result = source_an.fetch(lecture_an)
 
     assert result.amendements == []
-    assert result.created == 0
-    assert result.errored == ["6", "7", "9"]
+    assert result.created == set()
+    assert result.errored == {6, 7, 9}
     assert DBSession.query(Amendement).count() == len(amendements_an) == 2
 
 
@@ -810,8 +810,8 @@ def test_fetch_amendements_with_emptiness(
         result = source_an.fetch(lecture_an)
 
     assert result.amendements == []
-    assert result.created == 0
-    assert result.errored == []
+    assert result.created == set()
+    assert result.errored == set()
     assert DBSession.query(Amendement).count() == len(amendements_an) == 2
 
 
@@ -863,8 +863,8 @@ def test_fetch_amendements_with_connection_errors(
         result = source_an.fetch(lecture_an)
 
     assert result.amendements == []
-    assert result.created == 0
-    assert result.errored == ["6", "7", "9"]
+    assert result.created == set()
+    assert result.errored == {6, 7, 9}
     assert DBSession.query(Amendement).count() == len(amendements_an) == 2
 
 
@@ -948,8 +948,8 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
         result = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in result.amendements] == [666, 999]
-    assert result.created == 0
-    assert result.errored == []
+    assert result.created == set()
+    assert result.errored == set()
 
     amendement_666 = DBSession.query(Amendement).filter(Amendement.num == 666).one()
     assert amendement_666.location.batch.nums == [666, 999]
@@ -1036,8 +1036,8 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
         result = source_an.fetch(lecture_an)
 
     assert [amendement.num for amendement in result.amendements] == [666, 999]
-    assert result.created == 0
-    assert result.errored == []
+    assert result.created == set()
+    assert result.errored == set()
 
     for num in [666, 999]:
         amendement = DBSession.query(Amendement).filter(Amendement.num == num).one()

@@ -4,7 +4,7 @@ import re
 import sys
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import Iterable, List, Optional, Tuple
+from typing import Iterable, List, Optional, Set, Tuple
 from urllib.parse import urlparse
 
 from zam_repondeur.models import Amendement, Chambre, Lecture
@@ -50,7 +50,7 @@ class Senat(RemoteSource):
         return self._fetch(lecture)
 
     def _fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
-        created = 0
+        created: Set[int] = set()
         amendements: List[Amendement] = []
 
         # Remember previous positions and reset them
@@ -64,10 +64,11 @@ class Senat(RemoteSource):
                 lecture=lecture, dry_run=dry_run
             )
         except NotFound:
-            return FetchResult.create(amendements=amendements, created=created)
+            return FetchResult.create(amendements=[], created=set())
 
         for amendement, created_ in amendements_created:
-            created += int(created_)
+            if created_:
+                created.add(amendement.num)
             amendements.append(amendement)
 
         processed_amendements = list(

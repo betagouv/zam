@@ -146,11 +146,14 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             )
 
             if batch_result.created:
-                AmendementsRecuperes.create(lecture=lecture, count=batch_result.created)
+                AmendementsRecuperes.create(
+                    lecture=lecture, count=len(batch_result.created)
+                )
 
             if batch_result.errored:
                 AmendementsNonRecuperes.create(
-                    lecture=lecture, missings=batch_result.errored
+                    lecture=lecture,
+                    missings=[str(num) for num in sorted(batch_result.errored)],
                 )
 
             cumulated_result += batch_result

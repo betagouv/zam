@@ -241,10 +241,10 @@ application.register(
         'tr:not([class^=hidden]):not([class=limit-derouleur])'
       )
       const initialCountString = `
-      ${initialArticle.toLocaleString('fr_FR')} amendement${
+      ${initialArticle.toLocaleString('fr')} amendement${
         initialArticle > 1 ? 's' : ''
       } pour cet article •
-      ${initialTotal.toLocaleString('fr_FR')} amendement${initialTotal > 1 ? 's' : ''} au total
+      ${initialTotal.toLocaleString('fr')} amendement${initialTotal > 1 ? 's' : ''} au total
     `
       if (!visibleRows.length) {
         this.countTarget.innerHTML = `Aucun amendement affiché • ${initialCountString}`
@@ -261,7 +261,7 @@ application.register(
       else {
         const plural = current > 1 ? 's' : ''
         this.countTarget.innerHTML = `
-        ${current.toLocaleString('fr_FR')} amendement${plural} affiché${plural} • ${initialCountString}
+        ${current.toLocaleString('fr')} amendement${plural} affiché${plural} • ${initialCountString}
       `
       }
     }

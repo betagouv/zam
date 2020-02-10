@@ -108,7 +108,7 @@ class Notifications extends Stimulus.Controller {
         .slice(0, 4)
         .join(', ')} … ${numbers
         .slice(-4, length)
-        .join(', ')} (${length.toLocaleString('fr_FR')} au total) ont été mis à jour !`
+        .join(', ')} (${length.toLocaleString('fr')} au total) ont été mis à jour !`
     }
   }
 }

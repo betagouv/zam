@@ -28,3 +28,9 @@ def test_group_by_day(app, lecture_an, amendements_an, user_david):
         assert group_by_day(amendements_an[0].events) == [
             (date.today(), [amendements_an[0].events[0]])
         ]
+
+
+def test_number():
+    from zam_repondeur.views.jinja2_filters import number
+
+    assert number(100000) == "100\u202f000"  # narrow non-breaking space

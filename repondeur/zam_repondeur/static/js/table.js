@@ -95,7 +95,7 @@ class TableFilters extends Stimulus.Controller {
       'tr:not([class^=hidden]):not([class=limit-derouleur])'
     )
     if (!visibleRows.length) {
-      this.countTarget.innerHTML = `Aucun amendement (${initial} au total)`
+      this.countTarget.innerHTML = `Aucun amendement (${initial.toLocaleString('fr_FR')} au total)`
       return
     }
     const current = Array.from(visibleRows).reduce(
@@ -106,9 +106,9 @@ class TableFilters extends Stimulus.Controller {
     )
     const plural = current > 1 ? 's' : ''
     if (initial === current)
-      this.countTarget.innerHTML = `${current} amendement${plural}`
+      this.countTarget.innerHTML = `${current.toLocaleString('fr_FR')} amendement${plural}`
     else
-      this.countTarget.innerHTML = `${current} amendement${plural} (${initial} au total)`
+      this.countTarget.innerHTML = `${current.toLocaleString('fr_FR')} amendement${plural} (${initial.toLocaleString('fr_FR')} au total)`
   }
 
   filterArticle(event) {

@@ -92,3 +92,7 @@ def human_readable_date_and_time(dt: datetime) -> str:
 def _local_time(dt: datetime) -> datetime:
     local_tz = pytz.timezone("Europe/Paris")
     return dt.astimezone(local_tz)
+
+
+def number(n: int) -> str:
+    return "{:,}".format(n).replace(",", "\u202f")  # narrow non-breaking space

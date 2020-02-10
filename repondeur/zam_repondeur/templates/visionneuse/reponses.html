@@ -217,7 +217,7 @@
         {{ amendements[-3] }},
         {{ amendements[-2] }} et
         {{ amendements[-1] }}
-        ({{ length }} au total)
+        ({{ length|number }} au total)
     {% else %}
         {% for amendement in amendements %}
             {{ amendement }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}

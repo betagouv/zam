@@ -1,7 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 from datetime import date
-from typing import Any, Dict, List, NamedTuple, Optional
+from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Set
 
 from zam_repondeur.models import (
     Amendement,
@@ -64,8 +64,8 @@ class Source:
 
 class FetchResult(NamedTuple):
     amendements: List[Amendement]
-    created: int
-    errored: List[str]
+    created: Set[int]
+    errored: Set[int]
     next_start_index: Optional[int]
 
     @property
@@ -76,18 +76,18 @@ class FetchResult(NamedTuple):
     def create(
         cls,
         amendements: List[Amendement] = [],
-        created: int = 0,
-        errored: List[str] = [],
+        created: Iterable[int] = (),
+        errored: Iterable[int] = (),
         next_start_index: Optional[int] = None,
     ) -> "FetchResult":
         return cls(
             amendements=amendements,
-            created=created,
-            errored=errored,
+            created=set(created),
+            errored=set(errored),
             next_start_index=next_start_index,
         )
 
-    def __add__(self: "FetchResult", other: object) -> "FetchResult":
+    def __add__(self: "FetchResult", other: object) -> "FetchResult":  # type: ignore
         if not isinstance(other, FetchResult):
             raise TypeError
         if other.next_start_index is None:
@@ -96,8 +96,8 @@ class FetchResult(NamedTuple):
             next_start_index = other.next_start_index
         return FetchResult(
             amendements=self.amendements + other.amendements,
-            created=self.created + other.created,
-            errored=self.errored + other.errored,
+            created=self.created | other.created,
+            errored=self.errored | other.errored,
             next_start_index=next_start_index,
         )
 
@@ -111,7 +111,7 @@ class CollectedChanges(NamedTuple):
     position_changes: Dict[int, Optional[int]]
     actions: List["Action"]
     unchanged: List[int]
-    errored: List[str]
+    errored: Set[int]
     next_start_index: Optional[int]
 
     @classmethod
@@ -121,7 +121,7 @@ class CollectedChanges(NamedTuple):
         position_changes: Optional[Dict[int, Optional[int]]] = None,
         actions: Optional[List["Action"]] = None,
         unchanged: Optional[List[int]] = None,
-        errored: Optional[List[str]] = None,
+        errored: Optional[Set[int]] = None,
         next_start_index: Optional[int] = None,
     ) -> "CollectedChanges":
         if position_changes is None:
@@ -131,7 +131,7 @@ class CollectedChanges(NamedTuple):
         if unchanged is None:
             unchanged = []
         if errored is None:
-            errored = []
+            errored = set()
         return cls(
             derouleur_fetch_success,
             position_changes,
@@ -242,7 +242,7 @@ class CreateAmendement(CreateOrUpdateAmendement):
             date_depot=self.date_depot,
         )
 
-        return FetchResult.create(amendements=[amendement], created=1)
+        return FetchResult.create(amendements=[amendement], created={self.num})
 
 
 class UpdateAmendement(CreateOrUpdateAmendement):
@@ -256,7 +256,7 @@ class UpdateAmendement(CreateOrUpdateAmendement):
     def apply(self, lecture: Lecture) -> FetchResult:
         amendement = lecture.find_amendement(self.amendement_num)
         if amendement is None:
-            return FetchResult.create(errored=[str(self.amendement_num)])
+            return FetchResult.create(errored={self.amendement_num})
 
         article = self._get_article(lecture)
         parent = self._get_parent(lecture, article)

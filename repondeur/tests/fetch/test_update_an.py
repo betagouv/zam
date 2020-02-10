@@ -691,7 +691,7 @@ def test_rectif_with_nil(lecture_an, source_an):
     ):
         result = source_an.fetch(lecture=lecture_an)
 
-    assert result.errored == []
+    assert result.errored == set()
 
     amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
     assert amendement.rectif == 0

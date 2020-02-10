@@ -129,13 +129,17 @@ class DossierCollection(Resource):
 class DossierResource(Resource):
     def __acl__(self) -> List[ACE]:
         # Only team members and admins can view it.
-        return [
-            (Allow, f"group:admins", "view"),
-            (Allow, f"team:{self.dossier.team.pk}", "view"),
-            (Deny, Authenticated, "view"),
-            (Allow, f"group:admins", "retrait"),
-            (Deny, Authenticated, "retrait"),
-        ]
+        acl = [(Allow, f"group:admins", "view")]
+        if self.dossier.team is not None:
+            acl.append((Allow, f"team:{self.dossier.team.pk}", "view"))
+        acl.extend(
+            [
+                (Deny, Authenticated, "view"),
+                (Allow, f"group:admins", "retrait"),
+                (Deny, Authenticated, "retrait"),
+            ]
+        )
+        return acl
 
     def __init__(self, name: str, parent: Resource) -> None:
         super().__init__(name=name, parent=parent)

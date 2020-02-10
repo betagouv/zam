@@ -173,10 +173,10 @@ def test_aspire_senat(app, lecture_senat, settings):
     result = source.fetch(lecture_senat)
 
     # All amendements are fetched
-    assert len(result.amendements) == 595
+    assert len(result.fetched) == 595
 
     # Check details of #1
-    assert 1 in result.amendements
+    assert 1 in result.fetched
     amendement = Amendement.get(lecture_senat, 1)
     assert amendement.num == 1
     assert amendement.rectif == 1
@@ -211,7 +211,7 @@ def test_aspire_senat(app, lecture_senat, settings):
     assert events[2].render_summary() == "L’amendement a été rectifié."
 
     # Check that #596 has a parent
-    assert 596 in result.amendements
+    assert 596 in result.fetched
     sous_amendement = Amendement.get(lecture_senat, 596)
     assert sous_amendement.parent is not None
     assert sous_amendement.parent.num == 229
@@ -268,12 +268,12 @@ def test_aspire_senat_again_with_irrecevable(app, lecture_senat, settings):
     source = Senat(settings=settings)
 
     result = source.fetch(lecture_senat)
-    assert 1 in result.amendements
+    assert 1 in result.fetched
     amendement = Amendement.get(lecture_senat, 1)
     assert len(amendement.events) == 3
 
     result = source.fetch(lecture_senat)
-    assert 1 in result.amendements
+    assert 1 in result.fetched
     amendement = Amendement.get(lecture_senat, 1)
     assert len(amendement.events) == 4
 
@@ -344,7 +344,7 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
 
     # Let's fetch a new amendement
     result = source.fetch(lecture_senat)
-    assert 1 in result.amendements
+    assert 1 in result.fetched
     amendement = Amendement.get(lecture_senat, 1)
     assert len(amendement.events) == 3
 
@@ -356,7 +356,7 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
 
     # Now fetch the same amendement again (now irrecevable)
     result = source.fetch(lecture_senat)
-    assert 1 in result.amendements
+    assert 1 in result.fetched
     amendement = Amendement.get(lecture_senat, 1)
     assert len(amendement.events) == 5  # two more
 
@@ -419,7 +419,7 @@ def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie, settings):
     result = source.fetch(lecture_plf_1re_partie)
 
     # All amendements from part 1 are fetched
-    assert len(result.amendements) == 1005
+    assert len(result.fetched) == 1005
 
     # Missions are not set on first part
     amendement = Amendement.get(lecture_plf_1re_partie, 1)
@@ -481,10 +481,10 @@ def test_aspire_senat_plf2019_2e_partie(app, lecture_plf_2e_partie, settings):
     result = source.fetch(lecture_plf_2e_partie)
 
     # All amendements from part 2 are fetched
-    assert len(result.amendements) == 35
+    assert len(result.fetched) == 35
 
     amendements = sorted(
-        Amendement.get(lecture_plf_2e_partie, num) for num in result.amendements
+        Amendement.get(lecture_plf_2e_partie, num) for num in result.fetched
     )
 
     # Positions are unique

@@ -58,9 +58,7 @@ class TestFetchAndParseAll:
         ):
             result = source.fetch(lecture=lecture_an)
 
-        amendements = sorted(
-            Amendement.get(lecture_an, num) for num in result.amendements
-        )
+        amendements = sorted(Amendement.get(lecture_an, num) for num in result.fetched)
 
         assert len(amendements) == 5
 
@@ -125,7 +123,7 @@ class TestFetchAndParseAll:
         # Once the fetch is complete, the progress status is back to empty.
         assert lecture_an.get_fetch_progress() == {}
 
-        assert len(result.amendements) == 5
+        assert len(result.fetched) == 5
         assert result.created == {177, 270, 723, 135, 192}
         assert result.errored == set()
 
@@ -171,9 +169,7 @@ class TestFetchAndParseAll:
                 if batch_result.next_start_index is None:
                     break
 
-        amendements = sorted(
-            Amendement.get(lecture_an, num) for num in result.amendements
-        )
+        amendements = sorted(Amendement.get(lecture_an, num) for num in result.fetched)
 
         assert len(amendements) == 2
 
@@ -206,9 +202,7 @@ class TestFetchAndParseAll:
         ):
             result = source.fetch(lecture=lecture_an)
 
-        amendements = sorted(
-            Amendement.get(lecture_an, num) for num in result.amendements
-        )
+        amendements = sorted(Amendement.get(lecture_an, num) for num in result.fetched)
 
         assert len(amendements) == 2
 
@@ -250,7 +244,7 @@ class TestFetchAndParseAll:
         ):
             result = source.fetch(lecture=lecture)
 
-        amendements = sorted(Amendement.get(lecture, num) for num in result.amendements)
+        amendements = sorted(Amendement.get(lecture, num) for num in result.fetched)
 
         assert len(amendements) == 3
 
@@ -295,9 +289,7 @@ class TestFetchAndParseAll:
         ):
             result = source.fetch(lecture=lecture_an)
 
-        amendements = sorted(
-            Amendement.get(lecture_an, num) for num in result.amendements
-        )
+        amendements = sorted(Amendement.get(lecture_an, num) for num in result.fetched)
 
         assert len(amendements) == 4
         assert amendements[0].num == 177

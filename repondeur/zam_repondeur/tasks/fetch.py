@@ -169,7 +169,7 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             "Total time for %d batches: %.1fs", nb_batches, total_timer.elapsed()
         )
 
-        if not cumulated_result.amendements:
+        if not cumulated_result.fetched:
             AmendementsNonTrouves.create(lecture=lecture)
 
         if cumulated_result.changed:

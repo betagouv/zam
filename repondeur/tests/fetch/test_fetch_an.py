@@ -424,7 +424,7 @@ class TestFetchAmendement:
         assert amendement.rectif == 0
         assert amendement.auteur == "Door Jean-Pierre"
         assert amendement.matricule == "267289"
-        assert amendement.date_depot is None
+        assert amendement.date_depot == date(2016, 10, 19)
         assert amendement.sort == "rejeté"
         assert amendement.position == 1
         assert amendement.id_discussion_commune is None

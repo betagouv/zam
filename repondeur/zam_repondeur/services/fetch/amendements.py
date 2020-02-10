@@ -1,5 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
+from datetime import date
 from typing import Any, Dict, List, NamedTuple, Optional
 
 from zam_repondeur.models import (
@@ -164,6 +165,7 @@ class CreateOrUpdateAmendement(Action):
         corps: str,
         expose: str,
         sort: str,
+        date_depot: Optional[date],
     ):
         self.subdiv = subdiv
         self.parent_num_raw = parent_num_raw
@@ -179,6 +181,7 @@ class CreateOrUpdateAmendement(Action):
         self.corps = corps
         self.expose = expose
         self.sort = sort
+        self.date_depot = date_depot
 
     def _get_article(self, lecture: Lecture) -> Article:
         article: Article
@@ -236,6 +239,7 @@ class CreateAmendement(CreateOrUpdateAmendement):
             corps=self.corps,
             expose=self.expose,
             sort=self.sort,
+            date_depot=self.date_depot,
         )
 
         return FetchResult.create(amendements=[amendement], created=1)
@@ -276,6 +280,7 @@ class UpdateAmendement(CreateOrUpdateAmendement):
             auteur=self.auteur,
             mission_titre=self.mission_titre,
             mission_titre_court=self.mission_titre_court,
+            date_depot=self.date_depot,
         )
 
         return FetchResult.create(amendements=[amendement])

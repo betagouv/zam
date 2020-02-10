@@ -64,7 +64,7 @@ class Senat(RemoteSource):
                 lecture=lecture, dry_run=dry_run
             )
         except NotFound:
-            return FetchResult.create(amendements=set(), created=set())
+            return FetchResult.create(fetched=set(), created=set())
 
         for amendement, created_ in amendements_created:
             if created_:
@@ -82,7 +82,7 @@ class Senat(RemoteSource):
                 logger.info("Amendement %s retiré de la discussion", amdt.num)
 
         return FetchResult.create(
-            amendements={amdt.num for amdt in processed_amendements}, created=created
+            fetched={amdt.num for amdt in processed_amendements}, created=created
         )
 
     def _fetch_and_parse_all(

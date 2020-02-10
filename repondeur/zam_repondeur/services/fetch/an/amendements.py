@@ -94,7 +94,7 @@ class AssembleeNationale(RemoteSource):
         created = isinstance(action, CreateAmendement)
         if action is not None:
             result = action.apply(lecture)
-            num = first(result.amendements)
+            num = first(result.fetched)
             DBSession.flush()
             amendement = Amendement.get(lecture, num)
         return amendement, created
@@ -339,7 +339,7 @@ class AssembleeNationale(RemoteSource):
 
     def apply_changes(self, lecture: Lecture, changes: CollectedChanges) -> FetchResult:
         result = FetchResult.create(
-            amendements=changes.unchanged,
+            fetched=changes.unchanged,
             errored=changes.errored,
             next_start_index=changes.next_start_index,
         )

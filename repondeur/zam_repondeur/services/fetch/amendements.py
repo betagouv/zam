@@ -63,25 +63,25 @@ class Source:
 
 
 class FetchResult(NamedTuple):
-    amendements: Set[int]
+    fetched: Set[int]
     created: Set[int]
     errored: Set[int]
     next_start_index: Optional[int]
 
     @property
     def changed(self) -> bool:
-        return bool(self.amendements and not (self.created or self.errored))
+        return bool(self.fetched and not (self.created or self.errored))
 
     @classmethod
     def create(
         cls,
-        amendements: Iterable[int] = (),
+        fetched: Iterable[int] = (),
         created: Iterable[int] = (),
         errored: Iterable[int] = (),
         next_start_index: Optional[int] = None,
     ) -> "FetchResult":
         return cls(
-            amendements=set(amendements),
+            fetched=set(fetched),
             created=set(created),
             errored=set(errored),
             next_start_index=next_start_index,
@@ -95,7 +95,7 @@ class FetchResult(NamedTuple):
         else:
             next_start_index = other.next_start_index
         return FetchResult(
-            amendements=self.amendements | other.amendements,
+            fetched=self.fetched | other.fetched,
             created=self.created | other.created,
             errored=self.errored | other.errored,
             next_start_index=next_start_index,
@@ -242,7 +242,7 @@ class CreateAmendement(CreateOrUpdateAmendement):
             date_depot=self.date_depot,
         )
 
-        return FetchResult.create(amendements={self.num}, created={self.num})
+        return FetchResult.create(fetched={self.num}, created={self.num})
 
 
 class UpdateAmendement(CreateOrUpdateAmendement):
@@ -283,7 +283,7 @@ class UpdateAmendement(CreateOrUpdateAmendement):
             date_depot=self.date_depot,
         )
 
-        return FetchResult.create(amendements={self.amendement_num})
+        return FetchResult.create(fetched={self.amendement_num})
 
 
 class RemoteSource(Source):

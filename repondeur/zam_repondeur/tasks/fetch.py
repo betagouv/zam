@@ -129,7 +129,8 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             # we can roll back at the end.
             if not huey.immediate:
                 transaction.commit()
-                DBSession.expire_all()
+                transaction.abort()
+                transaction.begin()
 
             lecture = DBSession.query(Lecture).with_for_update().get(lecture_pk)
             if lecture is None:

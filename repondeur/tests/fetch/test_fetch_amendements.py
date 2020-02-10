@@ -255,6 +255,7 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
                         "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
                         "etat": "AC",
                         "retireAvantPublication": "0",
+                        "dateDepot": "27/04/2018",
                     }
                 }
             )
@@ -370,6 +371,7 @@ def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "missionVisee": "Mission « Outre-mer »",
+                        "dateDepot": "27/04/2018",
                     }
                 }
             )
@@ -470,6 +472,7 @@ def test_fetch_amendements_an_without_auteur_key(
                         "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
                         "etat": "AC",
                         "retireAvantPublication": "0",
+                        "dateDepot": "27/04/2018",
                     }
                 }
             )
@@ -586,6 +589,7 @@ def test_fetch_amendements_an_without_group_tribun_id(
                         "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
                         "etat": "AC",
                         "retireAvantPublication": "0",
+                        "dateDepot": "27/04/2018",
                     }
                 }
             )
@@ -704,6 +708,7 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
                         "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
                         "etat": "AC",
                         "retireAvantPublication": "0",
+                        "dateDepot": "27/04/2018",
                     }
                 }
             )
@@ -933,6 +938,7 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
                         "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
                         "etat": "AC",
                         "retireAvantPublication": "0",
+                        "dateDepot": "27/04/2018",
                     }
                 }
             )
@@ -1020,6 +1026,7 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
                         "sortEnSeance": OrderedDict({"@xsi:nil": "true"}),
                         "etat": "AC",
                         "retireAvantPublication": "0",
+                        "dateDepot": "27/04/2018",
                     }
                 }
             )

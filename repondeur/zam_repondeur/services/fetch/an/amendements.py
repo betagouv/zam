@@ -2,6 +2,7 @@ import logging
 import math
 import re
 from collections import OrderedDict
+from datetime import date
 from http import HTTPStatus
 from itertools import chain, count, islice
 from typing import Any, Dict, Iterator, List, NamedTuple, Optional, Set, Tuple
@@ -22,6 +23,7 @@ from zam_repondeur.services.fetch.amendements import (
     RemoteSource,
     UpdateAmendement,
 )
+from zam_repondeur.services.fetch.dates import parse_french_date
 from zam_repondeur.services.fetch.division import parse_subdiv
 from zam_repondeur.services.fetch.exceptions import FetchError, NotFound
 from zam_repondeur.services.fetch.http import get_http_session
@@ -264,6 +266,8 @@ class AssembleeNationale(RemoteSource):
         expose = amend_data.get_expose()
         sort = amend_data.get_sort()
 
+        date_depot = amend_data.get_date_depot()
+
         amendement = lecture.find_amendement(num)
 
         action: Optional[Action] = None
@@ -285,6 +289,7 @@ class AssembleeNationale(RemoteSource):
                 corps=corps,
                 expose=expose,
                 sort=sort,
+                date_depot=date_depot,
             )
             return amendement, action
 
@@ -308,6 +313,7 @@ class AssembleeNationale(RemoteSource):
                 corps != amendement.corps,
                 expose != amendement.expose,
                 sort != amendement.sort,
+                date_depot != amendement.date_depot,
             ]
         )
         if modified:
@@ -327,6 +333,7 @@ class AssembleeNationale(RemoteSource):
                 corps=corps,
                 expose=expose,
                 sort=sort,
+                date_depot=date_depot,
             )
         return amendement, action
 
@@ -825,3 +832,6 @@ class ANAmendementData:
     @staticmethod
     def _unjustify(content: str) -> str:
         return content.replace(' style="text-align: justify;"', "")
+
+    def get_date_depot(self) -> Optional[date]:
+        return parse_french_date(self.amend["dateDepot"])

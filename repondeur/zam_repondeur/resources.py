@@ -167,9 +167,6 @@ class LectureCollection(Resource):
     def parent(self) -> DossierResource:
         return cast(DossierResource, self.__parent__)
 
-    def models(self) -> List[Lecture]:
-        return Lecture.all()
-
     def __getitem__(self, key: str) -> Resource:
         try:
             chambre, session_or_legislature, num_texte, organe = key.split(".")

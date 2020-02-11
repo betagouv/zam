@@ -81,7 +81,16 @@ class Lecture(Base, LastEventMixin):
         passive_deletes=True,
     )
 
-    __repr_keys__ = ("pk", "chambre", "organe", "partie")
+    def __repr__(self) -> str:
+        return (
+            f"<Lecture pk={self.pk}"
+            f" dossier={self.dossier.titre!r}"
+            f" phase={self.phase.name}"
+            f" chambre={self.chambre.name}"
+            f" organe={self.organe}"
+            f" texte={self.texte.numero}"
+            f" partie={self.partie}>"
+        )
 
     def __lt__(self, other: "Lecture") -> bool:
         return self.sort_key < other.sort_key

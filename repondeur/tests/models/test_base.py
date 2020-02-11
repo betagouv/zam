@@ -21,8 +21,8 @@ class TestRepr:
 
     def test_lecture(self, lecture_an):
         expected_repr = (
-            "<Lecture pk=1 chambre=<Chambre.AN: 'Assemblée nationale'>"
-            " organe='PO717460' partie=None>"
+            "<Lecture pk=1 dossier='Sécurité sociale : loi de financement 2018'"
+            " phase=PREMIERE_LECTURE chambre=AN organe=PO717460 texte=269 partie=None>"
         )
         assert repr(lecture_an) == expected_repr
 

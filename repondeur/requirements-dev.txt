@@ -26,7 +26,7 @@ pyflakes==2.1.1
 Pygments==2.5.2
 pyparsing==2.4.6
 pyperclip==1.7.0
-pyramid-debugtoolbar==4.6
+pyramid-debugtoolbar==4.6.1
 pyramid-mako==1.1.0
 pytest==5.3.5
 pytest-cov==2.8.1

@@ -2,6 +2,7 @@ import logging
 import math
 import re
 from collections import OrderedDict
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from http import HTTPStatus
 from itertools import chain, count, islice
@@ -72,7 +73,7 @@ class ProgressBar:
         self.total = total
 
     def advance(self, offset: int) -> None:
-        progress = self.start_index + offset + 1
+        progress = self.start_index + offset
         self.lecture.set_fetch_progress(progress, max(progress, self.total))
 
 
@@ -90,7 +91,17 @@ class AssembleeNationale(RemoteSource):
     def fetch_amendement(
         self, lecture: Lecture, numero_prefixe: str, position: Optional[int]
     ) -> Tuple[Optional[Amendement], bool]:
-        amendement, action = self._collect_amendement(lecture, numero_prefixe, position)
+
+        logger.info("Récupération de l'amendement %r", numero_prefixe)
+        amend_data = _retrieve_amendement(lecture, numero_prefixe)
+        amendement, action = self.inspect_amendement(
+            lecture=lecture,
+            amend_data=amend_data,
+            position=position,
+            id_discussion_commune=None,
+            id_identique=None,
+        )
+
         created = isinstance(action, CreateAmendement)
         if action is not None:
             result = action.apply(lecture)
@@ -124,15 +135,13 @@ class AssembleeNationale(RemoteSource):
         max_num_in_lecture = max((amdt.num for amdt in lecture.amendements), default=0)
         max_num_seen = max(max_num_in_liste, max_num_in_lecture)
 
-        expected_max_index = max_num_seen + self.max_404
-
         progress_bar = ProgressBar(
             lecture=lecture,
             start_index=start_index,
-            total=round_up(expected_max_index, self.batch_size),
+            total=round_up(max_num_seen + self.max_404, self.batch_size),
         )
 
-        actions, unchanged, errored, consecutive_404s = self._collect_amendements(
+        actions, unchanged, errored, not_found = self._collect_amendements(
             lecture=lecture,
             derouleur=derouleur,
             numeros_prefixes=numeros_prefixes,
@@ -146,10 +155,11 @@ class AssembleeNationale(RemoteSource):
         # - we received a number of 404 responses while trying to discover unlisted ones
         max_index = start_index + self.batch_size - 1
         discovery_covered_known_range = (max_index + 1) >= max_num_seen
-        give_up_unlisted_discovery = consecutive_404s >= self.max_404
+        end_of_batch = self.last_n_numbers(numeros_prefixes, self.max_404, derouleur)
+        batch_ends_with_enough_404s = not_found.issuperset(end_of_batch)
 
         next_start_index: Optional[int]
-        if discovery_covered_known_range and give_up_unlisted_discovery:
+        if discovery_covered_known_range and batch_ends_with_enough_404s:
             next_start_index = None
         else:
             next_start_index = start_index + self.batch_size
@@ -178,25 +188,46 @@ class AssembleeNationale(RemoteSource):
         prefixed = (derouleur.add_prefixe(num) for num in filtered)
         return prefixed
 
+    def last_n_numbers(
+        self, numeros_prefixes: List[str], n: int, derouleur: "ANDerouleurData"
+    ) -> Set[int]:
+        return set(
+            derouleur.remove_prefixe(numero_prefixe)
+            for numero_prefixe in numeros_prefixes[-n:]
+        )
+
     def _collect_amendements(
         self,
         lecture: Lecture,
         derouleur: "ANDerouleurData",
         numeros_prefixes: List[str],
         progress_bar: ProgressBar,
-    ) -> Tuple[List[Action], List[int], Set[int], int]:
+    ) -> Tuple[List[Action], List[int], Set[int], Set[int]]:
         actions: List[Action] = []
         unchanged: List[int] = []
         errored: Set[int] = set()
-        consecutive_404s = 0
+        not_found: Set[int] = set()
 
-        for offset, numero_prefixe in enumerate(numeros_prefixes):
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            futures = [
+                executor.submit(
+                    _retrieve_amendement_data_from_first_working_url,
+                    _urls_to_try(lecture, num),
+                )
+                for num in numeros_prefixes
+            ]
+
+        offset = 0
+        for numero_prefixe, future in zip(numeros_prefixes, futures):
+            offset += 1
             progress_bar.advance(offset)
-            try:
-                item = derouleur.items.get(numero_prefixe)
 
-                logger.info("Récupération de l'amendement %r", numero_prefixe)
-                amend_data = _retrieve_amendement(lecture, numero_prefixe)
+            logger.info("Récupération de l'amendement %r", numero_prefixe)
+
+            item = derouleur.items.get(numero_prefixe)
+
+            try:
+                amend_data = future.result()
                 amendement, action = self.inspect_amendement(
                     lecture=lecture,
                     amend_data=amend_data,
@@ -211,36 +242,20 @@ class AssembleeNationale(RemoteSource):
                     if amendement is None:
                         raise ValueError("Invalid amendement return value")
                     unchanged.append(amendement.num)
-                consecutive_404s = 0
             except NotFound:
                 logger.debug("Amendement %s not found", numero_prefixe)
-                if numero_prefixe in derouleur.numeros_prefixes:
-                    errored.add(derouleur.remove_prefixe(numero_prefixe))
-                consecutive_404s += 1
+                numero = derouleur.remove_prefixe(numero_prefixe)
+                if numero_prefixe in derouleur.numeros_prefixes:  # should be found
+                    errored.add(numero)
+                else:
+                    not_found.add(numero)
                 continue
             except Exception:
                 logger.exception("Error while fetching amendement %r", numero_prefixe)
                 errored.add(derouleur.remove_prefixe(numero_prefixe))
                 continue
-        return actions, unchanged, errored, consecutive_404s
 
-    def _collect_amendement(
-        self,
-        lecture: Lecture,
-        numero_prefixe: str,
-        position: Optional[int],
-        id_discussion_commune: Optional[int] = None,
-        id_identique: Optional[int] = None,
-    ) -> Tuple[Optional["Amendement"], Optional[Action]]:
-        """
-        Récupère un amendement depuis son numéro.
-        """
-        logger.info("Récupération de l'amendement %r", numero_prefixe)
-        amend_data = _retrieve_amendement(lecture, numero_prefixe)
-        amendement, action = self.inspect_amendement(
-            lecture, amend_data, position, id_discussion_commune, id_identique
-        )
-        return amendement, action
+        return actions, unchanged, errored, not_found
 
     def inspect_amendement(
         self,
@@ -450,19 +465,38 @@ _FORCE_LIST_KEYS_AMENDEMENT = ("programmeAmdt",)
 
 
 def _retrieve_amendement(lecture: Lecture, numero_prefixe: str) -> "ANAmendementData":
-    url = _build_amendement_url(lecture, numero_prefixe)
-    try:
-        content = _retrieve_content(url, force_list=_FORCE_LIST_KEYS_AMENDEMENT)
-    except NotFound:
-        url = build_url(lecture, numero_prefixe, fallback=True)
-        content = _retrieve_content(url)
+    urls = _urls_to_try(lecture, numero_prefixe)
+    amendement_data = _retrieve_amendement_data_from_first_working_url(
+        urls=urls, force_list=_FORCE_LIST_KEYS_AMENDEMENT,
+    )
+    return amendement_data
+
+
+def _retrieve_amendement_data_from_first_working_url(
+    urls: List[str], force_list: Optional[Tuple[str]] = None
+) -> "ANAmendementData":
+    content = _retrieve_content_from_first_working_url(urls, force_list)
     return ANAmendementData(content)
 
 
-def _build_amendement_url(
-    lecture: Lecture, numero_prefixe: str = "", fallback: bool = False
-) -> str:
-    return build_url(lecture, numero_prefixe, fallback)
+def _retrieve_content_from_first_working_url(
+    urls: List[str], force_list: Optional[Tuple[str]] = None
+) -> Dict[str, OrderedDict]:
+    last_index = len(urls) - 1
+    for index, url in enumerate(urls):
+        try:
+            return _retrieve_content(url, force_list=force_list)
+        except NotFound:
+            if index == last_index:
+                raise
+    raise RuntimeError  # should not happen
+
+
+def _urls_to_try(lecture: Lecture, numero_prefixe: str) -> List[str]:
+    return [
+        build_url(lecture, numero_prefixe, fallback=False),
+        build_url(lecture, numero_prefixe, fallback=True),
+    ]
 
 
 def build_url(

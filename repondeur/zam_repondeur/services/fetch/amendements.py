@@ -7,6 +7,7 @@ from zam_repondeur.models import (
     Amendement,
     Article,
     Chambre,
+    DBSession,
     Lecture,
     get_one_or_create,
 )
@@ -200,13 +201,11 @@ class CreateOrUpdateAmendement(Action):
         parent_num, parent_rectif = Amendement.parse_num(self.parent_num_raw)
         if not parent_num:
             return None
-        parent: Optional[Amendement]
-        parent, _ = get_one_or_create(
-            Amendement,
-            create_kwargs={"article": article, "rectif": parent_rectif},
-            lecture=lecture,
-            num=parent_num,
-        )
+        # The parent amendement must have been created before this one
+        # (which should be the case as long as we process them in order)
+        parent: Amendement = DBSession.query(Amendement).filter_by(
+            lecture=lecture, num=parent_num,
+        ).one()
         return parent
 
 

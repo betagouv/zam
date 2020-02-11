@@ -191,7 +191,7 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
     with patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement_data_from_first_working_url"  # noqa
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = ANDerouleurData(
             lecture_an,
@@ -223,9 +223,11 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
             },
         )
 
-        def dynamic_return_value(lecture, numero_prefixe):
+        def dynamic_return_value(urls, force_list=None):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
+
+            numero_prefixe = urls[0].rsplit("/", 1)[-1][:-4]
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
@@ -306,7 +308,7 @@ def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_
     with patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement_data_from_first_working_url"  # noqa
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = ANDerouleurData(
             lecture_an,
@@ -338,9 +340,11 @@ def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_
             },
         )
 
-        def dynamic_return_value(lecture, numero_prefixe):
+        def dynamic_return_value(urls, force_list=None):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
+
+            numero_prefixe = urls[0].rsplit("/", 1)[-1][:-4]
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
@@ -415,7 +419,7 @@ def test_fetch_amendements_an_without_auteur_key(
     with patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement_data_from_first_working_url"  # noqa
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = ANDerouleurData(
             lecture_an,
@@ -447,9 +451,11 @@ def test_fetch_amendements_an_without_auteur_key(
             },
         )
 
-        def dynamic_return_value(lecture, numero_prefixe):
+        def dynamic_return_value(urls, force_list=None):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
+
+            numero_prefixe = urls[0].rsplit("/", 1)[-1][:-4]
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
@@ -524,7 +530,7 @@ def test_fetch_amendements_an_without_group_tribun_id(
     with patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement_data_from_first_working_url"  # noqa
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = ANDerouleurData(
             lecture_an,
@@ -556,9 +562,11 @@ def test_fetch_amendements_an_without_group_tribun_id(
             },
         )
 
-        def dynamic_return_value(lecture, numero_prefixe):
+        def dynamic_return_value(urls, force_list=None):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
+
+            numero_prefixe = urls[0].rsplit("/", 1)[-1][:-4]
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
@@ -643,7 +651,7 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
     with patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement_data_from_first_working_url"  # noqa
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = ANDerouleurData(
             lecture_an,
@@ -675,9 +683,11 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
             },
         )
 
-        def dynamic_return_value(lecture, numero_prefixe):
+        def dynamic_return_value(urls, force_list=None):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
+
+            numero_prefixe = urls[0].rsplit("/", 1)[-1][:-4]
 
             if numero_prefixe not in {"6", "7", "9"}:
                 raise NotFound
@@ -749,7 +759,7 @@ def test_fetch_amendements_with_errored(
     with patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement_data_from_first_working_url"  # noqa
     ) as mock_retrieve_amendement:
         mock_fetch_discussion_list.return_value = ANDerouleurData(
             lecture_an,
@@ -879,7 +889,7 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
     with transaction.manager, patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement_data_from_first_working_url"  # noqa
     ) as mock_retrieve_amendement:
         DBSession.add(lecture_an)
         mock_fetch_discussion_list.return_value = ANDerouleurData(
@@ -906,9 +916,11 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
             },
         )
 
-        def dynamic_return_value(lecture, numero_prefixe):
+        def dynamic_return_value(urls, force_list=None):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
+
+            numero_prefixe = urls[0].rsplit("/", 1)[-1][:-4]
 
             if numero_prefixe not in {"666", "999"}:
                 raise NotFound
@@ -967,7 +979,7 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
     with transaction.manager, patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
     ) as mock_fetch_discussion_list, patch(
-        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement"
+        "zam_repondeur.services.fetch.an.amendements._retrieve_amendement_data_from_first_working_url"  # noqa
     ) as mock_retrieve_amendement:
         DBSession.add(lecture_an)
         mock_fetch_discussion_list.return_value = ANDerouleurData(
@@ -994,9 +1006,11 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
             },
         )
 
-        def dynamic_return_value(lecture, numero_prefixe):
+        def dynamic_return_value(urls, force_list=None):
             from zam_repondeur.services.fetch.an.amendements import ANAmendementData
             from zam_repondeur.services.fetch.exceptions import NotFound
+
+            numero_prefixe = urls[0].rsplit("/", 1)[-1][:-4]
 
             if numero_prefixe not in {"666", "999"}:
                 raise NotFound

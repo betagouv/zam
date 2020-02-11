@@ -9,11 +9,10 @@ from sqlalchemy import (
     Index,
     Integer,
     Text,
-    desc,
     func,
     select,
 )
-from sqlalchemy.orm import Query, column_property, joinedload, relationship
+from sqlalchemy.orm import Query, column_property, relationship
 
 from zam_repondeur.decorator import reify
 
@@ -159,16 +158,6 @@ class Lecture(Base, LastEventMixin):
             datetime.utcnow().date() - self.texte.date_depot
             <= timedelta(days=int(settings.get(f"zam.refresh.{kind}") or 30))
         )
-
-    @classmethod
-    def all(cls) -> List["Lecture"]:
-        lectures: List["Lecture"] = (
-            DBSession.query(cls)
-            .options(joinedload("amendements"))
-            .order_by(desc(cls.created_at))
-            .all()
-        )
-        return lectures
 
     @classmethod
     def get_by_pk(cls, pk: int) -> Optional["Lecture"]:

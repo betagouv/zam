@@ -26,7 +26,6 @@ def system(ctx):
         "python3-venv",
         "python3-swiftclient",
         "python3-wheel",
-        "redis-server",
         "./wkhtmltox_0.12.5-1.bionic_amd64.deb",
         "xvfb",
     )
@@ -36,6 +35,7 @@ def system(ctx):
     ctx.sudo("chown zam:users /srv/zam/")
     ctx.sudo("chsh -s /bin/bash zam")
     setup_postgres(ctx)
+    setup_redis(ctx)
     setup_smtp_server(ctx)
     setup_unattended_upgrades(ctx)
 
@@ -64,6 +64,18 @@ def total_memory(ctx):
     """
     mem_total = int(ctx.run("awk '/MemTotal/ {print $2}' /proc/meminfo").stdout.strip())
     return mem_total // 1024
+
+
+@task
+def setup_redis(ctx):
+    install_packages(ctx, "redis-server")
+    sudo_put(
+        ctx,
+        "files/redis/sysctl.conf",
+        "/etc/sysctl.d/60-redis-server.conf",
+        chown="root",
+    )
+    ctx.sudo("sudo service procps reload")
 
 
 @task

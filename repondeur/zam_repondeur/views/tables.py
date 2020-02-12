@@ -47,6 +47,7 @@ class TableView:
                         "num",
                         "parent_pk",
                         "position",
+                        "tri_amendement",
                         "rectif",
                         "sort",
                     ),

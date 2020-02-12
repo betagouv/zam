@@ -92,7 +92,7 @@ class Article(Base):
 
     amendements = relationship(
         Amendement,
-        order_by=(Amendement.position, Amendement.num),
+        order_by=(Amendement.tri_amendement, Amendement.position, Amendement.num),
         back_populates="article",
     )
 

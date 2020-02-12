@@ -232,7 +232,7 @@ class TestPostForm:
         }
 
         # We should have loaded 5 amendements
-        assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 135, 192]
+        assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 192, 135]
 
     @responses.activate
     def test_plfss_2018_an_using_fallback(self, app, user_sgg, dossier_plfss2018):
@@ -413,7 +413,7 @@ class TestPostForm:
         }
 
         # We should have loaded 5 amendements
-        assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 135, 192]
+        assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 192, 135]
 
     @responses.activate
     def test_plfss_2019_senat(self, app, user_sgg, dossier_plfss2019):

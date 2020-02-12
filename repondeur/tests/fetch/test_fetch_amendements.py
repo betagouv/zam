@@ -176,13 +176,15 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
-    Amendement.create(lecture=lecture_an, article=article1_an, num=6, position=1)
+    Amendement.create(
+        lecture=lecture_an, article=article1_an, num=6, tri_amendement="aa"
+    )
 
     amendement_9 = Amendement.create(
         lecture=lecture_an,
         article=article1_an,
         num=9,
-        position=2,
+        tri_amendement="ab",
         avis="Favorable",
         objet="Objet",
         reponse="Réponse",
@@ -203,19 +205,16 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "3/3",
                             },
                         ]
                     }
@@ -258,6 +257,7 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )
@@ -281,25 +281,20 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
     assert amendement_9.groupe == "La République en Marche"
     assert amendement_9.auteur == "Véran Olivier"
 
-    # Check that the position was changed on the updated amendement
-    assert amendement_9.position == 3
-
-    # Check that the position was set for the new amendement
-    amendement_7 = DBSession.query(Amendement).filter(Amendement.num == 7).one()
-    assert amendement_7.position == 2
+    # Check the new sort order
+    assert [amdt.num for amdt in sorted(DBSession.query(Amendement))] == [6, 7, 9]
 
 
 def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_an):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
-    Amendement.create(lecture=lecture_an, article=article1_an, num=6, position=1)
+    Amendement.create(lecture=lecture_an, article=article1_an, num=6)
 
     amendement_9 = Amendement.create(
         lecture=lecture_an,
         article=article1_an,
         num=9,
-        position=2,
         avis="Favorable",
         objet="Objet",
         reponse="Réponse",
@@ -320,19 +315,16 @@ def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "3/3",
                             },
                         ]
                     }
@@ -376,6 +368,7 @@ def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_
                         "retireAvantPublication": "0",
                         "missionVisee": "Mission « Outre-mer »",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )
@@ -400,16 +393,13 @@ def test_fetch_amendements_an_without_auteur_key(
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
-    amendement_6 = Amendement.create(
-        lecture=lecture_an, article=article1_an, num=6, position=1
-    )
+    amendement_6 = Amendement.create(lecture=lecture_an, article=article1_an, num=6)
     DBSession.add(amendement_6)
 
     amendement_9 = Amendement.create(
         lecture=lecture_an,
         article=article1_an,
         num=9,
-        position=2,
         avis="Favorable",
         objet="Objet",
         reponse="Réponse",
@@ -431,19 +421,16 @@ def test_fetch_amendements_an_without_auteur_key(
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "3/3",
                             },
                         ]
                     }
@@ -479,6 +466,7 @@ def test_fetch_amendements_an_without_auteur_key(
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )
@@ -511,16 +499,13 @@ def test_fetch_amendements_an_without_group_tribun_id(
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
-    amendement_6 = Amendement.create(
-        lecture=lecture_an, article=article1_an, num=6, position=1
-    )
+    amendement_6 = Amendement.create(lecture=lecture_an, article=article1_an, num=6)
     DBSession.add(amendement_6)
 
     amendement_9 = Amendement.create(
         lecture=lecture_an,
         article=article1_an,
         num=9,
-        position=2,
         avis="Favorable",
         objet="Objet",
         reponse="Réponse",
@@ -542,19 +527,16 @@ def test_fetch_amendements_an_without_group_tribun_id(
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "3/3",
                             },
                         ]
                     }
@@ -598,6 +580,7 @@ def test_fetch_amendements_an_without_group_tribun_id(
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )
@@ -632,16 +615,13 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
-    amendement_6 = Amendement.create(
-        lecture=lecture_an, article=article1_an, num=6, position=1
-    )
+    amendement_6 = Amendement.create(lecture=lecture_an, article=article1_an, num=6)
     DBSession.add(amendement_6)
 
     amendement_9 = Amendement.create(
         lecture=lecture_an,
         article=article1_an,
         num=9,
-        position=2,
         avis="Favorable",
         objet="Objet",
         reponse="Réponse",
@@ -663,19 +643,16 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "3/3",
                             },
                         ]
                     }
@@ -719,6 +696,7 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )
@@ -771,19 +749,16 @@ def test_fetch_amendements_with_errored(
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "3/3",
                             },
                         ]
                     }
@@ -849,19 +824,16 @@ def test_fetch_amendements_with_connection_errors(
                                 "@numero": "6",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "1/3",
                             },
                             {
                                 "@numero": "7",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "2/3",
                             },
                             {
                                 "@numero": "9",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "3/3",
                             },
                         ]
                     }
@@ -902,13 +874,11 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
                                 "@numero": "666",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "1/2",
                             },
                             {
                                 "@numero": "999",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "2/2",
                             },
                         ]
                     }
@@ -951,6 +921,7 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )
@@ -992,13 +963,11 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
                                 "@numero": "666",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "1/2",
                             },
                             {
                                 "@numero": "999",
                                 "@discussionCommune": "",
                                 "@discussionIdentique": "",
-                                "@position": "2/2",
                             },
                         ]
                     }
@@ -1041,6 +1010,7 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )

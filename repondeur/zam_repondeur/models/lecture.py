@@ -62,7 +62,7 @@ class Lecture(Base, LastEventMixin):
 
     amendements: List[Amendement] = relationship(
         Amendement,
-        order_by=(Amendement.position, Amendement.num),
+        order_by=(Amendement.tri_amendement, Amendement.position, Amendement.num),
         back_populates="lecture",
         cascade="all, delete-orphan",
         passive_deletes=True,

@@ -37,6 +37,7 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
                 "num",
                 "parent_pk",
                 "position",
+                "tri_amendement",
                 "rectif",
                 "sort",
             ),

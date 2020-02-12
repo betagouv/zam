@@ -109,7 +109,6 @@ class CollectedChanges(NamedTuple):
     """
 
     derouleur_fetch_success: bool
-    position_changes: Dict[int, Optional[int]]
     creates: List["CreateAmendement"]
     updates: List["UpdateAmendement"]
     unchanged: List[int]
@@ -120,15 +119,12 @@ class CollectedChanges(NamedTuple):
     def create(
         cls,
         derouleur_fetch_success: bool = True,
-        position_changes: Optional[Dict[int, Optional[int]]] = None,
         creates: Optional[List["CreateAmendement"]] = None,
         updates: Optional[List["UpdateAmendement"]] = None,
         unchanged: Optional[List[int]] = None,
         errored: Optional[Set[int]] = None,
         next_start_index: Optional[int] = None,
     ) -> "CollectedChanges":
-        if position_changes is None:
-            position_changes = {}
         if creates is None:
             creates = []
         if updates is None:
@@ -139,7 +135,6 @@ class CollectedChanges(NamedTuple):
             errored = set()
         return cls(
             derouleur_fetch_success,
-            position_changes,
             creates,
             updates,
             unchanged,
@@ -160,7 +155,7 @@ class CreateOrUpdateAmendement(Action):
         subdiv: SubDiv,
         parent_num_raw: str,
         rectif: int,
-        position: Optional[int],
+        tri_amendement: Optional[str],
         id_discussion_commune: Optional[int],
         id_identique: Optional[int],
         matricule: str,
@@ -176,7 +171,7 @@ class CreateOrUpdateAmendement(Action):
         self.subdiv = subdiv
         self.parent_num_raw = parent_num_raw
         self.rectif = rectif
-        self.position = position
+        self.tri_amendement = tri_amendement
         self.id_discussion_commune = id_discussion_commune
         self.id_identique = id_identique
         self.matricule = matricule
@@ -230,9 +225,9 @@ class CreateAmendement(CreateOrUpdateAmendement):
             lecture=lecture,
             article=article,
             parent=parent,
-            position=self.position,
             num=self.num,
             rectif=self.rectif,
+            tri_amendement=self.tri_amendement,
             id_discussion_commune=self.id_discussion_commune,
             id_identique=self.id_identique,
             matricule=self.matricule,
@@ -276,7 +271,7 @@ class UpdateAmendement(CreateOrUpdateAmendement):
             amendement,
             article=article,
             parent=parent,
-            position=self.position,
+            tri_amendement=self.tri_amendement,
             id_discussion_commune=self.id_discussion_commune,
             id_identique=self.id_identique,
             matricule=self.matricule,

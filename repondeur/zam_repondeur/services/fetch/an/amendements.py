@@ -90,7 +90,7 @@ class AssembleeNationale(RemoteSource):
             )
 
     def fetch_amendement(
-        self, lecture: Lecture, numero_prefixe: str, position: Optional[int]
+        self, lecture: Lecture, numero_prefixe: str
     ) -> Tuple[Optional[Amendement], bool]:
 
         logger.info("Récupération de l'amendement %r", numero_prefixe)
@@ -98,7 +98,6 @@ class AssembleeNationale(RemoteSource):
         amendement, action = self.inspect_amendement(
             lecture=lecture,
             amend_data=amend_data,
-            position=position,
             id_discussion_commune=None,
             id_identique=None,
         )
@@ -121,8 +120,6 @@ class AssembleeNationale(RemoteSource):
 
         if not derouleur.items:
             logger.warning("Empty amendement list for %r", lecture)
-
-        position_changes = derouleur.updated_amendement_positions()
 
         numeros_prefixes: List[str] = list(
             islice(
@@ -166,7 +163,6 @@ class AssembleeNationale(RemoteSource):
             next_start_index = start_index + self.batch_size
 
         return CollectedChanges.create(
-            position_changes=position_changes,
             creates=creates,
             updates=updates,
             unchanged=unchanged,
@@ -243,7 +239,6 @@ class AssembleeNationale(RemoteSource):
                 amendement, action = self.inspect_amendement(
                     lecture=lecture,
                     amend_data=amend_data,
-                    position=item.position if item else None,
                     id_discussion_commune=item.id_discussion_commune if item else None,
                     id_identique=item.id_identique if item else None,
                 )
@@ -275,7 +270,6 @@ class AssembleeNationale(RemoteSource):
         self,
         lecture: Lecture,
         amend_data: "ANAmendementData",
-        position: Optional[int],
         id_discussion_commune: Optional[int],
         id_identique: Optional[int],
     ) -> Tuple[Optional["Amendement"], Optional[Action]]:
@@ -301,6 +295,8 @@ class AssembleeNationale(RemoteSource):
 
         date_depot = amend_data.get_date_depot()
 
+        tri_amendement = amend_data.get_tri_amendement()
+
         amendement = lecture.find_amendement(num)
 
         action: Optional[Action] = None
@@ -311,7 +307,7 @@ class AssembleeNationale(RemoteSource):
                 parent_num_raw=parent_num_raw,
                 num=num,
                 rectif=rectif,
-                position=position,
+                tri_amendement=tri_amendement,
                 id_discussion_commune=id_discussion_commune,
                 id_identique=id_identique,
                 matricule=matricule,
@@ -336,6 +332,7 @@ class AssembleeNationale(RemoteSource):
                 corps != amendement.corps,
                 expose != amendement.expose,
                 sort != amendement.sort,
+                tri_amendement != amendement.tri_amendement,
                 id_discussion_commune != amendement.id_discussion_commune,
                 id_identique != amendement.id_identique,
                 matricule != amendement.matricule,
@@ -355,7 +352,7 @@ class AssembleeNationale(RemoteSource):
                 subdiv=subdiv,
                 parent_num_raw=parent_num_raw,
                 rectif=rectif,
-                position=position,
+                tri_amendement=tri_amendement,
                 id_discussion_commune=id_discussion_commune,
                 id_identique=id_identique,
                 matricule=matricule,
@@ -377,19 +374,6 @@ class AssembleeNationale(RemoteSource):
             next_start_index=changes.next_start_index,
         )
 
-        # Build amendement -> position map
-        moved_amendements = {
-            amendement: changes.position_changes[amendement.num]
-            for amendement in lecture.amendements
-            if amendement.num in changes.position_changes
-        }
-
-        # Reset positions first, so that we never have two with the same position
-        # (which would trigger an integrity error due to the unique constraint)
-        for amendement in moved_amendements:
-            amendement.position = None
-        DBSession.flush()
-
         # Create amendements in numerical order, because a "sous-amendement"
         # must always be created after its parent
         for create_action in sorted(changes.creates, key=attrgetter("num")):
@@ -398,11 +382,6 @@ class AssembleeNationale(RemoteSource):
         # Update amendements
         for update_action in changes.updates:
             result += update_action.apply(lecture)
-
-        # Apply new amendement positions
-        for amendement, position in moved_amendements.items():
-            if amendement.position != position:
-                amendement.position = position
 
         DBSession.flush()
 
@@ -558,7 +537,6 @@ class ANDerouleurItem(NamedTuple):
     numero: int
     id_discussion_commune: Optional[int]
     id_identique: Optional[int]
-    position: int
 
     @property
     def numero_prefixe(self) -> str:
@@ -578,7 +556,6 @@ class ANDerouleurItem(NamedTuple):
                 if item["@discussionIdentique"]
                 else None
             ),
-            position=int(item["@position"].split("/")[0]),
         )
 
     @classmethod
@@ -638,25 +615,6 @@ class ANDerouleurData:
         if not numero_prefixe.startswith(self.prefixe):
             raise ValueError(f"{numero_prefixe!r} does not start with {self.prefixe!r}")
         return int(numero_prefixe[len(self.prefixe) :])
-
-    def updated_amendement_positions(self) -> Dict[int, Optional[int]]:
-
-        amendements = [amdt for amdt in self.lecture.amendements]
-
-        current_order = {amdt.num: amdt.position for amdt in amendements}
-
-        new_order = {item.numero: item.position for item in self.items.values()}
-
-        for amdt in amendements:
-            if amdt.num not in current_order:
-                logger.error("%r not in %r", amdt.num, current_order)
-                raise ValueError
-
-        return {
-            amdt.num: new_order.get(amdt.num)
-            for amdt in amendements
-            if new_order.get(amdt.num) != current_order[amdt.num]
-        }
 
 
 def get_organe_abrev(organe_uid: str) -> str:
@@ -898,3 +856,7 @@ class ANAmendementData:
 
     def get_date_depot(self) -> Optional[date]:
         return parse_french_date(self.amend["dateDepot"])
+
+    def get_tri_amendement(self) -> str:
+        tri_amendement: str = self.amend["triAmendement"]
+        return tri_amendement

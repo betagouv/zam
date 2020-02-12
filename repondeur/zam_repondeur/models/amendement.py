@@ -184,6 +184,7 @@ class Amendement(Base):
     __table_args__ = (
         Index("ix_amendements__lecture_pk", "lecture_pk"),
         Index("ix_amendements__parent_pk", "parent_pk"),
+        Index("ix_amendements__tri_amendement", "tri_amendement"),
         UniqueConstraint("num", "lecture_pk"),
         UniqueConstraint("position", "lecture_pk"),
     )
@@ -203,7 +204,16 @@ class Amendement(Base):
     mission_titre_court: Optional[str] = Column(Text, nullable=True)
 
     # Ordre et regroupement lors de la discussion.
-    position: Optional[int] = Column(Integer, nullable=True)
+    position: Optional[int] = Column(
+        Integer,
+        nullable=True,
+        doc="Ordre de discussion explicite issu du dérouleur (Sénat)",
+    )
+    tri_amendement: Optional[str] = Column(
+        Text,
+        nullable=True,
+        doc="Clé de tri alphanumérique pour l'ordre de discussion (AN)",
+    )
     id_discussion_commune: Optional[int] = Column(Integer, nullable=True)
     id_identique: Optional[int] = Column(Integer, nullable=True)
 
@@ -298,6 +308,7 @@ class Amendement(Base):
         date_depot: Optional[date] = None,
         sort: Optional[str] = None,
         position: Optional[int] = None,
+        tri_amendement: Optional[str] = None,
         id_discussion_commune: Optional[int] = None,
         id_identique: Optional[int] = None,
         expose: Optional[str] = None,
@@ -325,6 +336,7 @@ class Amendement(Base):
             date_depot=date_depot,
             sort=sort,
             position=position,
+            tri_amendement=tri_amendement,
             id_discussion_commune=id_discussion_commune,
             id_identique=id_identique,
             expose=expose,
@@ -354,9 +366,10 @@ class Amendement(Base):
         return self.sort_key < other.sort_key
 
     @reify
-    def sort_key(self) -> Tuple[bool, int, "Article", int]:
+    def sort_key(self) -> Tuple[bool, str, int, "Article", int]:
         return (
             self.is_abandoned,
+            self.tri_amendement or "~",
             self.position or self.VERY_BIG_NUMBER,
             self.article,
             self.num,

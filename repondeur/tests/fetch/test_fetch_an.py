@@ -52,8 +52,8 @@ class TestFetchAndParseAll:
                 ("177", read_sample_data("an/269/177.xml")),
                 ("270", read_sample_data("an/269/270.xml")),
                 ("723", read_sample_data("an/269/723.xml")),
-                ("135", read_sample_data("an/269/135.xml")),
                 ("192", read_sample_data("an/269/192.xml")),
+                ("135", read_sample_data("an/269/135.xml")),
             ),
         ):
             result = source.fetch(lecture=lecture_an)
@@ -63,29 +63,44 @@ class TestFetchAndParseAll:
         assert len(amendements) == 5
 
         assert amendements[0].num == 177
-        assert amendements[0].position == 1
+        assert (
+            amendements[0].tri_amendement
+            == "aeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaki"
+        )
         assert amendements[0].id_discussion_commune is None
         assert amendements[0].id_identique == 20386
 
         assert amendements[1].num == 270
-        assert amendements[1].position == 2
+        assert (
+            amendements[1].tri_amendement
+            == "aeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaako"
+        )
         assert amendements[1].id_discussion_commune is None
         assert amendements[1].id_identique == 20386
 
         assert amendements[2].num == 723
-        assert amendements[2].position == 3
+        assert (
+            amendements[2].tri_amendement
+            == "aeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas"
+        )
         assert amendements[2].id_discussion_commune is None
         assert amendements[2].id_identique is None
 
-        assert amendements[3].num == 135
-        assert amendements[3].position == 4
+        assert amendements[3].num == 192
+        assert (
+            amendements[3].tri_amendement
+            == "awaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaice"
+        )
         assert amendements[3].id_discussion_commune is None
-        assert amendements[3].id_identique is None
+        assert amendements[3].id_identique == 20439
 
-        assert amendements[4].num == 192
-        assert amendements[4].position == 5
+        assert amendements[4].num == 135
+        assert (
+            amendements[4].tri_amendement
+            == "bacaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaao"
+        )
         assert amendements[4].id_discussion_commune is None
-        assert amendements[4].id_identique == 20439
+        assert amendements[4].id_identique is None
 
         assert result.created == {177, 270, 723, 135, 192}
         assert result.errored == set()
@@ -108,8 +123,8 @@ class TestFetchAndParseAll:
                 ("177", read_sample_data("an/269/177.xml")),
                 ("270", read_sample_data("an/269/270.xml")),
                 ("723", read_sample_data("an/269/723.xml")),
-                ("135", read_sample_data("an/269/135.xml")),
                 ("192", read_sample_data("an/269/192.xml")),
+                ("135", read_sample_data("an/269/135.xml")),
             ),
         ), patch(
             "zam_repondeur.services.progress.ProgressRepository.set_fetch_progress"
@@ -124,7 +139,7 @@ class TestFetchAndParseAll:
         assert lecture_an.get_fetch_progress() == {}
 
         assert len(result.fetched) == 5
-        assert result.created == {177, 270, 723, 135, 192}
+        assert result.created == {177, 270, 723, 192, 135}
         assert result.errored == set()
 
     @responses.activate
@@ -174,12 +189,18 @@ class TestFetchAndParseAll:
         assert len(amendements) == 2
 
         assert amendements[0].num == 177
-        assert amendements[0].position == 1
+        assert (
+            amendements[0].tri_amendement
+            == "aeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaki"
+        )
         assert amendements[0].id_discussion_commune is None
         assert amendements[0].id_identique == 20386
 
         assert amendements[1].num == 192
-        assert amendements[1].position is None
+        assert (
+            amendements[1].tri_amendement
+            == "awaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaice"
+        )
         assert amendements[1].id_discussion_commune is None
         assert amendements[1].id_identique is None
 
@@ -207,10 +228,16 @@ class TestFetchAndParseAll:
         assert len(amendements) == 2
 
         assert amendements[0].num == 2
-        assert amendements[0].position is None
+        assert (
+            amendements[0].tri_amendement
+            == "ilaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaf"
+        )
 
         assert amendements[1].num == 1
-        assert amendements[1].position == 1
+        assert (
+            amendements[1].tri_amendement
+            == "elaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"
+        )
 
         assert result.created == {1, 2}
         assert result.errored == set()
@@ -249,17 +276,26 @@ class TestFetchAndParseAll:
         assert len(amendements) == 3
 
         assert amendements[0].num == 1
-        assert amendements[0].position == 1
+        assert (
+            amendements[0].tri_amendement
+            == "gaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafahoti"
+        )
         assert amendements[0].id_discussion_commune == 3448
         assert amendements[0].id_identique == 8496
 
         assert amendements[1].num == 2
-        assert amendements[1].position == 2
+        assert (
+            amendements[1].tri_amendement
+            == "gaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafahotk"
+        )
         assert amendements[1].id_discussion_commune is None
         assert amendements[1].id_identique is None
 
         assert amendements[2].num == 3
-        assert amendements[2].position == 3
+        assert (
+            amendements[2].tri_amendement
+            == "gaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafahoto"
+        )
         assert amendements[2].id_discussion_commune is None
         assert amendements[1].id_identique is None
 
@@ -283,8 +319,8 @@ class TestFetchAndParseAll:
                 ("177", read_sample_data("an/269/177.xml")),
                 # removed 270…
                 ("723", read_sample_data("an/269/723.xml")),
-                ("135", read_sample_data("an/269/135.xml")),
                 ("192", read_sample_data("an/269/192.xml")),
+                ("135", read_sample_data("an/269/135.xml")),
             ),
         ):
             result = source.fetch(lecture=lecture_an)
@@ -294,10 +330,9 @@ class TestFetchAndParseAll:
         assert len(amendements) == 4
         assert amendements[0].num == 177
         assert amendements[1].num == 723
-        assert amendements[2].num == 135
-        assert amendements[3].num == 192
+        assert amendements[2].num == 192
+        assert amendements[3].num == 135
 
-        assert [amdt.position for amdt in amendements] == [1, 3, 4, 5]
         assert result.created == {177, 723, 135, 192}
         assert result.errored == {270}
 
@@ -344,11 +379,7 @@ class TestFetchDiscussionList:
 
         assert len(derouleur.items) == 5
         assert derouleur.items["177"] == ANDerouleurItem(
-            prefixe="",
-            numero=177,
-            id_discussion_commune=None,
-            id_identique=20386,
-            position=1,
+            prefixe="", numero=177, id_discussion_commune=None, id_identique=20386,
         )
 
     @responses.activate
@@ -387,11 +418,7 @@ class TestFetchDiscussionList:
         derouleur = fetch_discussion_list(lecture=lecture_an)
 
         assert derouleur.items["177"] == ANDerouleurItem(
-            prefixe="",
-            numero=177,
-            id_discussion_commune=None,
-            id_identique=20386,
-            position=1,
+            prefixe="", numero=177, id_discussion_commune=None, id_identique=20386,
         )
 
     @responses.activate
@@ -424,7 +451,7 @@ class TestFetchAmendement:
         DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="177", position=1
+            lecture=lecture_an, numero_prefixe="177"
         )
 
         assert created
@@ -436,7 +463,11 @@ class TestFetchAmendement:
         assert amendement.matricule == "267289"
         assert amendement.date_depot == date(2016, 10, 19)
         assert amendement.sort == "rejeté"
-        assert amendement.position == 1
+        assert amendement.position is None
+        assert (
+            amendement.tri_amendement
+            == "aeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaki"
+        )
         assert amendement.id_discussion_commune is None
         assert amendement.id_identique is None
         assert amendement.parent is None
@@ -476,7 +507,7 @@ class TestFetchAmendement:
         DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="723", position=1
+            lecture=lecture_an, numero_prefixe="723"
         )
 
         assert amendement.gouvernemental is True
@@ -497,7 +528,7 @@ class TestFetchAmendement:
         DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="135", position=1
+            lecture=lecture_an, numero_prefixe="135"
         )
 
         assert amendement.gouvernemental is False
@@ -519,7 +550,7 @@ class TestFetchAmendement:
         DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="494", position=1
+            lecture=lecture_an, numero_prefixe="494"
         )
 
         assert amendement.mission_titre == "Mission « Outre-mer »"
@@ -583,7 +614,7 @@ class TestFetchAmendement:
         DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="319", position=1
+            lecture=lecture_an, numero_prefixe="319"
         )
 
         assert amendement.mission_titre == "Mission « Action extérieure de l'État »"
@@ -647,7 +678,7 @@ class TestFetchAmendement:
         DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="1463", position=1
+            lecture=lecture_an, numero_prefixe="1463"
         )
 
         assert amendement.mission_titre == "Mission « Cohésion des territoires »"
@@ -777,7 +808,7 @@ class TestFetchAmendement:
         DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="398", position=1
+            lecture=lecture_an, numero_prefixe="398"
         )
 
         assert amendement.mission_titre == "Mission « Investissements d'avenir »"
@@ -874,7 +905,7 @@ class TestFetchAmendement:
         )
 
         amendement, created = source.fetch_amendement(
-            lecture=lecture_plf_2019, numero_prefixe="193", position=1
+            lecture=lecture_plf_2019, numero_prefixe="193"
         )
 
         assert amendement.mission_titre == "Mission « Sécurités »"
@@ -934,11 +965,11 @@ class TestFetchAmendement:
         DBSession.add(lecture_an)
 
         amendement1, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="155", position=1
+            lecture=lecture_an, numero_prefixe="155"
         )
         assert created
         amendement2, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="941", position=2
+            lecture=lecture_an, numero_prefixe="941"
         )
         assert created
 
@@ -959,7 +990,7 @@ class TestFetchAmendement:
         DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="38", position=1
+            lecture=lecture_an, numero_prefixe="38"
         )
 
         assert amendement.sort == ""
@@ -979,7 +1010,7 @@ class TestFetchAmendement:
         DBSession.add(lecture_an)
 
         amendement, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="192", position=1
+            lecture=lecture_an, numero_prefixe="192"
         )
 
         assert amendement.article.type == "article"
@@ -994,9 +1025,7 @@ class TestFetchAmendement:
         responses.add(responses.GET, build_url(lecture_an, 177), status=404)
 
         with pytest.raises(NotFound):
-            source.fetch_amendement(
-                lecture=lecture_an, numero_prefixe="177", position=1
-            )
+            source.fetch_amendement(lecture=lecture_an, numero_prefixe="177")
 
     @responses.activate
     def test_fetch_amendement_content_empty(self, lecture_an, app, source):
@@ -1005,9 +1034,7 @@ class TestFetchAmendement:
         responses.add(responses.GET, build_url(lecture_an, 177), status=200, body="")
 
         with pytest.raises(NotFound):
-            source.fetch_amendement(
-                lecture=lecture_an, numero_prefixe="177", position=1
-            )
+            source.fetch_amendement(lecture=lecture_an, numero_prefixe="177")
 
 
 class TestFetchAmendementAgain:
@@ -1027,7 +1054,7 @@ class TestFetchAmendementAgain:
 
         # Let's fetch a new amendement
         amendement1, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="177", position=1
+            lecture=lecture_an, numero_prefixe="177"
         )
         assert created
 
@@ -1038,7 +1065,7 @@ class TestFetchAmendementAgain:
 
         # And fetch the same amendement again
         amendement2, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="177", position=1
+            lecture=lecture_an, numero_prefixe="177"
         )
         assert not created
         assert amendement2 is amendement1
@@ -1074,11 +1101,11 @@ class TestFetchAmendementAgain:
 
         # Let's fetch a new amendement
         amendement1, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="177", position=1
+            lecture=lecture_an, numero_prefixe="177"
         )
         # And fetch the same amendement again
         amendement2, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="177", position=1
+            lecture=lecture_an, numero_prefixe="177"
         )
 
         # An irrecevable event has been created
@@ -1125,7 +1152,7 @@ class TestFetchAmendementAgain:
 
         # Let's fetch a new amendement
         amendement1, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="177", position=1
+            lecture=lecture_an, numero_prefixe="177"
         )
 
         # Put it on a user table
@@ -1136,7 +1163,7 @@ class TestFetchAmendementAgain:
 
         # Now fetch the same amendement again (now irrecevable)
         amendement2, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="177", position=1
+            lecture=lecture_an, numero_prefixe="177"
         )
 
         # An irrecevable event has been created
@@ -1179,14 +1206,14 @@ class TestFetchAmendementAgain:
         DBSession.add(lecture_an)
 
         amendement1, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="177", position=1
+            lecture=lecture_an, numero_prefixe="177"
         )
         assert created
 
         amendement1.article = None  # let's change the article
 
         amendement2, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="177", position=2
+            lecture=lecture_an, numero_prefixe="177"
         )
         assert not created
         assert amendement2 is amendement1
@@ -1213,12 +1240,12 @@ class TestFetchAmendementAgain:
         DBSession.add(lecture_an)
 
         parent1, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="155", position=1
+            lecture=lecture_an, numero_prefixe="155"
         )
         assert created
 
         child1, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="941", position=2
+            lecture=lecture_an, numero_prefixe="941"
         )
         assert created
 
@@ -1229,13 +1256,13 @@ class TestFetchAmendementAgain:
         DBSession.flush()
 
         parent2, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="155", position=1
+            lecture=lecture_an, numero_prefixe="155"
         )
         assert not created
         assert parent2 is parent1
 
         child2, created = source.fetch_amendement(
-            lecture=lecture_an, numero_prefixe="941", position=2
+            lecture=lecture_an, numero_prefixe="941"
         )
         assert not created
         assert child2 is child1
@@ -1257,7 +1284,6 @@ def test_amendements_to_collect(lecture_an, source):
                             "@numero": "2",
                             "@discussionCommune": "1234",
                             "@discussionIdentique": "5678",
-                            "@position": "1/1",
                         }
                     ]
                 }

@@ -45,8 +45,12 @@ zam.users.max_token_requests_per_ip_per_minute = 50
 zam.users.max_token_validations_per_ip_per_minute = 50
 zam.amendements.redis_url = redis://localhost:6379/4
 zam.progress.redis_url = redis://localhost:6379/5
-# Duration in minutes
+
+# Progress expiration delay in minutes (in case it gets stuck)
 zam.progress.max_duration = 30
+
+# Progress refresh interval in seconds (default is 5)
+zam.progress.lecture_refresh = 90
 
 zam.session_secret = $$session_secret
 

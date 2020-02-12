@@ -110,7 +110,8 @@ class CollectedChanges(NamedTuple):
 
     derouleur_fetch_success: bool
     position_changes: Dict[int, Optional[int]]
-    actions: List["Action"]
+    creates: List["CreateAmendement"]
+    updates: List["UpdateAmendement"]
     unchanged: List[int]
     errored: Set[int]
     next_start_index: Optional[int]
@@ -120,15 +121,18 @@ class CollectedChanges(NamedTuple):
         cls,
         derouleur_fetch_success: bool = True,
         position_changes: Optional[Dict[int, Optional[int]]] = None,
-        actions: Optional[List["Action"]] = None,
+        creates: Optional[List["CreateAmendement"]] = None,
+        updates: Optional[List["UpdateAmendement"]] = None,
         unchanged: Optional[List[int]] = None,
         errored: Optional[Set[int]] = None,
         next_start_index: Optional[int] = None,
     ) -> "CollectedChanges":
         if position_changes is None:
             position_changes = {}
-        if actions is None:
-            actions = []
+        if creates is None:
+            creates = []
+        if updates is None:
+            updates = []
         if unchanged is None:
             unchanged = []
         if errored is None:
@@ -136,7 +140,8 @@ class CollectedChanges(NamedTuple):
         return cls(
             derouleur_fetch_success,
             position_changes,
-            actions,
+            creates,
+            updates,
             unchanged,
             errored,
             next_start_index,

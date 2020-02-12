@@ -141,7 +141,7 @@ class AssembleeNationale(RemoteSource):
             total=round_up(max_num_seen + self.max_404, self.batch_size),
         )
 
-        actions, unchanged, errored, not_found = self._collect_amendements(
+        creates, updates, unchanged, errored, not_found = self._collect_amendements(
             lecture=lecture,
             derouleur=derouleur,
             numeros_prefixes=numeros_prefixes,
@@ -166,7 +166,8 @@ class AssembleeNationale(RemoteSource):
 
         return CollectedChanges.create(
             position_changes=position_changes,
-            actions=actions,
+            creates=creates,
+            updates=updates,
             unchanged=unchanged,
             errored=errored,
             next_start_index=next_start_index,
@@ -202,8 +203,11 @@ class AssembleeNationale(RemoteSource):
         derouleur: "ANDerouleurData",
         numeros_prefixes: List[str],
         progress_bar: ProgressBar,
-    ) -> Tuple[List[Action], List[int], Set[int], Set[int]]:
-        actions: List[Action] = []
+    ) -> Tuple[
+        List[CreateAmendement], List[UpdateAmendement], List[int], Set[int], Set[int]
+    ]:
+        creates: List[CreateAmendement] = []
+        updates: List[UpdateAmendement] = []
         unchanged: List[int] = []
         errored: Set[int] = set()
         not_found: Set[int] = set()
@@ -236,8 +240,10 @@ class AssembleeNationale(RemoteSource):
                     id_identique=item.id_identique if item else None,
                 )
 
-                if action is not None:
-                    actions.append(action)
+                if isinstance(action, CreateAmendement):
+                    creates.append(action)
+                elif isinstance(action, UpdateAmendement):
+                    updates.append(action)
                 else:
                     if amendement is None:
                         raise ValueError("Invalid amendement return value")
@@ -255,7 +261,7 @@ class AssembleeNationale(RemoteSource):
                 errored.add(derouleur.remove_prefixe(numero_prefixe))
                 continue
 
-        return actions, unchanged, errored, not_found
+        return creates, updates, unchanged, errored, not_found
 
     def inspect_amendement(
         self,
@@ -376,9 +382,13 @@ class AssembleeNationale(RemoteSource):
             amendement.position = None
         DBSession.flush()
 
-        # Create or update amendements
-        for action in changes.actions:
-            result += action.apply(lecture)
+        # Create amendements
+        for create_action in changes.creates:
+            result += create_action.apply(lecture)
+
+        # Update amendements
+        for update_action in changes.updates:
+            result += update_action.apply(lecture)
 
         # Apply new amendement positions
         for amendement, position in moved_amendements.items():

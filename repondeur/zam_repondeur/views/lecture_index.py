@@ -75,4 +75,5 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
         "articles": lecture.articles,
         "article_param": article_param,
         "progress_url": request.resource_url(lecture_resource, "progress_status"),
+        "progress_interval": request.registry.settings["zam.progress.lecture_refresh"],
     }

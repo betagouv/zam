@@ -25,7 +25,7 @@
     <div class="last-update"
         data-controller="progress"
         data-progress-check-url="{{ progress_url }}"
-        data-progress-check-interval="{{ request.registry.settings['zam.progress.lecture_refresh'] }}">
+        data-progress-check-interval="{{ progress_interval }}">
         Dernière mise à jour :
         <time datetime="{{ lecture.last_event_datetime.isoformat(timespec='milliseconds') }}"
             data-controller="timestamp"

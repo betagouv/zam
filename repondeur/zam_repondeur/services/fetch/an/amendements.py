@@ -2,10 +2,11 @@ import logging
 import math
 import re
 from collections import OrderedDict
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 from http import HTTPStatus
 from itertools import chain, count, islice
+from operator import attrgetter
 from typing import Any, Dict, Iterator, List, NamedTuple, Optional, Set, Tuple
 from urllib.parse import urljoin
 
@@ -212,20 +213,27 @@ class AssembleeNationale(RemoteSource):
         errored: Set[int] = set()
         not_found: Set[int] = set()
 
+        # Dispatch network requests to a thread pool
         with ThreadPoolExecutor(max_workers=4) as executor:
             futures = [
                 executor.submit(
                     _retrieve_amendement_data_from_first_working_url,
-                    _urls_to_try(lecture, num),
+                    _urls_to_try(lecture, numero_prefixe),
                 )
-                for num in numeros_prefixes
+                for numero_prefixe in numeros_prefixes
             ]
+            future_to_numero_prefixe = {
+                future: numero_prefixe
+                for future, numero_prefixe in zip(futures, numeros_prefixes)
+            }
 
+        # Process amendement data as it is received (out of order)
         offset = 0
-        for numero_prefixe, future in zip(numeros_prefixes, futures):
+        for future in as_completed(futures):
             offset += 1
             progress_bar.advance(offset)
 
+            numero_prefixe = future_to_numero_prefixe[future]
             logger.info("Récupération de l'amendement %r", numero_prefixe)
 
             item = derouleur.items.get(numero_prefixe)
@@ -382,8 +390,9 @@ class AssembleeNationale(RemoteSource):
             amendement.position = None
         DBSession.flush()
 
-        # Create amendements
-        for create_action in changes.creates:
+        # Create amendements in numerical order, because a "sous-amendement"
+        # must always be created after its parent
+        for create_action in sorted(changes.creates, key=attrgetter("num")):
             result += create_action.apply(lecture)
 
         # Update amendements

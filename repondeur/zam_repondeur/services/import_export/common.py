@@ -10,6 +10,7 @@ from zam_repondeur.models import (
     SharedTable,
     Team,
     User,
+    UserTable,
     get_one_or_create,
 )
 from zam_repondeur.models.events.amendement import (
@@ -21,6 +22,8 @@ from zam_repondeur.models.events.amendement import (
 )
 from zam_repondeur.services.clean import clean_html
 from zam_repondeur.utils import normalize_avis, normalize_num, normalize_reponse
+
+logger = logging.getLogger(__name__)
 
 
 def import_amendement(
@@ -83,7 +86,7 @@ def import_amendement(
         _transfer_to_box_amendement_on_import(request, lecture, amendement, item)
 
     if "affectation_email" in item and item["affectation_email"]:
-        _transfer_to_user_amendement_on_import(request, lecture, amendement, item)
+        _transfer_to_user_amendement_on_import(request, lecture, amendement, item, team)
 
     previous_reponse = reponse
     counter["reponses"] += 1
@@ -111,22 +114,21 @@ def _transfer_to_box_amendement_on_import(
 
 
 def _transfer_to_user_amendement_on_import(
-    request: Request, lecture: Lecture, amendement: Amendement, item: dict
+    request: Request, lecture: Lecture, amendement: Amendement, item: dict, team: Team
 ) -> None:
     email = User.normalize_email(item["affectation_email"])
 
     if not User.email_is_well_formed(email):
-        logging.warning("Invalid email address %r", email)
+        logger.warning("Invalid email address %r", email)
         return
 
     user, created = get_one_or_create(User, email=email)
     if created:
         affectation_name = User.normalize_name(item["affectation_name"])
         user.name = affectation_name if affectation_name != "" else email
-        if lecture.dossier.team:
-            user.teams.append(lecture.dossier.team)
+        user.teams.append(team)
 
-    user_table = user.table_for(lecture)
+    user_table, _ = get_one_or_create(UserTable, user=user, lecture=lecture)
     if amendement.location.user_table is user_table:
         return
 

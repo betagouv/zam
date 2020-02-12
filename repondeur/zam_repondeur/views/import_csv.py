@@ -2,6 +2,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config
+from sqlalchemy.orm import joinedload, load_only, subqueryload
 
 from zam_repondeur.message import Message
 from zam_repondeur.models.events.lecture import ReponsesImportees
@@ -12,7 +13,17 @@ from zam_repondeur.services.import_export.csv import CSVImportError, import_csv
 @view_config(context=LectureResource, name="import_csv", request_method="POST")
 def upload_csv(context: LectureResource, request: Request) -> Response:
 
-    lecture = context.model()
+    lecture = context.model(
+        subqueryload("amendements").options(
+            load_only("num"),
+            joinedload("user_content").load_only(
+                "avis", "objet", "reponse", "comments"
+            ),
+            joinedload("location").options(
+                subqueryload("shared_table"), subqueryload("user_table"),
+            ),
+        )
+    )
 
     next_url = request.resource_url(context["amendements"])
 

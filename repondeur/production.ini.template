@@ -56,8 +56,8 @@ zam.session_secret = $$session_secret
 
 zam.auth_secret = $$auth_secret
 
-zam.refresh.amendements = 365
-zam.refresh.articles = 365
+zam.refresh.amendements = 45
+zam.refresh.articles = 45
 
 zam.fetch.an.batch_size = 250
 zam.fetch.an.max_404 = 180

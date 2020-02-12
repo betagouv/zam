@@ -369,9 +369,6 @@ nav.secondary {
     height: .6rem;
     border-radius: 1rem;
   }
-  .authors .author {
-    white-space: nowrap;
-  }
   .d-none,
   .is-none {
     display: none;

@@ -387,7 +387,9 @@ class AssembleeNationale(RemoteSource):
 
         DBSession.flush()
 
-        lecture.reset_fetch_progress()
+        # Was it the last batch?
+        if changes.next_start_index is None:
+            lecture.reset_fetch_progress()
 
         return result
 

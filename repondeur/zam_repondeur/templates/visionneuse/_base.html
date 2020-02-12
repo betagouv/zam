@@ -11,15 +11,15 @@
 </head>
 
 <body>
-
+{% set url_list_article = request.resource_url(context.parent if article is defined else context) %}
 <nav class="main">
   <span>
-    <a class="list" href="{{ request.resource_url(context.parent if article is defined else context) }}">Liste des articles</a>
+    <a class="list" href="{{ url_list_article }}">Liste des articles</a>
   </span>
   <span><a class="find" href="">Accès amendement</a></span>
 </nav>
 
-<form class="search is-none" id="search-amendements" method="get" role="search" action="" data-amendement-matches='{{ lecture|amendement_matches|tojson }}'>
+<form class="search is-none" id="search-amendements" method="get" role="search" action="" data-amendement-matches='{{ lecture|amendement_matches|tojson }}' data-url-list-articles="{{ url_list_article }}">
   <label for="q-amendement">Amendement nº</label>
   <span class="number-with-hint">
     <input name="q-amendement" id="q-amendement" type="number" min="1" step="1">

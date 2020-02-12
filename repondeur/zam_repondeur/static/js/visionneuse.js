@@ -73,6 +73,7 @@
 ;(function jumpToAmendement() {
   const form = document.querySelector('#search-amendements')
   const input = form.querySelector('input[name="q-amendement"]')
+  const urlListArticles = form.dataset.urlListArticles
   const matches = JSON.parse(form.dataset.amendementMatches)
   form.addEventListener('submit', e => {
     e.preventDefault()
@@ -80,7 +81,7 @@
     const data = new FormData(form)
     const value = data.get('q-amendement').trim()
     if (value in matches) {
-      window.location = matches[value]
+      window.location = `${urlListArticles}${matches[value]}`
     } else {
       form.querySelector('.error').classList.remove('hide')
     }

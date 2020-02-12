@@ -22,15 +22,8 @@ def paragriphy(content: Optional[str]) -> Markup:
 
 @contextfilter
 def amendement_matches(context: Context, lecture: "Lecture") -> dict:
-    resource_context = (
-        context["context"].parent if "article" in context else context["context"]
-    )
     matches = {
-        amendement.num: context["request"].resource_url(
-            resource_context[amendement.article.url_key],
-            "reponses",
-            anchor=amendement.slug,
-        )
+        amendement.num: f"{amendement.article.url_key}/reponses#{amendement.slug}"
         for amendement in lecture.amendements
         if amendement.is_displayable
     }

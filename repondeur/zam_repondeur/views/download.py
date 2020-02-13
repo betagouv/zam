@@ -1,6 +1,6 @@
 import os
 from tempfile import NamedTemporaryFile
-from typing import List
+from typing import List, Set
 
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.request import Request
@@ -91,14 +91,12 @@ def export_xlsx(context: LectureResource, request: Request) -> Response:
 
     try:
         params = request.params.getall("n")
-        nums: List[int] = [int(num) for num in params]
+        nums: Set[int] = {int(num) for num in params}
     except ValueError:
         raise HTTPBadRequest()
 
     amendements = [
-        amendement
-        for amendement in (lecture.find_amendement(num) for num in nums)
-        if amendement is not None
+        amendement for amendement in lecture.amendements if amendement.num in nums
     ]
     expanded_amendements = list(Batch.expanded_batches(amendements))
 

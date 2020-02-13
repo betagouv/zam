@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Iterable
+from typing import Iterable, List, Optional
 
 from openpyxl import Workbook
 from openpyxl.styles import Color, Font, PatternFill
@@ -14,13 +14,19 @@ DARK_BLUE = Color(rgb="00182848")
 WHITE = Color(rgb="00FFFFFF")
 
 
-def export_xlsx(lecture: Lecture, filename: str, request: Request) -> Counter:
+def write_xlsx(
+    lecture: Lecture,
+    filename: str,
+    request: Request,
+    amendements: Optional[List[Amendement]] = None,
+) -> Counter:
     wb = Workbook()
     ws = wb.active
     ws.title = "Amendements"
+    amendements = amendements or sorted(lecture.amendements)
 
     _write_xslsx_header_row(ws)
-    counter = _export_xlsx_data_rows(ws, sorted(lecture.amendements))
+    counter = _export_xlsx_data_rows(ws, amendements)
     wb.save(filename)
     return counter
 

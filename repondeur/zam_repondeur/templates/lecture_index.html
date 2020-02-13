@@ -69,7 +69,7 @@
                 <th colspan="2">
                     Actions groupées :
                 </th>
-                <th colspan="2">
+                <th>
                     <a id="transfer-amendements"
                         href="{{ request.resource_url(context.parent, 'transfer_amendements', query={'from_index': 1}) }}"
                         class="button primary"
@@ -77,8 +77,11 @@
                         Transférer
                     </a>
                 </th>
-                <th colspan="2">
+                <th>
                     <a id="export-pdf" href="{{ request.resource_url(context.parent, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
+                </th>
+                <th colspan="2">
+                    <a id="export-xlsx" href="{{ request.resource_url(context.parent, 'export_xlsx') }}" class="button primary">Exporter en Excel</a>
                 </th>
                 <th></th>
             </tr>

@@ -12,13 +12,13 @@ from zam_repondeur.models import Batch
 from zam_repondeur.resources import LectureResource
 from zam_repondeur.services.import_export.json import export_json
 from zam_repondeur.services.import_export.pdf import write_pdf, write_pdf_multiple
-from zam_repondeur.services.import_export.xlsx import export_xlsx
+from zam_repondeur.services.import_export.xlsx import write_xlsx
 
 DOWNLOAD_FORMATS = {
     "json": (export_json, "application/json"),
     "pdf": (write_pdf, "application/pdf"),
     "xlsx": (
-        export_xlsx,
+        write_xlsx,
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     ),
 }
@@ -72,8 +72,7 @@ def download_amendements(context: LectureResource, request: Request) -> Response
         tmp_file_path = os.path.abspath(file_.name)
 
         write_func, content_type = DOWNLOAD_FORMATS[fmt]
-
-        write_func(lecture, tmp_file_path, request)
+        write_func(lecture, tmp_file_path, request)  # type: ignore
 
         response = FileResponse(tmp_file_path)
         attach_name = (
@@ -85,13 +84,52 @@ def download_amendements(context: LectureResource, request: Request) -> Response
         return response
 
 
+@view_config(context=LectureResource, name="export_xlsx")
+def export_xlsx(context: LectureResource, request: Request) -> Response:
+
+    lecture = context.model(*EXPORT_OPTIONS)
+
+    try:
+        params = request.params.getall("n")
+        nums: List[int] = [int(num) for num in params]
+    except ValueError:
+        raise HTTPBadRequest()
+
+    amendements = [
+        amendement
+        for amendement in (lecture.find_amendement(num) for num in nums)
+        if amendement is not None
+    ]
+    expanded_amendements = list(Batch.expanded_batches(amendements))
+
+    with NamedTemporaryFile() as file_:
+
+        tmp_file_path = os.path.abspath(file_.name)
+
+        write_xlsx(lecture, tmp_file_path, request, amendements=expanded_amendements)
+
+        response = FileResponse(tmp_file_path)
+        attach_name = (
+            f"article{expanded_amendements[0].article.num}-"
+            f"amendement{'s' if len(expanded_amendements) > 1 else ''}-"
+            f"{','.join(str(amdt.num) for amdt in expanded_amendements)}-"
+            f"{lecture.chambre}-{lecture.texte.numero}-"
+            f"{lecture.organe}.xlsx"
+        )
+        response.content_type = (
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
+        return response
+
+
 @view_config(context=LectureResource, name="export_pdf")
 def export_pdf(context: LectureResource, request: Request) -> Response:
 
     lecture = context.model(*PDF_OPTIONS)
 
     try:
-        params = request.params.getall("n") or request.params.getall("nums")  # compat
+        params = request.params.getall("n")
         nums: List[int] = [int(num) for num in params]
     except ValueError:
         raise HTTPBadRequest()
@@ -116,6 +154,7 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
 
         response = FileResponse(tmp_file_path)
         attach_name = (
+            f"article{expanded_amendements[0].article.num}-"
             f"amendement{'s' if len(expanded_amendements) > 1 else ''}-"
             f"{','.join(str(amdt.num) for amdt in expanded_amendements)}-"
             f"{lecture.chambre}-{lecture.texte.numero}-"

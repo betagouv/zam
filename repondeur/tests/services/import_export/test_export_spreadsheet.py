@@ -2,28 +2,12 @@ import csv
 from pathlib import Path
 
 
-def test_export_csv_columns(lecture_an, article1_an, tmpdir):
-    from zam_repondeur.models import DBSession, Amendement
+def test_export_csv_columns(lecture_an, amendements_an, tmpdir):
     from zam_repondeur.services.import_export.csv import export_csv
 
     filename = str(tmpdir.join("test.csv"))
-
-    amendement = Amendement.create(
-        lecture=lecture_an,
-        article=article1_an,
-        num=333,
-        position=1,
-        avis="Favorable",
-        objet="Un objet très pertinent",
-        reponse="Une réponse très appropriée",
-        comments="Avec des commentaires",
-    )
-    DBSession.add(amendement)
-    DBSession.add(lecture_an)
-
     counter = export_csv(lecture_an, filename, request={})
-
-    assert counter["amendements"] == 1
+    assert counter["amendements"] == 2
 
     with Path(filename).open(encoding="utf-8-sig") as csv_file:
         reader = csv.reader(csv_file, delimiter=";")
@@ -51,35 +35,20 @@ def test_export_csv_columns(lecture_an, article1_an, tmpdir):
         ]
 
 
-def test_export_excel_columns(lecture_an, article1_an, tmpdir):
+def test_export_excel_columns(lecture_an, amendements_an, tmpdir):
     from openpyxl import load_workbook
 
-    from zam_repondeur.models import DBSession, Amendement
-    from zam_repondeur.services.import_export.xlsx import export_xlsx
+    from zam_repondeur.services.import_export.xlsx import write_xlsx
 
     filename = str(tmpdir.join("test.xlsx"))
-
-    amendement = Amendement.create(
-        lecture=lecture_an,
-        article=article1_an,
-        num=333,
-        position=1,
-        avis="Favorable",
-        objet="Un objet très pertinent",
-        reponse="Une réponse très appropriée",
-        comments="Avec des commentaires",
-    )
-    DBSession.add(amendement)
-    DBSession.add(lecture_an)
-
-    counter = export_xlsx(lecture_an, filename, request={})
-
-    assert counter["amendements"] == 1
+    counter = write_xlsx(lecture_an, filename, request={})
+    assert counter["amendements"] == 2
 
     wb = load_workbook(filename, read_only=True)
     ws = wb.active
     header_row = next(ws.rows)
     headers = [cell.value for cell in header_row]
+    assert len(list(ws.rows)) == 3
 
     assert headers == [
         "Num article",
@@ -102,6 +71,22 @@ def test_export_excel_columns(lecture_an, article1_an, tmpdir):
         "Affectation (boite)",
         "Sort",
     ]
+
+
+def test_export_excel_subset(lecture_an, amendements_an, tmpdir):
+    from openpyxl import load_workbook
+
+    from zam_repondeur.services.import_export.xlsx import write_xlsx
+
+    filename = str(tmpdir.join("test.xlsx"))
+    counter = write_xlsx(
+        lecture_an, filename, request={}, amendements=[amendements_an[0]]
+    )
+    assert counter["amendements"] == 1
+
+    wb = load_workbook(filename, read_only=True)
+    ws = wb.active
+    assert len(list(ws.rows)) == 2
 
 
 def test_export_csv_with_parent(lecture_an, article1_an, tmpdir):

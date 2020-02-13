@@ -124,7 +124,7 @@ class BatchAmendements:
         ]
 
     def get_nums(self, source: MultiDict) -> List[str]:
-        nums: List[str] = source.getall("n") or source.getall("nums")  # compatibility
+        nums: List[str] = source.getall("n")
         return nums
 
     def check_amendements_are_all_on_my_table(

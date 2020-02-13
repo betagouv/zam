@@ -37,7 +37,7 @@ def test_download_bad_format(app, lecture_an, user_david):
     assert 'Invalid value "docx" for "format" param' in resp.text
 
 
-def test_download_multiple_amendements(app, lecture_an, amendements_an, user_david):
+def test_download_pdf_multiple_amendements(app, lecture_an, amendements_an, user_david):
     resp = app.get(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf?n=666&n=999",
         user=user_david,
@@ -46,11 +46,11 @@ def test_download_multiple_amendements(app, lecture_an, amendements_an, user_dav
     assert resp.content_type == "application/pdf"
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=amendements-666,999-an-269-PO717460.pdf"
+        == f"attachment; filename=article1-amendements-666,999-an-269-PO717460.pdf"
     )
 
 
-def test_download_multiple_amendements_same_batch(
+def test_download_pdf_multiple_amendements_same_batch(
     app, lecture_an, amendements_an_batch, user_david
 ):
     resp = app.get(
@@ -61,5 +61,41 @@ def test_download_multiple_amendements_same_batch(
     assert resp.content_type == "application/pdf"
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=amendements-666,999-an-269-PO717460.pdf"
+        == f"attachment; filename=article1-amendements-666,999-an-269-PO717460.pdf"
+    )
+
+
+def test_download_xlsx_multiple_amendements(
+    app, lecture_an, amendements_an, user_david
+):
+    resp = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_xlsx?n=666&n=999",
+        user=user_david,
+    )
+    assert resp.status_code == 200
+    assert (
+        resp.content_type
+        == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    assert (
+        resp.headers["Content-Disposition"]
+        == f"attachment; filename=article1-amendements-666,999-an-269-PO717460.xlsx"
+    )
+
+
+def test_download_xlsx_multiple_amendements_same_batch(
+    app, lecture_an, amendements_an_batch, user_david
+):
+    resp = app.get(
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_xlsx?n=666",
+        user=user_david,
+    )
+    assert resp.status_code == 200
+    assert (
+        resp.content_type
+        == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    assert (
+        resp.headers["Content-Disposition"]
+        == f"attachment; filename=article1-amendements-666,999-an-269-PO717460.xlsx"
     )

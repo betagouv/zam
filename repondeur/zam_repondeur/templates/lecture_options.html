@@ -59,13 +59,24 @@
 {% block body %}
 {% include "svg-file-icons.html" %}
 <h1>Options avancées</h1>
+{% set off_limit = lecture.nb_amendements > 10000 %}
 <div class="box" data-controller="multiple-clicks">
+    {% if off_limit %}
+        <div class="notice warning">
+            <h4>
+                En raison du nombre élevé d’amendements sur cette lecture,
+                les exports sont à réaliser en sélectionnant les amendements
+                <a href="{{ request.resource_url(context, 'amendements') }}"
+                >sur l’index</a>.
+            </h4>
+        </div>
+    {% endif %}
     <div class="flex-line">
         <div>
             <h3>Exporter un tableau</h3>
             <p>au format Excel, pour obtenir un tableau de RIM par exemple.</p>
         </div>
-        <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'xlsx'}) }}">
+        <a class="button primary {% if off_limit %}disabled{% endif %}" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'xlsx'}) }}">
             {{ macros.svg_icon("file-excel") }}
             Tableau
         </a>
@@ -76,7 +87,7 @@
             <h3>Exporter un dossier</h3>
             <p>au format PDF, pour obtenir un dossier complet imprimable.</p>
         </div>
-        <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'pdf'}) }}">
+        <a class="button primary {% if off_limit %}disabled{% endif %}" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'pdf'}) }}">
             {{ macros.svg_icon("file-pdf") }}
             Dossier
         </a>
@@ -87,7 +98,7 @@
             <h3>Exporter un fichier technique structuré</h3>
             <p>au format JSON.</p>
         </div>
-        <a class="button primary" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'json'}) }}">
+        <a class="button primary {% if off_limit %}disabled{% endif %}" data-action="multiple-clicks#prevent" href="{{ request.resource_url(context, 'download_amendements', query={'format': 'json'}) }}">
             {{ macros.svg_icon("file-archive") }}
             Fichier technique
         </a>

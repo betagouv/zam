@@ -1,4 +1,5 @@
 import pytest
+import transaction
 
 
 @pytest.mark.parametrize(
@@ -50,6 +51,26 @@ def test_download_pdf_multiple_amendements(app, lecture_an, amendements_an, user
     )
 
 
+def test_download_pdf_lots_of_amendements(app, lecture_an, article1_an, user_david):
+    from zam_repondeur.models import Amendement
+
+    nb_amendements = 11
+    with transaction.manager:
+        for i in range(nb_amendements):
+            Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)
+
+    params = "&".join(f"n={i+1}" for i in range(nb_amendements))
+    resp = app.get(
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf?{params}",
+        user=user_david,
+    )
+    assert resp.content_type == "application/pdf"
+    assert (
+        resp.headers["Content-Disposition"]
+        == f"attachment; filename=article1-11amendements-1etc-an-269-PO717460.pdf"
+    )
+
+
 def test_download_pdf_multiple_amendements_same_batch(
     app, lecture_an, amendements_an_batch, user_david
 ):
@@ -80,6 +101,30 @@ def test_download_xlsx_multiple_amendements(
     assert (
         resp.headers["Content-Disposition"]
         == f"attachment; filename=article1-amendements-666,999-an-269-PO717460.xlsx"
+    )
+
+
+def test_download_xlsx_lots_of_amendements(app, lecture_an, article1_an, user_david):
+    from zam_repondeur.models import Amendement
+
+    nb_amendements = 11
+    with transaction.manager:
+        for i in range(nb_amendements):
+            Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)
+
+    params = "&".join(f"n={i+1}" for i in range(nb_amendements))
+    resp = app.get(
+        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_xlsx?{params}",
+        user=user_david,
+    )
+    assert resp.status_code == 200
+    assert (
+        resp.content_type
+        == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    assert (
+        resp.headers["Content-Disposition"]
+        == f"attachment; filename=article1-11amendements-1etc-an-269-PO717460.xlsx"
     )
 
 

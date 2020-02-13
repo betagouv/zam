@@ -8,7 +8,7 @@ from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload, load_only, subqueryload
 
-from zam_repondeur.models import Batch
+from zam_repondeur.models import Amendement, Article, Batch, Lecture
 from zam_repondeur.resources import LectureResource
 from zam_repondeur.services.import_export.json import export_json
 from zam_repondeur.services.import_export.pdf import write_pdf, write_pdf_multiple
@@ -101,22 +101,18 @@ def export_xlsx(context: LectureResource, request: Request) -> Response:
     expanded_amendements = list(Batch.expanded_batches(amendements))
 
     with NamedTemporaryFile() as file_:
-
         tmp_file_path = os.path.abspath(file_.name)
-
         write_xlsx(lecture, tmp_file_path, request, amendements=expanded_amendements)
-
         response = FileResponse(tmp_file_path)
-        attach_name = (
-            f"article{expanded_amendements[0].article.num}-"
-            f"amendement{'s' if len(expanded_amendements) > 1 else ''}-"
-            f"{','.join(str(amdt.num) for amdt in expanded_amendements)}-"
-            f"{lecture.chambre}-{lecture.texte.numero}-"
-            f"{lecture.organe}.xlsx"
+
+        fmt = "xlsx"
+        attach_name = generate_attach_name(
+            lecture=lecture,
+            article=expanded_amendements[0].article,
+            amendements=expanded_amendements,
+            extension=fmt,
         )
-        response.content_type = (
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
+        response.content_type = DOWNLOAD_FORMATS[fmt][1]
         response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
         return response
 
@@ -140,9 +136,7 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
     expanded_amendements = list(Batch.expanded_batches(amendements))
 
     with NamedTemporaryFile() as file_:
-
         tmp_file_path = os.path.abspath(file_.name)
-
         write_pdf_multiple(
             lecture=lecture,
             amendements=amendements,
@@ -150,14 +144,30 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
             request=request,
         )
 
+        fmt = "pdf"
         response = FileResponse(tmp_file_path)
-        attach_name = (
-            f"article{expanded_amendements[0].article.num}-"
-            f"amendement{'s' if len(expanded_amendements) > 1 else ''}-"
-            f"{','.join(str(amdt.num) for amdt in expanded_amendements)}-"
-            f"{lecture.chambre}-{lecture.texte.numero}-"
-            f"{lecture.organe}.pdf"
+        attach_name = generate_attach_name(
+            lecture=lecture,
+            article=expanded_amendements[0].article,
+            amendements=expanded_amendements,
+            extension=fmt,
         )
-        response.content_type = "application/pdf"
+        response.content_type = DOWNLOAD_FORMATS[fmt][1]
         response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
         return response
+
+
+def generate_attach_name(
+    lecture: Lecture, article: Article, amendements: List[Amendement], extension: str
+) -> str:
+    article_name = f"article{article.num}-"
+    nb_amendements = len(amendements)
+    if nb_amendements > 10:
+        amendements_name = f"{nb_amendements}amendements-{amendements[0].num}etc-"
+    else:
+        amendements_name = (
+            f"amendement{'s' if len(amendements) > 1 else ''}-"
+            f"{','.join(str(amdt.num) for amdt in amendements)}-"
+        )
+    lecture_name = f"{lecture.chambre}-{lecture.texte.numero}-{lecture.organe}"
+    return f"{article_name}{amendements_name}{lecture_name}.{extension}"

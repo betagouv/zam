@@ -16,13 +16,29 @@ def write_xlsx(
     request: Request,
     amendements: Optional[List[Amendement]] = None,
 ) -> Counter:
+    return _write_xlsx_amendements(
+        filename, amendements or sorted(lecture.amendements),
+    )
+
+
+def _write_xlsx_amendements(
+    filename: str, amendements: Iterable[Amendement],
+) -> Counter:
+    amendement_dicts = (
+        {FIELDS[k]: v for k, v in export_amendement_for_spreadsheet(amendement).items()}
+        for amendement in amendements
+    )
+    return _write_xlsx_amendement_dicts(filename, amendement_dicts)
+
+
+def _write_xlsx_amendement_dicts(
+    filename: str, amendement_dicts: Iterable[dict],
+) -> Counter:
     wb = Workbook()
     ws = wb.active
     ws.title = "Amendements"
-    amendements = amendements or sorted(lecture.amendements)
-
     _write_xslsx_header_row(ws)
-    counter = _export_xlsx_data_rows(ws, amendements)
+    counter = _export_xlsx_data_rows(ws, amendement_dicts)
     wb.save(filename)
     return counter
 
@@ -33,12 +49,9 @@ def _write_xslsx_header_row(ws: Worksheet) -> None:
         cell.value = value
 
 
-def _export_xlsx_data_rows(ws: Worksheet, amendements: Iterable[Amendement]) -> Counter:
+def _export_xlsx_data_rows(ws: Worksheet, amendement_dicts: Iterable[dict]) -> Counter:
     counter = Counter({"amendements": 0})
-    for amend in amendements:
-        amend_dict = {
-            FIELDS[k]: v for k, v in export_amendement_for_spreadsheet(amend).items()
-        }
+    for amend_dict in amendement_dicts:
         for column, value in enumerate(HEADERS, 1):
             cell = ws.cell(row=counter["amendements"] + 2, column=column)
             cell.value = amend_dict[value]

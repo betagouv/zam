@@ -571,7 +571,7 @@ class Amendement(Base):
         amendements_repository.stop_editing(self.pk)
 
     def asdict(self) -> dict:
-        result: Dict[str, Union[str, int, date]] = {
+        result: Dict[str, Union[str, int, bool, date]] = {
             "num": self.num,
             "rectif": self.rectif or "",
             "sort": self.sort or "",

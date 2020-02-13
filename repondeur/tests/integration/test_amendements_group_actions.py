@@ -46,6 +46,10 @@ def test_group_actions_button_urls_change_with_selection(
         find("#export-pdf").get_attribute("href")
         == f"{lecture_an_url}/export_pdf?n=666"
     )
+    assert (
+        find("#export-xlsx").get_attribute("href")
+        == f"{lecture_an_url}/export_xlsx?n=666"
+    )
 
     checkboxes[1].click()
 
@@ -56,6 +60,10 @@ def test_group_actions_button_urls_change_with_selection(
     assert (
         find("#export-pdf").get_attribute("href")
         == f"{lecture_an_url}/export_pdf?n=666&n=999"
+    )
+    assert (
+        find("#export-xlsx").get_attribute("href")
+        == f"{lecture_an_url}/export_xlsx?n=666&n=999"
     )
 
     checkboxes[0].click()
@@ -68,6 +76,10 @@ def test_group_actions_button_urls_change_with_selection(
         find("#export-pdf").get_attribute("href")
         == f"{lecture_an_url}/export_pdf?n=999"
     )
+    assert (
+        find("#export-xlsx").get_attribute("href")
+        == f"{lecture_an_url}/export_xlsx?n=999"
+    )
 
     checkboxes[1].click()
 
@@ -76,6 +88,7 @@ def test_group_actions_button_urls_change_with_selection(
         == f"{lecture_an_url}/transfer_amendements?from_index=1"
     )
     assert find("#export-pdf").get_attribute("href") == f"{lecture_an_url}/export_pdf"
+    assert find("#export-xlsx").get_attribute("href") == f"{lecture_an_url}/export_xlsx"
 
     assert not find(".groupActions").is_displayed()
 
@@ -86,7 +99,7 @@ def test_group_actions_button_urls_change_on_the_fly(
     driver.get(f"{lecture_an_url}/amendements/")
     find = driver.find_element_by_css_selector
 
-    # Set a filter on the article
+    # Set a filter on the amendement
     input_field = find(f"thead tr.filters th:nth-child(3) input")
     input_field.send_keys("666")
     # Select the first amendement

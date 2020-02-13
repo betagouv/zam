@@ -23,7 +23,7 @@ class TransferAmendements:
 
     def get_nums(self) -> List[str]:
         params = self.request.GET
-        nums: List[str] = params.getall("n") or params.getall("nums")  # compatibility
+        nums: List[str] = params.getall("n")
         return nums
 
     @view_config(request_method="GET")

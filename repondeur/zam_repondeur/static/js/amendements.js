@@ -79,6 +79,10 @@ application.register(
         this.groupActions.querySelector('#export-pdf'),
         checkeds
       )
+      this.changeURLGivenChecks(
+        this.groupActions.querySelector('#export-xlsx'),
+        checkeds
+      )
       if (checkedsLength >= 2 && this.batchAmendementsLink) {
         this.changeURLGivenChecks(this.batchAmendementsLink, checkeds)
       }

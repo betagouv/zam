@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Dict, Optional, Union
 
 from inscriptis import get_text
 
@@ -42,20 +42,40 @@ HTML_FIELDS = ["corps", "expose", "objet", "reponse", "comments"]
 
 
 def export_amendement_for_spreadsheet(amendement: Amendement) -> dict:
-    data: dict = {k: v for k, v in amendement.asdict().items() if k in FIELDS}
-    for field_name in HTML_FIELDS:
-        if data[field_name] is not None:
-            data[field_name] = html_to_text(data[field_name])
-    return {k: convert_boolean(v) for k, v in data.items()}
-
-
-def convert_boolean(value: Any) -> Any:
-    if value is True:
-        return "Oui"
-    elif value is False:
-        return "Non"
-    else:
-        return value
+    data: Dict[str, Union[str, int, bool]] = {
+        "article": amendement.article.format(),
+        "article_titre": amendement.article.user_content.title or "",
+        "num": amendement.num,
+        "rectif": amendement.rectif or "",
+        "parent": amendement.parent and amendement.parent.num_disp or "",
+        "auteur": amendement.auteur or "",
+        "groupe": amendement.groupe or "",
+        "gouvernemental": "Oui" if amendement.gouvernemental else "Non",
+        "corps": html_to_text(amendement.corps or ""),
+        "expose": html_to_text(amendement.expose or ""),
+        "first_identique_num": amendement.first_identique_num or "",
+        "avis": amendement.user_content.avis or "",
+        "objet": html_to_text(amendement.user_content.objet or ""),
+        "reponse": html_to_text(amendement.user_content.reponse or ""),
+        "comments": html_to_text(amendement.user_content.comments or ""),
+        "affectation_email": (
+            amendement.location.user_table
+            and amendement.location.user_table.user.email
+            or ""
+        ),
+        "affectation_name": (
+            amendement.location.user_table
+            and amendement.location.user_table.user.name
+            or ""
+        ),
+        "affectation_box": (
+            amendement.location.shared_table
+            and amendement.location.shared_table.titre
+            or ""
+        ),
+        "sort": amendement.sort or "",
+    }
+    return data
 
 
 def html_to_text(html: str) -> str:

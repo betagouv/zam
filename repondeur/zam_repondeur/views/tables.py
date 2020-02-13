@@ -152,7 +152,7 @@ class TableView:
 
     def get_nums(self) -> List[str]:
         params = self.request.POST
-        nums: List[str] = params.getall("n") or params.getall("nums")  # compatibility
+        nums: List[str] = params.getall("n")
         return nums
 
     def get_target_user_table(self, target: str) -> Optional[UserTable]:

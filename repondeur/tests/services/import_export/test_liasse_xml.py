@@ -47,6 +47,23 @@ def test_import_liasse_xml_article_additionnel(
     assert errors == []
 
 
+def test_import_liasse_xml_avant_un(
+    lecture_essoc2018_an_nouvelle_lecture_commission_fond,
+):
+    from zam_repondeur.services.import_export.liasse_xml import import_liasse_xml
+
+    amendements, errors = import_liasse_xml(
+        open_liasse("liasse_avant_un.xml"),
+        lecture_essoc2018_an_nouvelle_lecture_commission_fond,
+    )
+
+    assert amendements[0].article.type == "article"
+    assert amendements[0].article.num == "1"
+    assert amendements[0].article.pos == "avant"
+
+    assert errors == []
+
+
 def test_import_same_liasse_xml_again_preserve_response(
     lecture_essoc2018_an_nouvelle_lecture_commission_fond,
 ):

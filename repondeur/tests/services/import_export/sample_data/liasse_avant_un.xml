@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<amendements>
+<amendement xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.assemblee-nationale.fr/referentiel">
+    <uid>AMANR5L15PO744107B0806P0D1N28</uid>
+    <identifiant>
+        <legislature>15</legislature>
+        <numero>28</numero>
+        <numRect>0</numRect>
+        <saisine>
+            <refTexteLegislatif>PRJLANR5L15B0806</refTexteLegislatif>
+            <numeroPartiePLF>0</numeroPartiePLF>
+            <organeExamen>PO744107</organeExamen>
+            <mentionSecondeDeliberation>0</mentionSecondeDeliberation>
+        </saisine>
+    </identifiant>
+    <numeroLong>28</numeroLong>
+    <etapeTexte>Nouvelle Lecture</etapeTexte>
+    <triAmendement>l</triAmendement>
+    <cardinaliteAmdtMultiples>1</cardinaliteAmdtMultiples>
+    <amendementParent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <etat>En traitement</etat>
+    <signataires>
+        <auteur>
+            <typeAuteur>Depute</typeAuteur>
+            <acteurRef>PA718838</acteurRef>
+            <organeRef xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <groupePolitiqueRef>PO730934</groupePolitiqueRef>
+        </auteur>
+        <cosignataires>
+            <acteurRef>PA718838</acteurRef>
+        </cosignataires>
+        <texteAffichable> M.&amp;#160;Brun</texteAffichable>
+    </signataires>
+    <pointeurFragmentTexte>
+        <missionVisee xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <division>
+            <titre>TITRE Ier</titre>
+            <articleDesignationCourte>AVANT ART. PREMIER</articleDesignationCourte>
+            <type>CHAPITRE</type>
+            <avant_A_Apres>A</avant_A_Apres>
+            <divisionRattachee>AVANT  L'ARTICLE PREMIER</divisionRattachee>
+            <articleAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <chapitreAdditionnel xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <urlDivisionTexteVise>/15/textes/2623.asp#D_TITRE_Ier_2</urlDivisionTexteVise>
+        </division>
+        <alinea xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </pointeurFragmentTexte>
+    <corps>
+        <dispositif><![CDATA[<div>Cet amendement est en cours de traitement par les services de l'Assemblée.</div><BR/><BR/>]]></dispositif>
+        <exposeSommaire></exposeSommaire>
+        <annexeExposeSommaire xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    </corps>
+    <representations>
+        <representation>
+            <nom>PDF</nom>
+            <typeMime>
+                <type>application</type>
+                <subType>PDF</subType>
+            </typeMime>
+            <statutRepresentation>
+                <verbatim>true</verbatim>
+                <canonique>true</canonique>
+                <officielle>true</officielle>
+                <transcription>false</transcription>
+                <enregistrement>false</enregistrement>
+            </statutRepresentation>
+            <repSource xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <offset xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+            <contenu>
+                <documentURI>/15/amendements/0806/CSCONF/28.pdf</documentURI>
+            </contenu>
+            <dateDispoRepresentation xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        </representation>
+    </representations>
+    <seanceDiscussion xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <sort xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <dateDepot>2018-06-07</dateDepot>
+    <dateDistribution xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <article99>0</article99>
+    <loiReference>
+        <codeLoi xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <divisionCodeLoi>s 24</divisionCodeLoi>
+    </loiReference>
+</amendement>
+</amendements>

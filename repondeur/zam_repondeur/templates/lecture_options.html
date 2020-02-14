@@ -59,7 +59,6 @@
 {% block body %}
 {% include "svg-file-icons.html" %}
 <h1>Options avancées</h1>
-{% set off_limit = lecture.nb_amendements > 10000 %}
 <div class="box" data-controller="multiple-clicks">
     {% if off_limit %}
         <div class="notice warning">

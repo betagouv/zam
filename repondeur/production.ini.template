@@ -52,6 +52,9 @@ zam.progress.max_duration = 30
 # Progress refresh interval in seconds (default is 5)
 zam.progress.lecture_refresh = 90
 
+# Number of amendements above which we do not display global exports options
+zam.limits.hide_exports_options = 15000
+
 zam.session_secret = $$session_secret
 
 zam.auth_secret = $$auth_secret

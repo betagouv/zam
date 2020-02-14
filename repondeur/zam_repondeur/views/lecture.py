@@ -65,12 +65,16 @@ def lecture_options(context: LectureResource, request: Request) -> Response:
         .filter(SharedTable.lecture_pk == lecture.pk)
         .options(load_only("lecture_pk", "nb_amendements", "slug", "titre"))
     ).all()
+    off_limit = lecture.nb_amendements > int(
+        request.registry.settings.get("zam.limits.hide_exports_options", 10000)
+    )
     return {
         "lecture": lecture,
         "dossier_resource": context.dossier_resource,
         "lecture_resource": context,
         "current_tab": "options",
         "shared_tables": shared_tables,
+        "off_limit": off_limit,
     }
 
 

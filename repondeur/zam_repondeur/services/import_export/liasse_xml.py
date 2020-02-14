@@ -194,23 +194,27 @@ def _parse_division(node: RestrictedElement) -> SubDiv:
     if division_type is None:
         raise ValueError("Missing division type")
 
+    pos = parse_avant_apres(
+        extract("pointeurFragmentTexte", "division", "avant_A_Apres") or ""
+    )
     if division_type == "TITRE":
-        return SubDiv(type_="titre", num="", mult="", pos="")
+        return SubDiv(type_="titre", num="", mult="", pos=pos)
 
     if division_type == "CHAPITRE":
-        mo = re.match(r"^([A-Za-z0-9])+", division_titre or "")
-        num = mo.group(1) if mo is not None else ""
-        return SubDiv(type_="chapitre", num=num, mult="", pos="")
+        division_rattachee = extract(
+            "pointeurFragmentTexte", "division", "divisionRattachee"
+        )
+        if division_rattachee:
+            return parse_subdiv(division_rattachee)
+        else:
+            mo = re.match(r"^([A-Za-z0-9])+", division_titre or "")
+            num = mo.group(1) if mo is not None else ""
+            return SubDiv(type_="chapitre", num=num, mult="", pos=pos)
 
     if division_titre is None:
         raise ValueError("Missing division titre")
 
     subdiv = parse_subdiv(division_titre)
-
-    pos = parse_avant_apres(
-        extract("pointeurFragmentTexte", "division", "avant_A_Apres") or ""
-    )
-
     return subdiv._replace(pos=pos)
 
 

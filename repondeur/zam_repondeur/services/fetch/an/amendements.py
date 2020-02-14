@@ -58,7 +58,7 @@ BATCH_SIZE = 250
 
 # When trying to discover amendements published but not yet included in the list,
 # we can't try all possible numbers, so we'll stop after a string of 404s
-MAX_404 = 180
+MAX_404 = 300
 
 
 class OrganeNotFound(Exception):

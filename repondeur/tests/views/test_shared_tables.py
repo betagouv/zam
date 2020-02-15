@@ -41,7 +41,7 @@ def test_post_shared_tables_create_form(app, lecture_an, amendements_an, user_da
     resp = app.get(
         f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/add", user=user_david
     )
-    form = resp.form
+    form = resp.forms["box-upsert"]
     form["titre"] = "Test table"
     resp = form.submit()
 
@@ -130,7 +130,7 @@ def test_post_shared_tables_edit_form(
         f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["box-upsert"]
     form["titre"] = "Test table 2"
     resp = form.submit()
 
@@ -206,7 +206,7 @@ def test_post_shared_tables_delete_form(
         f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/delete",
         user=user_david,
     )
-    resp = resp.form.submit()
+    resp = resp.forms["box-delete"].submit()
 
     assert resp.status_code == 302
     assert resp.location == (

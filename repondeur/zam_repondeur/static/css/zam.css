@@ -65,6 +65,10 @@ nav.main {
             nav.main ul li.selected a:hover {
                 text-decoration: none;
             }
+            nav.main a.find {
+              background: no-repeat right top/13% url("../img/loupe.svg");
+              padding-right: 2rem;
+            }
     nav.main > ul {
         display: flex;
         flex-direction: row;
@@ -628,3 +632,45 @@ abbr.status,
         text-decoration: none;
         color: black;
     }
+
+/* Search amendement */
+.search {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  padding: 1rem;
+  background: white;
+  box-shadow: 0 7px 7px -1px #ccc;
+  margin-bottom: 1rem;
+}
+  .search label {
+    margin-right: .3rem;
+  }
+  .search #q {
+    border: 1px solid #979797;
+    padding: .3rem;
+    background: no-repeat 99% center/11% url("../img/loupe_gray.svg");
+  }
+  .search .hint {
+    color: #565656;
+    font-size: .8rem;
+    font-weight: normal;
+    margin-top: .2rem;
+  }
+  .search .error {
+    border: 1px solid red;
+    background: white;
+    color: red;
+    text-align: center;
+    padding: 1rem 1.5rem;
+    margin: 0 1rem;
+  }
+  .search .number-with-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 1rem;
+  }

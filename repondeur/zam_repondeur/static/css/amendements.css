@@ -117,7 +117,7 @@ td a.arrow-right {
 }
 
 :target {
-    background: #ededed66;
+    background: #ededed;
 }
 /* To keep under :target for priority. */
 .highlighted {

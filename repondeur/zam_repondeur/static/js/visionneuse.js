@@ -73,20 +73,25 @@
 ;(function jumpToAmendement() {
   const form = document.querySelector('#search-amendements')
   const input = form.querySelector('input[name="q-amendement"]')
-  const urlListArticles = form.dataset.urlListArticles
-  const matches = JSON.parse(form.dataset.amendementMatches)
+  const urlSearchAmendement = form.dataset.urlSearchAmendement
+  const error = form.querySelector('.error')
   form.addEventListener('submit', e => {
     e.preventDefault()
     const form = e.target
     const data = new FormData(form)
     const value = data.get('q-amendement').trim()
-    if (value in matches) {
-      window.location = `${urlListArticles}${matches[value]}`
-    } else {
-      form.querySelector('.error').classList.remove('hide')
-    }
+    const url = new URL(urlSearchAmendement)
+    url.search = `num=${value}`
+    fetch(url)
+      .then(response => response.json())
+      .then(urls => {
+        if ('visionneuse' in urls) {
+          window.location = urls['visionneuse']
+        } else {
+          error.classList.remove('hide')
+        }
+      })
+      .catch(e => error.classList.remove('hide'))
   })
-  input.addEventListener('keydown', e => {
-    form.querySelector('.error').classList.add('hide')
-  })
+  input.addEventListener('keydown', e => error.classList.add('hide'))
 })()

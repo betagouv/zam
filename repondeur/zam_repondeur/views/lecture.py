@@ -1,13 +1,13 @@
 from datetime import date
 
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config
 from sqlalchemy.orm import load_only, noload
 
 from zam_repondeur.message import Message
-from zam_repondeur.models import DBSession, SharedTable
+from zam_repondeur.models import Amendement, DBSession, SharedTable
 from zam_repondeur.resources import LectureResource
 from zam_repondeur.tasks.fetch import fetch_amendements
 
@@ -78,3 +78,36 @@ def lecture_options(context: LectureResource, request: Request) -> Response:
 def progress_status(context: LectureResource, request: Request) -> dict:
     lecture = context.model(noload("amendements"))
     return lecture.get_fetch_progress() or {}
+
+
+@view_config(context=LectureResource, name="search_amendement", renderer="json")
+def search_amendement(context: LectureResource, request: Request) -> dict:
+    lecture = context.model(noload("amendements"))
+
+    try:
+        num_param: str = request.params.get("num", "")
+        num: int = int(num_param)
+    except ValueError:
+        raise HTTPBadRequest()
+
+    amendement = (
+        DBSession.query(Amendement)
+        .filter(Amendement.lecture == lecture, Amendement.num == num)
+        .first()
+    )
+    if amendement is None:
+        raise HTTPBadRequest()
+    result = {
+        "index": request.resource_url(
+            context["amendements"],
+            query={"article": amendement.article.url_key},
+            anchor=amendement.slug,
+        ),
+    }
+    if amendement.is_displayable:
+        result["visionneuse"] = request.resource_url(
+            context["articles"][amendement.article.url_key],
+            "reponses",
+            anchor=amendement.slug,
+        )
+    return result

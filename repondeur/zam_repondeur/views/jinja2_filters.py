@@ -3,8 +3,7 @@ from itertools import groupby
 from typing import TYPE_CHECKING, Iterable, List, Optional, Tuple
 
 import pytz
-from jinja2 import Markup, contextfilter
-from jinja2.runtime import Context
+from jinja2 import Markup
 
 # Make these types available to mypy, but avoid circular imports
 if TYPE_CHECKING:
@@ -18,16 +17,6 @@ def paragriphy(content: Optional[str]) -> Markup:
     if not content.startswith("<p>"):
         content = f"<p>{content}</p>"
     return Markup(content)
-
-
-@contextfilter
-def amendement_matches(context: Context, lecture: "Lecture") -> dict:
-    matches = {
-        amendement.num: f"{amendement.article.url_key}/reponses#{amendement.slug}"
-        for amendement in lecture.amendements
-        if amendement.is_displayable
-    }
-    return matches
 
 
 def filter_out_empty_additionals(all_articles: List["Article"]) -> List["Article"]:

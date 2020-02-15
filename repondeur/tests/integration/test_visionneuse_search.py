@@ -1,3 +1,5 @@
+from time import sleep
+
 import transaction
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -72,6 +74,7 @@ def test_visionneuse_amendements_search_not_found(
     ).is_displayed()
     driver.find_element_by_link_text("Accès amendement").click()
     driver.find_element_by_css_selector("#q-amendement").send_keys(f"42{Keys.ENTER}")
+    sleep(1)  # Wait for the AJAX request.
     assert driver.find_element_by_css_selector(
         "#search-amendements .error"
     ).is_displayed()

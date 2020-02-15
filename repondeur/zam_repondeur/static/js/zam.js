@@ -65,3 +65,35 @@ application.register(
     }
   }
 )
+
+application.register(
+  'amendement-search',
+  class extends Stimulus.Controller {
+    static get targets() {
+      return ['link', 'form', 'input', 'error']
+    }
+
+    open(event) {
+      event.preventDefault()
+      this.formTarget.classList.toggle('d-none')
+    }
+
+    submit(event) {
+      event.preventDefault()
+      const value = this.inputTarget.value
+      const urlSearchAmendement = this.formTarget.dataset.urlSearchAmendement
+      const url = new URL(urlSearchAmendement)
+      url.search = `num=${value}`
+      fetch(url)
+        .then(response => response.json())
+        .then(urls => {
+          window.location = urls['index']
+        })
+        .catch(e => this.errorTarget.classList.remove('d-none'))
+    }
+
+    reset(event) {
+      this.errorTarget.classList.add('d-none')
+    }
+  }
+)

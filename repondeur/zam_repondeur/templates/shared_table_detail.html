@@ -20,7 +20,7 @@
     {% else %}
         <h1>Créer une boîte</h1>
     {% endif %}
-    <form action="{{ request.path }}" method="POST">
+    <form id="box-upsert" action="{{ request.path }}" method="POST">
         <div class="form-group">
             <label for="titre">Nom de la boîte :</label>
             <input type="text" name="titre" {% if shared_table is defined %}value="{{ shared_table.titre }}"{% endif %} required>

@@ -55,10 +55,11 @@ def test_lecture_get_batch_amendements(
     assert "Nº\xa0666" in resp.parser.css_first(".amendements li").text()
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
-    assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["n", "submit-to"]
-    assert resp.form.fields["n"][0].value == "666"
-    assert resp.form.fields["n"][1].value == "999"
+    form = resp.forms["batch-amendements"]
+    assert form.method == "POST"
+    assert list(form.fields.keys()) == ["n", "submit-to"]
+    assert form.fields["n"][0].value == "666"
+    assert form.fields["n"][1].value == "999"
 
 
 def test_lecture_get_batch_amendements_not_all_on_table(
@@ -278,8 +279,7 @@ def test_lecture_post_batch_set_amendements(
         {"n": amendements_an},
         user=user_david,
     )
-    form = resp.form
-    resp = form.submit("submit-to")
+    resp = resp.forms["batch-amendements"].submit("submit-to")
 
     # We're redirected to our table
     assert resp.status_code == 302
@@ -326,7 +326,7 @@ def test_lecture_post_batch_set_amendements_not_all_on_table(
         {"n": amendements_an},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["batch-amendements"]
 
     # Let's remove an amendement from the table before submission.
     with transaction.manager:
@@ -372,7 +372,7 @@ def test_lecture_post_batch_set_amendements_only_one_reponse(
         {"n": amendements_an},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["batch-amendements"]
 
     # Let's change reponses of the first amendement before submission.
     with transaction.manager:
@@ -439,7 +439,7 @@ def test_lecture_post_batch_set_amendements_update_all_user_content(
         {"n": amendements_an},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["batch-amendements"]
 
     # Let's change user content of the first amendement before submission.
     with transaction.manager:
@@ -480,7 +480,7 @@ def test_lecture_post_batch_set_amendements_same_reponses(
         {"n": amendements_an},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["batch-amendements"]
 
     # Let's change reponses of the amendements before submission.
     with transaction.manager:
@@ -522,7 +522,7 @@ def test_lecture_post_batch_set_amendements_different_reponses(
         {"n": amendements_an},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["batch-amendements"]
 
     # Let's change reponses of the amendements before submission.
     with transaction.manager:
@@ -569,7 +569,7 @@ def test_lecture_post_batch_set_amendements_same_reponses_different_comments(
         {"n": amendements_an},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["batch-amendements"]
 
     # Let's change reponses of the amendements before submission.
     with transaction.manager:
@@ -622,7 +622,7 @@ def test_lecture_post_batch_set_amendements_different_articles(
         {"n": amendements_an},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["batch-amendements"]
 
     # Let's change article of the first amendement before submission.
     with transaction.manager:
@@ -670,7 +670,7 @@ def test_lecture_post_batch_unset_amendement(
         {"n": amendements_an},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["batch-amendements"]
     resp = form.submit("submit-to")
 
     # Reload amendement as it was updated in another transaction
@@ -688,7 +688,7 @@ def test_lecture_post_batch_unset_amendement(
         {"n": amendement_666},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["batch-amendements"]
     resp = form.submit("submit-to")
 
     # We're redirected to our table
@@ -751,7 +751,7 @@ def test_lecture_post_batch_reset_amendement(
         {"n": amendements_an},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["batch-amendements"]
     resp = form.submit("submit-to")
 
     # Reload amendement as it was updated in another transaction
@@ -769,7 +769,7 @@ def test_lecture_post_batch_reset_amendement(
         {"n": [amendement_666, amendement_777]},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["batch-amendements"]
     resp = form.submit("submit-to")
 
     # We're redirected to our table

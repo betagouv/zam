@@ -27,7 +27,9 @@ def test_create_batch_from_table(
     assert batch_amendements.is_displayed()
     batch_amendements.click()
     assert driver.current_url == f"{lecture_an_url}/batch_amendements?n=666&n=999"
-    submit_button = driver.find_element_by_css_selector('input[type="submit"]')
+    submit_button = driver.find_element_by_css_selector(
+        '#batch-amendements input[type="submit"]'
+    )
     submit_button.click()
     assert driver.current_url == f"{lecture_an_url}/tables/{user_david.email}/"
 

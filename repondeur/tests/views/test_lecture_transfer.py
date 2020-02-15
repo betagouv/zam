@@ -43,10 +43,11 @@ def test_lecture_get_transfer_amendements(app, lecture_an, amendements_an, user_
     )
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
-    assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to"]
-    assert resp.form.fields["n"][0].value == "666"
-    assert resp.form.fields["target"][0].options == [
+    form = resp.forms["transfer-amendements"]
+    assert form.method == "POST"
+    assert list(form.fields.keys()) == ["n", "target", "submit-to"]
+    assert form.fields["n"][0].value == "666"
+    assert form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
     ]
@@ -68,10 +69,11 @@ def test_lecture_get_transfer_amendements_with_shared_table(
     )
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
-    assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to"]
-    assert resp.form.fields["n"][0].value == "666"
-    assert resp.form.fields["target"][0].options == [
+    form = resp.forms["transfer-amendements"]
+    assert form.method == "POST"
+    assert list(form.fields.keys()) == ["n", "target", "submit-to"]
+    assert form.fields["n"][0].value == "666"
+    assert form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
         ("test-table", False, "Test table"),
@@ -88,15 +90,17 @@ def test_lecture_get_transfer_amendements_from_index(
         user=user_david,
     )
     assert resp.status_code == 200
-    assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["n", "from_index", "target", "submit-to"]
-    assert resp.form.fields["n"][0].value == "666"
-    assert resp.form.fields["target"][0].options == [
+
+    form = resp.forms["transfer-amendements"]
+    assert form.method == "POST"
+    assert list(form.fields.keys()) == ["n", "from_index", "target", "submit-to"]
+    assert form.fields["n"][0].value == "666"
+    assert form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
         ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
-    assert resp.form.fields["from_index"][0].value == "1"
+    assert form.fields["from_index"][0].value == "1"
 
 
 def test_lecture_get_transfer_amendements_from_me(
@@ -121,10 +125,11 @@ def test_lecture_get_transfer_amendements_from_me(
     )
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
-    assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
-    assert resp.form.fields["n"][0].value == "666"
-    assert resp.form.fields["target"][0].options == [
+    form = resp.forms["transfer-amendements"]
+    assert form.method == "POST"
+    assert list(form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
+    assert form.fields["n"][0].value == "666"
+    assert form.fields["target"][0].options == [
         ("", True, ""),
         ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
@@ -151,10 +156,11 @@ def test_lecture_get_transfer_amendements_from_shared_table(
     )
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
-    assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
-    assert resp.form.fields["n"][0].value == "666"
-    assert resp.form.fields["target"][0].options == [
+    form = resp.forms["transfer-amendements"]
+    assert form.method == "POST"
+    assert list(form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
+    assert form.fields["n"][0].value == "666"
+    assert form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
         ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
@@ -182,10 +188,11 @@ def test_lecture_get_transfer_amendements_including_me(
     )
     assert "checked" in resp.parser.css_first(".amendements li input").attributes
 
-    assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
-    assert resp.form.fields["n"][0].value == "666"
-    assert resp.form.fields["target"][0].options == [
+    form = resp.forms["transfer-amendements"]
+    assert form.method == "POST"
+    assert list(form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
+    assert form.fields["n"][0].value == "666"
+    assert form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
         ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
@@ -214,10 +221,11 @@ def test_lecture_get_transfer_amendements_from_me_from_save(
     assert not resp.parser.css_first(".amendements")
     assert resp.parser.css_first('input[type="hidden"]').attributes["value"] == "666"
 
-    assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
-    assert resp.form.fields["n"][0].value == "666"
-    assert resp.form.fields["target"][0].options == [
+    form = resp.forms["transfer-amendements"]
+    assert form.method == "POST"
+    assert list(form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
+    assert form.fields["n"][0].value == "666"
+    assert form.fields["target"][0].options == [
         ("", True, ""),
         ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
     ]
@@ -249,10 +257,11 @@ def test_lecture_get_transfer_amendements_from_other(
         == "user inactive"
     )
 
-    assert resp.form.method == "POST"
-    assert list(resp.form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
-    assert resp.form.fields["n"][0].value == "666"
-    assert resp.form.fields["target"][0].options == [
+    form = resp.forms["transfer-amendements"]
+    assert form.method == "POST"
+    assert list(form.fields.keys()) == ["n", "target", "submit-to", "submit-index"]
+    assert form.fields["n"][0].value == "666"
+    assert form.fields["target"][0].options == [
         ("", True, ""),
         ("david@exemple.gouv.fr", False, "David (david@exemple.gouv.fr)"),
         ("ronan@exemple.gouv.fr", False, "Ronan (ronan@exemple.gouv.fr)"),
@@ -331,7 +340,7 @@ def test_lecture_post_transfer_amendements_to_me(
         {"n": [amdt]},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["transfer-amendements"]
     form["target"] = user_david.email
     resp = form.submit("submit-to")
 
@@ -378,7 +387,7 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
         {"n": [amendement]},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["transfer-amendements"]
     form["target"] = user_david.email
     resp = form.submit("submit-to")
 
@@ -422,7 +431,7 @@ def test_lecture_post_transfer_amendements_to_index(
         {"n": [amendements_an[0]]},
         user=user_david,
     )
-    resp = resp.form.submit("submit-index")
+    resp = resp.forms["transfer-amendements"].submit("submit-index")
 
     # We're redirected to our table
     assert resp.status_code == 302
@@ -463,7 +472,7 @@ def test_lecture_post_transfer_amendements_to_index_from_index(
         {"n": [amendements_an[0]], "from_index": 1},
         user=user_david,
     )
-    resp = resp.form.submit("submit-index")
+    resp = resp.forms["transfer-amendements"].submit("submit-index")
     assert resp.status_code == 302
     assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
@@ -495,7 +504,7 @@ def test_lecture_post_transfer_amendements_to_other(
         {"n": [amendements_an[0]]},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["transfer-amendements"]
     form["target"] = user_ronan.email
     resp = form.submit()
     assert resp.status_code == 302
@@ -534,7 +543,7 @@ def test_lecture_post_transfer_amendements_to_other_from_index(
         {"n": [amendements_an[0]], "from_index": 1},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["transfer-amendements"]
     form["target"] = user_ronan.email
     resp = form.submit()
     assert resp.status_code == 302
@@ -561,7 +570,7 @@ def test_lecture_post_transfer_amendements_from_void_to_shared_table(
         {"n": [amendements_an[0]]},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["transfer-amendements"]
     form["target"] = shared_table_lecture_an.slug
     resp = form.submit("submit-to")
 
@@ -604,7 +613,7 @@ def test_lecture_post_transfer_amendements_from_me_to_shared_table(
         {"n": [amendements_an[0]]},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["transfer-amendements"]
     form["target"] = shared_table_lecture_an.slug
     resp = form.submit("submit-to")
 
@@ -646,7 +655,7 @@ def test_lecture_post_transfer_amendements_from_other_to_shared_table(
         {"n": [amendements_an[0]]},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["transfer-amendements"]
     form["target"] = shared_table_lecture_an.slug
     resp = form.submit("submit-to")
 
@@ -688,7 +697,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_void(
         {"n": [amendements_an[0]]},
         user=user_david,
     )
-    resp = resp.form.submit("submit-index")
+    resp = resp.forms["transfer-amendements"].submit("submit-index")
 
     # We're redirected to our table
     assert resp.status_code == 302
@@ -727,7 +736,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_me(
         {"n": [amendements_an[0]]},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["transfer-amendements"]
     form["target"] = user_david.email
     resp = form.submit("submit-to")
 
@@ -768,7 +777,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_other(
         {"n": [amendements_an[0]]},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["transfer-amendements"]
     form["target"] = user_ronan.email
     resp = form.submit("submit-to")
 
@@ -812,7 +821,7 @@ def test_lecture_post_transfer_amendements_from_void_to_noname_user(
         {"n": [amendements_an[0]]},
         user=user_david,
     )
-    form = resp.form
+    form = resp.forms["transfer-amendements"]
     form["target"] = user_noname.email
     resp = form.submit("submit-to")
 

@@ -22,7 +22,7 @@
     {% block header %}
     {% endblock %}
 </head>
-<body>
+<body data-controller="amendement-search">
     <nav class="main">
         {% block nav %}
             <ul data-controller="menu">
@@ -95,6 +95,11 @@
                                 Index
                             </a>
                         </li>
+                        <li>
+                            <a class="find" href=""
+                                data-action="amendement-search#open"
+                                data-target="amendement-search.link">Accès amendement</a>
+                        </li>
                     {% endif %}
                 {% endif %}
             </ul>
@@ -103,6 +108,28 @@
         <div class="badge" style="background-color: {{ request.registry.settings.get('zam.menu_badge_color', '#aaaaaa') }};">{{ request.registry.settings.get('zam.menu_badge_label') }}</div>
         {% endif %}
     </nav>
+
+    {% if request.user and lecture_resource is defined %}
+        <form class="search d-none" id="search-amendements"
+            method="get" role="search"
+            action=""
+            data-url-search-amendement="{{ request.resource_url(lecture_resource, 'search_amendement') }}"
+            data-target="amendement-search.form">
+          <label for="q-amendement">Amendement nº</label>
+          <span class="number-with-hint">
+            <input name="q-amendement" id="q-amendement"
+                type="number" min="1" step="1"
+                data-target="amendement-search.input"
+                data-action="keydown->amendement-search#reset">
+            <span class="hint">Chiffres uniquement</span>
+          </span>
+          <input class="button primary"
+            type="submit" name="submit" value="Valider"
+            data-action="amendement-search#submit">
+          <p class="d-none error"
+            data-target="amendement-search.error">Amendement non trouvé.</p>
+        </form>
+    {% endif %}
 
     <main role="main" class="{% block main_class %}box{% endblock %}">
         {% block body %}

@@ -8,7 +8,7 @@ ssh_keys:
   raphaelpierquin: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbNIX/qNF03q/zVQH0E6OqYA9mt5FpT270VfONcjZeomIFLr9UuxNJdBGZnE1BhP5OXf2BLVMeOB6zj8oV+Cmv3+nL5o+oF0MWdmnx7r2kGsPamGqL9HVokuUzE7lIqeAcq0Itosgh/ns8R49VQkURNzFV6QTBxXiGxUOwxw+a81vcDgLZ6SickeM8jAqGEFFiIjyqIZ0T5ah+C0VzEUi0XSYkyzslx6gChBK8akiPwVDQyQlRjVgKcnSPRqRcPj9SgbsrpSvmbnfDrVQs76YwTrlJln7Fll9A07lccl9Vl4J6qwirtRrzKWNmelv/edIYKPHPmAK5AnrXtW+k77Rn raphael@tartine
 
 # How long before we give up on a long-running request (e.g. PDF generation)?
-request_timeout: 300
+request_timeout: 600
 
 # Rollbar token with permissions to post items & deploys
 # cf. https://rollbar.com/zam/zam/settings/access_tokens/

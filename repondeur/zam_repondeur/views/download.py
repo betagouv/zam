@@ -8,7 +8,7 @@ from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload, load_only, subqueryload
 
-from zam_repondeur.models import Amendement, Article, Batch, Lecture
+from zam_repondeur.models import Amendement, AmendementList, Article, Batch, Lecture
 from zam_repondeur.resources import LectureResource
 from zam_repondeur.services.import_export.json import export_json
 from zam_repondeur.services.import_export.pdf import write_pdf, write_pdf_multiple
@@ -129,10 +129,10 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
         raise HTTPBadRequest()
 
     amendements = [
-        amendement
-        for amendement in (lecture.find_amendement(num) for num in nums)
-        if amendement is not None
+        amendement for amendement in lecture.amendements if amendement.num in nums
     ]
+    article = amendements[0].article
+    article_amendements = AmendementList(article.amendements)
     expanded_amendements = list(Batch.expanded_batches(amendements))
 
     with NamedTemporaryFile() as file_:
@@ -140,6 +140,7 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
         write_pdf_multiple(
             lecture=lecture,
             amendements=amendements,
+            article_amendements=article_amendements,
             filename=tmp_file_path,
             request=request,
         )
@@ -148,7 +149,7 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
         response = FileResponse(tmp_file_path)
         attach_name = generate_attach_name(
             lecture=lecture,
-            article=expanded_amendements[0].article,
+            article=article,
             amendements=expanded_amendements,
             extension=fmt,
         )

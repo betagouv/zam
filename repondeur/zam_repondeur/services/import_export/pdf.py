@@ -45,14 +45,14 @@ def write_pdf(lecture: Lecture, filename: str, request: Request) -> None:
 def write_pdf_multiple(
     lecture: Lecture,
     amendements: Iterable[Amendement],
+    article_amendements: AmendementList,
     filename: str,
     request: Request,
 ) -> None:
-    all_amendements: AmendementList = lecture.all_amendements
     content = generate_html_for_pdf(
         request,
         "print/multiple.html",
-        {"amendements": amendements, "all_amendements": all_amendements},
+        {"amendements": amendements, "article_amendements": article_amendements},
     )
     with xvfb_if_supported():
         pdfkit.from_string(content, filename, options=PDFKIT_OPTIONS, css=PDF_CSS)

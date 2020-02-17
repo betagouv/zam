@@ -47,7 +47,7 @@ def test_download_pdf_multiple_amendements(app, lecture_an, amendements_an, user
     assert resp.content_type == "application/pdf"
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=article.1..-amendements-666,999-an-269-PO717460.pdf"
+        == f"attachment; filename=article1-amendements-666_999-an-269-PO717460.pdf"
     )
 
 
@@ -67,7 +67,7 @@ def test_download_pdf_lots_of_amendements(app, lecture_an, article1_an, user_dav
     assert resp.content_type == "application/pdf"
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=article.1..-11amendements-1etc-an-269-PO717460.pdf"
+        == f"attachment; filename=article1-11amendements-1etc-an-269-PO717460.pdf"
     )
 
 
@@ -82,7 +82,7 @@ def test_download_pdf_multiple_amendements_same_batch(
     assert resp.content_type == "application/pdf"
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=article.1..-amendements-666,999-an-269-PO717460.pdf"
+        == f"attachment; filename=article1-amendements-666_999-an-269-PO717460.pdf"
     )
 
 
@@ -100,7 +100,7 @@ def test_download_xlsx_multiple_amendements(
     )
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=article.1..-amendements-666,999-an-269-PO717460.xlsx"
+        == f"attachment; filename=article1-amendements-666_999-an-269-PO717460.xlsx"
     )
 
 
@@ -124,7 +124,7 @@ def test_download_xlsx_lots_of_amendements(app, lecture_an, article1_an, user_da
     )
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=article.1..-11amendements-1etc-an-269-PO717460.xlsx"
+        == f"attachment; filename=article1-11amendements-1etc-an-269-PO717460.xlsx"
     )
 
 
@@ -142,5 +142,5 @@ def test_download_xlsx_multiple_amendements_same_batch(
     )
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=article.1..-amendements-666,999-an-269-PO717460.xlsx"
+        == f"attachment; filename=article1-amendements-666_999-an-269-PO717460.xlsx"
     )

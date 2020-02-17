@@ -688,7 +688,7 @@ def test_generate_pdf_amendement_without_responses(app, lecture_senat, article1_
         generate_html_for_pdf(
             DummyRequest(),
             "print/multiple.html",
-            {"amendements": amdt_list, "all_amendements": amdt_list},
+            {"amendements": amdt_list, "article_amendements": amdt_list},
         )
     )
 
@@ -721,7 +721,7 @@ def test_generate_pdf_amendement_with_responses(app, lecture_senat, article1_sen
         generate_html_for_pdf(
             DummyRequest(),
             "print/multiple.html",
-            {"amendements": amdt_list, "all_amendements": amdt_list},
+            {"amendements": amdt_list, "article_amendements": amdt_list},
         )
     )
 
@@ -749,7 +749,7 @@ def test_generate_pdf_amendement_with_content(
         generate_html_for_pdf(
             DummyRequest(),
             "print/multiple.html",
-            {"amendements": amdt_list, "all_amendements": amdt_list},
+            {"amendements": amdt_list, "article_amendements": amdt_list},
         )
     )
 
@@ -804,7 +804,7 @@ def test_generate_pdf_amendement_with_similaire(
             "print/multiple.html",
             {
                 "amendements": AmendementList([amendement_6666]),
-                "all_amendements": amdt_list,
+                "article_amendements": amdt_list,
             },
         )
     )
@@ -897,7 +897,7 @@ def test_generate_pdf_amendement_with_batches(
             "print/multiple.html",
             {
                 "amendements": AmendementList([amendement_666, amendement_555]),
-                "all_amendements": amdt_list,
+                "article_amendements": amdt_list,
             },
         )
     )

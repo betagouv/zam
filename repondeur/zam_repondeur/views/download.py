@@ -160,14 +160,14 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
 def generate_attach_name(
     lecture: Lecture, article: Article, amendements: List[Amendement], extension: str
 ) -> str:
-    article_name = f"{article.url_key}-"
+    article_name = f"{article.url_key.replace('.', '')}-"
     nb_amendements = len(amendements)
     if nb_amendements > 10:
         amendements_name = f"{nb_amendements}amendements-{amendements[0].num}etc-"
     else:
         amendements_name = (
             f"amendement{'s' if len(amendements) > 1 else ''}-"
-            f"{','.join(str(amdt.num) for amdt in amendements)}-"
+            f"{'_'.join(str(amdt.num) for amdt in amendements)}-"
         )
     lecture_name = f"{lecture.chambre}-{lecture.texte.numero}-{lecture.organe}"
     return f"{article_name}{amendements_name}{lecture_name}.{extension}"

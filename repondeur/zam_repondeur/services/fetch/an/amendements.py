@@ -727,7 +727,7 @@ class ANAmendementData:
             subdiv = parse_subdiv(division["titre"])
         else:
             subdiv = parse_subdiv(division["divisionRattache"])
-        if division["avantApres"]:
+        if division["avantApres"] and not subdiv.pos:
             pos = parse_avant_apres(division["avantApres"])
             subdiv = subdiv._replace(pos=pos)
         return subdiv

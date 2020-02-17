@@ -3,6 +3,35 @@ import pytest
 from zam_repondeur.models.division import SubDiv
 
 
+def test_avant_article_premier():
+    """
+    From http://www.assemblee-nationale.fr/dyn/15/amendements/2623/AN/45.xml
+    """
+    from zam_repondeur.services.fetch.an.amendements import ANAmendementData
+
+    data = ANAmendementData(
+        {
+            "amendement": {
+                "division": {
+                    "titre": "TITRE Ier",
+                    "divisionDesignation": "AVANT ART. PREMIER",
+                    "type": "CHAPITRE",
+                    "avantApres": "A",
+                    "divisionRattache": "AVANT L'ARTICLE PREMIER",
+                    "articleAdditionnel": "xsi:nil",
+                    "divisionAdditionnelle": "xsi:nil",
+                    "urlDivisionTexteVise": "/15/textes/2623.asp#D_TITRE_Ier_2",
+                }
+            }
+        }
+    )
+    division = data.get_division()
+    assert division.type_ == "article"
+    assert division.num == "1"
+    assert division.mult == ""
+    assert division.pos == "avant"
+
+
 @pytest.mark.parametrize(
     "text,num",
     [

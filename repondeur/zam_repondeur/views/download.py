@@ -160,7 +160,7 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
     lecture = context.model(
         noload("amendements"),
         joinedload("dossier").load_only("titre"),
-        subqueryload("articles").options(joinedload("user_content"),),
+        subqueryload("articles").options(joinedload("user_content")),
     )
     article_amendements = (
         DBSession.query(Amendement)
@@ -212,13 +212,14 @@ def generate_attach_name(
     lecture: Lecture, article: Article, amendements: List[Amendement], extension: str
 ) -> str:
     article_name = f"{article.url_key.replace('.', '')}-"
-    nb_amendements = len(amendements)
+    nums = sorted(amdt.num for amdt in amendements)
+    nb_amendements = len(nums)
     if nb_amendements > 10:
-        amendements_name = f"{nb_amendements}amendements-{amendements[0].num}etc-"
+        amendements_name = f"{nb_amendements}amendements-{nums[0]}etc-"
     else:
         amendements_name = (
-            f"amendement{'s' if len(amendements) > 1 else ''}-"
-            f"{'_'.join(str(amdt.num) for amdt in amendements)}-"
+            f"amendement{'s' if nb_amendements > 1 else ''}-"
+            f"{'_'.join(str(num) for num in nums)}-"
         )
     lecture_name = f"{lecture.chambre}-{lecture.texte.numero}-{lecture.organe}"
     return f"{article_name}{amendements_name}{lecture_name}.{extension}"

@@ -78,10 +78,10 @@
                     </a>
                 </th>
                 <th>
-                    <a id="export-pdf" href="{{ request.resource_url(context.parent, 'export_pdf') }}" class="button primary">Exporter en PDF</a>
+                    <a id="export-pdf" class="button primary" href="{{ request.resource_url(context.parent, 'export_pdf', query={'article': article_param}) }}" download>Exporter en PDF</a>
                 </th>
                 <th colspan="2">
-                    <a id="export-xlsx" href="{{ request.resource_url(context.parent, 'export_xlsx') }}" class="button primary">Exporter en Excel</a>
+                    <a id="export-xlsx" class="button primary" href="{{ request.resource_url(context.parent, 'export_xlsx', query={'article': article_param}) }}" download>Exporter en Excel</a>
                 </th>
                 <th></th>
             </tr>

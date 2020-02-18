@@ -254,10 +254,6 @@ application.register(
         this.groupActions.querySelector('#transfer-amendements'),
         checkeds
       )
-      this.changeURLGivenChecks(
-        this.groupActions.querySelector('#export-pdf'),
-        checkeds
-      )
       if (checkedsLength >= 2 && this.batchAmendementsLink) {
         this.changeURLGivenChecks(this.batchAmendementsLink, checkeds)
       }

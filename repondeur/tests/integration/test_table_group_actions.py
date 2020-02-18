@@ -200,36 +200,28 @@ def test_group_actions_button_urls_change_with_selection(
     WebDriverWait(driver, 20).until(EC.visibility_of(find(".groupActions")))
 
     assert find(".groupActions").is_displayed()
-
-    for action in ["transfer-amendements", "export-pdf"]:
-        assert (
-            find("#" + action).get_attribute("href")
-            == f"{lecture_an_url}/{action.replace('-', '_')}?n=666"
-        )
+    assert (
+        find("#transfer-amendements").get_attribute("href")
+        == f"{lecture_an_url}/transfer_amendements?n=666"
+    )
 
     checkboxes[1].click()
-
-    for action in ["transfer-amendements", "export-pdf"]:
-        assert (
-            find("#" + action).get_attribute("href")
-            == f"{lecture_an_url}/{action.replace('-', '_')}?n=666&n=999"
-        )
+    assert (
+        find("#transfer-amendements").get_attribute("href")
+        == f"{lecture_an_url}/transfer_amendements?n=666&n=999"
+    )
 
     checkboxes[0].click()
-
-    for action in ["transfer-amendements", "export-pdf"]:
-        assert (
-            find("#" + action).get_attribute("href")
-            == f"{lecture_an_url}/{action.replace('-', '_')}?n=999"
-        )
+    assert (
+        find("#transfer-amendements").get_attribute("href")
+        == f"{lecture_an_url}/transfer_amendements?n=999"
+    )
 
     checkboxes[1].click()
-
-    for action in ["transfer-amendements", "export-pdf"]:
-        assert (
-            find("#" + action).get_attribute("href")
-            == f"{lecture_an_url}/{action.replace('-', '_')}"
-        )
+    assert (
+        find("#transfer-amendements").get_attribute("href")
+        == f"{lecture_an_url}/transfer_amendements"
+    )
 
     assert not find(".groupActions").is_displayed()
 

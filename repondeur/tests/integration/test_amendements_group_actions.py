@@ -28,7 +28,7 @@ def test_group_actions_are_made_invisible_by_unselection(
 
 
 def test_group_actions_button_urls_change_with_selection(
-    wsgi_server, driver, lecture_an_url, amendements_an
+    wsgi_server, driver, lecture_an_url, amendements_an, article1_an
 ):
     driver.get(f"{lecture_an_url}/amendements/")
     find = driver.find_element_by_css_selector
@@ -44,11 +44,11 @@ def test_group_actions_button_urls_change_with_selection(
     )
     assert (
         find("#export-pdf").get_attribute("href")
-        == f"{lecture_an_url}/export_pdf?n=666"
+        == f"{lecture_an_url}/export_pdf?article={article1_an.url_key}&n=666"
     )
     assert (
         find("#export-xlsx").get_attribute("href")
-        == f"{lecture_an_url}/export_xlsx?n=666"
+        == f"{lecture_an_url}/export_xlsx?article={article1_an.url_key}&n=666"
     )
 
     checkboxes[1].click()
@@ -59,11 +59,11 @@ def test_group_actions_button_urls_change_with_selection(
     )
     assert (
         find("#export-pdf").get_attribute("href")
-        == f"{lecture_an_url}/export_pdf?n=666&n=999"
+        == f"{lecture_an_url}/export_pdf?article={article1_an.url_key}&n=666&n=999"
     )
     assert (
         find("#export-xlsx").get_attribute("href")
-        == f"{lecture_an_url}/export_xlsx?n=666&n=999"
+        == f"{lecture_an_url}/export_xlsx?article={article1_an.url_key}&n=666&n=999"
     )
 
     checkboxes[0].click()
@@ -74,11 +74,11 @@ def test_group_actions_button_urls_change_with_selection(
     )
     assert (
         find("#export-pdf").get_attribute("href")
-        == f"{lecture_an_url}/export_pdf?n=999"
+        == f"{lecture_an_url}/export_pdf?article={article1_an.url_key}&n=999"
     )
     assert (
         find("#export-xlsx").get_attribute("href")
-        == f"{lecture_an_url}/export_xlsx?n=999"
+        == f"{lecture_an_url}/export_xlsx?article={article1_an.url_key}&n=999"
     )
 
     checkboxes[1].click()
@@ -87,8 +87,14 @@ def test_group_actions_button_urls_change_with_selection(
         find("#transfer-amendements").get_attribute("href")
         == f"{lecture_an_url}/transfer_amendements?from_index=1"
     )
-    assert find("#export-pdf").get_attribute("href") == f"{lecture_an_url}/export_pdf"
-    assert find("#export-xlsx").get_attribute("href") == f"{lecture_an_url}/export_xlsx"
+    assert (
+        find("#export-pdf").get_attribute("href")
+        == f"{lecture_an_url}/export_pdf?article={article1_an.url_key}"
+    )
+    assert (
+        find("#export-xlsx").get_attribute("href")
+        == f"{lecture_an_url}/export_xlsx?article={article1_an.url_key}"
+    )
 
     assert not find(".groupActions").is_displayed()
 

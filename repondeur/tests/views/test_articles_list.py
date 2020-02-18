@@ -20,23 +20,6 @@ class TestListArticles:
         titles = [node.text().strip() for node in resp.parser.css(".article")]
         assert titles == ["Article add. av. 1", "Article 1"]
 
-    def test_additional_articles_without_avis_are_not_listed(
-        self, app, article1_an, article1av_an, amendements_an, user_david
-    ):
-        from zam_repondeur.models import DBSession
-
-        with transaction.manager:
-            amendements_an[0].article = article1av_an
-            DBSession.add_all(amendements_an)
-
-        resp = app.get(
-            "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/",
-            user=user_david,
-        )
-        assert resp.status_code == 200
-        titles = [node.text().strip() for node in resp.parser.css(".article")]
-        assert titles == ["Article 1"]
-
     def test_uppercase_roman_numbers_are_preserved(
         self, app, chapitre_1er_an, user_david
     ):

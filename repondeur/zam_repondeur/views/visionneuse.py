@@ -3,7 +3,7 @@ from typing import Any, Dict, Tuple
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config
-from sqlalchemy.orm import joinedload, lazyload, load_only, subqueryload
+from sqlalchemy.orm import joinedload, lazyload, load_only
 
 from zam_repondeur.models import Article
 from zam_repondeur.models.article import mult_key
@@ -32,14 +32,6 @@ def list_articles(context: ArticleCollection, request: Request) -> Dict[str, Any
         lazyload("articles").options(
             load_only("lecture_pk", "mult", "num", "pos", "type"),
             joinedload("user_content").load_only("title"),
-            joinedload("amendements").options(
-                load_only("auteur", "sort"),
-                joinedload("user_content").load_only("avis"),
-            ),
-        ),
-        lazyload("amendements").options(
-            load_only("article_pk", "auteur", "num", "rectif", "sort"),
-            joinedload("user_content").load_only("avis"),
         ),
         joinedload("texte").load_only("legislature", "numero"),
     )
@@ -65,7 +57,9 @@ def list_reponses(context: ArticleResource, request: Request) -> Response:
                 "rectif",
                 "sort",
             ),
-            joinedload("user_content").load_only("avis", "objet", "reponse"),
+            joinedload("user_content").load_only(
+                "avis", "objet", "reponse", "has_objet", "has_reponse"
+            ),
         ),
         lazyload("lecture").options(
             lazyload("amendements").options(
@@ -75,7 +69,6 @@ def list_reponses(context: ArticleResource, request: Request) -> Response:
             joinedload("texte").load_only("legislature", "numero"),
             lazyload("articles").options(
                 load_only("lecture_pk", "mult", "num", "pos", "type"),
-                subqueryload("amendements"),
             ),
         ),
     )
@@ -85,6 +78,6 @@ def list_reponses(context: ArticleResource, request: Request) -> Response:
         "grouped_displayable_amendements": list(
             article.grouped_displayable_amendements()
         ),
-        "next_article": article.next_displayable_article,
-        "previous_article": article.previous_displayable_article,
+        "next_article": article.next_article,
+        "previous_article": article.previous_article,
     }

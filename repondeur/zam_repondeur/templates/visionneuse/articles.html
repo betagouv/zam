@@ -70,7 +70,7 @@
     </form>
   </section>
 
-  {% for article in articles|filter_out_empty_additionals %}
+  {% for article in articles %}
     {% if article.slug and not article.is_erreur %}
       <section class="box article" id="{{ article.slug }}" data-article-num="{{ article.num }}">
         <h2><a class="arrow-right" href="{{ request.resource_url(context, article.url_key, 'reponses') }}">{{ article.format(short=False) }}</a></h2>

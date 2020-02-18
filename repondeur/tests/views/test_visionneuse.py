@@ -680,21 +680,3 @@ def test_links_to_previous_and_next_articles(
     assert resp.status_code == 200
     nav_links = [node.text() for node in resp.parser.css(".secondary a")]
     assert nav_links == ["Article add. av. 1", "Article 7 bis"]
-
-
-def test_links_to_previous_and_next_articles_when_empty_additional(
-    app, lecture_an, amendements_an, article1av_an, article7bis_an, user_david
-):
-    resp = app.get(
-        (
-            "/dossiers/plfss-2018"
-            "/lectures/an.15.269.PO717460"
-            "/articles/article.1.."
-            "/reponses"
-        ),
-        user=user_david,
-    )
-
-    assert resp.status_code == 200
-    nav_links = [node.text() for node in resp.parser.css(".secondary a")]
-    assert nav_links == ["Article 7 bis"]

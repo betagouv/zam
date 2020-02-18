@@ -19,19 +19,6 @@ def paragriphy(content: Optional[str]) -> Markup:
     return Markup(content)
 
 
-def filter_out_empty_additionals(all_articles: List["Article"]) -> List["Article"]:
-    articles = []
-    for article in all_articles:
-        if article.pos:
-            for amendement in article.amendements:
-                if amendement.is_displayable:
-                    articles.append(article)
-                    break
-        else:
-            articles.append(article)
-    return articles
-
-
 def group_by_day(events: List["Event"]) -> List[Tuple[date, List["Event"]]]:
     def by_day(event: "Event") -> date:
         event_date: date = event.created_at.date()

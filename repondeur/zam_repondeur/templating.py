@@ -10,7 +10,6 @@ FILTERS_PATH = "zam_repondeur.views.jinja2_filters"
 JINJA2_SETTINGS = {
     "jinja2.filters": {
         "paragriphy": f"{FILTERS_PATH}:paragriphy",
-        "filter_out_empty_additionals": f"{FILTERS_PATH}:filter_out_empty_additionals",
         "group_by_day": f"{FILTERS_PATH}:group_by_day",
         "h3_to_h5": f"{FILTERS_PATH}:h3_to_h5",
         "enumeration": f"{FILTERS_PATH}:enumeration",

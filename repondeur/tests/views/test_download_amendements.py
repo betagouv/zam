@@ -38,9 +38,14 @@ def test_download_bad_format(app, lecture_an, user_david):
     assert 'Invalid value "docx" for "format" param' in resp.text
 
 
-def test_download_pdf_multiple_amendements(app, lecture_an, amendements_an, user_david):
+def test_download_pdf_multiple_amendements(
+    app, lecture_an, article1_an, amendements_an, user_david
+):
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf?n=666&n=999",
+        (
+            f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf"
+            f"?article={article1_an.url_key}&n=666&n=999"
+        ),
         user=user_david,
     )
     assert resp.status_code == 200
@@ -61,7 +66,10 @@ def test_download_pdf_lots_of_amendements(app, lecture_an, article1_an, user_dav
 
     params = "&".join(f"n={i+1}" for i in range(nb_amendements))
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf?{params}",
+        (
+            f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf"
+            f"?article={article1_an.url_key}&{params}"
+        ),
         user=user_david,
     )
     assert resp.content_type == "application/pdf"
@@ -72,10 +80,13 @@ def test_download_pdf_lots_of_amendements(app, lecture_an, article1_an, user_dav
 
 
 def test_download_pdf_multiple_amendements_same_batch(
-    app, lecture_an, amendements_an_batch, user_david
+    app, lecture_an, article1_an, amendements_an_batch, user_david
 ):
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf?n=666",
+        (
+            f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf"
+            f"?article={article1_an.url_key}&n=666"
+        ),
         user=user_david,
     )
     assert resp.status_code == 200
@@ -87,10 +98,13 @@ def test_download_pdf_multiple_amendements_same_batch(
 
 
 def test_download_xlsx_multiple_amendements(
-    app, lecture_an, amendements_an, user_david
+    app, lecture_an, article1_an, amendements_an, user_david
 ):
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_xlsx?n=666&n=999",
+        (
+            f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_xlsx"
+            f"?article={article1_an.url_key}&n=666&n=999"
+        ),
         user=user_david,
     )
     assert resp.status_code == 200
@@ -114,7 +128,10 @@ def test_download_xlsx_lots_of_amendements(app, lecture_an, article1_an, user_da
 
     params = "&".join(f"n={i+1}" for i in range(nb_amendements))
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_xlsx?{params}",
+        (
+            f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_xlsx"
+            f"?article={article1_an.url_key}&{params}"
+        ),
         user=user_david,
     )
     assert resp.status_code == 200
@@ -129,10 +146,13 @@ def test_download_xlsx_lots_of_amendements(app, lecture_an, article1_an, user_da
 
 
 def test_download_xlsx_multiple_amendements_same_batch(
-    app, lecture_an, amendements_an_batch, user_david
+    app, lecture_an, article1_an, amendements_an_batch, user_david
 ):
     resp = app.get(
-        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_xlsx?n=666",
+        (
+            f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_xlsx"
+            f"?article={article1_an.url_key}&n=666"
+        ),
         user=user_david,
     )
     assert resp.status_code == 200

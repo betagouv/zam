@@ -6,9 +6,16 @@ from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.request import Request
 from pyramid.response import FileResponse, Response
 from pyramid.view import view_config
-from sqlalchemy.orm import joinedload, load_only, subqueryload
+from sqlalchemy.orm import joinedload, load_only, noload, subqueryload
 
-from zam_repondeur.models import Amendement, AmendementList, Article, Batch, Lecture
+from zam_repondeur.models import (
+    Amendement,
+    AmendementList,
+    Article,
+    Batch,
+    DBSession,
+    Lecture,
+)
 from zam_repondeur.resources import LectureResource
 from zam_repondeur.services.import_export.json import export_json
 from zam_repondeur.services.import_export.pdf import write_pdf, write_pdf_multiple
@@ -86,18 +93,37 @@ def download_amendements(context: LectureResource, request: Request) -> Response
 
 @view_config(context=LectureResource, name="export_xlsx")
 def export_xlsx(context: LectureResource, request: Request) -> Response:
-
-    lecture = context.model(*EXPORT_OPTIONS)
-
+    num_params = request.params.getall("n")
     try:
-        params = request.params.getall("n")
-        nums: Set[int] = {int(num) for num in params}
+        nums: Set[int] = {int(num) for num in num_params}
     except ValueError:
         raise HTTPBadRequest()
 
-    amendements = [
-        amendement for amendement in lecture.amendements if amendement.num in nums
-    ]
+    article_param = request.params.get("article")
+    try:
+        article_type, article_num, article_mult, article_pos = article_param.split(".")
+    except ValueError:
+        raise HTTPBadRequest()
+
+    lecture = context.model(noload("amendements"))
+    amendements = (
+        DBSession.query(Amendement)
+        .filter(
+            Article.pk == Amendement.article_pk,
+            Amendement.lecture == lecture,
+            Article.type == article_type,
+            Article.num == article_num,
+            Article.mult == article_mult,
+            Article.pos == article_pos,
+            Amendement.num.in_(nums),  # type: ignore
+        )
+        .options(
+            joinedload("user_content"),
+            joinedload("location").options(
+                joinedload("user_table").joinedload("user").load_only("email", "name")
+            ),
+        )
+    )
     expanded_amendements = list(Batch.expanded_batches(amendements))
 
     with NamedTemporaryFile() as file_:
@@ -119,28 +145,52 @@ def export_xlsx(context: LectureResource, request: Request) -> Response:
 
 @view_config(context=LectureResource, name="export_pdf")
 def export_pdf(context: LectureResource, request: Request) -> Response:
-
-    lecture = context.model(*PDF_OPTIONS)
-
+    params = request.params.getall("n")
     try:
-        params = request.params.getall("n")
         nums: List[int] = [int(num) for num in params]
     except ValueError:
         raise HTTPBadRequest()
 
+    article_param = request.params.get("article")
+    try:
+        article_type, article_num, article_mult, article_pos = article_param.split(".")
+    except ValueError:
+        raise HTTPBadRequest()
+
+    lecture = context.model(
+        noload("amendements"),
+        joinedload("dossier").load_only("titre"),
+        subqueryload("articles").options(joinedload("user_content"),),
+    )
+    article_amendements = (
+        DBSession.query(Amendement)
+        .filter(
+            Article.pk == Amendement.article_pk,
+            Amendement.lecture == lecture,
+            Article.type == article_type,
+            Article.num == article_num,
+            Article.mult == article_mult,
+            Article.pos == article_pos,
+        )
+        .options(
+            joinedload("user_content"),
+            joinedload("location").options(
+                joinedload("user_table").joinedload("user").load_only("email", "name")
+            ),
+        )
+    )
     amendements = [
-        amendement for amendement in lecture.amendements if amendement.num in nums
+        amendement for amendement in article_amendements if amendement.num in nums
     ]
-    article = amendements[0].article
-    article_amendements = AmendementList(article.amendements)
     expanded_amendements = list(Batch.expanded_batches(amendements))
+    article = amendements[0].article
 
     with NamedTemporaryFile() as file_:
         tmp_file_path = os.path.abspath(file_.name)
         write_pdf_multiple(
             lecture=lecture,
             amendements=amendements,
-            article_amendements=article_amendements,
+            article_amendements=AmendementList(article_amendements),
             filename=tmp_file_path,
             request=request,
         )

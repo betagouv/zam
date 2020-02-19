@@ -1,16 +1,20 @@
-### Perspectives
+### Actualités 2020
 
-<p class="notice">Date de prochaine démonstration : à déterminer.</p>
+#### L'outverture de l'outil DILA prévue pour mai
 
-#### Rappel des objectifs prioritaires des développements 2019
+Les travaux de reprise par la DILA et son prestataire sont actuellement en cours. Le planning annoncé prévoit à ce stade une mise en service début mai 2020 de "SIGNALE" : acronyme pour Système Interministériel de Gestion Numérique des Amendements LEgislatifs. 
 
-- guider les utilisateurs en mettant en avant les amendements qui leur sont affectés et en permettant le transfert d’un amendement d’une personne à une autre
-- conserver la trace des éditions successives sur l’amendement (chemin de validation)
-- fiabiliser l’outil au regard des volumes d’utilisateurs/amendements et des flux du Parlement
+SIGNALE sera hébergé directement par la DILA et proposé à l'ensemble des ministères. Par ailleurs, l'ambition de la DILA est d'améliorer la captation des données, point sur lequel elle est tributaire de la stabilisation des flux provenant du Parlement. Enfin, l'assistance des utilisteurs de SIGNALE ainsi que la gestion du produit (évolutions) seront assurées par la DILA.
 
-#### Ils zamment en 2019 !
+#### Quid de Zam aujourd'hui ?
 
-##### Semestre 1
+Le calendrier de mise en service de l'outil DILA ayant été décalé de plusieurs mois par rapport à l'attendu de départ, et le financement de l'équipe Zam se terminant initialement au 31 décembre 2019, une période d'interruption était prévue. 
+Cependant, de nombreux utilisateurs se sont manifestés pour solliciter la poursuite de Zam, au premier rang desquels l'équipe en charge du projet de loi instituant un système universel de retraites, pour lequel un très grand volume d'amendements était attendu. 
+En réponse, la DINUM a prolongé son soutien de l'équipe Zam et Zam est donc toujours en service !
+
+### Ils ont zammé en 2019 !
+
+#### Semestre 1
 
 - projet de loi pour une école de la confiance (SG - ministère de l’éducation nationale)
 - projet de loi relatif à l’organisation et la transformation du système de santé (DGOS - ministère des solidarités et de la santé)
@@ -19,7 +23,7 @@
 - projet de loi de transformation de la fonction publique (DGAFP - Bercy)
 - proposition de loi visant à lutter contre la haine sur Internet (DGE - Bercy)
 
-##### Semestre 2
+#### Semestre 2
 
 - projet de loi sur la bioéthique (DGS - ministère des solidarités et de la santé)
 - projet de loi relatif à l'engagement dans la vie locale et à la proximité de l'action publique (DGCL - ministère chargé des collectivités territoriales)

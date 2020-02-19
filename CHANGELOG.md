@@ -4,7 +4,7 @@
 
 Les travaux de reprise par la DILA et son prestataire sont actuellement en cours. Le planning annoncé prévoit à ce stade une mise en service début mai 2020 de « SIGNALE » : acronyme pour Système Interministériel de Gestion Numérique des Amendements LEgislatifs. 
 
-SIGNALE sera hébergé directement par la DILA et proposé à l’ensemble des ministères. Par ailleurs, l’ambition de la DILA est d’améliorer la captation des données, point sur lequel elle est tributaire de la stabilisation des flux provenant du Parlement. Enfin, l’assistance des utilisteurs de SIGNALE ainsi que la gestion du produit (évolutions) seront assurées par la DILA.
+SIGNALE sera hébergé directement par la DILA et proposé à l’ensemble des ministères. Par ailleurs, l’ambition de la DILA est d’améliorer la captation des données, point sur lequel elle est tributaire de la stabilisation des flux provenant du Parlement. Enfin, l’assistance des utilisateurs de SIGNALE ainsi que la gestion du produit (évolutions) seront assurées par la DILA.
 
 #### Quid de Zam aujourd’hui ?
 

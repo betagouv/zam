@@ -625,11 +625,12 @@ class Amendement(Base):
 
 
 class AmendementList(list):
-    def __init__(self, amendements: Iterable[Amendement]):
-        super().__init__(sorted(amendements))
+    def __init__(self, amendements: Iterable[Amendement], sort_key=None):
+        super().__init__(sorted(amendements, key=sort_key))
+        self._sort_key = sort_key
 
     def similaires(self, amendement: Amendement) -> List["Amendement"]:
-        return sorted(self._set_of_similaires(amendement))
+        return sorted(self._set_of_similaires(amendement), key=self._sort_key)
 
     def _set_of_similaires(self, amendement: Amendement) -> Set["Amendement"]:
         similaires = self.similaires_map[amendement.num]

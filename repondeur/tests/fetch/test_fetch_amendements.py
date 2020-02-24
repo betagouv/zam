@@ -258,6 +258,7 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )
@@ -376,6 +377,7 @@ def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_
                         "retireAvantPublication": "0",
                         "missionVisee": "Mission « Outre-mer »",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )
@@ -479,6 +481,7 @@ def test_fetch_amendements_an_without_auteur_key(
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )
@@ -598,6 +601,7 @@ def test_fetch_amendements_an_without_group_tribun_id(
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )
@@ -719,6 +723,7 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )
@@ -951,6 +956,7 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )
@@ -1041,6 +1047,7 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
                         "etat": "AC",
                         "retireAvantPublication": "0",
                         "dateDepot": "27/04/2018",
+                        "triAmendement": "a" + numero_prefixe,
                     }
                 }
             )

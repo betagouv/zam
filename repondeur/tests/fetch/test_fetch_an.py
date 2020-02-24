@@ -64,26 +64,46 @@ class TestFetchAndParseAll:
 
         assert amendements[0].num == 177
         assert amendements[0].position == 1
+        assert (
+            amendements[0].tri_amendement
+            == "aeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaki"
+        )
         assert amendements[0].id_discussion_commune is None
         assert amendements[0].id_identique == 20386
 
         assert amendements[1].num == 270
         assert amendements[1].position == 2
+        assert (
+            amendements[1].tri_amendement
+            == "aeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaako"
+        )
         assert amendements[1].id_discussion_commune is None
         assert amendements[1].id_identique == 20386
 
         assert amendements[2].num == 723
         assert amendements[2].position == 3
+        assert (
+            amendements[2].tri_amendement
+            == "aeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas"
+        )
         assert amendements[2].id_discussion_commune is None
         assert amendements[2].id_identique is None
 
         assert amendements[3].num == 135
         assert amendements[3].position == 4
+        assert (
+            amendements[3].tri_amendement
+            == "bacaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaao"
+        )
         assert amendements[3].id_discussion_commune is None
         assert amendements[3].id_identique is None
 
         assert amendements[4].num == 192
         assert amendements[4].position == 5
+        assert (
+            amendements[4].tri_amendement
+            == "awaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaice"
+        )
         assert amendements[4].id_discussion_commune is None
         assert amendements[4].id_identique == 20439
 
@@ -175,11 +195,19 @@ class TestFetchAndParseAll:
 
         assert amendements[0].num == 177
         assert amendements[0].position == 1
+        assert (
+            amendements[0].tri_amendement
+            == "aeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaki"
+        )
         assert amendements[0].id_discussion_commune is None
         assert amendements[0].id_identique == 20386
 
         assert amendements[1].num == 192
         assert amendements[1].position is None
+        assert (
+            amendements[1].tri_amendement
+            == "awaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaice"
+        )
         assert amendements[1].id_discussion_commune is None
         assert amendements[1].id_identique is None
 
@@ -208,9 +236,17 @@ class TestFetchAndParseAll:
 
         assert amendements[0].num == 2
         assert amendements[0].position is None
+        assert (
+            amendements[0].tri_amendement
+            == "ilaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaf"
+        )
 
         assert amendements[1].num == 1
         assert amendements[1].position == 1
+        assert (
+            amendements[1].tri_amendement
+            == "elaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"
+        )
 
         assert result.created == {1, 2}
         assert result.errored == set()
@@ -250,16 +286,28 @@ class TestFetchAndParseAll:
 
         assert amendements[0].num == 1
         assert amendements[0].position == 1
+        assert (
+            amendements[0].tri_amendement
+            == "gaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafahoti"
+        )
         assert amendements[0].id_discussion_commune == 3448
         assert amendements[0].id_identique == 8496
 
         assert amendements[1].num == 2
         assert amendements[1].position == 2
+        assert (
+            amendements[1].tri_amendement
+            == "gaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafahotk"
+        )
         assert amendements[1].id_discussion_commune is None
         assert amendements[1].id_identique is None
 
         assert amendements[2].num == 3
         assert amendements[2].position == 3
+        assert (
+            amendements[2].tri_amendement
+            == "gaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafahoto"
+        )
         assert amendements[2].id_discussion_commune is None
         assert amendements[1].id_identique is None
 
@@ -437,6 +485,10 @@ class TestFetchAmendement:
         assert amendement.date_depot == date(2016, 10, 19)
         assert amendement.sort == "rejeté"
         assert amendement.position == 1
+        assert (
+            amendement.tri_amendement
+            == "aeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaki"
+        )
         assert amendement.id_discussion_commune is None
         assert amendement.id_identique is None
         assert amendement.parent is None

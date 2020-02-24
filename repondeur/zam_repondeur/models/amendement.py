@@ -3,6 +3,7 @@ from datetime import date, datetime
 from itertools import groupby
 from typing import (
     TYPE_CHECKING,
+    Any,
     Callable,
     Dict,
     Iterable,
@@ -625,7 +626,11 @@ class Amendement(Base):
 
 
 class AmendementList(list):
-    def __init__(self, amendements: Iterable[Amendement], sort_key=None):
+    def __init__(
+        self,
+        amendements: Iterable[Amendement],
+        sort_key: Optional[Callable[[Amendement], Any]] = None,
+    ):
         super().__init__(sorted(amendements, key=sort_key))
         self._sort_key = sort_key
 

@@ -1,3 +1,5 @@
+from typing import Callable, Tuple
+
 from pyramid.request import Request
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload, load_only, subqueryload
@@ -61,7 +63,7 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
             ),
         )
     )
-    amendements = AmendementList(amendements)
+    amendements = AmendementList(amendements, sort_key=get_sort_key(request))
     total_count_amendements = lecture.nb_amendements
     return {
         "lecture": lecture,
@@ -77,3 +79,29 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
         "progress_url": request.resource_url(lecture_resource, "progress_status"),
         "progress_interval": request.registry.settings["zam.progress.lecture_refresh"],
     }
+
+
+def get_sort_key(request: Request) -> Callable[[Amendement], tuple]:
+    """
+    Add flag in query params to enable alternate sorting
+    """
+
+    try:
+        tri_amendement_enabled = int(request.params.get("tri_amendement", "0"))
+    except ValueError:
+        tri_amendement_enabled = 0
+
+    return sort_by_tri_amendement if tri_amendement_enabled else sort_by_position
+
+
+def sort_by_tri_amendement(amendement: Amendement) -> Tuple[bool, str, Article, int]:
+    return (
+        amendement.is_abandoned,
+        amendement.tri_amendement or "~",
+        amendement.article,
+        amendement.num,
+    )
+
+
+def sort_by_position(amendement: Amendement) -> Tuple[bool, int, Article, int]:
+    return amendement.sort_key

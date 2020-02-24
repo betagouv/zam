@@ -161,6 +161,7 @@ class CreateOrUpdateAmendement(Action):
         parent_num_raw: str,
         rectif: int,
         position: Optional[int],
+        tri_amendement: Optional[str],
         id_discussion_commune: Optional[int],
         id_identique: Optional[int],
         matricule: str,
@@ -177,6 +178,7 @@ class CreateOrUpdateAmendement(Action):
         self.parent_num_raw = parent_num_raw
         self.rectif = rectif
         self.position = position
+        self.tri_amendement = tri_amendement
         self.id_discussion_commune = id_discussion_commune
         self.id_identique = id_identique
         self.matricule = matricule
@@ -233,6 +235,7 @@ class CreateAmendement(CreateOrUpdateAmendement):
             position=self.position,
             num=self.num,
             rectif=self.rectif,
+            tri_amendement=self.tri_amendement,
             id_discussion_commune=self.id_discussion_commune,
             id_identique=self.id_identique,
             matricule=self.matricule,
@@ -277,6 +280,7 @@ class UpdateAmendement(CreateOrUpdateAmendement):
             article=article,
             parent=parent,
             position=self.position,
+            tri_amendement=self.tri_amendement,
             id_discussion_commune=self.id_discussion_commune,
             id_identique=self.id_identique,
             matricule=self.matricule,

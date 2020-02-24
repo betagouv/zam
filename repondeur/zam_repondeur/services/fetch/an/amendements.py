@@ -301,6 +301,8 @@ class AssembleeNationale(RemoteSource):
 
         date_depot = amend_data.get_date_depot()
 
+        tri_amendement = amend_data.get_tri_amendement()
+
         amendement = lecture.find_amendement(num)
 
         action: Optional[Action] = None
@@ -312,6 +314,7 @@ class AssembleeNationale(RemoteSource):
                 num=num,
                 rectif=rectif,
                 position=position,
+                tri_amendement=tri_amendement,
                 id_discussion_commune=id_discussion_commune,
                 id_identique=id_identique,
                 matricule=matricule,
@@ -336,6 +339,7 @@ class AssembleeNationale(RemoteSource):
                 corps != amendement.corps,
                 expose != amendement.expose,
                 sort != amendement.sort,
+                tri_amendement != amendement.tri_amendement,
                 id_discussion_commune != amendement.id_discussion_commune,
                 id_identique != amendement.id_identique,
                 matricule != amendement.matricule,
@@ -356,6 +360,7 @@ class AssembleeNationale(RemoteSource):
                 parent_num_raw=parent_num_raw,
                 rectif=rectif,
                 position=position,
+                tri_amendement=tri_amendement,
                 id_discussion_commune=id_discussion_commune,
                 id_identique=id_identique,
                 matricule=matricule,
@@ -898,3 +903,7 @@ class ANAmendementData:
 
     def get_date_depot(self) -> Optional[date]:
         return parse_french_date(self.amend["dateDepot"])
+
+    def get_tri_amendement(self) -> str:
+        tri_amendement: str = self.amend["triAmendement"]
+        return tri_amendement

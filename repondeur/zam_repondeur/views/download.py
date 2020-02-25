@@ -1,6 +1,6 @@
 import os
 from tempfile import NamedTemporaryFile
-from typing import List, Set
+from typing import List, Tuple
 
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.request import Request
@@ -30,31 +30,32 @@ DOWNLOAD_FORMATS = {
     ),
 }
 
-
-AMDT_OPTIONS = [
-    joinedload("user_content"),
-    joinedload("location").options(
-        joinedload("user_table").joinedload("user").load_only("email", "name")
-    ),
-    joinedload("article").options(
-        load_only("lecture_pk", "mult", "num", "pos", "type"),
-        joinedload("user_content"),
-    ),
-]
+USER_CONTENT_OPTIONS = joinedload("user_content")
+LOCATION_OPTIONS = joinedload("location").options(
+    joinedload("user_table").joinedload("user").load_only("email", "name")
+)
+ARTICLE_OPTIONS = joinedload("article").options(
+    load_only("lecture_pk", "mult", "num", "pos", "type"), joinedload("user_content"),
+)
+DOSSIER_OPTIONS = joinedload("dossier").load_only("titre")
 
 EXPORT_OPTIONS = [
-    subqueryload("amendements").options(*AMDT_OPTIONS),
+    subqueryload("amendements").options(
+        USER_CONTENT_OPTIONS, LOCATION_OPTIONS, ARTICLE_OPTIONS,
+    ),
     subqueryload("articles").joinedload("user_content"),
 ]
 
 PDF_OPTIONS = [
-    joinedload("dossier").load_only("titre"),
+    DOSSIER_OPTIONS,
     subqueryload("articles").options(
-        joinedload("user_content"),
+        USER_CONTENT_OPTIONS,
         subqueryload("amendements").options(
             subqueryload("children"),
             joinedload("user_content").defer("comments"),
-            *AMDT_OPTIONS,
+            USER_CONTENT_OPTIONS,
+            LOCATION_OPTIONS,
+            ARTICLE_OPTIONS,
         ),
     ),
 ]
@@ -62,7 +63,6 @@ PDF_OPTIONS = [
 
 @view_config(context=LectureResource, name="download_amendements")
 def download_amendements(context: LectureResource, request: Request) -> Response:
-
     fmt: str = request.params.get("format", "")
     if fmt not in DOWNLOAD_FORMATS.keys():
         raise HTTPBadRequest(f'Invalid value "{fmt}" for "format" param')
@@ -93,97 +93,82 @@ def download_amendements(context: LectureResource, request: Request) -> Response
 
 @view_config(context=LectureResource, name="export_xlsx")
 def export_xlsx(context: LectureResource, request: Request) -> Response:
-    num_params = request.params.getall("n")
-    try:
-        nums: Set[int] = {int(num) for num in num_params}
-    except ValueError:
-        raise HTTPBadRequest()
-
-    article_param = request.params.get("article")
-    try:
-        article_type, article_num, article_mult, article_pos = article_param.split(".")
-    except ValueError:
-        raise HTTPBadRequest()
-
     lecture = context.model(noload("amendements"))
-    amendements = (
-        DBSession.query(Amendement)
-        .filter(
-            Article.pk == Amendement.article_pk,
-            Amendement.lecture == lecture,
-            Article.type == article_type,
-            Article.num == article_num,
-            Article.mult == article_mult,
-            Article.pos == article_pos,
-            Amendement.num.in_(nums),  # type: ignore
+    nums, article_param = parse_params(request, lecture=lecture)
+    if article_param == "all":
+        amendements = (
+            DBSession.query(Amendement)
+            .join(Article)
+            .filter(
+                Amendement.lecture == lecture, Amendement.num.in_(nums),  # type: ignore
+            )
+            .options(USER_CONTENT_OPTIONS, LOCATION_OPTIONS)
         )
-        .options(
-            joinedload("user_content"),
-            joinedload("location").options(
-                joinedload("user_table").joinedload("user").load_only("email", "name")
-            ),
+    else:
+        article_type, article_num, article_mult, article_pos = article_param.split(".")
+        amendements = (
+            DBSession.query(Amendement)
+            .filter(
+                Article.pk == Amendement.article_pk,
+                Amendement.lecture == lecture,
+                Article.type == article_type,
+                Article.num == article_num,
+                Article.mult == article_mult,
+                Article.pos == article_pos,
+                Amendement.num.in_(nums),  # type: ignore
+            )
+            .options(USER_CONTENT_OPTIONS, LOCATION_OPTIONS)
         )
-    )
+
     expanded_amendements = list(Batch.expanded_batches(amendements))
 
     with NamedTemporaryFile() as file_:
         tmp_file_path = os.path.abspath(file_.name)
         write_xlsx(lecture, tmp_file_path, request, amendements=expanded_amendements)
-        response = FileResponse(tmp_file_path)
-
-        fmt = "xlsx"
-        attach_name = generate_attach_name(
+        return write_response(
+            tmp_file_path=tmp_file_path,
+            fmt="xlsx",
             lecture=lecture,
-            article=expanded_amendements[0].article,
+            article_param=article_param,
             amendements=expanded_amendements,
-            extension=fmt,
         )
-        response.content_type = DOWNLOAD_FORMATS[fmt][1]
-        response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
-        return response
 
 
 @view_config(context=LectureResource, name="export_pdf")
 def export_pdf(context: LectureResource, request: Request) -> Response:
-    params = request.params.getall("n")
-    try:
-        nums: List[int] = [int(num) for num in params]
-    except ValueError:
-        raise HTTPBadRequest()
-
-    article_param = request.params.get("article")
-    try:
-        article_type, article_num, article_mult, article_pos = article_param.split(".")
-    except ValueError:
-        raise HTTPBadRequest()
-
     lecture = context.model(
         noload("amendements"),
-        joinedload("dossier").load_only("titre"),
+        DOSSIER_OPTIONS,
         subqueryload("articles").options(joinedload("user_content")),
     )
-    article_amendements = (
-        DBSession.query(Amendement)
-        .filter(
-            Article.pk == Amendement.article_pk,
-            Amendement.lecture == lecture,
-            Article.type == article_type,
-            Article.num == article_num,
-            Article.mult == article_mult,
-            Article.pos == article_pos,
+    nums, article_param = parse_params(request, lecture=lecture)
+    if article_param == "all":
+        # TODO: deal with that special case!
+        article_amendements = (
+            DBSession.query(Amendement)
+            .join(Article)
+            .filter(Amendement.lecture == lecture,)
+            .options(USER_CONTENT_OPTIONS, LOCATION_OPTIONS)
         )
-        .options(
-            joinedload("user_content"),
-            joinedload("location").options(
-                joinedload("user_table").joinedload("user").load_only("email", "name")
-            ),
+    else:
+        article_type, article_num, article_mult, article_pos = article_param.split(".")
+        article_amendements = (
+            DBSession.query(Amendement)
+            .filter(
+                Article.pk == Amendement.article_pk,
+                Amendement.lecture == lecture,
+                Article.type == article_type,
+                Article.num == article_num,
+                Article.mult == article_mult,
+                Article.pos == article_pos,
+            )
+            .options(USER_CONTENT_OPTIONS, LOCATION_OPTIONS,)
         )
-    )
+
     amendements = [
         amendement for amendement in article_amendements if amendement.num in nums
     ]
     expanded_amendements = list(Batch.expanded_batches(amendements))
-    article = amendements[0].article
 
     with NamedTemporaryFile() as file_:
         tmp_file_path = os.path.abspath(file_.name)
@@ -194,32 +179,65 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
             filename=tmp_file_path,
             request=request,
         )
-
-        fmt = "pdf"
-        response = FileResponse(tmp_file_path)
-        attach_name = generate_attach_name(
+        return write_response(
+            tmp_file_path=tmp_file_path,
+            fmt="pdf",
             lecture=lecture,
-            article=article,
+            article_param=article_param,
             amendements=expanded_amendements,
-            extension=fmt,
         )
-        response.content_type = DOWNLOAD_FORMATS[fmt][1]
-        response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
-        return response
+
+
+def parse_params(request: Request, lecture: Lecture) -> Tuple[List[int], str]:
+    params = request.params.getall("n")
+    try:
+        nums: List[int] = [int(num) for num in params]
+    except ValueError:
+        raise HTTPBadRequest()
+
+    total_count_amendements = lecture.nb_amendements
+    limit_to_display_all_amendements_on_index = int(
+        request.registry.settings.get(
+            "zam.limits.to_display_all_amendements_on_index", 1000
+        )
+    )
+    is_off_limit = total_count_amendements > limit_to_display_all_amendements_on_index
+    default_param = "article.1.." if is_off_limit else "all"
+    article_param = request.params.get("article", default_param)
+    return nums, article_param
+
+
+def write_response(
+    tmp_file_path: str,
+    fmt: str,
+    lecture: Lecture,
+    article_param: str,
+    amendements: List[Amendement],
+) -> FileResponse:
+    response = FileResponse(tmp_file_path)
+    attach_name = generate_attach_name(
+        lecture=lecture,
+        article_param=article_param,
+        amendements=amendements,
+        extension=fmt,
+    )
+    response.content_type = DOWNLOAD_FORMATS[fmt][1]
+    response.headers["Content-Disposition"] = f"attachment; filename={attach_name}"
+    return response
 
 
 def generate_attach_name(
-    lecture: Lecture, article: Article, amendements: List[Amendement], extension: str
+    lecture: Lecture, article_param: str, amendements: List[Amendement], extension: str
 ) -> str:
-    article_name = f"{article.url_key.replace('.', '')}-"
+    article_name = f"{article_param.replace('.', '')}-"
     nums = sorted(amdt.num for amdt in amendements)
     nb_amendements = len(nums)
     if nb_amendements > 10:
-        amendements_name = f"{nb_amendements}amendements-{nums[0]}etc-"
+        amendements_name = f"{nb_amendements}amendements-{nums[0]}etc"
     else:
         amendements_name = (
             f"amendement{'s' if nb_amendements > 1 else ''}-"
-            f"{'_'.join(str(num) for num in nums)}-"
+            f"{'_'.join(str(num) for num in nums)}"
         )
-    lecture_name = f"{lecture.chambre}-{lecture.texte.numero}-{lecture.organe}"
-    return f"{article_name}{amendements_name}{lecture_name}.{extension}"
+    lecture_name = f"{lecture.chambre}-{lecture.texte.numero}-{lecture.organe}-"
+    return f"{lecture_name}{article_name}{amendements_name}.{extension}"

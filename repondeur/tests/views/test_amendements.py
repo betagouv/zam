@@ -141,6 +141,35 @@ def test_get_amendements_columns_default(
         for node in resp.parser.css("thead tr.filters th")
         if node.text().strip().split()
     ] == [
+        ["Tous", "Art.", "1"],
+        ["Nº", "Gouv."],
+        ["Table/boîte", "Vide"],
+        ["Avis", "Vide"],
+        ["Réponse"],
+    ]
+    options = resp.parser.css("thead tr.filters th select option")
+    assert "selected" in options[0].attributes
+
+
+def test_get_amendements_columns_off_limit(
+    app, settings, article1_an, lecture_an, lecture_an_url, amendements_an, user_david
+):
+    from zam_repondeur.models import Amendement
+
+    nb_amendements = int(settings["zam.limits.to_display_all_amendements_on_index"])
+
+    with transaction.manager:
+        for i in range(nb_amendements):
+            Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)
+
+    resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
+
+    assert resp.status_code == 200
+    assert [
+        node.text().strip().split()
+        for node in resp.parser.css("thead tr.filters th")
+        if node.text().strip().split()
+    ] == [
         ["Art.", "1"],
         ["Nº", "Gouv."],
         ["Table/boîte", "Vide"],
@@ -172,7 +201,7 @@ def test_get_amendements_columns_not_default_article(
         for node in resp.parser.css("thead tr.filters th")
         if node.text().strip().split()
     ] == [
-        ["Art.", "1", "Art.", "7", "bis"],
+        ["Tous", "Art.", "1", "Art.", "7", "bis"],
         ["Nº", "Gouv."],
         ["Table/boîte", "Vide"],
         ["Avis", "Vide"],
@@ -180,7 +209,8 @@ def test_get_amendements_columns_not_default_article(
     ]
     options = resp.parser.css("thead tr.filters th select option")
     assert "selected" not in options[0].attributes
-    assert "selected" in options[1].attributes
+    assert "selected" not in options[1].attributes
+    assert "selected" in options[2].attributes
 
 
 def test_get_amendements_columns_missions_for_plf2(
@@ -197,7 +227,7 @@ def test_get_amendements_columns_missions_for_plf2(
         for node in resp.parser.css("thead tr.filters th")
         if node.text().strip().split()
     ] == [
-        ["Art.", "1"],
+        ["Tous", "Art.", "1"],
         ["Mission"],
         ["Nº", "Gouv."],
         ["Table/boîte", "Vide"],

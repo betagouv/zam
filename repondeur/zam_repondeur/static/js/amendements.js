@@ -265,15 +265,22 @@ application.register(
     updateCount() {
       const initialTotal = parseInt(this.data.get('initial-total-count'))
       const initialArticle = parseInt(this.data.get('initial-article-count'))
+      const isOffLimit = this.data.get('is-off-limit') === 'true'
       const visibleRows = this.tbodyTarget.querySelectorAll(
         'tr:not([class^=hidden]):not([class=limit-derouleur])'
       )
-      const initialCountString = `
-      ${initialArticle.toLocaleString('fr')} amendement${
+      let initialCountString = `
+        ${initialArticle.toLocaleString('fr')} amendement${
         initialArticle > 1 ? 's' : ''
-      } pour cet article •
-      ${initialTotal.toLocaleString('fr')} amendement${initialTotal > 1 ? 's' : ''} au total
-    `
+      }`
+      if (isOffLimit) {
+        initialCountString = `
+        ${initialCountString} pour cet article •
+        ${initialTotal.toLocaleString('fr')} amendement${
+          initialTotal > 1 ? 's' : ''
+        } au total
+      `
+      }
       if (!visibleRows.length) {
         this.countTarget.innerHTML = `Aucun amendement affiché • ${initialCountString}`
         return
@@ -289,7 +296,9 @@ application.register(
       else {
         const plural = current > 1 ? 's' : ''
         this.countTarget.innerHTML = `
-        ${current.toLocaleString('fr')} amendement${plural} affiché${plural} • ${initialCountString}
+        ${current.toLocaleString(
+          'fr'
+        )} amendement${plural} affiché${plural} • ${initialCountString}
       `
       }
     }

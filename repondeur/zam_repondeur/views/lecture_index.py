@@ -7,77 +7,95 @@ from sqlalchemy.orm import joinedload, load_only, subqueryload
 from zam_repondeur.models import Amendement, AmendementList, Article, Batch, DBSession
 from zam_repondeur.resources import AmendementCollection
 
+AMDTS_OPTIONS = [
+    load_only(
+        "article_pk",
+        "auteur",
+        "id_identique",
+        "lecture_pk",
+        "mission_titre",
+        "mission_titre_court",
+        "num",
+        "parent_pk",
+        "position",
+        "rectif",
+        "sort",
+    ),
+    joinedload("user_content").load_only(
+        "avis", "has_reponse", "objet", "reponse_hash"
+    ),
+    joinedload("location").options(
+        subqueryload("batch")
+        .joinedload("amendements_locations")
+        .joinedload("amendement")
+        .load_only("num", "rectif"),
+        subqueryload("shared_table").load_only("titre"),
+        subqueryload("user_table").joinedload("user").load_only("email", "name"),
+    ),
+    (
+        subqueryload("identiques")
+        .load_only("num")
+        .joinedload("user_content")
+        .load_only("reponse_hash")
+    ),
+]
+
 
 @view_config(context=AmendementCollection, renderer="lecture_index.html")
 def lecture_index(context: AmendementCollection, request: Request) -> dict:
     """
-    The index lists all amendements in a lecture
+    The index lists all amendements for small lectures, only by article for big ones.
     """
     lecture_resource = context.parent
-    article_param = request.params.get("article", "article.1..")
-    article_type, article_num, article_mult, article_pos = article_param.split(".")
     lecture = lecture_resource.model(subqueryload("articles").defer("content"))
-    amendements = (
-        DBSession.query(Amendement)
-        .join(Article)
-        .filter(
-            Article.pk == Amendement.article_pk,
-            Amendement.lecture == lecture,
-            Article.type == article_type,
-            Article.num == article_num,
-            Article.mult == article_mult,
-            Article.pos == article_pos,
-        )
-        .options(
-            load_only(
-                "article_pk",
-                "auteur",
-                "id_identique",
-                "lecture_pk",
-                "mission_titre",
-                "mission_titre_court",
-                "num",
-                "parent_pk",
-                "position",
-                "rectif",
-                "sort",
-            ),
-            joinedload("user_content").load_only(
-                "avis", "has_reponse", "objet", "reponse_hash"
-            ),
-            joinedload("location").options(
-                subqueryload("batch")
-                .joinedload("amendements_locations")
-                .joinedload("amendement")
-                .load_only("num", "rectif"),
-                subqueryload("shared_table").load_only("titre"),
-                subqueryload("user_table")
-                .joinedload("user")
-                .load_only("email", "name"),
-            ),
-            (
-                subqueryload("identiques")
-                .load_only("num")
-                .joinedload("user_content")
-                .load_only("reponse_hash")
-            ),
+    total_count_amendements = lecture.nb_amendements
+    limit_to_display_all_amendements_on_index = int(
+        request.registry.settings.get(
+            "zam.limits.to_display_all_amendements_on_index", 1000
         )
     )
+    is_off_limit = total_count_amendements > limit_to_display_all_amendements_on_index
+    default_param = "article.1.." if is_off_limit else "all"
+    article_param = request.params.get("article", default_param)
+    if article_param == "all":
+        amendements = (
+            DBSession.query(Amendement)
+            .join(Article)
+            .filter(Amendement.lecture == lecture,)
+            .options(*AMDTS_OPTIONS)
+        )
+    else:
+        article_type, article_num, article_mult, article_pos = article_param.split(".")
+        amendements = (
+            DBSession.query(Amendement)
+            .join(Article)
+            .filter(
+                Article.pk == Amendement.article_pk,
+                Amendement.lecture == lecture,
+                Article.type == article_type,
+                Article.num == article_num,
+                Article.mult == article_mult,
+                Article.pos == article_pos,
+            )
+            .options(*AMDTS_OPTIONS)
+        )
+
     amendements = AmendementList(amendements, sort_key=get_sort_key(request))
-    total_count_amendements = lecture.nb_amendements
+    article_count_amendements = len(amendements)
     return {
         "lecture": lecture,
         "dossier_resource": lecture_resource.dossier_resource,
         "lecture_resource": lecture_resource,
         "current_tab": "index",
         "total_count_amendements": total_count_amendements,
-        "article_count_amendements": len(amendements),
+        "article_count_amendements": article_count_amendements,
         "amendements": amendements,
         "collapsed_amendements": Batch.collapsed_batches(amendements),
         "articles": lecture.articles,
         "article_param": article_param,
         "progress_url": request.resource_url(lecture_resource, "progress_status"),
         "progress_interval": request.registry.settings["zam.progress.lecture_refresh"],
+        "is_off_limit": is_off_limit,
     }
 
 

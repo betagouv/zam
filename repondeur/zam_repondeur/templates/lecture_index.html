@@ -51,12 +51,17 @@
 <div class="content"
     data-controller="amendements-filters"
     data-amendements-filters-initial-total-count="{{ total_count_amendements }}"
-    data-amendements-filters-initial-article-count="{{ article_count_amendements }}">
+    data-amendements-filters-initial-article-count="{{ article_count_amendements }}"
+    data-amendements-filters-is-off-limit="{{ 'true' if is_off_limit else 'false' }}">
     <div class="options">
         <a href="">{# Keep the empty link for consistency with flexbox and user table. #}</a>
         <span data-target="amendements-filters.count">
-            {{ article_count_amendements|number }} amendements pour cet article •
-            {{ total_count_amendements|number }} amendements au total
+            {% if is_off_limit %}
+                {{ article_count_amendements|number }} amendements pour cet article •
+                {{ total_count_amendements|number }} amendements au total
+            {% else %}
+                {{ total_count_amendements|number }} amendements
+            {% endif %}
         </span>
     </div>
 
@@ -95,6 +100,9 @@
                     <select
                         data-action="amendements-filters#filterArticle"
                         data-target="amendements-filters.articleSelect">
+                    {% if not is_off_limit %}
+                        <option value="all" {% if article_param == "all" %}selected{% endif %}>Tous</option>
+                    {% endif %}
                     {% for article in articles|sort %}
                         <option value="{{ article.url_key }}" {% if article.url_key == article_param %}selected{% endif %}>{{ article }}</option>
                     {% endfor %}

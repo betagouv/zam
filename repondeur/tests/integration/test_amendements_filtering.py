@@ -28,7 +28,33 @@ def test_number_of_amendements_is_displayed(
     counter = driver.find_element_by_css_selector(
         'span[data-target="amendements-filters.count"]'
     )
-    assert counter.text == "2 amendements pour cet article • 2 amendements au total"
+    assert counter.text == "2 amendements"
+
+
+def test_number_of_amendements_is_displayed_off_limit(
+    wsgi_server,
+    driver,
+    settings,
+    article1_an,
+    lecture_an,
+    lecture_an_url,
+    amendements_an,
+):
+    from zam_repondeur.models import Amendement
+
+    nb_amendements = int(settings["zam.limits.to_display_all_amendements_on_index"])
+
+    with transaction.manager:
+        for i in range(nb_amendements):
+            Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)
+
+    driver.get(f"{lecture_an_url}/amendements/")
+    trs = driver.find_elements_by_css_selector("tbody tr")
+    assert len(trs) == 7
+    counter = driver.find_element_by_css_selector(
+        'span[data-target="amendements-filters.count"]'
+    )
+    assert counter.text == "7 amendements pour cet article • 7 amendements au total"
 
 
 def test_number_of_amendements_is_displayed_with_limit_derouleur(
@@ -48,7 +74,7 @@ def test_number_of_amendements_is_displayed_with_limit_derouleur(
     counter = driver.find_element_by_css_selector(
         'span[data-target="amendements-filters.count"]'
     )
-    assert counter.text == "2 amendements pour cet article • 2 amendements au total"
+    assert counter.text == "2 amendements"
 
 
 @pytest.mark.parametrize(

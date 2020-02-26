@@ -143,7 +143,6 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
     )
     nums, article_param = parse_params(request, lecture=lecture)
     if article_param == "all":
-        # TODO: deal with that special case!
         article_amendements = (
             DBSession.query(Amendement)
             .join(Article)

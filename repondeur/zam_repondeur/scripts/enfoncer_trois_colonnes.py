@@ -1,14 +1,21 @@
 """
 Experiment: enfoncer un tableau 3 colonnes dans Zam
+
+Usage:
+
+    visam_trois_colonnes development.ini --input ~/path/to.csv
 """
+import csv
 import logging
 import sys
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser, FileType, Namespace
+from collections import defaultdict
 from datetime import date
-from typing import List
+from typing import Dict, List, TextIO, Tuple
 
 import transaction
-from pyramid.paster import bootstrap, setup_logging
+from pyramid.paster import bootstrap
+from pyramid.paster import setup_logging as _setup_logging
 
 from zam_repondeur.models import (
     Amendement,
@@ -21,45 +28,62 @@ from zam_repondeur.models import (
     TypeTexte,
     get_one_or_create,
 )
+from zam_repondeur.services.import_export.csv import guess_csv_delimiter
+from zam_repondeur.slugs import slugify
 
 logger = logging.getLogger(__name__)
 
 
 def main(argv: List[str] = sys.argv) -> None:
-
     args = parse_args(argv[1:])
+    setup_logging(args)
 
-    setup_logging(args.config_uri)
+    dossier, articles = compile_data(args.input)
+    create_data(args.config_uri, dossier, articles)
 
-    log_level = logging.WARNING
-    if args.verbose:
-        log_level = logging.INFO
-    if args.debug:
-        log_level = logging.DEBUG
-    logging.getLogger().setLevel(log_level)
-    logging.getLogger("urllib3.connectionpool").setLevel(log_level)
 
-    with bootstrap(args.config_uri, options={"app": "zam_fake"}):
+def compile_data(input_file: TextIO) -> Tuple[dict, dict]:
+    delimiter = guess_csv_delimiter(input_file)
+    dossier = {}
+    articles: Dict[str, list] = defaultdict(list)
+    for i, line in enumerate(
+        csv.DictReader(
+            input_file,
+            fieldnames=["numero", "texte", "amendements", "position"],
+            delimiter=delimiter,
+        )
+    ):
+        if i == 0:
+            dossier["titre"] = line["texte"]
+        numero = line["numero"]
+        if numero in ("", "N° Article"):
+            # TODO: deal with amendements applied to the whole text.
+            continue
+
+        texte = line["texte"].strip()
+        if texte:
+            articles[numero].append(texte)
+
+    return dossier, articles
+
+
+def create_data(config_uri: str, dossier: dict, articles: dict) -> None:
+    with bootstrap(config_uri, options={"app": "visam_trois_colonnes"}):
         with transaction.manager:
             texte = create_texte()
             print(texte)
-            dossier = create_dossier()
+            dossier = create_dossier(titre=dossier["titre"])
             print(dossier)
             lecture = create_lecture(dossier=dossier, texte=texte)
             print(lecture)
-            article = create_article(lecture=lecture)
+            for numero, alineas in articles.items():
+                article = create_article(
+                    lecture=lecture, numero=numero, alineas=alineas
+                )
             print(article)
-            amendement = create_amendement(lecture=lecture, article=article)
-            print(amendement)
+            # amendement = create_amendement(lecture=lecture, article=article)
+            # print(amendement)
             # create_reponses(lecture)
-
-
-def parse_args(argv: List[str]) -> Namespace:
-    parser = ArgumentParser()
-    parser.add_argument("config_uri")
-    parser.add_argument("-v", "--verbose", action="store_true")
-    parser.add_argument("-d", "--debug", action="store_true")
-    return parser.parse_args(argv)
 
 
 def create_texte() -> Texte:
@@ -74,12 +98,9 @@ def create_texte() -> Texte:
     return texte
 
 
-def create_dossier() -> Dossier:
+def create_dossier(titre: str) -> Dossier:
     dossier, _ = get_one_or_create(
-        Dossier,
-        titre="Projet de décret relatif au contrat de projet dans la fonction publique",
-        slug="projet-de-decret-relatif-au-contrat-de-projet-dans-la-fonction-publique",
-        an_id="dummy",
+        Dossier, titre=titre, slug=slugify(titre), an_id="dummy",
     )
     return dossier
 
@@ -96,8 +117,13 @@ def create_lecture(texte: Texte, dossier: Dossier) -> Lecture:
     return lecture
 
 
-def create_article(lecture: Lecture) -> Article:
-    article, _ = get_one_or_create(Article, type="article", num="1", lecture=lecture)
+def create_article(lecture: Lecture, numero: str, alineas: list) -> Article:
+    if alineas[0].startswith("Article "):
+        alineas.pop(0)
+    content = {str(i).zfill(3): alinea for i, alinea in enumerate(alineas, start=1)}
+    article, _ = get_one_or_create(
+        Article, type="article", num=numero, lecture=lecture, content=content
+    )
     return article
 
 
@@ -113,3 +139,24 @@ def create_amendement(lecture: Lecture, article: Article) -> Amendement:
         },
     )
     return amendement
+
+
+def parse_args(argv: List[str]) -> Namespace:
+    parser = ArgumentParser()
+    parser.add_argument("config_uri")
+    parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("-d", "--debug", action="store_true")
+    parser.add_argument("-i", "--input", type=FileType("r"))
+    return parser.parse_args(argv)
+
+
+def setup_logging(args: Namespace) -> None:
+    _setup_logging(args.config_uri)
+
+    log_level = logging.WARNING
+    if args.verbose:
+        log_level = logging.INFO
+    if args.debug:
+        log_level = logging.DEBUG
+    logging.getLogger().setLevel(log_level)
+    logging.getLogger("urllib3.connectionpool").setLevel(log_level)

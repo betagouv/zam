@@ -102,7 +102,7 @@ def test_group_actions_button_urls_change_with_selection(
     assert not find(".groupActions").is_displayed()
 
 
-def test_group_actions_button_urls_change_with_selection_off_limit(
+def test_group_actions_button_urls_change_with_selection_too_many_amendements(
     wsgi_server,
     settings,
     driver,

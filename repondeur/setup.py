@@ -56,6 +56,7 @@ setup(
             "zam_queue = zam_repondeur.scripts.queue:main",
             "zam_update_dossiers = zam_repondeur.scripts.update_dossiers:main",
             "zam_fake = zam_repondeur.scripts.fake:main",
+            "visam_trois_colonnes = zam_repondeur.scripts.enfoncer_trois_colonnes:main",
         ],
     },
 )

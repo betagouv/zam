@@ -42,7 +42,7 @@ def test_number_of_amendements_is_displayed_off_limit(
 ):
     from zam_repondeur.models import Amendement
 
-    nb_amendements = int(settings["zam.limits.to_display_all_amendements_on_index"])
+    nb_amendements = int(settings["zam.limits.max_amendements_for_full_index"])
 
     with transaction.manager:
         for i in range(nb_amendements):

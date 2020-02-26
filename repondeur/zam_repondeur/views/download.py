@@ -94,13 +94,14 @@ def download_amendements(context: LectureResource, request: Request) -> Response
 @view_config(context=LectureResource, name="export_xlsx")
 def export_xlsx(context: LectureResource, request: Request) -> Response:
     lecture = context.model(noload("amendements"))
-    nums, article_param = parse_params(request, lecture=lecture)
+    nums_params, article_param = parse_params(request, lecture=lecture)
     if article_param == "all":
         amendements = (
             DBSession.query(Amendement)
             .join(Article)
             .filter(
-                Amendement.lecture == lecture, Amendement.num.in_(nums),  # type: ignore
+                Amendement.lecture == lecture,
+                Amendement.num.in_(nums_params),  # type: ignore
             )
             .options(USER_CONTENT_OPTIONS, LOCATION_OPTIONS)
         )
@@ -115,7 +116,7 @@ def export_xlsx(context: LectureResource, request: Request) -> Response:
                 Article.num == article_num,
                 Article.mult == article_mult,
                 Article.pos == article_pos,
-                Amendement.num.in_(nums),  # type: ignore
+                Amendement.num.in_(nums_params),  # type: ignore
             )
             .options(USER_CONTENT_OPTIONS, LOCATION_OPTIONS)
         )
@@ -141,7 +142,7 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
         DOSSIER_OPTIONS,
         subqueryload("articles").options(joinedload("user_content")),
     )
-    nums, article_param = parse_params(request, lecture=lecture)
+    nums_params, article_param = parse_params(request, lecture=lecture)
     if article_param == "all":
         article_amendements = (
             DBSession.query(Amendement)
@@ -165,7 +166,9 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
         )
 
     amendements = [
-        amendement for amendement in article_amendements if amendement.num in nums
+        amendement
+        for amendement in article_amendements
+        if amendement.num in nums_params
     ]
     expanded_amendements = list(Batch.expanded_batches(amendements))
 
@@ -187,13 +190,8 @@ def export_pdf(context: LectureResource, request: Request) -> Response:
         )
 
 
-def parse_params(request: Request, lecture: Lecture) -> Tuple[List[int], str]:
-    params = request.params.getall("n")
-    try:
-        nums: List[int] = [int(num) for num in params]
-    except ValueError:
-        raise HTTPBadRequest()
-
+def parse_params(request: Request, lecture: Lecture) -> Tuple[List[str], str]:
+    nums_params = request.params.getall("n")
     total_count_amendements = lecture.nb_amendements
     max_amendements_for_full_index = int(
         request.registry.settings.get("zam.limits.max_amendements_for_full_index", 1000)
@@ -201,7 +199,7 @@ def parse_params(request: Request, lecture: Lecture) -> Tuple[List[int], str]:
     too_many_amendements = total_count_amendements > max_amendements_for_full_index
     default_param = "article.1.." if too_many_amendements else "all"
     article_param = request.params.get("article", default_param)
-    return nums, article_param
+    return nums_params, article_param
 
 
 def write_response(

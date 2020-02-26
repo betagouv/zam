@@ -7,12 +7,8 @@ from webob.multidict import MultiDict
 from zam_repondeur.models import AVIS
 
 
-def normalize_num(num: str) -> int:
-    try:
-        num_int = int(num)
-    except ValueError:
-        num_int = int(num.split("\n")[0].strip(","))
-    return num_int
+def normalize_num(num: str) -> str:
+    return num.split("\n", 1)[0].strip(",")
 
 
 def normalize_avis(avis: str) -> str:

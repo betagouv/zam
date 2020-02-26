@@ -66,7 +66,7 @@ def test_position_changed(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
+    assert [amdt.num for amdt in lecture_an.amendements] == ["177", "270"]
     assert [amdt.position for amdt in lecture_an.amendements] == [1, 2]
 
     with setup_mock_responses(
@@ -105,7 +105,7 @@ def test_position_changed(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
+    assert [amdt.num for amdt in lecture_an.amendements] == ["177", "270"]
     assert [amdt.position for amdt in lecture_an.amendements] == [2, 1]
 
 
@@ -155,7 +155,7 @@ def test_abandoned_before_seance(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
+    assert [amdt.num for amdt in lecture_an.amendements] == ["177", "270"]
     assert [amdt.position for amdt in lecture_an.amendements] == [1, 2]
 
     with setup_mock_responses(
@@ -186,7 +186,7 @@ def test_abandoned_before_seance(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    assert [amdt.num for amdt in lecture_an.amendements] == [177, 270]
+    assert [amdt.num for amdt in lecture_an.amendements] == ["177", "270"]
     assert [amdt.position for amdt in lecture_an.amendements] == [None, 1]
 
 
@@ -236,7 +236,7 @@ def test_article_changed(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "177").one()
     assert str(amendement.article) == "Art. 3"
 
     # Fetch updates
@@ -302,7 +302,7 @@ def test_article_changed(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "177").one()
     assert str(amendement.article) == "Art. 4"
 
 
@@ -352,7 +352,7 @@ def test_add_parent_amendement(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "270").one()
     assert amendement.parent is None
 
     # Fetch updates
@@ -398,9 +398,9 @@ def test_add_parent_amendement(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "270").one()
     assert amendement.parent is not None
-    assert amendement.parent.num == 177
+    assert amendement.parent.num == "177"
 
 
 @responses.activate
@@ -455,9 +455,9 @@ def test_remove_parent_amendement(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "270").one()
     assert amendement.parent is not None
-    assert amendement.parent.num == 177
+    assert amendement.parent.num == "177"
 
     # Fetch updates
     with setup_mock_responses(
@@ -496,7 +496,7 @@ def test_remove_parent_amendement(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 270).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "270").one()
     assert amendement.parent is None
 
 
@@ -544,7 +544,7 @@ def test_rectif(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "177").one()
     assert amendement.rectif == 0
 
     # Fetch updates
@@ -590,7 +590,7 @@ def test_rectif(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "177").one()
     assert amendement.rectif == 2
 
     event = next(e for e in amendement.events if isinstance(e, AmendementRectifie))
@@ -642,7 +642,7 @@ def test_rectif_with_nil(lecture_an, source_an):
     ):
         source_an.fetch(lecture=lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "177").one()
     assert amendement.rectif == 0
 
     # Fetch updates
@@ -693,7 +693,7 @@ def test_rectif_with_nil(lecture_an, source_an):
 
     assert result.errored == set()
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 177).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "177").one()
     assert amendement.rectif == 0
 
     with pytest.raises(StopIteration):

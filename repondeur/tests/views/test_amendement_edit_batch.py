@@ -98,8 +98,8 @@ def test_transfer_amendement_from_edit_form(
     user_david = DBSession.query(User).filter(User.email == user_david.email).first()
     table = user_david.table_for(lecture_an)
     assert len(table.amendements) == 2
-    assert table.amendements[0].num == 666
-    assert table.amendements[1].num == 999
+    assert table.amendements[0].num == "666"
+    assert table.amendements[1].num == "999"
 
     # An event was added to the amendement
     assert len(amdt.events) == 1
@@ -173,7 +173,7 @@ def test_post_amendement_edit_form_save_batch(
         DBSession.add(user_david_table_an)
         user_david_table_an.add_amendement(amendement)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.user_content.avis is None
     assert amendement.user_content.objet is None
     assert amendement.user_content.reponse is None
@@ -195,7 +195,7 @@ def test_post_amendement_edit_form_save_batch(
         "#amdt-666"
     )
 
-    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == 666).one()
+    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == "666").one()
     assert amendement_666.user_content.avis == "Favorable"
     assert amendement_666.user_content.objet == "Un objet très pertinent"
     assert (
@@ -209,7 +209,7 @@ def test_post_amendement_edit_form_save_batch(
     # Should create events.
     assert len(amendement_666.events) == 4
 
-    amendement_999 = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement_999 = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement_999.user_content.avis == "Favorable"
     assert amendement_999.user_content.objet == "Un objet très pertinent"
     assert (
@@ -248,9 +248,9 @@ def test_post_amendement_edit_form_reset_editing_state(
     form["comments"] = "Avec des <table><tr><td>commentaires</td></tr></table>"
     resp = form.submit("save")
 
-    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == 666).one()
+    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == "666").one()
     assert not amendement_666.is_being_edited
-    amendement_999 = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement_999 = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert not amendement_999.is_being_edited
 
 
@@ -295,7 +295,7 @@ def test_post_amendement_edit_form_switch_table(
     assert "Les modifications n’ont PAS été enregistrées" in resp.text
     assert "Il est actuellement sur la table de Ronan" in resp.text
 
-    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == 666).one()
+    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == "666").one()
     assert amendement_666.user_content.avis is None
     assert amendement_666.user_content.objet is None
     assert amendement_666.user_content.reponse is None
@@ -303,7 +303,7 @@ def test_post_amendement_edit_form_switch_table(
     # Should NOT create events.
     assert len(amendement_666.events) == 0
 
-    amendement_999 = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement_999 = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement_999.user_content.avis is None
     assert amendement_999.user_content.objet is None
     assert amendement_999.user_content.reponse is None
@@ -322,7 +322,7 @@ def test_post_amendement_edit_form_and_transfer(
         DBSession.add(user_david_table_an)
         user_david_table_an.add_amendement(amendement)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.user_content.avis is None
     assert amendement.user_content.objet is None
     assert amendement.user_content.reponse is None
@@ -349,7 +349,7 @@ def test_post_amendement_edit_form_and_transfer(
         "%2F%23amdt-666"
     )
 
-    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == 666).one()
+    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == "666").one()
     assert amendement_666.user_content.avis == "Favorable"
     assert amendement_666.user_content.objet == "Un objet très pertinent"
     assert (
@@ -363,7 +363,7 @@ def test_post_amendement_edit_form_and_transfer(
     # Should create events.
     assert len(amendement_666.events) == 4
 
-    amendement_999 = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement_999 = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement_999.user_content.avis == "Favorable"
     assert amendement_999.user_content.objet == "Un objet très pertinent"
     assert (

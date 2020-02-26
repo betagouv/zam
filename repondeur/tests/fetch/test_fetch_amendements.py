@@ -154,12 +154,12 @@ def test_fetch_amendements_senat(
 
         result = source_senat.fetch(lecture_senat)
 
-    assert result.fetched == {6666, 7777, 9999}
-    assert result.created == {7777}
+    assert result.fetched == {"6666", "7777", "9999"}
+    assert result.created == {"7777"}
     assert result.errored == set()
 
     # Check that the response was preserved on the updated amendement
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 9999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "9999").one()
     assert amendement.user_content.avis == "Favorable"
     assert amendement.user_content.objet == "Objet"
     assert amendement.user_content.reponse == "Réponse"
@@ -168,7 +168,7 @@ def test_fetch_amendements_senat(
     assert amendement.position == 3
 
     # Check that the position is set for the new amendement
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 7777).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "7777").one()
     assert amendement.position == 2
 
 
@@ -176,12 +176,12 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
-    Amendement.create(lecture=lecture_an, article=article1_an, num=6, position=1)
+    Amendement.create(lecture=lecture_an, article=article1_an, num="6", position=1)
 
     amendement_9 = Amendement.create(
         lecture=lecture_an,
         article=article1_an,
-        num=9,
+        num="9",
         position=2,
         avis="Favorable",
         objet="Objet",
@@ -267,11 +267,11 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
 
         result = source_an.fetch(lecture_an)
 
-    assert result.fetched == {6, 7, 9}
-    assert result.created == {7}
+    assert result.fetched == {"6", "7", "9"}
+    assert result.created == {"7"}
     assert result.errored == set()
 
-    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
+    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == "9").one()
     # Check that the response was preserved on the updated amendement
     assert amendement_9.user_content.avis == "Favorable"
     assert amendement_9.user_content.objet == "Objet"
@@ -286,7 +286,7 @@ def test_fetch_amendements_an(app, source_an, lecture_an, article1_an):
     assert amendement_9.position == 3
 
     # Check that the position was set for the new amendement
-    amendement_7 = DBSession.query(Amendement).filter(Amendement.num == 7).one()
+    amendement_7 = DBSession.query(Amendement).filter(Amendement.num == "7").one()
     assert amendement_7.position == 2
 
 
@@ -294,12 +294,12 @@ def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
-    Amendement.create(lecture=lecture_an, article=article1_an, num=6, position=1)
+    Amendement.create(lecture=lecture_an, article=article1_an, num="6", position=1)
 
     amendement_9 = Amendement.create(
         lecture=lecture_an,
         article=article1_an,
-        num=9,
+        num="9",
         position=2,
         avis="Favorable",
         objet="Objet",
@@ -386,11 +386,11 @@ def test_fetch_amendements_an_with_mission(app, source_an, lecture_an, article1_
 
         result = source_an.fetch(lecture_an)
 
-    assert result.fetched == {6, 7, 9}
-    assert result.created == {7}
+    assert result.fetched == {"6", "7", "9"}
+    assert result.created == {"7"}
     assert result.errored == set()
 
-    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
+    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == "9").one()
     # Check that the mission is created
     assert amendement_9.mission_titre == "Mission « Outre-mer »"
     assert amendement_9.mission_titre_court == "Outre-mer"
@@ -403,14 +403,14 @@ def test_fetch_amendements_an_without_auteur_key(
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
     amendement_6 = Amendement.create(
-        lecture=lecture_an, article=article1_an, num=6, position=1
+        lecture=lecture_an, article=article1_an, num="6", position=1
     )
     DBSession.add(amendement_6)
 
     amendement_9 = Amendement.create(
         lecture=lecture_an,
         article=article1_an,
-        num=9,
+        num="9",
         position=2,
         avis="Favorable",
         objet="Objet",
@@ -490,18 +490,18 @@ def test_fetch_amendements_an_without_auteur_key(
 
         result = source_an.fetch(lecture_an)
 
-    assert result.fetched == {6, 7, 9}
-    assert result.created == {7}
+    assert result.fetched == {"6", "7", "9"}
+    assert result.created == {"7"}
     assert result.errored == set()
 
-    for num in [6, 7, 9]:
+    for num in ["6", "7", "9"]:
         assert any(
             record.levelname == "WARNING"
             and record.message.startswith(f"Unknown auteur for amendement {num}")
             for record in caplog.records
         )
 
-    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
+    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == "9").one()
     # Check that the missing auteur key leads to an explicit string
     assert amendement_9.matricule == ""
     assert amendement_9.groupe == "Non trouvé"
@@ -515,14 +515,14 @@ def test_fetch_amendements_an_without_group_tribun_id(
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
     amendement_6 = Amendement.create(
-        lecture=lecture_an, article=article1_an, num=6, position=1
+        lecture=lecture_an, article=article1_an, num="6", position=1
     )
     DBSession.add(amendement_6)
 
     amendement_9 = Amendement.create(
         lecture=lecture_an,
         article=article1_an,
-        num=9,
+        num="9",
         position=2,
         avis="Favorable",
         objet="Objet",
@@ -610,11 +610,11 @@ def test_fetch_amendements_an_without_group_tribun_id(
 
         result = source_an.fetch(lecture_an)
 
-    assert result.fetched == {6, 7, 9}
-    assert result.created == {7}
+    assert result.fetched == {"6", "7", "9"}
+    assert result.created == {"7"}
     assert result.errored == set()
 
-    for num in [6, 7, 9]:
+    for num in ["6", "7", "9"]:
         assert any(
             record.levelname == "WARNING"
             and record.message.startswith(
@@ -623,7 +623,7 @@ def test_fetch_amendements_an_without_group_tribun_id(
             for record in caplog.records
         )
 
-    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
+    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == "9").one()
     # Check that the empty group key leads to an explicit string
     assert amendement_9.matricule == "642788"
     assert amendement_9.groupe == "Non précisé"
@@ -637,14 +637,14 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
     amendement_6 = Amendement.create(
-        lecture=lecture_an, article=article1_an, num=6, position=1
+        lecture=lecture_an, article=article1_an, num="6", position=1
     )
     DBSession.add(amendement_6)
 
     amendement_9 = Amendement.create(
         lecture=lecture_an,
         article=article1_an,
-        num=9,
+        num="9",
         position=2,
         avis="Favorable",
         objet="Objet",
@@ -732,11 +732,11 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
 
         result = source_an.fetch(lecture_an)
 
-    assert result.fetched == {6, 7, 9}
-    assert result.created == {7}
+    assert result.fetched == {"6", "7", "9"}
+    assert result.created == {"7"}
     assert result.errored == set()
 
-    for num in [6, 7, 9]:
+    for num in ["6", "7", "9"]:
         assert any(
             record.levelname == "WARNING"
             and record.message.startswith(
@@ -745,7 +745,7 @@ def test_fetch_amendements_an_with_unknown_group_tribun_id(
             for record in caplog.records
         )
 
-    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == 9).one()
+    amendement_9 = DBSession.query(Amendement).filter(Amendement.num == "9").one()
     # Check that the wrong group key leads to an explicit string
     assert amendement_9.matricule == "642788"
     assert amendement_9.groupe == "Non trouvé"
@@ -801,7 +801,7 @@ def test_fetch_amendements_with_errored(
 
     assert result.fetched == set()
     assert result.created == set()
-    assert result.errored == {6, 7, 9}
+    assert result.errored == {"6", "7", "9"}
     assert DBSession.query(Amendement).count() == len(amendements_an) == 2
 
 
@@ -879,7 +879,7 @@ def test_fetch_amendements_with_connection_errors(
 
     assert result.fetched == set()
     assert result.created == set()
-    assert result.errored == {6, 7, 9}
+    assert result.errored == {"6", "7", "9"}
     assert DBSession.query(Amendement).count() == len(amendements_an) == 2
 
 
@@ -889,7 +889,7 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
-    assert amendements_an_batch[0].location.batch.nums == [666, 999]
+    assert amendements_an_batch[0].location.batch.nums == ["666", "999"]
 
     with transaction.manager, patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
@@ -965,12 +965,12 @@ def test_fetch_update_amendements_an_with_batch_preserve_batch(
 
         result = source_an.fetch(lecture_an)
 
-    assert result.fetched == {666, 999}
+    assert result.fetched == {"666", "999"}
     assert result.created == set()
     assert result.errored == set()
 
-    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == 666).one()
-    assert amendement_666.location.batch.nums == [666, 999]
+    amendement_666 = DBSession.query(Amendement).filter(Amendement.num == "666").one()
+    assert amendement_666.location.batch.nums == ["666", "999"]
 
 
 def test_fetch_update_amendements_an_with_batch_and_changing_article(
@@ -980,7 +980,7 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
     from zam_repondeur.models.events.amendement import BatchUnset
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 
-    assert amendements_an_batch[0].location.batch.nums == [666, 999]
+    assert amendements_an_batch[0].location.batch.nums == ["666", "999"]
 
     with transaction.manager, patch(
         "zam_repondeur.services.fetch.an.amendements.fetch_discussion_list"
@@ -1056,11 +1056,11 @@ def test_fetch_update_amendements_an_with_batch_and_changing_article(
 
         result = source_an.fetch(lecture_an)
 
-    assert result.fetched == {666, 999}
+    assert result.fetched == {"666", "999"}
     assert result.created == set()
     assert result.errored == set()
 
-    for num in [666, 999]:
+    for num in ["666", "999"]:
         amendement = DBSession.query(Amendement).filter(Amendement.num == num).one()
         assert amendement.location.batch is None
 

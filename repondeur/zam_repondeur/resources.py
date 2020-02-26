@@ -330,7 +330,7 @@ class AmendementCollection(Resource):
 class AmendementResource(Resource):
     def __init__(self, name: str, parent: Resource) -> None:
         super().__init__(name=name, parent=parent)
-        self.num = int(name)
+        self.num = name
 
     @property
     def parent(self) -> AmendementCollection:

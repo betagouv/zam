@@ -82,11 +82,7 @@ def progress_status(context: LectureResource, request: Request) -> dict:
 def search_amendement(context: LectureResource, request: Request) -> dict:
     lecture = context.model(noload("amendements"))
 
-    try:
-        num_param: str = request.params.get("num", "")
-        num: int = int(num_param)
-    except ValueError:
-        raise HTTPBadRequest()
+    num: str = request.params.get("num", "")
 
     amendement = (
         DBSession.query(Amendement)

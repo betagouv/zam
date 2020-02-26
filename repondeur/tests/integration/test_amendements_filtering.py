@@ -315,7 +315,6 @@ def test_column_filtering_by_checkbox(
             position=3,
             auteur="LE GOUVERNEMENT",
         )
-        amendement.user_content.avis = "Favorable"
         user_david_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/amendements/")

@@ -149,7 +149,7 @@ def test_get_amendements_columns_default(
     assert "selected" in options[0].attributes
 
 
-def test_get_amendements_columns_off_limit(
+def test_get_amendements_columns_too_many_amendements(
     app, settings, article1_an, lecture_an, lecture_an_url, amendements_an, user_david
 ):
     from zam_repondeur.models import Amendement

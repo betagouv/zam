@@ -31,7 +31,7 @@ def test_number_of_amendements_is_displayed(
     assert counter.text == "2 amendements"
 
 
-def test_number_of_amendements_is_displayed_off_limit(
+def test_number_of_amendements_is_displayed_too_many_amendements(
     wsgi_server,
     driver,
     settings,

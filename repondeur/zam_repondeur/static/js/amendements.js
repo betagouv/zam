@@ -265,7 +265,7 @@ application.register(
     updateCount() {
       const initialTotal = parseInt(this.data.get('initial-total-count'))
       const initialArticle = parseInt(this.data.get('initial-article-count'))
-      const isOffLimit = this.data.get('is-off-limit') === 'true'
+      const showingPartialIndex = this.data.get('selected-article') !== 'all'
       const visibleRows = this.tbodyTarget.querySelectorAll(
         'tr:not([class^=hidden]):not([class=limit-derouleur])'
       )
@@ -273,7 +273,7 @@ application.register(
         ${initialArticle.toLocaleString('fr')} amendement${
         initialArticle > 1 ? 's' : ''
       }`
-      if (isOffLimit) {
+      if (showingPartialIndex) {
         initialCountString = `
         ${initialCountString} pour cet article •
         ${initialTotal.toLocaleString('fr')} amendement${

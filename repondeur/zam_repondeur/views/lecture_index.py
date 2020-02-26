@@ -49,12 +49,10 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
     lecture_resource = context.parent
     lecture = lecture_resource.model(subqueryload("articles").defer("content"))
     total_count_amendements = lecture.nb_amendements
-    limit_to_display_all_amendements_on_index = int(
-        request.registry.settings.get(
-            "zam.limits.to_display_all_amendements_on_index", 1000
-        )
+    max_amendements_for_full_index = int(
+        request.registry.settings.get("zam.limits.max_amendements_for_full_index", 1000)
     )
-    is_off_limit = total_count_amendements > limit_to_display_all_amendements_on_index
+    is_off_limit = total_count_amendements > max_amendements_for_full_index
     default_param = "article.1.." if is_off_limit else "all"
     article_param = request.params.get("article", default_param)
     if article_param == "all":

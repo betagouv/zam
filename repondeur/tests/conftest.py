@@ -98,7 +98,7 @@ def settings(tmp_path_factory):
         "zam.http_cache_duration": 0,
         "zam.http_cache_dir": str(tmp_path_factory.mktemp(".web_cache")),
         "zam.fetch.an.max_404": "1",
-        "zam.limits.to_display_all_amendements_on_index": "5",
+        "zam.limits.max_amendements_for_full_index": "5",
     }
 
 

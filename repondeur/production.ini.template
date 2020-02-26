@@ -53,7 +53,7 @@ zam.progress.max_duration = 30
 zam.progress.lecture_refresh = 90
 
 # Number of amendements above which we do not display all amendements on index
-zam.limits.to_display_all_amendements_on_index = 1000
+zam.limits.max_amendements_for_full_index = 1000
 
 zam.session_secret = $$session_secret
 

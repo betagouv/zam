@@ -2,7 +2,7 @@ import logging
 import re
 from datetime import date
 from functools import partial
-from typing import IO, Dict, List, Optional, Tuple, cast
+from typing import IO, Dict, List, Optional, Tuple
 
 from defusedxml.lxml import RestrictedElement, parse
 from lxml.etree import XMLSyntaxError  # nosec
@@ -150,7 +150,7 @@ def _make_amendement(
     if not created:
         amendement.article = article
         amendement.parent = parent
-    amendement.alinea = to_int(extract("pointeurFragmentTexte", "alinea", "numero"))
+    amendement.alinea = extract("pointeurFragmentTexte", "alinea", "numero")
     amendement.auteur = auteur_name
     amendement.matricule = matricule
     amendement.groupe = groupe_name
@@ -160,7 +160,7 @@ def _make_amendement(
     )
     amendement.corps = clean_html(extract("corps", "dispositif") or "")
     amendement.expose = clean_html(extract("corps", "exposeSommaire") or "")
-    return cast(Amendement, amendement)
+    return amendement
 
 
 def check_same_lecture(

@@ -70,13 +70,13 @@ class TestPostForm:
             ReponseAmendementModifiee,
         )
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.user_content.avis is None
         assert amendement.user_content.objet is None
         assert amendement.user_content.reponse is None
         assert amendement.events == []
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.user_content.avis is None
         assert amendement.user_content.objet is None
         assert amendement.user_content.reponse is None
@@ -84,7 +84,7 @@ class TestPostForm:
 
         self._upload_csv(app, filename, user=user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.user_content.avis == "Défavorable"
         assert "<strong>ipsum</strong>" in amendement.user_content.objet
         assert "<blink>amet</blink>" not in amendement.user_content.objet
@@ -97,7 +97,7 @@ class TestPostForm:
         assert ObjetAmendementModifie in events
         assert ReponseAmendementModifiee in events
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.user_content.objet.startswith("Lorem")
         events = {type(event): event for event in amendement.events}
         assert ObjetAmendementModifie in events
@@ -106,18 +106,18 @@ class TestPostForm:
     def test_upload_does_not_update_position(self, app, filename, user_david):
         from zam_repondeur.models import DBSession, Amendement
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.position == 1
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.position == 2
 
         self._upload_csv(app, filename, user=user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.position == 1
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.position == 2
 
     @pytest.mark.parametrize("filename", TEST_FILES)
@@ -137,12 +137,12 @@ class TestPostForm:
 
         self._upload_csv(app, "reponses_with_comments.csv", user=user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.user_content.comments == "A comment"
         events = {type(event): event for event in amendement.events}
         assert CommentsAmendementModifie in events
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.user_content.comments is None
         events = {type(event): event for event in amendement.events}
         assert CommentsAmendementModifie not in events
@@ -153,21 +153,21 @@ class TestPostForm:
         from zam_repondeur.models import DBSession, Amendement
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.user_table is None
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.user_table is None
 
         self._upload_csv(app, "reponses_with_affectation.csv", user=user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.user_table.user.email == "melodie@exemple.gouv.fr"
         assert amendement.location.user_table.user.name == "Mélodie Dahi"
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere in events
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.user_table is None
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere not in events
@@ -175,14 +175,14 @@ class TestPostForm:
     def test_upload_with_affectation_empty_name(self, app, user_david):
         from zam_repondeur.models import DBSession, Amendement
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.user_table is None
 
         self._upload_csv(
             app, "reponses_with_affectation_empty_name.csv", user=user_david
         )
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.user_table.user.email == "melodie@exemple.gouv.fr"
         assert amendement.location.user_table.user.name == "melodie@exemple.gouv.fr"
 
@@ -198,10 +198,10 @@ class TestPostForm:
             DBSession.add(team_zam)
             team_zam_users = team_zam.users
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.user_table is None
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.user_table is None
 
         user_melodie = (
@@ -228,12 +228,12 @@ class TestPostForm:
         assert user_melodie.teams == [team_zam]
 
         # Check the amendement is on the new user's table
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.user_table.user is user_melodie
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere in events
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.user_table is None
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere not in events
@@ -247,13 +247,13 @@ class TestPostForm:
 
         self._upload_csv(app, "reponses_with_affectation.csv", user=user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.user_table.user.email == "melodie@exemple.gouv.fr"
         assert amendement.location.user_table.user.name == "Mélodie Dahi"
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere in events
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.user_table is None
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere not in events
@@ -308,7 +308,7 @@ def test_post_form_from_export(
                 reponse="Une réponse très appropriée",
                 comments="Avec des commentaires",
             )
-            for position, num in enumerate((333, 777), 1)
+            for position, num in enumerate(("333", "777"), 1)
         ]
         counter = export_csv(lecture_an, filename, request={})
 
@@ -333,7 +333,7 @@ def test_post_form_from_export(
     assert resp.status_code == 200
     assert "2 réponse(s) chargée(s) avec succès" in resp.text
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 333).first()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "333").first()
     assert amendement.user_content.avis == "Favorable"
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 777).first()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "777").first()
     assert amendement.user_content.avis == "Favorable"

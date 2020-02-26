@@ -158,7 +158,7 @@ def test_get_amendements_columns_too_many_amendements(
 
     with transaction.manager:
         for i in range(nb_amendements):
-            Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)
+            Amendement.create(lecture=lecture_an, article=article1_an, num=str(i + 1))
 
     resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
 

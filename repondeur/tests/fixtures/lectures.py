@@ -136,7 +136,7 @@ def amendements_an(db, lecture_an, article1_an):
             Amendement.create(
                 lecture=lecture_an, article=article1_an, num=num, position=position
             )
-            for position, num in enumerate((666, 999), 1)
+            for position, num in enumerate(("666", "999"), 1)
         ]
 
     DBSession.add_all(amendements)
@@ -168,7 +168,7 @@ def amendements_senat(db, lecture_senat, article1_senat):
                 num=num,
                 position=position,
             )
-            for position, num in enumerate((6666, 9999), 1)
+            for position, num in enumerate(("6666", "9999"), 1)
         ]
 
     DBSession.add_all(amendements)

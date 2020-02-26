@@ -252,7 +252,7 @@ def _check_amendement_0(amendement):
     assert amendement.article.user_content.title == ""
     assert amendement.article.user_content.presentation == ""
 
-    assert amendement.alinea == 24
+    assert amendement.alinea == "24"
 
     assert amendement.num == 28
     assert amendement.rectif == 0
@@ -300,7 +300,7 @@ def _check_amendement_1(amendement):
     assert amendement.article.user_content.title == ""
     assert amendement.article.user_content.presentation == ""
 
-    assert amendement.alinea == 12
+    assert amendement.alinea == "12"
 
     assert amendement.num == 26
     assert amendement.rectif == 0

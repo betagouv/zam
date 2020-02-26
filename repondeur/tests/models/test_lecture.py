@@ -131,8 +131,8 @@ class TestSimilairesMap:
         DBSession.add(lecture_an)
         amdt_666, amdt_999 = amendements_an
         assert lecture_an.all_amendements.similaires_map == {
-            666: {amdt_666, amdt_999},
-            999: {amdt_666, amdt_999},
+            "666": {amdt_666, amdt_999},
+            "999": {amdt_666, amdt_999},
         }
 
     def test_same_reponses(self, lecture_an, amendements_an):
@@ -144,14 +144,14 @@ class TestSimilairesMap:
             DBSession.add_all(amendements_an)
 
         lecture_an = DBSession.query(Lecture).one()
-        amdt_666 = DBSession.query(Amendement).filter_by(num=666).one()
-        amdt_999 = DBSession.query(Amendement).filter_by(num=999).one()
+        amdt_666 = DBSession.query(Amendement).filter_by(num="666").one()
+        amdt_999 = DBSession.query(Amendement).filter_by(num="999").one()
 
         assert amdt_666.user_content.reponse_hash == amdt_999.user_content.reponse_hash
 
         assert lecture_an.all_amendements.similaires_map == {
-            666: {amdt_666, amdt_999},
-            999: {amdt_666, amdt_999},
+            "666": {amdt_666, amdt_999},
+            "999": {amdt_666, amdt_999},
         }
 
     def test_different_reponses(self, lecture_an, amendements_an):
@@ -163,12 +163,12 @@ class TestSimilairesMap:
             DBSession.add_all(amendements_an)
 
         lecture_an = DBSession.query(Lecture).one()
-        amdt_666 = DBSession.query(Amendement).filter_by(num=666).one()
-        amdt_999 = DBSession.query(Amendement).filter_by(num=999).one()
+        amdt_666 = DBSession.query(Amendement).filter_by(num="666").one()
+        amdt_999 = DBSession.query(Amendement).filter_by(num="999").one()
 
         assert amdt_666.user_content.reponse_hash != amdt_999.user_content.reponse_hash
 
         assert lecture_an.all_amendements.similaires_map == {
-            666: {amdt_666},
-            999: {amdt_999},
+            "666": {amdt_666},
+            "999": {amdt_999},
         }

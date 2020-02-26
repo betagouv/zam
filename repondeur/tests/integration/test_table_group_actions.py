@@ -91,7 +91,7 @@ def test_batch_amendements_is_hidden_when_selected_amendements_have_different_ar
 
     with transaction.manager:
         amendement = Amendement.create(
-            lecture=lecture_an, article=article7bis_an, num=777
+            lecture=lecture_an, article=article7bis_an, num="777"
         )
         DBSession.add(user_david_table_an)
         user_david_table_an.add_amendement(amendements_an[0])
@@ -132,7 +132,7 @@ def test_batch_amendements_is_hidden_when_selected_amendements_have_different_mi
             lecture=lecture_an,
             article=article1_an,
             mission_titre=mission2_titre,
-            num=777,
+            num="777",
         )
 
         DBSession.add(user_david_table_an)

@@ -145,7 +145,7 @@ def _make_amendement(
         Amendement,
         create_kwargs={"article": article, "parent": parent},
         lecture=lecture,
-        num=to_int(extract("identifiant", "numero")),
+        num=to_str(extract("identifiant", "numero")),
     )
     if not created:
         amendement.article = article
@@ -227,10 +227,10 @@ def extract_from_node(node: RestrictedElement, *path: str) -> Optional[str]:
     return text
 
 
-def to_int(text: Optional[str]) -> Optional[int]:
+def to_str(text: Optional[str]) -> str:
     if text is None:
-        return None
-    return int(text)
+        return ""
+    return text
 
 
 def to_date(text: Optional[str]) -> Optional[date]:
@@ -290,7 +290,7 @@ def get_parent(
         num = get_number_from_uid(uid)
         parent: Optional[Amendement] = (
             DBSession.query(Amendement)
-            .filter(Amendement.lecture == lecture, Amendement.num == num)
+            .filter(Amendement.lecture == lecture, Amendement.num == str(num))
             .first()
         )
         if parent is None:

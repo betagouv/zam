@@ -64,9 +64,9 @@ class Source:
 
 
 class FetchResult(NamedTuple):
-    fetched: Set[int]
-    created: Set[int]
-    errored: Set[int]
+    fetched: Set[str]
+    created: Set[str]
+    errored: Set[str]
     next_start_index: Optional[int]
 
     @property
@@ -76,9 +76,9 @@ class FetchResult(NamedTuple):
     @classmethod
     def create(
         cls,
-        fetched: Iterable[int] = (),
-        created: Iterable[int] = (),
-        errored: Iterable[int] = (),
+        fetched: Iterable[str] = (),
+        created: Iterable[str] = (),
+        errored: Iterable[str] = (),
         next_start_index: Optional[int] = None,
     ) -> "FetchResult":
         return cls(
@@ -211,7 +211,7 @@ class CreateOrUpdateAmendement(Action):
         # The parent amendement must have been created before this one
         # (which should be the case as long as we process them in order)
         parent: Amendement = DBSession.query(Amendement).filter_by(
-            lecture=lecture, num=parent_num,
+            lecture=lecture, num=str(parent_num),
         ).one()
         return parent
 
@@ -233,7 +233,7 @@ class CreateAmendement(CreateOrUpdateAmendement):
             article=article,
             parent=parent,
             position=self.position,
-            num=self.num,
+            num=str(self.num),
             rectif=self.rectif,
             tri_amendement=self.tri_amendement,
             id_discussion_commune=self.id_discussion_commune,
@@ -249,7 +249,7 @@ class CreateAmendement(CreateOrUpdateAmendement):
             date_depot=self.date_depot,
         )
 
-        return FetchResult.create(fetched={self.num}, created={self.num})
+        return FetchResult.create(fetched={str(self.num)}, created={str(self.num)})
 
 
 class UpdateAmendement(CreateOrUpdateAmendement):
@@ -261,9 +261,9 @@ class UpdateAmendement(CreateOrUpdateAmendement):
         return f"<UpdateAmendement(num={self.amendement_num})>"
 
     def apply(self, lecture: Lecture) -> FetchResult:
-        amendement = lecture.find_amendement(self.amendement_num)
+        amendement = lecture.find_amendement(str(self.amendement_num))
         if amendement is None:
-            return FetchResult.create(errored={self.amendement_num})
+            return FetchResult.create(errored={str(self.amendement_num)})
 
         article = self._get_article(lecture)
         parent = self._get_parent(lecture, article)
@@ -291,7 +291,7 @@ class UpdateAmendement(CreateOrUpdateAmendement):
             date_depot=self.date_depot,
         )
 
-        return FetchResult.create(fetched={self.amendement_num})
+        return FetchResult.create(fetched={str(self.amendement_num)})
 
 
 class RemoteSource(Source):

@@ -34,7 +34,7 @@ class TestRepr:
 
     def test_amendement(self, amendements_an):
         expected_repr = (
-            "<Amendement pk=1 num=666 rectif=0 lecture_pk=1 article_pk=1"
+            "<Amendement pk=1 num='666' rectif=0 lecture_pk=1 article_pk=1"
             " parent_pk=None>"
         )
         assert repr(amendements_an[0]) == expected_repr

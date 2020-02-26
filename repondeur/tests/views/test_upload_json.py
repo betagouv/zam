@@ -82,19 +82,19 @@ class TestPostForm:
             ReponseAmendementModifiee,
         )
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.user_content.avis is None
         assert amendement.user_content.objet is None
         assert amendement.user_content.reponse is None
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.user_content.avis is None
         assert amendement.user_content.objet is None
         assert amendement.user_content.reponse is None
 
         self._upload_backup(app, "backup.json", user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.user_content.avis == "Défavorable"
         assert "<strong>ipsum</strong>" in amendement.user_content.objet
         assert "<blink>amet</blink>" not in amendement.user_content.objet
@@ -107,7 +107,7 @@ class TestPostForm:
         assert ObjetAmendementModifie in events
         assert ReponseAmendementModifiee in events
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.user_content.objet.startswith("Lorem")
         events = {type(event): event for event in amendement.events}
         assert ObjetAmendementModifie in events
@@ -115,18 +115,18 @@ class TestPostForm:
     def test_upload_does_not_update_position(self, app, user_david):
         from zam_repondeur.models import DBSession, Amendement
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.position == 1
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.position == 2
 
         self._upload_backup(app, "backup.json", user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.position == 1
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.position == 2
 
     def test_upload_backup_with_comments(self, app, user_david):
@@ -135,12 +135,12 @@ class TestPostForm:
 
         self._upload_backup(app, "backup_with_comments.json", user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.user_content.comments == "A comment"
         events = {type(event): event for event in amendement.events}
         assert CommentsAmendementModifie in events
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.user_content.comments is None
         events = {type(event): event for event in amendement.events}
         assert CommentsAmendementModifie not in events
@@ -151,22 +151,22 @@ class TestPostForm:
         from zam_repondeur.models import DBSession, Amendement
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.user_table is None
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.user_table is None
 
         self._upload_backup(app, "backup_with_affectation_new.json", user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.user_table.user.email == "melodie@exemple.gouv.fr"
         assert amendement.location.user_table.user.name == "Mélodie"
         assert amendement.location.user_table.user.teams[0].pk == team_zam.pk
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere in events
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.user_table is None
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere not in events
@@ -177,10 +177,10 @@ class TestPostForm:
         from zam_repondeur.models import DBSession, Amendement, User
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.user_table is None
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.user_table is None
 
         user_melodie = (
@@ -209,12 +209,12 @@ class TestPostForm:
         assert user_melodie.teams == [team_zam]
 
         # Check the amendement is on the new user's table
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.user_table.user is user_melodie
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere in events
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.user_table is None
         events = {type(event): event for event in amendement.events}
         assert AmendementTransfere not in events
@@ -225,40 +225,40 @@ class TestPostForm:
         with transaction.manager:
             DBSession.add_all([user_david, user_ronan])
             amendement = (
-                DBSession.query(Amendement).filter(Amendement.num == 666).first()
+                DBSession.query(Amendement).filter(Amendement.num == "666").first()
             )
             amendement.location.user_table = user_david.table_for(lecture_an)
 
         assert amendement.location.user_table.user.email == "david@exemple.gouv.fr"
         assert amendement.location.user_table.user.name == "David"
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.user_table is None
 
         self._upload_backup(app, "backup_with_affectation_existing.json", user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.user_table.user.email == "ronan@exemple.gouv.fr"
         assert (
             amendement.location.user_table.user.name == "Ronan"
         )  # Should not override the name of an existing user.
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.user_table is None
 
     def test_upload_affectation_box_new(self, app, lecture_an, user_david):
         from zam_repondeur.models import DBSession, Amendement
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.shared_table is None
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.shared_table is None
 
         self._upload_backup(app, "backup_with_affectation_box.json", user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.shared_table.titre == "PréRIM"
 
         # A transfer event has been created
@@ -278,7 +278,7 @@ class TestPostForm:
             "a transféré l’amendement à « PréRIM »."
         )
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.shared_table is None
 
     def test_upload_affectation_box_existing_not_updated(
@@ -290,20 +290,20 @@ class TestPostForm:
         with transaction.manager:
             DBSession.add_all([user_david])
             amendement = (
-                DBSession.query(Amendement).filter(Amendement.num == 666).first()
+                DBSession.query(Amendement).filter(Amendement.num == "666").first()
             )
             shared_table = SharedTable.create(lecture=lecture_an, titre="PréRIM")
             shared_table.add_amendement(amendement)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.shared_table.titre == "PréRIM"
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.shared_table is None
 
         self._upload_backup(app, "backup_with_affectation_box.json", user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.shared_table.titre == "PréRIM"
 
         # No transfer event has been created
@@ -313,7 +313,7 @@ class TestPostForm:
             if isinstance(event, AmendementTransfere)
         )
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.shared_table is None
 
     def test_upload_affectation_box_existing_updated(self, app, lecture_an, user_david):
@@ -323,20 +323,20 @@ class TestPostForm:
         with transaction.manager:
             DBSession.add_all([user_david])
             amendement = (
-                DBSession.query(Amendement).filter(Amendement.num == 666).first()
+                DBSession.query(Amendement).filter(Amendement.num == "666").first()
             )
             shared_table = SharedTable.create(lecture=lecture_an, titre="Initial")
             shared_table.add_amendement(amendement)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.shared_table.titre == "Initial"
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.shared_table is None
 
         self._upload_backup(app, "backup_with_affectation_box.json", user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.shared_table.titre == "PréRIM"
 
         # A transfer event has been created
@@ -356,7 +356,7 @@ class TestPostForm:
             "a transféré l’amendement de « Initial » à « PréRIM »."
         )
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.shared_table is None
 
     def test_upload_affectation_box_from_user(
@@ -368,20 +368,20 @@ class TestPostForm:
         with transaction.manager:
             DBSession.add_all([user_david, user_ronan])
             amendement = (
-                DBSession.query(Amendement).filter(Amendement.num == 666).first()
+                DBSession.query(Amendement).filter(Amendement.num == "666").first()
             )
             amendement.location.user_table = user_ronan.table_for(lecture_an)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.shared_table is None
         assert amendement.location.user_table is not None
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.shared_table is None
 
         self._upload_backup(app, "backup_with_affectation_box.json", user_david)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.location.shared_table.titre == "PréRIM"
 
         # A transfer event has been created
@@ -402,7 +402,7 @@ class TestPostForm:
             "à « PréRIM »."
         )
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 999).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "999").first()
         assert amendement.location.shared_table is None
 
     def test_upload_backup_with_articles(self, app, user_david):
@@ -418,7 +418,7 @@ class TestPostForm:
             in resp.text
         )
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.article.user_content.title == "Titre"
         assert amendement.article.user_content.presentation == "Présentation"
 
@@ -472,7 +472,7 @@ def test_post_form_from_export(
                 reponse="Une réponse très appropriée",
                 comments="Avec des commentaires",
             )
-            for position, num in enumerate((333, 777), 1)
+            for position, num in enumerate(("333", "777"), 1)
         ]
         counter = export_json(lecture_an, filename, request={})
 

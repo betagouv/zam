@@ -1,7 +1,9 @@
 import pytest
 
 
-@pytest.mark.parametrize("input,output", [("1", 1), ("1\nfoo", 1), ("1,\nbar", 1)])
+@pytest.mark.parametrize(
+    "input,output", [("1", "1"), ("1\nfoo", "1"), ("1,\nbar", "1")]
+)
 def test_normalize_num(input, output):
     from zam_repondeur.utils import normalize_num
 

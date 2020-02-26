@@ -829,6 +829,106 @@ def test_generate_pdf_amendement_with_similaire(
     assert "La réponse" in response_node.css("div p")[-1].text()
 
 
+def test_generate_pdf_amendement_with_similaire_different_articles(
+    app, lecture_senat, article1_senat, article7bis_senat, amendements_senat
+):
+    from zam_repondeur.models import Amendement, AmendementList, DBSession
+    from zam_repondeur.services.import_export.pdf import generate_html_for_pdf
+
+    amendement_6666, amendement_9999 = amendements_senat
+
+    amendement_6666.auteur = "M. JEAN"
+    amendement_6666.groupe = "Les Indépendants"
+    amendement_6666.user_content.avis = "Favorable"
+    amendement_6666.user_content.objet = "L’objet"
+    amendement_6666.user_content.reponse = "La réponse"
+
+    amendement_9999.auteur = "M. CLAUDE"
+    amendement_9999.groupe = "Les Mécontents"
+    amendement_9999.user_content.avis = "Favorable"
+    amendement_9999.user_content.objet = "L’objet"
+    amendement_9999.user_content.reponse = "La réponse"
+
+    amendement = Amendement.create(
+        lecture=lecture_senat,
+        article=article7bis_senat,
+        alinea="",
+        num=42,
+        rectif=1,
+        auteur="M. DUPONT",
+        groupe="RDSE",
+        matricule="000000",
+        corps="<p>L'article 1 est supprimé.</p>",
+        expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
+        resume="Suppression de l'article",
+        position=3,
+        avis="Favorable",
+        objet="L’objet",
+        reponse="La réponse",
+    )
+
+    DBSession.add_all(amendements_senat)
+    DBSession.flush()
+
+    amdt_list = AmendementList(amendements_senat + [amendement])
+
+    assert amdt_list.similaires(amendement_6666) == [amendement_9999]
+    assert amdt_list.similaires(amendement) == []
+
+    parser = HTMLParser(
+        generate_html_for_pdf(
+            DummyRequest(),
+            "print/multiple.html",
+            {
+                "amendements": AmendementList([amendement_6666, amendement]),
+                "article_amendements": amdt_list,
+            },
+        )
+    )
+
+    assert _html_page_titles(parser) == [
+        "Réponse",
+        "Amendement nº 6666",
+        "Réponse",
+        "Amendement nº 42 rect.",
+    ]
+    response_node_6666, response_node_42_rect = parser.css(".reponse")
+
+    assert _cartouche_to_list(response_node_6666) == [
+        "Article",
+        "Art. 1",
+        "Amendements",
+        "6666 et 9999",
+        "Auteurs",
+        "M. CLAUDE et M. JEAN",
+        "Groupes",
+        "Les Indépendants et Les Mécontents",
+        "Avis",
+        "Favorable",
+    ]
+    assert response_node_6666.css_first("div h5").text() == "Objet"
+    assert "L’objet" in response_node_6666.css_first("div p").text()
+    assert response_node_6666.css("div h5")[-1].text() == "Réponse"
+    assert "La réponse" in response_node_6666.css("div p")[-1].text()
+
+    assert _cartouche_to_list(response_node_42_rect) == [
+        "Article",
+        "Art. 7 bis",
+        "Amendement",
+        "42 rect.",
+        "Auteur",
+        "M. DUPONT",
+        "Groupe",
+        "RDSE",
+        "Avis",
+        "Favorable",
+    ]
+    assert response_node_42_rect.css_first("div h5").text() == "Objet"
+    assert "L’objet" in response_node_42_rect.css_first("div p").text()
+    assert response_node_42_rect.css("div h5")[-1].text() == "Réponse"
+    assert "La réponse" in response_node_42_rect.css("div p")[-1].text()
+
+
 @pytest.fixture
 def another_amendements_an_batch(lecture_an, article1_an):
     from zam_repondeur.models import Amendement, Batch, DBSession

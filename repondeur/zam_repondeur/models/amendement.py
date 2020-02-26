@@ -642,7 +642,11 @@ class AmendementList(list):
         return {
             other
             for other in similaires
-            if (other.num != amendement.num and other.is_displayable)
+            if (
+                other.num != amendement.num
+                and other.article == amendement.article
+                and other.is_displayable
+            )
         }
 
     @reify

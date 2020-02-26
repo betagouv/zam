@@ -29,13 +29,16 @@ export OS_STORAGE_URL=$$os_storage_url
 # endpoint for all services the user/tenant has access to - including nova,
 # glance, keystone, swift.
 #
-export OS_AUTH_URL=https://auth.cloud.ovh.net/v2.0/
-export OS_IDENTITY_API_VERSION=2
+export OS_AUTH_URL=https://auth.cloud.ovh.net/v3/
+export OS_IDENTITY_API_VERSION=3
+
+export OS_USER_DOMAIN_NAME=${OS_USER_DOMAIN_NAME:-"Default"}
+export OS_PROJECT_DOMAIN_NAME=${OS_PROJECT_DOMAIN_NAME:-"Default"}
 
 # With the addition of Keystone we have standardized on the term **tenant**
 # as the entity that owns the resources.
-export OS_TENANT_ID=$$os_tenant_id
-export OS_TENANT_NAME=$$os_tenant_name
+export OS_TENANT_ID="$$os_tenant_id"
+export OS_TENANT_NAME="$$os_tenant_name"
 
 # In addition to the owning entity (tenant), openstack stores the entity
 # performing the action as the **user**.
@@ -44,7 +47,7 @@ export OS_PASSWORD="$$os_password"
 
 # If your configuration has multiple regions, we set that information here.
 # OS_REGION_NAME is optional and only valid in certain environments.
-export OS_REGION_NAME="SBG5"
+export OS_REGION_NAME="SBG"
 
 if [ -n "$OS_STORAGE_URL" ] && [ -n "$OS_USERNAME" ] && [ -n "$OS_PASSWORD" ]; then
     echo "Uploading backup to OVH Public Cloud Storage"

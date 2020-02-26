@@ -49,7 +49,7 @@ def import_csv(
 
     reponses_text_file = io.TextIOWrapper(reponses_file, encoding="utf-8-sig")
 
-    delimiter = _guess_csv_delimiter(reponses_text_file)
+    delimiter = guess_csv_delimiter(reponses_text_file)
 
     for line in csv.DictReader(reponses_text_file, delimiter=delimiter):
         item = {
@@ -64,7 +64,7 @@ def import_csv(
     return counter
 
 
-def _guess_csv_delimiter(text_file: TextIO) -> str:
+def guess_csv_delimiter(text_file: TextIO) -> str:
     try:
         sample = text_file.readline()
     except UnicodeDecodeError:

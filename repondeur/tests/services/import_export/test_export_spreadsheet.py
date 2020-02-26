@@ -106,7 +106,7 @@ def test_export_csv_with_parent(lecture_an, article1_an, tmpdir):
             reponse="Une réponse très appropriée",
             comments="Avec des commentaires",
         )
-        for position, num in enumerate((333, 777), 1)
+        for position, num in enumerate(("333", "777"), 1)
     ]
     amendements[1].parent = amendements[0]
     DBSession.add_all(amendements)
@@ -141,7 +141,7 @@ def test_export_csv_with_auteur(lecture_an, article1_an, tmpdir):
             reponse="Une réponse très appropriée",
             comments="Avec des commentaires",
         )
-        for position, num in enumerate((333, 777), 1)
+        for position, num in enumerate(("333", "777"), 1)
     ]
     amendements[0].auteur = "Victor Hugo"
     DBSession.add_all(amendements)
@@ -176,7 +176,7 @@ def test_export_csv_with_gouvernemental(lecture_an, article1_an, tmpdir):
             reponse="Une réponse très appropriée",
             comments="Avec des commentaires",
         )
-        for position, num in enumerate((333, 777), 1)
+        for position, num in enumerate(("333", "777"), 1)
     ]
     amendements[0].gouvernemental = True
     DBSession.add_all(amendements)
@@ -211,7 +211,7 @@ def test_export_csv_with_identique(lecture_an, article1_an, tmpdir):
             reponse="Une réponse très appropriée",
             comments="Avec des commentaires",
         )
-        for position, num in enumerate((333, 444, 777), 1)
+        for position, num in enumerate(("333", "444", "777"), 1)
     ]
     amendements[0].id_identique = 42
     amendements[1].id_identique = 42

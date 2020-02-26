@@ -160,7 +160,7 @@ def test_import_liasse_xml_with_known_but_missing_parent(
         lecture_essoc2018_an_nouvelle_lecture_commission_fond,
     )
     assert len(amendements) == 1
-    assert amendements[0].num == 28
+    assert amendements[0].num == "28"
     assert amendements[0].parent is None
     assert errors == []
 
@@ -170,8 +170,8 @@ def test_import_liasse_xml_with_known_but_missing_parent(
         lecture_essoc2018_an_nouvelle_lecture_commission_fond,
     )
     assert len(amendements) == 1
-    assert amendements[0].num == 26
-    assert amendements[0].parent.num == 28
+    assert amendements[0].num == "26"
+    assert amendements[0].parent.num == "28"
     assert errors == []
 
 
@@ -254,7 +254,7 @@ def _check_amendement_0(amendement):
 
     assert amendement.alinea == "24"
 
-    assert amendement.num == 28
+    assert amendement.num == "28"
     assert amendement.rectif == 0
 
     assert amendement.auteur == "Fabrice Brun"
@@ -302,7 +302,7 @@ def _check_amendement_1(amendement):
 
     assert amendement.alinea == "12"
 
-    assert amendement.num == 26
+    assert amendement.num == "26"
     assert amendement.rectif == 0
 
     assert amendement.auteur == "Fabrice Brun"
@@ -317,7 +317,7 @@ def _check_amendement_1(amendement):
     assert amendement.id_discussion_commune is None
     assert amendement.id_identique is None
 
-    assert amendement.parent.num == 28
+    assert amendement.parent.num == "28"
     assert amendement.parent.rectif == 0
 
     assert amendement.corps == (

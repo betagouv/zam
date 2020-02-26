@@ -198,7 +198,7 @@ class Amendement(Base):
     created_at: datetime = Column(DateTime, nullable=False)
 
     # Meta informations.
-    num: int = Column(Integer, nullable=False)
+    num: str = Column(Text, nullable=False)
     rectif: int = Column(Integer, nullable=False, default=0)
     auteur: Optional[str] = Column(Text, nullable=True)
     matricule: Optional[str] = Column(Text, nullable=True)
@@ -292,7 +292,7 @@ class Amendement(Base):
     __repr_keys__ = ("pk", "num", "rectif", "lecture_pk", "article_pk", "parent_pk")
 
     @classmethod
-    def get(cls, lecture: "Lecture", num: int) -> "Amendement":
+    def get(cls, lecture: "Lecture", num: str) -> "Amendement":
         amendement: "Amendement" = DBSession.query(cls).filter_by(
             lecture=lecture, num=num
         ).one()
@@ -303,7 +303,7 @@ class Amendement(Base):
         cls,
         lecture,
         article,
-        num: int,
+        num: str,
         rectif: int = 0,
         auteur: str = "",
         groupe: str = "",
@@ -369,7 +369,7 @@ class Amendement(Base):
         return self.sort_key < other.sort_key
 
     @reify
-    def sort_key(self) -> Tuple[bool, int, "Article", int]:
+    def sort_key(self) -> Tuple[bool, int, "Article", str]:
         return (
             self.is_abandoned,
             self.position or self.VERY_BIG_NUMBER,
@@ -520,10 +520,10 @@ class Amendement(Base):
         return self.id_identique is not None
 
     @property
-    def first_identique_num(self) -> Optional[int]:
+    def first_identique_num(self) -> Optional[str]:
         if self.id_identique is None:
             return None
-        smallest_other_num: Optional[int] = first(
+        smallest_other_num: Optional[str] = first(
             (amdt.num for amdt in self.identiques), None
         )
         if smallest_other_num is None:
@@ -654,10 +654,10 @@ class AmendementList(list):
         }
 
     @reify
-    def similaires_map(self) -> Dict[int, Set[Amendement]]:
+    def similaires_map(self) -> Dict[str, Set[Amendement]]:
         return self._build_map(key=lambda amdt: amdt.user_content.reponse_hash)
 
-    def _build_map(self, key: Callable) -> Dict[int, Set[Amendement]]:
+    def _build_map(self, key: Callable) -> Dict[str, Set[Amendement]]:
         res = {}
         for _, g in groupby(sorted(self, key=key), key=key):
             identiques = set(g)

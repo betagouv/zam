@@ -117,7 +117,7 @@ def test_group_actions_button_urls_change_with_selection_too_many_amendements(
 
     with transaction.manager:
         for i in range(nb_amendements):
-            Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)
+            Amendement.create(lecture=lecture_an, article=article1_an, num=str(i + 1))
 
     driver.get(f"{lecture_an_url}/amendements/")
     find = driver.find_element_by_css_selector

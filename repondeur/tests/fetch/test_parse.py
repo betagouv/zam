@@ -29,7 +29,7 @@ def test_parse_from_csv(lecture_senat, settings):
     amendement, created = source.parse_from_csv(amend, lecture_senat)
 
     assert created
-    assert amendement.num == 1
+    assert amendement.num == "1"
     assert amendement.rectif == 1
     assert amendement.num_disp == "1 rect."
     assert amendement.date_depot == date(2017, 11, 13)
@@ -72,7 +72,7 @@ def test_parse_from_csv_unparsable_article(lecture_senat, settings):
     amendement, created = source.parse_from_csv(amend, lecture_senat)
 
     assert created
-    assert amendement.num == 1
+    assert amendement.num == "1"
     assert amendement.rectif == 1
     assert amendement.num_disp == "1 rect."
 

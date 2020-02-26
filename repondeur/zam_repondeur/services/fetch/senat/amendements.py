@@ -50,7 +50,7 @@ class Senat(RemoteSource):
         return self._fetch(lecture)
 
     def _fetch(self, lecture: Lecture, dry_run: bool = False) -> FetchResult:
-        created: Set[int] = set()
+        created: Set[str] = set()
         amendements: List[Amendement] = []
 
         # Remember previous positions and reset them
@@ -99,7 +99,7 @@ class Senat(RemoteSource):
         article, _ = lecture.find_or_create_article(subdiv)
 
         num, rectif = Amendement.parse_num(row["Numéro "])
-        amendement, created = lecture.find_or_create_amendement(num, article)
+        amendement, created = lecture.find_or_create_amendement(str(num), article)
 
         self.update_rectif(amendement, rectif)
         self.update_corps(amendement, clean_html(row["Dispositif "]))
@@ -149,7 +149,9 @@ class Senat(RemoteSource):
             details.num: details for details in discussion_details
         }
         for amendement in amendements:
-            self._enrich_one(amendement, discussion_details_by_num.get(amendement.num))
+            self._enrich_one(
+                amendement, discussion_details_by_num.get(int(amendement.num))
+            )
 
     def _enrich_one(
         self, amendement: Amendement, discussion_details: Optional[DiscussionDetails]
@@ -159,7 +161,7 @@ class Senat(RemoteSource):
         parent: Optional[Amendement]
         if discussion_details.parent_num is not None:
             parent = Amendement.get(
-                lecture=amendement.lecture, num=discussion_details.parent_num
+                lecture=amendement.lecture, num=str(discussion_details.parent_num)
             )
         else:
             parent = None

@@ -24,7 +24,7 @@ class Batch(Base):
         return sorted(location.amendement for location in self.amendements_locations)
 
     @property
-    def nums(self) -> List[int]:
+    def nums(self) -> List[str]:
         return [amendement.num for amendement in self.amendements]
 
     @property

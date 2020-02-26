@@ -199,8 +199,8 @@ def parse_params(request: Request, lecture: Lecture) -> Tuple[List[int], str]:
     max_amendements_for_full_index = int(
         request.registry.settings.get("zam.limits.max_amendements_for_full_index", 1000)
     )
-    is_off_limit = total_count_amendements > max_amendements_for_full_index
-    default_param = "article.1.." if is_off_limit else "all"
+    too_many_amendements = total_count_amendements > max_amendements_for_full_index
+    default_param = "article.1.." if too_many_amendements else "all"
     article_param = request.params.get("article", default_param)
     return nums, article_param
 

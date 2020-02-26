@@ -75,7 +75,7 @@ def test_download_pdf_multiple_amendements_multiple_articles(
     assert resp.content_type == "application/pdf"
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=an-269-PO717460-all-amendements-666_777.pdf"
+        == f"attachment; filename=an-269-PO717460-amendements-666_777.pdf"
     )
 
 
@@ -163,7 +163,7 @@ def test_download_xlsx_multiple_amendements_multiple_articles(
     )
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=an-269-PO717460-all-amendements-666_777.xlsx"
+        == f"attachment; filename=an-269-PO717460-amendements-666_777.xlsx"
     )
 
 

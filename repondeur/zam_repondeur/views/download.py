@@ -229,7 +229,10 @@ def write_response(
 def generate_attach_name(
     lecture: Lecture, article_param: str, amendements: List[Amendement], extension: str
 ) -> str:
-    article_name = f"{article_param.replace('.', '')}-"
+    lecture_name = f"{lecture.chambre}-{lecture.texte.numero}-{lecture.organe}-"
+    article_name = (
+        f"{article_param.replace('.', '')}-" if article_param != "all" else ""
+    )
     nums = sorted(amdt.num for amdt in amendements)
     nb_amendements = len(nums)
     if nb_amendements > 10:
@@ -239,5 +242,4 @@ def generate_attach_name(
             f"amendement{'s' if nb_amendements > 1 else ''}-"
             f"{'_'.join(str(num) for num in nums)}"
         )
-    lecture_name = f"{lecture.chambre}-{lecture.texte.numero}-{lecture.organe}-"
     return f"{lecture_name}{article_name}{amendements_name}.{extension}"

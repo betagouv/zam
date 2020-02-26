@@ -116,7 +116,7 @@ def test_column_filtering_by_value(
         user_david_table_an.add_amendement(amendements_an[0])
         user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
-            lecture=lecture_an, article=article7bis_an, num=777
+            lecture=lecture_an, article=article7bis_an, num="777"
         )
         user_david_table_an.add_amendement(amendement)
 
@@ -185,7 +185,7 @@ def test_column_filtering_by_value_with_batches(
         user_david_table_an.add_amendement(amendements_an[0])
         user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
-            lecture=lecture_an, article=article7bis_an, num=777
+            lecture=lecture_an, article=article7bis_an, num="777"
         )
         user_david_table_an.add_amendement(amendement)
 
@@ -239,7 +239,7 @@ def test_column_filtering_by_checkbox(
         amendement = Amendement.create(
             lecture=lecture_an,
             article=article7bis_an,
-            num=777,
+            num="777",
             auteur="LE GOUVERNEMENT",
         )
         user_david_table_an.add_amendement(amendement)

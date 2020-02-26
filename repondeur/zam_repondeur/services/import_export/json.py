@@ -13,7 +13,7 @@ def import_json(
     request: Request,
     backup_file: BinaryIO,
     lecture: Lecture,
-    amendements: Dict[int, Amendement],
+    amendements: Dict[str, Amendement],
     articles: Dict[str, Article],
     team: Team,
 ) -> Counter:

@@ -41,7 +41,7 @@ def import_csv(
     request: Request,
     reponses_file: BinaryIO,
     lecture: Lecture,
-    amendements: Dict[int, Amendement],
+    amendements: Dict[str, Amendement],
     team: Team,
 ) -> Counter:
     previous_reponse = ""

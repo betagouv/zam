@@ -51,15 +51,15 @@ def test_position_changed(lecture_senat, source_senat):
     source_senat.fetch(lecture_senat)
 
     assert {amdt.num: amdt.position for amdt in lecture_senat.amendements} == {
-        31: 1,
-        443: 2,
+        "31": 1,
+        "443": 2,
     }
 
     source_senat.fetch(lecture_senat)
 
     assert {amdt.num: amdt.position for amdt in lecture_senat.amendements} == {
-        31: 2,
-        443: 1,
+        "31": 2,
+        "443": 1,
     }
 
 
@@ -102,15 +102,15 @@ def test_abandoned_before_seance(lecture_senat, source_senat):
     source_senat.fetch(lecture_senat)
 
     assert {amdt.num: amdt.position for amdt in lecture_senat.amendements} == {
-        31: 1,
-        443: 2,
+        "31": 1,
+        "443": 2,
     }
 
     source_senat.fetch(lecture_senat)
 
     assert {amdt.num: amdt.position for amdt in lecture_senat.amendements} == {
-        31: 1,
-        443: None,
+        "31": 1,
+        "443": None,
     }
 
 
@@ -158,15 +158,15 @@ def test_article_changed(lecture_senat, source_senat):
     source_senat.fetch(lecture_senat)
 
     assert {amdt.num: str(amdt.article) for amdt in lecture_senat.amendements} == {
-        31: "Art. 3",
-        443: "Art. 4",
+        "31": "Art. 3",
+        "443": "Art. 4",
     }
 
     source_senat.fetch(lecture_senat)
 
     assert {amdt.num: str(amdt.article) for amdt in lecture_senat.amendements} == {
-        31: "Art. 3",
-        443: "Art. 3",
+        "31": "Art. 3",
+        "443": "Art. 3",
     }
 
 
@@ -210,14 +210,14 @@ def test_add_parent_amendement(lecture_senat, source_senat):
     assert {
         amdt.num: amdt.parent.num if amdt.parent else None
         for amdt in lecture_senat.amendements
-    } == {31: None, 443: None}
+    } == {"31": None, "443": None}
 
     source_senat.fetch(lecture_senat)
 
     assert {
         amdt.num: amdt.parent.num if amdt.parent else None
         for amdt in lecture_senat.amendements
-    } == {31: None, 443: 31}
+    } == {"31": None, "443": "31"}
 
 
 @responses.activate
@@ -260,11 +260,11 @@ def test_remove_parent_amendement(lecture_senat, source_senat):
     assert {
         amdt.num: amdt.parent.num if amdt.parent else None
         for amdt in lecture_senat.amendements
-    } == {31: None, 443: 31}
+    } == {"31": None, "443": "31"}
 
     source_senat.fetch(lecture_senat)
 
     assert {
         amdt.num: amdt.parent.num if amdt.parent else None
         for amdt in lecture_senat.amendements
-    } == {31: None, 443: None}
+    } == {"31": None, "443": None}

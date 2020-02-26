@@ -370,7 +370,7 @@ class Lecture(Base, LastEventMixin):
             created = True
         return article, created
 
-    def find_amendement(self, num: int) -> Optional[Amendement]:
+    def find_amendement(self, num: str) -> Optional[Amendement]:
         amendement: Amendement
         for amendement in self.amendements:
             if amendement.num == num:
@@ -378,7 +378,7 @@ class Lecture(Base, LastEventMixin):
         return None
 
     def find_or_create_amendement(
-        self, num: int, article: Article
+        self, num: str, article: Article
     ) -> Tuple[Amendement, bool]:
         amendement = self.find_amendement(num)
         created = False

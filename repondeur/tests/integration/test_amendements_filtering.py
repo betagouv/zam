@@ -46,7 +46,7 @@ def test_number_of_amendements_is_displayed_too_many_amendements(
 
     with transaction.manager:
         for i in range(nb_amendements):
-            Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)
+            Amendement.create(lecture=lecture_an, article=article1_an, num=str(i + 1))
 
     driver.get(f"{lecture_an_url}/amendements/")
     trs = driver.find_elements_by_css_selector("tbody tr")
@@ -110,7 +110,7 @@ def test_column_filtering_by_value(
         user_ronan_table_an.add_amendement(amendements_an[0])
         user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
-            lecture=lecture_an, article=article1_an, num=777, position=3
+            lecture=lecture_an, article=article1_an, num="777", position=3
         )
         user_daniel_table_an.add_amendement(amendement)
 
@@ -305,7 +305,7 @@ def test_column_filtering_by_value_with_batches(
         user_ronan_table_an.add_amendement(amendements_an[0])
         user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
-            lecture=lecture_an, article=article1_an, num=777, position=3
+            lecture=lecture_an, article=article1_an, num="777", position=3
         )
         user_daniel_table_an.add_amendement(amendement)
 
@@ -367,7 +367,7 @@ def test_column_filtering_by_checkbox(
         amendement = Amendement.create(
             lecture=lecture_an,
             article=article1_an,
-            num=777,
+            num="777",
             position=3,
             auteur="LE GOUVERNEMENT",
         )
@@ -448,7 +448,7 @@ def test_column_filtering_by_value_for_missions(
         amendement = Amendement.create(
             lecture=lecture_plf2018_an_premiere_lecture_seance_publique_2,
             article=article1_plf2018_an_premiere_lecture_seance_publique_2,
-            num=222,
+            num="222",
             position=3,
             mission_titre="Mission Action extérieure de l'État",
             mission_titre_court="Action ext.",

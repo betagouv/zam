@@ -319,14 +319,14 @@ class BatchSet(AmendementEvent):
         self,
         amendement: Amendement,
         batch: Batch,
-        amendements_nums: List[int],
+        amendements_nums: List[str],
         request: Request,
     ) -> None:
         self.request = request
         others = [
             amendement_num
             for amendement_num in amendements_nums
-            if int(amendement_num) != amendement.num
+            if amendement_num != amendement.num
         ]
         super().__init__(
             amendement=amendement, amendements_nums=others, request=request

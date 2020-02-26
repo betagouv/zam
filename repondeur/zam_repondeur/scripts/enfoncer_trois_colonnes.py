@@ -106,7 +106,7 @@ def create_amendement(lecture: Lecture, article: Article) -> Amendement:
         Amendement,
         lecture=lecture,
         article=article,
-        num=1,
+        num="FSU 1",
         create_kwargs={
             "corps": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis vel at laboriosam officiis quibusdam cupiditate molestias impedit in totam quas delectus nesciunt animi unde iste, adipisci rem magnam incidunt nam.",  # noqa
             "expose": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur aspernatur illum perferendis labore dolor, qui. Laudantium velit culpa distinctio, dignissimos fuga possimus eaque eveniet ullam voluptatum doloremque doloribus architecto mollitia.",  # noqa

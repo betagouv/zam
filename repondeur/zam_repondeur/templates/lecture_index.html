@@ -56,7 +56,7 @@
     <div class="options">
         <a href="">{# Keep the empty link for consistency with flexbox and user table. #}</a>
         <span data-target="amendements-filters.count">
-            {% if is_off_limit %}
+            {% if too_many_amendements %}
                 {{ article_count_amendements|number }} amendements pour cet article •
                 {{ total_count_amendements|number }} amendements au total
             {% else %}
@@ -100,7 +100,7 @@
                     <select
                         data-action="amendements-filters#filterArticle"
                         data-target="amendements-filters.articleSelect">
-                    {% if not is_off_limit %}
+                    {% if not too_many_amendements %}
                         <option value="all" {% if article_param == "all" %}selected{% endif %}>Tous</option>
                     {% endif %}
                     {% for article in articles|sort %}

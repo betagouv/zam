@@ -1,4 +1,4 @@
-from typing import Any, Tuple
+from typing import Any, Tuple, Type, TypeVar
 
 from pyramid_retry import mark_error_retryable
 from sqlalchemy.exc import IntegrityError
@@ -65,9 +65,12 @@ def _create(model: Any, create_kwargs: Any = None, **kwargs: Any) -> Tuple[Any, 
     return created, True
 
 
+Model = TypeVar("Model", bound=Base)
+
+
 def get_one_or_create(
-    model: Any, create_kwargs: Any = None, options: Any = None, **kwargs: Any
-) -> Tuple[Any, bool]:
+    model: Type[Model], create_kwargs: Any = None, options: Any = None, **kwargs: Any
+) -> Tuple[Model, bool]:
     try:
         return _get_one(model, options, **kwargs)
     except NoResultFound:

@@ -11,9 +11,7 @@ def test_no_amendements(app, lecture_an_url, user_david):
     resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
 
     assert resp.status_code == 200
-    assert (
-        "Les amendements ne sont pas encore disponibles pour cet article." in resp.text
-    )
+    assert "Les amendements ne sont pas encore disponibles." in resp.text
 
 
 def test_get_amendements_order_default(app, lecture_an_url, amendements_an, user_david):

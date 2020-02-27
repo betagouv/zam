@@ -236,8 +236,7 @@ def create_texte() -> Texte:
     texte, _ = get_one_or_create(
         Texte,
         type_=TypeTexte.PROJET,
-        chambre=Chambre.AN,  # TODO: CCFP et ...
-        legislature=15,
+        chambre=Chambre.CCFP,
         numero=1,
         create_kwargs={"date_depot": date.today()},
     )
@@ -252,13 +251,14 @@ def create_dossier(titre: str) -> Dossier:
 
 
 def create_lecture(texte: Texte, dossier: Dossier) -> Lecture:
+    organe = "Assemblée plénière"
     lecture, _ = get_one_or_create(
         Lecture,
         dossier=dossier,
         texte=texte,
         phase=Phase.PREMIERE_LECTURE,
-        organe="dummy",  # TODO: distinguer Assemblée Plénière / Formation Spécialisée
-        titre="Première lecture – Assemblée plénière",
+        organe=organe,
+        titre=f"Première lecture – {organe}",
     )
     return lecture
 

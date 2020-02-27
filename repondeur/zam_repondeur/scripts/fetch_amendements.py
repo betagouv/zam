@@ -106,9 +106,11 @@ def fetch_amendements_for_dossier(
 
 def fetch_amendements_for_lecture(lecture: Lecture, settings: Dict[str, Any]) -> None:
     chambre = lecture.texte.chambre
-    source: RemoteSource = RemoteSource.get_remote_source_for_chambre(
+    source = RemoteSource.get_remote_source_for_chambre(
         chambre=chambre, settings=settings
     )
+    if source is None:
+        return
     try:
         with Timer() as prepare_timer:
             source.prepare(lecture)

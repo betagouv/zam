@@ -319,7 +319,7 @@ class RemoteSource(Source):
         chambre: Chambre,
         settings: Dict[str, Any],
         prefetching_enabled: bool = True,
-    ) -> "RemoteSource":
+    ) -> Optional["RemoteSource"]:
         from zam_repondeur.services.fetch.an.amendements import AssembleeNationale
         from zam_repondeur.services.fetch.senat.amendements import Senat
 
@@ -327,6 +327,8 @@ class RemoteSource(Source):
             return AssembleeNationale(
                 settings=settings, prefetching_enabled=prefetching_enabled
             )
-        if chambre == Chambre.SENAT:
+        elif chambre == Chambre.SENAT:
             return Senat(settings=settings, prefetching_enabled=prefetching_enabled)
+        elif chambre == Chambre.CCFP:
+            return None
         raise NotImplementedError

@@ -216,7 +216,7 @@ nav.secondary {
     background: white;
     min-height: 5rem;
     top: calc(50px + 5rem); /* Size of the nav + main header also sticky */
-    border-left: 8px solid;
+    border-left: 8px solid white;
     padding: .5rem 1rem;
     box-shadow: 0 5px 5px 2px #ccc;
     z-index: 2;
@@ -258,7 +258,7 @@ nav.secondary {
   .amendement-detail {
     padding: 1rem;
     border: 1px solid #e9e5e5;
-    border-left: 8px solid;
+    border-left: 8px solid white;
     line-height: 1.7;
     background: white;
   }

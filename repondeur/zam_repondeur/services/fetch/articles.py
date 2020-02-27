@@ -39,8 +39,10 @@ SENAT_URL = "https://www.senat.fr/"
 def get_possible_texte_urls(texte: Texte) -> List[str]:
     if texte.chambre == Chambre.AN:
         return get_possible_texte_urls_an(texte)
-    else:
+    elif texte.chambre == Chambre.SENAT:
         return get_possible_texte_urls_senat(texte)
+    else:
+        return []
 
 
 def get_possible_texte_urls_an(texte: Texte) -> List[str]:

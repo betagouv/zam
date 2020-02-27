@@ -54,6 +54,8 @@ NumAmendement = str
 class AmendementData(NamedTuple):
     num_article: SubDiv
     num_amendement: NumAmendement
+    auteur: str
+    groupe: str
     corps: str
     expose: str
     comments: str
@@ -84,6 +86,8 @@ def extract_data_from_csv_file(
     next(reader)
 
     num_amendement = None
+    auteur = ""
+    groupe = ""
     comments = ""
 
     # Les lignes non vides contiennent les articles et amendements associés
@@ -117,6 +121,12 @@ def extract_data_from_csv_file(
                 copie_amendement = 1
                 while (num_amendement, copie_amendement) in amendements:
                     copie_amendement += 1
+
+                # Extraction de l'auteur
+                if mo.group(2) == "Gouvernement":
+                    auteur = "LE GOUVERNEMENT"
+                else:
+                    groupe = mo.group(2)
 
                 # Extraction de l'avis
                 reponse = line["avis"]
@@ -156,11 +166,15 @@ def extract_data_from_csv_file(
                     num_amendement=numero_avec_mult,
                     corps=corps,
                     expose=expose,
+                    auteur=auteur,
+                    groupe=groupe,
                     avis=avis,
                     reponse=reponse,
                     comments=comments,
                 )
                 num_amendement = None  # terminé
+                auteur = ""  # terminé
+                groupe = ""  # terminé
                 comments = ""  # terminé
 
     return dossier, articles, list(amendements.values())
@@ -209,6 +223,8 @@ def load_data(
             num=amendement.num_amendement,
             corps=amendement.corps,
             expose=amendement.expose,
+            auteur=amendement.auteur,
+            groupe=amendement.groupe,
             avis=amendement.avis,
             reponse=amendement.reponse,
             comments=amendement.comments,
@@ -269,6 +285,8 @@ def create_amendement(
     num: NumAmendement,
     corps: str,
     expose: str,
+    auteur: str,
+    groupe: str,
     avis: Optional[str],
     reponse: str,
     comments: str,
@@ -282,6 +300,8 @@ def create_amendement(
         create_kwargs={
             "corps": corps,
             "expose": expose,
+            "auteur": auteur,
+            "groupe": groupe,
             "avis": avis,
             "reponse": reponse,
             "comments": comments,

@@ -42,7 +42,7 @@ def main(argv: List[str] = sys.argv) -> None:
 
     with bootstrap(args.config_uri, options={"app": "visam_trois_colonnes"}):
         with transaction.manager:
-            create_data(dossier, articles)
+            load_data(dossier, articles)
 
 
 def extract_data_from_csv_file(input_file: TextIO) -> Tuple[dict, dict]:
@@ -70,7 +70,7 @@ def extract_data_from_csv_file(input_file: TextIO) -> Tuple[dict, dict]:
     return dossier, articles
 
 
-def create_data(dossier: dict, articles: dict) -> None:
+def load_data(dossier: dict, articles: dict) -> None:
     texte = create_texte()
     print(texte)
     dossier = create_dossier(titre=dossier["titre"])

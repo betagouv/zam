@@ -7,11 +7,12 @@ Usage:
 """
 import csv
 import logging
+import re
 import sys
 from argparse import ArgumentParser, FileType, Namespace
 from collections import defaultdict
 from datetime import date
-from typing import Dict, List, TextIO, Tuple
+from typing import Dict, List, NamedTuple, Optional, TextIO, Tuple
 
 import transaction
 from pyramid.paster import bootstrap
@@ -28,6 +29,8 @@ from zam_repondeur.models import (
     TypeTexte,
     get_one_or_create,
 )
+from zam_repondeur.models.division import SubDiv
+from zam_repondeur.services.fetch.division import parse_subdiv
 from zam_repondeur.services.import_export.csv import guess_csv_delimiter
 from zam_repondeur.slugs import slugify
 
@@ -38,51 +41,179 @@ def main(argv: List[str] = sys.argv) -> None:
     args = parse_args(argv[1:])
     setup_logging(args)
 
-    dossier, articles = extract_data_from_csv_file(args.input)
+    dossier, articles, amendements = extract_data_from_csv_file(args.input)
 
     with bootstrap(args.config_uri, options={"app": "visam_trois_colonnes"}):
         with transaction.manager:
-            load_data(dossier, articles)
+            load_data(dossier, articles, amendements)
 
 
-def extract_data_from_csv_file(input_file: TextIO) -> Tuple[dict, dict]:
-    delimiter = guess_csv_delimiter(input_file)
-    dossier = {}
-    articles: Dict[str, list] = defaultdict(list)
-    for i, line in enumerate(
-        csv.DictReader(
-            input_file,
-            fieldnames=["numero", "texte", "amendements", "position"],
-            delimiter=delimiter,
-        )
-    ):
-        if i == 0:
-            dossier["titre"] = line["texte"]
-        numero = line["numero"]
-        if numero in ("", "N° Article"):
-            # TODO: deal with amendements applied to the whole text.
-            continue
-
-        texte = line["texte"].strip()
-        if texte:
-            articles[numero].append(texte)
-
-    return dossier, articles
+NumAmendement = str
 
 
-def load_data(dossier: dict, articles: dict) -> None:
+class AmendementData(NamedTuple):
+    num_article: SubDiv
+    num_amendement: NumAmendement
+    corps: str
+    expose: str
+    comments: str
+    avis: Optional[str]
+    reponse: str
+
+
+def extract_data_from_csv_file(
+    input_file: TextIO,
+) -> Tuple[dict, dict, List[AmendementData]]:
+    articles: Dict[SubDiv, List[str]] = defaultdict(list)
+    amendements: Dict[Tuple[NumAmendement, int], AmendementData] = {}
+
+    reader = csv.DictReader(
+        input_file,
+        fieldnames=["numero_article", "texte_article", "amendements", "avis"],
+        delimiter=guess_csv_delimiter(input_file),
+    )
+
+    # La première ligne contient le titre du dossier
+    first_line = next(reader)
+    dossier = {"titre": first_line["texte_article"]}
+
+    # La deuxième ligne est vide
+    next(reader)
+
+    # La troisième ligne contient les en-têtes de colonnes
+    next(reader)
+
+    num_amendement = None
+    comments = ""
+
+    # Les lignes non vides contiennent les articles et amendements associés
+    non_empty_lines = (line for line in reader if line != ("", "", "", ""))
+    for line in non_empty_lines:
+        numero_article = parse_subdiv(line["numero_article"])
+        if numero_article.mult == "bis":  # bis
+            numero_article = numero_article._replace(mult="", pos="après")
+
+        # On accumule le texte de l'article, qui peut être réparti sur plusieurs lignes
+        texte_article = line["texte_article"].strip()
+        if texte_article or numero_article not in articles:
+            articles[numero_article].append(texte_article)
+
+        # Un amendement est réparti sur 2 ou 3 lignes
+        texte_amendement = line["amendements"]
+
+        # Début de la séquence : numéro d'amendement et avis
+        if num_amendement is None:
+            mo = re.match(
+                (
+                    r"Amendement "
+                    r"((employeurs\sterritoriaux|Gouvernement|[A-Z-]{2,})"
+                    r"(\s\d+)?)"
+                ),
+                texte_amendement,
+            )
+            if mo is not None:
+                # Numéro d'amendement
+                num_amendement = mo.group(1)
+                copie_amendement = 1
+                while (num_amendement, copie_amendement) in amendements:
+                    copie_amendement += 1
+
+                # Extraction de l'avis
+                reponse = line["avis"]
+                avis = parse_avis(reponse.split("\n", 1)[0].strip())
+                reponse = reponse.replace("\n", "<br>")
+
+        # Suite de la séquence
+        elif texte_amendement:
+            # Commentaire (ignoré pour l'instant)
+            if re.match(
+                r"\s*(Identique|Similair?e|A traiter) .*",
+                texte_amendement,
+                flags=re.IGNORECASE,
+            ):
+                comments = texte_amendement
+            else:
+                mo = re.match(
+                    r"\s*Texte de l’amendement\s?:?(.*?)Exposé des motifs\s?:(.*)",
+                    texte_amendement,
+                    flags=re.MULTILINE | re.DOTALL,
+                )
+                if mo is not None:
+                    corps = mo.group(1).strip().replace("\n", "<br><br>")
+                    expose = mo.group(2).strip().replace("\n", "<br><br>")
+                else:
+                    corps = texte_amendement
+                    expose = ""
+
+                # Les amendements modifiant plusieurs articles sont dupliqués
+                numero_avec_mult = num_amendement
+                if copie_amendement > 1:
+                    numero_avec_mult += (
+                        " " + Amendement._RECTIF_TO_SUFFIX[copie_amendement]
+                    )
+                amendements[(num_amendement, copie_amendement)] = AmendementData(
+                    num_article=numero_article,
+                    num_amendement=numero_avec_mult,
+                    corps=corps,
+                    expose=expose,
+                    avis=avis,
+                    reponse=reponse,
+                    comments=comments,
+                )
+                num_amendement = None  # terminé
+                comments = ""  # terminé
+
+    return dossier, articles, list(amendements.values())
+
+
+def parse_avis(line: str) -> Optional[str]:
+    if line in {"Favorable", "Avis favorable"}:
+        return "Favorable"
+    if line in {"Défavorable", "Avis défavorable"}:
+        return "Défavorable"
+    if line in {
+        "Retrait - à défaut défavorable",
+        "Retrait car satisfait - à défaut avis défavorable",
+        "Retrait car staisfait - à défaut avis défavorable",
+        "Retrait car satisfait (à défaut avis défavorable)",
+        "Retrait au bénéfice d'explication - à défaut avis défavorable",
+        "Retrait au bénéfice d'explication ou à défaut avis défavorable",
+    }:
+        return "Retrait sinon rejet"
+    if line in {
+        "Avis favorable sous réserve d'un sous-amendement",
+        "Réponse de la DGCL : Favorable sous réserve de l'examen du CE",
+    }:
+        return "Favorable sous réserve de"
+    if line == "Position DGCL :  sagesse":
+        return "Sagesse"
+    if line == "":
+        return None
+    raise ValueError(f"Cannot parse {line!r}")
+
+
+def load_data(
+    dossier: dict, articles: Dict[SubDiv, List[str]], amendements: List[AmendementData],
+) -> None:
     texte = create_texte()
-    print(texte)
     dossier = create_dossier(titre=dossier["titre"])
-    print(dossier)
     lecture = create_lecture(dossier=dossier, texte=texte)
-    print(lecture)
-    for numero, alineas in articles.items():
-        article = create_article(lecture=lecture, numero=numero, alineas=alineas)
-    print(article)
-    # amendement = create_amendement(lecture=lecture, article=article)
-    # print(amendement)
-    # create_reponses(lecture)
+    articles_by_num = {
+        numero: create_article(lecture=lecture, numero=numero, alineas=alineas)
+        for numero, alineas in articles.items()
+    }
+    for position, amendement in enumerate(amendements, 1):
+        create_amendement(
+            lecture=lecture,
+            article=articles_by_num[amendement.num_article],
+            num=amendement.num_amendement,
+            corps=amendement.corps,
+            expose=amendement.expose,
+            avis=amendement.avis,
+            reponse=amendement.reponse,
+            comments=amendement.comments,
+            position=position,
+        )
 
 
 def create_texte() -> Texte:
@@ -116,25 +247,45 @@ def create_lecture(texte: Texte, dossier: Dossier) -> Lecture:
     return lecture
 
 
-def create_article(lecture: Lecture, numero: str, alineas: list) -> Article:
+def create_article(lecture: Lecture, numero: SubDiv, alineas: list) -> Article:
     if alineas[0].startswith("Article "):
         alineas.pop(0)
     content = {str(i).zfill(3): alinea for i, alinea in enumerate(alineas, start=1)}
     article, _ = get_one_or_create(
-        Article, type="article", num=numero, lecture=lecture, content=content
+        Article,
+        type=numero.type_,
+        num=numero.num,
+        mult=numero.mult,
+        pos=numero.pos,
+        lecture=lecture,
+        content=content,
     )
     return article
 
 
-def create_amendement(lecture: Lecture, article: Article) -> Amendement:
+def create_amendement(
+    lecture: Lecture,
+    article: Article,
+    num: NumAmendement,
+    corps: str,
+    expose: str,
+    avis: Optional[str],
+    reponse: str,
+    comments: str,
+    position: int,
+) -> Amendement:
     amendement, _ = get_one_or_create(
         Amendement,
         lecture=lecture,
         article=article,
-        num="FSU 1",
+        num=num,
         create_kwargs={
-            "corps": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis vel at laboriosam officiis quibusdam cupiditate molestias impedit in totam quas delectus nesciunt animi unde iste, adipisci rem magnam incidunt nam.",  # noqa
-            "expose": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur aspernatur illum perferendis labore dolor, qui. Laudantium velit culpa distinctio, dignissimos fuga possimus eaque eveniet ullam voluptatum doloremque doloribus architecto mollitia.",  # noqa
+            "corps": corps,
+            "expose": expose,
+            "avis": avis,
+            "reponse": reponse,
+            "comments": comments,
+            "position": position,
         },
     )
     return amendement

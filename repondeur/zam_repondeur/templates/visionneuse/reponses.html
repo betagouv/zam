@@ -84,7 +84,7 @@
           >
             <a href="#{{ amendement.slug }}"
                class="button"
-               data-toggle-target="amendement-detail-{{ amendement.num }}">
+               data-toggle-target="amendement-detail-{{ amendement.slug }}">
               Texte
             </a>
             <h2>
@@ -117,7 +117,7 @@
             <div class="gouvernemental">
               <a href="#{{ amendement.slug }}"
                  class="button gouvernemental"
-                 data-toggle-target="reponse-detail-{{ amendement.num }}">
+                 data-toggle-target="reponse-detail-{{ amendement.slug }}">
                 Présentation
               </a>
             </div>
@@ -126,7 +126,7 @@
             <div>
               <a href="#{{ amendement.slug }}"
                  class="button"
-                 data-toggle-target="reponse-detail-{{ amendement.num }}">
+                 data-toggle-target="reponse-detail-{{ amendement.slug }}">
                 Réponse
               </a>
               <p>Avis : <span class="avis {{ avis_class }}">{{ amendement.user_content.avis }}</span></p>
@@ -134,7 +134,7 @@
           {% endif %}
         </header>
         <div class="is-none">
-          <div id="reponse-detail-{{ amendement.num }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
+          <div id="reponse-detail-{{ amendement.slug }}" class="reponse-detail {{ avis_class }}{% if is_gouvernemental %} gouvernemental{% endif %}">
             {% if amendement.user_content.has_objet %}
               <h4>Objet</h4>
               <div>
@@ -159,7 +159,7 @@
           </div>
         </div>
         <div class="is-none">
-          <div id="amendement-detail-{{ amendement.num }}"
+          <div id="amendement-detail-{{ amendement.slug }}"
                class="amendement-detail {{ avis_class }}">
             {% for amendement in amendements %}
               {% if multiple %}

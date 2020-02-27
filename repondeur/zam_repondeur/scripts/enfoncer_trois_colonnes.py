@@ -39,7 +39,10 @@ def main(argv: List[str] = sys.argv) -> None:
     setup_logging(args)
 
     dossier, articles = compile_data(args.input)
-    create_data(args.config_uri, dossier, articles)
+
+    with bootstrap(args.config_uri, options={"app": "visam_trois_colonnes"}):
+        with transaction.manager:
+            create_data(dossier, articles)
 
 
 def compile_data(input_file: TextIO) -> Tuple[dict, dict]:
@@ -67,23 +70,19 @@ def compile_data(input_file: TextIO) -> Tuple[dict, dict]:
     return dossier, articles
 
 
-def create_data(config_uri: str, dossier: dict, articles: dict) -> None:
-    with bootstrap(config_uri, options={"app": "visam_trois_colonnes"}):
-        with transaction.manager:
-            texte = create_texte()
-            print(texte)
-            dossier = create_dossier(titre=dossier["titre"])
-            print(dossier)
-            lecture = create_lecture(dossier=dossier, texte=texte)
-            print(lecture)
-            for numero, alineas in articles.items():
-                article = create_article(
-                    lecture=lecture, numero=numero, alineas=alineas
-                )
-            print(article)
-            # amendement = create_amendement(lecture=lecture, article=article)
-            # print(amendement)
-            # create_reponses(lecture)
+def create_data(dossier: dict, articles: dict) -> None:
+    texte = create_texte()
+    print(texte)
+    dossier = create_dossier(titre=dossier["titre"])
+    print(dossier)
+    lecture = create_lecture(dossier=dossier, texte=texte)
+    print(lecture)
+    for numero, alineas in articles.items():
+        article = create_article(lecture=lecture, numero=numero, alineas=alineas)
+    print(article)
+    # amendement = create_amendement(lecture=lecture, article=article)
+    # print(amendement)
+    # create_reponses(lecture)
 
 
 def create_texte() -> Texte:

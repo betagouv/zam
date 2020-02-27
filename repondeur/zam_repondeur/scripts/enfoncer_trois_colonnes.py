@@ -38,14 +38,14 @@ def main(argv: List[str] = sys.argv) -> None:
     args = parse_args(argv[1:])
     setup_logging(args)
 
-    dossier, articles = compile_data(args.input)
+    dossier, articles = extract_data_from_csv_file(args.input)
 
     with bootstrap(args.config_uri, options={"app": "visam_trois_colonnes"}):
         with transaction.manager:
             create_data(dossier, articles)
 
 
-def compile_data(input_file: TextIO) -> Tuple[dict, dict]:
+def extract_data_from_csv_file(input_file: TextIO) -> Tuple[dict, dict]:
     delimiter = guess_csv_delimiter(input_file)
     dossier = {}
     articles: Dict[str, list] = defaultdict(list)

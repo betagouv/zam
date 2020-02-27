@@ -1,0 +1,135 @@
+{% extends "visionneuse/_base.html" %}
+{% import "visionneuse/macros.html" as macros %}
+
+{% block extra_styles %}
+<style type="text/css">
+  nav.main span {
+    visibility: hidden;
+  }
+
+  .title {
+    background: white;
+    border: 1px solid #d9d9d9;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 7px 7px -1px #ccc;
+  }
+    .title h1 {
+      margin: 1.7rem 3rem;
+      text-align: center;
+      font-family: "source_serif_pro";
+      font-size: 1.7rem;
+      color: #3167a6;
+    }
+
+  section > header {
+    box-shadow: none;
+  }
+  article header {
+    top: calc(50px + 5rem + 1rem);
+  }
+</style>
+{% endblock %}
+
+{% block title %}
+  <h1>{{ lecture.dossier.titre }}</h1>
+{% endblock %}
+
+{% block main %}
+  {% for article in articles %}
+    {% if article.slug and not article.is_erreur %}
+      <div class="title">
+        <section id="{{ article.slug }}">
+          <header>
+            <div class="wrapper">
+              <div class="titles">
+                <h2>{{ article.format(short=False) }}</h2>
+              </div>
+              {% if article.content or article.user_content.presentation %}
+                <a href="#content-{{ article.slug }}"
+                   class="button"
+                   data-toggle-target="content-{{ article.slug }}"
+                  >Texte</a>
+              {% endif %}
+            </div>
+          </header>
+        </section>
+      </div>
+
+      <div class="is-none">
+        <span class="fake-anchor" id="content-{{ article.slug }}"></span>
+        <div class="article">
+          <h2 class="article-title">{{ article.user_content.title or "" }}</h2>
+          {% if article.user_content.presentation %}
+            <h3>Présentation de l’article</h3>
+            {{ article.user_content.presentation | safe }}
+          {% endif %}
+          {% if article.content %}
+            <h3>Texte de l’article</h3>
+            {% for number, content in article.content.items() %}
+              <dl>
+                <dt>{{ number }}</dt>
+                <dd>
+                  <p>{{ content.strip('"') | safe }}</p>
+                </dd>
+              </dl>
+            {% endfor %}
+          {% endif %}
+          <p class="bottom">
+            <a class="button arrow arrow-up" href="#{{ article.slug }}">Replier</a>
+          </p>
+        </div>
+      </div>
+
+      {% for reponse, amendements in article.grouped_displayable_amendements() %}
+        {% set amendement = amendements[0] %}
+        {% set is_gouvernemental = amendement.gouvernemental %}
+        {% set parent = amendement.parent %}
+        <article class="{% if is_gouvernemental %}gouvernemental{% endif %} {% if parent %}sous-amendement{% endif %}">
+          {% set multiple = amendements|length > 1 %}
+          <header class="reponse">
+            <div
+            {%- for amendement in amendements %}
+              data-amendement-{{ amendement.num }}="{{ amendement }}"
+            {% endfor -%}
+            data-anchor="{{ amendement.slug }}"
+            >
+              <h2>
+                {{ macros.multiple_amendements_title(amendements) }}
+              </h2>
+              {% if amendement.user_content.objet and (amendement.user_content.objet|length < 200) %}
+                <div class="presentation">
+                  {{ amendement.user_content.objet | paragriphy }}
+                </div>
+              {% endif %}
+            </div>
+          </header>
+          <div>
+            <div id="amendement-detail-{{ amendement.slug }}"
+                 class="amendement-detail">
+              {% for amendement in amendements %}
+                {% if multiple %}
+                  <h3>
+                    Amendement {{ amendement.num }}
+                    — {{ amendement.auteur }}
+                    {% if amendement.groupe -%}
+                      <small>({{ amendement.groupe }}
+                        <span class="group-color" style="background-color: {{ amendement.couleur_groupe }};"></span>)</small>
+                    {%- endif %}
+                  </h3>
+                {% endif %}
+                <div>
+                  <h4>Exposé</h4>
+                  {{ amendement.expose|safe }}
+                  <h4>Corps de l’amendement</h4>
+                  {{ amendement.corps|safe }}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
+{% endblock %}
+
+</html>

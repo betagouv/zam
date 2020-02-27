@@ -146,7 +146,7 @@ def parse_args(argv: List[str]) -> Namespace:
     parser.add_argument("config_uri")
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("-d", "--debug", action="store_true")
-    parser.add_argument("-i", "--input", type=FileType("r"))
+    parser.add_argument("-i", "--input", type=FileType("r"), required=True)
     return parser.parse_args(argv)
 
 

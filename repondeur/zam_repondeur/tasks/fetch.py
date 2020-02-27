@@ -187,6 +187,9 @@ def create_missing_lectures(dossier_pk: int, user_pk: Optional[int] = None) -> N
             logger.error(f"Dossier {dossier_pk} introuvable")
             return
 
+        if dossier.an_id == "dummy":  # FIXME: just a quick hack
+            return
+
         if user_pk is not None:
             user = DBSession.query(User).get(user_pk)
         else:

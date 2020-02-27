@@ -174,6 +174,8 @@ class Lecture(Base, LastEventMixin):
         return bool(self.partie and self.partie == 2)
 
     def refreshable_for(self, kind: str, settings: Dict[str, str]) -> bool:
+        if self.texte.chambre not in {Chambre.AN, Chambre.SENAT}:
+            return False
         return bool(
             datetime.utcnow().date() - self.texte.date_depot
             <= timedelta(days=int(settings.get(f"zam.refresh.{kind}") or 30))

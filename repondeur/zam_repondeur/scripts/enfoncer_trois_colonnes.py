@@ -30,6 +30,7 @@ from zam_repondeur.models import (
     get_one_or_create,
 )
 from zam_repondeur.models.division import SubDiv
+from zam_repondeur.models.events.lecture import LectureCreee
 from zam_repondeur.services.fetch.division import parse_subdiv
 from zam_repondeur.services.import_export.csv import guess_csv_delimiter
 from zam_repondeur.slugs import slugify
@@ -260,6 +261,7 @@ def create_lecture(texte: Texte, dossier: Dossier) -> Lecture:
         organe=organe,
         titre=f"Première lecture – {organe}",
     )
+    LectureCreee.create(lecture=lecture, user=None)
     return lecture
 
 

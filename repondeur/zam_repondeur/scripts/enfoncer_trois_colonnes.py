@@ -99,7 +99,7 @@ def create_texte() -> Texte:
 
 def create_dossier(titre: str) -> Dossier:
     dossier, _ = get_one_or_create(
-        Dossier, titre=titre, slug=slugify(titre), an_id="dummy",
+        Dossier, slug=slugify(titre), create_kwargs={"titre": titre, "an_id": "dummy"}
     )
     return dossier
 

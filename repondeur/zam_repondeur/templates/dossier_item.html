@@ -103,7 +103,10 @@
         <div class="lecture box">
             <div>
                 <h3>{{ lecture.chambre.value }}, {{ lecture.format_organe() }}</h3>
-                <p>{{ lecture.format_num_lecture() }}, {{ lecture.format_texte() }}</p>
+                <p>{{ lecture.format_num_lecture() }}
+                    {%- set texte = lecture.format_texte() %}
+                    {% if texte %}, {{ texte }}{% endif %}
+                </p>
                 {% if lecture.nb_amendements %}
                     <em>{{ lecture.nb_amendements|number }} amendements</em>
                 {% endif %}

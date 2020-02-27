@@ -100,27 +100,31 @@ class Lecture(Base, LastEventMixin):
         return self.texte.date_depot, self.organe, self.partie or 0
 
     def __str__(self) -> str:
-        return ", ".join(
-            [
-                self.format_chambre(),
-                self.format_session_or_legislature(),
-                self.format_organe(),
-                self.format_num_lecture(),
-                self.format_texte(),
-            ]
-        )
+        parts: List[Optional[str]] = [
+            self.format_chambre(),
+            self.format_session_or_legislature(),
+            self.format_organe(),
+            self.format_num_lecture(),
+            self.format_texte(),
+        ]
+        return ", ".join(filter(None, parts))
 
     def format_chambre(self) -> str:
         return str(self.chambre.value)
 
-    def format_session_or_legislature(self) -> str:
+    def format_session_or_legislature(self) -> Optional[str]:
         if self.chambre == Chambre.AN:
             return f"{self.texte.legislature}e législature"
-        else:
+        elif self.chambre == Chambre.SENAT:
             return f"session {self.texte.session_str}"
+        else:
+            return ""
 
     def format_organe(self) -> str:
         from zam_repondeur.services.data import repository  # avoid circular imports
+
+        if self.chambre == Chambre.CCFP:
+            return self.organe
 
         result: str = self.organe
         organe_data = repository.get_opendata_organe(self.organe)
@@ -135,17 +139,22 @@ class Lecture(Base, LastEventMixin):
             "Sénat ( 5ème République )",
         }:
             return "Séance publique"
-        if label.startswith("Commission"):
-            return label
-        if label:
-            return f"Commission des {label.lower()}"
-        return "Commissions"
+        if self.chambre == Chambre.AN:
+            if label.startswith("Commission"):
+                return label
+            if label:
+                return f"Commission des {label.lower()}"
+        elif self.chambre == Chambre.SENAT:
+            return "Commissions"
+        return label
 
     def format_num_lecture(self) -> str:
         num_lecture, _ = self.titre.split(" – ", 1)
         return str(num_lecture.strip())
 
     def format_texte(self) -> str:
+        if self.chambre == Chambre.CCFP:
+            return None
         return f"texte nº\u00a0{self.texte.numero}" + self.format_partie()
 
     def format_partie(self) -> str:
@@ -203,6 +212,8 @@ class Lecture(Base, LastEventMixin):
             query = query.filter(
                 Texte.session == int(session_or_legislature.split("-")[0])
             )
+        elif chambre == Chambre.CCFP:
+            pass
         else:
             raise ValueError("Invalid value for chambre")
         res: Optional["Lecture"] = query.first()
@@ -348,8 +359,11 @@ class Lecture(Base, LastEventMixin):
     def _session_or_legislature(self) -> str:
         if self.texte.chambre == Chambre.AN:
             return str(self.texte.legislature)
-        assert self.texte.session_str is not None  # nosec (mypy hint)
-        return self.texte.session_str
+        elif self.texte.chambre == Chambre.SENAT:
+            assert self.texte.session_str is not None  # nosec (mypy hint)
+            return self.texte.session_str
+        else:
+            return ""
 
     def find_article(self, subdiv: SubDiv) -> Optional[Article]:
         article: Article

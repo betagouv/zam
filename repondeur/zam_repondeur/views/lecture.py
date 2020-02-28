@@ -95,10 +95,19 @@ def search_amendement(context: LectureResource, request: Request) -> dict:
     )
     if amendement is None:
         raise HTTPBadRequest()
+
+    total_count_amendements = lecture.nb_amendements
+    max_amendements_for_full_index = int(
+        request.registry.settings.get("zam.limits.max_amendements_for_full_index", 1000)
+    )
+    too_many_amendements = total_count_amendements > max_amendements_for_full_index
+
     result = {
         "index": request.resource_url(
             context["amendements"],
-            query={"article": amendement.article.url_key},
+            query={
+                "article": amendement.article.url_key if too_many_amendements else "all"
+            },
             anchor=amendement.slug,
         ),
     }

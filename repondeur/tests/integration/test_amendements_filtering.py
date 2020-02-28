@@ -150,6 +150,62 @@ def test_column_filtering_by_value(
 @pytest.mark.parametrize(
     "column_index,input_text,kind,initial,filtered",
     [
+        ("3", "111", "amendement", ["666", "999", "777"], []),
+        ("4", "Ma", "table", ["Ronan", "David", "Daniel"], []),
+    ],
+)
+def test_column_filtering_by_value_when_empty_results(
+    wsgi_server,
+    driver,
+    lecture_an,
+    lecture_an_url,
+    article1_an,
+    amendements_an,
+    user_david_table_an,
+    user_ronan_table_an,
+    user_daniel_table_an,
+    column_index,
+    input_text,
+    kind,
+    initial,
+    filtered,
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    with transaction.manager:
+        DBSession.add(user_ronan_table_an)
+        DBSession.add(user_david_table_an)
+        DBSession.add(user_daniel_table_an)
+
+        user_ronan_table_an.add_amendement(amendements_an[0])
+        user_david_table_an.add_amendement(amendements_an[1])
+        amendement = Amendement.create(
+            lecture=lecture_an, article=article1_an, num=777, position=3
+        )
+        user_daniel_table_an.add_amendement(amendement)
+
+    driver.get(f"{lecture_an_url}/amendements/")
+    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    assert extract_column_text(column_index, trs) == initial
+    input_field = driver.find_element_by_css_selector(
+        f"thead tr.filters th:nth-child({column_index}) input"
+    )
+    input_field.send_keys(input_text)
+    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    assert extract_column_text(column_index, trs) == filtered
+    empty_message = driver.find_element_by_css_selector(
+        '[data-target="amendements-filters.empty"]'
+    )
+    assert empty_message.is_displayed()
+
+    # Restore initial state.
+    input_field.send_keys(Keys.BACKSPACE * len(input_text))
+    assert not empty_message.is_displayed()
+
+
+@pytest.mark.parametrize(
+    "column_index,input_text,kind,initial,filtered",
+    [
         ("4", "da", "table", ["David", "Test table"], ["David"]),
         ("4", "te", "table", ["David", "Test table"], ["Test table"]),
     ],

@@ -180,3 +180,7 @@ tr.limit-derouleur {
     opacity: 0;
     height: 0;
 }
+
+.search {
+    box-shadow: none;
+}

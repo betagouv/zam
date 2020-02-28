@@ -367,6 +367,32 @@
             <p>S’ils sont publiés sur le site, c’est un indicateur qu’ils arrivent bientôt sur {{ app_name }} ! En effet, il est possible que les amendements soient publiés sur le site Internet (ou sur l’intranet parlementaire notamment ELOI) mais qu’ils ne soient pas encore disponibles pour {{ app_name }}, en particulier lorsqu’il s’agit d’une lecture Assemblée nationale.</p>
             <p>Si cela vous semble anormalement long, veuillez <a href="https://github.com/betagouv/zam/wiki/R%C3%A9solution-de-probl%C3%A8mes">consulter la page d’aide dédiée</a> et/ou <a href="mailto:contact@zam.beta.gouv.fr">contacter l’équipe de développement</a> pour solliciter de l’aide.</p>
         </div>
+    {% else %}
+        <div class="notice d-none"
+            data-target="amendements-filters.empty">
+            <h3>Aucun amendement trouvé.</h3>
+            <p>Vous pouvez ajuster vos termes de filtrage afin de réduire la spécificité de votre recherche.</p>
+            <p>Vous pouvez rechercher un amendement par numéro de manière transverse grâce à ce formulaire :</p>
+            <form class="search"
+                method="get" role="search"
+                action=""
+                data-url-search-amendement="{{ request.resource_url(lecture_resource, 'search_amendement') }}"
+                data-target="amendement-search.form">
+              <label for="q-amendement">Amendement nº</label>
+              <span class="number-with-hint">
+                <input name="q-amendement" id="q-amendement"
+                    type="number" min="1" step="1"
+                    data-target="amendement-search.input"
+                    data-action="keydown->amendement-search#reset">
+                <span class="hint">Chiffres uniquement</span>
+              </span>
+              <input class="button primary"
+                type="submit" name="submit" value="Valider"
+                data-action="amendement-search#submit">
+              <p class="d-none error"
+                data-target="amendement-search.error">Amendement non trouvé.</p>
+            </form>
+        </div>
     {% endif %}
     <div data-controller="amendements-articles">
         <nav id="bottom-nav">

@@ -171,6 +171,7 @@ application.register(
         'table',
         'tbody',
         'loading',
+        'empty',
         'articleSelect',
         'missionInput',
         'amendementInput',
@@ -283,7 +284,12 @@ application.register(
       }
       if (!visibleRows.length) {
         this.countTarget.innerHTML = `Aucun amendement affiché • ${initialCountString}`
+        if (initialTotal) {
+          this.emptyTarget.classList.remove('d-none')
+        }
         return
+      } else {
+        this.emptyTarget.classList.add('d-none')
       }
       const current = Array.from(visibleRows).reduce(
         (accumulator, currentValue) => {

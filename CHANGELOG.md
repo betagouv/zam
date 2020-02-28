@@ -31,7 +31,22 @@ En réponse, la DINUM a prolongé son soutien de l’équipe Zam et Zam est donc
 - PLF pour 2020 (DLF - Bercy)
 - PLFSS pour 2020 (DSS - ministère des solidarités et de la santé)
 
-### Changements récents
+### Changements récents<span id="changelog"></span>
+
+#### 28 février 2020
+
+Améliorations relatives à la gestion des lectures comprenant de très nombreux amendements :
+
+* Découpage de la page d’index par article (l’ensemble des amendements restent affichables pour les lectures de taille raisonnable)
+* Ajout d’un filtre sur la page d’index pour n’afficher que les amendements sans avis
+* Affichage d’une alerte (non bloquante) en cas de soumission d’une réponse exempte d’avis
+* Optimisation du temps d’import des fichiers CSV volumineux
+* Ajout de la fonctionnalité de recherche d’un amendement depuis l’ensemble des pages
+* Ajout de l’export de fichiers Excel relatifs à une sélection d’amendements directement depuis la page d’index
+* Optimisation de la durée de génération des exports PDF
+* Augmentation de la pertinence de l’ordre des amendements au cours du traitement d’une lecture en séance
+* Meilleure réactivité générale et optimisation de la récupération des amendements depuis le site de l’Assemblée Nationale
+
 
 #### 18 décembre 2019
 

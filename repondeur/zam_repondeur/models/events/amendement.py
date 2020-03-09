@@ -28,8 +28,9 @@ class AmendementEvent(Event):
     @property
     def template_vars(self) -> dict:
         template_vars = {
-            "new_value": self.data["new_value"],
-            "old_value": self.data["old_value"],
+            key: self.data[key]
+            for key in ("new_value", "old_value")
+            if key in self.data
         }
         if self.user:
             template_vars.update({"user": self.user.name, "email": self.user.email})
@@ -46,6 +47,22 @@ class AmendementEvent(Event):
                 )
             )
         )
+
+
+class AmendementSaisi(AmendementEvent):
+    __mapper_args__ = {"polymorphic_identity": "amendement_saisi"}
+
+    icon = "edit"
+
+    summary_template = Template(
+        f"L’amendement a été saisi par <abbr title='$email'>$user</abbr>."
+    )
+
+    def apply(self) -> None:
+        pass
+
+    def render_details(self) -> str:
+        return ""
 
 
 class AmendementRectifie(AmendementEvent):

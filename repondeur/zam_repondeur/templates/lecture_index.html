@@ -54,7 +54,7 @@
     data-amendements-filters-initial-article-count="{{ article_count_amendements }}"
     data-amendements-filters-selected-article="{{ article_param }}">
     <div class="options">
-        <a href="">{# Keep the empty link for consistency with flexbox and user table. #}</a>
+        <a href="{{ enter_amendement_url }} ">Saisir un nouvel amendement...</a>
         <span data-target="amendements-filters.count">
             {% if too_many_amendements %}
                 {{ article_count_amendements|number }} amendements pour cet article •

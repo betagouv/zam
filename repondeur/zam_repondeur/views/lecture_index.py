@@ -101,6 +101,7 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
         "progress_url": request.resource_url(lecture_resource, "progress_status"),
         "progress_interval": request.registry.settings["zam.progress.lecture_refresh"],
         "too_many_amendements": too_many_amendements,
+        "enter_amendement_url": request.resource_url(context, "saisie"),
     }
 
 

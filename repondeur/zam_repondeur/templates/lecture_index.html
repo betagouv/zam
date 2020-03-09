@@ -54,9 +54,7 @@
     data-amendements-filters-initial-article-count="{{ article_count_amendements }}"
     data-amendements-filters-selected-article="{{ article_param }}">
     <div class="options">
-        {% if lecture.chambre.name in ["CCFP"] %}
-        <a href="{{ enter_amendement_url }} ">Saisir un nouvel amendement...</a>
-        {% endif %}
+        <a href="#"></a>
         <span data-target="amendements-filters.count">
             {% if too_many_amendements %}
                 {{ article_count_amendements|number }} amendements pour cet article •
@@ -370,7 +368,7 @@
             <p>S’ils sont publiés sur le site, c’est un indicateur qu’ils arrivent bientôt sur {{ app_name }} ! En effet, il est possible que les amendements soient publiés sur le site Internet (ou sur l’intranet parlementaire notamment ELOI) mais qu’ils ne soient pas encore disponibles pour {{ app_name }}, en particulier lorsqu’il s’agit d’une lecture Assemblée nationale.</p>
             <p>Si cela vous semble anormalement long, veuillez <a href="https://github.com/betagouv/zam/wiki/R%C3%A9solution-de-probl%C3%A8mes">consulter la page d’aide dédiée</a> et/ou <a href="mailto:contact@zam.beta.gouv.fr">contacter l’équipe de développement</a> pour solliciter de l’aide.</p>
             {% elif lecture.chambre.name in ["CCFP"] %}
-            <h3 style="text-align: center">Aucun amendement saisi pour l'instant...</h3>
+            <h3 class="centered">Aucun amendement saisi pour l’instant…</h3>
             {% endif %}
         </div>
     {% else %}
@@ -400,6 +398,13 @@
             </form>
         </div>
     {% endif %}
+
+    {% if lecture.chambre.name in ["CCFP"] %}
+    <div class="centered" style="margin-top: 4rem">
+        <a class="button primary enabled" href="{{ enter_amendement_url }} ">Saisir un nouvel amendement</a>
+    </div>
+    {% endif %}
+
     <div data-controller="amendements-articles">
         <nav id="bottom-nav">
             <a class="toggle primary button" href="#"

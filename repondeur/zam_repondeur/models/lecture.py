@@ -21,6 +21,7 @@ from .article import Article
 from .base import Base, DBSession
 from .chambre import Chambre
 from .division import SubDiv
+from .dossier import Dossier
 from .events.base import LastEventMixin
 from .organe import ORGANE_SENAT, ORGANES_SEANCE_PUBLIQUE
 from .phase import Phase
@@ -189,6 +190,7 @@ class Lecture(Base, LastEventMixin):
     @classmethod
     def get(
         cls,
+        dossier: Dossier,
         chambre: Chambre,
         session_or_legislature: str,
         num_texte: int,
@@ -200,6 +202,7 @@ class Lecture(Base, LastEventMixin):
             DBSession.query(cls)
             .join(Texte)
             .filter(
+                cls.dossier_pk == dossier.pk,
                 cls.chambre == chambre,
                 cls.partie == partie,
                 cls.organe == organe,

@@ -62,6 +62,15 @@ class SaisieAmendement:
             .one_or_none()
         )
 
+        max_position = max(
+            (
+                amdt.position
+                for amdt in self.lecture.amendements
+                if amdt.position is not None
+            ),
+            default=0,
+        )
+
         # Create amendement
         amendement = Amendement.create(
             lecture=self.lecture,
@@ -70,6 +79,7 @@ class SaisieAmendement:
             groupe=groupe,
             corps=corps,
             expose=expose,
+            position=max_position + 1,
         )
 
         # Add initial event to journal

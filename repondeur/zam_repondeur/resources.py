@@ -4,7 +4,7 @@ from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
 from pyramid.security import Allow, Authenticated, Deny, Everyone
 from sqlalchemy import desc
-from sqlalchemy.orm import Query, joinedload, lazyload, subqueryload
+from sqlalchemy.orm import Query, joinedload, lazyload, load_only, subqueryload
 from sqlalchemy.orm.exc import NoResultFound
 
 from zam_repondeur.decorator import reify
@@ -240,7 +240,10 @@ class LectureResource(Resource):
 
 class AmendementCollection(Resource):
     def __getitem__(self, key: str) -> Resource:
-        return AmendementResource(name=key, parent=self)
+        resource = AmendementResource(name=key, parent=self)
+        if not resource.exists():
+            raise KeyError
+        return resource
 
     @property
     def parent(self) -> LectureResource:
@@ -271,6 +274,14 @@ class AmendementResource(Resource):
         except NoResultFound:
             raise ResourceNotFound(self)
         return amendement
+
+    def exists(self) -> bool:
+        return bool(
+            DBSession.query(Amendement)
+            .filter_by(lecture=self.lecture_resource.model(), num=self.num)
+            .options(load_only("pk"))
+            .one_or_none()
+        )
 
 
 class ArticleCollection(Resource):

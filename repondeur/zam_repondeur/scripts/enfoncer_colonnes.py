@@ -1,9 +1,9 @@
 """
-Experiment: enfoncer un tableau 3 colonnes dans Zam
+Experiment: enfoncer un tableau 1/2/3 colonnes dans Zam
 
 Usage:
 
-    visam_trois_colonnes development.ini --input ~/path/to.csv
+    visam_colonnes development.ini --input ~/path/to.csv --colonnes=2
 """
 import csv
 import logging
@@ -46,7 +46,7 @@ def main(argv: List[str] = sys.argv) -> None:
 
     with bootstrap(args.config_uri, options={"app": "visam_trois_colonnes"}):
         with transaction.manager:
-            load_data(dossier, articles, amendements)
+            load_data(dossier, articles, amendements, colonnes=args.colonnes)
 
 
 NumAmendement = str
@@ -208,7 +208,10 @@ def parse_avis(line: str) -> Optional[str]:
 
 
 def load_data(
-    dossier: dict, articles: Dict[SubDiv, List[str]], amendements: List[AmendementData],
+    dossier: dict,
+    articles: Dict[SubDiv, List[str]],
+    amendements: List[AmendementData],
+    colonnes: int,
 ) -> None:
     texte = create_texte()
     dossier = create_dossier(titre=dossier["titre"])
@@ -217,20 +220,24 @@ def load_data(
         numero: create_article(lecture=lecture, numero=numero, alineas=alineas)
         for numero, alineas in articles.items()
     }
-    for position, amendement in enumerate(amendements, 1):
-        create_amendement(
-            lecture=lecture,
-            article=articles_by_num[amendement.num_article],
-            num=amendement.num_amendement,
-            corps=amendement.corps,
-            expose=amendement.expose,
-            auteur=amendement.auteur,
-            groupe=amendement.groupe,
-            avis=amendement.avis,
-            reponse=amendement.reponse,
-            comments=amendement.comments,
-            position=position,
-        )
+    if colonnes >= 2:
+        for position, amendement in enumerate(amendements, 1):
+            reponse = {
+                "avis": amendement.avis,
+                "reponse": amendement.reponse,
+                "comments": amendement.comments,
+            }
+            create_amendement(
+                lecture=lecture,
+                article=articles_by_num[amendement.num_article],
+                num=amendement.num_amendement,
+                corps=amendement.corps,
+                expose=amendement.expose,
+                auteur=amendement.auteur,
+                groupe=amendement.groupe,
+                position=position,
+                **reponse if colonnes == 3 else {},
+            )
 
 
 def create_texte() -> Texte:
@@ -289,10 +296,10 @@ def create_amendement(
     expose: str,
     auteur: str,
     groupe: str,
-    avis: Optional[str],
-    reponse: str,
-    comments: str,
     position: int,
+    avis: Optional[str] = None,
+    reponse: Optional[str] = None,
+    comments: Optional[str] = None,
 ) -> Amendement:
     amendement, _ = get_one_or_create(
         Amendement,
@@ -319,6 +326,7 @@ def parse_args(argv: List[str]) -> Namespace:
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("-d", "--debug", action="store_true")
     parser.add_argument("-i", "--input", type=FileType("r"), required=True)
+    parser.add_argument("-c", "--colonnes", type=int, default=3, choices=[1, 2, 3])
     return parser.parse_args(argv)
 
 

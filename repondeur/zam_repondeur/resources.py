@@ -373,6 +373,7 @@ class LectureResource(Resource):
 
     def model(self, *options: Any) -> Lecture:
         lecture = Lecture.get(
+            self.dossier_resource.dossier,
             self.chambre,
             self.session_or_legislature,
             self.num_texte,

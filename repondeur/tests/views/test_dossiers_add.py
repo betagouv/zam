@@ -194,6 +194,7 @@ class TestPostForm:
         )
 
         lecture = Lecture.get(
+            dossier=dossier_plfss2018,
             chambre=Chambre.AN,
             session_or_legislature="15",
             num_texte=269,
@@ -381,6 +382,7 @@ class TestPostForm:
         )
 
         lecture = Lecture.get(
+            dossier=dossier_plfss2018,
             chambre=Chambre.AN,
             session_or_legislature="15",
             num_texte=269,
@@ -482,6 +484,7 @@ class TestPostForm:
         assert "Dossier créé avec succès," in resp.text
 
         lecture = Lecture.get(
+            dossier=dossier_plfss2019,
             chambre=Chambre.SENAT,
             session_or_legislature="2018-2019",
             num_texte=106,

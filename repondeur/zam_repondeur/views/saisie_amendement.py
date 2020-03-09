@@ -5,10 +5,10 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.message import Message
-from zam_repondeur.models import Amendement, DBSession
+from zam_repondeur.models import Amendement, Article, DBSession
+from zam_repondeur.models.division import SubDiv
 from zam_repondeur.models.events.amendement import AmendementSaisi
 from zam_repondeur.resources import AmendementCollection
-from zam_repondeur.services.fetch.division import parse_subdiv
 
 
 GROUPES = {
@@ -32,7 +32,14 @@ class SaisieAmendement:
 
     @view_config(request_method="GET", renderer="saisie_amendement.html")
     def get(self) -> dict:
-        return {"lecture": self.lecture, "groupes": GROUPES.items()}
+        return {
+            "lecture": self.lecture,
+            "groupes": GROUPES.items(),
+            "subdivs": [
+                (article.url_key, str(article))
+                for article in sorted(self.lecture.articles)
+            ],
+        }
 
     @view_config(request_method="POST")
     def post(self) -> Response:
@@ -40,8 +47,20 @@ class SaisieAmendement:
         num = self.next_num_for(GROUPES[groupe])
         corps = self.request.POST.get("corps")
         expose = self.request.POST.get("expose")
-        subdiv = self.request.POST.get("subdiv")
-        article, _ = self.lecture.find_or_create_article(parse_subdiv(subdiv))
+
+        # Find article
+        subdiv = SubDiv(*self.request.POST.get("subdiv").split("."))
+        article = (
+            DBSession.query(Article)
+            .filter_by(
+                lecture=self.lecture,
+                type=subdiv.type_,
+                num=subdiv.num,
+                mult=subdiv.mult,
+                pos=subdiv.pos,
+            )
+            .one_or_none()
+        )
 
         # Create amendement
         amendement = Amendement.create(

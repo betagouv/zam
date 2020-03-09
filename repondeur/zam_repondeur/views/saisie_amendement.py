@@ -32,7 +32,11 @@ class SaisieAmendement:
 
     @view_config(request_method="GET", renderer="saisie_amendement.html")
     def get(self) -> dict:
+        lecture_resource = self.context.parent
         return {
+            "lecture_resource": lecture_resource,
+            "dossier_resource": lecture_resource.dossier_resource,
+            "current_tab": "saisie-amendement",
             "lecture": self.lecture,
             "groupes": GROUPES.items(),
             "subdivs": [

@@ -59,7 +59,12 @@
     </div>
     <div class="form-group">
         <label for="subdiv">Article (ou partie du texte)</label>
-        <input type="text" name="subdiv" class="form-control">
+        <select name="subdiv" class="form-control" required>
+            <option value="" selected disabled>Choisir dans la liste…</option>
+            {% for value, title in subdivs %}
+                <option value="{{ value }}">{{ title }}</option>
+            {% endfor %}
+        </select>
     </div>
     <div class="form-group">
         <label for="corps">Corps de l’amendement</label>

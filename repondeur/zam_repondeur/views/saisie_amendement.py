@@ -1,7 +1,6 @@
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
-
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.message import Message
@@ -9,7 +8,6 @@ from zam_repondeur.models import Amendement, Article, DBSession
 from zam_repondeur.models.division import SubDiv
 from zam_repondeur.models.events.amendement import AmendementSaisi
 from zam_repondeur.resources import AmendementCollection
-
 
 GROUPES = {
     "LE GOUVERNEMENT": "Gouvernement",

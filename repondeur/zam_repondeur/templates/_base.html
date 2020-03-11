@@ -32,6 +32,9 @@
                         <a data-action="menu#toggle click@window->menu#dismiss">Menu</a>
                         <div class="menu d-none" data-target="menu.menu">
                             <ul class="menu-breadcrumb">
+                                {% if current_tab is defined %}
+                                    <li{% if current_tab == 'conseils' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root, 'conseils') }}">Conseils</a></li>
+                                {% endif %}
                                 {% if dossier_resource is defined %}
                                     <li class="menu-dossier">
                                         <a href="{{ request.resource_url(dossier_resource) }}">{{ dossier_resource.model().titre }}</a>

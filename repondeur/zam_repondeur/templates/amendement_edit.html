@@ -2,7 +2,7 @@
 {% import "macros.html" as macros %}
 
 {% block title %}
-    {{ amendement.lecture }} • {{ amendement.lecture.dossier.titre }} • Zam
+    {{ amendement.lecture }} • {{ amendement.lecture.dossier.titre }} • {{ app_name }}
 {% endblock %}
 
 {% block header %}
@@ -183,7 +183,7 @@
 
             {% if amendement.article.is_erreur %}
                 <p class="article notice warning">
-                    La récupération de l’article correspondant à cet amendement n’a pas pu être effectuée correctement. L’équipe de développement de Zam a été prévenue de cette anomalie critique.
+                    La récupération de l’article correspondant à cet amendement n’a pas pu être effectuée correctement. L’équipe de développement de {{ app_name }} a été prévenue de cette anomalie critique.
                 </p>
             {% else %}
                 <p class="article">

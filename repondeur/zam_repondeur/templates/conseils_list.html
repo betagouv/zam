@@ -1,0 +1,103 @@
+{% extends "_base.html" %}
+{% import "macros.html" as macros %}
+
+{% block header %}
+<style type="text/css">
+    main {
+        max-width: 60rem;
+        margin: 2rem auto;
+    }
+    h2 {
+        margin: 4rem 0 2rem 2rem;
+    }
+    h3 {
+        line-height: normal;
+    }
+
+    .conseil {
+        margin: 2rem 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+    }
+    .conseil:first-child {
+        margin-top: 2rem;
+    }
+    .conseil nav {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        flex-direction: column;
+        text-align: right;
+        margin-left: 2rem;
+    }
+    .conseil nav a {
+        background: no-repeat right center url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}");
+    }
+    .conseil nav a {
+        font-size: 1.1rem;
+        padding-right: 1.8rem;
+        background-position: 99% 42%;
+        background-size: 5%;
+    }
+    .conseil nav a:first-child {
+        font-size: 1.7rem;
+        padding-right: 2rem;
+        background-position: right 40%;
+        background-size: 7%;
+    }
+    .conseil .details {
+        line-height: 1.2;
+    }
+    .extra-button {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+        .extra-button a.button {
+            color: #3167a6;
+            border: 1px solid #3167a6;
+        }
+        .extra-button a.button:hover {
+            background-color: #3167a6;
+            color: white;
+        }
+    .contact {
+        text-align: center;
+    }
+        .contact a.primary {
+            margin: 2rem 1rem;
+        }
+</style>
+{% endblock %}
+
+{% block main_class %}{% endblock %}
+
+{% block body %}
+    <section>
+        <h2>Conseils</h2>
+        {% for conseil in conseils %}
+            <div class="conseil box">
+                <div>
+                    <h3>{{ conseil.chambre.name }} du {{ conseil.date.strftime("%x") }}</h3>
+                    <p>{{ conseil.chambre.value }} &mdash; {{ conseil.formation.value }}</p>
+                </div>
+                <nav>
+                    <a href="{{ request.resource_url(context) }}">
+                        Accéder à ce conseil
+                    </a>
+                </nav>
+            </div>
+        {% else %}
+            <div class="conseil box">
+                <h3>Aucun conseil pour l’instant.</h3>
+            </div>
+        {% endfor %}
+    </section>
+    <div class="extra-button conseil box">
+    {% if can_add_conseil %}
+        <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
+            Ajouter un conseil
+        </a>
+    {% endif %}
+    </div>
+{% endblock %}

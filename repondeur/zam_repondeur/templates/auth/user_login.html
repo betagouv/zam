@@ -1,7 +1,7 @@
 {% extends "auth/_base_auth.html" %}
 
 {% block body %}
-<h1>Entrer dans Zam</h1>
+<h1>Entrer dans {{ app_name }}</h1>
 <form method="POST" class="intro">
     <fieldset>
         {% if request.session.pop('missing_email', None) %}
@@ -22,6 +22,6 @@
             required
             autocorrect="off" spellcheck="false">
     </fieldset>
-    <input type="submit" class="button primary enabled" value="Entrer dans Zam">
+    <input type="submit" class="button primary enabled" value="Entrer dans {{ app_name }}">
 </form>
 {% endblock %}

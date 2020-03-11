@@ -1,0 +1,61 @@
+{% extends "_base.html" %}
+
+{% block header %}
+    <style type="text/css">
+        h2 {
+            text-align: center;
+            margin: 2.5rem 0 1.5rem 0;
+            font-weight: 600;
+        }
+        label {
+            font-weight: 600;
+        }
+        .form-group {
+            margin-top: 2.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <form id="add-conseil" action="{{ request.path }}" method="POST">
+        <h2>Ajouter un conseil</h2>
+
+        <div class="form-group">
+            <label for="chambre">Conseil</label>
+            <select name="chambre" class="form-control" required>
+                <option value="" selected disabled>Choisir dans la liste…</option>
+                {% for value, title in chambres %}
+                    <option value="{{ value }}">{{ title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="date">Date du conseil</label>
+            <input type="date" name="date" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="formation">Formation</label>
+            <select name="formation" class="form-control" required>
+                {% for value, title in formations %}
+                    <option value="{{ value }}">{{ title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="urgence_declaree">Urgence déclarée</label>
+            <select name="urgence_declaree" class="form-control" required>
+                <option value="0" selected>Non (délai de dépôt des amendements : J-4)</option>
+                <option value="1">Oui (délai de dépôt des amendements : J-2)</option>
+            </select>
+        </div>
+
+        <div class="form-group save-buttons">
+            <a href="{{ request.resource_url(context) }}" class="arrow-left">Retour</a>
+            <input type="submit" name="submit" value="Ajouter le conseil" class="button enabled primary">
+        </div>
+
+    </form>
+{% endblock %}

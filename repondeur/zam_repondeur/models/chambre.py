@@ -5,6 +5,7 @@ class Chambre(enum.Enum):
     AN = "Assemblée nationale"
     SENAT = "Sénat"
     CCFP = "Conseil commun de la fonction publique"
+    CSFPE = "Conseil supérieur de la fonction publique d’État"
 
     @staticmethod
     def from_string(chambre: str) -> "Chambre":

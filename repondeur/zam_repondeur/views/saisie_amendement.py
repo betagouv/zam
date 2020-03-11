@@ -8,6 +8,7 @@ from zam_repondeur.models import Amendement, Article, DBSession
 from zam_repondeur.models.division import SubDiv
 from zam_repondeur.models.events.amendement import AmendementSaisi
 from zam_repondeur.resources import AmendementCollection
+from zam_repondeur.services.clean import clean_html
 
 GROUPES = {
     "LE GOUVERNEMENT": "Gouvernement",
@@ -47,8 +48,8 @@ class SaisieAmendement:
     def post(self) -> Response:
         groupe = self.request.POST.get("groupe")
         num = self.next_num_for(GROUPES[groupe])
-        corps = self.request.POST.get("corps")
-        expose = self.request.POST.get("expose")
+        corps = clean_html(self.request.POST.get("corps", ""))
+        expose = clean_html(self.request.POST.get("expose", ""))
 
         # Find article
         subdiv = SubDiv(*self.request.POST.get("subdiv").split("."))

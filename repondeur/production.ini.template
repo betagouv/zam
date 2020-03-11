@@ -21,6 +21,8 @@ root = %(here)s
 [app:repondeur]
 use = egg:zam_repondeur
 
+zam.app_name = Visam
+
 pyramid.includes =
     pyramid_mailer
 

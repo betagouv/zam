@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Zam{% endblock %}</title>
+    <title>{% block title %}{{ app_name }}{% endblock %}</title>
 
     {# Generated via https://realfavicongenerator.net/ #}
     <link rel="apple-touch-icon" sizes="180x180" href="{{ request.static_url('zam_repondeur:static/favicons/apple-touch-icon.png') }}">
@@ -80,7 +80,7 @@
                                 {% if request.user.name %}
                                     <li class="user"><a href="{{ request.route_url('welcome') }}" class="account">{{ request.user.name or "" }}</a></li>
                                 {% endif %}
-                                <li><a class="logout" href="{{ request.route_url('logout') }}" title="Se déconnecter de Zam">Déconnexion</a></li>
+                                <li><a class="logout" href="{{ request.route_url('logout') }}" title="Se déconnecter de {{ app_name }}">Déconnexion</a></li>
                             </ul>
                         </div>
                     </li>

@@ -116,25 +116,26 @@ class UserLogin(RateLimiterMixin):
                 return token
 
     def send_auth_token_email(self, token: str, email: str) -> None:
+        app_name = self.request.registry.settings["zam.app_name"]
         url = self.request.route_url("auth", _query={"token": token})
         url_dossiers = self.request.resource_url(self.request.root["dossiers"])
         mailer = get_mailer(self.request)
         message = MailMessage(
-            subject="Se connecter à Zam",
+            subject=f"Se connecter à {app_name}",
             sender="contact@zam.beta.gouv.fr",
             recipients=[email],
             body=f"""
 Bonjour,
 
-Pour vous connecter à Zam, veuillez cliquer sur l’adresse suivante :
+Pour vous connecter à {app_name}, veuillez cliquer sur l’adresse suivante :
 {url}
 
-Notez que Zam ne fonctionne pas sous Internet Explorer,
+Notez que {app_name} ne fonctionne pas sous Internet Explorer,
 aussi il est conseillé de copier-coller cette adresse
 dans un navigateur moderne comme Firefox ou Chrome.
 
 Ce lien contient un code personnel à usage unique,
-valable 10 minutes, pour vous authentifier sur Zam.
+valable 10 minutes, pour vous authentifier sur {app_name}.
 
 Une fois connecté·e, vous pourrez directement accéder aux dossiers :
 {url_dossiers}
@@ -214,7 +215,10 @@ class Authenticate(RateLimiterMixin):
         # Compute response headers for the session cookie
         headers = remember(self.request, user.pk)
 
-        self.request.session.flash(Message(cls="success", text="Bienvenue dans Zam !"))
+        app_name = self.request.registry.settings["zam.app_name"]
+        self.request.session.flash(
+            Message(cls="success", text=f"Bienvenue dans {app_name} !")
+        )
 
         return HTTPFound(location=next_url, headers=headers)
 

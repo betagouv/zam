@@ -135,12 +135,13 @@ class DossierInviteForm(DossierViewBase):
         # TODO: async?
         mailer = get_mailer(self.request)
         reply_to = formataddr((self.request.user.name, self.request.user.email))
-        subject = "Invitation à rejoindre un dossier législatif sur Zam"
+        app_name = self.request.registry.settings["zam.app_name"]
+        subject = f"Invitation à rejoindre un dossier législatif sur {app_name}"
         url = self.request.resource_url(self.request.context)
         body = f"""
 Bonjour,
 
-Vous venez d’être invité·e à rejoindre Zam
+Vous venez d’être invité·e à rejoindre {app_name}
 par {self.request.user}
 pour participer au dossier législatif suivant :
 {self.dossier.titre}
@@ -165,14 +166,15 @@ Bonne journée !
         # TODO: async?
         mailer = get_mailer(self.request)
         reply_to = formataddr((self.request.user.name, self.request.user.email))
-        subject = "Invitation à participer à un dossier législatif sur Zam"
+        app_name = self.request.registry.settings["zam.app_name"]
+        subject = f"Invitation à participer à un dossier législatif sur {app_name}"
         url = self.request.resource_url(self.request.context)
         body = f"""
 Bonjour,
 
 Vous venez d’être invité·e
 par {self.request.user} à participer
-au dossier législatif suivant sur Zam :
+au dossier législatif suivant sur {app_name} :
 {self.dossier.titre}
 
 Vous pouvez y accéder via l’adresse suivante :

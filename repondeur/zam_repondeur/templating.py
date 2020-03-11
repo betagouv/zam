@@ -1,6 +1,7 @@
 from typing import Any, Dict, Optional
 
 from pyramid.config import Configurator
+from pyramid.events import BeforeRender
 from pyramid.registry import Registry
 from pyramid.threadlocal import get_current_registry
 from pyramid_jinja2 import Environment, IJinja2Environment
@@ -29,6 +30,13 @@ def includeme(config: Configurator) -> None:
     config.include("pyramid_jinja2")
     config.add_jinja2_renderer(".html")
     config.add_jinja2_search_path("zam_repondeur:templates", name=".html")
+
+    app_name = config.registry.settings["zam.app_name"]
+
+    def add_renderer_globals(event):
+        event["app_name"] = app_name
+
+    config.add_subscriber(add_renderer_globals, BeforeRender)
 
 
 def render_template(

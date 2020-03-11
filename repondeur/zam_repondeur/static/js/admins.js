@@ -5,7 +5,8 @@ application.register(
       if (
         window.confirm(
           'Êtes-vous sûr·e de vouloir retirer cette personne ? ' +
-            '(elle ne sera plus administratrice mais conservera son accès à Zam)'
+            '(elle ne sera plus administratrice mais conservera ' +
+            'son accès à l’application)'
         )
       ) {
         return

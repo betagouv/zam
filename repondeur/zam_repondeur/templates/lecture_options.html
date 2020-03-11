@@ -138,7 +138,7 @@
         <div class="flex-line" data-controller="filename">
             <div>
                 <h3>Importer un fichier technique structuré</h3>
-                <p>L’import d’un JSON permet d’interfacer Zam avec un autre outil.</p>
+                <p>L’import d’un JSON permet d’interfacer {{ app_name }} avec un autre outil.</p>
             </div>
             <form action="{{ request.resource_url(context, 'import_backup') }}" enctype="multipart/form-data" method="post" id="backup-form">
                 <div class="custom-file">

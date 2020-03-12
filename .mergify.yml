@@ -1,0 +1,10 @@
+pull_request_rules:
+  - name: automatic merge for master when reviewed and CI passes
+    conditions:
+      - "status-success=ci/circleci: repondeur"
+      - "#approved-reviews-by>=1"
+      - label=ready-to-merge
+    actions:
+      merge:
+        method: rebase
+        strict: true

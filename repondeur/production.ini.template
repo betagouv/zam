@@ -25,6 +25,7 @@ zam.app_name = Visam
 
 pyramid.includes =
     pyramid_mailer
+    zam_repondeur.visam
 
 rollbar.access_token = $$rollbar_token
 rollbar.environment = $$environment

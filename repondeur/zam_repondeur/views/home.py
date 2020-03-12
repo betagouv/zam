@@ -8,4 +8,5 @@ from zam_repondeur.resources import Root
 
 @view_config(context=Root)
 def home(context: Root, request: Request) -> Response:
-    return HTTPFound(location=request.resource_url(context["dossiers"]))
+    default_resource = request.registry.settings["zam.home"]
+    return HTTPFound(location=request.resource_url(context[default_resource]))

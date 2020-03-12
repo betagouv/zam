@@ -15,6 +15,7 @@ from zam_repondeur.version import load_version
 
 BASE_SETTINGS = {
     "zam.app_name": "Zam",
+    "zam.home": "dossiers",
     "zam.auth_cookie_duration": 7 * 24 * 3600,  # a user stays identified for 7 days
     "zam.auth_cookie_secure": True,  # disable for local HTTP access in development
     "zam.legislatures": "14,15",

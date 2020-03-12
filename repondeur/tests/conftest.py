@@ -61,7 +61,7 @@ class TestApp(BaseTestApp):
 def settings(tmp_path_factory):
     return {
         "pyramid.debug_authorization": True,
-        "pyramid.includes": "pyramid_mailer.testing",
+        "pyramid.includes": ["pyramid_mailer.testing"],
         "sqlalchemy.url": os.environ.get(
             "ZAM_TEST_DB_URL", "postgresql://zam@localhost/zam-test"
         ),

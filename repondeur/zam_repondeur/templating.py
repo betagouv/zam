@@ -30,13 +30,12 @@ def includeme(config: Configurator) -> None:
     config.include("pyramid_jinja2")
     config.add_jinja2_renderer(".html")
     config.add_jinja2_search_path("zam_repondeur:templates", name=".html")
-
-    app_name = config.registry.settings["zam.app_name"]
-
-    def add_renderer_globals(event: BeforeRender) -> None:
-        event["app_name"] = app_name
-
     config.add_subscriber(add_renderer_globals, BeforeRender)
+
+
+def add_renderer_globals(event: BeforeRender) -> None:
+    registry = get_current_registry()
+    event["app_name"] = registry.settings["zam.app_name"]
 
 
 def render_template(

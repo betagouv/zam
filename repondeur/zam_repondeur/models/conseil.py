@@ -52,9 +52,12 @@ class Conseil(Base):
         """,
     )
 
+    def __repr__(self) -> str:
+        return f"{self.chambre.name} du {self.date.strftime('%x')}"
+
     @property
     def slug(self) -> str:
-        return f"{self.chambre.lower()}-{self.date}"
+        return f"{self.chambre.name.lower()}-{self.date}"
 
     @classmethod
     def create(
@@ -82,6 +85,6 @@ class Conseil(Base):
         except ValueError:
             return None
         res: Optional["Conseil"] = DBSession.query(cls).filter(
-            cls.chambre == chambre, cls.date == date,
+            cls.chambre == chambre.upper(), cls.date == date,
         ).options(*options).first()
         return res

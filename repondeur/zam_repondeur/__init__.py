@@ -1,3 +1,4 @@
+import logging
 from multiprocessing import cpu_count
 from typing import Any
 
@@ -12,6 +13,9 @@ from sqlalchemy import engine_from_config, event
 from zam_repondeur.models import Base, DBSession, log_query_with_origin
 from zam_repondeur.resources import Root
 from zam_repondeur.version import load_version
+
+logger = logging.getLogger(__name__)
+
 
 BASE_SETTINGS = {
     "zam.app_name": "Zam",

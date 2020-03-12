@@ -3,7 +3,7 @@ import logging
 from pyramid.request import Request
 from pyramid.view import view_config, view_defaults
 
-from zam_repondeur.resources import ConseilResource
+from zam_repondeur.visam.resources import ConseilResource
 
 logger = logging.getLogger(__name__)
 

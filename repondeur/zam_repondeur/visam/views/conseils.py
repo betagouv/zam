@@ -7,8 +7,8 @@ from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.message import Message
 from zam_repondeur.models import Chambre, Conseil, Formation
-from zam_repondeur.resources import ConseilCollection
 from zam_repondeur.services.fetch.dates import parse_date
+from zam_repondeur.visam.resources import ConseilCollection
 
 logger = logging.getLogger(__name__)
 

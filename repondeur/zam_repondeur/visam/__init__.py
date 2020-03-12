@@ -16,3 +16,6 @@ def includeme(config: Configurator) -> None:
 
     # Change default home page
     config.add_settings({"zam.home": "conseils"})
+
+    # Add our views
+    config.scan(".views")

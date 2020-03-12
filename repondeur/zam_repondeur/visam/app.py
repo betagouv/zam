@@ -5,6 +5,8 @@ from pyramid.router import Router
 
 from zam_repondeur import BASE_SETTINGS
 
+from .resources import VisamRoot
+
 
 def make_app(global_settings: dict, **settings: Any) -> Router:
 
@@ -25,6 +27,9 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
 
         # Change default home page
         config.add_settings({"zam.home": "conseils"})
+
+        # Customize the resource tree
+        config.set_root_factory(VisamRoot)
 
         # Scan Visam-specific views
         config.scan(".views")

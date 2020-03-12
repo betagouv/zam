@@ -33,7 +33,7 @@ def includeme(config: Configurator) -> None:
 
     app_name = config.registry.settings["zam.app_name"]
 
-    def add_renderer_globals(event):
+    def add_renderer_globals(event: BeforeRender) -> None:
         event["app_name"] = app_name
 
     config.add_subscriber(add_renderer_globals, BeforeRender)

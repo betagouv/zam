@@ -181,7 +181,7 @@ def setup_self_signed_cert(ctx):
         " -days 365"
         " -sha256"
         " -nodes"
-        f" -subj '/C=FR/OU=Zam/CN={hostname}'"
+        f" -subj '/C=FR/OU=Visam/CN={hostname}'"
     )
 
 

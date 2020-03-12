@@ -32,7 +32,7 @@ def test_get_amendement_edit_form(
     # Check the displayed amendement
     assert resp.parser.css_first(".title .article").text().strip() == "Article 1"
 
-    assert resp.parser.css_first(".expose h4").text() == "Exposé"
+    assert resp.parser.css_first(".expose h4").text() == "Exposé des motifs"
     assert resp.parser.css_first(".expose h4 + *").text() == "Bla bla bla"
 
     assert resp.parser.css_first(".corps h4").text() == "Corps de l’amendement"

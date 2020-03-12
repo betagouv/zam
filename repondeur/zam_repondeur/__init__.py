@@ -68,7 +68,7 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         config.include("zam_repondeur.services.fetch.http")
         load_version(config)
 
-        config.scan()
+        config.scan("zam_repondeur.views")
 
         app = config.make_wsgi_app()
 

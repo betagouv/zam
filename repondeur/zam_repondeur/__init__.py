@@ -68,6 +68,12 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         config.include("zam_repondeur.services.fetch.http")
         load_version(config)
 
+        # Visam-specific CSS and images
+        config.override_asset(
+            to_override="zam_repondeur:static/",
+            override_with="zam_repondeur:visam/static/",
+        )
+
         config.scan()
 
         app = config.make_wsgi_app()

@@ -13,3 +13,6 @@ def includeme(config: Configurator) -> None:
         to_override="zam_repondeur:static/",
         override_with="zam_repondeur:visam/static/",
     )
+
+    # Add our views
+    config.scan(".views")

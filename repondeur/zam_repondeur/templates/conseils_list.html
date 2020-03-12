@@ -82,7 +82,7 @@
                     <p>{{ conseil.chambre.value }} &mdash; {{ conseil.formation.value }}</p>
                 </div>
                 <nav>
-                    <a href="{{ request.resource_url(context) }}">
+                    <a href="{{ request.resource_url(context, conseil.slug) }}">
                         Accéder à ce conseil
                     </a>
                 </nav>

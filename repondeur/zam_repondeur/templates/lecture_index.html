@@ -44,7 +44,7 @@
         <h3>Vos amendements n’apparaissent pas ? Ou sont mal ordonnés ?</h3>
         <p>S’ils ne sont pas encore publiés sur le site Internet de l’Assemblée nationale / du Sénat, tout va bien, veuillez patienter.</p>
         <p>S’ils sont publiés sur le site, c’est un indicateur qu’ils arrivent bientôt sur {{ app_name }} ! En effet, il est possible que les amendements soient publiés sur le site Internet (ou sur l’intranet parlementaire notamment ELOI) mais qu’ils ne soient pas encore disponibles pour {{ app_name }}, en particulier lorsqu’il s’agit d’une lecture Assemblée nationale.</p>
-        <p>Si cela vous semble anormalement long, veuillez <a href="https://github.com/betagouv/zam/wiki/R%C3%A9solution-de-probl%C3%A8mes">consulter la page d’aide dédiée</a> et/ou <a href="mailto:contact@zam.beta.gouv.fr">contacter l’équipe de développement</a> pour solliciter de l’aide.</p>
+        <p>Si cela vous semble anormalement long, veuillez <a href="https://github.com/betagouv/zam/wiki/R%C3%A9solution-de-probl%C3%A8mes">consulter la page d’aide dédiée</a> et/ou <a href="mailto:{{ contact_email }}">contacter l’équipe de développement</a> pour solliciter de l’aide.</p>
     </div>
 </div>
 
@@ -366,7 +366,7 @@
             <h3>Les amendements ne sont pas encore disponibles.</h3>
             <p>S’ils ne sont pas encore publiés sur le site Internet de l’Assemblée nationale / du Sénat, tout va bien, veuillez patienter.</p>
             <p>S’ils sont publiés sur le site, c’est un indicateur qu’ils arrivent bientôt sur {{ app_name }} ! En effet, il est possible que les amendements soient publiés sur le site Internet (ou sur l’intranet parlementaire notamment ELOI) mais qu’ils ne soient pas encore disponibles pour {{ app_name }}, en particulier lorsqu’il s’agit d’une lecture Assemblée nationale.</p>
-            <p>Si cela vous semble anormalement long, veuillez <a href="https://github.com/betagouv/zam/wiki/R%C3%A9solution-de-probl%C3%A8mes">consulter la page d’aide dédiée</a> et/ou <a href="mailto:contact@zam.beta.gouv.fr">contacter l’équipe de développement</a> pour solliciter de l’aide.</p>
+            <p>Si cela vous semble anormalement long, veuillez <a href="https://github.com/betagouv/zam/wiki/R%C3%A9solution-de-probl%C3%A8mes">consulter la page d’aide dédiée</a> et/ou <a href="mailto:{{ contact_email }}">contacter l’équipe de développement</a> pour solliciter de l’aide.</p>
             {% elif lecture.chambre.name in ["CCFP"] %}
             <h3 class="centered">Aucun amendement saisi pour l’instant…</h3>
             {% endif %}

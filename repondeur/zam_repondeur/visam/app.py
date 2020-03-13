@@ -16,8 +16,13 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
 
         config.include("zam_repondeur")
 
-        # Custom app name
-        config.add_settings({"zam.app_name": "Visam"})
+        # Custom app name and contact email address
+        config.add_settings(
+            {
+                "zam.app_name": "Visam",
+                "zam.contact_email": "contact@visam.beta.gouv.fr",
+            }
+        )
 
         # Custom logo
         config.override_asset(

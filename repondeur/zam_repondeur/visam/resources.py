@@ -3,8 +3,10 @@ from typing import Any, List, Optional, cast
 from pyramid.request import Request
 from pyramid.security import Allow, Deny, Everyone
 
-from zam_repondeur.models import Conseil, DBSession
+from zam_repondeur.models import DBSession
 from zam_repondeur.resources import Resource, ResourceNotFound, Root
+
+from .models import Conseil
 
 
 class VisamRoot(Root):

@@ -36,6 +36,7 @@ def includeme(config: Configurator) -> None:
 def add_renderer_globals(event: BeforeRender) -> None:
     registry = get_current_registry()
     event["app_name"] = registry.settings["zam.app_name"]
+    event["contact_email"] = registry.settings["zam.contact_email"]
 
 
 def render_template(

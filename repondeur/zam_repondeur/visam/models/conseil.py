@@ -2,10 +2,28 @@ import datetime
 import enum
 from typing import Any, Optional
 
-from sqlalchemy import Boolean, CheckConstraint, Column, Date, Enum, Integer
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    Column,
+    Date,
+    Enum,
+    ForeignKey,
+    Integer,
+    Table,
+)
+from sqlalchemy.orm import relationship
 
 from zam_repondeur.models.base import Base, DBSession
 from zam_repondeur.models.chambre import Chambre
+from zam_repondeur.models.users import Team, User
+
+association_table = Table(
+    "conseils_lectures",
+    Base.metadata,
+    Column("conseil_id", Integer, ForeignKey("conseils.id")),
+    Column("lecture_pk", Integer, ForeignKey("lectures.pk")),
+)
 
 
 class Formation(enum.Enum):
@@ -52,6 +70,11 @@ class Conseil(Base):
         """,
     )
 
+    team_pk = Column(Integer, ForeignKey("teams.pk"), nullable=False)
+    team = relationship("Team")
+
+    lectures = relationship("Lecture", secondary=association_table)
+
     def __repr__(self) -> str:
         return f"{self.chambre.name} du {self.date.strftime('%x')}"
 
@@ -75,7 +98,13 @@ class Conseil(Base):
             date=date,
             urgence_declaree=urgence_declaree,
         )
+        team = Team.create(conseil.slug)
+        conseil.team = team
         DBSession.add(conseil)
+        for admin in DBSession.query(User).filter(
+            User.admin_at.isnot(None)  # type: ignore
+        ):
+            admin.teams.append(team)
         return conseil
 
     @classmethod

@@ -75,14 +75,19 @@ class TexteAddView(ConseilViewBase):
         self.request.session.flash(
             Message(cls="success", text=("Texte créé avec succès."),)
         )
-        return HTTPFound(location=self.request.resource_url(self.context))
+        location = self.request.resource_url(
+            self.request.root["dossiers"][lecture.dossier.slug]["lectures"][
+                lecture.url_key
+            ]["amendements"]
+        )
+        return HTTPFound(location=location)
 
     def create_texte(self, chambre: Chambre) -> Texte:
         max_numero = (
             DBSession.query(func.max(Texte.numero))
             .filter(Texte.type_ == TypeTexte.PROJET, Texte.chambre == chambre)
             .scalar()
-        )
+        ) or 0
         texte = Texte.create(
             type_=TypeTexte.PROJET,
             chambre=chambre,

@@ -67,7 +67,8 @@ class UserLogin(RateLimiterMixin):
     def next_url(self) -> Any:
         url = self.request.params.get("source")
         if url is None or url == self.request.route_url("login"):
-            url = self.request.resource_url(self.request.root["dossiers"])
+            default_resource = self.request.registry.settings["zam.home"]
+            url = self.request.resource_url(self.request.root[default_resource])
         return url
 
     @view_config(request_method="POST", require_csrf=True)
@@ -118,7 +119,7 @@ class UserLogin(RateLimiterMixin):
     def send_auth_token_email(self, token: str, email: str) -> None:
         app_name = self.request.registry.settings["zam.app_name"]
         url = self.request.route_url("auth", _query={"token": token})
-        url_dossiers = self.request.resource_url(self.request.root["dossiers"])
+        url_home = self.request.resource_url(self.request.root)
         mailer = get_mailer(self.request)
         message = MailMessage(
             subject=f"Se connecter à {app_name}",
@@ -137,8 +138,8 @@ dans un navigateur moderne comme Firefox ou Chrome.
 Ce lien contient un code personnel à usage unique,
 valable 10 minutes, pour vous authentifier sur {app_name}.
 
-Une fois connecté·e, vous pourrez directement accéder aux dossiers :
-{url_dossiers}
+Une fois connecté·e, vous pourrez directement accéder à l’application :
+{url_home}
 
 Bonne journée !
             """.strip(),
@@ -226,7 +227,8 @@ class Authenticate(RateLimiterMixin):
     def next_url(self) -> Any:
         url = self.request.params.get("source")
         if url is None or url == self.request.route_url("login"):
-            url = self.request.resource_url(self.request.root["dossiers"])
+            default_resource = self.request.registry.settings["zam.home"]
+            url = self.request.resource_url(self.request.root[default_resource])
         return url
 
     def log_successful_login_attempt(self, email: str) -> None:
@@ -255,8 +257,9 @@ class Welcome:
             return HTTPFound(location=self.request.route_url("welcome"))
 
         self.request.user.name = User.normalize_name(name)
+        default_resource = self.request.registry.settings["zam.home"]
         next_url = self.request.params.get("source") or self.request.resource_url(
-            self.request.root["dossiers"]
+            self.request.root[default_resource]
         )
         return HTTPFound(location=next_url)
 

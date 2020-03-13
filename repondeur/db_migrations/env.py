@@ -3,6 +3,9 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+# Make sure all models are loaded
+import zam_repondeur.models  # noqa
+import zam_repondeur.visam.models  # noqa
 from zam_repondeur.models import Base
 
 # this is the Alembic Config object, which provides

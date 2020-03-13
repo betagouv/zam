@@ -93,3 +93,4 @@ def test_conseils_add_submit(app, user_sgg):
     assert conseil.date == date(2020, 4, 1)
     assert conseil.formation.value == "Assemblée plénière"
     assert not conseil.urgence_declaree
+    assert conseil.team.name == "ccfp-2020-04-01"

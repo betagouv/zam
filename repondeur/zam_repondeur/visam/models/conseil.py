@@ -89,7 +89,7 @@ class Conseil(Base):
         formation: Formation,
         date: datetime.date,
         urgence_declaree: bool = False,
-    ) -> "Chambre":
+    ) -> "Conseil":
         if chambre in {Chambre.AN, Chambre.SENAT}:
             raise ValueError("Chambre invalide")
         conseil = cls(

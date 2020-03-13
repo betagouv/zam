@@ -30,7 +30,7 @@ class ConseilsList(ConseilCollectionBase):
         }
 
 
-@view_defaults(context=ConseilCollection, name="add", permission="activate")
+@view_defaults(context=ConseilCollection, name="add", permission="add")
 class ConseilAddView(ConseilCollectionBase):
     @view_config(request_method="GET", renderer="conseils_add.html")
     def get(self) -> dict:

@@ -18,7 +18,7 @@ class VisamRoot(Root):
 
 
 class ConseilCollection(Resource):
-    __acl__ = [(Allow, "group:admins", "activate"), (Deny, Everyone, "activate")]
+    __acl__ = [(Allow, "group:admins", "add"), (Deny, Everyone, "add")]
 
     def models(self, *options: Any) -> List[Conseil]:
         result: List[Conseil] = (

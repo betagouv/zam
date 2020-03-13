@@ -46,7 +46,7 @@
         line-height: 1.2;
     }
     .extra-button {
-        justify-content: center;
+        text-align: center;
         margin-top: 1rem;
     }
         .extra-button a.button {
@@ -69,16 +69,21 @@
             <div class="texte box">
                 <h3>{{ lecture.dossier.titre }}</h3>
                 <nav>
-                    <a href="{{ request.resource_url(context.parent.parent['dossiers'][lecture.dossier.slug]['lectures'][lecture.url_key]['amendements']) }}">
+                    <a href="{{ request.resource_url(request.root['dossiers'][lecture.dossier.slug]['lectures'][lecture.url_key]['amendements']) }}">
                         Accéder à ce texte
                     </a>
                 </nav>
             </div>
         {% endfor %}
     </section>
-    <div class="extra-button texte box">
-        <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
-            Ajouter un texte
-        </a>
-    </div>
+    {% if not lectures %}
+        <div class="extra-button box">
+            <h2>Aucun texte pour l’instant.</h2>
+            <p>
+                <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
+                    Ajouter un texte
+                </a>
+            </p>
+        </div>
+    {% endif %}
 {% endblock %}

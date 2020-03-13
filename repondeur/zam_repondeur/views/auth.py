@@ -295,7 +295,7 @@ def forbidden_view(exception: HTTPForbidden, request: Request) -> Any:
         )
 
     # Default
-    message = "L’accès à ce dossier est réservé aux personnes autorisées."
+    message = "L’accès à cette page est réservé aux personnes autorisées."
     next_resource = request.root
 
     if isinstance(exception.result, ACLDenied):

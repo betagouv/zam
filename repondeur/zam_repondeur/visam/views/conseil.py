@@ -8,14 +8,14 @@ from zam_repondeur.visam.resources import ConseilResource
 logger = logging.getLogger(__name__)
 
 
-class ConseilResourceBase:
+class ConseilViewBase:
     def __init__(self, context: ConseilResource, request: Request) -> None:
         self.context = context
         self.request = request
 
 
 @view_defaults(context=ConseilResource)
-class ConseilsList(ConseilResourceBase):
+class ConseilView(ConseilViewBase):
     @view_config(request_method="GET", renderer="conseil_item.html")
     def get(self) -> dict:
         return {

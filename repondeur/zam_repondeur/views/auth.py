@@ -117,12 +117,13 @@ class UserLogin(RateLimiterMixin):
 
     def send_auth_token_email(self, token: str, email: str) -> None:
         app_name = self.request.registry.settings["zam.app_name"]
+        contact_email = self.request.registry.settings["zam.contact_email"]
         url = self.request.route_url("auth", _query={"token": token})
         url_home = self.request.resource_url(self.request.root.self_or_child())
         mailer = get_mailer(self.request)
         message = MailMessage(
             subject=f"Se connecter à {app_name}",
-            sender="contact@zam.beta.gouv.fr",
+            sender=contact_email,
             recipients=[email],
             body=f"""
 Bonjour,

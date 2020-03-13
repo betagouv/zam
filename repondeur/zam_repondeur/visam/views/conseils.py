@@ -57,7 +57,7 @@ class ConseilAddView(ConseilCollectionBase):
         if date is None:
             raise HTTPBadRequest("Date invalide")  # TODO: better validation
 
-        Conseil.create(
+        conseil = Conseil.create(
             chambre=chambre,
             date=date,
             formation=formation,
@@ -67,4 +67,4 @@ class ConseilAddView(ConseilCollectionBase):
         self.request.session.flash(
             Message(cls="success", text=("Conseil créé avec succès."),)
         )
-        return HTTPFound(location=self.request.resource_url(self.context))
+        return HTTPFound(location=self.request.resource_url(self.context, conseil.slug))

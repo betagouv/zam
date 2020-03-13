@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 import responses
 import transaction
-from pyramid.threadlocal import get_current_registry
 from pyramid_mailer import get_mailer
 
 from fixtures.dossiers import *  # noqa: F401,F403
@@ -196,9 +195,10 @@ def app(
 
 
 @pytest.fixture
-def mailer():
-    registry = get_current_registry()
-    yield get_mailer(registry)
+def mailer(app):
+    mailer = get_mailer(app.app.registry)
+    mailer.outbox = []  # clean the list of sent messages first
+    return mailer
 
 
 def pytest_runtest_call(item):
@@ -207,14 +207,7 @@ def pytest_runtest_call(item):
 
     See: https://docs.pytest.org/en/latest/reference.html#hook-reference
     """
-    clear_email_outbox()
     clear_rate_limiting_counters()
-
-
-def clear_email_outbox():
-    registry = get_current_registry()
-    mailer = get_mailer(registry)
-    mailer.outbox = []
 
 
 def clear_rate_limiting_counters():

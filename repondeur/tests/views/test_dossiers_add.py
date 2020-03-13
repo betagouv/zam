@@ -56,7 +56,7 @@ def test_get_form_non_sgg_user(app, user_david):
     resp = resp.maybe_follow()
 
     assert resp.status_code == 200
-    assert "L’accès à ce dossier est réservé aux personnes autorisées." in resp.text
+    assert "L’accès à cette page est réservé aux personnes autorisées." in resp.text
 
 
 def test_get_form_does_not_propose_dossiers_with_teams(

@@ -6,7 +6,8 @@ import transaction
 
 @pytest.fixture
 def conseil_ccfp(db):
-    from zam_repondeur.models import Conseil, Chambre, Formation
+    from zam_repondeur.models import Chambre
+    from zam_repondeur.visam.models import Conseil, Formation
 
     with transaction.manager:
         conseil = Conseil.create(

@@ -9,7 +9,6 @@ from .article import Article, ArticleUserContent  # noqa
 from .base import Base, DBSession, log_query_with_origin  # noqa
 from .batch import Batch  # noqa
 from .chambre import Chambre  # noqa
-from .conseil import Conseil, Formation  # noqa
 from .dossier import Dossier  # noqa
 from .events.amendement import (  # noqa
     AmendementIrrecevable,

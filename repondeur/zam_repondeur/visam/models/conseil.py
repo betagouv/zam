@@ -4,8 +4,8 @@ from typing import Any, Optional
 
 from sqlalchemy import Boolean, CheckConstraint, Column, Date, Enum, Integer
 
-from .base import Base, DBSession
-from .chambre import Chambre
+from zam_repondeur.models.base import Base, DBSession
+from zam_repondeur.models.chambre import Chambre
 
 
 class Formation(enum.Enum):

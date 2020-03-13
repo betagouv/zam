@@ -80,7 +80,7 @@ class TestLoginPage:
             Ce lien contient un code personnel à usage unique,
             valable 10 minutes, pour vous authentifier sur Zam.
 
-            Une fois connecté·e, vous pourrez directement accéder aux dossiers :
+            Une fois connecté·e, vous pourrez directement accéder à l’application :
             https://zam.test/dossiers/
 
             Bonne journée !"""

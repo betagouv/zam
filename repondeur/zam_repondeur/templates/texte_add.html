@@ -1,0 +1,39 @@
+{% extends "_base.html" %}
+
+{% block header %}
+    <style type="text/css">
+        h2 {
+            text-align: center;
+            margin: 2.5rem 0 1.5rem 0;
+            font-weight: 600;
+        }
+        label {
+            font-weight: 600;
+        }
+        .form-group {
+            margin-top: 2.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <form id="add-texte" action="{{ request.path }}" method="POST">
+        <h2>Ajouter un texte</h2>
+
+        <div class="form-group">
+            <label for="titre">Titre</label>
+            <input type="text" name="titre" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="contenu">Contenu</label>
+            <textarea name="contenu" class="form-control" rows="20"></textarea>
+        </div>
+
+        <div class="form-group save-buttons">
+            <a href="{{ request.resource_url(context) }}" class="arrow-left">Retour</a>
+            <input type="submit" name="submit" value="Ajouter le texte" class="button enabled primary">
+        </div>
+
+    </form>
+{% endblock %}

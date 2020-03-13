@@ -136,6 +136,7 @@ class DossierInviteForm(DossierViewBase):
         mailer = get_mailer(self.request)
         reply_to = formataddr((self.request.user.name, self.request.user.email))
         app_name = self.request.registry.settings["zam.app_name"]
+        contact_email = self.request.registry.settings["zam.contact_email"]
         subject = f"Invitation à rejoindre un dossier législatif sur {app_name}"
         url = self.request.resource_url(self.request.context)
         body = f"""
@@ -154,7 +155,7 @@ Bonne journée !
         for user in users:
             message = MailMessage(
                 subject=subject,
-                sender="contact@zam.beta.gouv.fr",
+                sender=contact_email,
                 recipients=[user.email],
                 body=body.strip(),
                 extra_headers={"reply-to": reply_to},
@@ -167,6 +168,7 @@ Bonne journée !
         mailer = get_mailer(self.request)
         reply_to = formataddr((self.request.user.name, self.request.user.email))
         app_name = self.request.registry.settings["zam.app_name"]
+        contact_email = self.request.registry.settings["zam.contact_email"]
         subject = f"Invitation à participer à un dossier législatif sur {app_name}"
         url = self.request.resource_url(self.request.context)
         body = f"""
@@ -185,7 +187,7 @@ Bonne journée !
         for user in users:
             message = MailMessage(
                 subject=subject,
-                sender="contact@zam.beta.gouv.fr",
+                sender=contact_email,
                 recipients=[user.email],
                 body=body.strip(),
                 extra_headers={"reply-to": reply_to},

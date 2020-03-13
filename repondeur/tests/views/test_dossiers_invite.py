@@ -44,7 +44,7 @@ def test_get_form_user_not_in_dossier_team(app, user_ronan, dossier_plfss2018):
     resp = resp.maybe_follow()
 
     assert resp.status_code == 200
-    assert "L’accès à ce dossier est réservé aux personnes autorisées." in resp.text
+    assert "L’accès à cette page est réservé aux personnes autorisées." in resp.text
 
 
 def test_post_form(app, user_david, dossier_plfss2018, mailer):

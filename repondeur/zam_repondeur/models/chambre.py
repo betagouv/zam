@@ -7,15 +7,13 @@ class Chambre(enum.Enum):
     CCFP = "Conseil commun de la fonction publique"
     CSFPE = "Conseil supérieur de la fonction publique d’État"
 
-    @staticmethod
-    def from_string(chambre: str) -> "Chambre":
-        if chambre == "an":
-            return Chambre.AN
-        if chambre == "senat":
-            return Chambre.SENAT
-        if chambre == "ccfp":
-            return Chambre.CCFP
-        raise ValueError(f"Invalid string value {chambre!r} for Chambre")
+    @classmethod
+    def from_string(cls, chambre: str) -> "Chambre":
+        d = {name.lower(): value for name, value in cls.__members__.items()}
+        try:
+            return d[chambre]
+        except KeyError as e:
+            raise ValueError(f"Invalid string value {chambre!r} for Chambre") from e
 
     def __str__(self) -> str:
         return self.name.lower()

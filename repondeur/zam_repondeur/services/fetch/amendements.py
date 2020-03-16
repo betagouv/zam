@@ -329,6 +329,6 @@ class RemoteSource(Source):
             )
         elif chambre == Chambre.SENAT:
             return Senat(settings=settings, prefetching_enabled=prefetching_enabled)
-        elif chambre == Chambre.CCFP:
+        elif chambre in {Chambre.CCFP, Chambre.CSFPE}:
             return None
         raise NotImplementedError

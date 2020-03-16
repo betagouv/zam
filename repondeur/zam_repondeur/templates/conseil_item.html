@@ -76,14 +76,14 @@
             </div>
         {% endfor %}
     </section>
-    {% if not lectures %}
-        <div class="extra-button box">
-            <h2>Aucun texte pour l’instant.</h2>
-            <p>
-                <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
-                    Ajouter un texte
-                </a>
-            </p>
-        </div>
-    {% endif %}
+    <div class="extra-button box">
+        {% if not lectures %}
+        <h2>Aucun texte pour l’instant.</h2>
+        {% endif %}
+        <p>
+            <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
+                Ajouter un texte
+            </a>
+        </p>
+    </div>
 {% endblock %}

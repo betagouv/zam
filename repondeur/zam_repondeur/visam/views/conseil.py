@@ -44,6 +44,7 @@ class ConseilView(ConseilViewBase):
         return {
             "conseil": conseil,
             "lectures": lectures,
+            "can_add_texte": self.request.has_permission("add", self.context),
             "current_tab": "conseils",
         }
 

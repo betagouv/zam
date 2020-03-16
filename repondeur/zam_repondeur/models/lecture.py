@@ -124,9 +124,6 @@ class Lecture(Base, LastEventMixin):
     def format_organe(self) -> str:
         from zam_repondeur.services.data import repository  # avoid circular imports
 
-        if self.chambre == Chambre.CCFP:
-            return self.organe
-
         result: str = self.organe
         organe_data = repository.get_opendata_organe(self.organe)
         if organe_data is not None:
@@ -154,7 +151,7 @@ class Lecture(Base, LastEventMixin):
         return str(num_lecture.strip())
 
     def format_texte(self) -> Optional[str]:
-        if self.chambre == Chambre.CCFP:
+        if self.chambre in {Chambre.CCFP, Chambre.CSFPE}:
             return None
         if self.partie == 1:
             partie = " (1re partie)"
@@ -215,7 +212,7 @@ class Lecture(Base, LastEventMixin):
             query = query.filter(
                 Texte.session == int(session_or_legislature.split("-")[0])
             )
-        elif chambre == Chambre.CCFP:
+        elif chambre in {Chambre.CCFP, Chambre.CSFPE}:
             pass
         else:
             raise ValueError("Invalid value for chambre")

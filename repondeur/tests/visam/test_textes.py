@@ -5,16 +5,6 @@ def test_conseil_empty_textes(app, conseil_ccfp, user_david):
     assert resp.content_type == "text/html"
 
     assert "Aucun texte pour l’instant." in resp.text
-    assert "Ajouter un texte" not in resp.text
-
-
-def test_conseil_empty_textes_admin(app, conseil_ccfp, user_sgg):
-    resp = app.get("/conseils/ccfp-2020-04-01", user=user_sgg)
-
-    assert resp.status_code == 200
-    assert resp.content_type == "text/html"
-
-    assert "Aucun texte pour l’instant." in resp.text
     assert "Ajouter un texte" in resp.text
 
 
@@ -25,21 +15,11 @@ def test_conseil_with_texte(app, conseil_ccfp, lecture_conseil_ccfp, user_david)
     assert resp.content_type == "text/html"
 
     assert len(resp.parser.css(".texte nav a")) == 1
-    assert "Ajouter un texte" not in resp.text
-
-
-def test_conseil_with_texte_admin(app, conseil_ccfp, lecture_conseil_ccfp, user_sgg):
-    resp = app.get("/conseils/ccfp-2020-04-01", user=user_sgg)
-
-    assert resp.status_code == 200
-    assert resp.content_type == "text/html"
-
-    assert len(resp.parser.css(".texte nav a")) == 1
     assert "Ajouter un texte" in resp.text
 
 
-def test_conseil_add_texte_form(app, conseil_ccfp, user_sgg):
-    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_sgg)
+def test_conseil_add_texte_form(app, conseil_ccfp, user_david):
+    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -57,22 +37,10 @@ def test_conseil_add_texte_form(app, conseil_ccfp, user_sgg):
     assert form.fields["submit"][0].attrs["type"] == "submit"
 
 
-def test_conseil_add_texte_non_admin(app, conseil_ccfp, user_david):
-    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_david)
-
-    assert resp.status_code == 302
-    assert resp.location == "https://visam.test/"
-
-    resp = resp.maybe_follow()
-
-    assert resp.status_code == 200
-    assert "L’accès à cette page est réservé aux personnes autorisées." in resp.text
-
-
-def test_conseil_add_texte_submit(app, conseil_ccfp, user_sgg):
+def test_conseil_add_texte_submit(app, conseil_ccfp, user_david):
     from zam_repondeur.models import Article, DBSession, Dossier, Lecture, Texte
 
-    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_sgg)
+    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_david)
     form = resp.forms["add-texte"]
     form["titre"] = "Titre du texte"
     form["contenu"] = "Contenu du texte"

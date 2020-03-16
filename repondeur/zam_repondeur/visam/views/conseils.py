@@ -26,12 +26,11 @@ class ConseilsList(ConseilCollectionBase):
     def get(self) -> dict:
         return {
             "conseils": self.context.models(),
-            "can_add_conseil": self.request.has_permission("add", self.context),
             "current_tab": "conseils",
         }
 
 
-@view_defaults(context=ConseilCollection, name="add", permission="add")
+@view_defaults(context=ConseilCollection, name="add")
 class ConseilAddView(ConseilCollectionBase):
     @view_config(request_method="GET", renderer="conseils_add.html")
     def get(self) -> dict:

@@ -1,7 +1,6 @@
 from typing import Any, List, Optional, cast
 
 from pyramid.request import Request
-from pyramid.security import Allow, Deny, Everyone
 
 from zam_repondeur.models import DBSession
 from zam_repondeur.resources import Resource, ResourceNotFound, Root
@@ -20,8 +19,6 @@ class VisamRoot(Root):
 
 
 class ConseilCollection(Resource):
-    __acl__ = [(Allow, "group:admins", "add"), (Deny, Everyone, "add")]
-
     def models(self, *options: Any) -> List[Conseil]:
         result: List[Conseil] = (
             DBSession.query(Conseil).order_by(Conseil.date.desc()).options(*options)
@@ -38,8 +35,6 @@ class ConseilCollection(Resource):
 
 
 class ConseilResource(Resource):
-    __acl__ = [(Allow, "group:admins", "add"), (Deny, Everyone, "add")]
-
     def __init__(self, name: str, parent: Resource) -> None:
         super().__init__(name=name, parent=parent)
         self.slug = name

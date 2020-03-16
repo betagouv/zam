@@ -44,12 +44,11 @@ class ConseilView(ConseilViewBase):
         return {
             "conseil": conseil,
             "lectures": lectures,
-            "can_add_texte": self.request.has_permission("add", self.context),
             "current_tab": "conseils",
         }
 
 
-@view_defaults(context=ConseilResource, name="add", permission="add")
+@view_defaults(context=ConseilResource, name="add")
 class TexteAddView(ConseilViewBase):
     @view_config(request_method="GET", renderer="texte_add.html")
     def get(self) -> dict:

@@ -10,6 +10,17 @@ def test_conseils_empty(app, user_david):
     assert resp.content_type == "text/html"
 
     assert "Aucun conseil pour l’instant." in resp.text
+    assert "Ajouter un conseil" not in resp.text
+
+
+def test_conseils_empty_admin(app, user_sgg):
+    resp = app.get("/conseils/", user=user_sgg)
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    assert "Aucun conseil pour l’instant." in resp.text
+    assert "Ajouter un conseil" in resp.text
 
 
 def test_conseils(app, conseil_ccfp, user_david):
@@ -19,6 +30,17 @@ def test_conseils(app, conseil_ccfp, user_david):
     assert resp.content_type == "text/html"
 
     assert len(resp.parser.css(".conseil nav a")) == 1
+    assert "Ajouter un conseil" not in resp.text
+
+
+def test_conseils_admin(app, conseil_ccfp, user_sgg):
+    resp = app.get("/conseils/", user=user_sgg)
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    assert len(resp.parser.css(".conseil nav a")) == 1
+    assert "Ajouter un conseil" in resp.text
 
 
 def test_conseils_add_form(app, user_sgg):

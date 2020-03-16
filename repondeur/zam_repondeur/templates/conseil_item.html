@@ -74,16 +74,17 @@
                     </a>
                 </nav>
             </div>
+        {% else %}
+            <div class="texte box">
+                <h3>Aucun texte pour l’instant.</h3>
+            </div>
         {% endfor %}
     </section>
     <div class="extra-button box">
-        {% if not lectures %}
-        <h2>Aucun texte pour l’instant.</h2>
-        {% endif %}
-        <p>
+        {% if can_add_texte %}
             <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
                 Ajouter un texte
             </a>
-        </p>
+        {% endif %}
     </div>
 {% endblock %}

@@ -27,7 +27,7 @@
 
         <div class="form-group">
             <label for="contenu">Contenu</label>
-            <textarea name="contenu" class="form-control" rows="20"></textarea>
+            <textarea name="contenu" class="form-control editable" rows="20"></textarea>
         </div>
 
         <div class="form-group save-buttons">
@@ -36,4 +36,24 @@
         </div>
 
     </form>
+{% endblock %}
+
+
+{% block scripts %}
+    <script src="{{ request.static_url('zam_repondeur:static/tinymce-5-1-1/tinymce.min.js') }}"></script>
+    <script type="text/javascript">
+        tinymce.init({
+            selector: 'textarea.editable',
+            language: 'fr_FR',
+            menubar: false,
+            plugins: 'lists fullscreen paste table',
+            toolbar:
+                'undo redo | formatselect | bold italic removeformat | bullist numlist | table | cut copy paste | fullscreen',
+            branding: false,
+            elementpath: false,
+            content_style: 'p, li { line-height: 1.5; margin: 1em 0; }',
+            block_formats: 'Paragraphe=p;Titre=h3',
+            browser_spellcheck: true,
+        })
+    </script>
 {% endblock %}

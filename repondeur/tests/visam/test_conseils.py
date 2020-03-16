@@ -10,16 +10,6 @@ def test_conseils_empty(app, user_david):
     assert resp.content_type == "text/html"
 
     assert "Aucun conseil pour l’instant." in resp.text
-    assert "Ajouter un conseil" not in resp.text
-
-
-def test_conseils_empty_admin(app, user_sgg):
-    resp = app.get("/conseils/", user=user_sgg)
-
-    assert resp.status_code == 200
-    assert resp.content_type == "text/html"
-
-    assert "Aucun conseil pour l’instant." in resp.text
     assert "Ajouter un conseil" in resp.text
 
 
@@ -30,21 +20,11 @@ def test_conseils(app, conseil_ccfp, user_david):
     assert resp.content_type == "text/html"
 
     assert len(resp.parser.css(".conseil nav a")) == 1
-    assert "Ajouter un conseil" not in resp.text
-
-
-def test_conseils_admin(app, conseil_ccfp, user_sgg):
-    resp = app.get("/conseils/", user=user_sgg)
-
-    assert resp.status_code == 200
-    assert resp.content_type == "text/html"
-
-    assert len(resp.parser.css(".conseil nav a")) == 1
     assert "Ajouter un conseil" in resp.text
 
 
-def test_conseils_add_form(app, user_sgg):
-    resp = app.get("/conseils/add", user=user_sgg)
+def test_conseils_add_form(app, user_david):
+    resp = app.get("/conseils/add", user=user_david)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -78,23 +58,11 @@ def test_conseils_add_form(app, user_sgg):
     assert form.fields["submit"][0].attrs["type"] == "submit"
 
 
-def test_conseils_add_non_admin(app, user_david):
-    resp = app.get("/conseils/add", user=user_david)
-
-    assert resp.status_code == 302
-    assert resp.location == "https://visam.test/"
-
-    resp = resp.maybe_follow()
-
-    assert resp.status_code == 200
-    assert "L’accès à cette page est réservé aux personnes autorisées." in resp.text
-
-
-def test_conseils_add_submit(app, user_sgg):
+def test_conseils_add_submit(app, user_david):
     from zam_repondeur.models import DBSession
     from zam_repondeur.visam.models import Conseil
 
-    resp = app.get("/conseils/add", user=user_sgg)
+    resp = app.get("/conseils/add", user=user_david)
     form = resp.forms["add-conseil"]
     form["chambre"] = "CCFP"
     form["date"] = "2020-04-01"

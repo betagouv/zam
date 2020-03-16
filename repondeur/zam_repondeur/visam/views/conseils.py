@@ -26,7 +26,7 @@ class ConseilsList(ConseilCollectionBase):
     def get(self) -> dict:
         return {
             "conseils": self.context.models(),
-            "can_add_conseil": True,
+            "can_add_conseil": self.request.has_permission("add", self.context),
             "current_tab": "conseils",
         }
 

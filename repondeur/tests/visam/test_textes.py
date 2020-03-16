@@ -5,6 +5,17 @@ def test_conseil_empty_textes(app, conseil_ccfp, user_david):
     assert resp.content_type == "text/html"
 
     assert "Aucun texte pour l’instant." in resp.text
+    assert "Ajouter un texte" not in resp.text
+
+
+def test_conseil_empty_textes_admin(app, conseil_ccfp, user_sgg):
+    resp = app.get("/conseils/ccfp-2020-04-01", user=user_sgg)
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    assert "Aucun texte pour l’instant." in resp.text
+    assert "Ajouter un texte" in resp.text
 
 
 def test_conseil_with_texte(app, conseil_ccfp, lecture_conseil_ccfp, user_david):
@@ -14,6 +25,17 @@ def test_conseil_with_texte(app, conseil_ccfp, lecture_conseil_ccfp, user_david)
     assert resp.content_type == "text/html"
 
     assert len(resp.parser.css(".texte nav a")) == 1
+    assert "Ajouter un texte" not in resp.text
+
+
+def test_conseil_with_texte_admin(app, conseil_ccfp, lecture_conseil_ccfp, user_sgg):
+    resp = app.get("/conseils/ccfp-2020-04-01", user=user_sgg)
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    assert len(resp.parser.css(".texte nav a")) == 1
+    assert "Ajouter un texte" in resp.text
 
 
 def test_conseil_add_texte_form(app, conseil_ccfp, user_sgg):

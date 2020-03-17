@@ -1,10 +1,13 @@
 import logging
+from collections import defaultdict
 from datetime import date
+from typing import Dict, List
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
+from selectolax.parser import HTMLParser
 from sqlalchemy import func
 
 from zam_repondeur.message import Message
@@ -19,9 +22,8 @@ from zam_repondeur.models import (
     TypeTexte,
     get_one_or_create,
 )
-from zam_repondeur.models.division import SubDiv
 from zam_repondeur.models.events.lecture import LectureCreee
-from zam_repondeur.services.fetch.division import parse_subdiv
+from zam_repondeur.services.clean import clean_html
 from zam_repondeur.slugs import slugify
 from zam_repondeur.visam.models.conseil import Formation
 from zam_repondeur.visam.resources import ConseilResource
@@ -69,8 +71,7 @@ class TexteAddView(ConseilViewBase):
         lecture = self.create_lecture(texte, dossier, conseil.formation)
         conseil.lectures.append(lecture)
 
-        subdiv = parse_subdiv("Article 1")  # FIXME.
-        self.create_article(lecture, subdiv, contenu)
+        self.create_articles(lecture, contenu)
 
         self.request.session.flash(
             Message(cls="success", text=("Texte créé avec succès."),)
@@ -118,20 +119,39 @@ class TexteAddView(ConseilViewBase):
         LectureCreee.create(lecture=lecture, user=None)
         return lecture
 
-    def create_article(self, lecture: Lecture, numero: SubDiv, contenu: str) -> Article:
-        alineas = contenu.split("\n")  # TODO: stupidly basic, find a better way.
-        content = {
-            str(i).zfill(3): alinea
-            for i, alinea in enumerate(alineas, start=1)
-            if alinea.strip()
-        }
-        article, _ = get_one_or_create(
-            Article,
-            type=numero.type_,
-            num=numero.num,
-            mult=numero.mult,
-            pos=numero.pos,
-            lecture=lecture,
-            content=content,
-        )
-        return article
+    def create_articles(self, lecture: Lecture, contenu: str) -> None:
+        for num, alineas in self.extract_articles(contenu).items():
+            Article.create(
+                type="article",
+                num=num,
+                mult="",
+                pos="",
+                lecture=lecture,
+                content={
+                    str(i).zfill(3): alinea for i, alinea in enumerate(alineas, start=1)
+                },
+            )
+
+    def extract_articles(self, contenu: str) -> Dict[str, List[str]]:
+        """
+        Basic extraction of article contents
+
+        Based on the following heuristics:
+        - ignore everything before the first article
+        - start a new article when a top-level element starts with "Article ..."
+        - stop when a top-level element starts with "Fait le ..."
+        """
+        html = HTMLParser(clean_html(contenu))
+        articles: Dict[str, List[str]] = defaultdict(list)
+        current_article = None
+        for node in html.css("body > *"):
+            texte = node.text()
+            if not texte.strip():  # skip empty lines
+                continue
+            if texte.startswith("Article "):
+                current_article = texte[len("Article ") :]
+            elif texte.startswith("Fait le "):  # beginning of boilerplate
+                break
+            elif current_article is not None:
+                articles[current_article].append(node.html)
+        return articles

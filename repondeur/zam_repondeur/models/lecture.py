@@ -82,6 +82,10 @@ class Lecture(Base, LastEventMixin):
         passive_deletes=True,
     )
 
+    @property
+    def conseil(self) -> Optional["Conseil"]:
+        return self._conseil if hasattr(self, "_conseil") else None
+
     def __repr__(self) -> str:
         return (
             f"<Lecture pk={self.pk}"

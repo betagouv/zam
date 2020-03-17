@@ -47,6 +47,7 @@ class ConseilView(ConseilViewBase):
             "conseil": conseil,
             "lectures": lectures,
             "current_tab": "conseils",
+            "conseil_resource": self.context,
         }
 
 
@@ -56,6 +57,7 @@ class TexteAddView(ConseilViewBase):
     def get(self) -> dict:
         return {
             "current_tab": "conseils",
+            "conseil_resource": self.context,
         }
 
     @view_config(request_method="POST")

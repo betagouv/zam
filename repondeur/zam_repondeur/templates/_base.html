@@ -32,30 +32,30 @@
                         <a data-action="menu#toggle click@window->menu#dismiss">Menu</a>
                         <div class="menu d-none" data-target="menu.menu">
                             <ul class="menu-breadcrumb">
-                                {% if current_tab is defined %}
-                                    <li{% if current_tab == 'conseils' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root, 'conseils') }}">Conseils</a></li>
-                                {% endif %}
-                                {% if dossier_resource is defined %}
-                                    <li class="menu-dossier">
-                                        <a href="{{ request.resource_url(dossier_resource) }}">{{ dossier_resource.model().titre }}</a>
+                                {% if conseil_resource is defined %}
+                                    <li class="menu-conseil">
+                                        <a href="{{ request.resource_url(conseil_resource) }}">{{ conseil_resource.model() }}</a>
                                     </li>
                                     {% if not lecture_resource is defined %}
                                         <li class="backlink">
-                                            <a class="arrow-left" href="{{ request.resource_url(dossier_resource.parent) }}">Liste des dossiers</a>
+                                            <a class="arrow-left" href="{{ request.resource_url(conseil_resource.parent) }}">Liste des conseils</a>
                                         </li>
                                     {% endif %}
                                 {% elif current_tab is defined %}
-                                    <li{% if current_tab == 'dossiers' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root, 'dossiers') }}">Dossiers</a></li>
+                                    <li{% if current_tab == 'conseils' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root, 'conseils') }}">Conseils</a></li>
                                 {% endif %}
                                 {% if lecture_resource is defined %}
+                                    {% set lecture_model = lecture_resource.model() %}
                                     <li>
                                         <a href="{{ request.resource_url(lecture_resource, 'amendements') }}">
-                                            {{ lecture_resource.model() }}
+                                            {{ lecture_model }}
                                         </a>
                                     </li>
-                                    <li class="backlink">
-                                        <a class="arrow-left" href="{{ request.resource_url(dossier_resource) }}">Liste des lectures</a>
-                                    </li>
+                                    {% if lecture_model.conseil %}
+                                        <li class="backlink">
+                                            <a class="arrow-left" href="{{ request.resource_url(request.root, 'conseils', lecture_model.conseil.slug) }}">Liste des textes</a>
+                                        </li>
+                                    {% endif %}
                                 {% endif %}
                             </ul>
                             <ul class="menu-actions">

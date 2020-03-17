@@ -12,7 +12,7 @@ from sqlalchemy import (
     Integer,
     Table,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 
 from zam_repondeur.models.base import Base, DBSession
 from zam_repondeur.models.chambre import Chambre
@@ -73,7 +73,11 @@ class Conseil(Base):
     team_pk = Column(Integer, ForeignKey("teams.pk"), nullable=False)
     team = relationship("Team")
 
-    lectures = relationship("Lecture", secondary=association_table)
+    lectures = relationship(
+        "Lecture",
+        secondary=association_table,
+        backref=backref("_conseil", uselist=False),
+    )
 
     def __repr__(self) -> str:
         return f"{self.chambre.name} du {self.date.strftime('%x')}"

@@ -1,3 +1,8 @@
+from pathlib import Path
+
+import pytest
+
+
 def test_conseil_empty_textes(app, conseil_ccfp, user_david):
     resp = app.get("/conseils/ccfp-2020-04-01", user=user_david)
 
@@ -37,13 +42,22 @@ def test_conseil_add_texte_form(app, conseil_ccfp, user_david):
     assert form.fields["submit"][0].attrs["type"] == "submit"
 
 
-def test_conseil_add_texte_submit(app, conseil_ccfp, user_david):
+SAMPLE_FILE = Path(__file__).parent / "projet_de_decret.html"
+
+
+@pytest.fixture(scope="session")
+def contenu():
+    return SAMPLE_FILE.read_text()
+
+
+def test_conseil_add_texte_submit(app, conseil_ccfp, contenu, user_david):
     from zam_repondeur.models import Article, DBSession, Dossier, Lecture, Texte
 
     resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_david)
     form = resp.forms["add-texte"]
     form["titre"] = "Titre du texte"
-    form["contenu"] = "Contenu du texte"
+    form["contenu"] = contenu
+
     resp = form.submit()
 
     assert resp.status_code == 302
@@ -69,7 +83,95 @@ def test_conseil_add_texte_submit(app, conseil_ccfp, user_david):
     assert lecture.dossier == dossier
     assert lecture.texte == texte
 
-    article = DBSession.query(Article).one()
-    assert article.content == {"001": "Contenu du texte"}
-    assert str(article) == "Art. 1"
-    assert article.lecture == lecture
+    articles = DBSession.query(Article).all()
+    assert len(articles) == 2
+
+    article1, article2 = articles
+
+    assert article1.type == "article"
+    assert article1.num == "1"
+    assert article1.mult == ""
+    assert article1.pos == ""
+    assert article1.content == {
+        "001": "<p>A l’article 2 du décret du 22 août 2008 susvisé, les lignes : "
+        "&nbsp;</p>",
+        "002": "<table>\n"
+        "    \n"
+        "    \n"
+        "    \n"
+        "    \n"
+        "    \n"
+        "    \n"
+        "    <tbody>\n"
+        "        <tr>\n"
+        '            <td colspan="4">\n'
+        "                <p>&nbsp;</p>\n"
+        "                <p>Architectes et urbanistes de l’Etat en chef </p>\n"
+        "            </td>\n"
+        "        </tr>\n"
+        "        <tr>\n"
+        "            <td>\n"
+        "                <p>&nbsp;</p>\n"
+        "                <p>ES </p>\n"
+        "            </td>\n"
+        "            <td>\n"
+        "                <p>&nbsp;</p>\n"
+        "                <p>HEB bis </p>\n"
+        "            </td>\n"
+        "            <td>\n"
+        "                <p>&nbsp;</p>\n"
+        "                <p>HEB bis </p>\n"
+        "            </td>\n"
+        "            <td>\n"
+        "                <p>&nbsp;</p>\n"
+        "            </td>\n"
+        "        </tr>\n"
+        "    </tbody>\n"
+        "</table>",
+        "003": "<p>sont remplacées par les lignes : &nbsp;</p>",
+        "004": "<table>\n"
+        "    \n"
+        "    \n"
+        "    \n"
+        "    \n"
+        "    \n"
+        "    \n"
+        "    <tbody>\n"
+        "        <tr>\n"
+        '            <td colspan="4">\n'
+        "                <p>&nbsp;</p>\n"
+        "                <p>Architectes et urbanistes de l’Etat en chef </p>\n"
+        "            </td>\n"
+        "        </tr>\n"
+        "        <tr>\n"
+        "            <td>\n"
+        "                <p>&nbsp;</p>\n"
+        "                <p>8 </p>\n"
+        "            </td>\n"
+        "            <td>\n"
+        "                <p>&nbsp;</p>\n"
+        "                <p>HEB bis </p>\n"
+        "            </td>\n"
+        "            <td>\n"
+        "                <p>&nbsp;</p>\n"
+        "                <p>HEB bis</p>\n"
+        "            </td>\n"
+        "            <td>\n"
+        "                <p>&nbsp;</p>\n"
+        "            </td>\n"
+        "        </tr>\n"
+        "    </tbody>\n"
+        "</table>",
+    }
+
+    assert article2.type == "article"
+    assert article2.num == "2"
+    assert article2.mult == ""
+    assert article2.content == {
+        "001": "<p>La ministre de la transition écologique et solidaire, le ministre "
+        "de l’action et des comptes publics, le ministre de la culture et le "
+        "secrétaire d’Etat auprès du ministre de l’action et des comptes "
+        "publics sont chargés, chacun en ce qui le concerne, de l’exécution du "
+        "présent décret, qui sera publié au Journal officiel de la République "
+        "française.&nbsp;</p>"
+    }

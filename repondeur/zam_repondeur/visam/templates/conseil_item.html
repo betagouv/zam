@@ -57,16 +57,58 @@
             background-color: #3167a6;
             color: white;
         }
+    [draggable="true"] {
+        background: white no-repeat 10px 10px url("{{ request.static_url('zam_repondeur:static/img/draganddrop.svg') }}");
+    }
+        [draggable="true"].highlighted {
+            background-color: #d4edda66;
+        }
+    .dropzone {
+        height: 0;
+        border: none;
+        margin: 0 1rem;
+        transition: height .1s;
+    }
+        .dropzone.highlighted {
+            height: .5rem;
+            background: LightGoldenRodYellow;
+            transition: height .5s;
+        }
+        .dropzone.highlighted.hover {
+            height: 6rem;
+            border: 5px black solid;
+            background: Gold;
+            transition: height .2s;
+        }
 </style>
 {% endblock %}
 
 {% block main_class %}{% endblock %}
 
 {% block body %}
-    <section>
+    <section data-controller="textes-order"
+        data-target="textes-order.parent"
+        data-textes-order-url="{{ request.resource_url(context, 'order') }}">
         <h2>Conseil {{ conseil }}</h2>
+        <div class="dropzone"
+            data-target="textes-order.dropzone"
+            data-action="
+                drag->textes-order#dragging
+                dragover->textes-order#preventDefault
+                dragenter->textes-order#highlightDropzone
+                dragleave->textes-order#downlightDropzone
+                drop->textes-order#reorder
+            "></div>
         {% for lecture in lectures %}
-            <div class="texte box">
+            <div draggable="true" class="texte box"
+                data-action="
+                    drag->textes-order#dragging
+                    dragstart->textes-order#registerDragged
+                    dragstart->textes-order#showDropzones
+                    dragend->textes-order#hideDropzones
+                "
+                data-target="textes-order.texte"
+                data-pk="{{ lecture.dossier.pk }}">
                 <h3>{{ lecture.dossier.titre }}</h3>
                 <nav>
                     <a href="{{ request.resource_url(request.root['dossiers'][lecture.dossier.slug]['lectures'][lecture.url_key]['amendements']) }}">
@@ -74,6 +116,15 @@
                     </a>
                 </nav>
             </div>
+            <div class="dropzone"
+                data-target="textes-order.dropzone"
+                data-action="
+                    drag->textes-order#dragging
+                    dragover->textes-order#preventDefault
+                    dragenter->textes-order#highlightDropzone
+                    dragleave->textes-order#downlightDropzone
+                    drop->textes-order#reorder
+                "></div>
         {% else %}
             <div class="texte box">
                 <h3>Aucun texte pour l’instant.</h3>
@@ -85,4 +136,10 @@
             Ajouter un texte
         </a>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {% if lectures | length > 1 %}
+        <script src="{{ request.static_url('zam_repondeur:static/js/conseil.js') }}"></script>
+    {% endif %}
 {% endblock %}

@@ -42,6 +42,9 @@ class SaisieAmendement:
                 (article.url_key, str(article))
                 for article in sorted(self.lecture.articles)
             ],
+            "article_collection_url": self.request.resource_path(
+                lecture_resource["articles"]
+            ),
         }
 
     @view_config(request_method="POST")

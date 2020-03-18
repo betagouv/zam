@@ -1,4 +1,5 @@
 {% extends "_base_edit.html" %}
+{% from "article_macros.html" import content %}
 {% import "macros.html" as macros %}
 
 {% block title %}
@@ -25,18 +26,6 @@
         {{ form(article) }}
     </section>
 {% endblock %}
-
-
-{% macro content(article) %}
-    {% if article.content %}
-        <dl>
-            {% for pastille, content in article.content.items() %}
-                <dt>{{ pastille }}</dt>
-                <dd>{{ content.strip('"') | safe }}</dd>
-            {% endfor %}
-        </dl>
-    {% endif %}
-{% endmacro %}
 
 
 {% macro form(article) %}

@@ -1,7 +1,7 @@
 import logging
 from collections import defaultdict
 from datetime import date
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
@@ -66,18 +66,30 @@ class TexteAddView(ConseilViewBase):
         contenu = self.request.POST.get("contenu", "")
 
         conseil = self.context.model()
-        texte = self.create_texte(conseil.chambre)
-        dossier = self.create_dossier(titre)
-        dossier.team = conseil.team
+        dossier, created = self.create_dossier(titre)
 
-        lecture = self.create_lecture(texte, dossier, conseil.formation)
-        conseil.lectures.append(lecture)
+        if created:
+            dossier.team = conseil.team
+            texte = self.create_texte(conseil.chambre)
+            lecture = self.create_lecture(texte, dossier, conseil.formation)
+            conseil.lectures.append(lecture)
 
-        self.create_articles(lecture, contenu)
+            self.create_articles(lecture, contenu)
 
-        self.request.session.flash(
-            Message(cls="success", text=("Texte créé avec succès."),)
-        )
+            self.request.session.flash(
+                Message(cls="success", text=("Texte créé avec succès."),)
+            )
+        else:
+            lecture = [
+                lecture
+                for lecture in dossier.lectures
+                if lecture.texte.chambre == conseil.chambre
+            ][0]
+
+            self.request.session.flash(
+                Message(cls="warning", text=("Ce texte existe déjà…"),)
+            )
+
         location = self.request.resource_url(
             self.request.root["dossiers"][lecture.dossier.slug]["lectures"][
                 lecture.url_key
@@ -99,12 +111,12 @@ class TexteAddView(ConseilViewBase):
         )
         return texte
 
-    def create_dossier(self, titre: str) -> Dossier:
+    def create_dossier(self, titre: str) -> Tuple[Dossier, bool]:
         slug = slugify(titre)
-        dossier, _ = get_one_or_create(
+        dossier, created = get_one_or_create(
             Dossier, slug=slug, create_kwargs={"titre": titre, "an_id": "dummy-" + slug}
         )
-        return dossier
+        return dossier, created
 
     def create_lecture(
         self, texte: Texte, dossier: Dossier, formation: Formation

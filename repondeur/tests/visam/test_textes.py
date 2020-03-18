@@ -175,3 +175,41 @@ def test_conseil_add_texte_submit(app, conseil_ccfp, contenu, user_david):
         "présent décret, qui sera publié au Journal officiel de la République "
         "française.&nbsp;</p>"
     }
+
+
+def test_conseil_add_texte_submit_existing(app, conseil_ccfp, contenu, user_david):
+    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_david)
+    form = resp.forms["add-texte"]
+    form["titre"] = "Titre du texte"
+    form["contenu"] = contenu
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == (
+        "https://visam.test/dossiers/titre-texte"
+        "/lectures/ccfp..1.Assembl%C3%A9e%20pl%C3%A9ni%C3%A8re/amendements/"
+    )
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "Texte créé avec succès." in resp.text
+
+    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_david)
+    form = resp.forms["add-texte"]
+    form["titre"] = "Titre du texte"
+    form["contenu"] = contenu
+
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == (
+        "https://visam.test/dossiers/titre-texte"
+        "/lectures/ccfp..1.Assembl%C3%A9e%20pl%C3%A9ni%C3%A8re/amendements/"
+    )
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "Ce texte existe déjà…" in resp.text

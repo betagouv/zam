@@ -31,7 +31,7 @@ def test_post_amendement_saisie_form(app, lecture_an_url, article1_an, user_davi
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://zam.test/"
+        "https://visam.test/"
         "dossiers/plfss-2018/"
         "lectures/an.15.269.PO717460/"
         "amendements/#amdt-CFTC-1"

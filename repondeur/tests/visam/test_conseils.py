@@ -84,3 +84,26 @@ def test_conseils_add_submit(app, user_david):
     assert conseil.formation.value == "Assemblée plénière"
     assert not conseil.urgence_declaree
     assert conseil.team.name == "ccfp-2020-04-01"
+
+
+def test_conseils_add_submit_existing(app, conseil_ccfp, user_david):
+    from zam_repondeur.models import DBSession
+    from zam_repondeur.visam.models import Conseil
+
+    resp = app.get("/conseils/add", user=user_david)
+    form = resp.forms["add-conseil"]
+    form["chambre"] = "CCFP"
+    form["date"] = "2020-04-01"
+    form["formation"] = "ASSEMBLEE_PLENIERE"
+    form["urgence_declaree"] = "0"
+    resp = form.submit()
+
+    assert resp.status_code == 302
+    assert resp.location == "https://visam.test/conseils/ccfp-2020-04-01"
+
+    resp = resp.follow()
+
+    assert resp.status_code == 200
+    assert "Ce conseil existe déjà…" in resp.text
+
+    assert len(DBSession.query(Conseil).all()) == 1

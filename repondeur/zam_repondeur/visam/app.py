@@ -30,6 +30,9 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
             override_with="zam_repondeur:visam/static/",
         )
 
+        # Custom templates
+        config.add_jinja2_search_path("zam_repondeur:visam/templates", name=".html")
+
         # Customize the resource tree
         config.set_root_factory(VisamRoot)
 

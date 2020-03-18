@@ -14,6 +14,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import backref, relationship
 
+from zam_repondeur.models import get_one_or_create
 from zam_repondeur.models.base import Base, DBSession
 from zam_repondeur.models.chambre import Chambre
 from zam_repondeur.models.users import Team, User
@@ -102,7 +103,7 @@ class Conseil(Base):
             date=date,
             urgence_declaree=urgence_declaree,
         )
-        team = Team.create(conseil.slug)
+        team, _ = get_one_or_create(Team, name=conseil.slug)
         conseil.team = team
         DBSession.add(conseil)
         for admin in DBSession.query(User).filter(

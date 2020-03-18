@@ -110,8 +110,7 @@ class TexteAddView(ConseilViewBase):
         self, texte: Texte, dossier: Dossier, formation: Formation
     ) -> Lecture:
         organe = formation.value
-        lecture, _ = get_one_or_create(
-            Lecture,
+        lecture = Lecture.create(
             dossier=dossier,
             texte=texte,
             phase=Phase.PREMIERE_LECTURE,

@@ -34,8 +34,8 @@ class TestAmendementSaisieForm:
 
         assert resp.forms["saisie-amendement"].method == "POST"
         assert list(resp.forms["saisie-amendement"].fields.keys()) == [
-            "groupe",
             "subdiv",
+            "groupe",
             "corps",
             "expose",
             "save",
@@ -48,8 +48,8 @@ class TestAmendementSaisieForm:
 
         resp = app.get(f"{lecture_an_url}/amendements/saisie", user=user_david)
         form = resp.forms["saisie-amendement"]
-        form["groupe"] = "CFTC"
         form["subdiv"] = "article.1.."
+        form["groupe"] = "CFTC"
         form[
             "corps"
         ] = 'Un corps <span style="font-family: Arial Narrow, serif;">de</span> rêve'

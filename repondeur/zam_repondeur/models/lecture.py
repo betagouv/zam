@@ -30,6 +30,7 @@ from .texte import Texte
 # Make these types available to mypy, but avoid circular imports
 if TYPE_CHECKING:
     from .dossier import Dossier  # noqa
+    from zam_repondeur.visam.models.conseil import Conseil  # noqa
 
 
 class Lecture(Base, LastEventMixin):

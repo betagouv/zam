@@ -1,8 +1,72 @@
 {% extends "_base_lecture.html" %}
 
 {% block header %}
+    {{ super() }}
     <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/amendements.css') }}">
     <style type="text/css">
+        /* Make it wide */
+        main.box {
+            max-width: calc(100% - 4rem);
+        }
+
+        /* Two-columns layout */
+        #saisie-amendement {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            margin-top: 2.5rem;
+        }
+        #saisie-amendement > section {
+            flex-basis: 90ch;
+            margin: 0 2rem;
+            max-width: calc(90ch - 2rem);
+        }
+        #saisie-amendement > section.content {
+            margin-right: 1rem;
+        }
+        #saisie-amendement > section.edit {
+            margin-left: 1rem;
+            padding: 2rem;
+        }
+        #saisie-amendement > section > div {
+            margin-bottom: 2rem;
+        }
+
+        h4 {
+            margin-bottom: 0.75rem;
+        }
+        .form-group {
+            margin-bottom: 3rem;
+        }
+        label {
+            font-weight: 600;
+            margin: 2rem 0 1rem 0;
+            font-size: 1.2rem;
+        }
+        textarea {
+            height: 30vh;
+        }
+        div.mce-fullscreen {
+            z-index: 1030;
+        }
+        .title {
+            margin-top: 2.5rem;
+        }
+            .title header {
+                text-align: center;
+                margin-bottom: 2.5rem;
+            }
+                .title header h2 {
+                    font-weight: 600;
+                }
+                .title header h3 {
+                    font-size: 1.4rem;
+                    font-weight: 400;
+                }
+                .title header h4 {
+                    font-size: 1.2rem;
+                    font-weight: 400;
+                }
         h4 {
             margin-bottom: 0.75rem;
         }
@@ -41,43 +105,47 @@
     </style>
 {% endblock %}
 
-
 {% block body %}
-<h1>Saisir un nouvel amendement</h1>
-<h2 class="subtitle">{{ lecture.dossier.titre }}</h2>
-<p class="subtitle">{{ lecture }}</p>
-
-<form method="POST" action="" id="saisie-amendement">
-    <div class="form-group">
-        <label for="groupe">Soumis par</label>
-        <select name="groupe" class="form-control" required>
-            <option value="" selected disabled>Choisir dans la liste…</option>
-            {% for value, title in groupes %}
-                <option value="{{ value }}">{{ title }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="subdiv">Article (ou partie du texte)</label>
-        <select name="subdiv" class="form-control" required>
-            <option value="" selected disabled>Choisir dans la liste…</option>
-            {% for value, title in subdivs %}
-                <option value="{{ value }}">{{ title }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="corps">Corps de l’amendement</label>
-        <textarea name="corps" class="form-control editable"></textarea>
-    </div>
-    <div class="form-group">
-        <label for="expose">Exposé des motifs</label>
-        <textarea name="expose" class="form-control editable"></textarea>
-    </div>
-    <div class="form-group save-buttons">
-        <input type="submit" name="save" class="primary button enabled" value="Enregistrer l’amendement">
-    </div>
-</form>
+    <h1>Saisir un nouvel amendement</h1>
+    <form method="POST" action="" id="saisie-amendement" data-controller="preview">
+        <section class="content box">
+            <h2 class="subtitle">{{ lecture.dossier.titre }}</h2>
+            <p class="subtitle">{{ lecture }}</p>
+            <div class="form-group">
+                <label for="subdiv">Article</label>
+                <select name="subdiv" class="form-control" required
+                        data-target="preview.selector" data-action="preview#update">
+                    <option value="" selected disabled>Choisir dans la liste…</option>
+                    {% for value, title in subdivs %}
+                        <option value="{{ value }}">{{ title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div data-target="preview.contents"></div>
+        </section>
+        <section class="edit box">
+            <div class="form-group">
+                <label for="groupe">Soumis par</label>
+                <select name="groupe" class="form-control" required>
+                    <option value="" selected disabled>Choisir dans la liste…</option>
+                    {% for value, title in groupes %}
+                        <option value="{{ value }}">{{ title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="corps">Corps de l’amendement</label>
+                <textarea name="corps" class="form-control editable"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="expose">Exposé des motifs</label>
+                <textarea name="expose" class="form-control editable"></textarea>
+            </div>
+            <div class="form-group save-buttons">
+                <input type="submit" name="save" class="primary button enabled" value="Enregistrer l’amendement">
+            </div>
+        </section>
+    </form>
 {% endblock %}
 
 
@@ -97,5 +165,24 @@
             block_formats: 'Paragraphe=p;Titre=h3',
             browser_spellcheck: true,
         })
+    </script>
+    <script>
+        class PreviewArticle extends Stimulus.Controller {
+            static get targets() {
+                return ['selector', 'contents']
+            }
+
+            update() {
+                const subdiv = this.selectorTarget.value
+                fetch(`{{ article_collection_url }}${subdiv}/preview`)
+                    .then(response => response.text())
+                    .then(html => {
+                        this.contentsTarget.innerHTML = html
+                    })
+            }
+        }
+        ;(() => {
+            application.register('preview', PreviewArticle)
+        })()
     </script>
 {% endblock %}

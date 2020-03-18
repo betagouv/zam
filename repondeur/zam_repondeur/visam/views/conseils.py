@@ -6,7 +6,7 @@ from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.message import Message
-from zam_repondeur.models import Chambre
+from zam_repondeur.models import Chambre, get_one_or_create
 from zam_repondeur.services.fetch.dates import parse_date
 from zam_repondeur.visam.models import Conseil, Formation
 from zam_repondeur.visam.resources import ConseilCollection
@@ -56,14 +56,20 @@ class ConseilAddView(ConseilCollectionBase):
         if date is None:
             raise HTTPBadRequest("Date invalide")  # TODO: better validation
 
-        conseil = Conseil.create(
+        conseil, created = get_one_or_create(
+            Conseil,
             chambre=chambre,
             date=date,
             formation=formation,
             urgence_declaree=urgence_declaree,
         )
 
-        self.request.session.flash(
-            Message(cls="success", text=("Conseil créé avec succès."),)
-        )
+        if created:
+            self.request.session.flash(
+                Message(cls="success", text=("Conseil créé avec succès."),)
+            )
+        else:
+            self.request.session.flash(
+                Message(cls="warning", text=("Ce conseil existe déjà…"),)
+            )
         return HTTPFound(location=self.request.resource_url(self.context, conseil.slug))

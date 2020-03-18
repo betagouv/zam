@@ -69,6 +69,32 @@ def lecture_conseil_ccfp(db, conseil_ccfp, dossier_conseil_ccfp, texte_conseil_c
 
 
 @pytest.fixture
+def articles_conseil_ccfp(db, lecture_conseil_ccfp):
+    from zam_repondeur.models import Article
+
+    articles = []
+    with transaction.manager:
+        content = {
+            "1": ["Contenu article 1"],
+            "2": ["Contenu article 2 alinéa 1", "Contenu article 2 alinéa 2"],
+        }
+        for num, alineas in content.items():
+            article = Article.create(
+                type="article",
+                num=num,
+                mult="",
+                pos="",
+                lecture=lecture_conseil_ccfp,
+                content={
+                    str(i).zfill(3): alinea for i, alinea in enumerate(alineas, start=1)
+                },
+            )
+            articles.append(article)
+
+    return articles
+
+
+@pytest.fixture
 def conseil_csfpe(db, team_zam):
     from zam_repondeur.models import Chambre
     from zam_repondeur.visam.models import Conseil, Formation

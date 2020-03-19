@@ -219,7 +219,7 @@ class DossierRetraitForm(DossierViewBase):
         DossierRetrait.create(dossier=self.dossier, target=target, request=self.request)
         self.request.session.flash(
             Message(
-                cls="success", text=(f"{target} a été retiré·e du dossier avec succès.")
+                cls="success", text=f"{target} a été retiré·e du dossier avec succès."
             )
         )
         return HTTPFound(location=self.request.resource_url(self.context, "retrait"))

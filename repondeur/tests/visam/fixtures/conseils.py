@@ -77,7 +77,7 @@ def conseil_csfpe(db, team_zam):
         conseil = Conseil.create(
             chambre=Chambre.CSFPE,
             formation=Formation.ASSEMBLEE_PLENIERE,
-            date=date(2020, 4, 1),
+            date=date(2020, 5, 15),
         )
         conseil.team = team_zam
 

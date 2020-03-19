@@ -1,6 +1,6 @@
 import datetime
 import enum
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from sqlalchemy import (
     Boolean,
@@ -17,6 +17,7 @@ from sqlalchemy.orm import backref, relationship
 from zam_repondeur.models import get_one_or_create
 from zam_repondeur.models.base import Base, DBSession
 from zam_repondeur.models.chambre import Chambre
+from zam_repondeur.models.lecture import Lecture
 from zam_repondeur.models.users import Team, User
 
 association_table = Table(
@@ -74,7 +75,7 @@ class Conseil(Base):
     team_pk = Column(Integer, ForeignKey("teams.pk"), nullable=False)
     team = relationship("Team")
 
-    lectures = relationship(
+    lectures: List[Lecture] = relationship(
         "Lecture",
         secondary=association_table,
         backref=backref("_conseil", uselist=False),

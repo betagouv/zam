@@ -66,10 +66,10 @@ class ConseilAddView(ConseilCollectionBase):
 
         if created:
             self.request.session.flash(
-                Message(cls="success", text=("Conseil créé avec succès."),)
+                Message(cls="success", text="Conseil créé avec succès.")
             )
         else:
             self.request.session.flash(
-                Message(cls="warning", text=("Ce conseil existe déjà…"),)
+                Message(cls="warning", text="Ce conseil existe déjà…")
             )
         return HTTPFound(location=self.request.resource_url(self.context, conseil.slug))

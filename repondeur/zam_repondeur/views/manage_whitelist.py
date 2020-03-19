@@ -53,7 +53,7 @@ class WhitelistDelete(WhitelistCollectionBase):
         self.request.session.flash(
             Message(
                 cls="success",
-                text=("Adresse de courriel ou modèle supprimé(e) avec succès."),
+                text="Adresse de courriel ou modèle supprimé(e) avec succès.",
             )
         )
         return HTTPFound(location=self.request.resource_url(self.context))
@@ -102,7 +102,7 @@ class WhitelistAddForm(WhitelistCollectionBase):
         self.request.session.flash(
             Message(
                 cls="success",
-                text=("Adresse de courriel ou modèle créé(e) avec succès."),
+                text="Adresse de courriel ou modèle créé(e) avec succès.",
             )
         )
         return HTTPFound(location=self.request.resource_url(self.context))

@@ -51,9 +51,7 @@ class AdminsRemove(AdminsCollectionBase):
         user = DBSession.query(User).filter_by(pk=user_pk).first()
         AdminRevoke.create(target=user, request=self.request)
         self.request.session.flash(
-            Message(
-                cls="success", text=("Droits d’administration retirés avec succès.")
-            )
+            Message(cls="success", text="Droits d’administration retirés avec succès.")
         )
         return HTTPFound(location=self.request.resource_url(self.context))
 
@@ -79,9 +77,7 @@ class AdminsAddForm(AdminsCollectionBase):
         user = DBSession.query(User).filter_by(pk=user_pk).first()
         AdminGrant.create(target=user, request=self.request)
         self.request.session.flash(
-            Message(
-                cls="success", text=("Droits d’administration ajoutés avec succès.")
-            )
+            Message(cls="success", text="Droits d’administration ajoutés avec succès.")
         )
         return HTTPFound(location=self.request.resource_url(self.context))
 

@@ -83,7 +83,7 @@ class DossierAddForm(DossierCollectionBase):
         self.request.session.flash(
             Message(
                 cls="success",
-                text=("Dossier créé avec succès, lectures en cours de création."),
+                text="Dossier créé avec succès, lectures en cours de création.",
             )
         )
         return HTTPFound(

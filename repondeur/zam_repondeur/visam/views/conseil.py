@@ -77,7 +77,7 @@ class TexteAddView(ConseilViewBase):
             self.create_articles(lecture, contenu)
 
             self.request.session.flash(
-                Message(cls="success", text=("Texte créé avec succès."),)
+                Message(cls="success", text="Texte créé avec succès.")
             )
         else:
             lecture = [
@@ -87,7 +87,7 @@ class TexteAddView(ConseilViewBase):
             ][0]
 
             self.request.session.flash(
-                Message(cls="warning", text=("Ce texte existe déjà…"),)
+                Message(cls="warning", text="Ce texte existe déjà…")
             )
 
         location = self.request.resource_url(

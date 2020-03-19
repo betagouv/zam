@@ -1,7 +1,7 @@
 import logging
 from collections import defaultdict
 from datetime import date
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
@@ -25,7 +25,7 @@ from zam_repondeur.models import (
 from zam_repondeur.models.events.lecture import LectureCreee
 from zam_repondeur.services.clean import clean_html
 from zam_repondeur.slugs import slugify
-from zam_repondeur.visam.models.conseil import Formation
+from zam_repondeur.visam.models.conseil import Conseil, Formation
 from zam_repondeur.visam.resources import ConseilResource
 
 logger = logging.getLogger(__name__)
@@ -66,11 +66,20 @@ class TexteAddView(ConseilViewBase):
         contenu = self.request.POST.get("contenu", "")
 
         conseil = self.context.model()
-        dossier, created = self.create_dossier(titre)
 
+        # Un même texte, ou des versions successives d’un même texte,
+        # peuvent passer devant plusieurs conseils. Dans ce cas, les
+        # lectures seront regroupées au sein d’un même dossier.
+        dossier, created = self.find_or_create_dossier(titre)
         if created:
             dossier.team = conseil.team
+
+        # Par contre, un même texte ne peut pas être examiné plusieurs
+        # fois lors d’une même séance d’un conseil...
+        lecture = self.find_lecture(dossier, conseil)
+        if lecture is None:
             texte = self.create_texte(conseil.chambre)
+
             lecture = self.create_lecture(texte, dossier, conseil.formation)
             conseil.lectures.append(lecture)
 
@@ -80,14 +89,8 @@ class TexteAddView(ConseilViewBase):
                 Message(cls="success", text="Texte créé avec succès.")
             )
         else:
-            lecture = [
-                lecture
-                for lecture in dossier.lectures
-                if lecture.texte.chambre == conseil.chambre
-            ][0]
-
             self.request.session.flash(
-                Message(cls="warning", text="Ce texte existe déjà…")
+                Message(cls="warning", text="Ce texte existe déjà dans ce conseil…")
             )
 
         location = self.request.resource_url(
@@ -111,12 +114,18 @@ class TexteAddView(ConseilViewBase):
         )
         return texte
 
-    def create_dossier(self, titre: str) -> Tuple[Dossier, bool]:
+    def find_or_create_dossier(self, titre: str) -> Tuple[Dossier, bool]:
         slug = slugify(titre)
         dossier, created = get_one_or_create(
             Dossier, slug=slug, create_kwargs={"titre": titre, "an_id": "dummy-" + slug}
         )
         return dossier, created
+
+    def find_lecture(self, dossier: Dossier, conseil: Conseil) -> Optional[Lecture]:
+        for lecture in conseil.lectures:
+            if lecture.dossier is dossier:
+                return lecture
+        return None
 
     def create_lecture(
         self, texte: Texte, dossier: Dossier, formation: Formation

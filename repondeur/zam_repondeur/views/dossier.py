@@ -50,7 +50,7 @@ def dossier_journal(context: DossierResource, request: Request) -> Response:
     dossier = context.model(
         subqueryload("events").joinedload("user").load_only("email", "name")
     )
-    allowed_to_refresh = request.has_permission("refresh_dossier", context)
+    allowed_to_refresh = request.has_permission("refresh", context)
     return {
         "dossier": dossier,
         "dossier_resource": context,
@@ -60,9 +60,7 @@ def dossier_journal(context: DossierResource, request: Request) -> Response:
     }
 
 
-@view_config(
-    context=DossierResource, name="manual_refresh", permission="refresh_dossier"
-)
+@view_config(context=DossierResource, name="manual_refresh", permission="refresh")
 def manual_refresh(context: DossierResource, request: Request) -> Response:
     dossier = context.dossier
     update_dossier(dossier.pk, force=True)

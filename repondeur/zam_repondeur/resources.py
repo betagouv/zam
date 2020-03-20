@@ -189,7 +189,7 @@ class LectureCollection(Resource):
 
 class LectureResource(Resource):
     __acl__ = [
-        (Allow, "group:admins", "refresh"),
+        (Allow, Authenticated, "refresh"),
         (Deny, Everyone, "refresh"),
     ]
 

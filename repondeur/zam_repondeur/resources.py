@@ -70,10 +70,6 @@ class Root(Resource):
         (Allow, Authenticated, "view"),
         (Allow, "group:admins", "delete"),
         (Deny, Everyone, "delete"),
-        (Allow, "group:admins", "refresh_dossier"),
-        (Deny, Everyone, "refresh_dossier"),
-        (Allow, "group:admins", "refresh_lecture"),
-        (Deny, Everyone, "refresh_lecture"),
         (Allow, "group:admins", "manage_whitelist"),
         (Deny, Everyone, "manage_whitelist"),
     ]
@@ -135,6 +131,8 @@ class DossierResource(Resource):
             (Deny, Authenticated, "view"),
             (Allow, f"group:admins", "retrait"),
             (Deny, Authenticated, "retrait"),
+            (Allow, "group:admins", "refresh_dossier"),
+            (Deny, Everyone, "refresh_dossier"),
         ]
 
     def __init__(self, name: str, parent: Resource) -> None:
@@ -190,6 +188,11 @@ class LectureCollection(Resource):
 
 
 class LectureResource(Resource):
+    __acl__ = [
+        (Allow, "group:admins", "refresh_lecture"),
+        (Deny, Everyone, "refresh_lecture"),
+    ]
+
     def __init__(
         self,
         name: str,

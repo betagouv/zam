@@ -1,6 +1,7 @@
 import logging
 from collections import defaultdict
 from datetime import date
+from operator import attrgetter
 from typing import Dict, List, Optional, Tuple
 
 from pyramid.httpexceptions import HTTPFound
@@ -42,7 +43,10 @@ class ConseilView(ConseilViewBase):
     @view_config(request_method="GET", renderer="conseil_item.html")
     def get(self) -> dict:
         conseil = self.context.model()
-        lectures = conseil.lectures
+        lectures = sorted(
+            [lecture for lecture in conseil.lectures if lecture.dossier.order],
+            key=attrgetter("dossier.order"),
+        )
         return {
             "conseil": conseil,
             "lectures": lectures,
@@ -70,7 +74,7 @@ class TexteAddView(ConseilViewBase):
         # Un même texte, ou des versions successives d’un même texte,
         # peuvent passer devant plusieurs conseils. Dans ce cas, les
         # lectures seront regroupées au sein d’un même dossier.
-        dossier, created = self.find_or_create_dossier(titre)
+        dossier, created = self.find_or_create_dossier(titre, conseil.lectures)
         if created:
             dossier.team = conseil.team
 
@@ -114,10 +118,22 @@ class TexteAddView(ConseilViewBase):
         )
         return texte
 
-    def find_or_create_dossier(self, titre: str) -> Tuple[Dossier, bool]:
+    def find_or_create_dossier(
+        self, titre: str, lectures: List[Lecture]
+    ) -> Tuple[Dossier, bool]:
         slug = slugify(titre)
+        dossiers_orders = [
+            lecture.dossier.order for lecture in lectures if lecture.dossier.order
+        ]
+        max_order = max(dossiers_orders) if dossiers_orders else 0
         dossier, created = get_one_or_create(
-            Dossier, slug=slug, create_kwargs={"titre": titre, "an_id": "dummy-" + slug}
+            Dossier,
+            slug=slug,
+            create_kwargs={
+                "titre": titre,
+                "an_id": "dummy-" + slug,
+                "order": max_order + 1,
+            },
         )
         return dossier, created
 
@@ -177,3 +193,21 @@ class TexteAddView(ConseilViewBase):
             elif current_article is not None:
                 articles[current_article].append(node.html)
         return articles
+
+
+@view_defaults(context=ConseilResource, name="order")
+class TexteOrderView(ConseilViewBase):
+    @view_config(request_method="POST", renderer="json")
+    def post(self) -> dict:
+        ordered_dossier_pks = self.request.json_body["order"]
+        conseil = self.context.model()
+        dossiers = sorted(
+            [lecture.dossier for lecture in conseil.lectures if lecture.dossier.order],
+            key=attrgetter("order"),
+        )
+        for dossier, ordered_dossier_pk in zip(dossiers, ordered_dossier_pks):
+            if dossier.pk != int(ordered_dossier_pk):
+                new_position = ordered_dossier_pks.index(str(dossier.pk)) + 1
+                if dossier.order != new_position:
+                    dossier.order = new_position
+        return {}

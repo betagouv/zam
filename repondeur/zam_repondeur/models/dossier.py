@@ -19,6 +19,7 @@ class Dossier(Base, LastEventMixin):
 
     titre: str = Column(Text, nullable=False)  # TODO: make it unique?
     slug: str = Column(Text, nullable=False, unique=True)
+    order: int = Column(Integer, nullable=True)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     modified_at = Column(
@@ -60,6 +61,7 @@ class Dossier(Base, LastEventMixin):
         slug: str,
         an_id: Optional[str] = None,
         senat_id: Optional[str] = None,
+        order: Optional[int] = None,
     ) -> "Dossier":
         if an_id is None and senat_id is None:
             raise ValueError("You must provide at least one of 'an_id' and 'senat_id'")
@@ -78,6 +80,7 @@ class Dossier(Base, LastEventMixin):
             senat_id=senat_id,
             titre=titre,
             slug=slug,
+            order=order,
             created_at=now,
             modified_at=now,
         )

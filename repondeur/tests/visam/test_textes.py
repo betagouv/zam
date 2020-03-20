@@ -76,6 +76,7 @@ def test_conseil_add_texte_submit(app, conseil_ccfp, contenu, user_david):
 
     dossier = DBSession.query(Dossier).one()
     assert dossier.titre == "Titre du texte"
+    assert dossier.order == 1
     assert dossier.team.name == "Zam"
 
     lecture = DBSession.query(Lecture).one()
@@ -255,3 +256,65 @@ def test_conseil_add_texte_submit_existing_different_conseil(
 
     assert resp.status_code == 200
     assert "Texte créé avec succès." in resp.text
+
+
+def test_conseil_add_texte_submit_increase_order(
+    app, lecture_conseil_ccfp, contenu, user_david
+):
+    from zam_repondeur.models import DBSession, Dossier
+
+    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_david)
+    form = resp.forms["add-texte"]
+    form["titre"] = "Titre du texte"
+    form["contenu"] = contenu
+
+    resp = form.submit()
+    resp = resp.maybe_follow()
+    assert resp.status_code == 200
+    assert "Texte créé avec succès." in resp.text
+
+    dossier1, dossier2 = DBSession.query(Dossier).all()
+    assert dossier1.titre == "Titre du texte CCFP"
+    assert dossier1.order == 1
+    assert dossier2.titre == "Titre du texte"
+    assert dossier2.order == 2
+
+
+def test_conseil_reorder_textes_unique_lecture(app, lecture_conseil_ccfp, user_david):
+    resp = app.get("/conseils/ccfp-2020-04-01", user=user_david)
+    assert resp.status_code == 200
+    assert '<script src="https://visam.test/static/js/conseil.js' not in resp.text
+
+
+def test_conseil_reorder_textes(
+    app, lecture_conseil_ccfp, lecture_conseil_ccfp_2, user_david
+):
+    from zam_repondeur.models import Dossier
+
+    assert lecture_conseil_ccfp.dossier.order == 1
+    assert lecture_conseil_ccfp_2.dossier.order == 2
+
+    resp = app.get("/conseils/ccfp-2020-04-01", user=user_david)
+    assert resp.status_code == 200
+    assert '<script src="https://visam.test/static/js/conseil.js' in resp.text
+
+    assert resp.parser.css("h3")[0].text() == "Titre du texte CCFP"
+    assert resp.parser.css("h3")[1].text() == "Titre du texte CCFP 2"
+
+    resp = app.post_json(
+        "/conseils/ccfp-2020-04-01/order", {"order": ["2", "1"]}, user=user_david
+    )
+    assert resp.status_code == 200
+    assert resp.text == "{}"
+
+    # Reload dossiers.
+    dossier_1 = Dossier.get(lecture_conseil_ccfp.dossier.slug)
+    dossier_2 = Dossier.get(lecture_conseil_ccfp_2.dossier.slug)
+
+    assert dossier_1.order == 2
+    assert dossier_2.order == 1
+
+    resp = app.get("/conseils/ccfp-2020-04-01", user=user_david)
+    assert resp.status_code == 200
+    assert resp.parser.css("h3")[0].text() == "Titre du texte CCFP 2"
+    assert resp.parser.css("h3")[1].text() == "Titre du texte CCFP"

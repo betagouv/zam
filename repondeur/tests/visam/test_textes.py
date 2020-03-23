@@ -51,7 +51,13 @@ def contenu():
 
 
 def test_conseil_add_texte_submit(app, conseil_ccfp, contenu, user_david):
-    from zam_repondeur.models import Article, DBSession, Dossier, Lecture, Texte
+    from zam_repondeur.models import (
+        Article,
+        DBSession,
+        Dossier,
+        Lecture,
+        Texte,
+    )
 
     resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_david)
     form = resp.forms["add-texte"]
@@ -76,7 +82,6 @@ def test_conseil_add_texte_submit(app, conseil_ccfp, contenu, user_david):
 
     dossier = DBSession.query(Dossier).one()
     assert dossier.titre == "Titre du texte"
-    assert dossier.order == 1
     assert dossier.team.name == "Zam"
 
     lecture = DBSession.query(Lecture).one()
@@ -259,13 +264,14 @@ def test_conseil_add_texte_submit_existing_different_conseil(
 
 
 def test_conseil_add_texte_submit_increase_order(
-    app, lecture_conseil_ccfp, contenu, user_david
+    app, conseil_ccfp, lecture_conseil_ccfp, contenu, user_david
 ):
-    from zam_repondeur.models import DBSession, Dossier
+    from zam_repondeur.models import DBSession
+    from zam_repondeur.visam.models import Conseil
 
     resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_david)
     form = resp.forms["add-texte"]
-    form["titre"] = "Titre du texte"
+    form["titre"] = "Titre du texte ajouté"
     form["contenu"] = contenu
 
     resp = form.submit()
@@ -273,11 +279,12 @@ def test_conseil_add_texte_submit_increase_order(
     assert resp.status_code == 200
     assert "Texte créé avec succès." in resp.text
 
-    dossier1, dossier2 = DBSession.query(Dossier).all()
-    assert dossier1.titre == "Titre du texte CCFP"
-    assert dossier1.order == 1
-    assert dossier2.titre == "Titre du texte"
-    assert dossier2.order == 2
+    # Le texte est ajouté à la fin
+    conseil_ccfp = DBSession.query(Conseil).get(conseil_ccfp.id)
+    assert [lecture.dossier.titre for lecture in conseil_ccfp.lectures] == [
+        "Titre du texte CCFP",
+        "Titre du texte ajouté",
+    ]
 
 
 def test_conseil_reorder_textes_unique_lecture(app, lecture_conseil_ccfp, user_david):
@@ -286,13 +293,17 @@ def test_conseil_reorder_textes_unique_lecture(app, lecture_conseil_ccfp, user_d
     assert '<script src="https://visam.test/static/js/conseil.js' not in resp.text
 
 
-def test_conseil_reorder_textes(
-    app, lecture_conseil_ccfp, lecture_conseil_ccfp_2, user_david
-):
-    from zam_repondeur.models import Dossier
+@pytest.mark.usefixtures("lecture_conseil_ccfp", "lecture_conseil_ccfp_2")
+def test_conseil_reorder_textes(app, conseil_ccfp, user_david):
+    from zam_repondeur.models import DBSession
+    from zam_repondeur.visam.models import Conseil
 
-    assert lecture_conseil_ccfp.dossier.order == 1
-    assert lecture_conseil_ccfp_2.dossier.order == 2
+    # Ordre initial des textes
+    conseil_ccfp = DBSession.query(Conseil).get(conseil_ccfp.id)
+    assert [lecture.dossier.titre for lecture in conseil_ccfp.lectures] == [
+        "Titre du texte CCFP",
+        "Titre du texte CCFP 2",
+    ]
 
     resp = app.get("/conseils/ccfp-2020-04-01", user=user_david)
     assert resp.status_code == 200
@@ -307,12 +318,12 @@ def test_conseil_reorder_textes(
     assert resp.status_code == 200
     assert resp.text == "{}"
 
-    # Reload dossiers.
-    dossier_1 = Dossier.get(lecture_conseil_ccfp.dossier.slug)
-    dossier_2 = Dossier.get(lecture_conseil_ccfp_2.dossier.slug)
-
-    assert dossier_1.order == 2
-    assert dossier_2.order == 1
+    # L’ordre des textes est modifié
+    conseil_ccfp = DBSession.query(Conseil).get(conseil_ccfp.id)
+    assert [lecture.dossier.titre for lecture in conseil_ccfp.lectures] == [
+        "Titre du texte CCFP 2",
+        "Titre du texte CCFP",
+    ]
 
     resp = app.get("/conseils/ccfp-2020-04-01", user=user_david)
     assert resp.status_code == 200

@@ -2,17 +2,10 @@ import datetime
 import enum
 from typing import Any, List, Optional
 
-from sqlalchemy import (
-    Boolean,
-    CheckConstraint,
-    Column,
-    Date,
-    Enum,
-    ForeignKey,
-    Integer,
-    Table,
-)
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy import Boolean, CheckConstraint, Column, Date, Enum, ForeignKey, Integer
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.orderinglist import ordering_list
+from sqlalchemy.orm import relationship
 
 from zam_repondeur.models import get_one_or_create
 from zam_repondeur.models.base import Base, DBSession
@@ -20,12 +13,29 @@ from zam_repondeur.models.chambre import Chambre
 from zam_repondeur.models.lecture import Lecture
 from zam_repondeur.models.users import Team, User
 
-association_table = Table(
-    "conseils_lectures",
-    Base.metadata,
-    Column("conseil_id", Integer, ForeignKey("conseils.id")),
-    Column("lecture_pk", Integer, ForeignKey("lectures.pk")),
-)
+
+class ConseilLecture(Base):
+    """
+    Association object
+
+    https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html#association-object
+    """
+
+    __tablename__ = "conseils_lectures"
+
+    conseil_id = Column(
+        Integer,
+        ForeignKey("conseils.id", onupdate="CASCADE", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    lecture_pk = Column(
+        Integer,
+        ForeignKey("lectures.pk", onupdate="CASCADE", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    lecture = relationship("Lecture")
+
+    position = Column(Integer, doc="Ordre des lectures dans un conseil")
 
 
 class Formation(enum.Enum):
@@ -75,10 +85,20 @@ class Conseil(Base):
     team_pk = Column(Integer, ForeignKey("teams.pk"), nullable=False)
     team = relationship("Team")
 
-    lectures: List[Lecture] = relationship(
-        "Lecture",
-        secondary=association_table,
-        backref=backref("_conseil", uselist=False),
+    # We use `ordering_list` to automatically map the order of the list
+    # to the `position` attribute on the association object.
+    # https://docs.sqlalchemy.org/en/13/orm/extensions/orderinglist.html#module-sqlalchemy.ext.orderinglist
+    _lectures: List[ConseilLecture] = relationship(
+        "ConseilLecture",
+        order_by=[ConseilLecture.position],
+        collection_class=ordering_list("position"),
+        cascade="all, delete-orphan",
+    )
+
+    # We use `association_proxy` to hide the intermediate association objects.
+    # https://docs.sqlalchemy.org/en/13/orm/extensions/associationproxy.html#module-sqlalchemy.ext.associationproxy
+    lectures: List[Lecture] = association_proxy(
+        "_lectures", "lecture", creator=lambda lecture: ConseilLecture(lecture=lecture)
     )
 
     def __repr__(self) -> str:

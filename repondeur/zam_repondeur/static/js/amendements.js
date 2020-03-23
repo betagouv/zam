@@ -399,7 +399,9 @@ application.register(
         if (!value) {
           return true
         }
-        return line.dataset.amendement.split(',').some(num => num === value)
+        return line.dataset.amendement
+          .split(',')
+          .some(num => num.toLowerCase().startsWith(value.toLowerCase()))
       })
       this.tableTarget.classList.toggle('filtered-amendement', value)
     }

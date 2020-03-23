@@ -29,7 +29,6 @@ def dossier_conseil_ccfp(db, team_zam):
             an_id="dummy-titre-texte-ccfp",
             titre="Titre du texte CCFP",
             slug="titre-texte-ccfp",
-            order=1,
         )
         dossier.team = team_zam
 
@@ -45,7 +44,6 @@ def dossier_conseil_ccfp_2(db, team_zam):
             an_id="dummy-titre-texte-ccfp-2",
             titre="Titre du texte CCFP 2",
             slug="titre-texte-ccfp-2",
-            order=2,
         )
         dossier.team = team_zam
 

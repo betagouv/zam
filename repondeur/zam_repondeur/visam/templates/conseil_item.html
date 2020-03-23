@@ -105,7 +105,7 @@
                     dragend->textes-order#hideDropzones
                 "
                 data-target="textes-order.texte"
-                data-pk="{{ lecture.dossier.pk }}">
+                data-pk="{{ lecture.pk }}">
                 <h3>{{ lecture.dossier.titre }}</h3>
                 <nav>
                     <a href="{{ request.resource_url(request.root['dossiers'][lecture.dossier.slug]['lectures'][lecture.url_key]['amendements']) }}">

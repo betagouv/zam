@@ -1,7 +1,6 @@
 import logging
 from collections import defaultdict
 from datetime import date
-from operator import attrgetter
 from typing import Dict, List, Optional, Tuple
 
 from pyramid.httpexceptions import HTTPFound
@@ -36,20 +35,16 @@ class ConseilViewBase:
     def __init__(self, context: ConseilResource, request: Request) -> None:
         self.context = context
         self.request = request
+        self.conseil = self.context.model()
 
 
 @view_defaults(context=ConseilResource)
 class ConseilView(ConseilViewBase):
     @view_config(request_method="GET", renderer="conseil_item.html")
     def get(self) -> dict:
-        conseil = self.context.model()
-        lectures = sorted(
-            [lecture for lecture in conseil.lectures if lecture.dossier.order],
-            key=attrgetter("dossier.order"),
-        )
         return {
-            "conseil": conseil,
-            "lectures": lectures,
+            "conseil": self.conseil,
+            "lectures": self.conseil.lectures,
             "current_tab": "conseils",
             "conseil_resource": self.context,
         }
@@ -69,23 +64,21 @@ class TexteAddView(ConseilViewBase):
         titre = self.request.POST["titre"]
         contenu = self.request.POST.get("contenu", "")
 
-        conseil = self.context.model()
-
         # Un même texte, ou des versions successives d’un même texte,
         # peuvent passer devant plusieurs conseils. Dans ce cas, les
         # lectures seront regroupées au sein d’un même dossier.
-        dossier, created = self.find_or_create_dossier(titre, conseil.lectures)
+        dossier, created = self.find_or_create_dossier(titre, self.conseil.lectures)
         if created:
-            dossier.team = conseil.team
+            dossier.team = self.conseil.team
 
         # Par contre, un même texte ne peut pas être examiné plusieurs
         # fois lors d’une même séance d’un conseil...
-        lecture = self.find_lecture(dossier, conseil)
+        lecture = self.find_lecture(dossier, self.conseil)
         if lecture is None:
-            texte = self.create_texte(conseil.chambre)
+            texte = self.create_texte(self.conseil.chambre)
 
-            lecture = self.create_lecture(texte, dossier, conseil.formation)
-            conseil.lectures.append(lecture)
+            lecture = self.create_lecture(texte, dossier, self.conseil.formation)
+            self.conseil.lectures.append(lecture)
 
             self.create_articles(lecture, contenu)
 
@@ -122,18 +115,10 @@ class TexteAddView(ConseilViewBase):
         self, titre: str, lectures: List[Lecture]
     ) -> Tuple[Dossier, bool]:
         slug = slugify(titre)
-        dossiers_orders = [
-            lecture.dossier.order for lecture in lectures if lecture.dossier.order
-        ]
-        max_order = max(dossiers_orders) if dossiers_orders else 0
         dossier, created = get_one_or_create(
             Dossier,
             slug=slug,
-            create_kwargs={
-                "titre": titre,
-                "an_id": "dummy-" + slug,
-                "order": max_order + 1,
-            },
+            create_kwargs={"titre": titre, "an_id": "dummy-" + slug},
         )
         return dossier, created
 
@@ -199,15 +184,9 @@ class TexteAddView(ConseilViewBase):
 class TexteOrderView(ConseilViewBase):
     @view_config(request_method="POST", renderer="json")
     def post(self) -> dict:
-        ordered_dossier_pks = self.request.json_body["order"]
-        conseil = self.context.model()
-        dossiers = sorted(
-            [lecture.dossier for lecture in conseil.lectures if lecture.dossier.order],
-            key=attrgetter("order"),
-        )
-        for dossier, ordered_dossier_pk in zip(dossiers, ordered_dossier_pks):
-            if dossier.pk != int(ordered_dossier_pk):
-                new_position = ordered_dossier_pks.index(str(dossier.pk)) + 1
-                if dossier.order != new_position:
-                    dossier.order = new_position
+        ordered_lecture_pks = (int(pk) for pk in self.request.json_body["order"])
+        ordered_lectures = (Lecture.get_by_pk(pk) for pk in ordered_lecture_pks)
+        self.conseil.lectures = [
+            lecture for lecture in ordered_lectures if lecture is not None
+        ]
         return {}

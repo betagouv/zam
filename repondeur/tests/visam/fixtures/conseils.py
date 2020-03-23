@@ -84,6 +84,52 @@ def lecture_conseil_ccfp(db, conseil_ccfp, dossier_conseil_ccfp, texte_conseil_c
 
 
 @pytest.fixture
+def article1_texte_conseil_ccfp(db, lecture_conseil_ccfp):
+    from zam_repondeur.models import Article
+
+    with transaction.manager:
+        article = Article.create(lecture=lecture_conseil_ccfp, type="article", num="1")
+
+    return article
+
+
+@pytest.fixture
+def amendement_222_lecture_conseil_ccfp(
+    db, lecture_conseil_ccfp, article1_texte_conseil_ccfp
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    with transaction.manager:
+        amendement = Amendement.create(
+            lecture=lecture_conseil_ccfp,
+            article=article1_texte_conseil_ccfp,
+            num="v222",
+            position=1,
+        )
+
+        DBSession.add(amendement)
+    return amendement
+
+
+@pytest.fixture
+def amendement_444_lecture_conseil_ccfp(
+    db, lecture_conseil_ccfp, article1_texte_conseil_ccfp
+):
+    from zam_repondeur.models import Amendement, DBSession
+
+    with transaction.manager:
+        amendement = Amendement.create(
+            lecture=lecture_conseil_ccfp,
+            article=article1_texte_conseil_ccfp,
+            num="v444",
+            position=2,
+        )
+
+        DBSession.add(amendement)
+    return amendement
+
+
+@pytest.fixture
 def lecture_conseil_ccfp_2(
     db, conseil_ccfp, dossier_conseil_ccfp_2, texte_conseil_ccfp
 ):

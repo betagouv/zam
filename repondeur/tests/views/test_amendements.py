@@ -30,9 +30,10 @@ def test_get_amendements_order_default(app, lecture_an_url, amendements_an, user
         "999",
     ]
     headers_rows_length = 3
-    assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
-        headers_rows_length:
-    ] == ["Art. 1 666 Voir", "Art. 1 999 Voir"]
+    assert [
+        " ".join(node.text().strip().split())
+        for node in resp.parser.css("tr:not(.dropzone)")
+    ][headers_rows_length:] == ["Art. 1 666 Voir", "Art. 1 999 Voir"]
 
 
 def test_get_amendements_order_abandoned_last(
@@ -51,9 +52,10 @@ def test_get_amendements_order_abandoned_last(
 
     assert resp.status_code == 200
     headers_rows_length = 3
-    assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
-        headers_rows_length:
-    ] == [
+    assert [
+        " ".join(node.text().strip().split())
+        for node in resp.parser.css("tr:not(.dropzone)")
+    ][headers_rows_length:] == [
         "Art. 1 999 Voir",
         (
             "Les amendements en-deçà de cette ligne ne sont pas (encore) présents "
@@ -78,9 +80,10 @@ def test_get_amendements_order_with_missing_position(
 
     assert resp.status_code == 200
     headers_rows_length = 3
-    assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
-        headers_rows_length:
-    ] == [
+    assert [
+        " ".join(node.text().strip().split())
+        for node in resp.parser.css("tr:not(.dropzone)")
+    ][headers_rows_length:] == [
         "Art. 1 999 Voir",
         (
             "Les amendements en-deçà de cette ligne ne sont pas (encore) présents "
@@ -105,9 +108,10 @@ def test_get_amendements_order_with_abandoned_next_do_not_display_limit_derouleu
 
     assert resp.status_code == 200
     headers_rows_length = 3
-    assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
-        headers_rows_length:
-    ] == ["Art. 1 999 Voir", "Art. 1 666 Irr. Voir"]
+    assert [
+        " ".join(node.text().strip().split())
+        for node in resp.parser.css("tr:not(.dropzone)")
+    ][headers_rows_length:] == ["Art. 1 999 Voir", "Art. 1 666 Irr. Voir"]
 
 
 def test_get_amendements_not_found_bad_format(app, user_david):

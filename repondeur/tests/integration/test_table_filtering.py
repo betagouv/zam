@@ -89,7 +89,8 @@ def test_filters_are_absent_without_amendements(
             ["Article 1", "Article 1", "Article 7 bis"],
             ["Article 7 bis"],
         ),
-        ("2", ".numero", "777", "amendement", ["666", "999", "777"], ["777"]),
+        ("2", ".numero", "66", "amendement", ["666", "999", "661"], ["666", "661"]),
+        ("2", ".numero", "661", "amendement", ["666", "999", "661"], ["661"]),
     ],
 )
 def test_column_filtering_by_value(
@@ -116,7 +117,7 @@ def test_column_filtering_by_value(
         user_david_table_an.add_amendement(amendements_an[0])
         user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
-            lecture=lecture_an, article=article7bis_an, num="777"
+            lecture=lecture_an, article=article7bis_an, num="661"
         )
         user_david_table_an.add_amendement(amendement)
 

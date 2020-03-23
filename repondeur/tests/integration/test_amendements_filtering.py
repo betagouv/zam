@@ -23,7 +23,7 @@ def test_number_of_amendements_is_displayed(
     wsgi_server, driver, lecture_an_url, amendements_an
 ):
     driver.get(f"{lecture_an_url}/amendements/")
-    trs = driver.find_elements_by_css_selector("tbody tr")
+    trs = driver.find_elements_by_css_selector("tbody tr:not(.dropzone)")
     assert len(trs) == 2
     counter = driver.find_element_by_css_selector(
         'span[data-target="amendements-filters.count"]'
@@ -49,7 +49,7 @@ def test_number_of_amendements_is_displayed_too_many_amendements(
             Amendement.create(lecture=lecture_an, article=article1_an, num=str(i + 1))
 
     driver.get(f"{lecture_an_url}/amendements/")
-    trs = driver.find_elements_by_css_selector("tbody tr")
+    trs = driver.find_elements_by_css_selector("tbody tr:not(.dropzone)")
     assert len(trs) == 7
     counter = driver.find_element_by_css_selector(
         'span[data-target="amendements-filters.count"]'
@@ -69,7 +69,7 @@ def test_number_of_amendements_is_displayed_with_limit_derouleur(
         DBSession.add_all(amendements_an)
 
     driver.get(f"{lecture_an_url}/amendements/")
-    trs = driver.find_elements_by_css_selector("tbody tr")
+    trs = driver.find_elements_by_css_selector("tbody tr:not(.dropzone)")
     assert len(trs) == 3
     counter = driver.find_element_by_css_selector(
         'span[data-target="amendements-filters.count"]'
@@ -115,13 +115,17 @@ def test_column_filtering_by_value(
         user_daniel_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/amendements/")
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )
     input_field.send_keys(input_text)
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == filtered
     assert (
         driver.current_url
@@ -130,19 +134,25 @@ def test_column_filtering_by_value(
 
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     assert driver.current_url == f"{lecture_an_url}/amendements/"
 
     # Check filters are active on URL (re)load.
     driver.get(f"{lecture_an_url}/amendements/?{kind}={input_text}")
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == filtered
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     assert driver.current_url == f"{lecture_an_url}/amendements/"
 
@@ -235,13 +245,17 @@ def test_column_filtering_by_value_with_shared_tables(
         shared_table_lecture_an.add_amendement(amendements_an[1])
 
     driver.get(f"{lecture_an_url}/amendements")
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )
     input_field.send_keys(input_text)
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == filtered
     assert (
         driver.current_url
@@ -250,19 +264,25 @@ def test_column_filtering_by_value_with_shared_tables(
 
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     assert driver.current_url == f"{lecture_an_url}/amendements"
 
     # Check filters are active on URL (re)load.
     driver.get(f"{lecture_an_url}/amendements?{kind}={input_text}")
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == filtered
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     assert driver.current_url == f"{lecture_an_url}/amendements"
 
@@ -310,31 +330,41 @@ def test_column_filtering_by_value_with_batches(
         user_daniel_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/amendements/")
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )
     input_field.send_keys(input_text)
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == filtered
     assert driver.current_url == f"{lecture_an_url}/amendements/?{kind}={input_text}"
 
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     assert driver.current_url == f"{lecture_an_url}/amendements/"
 
     # Check filters are active on URL (re)load.
     driver.get(f"{lecture_an_url}/amendements/?{kind}={input_text}")
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == filtered
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     assert driver.current_url == f"{lecture_an_url}/amendements/"
 
@@ -374,31 +404,41 @@ def test_column_filtering_by_checkbox(
         user_david_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/amendements/")
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     label = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) label[for='{kind}']"
     )
     label.click()
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == filtered
     assert driver.current_url == f"{lecture_an_url}/amendements/?{kind}=1"
 
     # Restore initial state.
     label.click()
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     assert driver.current_url == f"{lecture_an_url}/amendements/"
 
     # Check filters are active on URL (re)load.
     driver.get(f"{lecture_an_url}/amendements/?{kind}=1")
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == filtered
     label = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) label[for='{kind}']"
     )
     label.click()
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     assert driver.current_url == f"{lecture_an_url}/amendements/"
 
@@ -456,13 +496,17 @@ def test_column_filtering_by_value_for_missions(
         DBSession.add(amendement)
 
     driver.get(f"{LECTURE_URL}/amendements/")
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )
     input_field.send_keys(input_text)
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == filtered
     assert (
         driver.current_url
@@ -471,18 +515,24 @@ def test_column_filtering_by_value_for_missions(
 
     # Restore initial state.
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     assert driver.current_url == f"{LECTURE_URL}/amendements/"
 
     # Check filters are active on URL (re)load.
     driver.get(f"{LECTURE_URL}/amendements/?{kind}={input_text}")
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == filtered
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )
     input_field.send_keys(Keys.BACKSPACE * len(input_text))
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     assert driver.current_url == f"{LECTURE_URL}/amendements/"

@@ -3,6 +3,36 @@
 
 {% block header %}
 <link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/amendements.css') }}">
+<style type="text/css">
+    [name="select-all"],
+    [name="amendement-selected"] {
+        margin-left: 12px;
+    }
+    [draggable="true"] {
+        background: white no-repeat 7px 12px url("{{ request.static_url('zam_repondeur:static/img/draganddrop.svg') }}");
+    }
+        [draggable="true"].highlighted td {
+            background-color: Gold;
+        }
+    .dropzone {
+        height: 0;
+        border: none;
+        margin: 0 .1rem;
+        transition: height .1s;
+    }
+        .dropzone td {
+            padding: 0;
+        }
+        .dropzone.highlighted {
+            height: 1rem;
+            background: LightGoldenRodYellow;
+            transition: height .5s;
+        }
+        .dropzone.highlighted.hover {
+            background: Gold;
+        }
+
+</style>
 {% endblock %}
 
 {% block body %}
@@ -167,7 +197,21 @@
                 <th colspan="{% if lecture.has_missions %}8{% else %}7{% endif %}"></th>
             </tr>
         </thead>
-        <tbody data-controller="backlinks" data-target="amendements-filters.tbody">
+        <tbody
+            data-controller="backlinks amendements-order"
+            data-target="amendements-filters.tbody amendements-order.parent"
+            data-amendements-order-url="{{ request.resource_url(context, 'order') }}">
+            <tr class="dropzone"
+                data-target="amendements-order.dropzone"
+                data-action="
+                    drag->amendements-order#dragging
+                    dragover->amendements-order#preventDefault
+                    dragenter->amendements-order#highlightDropzone
+                    dragleave->amendements-order#downlightDropzone
+                    drop->amendements-order#reorder
+                ">
+                <td colspan="{% if lecture.has_missions %}8{% else %}7{% endif %}">
+            </tr>
         {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
         {% for amendement in collapsed_amendements %}
             {% if loop.previtem is defined and loop.previtem.position and loop.previtem.is_displayable and not amendement.position %}
@@ -225,7 +269,16 @@
                 {% if amendement.slug == highlighted_amdt -%}
                 class="highlighted"
                 {%- endif %}
-                id="{{ amendement.slug }}">
+                id="{{ amendement.slug }}"
+                data-action="
+                    drag->amendements-order#dragging
+                    dragstart->amendements-order#registerDragged
+                    dragstart->amendements-order#showDropzones
+                    dragend->amendements-order#hideDropzones
+                "
+                data-target="amendements-order.amendement"
+                data-num="{{ amendement.num }}"
+                draggable="true">
                 <td>
                     <input type="checkbox" name="amendement-selected" value="{{ amendement.num }}">
                 </td>
@@ -357,6 +410,17 @@
                     </a>
                 </td>
             </tr>
+            <tr class="dropzone"
+                data-target="amendements-order.dropzone"
+                data-action="
+                    drag->amendements-order#dragging
+                    dragover->amendements-order#preventDefault
+                    dragenter->amendements-order#highlightDropzone
+                    dragleave->amendements-order#downlightDropzone
+                    drop->amendements-order#reorder
+                ">
+                <td colspan="{% if lecture.has_missions %}8{% else %}7{% endif %}">
+            </tr>
         {% endfor %}
         </tbody>
     </table>
@@ -439,4 +503,7 @@
     <script src="{{ request.static_url('zam_repondeur:static/js/backlinks.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/js/amendements.js') }}"></script>
     <script src="{{ request.static_url('zam_repondeur:static/js/progress.js') }}"></script>
+    {% if total_count_amendements > 1 %}
+        <script src="{{ request.static_url('zam_repondeur:static/js/amendements-order.js') }}"></script>
+    {% endif %}
 {% endblock %}

@@ -50,7 +50,7 @@ pyramid==1.10.4
 pyramid-default-cors==0.2.1
 pyramid-jinja2==2.8
 pyramid-mailer==0.15.1
-pyramid-retry==2.1
+pyramid-retry==2.1.1
 pyramid-tm==2.4
 python-dateutil==2.8.1
 python-editor==1.0.4

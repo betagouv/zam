@@ -61,7 +61,7 @@
         background: white no-repeat 10px 10px url("{{ request.static_url('zam_repondeur:static/img/draganddrop.svg') }}");
     }
         [draggable="true"].highlighted {
-            background-color: #d4edda66;
+            background-color: LightGoldenRodYellow;
         }
     .dropzone {
         height: 0;
@@ -70,15 +70,12 @@
         transition: height .1s;
     }
         .dropzone.highlighted {
-            height: .5rem;
+            height: 1.5rem;
             background: LightGoldenRodYellow;
             transition: height .5s;
         }
         .dropzone.highlighted.hover {
-            height: 6rem;
-            border: 5px black solid;
             background: Gold;
-            transition: height .2s;
         }
 </style>
 {% endblock %}

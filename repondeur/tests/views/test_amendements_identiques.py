@@ -6,10 +6,10 @@ def test_amendements_not_identiques(app, lecture_an_url, amendements_an, user_da
 
     assert resp.status_code == 200
 
-    amendements = resp.parser.css("tbody tr")
+    amendements = resp.parser.css("tbody tr:not(.dropzone)")
     assert len(amendements) == 2
 
-    identiques = resp.parser.css("tbody tr td.identique")
+    identiques = resp.parser.css("tbody tr:not(.dropzone) td.identique")
     assert len(identiques) == 0
 
 
@@ -30,10 +30,10 @@ def test_amendements_identiques(app, lecture_an_url, amendements_an, user_david)
 
     assert resp.status_code == 200
 
-    amendements = resp.parser.css("tbody tr")
+    amendements = resp.parser.css("tbody tr:not(.dropzone)")
     assert len(amendements) == 2
 
-    identiques = resp.parser.css("tbody tr td.identique")
+    identiques = resp.parser.css("tbody tr:not(.dropzone) td.identique")
     assert len(identiques) == 2
 
     assert "first" in identiques[0].attributes["class"]
@@ -64,8 +64,8 @@ def test_amendements_identiques_with_abandoned(
 
     assert resp.status_code == 200
 
-    amendements = resp.parser.css("tbody tr")
+    amendements = resp.parser.css("tbody tr:not(.dropzone)")
     assert len(amendements) == 2
 
-    identiques = resp.parser.css("tbody tr td.identique")
+    identiques = resp.parser.css("tbody tr:not(.dropzone) td.identique")
     assert len(identiques) == 0

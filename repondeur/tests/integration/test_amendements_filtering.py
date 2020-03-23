@@ -80,7 +80,8 @@ def test_number_of_amendements_is_displayed_with_limit_derouleur(
 @pytest.mark.parametrize(
     "column_index,input_text,kind,initial,filtered",
     [
-        ("3", "777", "amendement", ["666", "999", "777"], ["777"]),
+        ("3", "66", "amendement", ["666", "999", "661"], ["666", "661"]),
+        ("3", "666", "amendement", ["666", "999", "661"], ["666"]),
         ("4", "Da", "table", ["Ronan", "David", "Daniel"], ["David", "Daniel"]),
     ],
 )
@@ -110,7 +111,7 @@ def test_column_filtering_by_value(
         user_ronan_table_an.add_amendement(amendements_an[0])
         user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
-            lecture=lecture_an, article=article1_an, num="777", position=3
+            lecture=lecture_an, article=article1_an, num="661", position=3
         )
         user_daniel_table_an.add_amendement(amendement)
 

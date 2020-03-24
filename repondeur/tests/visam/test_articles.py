@@ -1,9 +1,12 @@
-def test_article_preview(app, articles_conseil_ccfp, user_david):
+def test_article_preview(
+    app, conseil_ccfp, lecture_conseil_ccfp, articles_conseil_ccfp, user_david
+):
+    article = articles_conseil_ccfp[0]
     resp = app.get(
         (
-            "/dossiers/titre-texte-ccfp"
-            "/lectures/ccfp..1.Assembl%C3%A9e%20pl%C3%A9ni%C3%A8re"
-            "/articles/article.1../preview"
+            f"/conseils/{conseil_ccfp.slug}"
+            f"/textes/{lecture_conseil_ccfp.dossier.slug}"
+            f"/articles/{article.url_key}/preview"
         ),
         user=user_david,
     )

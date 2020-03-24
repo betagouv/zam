@@ -108,7 +108,7 @@
                 data-pk="{{ lecture.pk }}">
                 <h3>{{ lecture.dossier.titre }}</h3>
                 <nav>
-                    <a href="{{ request.resource_url(request.root['dossiers'][lecture.dossier.slug]['lectures'][lecture.url_key]['amendements']) }}">
+                    <a href="{{ request.resource_url(request.root['conseils'][conseil.slug]['textes'][lecture.dossier.slug]['amendements']) }}">
                         Accéder à ce texte
                     </a>
                 </nav>

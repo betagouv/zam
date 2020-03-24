@@ -364,7 +364,7 @@ class LectureResource(Resource):
         return self.dossier_resource
 
     @property
-    def dossier_resource(self) -> DossierResource:
+    def dossier_resource(self) -> Optional[DossierResource]:
         return self.parent.parent
 
     @reify
@@ -372,6 +372,7 @@ class LectureResource(Resource):
         return self.model()
 
     def model(self, *options: Any) -> Lecture:
+        assert self.dossier_resource is not None  # nosec (mypy hint)
         lecture = Lecture.get(
             self.dossier_resource.dossier,
             self.chambre,

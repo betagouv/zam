@@ -91,9 +91,7 @@ class TexteAddView(ConseilViewBase):
             )
 
         location = self.request.resource_url(
-            self.request.root["dossiers"][lecture.dossier.slug]["lectures"][
-                lecture.url_key
-            ]["amendements"]
+            self.context["textes"][lecture.dossier.slug]["amendements"]
         )
         return HTTPFound(location=location)
 

@@ -101,14 +101,12 @@ class HeadlessChrome(webdriver.Chrome):
 
 
 @pytest.fixture
-def dossier_conseil_ccfp_url(wsgi_server, lecture_conseil_ccfp):
-    return (
-        f"{wsgi_server.application_url}dossiers/{lecture_conseil_ccfp.dossier.url_key}"
-    )
+def conseil_ccfp_url(wsgi_server, conseil_ccfp):
+    return f"{wsgi_server.application_url}conseils/{conseil_ccfp.slug}/"
 
 
 @pytest.fixture
 def lecture_conseil_ccfp_url(
-    wsgi_server, lecture_conseil_ccfp, dossier_conseil_ccfp_url
+    conseil_ccfp_url, lecture_conseil_ccfp,
 ):
-    return f"{dossier_conseil_ccfp_url}/lectures/{lecture_conseil_ccfp.url_key}"
+    return f"{conseil_ccfp_url}textes/{lecture_conseil_ccfp.dossier.slug}"

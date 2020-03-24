@@ -68,8 +68,7 @@ def test_conseil_add_texte_submit(app, conseil_ccfp, contenu, user_david):
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://visam.test/dossiers/titre-texte"
-        "/lectures/ccfp..1.Assembl%C3%A9e%20pl%C3%A9ni%C3%A8re/amendements/"
+        "https://visam.test/conseils/ccfp-2020-04-01/textes/titre-texte/amendements/"
     )
 
     resp = resp.follow()
@@ -195,8 +194,7 @@ def test_conseil_add_texte_submit_existing_same_conseil(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://visam.test/dossiers/titre-texte"
-        "/lectures/ccfp..1.Assembl%C3%A9e%20pl%C3%A9ni%C3%A8re/amendements/"
+        "https://visam.test/conseils/ccfp-2020-04-01/textes/titre-texte/amendements/"
     )
 
     resp = resp.follow()
@@ -213,8 +211,7 @@ def test_conseil_add_texte_submit_existing_same_conseil(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://visam.test/dossiers/titre-texte"
-        "/lectures/ccfp..1.Assembl%C3%A9e%20pl%C3%A9ni%C3%A8re/amendements/"
+        "https://visam.test/conseils/ccfp-2020-04-01/textes/titre-texte/amendements/"
     )
 
     resp = resp.follow()
@@ -235,8 +232,7 @@ def test_conseil_add_texte_submit_existing_different_conseil(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://visam.test/dossiers/titre-texte"
-        "/lectures/ccfp..1.Assembl%C3%A9e%20pl%C3%A9ni%C3%A8re/amendements/"
+        "https://visam.test/conseils/ccfp-2020-04-01/textes/titre-texte/amendements/"
     )
 
     resp = resp.follow()
@@ -253,8 +249,7 @@ def test_conseil_add_texte_submit_existing_different_conseil(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://visam.test/dossiers/titre-texte"
-        "/lectures/csfpe..1.Assembl%C3%A9e%20pl%C3%A9ni%C3%A8re/amendements/"
+        "https://visam.test/conseils/csfpe-2020-05-15/textes/titre-texte/amendements/"
     )
 
     resp = resp.follow()

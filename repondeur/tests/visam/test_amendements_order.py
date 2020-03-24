@@ -1,16 +1,14 @@
-from urllib.parse import quote
-
 import pytest
 
 
 @pytest.mark.usefixtures("amendement_222_lecture_conseil_ccfp")
 def test_lecture_reorder_amendements_unique_amendement(
-    app, lecture_conseil_ccfp, user_david
+    app, conseil_ccfp, lecture_conseil_ccfp, user_david
 ):
     lecture = lecture_conseil_ccfp
     dossier = lecture.dossier
     resp = app.get(
-        f"/dossiers/{dossier.slug}/lectures/{quote(lecture.url_key)}/amendements/",
+        f"/conseils/{conseil_ccfp.slug}/textes/{dossier.slug}/amendements/",
         user=user_david,
     )
     assert resp.status_code == 200
@@ -22,6 +20,7 @@ def test_lecture_reorder_amendements_unique_amendement(
 
 def test_lecture_reorder_amendements_many_amendements(
     app,
+    conseil_ccfp,
     lecture_conseil_ccfp,
     amendement_222_lecture_conseil_ccfp,
     amendement_444_lecture_conseil_ccfp,
@@ -37,14 +36,14 @@ def test_lecture_reorder_amendements_many_amendements(
     assert amendement_444_lecture_conseil_ccfp.position == 2
 
     resp = app.get(
-        f"/dossiers/{dossier.slug}/lectures/{quote(lecture.url_key)}/amendements/",
+        f"/conseils/{conseil_ccfp.slug}/textes/{dossier.slug}/amendements/",
         user=user_david,
     )
     assert resp.status_code == 200
     assert '<script src="https://visam.test/static/js/amendements-order.js' in resp.text
 
     resp = app.post_json(
-        f"/dossiers/{dossier.slug}/lectures/{quote(lecture.url_key)}/amendements/order",
+        f"/conseils/{conseil_ccfp.slug}/textes/{dossier.slug}/amendements/order",
         {"order": ["v444", "v222"]},
         user=user_david,
     )

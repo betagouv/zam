@@ -34,7 +34,7 @@ def upload_json(context: LectureResource, request: Request) -> Response:
                 amendement.num: amendement for amendement in lecture.amendements
             },
             articles={article.sort_key_as_str: article for article in lecture.articles},
-            team=context.dossier_resource.dossier.team,
+            team=lecture.dossier.team,
         )
     except ValueError as exc:
         request.session.flash(Message(cls="danger", text=str(exc)))

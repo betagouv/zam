@@ -43,7 +43,7 @@ def upload_csv(context: LectureResource, request: Request) -> Response:
             amendements={
                 amendement.num: amendement for amendement in lecture.amendements
             },
-            team=context.dossier_resource.dossier.team,
+            team=lecture.dossier.team,
         )
     except CSVImportError as exc:
         request.session.flash(Message(cls="danger", text=str(exc)))

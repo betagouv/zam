@@ -26,7 +26,7 @@
             "position":1,
             "id_discussion_commune":"",
             "id_identique":"",
-            "alinea":"",
+            "alinea":""
         },
         {
             "num":999,
@@ -54,7 +54,7 @@
             "position":2,
             "id_discussion_commune":"",
             "id_identique":"",
-            "alinea":"",
+            "alinea":""
         }
     ]
 }

@@ -611,7 +611,7 @@ class Amendement(Base):
             "id_identique": self.id_identique or "",
             "first_identique_num": self.first_identique_num or "",
             "alinea": self.alinea or "",
-            "date_depot": self.date_depot or "",
+            "date_depot": self.date_depot.isoformat() if self.date_depot else "",
             "affectation_email": (
                 self.location.user_table and self.location.user_table.user.email or ""
             ),

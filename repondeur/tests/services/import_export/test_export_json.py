@@ -1,3 +1,5 @@
+from datetime import date
+
 import transaction
 import ujson as json
 
@@ -26,6 +28,7 @@ def test_export_json(
             expose="<p>Cet article va à l'encontre du principe d'égalité.</p>",
             resume="Suppression de l'article",
             position=1,
+            date_depot=date(2018, 4, 1),
         )
         Amendement.create(
             lecture=lecture_senat,
@@ -90,7 +93,7 @@ def test_export_json(
         "chambre": "senat",
         "comments": "",
         "corps": "<p>L'article 1 est supprimé.</p>",
-        "date_depot": "",
+        "date_depot": "2018-04-01",
         "id_discussion_commune": "",
         "expose": "<p>Cet article va à l'encontre du principe d'égalité.</p>",
         "groupe": "RDSE",

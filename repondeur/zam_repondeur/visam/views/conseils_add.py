@@ -1,7 +1,6 @@
 import logging
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
-from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
@@ -10,28 +9,13 @@ from zam_repondeur.models import Chambre, get_one_or_create
 from zam_repondeur.services.fetch.dates import parse_date
 from zam_repondeur.visam.models import Conseil, Formation
 from zam_repondeur.visam.resources import ConseilCollection
+from zam_repondeur.visam.views.conseils_list import ConseilCollectionBase
 
 logger = logging.getLogger(__name__)
 
 
-class ConseilCollectionBase:
-    def __init__(self, context: ConseilCollection, request: Request) -> None:
-        self.context = context
-        self.request = request
-
-
-@view_defaults(context=ConseilCollection)
-class ConseilsList(ConseilCollectionBase):
-    @view_config(request_method="GET", renderer="conseils_list.html")
-    def get(self) -> dict:
-        return {
-            "conseils": self.context.models(),
-            "current_tab": "conseils",
-        }
-
-
 @view_defaults(context=ConseilCollection, name="add")
-class ConseilAddView(ConseilCollectionBase):
+class AddConseilView(ConseilCollectionBase):
     @view_config(request_method="GET", renderer="conseils_add.html")
     def get(self) -> dict:
         return {

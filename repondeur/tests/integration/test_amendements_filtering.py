@@ -196,13 +196,17 @@ def test_column_filtering_by_value_when_empty_results(
         user_daniel_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/amendements/")
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == initial
     input_field = driver.find_element_by_css_selector(
         f"thead tr.filters th:nth-child({column_index}) input"
     )
     input_field.send_keys(input_text)
-    trs = driver.find_elements_by_css_selector(f"tbody tr:not(.hidden-{kind})")
+    trs = driver.find_elements_by_css_selector(
+        f"tbody tr:not(.hidden-{kind}):not(.dropzone)"
+    )
     assert extract_column_text(column_index, trs) == filtered
     empty_message = driver.find_element_by_css_selector(
         '[data-target="amendements-filters.empty"]'

@@ -4,7 +4,6 @@ from datetime import date
 from typing import Dict, List, Optional, Tuple
 
 from pyramid.httpexceptions import HTTPFound
-from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 from selectolax.parser import HTMLParser
@@ -27,32 +26,14 @@ from zam_repondeur.services.clean import clean_html
 from zam_repondeur.slugs import slugify
 from zam_repondeur.visam.models.conseil import Conseil, Formation
 from zam_repondeur.visam.resources import ConseilResource
+from zam_repondeur.visam.views.conseil_item import ConseilViewBase
 
 logger = logging.getLogger(__name__)
 
 
-class ConseilViewBase:
-    def __init__(self, context: ConseilResource, request: Request) -> None:
-        self.context = context
-        self.request = request
-        self.conseil = self.context.model()
-
-
-@view_defaults(context=ConseilResource)
-class ConseilView(ConseilViewBase):
-    @view_config(request_method="GET", renderer="conseil_item.html")
-    def get(self) -> dict:
-        return {
-            "conseil": self.conseil,
-            "lectures": self.conseil.lectures,
-            "current_tab": "conseils",
-            "conseil_resource": self.context,
-        }
-
-
 @view_defaults(context=ConseilResource, name="add")
-class TexteAddView(ConseilViewBase):
-    @view_config(request_method="GET", renderer="texte_add.html")
+class ConseilAddTexteView(ConseilViewBase):
+    @view_config(request_method="GET", renderer="conseil_add_texte.html")
     def get(self) -> dict:
         return {
             "current_tab": "conseils",
@@ -176,15 +157,3 @@ class TexteAddView(ConseilViewBase):
             elif current_article is not None:
                 articles[current_article].append(node.html)
         return articles
-
-
-@view_defaults(context=ConseilResource, name="order")
-class TexteOrderView(ConseilViewBase):
-    @view_config(request_method="POST", renderer="json")
-    def post(self) -> dict:
-        ordered_lecture_pks = (int(pk) for pk in self.request.json_body["order"])
-        ordered_lectures = (Lecture.get_by_pk(pk) for pk in ordered_lecture_pks)
-        self.conseil.lectures = [
-            lecture for lecture in ordered_lectures if lecture is not None
-        ]
-        return {}

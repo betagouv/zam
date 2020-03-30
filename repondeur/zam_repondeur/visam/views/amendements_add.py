@@ -6,9 +6,9 @@ from pyramid.view import view_config, view_defaults
 from zam_repondeur.message import Message
 from zam_repondeur.models import Amendement, Article, DBSession
 from zam_repondeur.models.division import SubDiv
-from zam_repondeur.models.events.amendement import AmendementSaisi
 from zam_repondeur.resources import AmendementCollection
 from zam_repondeur.services.clean import clean_html
+from zam_repondeur.visam.models import AmendementSaisi
 
 GROUPES = {
     "LE GOUVERNEMENT": "Gouvernement",

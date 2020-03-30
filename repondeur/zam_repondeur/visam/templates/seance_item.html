@@ -59,23 +59,15 @@
         }
     [draggable="true"] {
         background: white no-repeat 10px 10px url("{{ request.static_url('zam_repondeur:static/img/draganddrop.svg') }}");
+        cursor: move;
     }
         [draggable="true"].highlighted {
-            background-color: Gold;
+            background-color: LightGoldenRodYellow;
+            cursor: row-resize;
         }
-    .dropzone {
-        height: 0;
-        border: none;
-        margin: 0 1rem;
-        transition: height .1s;
-    }
-        .dropzone.highlighted {
-            height: 1.5rem;
-            background: LightGoldenRodYellow;
-            transition: height .5s;
-        }
-        .dropzone.highlighted.hover {
-            background: Gold;
+        [draggable="true"]:-moz-drag-over {
+            outline: 2px dotted black;
+            background-color: LightGoldenRodYellow;
         }
 </style>
 {% endblock %}
@@ -84,26 +76,17 @@
 
 {% block body %}
     <section data-controller="textes-order"
-        data-target="textes-order.parent"
+        data-action="
+            dragstart->textes-order#dragstart
+            dragenter->textes-order#dragenter
+            dragover->textes-order#dragover
+            dragend->textes-order#dragend
+            drop->textes-order#drop
+        "
         data-textes-order-url="{{ request.resource_url(context, 'order') }}">
         <h2>{{ seance }}</h2>
-        <div class="dropzone"
-            data-target="textes-order.dropzone"
-            data-action="
-                drag->textes-order#dragging
-                dragover->textes-order#preventDefault
-                dragenter->textes-order#highlightDropzone
-                dragleave->textes-order#downlightDropzone
-                drop->textes-order#reorder
-            "></div>
         {% for lecture in lectures %}
             <div draggable="true" class="texte box"
-                data-action="
-                    drag->textes-order#dragging
-                    dragstart->textes-order#registerDragged
-                    dragstart->textes-order#showDropzones
-                    dragend->textes-order#hideDropzones
-                "
                 data-target="textes-order.texte"
                 data-pk="{{ lecture.pk }}">
                 <h3>{{ lecture.dossier.titre }}</h3>
@@ -113,15 +96,6 @@
                     </a>
                 </nav>
             </div>
-            <div class="dropzone"
-                data-target="textes-order.dropzone"
-                data-action="
-                    drag->textes-order#dragging
-                    dragover->textes-order#preventDefault
-                    dragenter->textes-order#highlightDropzone
-                    dragleave->textes-order#downlightDropzone
-                    drop->textes-order#reorder
-                "></div>
         {% else %}
             <div class="texte box">
                 <h3>Aucun texte pour l’instant.</h3>

@@ -8,7 +8,7 @@ from zam_repondeur.resources import AmendementCollection
 @view_config(
     context=AmendementCollection, name="order", request_method="POST", renderer="json"
 )
-def update_amendements_order(context: AmendementCollection, request: Request) -> dict:
+def reorder_amendements(context: AmendementCollection, request: Request) -> dict:
     lecture = context.parent.model()
     nums = request.json_body["order"]
     amendements = [Amendement.get(lecture, num) for num in nums]

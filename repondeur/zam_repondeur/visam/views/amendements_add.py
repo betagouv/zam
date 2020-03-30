@@ -23,13 +23,13 @@ GROUPES = {
 
 
 @view_defaults(context=AmendementCollection, name="saisie")
-class SaisieAmendement:
+class AddAmendementView:
     def __init__(self, context: AmendementCollection, request: Request):
         self.context = context
         self.request = request
         self.lecture = self.context.parent.model()
 
-    @view_config(request_method="GET", renderer="saisie_amendement.html")
+    @view_config(request_method="GET", renderer="amendements_add.html")
     def get(self) -> dict:
         lecture_resource = self.context.parent
         return {

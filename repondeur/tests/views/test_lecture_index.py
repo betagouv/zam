@@ -12,6 +12,8 @@ def test_no_amendements(app, lecture_an_url, user_david):
 
     assert resp.status_code == 200
     assert "Les amendements ne sont pas encore disponibles." in resp.text
+    assert "Un problème ?" in resp.text
+    assert "Vos amendements n’apparaissent pas ?" in resp.text
 
 
 def test_get_amendements_order_default(app, lecture_an_url, amendements_an, user_david):

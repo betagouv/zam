@@ -1,11 +1,13 @@
 from typing import Callable, Tuple
 
+from pyramid.httpexceptions import HTTPFound
 from pyramid.request import Request
+from pyramid.response import Response
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload, load_only, subqueryload
 
 from zam_repondeur.models import Amendement, AmendementList, Article, Batch, DBSession
-from zam_repondeur.resources import AmendementCollection
+from zam_repondeur.resources import AmendementCollection, LectureResource
 
 AMDTS_OPTIONS = [
     load_only(
@@ -39,6 +41,11 @@ AMDTS_OPTIONS = [
         .load_only("reponse_hash")
     ),
 ]
+
+
+@view_config(context=LectureResource)
+def default_view(context: LectureResource, request: Request) -> Response:
+    return HTTPFound(location=request.resource_url(context["amendements"]))
 
 
 @view_config(context=AmendementCollection, renderer="lecture_index.html")

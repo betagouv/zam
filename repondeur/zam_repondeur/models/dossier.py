@@ -17,7 +17,7 @@ class Dossier(Base, LastEventMixin):
     an_id = Column(Text, nullable=True, unique=True)
     senat_id = Column(Text, nullable=True, unique=True)
 
-    titre = Column(Text, nullable=False)  # TODO: make it unique?
+    titre: str = Column(Text, nullable=False)  # TODO: make it unique?
     slug: str = Column(Text, nullable=False, unique=True)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)

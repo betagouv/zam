@@ -57,10 +57,6 @@ class Resource(dict):
             yield parent
             parent = parent.parent
 
-    @property
-    def ancestors(self) -> List["Resource"]:
-        return list(reversed(list(self.parents)))
-
     def add_child(self, child: "Resource") -> None:
         self[child.__name__] = child
 

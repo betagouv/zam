@@ -146,13 +146,15 @@ class Lecture(Base, LastEventMixin):
         return str(num_lecture.strip())
 
     def format_texte(self) -> str:
+        return f"texte nº\u00a0{self.texte.numero}" + self.format_partie()
+
+    def format_partie(self) -> str:
         if self.partie == 1:
-            partie = " (1re partie)"
+            return " (1re partie)"
         elif self.partie == 2:
-            partie = " (2nde partie)"
+            return " (2nde partie)"
         else:
-            partie = ""
-        return f"texte nº\u00a0{self.texte.numero}{partie}"
+            return ""
 
     @property
     def is_commission(self) -> bool:

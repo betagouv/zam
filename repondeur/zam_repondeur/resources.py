@@ -60,6 +60,21 @@ class Resource(dict):
     def add_child(self, child: "Resource") -> None:
         self[child.__name__] = child
 
+    def breadcrumbs(self, request: Request) -> Iterator["Resource"]:
+        resources = list(reversed(list(self.parents)))
+        resources.append(self)
+        for resource in resources:
+            if resource.breadcrumbs_label is not None:
+                yield resource
+
+    @property
+    def breadcrumbs_label(self) -> Optional[str]:
+        return None
+
+    @property
+    def breadcrumbs_class(self) -> str:
+        return ""
+
 
 class Root(Resource):
     __acl__ = [
@@ -104,6 +119,8 @@ class AdminsCollection(Resource):
 
 class DossierCollection(Resource):
     __acl__ = [(Allow, "group:admins", "activate"), (Deny, Everyone, "activate")]
+
+    breadcrumbs_label = "Dossiers législatifs"
 
     def models(self, *options: Any) -> List[Dossier]:
         result: List[Dossier] = DBSession.query(Dossier).options(*options)
@@ -154,6 +171,13 @@ class DossierResource(Resource):
         if dossier is None:
             raise ResourceNotFound(self)
         return dossier
+
+    breadcrumbs_class = "menu-dossier"
+
+    @property
+    def breadcrumbs_label(self) -> Optional[str]:
+        dossier: Dossier = self.model()
+        return dossier.titre
 
 
 class LectureCollection(Resource):
@@ -234,6 +258,20 @@ class LectureResource(Resource):
         if lecture is None:
             raise ResourceNotFound(self)
         return lecture
+
+    @property
+    def breadcrumbs_label(self) -> Optional[str]:
+        lecture = self.model()
+        return (
+            ", ".join(
+                [
+                    lecture.format_num_lecture(),
+                    lecture.format_chambre(),
+                    lecture.format_organe(),
+                ]
+            )
+            + lecture.format_partie()
+        )
 
 
 class AmendementCollection(Resource):

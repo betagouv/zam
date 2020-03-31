@@ -10,28 +10,16 @@
     }
     [draggable="true"] {
         background: white no-repeat 7px 12px url("{{ request.static_url('zam_repondeur:static/img/draganddrop.svg') }}");
+        cursor: move;
     }
-        [draggable="true"].highlighted td {
-            background-color: Gold;
+        [draggable="true"].highlighted {
+            background-color: LightGoldenRodYellow;
+            cursor: row-resize;
         }
-    .dropzone {
-        height: 0;
-        border: none;
-        margin: 0 .1rem;
-        transition: height .1s;
-    }
-        .dropzone td {
-            padding: 0;
+        [draggable="true"]:-moz-drag-over {
+            outline: 2px dotted black;
+            background-color: LightGoldenRodYellow;
         }
-        .dropzone.highlighted {
-            height: 1rem;
-            background: LightGoldenRodYellow;
-            transition: height .5s;
-        }
-        .dropzone.highlighted.hover {
-            background: Gold;
-        }
-
 </style>
 {% endblock %}
 
@@ -199,19 +187,15 @@
         </thead>
         <tbody
             data-controller="backlinks amendements-order"
-            data-target="amendements-filters.tbody amendements-order.parent"
+            data-target="amendements-filters.tbody"
+            data-action="
+                dragstart->amendements-order#dragstart
+                dragenter->amendements-order#dragenter
+                dragover->amendements-order#dragover
+                dragend->amendements-order#dragend
+                drop->amendements-order#drop
+            "
             data-amendements-order-url="{{ request.resource_url(context, 'order') }}">
-            <tr class="dropzone"
-                data-target="amendements-order.dropzone"
-                data-action="
-                    drag->amendements-order#dragging
-                    dragover->amendements-order#preventDefault
-                    dragenter->amendements-order#highlightDropzone
-                    dragleave->amendements-order#downlightDropzone
-                    drop->amendements-order#reorder
-                ">
-                <td colspan="{% if lecture.has_missions %}8{% else %}7{% endif %}">
-            </tr>
         {% set highlighted_amdt = request.session.pop('highlighted_amdt', None) %}
         {% for amendement in collapsed_amendements %}
             {% if loop.previtem is defined and loop.previtem.position and loop.previtem.is_displayable and not amendement.position %}
@@ -270,12 +254,6 @@
                 class="highlighted"
                 {%- endif %}
                 id="{{ amendement.slug }}"
-                data-action="
-                    drag->amendements-order#dragging
-                    dragstart->amendements-order#registerDragged
-                    dragstart->amendements-order#showDropzones
-                    dragend->amendements-order#hideDropzones
-                "
                 data-target="amendements-order.amendement"
                 data-num="{{ amendement.num }}"
                 draggable="true">
@@ -409,17 +387,6 @@
                         Voir
                     </a>
                 </td>
-            </tr>
-            <tr class="dropzone"
-                data-target="amendements-order.dropzone"
-                data-action="
-                    drag->amendements-order#dragging
-                    dragover->amendements-order#preventDefault
-                    dragenter->amendements-order#highlightDropzone
-                    dragleave->amendements-order#downlightDropzone
-                    drop->amendements-order#reorder
-                ">
-                <td colspan="{% if lecture.has_missions %}8{% else %}7{% endif %}">
             </tr>
         {% endfor %}
         </tbody>

@@ -1,60 +1,90 @@
 class AmendementsOrder extends Stimulus.Controller {
   static get targets() {
-    return ['parent', 'dropzone', 'amendement']
+    return ['amendement']
   }
 
-  dragging(event) {
-    // Necessary to start the dragging stuff.
+  dragstart(event) {
+    event.dataTransfer.setData('application/drag-num', event.target.dataset.num)
+    event.dataTransfer.setData('application/initial-order', this.currentOrder())
+    event.dataTransfer.effectAllowed = 'move'
+    event.target.classList.add('highlighted')
   }
-  registerDragged(event) {
-    this.dragged = event.target
-    this.draggedPreviousDropzone = event.target.previousElementSibling
-    this.draggedNextDropzone = event.target.nextElementSibling
+  dragenter(event) {
+    if (this.isDropZone(event)) {
+      event.preventDefault()
+    }
   }
-  preventDefault(event) {
-    event.preventDefault()
+  dragover(event) {
+    event.dataTransfer.dropEffect = 'move'
+    if (this.isDropZone(event)) {
+      event.preventDefault()
+    }
+  }
+  dragend(event) {
+    event.target.classList.remove('highlighted')
   }
 
-  // Dropzones management.
-  showDropzones(event) {
-    this.dropzoneTargets.forEach(dropzone => {
-      dropzone.classList.add('highlighted')
-    })
-    this.draggedPreviousDropzone.classList.remove('highlighted')
-    this.draggedNextDropzone.classList.remove('highlighted')
-    this.dragged.classList.add('highlighted')
-    this.dragged.style.cursor = 'row-resize'
+  initialOrder(event) {
+    return event.dataTransfer.getData('application/initial-order').split(',')
   }
-  highlightDropzone(event) {
-    if (event.target.parentElement.className.includes('dropzone')) {
-      event.target.parentElement.classList.add('hover')
+  currentOrder() {
+    return this.amendementTargets.map(amendement => amendement.dataset.num)
+  }
+  sameArrays(array1, array2) {
+    // Full credits to https://stackoverflow.com/a/19746771
+    return (
+      array1.length === array2.length &&
+      array1.every((value, index) => value === array2[index])
+    )
+  }
+  isDraggable(element) {
+    if (!(element instanceof HTMLElement)) {
+      element = element.parentElement
     }
+    return (
+      element.hasAttribute('draggable') &&
+      element.getAttribute('draggable') == 'true'
+    )
   }
-  downlightDropzone(event) {
-    if (event.target.parentElement.className.includes('dropzone')) {
-      event.target.parentElement.classList.remove('hover')
+  isDropZone(event) {
+    return (
+      this.isDraggable(event.target) ||
+      this.isDraggable(event.target.parentElement) ||
+      this.isDraggable(event.target.parentElement.parentElement)
+    )
+  }
+  amendementElement(event) {
+    const target = event.target
+    if (this.isDraggable(target)) {
+      return target
     }
-  }
-  hideDropzones(event) {
-    this.dropzoneTargets.forEach(dropzone => {
-      dropzone.classList.remove('highlighted')
-      dropzone.classList.remove('hover')
-    })
-    this.dragged.classList.remove('highlighted')
-    this.dragged.style.cursor = 'auto'
+    const parent = target.parentElement
+    if (this.isDraggable(parent)) {
+      return parent
+    }
+    return false
   }
 
   // Actual reordering on drop.
-  reorder(event) {
-    const nextSibling = event.target.parentElement.nextElementSibling
-    this.parentTarget.removeChild(this.dragged)
-    this.parentTarget.removeChild(this.draggedNextDropzone)
-    const newDragged = this.parentTarget.insertBefore(this.dragged, nextSibling)
-    this.parentTarget.insertBefore(this.draggedNextDropzone, nextSibling)
-    const newOrder = this.amendementTargets.map(
-      amendement => amendement.dataset.num
-    )
-    this.submitOrder(newOrder)
+  drop(event) {
+    event.preventDefault()
+    const dropTarget = this.amendementElement(event)
+
+    const num = event.dataTransfer.getData('application/drag-num')
+    const draggedItem = this.element.querySelector(`[data-num='${num}']`)
+
+    // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
+    const positionComparison = dropTarget.compareDocumentPosition(draggedItem)
+    if (positionComparison & Node.DOCUMENT_POSITION_FOLLOWING) {
+      dropTarget.insertAdjacentElement('beforebegin', draggedItem)
+    } else if (positionComparison & Node.DOCUMENT_POSITION_PRECEDING) {
+      dropTarget.insertAdjacentElement('afterend', draggedItem)
+    }
+
+    const initialOrder = this.initialOrder(event)
+    const currentOrder = this.currentOrder()
+    if (!this.sameArrays(initialOrder, currentOrder))
+      this.submitOrder(currentOrder)
   }
 
   XHROptions() {

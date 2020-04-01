@@ -113,6 +113,7 @@
 
 {% block scripts %}
     {% if lectures | length > 1 %}
-        <script src="{{ request.static_url('zam_repondeur:static/js/seance.js') }}"></script>
+        <script src="{{ request.static_url('zam_repondeur:static/js/base-order.js') }}"></script>
+        <script src="{{ request.static_url('zam_repondeur:static/js/textes-order.js') }}"></script>
     {% endif %}
 {% endblock %}

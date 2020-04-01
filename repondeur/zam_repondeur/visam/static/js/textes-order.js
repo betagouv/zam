@@ -1,14 +1,15 @@
-class AmendementsOrder extends BaseOrder {
+class TextesOrder extends BaseOrder {
   static get targets() {
-    return ['amendement']
+    return ['texte']
   }
 
   dragstart(event) {
     super.dragstart(event)
-    event.dataTransfer.setData('application/drag-num', event.target.dataset.num)
+    event.dataTransfer.setData('application/drag-pk', event.target.dataset.pk)
   }
+
   currentOrder() {
-    return this.amendementTargets.map(amendement => amendement.dataset.num)
+    return this.texteTargets.map(texte => texte.dataset.pk)
   }
 
   // Actual reordering on drop.
@@ -16,8 +17,8 @@ class AmendementsOrder extends BaseOrder {
     event.preventDefault()
     const dropTarget = this.targetElement(event)
 
-    const num = event.dataTransfer.getData('application/drag-num')
-    const draggedItem = this.element.querySelector(`[data-num='${num}']`)
+    const pk = event.dataTransfer.getData('application/drag-pk')
+    const draggedItem = this.element.querySelector(`[data-pk='${pk}']`)
 
     // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
     const positionComparison = dropTarget.compareDocumentPosition(draggedItem)
@@ -34,4 +35,4 @@ class AmendementsOrder extends BaseOrder {
   }
 }
 
-application.register('amendements-order', AmendementsOrder)
+application.register('textes-order', TextesOrder)

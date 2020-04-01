@@ -65,7 +65,8 @@
             background-color: LightGoldenRodYellow;
             cursor: row-resize;
         }
-        [draggable="true"]:-moz-drag-over {
+        /* Mimicks `:-moz-drag-over` w/ cross-compatibility. */
+        [draggable="true"].drag-over {
             outline: 2px dotted black;
             background-color: LightGoldenRodYellow;
         }
@@ -80,6 +81,7 @@
             dragstart->textes-order#dragstart
             dragenter->textes-order#dragenter
             dragover->textes-order#dragover
+            dragleave->textes-order#dragleave
             dragend->textes-order#dragend
             drop->textes-order#drop
         "

@@ -16,7 +16,8 @@
             background-color: LightGoldenRodYellow;
             cursor: row-resize;
         }
-        [draggable="true"]:-moz-drag-over {
+        /* Mimicks `:-moz-drag-over` w/ cross-compatibility. */
+        [draggable="true"].drag-over {
             outline: 2px dotted black;
             background-color: LightGoldenRodYellow;
         }
@@ -192,6 +193,7 @@
                 dragstart->amendements-order#dragstart
                 dragenter->amendements-order#dragenter
                 dragover->amendements-order#dragover
+                dragleave->amendements-order#dragleave
                 dragend->amendements-order#dragend
                 drop->amendements-order#drop
             "

@@ -18,10 +18,15 @@ class TextesOrder extends Stimulus.Controller {
     event.dataTransfer.dropEffect = 'move'
     if (this.isDropZone(event)) {
       event.preventDefault()
+      this.targetElement(event).classList.add('drag-over')
     }
+  }
+  dragleave(event) {
+    this.removeDragOver()
   }
   dragend(event) {
     event.target.classList.remove('highlighted')
+    this.removeDragOver()
   }
 
   initialOrder(event) {
@@ -29,6 +34,11 @@ class TextesOrder extends Stimulus.Controller {
   }
   currentOrder() {
     return this.texteTargets.map(texte => texte.dataset.pk)
+  }
+  removeDragOver(event) {
+    Array.from(this.element.querySelectorAll('.drag-over')).forEach(element =>
+      element.classList.remove('drag-over')
+    )
   }
   sameArrays(array1, array2) {
     // Full credits to https://stackoverflow.com/a/19746771
@@ -53,7 +63,7 @@ class TextesOrder extends Stimulus.Controller {
       this.isDraggable(event.target.parentElement.parentElement)
     )
   }
-  texteElement(event) {
+  targetElement(event) {
     const target = event.target
     if (this.isDraggable(target)) {
       return target
@@ -62,13 +72,17 @@ class TextesOrder extends Stimulus.Controller {
     if (this.isDraggable(parent)) {
       return parent
     }
+    const grandParent = parent.parentElement
+    if (this.isDraggable(grandParent)) {
+      return grandParent
+    }
     return false
   }
 
   // Actual reordering on drop.
   drop(event) {
     event.preventDefault()
-    const dropTarget = this.texteElement(event)
+    const dropTarget = this.targetElement(event)
 
     const pk = event.dataTransfer.getData('application/drag-pk')
     const draggedItem = this.element.querySelector(`[data-pk='${pk}']`)

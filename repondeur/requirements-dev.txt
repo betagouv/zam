@@ -24,7 +24,7 @@ py==1.8.1
 pycodestyle==2.5.0
 pyflakes==2.1.1
 Pygments==2.6.1
-pyparsing==2.4.6
+pyparsing==2.4.7
 pyperclip==1.8.0
 pyramid-debugtoolbar==4.6.1
 pyramid-mako==1.1.0

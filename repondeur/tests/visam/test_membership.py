@@ -6,11 +6,9 @@ def test_membership_default(user_david):
     assert user_david.chambres == []
 
 
-def test_membership_with_chambre(user_david):
-    from zam_repondeur.models import DBSession, Chambre
-    from zam_repondeur.visam.models import UserChambreMembership
+def test_membership_with_chambre(user_ccfp):
+    from zam_repondeur.models import Chambre, DBSession
 
-    user_chambre = UserChambreMembership(user=user_david, chambre=Chambre.CSFPE)
-    DBSession.add(user_chambre)
+    DBSession.add(user_ccfp)
 
-    assert user_david.chambres == [Chambre.CSFPE]
+    assert user_ccfp.chambres == [Chambre.CCFP]

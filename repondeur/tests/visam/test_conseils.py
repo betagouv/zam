@@ -13,8 +13,18 @@ def test_conseils_empty(app, user_david):
     assert "Ajouter un conseil" in resp.text
 
 
-def test_conseils(app, conseil_ccfp, user_david):
-    resp = app.get("/conseils/", user=user_david)
+def test_conseils_other_chambre(app, conseil_ccfp, user_csfpe):
+    resp = app.get("/conseils/", user=user_csfpe)
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    assert "Aucun conseil pour l’instant." in resp.text
+    assert "Ajouter un conseil" in resp.text
+
+
+def test_conseils(app, conseil_ccfp, user_ccfp):
+    resp = app.get("/conseils/", user=user_ccfp)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -23,8 +33,8 @@ def test_conseils(app, conseil_ccfp, user_david):
     assert "Ajouter un conseil" in resp.text
 
 
-def test_conseils_add_form(app, user_david):
-    resp = app.get("/conseils/add", user=user_david)
+def test_conseils_add_form_ccfp(app, user_ccfp):
+    resp = app.get("/conseils/add", user=user_ccfp)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -46,7 +56,6 @@ def test_conseils_add_form(app, user_david):
     assert form.fields["chambre"][0].options == [
         ("", True, "Choisir dans la liste…"),
         ("CCFP", False, "Conseil commun de la fonction publique (CCFP)"),
-        ("CSFPE", False, "Conseil supérieur de la fonction publique d’État (CSFPE)"),
     ]
 
     assert isinstance(form.fields["formation"][0], Select)
@@ -58,11 +67,26 @@ def test_conseils_add_form(app, user_david):
     assert form.fields["submit"][0].attrs["type"] == "submit"
 
 
-def test_conseils_add_submit(app, user_david):
+def test_conseils_add_form_csfpe(app, user_csfpe):
+    resp = app.get("/conseils/add", user=user_csfpe)
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    # Check the form
+    form = resp.forms["add-conseil"]
+    assert isinstance(form.fields["chambre"][0], Select)
+    assert form.fields["chambre"][0].options == [
+        ("", True, "Choisir dans la liste…"),
+        ("CSFPE", False, "Conseil supérieur de la fonction publique d’État (CSFPE)"),
+    ]
+
+
+def test_conseils_add_submit(app, user_ccfp):
     from zam_repondeur.models import DBSession
     from zam_repondeur.visam.models import Conseil
 
-    resp = app.get("/conseils/add", user=user_david)
+    resp = app.get("/conseils/add", user=user_ccfp)
     form = resp.forms["add-conseil"]
     form["chambre"] = "CCFP"
     form["date"] = "2020-04-01"
@@ -86,11 +110,11 @@ def test_conseils_add_submit(app, user_david):
     assert conseil.team.name == "ccfp-2020-04-01"
 
 
-def test_conseils_add_submit_existing(app, conseil_ccfp, user_david):
+def test_conseils_add_submit_existing(app, conseil_ccfp, user_ccfp):
     from zam_repondeur.models import DBSession
     from zam_repondeur.visam.models import Conseil
 
-    resp = app.get("/conseils/add", user=user_david)
+    resp = app.get("/conseils/add", user=user_ccfp)
     form = resp.forms["add-conseil"]
     form["chambre"] = "CCFP"
     form["date"] = "2020-04-01"

@@ -1,5 +1,5 @@
 def test_article_preview(
-    app, conseil_ccfp, lecture_conseil_ccfp, articles_conseil_ccfp, user_david
+    app, conseil_ccfp, lecture_conseil_ccfp, articles_conseil_ccfp, user_ccfp
 ):
     article = articles_conseil_ccfp[0]
     resp = app.get(
@@ -8,7 +8,7 @@ def test_article_preview(
             f"/textes/{lecture_conseil_ccfp.dossier.slug}"
             f"/articles/{article.url_key}/preview"
         ),
-        user=user_david,
+        user=user_ccfp,
     )
 
     assert resp.status_code == 200

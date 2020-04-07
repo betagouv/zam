@@ -24,6 +24,7 @@ class AddConseilView(ConseilCollectionBase):
                 (choice.name, f"{choice.value} ({choice.name})")
                 for choice in Chambre.__members__.values()
                 if choice.name not in {"AN", "SENAT"}
+                and choice in self.request.user.chambres
             ],
             "formations": [
                 (choice.name, choice.value) for choice in Formation.__members__.values()
@@ -39,6 +40,10 @@ class AddConseilView(ConseilCollectionBase):
 
         if date is None:
             raise HTTPBadRequest("Date invalide")  # TODO: better validation
+
+        if chambre not in self.request.user.chambres:
+            # TODO: better validation
+            raise HTTPBadRequest("Chambre invalide pour cet·te utilisateur·ice")
 
         conseil, created = get_one_or_create(
             Conseil,

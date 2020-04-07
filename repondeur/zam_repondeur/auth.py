@@ -95,6 +95,8 @@ class AuthenticationPolicy(AuthTktAuthenticationPolicy):
             principals.append(f"user:{request.user.pk}")
             for team in request.user.teams:
                 principals.append(f"team:{team.pk}")
+            for chambre in request.user.chambres:
+                principals.append(f"chambre:{chambre.name}")
             if request.user.is_admin:
                 principals.append("group:admins")
         return principals

@@ -3,13 +3,13 @@ import pytest
 
 @pytest.mark.usefixtures("amendement_222_lecture_conseil_ccfp")
 def test_lecture_reorder_amendements_unique_amendement(
-    app, conseil_ccfp, lecture_conseil_ccfp, user_david
+    app, conseil_ccfp, lecture_conseil_ccfp, user_ccfp
 ):
     lecture = lecture_conseil_ccfp
     dossier = lecture.dossier
     resp = app.get(
         f"/conseils/{conseil_ccfp.slug}/textes/{dossier.slug}/amendements/",
-        user=user_david,
+        user=user_ccfp,
     )
     assert resp.status_code == 200
     assert (
@@ -24,7 +24,7 @@ def test_lecture_reorder_amendements_many_amendements(
     lecture_conseil_ccfp,
     amendement_222_lecture_conseil_ccfp,
     amendement_444_lecture_conseil_ccfp,
-    user_david,
+    user_ccfp,
 ):
     from zam_repondeur.models import Amendement
 
@@ -37,7 +37,7 @@ def test_lecture_reorder_amendements_many_amendements(
 
     resp = app.get(
         f"/conseils/{conseil_ccfp.slug}/textes/{dossier.slug}/amendements/",
-        user=user_david,
+        user=user_ccfp,
     )
     assert resp.status_code == 200
     assert '<script src="https://visam.test/static/js/amendements-order.js' in resp.text
@@ -45,7 +45,7 @@ def test_lecture_reorder_amendements_many_amendements(
     resp = app.post_json(
         f"/conseils/{conseil_ccfp.slug}/textes/{dossier.slug}/amendements/order",
         {"order": ["v444", "v222"]},
-        user=user_david,
+        user=user_ccfp,
     )
     assert resp.status_code == 200
     assert resp.text == "{}"

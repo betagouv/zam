@@ -1,21 +1,21 @@
 class TestButtonToAddAmendementOnIndex:
-    def test_ccfp(self, app, user_david, conseil_ccfp, lecture_conseil_ccfp):
+    def test_ccfp(self, app, user_ccfp, conseil_ccfp, lecture_conseil_ccfp):
         lecture = lecture_conseil_ccfp
         dossier = lecture.dossier
         resp = app.get(
             f"/conseils/{conseil_ccfp.slug}/textes/{dossier.slug}/amendements/",
-            user=user_david,
+            user=user_ccfp,
         )
         assert resp.status_code == 200
         assert "Aucun amendement saisi pour l’instant…" in resp
         assert "Saisir un nouvel amendement" in resp
 
-    def test_csfpe(self, app, user_david, conseil_csfpe, lecture_conseil_csfpe):
+    def test_csfpe(self, app, user_csfpe, conseil_csfpe, lecture_conseil_csfpe):
         lecture = lecture_conseil_csfpe
         dossier = lecture.dossier
         resp = app.get(
             f"/conseils/{conseil_csfpe.slug}/textes/{dossier.slug}/amendements/",
-            user=user_david,
+            user=user_csfpe,
         )
         assert resp.status_code == 200
         assert "Aucun amendement saisi pour l’instant…" in resp
@@ -24,14 +24,14 @@ class TestButtonToAddAmendementOnIndex:
 
 class TestAmendementSaisieForm:
     def test_get_form(
-        self, app, conseil_ccfp, lecture_conseil_ccfp, amendements_an, user_david
+        self, app, conseil_ccfp, lecture_conseil_ccfp, amendements_an, user_ccfp
     ):
         resp = app.get(
             (
                 f"/conseils/{conseil_ccfp.slug}"
                 f"/textes/{lecture_conseil_ccfp.dossier.slug}/amendements/saisie"
             ),
-            user=user_david,
+            user=user_ccfp,
         )
 
         assert resp.status_code == 200
@@ -52,7 +52,7 @@ class TestAmendementSaisieForm:
         conseil_ccfp,
         lecture_conseil_ccfp,
         article1_texte_conseil_ccfp,
-        user_david,
+        user_ccfp,
     ):
         from zam_repondeur.models import Amendement, DBSession
 
@@ -63,7 +63,7 @@ class TestAmendementSaisieForm:
                 f"/conseils/{conseil_ccfp.slug}"
                 f"/textes/{lecture_conseil_ccfp.dossier.slug}/amendements/saisie"
             ),
-            user=user_david,
+            user=user_ccfp,
         )
         form = resp.forms["saisie-amendement"]
         form["subdiv"] = "article.1.."

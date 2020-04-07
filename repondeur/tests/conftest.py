@@ -17,7 +17,6 @@ from fixtures.scraping import *  # noqa: F401,F403
 from fixtures.shared_tables import *  # noqa: F401,F403
 from fixtures.users import *  # noqa: F401,F403
 from testapp import TestApp
-from visam.fixtures.conseils import *  # noqa: F401,F403
 
 HERE = Path(__file__)
 

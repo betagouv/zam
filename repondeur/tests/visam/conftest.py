@@ -1,6 +1,8 @@
 import pytest
 
 from testapp import TestApp
+from visam.fixtures.conseils import *  # noqa: F401,F403
+from visam.fixtures.users import *  # noqa: F401,F403
 
 
 @pytest.fixture(scope="session")  # noqa: F811

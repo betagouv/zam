@@ -2,7 +2,7 @@ from sqlalchemy import Column, Enum, ForeignKey, Integer
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import backref, relationship
 
-from zam_repondeur.models.base import Base
+from zam_repondeur.models.base import Base, DBSession
 from zam_repondeur.models.chambre import Chambre
 from zam_repondeur.models.users import User
 
@@ -35,6 +35,12 @@ class UserChambreMembership(Base):
     )
 
     organisation = Column(Integer, doc="Organisations syndicales + autres")
+
+    @classmethod
+    def create(cls, user: User, chambre: Chambre,) -> "UserChambreMembership":
+        user_chambre_membership = cls(user=user, chambre=chambre,)
+        DBSession.add(user_chambre_membership)
+        return user_chambre_membership
 
 
 User.chambres = association_proxy(

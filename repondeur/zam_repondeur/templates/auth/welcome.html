@@ -17,7 +17,7 @@
     </fieldset>
     <div class="controls">
         {% if has_name %}
-            <a href="{{ request.resource_url(context['dossiers']) }}">Annuler</a>
+            <a href="{{ context.back_url(request) }}">Annuler</a>
             <input type="submit" class="button primary enabled" value="Enregistrer">
         {% else %}
             <input type="submit" class="button primary enabled" value="Entrer">

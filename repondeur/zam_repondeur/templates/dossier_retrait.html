@@ -51,7 +51,7 @@
         {% endif %}
     {% endfor %}
     </ul>
-    <a href="{{ request.resource_url(context) }}" class="arrow-left">Retour</a>
+    <a href="{{ context.back_url(request) }}" class="arrow-left">Retour</a>
 {% endblock %}
 
 {% block scripts %}

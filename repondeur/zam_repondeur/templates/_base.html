@@ -32,11 +32,16 @@
                         <div class="menu d-none" data-target="menu.menu">
                             <ul class="menu-breadcrumb">
                                 {% for resource in context.breadcrumbs(request) %}
-                                    {% set url = request.resource_url(resource) %}
                                     <li class="{{ resource.breadcrumbs_class }}">
-                                        <a href="{{ url }}">{{ resource.breadcrumbs_label }}</a>
+                                        {{ resource.breadcrumbs_label }}
                                     </li>
                                 {% endfor %}
+                                {% set back_url = context.back_url(request) %}
+                                {% if back_url %}
+                                    <li>
+                                        <a href="{{ back_url }}" class="arrow-left">Retour</a>
+                                    </li>
+                                {% endif %}
                             </ul>
                             <ul class="menu-actions">
                                 {% if lecture_resource is defined %}
@@ -58,8 +63,8 @@
                                     {% endif %}
                                 {% endif %}
                                 {% if request.user.is_admin and current_tab is defined %}
-                                    <li{% if current_tab == 'whitelist' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root, 'whitelist') }}">Gestion des accès</a></li>
-                                    <li{% if current_tab == 'admins' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root, 'admins') }}">Gestion des administrateur·ice·s</a></li>
+                                    <li{% if current_tab == 'whitelist' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root['whitelist']) }}">Gestion des accès</a></li>
+                                    <li{% if current_tab == 'admins' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root['admins']) }}">Gestion des administrateur·ice·s</a></li>
                                 {% endif %}
                                 {% if request.user.name %}
                                     <li class="user"><a href="{{ request.route_url('welcome') }}" class="account">{{ request.user.name or "" }}</a></li>

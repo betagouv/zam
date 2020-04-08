@@ -14,7 +14,7 @@ from zam_repondeur.visam.views.conseils_list import ConseilCollectionBase
 logger = logging.getLogger(__name__)
 
 
-@view_defaults(context=ConseilCollection, name="add")
+@view_defaults(context=ConseilCollection, name="add", permission="create_seance")
 class AddConseilView(ConseilCollectionBase):
     @view_config(request_method="GET", renderer="conseils_add.html")
     def get(self) -> dict:
@@ -24,7 +24,6 @@ class AddConseilView(ConseilCollectionBase):
                 (choice.name, f"{choice.value} ({choice.name})")
                 for choice in Chambre.__members__.values()
                 if choice.name not in {"AN", "SENAT"}
-                and (self.request.user.is_admin or choice in self.request.user.chambres)
             ],
             "formations": [
                 (choice.name, choice.value) for choice in Formation.__members__.values()
@@ -40,10 +39,6 @@ class AddConseilView(ConseilCollectionBase):
 
         if date is None:
             raise HTTPBadRequest("Date invalide")  # TODO: better validation
-
-        if chambre not in self.request.user.chambres:
-            # TODO: better validation
-            raise HTTPBadRequest("Chambre invalide pour cet·te utilisateur·ice")
 
         conseil, created = get_one_or_create(
             Conseil,

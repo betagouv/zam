@@ -19,9 +19,13 @@ class ConseilCollectionBase:
 class ListConseilsView(ConseilCollectionBase):
     @view_config(request_method="GET", renderer="conseils_list.html")
     def get(self) -> dict:
-        chambres = self.request.user.chambres
-        conseils = self.context.models().filter(Conseil.chambre.in_(chambres))
+        conseils = self.context.models()
+        can_create_seance = self.request.has_permission("create_seance", self.context)
+        if not self.request.user.is_admin:
+            chambres = self.request.user.chambres
+            conseils = conseils.filter(Conseil.chambre.in_(chambres))
         return {
             "conseils": conseils,
+            "can_create_seance": can_create_seance,
             "current_tab": "conseils",
         }

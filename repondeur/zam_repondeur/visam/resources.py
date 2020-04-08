@@ -1,7 +1,7 @@
 from typing import Any, List, Optional, cast
 
 from pyramid.request import Request
-from pyramid.security import Allow, Authenticated, Deny
+from pyramid.security import Allow, Authenticated, Deny, Everyone
 from sqlalchemy.orm import Query
 
 from zam_repondeur.models import DBSession, Dossier, Lecture
@@ -38,6 +38,11 @@ class VisamRoot(Root):
 
 
 class ConseilCollection(Resource):
+    __acl__ = [
+        (Allow, "group:admins", "create_seance"),
+        (Deny, Everyone, "create_seance"),
+    ]
+
     def models(self, *options: Any) -> Query:
         result: Query = (
             DBSession.query(Conseil).order_by(Conseil.date.desc()).options(*options)
@@ -57,7 +62,7 @@ class ConseilResource(Resource):
     def __acl__(self) -> List[ACE]:
         # Only chambre members and admins can view it.
         return [
-            (Allow, f"group:admins", "view"),
+            (Allow, "group:admins", "view"),
             (Allow, f"chambre:{self.model().chambre.name}", "view"),
             (Deny, Authenticated, "view"),
         ]

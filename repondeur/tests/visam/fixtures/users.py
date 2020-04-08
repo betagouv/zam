@@ -1,5 +1,17 @@
+from datetime import datetime
+
 import pytest
 import transaction
+
+
+@pytest.fixture
+def user_admin(db):
+    from zam_repondeur.models import User
+
+    with transaction.manager:
+        return User.create(
+            name="Admin user", email="user@admin.gouv.fr", admin_at=datetime.utcnow()
+        )
 
 
 @pytest.fixture

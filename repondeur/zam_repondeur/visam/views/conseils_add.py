@@ -24,7 +24,7 @@ class AddConseilView(ConseilCollectionBase):
                 (choice.name, f"{choice.value} ({choice.name})")
                 for choice in Chambre.__members__.values()
                 if choice.name not in {"AN", "SENAT"}
-                and choice in self.request.user.chambres
+                and (self.request.user.is_admin or choice in self.request.user.chambres)
             ],
             "formations": [
                 (choice.name, choice.value) for choice in Formation.__members__.values()

@@ -1,0 +1,20 @@
+{% extends "_base.html" %}
+{% import "macros.html" as macros %}
+
+{% block main_class %}box{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" type="text/css" href="{{ request.static_url('zam_repondeur:static/css/journal.css') }}">
+<style type="text/css">
+    h2 {
+        text-align: center;
+        font-weight: 600;
+        margin: 2.5rem 0 1.5rem 0;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    <h2>Journal</h2>
+    {{ macros.timeline(events, today) }}
+{% endblock %}

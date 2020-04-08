@@ -2,9 +2,10 @@ from typing import Any, List, Optional, cast
 
 from pyramid.request import Request
 from pyramid.security import Allow, Authenticated, Deny, Everyone
+from sqlalchemy import desc
 from sqlalchemy.orm import Query
 
-from zam_repondeur.models import DBSession, Dossier, Lecture
+from zam_repondeur.models import DBSession, Dossier, Lecture, User
 from zam_repondeur.resources import (
     ACE,
     AmendementCollection,
@@ -20,6 +21,7 @@ from zam_repondeur.resources import (
 )
 
 from .models.conseil import Conseil, ConseilLecture
+from .models.events.members import MembersEvent
 
 
 class VisamRoot(Root):
@@ -31,6 +33,7 @@ class VisamRoot(Root):
         super().__init__(_request)
         del self["dossiers"]
         self.add_child(ConseilCollection(name="conseils", parent=self))
+        self.add_child(MembersCollection(name="members", parent=self))
 
     @property
     def default_child(self) -> Optional[Resource]:
@@ -136,3 +139,14 @@ class TexteResource(LectureResource):
     def back_resource(self, request: Request) -> Optional["Resource"]:
         conseil = self.parent.parent
         return conseil
+
+
+class MembersCollection(Resource):
+    __acl__ = [(Allow, "group:admins", "manage"), (Deny, Everyone, "manage")]
+
+    def models(self, *options: Any) -> List[User]:
+        result: List[User] = DBSession.query(User).options(*options)
+        return result
+
+    def events(self) -> Query:
+        return DBSession.query(MembersEvent).order_by(desc(MembersEvent.created_at))

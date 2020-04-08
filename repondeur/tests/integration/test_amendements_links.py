@@ -20,13 +20,10 @@ def test_column_filtering_changes_edit_url_on_the_fly(
     assert driver.current_url == f"{lecture_an_url}/amendements/?amendement=666"
     see_td = driver.find_element_by_css_selector("td:nth-child(7)")
     see_link = see_td.find_element_by_css_selector("a")
-    assert (
-        see_link.get_attribute("href")
-        == f"{lecture_an_url}/amendements/666/amendement_edit"
-    )
+    assert see_link.get_attribute("href") == f"{lecture_an_url}/amendements/666/"
     see_link.click()
     assert driver.current_url == (
-        f"{lecture_an_url}/amendements/666/amendement_edit?"
+        f"{lecture_an_url}/amendements/666/?"
         f"back=%2Fdossiers%2F{lecture_an.dossier.url_key}"
         f"%2Flectures%2F{lecture_an.url_key}%2Famendements%2F%3Famendement%3D666"
     )

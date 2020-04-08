@@ -16,7 +16,7 @@ def test_amendement_edit_notification_on_amendement_transfer(
         user_david_table_an.add_amendement(amendements_an[0])
         DBSession.add_all(amendements_an)
 
-    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit")
+    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/")
     status = driver.find_element_by_css_selector('div[role="status"] div')
     assert not status.is_displayed()
     assert not status.text

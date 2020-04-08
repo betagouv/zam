@@ -54,9 +54,7 @@ def test_dissociate_batch_from_amendement_edit(
         user_david_table_an.add_amendement(amendements_an_batch[0])
         user_david_table_an.add_amendement(amendements_an_batch[1])
 
-    driver.get(
-        f"{lecture_an_url}/amendements/{amendements_an_batch[0]}/amendement_edit"
-    )
+    driver.get(f"{lecture_an_url}/amendements/{amendements_an_batch[0]}/")
     dissociate_button = driver.find_element_by_css_selector('[value="Retirer du lot"]')
     dissociate_button.click()
     assert driver.current_url == f"{lecture_an_url}/tables/{user_david.email}/"

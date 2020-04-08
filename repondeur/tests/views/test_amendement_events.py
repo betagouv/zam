@@ -18,10 +18,7 @@ def test_post_amendement_init_form_events(
         DBSession.add(user_david_table_an)
         user_david_table_an.add_amendement(amendement)
 
-    resp = app.get(
-        f"{lecture_an_url}/amendements/{amendement.num}/amendement_edit",
-        user=user_david,
-    )
+    resp = app.get(f"{lecture_an_url}/amendements/{amendement.num}/", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
@@ -117,10 +114,7 @@ def test_post_amendement_edit_form_events(
         amendement.user_content.comments = "Avec"
         user_david_table_an.add_amendement(amendement)
 
-    resp = app.get(
-        f"{lecture_an_url}/amendements/{amendement.num}/amendement_edit",
-        user=user_david,
-    )
+    resp = app.get(f"{lecture_an_url}/amendements/{amendement.num}/", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = "Favorable"
     form["objet"] = "Un objet très pertinent"
@@ -209,10 +203,7 @@ def test_post_amendement_edit_form_events_empty(
         DBSession.add(user_david_table_an)
         user_david_table_an.add_amendement(amendement)
 
-    resp = app.get(
-        f"{lecture_an_url}/amendements/{amendement.num}/amendement_edit",
-        user=user_david,
-    )
+    resp = app.get(f"{lecture_an_url}/amendements/{amendement.num}/", user=user_david)
     form = resp.forms["edit-amendement"]
     form["avis"] = ""
     form["objet"] = ""

@@ -209,7 +209,7 @@
 {% macro edit_button(amendement) %}
     {% if is_owner %}
         {% set edit_url = request.resource_url(
-            context.lecture_resource['amendements'][amendement.num_str], 'amendement_edit'
+            context.lecture_resource['amendements'][amendement.num_str]
         ) %}
         {% if amendement.user_content.avis %}
             <a class="primary button" href="{{ edit_url }}">Traiter</a>

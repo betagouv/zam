@@ -154,7 +154,7 @@
                         {% if amdt.num == amendement.num %}
                             <span class="current">{{ amendement.num }}</span>
                         {% else %}
-                            <a href="{{ request.resource_url(context.parent, amdt.num_str, 'amendement_edit') }}">{{ amdt.num }}</a>
+                            <a href="{{ request.resource_url(context.parent, amdt.num_str) }}">{{ amdt.num }}</a>
                         {% endif %}
                     {% endfor %}
                 </p>
@@ -174,7 +174,7 @@
                 <h2>Amendement nº&nbsp;{{ amendement }}</h2>
 
                 {% if amendement.parent %}
-                    <h3>Sous-amendement au <a href="{{ request.resource_url(context.lecture_resource['amendements'][amendement.parent.num_str], 'amendement_edit') }}">{{ amendement.parent }}</a></h3>
+                    <h3>Sous-amendement au <a href="{{ request.resource_url(context.lecture_resource['amendements'][amendement.parent.num_str]) }}">{{ amendement.parent }}</a></h3>
                 {% endif %}
 
                 {{ macros.status(amendement) }}
@@ -216,7 +216,7 @@
                         <em>
                             Identique au{% if identiques_length > 1 %}x{% endif %} nº
                             {% for identique in identiques -%}
-                                <a href="{{ request.resource_url(context.parent[identique.num_str], 'amendement_edit') }}">{{ identique }}</a>
+                                <a href="{{ request.resource_url(context.parent[identique.num_str]) }}">{{ identique }}</a>
                                 {% if not identique.reponse_similaire(amendement) %}
                                     <span title="Cet amendement identique n’a pas une réponse similaire">⚠️</span>
                                 {% endif %}

@@ -93,9 +93,11 @@
             </div>
         {% endfor %}
     </section>
-    <div class="extra-button conseil box">
-        <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
-            Ajouter un conseil
-        </a>
-    </div>
+    {% if can_create_seance %}
+        <div class="extra-button conseil box">
+            <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
+                Ajouter un conseil
+            </a>
+        </div>
+    {% endif %}
 {% endblock %}

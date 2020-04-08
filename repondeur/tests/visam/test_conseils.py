@@ -82,6 +82,22 @@ def test_conseils_add_form_csfpe(app, user_csfpe):
     ]
 
 
+def test_conseils_add_form_admin(app, user_admin):
+    resp = app.get("/conseils/add", user=user_admin)
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    # Check the form
+    form = resp.forms["add-conseil"]
+    assert isinstance(form.fields["chambre"][0], Select)
+    assert form.fields["chambre"][0].options == [
+        ("", True, "Choisir dans la liste…"),
+        ("CCFP", False, "Conseil commun de la fonction publique (CCFP)"),
+        ("CSFPE", False, "Conseil supérieur de la fonction publique d’État (CSFPE)"),
+    ]
+
+
 def test_conseils_add_submit(app, user_ccfp):
     from zam_repondeur.models import DBSession
     from zam_repondeur.visam.models import Conseil

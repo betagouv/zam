@@ -10,16 +10,26 @@ def test_conseils_empty(app, user_david):
     assert resp.content_type == "text/html"
 
     assert "Aucun conseil pour l’instant." in resp.text
-    assert "Ajouter un conseil" in resp.text
+    assert "Ajouter un conseil" not in resp.text
 
 
-def test_conseils_other_chambre(app, conseil_ccfp, user_csfpe):
+def test_conseils_other_chambre_user(app, conseil_ccfp, user_csfpe):
     resp = app.get("/conseils/", user=user_csfpe)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
     assert "Aucun conseil pour l’instant." in resp.text
+    assert "Ajouter un conseil" not in resp.text
+
+
+def test_conseils_admin_user(app, conseil_ccfp, user_admin):
+    resp = app.get("/conseils/", user=user_admin)
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    assert len(resp.parser.css(".conseil nav a")) == 1
     assert "Ajouter un conseil" in resp.text
 
 
@@ -30,11 +40,19 @@ def test_conseils(app, conseil_ccfp, user_ccfp):
     assert resp.content_type == "text/html"
 
     assert len(resp.parser.css(".conseil nav a")) == 1
-    assert "Ajouter un conseil" in resp.text
+    assert "Ajouter un conseil" not in resp.text
 
 
-def test_conseils_add_form_ccfp(app, user_ccfp):
+def test_conseils_add_form_no_admin(app, user_ccfp):
     resp = app.get("/conseils/add", user=user_ccfp)
+    assert resp.status_code == 302
+
+    resp = resp.maybe_follow()
+    assert "L’accès à cette page est réservé aux personnes autorisées." in resp.text
+
+
+def test_conseils_add_form(app, user_admin):
+    resp = app.get("/conseils/add", user=user_admin)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -56,6 +74,7 @@ def test_conseils_add_form_ccfp(app, user_ccfp):
     assert form.fields["chambre"][0].options == [
         ("", True, "Choisir dans la liste…"),
         ("CCFP", False, "Conseil commun de la fonction publique (CCFP)"),
+        ("CSFPE", False, "Conseil supérieur de la fonction publique d’État (CSFPE)"),
     ]
 
     assert isinstance(form.fields["formation"][0], Select)
@@ -67,42 +86,11 @@ def test_conseils_add_form_ccfp(app, user_ccfp):
     assert form.fields["submit"][0].attrs["type"] == "submit"
 
 
-def test_conseils_add_form_csfpe(app, user_csfpe):
-    resp = app.get("/conseils/add", user=user_csfpe)
-
-    assert resp.status_code == 200
-    assert resp.content_type == "text/html"
-
-    # Check the form
-    form = resp.forms["add-conseil"]
-    assert isinstance(form.fields["chambre"][0], Select)
-    assert form.fields["chambre"][0].options == [
-        ("", True, "Choisir dans la liste…"),
-        ("CSFPE", False, "Conseil supérieur de la fonction publique d’État (CSFPE)"),
-    ]
-
-
-def test_conseils_add_form_admin(app, user_admin):
-    resp = app.get("/conseils/add", user=user_admin)
-
-    assert resp.status_code == 200
-    assert resp.content_type == "text/html"
-
-    # Check the form
-    form = resp.forms["add-conseil"]
-    assert isinstance(form.fields["chambre"][0], Select)
-    assert form.fields["chambre"][0].options == [
-        ("", True, "Choisir dans la liste…"),
-        ("CCFP", False, "Conseil commun de la fonction publique (CCFP)"),
-        ("CSFPE", False, "Conseil supérieur de la fonction publique d’État (CSFPE)"),
-    ]
-
-
-def test_conseils_add_submit(app, user_ccfp):
+def test_conseils_add_submit(app, user_admin):
     from zam_repondeur.models import DBSession
     from zam_repondeur.visam.models import Conseil
 
-    resp = app.get("/conseils/add", user=user_ccfp)
+    resp = app.get("/conseils/add", user=user_admin)
     form = resp.forms["add-conseil"]
     form["chambre"] = "CCFP"
     form["date"] = "2020-04-01"
@@ -126,11 +114,11 @@ def test_conseils_add_submit(app, user_ccfp):
     assert conseil.team.name == "ccfp-2020-04-01"
 
 
-def test_conseils_add_submit_existing(app, conseil_ccfp, user_ccfp):
+def test_conseils_add_submit_existing(app, conseil_ccfp, user_admin):
     from zam_repondeur.models import DBSession
     from zam_repondeur.visam.models import Conseil
 
-    resp = app.get("/conseils/add", user=user_ccfp)
+    resp = app.get("/conseils/add", user=user_admin)
     form = resp.forms["add-conseil"]
     form["chambre"] = "CCFP"
     form["date"] = "2020-04-01"

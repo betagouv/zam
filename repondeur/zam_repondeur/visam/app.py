@@ -1,10 +1,12 @@
 from typing import Any
 
+from paste.deploy.converters import asbool
 from pyramid.config import Configurator
 from pyramid.router import Router
 
 from zam_repondeur import BASE_SETTINGS
 
+from .auth import VisamAuthenticationPolicy
 from .resources import VisamRoot
 
 
@@ -35,6 +37,15 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
 
         # Customize the resource tree
         config.set_root_factory(VisamRoot)
+
+        authn_policy = VisamAuthenticationPolicy(
+            settings["zam.auth_secret"],
+            hashalg="sha512",
+            max_age=int(settings["zam.auth_cookie_duration"]),
+            secure=asbool(settings["zam.auth_cookie_secure"]),
+            http_only=True,
+        )
+        config.set_authentication_policy(authn_policy)
 
         # Scan Visam-specific views
         config.scan(".views")

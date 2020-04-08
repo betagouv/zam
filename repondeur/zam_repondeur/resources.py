@@ -75,6 +75,38 @@ class Resource(dict):
     def breadcrumbs_class(self) -> str:
         return ""
 
+    def back_url(self, request: Request) -> Optional[str]:
+        # If we got there via URL dispatch, not traversal
+        if getattr(request, "matched_route"):
+            return request.resource_url(request.root.self_or_child())
+
+        # If we're not on the resource's default view, go back to that
+        if request.view_name != "":
+            return request.resource_url(self.self_or_child())
+
+        # Find a resource above this one
+        resource = self.back_resource(request)
+        if resource is None:
+            return None
+        resource = resource.self_or_child()
+        if resource is self:
+            return None
+        return request.resource_url(resource)
+
+    def back_resource(self, request: Request) -> Optional["Resource"]:
+        return self.parent
+
+    def self_or_child(self) -> "Resource":
+        resource: "Resource" = self
+        while resource.default_child is not None:
+            resource = resource.default_child
+        return resource
+
+    @property
+    def default_child(self) -> Optional["Resource"]:
+        """Allows redirecting to a child for resources that don't have views"""
+        return None
+
 
 class Root(Resource):
     __acl__ = [
@@ -89,6 +121,10 @@ class Root(Resource):
         self.add_child(WhitelistCollection(name="whitelist", parent=self))
         self.add_child(AdminsCollection(name="admins", parent=self))
         self.add_child(DossierCollection(name="dossiers", parent=self))
+
+    @property
+    def default_child(self) -> Optional[Resource]:
+        return cast(Resource, self["dossiers"])
 
 
 class WhitelistCollection(Resource):
@@ -119,8 +155,6 @@ class AdminsCollection(Resource):
 
 class DossierCollection(Resource):
     __acl__ = [(Allow, "group:admins", "activate"), (Deny, Everyone, "activate")]
-
-    breadcrumbs_label = "Dossiers législatifs"
 
     def models(self, *options: Any) -> List[Dossier]:
         result: List[Dossier] = DBSession.query(Dossier).options(*options)
@@ -235,8 +269,15 @@ class LectureResource(Resource):
         self.add_child(SharedTableCollection(name="boites", parent=self))
 
     @property
+    def default_child(self) -> Resource:
+        return cast(Resource, self["amendements"])
+
+    @property
     def parent(self) -> LectureCollection:
         return cast(LectureCollection, self.__parent__)
+
+    def back_resource(self, request: Request) -> Optional[Resource]:
+        return self.dossier_resource
 
     @property
     def dossier_resource(self) -> DossierResource:
@@ -282,6 +323,9 @@ class AmendementCollection(Resource):
     def parent(self) -> LectureResource:
         return cast(LectureResource, self.__parent__)
 
+    def back_resource(self, request: Request) -> Optional[Resource]:
+        return self.parent.back_resource(request)
+
 
 class AmendementResource(Resource):
     def __init__(self, name: str, parent: Resource) -> None:
@@ -295,6 +339,9 @@ class AmendementResource(Resource):
     @property
     def lecture_resource(self) -> LectureResource:
         return self.parent.parent
+
+    def back_resource(self, request: Request) -> Optional[Resource]:
+        return self.lecture_resource
 
     def model(self) -> Amendement:
         try:
@@ -344,6 +391,9 @@ class ArticleResource(Resource):
     def lecture_resource(self) -> LectureResource:
         return self.parent.parent
 
+    def back_resource(self, request: Request) -> Optional[Resource]:
+        return self.lecture_resource
+
     def model(self, *options: Any) -> Article:
         lecture: Lecture = self.lecture_resource.model()
         try:
@@ -380,6 +430,9 @@ class TableResource(Resource):
     @property
     def parent(self) -> TableCollection:
         return cast(TableCollection, self.__parent__)
+
+    def back_resource(self, request: Request) -> Optional[Resource]:
+        return self.lecture_resource
 
     @property
     def lecture_resource(self) -> LectureResource:

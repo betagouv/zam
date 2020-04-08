@@ -31,7 +31,7 @@
         </div>
 
         <div class="form-group save-buttons">
-            <a href="{{ request.resource_url(context) }}" class="arrow-left">Retour</a>
+            <a href="{{ context.back_url(request) }}" class="arrow-left">Retour</a>
             <input type="submit" name="submit" value="Ajouter le dossier" class="button enabled primary" disabled>
         </div>
 

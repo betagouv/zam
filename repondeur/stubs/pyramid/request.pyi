@@ -24,3 +24,4 @@ class Request:
     unauthenticated_userid: Optional[str]
     team: Team
     user: User
+    view_name: str

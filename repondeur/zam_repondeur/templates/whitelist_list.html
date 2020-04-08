@@ -69,7 +69,7 @@
         </ul>
     </section>
     <div class="extra-button">
-        <a href="{{ request.resource_url(context.parent) }}" class="arrow-left">Retour</a>
+        <a href="{{ context.back_url(request) }}" class="arrow-left">Retour</a>
         <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
             Ajouter une adresse
         </a>

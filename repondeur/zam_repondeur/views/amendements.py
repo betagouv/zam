@@ -20,9 +20,7 @@ from zam_repondeur.services.clean import clean_html
 from zam_repondeur.utils import add_url_fragment, add_url_params
 
 
-@view_defaults(
-    context=AmendementResource, name="amendement_edit", renderer="amendement_edit.html"
-)
+@view_defaults(context=AmendementResource, renderer="amendement_edit.html")
 class AmendementEdit:
     def __init__(self, context: AmendementResource, request: Request) -> None:
         self.context = context
@@ -39,6 +37,7 @@ class AmendementEdit:
         )
 
     @view_config(request_method="GET")
+    @view_config(request_method="GET", name="amendement_edit")  # backwards compat
     def get(self) -> dict:
         check_url = self.request.resource_path(self.my_table_resource, "check")
         return {
@@ -64,6 +63,7 @@ class AmendementEdit:
         }
 
     @view_config(request_method="POST")
+    @view_config(request_method="POST", name="amendement_edit")  # backwards compat
     def post(self) -> Response:
         avis = self.request.POST.get("avis", "")
         objet = clean_html(self.request.POST.get("objet", ""))

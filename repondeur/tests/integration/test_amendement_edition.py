@@ -21,7 +21,7 @@ def test_amendement_edition_start_editing_status(
 
     assert not amendement.is_being_edited
 
-    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit")
+    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/")
     avis = Select(driver.find_element_by_css_selector('select[name="avis"]'))
     avis.select_by_visible_text("Défavorable")
     time.sleep(1)  # Wait for the option to be selected.
@@ -42,7 +42,7 @@ def test_amendement_edition_exit_stop_editing_status(
 
     assert not amendement.is_being_edited
 
-    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit")
+    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/")
     avis = Select(driver.find_element_by_css_selector('select[name="avis"]'))
     avis.select_by_visible_text("Défavorable")
     time.sleep(1)  # Wait for the option to be selected.
@@ -68,7 +68,7 @@ def test_amendement_edition_with_avis(
         user_david_table_an.add_amendement(amendement)
         DBSession.add(amendement)
 
-    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit")
+    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/")
     avis = Select(driver.find_element_by_css_selector('select[name="avis"]'))
     avis.select_by_visible_text("Défavorable")
     save_button = driver.find_element_by_css_selector(
@@ -95,7 +95,7 @@ def test_amendement_edition_with_avis_and_reponse(
         user_david_table_an.add_amendement(amendement)
         DBSession.add(amendement)
 
-    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit")
+    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/")
     avis = Select(driver.find_element_by_css_selector('select[name="avis"]'))
     avis.select_by_visible_text("Défavorable")
 
@@ -130,7 +130,7 @@ def test_amendement_edition_with_reponse_only_and_accept(
         user_david_table_an.add_amendement(amendement)
         DBSession.add(amendement)
 
-    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit")
+    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/")
 
     driver.switch_to.frame("reponse_ifr")
     WebDriverWait(driver, 20).until(
@@ -166,7 +166,7 @@ def test_amendement_edition_with_reponse_only_and_deny(
         user_david_table_an.add_amendement(amendement)
         DBSession.add(amendement)
 
-    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit")
+    driver.get(f"{lecture_an_url}/amendements/{amendements_an[0].num}/")
 
     driver.switch_to.frame("reponse_ifr")
     WebDriverWait(driver, 20).until(
@@ -186,6 +186,5 @@ def test_amendement_edition_with_reponse_only_and_deny(
         assert amendements_an[0].user_content.reponse is None
 
     assert (
-        driver.current_url
-        == f"{lecture_an_url}/amendements/{amendements_an[0].num}/amendement_edit"
+        driver.current_url == f"{lecture_an_url}/amendements/{amendements_an[0].num}/"
     )

@@ -157,7 +157,6 @@ def amendement_journal(context: AmendementResource, request: Request) -> Dict[st
         "current_tab": "journal",
         "amendement": context.model(),
         "today": date.today(),
-        "back_url": request.resource_url(context, "amendement_edit"),
     }
 
 

@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block body %}
-    <a href="{{ back_url }}" class="arrow-left">Retour</a>
+    <a href="{{ context.back_url(request) }}" class="arrow-left">Retour</a>
     <h1>Journal des modifications</h1>
     <div class="title-extras">
         Amendement {{ amendement }}

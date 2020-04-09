@@ -6,7 +6,7 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Query
 
 from zam_repondeur.menu import MenuAction
-from zam_repondeur.models import DBSession, Dossier, Lecture, User
+from zam_repondeur.models import Chambre, DBSession, Dossier, Lecture, User
 from zam_repondeur.resources import (
     ACE,
     AmendementCollection,
@@ -61,11 +61,14 @@ class ConseilCollection(Resource):
         (Deny, Everyone, "create_seance"),
     ]
 
-    def models(self, *options: Any) -> Query:
-        result: Query = (
-            DBSession.query(Conseil).order_by(Conseil.date.desc()).options(*options)
-        )
-        return result
+    def models(
+        self, *options: Any, chambres: Optional[List[Chambre]] = None
+    ) -> List[Conseil]:
+        query: Query = DBSession.query(Conseil)
+        if chambres:
+            query = query.filter(Conseil.chambre.in_(chambres))
+        query = query.order_by(Conseil.date.desc()).options(*options)
+        return cast(List[Conseil], query.all())
 
     def __getitem__(self, key: str) -> Resource:
         resource = ConseilResource(name=key, parent=self)

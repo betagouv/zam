@@ -21,7 +21,7 @@ from zam_repondeur.resources import (
 )
 
 from .models.conseil import Conseil, ConseilLecture
-from .models.events.members import MembersEvent
+from .models.events.membership import MembershipEvent
 
 
 class VisamRoot(Root):
@@ -149,4 +149,6 @@ class MembersCollection(Resource):
         return result
 
     def events(self) -> Query:
-        return DBSession.query(MembersEvent).order_by(desc(MembersEvent.created_at))
+        return DBSession.query(MembershipEvent).order_by(
+            desc(MembershipEvent.created_at)
+        )

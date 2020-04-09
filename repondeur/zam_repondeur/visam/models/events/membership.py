@@ -12,7 +12,7 @@ from zam_repondeur.models.users import User
 from ..membership import UserChambreMembership
 
 
-class MembersEvent(Event):
+class MembershipEvent(Event):
     details_template = Template("")
 
     @property
@@ -32,8 +32,8 @@ class MembersEvent(Event):
         return Markup(self.details_template.safe_substitute(**self.template_vars))
 
 
-class MembersAdd(MembersEvent):
-    __mapper_args__ = {"polymorphic_identity": "members_add"}
+class MembershipAdded(MembershipEvent):
+    __mapper_args__ = {"polymorphic_identity": "membership_added"}
     icon = "edit"
 
     def __init__(
@@ -62,8 +62,8 @@ class MembersAdd(MembersEvent):
         UserChambreMembership.create(user=self.target_user, chambre=self.target_chambre)
 
 
-class MembersRemove(MembersEvent):
-    __mapper_args__ = {"polymorphic_identity": "members_remove"}
+class MembershipRemoved(MembershipEvent):
+    __mapper_args__ = {"polymorphic_identity": "membership_removed"}
     icon = "edit"
 
     def __init__(

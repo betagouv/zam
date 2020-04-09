@@ -8,7 +8,10 @@ from pyramid.view import view_config, view_defaults
 from zam_repondeur.message import Message
 from zam_repondeur.models import Chambre, DBSession, User
 from zam_repondeur.visam.models import UserChambreMembership
-from zam_repondeur.visam.models.events.members import MembersAdd, MembersRemove
+from zam_repondeur.visam.models.events.membership import (
+    MembershipAdded,
+    MembershipRemoved,
+)
 from zam_repondeur.visam.resources import MembersCollection
 
 
@@ -59,7 +62,7 @@ class MembersDelete(MembersCollectionBase):
             )
             .first()
         )
-        MembersRemove.create(membership=membership, request=self.request)
+        MembershipRemoved.create(membership=membership, request=self.request)
         self.request.session.flash(
             Message(
                 cls="success",
@@ -99,7 +102,7 @@ class MembersAddForm(MembersCollectionBase):
             )
             return HTTPFound(location=self.request.resource_url(self.context))
 
-        MembersAdd.create(
+        MembershipAdded.create(
             target_user=user,
             target_chambre=chambre,
             comment=None,

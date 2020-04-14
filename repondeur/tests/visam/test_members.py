@@ -22,6 +22,20 @@ class TestMembersList:
         assert resp.location == "https://visam.test/"
 
 
+class TestMembersMenuEntry:
+    def test_admin_can_see_menu_entry(self, app, user_admin):
+        resp = app.get("/conseils/", user=user_admin)
+
+        menu_items = [node.text() for node in resp.parser.css(".menu-actions li a")]
+        assert "Gestion des membres" in menu_items
+
+    def test_regular_user_cannot_see_menu_entry(self, app, user_david):
+        resp = app.get("/conseils/", user=user_david)
+
+        menu_items = [node.text() for node in resp.parser.css(".menu-actions li a")]
+        assert "Gestion des membres" not in menu_items
+
+
 class TestMembersAdd:
     def test_create(self, app, user_admin, user_david):
         from zam_repondeur.models import Chambre, DBSession, User

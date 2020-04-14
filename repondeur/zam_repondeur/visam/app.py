@@ -2,9 +2,11 @@ from typing import Any
 
 from paste.deploy.converters import asbool
 from pyramid.config import Configurator
+from pyramid.request import Request
 from pyramid.router import Router
 
 from zam_repondeur import BASE_SETTINGS
+from zam_repondeur.menu import MenuAction
 
 from .auth import VisamAuthenticationPolicy
 from .resources import VisamRoot
@@ -47,9 +49,30 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         )
         config.set_authentication_policy(authn_policy)
 
+        # Add Visam menu actions
+        config.add_menu_action(MembersMenuAction)
+
         # Scan Visam-specific views
         config.scan(".views")
 
         app = config.make_wsgi_app()
 
     return app
+
+
+class MembersMenuAction(MenuAction):
+    tab_name = "members"
+
+    title = "Gestion des membres"
+
+    def __init__(self, request: Request):
+        super().__init__(request)
+        self.resource = self.request.root["members"]
+
+    @property
+    def should_show(self) -> bool:
+        return self.request.has_permission("manage", self.resource)
+
+    @property
+    def url(self) -> str:
+        return self.request.resource_url(self.resource)

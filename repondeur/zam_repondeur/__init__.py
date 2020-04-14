@@ -66,6 +66,7 @@ def includeme(config: Configurator) -> None:
 
     config.include("zam_repondeur.auth")
     config.include("zam_repondeur.templating")
+    config.include("zam_repondeur.menu")
 
     config.include("pyramid_default_cors")
     config.include("pyramid_retry")

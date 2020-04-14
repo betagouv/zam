@@ -6,7 +6,14 @@ from pyramid.response import Response
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload, load_only, subqueryload
 
-from zam_repondeur.models import Amendement, AmendementList, Article, Batch, DBSession
+from zam_repondeur.models import (
+    Amendement,
+    AmendementList,
+    Article,
+    Batch,
+    Chambre,
+    DBSession,
+)
 from zam_repondeur.resources import AmendementCollection, LectureResource
 
 AMDTS_OPTIONS = [
@@ -102,7 +109,7 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
         "progress_interval": request.registry.settings["zam.progress.lecture_refresh"],
         "too_many_amendements": too_many_amendements,
         "enter_amendement_url": request.resource_url(context, "saisie"),
-        "show_help": not lecture.conseil,
+        "show_help": lecture.chambre in {Chambre.AN, Chambre.SENAT},
     }
 
 

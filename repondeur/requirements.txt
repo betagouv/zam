@@ -23,7 +23,7 @@ hupper==1.10.2
 idna==2.7
 inscriptis==1.0
 jdcal==1.4.1
-Jinja2==2.10.3
+Jinja2==2.11.2
 lawfactory-utils==0.1.7     # anpy, senapy, the-law-factory-parser
 legipy==0.1.2               # tlfp
 lockfile==0.12.2            # cachecontrol[filecache]

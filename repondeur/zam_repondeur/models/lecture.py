@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from sqlalchemy import (
     Column,
@@ -26,11 +26,6 @@ from .events.base import LastEventMixin
 from .organe import ORGANE_SENAT, ORGANES_SEANCE_PUBLIQUE
 from .phase import Phase
 from .texte import Texte
-
-# Make these types available to mypy, but avoid circular imports
-if TYPE_CHECKING:
-    from .dossier import Dossier  # noqa
-    from zam_repondeur.visam.models.conseil import Conseil  # noqa
 
 
 class Lecture(Base, LastEventMixin):
@@ -82,10 +77,6 @@ class Lecture(Base, LastEventMixin):
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
-
-    @property
-    def conseil(self) -> Optional["Conseil"]:
-        return self._conseil if hasattr(self, "_conseil") else None
 
     def __repr__(self) -> str:
         return (

@@ -23,9 +23,9 @@ class ConseilLecture(Base):
 
     __tablename__ = "conseils_lectures"
 
-    conseil_id = Column(
+    conseil_pk = Column(
         Integer,
-        ForeignKey("conseils.id", onupdate="CASCADE", ondelete="CASCADE"),
+        ForeignKey("conseils.pk", onupdate="CASCADE", ondelete="CASCADE"),
         primary_key=True,
     )
     lecture_pk = Column(
@@ -51,7 +51,7 @@ class Conseil(Base):
     __tablename__ = "conseils"
     __table_args__ = (CheckConstraint("chambre NOT IN ('AN', 'SENAT')"),)
 
-    id = Column(Integer, primary_key=True)
+    pk = Column(Integer, primary_key=True)
     chambre = Column(
         Enum(Chambre),
         nullable=False,

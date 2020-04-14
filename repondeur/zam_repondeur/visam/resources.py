@@ -138,7 +138,7 @@ class TexteResource(LectureResource):
             DBSession.query(Lecture)
             .join(ConseilLecture)
             .join(Dossier)
-            .filter(ConseilLecture.conseil_id == conseil.id, Dossier.slug == self.slug)
+            .filter(ConseilLecture.conseil_pk == conseil.pk, Dossier.slug == self.slug)
             .options(*options)
         ).one_or_none()
         if lecture is None:

@@ -4,7 +4,7 @@ import transaction
 
 class TestMembersMenuAction:
     def test_admin_sees_link_to_manage_members_in_menu(self, app, user_admin):
-        resp = app.get("/conseils/", user=user_admin)
+        resp = app.get("/seances/", user=user_admin)
         menu_actions = [
             elem.text().strip() for elem in resp.parser.css(".menu-actions > li > a")
         ]

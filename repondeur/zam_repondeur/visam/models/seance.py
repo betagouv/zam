@@ -14,18 +14,18 @@ from zam_repondeur.models.lecture import Lecture
 from zam_repondeur.models.users import Team, User
 
 
-class ConseilLecture(Base):
+class SeanceLecture(Base):
     """
     Association object
 
     https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html#association-object
     """
 
-    __tablename__ = "conseils_lectures"
+    __tablename__ = "seances_lectures"
 
-    conseil_pk = Column(
+    seance_pk = Column(
         Integer,
-        ForeignKey("conseils.pk", onupdate="CASCADE", ondelete="CASCADE"),
+        ForeignKey("seances.pk", onupdate="CASCADE", ondelete="CASCADE"),
         primary_key=True,
     )
     lecture_pk = Column(
@@ -43,12 +43,12 @@ class Formation(enum.Enum):
     FORMATION_SPECIALISEE = "Formation spécialisée"
 
 
-class Conseil(Base):
+class Seance(Base):
     """
     Une séance d'un conseil
     """
 
-    __tablename__ = "conseils"
+    __tablename__ = "seances"
     __table_args__ = (CheckConstraint("chambre NOT IN ('AN', 'SENAT')"),)
 
     pk = Column(Integer, primary_key=True)
@@ -88,9 +88,9 @@ class Conseil(Base):
     # We use `ordering_list` to automatically map the order of the list
     # to the `position` attribute on the association object.
     # https://docs.sqlalchemy.org/en/13/orm/extensions/orderinglist.html#module-sqlalchemy.ext.orderinglist
-    _lectures: List[ConseilLecture] = relationship(
-        "ConseilLecture",
-        order_by=[ConseilLecture.position],
+    _lectures: List[SeanceLecture] = relationship(
+        "SeanceLecture",
+        order_by=[SeanceLecture.position],
         collection_class=ordering_list("position"),
         cascade="all, delete-orphan",
     )
@@ -98,7 +98,7 @@ class Conseil(Base):
     # We use `association_proxy` to hide the intermediate association objects.
     # https://docs.sqlalchemy.org/en/13/orm/extensions/associationproxy.html#module-sqlalchemy.ext.associationproxy
     lectures: List[Lecture] = association_proxy(
-        "_lectures", "lecture", creator=lambda lecture: ConseilLecture(lecture=lecture)
+        "_lectures", "lecture", creator=lambda lecture: SeanceLecture(lecture=lecture)
     )
 
     def __repr__(self) -> str:
@@ -115,31 +115,31 @@ class Conseil(Base):
         formation: Formation,
         date: datetime.date,
         urgence_declaree: bool = False,
-    ) -> "Conseil":
+    ) -> "Seance":
         if chambre in {Chambre.AN, Chambre.SENAT}:
             raise ValueError("Chambre invalide")
-        conseil = cls(
+        seance = cls(
             chambre=chambre,
             formation=formation,
             date=date,
             urgence_declaree=urgence_declaree,
         )
-        team, _ = get_one_or_create(Team, name=conseil.slug)
-        conseil.team = team
-        DBSession.add(conseil)
+        team, _ = get_one_or_create(Team, name=seance.slug)
+        seance.team = team
+        DBSession.add(seance)
         for admin in DBSession.query(User).filter(
             User.admin_at.isnot(None)  # type: ignore
         ):
             admin.teams.append(team)
-        return conseil
+        return seance
 
     @classmethod
-    def get(cls, slug: str, *options: Any) -> Optional["Conseil"]:
+    def get(cls, slug: str, *options: Any) -> Optional["Seance"]:
         try:
             chambre, date = slug.split("-", 1)
         except ValueError:
             return None
-        res: Optional["Conseil"] = DBSession.query(cls).filter(
+        res: Optional["Seance"] = DBSession.query(cls).filter(
             cls.chambre == chambre.upper(), cls.date == date,
         ).options(*options).first()
         return res

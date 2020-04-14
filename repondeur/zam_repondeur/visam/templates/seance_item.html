@@ -86,7 +86,7 @@
     <section data-controller="textes-order"
         data-target="textes-order.parent"
         data-textes-order-url="{{ request.resource_url(context, 'order') }}">
-        <h2>Conseil {{ conseil }}</h2>
+        <h2>{{ seance }}</h2>
         <div class="dropzone"
             data-target="textes-order.dropzone"
             data-action="
@@ -108,7 +108,7 @@
                 data-pk="{{ lecture.pk }}">
                 <h3>{{ lecture.dossier.titre }}</h3>
                 <nav>
-                    <a href="{{ request.resource_url(request.root['conseils'][conseil.slug]['textes'][lecture.dossier.slug]['amendements']) }}">
+                    <a href="{{ request.resource_url(request.root['seances'][seance.slug]['textes'][lecture.dossier.slug]['amendements']) }}">
                         Accéder à ce texte
                     </a>
                 </nav>
@@ -137,6 +137,6 @@
 
 {% block scripts %}
     {% if lectures | length > 1 %}
-        <script src="{{ request.static_url('zam_repondeur:static/js/conseil.js') }}"></script>
+        <script src="{{ request.static_url('zam_repondeur:static/js/seance.js') }}"></script>
     {% endif %}
 {% endblock %}

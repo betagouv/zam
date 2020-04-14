@@ -8,9 +8,9 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 
 
 def test_amendement_creation_select_article(
-    wsgi_server, driver, lecture_conseil_ccfp_url, articles_conseil_ccfp
+    wsgi_server, driver, lecture_seance_ccfp_url, articles_seance_ccfp
 ):
-    driver.get(f"{lecture_conseil_ccfp_url}/amendements/saisie")
+    driver.get(f"{lecture_seance_ccfp_url}/amendements/saisie")
     subdiv = Select(driver.find_element_by_css_selector('select[name="subdiv"]'))
     subdiv.select_by_visible_text("Art. 2")
     time.sleep(1)  # Wait for the option to be selected.
@@ -29,11 +29,11 @@ def test_amendement_creation_select_article(
 
 
 def test_amendement_creation(
-    wsgi_server, driver, lecture_conseil_ccfp_url, articles_conseil_ccfp
+    wsgi_server, driver, lecture_seance_ccfp_url, articles_seance_ccfp
 ):
     from zam_repondeur.models import DBSession, Amendement
 
-    driver.get(f"{lecture_conseil_ccfp_url}/amendements/saisie")
+    driver.get(f"{lecture_seance_ccfp_url}/amendements/saisie")
     subdiv = Select(driver.find_element_by_css_selector('select[name="subdiv"]'))
     subdiv.select_by_visible_text("Art. 2")
 

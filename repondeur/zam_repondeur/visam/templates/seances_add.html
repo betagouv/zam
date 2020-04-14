@@ -17,8 +17,8 @@
 {% endblock %}
 
 {% block body %}
-    <form id="add-conseil" action="{{ request.path }}" method="POST">
-        <h2>Ajouter un conseil</h2>
+    <form id="add-seance" action="{{ request.path }}" method="POST">
+        <h2>Ajouter une séance d’un conseil</h2>
 
         <div class="form-group">
             <label for="chambre">Conseil</label>
@@ -31,7 +31,7 @@
         </div>
 
         <div class="form-group">
-            <label for="date">Date du conseil</label>
+            <label for="date">Date de la séance</label>
             <input type="date" name="date" class="form-control" required>
         </div>
 
@@ -54,7 +54,7 @@
 
         <div class="form-group save-buttons">
             <a href="{{ request.resource_url(context) }}" class="arrow-left">Retour</a>
-            <input type="submit" name="submit" value="Ajouter le conseil" class="button enabled primary">
+            <input type="submit" name="submit" value="Ajouter la séance" class="button enabled primary">
         </div>
 
     </form>

@@ -24,20 +24,20 @@ from zam_repondeur.models import (
 from zam_repondeur.models.events.lecture import LectureCreee
 from zam_repondeur.services.clean import clean_html
 from zam_repondeur.slugs import slugify
-from zam_repondeur.visam.models.conseil import Conseil, Formation
-from zam_repondeur.visam.resources import ConseilResource
-from zam_repondeur.visam.views.conseil_item import ConseilViewBase
+from zam_repondeur.visam.models.seance import Formation, Seance
+from zam_repondeur.visam.resources import SeanceResource
+from zam_repondeur.visam.views.seance_item import SeanceViewBase
 
 logger = logging.getLogger(__name__)
 
 
-@view_defaults(context=ConseilResource, name="add")
-class ConseilAddTexteView(ConseilViewBase):
-    @view_config(request_method="GET", renderer="conseil_add_texte.html")
+@view_defaults(context=SeanceResource, name="add")
+class SeanceAddTexteView(SeanceViewBase):
+    @view_config(request_method="GET", renderer="seance_add_texte.html")
     def get(self) -> dict:
         return {
-            "current_tab": "conseils",
-            "conseil_resource": self.context,
+            "current_tab": "seances",
+            "seance_resource": self.context,
         }
 
     @view_config(request_method="POST")
@@ -46,20 +46,20 @@ class ConseilAddTexteView(ConseilViewBase):
         contenu = self.request.POST.get("contenu", "")
 
         # Un même texte, ou des versions successives d’un même texte,
-        # peuvent passer devant plusieurs conseils. Dans ce cas, les
-        # lectures seront regroupées au sein d’un même dossier.
-        dossier, created = self.find_or_create_dossier(titre, self.conseil.lectures)
+        # peut être à l’ordre du jour de plusieurs séances d’un conseil.
+        # Dans ce cas, les lectures seront regroupées au sein d’un même dossier.
+        dossier, created = self.find_or_create_dossier(titre, self.seance.lectures)
         if created:
-            dossier.team = self.conseil.team
+            dossier.team = self.seance.team
 
         # Par contre, un même texte ne peut pas être examiné plusieurs
         # fois lors d’une même séance d’un conseil...
-        lecture = self.find_lecture(dossier, self.conseil)
+        lecture = self.find_lecture(dossier, self.seance)
         if lecture is None:
-            texte = self.create_texte(self.conseil.chambre)
+            texte = self.create_texte(self.seance.chambre)
 
-            lecture = self.create_lecture(texte, dossier, self.conseil.formation)
-            self.conseil.lectures.append(lecture)
+            lecture = self.create_lecture(texte, dossier, self.seance.formation)
+            self.seance.lectures.append(lecture)
 
             self.create_articles(lecture, contenu)
 
@@ -68,7 +68,10 @@ class ConseilAddTexteView(ConseilViewBase):
             )
         else:
             self.request.session.flash(
-                Message(cls="warning", text="Ce texte existe déjà dans ce conseil…")
+                Message(
+                    cls="warning",
+                    text="Ce texte est déjà à l’ordre du jour de cette séance…",
+                )
             )
 
         location = self.request.resource_url(
@@ -101,8 +104,8 @@ class ConseilAddTexteView(ConseilViewBase):
         )
         return dossier, created
 
-    def find_lecture(self, dossier: Dossier, conseil: Conseil) -> Optional[Lecture]:
-        for lecture in conseil.lectures:
+    def find_lecture(self, dossier: Dossier, seance: Seance) -> Optional[Lecture]:
+        for lecture in seance.lectures:
             if lecture.dossier is dossier:
                 return lecture
         return None

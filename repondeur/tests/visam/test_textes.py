@@ -3,8 +3,8 @@ from pathlib import Path
 import pytest
 
 
-def test_conseil_empty_textes(app, conseil_ccfp, user_ccfp):
-    resp = app.get("/conseils/ccfp-2020-04-01", user=user_ccfp)
+def test_seance_empty_textes(app, seance_ccfp, user_ccfp):
+    resp = app.get("/seances/ccfp-2020-04-01", user=user_ccfp)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -13,8 +13,8 @@ def test_conseil_empty_textes(app, conseil_ccfp, user_ccfp):
     assert "Ajouter un texte" in resp.text
 
 
-def test_conseil_with_texte(app, conseil_ccfp, lecture_conseil_ccfp, user_ccfp):
-    resp = app.get("/conseils/ccfp-2020-04-01", user=user_ccfp)
+def test_seance_with_texte(app, seance_ccfp, lecture_seance_ccfp, user_ccfp):
+    resp = app.get("/seances/ccfp-2020-04-01", user=user_ccfp)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -23,8 +23,8 @@ def test_conseil_with_texte(app, conseil_ccfp, lecture_conseil_ccfp, user_ccfp):
     assert "Ajouter un texte" in resp.text
 
 
-def test_conseil_add_texte_form(app, conseil_ccfp, user_ccfp):
-    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_ccfp)
+def test_seance_add_texte_form(app, seance_ccfp, user_ccfp):
+    resp = app.get("/seances/ccfp-2020-04-01/add", user=user_ccfp)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
@@ -32,7 +32,7 @@ def test_conseil_add_texte_form(app, conseil_ccfp, user_ccfp):
     # Check the form
     form = resp.forms["add-texte"]
     assert form.method == "POST"
-    assert form.action == "/conseils/ccfp-2020-04-01/add"
+    assert form.action == "/seances/ccfp-2020-04-01/add"
 
     assert list(form.fields.keys()) == [
         "titre",
@@ -50,7 +50,7 @@ def contenu():
     return SAMPLE_FILE.read_text()
 
 
-def test_conseil_add_texte_submit(app, conseil_ccfp, contenu, user_ccfp):
+def test_seance_add_texte_submit(app, seance_ccfp, contenu, user_ccfp):
     from zam_repondeur.models import (
         Article,
         DBSession,
@@ -59,7 +59,7 @@ def test_conseil_add_texte_submit(app, conseil_ccfp, contenu, user_ccfp):
         Texte,
     )
 
-    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_ccfp)
+    resp = app.get("/seances/ccfp-2020-04-01/add", user=user_ccfp)
     form = resp.forms["add-texte"]
     form["titre"] = "Titre du texte"
     form["contenu"] = contenu
@@ -68,7 +68,7 @@ def test_conseil_add_texte_submit(app, conseil_ccfp, contenu, user_ccfp):
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://visam.test/conseils/ccfp-2020-04-01/textes/titre-texte/amendements/"
+        "https://visam.test/seances/ccfp-2020-04-01/textes/titre-texte/amendements/"
     )
 
     resp = resp.follow()
@@ -182,10 +182,10 @@ def test_conseil_add_texte_submit(app, conseil_ccfp, contenu, user_ccfp):
     }
 
 
-def test_conseil_add_texte_submit_existing_same_conseil(
-    app, conseil_ccfp, contenu, user_ccfp
+def test_seance_add_texte_submit_existing_same_seance(
+    app, seance_ccfp, contenu, user_ccfp
 ):
-    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_ccfp)
+    resp = app.get("/seances/ccfp-2020-04-01/add", user=user_ccfp)
     form = resp.forms["add-texte"]
     form["titre"] = "Titre du texte"
     form["contenu"] = contenu
@@ -194,7 +194,7 @@ def test_conseil_add_texte_submit_existing_same_conseil(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://visam.test/conseils/ccfp-2020-04-01/textes/titre-texte/amendements/"
+        "https://visam.test/seances/ccfp-2020-04-01/textes/titre-texte/amendements/"
     )
 
     resp = resp.follow()
@@ -202,7 +202,7 @@ def test_conseil_add_texte_submit_existing_same_conseil(
     assert resp.status_code == 200
     assert "Texte créé avec succès." in resp.text
 
-    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_ccfp)
+    resp = app.get("/seances/ccfp-2020-04-01/add", user=user_ccfp)
     form = resp.forms["add-texte"]
     form["titre"] = "Titre du texte"
     form["contenu"] = contenu
@@ -211,19 +211,19 @@ def test_conseil_add_texte_submit_existing_same_conseil(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://visam.test/conseils/ccfp-2020-04-01/textes/titre-texte/amendements/"
+        "https://visam.test/seances/ccfp-2020-04-01/textes/titre-texte/amendements/"
     )
 
     resp = resp.follow()
 
     assert resp.status_code == 200
-    assert "Ce texte existe déjà dans ce conseil…" in resp.text
+    assert "Ce texte est déjà à l’ordre du jour de cette séance…" in resp.text
 
 
-def test_conseil_add_texte_submit_existing_different_conseil(
-    app, conseil_ccfp, conseil_csfpe, contenu, user_ccfp, user_csfpe
+def test_seance_add_texte_submit_existing_different_seance(
+    app, seance_ccfp, seance_csfpe, contenu, user_ccfp, user_csfpe
 ):
-    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_ccfp)
+    resp = app.get("/seances/ccfp-2020-04-01/add", user=user_ccfp)
     form = resp.forms["add-texte"]
     form["titre"] = "Titre du texte"
     form["contenu"] = contenu
@@ -232,7 +232,7 @@ def test_conseil_add_texte_submit_existing_different_conseil(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://visam.test/conseils/ccfp-2020-04-01/textes/titre-texte/amendements/"
+        "https://visam.test/seances/ccfp-2020-04-01/textes/titre-texte/amendements/"
     )
 
     resp = resp.follow()
@@ -240,7 +240,7 @@ def test_conseil_add_texte_submit_existing_different_conseil(
     assert resp.status_code == 200
     assert "Texte créé avec succès." in resp.text
 
-    resp = app.get("/conseils/csfpe-2020-05-15/add", user=user_csfpe)
+    resp = app.get("/seances/csfpe-2020-05-15/add", user=user_csfpe)
     form = resp.forms["add-texte"]
     form["titre"] = "Titre du texte"
     form["contenu"] = contenu
@@ -249,7 +249,7 @@ def test_conseil_add_texte_submit_existing_different_conseil(
 
     assert resp.status_code == 302
     assert resp.location == (
-        "https://visam.test/conseils/csfpe-2020-05-15/textes/titre-texte/amendements/"
+        "https://visam.test/seances/csfpe-2020-05-15/textes/titre-texte/amendements/"
     )
 
     resp = resp.follow()
@@ -258,13 +258,13 @@ def test_conseil_add_texte_submit_existing_different_conseil(
     assert "Texte créé avec succès." in resp.text
 
 
-def test_conseil_add_texte_submit_increase_order(
-    app, conseil_ccfp, lecture_conseil_ccfp, contenu, user_ccfp
+def test_seance_add_texte_submit_increase_order(
+    app, seance_ccfp, lecture_seance_ccfp, contenu, user_ccfp
 ):
     from zam_repondeur.models import DBSession
-    from zam_repondeur.visam.models import Conseil
+    from zam_repondeur.visam.models import Seance
 
-    resp = app.get("/conseils/ccfp-2020-04-01/add", user=user_ccfp)
+    resp = app.get("/seances/ccfp-2020-04-01/add", user=user_ccfp)
     form = resp.forms["add-texte"]
     form["titre"] = "Titre du texte ajouté"
     form["contenu"] = contenu
@@ -275,52 +275,52 @@ def test_conseil_add_texte_submit_increase_order(
     assert "Texte créé avec succès." in resp.text
 
     # Le texte est ajouté à la fin
-    conseil_ccfp = DBSession.query(Conseil).get(conseil_ccfp.pk)
-    assert [lecture.dossier.titre for lecture in conseil_ccfp.lectures] == [
+    seance_ccfp = DBSession.query(Seance).get(seance_ccfp.pk)
+    assert [lecture.dossier.titre for lecture in seance_ccfp.lectures] == [
         "Titre du texte CCFP",
         "Titre du texte ajouté",
     ]
 
 
-def test_conseil_reorder_textes_unique_lecture(app, lecture_conseil_ccfp, user_ccfp):
-    resp = app.get("/conseils/ccfp-2020-04-01", user=user_ccfp)
+def test_seance_reorder_textes_unique_lecture(app, lecture_seance_ccfp, user_ccfp):
+    resp = app.get("/seances/ccfp-2020-04-01", user=user_ccfp)
     assert resp.status_code == 200
-    assert '<script src="https://visam.test/static/js/conseil.js' not in resp.text
+    assert '<script src="https://visam.test/static/js/seance.js' not in resp.text
 
 
-@pytest.mark.usefixtures("lecture_conseil_ccfp", "lecture_conseil_ccfp_2")
-def test_conseil_reorder_textes(app, conseil_ccfp, user_ccfp):
+@pytest.mark.usefixtures("lecture_seance_ccfp", "lecture_seance_ccfp_2")
+def test_seance_reorder_textes(app, seance_ccfp, user_ccfp):
     from zam_repondeur.models import DBSession
-    from zam_repondeur.visam.models import Conseil
+    from zam_repondeur.visam.models import Seance
 
     # Ordre initial des textes
-    conseil_ccfp = DBSession.query(Conseil).get(conseil_ccfp.pk)
-    assert [lecture.dossier.titre for lecture in conseil_ccfp.lectures] == [
+    seance_ccfp = DBSession.query(Seance).get(seance_ccfp.pk)
+    assert [lecture.dossier.titre for lecture in seance_ccfp.lectures] == [
         "Titre du texte CCFP",
         "Titre du texte CCFP 2",
     ]
 
-    resp = app.get("/conseils/ccfp-2020-04-01", user=user_ccfp)
+    resp = app.get("/seances/ccfp-2020-04-01", user=user_ccfp)
     assert resp.status_code == 200
-    assert '<script src="https://visam.test/static/js/conseil.js' in resp.text
+    assert '<script src="https://visam.test/static/js/seance.js' in resp.text
 
     assert resp.parser.css("h3")[0].text() == "Titre du texte CCFP"
     assert resp.parser.css("h3")[1].text() == "Titre du texte CCFP 2"
 
     resp = app.post_json(
-        "/conseils/ccfp-2020-04-01/order", {"order": ["2", "1"]}, user=user_ccfp
+        "/seances/ccfp-2020-04-01/order", {"order": ["2", "1"]}, user=user_ccfp
     )
     assert resp.status_code == 200
     assert resp.text == "{}"
 
     # L’ordre des textes est modifié
-    conseil_ccfp = DBSession.query(Conseil).get(conseil_ccfp.pk)
-    assert [lecture.dossier.titre for lecture in conseil_ccfp.lectures] == [
+    seance_ccfp = DBSession.query(Seance).get(seance_ccfp.pk)
+    assert [lecture.dossier.titre for lecture in seance_ccfp.lectures] == [
         "Titre du texte CCFP 2",
         "Titre du texte CCFP",
     ]
 
-    resp = app.get("/conseils/ccfp-2020-04-01", user=user_ccfp)
+    resp = app.get("/seances/ccfp-2020-04-01", user=user_ccfp)
     assert resp.status_code == 200
     assert resp.parser.css("h3")[0].text() == "Titre du texte CCFP 2"
     assert resp.parser.css("h3")[1].text() == "Titre du texte CCFP"

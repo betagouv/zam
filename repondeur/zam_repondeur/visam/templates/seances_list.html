@@ -14,16 +14,16 @@
         line-height: normal;
     }
 
-    .conseil {
+    .seance {
         margin: 2rem 0.5rem;
         display: flex;
         justify-content: space-between;
         flex-wrap: nowrap;
     }
-    .conseil:first-child {
+    .seance:first-child {
         margin-top: 2rem;
     }
-    .conseil nav {
+    .seance nav {
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
@@ -31,22 +31,22 @@
         text-align: right;
         margin-left: 2rem;
     }
-    .conseil nav a {
+    .seance nav a {
         background: no-repeat right center url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}");
     }
-    .conseil nav a {
+    .seance nav a {
         font-size: 1.1rem;
         padding-right: 1.8rem;
         background-position: 99% 42%;
         background-size: 5%;
     }
-    .conseil nav a:first-child {
+    .seance nav a:first-child {
         font-size: 1.7rem;
         padding-right: 2rem;
         background-position: right 40%;
         background-size: 7%;
     }
-    .conseil .details {
+    .seance .details {
         line-height: 1.2;
     }
     .extra-button {
@@ -74,29 +74,29 @@
 
 {% block body %}
     <section>
-        <h2>Conseils</h2>
-        {% for conseil in conseils %}
-            <div class="conseil box">
+        <h2>Séances de conseils</h2>
+        {% for seance in seances %}
+            <div class="seance box">
                 <div>
-                    <h3>{{ conseil.chambre.name }} du {{ conseil.date.strftime("%x") }}</h3>
-                    <p>{{ conseil.chambre.value }} &mdash; {{ conseil.formation.value }}</p>
+                    <h3>{{ seance.chambre.name }} du {{ seance.date.strftime("%x") }}</h3>
+                    <p>{{ seance.chambre.value }} &mdash; {{ seance.formation.value }}</p>
                 </div>
                 <nav>
-                    <a href="{{ request.resource_url(context, conseil.slug) }}">
-                        Accéder à ce conseil
+                    <a href="{{ request.resource_url(context, seance.slug) }}">
+                        Accéder à cette séance
                     </a>
                 </nav>
             </div>
         {% else %}
-            <div class="conseil box">
-                <h3>Aucun conseil pour l’instant.</h3>
+            <div class="seance box">
+                <h3>Aucune séance pour l’instant.</h3>
             </div>
         {% endfor %}
     </section>
     {% if can_create_seance %}
-        <div class="extra-button conseil box">
+        <div class="extra-button seance box">
             <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
-                Ajouter un conseil
+                Ajouter une séance
             </a>
         </div>
     {% endif %}

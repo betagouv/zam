@@ -1,11 +1,11 @@
 def test_article_preview(
-    app, conseil_ccfp, lecture_conseil_ccfp, articles_conseil_ccfp, user_ccfp
+    app, seance_ccfp, lecture_seance_ccfp, articles_seance_ccfp, user_ccfp
 ):
-    article = articles_conseil_ccfp[0]
+    article = articles_seance_ccfp[0]
     resp = app.get(
         (
-            f"/conseils/{conseil_ccfp.slug}"
-            f"/textes/{lecture_conseil_ccfp.dossier.slug}"
+            f"/seances/{seance_ccfp.slug}"
+            f"/textes/{lecture_seance_ccfp.dossier.slug}"
             f"/articles/{article.url_key}/preview"
         ),
         user=user_ccfp,

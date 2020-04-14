@@ -5,23 +5,23 @@ import transaction
 
 
 @pytest.fixture
-def conseil_ccfp(db, team_zam):
+def seance_ccfp(db, team_zam):
     from zam_repondeur.models import Chambre
-    from zam_repondeur.visam.models import Conseil, Formation
+    from zam_repondeur.visam.models import Seance, Formation
 
     with transaction.manager:
-        conseil = Conseil.create(
+        seance = Seance.create(
             chambre=Chambre.CCFP,
             formation=Formation.ASSEMBLEE_PLENIERE,
             date=date(2020, 4, 1),
         )
-        conseil.team = team_zam
+        seance.team = team_zam
 
-    return conseil
+    return seance
 
 
 @pytest.fixture
-def dossier_conseil_ccfp(db, team_zam):
+def dossier_seance_ccfp(db, team_zam):
     from zam_repondeur.models import Dossier
 
     with transaction.manager:
@@ -36,7 +36,7 @@ def dossier_conseil_ccfp(db, team_zam):
 
 
 @pytest.fixture
-def dossier_conseil_ccfp_2(db, team_zam):
+def dossier_seance_ccfp_2(db, team_zam):
     from zam_repondeur.models import Dossier
 
     with transaction.manager:
@@ -51,7 +51,7 @@ def dossier_conseil_ccfp_2(db, team_zam):
 
 
 @pytest.fixture
-def texte_conseil_ccfp(db):
+def texte_seance_ccfp(db):
     from zam_repondeur.models import Chambre, Texte, TypeTexte
 
     with transaction.manager:
@@ -66,43 +66,43 @@ def texte_conseil_ccfp(db):
 
 
 @pytest.fixture
-def lecture_conseil_ccfp(db, conseil_ccfp, dossier_conseil_ccfp, texte_conseil_ccfp):
+def lecture_seance_ccfp(db, seance_ccfp, dossier_seance_ccfp, texte_seance_ccfp):
     from zam_repondeur.models import DBSession, Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
             phase=Phase.PREMIERE_LECTURE,
-            texte=texte_conseil_ccfp,
+            texte=texte_seance_ccfp,
             titre="Première lecture – Assemblée plénière",
             organe="Assemblée plénière",
-            dossier=dossier_conseil_ccfp,
+            dossier=dossier_seance_ccfp,
         )
-        DBSession.add(conseil_ccfp)
-        conseil_ccfp.lectures.append(lecture)
+        DBSession.add(seance_ccfp)
+        seance_ccfp.lectures.append(lecture)
 
     return lecture
 
 
 @pytest.fixture
-def article1_texte_conseil_ccfp(db, lecture_conseil_ccfp):
+def article1_texte_seance_ccfp(db, lecture_seance_ccfp):
     from zam_repondeur.models import Article
 
     with transaction.manager:
-        article = Article.create(lecture=lecture_conseil_ccfp, type="article", num="1")
+        article = Article.create(lecture=lecture_seance_ccfp, type="article", num="1")
 
     return article
 
 
 @pytest.fixture
-def amendement_222_lecture_conseil_ccfp(
-    db, lecture_conseil_ccfp, article1_texte_conseil_ccfp
+def amendement_222_lecture_seance_ccfp(
+    db, lecture_seance_ccfp, article1_texte_seance_ccfp
 ):
     from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
         amendement = Amendement.create(
-            lecture=lecture_conseil_ccfp,
-            article=article1_texte_conseil_ccfp,
+            lecture=lecture_seance_ccfp,
+            article=article1_texte_seance_ccfp,
             num="v222",
             position=1,
         )
@@ -112,15 +112,15 @@ def amendement_222_lecture_conseil_ccfp(
 
 
 @pytest.fixture
-def amendement_444_lecture_conseil_ccfp(
-    db, lecture_conseil_ccfp, article1_texte_conseil_ccfp
+def amendement_444_lecture_seance_ccfp(
+    db, lecture_seance_ccfp, article1_texte_seance_ccfp
 ):
     from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
         amendement = Amendement.create(
-            lecture=lecture_conseil_ccfp,
-            article=article1_texte_conseil_ccfp,
+            lecture=lecture_seance_ccfp,
+            article=article1_texte_seance_ccfp,
             num="v444",
             position=2,
         )
@@ -130,27 +130,25 @@ def amendement_444_lecture_conseil_ccfp(
 
 
 @pytest.fixture
-def lecture_conseil_ccfp_2(
-    db, conseil_ccfp, dossier_conseil_ccfp_2, texte_conseil_ccfp
-):
+def lecture_seance_ccfp_2(db, seance_ccfp, dossier_seance_ccfp_2, texte_seance_ccfp):
     from zam_repondeur.models import DBSession, Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
             phase=Phase.PREMIERE_LECTURE,
-            texte=texte_conseil_ccfp,
+            texte=texte_seance_ccfp,
             titre="Première lecture – Assemblée plénière",
             organe="Assemblée plénière",
-            dossier=dossier_conseil_ccfp_2,
+            dossier=dossier_seance_ccfp_2,
         )
-        DBSession.add(conseil_ccfp)
-        conseil_ccfp.lectures.append(lecture)
+        DBSession.add(seance_ccfp)
+        seance_ccfp.lectures.append(lecture)
 
     return lecture
 
 
 @pytest.fixture
-def articles_conseil_ccfp(db, lecture_conseil_ccfp):
+def articles_seance_ccfp(db, lecture_seance_ccfp):
     from zam_repondeur.models import Article
 
     articles = []
@@ -165,7 +163,7 @@ def articles_conseil_ccfp(db, lecture_conseil_ccfp):
                 num=num,
                 mult="",
                 pos="",
-                lecture=lecture_conseil_ccfp,
+                lecture=lecture_seance_ccfp,
                 content={
                     str(i).zfill(3): alinea for i, alinea in enumerate(alineas, start=1)
                 },
@@ -176,23 +174,23 @@ def articles_conseil_ccfp(db, lecture_conseil_ccfp):
 
 
 @pytest.fixture
-def conseil_csfpe(db, team_zam):
+def seance_csfpe(db, team_zam):
     from zam_repondeur.models import Chambre
-    from zam_repondeur.visam.models import Conseil, Formation
+    from zam_repondeur.visam.models import Seance, Formation
 
     with transaction.manager:
-        conseil = Conseil.create(
+        seance = Seance.create(
             chambre=Chambre.CSFPE,
             formation=Formation.ASSEMBLEE_PLENIERE,
             date=date(2020, 5, 15),
         )
-        conseil.team = team_zam
+        seance.team = team_zam
 
-    return conseil
+    return seance
 
 
 @pytest.fixture
-def dossier_conseil_csfpe(db, team_zam):
+def dossier_seance_csfpe(db, team_zam):
     from zam_repondeur.models import Dossier
 
     with transaction.manager:
@@ -207,7 +205,7 @@ def dossier_conseil_csfpe(db, team_zam):
 
 
 @pytest.fixture
-def texte_conseil_csfpe(db):
+def texte_seance_csfpe(db):
     from zam_repondeur.models import Chambre, Texte, TypeTexte
 
     with transaction.manager:
@@ -222,20 +220,18 @@ def texte_conseil_csfpe(db):
 
 
 @pytest.fixture
-def lecture_conseil_csfpe(
-    db, conseil_csfpe, dossier_conseil_csfpe, texte_conseil_csfpe
-):
+def lecture_seance_csfpe(db, seance_csfpe, dossier_seance_csfpe, texte_seance_csfpe):
     from zam_repondeur.models import DBSession, Lecture, Phase
 
     with transaction.manager:
         lecture = Lecture.create(
             phase=Phase.PREMIERE_LECTURE,
-            texte=texte_conseil_csfpe,
+            texte=texte_seance_csfpe,
             titre="Première lecture – Assemblée plénière",
             organe="Assemblée plénière",
-            dossier=dossier_conseil_csfpe,
+            dossier=dossier_seance_csfpe,
         )
-        DBSession.add(conseil_csfpe)
-        conseil_csfpe.lectures.append(lecture)
+        DBSession.add(seance_csfpe)
+        seance_csfpe.lectures.append(lecture)
 
     return lecture

@@ -21,24 +21,24 @@ from zam_repondeur.resources import (
     TableCollection,
 )
 
-from .models.conseil import Conseil, ConseilLecture
 from .models.events.membership import MembershipEvent
+from .models.seance import Seance, SeanceLecture
 
 
 class VisamRoot(Root):
     """
-    We create a special resource tree for Visam, with conseils instead of dossiers.
+    We create a special resource tree for Visam, with seances instead of dossiers.
     """
 
     def __init__(self, _request: Request) -> None:
         super().__init__(_request)
         del self["dossiers"]
-        self.add_child(ConseilCollection(name="conseils", parent=self))
+        self.add_child(SeanceCollection(name="seances", parent=self))
         self.add_child(MembersCollection(name="members", parent=self))
 
     @property
     def default_child(self) -> Optional[Resource]:
-        return cast(Resource, self["conseils"])
+        return cast(Resource, self["seances"])
 
     class ManageMembers(MenuAction):
         title = "Gestion des membres"
@@ -55,7 +55,7 @@ class VisamRoot(Root):
     menu_actions = Root.menu_actions + [ManageMembers]
 
 
-class ConseilCollection(Resource):
+class SeanceCollection(Resource):
     __acl__ = [
         (Allow, "group:admins", "create_seance"),
         (Deny, Everyone, "create_seance"),
@@ -63,15 +63,15 @@ class ConseilCollection(Resource):
 
     def models(
         self, *options: Any, chambres: Optional[List[Chambre]] = None
-    ) -> List[Conseil]:
-        query: Query = DBSession.query(Conseil)
+    ) -> List[Seance]:
+        query: Query = DBSession.query(Seance)
         if chambres:
-            query = query.filter(Conseil.chambre.in_(chambres))
-        query = query.order_by(Conseil.date.desc()).options(*options)
-        return cast(List[Conseil], query.all())
+            query = query.filter(Seance.chambre.in_(chambres))
+        query = query.order_by(Seance.date.desc()).options(*options)
+        return cast(List[Seance], query.all())
 
     def __getitem__(self, key: str) -> Resource:
-        resource = ConseilResource(name=key, parent=self)
+        resource = SeanceResource(name=key, parent=self)
         try:
             resource.model()
         except ResourceNotFound:
@@ -79,7 +79,7 @@ class ConseilCollection(Resource):
         return resource
 
 
-class ConseilResource(Resource):
+class SeanceResource(Resource):
     def __acl__(self) -> List[ACE]:
         # Only chambre members and admins can view it.
         return [
@@ -94,25 +94,25 @@ class ConseilResource(Resource):
         self.add_child(TexteCollection(name="textes", parent=self))
 
     @property
-    def parent(self) -> ConseilCollection:
-        return cast(ConseilCollection, self.__parent__)
+    def parent(self) -> SeanceCollection:
+        return cast(SeanceCollection, self.__parent__)
 
-    def model(self, *options: Any) -> Conseil:
-        conseil = Conseil.get(self.slug, *options)
-        if conseil is None:
+    def model(self, *options: Any) -> Seance:
+        seance = Seance.get(self.slug, *options)
+        if seance is None:
             raise ResourceNotFound(self)
-        return conseil
+        return seance
 
     @property
     def breadcrumbs_label(self) -> Optional[str]:
-        conseil: Conseil = self.model()
-        return str(conseil)
+        seance: Seance = self.model()
+        return str(seance)
 
 
 class TexteCollection(Resource):
     @property
-    def parent(self) -> ConseilResource:
-        return cast(ConseilResource, self.__parent__)
+    def parent(self) -> SeanceResource:
+        return cast(SeanceResource, self.__parent__)
 
     def __getitem__(self, key: str) -> Resource:
         return TexteResource(slug=key, parent=self)
@@ -133,12 +133,12 @@ class TexteResource(LectureResource):
         self.add_child(DerouleurCollection(name="derouleur", parent=self))
 
     def model(self, *options: Any) -> Lecture:
-        conseil = self.parent.parent.model()
+        seance = self.parent.parent.model()
         lecture: Optional[Lecture] = (
             DBSession.query(Lecture)
-            .join(ConseilLecture)
+            .join(SeanceLecture)
             .join(Dossier)
-            .filter(ConseilLecture.conseil_pk == conseil.pk, Dossier.slug == self.slug)
+            .filter(SeanceLecture.seance_pk == seance.pk, Dossier.slug == self.slug)
             .options(*options)
         ).one_or_none()
         if lecture is None:
@@ -155,8 +155,8 @@ class TexteResource(LectureResource):
         return lecture.dossier.titre
 
     def back_resource(self, request: Request) -> Optional["Resource"]:
-        conseil = self.parent.parent
-        return conseil
+        seance = self.parent.parent
+        return seance
 
 
 class MembersCollection(Resource):

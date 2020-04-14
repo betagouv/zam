@@ -275,7 +275,7 @@ def test_conseil_add_texte_submit_increase_order(
     assert "Texte créé avec succès." in resp.text
 
     # Le texte est ajouté à la fin
-    conseil_ccfp = DBSession.query(Conseil).get(conseil_ccfp.id)
+    conseil_ccfp = DBSession.query(Conseil).get(conseil_ccfp.pk)
     assert [lecture.dossier.titre for lecture in conseil_ccfp.lectures] == [
         "Titre du texte CCFP",
         "Titre du texte ajouté",
@@ -294,7 +294,7 @@ def test_conseil_reorder_textes(app, conseil_ccfp, user_ccfp):
     from zam_repondeur.visam.models import Conseil
 
     # Ordre initial des textes
-    conseil_ccfp = DBSession.query(Conseil).get(conseil_ccfp.id)
+    conseil_ccfp = DBSession.query(Conseil).get(conseil_ccfp.pk)
     assert [lecture.dossier.titre for lecture in conseil_ccfp.lectures] == [
         "Titre du texte CCFP",
         "Titre du texte CCFP 2",
@@ -314,7 +314,7 @@ def test_conseil_reorder_textes(app, conseil_ccfp, user_ccfp):
     assert resp.text == "{}"
 
     # L’ordre des textes est modifié
-    conseil_ccfp = DBSession.query(Conseil).get(conseil_ccfp.id)
+    conseil_ccfp = DBSession.query(Conseil).get(conseil_ccfp.pk)
     assert [lecture.dossier.titre for lecture in conseil_ccfp.lectures] == [
         "Titre du texte CCFP 2",
         "Titre du texte CCFP",

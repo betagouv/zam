@@ -123,8 +123,6 @@ class Root(Resource):
         (Allow, Authenticated, "view"),
         (Allow, "group:admins", "delete"),
         (Deny, Everyone, "delete"),
-        (Allow, "group:admins", "manage_whitelist"),
-        (Deny, Everyone, "manage_whitelist"),
     ]
 
     def __init__(self, _request: Request) -> None:

@@ -7,7 +7,7 @@ from pyramid.view import view_config, view_defaults
 
 from zam_repondeur.message import Message
 from zam_repondeur.models import Chambre, DBSession, User
-from zam_repondeur.visam.models import UserChambreMembership
+from zam_repondeur.visam.models import Organisation, UserMembership
 from zam_repondeur.visam.models.events.membership import (
     MembershipAdded,
     MembershipRemoved,
@@ -35,9 +35,11 @@ class MembersList(MembersCollectionBase):
         else:
             last_event_datetime = None
             last_event_timestamp = None
+        organisations = DBSession.query(Organisation).all()
         return {
             "users": users,
             "chambres": [Chambre.CCFP, Chambre.CSFPE],
+            "organisations": organisations,
             "current_tab": "members",
             "last_event_datetime": last_event_datetime,
             "last_event_timestamp": last_event_timestamp,
@@ -50,15 +52,20 @@ class MembersDelete(MembersCollectionBase):
     def post(self) -> Response:
         user_pk = self.request.POST["user_pk"]
         chambre_name = self.request.POST["chambre_name"]
+        organisation_name = self.request.POST["organisation_name"]
 
         user = DBSession.query(User).filter_by(pk=user_pk).first()
         chambre = Chambre.from_string(chambre_name)
+        organisation = (
+            DBSession.query(Organisation).filter_by(name=organisation_name).first()
+        )
 
         membership = (
-            DBSession.query(UserChambreMembership)
+            DBSession.query(UserMembership)
             .filter(
-                UserChambreMembership.user_pk == user.pk,
-                UserChambreMembership.chambre == chambre,
+                UserMembership.user_pk == user.pk,
+                UserMembership.chambre == chambre,
+                UserMembership.organisation == organisation,
             )
             .first()
         )
@@ -66,7 +73,10 @@ class MembersDelete(MembersCollectionBase):
         self.request.session.flash(
             Message(
                 cls="success",
-                text=f"Membre {user} retiré du {chambre.value} avec succès.",
+                text=(
+                    f"Membre {user} - {organisation} retiré du "
+                    f"{chambre.value} avec succès."
+                ),
             )
         )
         return HTTPFound(location=self.request.resource_url(self.context))
@@ -78,15 +88,20 @@ class MembersAddForm(MembersCollectionBase):
     def post(self) -> Response:
         user_pk = self.request.POST["user_pk"]
         chambre_name = self.request.POST["chambre_name"]
+        organisation_name = self.request.POST["organisation_name"]
 
         user = DBSession.query(User).filter_by(pk=user_pk).first()
         chambre = Chambre.from_string(chambre_name)
+        organisation = (
+            DBSession.query(Organisation).filter_by(name=organisation_name).first()
+        )
 
         membership = (
-            DBSession.query(UserChambreMembership)
+            DBSession.query(UserMembership)
             .filter(
-                UserChambreMembership.user_pk == user.pk,
-                UserChambreMembership.chambre == chambre,
+                UserMembership.user_pk == user.pk,
+                UserMembership.chambre == chambre,
+                UserMembership.organisation == organisation,
             )
             .first()
         )
@@ -95,7 +110,7 @@ class MembersAddForm(MembersCollectionBase):
                 Message(
                     cls="warning",
                     text=(
-                        f"Cet·te utilisateur·ice ({user}) "
+                        f"Cet·te utilisateur·ice : {user} - {organisation} "
                         f"est déjà membre du {chambre.value}."
                     ),
                 )
@@ -105,6 +120,7 @@ class MembersAddForm(MembersCollectionBase):
         MembershipAdded.create(
             target_user=user,
             target_chambre=chambre,
+            target_organisation=organisation,
             comment=None,
             request=self.request,
         )
@@ -112,7 +128,10 @@ class MembersAddForm(MembersCollectionBase):
         self.request.session.flash(
             Message(
                 cls="success",
-                text=f"Membre {user} ajouté au {chambre.value} avec succès.",
+                text=(
+                    f"Membre {user} - {organisation} ajouté au "
+                    f"{chambre.value} avec succès."
+                ),
             )
         )
         return HTTPFound(location=self.request.resource_url(self.context))

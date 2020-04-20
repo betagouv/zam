@@ -8,18 +8,7 @@ from zam_repondeur.models import Amendement, Article, DBSession
 from zam_repondeur.models.division import SubDiv
 from zam_repondeur.resources import AmendementCollection
 from zam_repondeur.services.clean import clean_html
-from zam_repondeur.visam.models import AmendementSaisi
-
-GROUPES = {
-    "LE GOUVERNEMENT": "Gouvernement",
-    "employeurs territoriaux": "Employeurs territoriaux",
-    "CFE-CGC": "CFE-CGC",
-    "CFTC": "CFTC",
-    "CGT": "CGT",
-    "FA-FP": "FA-FP",
-    "FSU": "FSU",
-    "UNSA": "UNSA",
-}
+from zam_repondeur.visam.models import AmendementSaisi, Organisation
 
 
 @view_defaults(context=AmendementCollection, name="saisie")
@@ -37,7 +26,8 @@ class AddAmendementView:
             "dossier_resource": lecture_resource.dossier_resource,
             "current_tab": "saisie-amendement",
             "lecture": self.lecture,
-            "groupes": GROUPES.items(),
+            "can_select_organisation": self.can_select_organisation(),
+            "organisations": DBSession.query(Organisation).all(),
             "subdivs": [
                 (article.url_key, str(article))
                 for article in sorted(self.lecture.articles)
@@ -49,8 +39,13 @@ class AddAmendementView:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        groupe = self.request.POST.get("groupe")
-        num = self.next_num_for(GROUPES[groupe])
+        if self.can_select_organisation():
+            organisation_name = self.request.POST.get("organisation")
+        else:
+            # WARNING: what if the user is part of two organisations?
+            organisation_name = self.request.user.organisations[0].name
+
+        num = self.next_num_for(organisation_name)
         corps = clean_html(self.request.POST.get("corps", ""))
         expose = clean_html(self.request.POST.get("expose", ""))
 
@@ -82,7 +77,7 @@ class AddAmendementView:
             lecture=self.lecture,
             article=article,
             num=num,
-            groupe=groupe,
+            groupe=organisation_name,
             corps=corps,
             expose=expose,
             position=max_position + 1,
@@ -112,3 +107,9 @@ class AddAmendementView:
         start = len(groupe_title) + 1
         max_num = max((int(num[start:]) for (num,) in nums), default=0)
         return groupe_title + " " + str(max_num + 1)
+
+    def can_select_organisation(self) -> bool:
+        return any(
+            organisation.is_gouvernement
+            for organisation in self.request.user.organisations
+        )

@@ -124,15 +124,16 @@
             <div data-target="preview.contents"></div>
         </section>
         <section class="edit box">
-            <div class="form-group">
-                <label for="groupe">Soumis par</label>
-                <select name="groupe" class="form-control" required>
-                    <option value="" selected disabled>Choisir dans la liste…</option>
-                    {% for value, title in groupes %}
-                        <option value="{{ value }}">{{ title }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+            {% if can_select_organisation %}
+                <div class="form-group">
+                    <label for="organisation">Soumis par</label>
+                    <select name="organisation" class="form-control" required>
+                        {% for organisation in organisations %}
+                            <option value="{{ organisation.name }}" {% if loop.first %}selected{% endif %}>{{ organisation.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
             <div class="form-group">
                 <label for="corps">Corps de l’amendement</label>
                 <textarea name="corps" class="form-control editable"></textarea>

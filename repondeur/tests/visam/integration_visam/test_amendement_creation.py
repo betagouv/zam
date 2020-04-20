@@ -29,16 +29,32 @@ def test_amendement_creation_select_article(
 
 
 def test_amendement_creation(
-    wsgi_server, driver, lecture_seance_ccfp_url, articles_seance_ccfp
+    app,
+    wsgi_server,
+    driver,
+    lecture_seance_ccfp_url,
+    articles_seance_ccfp,
+    user_ccfp,
+    org_gouvernement,
+    org_cgt,
 ):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import DBSession, Amendement, Chambre
+    from zam_repondeur.visam.models import UserMembership
+
+    with transaction.manager:
+        user_membership = UserMembership.create(
+            user=user_ccfp, chambre=Chambre.CCFP, organisation=org_gouvernement
+        )
+        DBSession.add(user_membership)
 
     driver.get(f"{lecture_seance_ccfp_url}/amendements/saisie")
     subdiv = Select(driver.find_element_by_css_selector('select[name="subdiv"]'))
     subdiv.select_by_visible_text("Art. 2")
 
-    groupe = Select(driver.find_element_by_css_selector('select[name="groupe"]'))
-    groupe.select_by_visible_text("CFTC")
+    organisation = Select(
+        driver.find_element_by_css_selector('select[name="organisation"]')
+    )
+    organisation.select_by_visible_text("CGT")
 
     driver.switch_to.frame("corps_ifr")
     WebDriverWait(driver, 20).until(
@@ -60,7 +76,8 @@ def test_amendement_creation(
 
     with transaction.manager:
         amendement = DBSession.query(Amendement).first()
-        assert amendement.groupe == "CFTC"
+        assert amendement.num == "CGT 1"
+        assert amendement.groupe == "CGT"
         assert amendement.article.num == "2"
         assert amendement.corps == "<p>Corps</p>"
         assert amendement.expose == "<p>Exposé</p>"

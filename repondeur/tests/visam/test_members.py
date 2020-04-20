@@ -23,7 +23,7 @@ class TestMembersList:
 
 
 class TestMembersAdd:
-    def test_create(self, app, user_admin, user_david):
+    def test_create(self, app, user_admin, user_david, org_cgt):
         from zam_repondeur.models import Chambre, DBSession, User
 
         DBSession.add(user_david)
@@ -31,7 +31,11 @@ class TestMembersAdd:
 
         resp = app.post(
             "/members/add",
-            {"user_pk": user_david.pk, "chambre_name": str(Chambre.CCFP)},
+            {
+                "user_pk": user_david.pk,
+                "chambre_name": str(Chambre.CCFP),
+                "organisation_name": org_cgt.name,
+            },
             user=user_admin,
         )
 
@@ -43,7 +47,7 @@ class TestMembersAdd:
         assert resp.status_code == 200
         assert resp.content_type == "text/html"
         assert (
-            "Membre David (david@exemple.gouv.fr) ajouté au "
+            "Membre David (david@exemple.gouv.fr) - CGT ajouté au "
             "Conseil commun de la fonction publique avec succès."
         ) in resp.text
 
@@ -52,14 +56,14 @@ class TestMembersAdd:
             assert len(user_admin.events) == 1
             assert user_admin.events[0].render_summary() == (
                 "<abbr title='user@admin.gouv.fr'>Admin user</abbr> a ajouté "
-                "David (david@exemple.gouv.fr) au "
+                "David (david@exemple.gouv.fr) - CGT au "
                 "Conseil commun de la fonction publique."
             )
 
         user_david = DBSession.query(User).filter_by(pk=user_david.pk).one()  # Refresh.
         assert user_david.chambres == [Chambre.CCFP]
 
-    def test_not_possible_to_regular_user(self, app, user_david):
+    def test_not_possible_twice(self, app, user_admin, user_david, org_cgt):
         from zam_repondeur.models import Chambre, DBSession, User
 
         DBSession.add(user_david)
@@ -67,7 +71,67 @@ class TestMembersAdd:
 
         resp = app.post(
             "/members/add",
-            {"user_pk": user_david.pk, "chambre_name": str(Chambre.CCFP)},
+            {
+                "user_pk": user_david.pk,
+                "chambre_name": str(Chambre.CCFP),
+                "organisation_name": org_cgt.name,
+            },
+            user=user_admin,
+        )
+        with transaction.manager:
+            DBSession.add(user_admin)
+            assert len(user_admin.events) == 1
+            assert user_admin.events[0].render_summary() == (
+                "<abbr title='user@admin.gouv.fr'>Admin user</abbr> a ajouté "
+                "David (david@exemple.gouv.fr) - CGT au "
+                "Conseil commun de la fonction publique."
+            )
+
+        user_david = DBSession.query(User).filter_by(pk=user_david.pk).one()  # Refresh.
+        assert user_david.chambres == [Chambre.CCFP]
+
+        resp = app.post(
+            "/members/add",
+            {
+                "user_pk": user_david.pk,
+                "chambre_name": str(Chambre.CCFP),
+                "organisation_name": org_cgt.name,
+            },
+            user=user_admin,
+        )
+
+        assert resp.status_code == 302
+        assert resp.location == "https://visam.test/members/"
+
+        resp = resp.follow()
+
+        assert resp.status_code == 200
+        assert resp.content_type == "text/html"
+        assert (
+            "Cet·te utilisateur·ice : David (david@exemple.gouv.fr) - CGT "
+            "est déjà membre du Conseil commun de la fonction publique."
+        ) in resp.text
+
+        with transaction.manager:
+            DBSession.add(user_admin)
+            assert len(user_admin.events) == 1
+
+        user_david = DBSession.query(User).filter_by(pk=user_david.pk).one()  # Refresh.
+        assert user_david.chambres == [Chambre.CCFP]
+
+    def test_not_possible_to_regular_user(self, app, user_david, org_cgt):
+        from zam_repondeur.models import Chambre, DBSession, User
+
+        DBSession.add(user_david)
+        assert user_david.chambres == []
+
+        resp = app.post(
+            "/members/add",
+            {
+                "user_pk": user_david.pk,
+                "chambre_name": str(Chambre.CCFP),
+                "organisation_name": org_cgt.name,
+            },
             user=user_david,
         )
 
@@ -87,7 +151,11 @@ class TestMembersDelete:
 
         resp = app.post(
             "/members/",
-            {"user_pk": user_ccfp.pk, "chambre_name": str(Chambre.CCFP)},
+            {
+                "user_pk": user_ccfp.pk,
+                "chambre_name": str(Chambre.CCFP),
+                "organisation_name": user_ccfp.organisations[0].name,
+            },
             user=user_admin,
         )
 
@@ -100,7 +168,7 @@ class TestMembersDelete:
         assert resp.content_type == "text/html"
 
         assert (
-            "Membre David (david@exemple.gouv.fr) retiré du "
+            "Membre David (david@exemple.gouv.fr) - CGT retiré du "
             "Conseil commun de la fonction publique avec succès."
         ) in resp.text
 
@@ -109,7 +177,7 @@ class TestMembersDelete:
             assert len(user_admin.events) == 1
             assert user_admin.events[0].render_summary() == (
                 "<abbr title='user@admin.gouv.fr'>Admin user</abbr> a retiré "
-                "David (david@exemple.gouv.fr) du "
+                "David (david@exemple.gouv.fr) - CGT du "
                 "Conseil commun de la fonction publique."
             )
 
@@ -124,7 +192,11 @@ class TestMembersDelete:
 
         resp = app.post(
             "/members/",
-            {"user_pk": user_ccfp.pk, "chambre_name": str(Chambre.CCFP)},
+            {
+                "user_pk": user_ccfp.pk,
+                "chambre_name": str(Chambre.CCFP),
+                "organisation_name": user_ccfp.organisations[0].name,
+            },
             user=user_david,
         )
 

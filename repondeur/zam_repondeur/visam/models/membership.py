@@ -6,8 +6,10 @@ from zam_repondeur.models.base import Base, DBSession
 from zam_repondeur.models.chambre import Chambre
 from zam_repondeur.models.users import User
 
+from .organisation import Organisation
 
-class UserChambreMembership(Base):
+
+class UserMembership(Base):
     """
     Association object
 
@@ -22,27 +24,38 @@ class UserChambreMembership(Base):
         primary_key=True,
     )
     user = relationship(
-        User, backref=backref("_chambres", cascade="all, delete-orphan")
+        User, backref=backref("memberships", cascade="all, delete-orphan")
     )
 
     chambre = Column(
         Enum(Chambre),
         nullable=False,
         primary_key=True,
-        doc="""
-        Le conseil concerné (par exemple: CCFP, CSFPE...).
-        """,
+        doc="""Le conseil concerné (par exemple: CCFP, CSFPE...).""",
     )
 
-    organisation = Column(Integer, doc="Organisations syndicales + autres")
+    organisation_pk = Column(
+        Integer, ForeignKey("organisations.pk"), primary_key=True, nullable=False,
+    )
+    organisation = relationship(Organisation, backref=backref("memberships"))
 
     @classmethod
-    def create(cls, user: User, chambre: Chambre,) -> "UserChambreMembership":
-        user_chambre_membership = cls(user=user, chambre=chambre,)
-        DBSession.add(user_chambre_membership)
-        return user_chambre_membership
+    def create(
+        cls, user: User, chambre: Chambre, organisation: Organisation
+    ) -> "UserMembership":
+        user_membership = cls(user=user, chambre=chambre, organisation=organisation)
+        DBSession.add(user_membership)
+        return user_membership
 
 
 User.chambres = association_proxy(
-    "_chambres", "chambre", creator=lambda user: UserChambreMembership(user=user)
+    "memberships", "chambre", creator=lambda user: UserMembership(user=user)
+)
+
+User.organisations = association_proxy(
+    "memberships", "organisation", creator=lambda user: UserMembership(user=user)
+)
+
+Organisation.members = association_proxy(
+    "memberships", "user", creator=lambda user: UserMembership(user=user)
 )

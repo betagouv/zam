@@ -1,4 +1,22 @@
+import pytest
 import transaction
+
+
+@pytest.mark.usefixtures("dossier_plfss2018")
+class TestMenuAction:
+    def test_admin_can_see_menu_action(self, app, user_sgg):
+        resp = app.get("/dossiers/plfss-2018/", user=user_sgg)
+        menu_actions = [
+            elem.text().strip() for elem in resp.parser.css(".menu-actions > li > a")
+        ]
+        assert "Retirer l’accès au dossier" in menu_actions
+
+    def test_regular_user_cannot_see_menu_action(self, app, user_david):
+        resp = app.get("/dossiers/plfss-2018/", user=user_david)
+        menu_actions = [
+            elem.text().strip() for elem in resp.parser.css(".menu-actions > li > a")
+        ]
+        assert "Retirer l’accès au dossier" not in menu_actions
 
 
 def test_get_form(app, user_sgg, user_david, dossier_plfss2018):

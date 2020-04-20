@@ -12,6 +12,14 @@ def extra_whitelist(db):
         AllowedEmailPattern.create(pattern="liste.blanche@exemple.fr")
 
 
+def test_menu_action(app, user_david, dossier_plfss2018):
+    resp = app.get("/dossiers/plfss-2018/", user=user_david)
+    menu_actions = [
+        elem.text().strip() for elem in resp.parser.css(".menu-actions > li > a")
+    ]
+    assert "Inviter au dossier" in menu_actions
+
+
 def test_get_form(app, user_david, dossier_plfss2018):
     resp = app.get("/dossiers/plfss-2018/invite", user=user_david)
 

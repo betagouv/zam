@@ -1,4 +1,5 @@
-from typing import Any, Iterator, List, Optional, Tuple, cast
+from itertools import chain
+from typing import Any, Iterator, List, Optional, Tuple, Type, cast
 
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
@@ -8,6 +9,7 @@ from sqlalchemy.orm import Query, joinedload, lazyload, subqueryload
 from sqlalchemy.orm.exc import NoResultFound
 
 from zam_repondeur.decorator import reify
+from zam_repondeur.menu import MenuAction
 from zam_repondeur.models import (
     AllowedEmailPattern,
     Amendement,
@@ -56,6 +58,10 @@ class Resource(dict):
         while parent is not None:
             yield parent
             parent = parent.parent
+
+    @property
+    def self_and_parents(self) -> Iterator["Resource"]:
+        return chain([self], self.parents)
 
     def add_child(self, child: "Resource") -> None:
         self[child.__name__] = child
@@ -107,6 +113,10 @@ class Resource(dict):
         """Allows redirecting to a child for resources that don't have views"""
         return None
 
+    @property
+    def menu_actions(self) -> List[Type[MenuAction]]:
+        return []
+
 
 class Root(Resource):
     __acl__ = [
@@ -125,6 +135,59 @@ class Root(Resource):
     @property
     def default_child(self) -> Optional[Resource]:
         return cast(Resource, self["dossiers"])
+
+    class ManageWhiteList(MenuAction):
+        title = "Gestion des accès"
+        tab_name = "whitelist"
+
+        @property
+        def should_show(self) -> bool:
+            return self.request.has_permission("manage", self.resource["whitelist"])
+
+        @property
+        def url(self) -> str:
+            return self.request.resource_url(self.resource["whitelist"])
+
+    class ManageAdmins(MenuAction):
+        title = "Gestion des administrateur·ice·s"
+        tab_name = "admins"
+
+        @property
+        def should_show(self) -> bool:
+            return self.request.has_permission("manage", self.resource["admins"])
+
+        @property
+        def url(self) -> str:
+            return self.request.resource_url(self.resource["admins"])
+
+    class EditProfile(MenuAction):
+        link_class = "account"
+
+        @property
+        def title(self) -> str:
+            return self.request.user.name or ""
+
+        @property
+        def should_show(self) -> bool:
+            return bool(self.request.user.name)
+
+        @property
+        def url(self) -> str:
+            return self.request.route_url("welcome")
+
+    class Logout(MenuAction):
+        title = "Déconnexion"
+        link_class = "logout"
+
+        @property
+        def should_show(self) -> bool:
+            return self.request.user is not None
+
+        @property
+        def url(self) -> str:
+            return self.request.route_url("logout")
+
+    menu_actions = [ManageWhiteList, ManageAdmins, EditProfile, Logout]
 
 
 class WhitelistCollection(Resource):
@@ -212,6 +275,28 @@ class DossierResource(Resource):
     def breadcrumbs_label(self) -> Optional[str]:
         dossier: Dossier = self.model()
         return dossier.titre
+
+    class InviterAuDossier(MenuAction):
+        title = "Inviter au dossier"
+        tab_name = "invite"
+
+        @property
+        def url(self) -> str:
+            return self.request.resource_url(self.resource, "invite")
+
+    class RetirerAccesAuDossier(MenuAction):
+        title = "Retirer l’accès au dossier"
+        tab_name = "retrait"
+
+        @property
+        def should_show(self) -> bool:
+            return self.request.has_permission("retrait", self.resource)
+
+        @property
+        def url(self) -> str:
+            return self.request.resource_url(self.resource, "retrait")
+
+    menu_actions = [InviterAuDossier, RetirerAccesAuDossier]
 
 
 class LectureCollection(Resource):
@@ -313,6 +398,24 @@ class LectureResource(Resource):
             )
             + lecture.format_partie()
         )
+
+    class DossierDeBanc(MenuAction):
+        title = "Dossier de banc"
+        open_in_new_window = True
+
+        @property
+        def url(self) -> str:
+            return self.request.resource_url(self.resource["articles"])
+
+    class OptionsAvancees(MenuAction):
+        title = "Options avancées"
+        tab_name = "options"
+
+        @property
+        def url(self) -> str:
+            return self.request.resource_url(self.resource, "options")
+
+    menu_actions = [DossierDeBanc, OptionsAvancees]
 
 
 class AmendementCollection(Resource):

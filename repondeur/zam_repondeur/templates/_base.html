@@ -44,32 +44,20 @@
                                 {% endif %}
                             </ul>
                             <ul class="menu-actions">
-                                {% if lecture_resource is defined %}
-                                    <li>
-                                        <a href="{{ request.resource_url(lecture_resource['articles']) }}" target="_blank">
-                                            Dossier de banc
-                                        </a>
-                                    </li>
-                                    <li{% if current_tab == 'options' %} class="selected"{% endif %}>
-                                        <a href="{{ request.resource_url(lecture_resource, 'options') }}">
-                                            Options avancées
-                                        </a>
-                                    </li>
-                                {% endif %}
-                                {% if dossier_resource is defined %}
-                                    <li{% if current_tab == 'invite' %} class="selected"{% endif %}><a href="{{ request.resource_url(dossier_resource, 'invite') }}">Inviter au dossier</a></li>
-                                    {% if request.user.is_admin %}
-                                        <li{% if current_tab == 'retrait' %} class="selected"{% endif %}><a href="{{ request.resource_url(dossier_resource, 'retrait') }}">Retirer l’accès au dossier</a></li>
+                                {% for action in request.get_menu_actions() %}
+                                    {% if action.should_show %}
+                                        <li {% if action.tab_name
+                                               and current_tab is defined
+                                               and current_tab == action.tab_name %} class="selected"{% endif %}>
+                                            <a href="{{ action.url }}"
+                                               {% if action.link_class %} class="{{ action.link_class }}"{% endif %}
+                                               {% if action.open_in_new_window %} target="_blank"{% endif %}
+                                               >
+                                                {{ action.title }}
+                                            </a>
+                                        </li>
                                     {% endif %}
-                                {% endif %}
-                                {% if request.user.is_admin and current_tab is defined %}
-                                    <li{% if current_tab == 'whitelist' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root['whitelist']) }}">Gestion des accès</a></li>
-                                    <li{% if current_tab == 'admins' %} class="selected"{% endif %}><a href="{{ request.resource_url(request.root['admins']) }}">Gestion des administrateur·ice·s</a></li>
-                                {% endif %}
-                                {% if request.user.name %}
-                                    <li class="user"><a href="{{ request.route_url('welcome') }}" class="account">{{ request.user.name or "" }}</a></li>
-                                {% endif %}
-                                <li><a class="logout" href="{{ request.route_url('logout') }}" title="Se déconnecter de {{ app_name }}">Déconnexion</a></li>
+                                {% endfor %}
                             </ul>
                         </div>
                     </li>

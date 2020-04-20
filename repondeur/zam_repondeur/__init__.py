@@ -50,6 +50,7 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
 
         setup_database(config, settings)
 
+        config.include("zam_repondeur.menu")
         config.include("zam_repondeur.auth")
         config.include("zam_repondeur.templating")
 

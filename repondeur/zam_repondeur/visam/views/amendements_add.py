@@ -63,6 +63,7 @@ class AddAmendementView:
             .one_or_none()
         )
 
+        auteur = "LE GOUVERNEMENT" if organisation.is_gouvernement else ""
         groupe = organisation.name
 
         max_position = max(
@@ -79,6 +80,7 @@ class AddAmendementView:
             lecture=self.lecture,
             article=article,
             num=num,
+            auteur=auteur,
             groupe=groupe,
             corps=corps,
             expose=expose,

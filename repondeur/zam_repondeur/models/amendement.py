@@ -180,7 +180,11 @@ class AmendementLocation(Base):
 
 
 class Amendement(Base):
+
+    AUTEUR_GOUVERNEMENT = "LE GOUVERNEMENT"
+
     VERY_BIG_NUMBER = 999_999_999
+
     __tablename__ = "amendements"
     __table_args__ = (
         Index("ix_amendements__lecture_pk", "lecture_pk"),
@@ -465,7 +469,7 @@ class Amendement(Base):
 
     @reify
     def gouvernemental(self) -> bool:
-        return self.auteur == "LE GOUVERNEMENT"
+        return self.auteur == Amendement.AUTEUR_GOUVERNEMENT
 
     @reify
     def is_withdrawn(self) -> bool:

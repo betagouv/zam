@@ -1,3 +1,6 @@
+from typing import Optional
+
+from more_itertools import first_true
 from sqlalchemy import Column, Enum, ForeignKey, Integer
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import backref, relationship
@@ -48,13 +51,22 @@ class UserMembership(Base):
         return user_membership
 
 
+def _membership_of(self: User, chambre: Chambre) -> Optional[UserMembership]:
+    return first_true(self.memberships, pred=lambda m: m.chambre == chambre)
+
+
+User.membership_of = _membership_of
+
+
 User.chambres = association_proxy(
     "memberships", "chambre", creator=lambda user: UserMembership(user=user)
 )
 
+
 User.organisations = association_proxy(
     "memberships", "organisation", creator=lambda user: UserMembership(user=user)
 )
+
 
 Organisation.members = association_proxy(
     "memberships", "user", creator=lambda user: UserMembership(user=user)

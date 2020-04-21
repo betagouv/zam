@@ -115,6 +115,6 @@ class AddAmendementView:
         return groupe_title + " " + str(max_num + 1)
 
     def can_select_organisation(self) -> bool:
-        return (
+        return self.request.user.is_admin or (
             self.membership is not None and self.membership.organisation.is_gouvernement
         )

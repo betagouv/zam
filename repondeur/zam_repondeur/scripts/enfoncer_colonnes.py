@@ -125,7 +125,7 @@ def extract_data_from_csv_file(
 
                 # Extraction de l'auteur
                 if mo.group(2) == "Gouvernement":
-                    auteur = "LE GOUVERNEMENT"
+                    auteur = Amendement.AUTEUR_GOUVERNEMENT
                 else:
                     groupe = mo.group(2)
 

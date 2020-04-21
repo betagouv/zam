@@ -63,7 +63,7 @@ class AddAmendementView:
             .one_or_none()
         )
 
-        auteur = "LE GOUVERNEMENT" if organisation.is_gouvernement else ""
+        auteur = Amendement.AUTEUR_GOUVERNEMENT if organisation.is_gouvernement else ""
         groupe = organisation.name
 
         max_position = max(

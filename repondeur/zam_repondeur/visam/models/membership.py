@@ -40,7 +40,9 @@ class UserMembership(Base):
     organisation_pk = Column(
         Integer, ForeignKey("organisations.pk"), primary_key=True, nullable=False,
     )
-    organisation = relationship(Organisation, backref=backref("memberships"))
+    organisation: Organisation = relationship(
+        Organisation, backref=backref("memberships")
+    )
 
     @classmethod
     def create(

@@ -8,6 +8,8 @@ from zam_repondeur.models.base import Base, DBSession
 class Organisation(Base):
     __tablename__ = "organisations"
 
+    __repr_keys__ = ("name",)
+
     pk = Column(Integer, primary_key=True)
     name: str = Column(Text, nullable=False, unique=True)
 

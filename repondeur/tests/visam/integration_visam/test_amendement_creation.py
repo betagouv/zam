@@ -8,8 +8,9 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 
 
 def test_amendement_creation_select_article(
-    wsgi_server, driver, lecture_seance_ccfp_url, articles_seance_ccfp
+    driver, user_ccfp, lecture_seance_ccfp_url, articles_seance_ccfp
 ):
+    driver.login(user_ccfp.email)
     driver.get(f"{lecture_seance_ccfp_url}/amendements/saisie")
     subdiv = Select(driver.find_element_by_css_selector('select[name="subdiv"]'))
     subdiv.select_by_visible_text("Art. 2")
@@ -30,7 +31,6 @@ def test_amendement_creation_select_article(
 
 def test_amendement_creation(
     app,
-    wsgi_server,
     driver,
     lecture_seance_ccfp_url,
     articles_seance_ccfp,
@@ -47,6 +47,7 @@ def test_amendement_creation(
         )
         DBSession.add(user_membership)
 
+    driver.login(user_ccfp.email)
     driver.get(f"{lecture_seance_ccfp_url}/amendements/saisie")
     subdiv = Select(driver.find_element_by_css_selector('select[name="subdiv"]'))
     subdiv.select_by_visible_text("Art. 2")

@@ -1,19 +1,24 @@
 from contextlib import contextmanager
+from functools import partial
 
 import pytest
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from webtest.http import StopableWSGIServer
 
-from .helpers import login
+from .helpers import login, logout
 
 
 @pytest.fixture(params=["firefox", "chrome"])
-def driver(request, wsgi_server, user_ccfp):
+def driver(request, wsgi_server):
     factory = driver_factory(request.param)
     with factory() as _driver:
+
+        # Add helper methods to the driver
+        _driver.login = partial(login, _driver, wsgi_server.application_url)
+        _driver.logout = partial(logout, _driver, wsgi_server.application_url)
+
         try:
-            login(_driver, wsgi_server.application_url, user_ccfp.email)
             yield _driver
         finally:
             _driver.quit()

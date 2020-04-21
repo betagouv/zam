@@ -24,7 +24,7 @@ def login(driver, base_url, email):
     wait.until(lambda driver: not driver.current_url.startswith(welcome_url))
 
 
-def logout(driver, base_url, email):
+def logout(driver, base_url):
     logout_url = f"{base_url}deconnexion"
     driver.get(logout_url)
     wait = WebDriverWait(driver, 1)

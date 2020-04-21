@@ -21,6 +21,8 @@ class UserMembership(Base):
 
     __tablename__ = "users_chambres"
 
+    __repr_keys__ = ("user", "chambre", "organisation")
+
     user_pk = Column(
         Integer,
         ForeignKey("users.pk", onupdate="CASCADE", ondelete="CASCADE"),

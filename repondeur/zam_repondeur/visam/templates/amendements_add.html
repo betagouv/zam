@@ -128,8 +128,9 @@
                 <div class="form-group">
                     <label for="organisation">Soumis par</label>
                     <select name="organisation" class="form-control" required>
-                        {% for organisation in organisations %}
-                            <option value="{{ organisation.name }}" {% if loop.first %}selected{% endif %}>{{ organisation.name }}</option>
+                        <option value="{{ gouvernement.name }}" selected>{{ gouvernement.name }}</option>
+                        {% for organisation in organisations_except_gouvernement %}
+                            <option value="{{ organisation.name }}">{{ organisation.name }}</option>
                         {% endfor %}
                     </select>
                 </div>

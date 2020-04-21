@@ -32,7 +32,10 @@ class AddAmendementView:
             "current_tab": "saisie-amendement",
             "lecture": self.lecture,
             "can_select_organisation": self.can_select_organisation(),
-            "organisations": DBSession.query(Organisation).all(),
+            "gouvernement": Organisation.find_by_name("Gouvernement"),
+            "organisations_except_gouvernement": DBSession.query(Organisation)
+            .filter(Organisation.name != "Gouvernement")
+            .all(),
             "subdivs": [
                 (article.url_key, str(article))
                 for article in sorted(self.lecture.articles)

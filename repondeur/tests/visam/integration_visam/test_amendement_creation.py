@@ -29,56 +29,92 @@ def test_amendement_creation_select_article(
     )
 
 
-def test_amendement_creation(
-    app,
-    driver,
-    lecture_seance_ccfp_url,
-    articles_seance_ccfp,
-    user_ccfp,
-    org_gouvernement,
-    org_cgt,
-):
-    from zam_repondeur.models import DBSession, Amendement, Chambre
-    from zam_repondeur.visam.models import UserMembership
+class TestAddAmendement:
+    def test_member_adds_amendement_for_their_organization(
+        app,
+        driver,
+        lecture_seance_ccfp_url,
+        articles_seance_ccfp,
+        user_ccfp,
+        org_gouvernement,
+        org_cgt,
+    ):
+        from zam_repondeur.models import DBSession, Amendement
 
-    with transaction.manager:
-        user_membership = UserMembership.create(
-            user=user_ccfp, chambre=Chambre.CCFP, organisation=org_gouvernement
+        driver.login(user_ccfp.email)
+        driver.get(f"{lecture_seance_ccfp_url}/amendements/saisie")
+        subdiv = Select(driver.find_element_by_css_selector('select[name="subdiv"]'))
+        subdiv.select_by_visible_text("Art. 2")
+
+        driver.switch_to.frame("corps_ifr")
+        WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-id="corps"]',))
+        ).send_keys("Corps")
+
+        driver.switch_to.default_content()  # Required to switch to a new iframe.
+
+        driver.switch_to.frame("expose_ifr")
+        WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-id="expose"]',))
+        ).send_keys("Exposé")
+
+        driver.switch_to.default_content()
+        save_button = driver.find_element_by_css_selector(
+            '.save-buttons input[name="save"]'
         )
-        DBSession.add(user_membership)
+        save_button.click()
 
-    driver.login(user_ccfp.email)
-    driver.get(f"{lecture_seance_ccfp_url}/amendements/saisie")
-    subdiv = Select(driver.find_element_by_css_selector('select[name="subdiv"]'))
-    subdiv.select_by_visible_text("Art. 2")
+        with transaction.manager:
+            amendement = DBSession.query(Amendement).first()
+            assert amendement.num == "CGT 1"
+            assert amendement.groupe == "CGT"
+            assert amendement.article.num == "2"
+            assert amendement.corps == "<p>Corps</p>"
+            assert amendement.expose == "<p>Exposé</p>"
 
-    organisation = Select(
-        driver.find_element_by_css_selector('select[name="organisation"]')
-    )
-    organisation.select_by_visible_text("CGT")
+    def test_gouvernement_adds_amendement_for_an_organization(
+        app,
+        driver,
+        lecture_seance_ccfp_url,
+        articles_seance_ccfp,
+        user_ccfp_gouvernement,
+        org_gouvernement,
+        org_cgt,
+    ):
+        from zam_repondeur.models import DBSession, Amendement
 
-    driver.switch_to.frame("corps_ifr")
-    WebDriverWait(driver, 20).until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-id="corps"]',))
-    ).send_keys("Corps")
+        driver.login(user_ccfp_gouvernement.email)
+        driver.get(f"{lecture_seance_ccfp_url}/amendements/saisie")
+        subdiv = Select(driver.find_element_by_css_selector('select[name="subdiv"]'))
+        subdiv.select_by_visible_text("Art. 2")
 
-    driver.switch_to.default_content()  # Required to be able to switch to a new iframe.
+        organisation = Select(
+            driver.find_element_by_css_selector('select[name="organisation"]')
+        )
+        organisation.select_by_visible_text("CGT")
 
-    driver.switch_to.frame("expose_ifr")
-    WebDriverWait(driver, 20).until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-id="expose"]',))
-    ).send_keys("Exposé")
+        driver.switch_to.frame("corps_ifr")
+        WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-id="corps"]',))
+        ).send_keys("Corps")
 
-    driver.switch_to.default_content()
-    save_button = driver.find_element_by_css_selector(
-        '.save-buttons input[name="save"]'
-    )
-    save_button.click()
+        driver.switch_to.default_content()  # Required to switch to a new iframe.
 
-    with transaction.manager:
-        amendement = DBSession.query(Amendement).first()
-        assert amendement.num == "CGT 1"
-        assert amendement.groupe == "CGT"
-        assert amendement.article.num == "2"
-        assert amendement.corps == "<p>Corps</p>"
-        assert amendement.expose == "<p>Exposé</p>"
+        driver.switch_to.frame("expose_ifr")
+        WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-id="expose"]',))
+        ).send_keys("Exposé")
+
+        driver.switch_to.default_content()
+        save_button = driver.find_element_by_css_selector(
+            '.save-buttons input[name="save"]'
+        )
+        save_button.click()
+
+        with transaction.manager:
+            amendement = DBSession.query(Amendement).first()
+            assert amendement.num == "CGT 1"
+            assert amendement.groupe == "CGT"
+            assert amendement.article.num == "2"
+            assert amendement.corps == "<p>Corps</p>"
+            assert amendement.expose == "<p>Exposé</p>"

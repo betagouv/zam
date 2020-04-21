@@ -756,7 +756,7 @@ class ANAmendementData:
         if self.raw_auteur is None:
             return "Non trouvé"
         if self.raw_auteur.get("estGouvernement", "") == "1":
-            return "LE GOUVERNEMENT"
+            return Amendement.AUTEUR_GOUVERNEMENT
         nom = self.raw_auteur.get("nom", "")
         prenom = self.raw_auteur.get("prenom", "")
         return f"{nom} {prenom}"

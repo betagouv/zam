@@ -110,7 +110,7 @@ def _make_amendement(
     is_gouvernemental = extract("signataires", "auteur", "typeAuteur") == "Gouvernement"
 
     if is_gouvernemental:
-        auteur_name = "LE GOUVERNEMENT"
+        auteur_name = Amendement.AUTEUR_GOUVERNEMENT
         groupe_name = None
         matricule = None
     else:

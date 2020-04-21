@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy import Column, Integer, Text
 
 from zam_repondeur.models.base import Base, DBSession
@@ -21,3 +23,10 @@ class Organisation(Base):
     @property
     def is_gouvernement(self) -> bool:
         return self.name == "Gouvernement"
+
+    @classmethod
+    def find_by_name(cls, name: str) -> Optional["Organisation"]:
+        organisation: Optional[Organisation] = DBSession.query(cls).filter_by(
+            name=name
+        ).one_or_none()
+        return organisation

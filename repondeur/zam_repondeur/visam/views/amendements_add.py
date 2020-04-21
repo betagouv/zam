@@ -44,14 +44,8 @@ class AddAmendementView:
 
     @view_config(request_method="POST")
     def post(self) -> Response:
-        if self.can_select_organisation():
-            organisation_name = self.request.POST.get("organisation")
-        else:
-            if self.membership is None:
-                raise HTTPBadRequest
-            organisation_name = self.membership.organisation.name
-
-        num = self.next_num_for(organisation_name)
+        organisation = self.organisation()
+        num = self.next_num_for(organisation.name)
         corps = clean_html(self.request.POST.get("corps", ""))
         expose = clean_html(self.request.POST.get("expose", ""))
 
@@ -69,6 +63,8 @@ class AddAmendementView:
             .one_or_none()
         )
 
+        groupe = organisation.name
+
         max_position = max(
             (
                 amdt.position
@@ -83,7 +79,7 @@ class AddAmendementView:
             lecture=self.lecture,
             article=article,
             num=num,
-            groupe=organisation_name,
+            groupe=groupe,
             corps=corps,
             expose=expose,
             position=max_position + 1,
@@ -100,6 +96,22 @@ class AddAmendementView:
         # Redirect to index
         index_url = self.request.resource_url(self.context, anchor=amendement.slug)
         return HTTPFound(location=index_url)
+
+    def organisation(self) -> Organisation:
+        # Get the organisation from the submitted form
+        if self.can_select_organisation():
+            organisation = Organisation.find_by_name(
+                self.request.POST.get("organisation")
+            )
+            if organisation is None:
+                raise HTTPBadRequest("Invalid organisation")
+            return organisation
+
+        # Get the organisation from the user's membership
+        if self.membership is not None:
+            return self.membership.organisation
+
+        raise HTTPBadRequest("Cannot determine organisation")
 
     def next_num_for(self, groupe_title: str) -> str:
         nums = (

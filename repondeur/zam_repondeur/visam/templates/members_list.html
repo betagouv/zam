@@ -74,27 +74,24 @@
                             {% endif %}
                         </td>
                         {% for chambre in chambres %}
+                            {% set membership = user.membership_of(chambre) %}
                             <td>
-                                {% if chambre in user.chambres %}
-                                    {% for membership in user.memberships %}
-                                        {% if membership.chambre == chambre %}
-                                            {{ membership.organisation }}
-                                            <form
-                                                method="post"
-                                                action="{{ request.resource_url(context) }}"
-                                                data-controller="members">
-                                                <input type="hidden" name="user_pk" value="{{ user.pk }}">
-                                                <input type="hidden" name="chambre_name" value="{{ chambre }}">
-                                                <input type="hidden" name="organisation_name" value="{{ membership.organisation.name }}">
-                                                <div class="form-group save-buttons">
-                                                    <input
-                                                        type="submit" name="save" value="Retirer"
-                                                        class="button danger"
-                                                        data-action="members#delete">
-                                                </div>
-                                            </form>
-                                        {% endif %}
-                                    {% endfor %}
+                                {% if membership %}
+                                    {{ membership.organisation }}
+                                    <form
+                                        method="post"
+                                        action="{{ request.resource_url(context) }}"
+                                        data-controller="members">
+                                        <input type="hidden" name="user_pk" value="{{ user.pk }}">
+                                        <input type="hidden" name="chambre_name" value="{{ chambre }}">
+                                        <input type="hidden" name="organisation_name" value="{{ membership.organisation.name }}">
+                                        <div class="form-group save-buttons">
+                                            <input
+                                                type="submit" name="save" value="Retirer"
+                                                class="button danger"
+                                                data-action="members#delete">
+                                        </div>
+                                    </form>
                                 {% else %}
                                     —
                                     <form

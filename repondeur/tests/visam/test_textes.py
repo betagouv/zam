@@ -285,7 +285,7 @@ def test_seance_add_texte_submit_increase_order(
 def test_seance_reorder_textes_unique_lecture(app, lecture_seance_ccfp, user_ccfp):
     resp = app.get("/seances/ccfp-2020-04-01", user=user_ccfp)
     assert resp.status_code == 200
-    assert '<script src="https://visam.test/static/js/seance.js' not in resp.text
+    assert '<script src="https://visam.test/static/js/textes-order.js' not in resp.text
 
 
 @pytest.mark.usefixtures("lecture_seance_ccfp", "lecture_seance_ccfp_2")
@@ -302,7 +302,7 @@ def test_seance_reorder_textes(app, seance_ccfp, user_ccfp):
 
     resp = app.get("/seances/ccfp-2020-04-01", user=user_ccfp)
     assert resp.status_code == 200
-    assert '<script src="https://visam.test/static/js/seance.js' in resp.text
+    assert '<script src="https://visam.test/static/js/textes-order.js' in resp.text
 
     assert resp.parser.css("h3")[0].text() == "Titre du texte CCFP"
     assert resp.parser.css("h3")[1].text() == "Titre du texte CCFP 2"

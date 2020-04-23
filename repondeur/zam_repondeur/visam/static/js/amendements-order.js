@@ -1,80 +1,36 @@
-class AmendementsOrder extends Stimulus.Controller {
+class AmendementsOrder extends BaseOrder {
   static get targets() {
-    return ['parent', 'dropzone', 'amendement']
+    return ['amendement']
   }
 
-  dragging(event) {
-    // Necessary to start the dragging stuff.
+  dragstart(event) {
+    super.dragstart(event)
+    event.dataTransfer.setData('application/drag-num', event.target.dataset.num)
   }
-  registerDragged(event) {
-    this.dragged = event.target
-    this.draggedPreviousDropzone = event.target.previousElementSibling
-    this.draggedNextDropzone = event.target.nextElementSibling
-  }
-  preventDefault(event) {
-    event.preventDefault()
-  }
-
-  // Dropzones management.
-  showDropzones(event) {
-    this.dropzoneTargets.forEach(dropzone => {
-      dropzone.classList.add('highlighted')
-    })
-    this.draggedPreviousDropzone.classList.remove('highlighted')
-    this.draggedNextDropzone.classList.remove('highlighted')
-    this.dragged.classList.add('highlighted')
-    this.dragged.style.cursor = 'row-resize'
-  }
-  highlightDropzone(event) {
-    if (event.target.parentElement.className.includes('dropzone')) {
-      event.target.parentElement.classList.add('hover')
-    }
-  }
-  downlightDropzone(event) {
-    if (event.target.parentElement.className.includes('dropzone')) {
-      event.target.parentElement.classList.remove('hover')
-    }
-  }
-  hideDropzones(event) {
-    this.dropzoneTargets.forEach(dropzone => {
-      dropzone.classList.remove('highlighted')
-      dropzone.classList.remove('hover')
-    })
-    this.dragged.classList.remove('highlighted')
-    this.dragged.style.cursor = 'auto'
+  currentOrder() {
+    return this.amendementTargets.map(amendement => amendement.dataset.num)
   }
 
   // Actual reordering on drop.
-  reorder(event) {
-    const nextSibling = event.target.parentElement.nextElementSibling
-    this.parentTarget.removeChild(this.dragged)
-    this.parentTarget.removeChild(this.draggedNextDropzone)
-    const newDragged = this.parentTarget.insertBefore(this.dragged, nextSibling)
-    this.parentTarget.insertBefore(this.draggedNextDropzone, nextSibling)
-    const newOrder = this.amendementTargets.map(
-      amendement => amendement.dataset.num
-    )
-    this.submitOrder(newOrder)
-  }
+  drop(event) {
+    event.preventDefault()
+    const dropTarget = this.targetElement(event)
 
-  XHROptions() {
-    const headers = new Headers({
-      'X-Requested-With': 'XMLHttpRequest',
-      'Content-Type': 'application/json'
-    })
-    return {
-      method: 'POST',
-      credentials: 'include',
-      headers: headers
+    const num = event.dataTransfer.getData('application/drag-num')
+    const draggedItem = this.element.querySelector(`[data-num='${num}']`)
+
+    // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
+    const positionComparison = dropTarget.compareDocumentPosition(draggedItem)
+    if (positionComparison & Node.DOCUMENT_POSITION_FOLLOWING) {
+      dropTarget.insertAdjacentElement('beforebegin', draggedItem)
+    } else if (positionComparison & Node.DOCUMENT_POSITION_PRECEDING) {
+      dropTarget.insertAdjacentElement('afterend', draggedItem)
     }
-  }
 
-  submitOrder(order) {
-    const options = this.XHROptions()
-    options['body'] = JSON.stringify({
-      order: order
-    })
-    fetch(this.data.get('url'), options)
+    const initialOrder = this.initialOrder(event)
+    const currentOrder = this.currentOrder()
+    if (!this.sameArrays(initialOrder, currentOrder))
+      this.submitOrder(currentOrder)
   }
 }
 

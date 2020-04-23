@@ -1,58 +1,74 @@
-class TextesOrder extends Stimulus.Controller {
-  static get targets() {
-    return ['parent', 'dropzone', 'texte']
+class BaseOrder extends Stimulus.Controller {
+  dragstart(event) {
+    event.dataTransfer.setData('application/initial-order', this.currentOrder())
+    event.dataTransfer.effectAllowed = 'move'
+    event.target.classList.add('highlighted')
   }
-
-  dragging(event) {
-    // Necessary to start the dragging stuff.
-  }
-  registerDragged(event) {
-    this.dragged = event.target
-    this.draggedPreviousDropzone = event.target.previousElementSibling
-    this.draggedNextDropzone = event.target.nextElementSibling
-  }
-  preventDefault(event) {
-    event.preventDefault()
-  }
-
-  // Dropzones management.
-  showDropzones(event) {
-    this.dropzoneTargets.forEach(dropzone => {
-      dropzone.classList.add('highlighted')
-    })
-    this.draggedPreviousDropzone.classList.remove('highlighted')
-    this.draggedNextDropzone.classList.remove('highlighted')
-    this.dragged.classList.add('highlighted')
-    this.dragged.style.cursor = 'row-resize'
-  }
-  highlightDropzone(event) {
-    if (event.target.className.includes('dropzone')) {
-      event.target.classList.add('hover')
+  dragenter(event) {
+    if (this.isDropZone(event)) {
+      event.preventDefault()
     }
   }
-  downlightDropzone(event) {
-    if (event.target.className.includes('dropzone')) {
-      event.target.classList.remove('hover')
+  dragover(event) {
+    event.dataTransfer.dropEffect = 'move'
+    if (this.isDropZone(event)) {
+      event.preventDefault()
+      this.targetElement(event).classList.add('drag-over')
     }
   }
-  hideDropzones(event) {
-    this.dropzoneTargets.forEach(dropzone => {
-      dropzone.classList.remove('highlighted')
-      dropzone.classList.remove('hover')
-    })
-    this.dragged.classList.remove('highlighted')
-    this.dragged.style.cursor = 'auto'
+  dragleave(event) {
+    this.removeDragOver()
+  }
+  dragend(event) {
+    event.target.classList.remove('highlighted')
+    this.removeDragOver()
   }
 
-  // Actual reordering on drop.
-  reorder(event) {
-    const nextSibling = event.target.nextElementSibling
-    this.parentTarget.removeChild(this.dragged)
-    this.parentTarget.removeChild(this.draggedNextDropzone)
-    const newDragged = this.parentTarget.insertBefore(this.dragged, nextSibling)
-    this.parentTarget.insertBefore(this.draggedNextDropzone, nextSibling)
-    const newOrder = this.texteTargets.map(texte => texte.dataset.pk)
-    this.submitOrder(newOrder)
+  initialOrder(event) {
+    return event.dataTransfer.getData('application/initial-order').split(',')
+  }
+  removeDragOver(event) {
+    Array.from(this.element.querySelectorAll('.drag-over')).forEach(element =>
+      element.classList.remove('drag-over')
+    )
+  }
+  sameArrays(array1, array2) {
+    // Full credits to https://stackoverflow.com/a/19746771
+    return (
+      array1.length === array2.length &&
+      array1.every((value, index) => value === array2[index])
+    )
+  }
+  isDraggable(element) {
+    if (!(element instanceof HTMLElement)) {
+      element = element.parentElement
+    }
+    return (
+      element.hasAttribute('draggable') &&
+      element.getAttribute('draggable') == 'true'
+    )
+  }
+  isDropZone(event) {
+    return (
+      this.isDraggable(event.target) ||
+      this.isDraggable(event.target.parentElement) ||
+      this.isDraggable(event.target.parentElement.parentElement)
+    )
+  }
+  targetElement(event) {
+    const target = event.target
+    if (this.isDraggable(target)) {
+      return target
+    }
+    const parent = target.parentElement
+    if (this.isDraggable(parent)) {
+      return parent
+    }
+    const grandParent = parent.parentElement
+    if (this.isDraggable(grandParent)) {
+      return grandParent
+    }
+    return false
   }
 
   XHROptions() {
@@ -75,5 +91,3 @@ class TextesOrder extends Stimulus.Controller {
     fetch(this.data.get('url'), options)
   }
 }
-
-application.register('textes-order', TextesOrder)

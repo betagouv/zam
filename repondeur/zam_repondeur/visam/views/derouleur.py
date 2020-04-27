@@ -16,9 +16,7 @@ def derouleur(context: DerouleurCollection, request: Request) -> Dict[str, Any]:
         joinedload("articles").options(
             load_only("lecture_pk", "mult", "num", "pos", "type", "content"),
             joinedload("user_content").load_only("title", "presentation"),
-            joinedload("amendements")
-            .joinedload("user_content")
-            .load_only("objet", "avis", "reponse"),
+            joinedload("amendements"),
         ),
         joinedload("texte").load_only("legislature", "numero"),
     )

@@ -350,7 +350,6 @@ class LectureResource(Resource):
         self.add_child(ArticleCollection(name="articles", parent=self))
         self.add_child(TableCollection(name="tables", parent=self))
         self.add_child(SharedTableCollection(name="boites", parent=self))
-        self.add_child(DerouleurCollection(name="derouleur", parent=self))
 
     @property
     def default_child(self) -> Resource:
@@ -624,13 +623,3 @@ class SharedTableDeleteResource(Resource):
 
     def model(self) -> SharedTable:
         return self.parent.model()
-
-
-class DerouleurCollection(Resource):
-    @property
-    def parent(self) -> LectureResource:
-        return cast(LectureResource, self.__parent__)
-
-    @property
-    def lecture_resource(self) -> LectureResource:
-        return self.parent

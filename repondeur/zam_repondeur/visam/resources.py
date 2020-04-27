@@ -11,7 +11,6 @@ from zam_repondeur.resources import (
     ACE,
     AmendementCollection,
     ArticleCollection,
-    DerouleurCollection,
     DossierResource,
     LectureResource,
     Resource,
@@ -170,3 +169,13 @@ class MembersCollection(Resource):
         return DBSession.query(MembershipEvent).order_by(
             desc(MembershipEvent.created_at)
         )
+
+
+class DerouleurCollection(Resource):
+    @property
+    def parent(self) -> LectureResource:
+        return cast(LectureResource, self.__parent__)
+
+    @property
+    def lecture_resource(self) -> LectureResource:
+        return self.parent

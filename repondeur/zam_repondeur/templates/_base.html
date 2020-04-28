@@ -23,7 +23,7 @@
     {% endblock %}
     <link rel="stylesheet" href="{{ request.static_url('zam_repondeur:static/css/custom.css') }}">
 </head>
-<body data-controller="amendement-search">
+<body data-controller="amendement-search"{% if body_class is defined %} class="{{ body_class }}"{% endif %}>
     <nav class="main">
         {% block nav %}
             <ul data-controller="menu">

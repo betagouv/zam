@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, cast
+from typing import Any, List, Optional, Type, cast
 
 from pyramid.request import Request
 from pyramid.security import Allow, Authenticated, Deny, Everyone
@@ -52,7 +52,9 @@ class VisamRoot(Root):
         def url(self) -> str:
             return self.request.resource_url(self.resource["members"])
 
-    menu_actions = Root.menu_actions + [ManageMembers]
+    menu_actions: List[Type[MenuAction]] = []
+    menu_actions.append(ManageMembers)
+    menu_actions.extend(Root.menu_actions)
 
 
 class SeanceCollection(Resource):

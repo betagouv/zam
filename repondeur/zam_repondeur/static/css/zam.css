@@ -8,6 +8,7 @@ body {
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     background: #f2f2f2;
     margin: 0;
+    --main-accent-color: #3167a6;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -30,7 +31,7 @@ a {
 }
 
 nav.main {
-    background: #3167a6 no-repeat 98% 50%/1.7rem url("../img/logo_1_0_white_z_only.svg");
+    background: var(--main-accent-color) no-repeat 98% 50%/1.7rem url("../img/logo_1_0_white_z_only.svg");
     color: white;
     padding: 0 1rem;
     font-size: 1rem;
@@ -104,7 +105,7 @@ nav.main {
         min-height: calc(100vh - 19px - 2rem);
         border: solid 1px white;
         padding: 8px;
-        background-color: #3167a6;
+        background-color: var(--main-accent-color);
         z-index: 100;
     }
         nav.main .menu li {
@@ -188,15 +189,18 @@ main.box {
 
 /* Liens */
 a {
-    color: #3167a6;
+    color: var(--main-accent-color);
+}
+a:hover {
+    color: var(--main-accent-color);
 }
 a.underlined {
     display: inline-block;
     line-height: 1;
-    border-bottom: 1px solid #3167a6;
+    border-bottom: 1px solid var(--main-accent-color);
 }
 a.underlined:hover {
-    border-bottom: 2px solid #3167a6;
+    border-bottom: 2px solid var(--main-accent-color);
     text-decoration: none;
 }
 
@@ -244,18 +248,18 @@ a.underlined:hover {
     color: white;
 }
 
-/* Bouton bleu */
+/* Bouton normal */
 .primary.button:hover,
 .primary.button.enabled {
-    background-color: #3167a6;
-    border-color: #3167a6;
+    background-color: var(--main-accent-color);
+    border-color: var(--main-accent-color);
     color: white;
 }
 .primary.button,
 .primary.button.enabled:hover {
     background-color: white;
-    border-color: #3167a6;
-    color: #3167a6;
+    border-color: var(--main-accent-color);
+    color: var(--main-accent-color);
 }
 
 /* Bouton orange */
@@ -600,12 +604,12 @@ abbr.status,
 }
     abbr.status.blue,
     .status.blue {
-        border-color: #3167a6;
-        color: #3167a6;
+        border-color: var(--main-accent-color);
+        color: var(--main-accent-color);
     }
     abbr.status.blue.selected {
         color: white;
-        background-color: #3167a6;
+        background-color: var(--main-accent-color);
     }
     abbr.status.grey,
     .status.grey {

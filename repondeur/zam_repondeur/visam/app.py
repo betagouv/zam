@@ -6,7 +6,7 @@ from pyramid.router import Router
 
 from zam_repondeur import BASE_SETTINGS
 
-from .auth import VisamAuthenticationPolicy
+from .auth import VisamAuthenticationPolicy, VisamRequest
 from .resources import VisamRoot
 
 
@@ -47,6 +47,9 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
             http_only=True,
         )
         config.set_authentication_policy(authn_policy)
+
+        # Custom request class with methods to identify different classes of users
+        config.set_request_factory(VisamRequest)
 
         # Scan Visam-specific views
         config.scan(".views")

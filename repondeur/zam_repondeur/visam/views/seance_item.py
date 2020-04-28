@@ -15,9 +15,11 @@ class SeanceViewBase:
 class SeanceView(SeanceViewBase):
     @view_config(request_method="GET", renderer="seance_item.html")
     def get(self) -> dict:
+        can_create_texte = self.request.has_permission("create_texte", self.context)
         return {
             "seance": self.seance,
             "lectures": self.seance.lectures,
             "current_tab": "seances",
             "seance_resource": self.context,
+            "can_create_texte": can_create_texte,
         }

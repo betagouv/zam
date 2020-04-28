@@ -35,7 +35,9 @@ class MembersList(MembersCollectionBase):
         else:
             last_event_datetime = None
             last_event_timestamp = None
-        organisations = DBSession.query(Organisation).all()
+        organisations = [
+            org for org in DBSession.query(Organisation) if not org.is_gouvernement
+        ]
         return {
             "users": users,
             "chambres": [Chambre.CCFP, Chambre.CSFPE],

@@ -86,8 +86,12 @@ class SeanceResource(Resource):
         # Only chambre members and admins can view it.
         return [
             (Allow, "group:admins", "view"),
+            (Allow, "group:gouvernement", "view"),
             (Allow, f"chambre:{self.model().chambre.name}", "view"),
             (Deny, Authenticated, "view"),
+            (Allow, "group:admins", "create_texte"),
+            (Allow, "group:gouvernement", "create_texte"),
+            (Deny, Authenticated, "create_texte"),
         ]
 
     def __init__(self, name: str, parent: Resource) -> None:

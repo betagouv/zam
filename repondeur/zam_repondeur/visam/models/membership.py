@@ -50,6 +50,8 @@ class UserMembership(Base):
     def create(
         cls, user: User, chambre: Chambre, organisation: Organisation
     ) -> "UserMembership":
+        if organisation.is_gouvernement:
+            raise ValueError("Users cannot become members of the governement")
         user_membership = cls(user=user, chambre=chambre, organisation=organisation)
         DBSession.add(user_membership)
         return user_membership

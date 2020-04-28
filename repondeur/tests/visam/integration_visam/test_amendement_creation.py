@@ -77,13 +77,13 @@ class TestAddAmendement:
         driver,
         lecture_seance_ccfp_url,
         articles_seance_ccfp,
-        user_ccfp_gouvernement,
+        user_gouvernement,
         org_gouvernement,
         org_cgt,
     ):
         from zam_repondeur.models import DBSession, Amendement
 
-        driver.login(user_ccfp_gouvernement.email)
+        driver.login(user_gouvernement.email)
         driver.get(f"{lecture_seance_ccfp_url}/amendements/saisie")
         subdiv = Select(driver.find_element_by_css_selector('select[name="subdiv"]'))
         subdiv.select_by_visible_text("Art. 2")

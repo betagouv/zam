@@ -128,11 +128,13 @@
             </div>
         {% endfor %}
     </section>
+    {% if can_create_texte %}
     <div class="extra-button box">
         <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
             Ajouter un texte
         </a>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block scripts %}

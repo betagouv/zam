@@ -21,3 +21,17 @@ class VisamAuthenticationPolicy(AuthenticationPolicy):
             else:
                 principals.append(GOUVERNEMENT)
         return principals
+
+
+class VisamRequest(Request):
+    @property
+    def is_admin_user(self) -> bool:
+        return ADMINS in self.effective_principals
+
+    @property
+    def is_gouvernement_user(self) -> bool:
+        return GOUVERNEMENT in self.effective_principals
+
+    @property
+    def is_member_user(self) -> bool:
+        return MEMBERS in self.effective_principals

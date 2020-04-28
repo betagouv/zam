@@ -38,6 +38,7 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         # Customize the resource tree
         config.set_root_factory(VisamRoot)
 
+        # Custom authentication policy
         authn_policy = VisamAuthenticationPolicy(
             settings["zam.auth_secret"],
             hashalg="sha512",

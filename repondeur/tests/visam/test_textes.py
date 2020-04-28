@@ -1,6 +1,8 @@
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pytest
+import transaction
 
 
 def test_seance_empty_textes(app, seance_ccfp, user_ccfp):
@@ -13,13 +15,39 @@ def test_seance_empty_textes(app, seance_ccfp, user_ccfp):
     assert "Ajouter un texte" in resp.text
 
 
-def test_seance_with_texte(app, seance_ccfp, lecture_seance_ccfp, user_ccfp):
+def test_seance_with_texte_after_deadline(
+    app, seance_ccfp, lecture_seance_ccfp, user_ccfp
+):
+    assert seance_ccfp.date < datetime.utcnow().date()
     resp = app.get("/seances/ccfp-2020-04-01", user=user_ccfp)
 
     assert resp.status_code == 200
     assert resp.content_type == "text/html"
 
-    assert len(resp.parser.css(".texte nav a")) == 1
+    textes = resp.parser.css(".texte nav a")
+    assert len(textes) == 2
+    assert textes[0].text().strip() == "Accéder à ce texte"
+    assert textes[1].text().strip() == "Accéder au dérouleur"
+    assert "Ajouter un texte" in resp.text
+
+
+def test_seance_with_texte_before_deadline(
+    app, seance_ccfp, lecture_seance_ccfp, user_ccfp
+):
+    from zam_repondeur.models import DBSession
+
+    with transaction.manager:
+        seance_ccfp.date = (datetime.utcnow() + timedelta(days=4 + 1)).date()
+        DBSession.add(seance_ccfp)
+
+    resp = app.get(f"/seances/{seance_ccfp.slug}", user=user_ccfp)
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html"
+
+    textes = resp.parser.css(".texte nav a")
+    assert len(textes) == 1
+    assert textes[0].text().strip() == "Accéder à ce texte"
     assert "Ajouter un texte" in resp.text
 
 

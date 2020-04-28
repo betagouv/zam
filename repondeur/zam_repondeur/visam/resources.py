@@ -66,7 +66,8 @@ class SeanceCollection(Resource):
         query: Query = DBSession.query(Seance)
         if chambres:
             query = query.filter(Seance.chambre.in_(chambres))
-        query = query.order_by(Seance.date.desc()).options(*options)
+        order_ = Seance.date.desc()  # type: ignore
+        query = query.order_by(order_).options(*options)
         return cast(List[Seance], query.all())
 
     def __getitem__(self, key: str) -> Resource:
@@ -122,7 +123,7 @@ class TexteResource(LectureResource):
     We inherit from LectureResource in order to reuse the associated views
     """
 
-    def __init__(self, slug: str, parent: Resource) -> None:
+    def __init__(self, slug: str, parent: TexteCollection) -> None:
         Resource.__init__(self, name=slug, parent=parent)
         self.slug = slug
         self.add_child(AmendementCollection(name="amendements", parent=self))
@@ -145,8 +146,16 @@ class TexteResource(LectureResource):
         return lecture
 
     @property
+    def parent(self) -> TexteCollection:
+        return cast(TexteCollection, self.__parent__)
+
+    @property
     def dossier_resource(self) -> Optional[DossierResource]:
         return None
+
+    @property
+    def seance_resource(self) -> SeanceResource:
+        return self.parent.parent
 
     @property
     def breadcrumbs_label(self) -> Optional[str]:
@@ -154,8 +163,7 @@ class TexteResource(LectureResource):
         return lecture.dossier.titre
 
     def back_resource(self, request: Request) -> Optional["Resource"]:
-        seance = self.parent.parent
-        return seance
+        return self.seance_resource
 
 
 class MembersCollection(Resource):
@@ -173,9 +181,13 @@ class MembersCollection(Resource):
 
 class DerouleurCollection(Resource):
     @property
-    def parent(self) -> LectureResource:
-        return cast(LectureResource, self.__parent__)
+    def parent(self) -> TexteResource:
+        return cast(TexteResource, self.__parent__)
 
     @property
     def lecture_resource(self) -> LectureResource:
+        return self.parent
+
+    @property
+    def texte_resource(self) -> TexteResource:
         return self.parent

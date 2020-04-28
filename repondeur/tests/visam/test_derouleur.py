@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import transaction
 
 
@@ -53,3 +55,32 @@ def test_derouleur_content(
         )
         == "Exposé Exposé 444 Corps de l’amendement Corps 444"
     )
+
+
+def test_derouleur_access(
+    app, seance_ccfp, lecture_seance_ccfp, user_ccfp,
+):
+    from zam_repondeur.models import DBSession
+
+    lecture = lecture_seance_ccfp
+    dossier = lecture.dossier
+
+    # If the seance is in the past, it displays the page.
+    assert seance_ccfp.date < datetime.utcnow().date()
+    resp = app.get(
+        f"/seances/{seance_ccfp.slug}/textes/{dossier.slug}/derouleur/", user=user_ccfp,
+    )
+    assert resp.status_code == 200
+
+    # If we are before the deadline, it raises a 404.
+    with transaction.manager:
+        seance_ccfp.date = (datetime.utcnow() + timedelta(days=4 + 1)).date()
+        DBSession.add(seance_ccfp)
+
+    assert seance_ccfp.date > datetime.utcnow().date()
+    resp = app.get(
+        f"/seances/{seance_ccfp.slug}/textes/{dossier.slug}/derouleur/",
+        user=user_ccfp,
+        expect_errors=True,
+    )
+    assert resp.status_code == 404

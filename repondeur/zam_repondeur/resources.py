@@ -356,15 +356,15 @@ class LectureResource(Resource):
         return cast(Resource, self["amendements"])
 
     @property
-    def parent(self) -> LectureCollection:
-        return cast(LectureCollection, self.__parent__)
+    def parent(self) -> Resource:
+        return cast(Resource, self.__parent__)
 
     def back_resource(self, request: Request) -> Optional[Resource]:
         return self.dossier_resource
 
     @property
     def dossier_resource(self) -> Optional[DossierResource]:
-        return self.parent.parent
+        return cast(DossierResource, self.parent.parent)
 
     @reify
     def lecture(self) -> Lecture:

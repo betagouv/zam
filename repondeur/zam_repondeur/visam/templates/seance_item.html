@@ -111,6 +111,11 @@
                     <a href="{{ request.resource_url(request.root['seances'][seance.slug]['textes'][lecture.dossier.slug]['amendements']) }}">
                         Accéder à ce texte
                     </a>
+                    {% if seance.is_past_deadline %}
+                        <a href="{{ request.resource_url(request.root['seances'][seance.slug]['textes'][lecture.dossier.slug]['derouleur']) }}">
+                            Accéder au dérouleur
+                        </a>
+                    {% endif %}
                 </nav>
             </div>
             <div class="dropzone"

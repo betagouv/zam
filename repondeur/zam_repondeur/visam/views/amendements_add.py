@@ -1,7 +1,6 @@
 from typing import Optional
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPFound
-from pyramid.request import Request
 from pyramid.response import Response
 from pyramid.view import view_config, view_defaults
 
@@ -10,12 +9,13 @@ from zam_repondeur.models import Amendement, Article, DBSession, Lecture
 from zam_repondeur.models.division import SubDiv
 from zam_repondeur.resources import AmendementCollection
 from zam_repondeur.services.clean import clean_html
+from zam_repondeur.visam.auth import VisamRequest
 from zam_repondeur.visam.models import AmendementSaisi, Organisation, UserMembership
 
 
 @view_defaults(context=AmendementCollection, name="saisie")
 class AddAmendementView:
-    def __init__(self, context: AmendementCollection, request: Request):
+    def __init__(self, context: AmendementCollection, request: VisamRequest):
         self.context = context
         self.request = request
         self.lecture: Lecture = self.context.parent.model()

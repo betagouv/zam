@@ -60,6 +60,7 @@ class VisamRoot(Root):
 class SeanceCollection(Resource):
     __acl__ = [
         (Allow, "group:admins", "create_seance"),
+        (Allow, "group:gouvernement", "create_seance"),
         (Deny, Everyone, "create_seance"),
     ]
 

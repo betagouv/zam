@@ -5,7 +5,7 @@ import pytest
 
 @pytest.mark.usefixtures("seance_ccfp")
 class TestListeTextes:
-    def test_seance_without_texte(self, app, user_ccfp):
+    def test_message_when_list_is_empty(self, app, user_ccfp):
         resp = app.get("/seances/ccfp-2020-04-01", user=user_ccfp)
 
         assert resp.status_code == 200
@@ -14,7 +14,7 @@ class TestListeTextes:
         assert "Aucun texte pour l’instant." in resp.text
 
     @pytest.mark.usefixtures("lecture_seance_ccfp")
-    def test_seance_with_texte(self, app, user_ccfp):
+    def test_member_sees_texte_in_list(self, app, user_ccfp):
         resp = app.get("/seances/ccfp-2020-04-01", user=user_ccfp)
 
         assert resp.status_code == 200
@@ -27,8 +27,10 @@ class TestListeTextes:
 class TestAddTexteButton:
     def test_gouvernement_sees_the_button(self, app, user_gouvernement):
         resp = app.get("/seances/ccfp-2020-04-01", user=user_gouvernement)
-        assert resp.status_code == 200
-        assert resp.content_type == "text/html"
+        assert "Ajouter un texte" in resp.text
+
+    def test_admin_sees_the_button(self, app, user_admin):
+        resp = app.get("/seances/ccfp-2020-04-01", user=user_admin)
         assert "Ajouter un texte" in resp.text
 
     def test_member_does_not_see_the_button(self, app, user_ccfp):
@@ -58,7 +60,8 @@ class TestSeanceAddTexteGetForm:
 
     def test_member_cannot_access_the_form(self, app, user_ccfp):
         resp = app.get("/seances/ccfp-2020-04-01/add", user=user_ccfp)
-        assert resp.status_code == 302
+        resp = resp.maybe_follow()
+        assert "L’accès à cette page est réservé aux personnes autorisées." in resp.text
 
 
 SAMPLE_FILE = Path(__file__).parent / "projet_de_decret.html"

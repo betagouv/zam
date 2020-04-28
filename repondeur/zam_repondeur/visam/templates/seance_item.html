@@ -28,19 +28,20 @@
         margin-left: 2rem;
     }
     .texte nav a {
-        background: no-repeat right center url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}");
-    }
-    .texte nav a {
         font-size: 1.1rem;
-        padding-right: 1.8rem;
-        background-position: 99% 42%;
-        background-size: 5%;
+    }
+    .texte nav a:after {
+        content: "";
+        padding-right: 1.7rem;
+        background-color: var(--main-accent-color);
+        mask: url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}") right 40% / 0.7rem no-repeat ;
     }
     .texte nav a:first-child {
         font-size: 1.7rem;
+    }
+    .texte nav a:first-child:after {
         padding-right: 2rem;
-        background-position: right 40%;
-        background-size: 7%;
+        mask-size: 1rem;
     }
     .texte .details {
         line-height: 1.2;

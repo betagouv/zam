@@ -1,7 +1,8 @@
-from typing import Any
+from typing import Any, Optional
 
 from paste.deploy.converters import asbool
 from pyramid.config import Configurator
+from pyramid.events import BeforeRender
 from pyramid.router import Router
 
 from zam_repondeur import BASE_SETTINGS
@@ -54,6 +55,27 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
         # Scan Visam-specific views
         config.scan(".views")
 
+        config.add_subscriber(add_visam_renderer_globals, BeforeRender)
+
         app = config.make_wsgi_app()
 
     return app
+
+
+def add_visam_renderer_globals(event: BeforeRender) -> None:
+    """
+    We want to use different accent colors for different classes of users
+    """
+    user_type = _get_user_type(event["request"])
+    if user_type is not None:
+        event["body_class"] = user_type
+
+
+def _get_user_type(request: VisamRequest) -> Optional[str]:
+    if request.is_admin_user:
+        return "admin-user"
+    if request.is_gouvernement_user:
+        return "gouv-user"
+    if request.is_member_user:
+        return "member-user"
+    return None

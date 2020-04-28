@@ -32,19 +32,13 @@
         margin-left: 2rem;
     }
     .seance nav a {
-        background: no-repeat right center url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}");
-    }
-    .seance nav a {
-        font-size: 1.1rem;
-        padding-right: 1.8rem;
-        background-position: 99% 42%;
-        background-size: 5%;
-    }
-    .seance nav a:first-child {
         font-size: 1.7rem;
+    }
+    .seance nav a:after {
+        content: "";
         padding-right: 2rem;
-        background-position: right 40%;
-        background-size: 7%;
+        background-color: var(--main-accent-color);
+        mask: url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}") right 40% / 1rem no-repeat;
     }
     .seance .details {
         line-height: 1.2;

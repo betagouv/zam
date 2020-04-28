@@ -157,15 +157,19 @@ nav.secondary {
 .arrow-left, .arrow-right {
     white-space: nowrap;
 }
-.arrow-left {
+.arrow-left:before {
+    content: "";
     padding-left: 1.33rem;
-    background: no-repeat left 40%/.7rem url("../img/big_left.svg");
+    background-color: var(--main-accent-color);
+    mask: no-repeat left 40%/.7rem url("../img/big_left.svg");
 }
-.arrow-right {
+.arrow-right:after {
+    content: "";
     padding-right: 1.33rem;
-    background: no-repeat right 40%/.7rem url("../img/big_right.svg");
+    background-color: var(--main-accent-color);
+    mask: no-repeat right 40%/.7rem url("../img/big_right.svg");
 }
-.save-buttons .arrow-left {
+.save-buttons .arrow-left:before {
     padding-top: .4rem;
     margin-top: .2rem;
     background-position: left 45%;

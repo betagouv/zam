@@ -111,9 +111,11 @@ td a, td a:hover {
     white-space: nowrap;
     text-decoration: none;
 }
-td a.arrow-right {
+td a.arrow-right:after {
     padding-right: .8rem;
-    background: no-repeat right 35%/18% url("../img/big_right.svg");
+    mask-position: right 45%;
+    mask-size: 55%;
+
 }
 
 :target {

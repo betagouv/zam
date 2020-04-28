@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from zam_repondeur.models.users import Team, User
 
@@ -23,6 +23,7 @@ class Request:
     json_body: dict
     params: Any
     unauthenticated_userid: Optional[str]
+    effective_principals: List[str]
     team: Team
     user: User
     view_name: str

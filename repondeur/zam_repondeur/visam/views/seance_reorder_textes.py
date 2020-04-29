@@ -5,7 +5,7 @@ from zam_repondeur.visam.resources import SeanceResource
 from zam_repondeur.visam.views.seance_item import SeanceViewBase
 
 
-@view_defaults(context=SeanceResource, name="order")
+@view_defaults(context=SeanceResource, name="order", permission="edit")
 class SeanceReorderTextesView(SeanceViewBase):
     @view_config(request_method="POST", renderer="json")
     def post(self) -> dict:

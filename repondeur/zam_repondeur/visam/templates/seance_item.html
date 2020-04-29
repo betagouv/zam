@@ -98,7 +98,10 @@
                 drop->textes-order#reorder
             "></div>
         {% for lecture in lectures %}
-            <div draggable="true" class="texte box"
+            <div class="texte box"
+                {% if can_reorder_textes %}
+                draggable="true"
+                {% endif %}
                 data-action="
                     drag->textes-order#dragging
                     dragstart->textes-order#registerDragged
@@ -139,7 +142,7 @@
 {% endblock %}
 
 {% block scripts %}
-    {% if lectures | length > 1 %}
+    {% if can_reorder_textes %}
         <script src="{{ request.static_url('zam_repondeur:static/js/seance.js') }}"></script>
     {% endif %}
 {% endblock %}

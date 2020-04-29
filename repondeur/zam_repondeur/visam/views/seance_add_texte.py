@@ -31,7 +31,7 @@ from zam_repondeur.visam.views.seance_item import SeanceViewBase
 logger = logging.getLogger(__name__)
 
 
-@view_defaults(context=SeanceResource, name="add", permission="create_texte")
+@view_defaults(context=SeanceResource, name="add", permission="edit")
 class SeanceAddTexteView(SeanceViewBase):
     @view_config(request_method="GET", renderer="seance_add_texte.html")
     def get(self) -> dict:

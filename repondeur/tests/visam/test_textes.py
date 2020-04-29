@@ -314,47 +314,68 @@ class TestSeanceAddTexteSubmitForm:
         ]
 
 
-def test_seance_reorder_textes_unique_lecture(
-    app, lecture_seance_ccfp, user_gouvernement
-):
-    resp = app.get("/seances/ccfp-2020-04-01", user=user_gouvernement)
-    assert resp.status_code == 200
-    assert '<script src="https://visam.test/static/js/seance.js' not in resp.text
+class TestReorderTextes:
+    @pytest.mark.usefixtures("lecture_seance_ccfp", "lecture_seance_ccfp_2")
+    def test_gouvernement_can_reorder_textes(self, app, seance_ccfp, user_gouvernement):
+        from zam_repondeur.models import DBSession
+        from zam_repondeur.visam.models import Seance
 
+        # Ordre initial des textes
+        seance_ccfp = DBSession.query(Seance).get(seance_ccfp.pk)
+        assert [lecture.dossier.titre for lecture in seance_ccfp.lectures] == [
+            "Titre du texte CCFP",
+            "Titre du texte CCFP 2",
+        ]
 
-@pytest.mark.usefixtures("lecture_seance_ccfp", "lecture_seance_ccfp_2")
-def test_seance_reorder_textes(app, seance_ccfp, user_gouvernement):
-    from zam_repondeur.models import DBSession
-    from zam_repondeur.visam.models import Seance
+        resp = app.get("/seances/ccfp-2020-04-01", user=user_gouvernement)
+        assert resp.status_code == 200
+        assert '<script src="https://visam.test/static/js/seance.js' in resp.text
 
-    # Ordre initial des textes
-    seance_ccfp = DBSession.query(Seance).get(seance_ccfp.pk)
-    assert [lecture.dossier.titre for lecture in seance_ccfp.lectures] == [
-        "Titre du texte CCFP",
-        "Titre du texte CCFP 2",
-    ]
+        assert resp.parser.css("h3")[0].text() == "Titre du texte CCFP"
+        assert resp.parser.css("h3")[1].text() == "Titre du texte CCFP 2"
 
-    resp = app.get("/seances/ccfp-2020-04-01", user=user_gouvernement)
-    assert resp.status_code == 200
-    assert '<script src="https://visam.test/static/js/seance.js' in resp.text
+        resp = app.post_json(
+            "/seances/ccfp-2020-04-01/order",
+            {"order": ["2", "1"]},
+            user=user_gouvernement,
+        )
+        assert resp.status_code == 200
+        assert resp.text == "{}"
 
-    assert resp.parser.css("h3")[0].text() == "Titre du texte CCFP"
-    assert resp.parser.css("h3")[1].text() == "Titre du texte CCFP 2"
+        # L’ordre des textes est modifié
+        seance_ccfp = DBSession.query(Seance).get(seance_ccfp.pk)
+        assert [lecture.dossier.titre for lecture in seance_ccfp.lectures] == [
+            "Titre du texte CCFP 2",
+            "Titre du texte CCFP",
+        ]
 
-    resp = app.post_json(
-        "/seances/ccfp-2020-04-01/order", {"order": ["2", "1"]}, user=user_gouvernement
-    )
-    assert resp.status_code == 200
-    assert resp.text == "{}"
+        resp = app.get("/seances/ccfp-2020-04-01", user=user_gouvernement)
+        assert resp.status_code == 200
+        assert resp.parser.css("h3")[0].text() == "Titre du texte CCFP 2"
+        assert resp.parser.css("h3")[1].text() == "Titre du texte CCFP"
 
-    # L’ordre des textes est modifié
-    seance_ccfp = DBSession.query(Seance).get(seance_ccfp.pk)
-    assert [lecture.dossier.titre for lecture in seance_ccfp.lectures] == [
-        "Titre du texte CCFP 2",
-        "Titre du texte CCFP",
-    ]
+    @pytest.mark.usefixtures("lecture_seance_ccfp")
+    def test_cannot_drag_and_drop_when_only_one_texte(self, app, user_gouvernement):
+        resp = app.get("/seances/ccfp-2020-04-01", user=user_gouvernement)
+        assert resp.status_code == 200
+        assert '<script src="https://visam.test/static/js/seance.js' not in resp.text
 
-    resp = app.get("/seances/ccfp-2020-04-01", user=user_gouvernement)
-    assert resp.status_code == 200
-    assert resp.parser.css("h3")[0].text() == "Titre du texte CCFP 2"
-    assert resp.parser.css("h3")[1].text() == "Titre du texte CCFP"
+    @pytest.mark.usefixtures("lecture_seance_ccfp", "lecture_seance_ccfp_2")
+    def test_member_cannot_drag_and_drop(self, app, user_ccfp):
+        resp = app.get("/seances/ccfp-2020-04-01", user=user_ccfp)
+        assert resp.status_code == 200
+        assert '<script src="https://visam.test/static/js/seance.js' not in resp.text
+
+    @pytest.mark.usefixtures("lecture_seance_ccfp", "lecture_seance_ccfp_2")
+    def test_member_cannot_reorder_textes(self, app, user_ccfp):
+        resp = app.post_json(
+            "/seances/ccfp-2020-04-01/order",
+            {"order": ["2", "1"]},
+            headers={"Accept": "application/json"},
+            user=user_ccfp,
+            expect_errors=True,
+        )
+        assert resp.status_code == 403
+        assert resp.json_body == {
+            "message": "Forbidden",
+        }

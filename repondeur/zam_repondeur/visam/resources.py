@@ -84,15 +84,18 @@ class SeanceCollection(Resource):
 
 class SeanceResource(Resource):
     def __acl__(self) -> List[ACE]:
-        # Only chambre members and admins can view it.
         return [
+            #
+            # Who can access the séance?
             (Allow, "group:admins", "view"),
             (Allow, "group:gouvernement", "view"),
             (Allow, f"chambre:{self.model().chambre.name}", "view"),
             (Deny, Authenticated, "view"),
-            (Allow, "group:admins", "create_texte"),
-            (Allow, "group:gouvernement", "create_texte"),
-            (Deny, Authenticated, "create_texte"),
+            #
+            # Who can add and reorder textes to the séance?
+            (Allow, "group:admins", "edit"),
+            (Allow, "group:gouvernement", "edit"),
+            (Deny, Authenticated, "edit"),
         ]
 
     def __init__(self, name: str, parent: Resource) -> None:

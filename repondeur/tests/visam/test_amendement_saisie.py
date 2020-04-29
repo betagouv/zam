@@ -55,7 +55,8 @@ class TestAmendementSaisieForm:
         seance_ccfp,
         lecture_seance_ccfp,
         amendements_an,
-        user_ccfp_gouvernement,
+        org_gouvernement,
+        user_gouvernement,
         org_cgt,
     ):
         resp = app.get(
@@ -63,7 +64,7 @@ class TestAmendementSaisieForm:
                 f"/seances/{seance_ccfp.slug}"
                 f"/textes/{lecture_seance_ccfp.dossier.slug}/amendements/saisie"
             ),
-            user=user_ccfp_gouvernement,
+            user=user_gouvernement,
         )
 
         assert resp.status_code == 200
@@ -133,7 +134,8 @@ class TestAmendementSaisieForm:
         seance_ccfp,
         lecture_seance_ccfp,
         article1_texte_seance_ccfp,
-        user_ccfp_gouvernement,
+        user_gouvernement,
+        org_gouvernement,
         org_cgt,
     ):
         from zam_repondeur.models import Amendement, DBSession
@@ -145,7 +147,7 @@ class TestAmendementSaisieForm:
                 f"/seances/{seance_ccfp.slug}"
                 f"/textes/{lecture_seance_ccfp.dossier.slug}/amendements/saisie"
             ),
-            user=user_ccfp_gouvernement,
+            user=user_gouvernement,
         )
         form = resp.forms["saisie-amendement"]
         form["subdiv"] = "article.1.."

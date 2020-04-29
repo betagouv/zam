@@ -2,3 +2,22 @@ nav.main {
     background-image: url("../img/logo_visam_white_v_only.svg");
     background-size: 2.5rem;
 }
+
+/* Different accent colors for different classes of users */
+body.gouv-user {
+    /* no change: blue */
+}
+
+body.member-user {
+    --main-accent-color: #0e8b9e; /* teal */
+}
+    body.member-user .options .toggle {
+        filter: hue-rotate(-24deg);
+    }
+
+body.admin-user {
+    --main-accent-color: #8f2f94; /* violet */
+}
+    body.admin-user .options .toggle {
+        filter: hue-rotate(85deg);
+    }

@@ -28,19 +28,20 @@
         margin-left: 2rem;
     }
     .texte nav a {
-        background: no-repeat right center url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}");
-    }
-    .texte nav a {
         font-size: 1.1rem;
-        padding-right: 1.8rem;
-        background-position: 99% 42%;
-        background-size: 5%;
+    }
+    .texte nav a:after {
+        content: "";
+        padding-right: 1.7rem;
+        background-color: var(--main-accent-color);
+        mask: url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}") right 40% / 0.7rem no-repeat ;
     }
     .texte nav a:first-child {
         font-size: 1.7rem;
+    }
+    .texte nav a:first-child:after {
         padding-right: 2rem;
-        background-position: right 40%;
-        background-size: 7%;
+        mask-size: 1rem;
     }
     .texte .details {
         line-height: 1.2;
@@ -50,11 +51,11 @@
         margin-top: 1rem;
     }
         .extra-button a.button {
-            color: #3167a6;
-            border: 1px solid #3167a6;
+            color: var(--main-accent-color);
+            border: 1px solid var(--main-accent-color);
         }
         .extra-button a.button:hover {
-            background-color: #3167a6;
+            background-color: var(--main-accent-color);
             color: white;
         }
     [draggable="true"] {
@@ -97,7 +98,10 @@
                 drop->textes-order#reorder
             "></div>
         {% for lecture in lectures %}
-            <div draggable="true" class="texte box"
+            <div class="texte box"
+                {% if can_reorder_textes %}
+                draggable="true"
+                {% endif %}
                 data-action="
                     drag->textes-order#dragging
                     dragstart->textes-order#registerDragged
@@ -128,15 +132,17 @@
             </div>
         {% endfor %}
     </section>
+    {% if can_create_texte %}
     <div class="extra-button box">
         <a class="button primary" href="{{ request.resource_url(context, 'add') }}">
             Ajouter un texte
         </a>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block scripts %}
-    {% if lectures | length > 1 %}
+    {% if can_reorder_textes %}
         <script src="{{ request.static_url('zam_repondeur:static/js/seance.js') }}"></script>
     {% endif %}
 {% endblock %}

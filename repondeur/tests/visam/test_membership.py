@@ -34,13 +34,3 @@ def test_membership_organisation_cgt(org_cgt, user_ccfp):
 
     assert org_cgt.members == [user_ccfp]
     assert user_ccfp.organisations == [org_cgt]
-
-
-def test_membership_organisation_gouvernement(org_gouvernement, user_ccfp_gouvernement):
-    from zam_repondeur.models import DBSession
-
-    DBSession.add(org_gouvernement)
-    DBSession.add(user_ccfp_gouvernement)
-
-    assert org_gouvernement.members == [user_ccfp_gouvernement]
-    assert user_ccfp_gouvernement.organisations == [org_gouvernement]

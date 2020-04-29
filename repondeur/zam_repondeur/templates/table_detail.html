@@ -45,12 +45,12 @@
         }
             .notice nav a {
                 font-size: 1.4rem;
+            }
+            .notice nav a:after {
+                content: "";
                 padding-right: 2rem;
-                background-image: url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}");
-                background-position: center;
-                background-repeat: no-repeat;
-                background-position: right 33%;
-                background-size: 0.9rem;
+                background-color: var(--main-accent-color);
+                mask: url("{{ request.static_url('zam_repondeur:static/img/big_right.svg') }}") right 33% / 0.9rem no-repeat;
             }
     .amendement-card {
         display: flex;

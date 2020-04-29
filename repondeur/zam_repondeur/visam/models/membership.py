@@ -14,7 +14,11 @@ from .organisation import Organisation
 
 class UserMembership(Base):
     """
-    Association object
+    Relationship between non-governement users and conseils.
+
+    eg. Michel (User) is a member of CCFP (Chambre) on behalf of the CGT (Organisation)
+
+    Note: this is a many-to-many relationship, using the association object pattern.
 
     https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html#association-object
     """
@@ -50,6 +54,8 @@ class UserMembership(Base):
     def create(
         cls, user: User, chambre: Chambre, organisation: Organisation
     ) -> "UserMembership":
+        if organisation.is_gouvernement:
+            raise ValueError("The organisation of a member cannot be the governement")
         user_membership = cls(user=user, chambre=chambre, organisation=organisation)
         DBSession.add(user_membership)
         return user_membership

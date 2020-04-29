@@ -29,7 +29,7 @@
 .timeline .icon {
     width: inherit;
     height: inherit;
-    border-left: 3px solid #3167a6;
+    border-left: 3px solid var(--main-accent-color);
     margin: 0 1rem;
 }
     .timeline .icon i {
@@ -38,7 +38,7 @@
         height: 2.8rem;
         margin: .6rem 0 0 -1.5rem;
         background: white no-repeat center center;
-        border: 2px solid #3167a6;
+        border: 2px solid var(--main-accent-color);
         border-radius: 50%;
     }
     .timeline .icon .icon-edit {

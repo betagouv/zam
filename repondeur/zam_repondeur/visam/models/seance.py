@@ -59,7 +59,7 @@ class Seance(Base):
         Le conseil concerné (par exemple: CCFP, CSFPE...).
         """,
     )
-    date = Column(
+    date: datetime.date = Column(
         Date,
         nullable=False,
         doc="""
@@ -143,3 +143,22 @@ class Seance(Base):
             cls.chambre == chambre.upper(), cls.date == date,
         ).options(*options).first()
         return res
+
+    @property
+    def delai_de_consultation(self) -> datetime.timedelta:
+        # Make amendements visible to everybody 4 days before the date
+        # of the seance but only 2 days if the emergency is declared.
+        days = 2 if self.urgence_declaree else 4
+        return datetime.timedelta(days=days)
+
+    @property
+    def deadline(self) -> datetime.date:
+        return self.date - self.delai_de_consultation
+
+    @property
+    def is_before_deadline(self) -> bool:
+        return datetime.datetime.utcnow().date() < self.deadline
+
+    @property
+    def is_past_deadline(self) -> bool:
+        return not self.is_before_deadline

@@ -11,9 +11,9 @@
         {{ amendements[-1] }}
         ({{ length|number }} au total)
     {% else %}
-        {% for amendement in amendements %}
+        {% for amendement in amendements -%}
             {{ amendement }}{% if loop.revindex == 2 %} et {% else %}{% if not loop.last %}, {% endif %}{% endif %}
-        {% endfor %}
+        {%- endfor %}
     {% endif %}
     {% if parent %} (sous-amendement au {{ parent }}){% endif %}
 {% endmacro %}

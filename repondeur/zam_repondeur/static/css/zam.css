@@ -66,10 +66,6 @@ nav.main {
             nav.main ul li.selected a:hover {
                 text-decoration: none;
             }
-            nav.main a.find {
-              background: no-repeat right top/13% url("../img/loupe.svg");
-              padding-right: 2rem;
-            }
     nav.main > ul {
         display: flex;
         flex-direction: row;

@@ -1,5 +1,7 @@
 from typing import Any, Dict, List, Optional
 
+from pyramid.response import Response
+
 from zam_repondeur.models.users import Team, User
 
 class Request:
@@ -27,3 +29,4 @@ class Request:
     team: Team
     user: User
     view_name: str
+    response: Response

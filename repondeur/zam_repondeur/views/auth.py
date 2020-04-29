@@ -285,7 +285,7 @@ def logout_confirm(context: Root, request: Request) -> dict:
     return {}
 
 
-@forbidden_view_config()
+@forbidden_view_config(accept="text/html")
 def forbidden_view(exception: HTTPForbidden, request: Request) -> Any:
 
     # Redirect unauthenticated users to the login page
@@ -309,3 +309,11 @@ def forbidden_view(exception: HTTPForbidden, request: Request) -> Any:
 
     request.session.flash(Message(cls="warning", text=message))
     return HTTPFound(location=request.resource_url(next_resource))
+
+
+@forbidden_view_config(accept="application/json", renderer="json")
+def forbidden_view_json(exception: HTTPForbidden, request: Request) -> dict:
+    request.response.status = 403
+    return {
+        "message": "Forbidden",
+    }

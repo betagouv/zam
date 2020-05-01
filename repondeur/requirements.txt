@@ -68,7 +68,7 @@ selectolax==0.2.3
 senapy==0.2.15              # tlfp
 six==1.11.0                 # legipy: < 1.12, >= 1.11
 SQLAlchemy==1.3.16
-SQLAlchemy-Utils==0.36.3
+SQLAlchemy-Utils==0.36.4
 text-unidecode==1.3
 tlfp==0.0.3
 transaction==3.0.0

@@ -1,5 +1,5 @@
 -i https://pypi.org/simple
-appdirs==1.4.3
+appdirs==1.4.4
 atomicwrites==1.4.0
 bandit==1.6.2
 black==19.10b0

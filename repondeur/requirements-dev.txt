@@ -39,7 +39,7 @@ smmap2==3.0.1
 soupsieve==2.0
 stevedore==1.32.0
 termcolor==1.1.0
-toml==0.10.0
+toml==0.10.1
 typed-ast==1.4.1
 waitress==1.4.3
 wcwidth==0.1.9

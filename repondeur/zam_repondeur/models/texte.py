@@ -125,7 +125,7 @@ class Texte(Base):
     @classmethod
     def get_or_create_from_ref(cls, texte_ref: "TexteRef", chambre: Chambre) -> "Texte":
         if texte_ref.date_depot is None:
-            raise RuntimeError("Cannot create LectureRef for Texte with no date_depot")
+            raise RuntimeError("Cannot create Texte from TexteRef with no date_depot")
 
         texte = cls.get(
             chambre, str(texte_ref.session or texte_ref.legislature), texte_ref.numero

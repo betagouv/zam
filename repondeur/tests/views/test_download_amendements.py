@@ -52,7 +52,7 @@ def test_download_pdf_multiple_amendements(
     assert resp.content_type == "application/pdf"
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=an-269-PO717460-article1-amendements-666_999.pdf"
+        == "attachment; filename=an-269-PO717460-article1-amendements-666_999.pdf"
     )
 
 
@@ -66,8 +66,8 @@ def test_download_pdf_multiple_amendements_multiple_articles(
 
     resp = app.get(
         (
-            f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf"
-            f"?article=all&n=666&n=777"
+            "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_pdf"
+            "?article=all&n=666&n=777"
         ),
         user=user_david,
     )
@@ -75,7 +75,7 @@ def test_download_pdf_multiple_amendements_multiple_articles(
     assert resp.content_type == "application/pdf"
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=an-269-PO717460-amendements-666_777.pdf"
+        == "attachment; filename=an-269-PO717460-amendements-666_777.pdf"
     )
 
 
@@ -98,7 +98,7 @@ def test_download_pdf_lots_of_amendements(app, lecture_an, article1_an, user_dav
     assert resp.content_type == "application/pdf"
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=an-269-PO717460-article1-11amendements-1etc.pdf"
+        == "attachment; filename=an-269-PO717460-article1-11amendements-1etc.pdf"
     )
 
 
@@ -116,7 +116,7 @@ def test_download_pdf_multiple_amendements_same_batch(
     assert resp.content_type == "application/pdf"
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=an-269-PO717460-article1-amendements-666_999.pdf"
+        == "attachment; filename=an-269-PO717460-article1-amendements-666_999.pdf"
     )
 
 
@@ -137,7 +137,7 @@ def test_download_xlsx_multiple_amendements(
     )
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=an-269-PO717460-article1-amendements-666_999.xlsx"
+        == "attachment; filename=an-269-PO717460-article1-amendements-666_999.xlsx"
     )
 
 
@@ -151,8 +151,8 @@ def test_download_xlsx_multiple_amendements_multiple_articles(
 
     resp = app.get(
         (
-            f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_xlsx"
-            f"?article=all&n=666&n=777"
+            "/dossiers/plfss-2018/lectures/an.15.269.PO717460/export_xlsx"
+            "?article=all&n=666&n=777"
         ),
         user=user_david,
     )
@@ -163,7 +163,7 @@ def test_download_xlsx_multiple_amendements_multiple_articles(
     )
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=an-269-PO717460-amendements-666_777.xlsx"
+        == "attachment; filename=an-269-PO717460-amendements-666_777.xlsx"
     )
 
 
@@ -190,7 +190,7 @@ def test_download_xlsx_lots_of_amendements(app, lecture_an, article1_an, user_da
     )
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=an-269-PO717460-article1-11amendements-1etc.xlsx"
+        == "attachment; filename=an-269-PO717460-article1-11amendements-1etc.xlsx"
     )
 
 
@@ -211,5 +211,5 @@ def test_download_xlsx_multiple_amendements_same_batch(
     )
     assert (
         resp.headers["Content-Disposition"]
-        == f"attachment; filename=an-269-PO717460-article1-amendements-666_999.xlsx"
+        == "attachment; filename=an-269-PO717460-article1-amendements-666_999.xlsx"
     )

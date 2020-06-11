@@ -195,7 +195,7 @@ def test_group_actions_button_urls_change_on_the_fly(
     find = driver.find_element_by_css_selector
 
     # Set a filter on the amendement
-    input_field = find(f"thead tr.filters th:nth-child(3) input")
+    input_field = find("thead tr.filters th:nth-child(3) input")
     input_field.send_keys("666")
     # Select the first amendement
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')

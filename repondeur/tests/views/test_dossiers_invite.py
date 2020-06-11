@@ -248,7 +248,7 @@ def test_post_form_already_invited(app, user_david, dossier_plfss2018):
     assert "Aucune invitation n’a été envoyée." in resp.text
 
     assert (
-        f"L’adresse courriel foo@exemple.gouv.fr "
+        "L’adresse courriel foo@exemple.gouv.fr "
         "avait déjà été invitée au dossier précédemment."
     ) in resp.text
 
@@ -391,7 +391,7 @@ def test_post_form_multiple_invites_one_not_gouv(
     assert "Invitation envoyée avec succès." in resp.text
 
     assert (
-        f"L’adresse courriel bar@exemple.notgouv.fr "
+        "L’adresse courriel bar@exemple.notgouv.fr "
         "est mal formée ou non autorisée et n’a pas été invitée."
     ) in resp.text
 

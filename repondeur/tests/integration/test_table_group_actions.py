@@ -247,7 +247,7 @@ def test_group_actions_button_urls_change_on_the_fly(
     driver.find_element_by_link_text("Filtrer").click()
 
     # Set a filter on the article
-    input_field = find(f"thead tr.filters th:nth-child(1) input")
+    input_field = find("thead tr.filters th:nth-child(1) input")
     input_field.send_keys("1")
     # Select the first amendement
     checkboxes = driver.find_elements_by_css_selector('[name="amendement-selected"]')

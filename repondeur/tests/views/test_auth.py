@@ -323,7 +323,7 @@ class TestLoginWithToken:
 
         # Oops, now we're being throttled
         resp = app.get(
-            "/authentification", params={"token": f"BADTOKEN"}, expect_errors=True
+            "/authentification", params={"token": "BADTOKEN"}, expect_errors=True
         )
         assert resp.status_code == 429  # Too Many Requests
 
@@ -332,13 +332,13 @@ class TestLoginWithToken:
         # If we wait 50 seconds we're still throttled
         with freeze_time(initial_time + timedelta(seconds=50)):
             resp = app.get(
-                "/authentification", params={"token": f"BADTOKEN"}, expect_errors=True
+                "/authentification", params={"token": "BADTOKEN"}, expect_errors=True
             )
             assert resp.status_code == 429  # Too Many Requests
 
         # If we wait 1 minute (sliding window) we can do a request again
         with freeze_time(initial_time + timedelta(seconds=60 + 0.01)):
-            resp = app.get("/authentification", params={"token": f"BADTOKEN"})
+            resp = app.get("/authentification", params={"token": "BADTOKEN"})
             assert 200 <= resp.status_code < 400
 
     def test_authenticated_user_gets_an_auth_cookie(self, app, auth_token):
@@ -522,7 +522,7 @@ class TestOnboarding:
 
         resp = app.get("/authentification", params={"token": token})
         assert resp.status_code == 302
-        assert resp.location == f"https://zam.test/dossiers/"
+        assert resp.location == "https://zam.test/dossiers/"
 
 
 class TestAuthTokenExpiration:

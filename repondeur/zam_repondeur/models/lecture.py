@@ -269,9 +269,7 @@ class Lecture(Base, LastEventMixin):
         return lecture
 
     @classmethod
-    def get_from_ref(
-        cls, lecture_ref: Any, dossier: "Dossier", texte: "Texte"
-    ) -> Optional["Lecture"]:
+    def get_from_ref(cls, lecture_ref: Any, dossier: "Dossier") -> Optional["Lecture"]:
         """
         Find an existing Lecture matching a LectureRef
         """

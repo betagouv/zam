@@ -70,20 +70,24 @@ def fetch_dossiers_legislatifs_and_textes(legislature: int) -> dict:
 
 def parse_textes(textes: list) -> Dict[str, TexteRef]:
     return {
-        item["uid"]: TexteRef(
-            uid=item["uid"],
-            type_=type_texte(item),
-            chambre=chambre_texte(item),
-            legislature=legislature_texte(item),
-            numero=int(item["notice"]["numNotice"]),
-            titre_long=item["titres"]["titrePrincipal"],
-            titre_court=item["titres"]["titrePrincipalCourt"],
-            date_depot=parse_date(item["cycleDeVie"]["chrono"]["dateDepot"]),
-        )
+        item["uid"]: _parse_texte(item)
         for item in textes
         if item["@xsi:type"] == "texteLoi_Type"
         if item["classification"]["type"]["code"] in {"PION", "PRJL"}
     }
+
+
+def _parse_texte(item: dict) -> TexteRef:
+    return TexteRef(
+        uid=item["uid"],
+        type_=type_texte(item),
+        chambre=chambre_texte(item),
+        legislature=legislature_texte(item),
+        numero=int(item["notice"]["numNotice"]),
+        titre_long=item["titres"]["titrePrincipal"],
+        titre_court=item["titres"]["titrePrincipalCourt"],
+        date_depot=parse_date(item["cycleDeVie"]["chrono"]["dateDepot"]),
+    )
 
 
 def type_texte(item: dict) -> TypeTexte:

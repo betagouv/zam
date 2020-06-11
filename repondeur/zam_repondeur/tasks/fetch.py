@@ -290,7 +290,7 @@ def create_or_update_lecture(
 
     texte = Texte.get_or_create_from_ref(lecture_ref.texte, lecture_ref.chambre)
 
-    lecture = Lecture.get_from_ref(lecture_ref, dossier, texte)
+    lecture = Lecture.get_from_ref(lecture_ref, dossier)
 
     if lecture is not None and lecture.texte is not texte:
         # We probably created the Lecture before a new Texte was adopted

@@ -9,7 +9,7 @@ def test_amendements_search(wsgi_server, driver, lecture_an_url, amendements_an)
     url = f"{lecture_an_url}/amendements/"
     driver.get(url)
     input_field = driver.find_element_by_css_selector(
-        f"thead tr.filters th:nth-child(3) input"
+        "thead tr.filters th:nth-child(3) input"
     )
     input_field.send_keys("111")  # Unknown numero.
     wait = WebDriverWait(driver, 1)
@@ -45,7 +45,7 @@ def test_amendements_search_too_many(
     url = f"{lecture_an_url}/amendements/"
     driver.get(url)
     input_field = driver.find_element_by_css_selector(
-        f"thead tr.filters th:nth-child(3) input"
+        "thead tr.filters th:nth-child(3) input"
     )
     input_field.send_keys("111")  # Unknown numero.
     wait = WebDriverWait(driver, 1)
@@ -70,7 +70,7 @@ def test_amendements_search_not_found(
         '[data-target="amendement-search.form"] .error'
     ).is_displayed()
     input_field = driver.find_element_by_css_selector(
-        f"thead tr.filters th:nth-child(3) input"
+        "thead tr.filters th:nth-child(3) input"
     )
     input_field.send_keys("111")  # Unknown numero.
     driver.find_element_by_css_selector("#q-amendement").send_keys(f"42{Keys.ENTER}")

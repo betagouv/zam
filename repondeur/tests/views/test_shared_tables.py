@@ -3,7 +3,7 @@ import transaction
 
 def test_get_shared_tables_empty(app, lecture_an, amendements_an, user_david):
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/options", user=user_david
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options", user=user_david
     )
 
     assert resp.status_code == 200
@@ -15,7 +15,7 @@ def test_get_shared_tables_list(
     app, lecture_an, amendements_an, user_david, shared_table_lecture_an
 ):
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/options", user=user_david
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/options", user=user_david
     )
 
     assert resp.status_code == 200
@@ -25,7 +25,7 @@ def test_get_shared_tables_list(
 
 def test_get_shared_tables_create_form(app, lecture_an, amendements_an, user_david):
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/add", user=user_david
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/add", user=user_david
     )
 
     assert resp.status_code == 200
@@ -39,7 +39,7 @@ def test_post_shared_tables_create_form(app, lecture_an, amendements_an, user_da
         DBSession.add(user_david)
 
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/add", user=user_david
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/add", user=user_david
     )
     form = resp.forms["box-upsert"]
     form["titre"] = "Test table"
@@ -76,7 +76,7 @@ def test_get_shared_tables_edit_form(
     app, lecture_an, amendements_an, user_david, shared_table_lecture_an
 ):
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",
         user=user_david,
     )
 
@@ -90,7 +90,7 @@ def test_get_shared_tables_edit_form_has_active_delete_link_if_no_amendement(
     app, lecture_an, amendements_an, user_david, shared_table_lecture_an
 ):
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",
         user=user_david,
     )
 
@@ -109,7 +109,7 @@ def test_get_shared_tables_edit_form_has_disabled_delete_link_if_amendement(
         shared_table_lecture_an.add_amendement(amendements_an[0])
 
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",
         user=user_david,
     )
 
@@ -127,7 +127,7 @@ def test_post_shared_tables_edit_form(
         DBSession.add(user_david)
 
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",
         user=user_david,
     )
     form = resp.forms["box-upsert"]
@@ -171,7 +171,7 @@ def test_get_shared_tables_edit_form_with_existing_same_name_shared_table(
         DBSession.add(user_david)
 
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/",
         user=user_david,
     )
     assert resp.status_code == 200
@@ -182,7 +182,7 @@ def test_get_shared_tables_delete_form(
     app, lecture_an, amendements_an, user_david, shared_table_lecture_an
 ):
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/delete",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/delete",
         user=user_david,
     )
 
@@ -203,7 +203,7 @@ def test_post_shared_tables_delete_form(
         == 1
     )
     resp = app.get(
-        f"/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/delete",
+        "/dossiers/plfss-2018/lectures/an.15.269.PO717460/boites/test-table/delete",
         user=user_david,
     )
     resp = resp.forms["box-delete"].submit()

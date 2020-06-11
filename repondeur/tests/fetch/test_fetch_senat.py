@@ -820,7 +820,7 @@ def test_fetch_and_parse_discussion_details_parent_missing(lecture_senat, caplog
     assert len(details) == 2
     assert details[0].parent_num is None
     assert details[1].parent_num is None
-    assert f"Unknown parent amendement 1234" in [rec.message for rec in caplog.records]
+    assert "Unknown parent amendement 1234" in [rec.message for rec in caplog.records]
 
 
 def test_derouleur_urls_and_mission_refs(lecture_senat):

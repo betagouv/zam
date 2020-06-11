@@ -17,3 +17,9 @@ def test_parse_date_empty_string():
     from zam_repondeur.services.fetch.dates import parse_date
 
     assert parse_date("") is None
+
+
+def test_parse_date_none():
+    from zam_repondeur.services.fetch.dates import parse_date
+
+    assert parse_date(None) is None

@@ -2,8 +2,8 @@ from datetime import date
 from typing import Optional
 
 
-def parse_date(rfc339_datetime_string: str) -> Optional[date]:
-    if rfc339_datetime_string == "":
+def parse_date(rfc339_datetime_string: Optional[str]) -> Optional[date]:
+    if not rfc339_datetime_string:
         return None
     return date(
         year=int(rfc339_datetime_string[0:4]),

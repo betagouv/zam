@@ -62,7 +62,7 @@ pytz==2020.1
 redis==3.5.3
 regex==2020.6.8            # dateparser
 repoze.sendmail==4.4.1      # pyramid-mailer
-requests==2.20.1            # lawfactory_utils, legipy: < 2.21, >= 2.20
+requests==2.24.0            # lawfactory_utils, legipy: < 2.21, >= 2.20
 rollbar==0.15.0
 selectolax==0.2.3
 senapy==0.2.15              # tlfp

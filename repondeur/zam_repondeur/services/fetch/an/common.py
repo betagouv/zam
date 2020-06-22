@@ -1,7 +1,7 @@
 import logging
 from http import HTTPStatus
 from io import BytesIO, TextIOWrapper
-from typing import IO, Generator, Tuple
+from typing import IO, BinaryIO, Generator, Tuple, cast
 from zipfile import ZipFile
 
 from zam_repondeur.services.fetch.http import get_http_session
@@ -42,4 +42,6 @@ def extract_from_zip(content: BytesIO) -> Generator[Tuple[str, IO[str]], None, N
     with ZipFile(content) as zip_file:
         for filename in zip_file.namelist():
             with zip_file.open(filename) as file_:
-                yield (filename, TextIOWrapper(file_, encoding="utf-8"))
+                # The cast is required temporarily to work around a typeshed issue
+                # https://github.com/python/mypy/pull/8965
+                yield (filename, TextIOWrapper(cast(BinaryIO, file_), encoding="utf-8"))

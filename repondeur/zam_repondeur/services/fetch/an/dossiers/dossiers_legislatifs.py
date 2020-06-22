@@ -1,5 +1,6 @@
 import logging
 import re
+from datetime import date
 from json import load
 from typing import Any, Dict, Iterator, List, NamedTuple, Optional, Tuple
 
@@ -70,23 +71,35 @@ def fetch_dossiers_legislatifs_and_textes(legislature: int) -> dict:
 
 def parse_textes(textes: list) -> Dict[str, TexteRef]:
     return {
-        item["uid"]: _parse_texte(item)
+        item["uid"]: parse_texte(item)
         for item in textes
         if item["@xsi:type"] == "texteLoi_Type"
         if item["classification"]["type"]["code"] in {"PION", "PRJL"}
     }
 
 
-def _parse_texte(item: dict) -> TexteRef:
+def parse_texte(item: dict) -> TexteRef:
+    uid: str = item["uid"]
+    date_depot: Optional[date] = parse_date(item["cycleDeVie"]["chrono"]["dateDepot"])
+    if date_depot is None:
+        date_creation: Optional[date] = parse_date(
+            item["cycleDeVie"]["chrono"]["dateCreation"]
+        )
+        if date_creation is None:
+            raise ValueError(f"Missing dateDepot and dateCreation for texte {uid}")
+        logger.warning(
+            "Missing dateDepot for texte %s, using dateCreation instead", uid
+        )
+        date_depot = date_creation
     return TexteRef(
-        uid=item["uid"],
+        uid=uid,
         type_=type_texte(item),
         chambre=chambre_texte(item),
         legislature=legislature_texte(item),
         numero=int(item["notice"]["numNotice"]),
         titre_long=item["titres"]["titrePrincipal"],
         titre_court=item["titres"]["titrePrincipalCourt"],
-        date_depot=parse_date(item["cycleDeVie"]["chrono"]["dateDepot"]),
+        date_depot=date_depot,
     )
 
 

@@ -42,6 +42,6 @@ termcolor==1.1.0
 toml==0.10.1
 typed-ast==1.4.1
 waitress==1.4.4
-wcwidth==0.2.4
+wcwidth==0.2.5
 WebTest==2.0.35
 zipp==3.1.0

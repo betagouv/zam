@@ -64,7 +64,7 @@ jobs:
           name: Check import order with isort
           command: |
             cd repondeur
-            ~/venv/bin/isort --recursive --check-only .
+            ~/venv/bin/isort --check-only .
       - run:
           name: Check for potential security issues with bandit
           command: |

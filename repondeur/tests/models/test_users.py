@@ -25,13 +25,13 @@ class TestUserActivity:
 
 class TestUserTeamRelationship:
     def test_user_set_team(self, user_david):
-        from zam_repondeur.models import DBSession, User, Team
+        from zam_repondeur.models import DBSession, Team, User
 
         team_zam = DBSession.query(Team).first()
         assert DBSession.query(User).first().teams == [team_zam]
 
     def test_user_unset_team(self, user_david):
-        from zam_repondeur.models import DBSession, User, Team
+        from zam_repondeur.models import DBSession, Team, User
 
         user_david = DBSession.query(User).first()
         team_zam = DBSession.query(Team).first()

@@ -75,7 +75,7 @@ class TestPostForm:
         )
 
     def test_upload_updates_user_content(self, app, user_david):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
         from zam_repondeur.models.events.amendement import (
             AvisAmendementModifie,
             ObjetAmendementModifie,
@@ -113,7 +113,7 @@ class TestPostForm:
         assert ObjetAmendementModifie in events
 
     def test_upload_does_not_update_position(self, app, user_david):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.position == 1
@@ -130,7 +130,7 @@ class TestPostForm:
         assert amendement.position == 2
 
     def test_upload_backup_with_comments(self, app, user_david):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
         from zam_repondeur.models.events.amendement import CommentsAmendementModifie
 
         self._upload_backup(app, "backup_with_comments.json", user_david)
@@ -148,7 +148,7 @@ class TestPostForm:
     def test_upload_backup_with_affectation_to_unknown_user_without_team(
         self, app, user_david, team_zam
     ):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
@@ -174,7 +174,7 @@ class TestPostForm:
     def test_upload_backup_with_affectation_to_unknown_user_with_team(
         self, app, lecture_an, user_david, team_zam
     ):
-        from zam_repondeur.models import DBSession, Amendement, User
+        from zam_repondeur.models import Amendement, DBSession, User
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
@@ -220,7 +220,7 @@ class TestPostForm:
         assert AmendementTransfere not in events
 
     def test_upload_updates_affectation(self, app, lecture_an, user_david, user_ronan):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
 
         with transaction.manager:
             DBSession.add_all([user_david, user_ronan])
@@ -247,7 +247,7 @@ class TestPostForm:
         assert amendement.location.user_table is None
 
     def test_upload_affectation_box_new(self, app, lecture_an, user_david):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
@@ -284,7 +284,7 @@ class TestPostForm:
     def test_upload_affectation_box_existing_not_updated(
         self, app, lecture_an, user_david
     ):
-        from zam_repondeur.models import DBSession, Amendement, SharedTable
+        from zam_repondeur.models import Amendement, DBSession, SharedTable
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         with transaction.manager:
@@ -317,7 +317,7 @@ class TestPostForm:
         assert amendement.location.shared_table is None
 
     def test_upload_affectation_box_existing_updated(self, app, lecture_an, user_david):
-        from zam_repondeur.models import DBSession, Amendement, SharedTable
+        from zam_repondeur.models import Amendement, DBSession, SharedTable
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         with transaction.manager:
@@ -362,7 +362,7 @@ class TestPostForm:
     def test_upload_affectation_box_from_user(
         self, app, lecture_an, user_david, user_ronan
     ):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         with transaction.manager:
@@ -406,7 +406,7 @@ class TestPostForm:
         assert amendement.location.shared_table is None
 
     def test_upload_backup_with_articles(self, app, user_david):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
 
         resp = self._upload_backup(
             app, "backup_with_articles.json", user_david
@@ -453,7 +453,7 @@ class TestPostForm:
 def test_post_form_from_export(
     app, lecture_an, lecture_an_url, article1_an, tmpdir, user_david
 ):
-    from zam_repondeur.models import DBSession, Amendement, Article
+    from zam_repondeur.models import Amendement, Article, DBSession
     from zam_repondeur.services.import_export.json import export_json
 
     filename = str(tmpdir.join("test.json"))

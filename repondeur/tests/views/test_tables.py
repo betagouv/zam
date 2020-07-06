@@ -272,7 +272,7 @@ class TestTransfer:
         user_ronan_table_an,
         david_has_one_amendement,
     ):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
 
         # Commit our user to the database and put 2 amendements on their table
         with transaction.manager:

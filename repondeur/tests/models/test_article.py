@@ -224,7 +224,7 @@ class TestOrdering:
         assert article_7.next_article is None
 
     def test_previous_next_displayable(self, article1_an, lecture_an, amendements_an):
-        from zam_repondeur.models import DBSession, Article
+        from zam_repondeur.models import Article, DBSession
 
         article_6 = Article.create(lecture=lecture_an, type="article", num=6)
         apres_article_6 = Article.create(

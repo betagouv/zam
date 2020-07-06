@@ -1,6 +1,7 @@
 class TestRepr:
     def test_no_repr_keys(self):
         from sqlalchemy import Column, Integer
+
         from zam_repondeur.models.base import Base
 
         class Foo(Base):

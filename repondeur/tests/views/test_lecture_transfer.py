@@ -419,7 +419,7 @@ def test_lecture_post_transfer_amendements_to_me_from_index(
 def test_lecture_post_transfer_amendements_to_index(
     app, lecture_an, amendements_an, user_david
 ):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
         DBSession.add(amendements_an[0])
@@ -460,7 +460,7 @@ def test_lecture_post_transfer_amendements_to_index(
 def test_lecture_post_transfer_amendements_to_index_from_index(
     app, lecture_an, lecture_an_url, amendements_an, user_david
 ):
-    from zam_repondeur.models import DBSession, User, Amendement
+    from zam_repondeur.models import Amendement, DBSession, User
 
     with transaction.manager:
         DBSession.add(amendements_an[0])
@@ -601,7 +601,7 @@ def test_lecture_post_transfer_amendements_from_void_to_shared_table(
 def test_lecture_post_transfer_amendements_from_me_to_shared_table(
     app, lecture_an, amendements_an, user_david, shared_table_lecture_an
 ):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
         DBSession.add(amendements_an[0])
@@ -643,7 +643,7 @@ def test_lecture_post_transfer_amendements_from_me_to_shared_table(
 def test_lecture_post_transfer_amendements_from_other_to_shared_table(
     app, lecture_an, amendements_an, user_david, user_ronan, shared_table_lecture_an
 ):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
         DBSession.add(amendements_an[0])
@@ -725,7 +725,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_void(
 def test_lecture_post_transfer_amendements_from_shared_table_to_me(
     app, lecture_an, amendements_an, user_david, shared_table_lecture_an
 ):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
         DBSession.add(amendements_an[0])
@@ -766,7 +766,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_me(
 def test_lecture_post_transfer_amendements_from_shared_table_to_other(
     app, lecture_an, amendements_an, user_david, user_ronan, shared_table_lecture_an
 ):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     with transaction.manager:
         DBSession.add(amendements_an[0])
@@ -808,7 +808,7 @@ def test_lecture_post_transfer_amendements_from_shared_table_to_other(
 def test_lecture_post_transfer_amendements_from_void_to_noname_user(
     app, lecture_an, amendements_an, user_david, team_zam
 ):
-    from zam_repondeur.models import DBSession, Amendement, User
+    from zam_repondeur.models import Amendement, DBSession, User
 
     with transaction.manager:
         # We simulate an invited user that has never been connected.

@@ -48,6 +48,8 @@ def dossier_plfss_2018():
 
 
 def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
+    from zam_repondeur.models.chambre import Chambre
+    from zam_repondeur.models.phase import Phase
     from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
         parse_dossier,
     )
@@ -56,8 +58,6 @@ def test_parse_dossier_plfss_2018(dossier_plfss_2018, textes):
         TexteRef,
         TypeTexte,
     )
-    from zam_repondeur.models.chambre import Chambre
-    from zam_repondeur.models.phase import Phase
 
     dossier = parse_dossier(dossier_plfss_2018, textes)
 
@@ -208,11 +208,11 @@ def dossier_ecole_de_la_confiance():
 
 
 def test_parse_dossier_ecole_de_la_confiance(dossier_ecole_de_la_confiance, textes):
+    from zam_repondeur.models.chambre import Chambre
+    from zam_repondeur.models.phase import Phase
     from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
         parse_dossier,
     )
-    from zam_repondeur.models.chambre import Chambre
-    from zam_repondeur.models.phase import Phase
 
     dossier = parse_dossier(dossier_ecole_de_la_confiance, textes)
 
@@ -241,6 +241,8 @@ def dossier_plf_2018():
 
 
 def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
+    from zam_repondeur.models.chambre import Chambre
+    from zam_repondeur.models.phase import Phase
     from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
         parse_dossier,
     )
@@ -249,8 +251,6 @@ def test_parse_dossier_plf_2018(dossier_plf_2018, textes):
         TexteRef,
         TypeTexte,
     )
-    from zam_repondeur.models.chambre import Chambre
-    from zam_repondeur.models.phase import Phase
 
     dossier = parse_dossier(dossier_plf_2018, textes)
 
@@ -535,17 +535,17 @@ def dossier_essoc():
 
 
 def test_parse_dossier_essoc(dossier_essoc, textes):
+    from zam_repondeur.models.chambre import Chambre
+    from zam_repondeur.models.phase import Phase
     from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
         parse_dossier,
     )
     from zam_repondeur.services.fetch.an.dossiers.models import (
-        LectureRef,
         DossierRef,
+        LectureRef,
         TexteRef,
         TypeTexte,
     )
-    from zam_repondeur.models.chambre import Chambre
-    from zam_repondeur.models.phase import Phase
 
     lectures = [
         LectureRef(
@@ -716,12 +716,12 @@ class TestGenLectures:
 
 
 def test_walk_actes(dossier_essoc, textes):
+    from zam_repondeur.models.phase import Phase
     from zam_repondeur.services.fetch.an.dossiers.dossiers_legislatifs import (
         Chambre,
-        walk_actes,
         WalkResult,
+        walk_actes,
     )
-    from zam_repondeur.models.phase import Phase
 
     acte = dossier_essoc["actesLegislatifs"]["acteLegislatif"][0]
     assert list(walk_actes(acte, "DLR5L15N36159")) == [

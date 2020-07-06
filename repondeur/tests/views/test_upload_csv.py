@@ -63,7 +63,7 @@ class TestPostForm:
 
     @pytest.mark.parametrize("filename", TEST_FILES)
     def test_upload_updates_user_content(self, app, filename, user_david):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
         from zam_repondeur.models.events.amendement import (
             AvisAmendementModifie,
             ObjetAmendementModifie,
@@ -104,7 +104,7 @@ class TestPostForm:
 
     @pytest.mark.parametrize("filename", TEST_FILES)
     def test_upload_does_not_update_position(self, app, filename, user_david):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.position == 1
@@ -132,7 +132,7 @@ class TestPostForm:
         assert ReponsesImportees in events
 
     def test_upload_with_comments(self, app, user_david):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
         from zam_repondeur.models.events.amendement import CommentsAmendementModifie
 
         self._upload_csv(app, "reponses_with_comments.csv", user=user_david)
@@ -150,7 +150,7 @@ class TestPostForm:
     def test_upload_with_affectation_to_unknown_user_without_team(
         self, app, user_david
     ):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
@@ -173,7 +173,7 @@ class TestPostForm:
         assert AmendementTransfere not in events
 
     def test_upload_with_affectation_empty_name(self, app, user_david):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
 
         amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
         assert amendement.location.user_table is None
@@ -189,7 +189,7 @@ class TestPostForm:
     def test_upload_with_affectation_to_unknown_user_with_team(
         self, app, lecture_an, user_ronan, team_zam
     ):
-        from zam_repondeur.models import DBSession, Amendement, User
+        from zam_repondeur.models import Amendement, DBSession, User
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         with transaction.manager:
@@ -239,7 +239,7 @@ class TestPostForm:
         assert AmendementTransfere not in events
 
     def test_upload_with_affectation_to_known_user(self, app, user_david):
-        from zam_repondeur.models import DBSession, Amendement
+        from zam_repondeur.models import Amendement, DBSession
         from zam_repondeur.models.events.amendement import AmendementTransfere
 
         with transaction.manager:
@@ -291,7 +291,7 @@ class TestPostForm:
 def test_post_form_from_export(
     app, lecture_an, lecture_an_url, article1_an, tmpdir, user_david
 ):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.import_export.csv import export_csv
 
     filename = str(tmpdir.join("test.csv"))

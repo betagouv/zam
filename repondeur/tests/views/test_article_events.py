@@ -2,8 +2,8 @@ import transaction
 
 
 def test_post_article_edit_form_title(app, lecture_an, amendements_an, user_david):
-    from zam_repondeur.models.events.article import TitreArticleModifie
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.models.events.article import TitreArticleModifie
 
     with transaction.manager:
         DBSession.add(user_david)
@@ -36,8 +36,8 @@ def test_post_article_edit_form_title(app, lecture_an, amendements_an, user_davi
 def test_post_article_edit_form_presentation(
     app, lecture_an, amendements_an, user_david
 ):
-    from zam_repondeur.models.events.article import PresentationArticleModifiee
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.models.events.article import PresentationArticleModifiee
 
     with transaction.manager:
         DBSession.add(user_david)

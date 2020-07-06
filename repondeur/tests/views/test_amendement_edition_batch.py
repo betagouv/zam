@@ -4,7 +4,7 @@ import transaction
 def test_amendement_start_editing(
     app, lecture_an_url, amendements_an_batch, user_david, user_david_table_an
 ):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     amendement_666 = amendements_an_batch[0]
     amendement_999 = amendements_an_batch[1]
@@ -32,7 +32,7 @@ def test_amendement_start_editing(
 def test_amendement_stop_editing(
     app, lecture_an_url, amendements_an_batch, user_david, user_david_table_an
 ):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     amendement_666 = amendements_an_batch[0]
     amendement_999 = amendements_an_batch[1]

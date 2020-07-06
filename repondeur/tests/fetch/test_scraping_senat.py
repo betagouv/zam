@@ -89,6 +89,8 @@ class TestCreateDossierRef:
         """
         Simple case: commission, then séance publique on adopted text
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -96,8 +98,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("pjl18-404") == DossierRef(
             uid="pjl18-404",
@@ -147,6 +147,8 @@ class TestCreateDossierRef:
         """
         Simple case: commission, then séance publique on adopted text
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -154,8 +156,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("pjl18-523") == DossierRef(
             uid="pjl18-523",
@@ -205,6 +205,8 @@ class TestCreateDossierRef:
         """
         Simple case: commission, then séance publique on adopted text
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -212,8 +214,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("pjl18-526") == DossierRef(
             uid="pjl18-526",
@@ -263,6 +263,8 @@ class TestCreateDossierRef:
         """
         Simple case: commission, then séance publique on adopted text
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -270,8 +272,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("pjl18-532") == DossierRef(
             uid="pjl18-532",
@@ -321,6 +321,8 @@ class TestCreateDossierRef:
         """
         Simple case: commission, then séance publique on adopted text
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -328,8 +330,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("ppl17-699") == DossierRef(
             uid="ppl17-699",
@@ -379,6 +379,8 @@ class TestCreateDossierRef:
         """
         Première & nouvelle lecture
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -386,8 +388,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("ppl18-002") == DossierRef(
             uid="ppl18-002",
@@ -471,6 +471,8 @@ class TestCreateDossierRef:
         """
         Première & nouvelle lecture
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -478,8 +480,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("ppl18-043") == DossierRef(
             uid="ppl18-043",
@@ -542,6 +542,8 @@ class TestCreateDossierRef:
 
         TODO: find a way to represent both commission lectures.
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -549,8 +551,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("ppl18-229") == DossierRef(
             uid="ppl18-229",
@@ -617,6 +617,8 @@ class TestCreateDossierRef:
         """
         Commission does not vote a new texte
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -624,8 +626,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("ppl18-260") == DossierRef(
             uid="ppl18-260",
@@ -675,6 +675,8 @@ class TestCreateDossierRef:
         """
         Commission does not vote a new texte
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -682,8 +684,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("ppl18-305") == DossierRef(
             uid="ppl18-305",
@@ -733,6 +733,8 @@ class TestCreateDossierRef:
         """
         Simple case: commission, then séance publique on adopted text
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -740,8 +742,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("ppl18-385") == DossierRef(
             uid="ppl18-385",
@@ -791,6 +791,8 @@ class TestCreateDossierRef:
         """
         Simple case: commission, then séance publique on adopted text
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -798,8 +800,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("ppl18-386") == DossierRef(
             uid="ppl18-386",
@@ -849,6 +849,8 @@ class TestCreateDossierRef:
         """
         Commission does not vote a new texte
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -856,8 +858,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("ppl18-436") == DossierRef(
             uid="ppl18-436",
@@ -907,6 +907,8 @@ class TestCreateDossierRef:
         """
         Commission has not adopted a new texte yet
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -914,8 +916,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("ppl18-454") == DossierRef(
             uid="ppl18-454",
@@ -965,6 +965,8 @@ class TestCreateDossierRef:
         """
         Simple case: commission, then séance publique on adopted text
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -972,8 +974,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("ppl18-462") == DossierRef(
             uid="ppl18-462",
@@ -1023,6 +1023,8 @@ class TestCreateDossierRef:
         """
         Résolution: the government is most likely not involved
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -1030,8 +1032,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("ppr18-458") == DossierRef(
             uid="ppr18-458",
@@ -1081,6 +1081,8 @@ class TestCreateDossierRef:
         """
         Projet de loi de finances 2020 (27/11)
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -1088,8 +1090,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("pjlf2020") == DossierRef(
             uid="pjlf2020",
@@ -1173,6 +1173,8 @@ class TestCreateDossierRef:
         """
         Projet de loi de financement de la sécurité sociale 2020 (27/11)
         """
+        from zam_repondeur.models.chambre import Chambre
+        from zam_repondeur.models.phase import Phase
         from zam_repondeur.services.fetch.an.dossiers.models import (
             DossierRef,
             LectureRef,
@@ -1180,8 +1182,6 @@ class TestCreateDossierRef:
             TypeTexte,
         )
         from zam_repondeur.services.fetch.senat.scraping import create_dossier_ref
-        from zam_repondeur.models.chambre import Chambre
-        from zam_repondeur.models.phase import Phase
 
         assert create_dossier_ref("plfss2020") == DossierRef(
             uid="plfss2020",

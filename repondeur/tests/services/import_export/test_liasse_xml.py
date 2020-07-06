@@ -180,8 +180,8 @@ def test_import_liasse_second_part(
 ):
     from zam_repondeur.models import DBSession, Lecture, Phase
     from zam_repondeur.services.import_export.liasse_xml import (
-        import_liasse_xml,
         LectureDoesNotMatch,
+        import_liasse_xml,
     )
 
     with transaction.manager:
@@ -218,8 +218,8 @@ def test_import_liasse_second_part(
 
 def test_import_liasse_xml_lecture_is_not_an(lecture_senat):
     from zam_repondeur.services.import_export.liasse_xml import (
-        import_liasse_xml,
         BadChambre,
+        import_liasse_xml,
     )
 
     with pytest.raises(BadChambre):
@@ -228,8 +228,8 @@ def test_import_liasse_xml_lecture_is_not_an(lecture_senat):
 
 def test_import_liasse_xml_lecture_does_not_match(lecture_an):
     from zam_repondeur.services.import_export.liasse_xml import (
-        import_liasse_xml,
         LectureDoesNotMatch,
+        import_liasse_xml,
     )
 
     with pytest.raises(LectureDoesNotMatch):

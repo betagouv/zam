@@ -5,7 +5,7 @@ import transaction
 
 class TestAdminList:
     def test_only_accessible_to_admin(self, app, user_sgg):
-        from zam_repondeur.models import User, DBSession
+        from zam_repondeur.models import DBSession, User
 
         assert DBSession.query(User).filter(User.admin_at.isnot(None)).count() == 1
 
@@ -29,7 +29,7 @@ class TestAdminList:
 
 class TestAdminAdd:
     def test_create(self, app, user_sgg, user_david):
-        from zam_repondeur.models import User, DBSession
+        from zam_repondeur.models import DBSession, User
 
         assert DBSession.query(User).filter(User.admin_at.isnot(None)).count() == 1
         resp = app.get("/admins/add", user=user_sgg)
@@ -68,7 +68,7 @@ class TestAdminAdd:
             )
 
     def test_submit_empty(self, app, user_sgg, user_david):
-        from zam_repondeur.models import User, DBSession
+        from zam_repondeur.models import DBSession, User
 
         assert DBSession.query(User).filter(User.admin_at.isnot(None)).count() == 1
         resp = app.get("/admins/add", user=user_sgg)
@@ -87,7 +87,7 @@ class TestAdminAdd:
         assert "Veuillez saisir une personne dans le menu déroulant." in resp.text
 
     def test_not_possible_to_regular_user(self, app, user_sgg, user_david):
-        from zam_repondeur.models import User, DBSession
+        from zam_repondeur.models import DBSession, User
 
         assert DBSession.query(User).filter(User.admin_at.isnot(None)).count() == 1
 
@@ -100,7 +100,7 @@ class TestAdminAdd:
 
 class TestAdminDelete:
     def test_delete(self, app, user_sgg, user_david):
-        from zam_repondeur.models import User, DBSession
+        from zam_repondeur.models import DBSession, User
 
         with transaction.manager:
             user_david.admin_at = datetime.utcnow()
@@ -136,7 +136,7 @@ class TestAdminDelete:
             )
 
     def test_not_possible_to_regular_user(self, app, user_sgg, user_david, user_ronan):
-        from zam_repondeur.models import User, DBSession
+        from zam_repondeur.models import DBSession, User
 
         with transaction.manager:
             user_david.admin_at = datetime.utcnow()
@@ -150,7 +150,7 @@ class TestAdminDelete:
         assert DBSession.query(User).filter(User.admin_at.isnot(None)).count() == 2
 
     def test_not_possible_to_yourself(self, app, user_sgg, user_david):
-        from zam_repondeur.models import User, DBSession
+        from zam_repondeur.models import DBSession, User
 
         with transaction.manager:
             user_david.admin_at = datetime.utcnow()

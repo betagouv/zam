@@ -136,7 +136,7 @@ class TestSimilairesMap:
         }
 
     def test_same_reponses(self, lecture_an, amendements_an):
-        from zam_repondeur.models import DBSession, Amendement, Lecture
+        from zam_repondeur.models import Amendement, DBSession, Lecture
 
         with transaction.manager:
             amendements_an[0].user_content.reponse = "bla bla"
@@ -155,7 +155,7 @@ class TestSimilairesMap:
         }
 
     def test_different_reponses(self, lecture_an, amendements_an):
-        from zam_repondeur.models import DBSession, Amendement, Lecture
+        from zam_repondeur.models import Amendement, DBSession, Lecture
 
         with transaction.manager:
             amendements_an[0].user_content.reponse = "bla bla"

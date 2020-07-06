@@ -42,7 +42,7 @@ def test_num_disp(lecture_senat, article1_senat, text, num, rectif, disp):
 
 
 def test_amendement_parent_relationship(amendements_an):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     a, b = DBSession.query(Amendement).all()
 
@@ -57,7 +57,7 @@ def test_amendement_parent_relationship(amendements_an):
 
 
 def test_amendement_batches(amendements_an):
-    from zam_repondeur.models import DBSession, Amendement, Batch
+    from zam_repondeur.models import Amendement, Batch, DBSession
 
     a, b = DBSession.query(Amendement).all()
 

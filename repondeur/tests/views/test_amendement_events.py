@@ -7,9 +7,9 @@ def test_post_amendement_init_form_events(
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import (
         AvisAmendementModifie,
+        CommentsAmendementModifie,
         ObjetAmendementModifie,
         ReponseAmendementModifiee,
-        CommentsAmendementModifie,
     )
 
     amendement = amendements_an[1]
@@ -99,9 +99,9 @@ def test_post_amendement_edit_form_events(
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import (
         AvisAmendementModifie,
+        CommentsAmendementModifie,
         ObjetAmendementModifie,
         ReponseAmendementModifiee,
-        CommentsAmendementModifie,
     )
 
     amendement = amendements_an[1]

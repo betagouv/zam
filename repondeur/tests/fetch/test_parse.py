@@ -5,8 +5,8 @@ import pytest
 
 def test_parse_from_csv(lecture_senat, settings):
 
-    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
+    from zam_repondeur.services.fetch.senat.amendements import Senat
 
     amend = {
         "Alinéa": " ",
@@ -48,8 +48,8 @@ def test_parse_from_csv(lecture_senat, settings):
 
 def test_parse_from_csv_unparsable_article(lecture_senat, settings):
 
-    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import DBSession
+    from zam_repondeur.services.fetch.senat.amendements import Senat
 
     amend = {
         "Alinéa": " ",
@@ -107,10 +107,10 @@ class TestExtractMatricule:
 
 class TestParseDiscussionDetails:
     def test_parse_basic_data(self):
+        from zam_repondeur.services.fetch.missions import MissionRef
         from zam_repondeur.services.fetch.senat.derouleur import (
             parse_discussion_details,
         )
-        from zam_repondeur.services.fetch.missions import MissionRef
 
         amend = {
             "idAmendement": "1104289",
@@ -142,10 +142,10 @@ class TestParseDiscussionDetails:
         assert details.parent_num is None
 
     def test_discussion_commune(self):
+        from zam_repondeur.services.fetch.missions import MissionRef
         from zam_repondeur.services.fetch.senat.derouleur import (
             parse_discussion_details,
         )
-        from zam_repondeur.services.fetch.missions import MissionRef
 
         amend = {
             "idAmendement": "1110174",
@@ -174,10 +174,10 @@ class TestParseDiscussionDetails:
         assert details.id_discussion_commune == 110541
 
     def test_not_discussion_commune(self):
+        from zam_repondeur.services.fetch.missions import MissionRef
         from zam_repondeur.services.fetch.senat.derouleur import (
             parse_discussion_details,
         )
-        from zam_repondeur.services.fetch.missions import MissionRef
 
         amend = {
             "idAmendement": "1103376",
@@ -206,10 +206,10 @@ class TestParseDiscussionDetails:
         assert details.id_discussion_commune is None
 
     def test_parse_sous_amendement(self):
+        from zam_repondeur.services.fetch.missions import MissionRef
         from zam_repondeur.services.fetch.senat.derouleur import (
             parse_discussion_details,
         )
-        from zam_repondeur.services.fetch.missions import MissionRef
 
         amend1 = {
             "idAmendement": "1104289",

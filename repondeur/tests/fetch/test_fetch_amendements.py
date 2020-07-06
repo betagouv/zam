@@ -834,6 +834,7 @@ def test_fetch_amendements_with_connection_errors(
     app, source_an, lecture_an, article1_an, amendements_an
 ):
     from requests.exceptions import ConnectionError
+
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.fetch.an.amendements import ANDerouleurData
 

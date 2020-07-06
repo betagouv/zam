@@ -6,14 +6,14 @@ import pytest
 
 @pytest.yield_fixture(scope="session", autouse=True)
 def mock_dossiers():
+    from zam_repondeur.models.chambre import Chambre
+    from zam_repondeur.models.phase import Phase
     from zam_repondeur.services.fetch.an.dossiers.models import (
         DossierRef,
         LectureRef,
         TexteRef,
         TypeTexte,
     )
-    from zam_repondeur.models.chambre import Chambre
-    from zam_repondeur.models.phase import Phase
 
     with patch(
         "zam_repondeur.services.data.get_dossiers_legislatifs_and_textes"

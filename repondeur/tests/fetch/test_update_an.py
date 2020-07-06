@@ -195,7 +195,7 @@ def test_article_changed(lecture_an, source_an):
     """
     The targeted article may change
     """
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add(lecture_an)
 
@@ -311,7 +311,7 @@ def test_add_parent_amendement(lecture_an, source_an):
     """
     A standalone amendement can become a « sous-amendement »
     """
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add(lecture_an)
 
@@ -408,7 +408,7 @@ def test_remove_parent_amendement(lecture_an, source_an):
     """
     A « sous-amendement » can become a standalone one
     """
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
 
     DBSession.add(lecture_an)
 
@@ -502,7 +502,7 @@ def test_remove_parent_amendement(lecture_an, source_an):
 
 @responses.activate
 def test_rectif(lecture_an, source_an):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import AmendementRectifie
 
     DBSession.add(lecture_an)
@@ -600,7 +600,7 @@ def test_rectif(lecture_an, source_an):
 
 @responses.activate
 def test_rectif_with_nil(lecture_an, source_an):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import AmendementRectifie
 
     DBSession.add(lecture_an)

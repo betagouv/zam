@@ -33,6 +33,7 @@ def source(settings):
 
 def assert_html_looks_like(value, expected):
     from textwrap import dedent
+
     from selectolax.parser import HTMLParser
 
     assert HTMLParser(value).html == HTMLParser(dedent(expected)).html
@@ -445,9 +446,9 @@ class TestFetchDiscussionList:
     @responses.activate
     def test_list_not_found(self, lecture_an, app):
         from zam_repondeur.services.fetch.an.amendements import (
+            NotFound,
             build_url,
             fetch_discussion_list,
-            NotFound,
         )
 
         responses.add(responses.GET, build_url(lecture_an), status=404)

@@ -45,7 +45,7 @@ def dossier_plf_2020(db):
 
 @pytest.fixture
 def texte_plf_2019(db):
-    from zam_repondeur.models import Texte, TypeTexte, Chambre
+    from zam_repondeur.models import Chambre, Texte, TypeTexte
 
     with transaction.manager:
         return Texte.create(
@@ -59,7 +59,7 @@ def texte_plf_2019(db):
 
 @pytest.fixture
 def texte_plf_2020(db):
-    from zam_repondeur.models import Texte, TypeTexte, Chambre
+    from zam_repondeur.models import Chambre, Texte, TypeTexte
 
     with transaction.manager:
         return Texte.create(
@@ -131,13 +131,13 @@ class TestBuildAmendementsURL:
 
 @responses.activate
 def test_aspire_senat(app, lecture_senat, settings):
-    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import (
         AmendementRectifie,
         CorpsAmendementModifie,
         ExposeAmendementModifie,
     )
+    from zam_repondeur.services.fetch.senat.amendements import Senat
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
 
@@ -220,9 +220,9 @@ def test_aspire_senat(app, lecture_senat, settings):
 
 @responses.activate
 def test_aspire_senat_again_with_irrecevable(app, lecture_senat, settings):
-    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import AmendementIrrecevable
+    from zam_repondeur.services.fetch.senat.amendements import Senat
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
 
@@ -292,12 +292,12 @@ def test_aspire_senat_again_with_irrecevable(app, lecture_senat, settings):
 def test_aspire_senat_again_with_irrecevable_transfers_to_index(
     app, lecture_senat, user_david_table_an, settings
 ):
-    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.models.events.amendement import (
         AmendementIrrecevable,
         AmendementTransfere,
     )
+    from zam_repondeur.services.fetch.senat.amendements import Senat
 
     sample_data = read_sample_data("jeu_complet_2017-2018_63.csv")
 
@@ -382,8 +382,8 @@ def test_aspire_senat_again_with_irrecevable_transfers_to_index(
 
 @responses.activate
 def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie, settings):
-    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.fetch.senat.amendements import Senat
 
     sample_data = read_sample_data("jeu_complet_2018-2019_146.csv")
 
@@ -428,8 +428,8 @@ def test_aspire_senat_plf2019_1re_partie(app, lecture_plf_1re_partie, settings):
 
 @responses.activate
 def test_aspire_senat_plf2019_2e_partie(app, lecture_plf_2e_partie, settings):
-    from zam_repondeur.services.fetch.senat.amendements import Senat
     from zam_repondeur.models import Amendement, DBSession
+    from zam_repondeur.services.fetch.senat.amendements import Senat
 
     sample_data = read_sample_data("jeu_complet_2018-2019_146.csv")
 
@@ -608,8 +608,8 @@ def test_fetch_all_buggy_csv(lecture_senat, filename):
 
 @responses.activate
 def test_fetch_all_commission(db):
-    from zam_repondeur.services.fetch.senat.amendements import _fetch_all
     from zam_repondeur.models import Chambre, Dossier, Lecture, Phase, Texte, TypeTexte
+    from zam_repondeur.services.fetch.senat.amendements import _fetch_all
 
     with transaction.manager:
         dossier = Dossier.create(
@@ -663,7 +663,7 @@ def test_fetch_all_commission(db):
 
 @responses.activate
 def test_fetch_all_not_found(lecture_senat):
-    from zam_repondeur.services.fetch.senat.amendements import _fetch_all, NotFound
+    from zam_repondeur.services.fetch.senat.amendements import NotFound, _fetch_all
 
     responses.add(
         responses.GET,
@@ -683,7 +683,6 @@ def test_fetch_all_not_found(lecture_senat):
 
 @responses.activate
 def test_fetch_discussion_details(dossier_plfss2018):
-    from zam_repondeur.services.fetch.senat.derouleur import _fetch_discussion_details
     from zam_repondeur.models import (
         Chambre,
         DBSession,
@@ -692,6 +691,7 @@ def test_fetch_discussion_details(dossier_plfss2018):
         Texte,
         TypeTexte,
     )
+    from zam_repondeur.services.fetch.senat.derouleur import _fetch_discussion_details
 
     with transaction.manager:
         texte = Texte.create(
@@ -727,8 +727,8 @@ def test_fetch_discussion_details(dossier_plfss2018):
 
 @responses.activate
 def test_fetch_discussion_details_empty_when_url_not_found(lecture_senat):
-    from zam_repondeur.services.fetch.senat.derouleur import _fetch_discussion_details
     from zam_repondeur.models import DBSession
+    from zam_repondeur.services.fetch.senat.derouleur import _fetch_discussion_details
 
     with transaction.manager:
         lecture_senat.organe = "PO744107"
@@ -747,10 +747,10 @@ def test_fetch_discussion_details_empty_when_url_not_found(lecture_senat):
 def test_fetch_and_parse_discussion_details_empty_and_logs_when_url_not_found(
     lecture_senat, caplog
 ):
+    from zam_repondeur.models import DBSession
     from zam_repondeur.services.fetch.senat.derouleur import (
         fetch_and_parse_discussion_details,
     )
-    from zam_repondeur.models import DBSession
 
     with transaction.manager:
         lecture_senat.organe = "PO744107"
@@ -770,10 +770,10 @@ def test_fetch_and_parse_discussion_details_empty_and_logs_when_url_not_found(
 
 @responses.activate
 def test_fetch_and_parse_discussion_details_parent_before(lecture_senat, caplog):
+    from zam_repondeur.models import DBSession
     from zam_repondeur.services.fetch.senat.derouleur import (
         fetch_and_parse_discussion_details,
     )
-    from zam_repondeur.models import DBSession
 
     with transaction.manager:
         lecture_senat.organe = "PO744107"
@@ -797,10 +797,10 @@ def test_fetch_and_parse_discussion_details_parent_before(lecture_senat, caplog)
 
 @responses.activate
 def test_fetch_and_parse_discussion_details_parent_missing(lecture_senat, caplog):
+    from zam_repondeur.models import DBSession
     from zam_repondeur.services.fetch.senat.derouleur import (
         fetch_and_parse_discussion_details,
     )
-    from zam_repondeur.models import DBSession
 
     with transaction.manager:
         lecture_senat.organe = "PO744107"
@@ -824,11 +824,11 @@ def test_fetch_and_parse_discussion_details_parent_missing(lecture_senat, caplog
 
 
 def test_derouleur_urls_and_mission_refs(lecture_senat):
+    from zam_repondeur.models import DBSession
+    from zam_repondeur.services.fetch.missions import MissionRef
     from zam_repondeur.services.fetch.senat.derouleur import (
         derouleur_urls_and_mission_refs,
     )
-    from zam_repondeur.services.fetch.missions import MissionRef
-    from zam_repondeur.models import DBSession
 
     assert list(derouleur_urls_and_mission_refs(lecture_senat)) == [
         (
@@ -852,11 +852,11 @@ def test_derouleur_urls_and_mission_refs(lecture_senat):
 def test_derouleur_urls_and_mission_refs_plf2019_1re_partie(
     dossier_plf_2019, texte_plf_2019
 ):
+    from zam_repondeur.models import Lecture, Phase
+    from zam_repondeur.services.fetch.missions import MissionRef
     from zam_repondeur.services.fetch.senat.derouleur import (
         derouleur_urls_and_mission_refs,
     )
-    from zam_repondeur.services.fetch.missions import MissionRef
-    from zam_repondeur.models import Lecture, Phase
 
     lecture = Lecture.create(
         phase=Phase.PREMIERE_LECTURE,
@@ -878,11 +878,11 @@ def test_derouleur_urls_and_mission_refs_plf2019_1re_partie(
 def test_derouleur_urls_and_mission_refs_plf2020_1re_partie(
     dossier_plf_2020, texte_plf_2020
 ):
+    from zam_repondeur.models import Lecture, Phase
+    from zam_repondeur.services.fetch.missions import MissionRef
     from zam_repondeur.services.fetch.senat.derouleur import (
         derouleur_urls_and_mission_refs,
     )
-    from zam_repondeur.services.fetch.missions import MissionRef
-    from zam_repondeur.models import Lecture, Phase
 
     lecture = Lecture.create(
         phase=Phase.PREMIERE_LECTURE,
@@ -904,11 +904,11 @@ def test_derouleur_urls_and_mission_refs_plf2020_1re_partie(
 def test_derouleur_urls_and_mission_refs_plf2019_2e_partie(
     dossier_plf_2019, texte_plf_2019
 ):
+    from zam_repondeur.models import Lecture, Phase
+    from zam_repondeur.services.fetch.missions import MissionRef
     from zam_repondeur.services.fetch.senat.derouleur import (
         derouleur_urls_and_mission_refs,
     )
-    from zam_repondeur.services.fetch.missions import MissionRef
-    from zam_repondeur.models import Lecture, Phase
 
     lecture = Lecture.create(
         phase=Phase.PREMIERE_LECTURE,
@@ -943,11 +943,11 @@ def test_derouleur_urls_and_mission_refs_plf2019_2e_partie(
 def test_derouleur_urls_and_mission_refs_plf2020_2e_partie(
     dossier_plf_2020, texte_plf_2020
 ):
+    from zam_repondeur.models import Lecture, Phase
+    from zam_repondeur.services.fetch.missions import MissionRef
     from zam_repondeur.services.fetch.senat.derouleur import (
         derouleur_urls_and_mission_refs,
     )
-    from zam_repondeur.services.fetch.missions import MissionRef
-    from zam_repondeur.models import Lecture, Phase
 
     lecture = Lecture.create(
         phase=Phase.PREMIERE_LECTURE,

@@ -36,11 +36,11 @@ def start_huey(
     config_uri: str, options: Dict[str, str], settings: Dict[str, Any], huey: Huey
 ) -> None:
     from zam_repondeur.tasks.fetch import (  # noqa
-        fetch_articles,
         fetch_amendements,
+        fetch_articles,
         update_dossier,
     )
-    from zam_repondeur.tasks.periodic import update_data, update_all_dossiers  # noqa
+    from zam_repondeur.tasks.periodic import update_all_dossiers, update_data  # noqa
 
     try:
         flush_stale_locks(huey)

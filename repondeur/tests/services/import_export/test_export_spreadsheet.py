@@ -90,7 +90,7 @@ def test_export_excel_subset(lecture_an, amendements_an, tmpdir):
 
 
 def test_export_csv_with_parent(lecture_an, article1_an, tmpdir):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.import_export.csv import export_csv
 
     filename = str(tmpdir.join("test.csv"))
@@ -125,7 +125,7 @@ def test_export_csv_with_parent(lecture_an, article1_an, tmpdir):
 
 
 def test_export_csv_with_auteur(lecture_an, article1_an, tmpdir):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.import_export.csv import export_csv
 
     filename = str(tmpdir.join("test.csv"))
@@ -160,7 +160,7 @@ def test_export_csv_with_auteur(lecture_an, article1_an, tmpdir):
 
 
 def test_export_csv_with_gouvernemental(lecture_an, article1_an, tmpdir):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.import_export.csv import export_csv
 
     filename = str(tmpdir.join("test.csv"))
@@ -195,7 +195,7 @@ def test_export_csv_with_gouvernemental(lecture_an, article1_an, tmpdir):
 
 
 def test_export_csv_with_identique(lecture_an, article1_an, tmpdir):
-    from zam_repondeur.models import DBSession, Amendement
+    from zam_repondeur.models import Amendement, DBSession
     from zam_repondeur.services.import_export.csv import export_csv
 
     filename = str(tmpdir.join("test.csv"))

@@ -30,7 +30,7 @@ pyramid-debugtoolbar==4.6.1
 pyramid-mako==1.1.0
 pytest==5.4.3
 pytest-cov==2.10.0
-pytest-sugar==0.9.3
+pytest-sugar==0.9.4
 PyYAML==5.3.1
 repoze.lru==0.7
 responses==0.10.15

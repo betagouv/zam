@@ -28,7 +28,7 @@ pyparsing==2.4.7
 pyperclip==1.8.0
 pyramid-debugtoolbar==4.6.1
 pyramid-mako==1.1.0
-pytest==5.4.3
+pytest==6.0.1
 pytest-cov==2.10.0
 pytest-sugar==0.9.4
 PyYAML==5.3.1

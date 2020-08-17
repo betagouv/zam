@@ -88,8 +88,6 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
         total_timer = Timer()
         total_timer.start()
 
-        logger.info("Récupération des amendements de %r", lecture)
-
         # This allows disabling the prefetching in tests.
         prefetching_enabled = int(huey.settings["zam.http_cache_duration"]) > 0
 
@@ -98,6 +96,10 @@ def fetch_amendements(lecture_pk: Optional[int]) -> bool:
             settings=huey.settings,
             prefetching_enabled=prefetching_enabled,
         )
+        if source is None:
+            return False
+
+        logger.info("Récupération des amendements de %r", lecture)
 
         # Allow prefetching of URLs into the requests cached session.
         with Timer() as prepare_timer:
@@ -185,6 +187,9 @@ def create_missing_lectures(dossier_pk: int, user_pk: Optional[int] = None) -> N
         dossier = DBSession.query(Dossier).get(dossier_pk)
         if dossier is None:
             logger.error(f"Dossier {dossier_pk} introuvable")
+            return
+
+        if dossier.an_id.startswith("dummy-"):  # FIXME: just a quick hack
             return
 
         if user_pk is not None:

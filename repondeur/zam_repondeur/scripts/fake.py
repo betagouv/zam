@@ -89,13 +89,13 @@ def find_lecture(
 
 
 def create_fake_amendements(lecture: Lecture, count: int) -> None:
-    start = max(amdt.num for amdt in lecture.amendements) + 1
+    start = max(int(amdt.num) for amdt in lecture.amendements) + 1
     today = date.today()
     for num in range(start, start + count):
         Amendement.create(
             lecture=lecture,
             article=random.choice(lecture.articles),  # nosec
-            num=num,
+            num=str(num),
             auteur="M. Bidon",
             date_depot=today,
             expose=(

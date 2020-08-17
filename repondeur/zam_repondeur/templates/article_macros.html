@@ -1,0 +1,10 @@
+{% macro content(article) %}
+    {% if article.content %}
+        <dl>
+            {% for pastille, content in article.content.items() %}
+                <dt>{{ pastille }}</dt>
+                <dd>{{ content.strip('"') | safe }}</dd>
+            {% endfor %}
+        </dl>
+    {% endif %}
+{% endmacro %}

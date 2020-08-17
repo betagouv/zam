@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from sqlalchemy import (
     Column,
@@ -21,14 +21,11 @@ from .article import Article
 from .base import Base, DBSession
 from .chambre import Chambre
 from .division import SubDiv
+from .dossier import Dossier
 from .events.base import LastEventMixin
 from .organe import ORGANE_SENAT, ORGANES_SEANCE_PUBLIQUE
 from .phase import Phase
 from .texte import Texte
-
-# Make these types available to mypy, but avoid circular imports
-if TYPE_CHECKING:
-    from .dossier import Dossier  # noqa
 
 
 class Lecture(Base, LastEventMixin):
@@ -100,24 +97,25 @@ class Lecture(Base, LastEventMixin):
         return self.texte.date_depot, self.organe, self.partie or 0
 
     def __str__(self) -> str:
-        return ", ".join(
-            [
-                self.format_chambre(),
-                self.format_session_or_legislature(),
-                self.format_organe(),
-                self.format_num_lecture(),
-                self.format_texte(),
-            ]
-        )
+        parts: List[Optional[str]] = [
+            self.format_chambre(),
+            self.format_session_or_legislature(),
+            self.format_organe(),
+            self.format_num_lecture(),
+            self.format_texte(),
+        ]
+        return ", ".join(filter(None, parts))
 
     def format_chambre(self) -> str:
         return str(self.chambre.value)
 
-    def format_session_or_legislature(self) -> str:
+    def format_session_or_legislature(self) -> Optional[str]:
         if self.chambre == Chambre.AN:
             return f"{self.texte.legislature}e législature"
-        else:
+        elif self.chambre == Chambre.SENAT:
             return f"session {self.texte.session_str}"
+        else:
+            return ""
 
     def format_organe(self) -> str:
         from zam_repondeur.services.data import repository  # avoid circular imports
@@ -135,17 +133,22 @@ class Lecture(Base, LastEventMixin):
             "Sénat ( 5ème République )",
         }:
             return "Séance publique"
-        if label.startswith("Commission"):
-            return label
-        if label:
-            return f"Commission des {label.lower()}"
-        return "Commissions"
+        if self.chambre == Chambre.AN:
+            if label.startswith("Commission"):
+                return label
+            if label:
+                return f"Commission des {label.lower()}"
+        elif self.chambre == Chambre.SENAT:
+            return "Commissions"
+        return label
 
     def format_num_lecture(self) -> str:
         num_lecture, _ = self.titre.split(" – ", 1)
         return str(num_lecture.strip())
 
-    def format_texte(self) -> str:
+    def format_texte(self) -> Optional[str]:
+        if self.chambre in {Chambre.CCFP, Chambre.CSFPE}:
+            return None
         return f"texte nº\u00a0{self.texte.numero}" + self.format_partie()
 
     def format_partie(self) -> str:
@@ -165,6 +168,8 @@ class Lecture(Base, LastEventMixin):
         return bool(self.partie and self.partie == 2)
 
     def refreshable_for(self, kind: str, settings: Dict[str, str]) -> bool:
+        if self.texte.chambre not in {Chambre.AN, Chambre.SENAT}:
+            return False
         return bool(
             datetime.utcnow().date() - self.texte.date_depot
             <= timedelta(days=int(settings.get(f"zam.refresh.{kind}") or 30))
@@ -178,6 +183,7 @@ class Lecture(Base, LastEventMixin):
     @classmethod
     def get(
         cls,
+        dossier: Dossier,
         chambre: Chambre,
         session_or_legislature: str,
         num_texte: int,
@@ -189,6 +195,7 @@ class Lecture(Base, LastEventMixin):
             DBSession.query(cls)
             .join(Texte)
             .filter(
+                cls.dossier_pk == dossier.pk,
                 cls.chambre == chambre,
                 cls.partie == partie,
                 cls.organe == organe,
@@ -203,6 +210,8 @@ class Lecture(Base, LastEventMixin):
             query = query.filter(
                 Texte.session == int(session_or_legislature.split("-")[0])
             )
+        elif chambre in {Chambre.CCFP, Chambre.CSFPE}:
+            pass
         else:
             raise ValueError("Invalid value for chambre")
         res: Optional["Lecture"] = query.first()
@@ -346,8 +355,11 @@ class Lecture(Base, LastEventMixin):
     def _session_or_legislature(self) -> str:
         if self.texte.chambre == Chambre.AN:
             return str(self.texte.legislature)
-        assert self.texte.session_str is not None  # nosec (mypy hint)
-        return self.texte.session_str
+        elif self.texte.chambre == Chambre.SENAT:
+            assert self.texte.session_str is not None  # nosec (mypy hint)
+            return self.texte.session_str
+        else:
+            return ""
 
     def find_article(self, subdiv: SubDiv) -> Optional[Article]:
         article: Article
@@ -370,7 +382,7 @@ class Lecture(Base, LastEventMixin):
             created = True
         return article, created
 
-    def find_amendement(self, num: int) -> Optional[Amendement]:
+    def find_amendement(self, num: str) -> Optional[Amendement]:
         amendement: Amendement
         for amendement in self.amendements:
             if amendement.num == num:
@@ -378,7 +390,7 @@ class Lecture(Base, LastEventMixin):
         return None
 
     def find_or_create_amendement(
-        self, num: int, article: Article
+        self, num: str, article: Article
     ) -> Tuple[Amendement, bool]:
         amendement = self.find_amendement(num)
         created = False

@@ -1,3 +1,4 @@
+import logging
 from multiprocessing import cpu_count
 from typing import Any
 
@@ -13,8 +14,12 @@ from zam_repondeur.models import Base, DBSession, log_query_with_origin
 from zam_repondeur.resources import Root
 from zam_repondeur.version import load_version
 
+logger = logging.getLogger(__name__)
+
+
 BASE_SETTINGS = {
     "zam.app_name": "Zam",
+    "zam.contact_email": "contact@zam.beta.gouv.fr",
     "zam.auth_cookie_duration": 7 * 24 * 3600,  # a user stays identified for 7 days
     "zam.auth_cookie_secure": True,  # disable for local HTTP access in development
     "zam.legislatures": "14,15",
@@ -35,44 +40,49 @@ def make_app(global_settings: dict, **settings: Any) -> Router:
 
     settings = {**BASE_SETTINGS, **settings}
 
+    with Configurator(settings=settings) as config:
+        config.include("zam_repondeur")
+        app = config.make_wsgi_app()
+
+    return app
+
+
+def includeme(config: Configurator) -> None:
+
+    config.set_root_factory(Root)
+
+    settings = config.get_settings()
     session_factory = SignedCookieSessionFactory(
         secret=settings["zam.session_secret"],
         serializer=JSONSerializer(),
         secure=asbool(settings["zam.auth_cookie_secure"]),
         httponly=True,
     )
+    config.set_session_factory(session_factory)
 
-    with Configurator(
-        settings=settings, root_factory=Root, session_factory=session_factory
-    ) as config:
+    config.include("zam_repondeur.errors")
 
-        config.include("zam_repondeur.errors")
+    setup_database(config)
 
-        setup_database(config, settings)
+    config.include("zam_repondeur.menu")
+    config.include("zam_repondeur.auth")
+    config.include("zam_repondeur.templating")
 
-        config.include("zam_repondeur.menu")
-        config.include("zam_repondeur.auth")
-        config.include("zam_repondeur.templating")
+    config.include("pyramid_default_cors")
+    config.include("pyramid_retry")
 
-        config.include("pyramid_default_cors")
-        config.include("pyramid_retry")
+    config.add_route("error", "/error")
 
-        config.add_route("error", "/error")
+    config.include("zam_repondeur.assets")
+    config.include("zam_repondeur.tasks")
+    config.include("zam_repondeur.services.data")
+    config.include("zam_repondeur.services.users")
+    config.include("zam_repondeur.services.progress")
+    config.include("zam_repondeur.services.amendements")
+    config.include("zam_repondeur.services.fetch.http")
+    load_version(config)
 
-        config.include("zam_repondeur.assets")
-        config.include("zam_repondeur.tasks")
-        config.include("zam_repondeur.services.data")
-        config.include("zam_repondeur.services.users")
-        config.include("zam_repondeur.services.progress")
-        config.include("zam_repondeur.services.amendements")
-        config.include("zam_repondeur.services.fetch.http")
-        load_version(config)
-
-        config.scan()
-
-        app = config.make_wsgi_app()
-
-    return app
+    config.scan("zam_repondeur.views")
 
 
 @view_config(route_name="error")
@@ -80,7 +90,9 @@ def error(request: Request) -> None:
     raise Exception("Not a real error (just for testing)")
 
 
-def setup_database(config: Configurator, settings: dict) -> None:
+def setup_database(config: Configurator) -> None:
+
+    settings = config.get_settings()
 
     # Make sure the SQLAlchemy connection pool is large enough for worker threads
     pool_size = max(5, settings["huey.workers"])

@@ -55,10 +55,10 @@ p.subtitle {
     padding: .75rem;
 }
 .table tbody tr:first-child td {
-    padding-top: 1rem;
+    padding-top: .5rem;
 }
 .table tr:hover {
-    background: #d4edda66;
+    background-color: #d4edda66;
 }
 
 /* Filtering */

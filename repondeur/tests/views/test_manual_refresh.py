@@ -61,7 +61,9 @@ def test_post_form(app, lecture_an, lecture_an_url, article1_an, user_david):
     with transaction.manager:
         DBSession.add(lecture_an)
         lecture_an.texte.date_depot = datetime.utcnow().date() - timedelta(days=5)
-        Amendement.create(lecture=lecture_an, article=article1_an, num=135, position=1)
+        Amendement.create(
+            lecture=lecture_an, article=article1_an, num="135", position=1
+        )
         assert lecture_an.events == []
 
     # No progress status by default.

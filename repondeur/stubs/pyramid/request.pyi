@@ -20,6 +20,7 @@ class Request:
     session: Any
     GET: Any
     POST: Any
+    json_body: dict
     params: Any
     unauthenticated_userid: Optional[str]
     team: Team

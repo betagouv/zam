@@ -6,7 +6,14 @@ from pyramid.response import Response
 from pyramid.view import view_config
 from sqlalchemy.orm import joinedload, load_only, subqueryload
 
-from zam_repondeur.models import Amendement, AmendementList, Article, Batch, DBSession
+from zam_repondeur.models import (
+    Amendement,
+    AmendementList,
+    Article,
+    Batch,
+    Chambre,
+    DBSession,
+)
 from zam_repondeur.resources import AmendementCollection, LectureResource
 
 AMDTS_OPTIONS = [
@@ -101,6 +108,8 @@ def lecture_index(context: AmendementCollection, request: Request) -> dict:
         "progress_url": request.resource_url(lecture_resource, "progress_status"),
         "progress_interval": request.registry.settings["zam.progress.lecture_refresh"],
         "too_many_amendements": too_many_amendements,
+        "enter_amendement_url": request.resource_url(context, "saisie"),
+        "show_help": lecture.chambre in {Chambre.AN, Chambre.SENAT},
     }
 
 
@@ -117,7 +126,7 @@ def get_sort_key(request: Request) -> Callable[[Amendement], tuple]:
     return sort_by_tri_amendement if tri_amendement_enabled else sort_by_position
 
 
-def sort_by_tri_amendement(amendement: Amendement) -> Tuple[bool, str, Article, int]:
+def sort_by_tri_amendement(amendement: Amendement) -> Tuple[bool, str, Article, str]:
     return (
         amendement.is_abandoned,
         amendement.tri_amendement or "~",
@@ -126,5 +135,5 @@ def sort_by_tri_amendement(amendement: Amendement) -> Tuple[bool, str, Article, 
     )
 
 
-def sort_by_position(amendement: Amendement) -> Tuple[bool, int, Article, int]:
+def sort_by_position(amendement: Amendement) -> Tuple[bool, int, Article, str]:
     return amendement.sort_key

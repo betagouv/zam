@@ -12,6 +12,8 @@ def test_no_amendements(app, lecture_an_url, user_david):
 
     assert resp.status_code == 200
     assert "Les amendements ne sont pas encore disponibles." in resp.text
+    assert "Un problème ?" in resp.text
+    assert "Vos amendements n’apparaissent pas ?" in resp.text
 
 
 def test_get_amendements_order_default(app, lecture_an_url, amendements_an, user_david):
@@ -30,9 +32,10 @@ def test_get_amendements_order_default(app, lecture_an_url, amendements_an, user
         "999",
     ]
     headers_rows_length = 3
-    assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
-        headers_rows_length:
-    ] == ["Art. 1 666 Voir", "Art. 1 999 Voir"]
+    assert [
+        " ".join(node.text().strip().split())
+        for node in resp.parser.css("tr:not(.dropzone)")
+    ][headers_rows_length:] == ["Art. 1 666 Voir", "Art. 1 999 Voir"]
 
 
 def test_get_amendements_order_abandoned_last(
@@ -51,9 +54,10 @@ def test_get_amendements_order_abandoned_last(
 
     assert resp.status_code == 200
     headers_rows_length = 3
-    assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
-        headers_rows_length:
-    ] == [
+    assert [
+        " ".join(node.text().strip().split())
+        for node in resp.parser.css("tr:not(.dropzone)")
+    ][headers_rows_length:] == [
         "Art. 1 999 Voir",
         (
             "Les amendements en-deçà de cette ligne ne sont pas (encore) présents "
@@ -78,9 +82,10 @@ def test_get_amendements_order_with_missing_position(
 
     assert resp.status_code == 200
     headers_rows_length = 3
-    assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
-        headers_rows_length:
-    ] == [
+    assert [
+        " ".join(node.text().strip().split())
+        for node in resp.parser.css("tr:not(.dropzone)")
+    ][headers_rows_length:] == [
         "Art. 1 999 Voir",
         (
             "Les amendements en-deçà de cette ligne ne sont pas (encore) présents "
@@ -105,9 +110,10 @@ def test_get_amendements_order_with_abandoned_next_do_not_display_limit_derouleu
 
     assert resp.status_code == 200
     headers_rows_length = 3
-    assert [" ".join(node.text().strip().split()) for node in resp.parser.css("tr")][
-        headers_rows_length:
-    ] == ["Art. 1 999 Voir", "Art. 1 666 Irr. Voir"]
+    assert [
+        " ".join(node.text().strip().split())
+        for node in resp.parser.css("tr:not(.dropzone)")
+    ][headers_rows_length:] == ["Art. 1 999 Voir", "Art. 1 666 Irr. Voir"]
 
 
 def test_get_amendements_not_found_bad_format(app, user_david):
@@ -158,7 +164,7 @@ def test_get_amendements_columns_too_many_amendements(
 
     with transaction.manager:
         for i in range(nb_amendements):
-            Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)
+            Amendement.create(lecture=lecture_an, article=article1_an, num=str(i + 1))
 
     resp = app.get(f"{lecture_an_url}/amendements/", user=user_david)
 

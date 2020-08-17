@@ -171,7 +171,7 @@
         </p>
         <div class="title">
             <header>
-                <h2>Amendement nº&nbsp;{{ amendement }}</h2>
+                <h2>Amendement {{ amendement }}</h2>
 
                 {% if amendement.parent %}
                     <h3>Sous-amendement au <a href="{{ request.resource_url(context.lecture_resource['amendements'][amendement.parent.num_str]) }}">{{ amendement.parent }}</a></h3>
@@ -282,7 +282,7 @@
 
 {% macro content(amendement) %}
     <div class="expose">
-        <h4 class="line-through">Exposé</h4>
+        <h4 class="line-through">Exposé des motifs</h4>
         {% if amendement.expose %}
             {{ amendement.expose | safe }}
         {% else %}

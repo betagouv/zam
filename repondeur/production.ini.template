@@ -19,7 +19,7 @@ root = %(here)s
 
 
 [app:repondeur]
-use = egg:zam_repondeur
+use = egg:zam_repondeur#visam
 
 pyramid.includes =
     pyramid_mailer
@@ -102,10 +102,12 @@ DBSession = zam_repondeur.models.DBSession
 Dossier = zam_repondeur.models.Dossier
 Lecture = zam_repondeur.models.Lecture
 Phase = zam_repondeur.models.Phase
+Seance = zam_repondeur.visam.models.Seance
 Team = zam_repondeur.models.Team
 Texte = zam_repondeur.models.Texte
 User = zam_repondeur.models.User
 repository = zam_repondeur.services.data.repository
+transaction = transaction
 
 
 ###

@@ -5,7 +5,7 @@ from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
 from pyramid.security import Allow, Authenticated, Deny, Everyone
 from sqlalchemy import desc
-from sqlalchemy.orm import Query, joinedload, lazyload, subqueryload
+from sqlalchemy.orm import Query, joinedload, lazyload, load_only, subqueryload
 from sqlalchemy.orm.exc import NoResultFound
 
 from zam_repondeur.decorator import reify
@@ -350,6 +350,7 @@ class LectureResource(Resource):
         self.add_child(ArticleCollection(name="articles", parent=self))
         self.add_child(TableCollection(name="tables", parent=self))
         self.add_child(SharedTableCollection(name="boites", parent=self))
+        self.add_child(DerouleurCollection(name="derouleur", parent=self))
 
     @property
     def default_child(self) -> Resource:
@@ -363,7 +364,7 @@ class LectureResource(Resource):
         return self.dossier_resource
 
     @property
-    def dossier_resource(self) -> DossierResource:
+    def dossier_resource(self) -> Optional[DossierResource]:
         return self.parent.parent
 
     @reify
@@ -371,7 +372,9 @@ class LectureResource(Resource):
         return self.model()
 
     def model(self, *options: Any) -> Lecture:
+        assert self.dossier_resource is not None  # nosec (mypy hint)
         lecture = Lecture.get(
+            self.dossier_resource.dossier,
             self.chambre,
             self.session_or_legislature,
             self.num_texte,
@@ -418,7 +421,10 @@ class LectureResource(Resource):
 
 class AmendementCollection(Resource):
     def __getitem__(self, key: str) -> Resource:
-        return AmendementResource(name=key, parent=self)
+        resource = AmendementResource(name=key, parent=self)
+        if not resource.exists():
+            raise KeyError
+        return resource
 
     @property
     def parent(self) -> LectureResource:
@@ -431,7 +437,7 @@ class AmendementCollection(Resource):
 class AmendementResource(Resource):
     def __init__(self, name: str, parent: Resource) -> None:
         super().__init__(name=name, parent=parent)
-        self.num = int(name)
+        self.num = name
 
     @property
     def parent(self) -> AmendementCollection:
@@ -455,6 +461,14 @@ class AmendementResource(Resource):
         except NoResultFound:
             raise ResourceNotFound(self)
         return amendement
+
+    def exists(self) -> bool:
+        return bool(
+            DBSession.query(Amendement)
+            .filter_by(lecture=self.lecture_resource.model(), num=self.num)
+            .options(load_only("pk"))
+            .one_or_none()
+        )
 
 
 class ArticleCollection(Resource):
@@ -610,3 +624,13 @@ class SharedTableDeleteResource(Resource):
 
     def model(self) -> SharedTable:
         return self.parent.model()
+
+
+class DerouleurCollection(Resource):
+    @property
+    def parent(self) -> LectureResource:
+        return cast(LectureResource, self.__parent__)
+
+    @property
+    def lecture_resource(self) -> LectureResource:
+        return self.parent

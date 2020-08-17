@@ -63,7 +63,9 @@ def test_select_all_checks_only_visible_amendements(
 
         user_ronan_table_an.add_amendement(amendements_an[0])
         user_david_table_an.add_amendement(amendements_an[1])
-        amendement = Amendement.create(lecture=lecture_an, article=article1_an, num=777)
+        amendement = Amendement.create(
+            lecture=lecture_an, article=article1_an, num="777"
+        )
         user_daniel_table_an.add_amendement(amendement)
 
     driver.get(f"{lecture_an_url}/amendements/")

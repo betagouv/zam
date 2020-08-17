@@ -3,18 +3,18 @@ import transaction
 from sqlalchemy.exc import IntegrityError
 
 EXAMPLES = [
-    ("", 0, 0, "0"),
-    ("COM-1", 1, 0, "1"),
-    ("COM-48 rect.", 48, 1, "48 rect."),
-    ("CE208", 208, 0, "208"),
-    ("CE|208", 208, 0, "208"),
-    ("42", 42, 0, "42"),
-    ("42 rect.", 42, 1, "42 rect."),
-    ("42 rect. bis", 42, 2, "42 rect. bis"),
-    ("42 rect. ter", 42, 3, "42 rect. ter"),
-    ("42 rect. nonies", 42, 9, "42 rect. nonies"),
-    ("42 rect. novies", 42, 9, "42 rect. nonies"),
-    ("42 rect. undecies", 42, 11, "42 rect. undecies"),
+    ("", "0", 0, "0"),
+    ("COM-1", "1", 0, "1"),
+    ("COM-48 rect.", "48", 1, "48 rect."),
+    ("CE208", "208", 0, "208"),
+    ("CE|208", "208", 0, "208"),
+    ("42", "42", 0, "42"),
+    ("42 rect.", "42", 1, "42 rect."),
+    ("42 rect. bis", "42", 2, "42 rect. bis"),
+    ("42 rect. ter", "42", 3, "42 rect. ter"),
+    ("42 rect. nonies", "42", 9, "42 rect. nonies"),
+    ("42 rect. novies", "42", 9, "42 rect. nonies"),
+    ("42 rect. undecies", "42", 11, "42 rect. undecies"),
 ]
 
 
@@ -22,7 +22,7 @@ EXAMPLES = [
 def test_parse_num(text, num, rectif, disp):
     from zam_repondeur.models import Amendement
 
-    assert Amendement.parse_num(text) == (num, rectif)
+    assert Amendement.parse_num(text) == (int(num), rectif)
 
 
 @pytest.mark.parametrize("text,num,rectif,disp", EXAMPLES)

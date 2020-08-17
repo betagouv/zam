@@ -1,11 +1,9 @@
 import os
-from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
 import responses
 import transaction
-from pyramid.threadlocal import get_current_registry
 from pyramid_mailer import get_mailer
 
 from fixtures.dossiers import *  # noqa: F401,F403
@@ -18,50 +16,16 @@ from fixtures.plfss2019 import *  # noqa: F401,F403
 from fixtures.scraping import *  # noqa: F401,F403
 from fixtures.shared_tables import *  # noqa: F401,F403
 from fixtures.users import *  # noqa: F401,F403
-from testapp import TestApp as BaseTestApp
+from testapp import TestApp
 
 HERE = Path(__file__)
-
-
-class TestApp(BaseTestApp):
-    def get(self, *args, **kwargs):
-        with self.auto_login(kwargs):
-            return super().get(*args, **kwargs)
-
-    def post(self, *args, **kwargs):
-        with self.auto_login(kwargs):
-            return super().post(*args, **kwargs)
-
-    def post_json(self, *args, **kwargs):
-        with self.auto_login(kwargs):
-            return super().post_json(*args, **kwargs)
-
-    @contextmanager
-    def auto_login(self, kwargs):
-        from zam_repondeur.models import User
-
-        user = kwargs.pop("user", None)
-        if user is not None:
-            assert isinstance(user, User)
-            self.user_login(email=user.email, headers=kwargs.get("headers"))
-
-        yield
-
-    def user_login(self, email, headers=None):
-        from zam_repondeur.auth import generate_auth_token
-        from zam_repondeur.services.users import repository
-
-        token = generate_auth_token()
-        repository.set_auth_token(email, token)
-        resp = self.get("/authentification", params={"token": token}, headers=headers)
-        assert resp.status_code == 302
 
 
 @pytest.fixture(scope="session")
 def settings(tmp_path_factory):
     return {
         "pyramid.debug_authorization": True,
-        "pyramid.includes": "pyramid_mailer.testing",
+        "pyramid.includes": ["pyramid_mailer.testing"],
         "sqlalchemy.url": os.environ.get(
             "ZAM_TEST_DB_URL", "postgresql://zam@localhost/zam-test"
         ),
@@ -230,9 +194,10 @@ def app(
 
 
 @pytest.fixture
-def mailer():
-    registry = get_current_registry()
-    yield get_mailer(registry)
+def mailer(app):
+    mailer = get_mailer(app.app.registry)
+    mailer.outbox = []  # clean the list of sent messages first
+    return mailer
 
 
 def pytest_runtest_call(item):
@@ -241,14 +206,7 @@ def pytest_runtest_call(item):
 
     See: https://docs.pytest.org/en/latest/reference.html#hook-reference
     """
-    clear_email_outbox()
     clear_rate_limiting_counters()
-
-
-def clear_email_outbox():
-    registry = get_current_registry()
-    mailer = get_mailer(registry)
-    mailer.outbox = []
 
 
 def clear_rate_limiting_counters():

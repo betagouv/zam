@@ -268,7 +268,7 @@ application.register(
       const initialArticle = parseInt(this.data.get('initial-article-count'))
       const showingPartialIndex = this.data.get('selected-article') !== 'all'
       const visibleRows = this.tbodyTarget.querySelectorAll(
-        'tr:not([class^=hidden]):not([class=limit-derouleur])'
+        'tr:not([class^=hidden]):not(.limit-derouleur):not(.dropzone)'
       )
       let initialCountString = `
         ${initialArticle.toLocaleString('fr')} amendement${
@@ -399,7 +399,9 @@ application.register(
         if (!value) {
           return true
         }
-        return line.dataset.amendement.split(',').some(num => num === value)
+        return line.dataset.amendement
+          .split(',')
+          .some(num => num.toLowerCase().startsWith(value.toLowerCase()))
       })
       this.tableTarget.classList.toggle('filtered-amendement', value)
     }
@@ -445,7 +447,7 @@ application.register(
     }
 
     filterColumn(className, shouldShow) {
-      this.tbodyTarget.querySelectorAll('tr').forEach(line => {
+      this.tbodyTarget.querySelectorAll('tr:not(.dropzone)').forEach(line => {
         line.classList.toggle(className, !shouldShow(line))
       })
     }

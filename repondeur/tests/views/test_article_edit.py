@@ -28,7 +28,7 @@ def test_get_article_edit_form_not_found_bad_format(app, lecture_an, user_david)
 def test_post_article_edit_form_title(app, lecture_an_url, amendements_an, user_david):
     from zam_repondeur.models import Amendement, DBSession
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.title == ""
 
     resp = app.get(
@@ -42,7 +42,7 @@ def test_post_article_edit_form_title(app, lecture_an_url, amendements_an, user_
     assert resp.status_code == 302
     assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.title == "Titre article"
 
     assert len(amendement.article.events) == 1
@@ -53,7 +53,7 @@ def test_post_article_edit_form_title_cleaned(
 ):
     from zam_repondeur.models import Amendement, DBSession
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.title == ""
 
     resp = app.get(
@@ -67,7 +67,7 @@ def test_post_article_edit_form_title_cleaned(
     assert resp.status_code == 302
     assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.title == "Titre article"
 
     assert len(amendement.article.events) == 1
@@ -83,7 +83,7 @@ def test_post_article_edit_form_title_redirect_next(
         DBSession.add(article_2)
         DBSession.add(lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.title == ""
 
     resp = app.get(
@@ -100,7 +100,7 @@ def test_post_article_edit_form_title_redirect_next(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/article.2../"
     )
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.title == "Titre article"
 
 
@@ -116,7 +116,7 @@ def test_post_article_edit_form_title_redirect_amendements_if_intersticial_is_la
         DBSession.add(article_1_apres)
         DBSession.add(lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.title == ""
 
     resp = app.get(
@@ -130,7 +130,7 @@ def test_post_article_edit_form_title_redirect_amendements_if_intersticial_is_la
     assert resp.status_code == 302
     assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.title == "Titre article"
 
 
@@ -148,7 +148,7 @@ def test_post_article_edit_form_title_redirect_next_with_apres(
         DBSession.add(article_2)
         DBSession.add(lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.title == ""
 
     resp = app.get(
@@ -165,7 +165,7 @@ def test_post_article_edit_form_title_redirect_next_with_apres(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/article.2../"
     )
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.title == "Titre article"
 
 
@@ -187,7 +187,7 @@ def test_post_article_edit_form_title_redirect_next_with_apres_and_avant(
         DBSession.add(article_2)
         DBSession.add(lecture_an)
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.title == ""
 
     resp = app.get(
@@ -204,7 +204,7 @@ def test_post_article_edit_form_title_redirect_next_with_apres_and_avant(
         "/dossiers/plfss-2018/lectures/an.15.269.PO717460/articles/article.2../"
     )
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.title == "Titre article"
 
 
@@ -213,7 +213,7 @@ def test_post_article_edit_form_presentation(
 ):
     from zam_repondeur.models import Amendement, DBSession
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.presentation == ""
 
     resp = app.get(
@@ -227,7 +227,7 @@ def test_post_article_edit_form_presentation(
     assert resp.status_code == 302
     assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.presentation == "<p>Content</p>"
 
     assert len(amendement.article.events) == 1
@@ -238,7 +238,7 @@ def test_post_article_edit_form_presentation_cleaned(
 ):
     from zam_repondeur.models import Amendement, DBSession
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.presentation == ""
 
     resp = app.get(
@@ -252,5 +252,5 @@ def test_post_article_edit_form_presentation_cleaned(
     assert resp.status_code == 302
     assert resp.location == f"https://zam.test{lecture_an_url}/amendements/"
 
-    amendement = DBSession.query(Amendement).filter(Amendement.num == 999).one()
+    amendement = DBSession.query(Amendement).filter(Amendement.num == "999").one()
     assert amendement.article.user_content.presentation == "Content"

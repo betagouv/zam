@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+
 from pyramid.decorator import reify
 from selectolax.parser import HTMLParser
 from webtest import TestApp as BaseTestApp
@@ -40,3 +42,35 @@ class TestRequest(BaseTestRequest):
 
 class TestApp(BaseTestApp):
     RequestClass = TestRequest
+
+    def get(self, *args, **kwargs):
+        with self.auto_login(kwargs):
+            return super().get(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        with self.auto_login(kwargs):
+            return super().post(*args, **kwargs)
+
+    def post_json(self, *args, **kwargs):
+        with self.auto_login(kwargs):
+            return super().post_json(*args, **kwargs)
+
+    @contextmanager
+    def auto_login(self, kwargs):
+        from zam_repondeur.models import User
+
+        user = kwargs.pop("user", None)
+        if user is not None:
+            assert isinstance(user, User)
+            self.user_login(email=user.email, headers=kwargs.get("headers"))
+
+        yield
+
+    def user_login(self, email, headers=None):
+        from zam_repondeur.auth import generate_auth_token
+        from zam_repondeur.services.users import repository
+
+        token = generate_auth_token()
+        repository.set_auth_token(email, token)
+        resp = self.get("/authentification", params={"token": token}, headers=headers)
+        assert resp.status_code == 302

@@ -56,7 +56,7 @@ def test_get_form_non_sgg_user(app, user_david):
     resp = resp.maybe_follow()
 
     assert resp.status_code == 200
-    assert "L’accès à ce dossier est réservé aux personnes autorisées." in resp.text
+    assert "L’accès à cette page est réservé aux personnes autorisées." in resp.text
 
 
 def test_get_form_does_not_propose_dossiers_with_teams(
@@ -194,6 +194,7 @@ class TestPostForm:
         )
 
         lecture = Lecture.get(
+            dossier=dossier_plfss2018,
             chambre=Chambre.AN,
             session_or_legislature="15",
             num_texte=269,
@@ -232,7 +233,13 @@ class TestPostForm:
         }
 
         # We should have loaded 5 amendements
-        assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 135, 192]
+        assert [amdt.num for amdt in lecture.amendements] == [
+            "177",
+            "270",
+            "723",
+            "135",
+            "192",
+        ]
 
     @responses.activate
     def test_plfss_2018_an_using_fallback(self, app, user_sgg, dossier_plfss2018):
@@ -375,6 +382,7 @@ class TestPostForm:
         )
 
         lecture = Lecture.get(
+            dossier=dossier_plfss2018,
             chambre=Chambre.AN,
             session_or_legislature="15",
             num_texte=269,
@@ -413,7 +421,13 @@ class TestPostForm:
         }
 
         # We should have loaded 5 amendements
-        assert [amdt.num for amdt in lecture.amendements] == [177, 270, 723, 135, 192]
+        assert [amdt.num for amdt in lecture.amendements] == [
+            "177",
+            "270",
+            "723",
+            "135",
+            "192",
+        ]
 
     @responses.activate
     def test_plfss_2019_senat(self, app, user_sgg, dossier_plfss2019):
@@ -470,6 +484,7 @@ class TestPostForm:
         assert "Dossier créé avec succès," in resp.text
 
         lecture = Lecture.get(
+            dossier=dossier_plfss2019,
             chambre=Chambre.SENAT,
             session_or_legislature="2018-2019",
             num_texte=106,
@@ -500,7 +515,7 @@ class TestPostForm:
         assert {article.num for article in lecture.articles} == {"1", "19", "29"}
 
         # We should have loaded 2 amendements
-        assert [amdt.num for amdt in lecture.amendements] == [629, 1]
+        assert [amdt.num for amdt in lecture.amendements] == ["629", "1"]
 
     @responses.activate
     def test_plfss_2018_an_dossier_already_activated(

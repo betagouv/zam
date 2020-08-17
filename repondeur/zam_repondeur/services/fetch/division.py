@@ -9,12 +9,11 @@ https://parsy.readthedocs.io/en/latest/overview.html
 """
 import logging
 import unicodedata
-from typing import Any, List, Optional
+from typing import Any, List
 
 from parsy import ParseError, regex, seq, string, string_from, whitespace
 
 from zam_repondeur.models.division import ADJECTIFS_MULTIPLICATIFS, SubDiv
-from zam_repondeur.models.texte import Texte
 
 logger = logging.getLogger(__name__)
 
@@ -230,7 +229,7 @@ DIVISION = (
 )
 
 
-def parse_subdiv(libelle: str, texte: Optional[Texte] = None) -> SubDiv:
+def parse_subdiv(libelle: str) -> SubDiv:
     try:
         subdiv: SubDiv = DIVISION.parse(libelle)
         return subdiv

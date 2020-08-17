@@ -740,7 +740,7 @@ def test_lecture_post_batch_reset_amendement(
 
     with transaction.manager:
         amendement_777 = Amendement.create(
-            lecture=lecture_an, article=article1_an, num=777
+            lecture=lecture_an, article=article1_an, num="777"
         )
         user_david_table_an.add_amendement(amendement_777)
         assert not amendement_777.location.batch
@@ -782,9 +782,9 @@ def test_lecture_post_batch_reset_amendement(
     )
 
     # Reload amendements as they were updated in another transaction.
-    amendement_666 = Amendement.get(lecture_an, 666)
-    amendement_999 = Amendement.get(lecture_an, 999)
-    amendement_777 = Amendement.get(lecture_an, 777)
+    amendement_666 = Amendement.get(lecture_an, "666")
+    amendement_999 = Amendement.get(lecture_an, "999")
+    amendement_777 = Amendement.get(lecture_an, "777")
 
     # A new batch is created and 999 is also included.
     assert amendement_666.location.batch.pk == 2

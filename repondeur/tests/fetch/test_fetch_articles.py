@@ -153,7 +153,7 @@ class TestGetArticlesAN:
 
         DBSession.add(lecture_an)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.article.user_content.title == ""
         assert amendement.article.content == {}
 
@@ -162,7 +162,7 @@ class TestGetArticlesAN:
         assert changed
 
         # We can get the article contents from an amendement
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert (
             amendement.article.user_content.title
             == "Dispositions relatives l'exercice 2016"
@@ -233,7 +233,7 @@ class TestGetArticlesAN:
 
         DBSession.add(lecture_an)
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.article.user_content.title == ""
         assert amendement.article.content == {}
 
@@ -245,7 +245,7 @@ class TestGetArticlesAN:
         assert changed
 
         # We can get the article contents from an amendement
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.article.user_content.title == "My custom title"
         assert amendement.article.content["001"].startswith(
             "Au titre de l'exercice 2016"
@@ -323,7 +323,7 @@ class TestGetArticlesAN:
 
         assert changed
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.article.content["001"].startswith(
             "Le code des relations entre"
         )
@@ -353,7 +353,7 @@ class TestGetArticlesAN:
 
         assert not changed
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 666).first()
+        amendement = DBSession.query(Amendement).filter(Amendement.num == "666").first()
         assert amendement.article.content == {}
 
 
@@ -383,7 +383,9 @@ class TestGetArticlesSenat:
 
         assert changed
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
+        amendement = (
+            DBSession.query(Amendement).filter(Amendement.num == "6666").first()
+        )
         assert amendement.article.content["001"].startswith(
             "Au titre de l'exercice 2016"
         )
@@ -441,7 +443,9 @@ class TestGetArticlesSenat:
 
         assert changed
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
+        amendement = (
+            DBSession.query(Amendement).filter(Amendement.num == "6666").first()
+        )
         assert amendement.article.content["001"].startswith("Ne donnent pas lieu à")
 
     @responses.activate
@@ -465,7 +469,9 @@ class TestGetArticlesSenat:
 
         assert changed
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
+        amendement = (
+            DBSession.query(Amendement).filter(Amendement.num == "6666").first()
+        )
         assert amendement.article.content["001"].startswith("La stratégie nationale")
 
     @responses.activate
@@ -489,7 +495,9 @@ class TestGetArticlesSenat:
 
         assert not changed
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
+        amendement = (
+            DBSession.query(Amendement).filter(Amendement.num == "6666").first()
+        )
         assert amendement.article.content == {}
 
         # Events should NOT be created
@@ -516,7 +524,9 @@ class TestGetArticlesSenat:
 
         assert not changed
 
-        amendement = DBSession.query(Amendement).filter(Amendement.num == 6666).first()
+        amendement = (
+            DBSession.query(Amendement).filter(Amendement.num == "6666").first()
+        )
         assert amendement.article.content == {}
 
         # Events should NOT be created

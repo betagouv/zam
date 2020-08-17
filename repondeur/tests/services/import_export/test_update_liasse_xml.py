@@ -45,7 +45,7 @@ def test_add_parent_amendement(lecture_essoc2018_an_nouvelle_lecture_commission_
     amendements2, errors = import_liasse_xml(
         open_liasse("liasse.xml"), lecture_essoc2018_an_nouvelle_lecture_commission_fond
     )
-    assert amendements[1].parent.num == amendements2[1].parent.num == 28
+    assert amendements[1].parent.num == amendements2[1].parent.num == "28"
     assert errors == []
 
 
@@ -58,7 +58,7 @@ def test_remove_parent_amendement(
     amendements, _ = import_liasse_xml(
         open_liasse("liasse.xml"), lecture_essoc2018_an_nouvelle_lecture_commission_fond
     )
-    assert amendements[1].parent.num == 28
+    assert amendements[1].parent.num == "28"
 
     # And import a liasse without the parent
     amendements2, errors = import_liasse_xml(

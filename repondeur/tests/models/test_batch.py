@@ -16,7 +16,7 @@ def amendements(db, lecture_an, article1_an):
         Amendement.create(
             lecture=lecture_an, article=article1_an, num=num, position=position
         )
-        for position, num in enumerate((1, 2, 3, 4), 1)
+        for position, num in enumerate(("1", "2", "3", "4"), 1)
     ]
 
 
@@ -24,20 +24,30 @@ class TestCollapsedBatches:
     def test_unbatched_amendements_are_left_alone(self, amendements):
         from zam_repondeur.models.batch import Batch
 
-        assert [a.num for a in Batch.collapsed_batches(amendements)] == [1, 2, 3, 4]
+        assert [a.num for a in Batch.collapsed_batches(amendements)] == [
+            "1",
+            "2",
+            "3",
+            "4",
+        ]
 
     def test_batched_amendements_are_grouped(self, amendements):
         from zam_repondeur.models.batch import Batch
 
         amendements[0].location.batch = amendements[2].location.batch = Batch.create()
-        assert [a.num for a in Batch.collapsed_batches(amendements)] == [1, 2, 4]
+        assert [a.num for a in Batch.collapsed_batches(amendements)] == ["1", "2", "4"]
 
 
 class TestExpandedBatches:
     def test_unbatched_amendements_are_left_alone(self, amendements):
         from zam_repondeur.models.batch import Batch
 
-        assert [a.num for a in Batch.expanded_batches(amendements)] == [1, 2, 3, 4]
+        assert [a.num for a in Batch.expanded_batches(amendements)] == [
+            "1",
+            "2",
+            "3",
+            "4",
+        ]
 
     def test_batched_amendements_are_expanded(self, amendements):
         from zam_repondeur.models.batch import Batch
@@ -48,7 +58,7 @@ class TestExpandedBatches:
             for a in Batch.expanded_batches(
                 [amendements[0], amendements[1], amendements[3]]
             )
-        } == {1, 2, 3, 4}
+        } == {"1", "2", "3", "4"}
 
 
 def partition(
@@ -69,7 +79,7 @@ def test_reversibility(lecture_an, article1_an, nb_amendements):
     from zam_repondeur.models import Amendement, Batch
 
     amendements = [
-        Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)
+        Amendement.create(lecture=lecture_an, article=article1_an, num=str(i + 1))
         for i in range(nb_amendements)
     ]
 

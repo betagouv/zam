@@ -3,8 +3,65 @@ from datetime import date
 import pytest
 import transaction
 
+from zam_repondeur.models.chambre import Chambre
+
 # We need data about dossiers, texts and groups
 pytestmark = pytest.mark.usefixtures("data_repository")
+
+
+@pytest.fixture
+def lecture_ccfp(db):
+    from zam_repondeur.models import (
+        Dossier,
+        Lecture,
+        Phase,
+        Texte,
+        TypeTexte,
+    )
+
+    dossier = Dossier.create(
+        titre="Projet de décret", slug="projet-decret", an_id="dummy-projet-decret"
+    )
+    texte = Texte.create(
+        type_=TypeTexte.PROJET, chambre=Chambre.CCFP, numero=1, date_depot=date.today(),
+    )
+    lecture = Lecture.create(
+        phase=Phase.PREMIERE_LECTURE,
+        dossier=dossier,
+        texte=texte,
+        organe="Assemblée plénière",
+        titre="Première lecture – Assemblée plénière",
+    )
+    return lecture
+
+
+@pytest.fixture
+def lecture_csfpe(db):
+    from zam_repondeur.models import (
+        Dossier,
+        Lecture,
+        Phase,
+        Texte,
+        TypeTexte,
+    )
+
+    dossier = Dossier.create(
+        titre="Projet de décret", slug="projet-decret", an_id="dummy-projet-decret"
+    )
+    texte = Texte.create(
+        type_=TypeTexte.PROJET,
+        chambre=Chambre.CSFPE,
+        numero=1,
+        date_depot=date.today(),
+    )
+    lecture = Lecture.create(
+        phase=Phase.PREMIERE_LECTURE,
+        dossier=dossier,
+        texte=texte,
+        organe="Assemblée plénière",
+        titre="Première lecture – Assemblée plénière",
+    )
+    return lecture
 
 
 class TestLectureToStr:
@@ -117,6 +174,56 @@ class TestLectureToStr:
         )
         assert str(lecture) == result
 
+    def test_ccfp(self, lecture_ccfp):
+        assert str(lecture_ccfp) == (
+            "Conseil commun de la fonction publique,"
+            " Assemblée plénière, Première lecture"
+        )
+
+    def test_csfpe(self, lecture_csfpe):
+        assert str(lecture_csfpe) == (
+            "Conseil supérieur de la fonction publique d’État,"
+            " Assemblée plénière, Première lecture"
+        )
+
+
+class TestLectureGet:
+    def test_get_ccfp(self, lecture_ccfp):
+        from zam_repondeur.models import Lecture
+        from zam_repondeur.models import DBSession
+
+        DBSession.flush()
+
+        assert (
+            Lecture.get(
+                dossier=lecture_ccfp.dossier,
+                chambre=Chambre.CCFP,
+                organe="Assemblée plénière",
+                num_texte=lecture_ccfp.texte.numero,
+                session_or_legislature=None,
+                partie=None,
+            )
+            is not None
+        )
+
+    def test_get_csfpe(self, lecture_csfpe):
+        from zam_repondeur.models import Lecture
+        from zam_repondeur.models import DBSession
+
+        DBSession.flush()
+
+        assert (
+            Lecture.get(
+                dossier=lecture_csfpe.dossier,
+                chambre=Chambre.CSFPE,
+                organe="Assemblée plénière",
+                num_texte=lecture_csfpe.texte.numero,
+                session_or_legislature=None,
+                partie=None,
+            )
+            is not None
+        )
+
 
 class TestSimilairesMap:
     def test_empty(self, lecture_an):
@@ -131,8 +238,8 @@ class TestSimilairesMap:
         DBSession.add(lecture_an)
         amdt_666, amdt_999 = amendements_an
         assert lecture_an.all_amendements.similaires_map == {
-            666: {amdt_666, amdt_999},
-            999: {amdt_666, amdt_999},
+            "666": {amdt_666, amdt_999},
+            "999": {amdt_666, amdt_999},
         }
 
     def test_same_reponses(self, lecture_an, amendements_an):
@@ -144,14 +251,14 @@ class TestSimilairesMap:
             DBSession.add_all(amendements_an)
 
         lecture_an = DBSession.query(Lecture).one()
-        amdt_666 = DBSession.query(Amendement).filter_by(num=666).one()
-        amdt_999 = DBSession.query(Amendement).filter_by(num=999).one()
+        amdt_666 = DBSession.query(Amendement).filter_by(num="666").one()
+        amdt_999 = DBSession.query(Amendement).filter_by(num="999").one()
 
         assert amdt_666.user_content.reponse_hash == amdt_999.user_content.reponse_hash
 
         assert lecture_an.all_amendements.similaires_map == {
-            666: {amdt_666, amdt_999},
-            999: {amdt_666, amdt_999},
+            "666": {amdt_666, amdt_999},
+            "999": {amdt_666, amdt_999},
         }
 
     def test_different_reponses(self, lecture_an, amendements_an):
@@ -163,12 +270,12 @@ class TestSimilairesMap:
             DBSession.add_all(amendements_an)
 
         lecture_an = DBSession.query(Lecture).one()
-        amdt_666 = DBSession.query(Amendement).filter_by(num=666).one()
-        amdt_999 = DBSession.query(Amendement).filter_by(num=999).one()
+        amdt_666 = DBSession.query(Amendement).filter_by(num="666").one()
+        amdt_999 = DBSession.query(Amendement).filter_by(num="999").one()
 
         assert amdt_666.user_content.reponse_hash != amdt_999.user_content.reponse_hash
 
         assert lecture_an.all_amendements.similaires_map == {
-            666: {amdt_666},
-            999: {amdt_999},
+            "666": {amdt_666},
+            "999": {amdt_999},
         }

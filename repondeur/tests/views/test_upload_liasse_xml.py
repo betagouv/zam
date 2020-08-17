@@ -101,11 +101,11 @@ def test_upload_liasse_with_table(
     )
     assert (
         "<table>\n<tbody>\n<tr>\n<td>Durée minimale de services"
-        in lecture.amendements[1].corps
+        in lecture.find_amendement("28").corps
     )
     assert (
         "<table>\n<tbody>\n<tr>\n<td>Durée minimale de services"
-        in lecture.amendements[0].expose
+        in lecture.find_amendement("26").expose
     )
 
 

@@ -133,7 +133,9 @@ class AssembleeNationale(RemoteSource):
         )
 
         max_num_in_liste = max(derouleur.numeros, default=0)
-        max_num_in_lecture = max((amdt.num for amdt in lecture.amendements), default=0)
+        max_num_in_lecture = max(
+            (int(amdt.num) for amdt in lecture.amendements), default=0
+        )
         max_num_seen = max(max_num_in_liste, max_num_in_lecture)
 
         progress_bar = ProgressBar(
@@ -255,7 +257,7 @@ class AssembleeNationale(RemoteSource):
                 else:
                     if amendement is None:
                         raise ValueError("Invalid amendement return value")
-                    unchanged.append(amendement.num)
+                    unchanged.append(int(amendement.num))
             except NotFound:
                 logger.debug("Amendement %s not found", numero_prefixe)
                 numero = derouleur.remove_prefixe(numero_prefixe)
@@ -303,7 +305,7 @@ class AssembleeNationale(RemoteSource):
 
         tri_amendement = amend_data.get_tri_amendement()
 
-        amendement = lecture.find_amendement(num)
+        amendement = lecture.find_amendement(str(num))
 
         action: Optional[Action] = None
 
@@ -355,7 +357,7 @@ class AssembleeNationale(RemoteSource):
         )
         if modified:
             action = UpdateAmendement(
-                amendement_num=amendement.num,
+                amendement_num=int(amendement.num),
                 subdiv=subdiv,
                 parent_num_raw=parent_num_raw,
                 rectif=rectif,
@@ -377,16 +379,16 @@ class AssembleeNationale(RemoteSource):
 
     def apply_changes(self, lecture: Lecture, changes: CollectedChanges) -> FetchResult:
         result = FetchResult.create(
-            fetched=changes.unchanged,
-            errored=changes.errored,
+            fetched={str(num) for num in changes.unchanged},
+            errored={str(num) for num in changes.errored},
             next_start_index=changes.next_start_index,
         )
 
         # Build amendement -> position map
         moved_amendements = {
-            amendement: changes.position_changes[amendement.num]
+            amendement: changes.position_changes[int(amendement.num)]
             for amendement in lecture.amendements
-            if amendement.num in changes.position_changes
+            if int(amendement.num) in changes.position_changes
         }
 
         # Reset positions first, so that we never have two with the same position
@@ -648,19 +650,19 @@ class ANDerouleurData:
 
         amendements = [amdt for amdt in self.lecture.amendements]
 
-        current_order = {amdt.num: amdt.position for amdt in amendements}
+        current_order = {int(amdt.num): amdt.position for amdt in amendements}
 
         new_order = {item.numero: item.position for item in self.items.values()}
 
         for amdt in amendements:
-            if amdt.num not in current_order:
+            if int(amdt.num) not in current_order:
                 logger.error("%r not in %r", amdt.num, current_order)
                 raise ValueError
 
         return {
-            amdt.num: new_order.get(amdt.num)
-            for amdt in amendements
-            if new_order.get(amdt.num) != current_order[amdt.num]
+            amdt_num: new_order.get(amdt_num)
+            for amdt_num in current_order
+            if new_order.get(amdt_num) != current_order[amdt_num]
         }
 
 

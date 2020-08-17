@@ -16,4 +16,4 @@ def test_non_team_member_cannot_access_owned_dossier(
 
     resp = resp.maybe_follow()
 
-    assert "L’accès à ce dossier est réservé aux personnes autorisées." in resp.text
+    assert "L’accès à cette page est réservé aux personnes autorisées." in resp.text

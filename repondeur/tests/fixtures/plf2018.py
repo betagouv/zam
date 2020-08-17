@@ -187,7 +187,7 @@ def amendements_plf2018_an_premiere_lecture_seance_publique_2(
                 mission_titre="Mission Action et transformation publiques",
                 mission_titre_court="Action transfo.",
             )
-            for position, num in enumerate((111, 333), 1)
+            for position, num in enumerate(("111", "333"), 1)
         ]
 
     DBSession.add_all(amendements)

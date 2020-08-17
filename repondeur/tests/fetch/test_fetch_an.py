@@ -63,7 +63,7 @@ class TestFetchAndParseAll:
 
         assert len(amendements) == 5
 
-        assert amendements[0].num == 177
+        assert amendements[0].num == "177"
         assert amendements[0].position == 1
         assert (
             amendements[0].tri_amendement
@@ -72,7 +72,7 @@ class TestFetchAndParseAll:
         assert amendements[0].id_discussion_commune is None
         assert amendements[0].id_identique == 20386
 
-        assert amendements[1].num == 270
+        assert amendements[1].num == "270"
         assert amendements[1].position == 2
         assert (
             amendements[1].tri_amendement
@@ -81,7 +81,7 @@ class TestFetchAndParseAll:
         assert amendements[1].id_discussion_commune is None
         assert amendements[1].id_identique == 20386
 
-        assert amendements[2].num == 723
+        assert amendements[2].num == "723"
         assert amendements[2].position == 3
         assert (
             amendements[2].tri_amendement
@@ -90,7 +90,7 @@ class TestFetchAndParseAll:
         assert amendements[2].id_discussion_commune is None
         assert amendements[2].id_identique is None
 
-        assert amendements[3].num == 135
+        assert amendements[3].num == "135"
         assert amendements[3].position == 4
         assert (
             amendements[3].tri_amendement
@@ -99,7 +99,7 @@ class TestFetchAndParseAll:
         assert amendements[3].id_discussion_commune is None
         assert amendements[3].id_identique is None
 
-        assert amendements[4].num == 192
+        assert amendements[4].num == "192"
         assert amendements[4].position == 5
         assert (
             amendements[4].tri_amendement
@@ -108,7 +108,7 @@ class TestFetchAndParseAll:
         assert amendements[4].id_discussion_commune is None
         assert amendements[4].id_identique == 20439
 
-        assert result.created == {177, 270, 723, 135, 192}
+        assert result.created == {"177", "270", "723", "135", "192"}
         assert result.errored == set()
 
     @responses.activate
@@ -145,7 +145,7 @@ class TestFetchAndParseAll:
         assert lecture_an.get_fetch_progress() == {}
 
         assert len(result.fetched) == 5
-        assert result.created == {177, 270, 723, 135, 192}
+        assert result.created == {"177", "270", "723", "135", "192"}
         assert result.errored == set()
 
     @responses.activate
@@ -194,7 +194,7 @@ class TestFetchAndParseAll:
 
         assert len(amendements) == 2
 
-        assert amendements[0].num == 177
+        assert amendements[0].num == "177"
         assert amendements[0].position == 1
         assert (
             amendements[0].tri_amendement
@@ -203,7 +203,7 @@ class TestFetchAndParseAll:
         assert amendements[0].id_discussion_commune is None
         assert amendements[0].id_identique == 20386
 
-        assert amendements[1].num == 192
+        assert amendements[1].num == "192"
         assert amendements[1].position is None
         assert (
             amendements[1].tri_amendement
@@ -212,7 +212,7 @@ class TestFetchAndParseAll:
         assert amendements[1].id_discussion_commune is None
         assert amendements[1].id_identique is None
 
-        assert result.created == {177, 192}
+        assert result.created == {"177", "192"}
         assert result.errored == set()
 
     @responses.activate
@@ -235,21 +235,21 @@ class TestFetchAndParseAll:
 
         assert len(amendements) == 2
 
-        assert amendements[0].num == 2
+        assert amendements[0].num == "2"
         assert amendements[0].position is None
         assert (
             amendements[0].tri_amendement
             == "ilaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaf"
         )
 
-        assert amendements[1].num == 1
+        assert amendements[1].num == "1"
         assert amendements[1].position == 1
         assert (
             amendements[1].tri_amendement
             == "elaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"
         )
 
-        assert result.created == {1, 2}
+        assert result.created == {"1", "2"}
         assert result.errored == set()
 
     @responses.activate
@@ -285,7 +285,7 @@ class TestFetchAndParseAll:
 
         assert len(amendements) == 3
 
-        assert amendements[0].num == 1
+        assert amendements[0].num == "1"
         assert amendements[0].position == 1
         assert (
             amendements[0].tri_amendement
@@ -294,7 +294,7 @@ class TestFetchAndParseAll:
         assert amendements[0].id_discussion_commune == 3448
         assert amendements[0].id_identique == 8496
 
-        assert amendements[1].num == 2
+        assert amendements[1].num == "2"
         assert amendements[1].position == 2
         assert (
             amendements[1].tri_amendement
@@ -303,7 +303,7 @@ class TestFetchAndParseAll:
         assert amendements[1].id_discussion_commune is None
         assert amendements[1].id_identique is None
 
-        assert amendements[2].num == 3
+        assert amendements[2].num == "3"
         assert amendements[2].position == 3
         assert (
             amendements[2].tri_amendement
@@ -316,7 +316,7 @@ class TestFetchAndParseAll:
             assert amendement.parent is amendements[0]
             assert amendement.parent_pk == amendements[0].pk
 
-        assert result.created == {1, 2, 3}
+        assert result.created == {"1", "2", "3"}
         assert result.errored == set()
 
     @responses.activate
@@ -341,14 +341,14 @@ class TestFetchAndParseAll:
         amendements = sorted(Amendement.get(lecture_an, num) for num in result.fetched)
 
         assert len(amendements) == 4
-        assert amendements[0].num == 177
-        assert amendements[1].num == 723
-        assert amendements[2].num == 135
-        assert amendements[3].num == 192
+        assert amendements[0].num == "177"
+        assert amendements[1].num == "723"
+        assert amendements[2].num == "135"
+        assert amendements[3].num == "192"
 
         assert [amdt.position for amdt in amendements] == [1, 3, 4, 5]
-        assert result.created == {177, 723, 135, 192}
-        assert result.errored == {270}
+        assert result.created == {"177", "723", "135", "192"}
+        assert result.errored == {"270"}
 
 
 class TestGetOrganeAbrev:
@@ -479,7 +479,7 @@ class TestFetchAmendement:
         assert created
 
         assert amendement.lecture == lecture_an
-        assert amendement.num == 177
+        assert amendement.num == "177"
         assert amendement.rectif == 0
         assert amendement.auteur == "Door Jean-Pierre"
         assert amendement.matricule == "267289"

@@ -121,7 +121,7 @@ def test_select_all_checks_only_visible_amendements(
         user_david_table_an.add_amendement(amendements_an[0])
         user_david_table_an.add_amendement(amendements_an[1])
         amendement = Amendement.create(
-            lecture=lecture_an, article=article7bis_an, num=777
+            lecture=lecture_an, article=article7bis_an, num="777"
         )
         user_david_table_an.add_amendement(amendement)
 

@@ -162,10 +162,7 @@ class TableView:
             target_user = self.request.user
         else:
             target_user = DBSession.query(User).filter(User.email == target).one()
-        if (
-            target_user
-            not in self.context.lecture_resource.dossier_resource.dossier.team.users
-        ):
+        if target_user not in self.lecture.dossier.team.users:
             raise HTTPForbidden("Transfert non autorisé")
         return target_user.table_for(self.lecture)
 

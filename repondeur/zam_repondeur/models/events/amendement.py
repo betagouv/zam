@@ -28,8 +28,9 @@ class AmendementEvent(Event):
     @property
     def template_vars(self) -> dict:
         template_vars = {
-            "new_value": self.data["new_value"],
-            "old_value": self.data["old_value"],
+            key: self.data[key]
+            for key in ("new_value", "old_value")
+            if key in self.data
         }
         if self.user:
             template_vars.update({"user": self.user.name, "email": self.user.email})
@@ -319,14 +320,14 @@ class BatchSet(AmendementEvent):
         self,
         amendement: Amendement,
         batch: Batch,
-        amendements_nums: List[int],
+        amendements_nums: List[str],
         request: Request,
     ) -> None:
         self.request = request
         others = [
             amendement_num
             for amendement_num in amendements_nums
-            if int(amendement_num) != amendement.num
+            if amendement_num != amendement.num
         ]
         super().__init__(
             amendement=amendement, amendements_nums=others, request=request

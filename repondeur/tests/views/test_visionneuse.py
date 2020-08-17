@@ -224,7 +224,7 @@ def test_reponses_many_grouping(
         Amendement.create(
             lecture=lecture_an,
             article=article1_an,
-            num=42,
+            num="42",
             position=3,
             auteur="M. DUPONT",
             groupe="RDSE",
@@ -235,7 +235,7 @@ def test_reponses_many_grouping(
         Amendement.create(
             lecture=lecture_an,
             article=article1_an,
-            num=57,
+            num="57",
             position=4,
             auteur="M. DURAND",
             groupe="Les Républicains",
@@ -246,7 +246,7 @@ def test_reponses_many_grouping(
         Amendement.create(
             lecture=lecture_an,
             article=article1_an,
-            num=72,
+            num="72",
             position=5,
             auteur="M. MARTIN",
             groupe="Les Républicains",
@@ -257,7 +257,7 @@ def test_reponses_many_grouping(
         Amendement.create(
             lecture=lecture_an,
             article=article1_an,
-            num=83,
+            num="83",
             position=6,
             auteur="M. MARTIN",
             groupe="Les Républicains",

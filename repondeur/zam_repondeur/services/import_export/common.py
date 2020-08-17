@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 def import_amendement(
     request: Request,
     lecture: Lecture,
-    amendements: Dict[int, Amendement],
+    amendements: Dict[str, Amendement],
     item: dict,
     counter: Counter,
     previous_reponse: str,
@@ -44,12 +44,7 @@ def import_amendement(
         counter["reponses_errors"] += 1
         return
 
-    try:
-        num = normalize_num(numero)
-    except ValueError:
-        logging.warning("Invalid amendement number %r", numero)
-        counter["reponses_errors"] += 1
-        return
+    num = normalize_num(str(numero))
 
     amendement = amendements.get(num)
     if not amendement:

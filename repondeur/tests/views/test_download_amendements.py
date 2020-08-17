@@ -62,7 +62,7 @@ def test_download_pdf_multiple_amendements_multiple_articles(
     from zam_repondeur.models import Amendement
 
     with transaction.manager:
-        Amendement.create(lecture=lecture_an, article=article7bis_an, num=777)
+        Amendement.create(lecture=lecture_an, article=article7bis_an, num="777")
 
     resp = app.get(
         (
@@ -85,7 +85,7 @@ def test_download_pdf_lots_of_amendements(app, lecture_an, article1_an, user_dav
     nb_amendements = 11
     with transaction.manager:
         for i in range(nb_amendements):
-            Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)
+            Amendement.create(lecture=lecture_an, article=article1_an, num=str(i + 1))
 
     params = "&".join(f"n={i+1}" for i in range(nb_amendements))
     resp = app.get(
@@ -147,7 +147,7 @@ def test_download_xlsx_multiple_amendements_multiple_articles(
     from zam_repondeur.models import Amendement
 
     with transaction.manager:
-        Amendement.create(lecture=lecture_an, article=article7bis_an, num=777)
+        Amendement.create(lecture=lecture_an, article=article7bis_an, num="777")
 
     resp = app.get(
         (
@@ -173,7 +173,7 @@ def test_download_xlsx_lots_of_amendements(app, lecture_an, article1_an, user_da
     nb_amendements = 11
     with transaction.manager:
         for i in range(nb_amendements):
-            Amendement.create(lecture=lecture_an, article=article1_an, num=i + 1)
+            Amendement.create(lecture=lecture_an, article=article1_an, num=str(i + 1))
 
     params = "&".join(f"n={i+1}" for i in range(nb_amendements))
     resp = app.get(

@@ -109,3 +109,7 @@ ENV/
 
 # redis
 *.rdb
+
+# static assets
+repondeur/zam_repondeur/static/node_modules/*
+repondeur/zam_repondeur/static/manifest.json

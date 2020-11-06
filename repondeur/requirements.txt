@@ -1,7 +1,7 @@
 -i https://pypi.org/simple
 alembic==1.4.2
 anpy==0.1.22                # tlfp
-attrs==19.1.0               # anpy: < 19.2, >= 19.1
+attrs==20.3.0               # anpy: < 19.2, >= 19.1
 beautifulsoup4==4.6.3       # lawfactory_utils, legipy: < 4.7, >= 4.6
 bleach==3.1.5
 CacheControl==0.12.6
